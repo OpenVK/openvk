@@ -7,6 +7,7 @@ namespace openvk\Web\Models\Entities;
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Util\Shell\Exceptions\UnknownCommandException;
 use openvk\Web\Util\Shell\Shell;
+use openvk\Web\Models\Repositories\Audios;
 
 /**
  * @method setName(string)
@@ -413,14 +414,16 @@ class Audio extends Media
         $obj->keys       = false;
         $obj->genre_id   = $obj->genre = self::vkGenres[$this->getGenre() ?? ""] ?? 18; # return Other if no match
         $obj->genre_str  = $this->getGenre();
-        $obj->owner_id   = $this->getOwner()->getId();
-        if ($this->getOwner() instanceof Club) {
-            $obj->owner_id *= -1;
-        }
+        $obj->owner_id   = $this->getOwner()->getRealId();
 
         $obj->lyrics = null;
         if (!is_null($this->getLyrics())) {
             $obj->lyrics = $this->getId();
+        }
+
+        $album = $this->getAlbum();
+        if ($album) {
+            $obj->album = $album->toVkApiStruct($user);
         }
 
         $obj->added      = $user && $this->isInLibraryOf($user);
@@ -440,6 +443,37 @@ class Audio extends Media
         }
 
         return $obj;
+    }
+
+    public function setAlbum(Playlist $album): void
+    {
+        $this->stateChanges("playlist_id", $album->getId());
+    }
+
+    public function setAlbumId(int $album): void
+    {
+        $this->stateChanges("playlist_id", $album);
+    }
+
+    public function getAlbum(): ?Playlist
+    {
+        $playlist_id = $this->getRecord()->playlist_id;
+        if (!$playlist_id) {
+            return null;
+        }
+
+        $album = (new Audios())->getPlaylist($playlist_id);
+
+        if (!$album || $album->isDeleted()) {
+            return null;
+        }
+
+        return $album;
+    }
+
+    public function getAlbumId(): ?int
+    {
+        return $this->getRecord()->playlist_id;
     }
 
     public function setOwner(int $oid): void

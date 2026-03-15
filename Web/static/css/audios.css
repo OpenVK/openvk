@@ -25,7 +25,7 @@
 /* Main music player */
 
 .bigPlayer {
-    background-color: rgb(240, 241, 242);
+    background-color: var(--common-2);
     margin-left: -10px;
     margin-top: -10px;
     width: 102.8%;
@@ -58,8 +58,47 @@
     right: 0;
 }
 
+.bigPlayer #album_info {
+    display: none;
+    position: absolute;
+    top: 46px;
+    left: 0;
+    width: 70%;
+    background: var(--common-2);
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--brand);
+    box-shadow: 0px 5px 9px 0px #2b2b2b33;
+}
+
+.bigPlayer.album_shown #album_info {
+    display: block;
+    font-size: 10px;
+}
+
+.bigPlayer.album_shown #album_info a {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.bigPlayer.album_shown #album_info a, 
+.bigPlayer.album_shown #album_info span {
+    height: 8px;
+    font-size: 10px;
+}
+
+.bigPlayer.album_shown #album_info a span {
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.bigPlayer.album_shown #album_info img {
+    width: 22px;
+    border-radius: 1px;
+}
+
 .bigPlayer .bigPlayerWrapper .absoluteButtons > div {
-    width: 8px;
+    min-width: 8px;
     height: 8px;
     font-size: 9px;
 
@@ -67,9 +106,7 @@
     align-items: center;
     justify-content: center;
     background: #ebebeb;
-    border: 1px solid #c3c3c3;
-    border-bottom: unset;
-    border-right: unset;
+    outline: 1px solid #c3c3c3;
     color: #c3c3c3;
     cursor: pointer;
     user-select: none;
@@ -674,13 +711,14 @@
 
 .playlistListView {
     display: flex;
-    padding: 7px;
-    gap: 9px;
+    padding: 12px;
+    gap: 13px;
     cursor: pointer;
+    border-radius: 2px;
 }
 
 .playlistListView:hover, .playlistListView .playlistCover {
-    background: #ebebeb;
+    background: var(--common-hover);
 }
 
 .playlistListView .playlistCover img {
@@ -706,6 +744,7 @@
 
 .playlistListView .playlistInfo .playlistMeta, .playlistListView .playlistInfo .playlistMeta span {
     color: #676767;
+    font-size: 10px;
 }
 
 /* other */
@@ -857,11 +896,11 @@
 }
 
 .friendsAudiosList .elem img {
-    width: 30px;
+    width: 26px;
     border-radius: 2px;
     object-fit: cover;
-    height: 31px;
-    min-width: 30px;
+    height: 26px;
+    min-width: 26px;
 }
 
 .friendsAudiosList .elem .additionalInfo {
@@ -877,6 +916,7 @@
 
 .friendsAudiosList .elem .additionalInfo .name {
     color: #2B587A;
+    font-size: 10px;
 }
 
 .friendsAudiosList #used .elem .additionalInfo .name {
@@ -888,7 +928,7 @@
     overflow: hidden;
     white-space: nowrap;
     color: #878A8F;
-    font-size: 11px;
+    font-size: 10px;
 }
 
 .friendsAudiosList #used .elem .additionalInfo .desc {
@@ -1100,7 +1140,7 @@
 
 #ajax_audio_player #aj_player_tracks {
     width: fit-content;
-    display: flex;
+    display: none;
     flex-direction: column;
 
     background: rgba(44, 44, 44, 0.79);
@@ -1109,6 +1149,10 @@
     margin-top: 2px;
     margin-left: 2px;
     border-radius: 0px 0px 2px 2px;
+}
+
+#ajax_audio_player:hover #aj_player_tracks {
+    display: flex;
 }
 
 #ajax_audio_player #aj_player_tracks .aj_track {

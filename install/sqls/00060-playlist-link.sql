@@ -1,0 +1,1 @@
+ALTER TABLE `audios` ADD `playlist_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `processed`;

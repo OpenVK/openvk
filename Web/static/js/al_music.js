@@ -47,12 +47,52 @@ class AudioTrack {
         this.item = item
     }
 
+    getTitle() {
+        return this.item.name
+    }
+
+    getPerformer() {
+        return this.item.performer
+    }
+
+    getPerformers() {
+        return this.item.performer.split(',')
+    }
+
     getName() {
         return `${this.item.performer} — ${this.item.name}`
     }
 
     getId() {
         return this.item.id
+    }
+
+    getPlaylistCover() {
+        if (this.item.album) {
+            return this.item.album.cover_url
+        }
+
+        return "/assets/packages/static/openvk/img/song.jpg"
+    }
+
+    getPlaylistName() {
+        if (this.item.album) {
+            return this.item.album.title
+        }
+
+        return 'ovk audios'
+    }
+
+    getPlaylistURL() {
+        if (this.item.album) {
+            return '/playlist'+this.item.album.owner_id + '_' + this.item.album.id
+        }
+
+        return '#'
+    }
+
+    hasPlaylist() {
+        return this.item.album != null
     }
 }
 
@@ -238,7 +278,7 @@ window.player = new class {
                 form_data.append('context_entity', this.context.object.entity_id)
                 break
             case 'classic_search_context':
-                // tidi riwriti
+                // todo rewrite
                 form_data.append('context', this.context.object.name)
                 form_data.append('context_entity', JSON.stringify({
                     'order': this.context.object.order,
@@ -601,7 +641,7 @@ window.player = new class {
     }
 
     __updateFace() {
-        const _c = this.currentTrack
+        const _c = new AudioTrack(this.currentTrack)
         const prev_button = this.uiPlayer.find('.nextButton')
         const next_button = this.uiPlayer.find('.backButton')
 
@@ -651,9 +691,9 @@ window.player = new class {
         }
 
         if(_c) {
-            this.uiPlayer.find('.trackInfo .trackName span').html(escapeHtml(_c.name))
+            this.uiPlayer.find('.trackInfo .trackName span').html(escapeHtml(_c.getName()))
             this.uiPlayer.find('.trackInfo .trackPerformers').html('')
-            const performers = _c.performer.split(', ')
+            const performers = _c.getPerformers()
             const lastPerformer = performers[performers.length - 1]
             performers.forEach(performer => {
                 this.uiPlayer.find('.trackInfo .trackPerformers').append(
@@ -664,10 +704,21 @@ window.player = new class {
             this.uiPlayer.find('.trackInfo .trackPerformers').html(`<a>${tr('track_unknown')}</a>`)
         }
 
+        if (u('.bigPlayer #album_info').length > 0) {
+            if (_c.hasPlaylist() && u('.playlistInfo').length == 0) {
+                u('.bigPlayer').addClass('album_shown')
+                u('.bigPlayer #album_info img').attr('src', _c.getPlaylistCover())
+                u('.bigPlayer #album_info #album_embed_name').html(escapeHtml(ovk_proc_strtr(_c.getPlaylistName(), 60)))
+                u('.bigPlayer #album_info a').attr('href', _c.getPlaylistURL())
+            } else {
+                u('.bigPlayer').removeClass('album_shown')
+            }
+        }
+
         if(this.ajaxPlayer.length > 0) {
             if(_c) {
-                this.ajaxPlayer.find('#aj_player_track_title b').html(escapeHtml(_c.performer))
-                this.ajaxPlayer.find('#aj_player_track_title span').html(escapeHtml(_c.name))
+                this.ajaxPlayer.find('#aj_player_track_title b').html(escapeHtml(_c.getPerformer()))
+                this.ajaxPlayer.find('#aj_player_track_title span').html(escapeHtml(_c.getName()))
             }
         }
 
@@ -690,12 +741,13 @@ window.player = new class {
     
     __updateMediaSession() {
         const album = document.querySelector(".playlistBlock")
-        const cur = this.currentTrack
+        const cur = new AudioTrack(this.currentTrack)
+
         navigator.mediaSession.metadata = new MediaMetadata({
-            title: escapeHtml(cur.name),
-            artist: escapeHtml(cur.performer),
-            album: album == null ? "OpenVK Audios" : escapeHtml(album.querySelector(".playlistInfo h4").innerHTML),
-            artwork: [{ src: album == null ? "/assets/packages/static/openvk/img/song.jpg" : album.querySelector(".playlistCover img").src }],
+            title: escapeHtml(cur.getName()),
+            artist: escapeHtml(cur.getPerformer()),
+            album: cur.getPlaylistName(),
+            artwork: [{ src: cur.getPlaylistCover()}],
         })
     }
 
