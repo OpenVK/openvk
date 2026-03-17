@@ -86,7 +86,7 @@
 "desc_none" = "opisanie otsutstvuet";
 "send" = "Otpravití";
 "years_zero" = "0 let";
-"years_one" = "1 god";
+"years_one" = "$1 god";
 "years_few" = "$1 goda";
 "years_many" = "$1 let";
 "years_other" = "$1 let";
@@ -302,20 +302,20 @@
 "group_changeowner_modal_text" = "Vnimanie! Vy peredajote prava vladelíca polízovatelju $1. Eto dejstvie neobratimo. Posle peredači vy ostanetesí adminstratorom, no smožete legko perestatí im bytí.";
 "group_owner_setted" = "Novyj vladelec ($1) uspešno naznačen v soobsčestvo $2. Vam vydany prava administratora v soobsčestve. Esli Vy hotite vernutí rolí vladelíca, obratitesí v <a href='/support?act=new'>tehničeskuju podderžku sajta</a>.";
 "participants_zero" = "Ni odnogo učastnika";
-"participants_one" = "Odin učastnik";
+"participants_one" = "$1 učastnik";
 "participants_few" = "$1 učastnika";
 "participants_many" = "$1 učastnikov";
 "participants_other" = "$1 učastnikov";
 "groups_zero" = "Ni odnoj gruppy";
-"groups_one" = "Odna gruppa";
+"groups_one" = "$1 gruppa";
 "groups_few" = "$1 gruppy";
 "groups_many" = "$1 grupp";
 "groups_other" = "$1 grupp";
 "groups_list_zero" = "Vy ne sostoite ni v odnoj gruppe";
-"groups_list_one" = "Vy sostoite v odnoj gruppe";
+"groups_list_one" = "Vy sostoite v $1 gruppe";
 "groups_list_other" = "Vy sostoite v $1 gruppah";
 "meetings_zero" = "Ni odnoj vstreči";
-"meetings_one" = "Odna vstreča";
+"meetings_one" = "$1 vstreča";
 "meetings_few" = "$1 vstreči";
 "meetings_many" = "$1 vstreč";
 "meetings_other" = "$1 vstreč";
@@ -342,12 +342,12 @@
 "avatar_album" = "Fotografii so stranicy";
 "wall_album" = "Fotografii so steny";
 "albums_zero" = "Ni odnogo alíboma";
-"albums_one" = "Odin alíbom";
+"albums_one" = "$1 alíbom";
 "albums_few" = "$1 alíboma";
 "albums_many" = "$1 alíbomov";
 "albums_other" = "$1 alíbomov";
 "albums_list_zero" = "U Vas net ni odnogo alíboma";
-"albums_list_one" = "U Vas odin alíbom";
+"albums_list_one" = "U Vas $1 alíbom";
 "albums_list_few" = "U Vas $1 alíboma";
 "albums_list_many" = "U Vas $1 alíbomov";
 "albums_list_other" = "U Vas $1 alíbomov";
@@ -398,7 +398,7 @@
 "upload_new_photo" = "Zagruzití novuju fotografiju";
 
 "is_x_photos_zero" = "Vsego nolí fotografij.";
-"is_x_photos_one" = "Vsego odna fotografija.";
+"is_x_photos_one" = "Vsego $1 fotografija.";
 "is_x_photos_few" = "Vsego $1 fotografii.";
 "is_x_photos_many" = "Vsego $1 fotografij.";
 "is_x_photos_other" = "Vsego $1 fotografij.";
@@ -425,12 +425,12 @@
 "note_preview_empty_err" = "Začem vam predprosmotr dlja zametki bez imeni ili soderžanija?";
 "edited" = "Otredaktirovano";
 "notes_zero" = "Ni odnoj zametki";
-"notes_one" = "Odna zametka";
+"notes_one" = "$1 zametka";
 "notes_few" = "$1 zametki";
 "notes_many" = "$1 zametok";
 "notes_other" = "$1 zametok";
 "notes_list_zero" = "Ne najdeno ni odnoj zametki";
-"notes_list_one" = "Najdena odna zametka";
+"notes_list_one" = "Najdena $1 zametka";
 "notes_list_few" = "Najdeno $1 zametki";
 "notes_list_many" = "Najdeno $1 zametok";
 "notes_list_other" = "Najdeno $1 zametok";
@@ -527,7 +527,7 @@
 "search_button" = "Najti";
 "search_placeholder" = "Načnite vvodití ljuboe imja, nazvanie ili slovo";
 "results_zero" = "Ni odnogo rezulítata";
-"results_one" = "Odin rezulítat";
+"results_one" = "$1 rezulítat";
 "results_few" = "$1 rezulítata";
 "results_many" = "$1 rezulítatov";
 "results_other" = "$1 rezulítatov";
@@ -662,7 +662,7 @@
 "info_uploaded_by" = "Zagruzil";
 "info_upload_date" = "Data zagruzki";
 "videos_zero" = "Net video";
-"videos_one" = "Odna videozapisí";
+"videos_one" = "$1 videozapisí";
 "videos_few" = "$1 videozapisi";
 "videos_many" = "$1 videozapisej";
 "videos_other" = "$1 videozapisej";
@@ -707,7 +707,7 @@
 "audio_embed_processing" = "Audio esčjo obrabatyvaetsja, libo obrabotalosí nepravilíno.";
 
 "audios_count_zero" = "Net audiozapisej";
-"audios_count_one" = "Odna audiozapisí";
+"audios_count_one" = "$1 audiozapisí";
 "audios_count_few" = "$1 audiozapisi";
 "audios_count_many" = "$1 audiozapisej";
 "audios_count_other" = "$1 audiozapisej";
@@ -764,13 +764,13 @@
 "playlist_cover" = "Obložka plejlista";
 
 "minutes_count_zero" = "dlitsja nolí minut";
-"minutes_count_one" = "dlitsja odnu minutu";
+"minutes_count_one" = "dlitsja $1 minutu";
 "minutes_count_few" = "dlitsja $1 minuty";
 "minutes_count_many" = "dlitsja $1 minut";
 "minutes_count_other" = "dlitsja $1 minut";
 
 "listens_count_zero" = "net proslušivanij";
-"listens_count_one" = "odno proslušivanie";
+"listens_count_one" = "$1 proslušivanie";
 "listens_count_few" = "$1 proslušivanija";
 "listens_count_many" = "$1 proslušivanij";
 "listens_count_other" = "$1 proslušivanij";
@@ -862,7 +862,7 @@
 "usages_left" = "Ostalosí ispolízovanij";
 "points_transfer_dialog_header_1" = "Vy možete otpravití v podarok ili peredatí častí golosov drugomu čeloveku.";
 "points_transfer_dialog_header_2" = "Vaš tekusčij balans:";
-"points_amount_one" = "1 golos";
+"points_amount_one" = "$1 golos";
 "points_amount_few" = "$1 golosa";
 "points_amount_many" = "$1 golosov";
 "points_amount_other" = "$1 golosov";
@@ -901,12 +901,12 @@
 "gift" = "Podarok";
 "gifts" = "Podarki";
 "gifts_zero" = "Net podarkov";
-"gifts_one" = "Odin podarok";
+"gifts_one" = "$1 podarok";
 "gifts_few" = "$1 podarka";
 "gifts_many" = "$1 podarkov";
 "gifts_other" = "$1 podarkov";
 "gifts_left" = "Podarkov ostalosí: $1";
-"gifts_left_one" = "Odin podarok ostalsja";
+"gifts_left_one" = "$1 podarok ostalsja";
 "gifts_left_few" = "$1 podarka ostalosí";
 "gifts_left_many" = "$1 podarkov ostalosí";
 "gifts_left_other" = "$1 podarkov ostalosí";
@@ -919,7 +919,7 @@
 "free_gift" = "Besplatno";
 "coins" = "Golosa";
 "coins_zero" = "0 golosov";
-"coins_one" = "Odin golos";
+"coins_one" = "$1 golos";
 "coins_few" = "$1 golosa";
 "coins_many" = "$1 golosov";
 "coins_other" = "$1 golosov";
@@ -1106,7 +1106,7 @@
 "poll_editor_tips" = "Nažatie Backspace v pustom variante privodit k ego udaleniju. Tab/Enter v poslednem dobavljaet novyj.";
 "poll_embed" = "Polučití kod";
 "poll_voter_count_zero" = "Budíte <b>pervym</b>, kto progolosuet!";
-"poll_voter_count_one" = "V oprose progolosoval <b>odin</b> čelovek.";
+"poll_voter_count_one" = "V oprose progolosoval <b>$1</b> čelovek.";
 "poll_voter_count_few" = "V oprose progolosovalo <b>$1</b> čeloveka.";
 "poll_voter_count_many" = "V oprose progolosovalo <b>$1</b> čelovek.";
 "poll_voter_count_other" = "V oprose progolosovalo <b>$1</b> čelovek.";
@@ -1124,12 +1124,12 @@
 /* Discussions */
 
 "discussions" = "Obsuždenija";
-"messages_one" = "Odno soobsčenie";
+"messages_one" = "$1 soobsčenie";
 "messages_few" = "$1 soobsčenija";
 "messages_many" = "$1 soobsčenij";
 "messages_other" = "$1 soobsčenij";
 "topic_messages_count_zero" = "V teme net soobsčenij";
-"topic_messages_count_one" = "V teme odno soobsčenie";
+"topic_messages_count_one" = "V teme $1 soobsčenie";
 "topic_messages_count_few" = "V teme $1 soobsčenija";
 "topic_messages_count_many" = "V teme $1 soobsčenij";
 "topic_messages_count_other" = "V teme $1 soobsčenij";
@@ -1145,7 +1145,7 @@
 "pin_topic" = "Zakrepití temu";
 "close_topic" = "Zakrytí temu";
 "delete_topic" = "Udalití temu";
-"topics_one" = "Odna tema";
+"topics_one" = "$1 tema";
 "topics_few" = "$1 temy";
 "topics_many" = "$1 tema";
 "topics_other" = "$1 tem";
@@ -1447,23 +1447,23 @@
 "on_this_instance_are" = "Na etoj instancii:";
 "about_links" = "Ssylki";
 "instance_links" = "Ssylki instancii:";
-"about_users_one" = "<b>1</b> polízovatelí";
+"about_users_one" = "<b>$1</b> polízovatelí";
 "about_users_few" = "<b>$1</b> polízovatelja";
 "about_users_many" = "<b>$1</b> polízovatelej";
 "about_users_other" = "<b>$1</b> polízovatelej";
-"about_online_users_one" = "<b>1</b> polízovatelí v seti";
+"about_online_users_one" = "<b>$1</b> polízovatelí v seti";
 "about_online_users_few" = "<b>$1</b> polízovatelja v seti";
 "about_online_users_many" = "<b>$1</b> polízovatelej v seti";
 "about_online_users_other" = "<b>$1</b> polízovatelej v seti";
-"about_active_users_one" = "<b>1</b> aktivnyj polízovatelí";
+"about_active_users_one" = "<b>$1</b> aktivnyj polízovatelí";
 "about_active_users_few" = "<b>$1</b> aktivnyh polízovatelja";
 "about_active_users_many" = "<b>$1</b> aktivnyh polízovatelej";
 "about_active_users_other" = "<b>$1</b> aktivnyh polízovatelej";
-"about_groups_one" = "<b>1</b> gruppa";
+"about_groups_one" = "<b>$1</b> gruppa";
 "about_groups_few" = "<b>$1</b> gruppy";
 "about_groups_many" = "<b>$1</b> grupp";
 "about_groups_other" = "<b>$1</b> grupp";
-"about_wall_posts_one" = "<b>1</b> zapisí na stenah";
+"about_wall_posts_one" = "<b>$1</b> zapisí na stenah";
 "about_wall_posts_few" = "<b>$1</b> zapisi na stenah";
 "about_wall_posts_many" = "<b>$1</b> zapisej na stenah";
 "about_wall_posts_other" = "<b>$1</b> zapisej na stenah";
