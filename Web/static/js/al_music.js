@@ -641,7 +641,11 @@ window.player = new class {
     }
 
     __updateFace() {
-        const _c = new AudioTrack(this.currentTrack)
+        let _c = null
+        if (this.currentTrack) { 
+            _c = new AudioTrack(this.currentTrack)
+        }
+
         const prev_button = this.uiPlayer.find('.nextButton')
         const next_button = this.uiPlayer.find('.backButton')
 
