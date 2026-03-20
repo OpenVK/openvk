@@ -107,6 +107,7 @@ window.player = new class {
 
     __linked_player_id = null
     current_track_id = 0
+    _fading = false
     tracks = []
 
     // 0 - shows remaining time before end
@@ -195,6 +196,10 @@ window.player = new class {
         }
 
         this.audioPlayer.onvolumechange = () => {
+            if (this._fading == true) {
+                return
+            }
+
             const volume = this.audioPlayer.volume;
             const ps = Math.ceil((volume * 100) / 1);
 
@@ -419,6 +424,7 @@ window.player = new class {
 
         document.querySelectorAll('audio').forEach(el => el.pause())
 
+        this._volumeFade(false)
         await this.audioPlayer.play()
         this.__setFavicon()
         this.__updateFace()
@@ -430,10 +436,51 @@ window.player = new class {
             return
         }
 
-        this.audioPlayer.pause()
+        this._volumeFade(true)
+
+        setTimeout(() => {
+            this.audioPlayer.pause()
+            this.__updateFace()
+        }, 300)
         this.__setFavicon('paused')
-        this.__updateFace()
         navigator.mediaSession.playbackState = "paused"
+    }
+
+    _volumeFade(down = false, interval = 15) {
+        const step = 0.03
+
+        if (!this.audioPlayer || this._fading) {
+            return
+        }
+
+        const current_volume = this.audioPlayer.volume
+
+        if (down) {
+            this.audioPlayer.volume = current_volume
+        } else {
+            this.audioPlayer.volume = 0
+        }
+
+        this._fading = true
+
+        const _i = setInterval(() => {
+            let done = false
+            if (down) {
+                this.audioPlayer.volume = Math.max(0, this.audioPlayer.volume - step)
+
+                done = this.audioPlayer.volume == 0
+            } else {
+                this.audioPlayer.volume += step
+
+                done = this.audioPlayer.volume >= current_volume
+            }
+
+            if (done) {
+                this.audioPlayer.volume = current_volume
+                this._fading = false
+                clearInterval(_i)
+            }
+        }, interval);
     }
 
     async playPreviousTrack() {
