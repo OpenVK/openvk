@@ -722,7 +722,7 @@ window.player = new class {
         if(this.ajaxPlayer.length > 0) {
             if(_c) {
                 this.ajaxPlayer.find('#aj_player_track_title b').html(escapeHtml(_c.getPerformer()))
-                this.ajaxPlayer.find('#aj_player_track_title span').html(escapeHtml(_c.getName()))
+                this.ajaxPlayer.find('#aj_player_track_title span').html(escapeHtml(_c.getTitle()))
             }
         }
 
