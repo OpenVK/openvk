@@ -240,10 +240,10 @@ final class Wall extends VKAPIRequestHandler
             }
 
             $owner_id = $post->getTargetWall();
-            if($owner_id > 0){
+            if ($owner_id > 0) {
                 $profiles[] = $owner_id;
             } else {
-                $groups = $owner_id * -1;
+                $groups[] = $owner_id * -1;
             }
 
             if ($post->isSigned()) {
@@ -476,10 +476,10 @@ final class Wall extends VKAPIRequestHandler
                 }
 
                 $owner_id = $post->getTargetWall();
-                if($owner_id > 0){
+                if ($owner_id > 0) {
                     $profiles[] = $owner_id;
                 } else {
-                    $groups = $owner_id * -1;
+                    $groups[] = $owner_id * -1;
                 }
 
                 if ($post->isSigned()) {
