@@ -239,6 +239,13 @@ final class Wall extends VKAPIRequestHandler
                 $groups[]   = $from_id * -1;
             }
 
+            $owner_id = $post->getTargetWall();
+            if($owner_id > 0){
+                $profiles[] = $owner_id;
+            } else {
+                $groups = $owner_id * -1;
+            }
+
             if ($post->isSigned()) {
                 $profiles[] = $post->getOwner(false)->getId();
             }
@@ -466,6 +473,13 @@ final class Wall extends VKAPIRequestHandler
                     $profiles[] = $from_id;
                 } else {
                     $groups[]   = $from_id * -1;
+                }
+
+                $owner_id = $post->getTargetWall();
+                if($owner_id > 0){
+                    $profiles[] = $owner_id;
+                } else {
+                    $groups = $owner_id * -1;
                 }
 
                 if ($post->isSigned()) {
