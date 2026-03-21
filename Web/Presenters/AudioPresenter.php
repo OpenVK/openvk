@@ -877,6 +877,7 @@ final class AudioPresenter extends OpenVKPresenter
 
         foreach ($audios as $audio) {
             $obj = $audio->toVkApiStruct($this->user->identity);
+            $obj->id = $audio->getId();
             $obj->name = $audio->getTitle();
             $obj->performer = $audio->getPerformer();
             $obj->length = $audio->getLength();
