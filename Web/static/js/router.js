@@ -109,7 +109,8 @@ window.router = new class {
         
         u("meta[name=csrf]").attr("value", u(parsed_content.querySelector('meta[name=csrf]')).attr('value'))
         
-        document.title = parsed_content.title
+        window.setBaseTitle(parsed_content.title)
+
         scripts_to_append.forEach(append_me => {
             this.__appendScript(append_me)
         })
