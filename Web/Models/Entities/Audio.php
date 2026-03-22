@@ -408,7 +408,6 @@ class Audio extends Media
         $obj->artist     = $this->getPerformer();
         $obj->title      = $this->getTitle();
         $obj->duration   = $this->getLength();
-        $obj->album_id   = $obj->album = null; # i forgor to implement
         $obj->url        = false;
         $obj->manifest   = false;
         $obj->keys       = false;
@@ -424,6 +423,7 @@ class Audio extends Media
         $album = $this->getAlbum();
         if ($album) {
             $obj->album = $album->toVkApiStruct($user);
+            $obj->album_id = $album->getPrettyId();
         }
 
         $obj->added      = $user && $this->isInLibraryOf($user);

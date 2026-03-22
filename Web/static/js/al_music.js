@@ -107,6 +107,7 @@ window.player = new class {
 
     __linked_player_id = null
     current_track_id = 0
+    _fading = false
     tracks = []
 
     // 0 - shows remaining time before end
@@ -195,6 +196,10 @@ window.player = new class {
         }
 
         this.audioPlayer.onvolumechange = () => {
+            if (this._fading == true) {
+                return
+            }
+
             const volume = this.audioPlayer.volume;
             const ps = Math.ceil((volume * 100) / 1);
 
@@ -419,6 +424,7 @@ window.player = new class {
 
         document.querySelectorAll('audio').forEach(el => el.pause())
 
+        this._volumeFade(false)
         await this.audioPlayer.play()
         this.__setFavicon()
         this.__updateFace()
@@ -430,10 +436,51 @@ window.player = new class {
             return
         }
 
-        this.audioPlayer.pause()
+        this._volumeFade(true)
+
+        setTimeout(() => {
+            this.audioPlayer.pause()
+            this.__updateFace()
+        }, 150)
         this.__setFavicon('paused')
-        this.__updateFace()
         navigator.mediaSession.playbackState = "paused"
+    }
+
+    _volumeFade(down = false, interval = 15) {
+        const step = 0.03
+
+        if (!this.audioPlayer || this._fading) {
+            return
+        }
+
+        const current_volume = this.audioPlayer.volume
+
+        if (down) {
+            this.audioPlayer.volume = current_volume
+        } else {
+            this.audioPlayer.volume = 0
+        }
+
+        this._fading = true
+
+        const _i = setInterval(() => {
+            let done = false
+            if (down) {
+                this.audioPlayer.volume = Math.max(0, this.audioPlayer.volume - step)
+
+                done = this.audioPlayer.volume == 0
+            } else {
+                this.audioPlayer.volume = Math.min(1, this.audioPlayer.volume + step)
+
+                done = this.audioPlayer.volume >= current_volume
+            }
+
+            if (done) {
+                this.audioPlayer.volume = current_volume
+                this._fading = false
+                clearInterval(_i)
+            }
+        }, interval);
     }
 
     async playPreviousTrack() {
@@ -641,7 +688,11 @@ window.player = new class {
     }
 
     __updateFace() {
-        const _c = new AudioTrack(this.currentTrack)
+        let _c = null
+        if (this.currentTrack) { 
+            _c = new AudioTrack(this.currentTrack)
+        }
+
         const prev_button = this.uiPlayer.find('.nextButton')
         const next_button = this.uiPlayer.find('.backButton')
 
@@ -691,7 +742,7 @@ window.player = new class {
         }
 
         if(_c) {
-            this.uiPlayer.find('.trackInfo .trackName span').html(escapeHtml(_c.getName()))
+            this.uiPlayer.find('.trackInfo .trackName span').html(escapeHtml(_c.getTitle()))
             this.uiPlayer.find('.trackInfo .trackPerformers').html('')
             const performers = _c.getPerformers()
             const lastPerformer = performers[performers.length - 1]
@@ -718,7 +769,7 @@ window.player = new class {
         if(this.ajaxPlayer.length > 0) {
             if(_c) {
                 this.ajaxPlayer.find('#aj_player_track_title b').html(escapeHtml(_c.getPerformer()))
-                this.ajaxPlayer.find('#aj_player_track_title span').html(escapeHtml(_c.getName()))
+                this.ajaxPlayer.find('#aj_player_track_title span').html(escapeHtml(_c.getTitle()))
             }
         }
 
@@ -1342,7 +1393,8 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
             <a id='audio_ctx_mute' ${window.player.audioPlayer.muted ? `class='pressed'` : ''}>${tr('mute_tip_noun')}</a>
             ` : ''}
             ${ctx_type == 'mini_player' ? `
-            <a style='display:none;' id='audio_ctx_play_next'>${tr('audio_ctx_play_next')}</a>    
+            <a style='display:none;' id='audio_ctx_play_next'>${tr('audio_ctx_play_next')}</a>
+            <a id='audio_ctx_link_playlist'>${tr('playlist')}</a>
             ` : ''}
             <a id='audio_ctx_add_to_group'>${tr('audio_ctx_add_to_group')}</a>
             <a id='audio_ctx_add_to_playlist'>${tr('audio_ctx_add_to_playlist')}</a>
@@ -1449,6 +1501,64 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
     })
     ctx_u.find('#audio_ctx_show_count').on('click', (ev) => {
         window.player.bigPlayer_toggleCountBlock()
+    })
+    ctx_u.find('#audio_ctx_link_playlist').on('click', async (ev) => {
+        let track_id = 0
+        if(ctx_type == 'main_player') {
+            if(window.player.current_track_id == 0) {
+                return
+            }
+
+            track_id = window.player.current_track_id
+        } else {
+            track_id = Number(u(e.target).closest('.audioEmbed').attr('data-realid'))
+        }
+
+        const audios = await window.OVKAPI.call('audio.getById', {
+            'audios': track_id
+        })
+        const audio = audios.items[0]
+        const id = audio.album_id
+
+        if (!audio.editable) {
+            if (id) {
+                window.router.route('/playlist' + id)
+            }
+            return
+        }
+        let body = u(`
+            <div>
+                <div>
+                    <div class="playlist_data"></div>
+                </div>
+                <div style="display: flex;align-items: center;gap: 3px;">
+                    <span>${escapeHtml(location.origin)}/playlist</span>
+                    <input style="width:50%;" type="text" id="playlist_id" value="${id ?? ""}">
+                </div>
+            </div>
+        `)
+        const msg = new CMessageBox({
+            title: '',
+            body: body.html(),
+            buttons: [tr('ok'), tr('cancel')],
+            callbacks: [async () => {
+                const new_id = msg.getNode().find('#playlist_id').nodes[0].value
+                if (new_id != '') {
+                    const playlist_id = new_id.split('_')
+
+                    try {
+                        await window.OVKAPI.call('audio.moveToAlbum', {
+                            'do_link': 1,
+                            'audio_ids': track_id,
+                            'album_id': playlist_id[1]
+                        })
+                    } catch(e) {
+                        makeError(e.message)
+                    }
+                }
+            }, () => {}]
+        })
+        msg.getNode().find('.ovk-diag-head').remove()
     })
 })
 

@@ -4144,9 +4144,10 @@ hr {
 }
 
 #ctx_menu a {
-    padding: 5px 6px 6px 8px;
+    padding: 5px 6px 6px 20px;
     color: black;
     position: relative;
+    font-size: 10px;
 }
 
 #ctx_menu a:hover {

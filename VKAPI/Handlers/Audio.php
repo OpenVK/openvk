@@ -733,7 +733,7 @@ final class Audio extends VKAPIRequestHandler
         return 1;
     }
 
-    public function moveToAlbum(int $album_id, string $audio_ids): int
+    public function moveToAlbum(int $album_id, string $audio_ids, ?bool $do_link = false): int
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -769,7 +769,14 @@ final class Audio extends VKAPIRequestHandler
         $res = 1;
         try {
             foreach ($audios as $audio) {
-                $res = min($res, (int) $album->add($audio));
+                if ($do_link) {
+                    if ($audio->canBeModifiedBy($this->getUser())) {
+                        $audio->setAlbum($album);
+                        $audio->save();
+                    }
+                } else {
+                    $res = min($res, (int) $album->add($audio));
+                }
             }
         } catch (\OutOfBoundsException $ex) {
             return 0;

@@ -65,9 +65,11 @@
     left: 0;
     width: 70%;
     background: var(--common-2);
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--brand);
-    box-shadow: 0px 5px 9px 0px #2b2b2b33;
+    margin-left: -1px;
+    padding: 15px 14px 17px 15px;
+    border: 1px solid #d8d8d8;
+    border-top: unset;
+    box-shadow: 0px 10px 8px 0px #2b2b2b33;
 }
 
 .bigPlayer.album_shown #album_info {
@@ -78,7 +80,7 @@
 .bigPlayer.album_shown #album_info a {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 13px;
 }
 
 .bigPlayer.album_shown #album_info a, 
@@ -93,7 +95,7 @@
 }
 
 .bigPlayer.album_shown #album_info img {
-    width: 22px;
+    width: 27px;
     border-radius: 1px;
 }
 
