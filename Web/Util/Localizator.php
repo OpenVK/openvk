@@ -31,8 +31,8 @@ class Localizator
         return $includes;
     }
 
-    /* 
-     * parsing takes a LOT of cpu time. so for future visits, 
+    /*
+     * parsing takes a LOT of cpu time. so for future visits,
      * we're parsing the locale and put it to native php file
      */
     protected function parse($file): array
