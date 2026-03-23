@@ -31,22 +31,48 @@ class Localizator
         return $includes;
     }
 
+    /*
+     * parsing takes a LOT of cpu time. so for future visits,
+     * we're parsing the locale and put it to native php file
+     */
     protected function parse($file): array
     {
-        $hash = sha1($file);
+        $hash = md5($file);
+        $array = [];
+
         if (isset($GLOBALS["localizationCache_$hash"])) {
             return $GLOBALS["localizationCache_$hash"];
         }
 
+        $tmpDir = dirname(__FILE__) . "/../../tmp/locales/";
+        if (!file_exists($tmpDir)) {
+            mkdir($tmpDir, 0o777, true);
+        }
+
+        $cacheFile = $tmpDir . $hash . '.tmplocale.php';
+        if (file_exists($cacheFile)) {
+            $array = require $cacheFile;
+            if (filemtime($file) == $array['__originalModifyDate']) {
+                return $array;
+            } else {
+                $array = []; // run that back
+            }
+        }
+
         $string = file_get_contents($file);
-        $string = preg_replace("%(?<!\")\/\*.*\*\/?%m", "", $string); #Remove comments
-        $array  = [];
 
         foreach (preg_split("%;[\\r\\n]++%", $string) as $statement) {
-            $s = explode(" = ", trim($statement));
+            if ($statement == "") {
+                continue;
+            }
+
+            $s = [];
+            preg_match('/\"(.+)\" = \"(.+)\"/', trim($statement), $s);
 
             try {
-                $array[eval("return $s[0];")] = eval("return $s[1];");
+                if (count($s) == 3) {
+                    $array[$s[1]] = $s[2];
+                }
             } catch (\ParseError $ex) {
                 throw new \ParseError($ex->getMessage() . " near " . $s[0]);
             }
@@ -56,6 +82,10 @@ class Localizator
             $array = array_merge(@self::parse($include), $array);
         }
 
+        $array['__originalModifyDate'] = filemtime($file);
+        $arrayExport = var_export($array, true);
+        $tmpContent = '<?php return ' . $arrayExport . '; ?>';
+        file_put_contents($cacheFile, $tmpContent);
         $GLOBALS["localizationCache_$hash"] = $array;
         return $array;
     }
