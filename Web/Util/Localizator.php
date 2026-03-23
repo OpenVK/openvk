@@ -42,7 +42,7 @@ class Localizator
 
         $tmpDir = dirname(__FILE__) . "/../../tmp/locales/";
         if (!file_exists($tmpDir)) {
-            mkdir($tmpDir, 0777, true);
+            mkdir($tmpDir, 0o777, true);
         }
 
         $cacheFile = $tmpDir . $hash . '.tmplocale.php';
@@ -81,7 +81,7 @@ class Localizator
         // tmp
         $array['__originalModifyDate'] = filemtime($file);
         $arrayExport = var_export($array, true);
-        $tmpContent = '<?php return '.$arrayExport.'; ?>';
+        $tmpContent = '<?php return ' . $arrayExport . '; ?>';
         file_put_contents($cacheFile, $tmpContent);
         $GLOBALS["localizationCache_$hash"] = $array;
         return $array;
