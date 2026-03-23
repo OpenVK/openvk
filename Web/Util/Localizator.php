@@ -39,14 +39,20 @@ class Localizator
         }
 
         $string = file_get_contents($file);
-        $string = preg_replace("%(?<!\")\/\*.*\*\/?%m", "", $string); #Remove comments
         $array  = [];
 
         foreach (preg_split("%;[\\r\\n]++%", $string) as $statement) {
-            $s = explode(" = ", trim($statement));
+            if ($statement == "") {
+                continue;
+            }
+
+            $s = [];
+            preg_match('/\"(.+)\" = \"(.+)\"/', trim($statement), $s);
 
             try {
-                $array[eval("return $s[0];")] = eval("return $s[1];");
+                if (count($s) == 3) {
+                    $array[$s[1]] = stripcslashes($s[2]);
+                }
             } catch (\ParseError $ex) {
                 throw new \ParseError($ex->getMessage() . " near " . $s[0]);
             }
