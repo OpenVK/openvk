@@ -31,6 +31,10 @@ class Localizator
         return $includes;
     }
 
+    /* 
+     * parsing takes a LOT of cpu time. so for future visits, 
+     * we're parsing the locale and put it to native php file
+     */
     protected function parse($file): array
     {
         $hash = md5($file);
@@ -78,7 +82,6 @@ class Localizator
             $array = array_merge(@self::parse($include), $array);
         }
 
-        // tmp
         $array['__originalModifyDate'] = filemtime($file);
         $arrayExport = var_export($array, true);
         $tmpContent = '<?php return ' . $arrayExport . '; ?>';
