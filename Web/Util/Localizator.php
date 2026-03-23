@@ -33,13 +33,29 @@ class Localizator
 
     protected function parse($file): array
     {
-        $hash = sha1($file);
+        $hash = md5($file);
+        $array = [];
+
         if (isset($GLOBALS["localizationCache_$hash"])) {
             return $GLOBALS["localizationCache_$hash"];
         }
 
+        $tmpDir = dirname(__FILE__) . "/../../tmp/locales/";
+        if (!file_exists($tmpDir)) {
+            mkdir($tmpDir, 0777, true);
+        }
+
+        $cacheFile = $tmpDir . $hash . '.tmplocale.php';
+        if (file_exists($cacheFile)) {
+            $array = require $cacheFile;
+            if (filemtime($file) == $array['__originalModifyDate']) {
+                return $array;
+            } else {
+                $array = []; // run that back
+            }
+        }
+
         $string = file_get_contents($file);
-        $array  = [];
 
         foreach (preg_split("%;[\\r\\n]++%", $string) as $statement) {
             if ($statement == "") {
@@ -51,7 +67,7 @@ class Localizator
 
             try {
                 if (count($s) == 3) {
-                    $array[$s[1]] = stripcslashes($s[2]);
+                    $array[$s[1]] = $s[2];
                 }
             } catch (\ParseError $ex) {
                 throw new \ParseError($ex->getMessage() . " near " . $s[0]);
@@ -62,6 +78,11 @@ class Localizator
             $array = array_merge(@self::parse($include), $array);
         }
 
+        // tmp
+        $array['__originalModifyDate'] = filemtime($file);
+        $arrayExport = var_export($array, true);
+        $tmpContent = '<?php return '.$arrayExport.'; ?>';
+        file_put_contents($cacheFile, $tmpContent);
         $GLOBALS["localizationCache_$hash"] = $array;
         return $array;
     }
