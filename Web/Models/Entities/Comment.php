@@ -108,7 +108,7 @@ class Comment extends Post
 
     public function getURL(): string
     {
-        return "/wall" . $this->getTarget()->getPrettyId() . "#_comment" . $this->getId();
+        return $this->getTargetURL() . "#_comment" . $this->getId();
     }
 
     public function canBeViewedBy(?User $user = null): bool
