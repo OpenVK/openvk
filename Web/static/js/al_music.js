@@ -1570,9 +1570,9 @@ u(document).on("click", ".musicIcon.edit-icon", (e) => {
     const genre = player.dataset.genre
     const lyrics = e.target.dataset.lyrics
     const album_id = e.currentTarget.dataset.albumId
-    
-    MessageBox(tr("edit_audio"), `
-        <div>
+    const owner_id = e.currentTarget.dataset.ownerId
+
+    MessageBox(tr("edit_audio"), `        <div>
             ${tr("performer")}
             <input name="performer" maxlength="256" type="text" value="${escapeHtml(performer)}">
         </div>
@@ -1694,7 +1694,7 @@ u(document).on("click", ".musicIcon.edit-icon", (e) => {
 
     const album_select = document.querySelector(".ovk-diag-body select[name=album_id]");
     (async () => {
-        const res = await window.OVKAPI.call('audio.getAlbums', {'count': 100})
+        const res = await window.OVKAPI.call('audio.getAlbums', {'count': 100, 'owner_id': owner_id})
         res.items.forEach(album => {
             album_select.insertAdjacentHTML("beforeend", `
                 <option value="${album.id}" ${album.id == album_id ? "selected" : ""}>${escapeHtml(album.title)}</option>
