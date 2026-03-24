@@ -1504,6 +1504,7 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
     })
     ctx_u.find('#audio_ctx_link_playlist').on('click', async (ev) => {
         let track_id = 0
+        let owner_id = 0
         if(ctx_type == 'main_player') {
             if(window.player.current_track_id == 0) {
                 return
@@ -1511,14 +1512,21 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
 
             track_id = window.player.current_track_id
         } else {
-            track_id = Number(u(e.target).closest('.audioEmbed').attr('data-realid'))
+            const player = u(ev.target).closest('.audioEmbed')
+            track_id = Number(player.attr('data-realid'))
+            owner_id = Number(player.attr('data-owner-id'))
         }
 
         const audios = await window.OVKAPI.call('audio.getById', {
             'audios': track_id
         })
         const audio = audios.items[0]
-        const id = audio.album_id
+        let id = audio.album_id
+        if (typeof id === 'string' && id.includes('_')) {
+             id = id.split('_')[1];
+        }
+
+        const final_owner_id = owner_id || audio.owner_id
 
         if (!audio.editable) {
             if (id) {
@@ -1526,39 +1534,49 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
             }
             return
         }
+
+        const albums = await window.OVKAPI.call('audio.getAlbums', {
+            'count': 100,
+            'owner_id': final_owner_id
+        })
+
+        let options = `<option value="0">${tr('none')}</option>`
+        albums.items.forEach(album => {
+            const isSelected = (String(album.id) === String(id)) ? 'selected' : '';
+            options += `<option value="${album.id}" ${isSelected}>${escapeHtml(album.title)}</option>`
+        })
+
         let body = u(`
             <div>
                 <div>
                     <div class="playlist_data"></div>
                 </div>
                 <div style="display: flex;align-items: center;gap: 3px;">
-                    <span>${escapeHtml(location.origin)}/playlist</span>
-                    <input style="width:50%;" type="text" id="playlist_id" value="${id ?? ""}">
+                    <span>${tr('album')}</span>
+                    <select id="playlist_id" style="width: 50%;">
+                        ${options}
+                    </select>
                 </div>
             </div>
         `)
         const msg = new CMessageBox({
-            title: '',
+            title: tr('audio_edit_album'),
             body: body.html(),
             buttons: [tr('ok'), tr('cancel')],
             callbacks: [async () => {
                 const new_id = msg.getNode().find('#playlist_id').nodes[0].value
-                if (new_id != '') {
-                    const playlist_id = new_id.split('_')
 
-                    try {
-                        await window.OVKAPI.call('audio.moveToAlbum', {
-                            'do_link': 1,
-                            'audio_ids': track_id,
-                            'album_id': playlist_id[1]
-                        })
-                    } catch(e) {
-                        makeError(e.message)
-                    }
+                try {
+                    await window.OVKAPI.call('audio.moveToAlbum', {
+                        'do_link': 1,
+                        'audio_ids': track_id,
+                        'album_id': new_id
+                    })
+                } catch(e) {
+                    makeError(e.message)
                 }
             }, () => {}]
         })
-        msg.getNode().find('.ovk-diag-head').remove()
     })
 })
 
