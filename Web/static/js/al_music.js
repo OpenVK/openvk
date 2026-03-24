@@ -1569,6 +1569,7 @@ u(document).on("click", ".musicIcon.edit-icon", (e) => {
     const name = e.target.dataset.title
     const genre = player.dataset.genre
     const lyrics = e.target.dataset.lyrics
+    const album_id = e.currentTarget.dataset.albumId
     
     MessageBox(tr("edit_audio"), `
         <div>
@@ -1587,6 +1588,13 @@ u(document).on("click", ".musicIcon.edit-icon", (e) => {
         </div>
 
         <div style="margin-top: 11px">
+            ${tr("album")}
+            <select name="album_id">
+                <option value="0">${tr('none')}</option>
+            </select>
+        </div>
+
+        <div style="margin-top: 11px">
             ${tr("lyrics")}
             <textarea name="lyrics" maxlength="5000" style="resize: vertical; max-height: 285px;">${lyrics ?? ""}</textarea>
         </div>
@@ -1602,6 +1610,7 @@ u(document).on("click", ".musicIcon.edit-icon", (e) => {
             const t_name   = $(".ovk-diag-body input[name=name]").val();
             const t_perf   = $(".ovk-diag-body input[name=performer]").val();
             const t_genre  = $(".ovk-diag-body select[name=genre]").val();
+            const t_album  = $(".ovk-diag-body select[name=album_id]").val();
             const t_lyrics = $(".ovk-diag-body textarea[name=lyrics]").val();
             const t_explicit = document.querySelector(".ovk-diag-body input[name=explicit]").checked;
             const t_unlisted = document.querySelector(".ovk-diag-body input[name=searchable]").checked;
@@ -1613,6 +1622,7 @@ u(document).on("click", ".musicIcon.edit-icon", (e) => {
                     name: t_name,
                     performer: t_perf,
                     genre: t_genre,
+                    album_id: t_album,
                     lyrics: t_lyrics,
                     unlisted: Number(t_unlisted),
                     explicit: Number(t_explicit),
@@ -1629,6 +1639,7 @@ u(document).on("click", ".musicIcon.edit-icon", (e) => {
                         e.target.setAttribute("data-lyrics", escapeHtml(response.new_info.lyrics_unformatted))
                         e.target.setAttribute("data-explicit", Number(response.new_info.explicit))
                         e.target.setAttribute("data-searchable", Number(!response.new_info.unlisted))
+                        e.target.setAttribute("data-album-id", t_album)
                         player.setAttribute("data-genre", response.new_info.genre)
                         
                         let name = player.querySelector(".title")
@@ -1680,6 +1691,16 @@ u(document).on("click", ".musicIcon.edit-icon", (e) => {
             <option value="${elGenre}" ${elGenre == genre ? "selected" : ""}>${elGenre}</option>
         `)
     })
+
+    const album_select = document.querySelector(".ovk-diag-body select[name=album_id]");
+    (async () => {
+        const res = await window.OVKAPI.call('audio.getAlbums', {'count': 100})
+        res.items.forEach(album => {
+            album_select.insertAdjacentHTML("beforeend", `
+                <option value="${album.id}" ${album.id == album_id ? "selected" : ""}>${escapeHtml(album.title)}</option>
+            `)
+        })
+    })()
 
     u(".ovk-diag-body #_fullyDeleteAudio").on("click", (e) => {
         MessageBox(tr('confirm'), tr('confirm_deleting_audio'), [tr('yes'), tr('no')], [() => {
