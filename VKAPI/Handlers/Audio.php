@@ -738,11 +738,16 @@ final class Audio extends VKAPIRequestHandler
         $this->requireUser();
         $this->willExecuteWriteAction();
 
-        $album = (new Audios())->getPlaylist($album_id);
-        if (!$album) {
-            $this->fail(0o404, "Album not found");
-        } elseif (!$album->canBeModifiedBy($this->getUser())) {
-            $this->fail(600, "Insufficient rights to this album");
+        $album = null;
+        if ($album_id > 0) {
+            $album = (new Audios())->getPlaylist($album_id);
+            if (!$album) {
+                $this->fail(0o404, "Album not found");
+            } elseif (!$album->canBeModifiedBy($this->getUser())) {
+                $this->fail(600, "Insufficient rights to this album");
+            }
+        } elseif (!$do_link) {
+            return 0;
         }
 
         $audios    = [];
@@ -771,11 +776,17 @@ final class Audio extends VKAPIRequestHandler
             foreach ($audios as $audio) {
                 if ($do_link) {
                     if ($audio->canBeModifiedBy($this->getUser())) {
-                        $audio->setAlbum($album);
+                        if ($album) {
+                            $audio->setAlbum($album);
+                        } else {
+                            $audio->setAlbumId(0);
+                        }
                         $audio->save();
                     }
                 } else {
-                    $res = min($res, (int) $album->add($audio));
+                    if ($album) {
+                        $res = min($res, (int) $album->add($audio));
+                    }
                 }
             }
         } catch (\OutOfBoundsException $ex) {

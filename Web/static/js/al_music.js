@@ -1504,6 +1504,7 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
     })
     ctx_u.find('#audio_ctx_link_playlist').on('click', async (ev) => {
         let track_id = 0
+        let owner_id = 0
         if(ctx_type == 'main_player') {
             if(window.player.current_track_id == 0) {
                 return
@@ -1511,14 +1512,21 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
 
             track_id = window.player.current_track_id
         } else {
-            track_id = Number(u(e.target).closest('.audioEmbed').attr('data-realid'))
+            const player = u(ev.target).closest('.audioEmbed')
+            track_id = Number(player.attr('data-realid'))
+            owner_id = Number(player.attr('data-owner-id'))
         }
 
         const audios = await window.OVKAPI.call('audio.getById', {
             'audios': track_id
         })
         const audio = audios.items[0]
-        const id = audio.album_id
+        let id = audio.album_id
+        if (typeof id === 'string' && id.includes('_')) {
+             id = id.split('_')[1];
+        }
+
+        const final_owner_id = owner_id || audio.owner_id
 
         if (!audio.editable) {
             if (id) {
@@ -1526,39 +1534,49 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
             }
             return
         }
+
+        const albums = await window.OVKAPI.call('audio.getAlbums', {
+            'count': 100,
+            'owner_id': final_owner_id
+        })
+
+        let options = `<option value="0">${tr('none')}</option>`
+        albums.items.forEach(album => {
+            const isSelected = (String(album.id) === String(id)) ? 'selected' : '';
+            options += `<option value="${album.id}" ${isSelected}>${escapeHtml(album.title)}</option>`
+        })
+
         let body = u(`
             <div>
                 <div>
                     <div class="playlist_data"></div>
                 </div>
                 <div style="display: flex;align-items: center;gap: 3px;">
-                    <span>${escapeHtml(location.origin)}/playlist</span>
-                    <input style="width:50%;" type="text" id="playlist_id" value="${id ?? ""}">
+                    <span>${tr('album')}</span>
+                    <select id="playlist_id" style="width: 50%;">
+                        ${options}
+                    </select>
                 </div>
             </div>
         `)
         const msg = new CMessageBox({
-            title: '',
+            title: tr('audio_edit_album'),
             body: body.html(),
             buttons: [tr('ok'), tr('cancel')],
             callbacks: [async () => {
                 const new_id = msg.getNode().find('#playlist_id').nodes[0].value
-                if (new_id != '') {
-                    const playlist_id = new_id.split('_')
 
-                    try {
-                        await window.OVKAPI.call('audio.moveToAlbum', {
-                            'do_link': 1,
-                            'audio_ids': track_id,
-                            'album_id': playlist_id[1]
-                        })
-                    } catch(e) {
-                        makeError(e.message)
-                    }
+                try {
+                    await window.OVKAPI.call('audio.moveToAlbum', {
+                        'do_link': 1,
+                        'audio_ids': track_id,
+                        'album_id': new_id
+                    })
+                } catch(e) {
+                    makeError(e.message)
                 }
             }, () => {}]
         })
-        msg.getNode().find('.ovk-diag-head').remove()
     })
 })
 
@@ -1569,9 +1587,10 @@ u(document).on("click", ".musicIcon.edit-icon", (e) => {
     const name = e.target.dataset.title
     const genre = player.dataset.genre
     const lyrics = e.target.dataset.lyrics
-    
-    MessageBox(tr("edit_audio"), `
-        <div>
+    const album_id = e.currentTarget.dataset.albumId
+    const owner_id = e.currentTarget.dataset.ownerId
+
+    MessageBox(tr("edit_audio"), `        <div>
             ${tr("performer")}
             <input name="performer" maxlength="256" type="text" value="${escapeHtml(performer)}">
         </div>
@@ -1584,6 +1603,13 @@ u(document).on("click", ".musicIcon.edit-icon", (e) => {
         <div style="margin-top: 11px">
             ${tr("genre")}
             <select name="genre"></select>
+        </div>
+
+        <div style="margin-top: 11px">
+            ${tr("album")}
+            <select name="album_id">
+                <option value="0">${tr('none')}</option>
+            </select>
         </div>
 
         <div style="margin-top: 11px">
@@ -1602,6 +1628,7 @@ u(document).on("click", ".musicIcon.edit-icon", (e) => {
             const t_name   = $(".ovk-diag-body input[name=name]").val();
             const t_perf   = $(".ovk-diag-body input[name=performer]").val();
             const t_genre  = $(".ovk-diag-body select[name=genre]").val();
+            const t_album  = $(".ovk-diag-body select[name=album_id]").val();
             const t_lyrics = $(".ovk-diag-body textarea[name=lyrics]").val();
             const t_explicit = document.querySelector(".ovk-diag-body input[name=explicit]").checked;
             const t_unlisted = document.querySelector(".ovk-diag-body input[name=searchable]").checked;
@@ -1613,6 +1640,7 @@ u(document).on("click", ".musicIcon.edit-icon", (e) => {
                     name: t_name,
                     performer: t_perf,
                     genre: t_genre,
+                    album_id: t_album,
                     lyrics: t_lyrics,
                     unlisted: Number(t_unlisted),
                     explicit: Number(t_explicit),
@@ -1629,6 +1657,7 @@ u(document).on("click", ".musicIcon.edit-icon", (e) => {
                         e.target.setAttribute("data-lyrics", escapeHtml(response.new_info.lyrics_unformatted))
                         e.target.setAttribute("data-explicit", Number(response.new_info.explicit))
                         e.target.setAttribute("data-searchable", Number(!response.new_info.unlisted))
+                        e.target.setAttribute("data-album-id", t_album)
                         player.setAttribute("data-genre", response.new_info.genre)
                         
                         let name = player.querySelector(".title")
@@ -1680,6 +1709,16 @@ u(document).on("click", ".musicIcon.edit-icon", (e) => {
             <option value="${elGenre}" ${elGenre == genre ? "selected" : ""}>${elGenre}</option>
         `)
     })
+
+    const album_select = document.querySelector(".ovk-diag-body select[name=album_id]");
+    (async () => {
+        const res = await window.OVKAPI.call('audio.getAlbums', {'count': 100, 'owner_id': owner_id})
+        res.items.forEach(album => {
+            album_select.insertAdjacentHTML("beforeend", `
+                <option value="${album.id}" ${album.id == album_id ? "selected" : ""}>${escapeHtml(album.title)}</option>
+            `)
+        })
+    })()
 
     u(".ovk-diag-body #_fullyDeleteAudio").on("click", (e) => {
         MessageBox(tr('confirm'), tr('confirm_deleting_audio'), [tr('yes'), tr('no')], [() => {

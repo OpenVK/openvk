@@ -14,7 +14,7 @@
 - class names are messy and illogical
 - all checks may be moved to first lines (isHasLyrics, isAdded...)
  *}
-<div id="audioEmbed-{$id}" data-realid="{$audio->getId()}" {if $hideButtons}data-prettyid="{$audio->getPrettyId()}"{/if} data-name="{$audio->getName()}" data-genre="{$audio->getGenre()}" n:class="audioEmbed, ctx_place, !$isAvailable ? processed, $isWithdrawn ? withdrawn" data-length="{$audio->getLength()}" data-keys="{json_encode($audio->getKeys())}" data-url="{$audio->getURL()}">
+<div id="audioEmbed-{$id}" data-realid="{$audio->getId()}" {if $hideButtons}data-prettyid="{$audio->getPrettyId()}"{/if} data-name="{$audio->getName()}" data-genre="{$audio->getGenre()}" n:class="audioEmbed, ctx_place, !$isAvailable ? processed, $isWithdrawn ? withdrawn" data-length="{$audio->getLength()}" data-keys="{json_encode($audio->getKeys())}" data-url="{$audio->getURL()}" data-owner-id="{isset($club) ? ($club->getId() * -1) : $audio->getOwner()->getId()}">
     <audio class="audio" />
 
     <div id="miniplayer" class="audioEntry">
@@ -50,7 +50,7 @@
                         <div class="remove-icon-group musicIcon" data-id="{$audio->getId()}" data-club="{$club->getId()}" n:if="isset($thisUser) && isset($club) && $club->canBeModifiedBy($thisUser)" ></div>
                         <div class="add-icon-group musicIcon hidden" data-id="{$audio->getId()}" n:if="isset($thisUser) && !$isWithdrawn" ></div>
                         <a class="download-icon musicIcon" n:if='isset($thisUser) && !$isWithdrawn && $isAvailable && \OPENVK_ROOT_CONF["openvk"]["preferences"]["music"]["exposeOriginalURLs"]' href="{$audio->getOriginalURL()}" download="{$audio->getDownloadName()}"></a>
-                        <div class="edit-icon musicIcon" data-lyrics="{$audio->getLyrics()}" data-title="{$audio->getTitle()}" data-performer="{$audio->getPerformer()}" data-explicit="{(int)$audio->isExplicit()}" data-searchable="{(int)!$audio->isUnlisted()}" n:if="isset($thisUser) && $editable && !$isWithdrawn" ></div>
+                        <div class="edit-icon musicIcon" data-album-id="{$audio->getAlbumId()}" data-lyrics="{$audio->getLyrics()}" data-title="{$audio->getTitle()}" data-performer="{$audio->getPerformer()}" data-explicit="{(int)$audio->isExplicit()}" data-searchable="{(int)!$audio->isUnlisted()}" data-owner-id="{isset($club) ? ($club->getId() * -1) : $audio->getOwner()->getId()}" n:if="isset($thisUser) && $editable && !$isWithdrawn" ></div>
                         <div class="report-icon musicIcon" data-id="{$audio->getId()}" n:if="isset($thisUser) && !$editable && !$isWithdrawn" ></div>
                     {/if}
                 </div>

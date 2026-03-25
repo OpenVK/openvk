@@ -728,6 +728,7 @@ final class AudioPresenter extends OpenVKPresenter
                 $genre     = empty($this->postParam("genre")) ? "undefined" : $this->postParam("genre");
                 $nsfw      = (int) ($this->postParam("explicit") ?? 0) === 1;
                 $unlisted  = (int) ($this->postParam("unlisted") ?? 0) === 1;
+                $album_id  = (int) ($this->postParam("album_id") ?? 0);
                 if (empty($performer) || empty($name) || iconv_strlen($performer . $name) > 128) { # FQN of audio must not be more than 128 chars
                     $this->flashFail("err", tr("error"), tr("error_insufficient_info"), null, true);
                 }
@@ -738,6 +739,16 @@ final class AudioPresenter extends OpenVKPresenter
                 $audio->setGenre($genre);
                 $audio->setExplicit($nsfw);
                 $audio->setSearchability($unlisted);
+                if ($album_id > 0) {
+                    $audio->setAlbumId($album_id);
+
+                    $playlist = (new Audios())->getPlaylist($album_id);
+                    if ($playlist && !$playlist->hasAudio($audio)) {
+                        $playlist->add($audio);
+                    }
+                } else {
+                    $audio->setAlbumId(0);
+                }
                 $audio->setEdited(time());
                 $audio->save();
 

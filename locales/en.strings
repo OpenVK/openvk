@@ -1025,6 +1025,7 @@
 "broadcast_audio" = "Broadcast audio to status";
 "sure_delete_playlist" = "Are you sure you want to delete this playlist?";
 "edit_audio" = "Edit audio";
+"audio_edit_album" = "Playlist";
 "audios_group" = "Audios from group";
 "playlists_group" = "Playlists from group";
 
