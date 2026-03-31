@@ -1993,7 +1993,7 @@ async function repost(id, repost_type = 'post') {
         title: tr('share'),
         unique_name: 'repost_modal',
         body: `
-            <div class='display_flex_column' style='gap: 5px;'>
+            <form class='display_flex_column' style='gap: 5px;'>
                 <b>${tr('auditory')}</b>
                 
                 <div class='display_flex_column' style="gap: 2px;padding-left: 1px;">
@@ -2013,29 +2013,64 @@ async function repost(id, repost_type = 'post') {
                 <b>${tr('your_comment')}</b>
 
                 <div style="padding-left: 1px;">
-                    <input type='hidden' id='repost_attachments'>
                     <textarea id='repostMsgInput' placeholder='...'></textarea>
 
-                    <div id="repost_signs" class='display_flex_column' style='display:none;'>
-                        <label><input type='checkbox' name="asGroup">${tr('post_as_group')}</label>
-                        <label><input type='checkbox' name="signed">${tr('add_signature')}</label>
+                    <div class='post-buttons'>
+                        <div class="post-horizontal"></div>
+                        <div class="post-vertical"></div>
+
+                        <div id="repost_signs" class='display_flex_column' style='display:none;margin-bottom:5px;'>
+                            <label><input type='checkbox' name="asGroup">${tr('post_as_group')}</label>
+                            <label><input type='checkbox' name="signed">${tr('add_signature')}</label>
+                        </div>
+
+                        <div class='edit_menu_buttons'>
+                            <div style="float: right; display: flex; flex-direction: column;">
+                                <a class='menu_toggler'>
+                                    ${tr('attach')}
+                                </a>
+                                
+                                <div id="wallAttachmentMenu" class="hidden">
+                                    <a class="header menu_toggler">
+                                        ${tr('attach')}
+                                    </a>
+                                    <a id="__photoAttachment">
+                                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
+                                        ${tr('photo')}
+                                    </a>
+                                    <a id="__videoAttachment">
+                                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
+                                        ${tr('video')}
+                                    </a>
+                                    <a id="__audioAttachment">
+                                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/audio-ac3.png" />
+                                        ${tr('audio')}
+                                    </a>
+                                    <a id="__documentAttachment">
+                                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-octet-stream.png" />
+                                        ${tr('document')}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </form>
         `,
         buttons: [tr('send'), tr('cancel')],
         callbacks: [
             async () => {
-                const message  = u('#repostMsgInput').nodes[0].value
-                const type     = u(`input[name='repost_type']:checked`).nodes[0].value
+                const node = msg.getNode()
+                const message  = node.find('#repostMsgInput').nodes[0].value
+                const type     = node.find(`input[name='repost_type']:checked`).nodes[0].value
                 let club_id = 0
                 try {
-                    club_id = parseInt(u(`select[name='selected_repost_club']`).nodes[0].selectedOptions[0].value)
+                    club_id = parseInt(node.find(`select[name='selected_repost_club']`).nodes[0].selectedOptions[0].value)
                 } catch(e) {}
     
-                const as_group = u(`input[name='asGroup']`).nodes[0].checked
-                const signed   = u(`input[name='signed']`).nodes[0].checked
-                const attachments = u(`#repost_attachments`).nodes[0].value
+                const as_group = node.find(`input[name='asGroup']`).nodes[0].checked
+                const signed   = node.find(`input[name='signed']`).nodes[0].checked
+                const attachments = collect_attachments(node.find('.post-buttons')).join(',')
     
                 const params = {}
                 switch(repost_type) {
@@ -2096,12 +2131,20 @@ async function repost(id, repost_type = 'post') {
             case 'wall':
                 u('#repost_signs').attr('style', 'display:none')
                 u(`select[name='selected_repost_club']`).attr('style', 'display:none')
+                u('.ovk-diag-body #__photoAttachment, .ovk-diag-body #__videoAttachment, .ovk-diag-body #__audioAttachment, .ovk-diag-body #__documentAttachment').attr('data-club', 0)
                 break
             case 'group':
                 u('#repost_signs').attr('style', 'display:flex')
                 u(`select[name='selected_repost_club']`).attr('style', 'display:block')
+                const club_id = u(`.ovk-diag-body select[name='selected_repost_club']`).nodes[0].value
+                u('.ovk-diag-body #__photoAttachment, .ovk-diag-body #__videoAttachment, .ovk-diag-body #__audioAttachment, .ovk-diag-body #__documentAttachment').attr('data-club', club_id)
                 break
         }
+    })
+
+    u('.ovk-diag-body').on('change', `select[name='selected_repost_club']`, (e) => {
+        const club_id = e.target.value
+        u('.ovk-diag-body #__photoAttachment, .ovk-diag-body #__videoAttachment, .ovk-diag-body #__audioAttachment, .ovk-diag-body #__documentAttachment').attr('data-club', club_id)
     })
     
     if(!window.openvk.writeableClubs) {
