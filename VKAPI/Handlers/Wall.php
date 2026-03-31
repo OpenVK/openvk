@@ -824,7 +824,7 @@ final class Wall extends VKAPIRequestHandler
 
         $nPost->attach($repost_entity);
 
-        foreach ($parsed_attachments as $attachment) {
+        foreach ($final_attachments as $attachment) {
             $nPost->attach($attachment);
         }
 
