@@ -74,10 +74,10 @@ final class Photos extends VKAPIRequestHandler
 
     public function saveOwnerPhoto(string $photo, string $hash): object
     {
+        $this->requireUser();
         $imagePath = $this->getImagePath($photo, $hash, $uploader, $group);
         if ($group == 0) {
-            $user  = (new \openvk\Web\Models\Repositories\Users())->get((int) $uploader);
-            $album = (new Albums())->getUserAvatarAlbum($user);
+            $album = (new Albums())->getUserAvatarAlbum($this->getUser());
         } else {
             $club  = (new Clubs())->get((int) $group);
             $album = (new Albums())->getClubAvatarAlbum($club);
@@ -85,7 +85,7 @@ final class Photos extends VKAPIRequestHandler
 
         try {
             $avatar = new Photo();
-            $avatar->setOwner((int) $uploader);
+            $avatar->setOwner($this->getUser()->getId());
             $avatar->setDescription("Profile photo");
             $avatar->setCreated(time());
             $avatar->setFile([
@@ -133,6 +133,7 @@ final class Photos extends VKAPIRequestHandler
 
     public function saveWallPhoto(string $photo, string $hash, int $group_id = 0, ?string $caption = null): array
     {
+        $this->requireUser();
         $imagePath = $this->getImagePath($photo, $hash, $uploader, $group);
         if ($group_id != $group) {
             $this->fail(8, "group_id doesn't match");
@@ -140,13 +141,12 @@ final class Photos extends VKAPIRequestHandler
 
         $album = null;
         if ($group_id != 0) {
-            $uploader = (new \openvk\Web\Models\Repositories\Users())->get((int) $uploader);
-            $album    = (new Albums())->getUserWallAlbum($uploader);
+            $album = (new Albums())->getUserWallAlbum($this->getUser());
         }
 
         try {
             $photo = new Photo();
-            $photo->setOwner((int) $uploader);
+            $photo->setOwner($this->getUser()->getId());
             $photo->setCreated(time());
             $photo->setFile([
                 "tmp_name" => $imagePath,
