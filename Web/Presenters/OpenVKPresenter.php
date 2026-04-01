@@ -212,6 +212,7 @@ abstract class OpenVKPresenter extends SimplePresenter
 
         $this->template->isXmas = intval(date('d')) >= 1 && date('m') == 12 || intval(date('d')) <= 15 && date('m') == 1 ? true : false;
         $this->template->isTimezoned = Session::i()->get("_timezoneOffset");
+        $this->template->isRtl = tr("__rtl") == "true" ? true : false;
 
         $userValidated = 0;
         $cacheTime     = OPENVK_ROOT_CONF["openvk"]["preferences"]["nginxCacheTime"] ?? 0;
