@@ -94,11 +94,11 @@ class Localizator
     {
         $lang  = is_null($lang) ? static::DEFAULT_LANG : $lang;
 
-	if (!file_exists(dirname(__FILE__) . "/../../locales/$lang.strings")) {
+        if (!file_exists(dirname(__FILE__) . "/../../locales/$lang.strings")) {
             $lang = static::DEFAULT_LANG;
-	}
-	
-	$array = @self::parse(dirname(__FILE__) . "/../../locales/$lang.strings");
+        }
+
+        $array = @self::parse(dirname(__FILE__) . "/../../locales/$lang.strings");
 
         return $array[$id] ?? "@$id";
     }
