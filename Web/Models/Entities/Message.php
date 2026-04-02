@@ -7,7 +7,7 @@ namespace openvk\Web\Models\Entities;
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\Repositories\Users;
-use openvk\Web\Models\Entities\Photo;
+use openvk\Web\Models\Entities\{Photo, Video, Audio, Note, Document};
 use openvk\Web\Models\RowModel;
 use openvk\Web\Util\DateTime;
 
@@ -131,17 +131,69 @@ class Message extends RowModel
                 $attachments[] = [
                     "type"  => "photo",
                     "link"  => "/photo" . $attachment->getPrettyId(),
+                    "id"    => $attachment->getPrettyId(),
                     "photo" => [
                         "url"     => $attachment->getURL(),
                         "caption" => $attachment->getDescription(),
+                    ],
+                ];
+            } elseif ($attachment instanceof Video) {
+                $attachments[] = [
+                    "type"  => "video",
+                    "link"  => "/video" . $attachment->getPrettyId(),
+                    "id"    => $attachment->getOwner()->getId() . "_" . $attachment->getVirtualId(),
+                    "video" => [
+                        "url"               => $attachment->getURL(),
+                        "name"              => $attachment->getName(),
+                        "length"            => $attachment->getLength(),
+                        "formatted_length"  => $attachment->getFormattedLength(),
+                        "thumbnail"         => $attachment->getThumbnailURL(),
+                        "author"            => $attachment->getOwner()->getCanonicalName(),
+                    ],
+                ];
+            } elseif ($attachment instanceof Audio) {
+                $attachments[] = [
+                    "type"  => "audio",
+                    "link"  => "/audio" . $attachment->getPrettyId(),
+                    "audio" => [
+                        "name"   => $attachment->getName(),
+                        "artist" => $attachment->getPerformer(),
+                    ],
+                ];
+            } elseif ($attachment instanceof Note) {
+                $attachments[] = [
+                    "type"  => "note",
+                    "link"  => "/note" . $attachment->getId(),
+                    "id"    => $attachment->getId(),
+                    "note"  => [
+                        "name" => $attachment->getName(),
+                    ],
+                ];
+            } elseif ($attachment instanceof Document) {
+                $previewData = null;
+                if ($attachment->hasPreview()) {
+                    $previewData = [
+                        "tiny" => $attachment->getPreview()->getURLBySizeId('tiny'),
+                        "medium" => $attachment->getPreview()->getURLBySizeId('medium'),
+                    ];
+                }
+
+                $attachments[] = [
+                    "type"      => "doc",
+                    "link"      => "/doc" . $attachment->getPrettyId(),
+                    "id"        => $attachment->getPrettyId(),
+                    "document"  => [
+                        "name" => $attachment->getName(),
+                        "ext"      => $attachment->getFileExtension(),
+                        "size_str" => readable_filesize($attachment->getFilesize()),
+                        "preview"  => $previewData,
+                        "pub_time" => (string) $attachment->getPublicationTime(),
                     ],
                 ];
             } else {
                 $attachments[] = [
                     "type"  => "unknown",
                 ];
-
-                # throw new \Exception("Unknown attachment type: " . get_class($attachment));
             }
         }
 
