@@ -1715,7 +1715,7 @@ u(document).on("click", ".musicIcon.edit-icon", (e) => {
         const res = await window.OVKAPI.call('audio.getAlbums', {'count': 100, 'owner_id': owner_id})
         res.items.forEach(album => {
             album_select.insertAdjacentHTML("beforeend", `
-                <option value="${album.id}" ${album.id == album_id ? "selected" : ""}>${escapeHtml(album.title)}</option>
+                <option value="${album.id}" ${String(album.id) === String(album_id) ? "selected" : ""}>${escapeHtml(album.title)}</option>
             `)
         })
     })()
