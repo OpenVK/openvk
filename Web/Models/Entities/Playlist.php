@@ -109,7 +109,7 @@ class Playlist extends MediaCollection
         if (!$entity) {
             return false;
         }
-        
+
         $id = $entity->getId();
         if ($entity instanceof Club) {
             $id *= -1;
