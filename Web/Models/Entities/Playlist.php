@@ -106,7 +106,7 @@ class Playlist extends MediaCollection
 
     public function isBookmarkedBy(RowModel $entity = null): bool
     {
-        if(!$entity) {
+        if (!$entity) {
             return false;
         }
         
