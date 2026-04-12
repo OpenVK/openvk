@@ -441,7 +441,8 @@
         
         <div style="width: 75%; display: inline-block;">
             {presenter "openvk!Support->knowledgeBaseArticle", "points"}
-            <center>{tr("also_you_can_transfer_points", $thisUser->getCoins(), rawurlencode($csrfToken))|noescape}</center>
+            {php $transferPointsHtml = str_replace('\\"', '"', tr("also_you_can_transfer_points", $thisUser->getCoins(), rawurlencode($csrfToken)))}
+            <center>{$transferPointsHtml|noescape}</center>
         </div>
         <div style="width: 22%; float: right;">
             <div style="margin: 0; font-size: medium; text-align: center; font-weight: 900;">
