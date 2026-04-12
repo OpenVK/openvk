@@ -104,8 +104,12 @@ class Playlist extends MediaCollection
         return $res;
     }
 
-    public function isBookmarkedBy(RowModel $entity): bool
+    public function isBookmarkedBy(RowModel $entity = null): bool
     {
+        if (!$entity) {
+            return false;
+        }
+
         $id = $entity->getId();
         if ($entity instanceof Club) {
             $id *= -1;
@@ -249,7 +253,7 @@ class Playlist extends MediaCollection
         return (new Photos())->get((int) $this->getRecord()->cover_photo_id);
     }
 
-    public function canBeModifiedBy(User $user): bool
+    public function canBeModifiedBy(User $user = null): bool
     {
         if (!$user) {
             return false;
