@@ -18,20 +18,23 @@ async function setupNotificationListener() {
                 console.error(rejection);
                 return;
             }
+            console.info("No new notifications discovered... Waiting 5s and looking up again");
+            await new Promise(resolve => setTimeout(resolve, 5000));
             
-            console.info("No new notifications discovered... Redialing event broker");
             continue;
         }
         
         
         playNotifSound();
-        NewNotification(notif.title, notif.body, notif.ava, Function.noop, notif.priority * 6000);
         console.info("New notification", notif);
+        NewNotification(notif.title, notif.body, notif.ava, Function.noop, notif.priority * 6000);
         
-        API.Notifications.ack();
+        await new Promise(resolve => setTimeout(resolve, 250));
     }
 };
 
-setupNotificationListener();
+(async function() {
+    await setupNotificationListener();
+})();
 
 u(document.body).on("click", () => window.playNotifSound = window.__actualPlayNotifSound);

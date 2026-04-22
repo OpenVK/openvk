@@ -6,6 +6,7 @@ namespace openvk\VKAPI\Handlers;
 
 use openvk\Web\Models\Entities\Club;
 use openvk\Web\Models\Repositories\{Notifications as Notifs, Clubs, Users};
+use openvk\Web\Util\NotificationBroker;
 
 final class Notifications extends VKAPIRequestHandler
 {
@@ -87,5 +88,75 @@ final class Notifications extends VKAPIRequestHandler
         }
 
         return 1;
+    }
+
+    public function fetch(string $last_id = "0")
+    {
+        $this->requireUser();
+        $userId = $this->getUser()->getId();
+        
+        $res = (object) [
+            "items"    => [],
+            "profiles" => [],
+            "groups"   => [],
+            "next_last_id" => $last_id,
+        ];
+
+        try {
+            $broker = NotificationBroker::i();
+            $events = $broker->getNew($userId, $last_id);
+
+            if (empty($events)) {
+                return $res;
+            }
+
+            $tmpProfiles = [];
+            $tmpGroups   = [];
+
+            foreach ($events as $event) {
+                $currentId = $event['id'];
+                $rawPayload = $event['data'];
+                
+                $notification = (new Notifs)->fromArray($rawPayload);
+                
+                if (!$notification) {
+                    continue;
+                }
+
+                $res->items[] = $notification->toVkApiStruct();
+                $res->new_lastId = $currentId;
+
+                $sxModel = $notification->getModel(1);
+                if (!method_exists($sxModel, "getAvatarUrl")) {
+                    $sxModel = $notification->getModel(0);
+                }
+
+                if ($sxModel instanceof Club) {
+                    $tmpGroups[] = $sxModel;
+                } elseif ($sxModel instanceof Users) {
+                    $tmpProfiles[] = $sxModel;
+                }
+            }
+
+            foreach (array_unique($tmpProfiles, SORT_REGULAR) as $user) {
+                $res->profiles[] = (object) [
+                    "uid"              => $user->getId(),
+                    "first_name"       => $user->getFirstName(),
+                    "last_name"        => $user->getLastName(),
+                    "photo"            => $user->getAvatarUrl(),
+                    "photo_medium_rec" => $user->getAvatarUrl("tiny"),
+                    "screen_name"      => $user->getShortCode(),
+                ];
+            }
+
+            foreach (array_unique($tmpGroups, SORT_REGULAR) as $club) {
+                $res->groups[] = $club->toVkApiStruct($this->getUser());
+            }
+
+            return $res;
+
+        } catch (\Exception $e) {
+            $this->fail(1981, "Internal error during event processing");
+        }
     }
 }

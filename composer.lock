@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ff441d4db67a05b7d3181d42d4285d7f",
+    "content-hash": "227f3edfceec34261894e1b69b0e2dd3",
     "packages": [
         {
             "name": "al/emoji-detector",
@@ -696,6 +696,69 @@
                 "source": "https://github.com/alphp/strftime"
             },
             "time": "2022-03-13T01:43:11+00:00"
+        },
+        {
+            "name": "predis/predis",
+            "version": "v3.4.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/predis/predis.git",
+                "reference": "2033429520d8997a7815a2485f56abe6d2d0e075"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/predis/predis/zipball/2033429520d8997a7815a2485f56abe6d2d0e075",
+                "reference": "2033429520d8997a7815a2485f56abe6d2d0e075",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2 || ^8.0",
+                "psr/http-message": "^1.0|^2.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.3",
+                "phpstan/phpstan": "^1.9",
+                "phpunit/phpcov": "^6.0 || ^8.0",
+                "phpunit/phpunit": "^8.0 || ~9.4.4"
+            },
+            "suggest": {
+                "ext-relay": "Faster connection with in-memory caching (>=0.6.2)"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Predis\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Till Krüss",
+                    "homepage": "https://till.im",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "A flexible and feature-complete Redis/Valkey client for PHP.",
+            "homepage": "http://github.com/predis/predis",
+            "keywords": [
+                "nosql",
+                "predis",
+                "redis"
+            ],
+            "support": {
+                "issues": "https://github.com/predis/predis/issues",
+                "source": "https://github.com/predis/predis/tree/v3.4.2"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/tillkruss",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-03-09T20:33:04+00:00"
         },
         {
             "name": "psr/cache",
@@ -3907,19 +3970,19 @@
     "aliases": [],
     "minimum-stability": "beta",
     "stability-flags": {
-        "whichbrowser/parser": 20,
-        "james-heinrich/getid3": 20,
-        "rybakit/msgpack": 20,
-        "wapmorgan/binary-stream": 20,
         "al/emoji-detector": 20,
-        "ezyang/htmlpurifier": 20,
-        "scssphp/scssphp": 20,
-        "lfkeitel/phptotp": 20,
-        "vearutop/php-obscene-censor-rus": 20,
-        "erusev/parsedown": 20,
         "bhaktaraz/php-rss-generator": 20,
+        "erusev/parsedown": 20,
+        "ezyang/htmlpurifier": 20,
+        "james-heinrich/getid3": 20,
+        "lfkeitel/phptotp": 20,
+        "rybakit/msgpack": 20,
+        "scssphp/scssphp": 20,
         "symfony/console": 20,
-        "wapmorgan/morphos": 20
+        "vearutop/php-obscene-censor-rus": 20,
+        "wapmorgan/binary-stream": 20,
+        "wapmorgan/morphos": 20,
+        "whichbrowser/parser": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
@@ -3930,6 +3993,6 @@
         "ext-sodium": "*",
         "ext-iconv": "*"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
 }

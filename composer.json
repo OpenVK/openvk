@@ -24,7 +24,8 @@
         "wapmorgan/morphos": "dev-master",
         "ext-sodium": "*",
         "php81_bc/strftime": "^0.0.2",
-        "ext-iconv": "*"
+        "ext-iconv": "*",
+        "predis/predis": "^3.4"
     },
     "minimum-stability": "beta",
     "require-dev": {
