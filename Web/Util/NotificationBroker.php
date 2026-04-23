@@ -61,7 +61,7 @@ class NotificationBroker
             ];
 
             $id = $this->redis->executeRaw($arguments);
-            $this->redis->expire($streamKey, 60 * 10); // key will expire in 10 minutes
+            $this->redis->expire($streamKey, 60 * 60); // key will expire in 1 hour
 
             return $id;
         } catch (Exception $e) {
