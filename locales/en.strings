@@ -1094,6 +1094,11 @@
 "nt_mention_in_note" = "in discussion of this note";
 "nt_mention_in_topic" = "in the discussion";
 "nt_sent_gift" = "sent you a gift";
+"notif_3_14_18" = "They wrote on your wall";
+"notif_0_14_18" = "Your post has been liked";
+"notif_0_6_18" = "Someone liked your comment";
+"notif_4_18_14" = "A user mentioned you";
+"notif_4_5_14" = "A group mentioned you";
 
 "nt_post_small" = "post";
 
