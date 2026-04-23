@@ -55,7 +55,7 @@ class Notifications implements Handler
             $event = end($events);
             $newCursor = $event['id'];
             $payload = (object) $event['data']['data'];
-            
+
             $notification = $this->notifs->fromArray((array) $payload);
 
             if (!$notification) {
@@ -77,7 +77,7 @@ class Notifications implements Handler
                 "title"    => tr("notif_" . $payload->actionCode . "_" . $payload->originModelType . "_" . $payload->targetModelType),
                 "body"     => trim(preg_replace('%(\s){2,}%', "$1", $latte->renderToString($tplId, ["notification" => $notification]))),
                 "ava"      => $userModel->getAvatarUrl(),
-                "priority" => 1
+                "priority" => 1,
             ]);
 
         } catch (\Exception $e) {

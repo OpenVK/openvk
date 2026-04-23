@@ -94,7 +94,7 @@ final class Notifications extends VKAPIRequestHandler
     {
         $this->requireUser();
         $userId = $this->getUser()->getId();
-        
+
         $res = (object) [
             "items"    => [],
             "profiles" => [],
@@ -116,9 +116,9 @@ final class Notifications extends VKAPIRequestHandler
             foreach ($events as $event) {
                 $currentId = $event['id'];
                 $rawPayload = $event['data'];
-                
-                $notification = (new Notifs)->fromArray($rawPayload);
-                
+
+                $notification = (new Notifs())->fromArray($rawPayload);
+
                 if (!$notification) {
                     continue;
                 }

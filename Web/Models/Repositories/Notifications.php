@@ -102,14 +102,14 @@ class Notifications
         $data = $payload['data'] ?? $payload;
 
         return $this->assemble(
-            (int)   $data['actionCode'],
-            (int)   $data['originModelType'],
-            (int)   $data['originModelId'],
-            (int)   $data['targetModelType'],
-            (int)   $data['targetModelId'],
-            (int)   $data['recipient'],
-            (int)   $data['timestamp'],
-            (string)($data['additionalPayload'] ?? ""),
+            (int) $data['actionCode'],
+            (int) $data['originModelType'],
+            (int) $data['originModelId'],
+            (int) $data['targetModelType'],
+            (int) $data['targetModelId'],
+            (int) $data['recipient'],
+            (int) $data['timestamp'],
+            (string) ($data['additionalPayload'] ?? ""),
             $class
         );
     }

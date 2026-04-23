@@ -122,7 +122,7 @@ class Notification
             $broker = NotificationBroker::i();
             $broker->push($this->recipient->getId(), [
                 'class' => str_replace("\\", ".", get_class($this)),
-                'data'  => $data
+                'data'  => $data,
             ]);
         } catch (\Exception $e) {
             error_log("NotificationBroker failure in emit(): " . $e->getMessage());
