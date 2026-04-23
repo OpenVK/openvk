@@ -52,11 +52,11 @@ class NotificationBroker
             $arguments = [
                 'XADD',
                 $streamKey,
-                'MAXLEN', 
-                '~', 
+                'MAXLEN',
+                '~',
                 (string) $this->maxlen,
                 '*',
-                'payload', 
+                'payload',
                 json_encode($data),
             ];
 
@@ -73,7 +73,7 @@ class NotificationBroker
     public function getNew(int $userId, string $lastId = '0'): array
     {
         $streamKey = $this->streamPrefix . $userId;
-        if (empty($lastId)) { 
+        if (empty($lastId)) {
             $lastId = '0';
         }
 
