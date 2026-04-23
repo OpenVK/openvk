@@ -31,6 +31,11 @@ class Notifications implements Handler
 
         try {
             $broker = NotificationBroker::i();
+            if (!$broker->isConnected()) {
+                $reject(1998, "Redis connection error");
+                return;
+            };
+
             $userId = $this->user->getId();
 
             $session = Session::i();
@@ -75,7 +80,7 @@ class Notifications implements Handler
                 "priority" => 1
             ]);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $reject(1981, "Redis Error: " . $e->getMessage());
         }
     }

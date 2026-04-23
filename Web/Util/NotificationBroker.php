@@ -18,7 +18,7 @@ class NotificationBroker
     {
         $conf = OPENVK_ROOT_CONF["openvk"]["credentials"]["notificationsBroker"];
         $redisConf = $conf["redis"] ?? ['addr' => '127.0.0.1', 'port' => 6379]; // я люблю фоллбеки :з
-        
+
         $this->redis = new RedisClient([
             'scheme' => 'tcp',
             'host'   => $redisConf["addr"],
@@ -34,11 +34,21 @@ class NotificationBroker
         return self::$instance ??= new self();
     }
 
+    public function isConnected(): bool
+    {
+        try {
+            $this->redis->ping();
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
     public function push(int $userId, array $data): ?string
     {
         try {
             $streamKey = $this->streamPrefix . $userId;
-            
+
             $arguments = [
                 'XADD',
                 $streamKey,
@@ -47,7 +57,7 @@ class NotificationBroker
                 (string) $this->maxlen,
                 '*',
                 'payload', 
-                json_encode($data)
+                json_encode($data),
             ];
 
             $id = $this->redis->executeRaw($arguments);
@@ -63,7 +73,9 @@ class NotificationBroker
     public function getNew(int $userId, string $lastId = '0'): array
     {
         $streamKey = $this->streamPrefix . $userId;
-        if (empty($lastId)) $lastId = '0';
+        if (empty($lastId)) { 
+            $lastId = '0';
+        }
 
         try {
             $response = $this->redis->executeRaw(['XREAD', 'STREAMS', $streamKey, $lastId]);
@@ -73,7 +85,7 @@ class NotificationBroker
             }
 
             $events = [];
-            
+
             foreach ($response as $streamData) {
                 if (!isset($streamData[1]) || !is_array($streamData[1])) {
                     continue;
@@ -99,7 +111,7 @@ class NotificationBroker
                         if ($decoded) {
                             $events[] = [
                                 'id'   => (string) $id,
-                                'data' => $decoded
+                                'data' => $decoded,
                             ];
                         }
                     }
@@ -107,7 +119,7 @@ class NotificationBroker
             }
 
             return $events;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log("NotificationBroker read error: " . $e->getMessage());
             return [];
         }
@@ -117,7 +129,7 @@ class NotificationBroker
     {
         $streamKey = $this->streamPrefix . $userId;
         $res = $this->redis->xrevrange($streamKey, '+', '-', 'COUNT', 1);
-        
+
         return !empty($res) ? (string) key($res) : '$';
     }
 }
