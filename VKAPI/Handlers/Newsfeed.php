@@ -11,13 +11,25 @@ use openvk\VKAPI\Handlers\Wall;
 
 final class Newsfeed extends VKAPIRequestHandler
 {
-    public function get(string $fields = "", int $start_from = 0, int $start_time = 0, int $end_time = 0, int $offset = 0, int $count = 30, int $extended = 0, int $forGodSakePleaseDoNotReportAboutMyOnlineActivity = 0)
+    private function parseCursor(?string $start_from): array
+    {
+        if (!empty($start_from) && strpos($start_from, '_') !== false) {
+            $parts = explode('_', $start_from);
+            return [(int) $parts[0], (int) $parts[1]];
+        }
+
+        return [PHP_INT_MAX, PHP_INT_MAX];
+    }
+
+    public function get(string $fields = "", string $start_from = "", int $start_time = 0, int $end_time = 0, int $offset = 0, int $count = 30, int $extended = 0, int $forGodSakePleaseDoNotReportAboutMyOnlineActivity = 0)
     {
         $this->requireUser();
 
         if ($forGodSakePleaseDoNotReportAboutMyOnlineActivity == 0) {
             $this->getUser()->updOnline($this->getPlatform());
         }
+
+        [$cursorTime, $cursorId] = $this->parseCursor($start_from);
 
         $id    = $this->getUser()->getId();
         $subs  = DatabaseConnection::i()
@@ -32,32 +44,39 @@ final class Newsfeed extends VKAPIRequestHandler
         $posts = DatabaseConnection::i()
                     ->getContext()
                     ->table("posts")
-                    ->select("id")
+                    ->select("id, created")
                     ->where("wall IN (?)", $ids)
                     ->where("deleted", 0)
                     ->where("suggested", 0)
-                    ->where("id < (?)", empty($start_from) ? PHP_INT_MAX : $start_from)
+                    ->where("created <= ?", $cursorTime)
+                    ->where("created < ? OR id < ?", $cursorTime, $cursorId)
                     ->where("? <= created", empty($start_time) ? 0 : $start_time)
                     ->where("? >= created", empty($end_time) ? PHP_INT_MAX : $end_time)
-                    ->order("created DESC");
+                    ->order("created DESC, id DESC");
 
         $rposts = [];
+        $lastPost = null;
         foreach ($posts->page((int) ($offset + 1), $count) as $post) {
             $rposts[] = (new PostsRepo())->get($post->id)->getPrettyId();
+            $lastPost = $post;
         }
 
         $response = (new Wall())->getById(implode(',', $rposts), $extended, $fields, $this->getUser());
-        $response->next_from = end(end($posts->page((int) ($offset + 1), $count))); // ну и костыли пиздец конечно)
+        if ($lastPost) {
+            $response->next_from = "{$lastPost->created}_{$lastPost->id}";
+        }
 
         return $response;
     }
 
-    public function getGlobal(string $fields = "", int $start_from = 0, int $start_time = 0, int $end_time = 0, int $offset = 0, int $count = 30, int $extended = 0, int $rss = 0, int $return_banned = 0)
+    public function getGlobal(string $fields = "", string $start_from = "", int $start_time = 0, int $end_time = 0, int $offset = 0, int $count = 30, int $extended = 0, int $rss = 0, int $return_banned = 0)
     {
         $this->requireUser();
 
+        [$cursorTime, $cursorId] = $this->parseCursor($start_from);
+
         $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) LEFT JOIN `profiles` ON LEAST(`posts`.`wall`, 0) = 0 AND `profiles`.`id` = ABS(`posts`.`wall`)";
-        $queryBase .= "WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND (`profiles`.`profile_type` = 0 OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
+        $queryBase .= " WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND (`profiles`.`profile_type` = 0 OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
 
         if ($this->getUser()->getNsfwTolerance() === User::NSFW_INTOLERANT) {
             $queryBase .= " AND `nsfw` = 0";
@@ -72,13 +91,20 @@ final class Newsfeed extends VKAPIRequestHandler
             }
         }
 
-        $start_from = empty($start_from) ? PHP_INT_MAX : $start_from;
         $start_time = empty($start_time) ? 0 : $start_time;
         $end_time = empty($end_time) ? PHP_INT_MAX : $end_time;
-        $posts = DatabaseConnection::i()->getConnection()->query("SELECT `posts`.`id` " . $queryBase . " AND `posts`.`id` <= " . $start_from . " AND " . $start_time . " <= `posts`.`created` AND `posts`.`created` <= " . $end_time . " ORDER BY `created` DESC LIMIT " . $count . " OFFSET " . $offset);
+
+        $cursorFilter = " AND (`posts`.`created` < {$cursorTime} OR (`posts`.`created` = {$cursorTime} AND `posts`.`id` < {$cursorId}))";
+
+        $posts = DatabaseConnection::i()->getConnection()->query(
+            "SELECT `posts`.`id`, `posts`.`created` " . $queryBase .
+            $cursorFilter .
+            " AND " . $start_time . " <= `posts`.`created` AND `posts`.`created` <= " . $end_time .
+            " ORDER BY `created` DESC, `id` DESC LIMIT " . $count . " OFFSET " . $offset
+        );
 
         $rposts = [];
-        $ids = [];
+        $lastPost = null;
         if ($rss == 1) {
             $channel = new \Bhaktaraz\RSSGenerator\Channel();
             $channel->title("Global Feed — " . OPENVK_ROOT_CONF['openvk']['appearance']['name'])
@@ -100,11 +126,13 @@ final class Newsfeed extends VKAPIRequestHandler
 
         foreach ($posts as $post) {
             $rposts[] = (new PostsRepo())->get($post->id)->getPrettyId();
-            $ids[] = $post->id;
+            $lastPost = $post;
         }
 
         $response = (new Wall())->getById(implode(',', $rposts), $extended, $fields, $this->getUser());
-        $response->next_from = end($ids);
+        if ($lastPost) {
+            $response->next_from = "{$lastPost->created}_{$lastPost->id}";
+        }
 
         return $response;
     }
