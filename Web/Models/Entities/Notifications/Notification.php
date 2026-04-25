@@ -7,7 +7,7 @@ namespace openvk\Web\Models\Entities\Notifications;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{User};
 use openvk\Web\Util\DateTime;
-use RdKafka\{Conf, Producer};
+use openvk\Web\Util\NotificationBroker;
 
 class Notification
 {
@@ -117,25 +117,15 @@ class Notification
 
         $edb->query("INSERT INTO notifications VALUES (0, ?, ?, ?, ?, ?, ?, ?, ?)", ...array_values($data));
 
-        $kafkaConf = OPENVK_ROOT_CONF["openvk"]["credentials"]["notificationsBroker"];
-        if ($kafkaConf["enable"]) {
-            $kafkaConf  = $kafkaConf["kafka"];
-            $brokerConf = new Conf();
-            $brokerConf->set("log_level", (string) LOG_DEBUG);
-            $brokerConf->set("debug", "all");
 
-            $producer = new Producer($brokerConf);
-            $producer->addBrokers($kafkaConf["addr"] . ":" . $kafkaConf["port"]);
-
-            $descriptor = implode(",", [
-                str_replace("\\", ".", get_class($this)),
-                $this->recipient->getId(),
-                base64_encode(serialize((object) $data)),
+        try {
+            $broker = NotificationBroker::i();
+            $broker->push($this->recipient->getId(), [
+                'class' => str_replace("\\", ".", get_class($this)),
+                'data'  => $data,
             ]);
-
-            $notifTopic = $producer->newTopic($kafkaConf["topic"]);
-            $notifTopic->produce(RD_KAFKA_PARTITION_UA, RD_KAFKA_MSG_F_BLOCK, $descriptor);
-            $producer->flush(100);
+        } catch (\Exception $e) {
+            error_log("NotificationBroker failure in emit(): " . $e->getMessage());
         }
 
         return true;

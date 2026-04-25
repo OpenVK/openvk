@@ -96,21 +96,21 @@ class Notifications
         }
     }
 
-    public function fromDescriptor(string $descriptor, ?object &$parsedData = nullptr)
+    public function fromArray(array $payload): Notification
     {
-        [$class, $recv, $data] = explode(",", $descriptor);
-        $class = str_replace(".", "\\", $class);
+        $class = isset($payload['class']) ? str_replace(".", "\\", $payload['class']) : null;
+        $data = $payload['data'] ?? $payload;
 
-        $parsedData = unserialize(base64_decode($data));
         return $this->assemble(
-            $parsedData->actionCode,
-            $parsedData->originModelType,
-            $parsedData->originModelId,
-            $parsedData->targetModelType,
-            $parsedData->targetModelId,
-            $parsedData->recipient,
-            $parsedData->timestamp,
-            $parsedData->additionalPayload,
+            (int) $data['actionCode'],
+            (int) $data['originModelType'],
+            (int) $data['originModelId'],
+            (int) $data['targetModelType'],
+            (int) $data['targetModelId'],
+            (int) $data['recipient'],
+            (int) $data['timestamp'],
+            (string) ($data['additionalPayload'] ?? ""),
+            $class
         );
     }
 }

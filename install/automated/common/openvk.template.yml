@@ -98,7 +98,10 @@ openvk:
                 password: "justMonika"
         notificationsBroker:
             enable: false
-            kafka:
+            redis:
                 addr: "127.0.0.1"
-                port: 9092
-                topic: "OvkEvents"
+                port: 6379
+                password: ""
+            stream:
+                maxlen: 1000         # Maximum notifications in memory at once
+                prefix: "ovk_notifs"
