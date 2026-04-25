@@ -125,7 +125,7 @@
             {if $correspondent->getId() === $thisUser->getId() || $correspondent->getPrivacyPermission('messages.write', $thisUser)}
                 <img class="ava" src="{$thisUser->getAvatarUrl('miniscule')}" alt="{$thisUser->getCanonicalName()}" />
                 <div class="messenger-app--input---messagebox">
-                    <div id="write" class='model_content_textarea' data-id="{$thisUser->getId()}">
+                    <div id="write" class='model_content_textarea' data-id="{$thisUser->getId()}" data-context="messages">
                         <form action="/" method="post" enctype="multipart/form-data" style="margin:0;">
                             <textarea id="wall-post-input-messenger" placeholder="{_enter_message}" name="message" style="width: 100%;resize: none;" class="small-textarea" autocomplete="off" data-bind="value: messageContent, event: { keydown: onTextareaKeyPress }"></textarea>
 

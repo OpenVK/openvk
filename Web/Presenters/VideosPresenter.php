@@ -56,7 +56,7 @@ final class VideosPresenter extends OpenVKPresenter
         if (!$video || $video->isDeleted()) {
             $this->notFound();
         }
-        if (!$user->getPrivacyPermission('videos.read', $this->user->identity ?? null)) {
+        if (!$video->canBeViewedBy($this->user->identity)) {
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
@@ -101,6 +101,10 @@ final class VideosPresenter extends OpenVKPresenter
 
                 if ((int) ($this->postParam("unlisted") ?? '0') == 1) {
                     $video->setUnlisted(true);
+                }
+
+                if ($this->queryParam("upload_context") === "messages") {
+                    $video->setIs_message_video(1);
                 }
 
                 $video->save();
