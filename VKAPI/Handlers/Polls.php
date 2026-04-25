@@ -52,7 +52,7 @@ final class Polls extends VKAPIRequestHandler
             "owner_id"       => $poll->getOwner()->getId(),
             "question"       => $poll->getTitle(),
             "votes"          => $poll->getVoterCount(),
-            "disable_unvote" => $poll->isRevotable(),
+            "disable_unvote" => !$poll->isRevotable(),
             "anonymous"      => $poll->isAnonymous(),
             "answer_ids"     => $userVote,
             "answers"        => $answers,
