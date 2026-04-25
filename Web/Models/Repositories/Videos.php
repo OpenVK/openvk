@@ -45,7 +45,7 @@ class Videos
     public function getByUser(User $user, int $page = 1, ?int $perPage = null): \Traversable
     {
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
-        foreach ($this->videos->where("owner", $user->getId())->where(["deleted" => 0, "unlisted" => 0])->page($page, $perPage)->order("created DESC") as $video) {
+        foreach ($this->videos->where("owner", $user->getId())->where(["deleted" => 0, "unlisted" => 0, "is_message_video" => 0])->page($page, $perPage)->order("created DESC") as $video) {
             yield new Video($video);
         }
     }
@@ -53,20 +53,20 @@ class Videos
     public function getByUserLimit(User $user, int $offset = 0, int $limit = 10): \Traversable
     {
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
-        foreach ($this->videos->where("owner", $user->getId())->where(["deleted" => 0, "unlisted" => 0])->limit($limit, $offset)->order("created DESC") as $video) {
+        foreach ($this->videos->where("owner", $user->getId())->where(["deleted" => 0, "unlisted" => 0, "is_message_video" => 0])->limit($limit, $offset)->order("created DESC") as $video) {
             yield new Video($video);
         }
     }
 
     public function getUserVideosCount(User $user): int
     {
-        return sizeof($this->videos->where("owner", $user->getId())->where(["deleted" => 0, "unlisted" => 0]));
+        return sizeof($this->videos->where("owner", $user->getId())->where(["deleted" => 0, "unlisted" => 0, "is_message_video" => 0]));
     }
 
     public function find(string $query = "", array $params = [], array $order = ['type' => 'id', 'invert' => false]): Util\EntityStream
     {
         $query = "%$query%";
-        $result = $this->videos->where("CONCAT_WS(' ', name, description) LIKE ?", $query)->where("deleted", 0)->where("unlisted", 0);
+        $result = $this->videos->where("CONCAT_WS(' ', name, description) LIKE ?", $query)->where("deleted", 0)->where("unlisted", 0)->where("is_message_video", 0);
         $order_str = 'id';
 
         switch ($order['type']) {
@@ -101,7 +101,7 @@ class Videos
 
     public function getLastVideo(User $user)
     {
-        $video = $this->videos->where("owner", $user->getId())->where(["deleted" => 0, "unlisted" => 0])->order("id DESC")->fetch();
+        $video = $this->videos->where("owner", $user->getId())->where(["deleted" => 0, "unlisted" => 0, "is_message_video" => 0])->order("id DESC")->fetch();
 
         return new Video($video);
     }

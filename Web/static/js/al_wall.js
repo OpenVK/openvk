@@ -1224,7 +1224,9 @@ async function __uploadToTextarea(file, textareaNode) {
         const rand = random_int(0, 1000)
         textareaNode.find('.post-horizontal').append(`<a id='temp_filler${rand}' class="upload-item lagged"><img src='${temp_url}'></a>`)
         
-        const res = await fetch(`/photos/upload?upload_context=${textareaNode.nodes[0].dataset.id}`, {
+        const writeEl = textareaNode.nodes[0]
+        const photoUploadContext = writeEl.dataset.context === 'messages' ? 'messages' : writeEl.dataset.id
+        const res = await fetch(`/photos/upload?upload_context=${photoUploadContext}`, {
             method: 'POST',
             body: form_data
         })
@@ -1467,7 +1469,7 @@ u(document).on("click", "#__photoAttachment", async (e) => {
     u(".ovk-diag-body #__pickerQuickUpload").on('change', (ev) => {
         for(file of ev.target.files) {
             try {
-                __uploadToTextarea(file, form)
+                __uploadToTextarea(file, form.closest('#write'))
             } catch(e) {
                 makeError(e.message)
                 return
@@ -1488,13 +1490,15 @@ u(document).on("click", "#__photoAttachment", async (e) => {
 
 u(document).on('click', '#__videoAttachment', async (e) => {
     const per_page = 10
-    const form = u(e.target).closest('form') 
+    const form = u(e.target).closest('form')
+    const isMessageContext = form.nodes[0]?.closest('#write')?.dataset?.context === 'messages'
+    const videoUploadUrl = isMessageContext ? '/videos/upload?upload_context=messages' : '/videos/upload'
     const msg = new CMessageBox({
         title: tr('selecting_video'),
         body: `
         <div class='attachment_selector'>
             <div class="topGrayBlock display_flex_row">
-                <a id='__fast_video_upload' href="/videos/upload"><input class='button' type='button' value='${tr("upload_button")}'></a>
+                <a id='__fast_video_upload' href="${videoUploadUrl}"><input class='button' type='button' value='${tr("upload_button")}'></a>
                 
                 <input type="search" id="video_query" maxlength="20" placeholder="${tr("header_search")}">
             </div>
@@ -1776,6 +1780,8 @@ u(document).on('click', '#__notesAttachment', async (e) => {
 })
 
 function showFastVideoUpload(node) {
+    const isMessageContext = node.nodes[0]?.closest('#write')?.dataset?.context === 'messages'
+    const uploadUrl = isMessageContext ? '/videos/upload?upload_context=messages' : '/videos/upload'
     let current_tab = 'file'
     const msg = new CMessageBox({
         title: tr('upload_video'),
@@ -1829,7 +1835,7 @@ function showFastVideoUpload(node) {
                     form_data.append("hash", u("meta[name=csrf]").attr("value"))
 
                     window.messagebox_stack[1].getNode().find('.ovk-diag-action button').nodes[1].classList.add('lagged')
-                    const fetcher = await fetch(`/videos/upload`, {
+                    const fetcher = await fetch(uploadUrl, {
                         method: 'POST',
                         body: form_data
                     })
@@ -1853,7 +1859,7 @@ function showFastVideoUpload(node) {
                     form_data.append("hash", u("meta[name=csrf]").attr("value"))
 
                     window.messagebox_stack[1].getNode().find('.ovk-diag-action button').nodes[1].classList.add('lagged')
-                    const fetcher_yt = await fetch(`/videos/upload`, {
+                    const fetcher_yt = await fetch(uploadUrl, {
                         method: 'POST',
                         body: form_data
                     })
