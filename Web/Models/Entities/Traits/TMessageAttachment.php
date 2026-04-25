@@ -35,8 +35,10 @@ trait TMessageAttachment
             ->where("deleted", 0)
             ->where(
                 "(sender_type = ? AND sender_id = ?) OR (recipient_type = ? AND recipient_id = ?)",
-                "openvk\\Web\\Models\\Entities\\User", $user->getId(),
-                "openvk\\Web\\Models\\Entities\\User", $user->getId()
+                "openvk\\Web\\Models\\Entities\\User",
+                $user->getId(),
+                "openvk\\Web\\Models\\Entities\\User",
+                $user->getId()
             )
             ->count("*");
     }
