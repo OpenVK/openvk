@@ -7,25 +7,25 @@ function __actualPlayNotifSound() {
 window.playNotifSound = Function.noop;
 
 function incrementNotificationsCounter() {
-    const parentLink = document.getElementById('notificationLink');
-    if (!parentLink) return;
+    document.querySelectorAll('a[href="/notifications"]').forEach(link => {
 
-    let counterObject = parentLink.querySelector('object');
-    
-    if (!counterObject) {
-        counterObject = document.createElement('object');
-        counterObject.type = 'internal/link';
-        counterObject.innerHTML = ' (<b>1</b>)';
-        parentLink.appendChild(counterObject);
-    } else {
-        const bTag = counterObject.querySelector('b');
-        if (bTag) {
-            let currentCount = parseInt(bTag.textContent) || 0;
-            bTag.textContent = currentCount + 1;
-        } else {
+        let counterObject = link.querySelector('object');
+
+        if (!counterObject) {
+            counterObject = document.createElement('object');
+            counterObject.type = 'internal/link';
             counterObject.innerHTML = ' (<b>1</b>)';
+            link.appendChild(counterObject);
+        } else {
+            const bTag = counterObject.querySelector('b');
+            if (bTag) {
+                let currentCount = parseInt(bTag.textContent) || 0;
+                bTag.textContent = currentCount + 1;
+            } else {
+                counterObject.innerHTML = ' (<b>1</b>)';
+            }
         }
-    }
+    });
 }
 
 async function setupNotificationListener() {
