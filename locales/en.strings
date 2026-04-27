@@ -1099,6 +1099,8 @@
 "notif_0_6_18" = "Someone liked your comment";
 "notif_4_18_14" = "A user mentioned you";
 "notif_4_5_14" = "A group mentioned you";
+"notif_2_14_18" = "You have been left a comment";
+
 
 "nt_post_small" = "post";
 
