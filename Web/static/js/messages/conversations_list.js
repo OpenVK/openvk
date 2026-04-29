@@ -1,28 +1,57 @@
+class ConversationsViewModel {
+    constructor(initial = []) {
+        this.items = initial.items
+        this.conversations = ko.observableArray(this.convs);
+    }
+}
+
 window.conversations = new (class {
   constructor() {
-    this.template = Handlebars.compile(`
-<div class="crp-list scroll_container">
-  {{#each items as | conversation convId | }}
-    <div class="conversation">
-      <span>{{convId}}</span>
+    this.template = `
+    <div class="crp-list scroll_container">
+        <div data-bind="foreach: window.conversations.view.items">
+            <div class="scroll_node crp-entry">
+                <div class="crp-entry--image">
+                    <img data-bind="attr: { src: peer.avatar_any }"
+                    loading="lazy" />
+                </div>
+                <div class="crp-entry--info">
+                    <a data-bind="attr: { href: peer.page_url}, html: peer.name "></a><br/>
+                </div>
+                <div class="crp-entry--message"></div>
+            </div>
+        </div>
     </div>
-  {{/each}}
-</div>
-      `);
+    `
   }
 
-  async getConversations() {}
+  async getConversations() {
+    // Adding profiles to conversation items.
+    let convs = await window.OVKAPI.call("messages.getConversations", {
+        extended: 1,
+        fields: 'photo_100'
+    });
+    convs.items.forEach(item => {
+        const _id = item.conversation.peer.id
+        const author = find_author(_id, convs.profiles, [])
+
+        item.peer = new ChatGeneralForm(author);
+        console.log(item)
+    })
+
+    return convs;
+  }
 
   async render(container = null) {
+    container.insertAdjacentHTML('beforeend', this.template)
     // todo change
     if (window.OVKAPI == null) {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
     }
 
-    const convs = await window.OVKAPI.call("messages.getConversations", {
-      extended: 1,
-    });
-    console.log(convs);
-    container.append(this.template(convs));
+    const convs = await this.getConversations();
+    this.view = new ConversationsViewModel(convs);
+    console.log(conversations.view.convs)
+    ko.applyBindings(this.view, container);
   }
 })();
