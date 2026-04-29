@@ -3,6 +3,14 @@ class ConversationsViewModel {
         this.items = initial.items
         this.conversations = ko.observableArray(this.convs);
     }
+
+    selectChat(data) {
+        this.openMessenger(data)
+    }
+
+    openMessenger(conv) {
+        console.log('ТЫ ТОЛЬКО ЧТО КЛИКНУЛ НА !!! ', conv)
+    }
 }
 
 window.conversations = new (class {
@@ -10,13 +18,13 @@ window.conversations = new (class {
     this.template = `
     <div class="crp-list scroll_container">
         <div data-bind="foreach: window.conversations.view.items">
-            <div class="scroll_node crp-entry">
+            <div class="scroll_node crp-entry" data-bind="event: { click: function(data, event) { window.conversations.view.selectChat(this) } }">
                 <div class="crp-entry--image">
                     <img data-bind="attr: { src: peer.avatar_any }"
                     loading="lazy" />
                 </div>
                 <div class="crp-entry--info">
-                    <a data-bind="attr: { href: peer.page_url}, html: peer.name "></a><br/>
+                    <a data-bind="attr: { href: peer.chat_url }, html: peer.name "></a><br/>
                 </div>
                 <div class="crp-entry--message"></div>
             </div>
@@ -26,7 +34,7 @@ window.conversations = new (class {
   }
 
   async getConversations() {
-    // Adding profiles to conversation items.
+    // adding profiles to conversation items
     let convs = await window.OVKAPI.call("messages.getConversations", {
         extended: 1,
         fields: 'photo_100'

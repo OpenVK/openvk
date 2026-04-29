@@ -38,42 +38,7 @@ final class MessengerPresenter extends OpenVKPresenter
     {
         $this->assertUserLoggedIn();
 
-        if (isset($_GET["sel"])) {
-            $this->pass("openvk!Messenger->app", $_GET["sel"]);
-        }
-
-        $page = (int) ($_GET["p"] ?? 1);
-        $correspondences = iterator_to_array($this->messages->getCorrespondencies($this->user->identity, $page));
-
         // #КакаоПрокакалось
-
-        $this->template->corresps = $correspondences;
-        $this->template->paginatorConf = (object) [
-            "count"   => $this->messages->getCorrespondenciesCount($this->user->identity),
-            "page"    => (int) ($_GET["p"] ?? 1),
-            "amount"  => sizeof($this->template->corresps),
-            "perPage" => OPENVK_DEFAULT_PER_PAGE,
-            "tidy"    => false,
-            "atTop"   => false,
-        ];
-    }
-
-    public function renderApp(int $sel): void
-    {
-        $this->assertUserLoggedIn();
-
-        $correspondent = $this->getCorrespondent($sel);
-        if (!$correspondent) {
-            $this->notFound();
-        }
-
-        if (!$this->user->identity->getPrivacyPermission('messages.write', $correspondent)) {
-            $this->flash("err", tr("warning"), tr("user_may_not_reply"));
-        }
-
-        $this->template->disable_ajax  = 1;
-        $this->template->selId         = $sel;
-        $this->template->correspondent = $correspondent;
     }
 
     public function renderEvents(int $randNum): void
