@@ -1,49 +1,4 @@
 class Messenger {
-    constructor() {
-        this.opened_tabs = [];
-        this.current_chat = null; // index of element
-        this.template = `
-    <div class="messenger-app">
-        <div class="messenger-app--messages">
-            <div data-bind="foreach: window.im._messages">
-                <div class="messenger-app--messages---message">
-                    <img class="ava" data-bind="attr: { src: sender.avatar, alt: sender.name }" />
-                    <div class="_content">
-                        <a href="#" data-bind="attr: { href: sender.link }">
-                            <strong data-bind="text: sender.name"></strong>
-                        </a>
-                        <span class="text" data-bind="html: text"></span>
-                        <div data-bind="foreach: attachments" class="attachments">
-                            <div class="msg-attach-j">
-                                <div data-bind="if: type === 'photo'" class="msg-attach-j-photo">
-                                    <a data-bind="attr: { href: link }">
-                                        <img data-bind="attr: { src: photo.url, alt: photo.caption  }" />
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="time" align="right">
-                        <span></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="messenger-app--input">
-            <img class="ava" alt="{$thisUser->getCanonicalName()}" />
-            <div class="messenger-app--input---messagebox">
-                <textarea
-                        data-bind="value: messageContent"
-                        name="message"
-                        placeholder="{_enter_message}"></textarea>
-                <button class="button">{_send}</button>
-            </div>
-            <img class="ava" alt="{$correspondent->getCanonicalName()}" />
-        </div>
-    </div>
-        `
-    }
-
     async init() {
         this.view = new MessengerViewModel();
     }
@@ -55,7 +10,7 @@ class Messenger {
         }
 
         this.appeared = true;
-        container.insertAdjacentHTML('beforeend', this.template);
+        container.insertAdjacentHTML('beforeend', this.view.template);
 
         ko.applyBindings(this.view, container);
     }
@@ -63,38 +18,64 @@ class Messenger {
     hide(container) {
         container.classList.add('hidden');
     }
-
-    hasChat(conversation) {
-        return false;
-    }
-
-    setChat(conv) {
-        this.current_chat = this.opened_tabs.indexOf(conv);
-    }
-
-    addChat(conv) {
-        return this.opened_tabs.push(conv) - 1;
-    }
-
-    getCurrentChat() {
-        return this.opened_tabs[this.current_chat]
-    }
-
-    selectChat(conversation) {
-        if (!this.hasChat(conversation)) {
-            this.addChat(conversation);
-        }
-
-        this.setChat(conversation);
-    }
 }
 
 class MessengerViewModel {
     //console.log(window.im.messenger.getCurrentChat())
-
     constructor() {
         // todo: чел может открыть несколько чатов, для каждого из них нужно сохранять прокрутку. поэтому надо сделать несколько view model и в массиве всё держать
-        this.messageContent = ko.observable("");
+        this.template = `
+        <div>
+            <div data-bind="foreach: opened_tabs">
+                <a data-bind="text: peer.name, event: { click: function() { window.im.messenger.view.setChat(this) } }"></a>
+            </div>
+        </div>
+        <div class="messenger-app">
+            <div class="messenger-app--messages">
+                <div data-bind="foreach: messages">
+                    <div class="messenger-app--messages---message">
+                        <img class="ava" data-bind="attr: { src: sender.avatar_any, alt: sender.name }" />
+                        <div class="_content">
+                            <a href="#" data-bind="attr: { href: sender.link }">
+                                <strong data-bind="text: sender.name"></strong>
+                            </a>
+                            <span class="text" data-bind="html: text"></span>
+                            <div data-bind="foreach: attachments" class="attachments">
+                                <div class="msg-attach-j">
+                                    <div data-bind="if: type === 'photo'" class="msg-attach-j-photo">
+                                        <a data-bind="attr: { href: link }">
+                                            <img data-bind="attr: { src: photo.url, alt: photo.caption  }" />
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="time" align="right">
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="messenger-app--input">
+                <img class="ava" alt="{$thisUser->getCanonicalName()}" />
+                <div class="messenger-app--input---messagebox">
+                    <textarea
+                            data-bind="value: messageContent"
+                            name="message"
+                            placeholder="{_enter_message}"></textarea>
+                    <button class="button">{_send}</button>
+                </div>
+                <img class="ava" alt="{$correspondent->getCanonicalName()}" />
+            </div>
+        </div>
+        `
+        this.opened_tabs = ko.observableArray([]);
+        this.messages = ko.pureComputed(function() {
+            console.log()
+            return window.im._messages;
+        });
+        this.messageContent = ko.observable('');
+        this.current_chat = ko.observable(null); // index of element
 
         /*this.sendMessage = model => {
             if(model.messageContent() === "") return false;
@@ -124,6 +105,29 @@ class MessengerViewModel {
             
             return true;
         };*/
+    }
+
+    hasChat(conversation) {
+        return this.opened_tabs().indexOf(conversation) != -1;
+    }
+
+    setChat(conv) {
+        console.log(conv)
+        this.current_chat(this.opened_tabs().indexOf(conv));
+    }
+
+    addChat(conv) {
+        return this.opened_tabs.push(conv) - 1;
+    }
+
+    getCurrentChat() {
+        return this.opened_tabs()[this.current_chat()];
+    }
+
+    preselectChat(conversation) {
+        if (!this.hasChat(conversation)) {
+            this.addChat(conversation);
+        }
     }
 }
 
@@ -195,16 +199,27 @@ window.im = new (class {
     }
 
     get _messages() {
-        return this.messenger.getCurrentChat().peer._getLocalMessages();
+        try {
+            const _chat = this.messenger.view.getCurrentChat();
+            console.log(_chat)
+
+            return _chat.peer._getLocalMessages();
+        } catch(e) {
+            console.error(e);
+            return []
+        }
     }
 
     async selectChat(conv) {
-        this.messenger.selectChat(conv);
+        this.messenger.view.preselectChat(conv);
 
-        const current_chat = this.messenger.getCurrentChat();
-        const messages = await current_chat.peer.getMessages();
+        //const current_chat = this.messenger.view.getCurrentChat();
+        if (!conv.peer._isMessagesInited()) {
+            const messages = await conv.peer.getMessages();
 
-        current_chat.peer._appendMessages(messages);
+            conv.peer._appendMessages(messages);
+        }
+        this.messenger.view.setChat(conv);
 
         this.selectTab('messenger');
     }
