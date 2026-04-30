@@ -41,7 +41,7 @@ window.conversations = new (class {
     });
     convs.items.forEach(item => {
         const _id = item.conversation.peer.id
-        const author = find_author(_id, convs.profiles, [])
+        const author = find_author(_id, convs.profiles, convs.groups)
 
         item.peer = new ChatGeneralForm(author);
         console.log(item)

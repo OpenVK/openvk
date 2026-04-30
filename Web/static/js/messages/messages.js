@@ -19,7 +19,12 @@ class ChatGeneralForm {
     }
 
     get name() {
-        return this.data.first_name;
+        switch (this.supposed_type) {
+            case 'user':
+                return this.data.first_name
+            case 'club':
+                return this.data.name
+        }
     }
 
     get page_url() {
@@ -27,7 +32,7 @@ class ChatGeneralForm {
             case 'user':
                 return '/id' + this.data.id
             case 'club':
-                return '/id'
+                return '/club' + this.data.id
         }
     }
 
