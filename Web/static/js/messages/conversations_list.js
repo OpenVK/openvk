@@ -4,12 +4,9 @@ class ConversationsViewModel {
         this.conversations = ko.observableArray(this.convs);
     }
 
-    selectChat(data) {
-        this.openMessenger(data)
-    }
-
-    openMessenger(conv) {
-        console.log('ТЫ ТОЛЬКО ЧТО КЛИКНУЛ НА !!! ', conv)
+    selectChat(conv) {
+        window.messenger.
+        this.openMessenger(conv)
     }
 }
 
