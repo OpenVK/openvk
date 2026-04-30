@@ -201,7 +201,7 @@ final class Messages extends VKAPIRequestHandler
         string $attachment = "",
         int $random_id = 0,
         int $reply_to = 0
-    ) { # интересно почему не attachments
+    ) {
         $this->requireUser();
         $this->willExecuteWriteAction();
 

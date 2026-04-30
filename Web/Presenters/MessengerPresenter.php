@@ -95,49 +95,4 @@ final class MessengerPresenter extends OpenVKPresenter
             ]));
         }, $id, $time);
     }
-
-    public function renderApiGetMessages(int $sel, int $lastMsg): void
-    {
-        $this->assertUserLoggedIn();
-
-        $correspondent = $this->getCorrespondent($sel);
-        if (!$correspondent) {
-            $this->notFound();
-        }
-
-        $messages       = [];
-        $correspondence = new Correspondence($this->user->identity, $correspondent);
-        foreach ($correspondence->getMessages(1, $lastMsg === 0 ? null : $lastMsg, null, 0) as $message) {
-            $messages[] = $message->simplify();
-        }
-
-        header("Content-Type: application/json");
-        exit(json_encode($messages));
-    }
-
-    public function renderApiWriteMessage(int $sel): void
-    {
-        $this->assertUserLoggedIn();
-        $this->willExecuteWriteAction();
-
-        if (empty($this->postParam("content"))) {
-            header("HTTP/1.1 400 Bad Request");
-            exit("<b>Argument error</b>: param 'content' expected to be string, undefined given.");
-        }
-
-        $sel = $this->getCorrespondent($sel);
-        if ($sel->getId() !== $this->user->id && !$sel->getPrivacyPermission('messages.write', $this->user->identity)) {
-            header("HTTP/1.1 403 Forbidden");
-            exit();
-        }
-
-        $cor = new Correspondence($this->user->identity, $sel);
-        $msg = new Message();
-        $msg->setContent($this->postParam("content"));
-        $cor->sendMessage($msg);
-
-        header("HTTP/1.1 202 Accepted");
-        header("Content-Type: application/json");
-        exit(json_encode($msg->simplify()));
-    }
 }
