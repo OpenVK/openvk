@@ -97,6 +97,10 @@ final class Messages extends VKAPIRequestHandler
             "version" => 3
         ]);
 
+        if (!$response) {
+            $this->fail(950, "IM Service unreachable");
+        }
+
         $data = json_decode($response, true);
         $result = (object) $data['response'];
 
@@ -137,6 +141,9 @@ final class Messages extends VKAPIRequestHandler
         }
 
         $response = $this->broker->invokeMethod($currentUser->getId(), "messages.getLongPollServer", $params);
+        if (!$response) {
+            $this->fail(950, "IM Service unreachable");
+        }
         $data = json_decode($response, true);
 
         if (!isset($data['response'])) {
@@ -171,6 +178,10 @@ final class Messages extends VKAPIRequestHandler
             "extended"    => (string) $extended,
             "preview_length" => $preview_length,
         ]);
+
+        if (!$response) {
+            $this->fail(950, "IM Service unreachable");
+        }
 
         $data = json_decode($response, true);
         if (!isset($data['response'])) {
@@ -350,7 +361,7 @@ final class Messages extends VKAPIRequestHandler
             $response = $this->broker->invokeMethod($sender_id, "messages.send", $params);
 
             if ($response === false) {
-                $this->fail(950, "Internal error: IM Server unreachable");
+                $this->fail(950, "IM Server unreachable");
             }
 
             $data = json_decode($response, true);
@@ -497,6 +508,10 @@ final class Messages extends VKAPIRequestHandler
         ];
 
         $response = $this->broker->invokeMethod($this->getUser()->getId(), "messages.getHistory", $params);
+
+        if (!$response) {
+            $this->fail(950, "IM Service unreachable");
+        }
 
         $data = json_decode($response, true);
         if (!isset($data['response'])) {
