@@ -11,6 +11,23 @@ use openvk\VKAPI\Handlers\{Users as APIUsers, Groups as APIClubs};
 
 final class Messages extends VKAPIRequestHandler
 {
+    private IMBroker $broker;
+
+    public function __construct(...$otherDeps)
+    {
+        parent::__construct(...$otherDeps);
+        $this->broker = IMBroker::i();
+    }
+
+    protected function ensureBrokerActive(): void
+    {
+        if (!$this->broker->isEnabled()) {
+            throw new \openvk\VKAPI\Exceptions\APIErrorException("IM Service is disabled");
+        }
+        if (!$this->broker->ping($this->broker->getLongPollBaseUrl() ."")) {
+            throw new \openvk\VKAPI\Exceptions\APIErrorException("IM Service is unreachable");
+        }
+    }
 
     /**
      * Обогащает сырые ID пользователей и групп полноценными объектами для VK API.
@@ -71,9 +88,9 @@ final class Messages extends VKAPIRequestHandler
     public function getLongPollHistory(int $ts = -1, int $preview_length = 0, int $events_limit = 1000, int $msgs_limit = 1000): object
     {
         $this->requireUser();
-        $broker = IMBroker::i();
+        $this->ensureBrokerActive();
 
-        $response = $broker->invokeMethod($this->getUser()->getId(), "messages.getLongPollHistory", [
+        $response = $this->broker->invokeMethod($this->getUser()->getId(), "messages.getLongPollHistory", [
             "ts" => $ts,
             "events_limit" => $events_limit,
             "msgs_limit" => $msgs_limit,
@@ -112,15 +129,14 @@ final class Messages extends VKAPIRequestHandler
             $params['group_id'] = $group_id;
         }
 
-        $broker = IMBroker::i();
-        $baseUrl = $broker->getLongPollBaseUrl();
+        $baseUrl = $this->broker->getLongPollBaseUrl();
 
         // защита от дурочка
-        if (!$broker->ping($baseUrl)) {
+        if (!$this->broker->ping($baseUrl)) {
             $this->fail(500, "LongPoll server is unreachable. Check proxy settings for /nim endpoint.");
         }
 
-        $response = $broker->invokeMethod($currentUser->getId(), "messages.getLongPollServer", $params);
+        $response = $this->broker->invokeMethod($currentUser->getId(), "messages.getLongPollServer", $params);
         $data = json_decode($response, true);
 
         if (!isset($data['response'])) {
@@ -148,9 +164,9 @@ final class Messages extends VKAPIRequestHandler
     public function getById(string $message_ids, int $preview_length = 0, int $extended = 0): object
     {
         $this->requireUser();
-        $broker = IMBroker::i();
+        $this->ensureBrokerActive();
 
-        $response = $broker->invokeMethod($this->getUser()->getId(), "messages.getById", [
+        $response = $this->broker->invokeMethod($this->getUser()->getId(), "messages.getById", [
             "message_ids" => $message_ids,
             "extended"    => (string) $extended,
             "preview_length" => $preview_length,
@@ -204,9 +220,9 @@ final class Messages extends VKAPIRequestHandler
     ) {
         $this->requireUser();
         $this->willExecuteWriteAction();
+        $this->ensureBrokerActive();
 
-        $broker = IMBroker::i();
-        if (!$broker->isEnabled()) {
+        if (!$this->broker->isEnabled()) {
             $this->fail(950, "IM Service is temporarily unavailable");
         }
 
@@ -331,7 +347,7 @@ final class Messages extends VKAPIRequestHandler
         }
 
         try {
-            $response = $broker->invokeMethod($sender_id, "messages.send", $params);
+            $response = $this->broker->invokeMethod($sender_id, "messages.send", $params);
 
             if ($response === false) {
                 $this->fail(950, "Internal error: IM Server unreachable");
@@ -373,7 +389,8 @@ final class Messages extends VKAPIRequestHandler
         int $group_id = 0
     ): array {
         $this->requireUser();
-        
+        $this->ensureBrokerActive();
+
         $current_uid = $this->getUser()->getId();
         if ($group_id > 0) {
             $club = (new ClubRepo())->get((int)$group_id);
@@ -393,7 +410,6 @@ final class Messages extends VKAPIRequestHandler
             $current_uid = ((int)$club->getId()) * -1;
         }
 
-        $broker = IMBroker::i();
         $params = [
             "offset"   => $offset,
             "count"    => $count,
@@ -401,7 +417,7 @@ final class Messages extends VKAPIRequestHandler
             "extended" => $extended,
         ];
 
-        $response = $broker->invokeMethod($current_uid, "messages.getConversations", $params);
+        $response = $this->broker->invokeMethod($current_uid, "messages.getConversations", $params);
         if (!$response) {
             $this->fail(950, "IM Service unreachable");
         }
@@ -467,8 +483,8 @@ final class Messages extends VKAPIRequestHandler
         string $fields = "" // unsupported yet
     ): object {
         $this->requireUser();
-        $broker = IMBroker::i();
-
+        $this->ensureBrokerActive();
+        
         $params = [
             "offset"           => $offset,
             "count"            => $count,
@@ -480,7 +496,7 @@ final class Messages extends VKAPIRequestHandler
             "extended"         => (string) $extended,
         ];
 
-        $response = $broker->invokeMethod($this->getUser()->getId(), "messages.getHistory", $params);
+        $response = $this->broker->invokeMethod($this->getUser()->getId(), "messages.getHistory", $params);
 
         $data = json_decode($response, true);
         if (!isset($data['response'])) {

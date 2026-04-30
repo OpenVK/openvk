@@ -125,7 +125,6 @@
                 </div>
                 {ifset $thisUser}
                 {var $notificationsCount = $thisUser->getNotificationsCount()}
-                {var $unreadMessagesCount = $thisUser->getUnreadMessagesCount()}
 
                 <a id="fast_notifications" href="/notifications" class="mobiles_only">
                     <object n:class="$notificationsCount == 0 ? zero_counter : '' ">
@@ -232,6 +231,7 @@
                                 <div class="pc_v">{_my_audios}</div>
                                 <div class="mobile_v">{_mobile_audios}</div>
                             </a>
+                            {if (OPENVK_ROOT_CONF["openvk"]["credentials"]["im"]["enable"] ?? false)}
                             <a n:if="$thisUser->getLeftMenuItemStatus('messages')" href="/im" class="link my_messages">
                                 <div class="pc_v">{_my_messages}</div>
                                 <div class="mobile_v">{_mobile_messages}</div>
@@ -239,6 +239,7 @@
                                     (<b>{$unreadMessagesCount}</b>)
                                 </object>
                             </a>
+                            {/if}
                             <a n:if="$thisUser->getLeftMenuItemStatus('notes')" href="/notes{$thisUser->getId()}" class="link my_notes">
                                 <div class="pc_v">{_my_notes}</div>
                                 <div class="mobile_v">{_mobile_notes}</div>
@@ -398,6 +399,7 @@
                                 <a id="minilink-albums" class="minilink" href="/albums{$thisUser->getId()}">
                                     <img src="/assets/packages/static/openvk/img/photos.svg">
                                 </a>
+                                {if (OPENVK_ROOT_CONF["openvk"]["credentials"]["im"]["enable"] ?? false)}
                                 <a id="minilink-messenger" class="minilink" href="/im">
                                     <object type="internal/link" n:if="$unreadMessagesCount > 0">
                                         <div class="counter">
@@ -406,6 +408,7 @@
                                     </object>
                                     <img src="/assets/packages/static/openvk/img/messages.svg">
                                 </a>
+                                {/if}
                                 <a id="minilink-groups" class="minilink" href="/groups{$thisUser->getId()}">
                                     <img src="/assets/packages/static/openvk/img/groups.svg">
                                 </a>
