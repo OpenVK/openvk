@@ -1,7 +1,9 @@
 class ChatGeneralForm {
     constructor(item, supposed_type = null) {
+        this.base_fields = 'photo_100';
         this.data = item;
         this.supposed_type = supposed_type;
+        this.messages = [];
 
         if (!supposed_type) {
             if (item.first_name) {
@@ -51,11 +53,43 @@ class ChatGeneralForm {
         }
     }
 
-    async getMessages(params = {}) {
+    async getMessages(offset = 0) {
+        const count = 10;
         const messages = await window.OVKAPI.call('messages.getHistory', {
-            'peer_id': this.id
-        })
+            'peer_id': this.id,
+            'offset': offset,
+            'count': count,
+            'extended': 1,
+            'fields': this.base_fields
+        });
+
+        _authorize(messages, (item) => {
+            return item.peer_id;
+        }, (item, author) => {
+            item.sender = new ChatGeneralForm(author);
+        });
+
+        return messages.items;
     }
+
+    _appendMessages(messages) {
+        messages.forEach(m => this.messages.push(m));
+    }
+
+    _getLocalMessages() {
+        return this.messages;
+    }
+}
+
+function _authorize(arr, get_id = null, set_id = null) {
+    arr.items.forEach(item => {
+        const _id = get_id(item);
+        const author = find_author(_id, arr.profiles, arr.groups)
+
+        set_id(item, author);
+    })
+
+    return arr;
 }
 
 class ChatMessage {
