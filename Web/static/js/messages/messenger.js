@@ -1,11 +1,12 @@
 class Messenger {
     constructor() {
         this.opened_tabs = [];
+        this.current_chat = null; // index of element
         this.template = `
     <div class="messenger-app">
         <div class="messenger-app--messages">
-            <div data-bind="foreach: messages">
-                <div class="messenger-app--messages---message" data-bind="css: { unread: !read }">
+            <div data-bind="foreach: window.im._messages">
+                <div class="messenger-app--messages---message">
                     <img class="ava" data-bind="attr: { src: sender.avatar, alt: sender.name }" />
                     <div class="_content">
                         <a href="#" data-bind="attr: { href: sender.link }">
@@ -23,7 +24,7 @@ class Messenger {
                         </div>
                     </div>
                     <div class="time" align="right">
-                        <span data-bind="html: timing.sent"></span>
+                        <span></span>
                     </div>
                 </div>
             </div>
@@ -48,8 +49,8 @@ class Messenger {
     }
 
     appear(container = null) {
+        container.classList.remove('hidden');
         if (this.appeared) {
-            container.classList.remove('hidden');
             return;
         }
 
@@ -63,15 +64,36 @@ class Messenger {
         container.classList.add('hidden');
     }
 
+    hasChat(conversation) {
+        return false;
+    }
+
+    setChat(conv) {
+        this.current_chat = this.opened_tabs.indexOf(conv);
+    }
+
+    addChat(conv) {
+        return this.opened_tabs.push(conv) - 1;
+    }
+
+    getCurrentChat() {
+        return this.opened_tabs[this.current_chat]
+    }
+
     selectChat(conversation) {
-        
+        if (!this.hasChat(conversation)) {
+            this.addChat(conversation);
+        }
+
+        this.setChat(conversation);
     }
 }
 
 class MessengerViewModel {
+    //console.log(window.im.messenger.getCurrentChat())
+
     constructor() {
         // todo: чел может открыть несколько чатов, для каждого из них нужно сохранять прокрутку. поэтому надо сделать несколько view model и в массиве всё держать
-        this.messages = ko.observableArray([]);
         this.messageContent = ko.observable("");
 
         /*this.sendMessage = model => {
@@ -172,8 +194,18 @@ window.im = new (class {
         return this.root.querySelector(`div[data-window="${tab_name}"]`)
     }
 
-    selectChat(conv) {
-        this.selectTab('messenger');
+    get _messages() {
+        return this.messenger.getCurrentChat().peer._getLocalMessages();
+    }
+
+    async selectChat(conv) {
         this.messenger.selectChat(conv);
+
+        const current_chat = this.messenger.getCurrentChat();
+        const messages = await current_chat.peer.getMessages();
+
+        current_chat.peer._appendMessages(messages);
+
+        this.selectTab('messenger');
     }
 })()

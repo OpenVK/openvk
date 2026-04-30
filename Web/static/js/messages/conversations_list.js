@@ -10,7 +10,7 @@ class Conversations {
         this.template = `
         <div class="crp-list scroll_container">
             <div data-bind="foreach: window.im.conversations.convs">
-                <div class="scroll_node crp-entry" data-bind="event: { click: function(data, event) { window.im.selectChat(this) } }">
+                <div class="scroll_node crp-entry" data-bind="event: { click: async function(data, event) { await window.im.selectChat(this) } }">
                     <div class="crp-entry--image">
                         <img data-bind="attr: { src: peer.avatar_any }"
                         loading="lazy" />
@@ -31,13 +31,12 @@ class Conversations {
             extended: 1,
             fields: 'photo_100'
         });
-        convs.items.forEach(item => {
-            const _id = item.conversation.peer.id
-            const author = find_author(_id, convs.profiles, convs.groups)
 
+        _authorize(convs, (item) => {
+            return item.conversation.peer.id
+        }, (item, author) => {
             item.peer = new ChatGeneralForm(author);
-            console.log(item)
-        })
+        });
 
         return convs.items;
     }
