@@ -741,14 +741,14 @@ class User extends RowModel
             if (!$broker->isEnabled()) {
                 return 0;
             }
-            
-            $response = $broker->invokeMethod($this->getId(), "im.getCounters");
+
+            $response = $broker->invokeMethod($this->getId(), "im.getUnreadConversations");
             if (empty($response) || !is_string($response)) {
                 return 0;
             }
             $data = json_decode($response, true);
 
-            return (int) ($data['response']['messages'] ?? 0);
+            return (int) ($data['response']['count'] ?? 0);
             
         } catch (\Exception $e) {
             error_log("IM Broker error: " . $e->getMessage());
