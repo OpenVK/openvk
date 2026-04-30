@@ -63,31 +63,48 @@ class ChatGeneralForm {
             'fields': this.base_fields
         });
 
-        _authorize(messages, (item) => {
-            return item.peer_id;
+        const _l = _authorize(messages, (item) => {
+            return item.from_id;
         }, (item, author) => {
             item.sender = new ChatGeneralForm(author);
+        }, (item, arr) => {
+            arr.push(new ChatMessage(item));
         });
 
-        return messages.items;
+        return _l;
     }
 
     _appendMessages(messages) {
+        this._messages_inited = true;
         messages.forEach(m => this.messages.push(m));
     }
 
     _getLocalMessages() {
         return this.messages;
     }
+
+    _isMessagesInited() {
+        return this._messages_inited;
+    }
 }
 
-function _authorize(arr, get_id = null, set_id = null) {
+function _authorize(arr, get_id = null, set_id = null, finalize = null) {
+    let fin = [];
+
     arr.items.forEach(item => {
         const _id = get_id(item);
         const author = find_author(_id, arr.profiles, arr.groups)
 
         set_id(item, author);
+
+        if (finalize) {
+            finalize(item, fin);
+        }
     })
+
+    if (finalize) {
+        return fin;
+    }
 
     return arr;
 }
@@ -95,5 +112,17 @@ function _authorize(arr, get_id = null, set_id = null) {
 class ChatMessage {
     constructor(item) {
         this.data = item;
+    }
+
+    get sender() {
+        return this.data.sender;
+    }
+
+    get text() {
+        return this.data.text;
+    }
+
+    get attachments() {
+        return this.data.attachments;
     }
 }
