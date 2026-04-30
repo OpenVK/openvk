@@ -6,7 +6,7 @@
 {block content}
     <script>
         async function init() {
-            await window.conversations.render(document.querySelector('.page_content'));
+            await window.im.init(document.querySelector('.page_content'));
         }
         init();
     </script>
