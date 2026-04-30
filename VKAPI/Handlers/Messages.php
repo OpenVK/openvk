@@ -4,72 +4,188 @@ declare(strict_types=1);
 
 namespace openvk\VKAPI\Handlers;
 
-use openvk\Web\Events\NewMessageEvent;
-use openvk\Web\Models\Entities\{Correspondence, Message};
-use openvk\Web\Models\Repositories\{Messages as MSGRepo, Users as USRRepo};
-use openvk\VKAPI\Structures\{Message as APIMsg, Conversation as APIConvo};
-use openvk\VKAPI\Handlers\Users as APIUsers;
-use Chandler\Signaling\SignalManager;
+use openvk\Web\Util\IMBroker;
+use openvk\Web\Models\Repositories\{Users as USRRepo, Clubs as ClubRepo};
+use openvk\Web\Models\Entities\{Club as ClubEnt};
+use openvk\VKAPI\Handlers\{Users as APIUsers, Groups as APIClubs};
 
 final class Messages extends VKAPIRequestHandler
 {
-    private function resolvePeer(int $user_id = -1, int $peer_id = -1): ?int
-    {
-        if ($user_id === -1) {
-            if ($peer_id === -1) {
-                return null;
-            } elseif ($peer_id < 0) {
-                return null;
-            } elseif (($peer_id - 2000000000) > 0) {
-                return null;
-            }
 
-            return $peer_id;
+    /**
+     * Обогащает сырые ID пользователей и групп полноценными объектами для VK API.
+     * * @param array|object $payload Ссылка на данные от IM сервиса
+     * @param string $fields Дополнительные поля для USRRepo
+     */
+    private function hydrateExtendedData(&$payload, string $fields = ""): void
+    {
+        $isObject = is_object($payload);
+        $data = $isObject ? (array)$payload : $payload;
+        
+        if (!empty($data['profiles'])) {
+            $userIDs = [];
+            foreach ($data['profiles'] as $uData) {
+                $userIDs[] = is_array($uData) ? ($uData['id'] ?? 0) : (int)$uData;
+            }
+            
+            $userIDs = array_unique(array_filter($userIDs));
+
+            if (!empty($userIDs)) {
+                $apiUsers = new APIUsers();
+                $data['profiles'] = $apiUsers->get(implode(',', $userIDs), $fields);
+            }
+        } else {
+            $data['profiles'] = [];
         }
 
-        return $user_id;
+        if (!empty($data['groups'])) {
+            $groupIDs = [];
+            foreach ($data['groups'] as $gData) {
+                $gid = is_array($gData) ? ($gData['id'] ?? 0) : abs((int)$gData);
+                $groupIDs[] = $gid;
+            }
+            
+            $groupIDs = array_unique(array_filter($groupIDs));
+
+            if (!empty($groupIDs)) {
+                $apiGroups = new APIClubs(); 
+                $data['groups'] = $apiGroups->getById(implode(',', $groupIDs), "", $fields);
+            }
+        } else {
+            $data['groups'] = [];
+        }
+
+        if ($isObject) {
+            foreach ($data as $key => $value) {
+                $payload->{$key} = $value;
+            }
+        } else {
+            $payload = $data;
+        }
+    }
+
+    // ----------------------------------
+    //             Longpoll
+    // ----------------------------------
+
+    public function getLongPollHistory(int $ts = -1, int $preview_length = 0, int $events_limit = 1000, int $msgs_limit = 1000): object
+    {
+        $this->requireUser();
+        $broker = IMBroker::i();
+
+        $response = $broker->invokeMethod($this->getUser()->getId(), "messages.getLongPollHistory", [
+            "ts" => $ts,
+            "events_limit" => $events_limit,
+            "msgs_limit" => $msgs_limit,
+            "version" => 3
+        ]);
+
+        $data = json_decode($response, true);
+        $result = (object) $data['response'];
+
+        $this->hydrateExtendedData($result);
+
+        return $result;
+    }
+
+    public function getLongPollServer(int $need_pts = 1, int $version = 2, ?int $group_id = null): array
+    {
+        $this->requireUser();
+        $currentUser = $this->getUser();
+        $params = [];
+
+        if ($group_id > 0) {
+            $club = (new ClubRepo())->get((int)$group_id);
+            
+            if (!$club) {
+                $this->fail(100, "One of the parameters specified was missing or invalid: group_id -> club not found");
+            }
+
+            if ($club->isBanned()) {
+                $this->fail(15, "Access denied: this community is blocked");
+            }
+
+            if (!$club->canBeModifiedBy($currentUser)) {
+                $this->fail(15, "Access denied: you are not an administrator of this community");
+            }
+
+            $params['group_id'] = $group_id;
+        }
+
+        $broker = IMBroker::i();
+        $baseUrl = $broker->getLongPollBaseUrl();
+
+        // защита от дурочка
+        if (!$broker->ping($baseUrl)) {
+            $this->fail(500, "LongPoll server is unreachable. Check proxy settings for /nim endpoint.");
+        }
+
+        $response = $broker->invokeMethod($currentUser->getId(), "messages.getLongPollServer", $params);
+        $data = json_decode($response, true);
+
+        if (!isset($data['response'])) {
+            $this->fail(500, "IM Internal Server error");
+        }
+
+        $res = $data['response'];
+        $res['server'] = $baseUrl;
+
+        return $res;
+    }
+
+    // ----------------------------------
+    //             Messages
+    // ----------------------------------
+
+    private function resolvePeer(int $user_id = -1, int $peer_id = -1, int $chat_id = -1): ?int
+    {
+        if ($chat_id > 0) return 2000000000 + $chat_id;
+        if ($peer_id !== -1) return $peer_id; 
+        if ($user_id !== -1) return $user_id;
+        return null;
     }
 
     public function getById(string $message_ids, int $preview_length = 0, int $extended = 0): object
     {
         $this->requireUser();
+        $broker = IMBroker::i();
 
-        $msgs  = new MSGRepo();
-        $ids   = preg_split("%, ?%", $message_ids);
-        $items = [];
-        foreach ($ids as $id) {
-            $message = $msgs->get((int) $id);
-            if (!$message) {
-                continue;
-            } elseif ($message->getSender()->getId() !== $this->getUser()->getId() && $message->getRecipient()->getId() !== $this->getUser()->getId()) {
-                continue;
-            }
+        $response = $broker->invokeMethod($this->getUser()->getId(), "messages.getById", [
+            "message_ids" => $message_ids,
+            "extended"    => (string) $extended,
+            "preview_length" => $preview_length,
+        ]);
 
-            $author = $message->getSender()->getId() === $this->getUser()->getId() ? $message->getRecipient()->getId() : $message->getSender()->getId();
-            $rMsg   = new APIMsg();
-
-            $rMsg->id         = $message->getId();
-            $rMsg->user_id    = $author;
-            $rMsg->from_id    = $message->getSender()->getId();
-            $rMsg->date       = $message->getSendTime()->timestamp();
-            $rMsg->read_state = 1;
-            $rMsg->out        = (int) ($message->getSender()->getId() === $this->getUser()->getId());
-            $rMsg->body       = $message->getText(false);
-            $rMsg->text       = $message->getText(false);
-            $rMsg->emoji      = true;
-
-            if ($preview_length > 0) {
-                $rMsg->body = ovk_proc_strtr($rMsg->body, $preview_length);
-            }
-            $rMsg->text = ovk_proc_strtr($rMsg->text, $preview_length);
-
-            $items[] = $rMsg;
+        $data = json_decode($response, true);
+        if (!isset($data['response'])) {
+            error_log("IM service error: " . $response);
+            $this->fail(500, "Internal error: IM service failure.");
         }
 
-        return (object) [
-            "count" => sizeof($items),
-            "items" => $items,
-        ];
+        $result = (object) $data['response'];
+
+        if ($extended == 1) {
+            $uRepo = new USRRepo();
+            $cRepo = new ClubRepo();
+
+            $result->profiles = [];
+            if (!empty($data['response']['profiles'])) {
+                foreach ($data['response']['profiles'] as $uid) {
+                    $user = $uRepo->get((int)$uid);
+                    if ($user) $result->profiles[] = $user->toVkApiStruct($this->getUser());
+                }
+            }
+
+            $result->groups = [];
+            if (!empty($data['response']['groups'])) {
+                foreach ($data['response']['groups'] as $gid) {
+                    $group = $cRepo->get(abs((int)$gid));
+                    if ($group) $result->groups[] = $group->toVkApiStruct($this->getUser());
+                }
+            }
+        }
+
+        return $result;
     }
 
     public function send(
@@ -77,22 +193,33 @@ final class Messages extends VKAPIRequestHandler
         int $peer_id = -1,
         string $domain = "",
         int $chat_id = -1,
+        int $group_id = 0,
         string $user_ids = "",
         string $message = "",
         int $sticker_id = -1,
         int $forGodSakePleaseDoNotReportAboutMyOnlineActivity = 0,
-        string $attachment = ""
+        string $attachment = "",
+        int $random_id = 0,
+        int $reply_to = 0
     ) { # интересно почему не attachments
         $this->requireUser();
         $this->willExecuteWriteAction();
+
+        $broker = IMBroker::i();
+        if (!$broker->isEnabled()) {
+            $this->fail(950, "IM Service is temporarily unavailable");
+        }
+
+        if ($user_id === -1 && $peer_id === -1 && $domain === "" && $chat_id === -1 && $user_ids === "") {
+            $this->fail(100, "One of the parameters specified was missing or invalid: no recipient");
+        }
 
         if ($forGodSakePleaseDoNotReportAboutMyOnlineActivity == 0) {
             $this->getUser()->updOnline($this->getPlatform());
         }
 
-        if ($chat_id !== -1) {
-            $this->fail(946, "Chats are not implemented");
-        } elseif ($sticker_id !== -1) {
+        // TODO
+        if ($sticker_id !== -1) {
             $this->fail(-151, "Stickers are not implemented");
         }
 
@@ -100,64 +227,277 @@ final class Messages extends VKAPIRequestHandler
             $this->fail(100, "Message text is empty or invalid");
         }
 
-        # lol recursion
         if (!empty($user_ids)) {
             $rIds = [];
-            $ids  = preg_split("%, ?%", $user_ids);
+            $ids = preg_split("%, ?%", $user_ids);
             if (sizeof($ids) > 100) {
                 $this->fail(913, "Too many recipients");
             }
 
             foreach ($ids as $id) {
-                $rIds[] = $this->send(-1, $id, "", -1, "", $message);
+                $rIds[] = $this->send(-1, (int)$id, "", -1, $group_id, "", $message, -1, 1, $attachment, rand(1, 2147483647));
             }
-
             return $rIds;
         }
 
+        $uRepo = (new USRRepo());
+        $cRepo = new ClubRepo();
+        
+        $sender_id = $this->getUser()->getId();
+        if ($group_id > 0) {
+            $club = (new ClubRepo())->get((int)$group_id);
+            
+            if (!$club) {
+                $this->fail(100, "One of the parameters specified was missing or invalid: group_id -> club not found");
+            }
+
+            if ($club->isBanned()) {
+                $this->fail(15, "Access denied: this community is blocked");
+            }
+
+            if (!$club->canBeModifiedBy($this->getUser())) {
+                $this->fail(15, "Access denied: you are not an administrator of this community");
+            }
+
+            $sender_id = ((int)$club->getId()) * -1;
+        }
+
         if (!empty($domain)) {
-            $peer = (new USRRepo())->getByShortCode($domain);
+            $peerObj = $uRepo->getByShortUrl($domain) ?: $cRepo->getByShortUrl($domain);
+            $resolvedId = $peerObj ? $peerObj->getId() : null;
+            if ($peerObj instanceof Club) $resolvedId = -$resolvedId; 
         } else {
-            $peer = $this->resolvePeer($user_id, $peer_id);
-            $peer = (new USRRepo())->get($peer);
+            $resolvedId = $this->resolvePeer($user_id, $peer_id, $chat_id);
+        }
+
+        if (is_null($resolvedId) || $resolvedId === 0) {
+            $this->fail(936, "There is no peer with this id");
+        }
+
+        if ($resolvedId > 0 && $resolvedId < 2000000000) {
+            $peer = $uRepo->get((int)$resolvedId);
+        } elseif ($resolvedId < 0) {
+            $peer = $cRepo->get(abs((int)$resolvedId));
+        } else {
+            $peer = (object)['id' => $resolvedId];
         }
 
         if (!$peer) {
             $this->fail(936, "There is no peer with this id");
         }
 
-        if ($this->getUser()->getId() !== $peer->getId() && !$peer->getPrivacyPermission('messages.write', $this->getUser())) {
-            $this->fail(945, "This chat is disabled because of privacy settings");
+        if (is_object($peer) && !($peer instanceof \stdClass)) {
+            try {
+                if ($peer instanceof ClubEnt) {
+                    if (!is_null($peer->getBanReason())) {
+                        $this->fail(18, "This community is blocked");
+                    }
+                }
+                if (method_exists($peer, 'isBanned')) {
+                    if ($peer->isBanned()) {
+                        $this->fail(18, "Recipient is banned");
+                    }
+                }
+
+                if (method_exists($peer, 'isDeleted')) {
+                    if ($peer->isDeleted()) {
+                        $this->fail(18, "Recipient was deleted");
+                    }
+                }
+            } catch (\Nette\MemberAccessException $e) {
+                // Это игнорит ошибку если deleted или banned нет в таблице.
+            }
         }
 
-        # Finally we get to send a message!
-        $chat = new Correspondence($this->getUser(), $peer);
-        $msg  = new Message();
-        $msg->setContent($message);
-
-        $msg = $chat->sendMessage($msg, true);
-        if (!$msg) {
-            $this->fail(950, "Internal error");
-        } elseif (!empty($attachment)) {
-            $attachs = parseAttachments($attachment);
-
-            # Работают только фотки, остальное просто не будет отображаться.
-            if (sizeof($attachs) >= 10) {
-                $this->fail(15, "Too many attachments");
-            }
-
-            foreach ($attachs as $attach) {
-                if ($attach && !$attach->isDeleted() && $attach->getOwner()->getId() == $this->getUser()->getId()) {
-                    $msg->attach($attach);
-                } else {
-                    $this->fail(52, "One of the attachments is invalid");
+        if ($resolvedId < 2000000000 && $sender_id !== $resolvedId) {
+            if (method_exists($peer, 'getPrivacyPermission')) {
+                // TODO: Нужно докинуть тут логику для клубов. (сообщения сообщества выключены)
+                if (!$peer->getPrivacyPermission('messages.write', $this->getUser())) {
+                    $this->fail(945, "This chat is disabled because of privacy settings");
                 }
             }
         }
 
-        return $msg->getId();
+        # Finally we get to send a message!
+        $params = [
+            "peer_id"    => (string) $resolvedId,
+            "message"    => $message,
+            "attachment" => $attachment,
+            "random_id"  => (string) ($random_id ?: rand(1, 2147483647)),
+        ];
+
+        if ($reply_to > 0) {
+            $params["reply_to"] = (string) $reply_to;
+        }
+
+        try {
+            $response = $broker->invokeMethod($sender_id, "messages.send", $params);
+
+            if ($response === false) {
+                $this->fail(950, "Internal error: IM Server unreachable");
+            }
+
+            $data = json_decode($response, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $this->fail(950, "Internal error: Invalid JSON from IM Server. Raw: " . substr($response, 0, 100));
+            }
+
+            if (isset($data['error'])) {
+                $errorCode = $data['error']['error_code'] ?? 500;
+                $errorMsg = $data['error']['error_msg'] ?? ("IM Error. Raw: " . substr($response, 0, 100));
+                
+                $this->fail($errorCode, $errorMsg);
+            }
+
+            if (!isset($data['response'])) {
+                return is_numeric($data) ? (int)$data : $data;
+            }
+
+            return (int) $data['response'];
+        } catch (\Exception $e) {
+            $this->fail(500, "Broker failure: " . $e->getMessage());
+        }
+    }
+    
+    // ----------------------------------
+    //               Chats
+    // ----------------------------------
+
+    public function getConversations(
+        int $offset = 0,
+        int $count = 20,
+        string $filter = "all",
+        int $extended = 0,
+        string $fields = "",
+        int $group_id = 0
+    ): array {
+        $this->requireUser();
+        
+        $current_uid = $this->getUser()->getId();
+        if ($group_id > 0) {
+            $club = (new ClubRepo())->get((int)$group_id);
+            
+            if (!$club) {
+                $this->fail(100, "One of the parameters specified was missing or invalid: group_id -> club not found");
+            }
+
+            if ($club->isBanned()) {
+                $this->fail(15, "Access denied: this community is blocked");
+            }
+
+            if (!$club->canBeModifiedBy($this->getUser())) {
+                $this->fail(15, "Access denied: you are not an administrator of this community");
+            }
+
+            $current_uid = ((int)$club->getId()) * -1;
+        }
+
+        $broker = IMBroker::i();
+        $params = [
+            "offset"   => $offset,
+            "count"    => $count,
+            "filter"   => $filter,
+            "extended" => $extended,
+        ];
+
+        $response = $broker->invokeMethod($current_uid, "messages.getConversations", $params);
+        if (!$response) {
+            $this->fail(950, "IM Service unreachable");
+        }
+
+        $data = json_decode($response, true);
+        $payload = $data['response'] ?? null;
+
+        if (!$payload) {
+            $this->fail(950, "Invalid response from IM Service");
+        }
+
+        // TODO: Переписать заглушку на реальный объект из БД.
+        if (!empty($payload['items'])) {
+            foreach ($payload['items'] as &$item) {
+                $peer = $item['conversation']['peer'] ?? null;
+                
+                if ($peer && $peer['type'] === 'chat') {
+                    $settings = $item['conversation']['chat_settings'] ?? [];
+                    
+                    $defaultAcl = [
+                        "acl" => [
+                            "can_invite" => true,
+                            "can_change_info" => false,
+                            "can_change_pin" => false,
+                            "can_promote_users" => false,
+                            "can_see_invite_link" => false,
+                            "can_change_invite_link" => false,
+                            "can_moderate" => false,
+                            "can_copy_chat" => false
+                        ]
+                    ];
+
+                    $item['conversation']['chat_settings'] = array_merge($defaultAcl, $settings);
+                    
+                    if (empty($item['conversation']['chat_settings']['title'])) {
+                        $chatId = $peer['id'] - 2000000000;
+                        $item['conversation']['chat_settings']['title'] = "Беседа №" . $chatId;
+                    }
+                }
+            }
+        }
+
+        if ($extended) {
+            $this->hydrateExtendedData($payload, $fields);            
+        }
+
+        return $payload;
     }
 
+    // ----------------------------------
+    //              History
+    // ----------------------------------
+
+    public function getHistory(
+        int $offset = 0, 
+        int $count = 20, 
+        int $user_id = 0, 
+        int $peer_id = 0, 
+        int $chat_id = 0,
+        int $start_message_id = 0, 
+        int $rev = 0, 
+        int $extended = 0, 
+        string $fields = "" // unsupported yet
+    ): object {
+        $this->requireUser();
+        $broker = IMBroker::i();
+
+        $params = [
+            "offset"           => $offset,
+            "count"            => $count,
+            "peer_id"          => $peer_id,
+            "user_id"          => $user_id,
+            "chat_id"          => $chat_id,
+            "start_message_id" => $start_message_id,
+            "rev"              => $rev,
+            "extended"         => (string) $extended,
+        ];
+
+        $response = $broker->invokeMethod($this->getUser()->getId(), "messages.getHistory", $params);
+
+        $data = json_decode($response, true);
+        if (!isset($data['response'])) {
+            error_log("IM service getHistory error: " . $response);
+            $this->fail(500, "Internal error: IM service failure.");
+        }
+
+        $result = (object) $data['response'];
+
+        if ($extended == 1) {
+            $this->hydrateExtendedData($result, $fields);
+        }
+
+        return $result;
+    }
+
+    /*
     public function delete(string $message_ids, int $spam = 0, int $delete_for_all = 0): object
     {
         $this->requireUser();
@@ -495,4 +835,5 @@ final class Messages extends VKAPIRequestHandler
 
         return 1;
     }
+        */
 }

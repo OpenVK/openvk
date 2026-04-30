@@ -166,12 +166,17 @@ openvk:
                 dsn: "mysql:unix_host=localhost;dbname=openvk-eventdb" # or unix_socket=/tmp/mysql.sock
                 user: "root"
                 password: "DATABASE_PASSWORD"
+        redis:
+            addr: "127.0.0.1"
+            port: 6379
+            password: ""
         notificationsBroker:
             enable: false
-            redis:
-                addr: "127.0.0.1"
-                port: 6379
-                password: ""
             stream:
                 maxlen: 1000         # Maximum notifications in memory at once
                 prefix: "ovk_notifs"
+        im:
+            enable: false
+            server_url: "http://127.0.0.1:8080"
+            lp_server_addr: "openvk.org" # Fill this if its on a different subdomain or left empty
+
