@@ -32,15 +32,19 @@ class Messenger {
             <img class="ava" alt="{$thisUser->getCanonicalName()}" />
             <div class="messenger-app--input---messagebox">
                 <textarea
-                        data-bind="value: messageContent, event: { keydown: onTextareaKeyPress }"
+                        data-bind="value: messageContent"
                         name="message"
                         placeholder="{_enter_message}"></textarea>
-                <button class="button" data-bind="click: sendMessage">{_send}</button>
+                <button class="button">{_send}</button>
             </div>
             <img class="ava" alt="{$correspondent->getCanonicalName()}" />
         </div>
     </div>
         `
+    }
+
+    async init() {
+        this.view = new MessengerViewModel();
     }
 
     appear(container = null) {
@@ -59,8 +63,45 @@ class Messenger {
         container.classList.add('hidden');
     }
 
-    selectChat() {
+    selectChat(conversation) {
+        
+    }
+}
 
+class MessengerViewModel {
+    constructor() {
+        // todo: чел может открыть несколько чатов, для каждого из них нужно сохранять прокрутку. поэтому надо сделать несколько view model и в массиве всё держать
+        this.messages = ko.observableArray([]);
+        this.messageContent = ko.observable("");
+
+        /*this.sendMessage = model => {
+            if(model.messageContent() === "") return false;
+            
+            window.Msg.sendMessage(model.messageContent());
+            model.messageContent("");
+        };
+        this.loadHistory = _ => {
+            window.Msg._loadHistory();
+        };
+
+        this.onMessagesScroll   = (model, e) => {
+            if(e.target.scrollTop < 21)
+                model.loadHistory();
+        };
+        this.onTextareaKeyPress = (model, e) => {
+            if(e.which === 13) {
+                if(!e.metaKey && !e.shiftKey) {
+                    let ta = u("textarea[name=message]").nodes[0];
+                    ta.blur(); //Fix update
+                    model.sendMessage(model);
+                    ta.focus();
+                    
+                    return false;
+                }
+            }
+            
+            return true;
+        };*/
     }
 }
 
@@ -82,6 +123,7 @@ window.im = new (class {
         this.conversations = new Conversations();
         await this.conversations.init();
         this.messenger = new Messenger();
+        await this.messenger.init();
         this.selectTab('conversations');
     }
 

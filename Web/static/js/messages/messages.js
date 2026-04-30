@@ -37,14 +37,24 @@ class ChatGeneralForm {
     }
 
     get chat_url() {
+        return '/im?sel=' + this.id
+    }
+
+    get id() {
         switch (this.supposed_type) {
             case 'user':
-                return '/im?sel=' + this.data.id
+                return this.data.id
             case 'club':
-                return '/im?sel=-' + this.data.id
+                return this.data.id * -1
             case 'chat':
-                return '/im?sel='
+                return this.data.id + 2000000000000
         }
+    }
+
+    async getMessages(params = {}) {
+        const messages = await window.OVKAPI.call('messages.getHistory', {
+            'peer_id': this.id
+        })
     }
 }
 
