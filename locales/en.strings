@@ -1219,6 +1219,31 @@
 "users_gifts" = "Gifts";
 "sent" = "Sent";
 
+/* Developers */
+
+"dev_title" = "Developers";
+"di_new_app" = "Create an App";
+"di_myapps_list" = "My Applications list »";
+"di_title" = "App Development";
+"di_desc" = "<b>OpenVK</b> is an independent Open Source project reviving the classic era of social networks. We are building a transparent and free platform where every developer can implement their ideas without corporate censorship or rigid constraints. Join our community: create apps, explore the source code, and contribute to the development of an internet that belongs to the users once again.";
+"di_btn_games" = "Games and Apps on OpenVK platform";
+"di_btn_standalone" = "Mobile/Standalone Apps";
+"di_btn_widgets" = "OAuth and Widgets for Sites";
+"di_documentation" = "Platform Documentation";
+"di_documentation_desc" = "Description of OpenVK platform features: app authorization, server-side and client-side API methods, app creation, and website integration.";
+"di_support" = "Support";
+"di_support_desc" = "Resolving platform-related issues: tools for contacting support, getting into the app catalog, and platform status.";
+"di_rules" = "Platform Rules";
+"di_rules_desc" = "Rules for publishing apps on the platform, advertising in apps, and accepting payments from users.";
+"di_bugs" = "Bug Tracker";
+"di_bugs_desc" = "A tool for informing developers about issues within the API and platform documentation.";
+
+"dsb_main" = "OpenVK API Overview";
+"dsb_methods" = "Methods";
+"dsb_m_account" = "Account";
+"dsb_m_audio" = "Audio";
+"dsb_models" = "Models";
+
 /* Apps */
 "app" = "Application";
 "apps" = "Applications";

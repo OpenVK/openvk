@@ -1,0 +1,64 @@
+{extends "../@layout.latte"}
+
+{block title}
+    {tr("dev_title")}
+{/block}
+
+{block header}
+    {tr("dev_title")}
+    {css "css/dev.css"}
+{/block}
+
+{block wrap}
+    <div class="wrap2">
+        <div class="wrap1">
+            <div class="page_wrap">
+                <div class="dev_main_head">
+                    <div class="dev_main_narrow">
+                        <div class="dev_create_app_btn"><a href="/editapp?act=create" class="button">&nbsp;&nbsp;{tr("di_new_app")}&nbsp;&nbsp;</a></div><br>
+                        <a href="/apps?act=dev">{tr("di_myapps_list")}</a>
+                    </div>
+                    <div class="dev_main_header">{tr("di_title")}</div>
+                    <div class="dev_main_desc">
+                        {tr("di_desc")|noescape}
+
+                        <div class="dev_main_sections">
+                            <a href="/dev/native" class="dev_sect dev_sect_games">
+                            <div class="dev_sect_icon"></div>
+                            {tr("di_btn_games")}
+                            </a>
+                            <a href="/dev/standalone" class="dev_sect dev_sect_standalone">
+                            <div class="dev_sect_icon"></div>
+                            {tr("di_btn_standalone")}
+                            </a>
+                            <a href="/dev/sites" class="dev_sect dev_sect_widgets">
+                            <div class="dev_sect_icon"></div>
+                            {tr("di_btn_widgets")}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="dev_main_cont">
+                    <div class="dev_parts_list fl_l">
+                        <a href="/dev/main" class="dev_part">
+                        <div class="dev_part_name">{tr("di_documentation")}</div>
+                        <div class="dev_part_desc">{tr("di_documentation_desc")}</div>
+                        </a>
+                        <a href="/support" class="dev_part">
+                        <div class="dev_part_name">{tr("di_support")}</div>
+                        <div class="dev_part_desc">{tr("di_support_desc")}</div>
+                        </a>
+                        <a href="/dev/terms" class="dev_part">
+                        <div class="dev_part_name">{tr("di_rules")}</div>
+                        <div class="dev_part_desc">{tr("di_rules_desc")}</div>
+                        </a>
+                        <a href="/dev/bugs" class="dev_part">
+                        <div class="dev_part_name">{tr("di_bugs")}</div>
+                        <div class="dev_part_desc">{tr("di_bugs_desc")}</div>
+                        </a>
+                    </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+{/block}

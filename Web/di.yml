@@ -28,6 +28,7 @@ services:
     - openvk\Web\Presenters\PollPresenter
     - openvk\Web\Presenters\BannedLinkPresenter
     - openvk\Web\Presenters\DocumentsPresenter
+    - openvk\Web\Presenters\DevelopersPresenter
     - openvk\Web\Models\Repositories\Users
     - openvk\Web\Models\Repositories\Posts
     - openvk\Web\Models\Repositories\Polls

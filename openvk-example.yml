@@ -106,6 +106,7 @@ openvk:
             notification: false
             support: false
             topics: false
+            dev: false
         ton:
             enabled: false
             address: "🅿"
