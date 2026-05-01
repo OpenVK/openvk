@@ -113,7 +113,9 @@ final class Messages extends VKAPIRequestHandler
     {
         $this->requireUser();
         $currentUser = $this->getUser();
-        $params = [];
+        $params = [
+            "version" => $version,
+        ];
 
         if ($group_id > 0) {
             $club = (new ClubRepo())->get((int)$group_id);
@@ -526,6 +528,88 @@ final class Messages extends VKAPIRequestHandler
         }
 
         return $result;
+    }
+
+    // ----------------------------------
+    //              Status
+    // ----------------------------------
+
+    public function getLastActivity(int $user_id) {
+        $uRepo = (new USRRepo());
+        $u = $uRepo->get($user_id);
+
+        if (empty($u)) {
+            $this->fail(113, 'Unknown user id');
+        }
+
+        return (object) [
+            "online" => (int)$u->isOnline(),
+            "time"   => $u->getOnline()->timestamp(),
+        ];
+    }
+
+    public function setActivity(
+        int $user_id = 0,
+        string $type = "typing",
+        int $peer_id = 0,
+        int $group_id = 0
+    ) {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        $this->ensureBrokerActive();
+
+        if (!in_array($type, ['typing', 'audiomessage'])) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: type");
+        }
+
+        $resolvedPeerId = $this->resolvePeer($user_id, $peer_id);
+
+        if (is_null($resolvedPeerId) || $resolvedPeerId === 0) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: peer_id is required");
+        }
+
+        $sender_id = $this->getUser()->getId();
+        if ($group_id > 0) {
+            $cRepo = new ClubRepo();
+            $club = $cRepo->get((int)$group_id);
+            
+            if (!$club) {
+                $this->fail(100, "One of the parameters specified was missing or invalid: group_id -> club not found");
+            }
+
+            if ($club->isBanned()) {
+                $this->fail(15, "Access denied: this community is blocked");
+            }
+
+            if (!$club->canBeModifiedBy($this->getUser())) {
+                $this->fail(15, "Access denied: you are not an administrator of this community");
+            }
+
+            $sender_id = ((int)$club->getId()) * -1;
+        }
+
+        $params = [
+            "peer_id" => (string) $resolvedPeerId,
+            "type"    => $type,
+        ];
+
+        try {
+            $response = $this->broker->invokeMethod($sender_id, "messages.setActivity", $params);
+
+            if ($response === false) {
+                $this->fail(950, "IM Service unreachable");
+            }
+
+            $data = json_decode($response, true);
+            
+            if (isset($data['error'])) {
+                $this->fail($data['error']['error_code'], $data['error']['error_msg']);
+            }
+
+            return 1;
+        } catch (\Exception $e) {
+            $this->fail(500, "Broker failure: " . $e->getMessage());
+        }
     }
 
     /*
