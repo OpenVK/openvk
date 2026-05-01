@@ -138,12 +138,20 @@ class Message extends RowModel
                     ],
                 ];
             } elseif ($attachment instanceof Video) {
+                if ($attachment->getType() != 1) {
+                    $videoUrl  = $attachment->getURL();
+                    $embedHtml = null;
+                } else {
+                    $videoUrl  = $attachment->getVideoDriver()->getURL();
+                    $embedHtml = $attachment->getVideoDriver()->getEmbed("100%");
+                }
                 $attachments[] = [
                     "type"  => "video",
                     "link"  => "/video" . $attachment->getPrettyId(),
                     "id"    => $attachment->getOwner()->getId() . "_" . $attachment->getVirtualId(),
                     "video" => [
-                        "url"               => $attachment->getURL(),
+                        "url"               => $videoUrl,
+                        "embed_html"        => $embedHtml,
                         "name"              => $attachment->getName(),
                         "length"            => $attachment->getLength(),
                         "formatted_length"  => $attachment->getFormattedLength(),

@@ -35,14 +35,19 @@
                                 </div>
                                 <div data-bind="if: type === 'video'" class="msg-attach-j-video">
                                     <div style="width: 100%; max-width: 400px; background: #000;">
+                                        <!-- ko if: !video.embed_html -->
                                         <div class="bsdn media" data-bind="attr: { 'data-name': video.name, 'data-author': video.author }" style="width: 100%;">
                                             <video class="media" data-bind="attr: { src: video.url }" style="width: 100%; display: block;"></video>
                                         </div>
+                                        <!-- /ko -->
+                                        <!-- ko if: video.embed_html -->
+                                        <div data-bind="html: video.embed_html" style="width: 100%;"></div>
+                                        <!-- /ko -->
                                     </div>
                                     <div class="video-wowzer" style="margin-top: 8px;">
                                         <div class="small-video-ico"></div>
                                         <a data-bind="attr: { href: link, 'data-video-id': id }, text: video.name" class="videoMessengerOpen" style="display: inline-block;"></a>
-                                        <span class="video-wowzer-length" data-bind="text: '(' + video.formatted_length + ')'"></span>
+                                        <span class="video-wowzer-length" data-bind="visible: !video.embed_html, text: '(' + video.formatted_length + ')'"></span>
                                     </div>
                                 </div>
                                 <div data-bind="if: type === 'audio'" class="msg-attach-j-audio">
