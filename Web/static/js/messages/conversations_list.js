@@ -28,7 +28,7 @@ class Conversations {
     async _resolveSel(sel) {
         let _ = null;
         this.convs.forEach(item => {
-            if (item.peer.id == sel) {
+            if (item.peer.id === sel) {
                 _ = item;
             }
         })
@@ -37,14 +37,19 @@ class Conversations {
             return _.peer;
         }
 
-        return await ChatGeneralForm.resolveById(sel);
+        let _n = await ChatGeneralForm.resolveById(sel);
+        if (!_n) {
+            return null;
+        }
+
+        return new ChatGeneralForm(_n);
     }
 
     async getConversations() {
         // adding profiles to conversation items
         let convs = await window.OVKAPI.call("messages.getConversations", {
             extended: 1,
-            fields: 'photo_100'
+            fields: ChatGeneralForm.base_fields
         });
 
         _authorize(convs, (item) => {
