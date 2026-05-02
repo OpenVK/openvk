@@ -1,9 +1,23 @@
 class ChatGeneralForm {
     constructor(item) {
-        this.base_fields = 'photo_100';
         this.data = item;
         this.messages = [];
         this.swag = 2000000000000;
+    }
+
+    static get base_fields() {
+        return 'photo_100'
+    }
+
+    get id() {
+        switch (this.supposed_type) {
+            case 'user':
+                return this.data.id;
+            case 'club':
+                return this.data.id * -1;
+            case 'chat':
+                return this.data.id + this.swag;
+        }
     }
 
     get supposed_type() {
@@ -18,16 +32,29 @@ class ChatGeneralForm {
         return 'chat';
     }
 
+    get can_write() {
+        return true;
+    }
+
     get avatar_any() {
         return this.data.photo_100;
+    }
+
+    get full_name() {
+        switch (this.supposed_type) {
+            case 'user':
+                return this.data.first_name + ' ' + this.data.last_name;
+            case 'club':
+                return this.data.name;
+        }
     }
 
     get name() {
         switch (this.supposed_type) {
             case 'user':
-                return this.data.first_name
+                return this.data.first_name;
             case 'club':
-                return this.data.name
+                return this.data.name;
         }
     }
 
@@ -54,28 +81,17 @@ class ChatGeneralForm {
             return;
         } else {
             if (id > 0) {
-                const __ = await window.OVKAPI.call('users.get', {'user_ids': id})
+                const __ = await window.OVKAPI.call('users.get', {'user_ids': id, 'fields': ChatGeneralForm.base_fields})
 
                 return __[0]
             } else {
-                const __ = await window.OVKAPI.call('groups.getById', {'group_ids': Math.abs(id)})
+                const __ = await window.OVKAPI.call('groups.getById', {'group_ids': Math.abs(id), 'fields': ChatGeneralForm.base_fields})
                 if (__[0].type == 'undefined') {
                     return null;
                 }
 
                 return __[0]
             }
-        }
-    }
-
-    get id() {
-        switch (this.supposed_type) {
-            case 'user':
-                return this.data.id;
-            case 'club':
-                return this.data.id * -1;
-            case 'chat':
-                return this.data.id + this.swag;
         }
     }
 
@@ -86,7 +102,7 @@ class ChatGeneralForm {
             'offset': offset,
             'count': count,
             'extended': 1,
-            'fields': this.base_fields
+            'fields': ChatGeneralForm.base_fields
         });
 
         const _l = _authorize(messages, (item) => {
@@ -98,6 +114,16 @@ class ChatGeneralForm {
         });
 
         return _l;
+    }
+
+    async sendMessage(msg) {
+        const resp = await window.OVKAPI.call('messages.send', {
+            'peer_id': this.id,
+            'message': msg.text,
+            'attachments': msg.str_attachments
+        });
+
+        console.info('sent message to ' + this.id)
     }
 
     _appendMessages(messages) {
@@ -136,7 +162,7 @@ function _authorize(arr, get_id = null, set_id = null, finalize = null) {
 }
 
 class ChatMessage {
-    constructor(item) {
+    constructor(item = {}) {
         this.data = item;
     }
 
@@ -149,6 +175,22 @@ class ChatMessage {
     }
 
     get attachments() {
-        return this.data.attachments;
+        const _at = this.data.attachments;
+        if (!_at) {
+            return []
+        }
+
+        return _at;
+    }
+
+    get str_attachments() {
+        const _at = this.attachments;
+        if (_at.length == 0) {
+            return '';
+        }
+    }
+
+    setText(text) {
+        this.data.text = text;
     }
 }

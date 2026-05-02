@@ -19,6 +19,16 @@ class Messenger {
     hide(container) {
         container.classList.add('hidden');
     }
+
+    async sendToCurrentCorresponder(model) {
+        const text = model.currentDraft();
+        const corresponder = window.im.corresponder;
+
+        const msg = new ChatMessage();
+        msg.setText(text);
+
+        await corresponder.sendMessage(msg);
+    }
 }
 
 class MessengerViewModel {
@@ -26,7 +36,7 @@ class MessengerViewModel {
         this.template = `
         <div>
             <div data-bind="foreach: opened_tabs">
-                <a data-bind="text: peer.name, event: { click: function() { window.im.messenger.view.setChat(this) } }"></a>
+                <a data-bind="text: peer.name, event: { click: function() { window.im.selectChat(this) } }"></a>
             </div>
         </div>
         <div class="messenger-app">
@@ -56,15 +66,15 @@ class MessengerViewModel {
                 </div>
             </div>
             <div class="messenger-app--input">
-                <img class="ava" alt="{$thisUser->getCanonicalName()}" />
+                <img class="ava" data-bind="attr: { src: window.im.current.avatar_any, alt: window.im.current.full_name }" />
                 <div class="messenger-app--input---messagebox">
                     <textarea
-                            data-bind="value: messageContent"
+                            data-bind="value: currentDraft, event: { keydown: onTextareaKeyPress }"
                             name="message"
-                            placeholder="{_enter_message}"></textarea>
-                    <button class="button">{_send}</button>
+                            placeholder="${tr('enter_message')}"></textarea>
+                    <button data-bind="event: { click: sendMessage }" class="button">${tr('send')}</button>
                 </div>
-                <img class="ava" alt="{$correspondent->getCanonicalName()}" />
+                <img class="ava" data-bind="attr: { src: window.im.corresponder.avatar_any, alt: window.im.corresponder.full_name }" />
             </div>
         </div>
         `
@@ -73,15 +83,11 @@ class MessengerViewModel {
             console.log()
             return window.im._messages;
         });
-        this.messageContent = ko.observable('');
+        this.currentDraft = ko.observable('');
+        this.drafts = {};
         this.current_chat = ko.observable(null); // index of element
 
-        /*this.sendMessage = model => {
-            if(model.messageContent() === "") return false;
-            
-            window.Msg.sendMessage(model.messageContent());
-            model.messageContent("");
-        };
+        /*
         this.loadHistory = _ => {
             window.Msg._loadHistory();
         };
@@ -91,21 +97,35 @@ class MessengerViewModel {
                 model.loadHistory();
         };
         this.onTextareaKeyPress = (model, e) => {
-            if(e.which === 13) {
-                if(!e.metaKey && !e.shiftKey) {
-                    let ta = u("textarea[name=message]").nodes[0];
-                    ta.blur(); //Fix update
-                    model.sendMessage(model);
-                    ta.focus();
-                    
-                    return false;
-                }
-            }
-            
-            return true;
+
         };*/
     }
 
+    onTextareaKeyPress(model, e) {
+        const ta = e.target;
+        if(e.which === 13) {
+            if(!e.metaKey && !e.shiftKey) {
+                ta.blur();
+                this.sendMessage(model);
+                ta.focus();
+
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    sendMessage(model) {
+        if(model.currentDraft() === "") return false;
+
+        window.im.messenger.sendToCurrentCorresponder(model)
+
+        this._eraseDraftFor({'peer': window.im.current});
+        this._eraseCurrentDraft();
+    }
+
+    // why these methods are there???
     hasChat(conversation) {
         return this.opened_tabs().indexOf(conversation) != -1;
     }
@@ -152,149 +172,41 @@ class MessengerViewModel {
             this.addChat(conversation);
         }
     }
-}
 
-window.im = new (class {
-    constructor() {
-        this.tabs = ['conversations', 'messenger'];
-        this.tab = ''
-    }
+    // Drafts
 
-    async init(container) {
-        if (window.OVKAPI == null) {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-
-        this.root = container;
-        await this._loadCurrent();
-        this._initTabs();
-
-        if (!this.conversations) {
-            this.conversations = new Conversations();
-            await this.conversations.init();
-        }
-
-        if (!this.messenger) {
-            this.messenger = new Messenger();
-            await this.messenger.init();
-        }
-
-        const found = await this._checkSel(new URL(location.href));
-        if (!found) {
-            this.selectTab('conversations');
-        }
-    }
-
-    selectTab(tab_name) {
-        if (this.tabs.indexOf(tab_name) == -1) {
-            throw new Error('invalid tab');
-        }
-
-        this.tab = tab_name;
-        // its so amazing to define check state via id not by class
-        // and do this for tab's text
-        u(this.root).find(".tabs .tab").attr('id', '')
-        u(this.root).find(`.tabs .tab[data-tab='${tab_name}']`).attr('id', 'activetabs')
-
-        switch (tab_name) {
-            case 'conversations':
-                this.conversations.appear(this._getTabWindow('conversations'));
-                this.messenger.hide(this._getTabWindow('messenger'));
-                this._pushState('/im');
-                break;
-            case 'messenger':
-                this.conversations.hide(this._getTabWindow('conversations'));
-                this.messenger.appear(this._getTabWindow('messenger'));
-                try {
-                    window.im._pushState('/im?sel=' + window.im.messenger.view.getCurrentChat().peer.id);
-                } catch(e) {
-                    console.error(e);
-                }
-
-                break;
-        }
-    }
-
-    async selectChat(conv) {
-        this.messenger.view.preselectChat(conv);
-
-        //const current_chat = this.messenger.view.getCurrentChat();
-        if (!conv.peer._isMessagesInited()) {
-            const messages = await conv.peer.getMessages();
-
-            conv.peer._appendMessages(messages);
-        }
-        this.messenger.view.setChat(conv, false);
-
-        this.selectTab('messenger');
-    }
-
-    async _loadCurrent() {
-        this._current = await window.OVKAPI.call('users.get', {'user_ids': window.openvk.current_id, 'fields': 'photo_100'})
-        this._current = this._current[0];
-    }
-
-    _initTabs() {
-        this.root.insertAdjacentHTML('beforeend', `
-            <div class="tabs"></div>
-        `);
-
-        this.tabs.forEach(tab => {
-            this.root.insertAdjacentHTML('beforeend', `
-                <div data-window="${tab}"></div>    
-            `);
-            this.root.querySelector(".tabs").insertAdjacentHTML('beforeend', `
-                <a data-tab="${tab}" onclick="window.im.selectTab('${tab}', event)" class="tab">
-                    ${tab}
-                </a>
-            `);
-        })
-    }
-
-    async _checkSel(loc) {
-        const _sel = Number(loc.searchParams.get('sel'));
-        if (!_sel) {
+    _saveDraft(to_chat) {
+        if (!to_chat) {
             return;
         }
 
-        const peer = await this.conversations._resolveSel(_sel);
+        this.drafts[to_chat.peer.id] = this.currentDraft();
+        console.info('saved draft for peer ' + to_chat.peer.id);
+        this._eraseCurrentDraft();
+    }
 
-        if (peer) {
-            const _item = new ChatGeneralForm(peer);
-            const _l = this.messenger.view.getChatWith(_item);
-            await this.selectChat(_l);
+    _eraseDraftFor(chat) {
+        this.drafts[chat.peer.id] = undefined;
+        console.info('erased draft for ' + chat.peer.id);
+    }
 
-            return _l;
-        } else {
-            console.error('No peer with this id!')
+    _eraseCurrentDraft() {
+        this.currentDraft('');
+    }
+
+    _loadDraft(for_chat) {
+        console.log(for_chat)
+        if (!for_chat) {
+            return;
         }
-    }
 
-    _getTabWindow(tab_name) {
-        return this.root.querySelector(`div[data-window="${tab_name}"]`)
-    }
-
-    get _messages() {
-        try {
-            const _chat = this.messenger.view.getCurrentChat();
-
-            return _chat.peer._getLocalMessages();
-        } catch(e) {
-            console.error(e);
-            return []
+        const _draft = this.drafts[for_chat.peer.id];
+        if (!_draft || _draft == '') {
+            return;
         }
-    }
 
-    _pushState(url) {
-        history.pushState({'from_messenger': 1}, null, url);
-    }
+        console.info('loaded draft for peer ' + for_chat.peer.id);
 
-    _resolveState(e) {
-        const _url = new URL(location.href);
-        if (_url.searchParams.get('sel')) {
-            this._checkSel(_url);
-        } else {
-            this.selectTab('conversations');
-        }
+        this.currentDraft(_draft);
     }
-})()
+}
