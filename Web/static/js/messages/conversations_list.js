@@ -25,6 +25,21 @@ class Conversations {
         `
     }
 
+    async _resolveSel(sel) {
+        let _ = null;
+        this.convs.forEach(item => {
+            if (item.peer.id == sel) {
+                _ = item;
+            }
+        })
+
+        if (_) {
+            return _.peer;
+        }
+
+        return await ChatGeneralForm.resolveById(sel);
+    }
+
     async getConversations() {
         // adding profiles to conversation items
         let convs = await window.OVKAPI.call("messages.getConversations", {
@@ -47,16 +62,14 @@ class Conversations {
     }
 
     appear(container) {
+        container.classList.remove('hidden');
         if (this.appeared) {
-            container.classList.remove('hidden');
-
             return;
         }
 
         this.node = container.insertAdjacentHTML('beforeend', this.template);
         this.appeared = true;
 
-        // todo unapply when unused???
         ko.applyBindings(this.view, container);
     }
 

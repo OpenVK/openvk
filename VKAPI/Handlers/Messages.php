@@ -165,7 +165,7 @@ final class Messages extends VKAPIRequestHandler
     private function resolvePeer(int $user_id = -1, int $peer_id = -1, int $chat_id = -1): ?int
     {
         if ($chat_id > 0) return 2000000000 + $chat_id;
-        if ($peer_id !== -1) return $peer_id; 
+        if ($peer_id !== 0) return $peer_id; 
         if ($user_id !== -1) return $user_id;
         return null;
     }
@@ -219,7 +219,7 @@ final class Messages extends VKAPIRequestHandler
 
     public function send(
         int $user_id = -1,
-        int $peer_id = -1,
+        int $peer_id = 0,
         string $domain = "",
         int $chat_id = -1,
         int $group_id = 0,
@@ -239,7 +239,7 @@ final class Messages extends VKAPIRequestHandler
             $this->fail(950, "IM Service is temporarily unavailable");
         }
 
-        if ($user_id === -1 && $peer_id === -1 && $domain === "" && $chat_id === -1 && $user_ids === "") {
+        if ($user_id === -1 && $peer_id === 0 && $domain === "" && $chat_id === -1 && $user_ids === "") {
             $this->fail(100, "One of the parameters specified was missing or invalid: no recipient");
         }
 

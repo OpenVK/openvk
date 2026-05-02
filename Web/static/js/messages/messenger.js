@@ -1,6 +1,7 @@
 class Messenger {
     async init() {
         this.view = new MessengerViewModel();
+        this.insert_type = 'page'; // page / fastchat
     }
 
     appear(container = null) {
@@ -130,8 +131,12 @@ class MessengerViewModel {
         return is;
     }
 
-    setChat(conv) {
+    setChat(conv, pushstate = true) {
         this.current_chat(this.opened_tabs().indexOf(conv));
+
+        if (pushstate) {
+            window.im._pushState('/im?sel=' + conv.peer.id);
+        }
     }
 
     addChat(conv) {
@@ -161,6 +166,7 @@ window.im = new (class {
         }
 
         this.root = container;
+        await this._loadCurrent();
         this._initTabs();
 
         if (!this.conversations) {
@@ -173,8 +179,10 @@ window.im = new (class {
             await this.messenger.init();
         }
 
-        this._checkSel(new URL(location.href));
-        this.selectTab('conversations');
+        const found = await this._checkSel(new URL(location.href));
+        if (!found) {
+            this.selectTab('conversations');
+        }
     }
 
     selectTab(tab_name) {
@@ -192,12 +200,38 @@ window.im = new (class {
             case 'conversations':
                 this.conversations.appear(this._getTabWindow('conversations'));
                 this.messenger.hide(this._getTabWindow('messenger'));
+                this._pushState('/im');
                 break;
             case 'messenger':
                 this.conversations.hide(this._getTabWindow('conversations'));
                 this.messenger.appear(this._getTabWindow('messenger'));
+                try {
+                    window.im._pushState('/im?sel=' + window.im.messenger.view.getCurrentChat().peer.id);
+                } catch(e) {
+                    console.error(e);
+                }
+
                 break;
         }
+    }
+
+    async selectChat(conv) {
+        this.messenger.view.preselectChat(conv);
+
+        //const current_chat = this.messenger.view.getCurrentChat();
+        if (!conv.peer._isMessagesInited()) {
+            const messages = await conv.peer.getMessages();
+
+            conv.peer._appendMessages(messages);
+        }
+        this.messenger.view.setChat(conv, false);
+
+        this.selectTab('messenger');
+    }
+
+    async _loadCurrent() {
+        this._current = await window.OVKAPI.call('users.get', {'user_ids': window.openvk.current_id, 'fields': 'photo_100'})
+        this._current = this._current[0];
     }
 
     _initTabs() {
@@ -218,13 +252,19 @@ window.im = new (class {
     }
 
     async _checkSel(loc) {
-        const _sel = loc.searchParams.get('sel');
-        const peer = await ChatGeneralForm.resolveById(_sel);
+        const _sel = Number(loc.searchParams.get('sel'));
+        if (!_sel) {
+            return;
+        }
+
+        const peer = await this.conversations._resolveSel(_sel);
 
         if (peer) {
             const _item = new ChatGeneralForm(peer);
             const _l = this.messenger.view.getChatWith(_item);
             await this.selectChat(_l);
+
+            return _l;
         } else {
             console.error('No peer with this id!')
         }
@@ -237,7 +277,6 @@ window.im = new (class {
     get _messages() {
         try {
             const _chat = this.messenger.view.getCurrentChat();
-            console.log(_chat)
 
             return _chat.peer._getLocalMessages();
         } catch(e) {
@@ -246,17 +285,16 @@ window.im = new (class {
         }
     }
 
-    async selectChat(conv) {
-        this.messenger.view.preselectChat(conv);
+    _pushState(url) {
+        history.pushState({'from_messenger': 1}, null, url);
+    }
 
-        //const current_chat = this.messenger.view.getCurrentChat();
-        if (!conv.peer._isMessagesInited()) {
-            const messages = await conv.peer.getMessages();
-
-            conv.peer._appendMessages(messages);
+    _resolveState(e) {
+        const _url = new URL(location.href);
+        if (_url.searchParams.get('sel')) {
+            this._checkSel(_url);
+        } else {
+            this.selectTab('conversations');
         }
-        this.messenger.view.setChat(conv);
-
-        this.selectTab('messenger');
     }
 })()
