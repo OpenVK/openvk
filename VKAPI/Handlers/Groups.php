@@ -172,7 +172,7 @@ final class Groups extends VKAPIRequestHandler
                     "id"          => intval($clbs[$i]),
                     "name"        => "DELETED",
                     "screen_name" => "club" . intval($clbs[$i]),
-                    "type"        => "group",
+                    "type"        => "undefined",
                     "description" => "This group was deleted or it doesn't exist",
                 ];
             } elseif ($clbs[$i] == null) {

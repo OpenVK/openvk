@@ -4,10 +4,12 @@ class ChatGeneralForm {
         this.data = item;
         this.supposed_type = supposed_type;
         this.messages = [];
+        this.swag = 2000000000000;
 
         if (!supposed_type) {
             if (item.first_name) {
                 this.supposed_type = 'user'
+            // поменяй проверку
             } else if (item.name) {
                 this.supposed_type = 'club'
             } else {
@@ -42,14 +44,39 @@ class ChatGeneralForm {
         return '/im?sel=' + this.id
     }
 
+    static async resolveById(id) {
+        if (id == 0) {
+            const __ = await window.OVKAPI.call('users.get', {'user_ids': window.openvk.current_id})
+            return __[0]
+        }
+
+        if (id > this.swag) {
+            // chats or smth
+            return;
+        } else {
+            if (id > 0) {
+                const __ = await window.OVKAPI.call('users.get', {'user_ids': id})
+
+                return __[0]
+            } else {
+                const __ = await window.OVKAPI.call('groups.getById', {'group_ids': Math.abs(id)})
+                if (__[0].type == 'undefined') {
+                    return null;
+                }
+
+                return __[0]
+            }
+        }
+    }
+
     get id() {
         switch (this.supposed_type) {
             case 'user':
-                return this.data.id
+                return this.data.id;
             case 'club':
-                return this.data.id * -1
+                return this.data.id * -1;
             case 'chat':
-                return this.data.id + 2000000000000
+                return this.data.id + this.swag;
         }
     }
 
