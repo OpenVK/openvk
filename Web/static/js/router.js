@@ -427,10 +427,15 @@ window.addEventListener('popstate', (e) => {
     }*/
 
     if(e.state != null) {
+        if (e.state.from_messenger) {
+            window.im._resolveState(e);
+            return;
+        }
+
         window.router.route({
             url: location.href,
             push_state: false,
-        })
+        });
     }
 })
 

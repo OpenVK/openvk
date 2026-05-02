@@ -1,21 +1,21 @@
 class ChatGeneralForm {
-    constructor(item, supposed_type = null) {
+    constructor(item) {
         this.base_fields = 'photo_100';
         this.data = item;
-        this.supposed_type = supposed_type;
         this.messages = [];
         this.swag = 2000000000000;
+    }
 
-        if (!supposed_type) {
-            if (item.first_name) {
-                this.supposed_type = 'user'
-            // поменяй проверку
-            } else if (item.name) {
-                this.supposed_type = 'club'
-            } else {
-                this.supposed_type = 'chat' // or channel
-            }
+    get supposed_type() {
+        if (this.data.first_name) {
+            return 'user';
         }
+
+        if (this.data.name) {
+            return 'club';
+        }
+
+        return 'chat';
     }
 
     get avatar_any() {
@@ -46,8 +46,7 @@ class ChatGeneralForm {
 
     static async resolveById(id) {
         if (id == 0) {
-            const __ = await window.OVKAPI.call('users.get', {'user_ids': window.openvk.current_id})
-            return __[0]
+            return window.im._current;
         }
 
         if (id > this.swag) {
