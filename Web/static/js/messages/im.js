@@ -38,8 +38,6 @@ window.im = new (class {
         this.tab = tab_name;
         // its so amazing to define check state via id not by class
         // and do this for tab's text
-        u(this.root).find(".tabs .tab").attr('id', '')
-        u(this.root).find(`.tabs .tab[data-tab='${tab_name}']`).attr('id', 'activetabs')
 
         switch (tab_name) {
             case 'conversations':
@@ -48,6 +46,10 @@ window.im = new (class {
                 this._pushState('/im');
                 break;
             case 'messenger':
+                if (!window.im.corresponder) {
+                    return;
+                }
+
                 this.conversations.hide(this._getTabWindow('conversations'));
                 this.messenger.appear(this._getTabWindow('messenger'));
                 try {
@@ -58,6 +60,9 @@ window.im = new (class {
 
                 break;
         }
+
+        u(this.root).find(".tabs .tab").attr('id', '')
+        u(this.root).find(`.tabs .tab[data-tab='${tab_name}']`).attr('id', 'activetabs')
     }
 
     async selectChat(conv) {
@@ -85,6 +90,7 @@ window.im = new (class {
         this._current_id = 0;
     }
 
+    // Current user. Do not confuse with window.im.corresponder!
     get current() {
         return this._currents[this._current_id];
     }
@@ -140,7 +146,11 @@ window.im = new (class {
     }
 
     get corresponder() {
-        return this.messenger.view.getCurrentChat().peer;
+        try {
+            return this.messenger.view.getCurrentChat().peer;
+        } catch(e) {
+            console.error(e);
+        }
     }
 
     _pushState(url) {
