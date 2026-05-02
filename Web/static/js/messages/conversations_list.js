@@ -2,7 +2,6 @@ class ConversationsViewModel {
     constructor() {
         this.conversations = ko.observableArray(window.im.conversations.convs);
     }
-
 }
 
 class Conversations {

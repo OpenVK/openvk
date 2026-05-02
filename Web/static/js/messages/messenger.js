@@ -1,7 +1,9 @@
 class Messenger {
     async init() {
+        this.appEl = document.querySelector(".messenger-app--messages");
         this.view = new MessengerViewModel();
-        this.insert_type = 'page'; // page / fastchat
+        this.insert_type = 'page'; // page / fast_chat
+        // fastchat sounds like a deutsch surname xd
     }
 
     appear(container = null) {
@@ -35,8 +37,8 @@ class MessengerViewModel {
     constructor() {
         this.template = `
         <div>
-            <div data-bind="foreach: opened_tabs">
-                <a data-bind="text: peer.name, event: { click: function() { window.im.selectChat(this) } }"></a>
+            <div data-bind="foreach: opened_tabs" class="messages--peers-tabs">
+                <a class="messages--peers-tab" data-bind="text: peer.name, event: { click: function() { window.im.selectChat(this) } }"></a>
             </div>
         </div>
         <div class="messenger-app">
@@ -208,5 +210,34 @@ class MessengerViewModel {
         console.info('loaded draft for peer ' + for_chat.peer.id);
 
         this.currentDraft(_draft);
+    }
+}
+
+class LongPollConnection {
+    listenLongpool() {
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", "/im12", true);
+        xhr.onload = () => {
+            let data = JSON.parse(xhr.responseText);
+            data.forEach(event => {
+                event = event.event;
+                if(event.type !== "newMessage")
+                    return;
+                //else if(event.message.sender.id !== {$correspondent->getId()})
+                //    return;
+                else if(this.offset >= event.message.uuid)
+                    return void(console.warn());
+
+                this.addMessage(event.message);
+                //this.offset = event.message.uuid;
+            });
+
+            listenLongpool();
+        };
+        xhr.send();
+    }
+
+    constructor() {
+        listenLongpool();
     }
 }

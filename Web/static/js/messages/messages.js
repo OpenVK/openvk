@@ -1,8 +1,14 @@
 class ChatGeneralForm {
+    static swag = 2000000000000;
+    static MESSAGES_PER_PAGE = 1;
+
     constructor(item) {
         this.data = item;
         this.messages = [];
-        this.swag = 2000000000000;
+        this.offset = 0;
+
+        // временные свойства хз где лучше храниь
+
     }
 
     static get base_fields() {
@@ -96,11 +102,10 @@ class ChatGeneralForm {
     }
 
     async getMessages(offset = 0) {
-        const count = 10;
         const messages = await window.OVKAPI.call('messages.getHistory', {
             'peer_id': this.id,
             'offset': offset,
-            'count': count,
+            'count': ChatGeneralForm.MESSAGES_PER_PAGE,
             'extended': 1,
             'fields': ChatGeneralForm.base_fields
         });
@@ -114,6 +119,11 @@ class ChatGeneralForm {
         });
 
         return _l;
+    }
+
+    async moveOffset() {
+        this.offset += ChatGeneralForm.MESSAGES_PER_PAGE;
+        return await this.getMessages(this.offset);
     }
 
     async sendMessage(msg) {
