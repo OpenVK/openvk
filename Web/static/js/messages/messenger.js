@@ -21,9 +21,7 @@ class Messenger {
 }
 
 class MessengerViewModel {
-    //console.log(window.im.messenger.getCurrentChat())
     constructor() {
-        // todo: чел может открыть несколько чатов, для каждого из них нужно сохранять прокрутку. поэтому надо сделать несколько view model и в массиве всё держать
         this.template = `
         <div>
             <div data-bind="foreach: opened_tabs">
@@ -111,8 +109,28 @@ class MessengerViewModel {
         return this.opened_tabs().indexOf(conversation) != -1;
     }
 
+    getChatWith(chat_general_form) {
+        let is = null;
+
+        window.im.conversations.convs.forEach(item => {
+            if (item.peer.id == chat_general_form.id) {
+                is = item;
+                return;
+            }
+        })
+
+        // какая разница
+        // но тут проблема что я не выделил conversation из метода в класс и поэтому это странно
+        if (!is) {
+            return {
+                'peer': chat_general_form
+            };
+        }
+
+        return is;
+    }
+
     setChat(conv) {
-        console.log(conv)
         this.current_chat(this.opened_tabs().indexOf(conv));
     }
 
@@ -138,7 +156,6 @@ window.im = new (class {
     }
 
     async init(container) {
-        // todo change
         if (window.OVKAPI == null) {
             await new Promise((resolve) => setTimeout(resolve, 1000));
         }
@@ -146,10 +163,17 @@ window.im = new (class {
         this.root = container;
         this._initTabs();
 
-        this.conversations = new Conversations();
-        await this.conversations.init();
-        this.messenger = new Messenger();
-        await this.messenger.init();
+        if (!this.conversations) {
+            this.conversations = new Conversations();
+            await this.conversations.init();
+        }
+
+        if (!this.messenger) {
+            this.messenger = new Messenger();
+            await this.messenger.init();
+        }
+
+        this._checkSel(new URL(location.href));
         this.selectTab('conversations');
     }
 
@@ -177,7 +201,6 @@ window.im = new (class {
     }
 
     _initTabs() {
-        // todo rewrite on kojs
         this.root.insertAdjacentHTML('beforeend', `
             <div class="tabs"></div>
         `);
@@ -192,6 +215,19 @@ window.im = new (class {
                 </a>
             `);
         })
+    }
+
+    async _checkSel(loc) {
+        const _sel = loc.searchParams.get('sel');
+        const peer = await ChatGeneralForm.resolveById(_sel);
+
+        if (peer) {
+            const _item = new ChatGeneralForm(peer);
+            const _l = this.messenger.view.getChatWith(_item);
+            await this.selectChat(_l);
+        } else {
+            console.error('No peer with this id!')
+        }
     }
 
     _getTabWindow(tab_name) {
