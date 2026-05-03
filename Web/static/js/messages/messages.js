@@ -3,7 +3,7 @@ class ChatGeneralForm {
     static MESSAGES_PER_PAGE = 1;
 
     constructor(item) {
-        this.data = item;
+        this.data = item || {};
         this.messages = [];
         this.offset = 0;
 
