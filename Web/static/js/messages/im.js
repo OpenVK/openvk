@@ -123,6 +123,8 @@ window.im = new (class {
                 this.conversations.appear(this._getTabWindow('conversations'));
                 this.messenger.hide(this._getTabWindow('messenger'));
                 this._pushState('/im');
+                this._toggleScrollMode(false);
+
                 break;
             case 'messenger':
                 if (!window.im.corresponder) {
@@ -131,6 +133,8 @@ window.im = new (class {
 
                 this.conversations.hide(this._getTabWindow('conversations'));
                 this.messenger.appear(this._getTabWindow('messenger'));
+                this._toggleScrollMode(true);
+
                 try {
                     window.im._pushState('/im?sel=' + window.im.messenger.view.getCurrentChat().peer.id);
                 } catch(e) {
@@ -146,6 +150,14 @@ window.im = new (class {
 
     _getTabWindow(tab_name) {
         return this.root.querySelector(`div[data-window="${tab_name}"]`)
+    }
+
+    _toggleScrollMode(enable = true) {
+        if (enable) {
+            u('body').addClass('no-scroll');
+        } else {
+            u('body').removeClass('no-scroll');
+        }
     }
 
     // Messages of current chat

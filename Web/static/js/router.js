@@ -153,6 +153,7 @@ window.router = new class {
         }
 
         this.applyTweaks()
+        window.im._toggleScrollMode(false);
 
         /*window.document.dispatchEvent(new Event("DOMContentLoaded", {
             bubbles: true,

@@ -1,6 +1,6 @@
 class ChatGeneralForm {
     static swag = 2000000000000;
-    static MESSAGES_PER_PAGE = 1;
+    static MESSAGES_PER_PAGE = 100;
 
     constructor(item) {
         this.data = item || {};
@@ -172,6 +172,13 @@ function _authorize(arr, get_id = null, set_id = null, finalize = null) {
 }
 
 class ChatMessage {
+    static AUTHOR_NAME_HIDE_TIMEOUT = 100;
+
+    doHideHead(another_msg) {
+        let _time_eq = this.data.date - another_msg.data.date;
+        return this.data.from_id == another_msg.data.from_id && _time_eq < ChatMessage.AUTHOR_NAME_HIDE_TIMEOUT;
+    }
+
     constructor(item = {}) {
         this.data = item;
     }

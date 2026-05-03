@@ -6,9 +6,13 @@ class Messenger {
         // fastchat sounds like a deutsch surname xd
     }
 
+    hasAppeared(container) {
+        return container.querySelector('.messenger-app') != null;
+    }
+
     appear(container = null) {
         container.classList.remove('hidden');
-        if (this.appeared) {
+        if (this.hasAppeared(container)) {
             return;
         }
 
@@ -46,11 +50,13 @@ class MessengerViewModel {
         </div>
         <div class="messenger-app">
             <div class="messenger-app--messages">
-                <div data-bind="foreach: messages">
-                    <div class="messenger-app--messages---message">
-                        <img class="ava" data-bind="attr: { src: sender.avatar_any, alt: sender.name }" />
+                <div class="messenger-app--messages-array" data-bind="foreach: { data: messages, as: 'msg' }">
+                    <div class="messenger-app--messages---message" data-bind="css: { 'same-author': $index() > 0 && $parent.messages()[$index() - 1].doHideHead(msg)}">
+                        <div class="_avatar">
+                            <img class="ava" data-bind="attr: { src: sender.avatar_any, alt: sender.name }" />
+                        </div>
                         <div class="_content">
-                            <a href="#" data-bind="attr: { href: sender.link }">
+                            <a class="_sender" href="#" data-bind="attr: { href: sender.link }">
                                 <strong data-bind="text: sender.name"></strong>
                             </a>
                             <span class="text" data-bind="html: text"></span>
