@@ -4,3 +4,8 @@
     background: black;
     margin: 5px 10px 0px 0px;
 }
+
+.messages--peers-tabs .messages--peers-tab-close {
+    padding: 9px 12px;
+    background: #66f0cc;
+}

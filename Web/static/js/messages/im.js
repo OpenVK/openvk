@@ -5,6 +5,25 @@ window.im = new (class {
         this.tab = ''
     }
 
+    // Get ID from ?sel= param and find conversation for it
+    async _checkSel(loc) {
+        const _sel = Number(loc.searchParams.get('sel'));
+        if (!_sel) {
+            return;
+        }
+
+        const peer = await this.conversations._resolveSel(_sel);
+
+        if (peer) {
+            const _l = this.messenger.view.getChatWith(peer);
+            await this.selectChat(_l);
+
+            return _l;
+        } else {
+            console.error('No peer with this id!')
+        }
+    }
+
     async init(container) {
         if (window.OVKAPI == null) {
             await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -28,6 +47,66 @@ window.im = new (class {
         if (!found) {
             this.selectTab('conversations');
         }
+    }
+
+    // Something between messenger and conversations
+
+    closeChat(conv) {
+        if (this.messenger.view.getTabsCount() - 1 == 0) {
+            this.selectTab('conversations');
+        } else {
+            const _id = this.messenger.view.opened_tabs().indexOf(conv);
+            this.selectChat(this.messenger.view.opened_tabs()[Math.max(0, _id - 1)])
+        }
+
+        this.messenger.view.closeChat(conv);
+    }
+
+    // Move to "Messenger" tab and select chat
+    async selectChat(conv) {
+        this.messenger.view.preselectChat(conv);
+
+        //const current_chat = this.messenger.view.getCurrentChat();
+        this.messenger.view._saveDraft(this.messenger.view.getCurrentChat());
+
+        if (!conv.peer._isMessagesInited()) {
+            const messages = await conv.peer.getMessages();
+
+            conv.peer._appendMessages(messages);
+        }
+        this.messenger.view.setChat(conv, false);
+        this.messenger.view._loadDraft(conv);
+
+        this.selectTab('messenger');
+    }
+
+    // Current user. Do not confuse with window.im.corresponder!
+    async _loadCurrent() {
+        let _v = await window.OVKAPI.call('users.get', {'user_ids': window.openvk.current_id, 'fields': ChatGeneralForm.base_fields});
+        this._currents = [new ChatGeneralForm(_v[0])];
+        this._current_id = 0;
+    }
+
+    get current() {
+        return this._currents[this._current_id];
+    }
+
+    // Tabs
+    _initTabs() {
+        this.root.insertAdjacentHTML('beforeend', `
+            <div class="tabs"></div>
+        `);
+
+        this.tabs.forEach(tab => {
+            this.root.insertAdjacentHTML('beforeend', `
+                <div data-window="${tab}"></div>    
+            `);
+            this.root.querySelector(".tabs").insertAdjacentHTML('beforeend', `
+                <a data-tab="${tab}" onclick="window.im.selectTab('${tab}', event)" class="tab">
+                    ${tab}
+                </a>
+            `);
+        })
     }
 
     selectTab(tab_name) {
@@ -65,75 +144,11 @@ window.im = new (class {
         u(this.root).find(`.tabs .tab[data-tab='${tab_name}']`).attr('id', 'activetabs')
     }
 
-    async selectChat(conv) {
-        console.log(conv)
-        // Move to "Messenger" tab and select chat
-        this.messenger.view.preselectChat(conv);
-
-        //const current_chat = this.messenger.view.getCurrentChat();
-        this.messenger.view._saveDraft(this.messenger.view.getCurrentChat());
-
-        if (!conv.peer._isMessagesInited()) {
-            const messages = await conv.peer.getMessages();
-
-            conv.peer._appendMessages(messages);
-        }
-        this.messenger.view.setChat(conv, false);
-        this.messenger.view._loadDraft(conv);
-
-        this.selectTab('messenger');
-    }
-
-    async _loadCurrent() {
-        let _v = await window.OVKAPI.call('users.get', {'user_ids': window.openvk.current_id, 'fields': ChatGeneralForm.base_fields});
-        this._currents = [new ChatGeneralForm(_v[0])];
-        this._current_id = 0;
-    }
-
-    // Current user. Do not confuse with window.im.corresponder!
-    get current() {
-        return this._currents[this._current_id];
-    }
-
-    _initTabs() {
-        this.root.insertAdjacentHTML('beforeend', `
-            <div class="tabs"></div>
-        `);
-
-        this.tabs.forEach(tab => {
-            this.root.insertAdjacentHTML('beforeend', `
-                <div data-window="${tab}"></div>    
-            `);
-            this.root.querySelector(".tabs").insertAdjacentHTML('beforeend', `
-                <a data-tab="${tab}" onclick="window.im.selectTab('${tab}', event)" class="tab">
-                    ${tab}
-                </a>
-            `);
-        })
-    }
-
-    async _checkSel(loc) {
-        const _sel = Number(loc.searchParams.get('sel'));
-        if (!_sel) {
-            return;
-        }
-
-        const peer = await this.conversations._resolveSel(_sel);
-
-        if (peer) {
-            const _l = this.messenger.view.getChatWith(peer);
-            await this.selectChat(_l);
-
-            return _l;
-        } else {
-            console.error('No peer with this id!')
-        }
-    }
-
     _getTabWindow(tab_name) {
         return this.root.querySelector(`div[data-window="${tab_name}"]`)
     }
 
+    // Messages of current chat
     get _messages() {
         try {
             const _chat = this.messenger.view.getCurrentChat();
@@ -145,6 +160,7 @@ window.im = new (class {
         }
     }
 
+    // Current corresponder
     get corresponder() {
         try {
             return this.messenger.view.getCurrentChat().peer;
@@ -153,6 +169,7 @@ window.im = new (class {
         }
     }
 
+    // """""Routing"""""
     _pushState(url) {
         history.pushState({'from_messenger': 1}, null, url);
     }

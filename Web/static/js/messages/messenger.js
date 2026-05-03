@@ -38,7 +38,10 @@ class MessengerViewModel {
         this.template = `
         <div>
             <div data-bind="foreach: opened_tabs" class="messages--peers-tabs">
-                <a class="messages--peers-tab" data-bind="text: peer.name, event: { click: function() { window.im.selectChat(this) } }"></a>
+                <div>
+                    <a class="messages--peers-tab" data-bind="text: peer.name, event: { click: function() { window.im.selectChat(this) } }"></a>
+                    <span class="messages--peers-tab-close" data-bind="text: 'x', event: { click: function () { window.im.closeChat(this) } }"></span>
+                </div>    
             </div>
         </div>
         <div class="messenger-app">
@@ -128,6 +131,8 @@ class MessengerViewModel {
     }
 
     // why these methods are there???
+    // Chat tabs
+
     hasChat(conversation) {
         return this.opened_tabs().indexOf(conversation) != -1;
     }
@@ -169,10 +174,18 @@ class MessengerViewModel {
         return this.opened_tabs()[this.current_chat()];
     }
 
+    getTabsCount() {
+        return this.opened_tabs().length;
+    }
+
     preselectChat(conversation) {
         if (!this.hasChat(conversation)) {
             this.addChat(conversation);
         }
+    }
+
+    closeChat(conv) {
+        this.opened_tabs.remove(conv);
     }
 
     // Drafts

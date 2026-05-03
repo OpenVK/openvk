@@ -26,11 +26,16 @@ class Conversations {
 
     async _resolveSel(sel) {
         let _ = null;
-        this.convs.forEach(item => {
-            if (item.peer.id === sel) {
-                _ = item;
-            }
-        })
+
+        try {
+            this.convs.forEach(item => {
+                if (item.peer.id === sel) {
+                    _ = item;
+                }
+            });
+        } catch(e) {
+            console.error(e);
+        }
 
         if (_) {
             return _.peer;
@@ -54,6 +59,7 @@ class Conversations {
         _authorize(convs, (item) => {
             return item.conversation.peer.id
         }, (item, author) => {
+            console.log(item, author)
             item.peer = new ChatGeneralForm(author);
         });
 
