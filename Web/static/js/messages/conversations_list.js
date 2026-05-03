@@ -71,14 +71,17 @@ class Conversations {
         this.view = new ConversationsViewModel();
     }
 
+    hasAppeared(container) {
+        return container.querySelector('.crp-list') != null;
+    }
+
     appear(container) {
         container.classList.remove('hidden');
-        if (this.appeared) {
+        if (this.hasAppeared(container)) {
             return;
         }
 
         this.node = container.insertAdjacentHTML('beforeend', this.template);
-        this.appeared = true;
 
         ko.applyBindings(this.view, container);
     }
