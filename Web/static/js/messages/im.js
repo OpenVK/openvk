@@ -47,6 +47,11 @@ window.im = new (class {
         if (!found) {
             this.selectTab('conversations');
         }
+
+        // lp
+        this.lp = new LongPollConnection();
+        await this.lp.create();
+        this.lp.listen();
     }
 
     // Something between messenger and conversations
@@ -66,18 +71,19 @@ window.im = new (class {
     async selectChat(conv) {
         this.messenger.view.preselectChat(conv);
 
+        const _url = new URL(location.href);
+        const _start_from = _url.searchParams.get('start_from');
+
         //const current_chat = this.messenger.view.getCurrentChat();
         this.messenger.view._saveDraft(this.messenger.view.getCurrentChat());
-
         if (!conv.peer._isMessagesInited()) {
-            const messages = await conv.peer.getMessages();
+            const messages = await conv.peer.getMessages(_start_from);
 
-            conv.peer._appendMessages(messages);
+            conv.peer._appendMessagesChunk(messages);
         }
         this.messenger.view.setChat(conv, false);
-        this.messenger.view._loadDraft(conv);
-
         this.selectTab('messenger');
+        this.messenger.view._loadDraft(conv);
     }
 
     // Current user. Do not confuse with window.im.corresponder!
@@ -94,12 +100,12 @@ window.im = new (class {
     // Tabs
     _initTabs() {
         this.root.insertAdjacentHTML('beforeend', `
-            <div class="tabs"></div>
+            <div class=".messenger-app--global-tabs tabs"></div>
         `);
 
         this.tabs.forEach(tab => {
             this.root.insertAdjacentHTML('beforeend', `
-                <div data-window="${tab}"></div>    
+                <div class="messenger-app--tab-${tab}" data-window="${tab}"></div>    
             `);
             this.root.querySelector(".tabs").insertAdjacentHTML('beforeend', `
                 <a data-tab="${tab}" onclick="window.im.selectTab('${tab}', event)" class="tab">
@@ -193,5 +199,11 @@ window.im = new (class {
         } else {
             this.selectTab('conversations');
         }
+    }
+
+    // LongPoll listener
+
+    onEventReceived(event) {
+        console.log(event);
     }
 })()

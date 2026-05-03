@@ -1,18 +1,52 @@
+class MessagesChunk {
+    constructor(items, do_reverse = false, count = 10, msg_offset = null) {
+        this.messages = [];
+        this.do_reverse = do_reverse;
+        this.count = count;
+        this.msg_offset = msg_offset;
+        this.latest_message_index = 0;
+        let _index = 0;
+        items.forEach(item => {
+            this.messages.push(item);
+            _index += 1;
+        })
+    }
+
+    // not oldest, but first in array
+    get first_messages() {
+        if (this.do_reverse) {
+            return this.messages[this.messages.length - 1];
+        } else {
+            return this.messages[0];
+        }
+    }
+
+    get latest_message() {
+        if (!this.do_reverse) {
+            return this.messages[this.messages.length - 1];
+        } else {
+            return this.messages[0];
+        }
+    }
+
+    getMessages() {
+        if (this.do_reverse) {
+            return this.messages.reverse();
+        } else {
+            return this.messages;
+        }
+    }
+}
+
 class ChatGeneralForm {
     static swag = 2000000000000;
-    static MESSAGES_PER_PAGE = 100;
+    static MESSAGES_PER_PAGE = 10;
+    static base_fields = 'photo_100'
 
     constructor(item) {
         this.data = item || {};
-        this.messages = [];
-        this.offset = 0;
-
-        // временные свойства хз где лучше храниь
-
-    }
-
-    static get base_fields() {
-        return 'photo_100'
+        this.chunks = [];
+        this.msg_offset = 0;
     }
 
     get id() {
@@ -49,18 +83,18 @@ class ChatGeneralForm {
     get full_name() {
         switch (this.supposed_type) {
             case 'user':
-                return this.data.first_name + ' ' + this.data.last_name;
+                return escapeHtml(this.data.first_name + ' ' + this.data.last_name);
             case 'club':
-                return this.data.name;
+                return escapeHtml(this.data.name);
         }
     }
 
     get name() {
         switch (this.supposed_type) {
             case 'user':
-                return this.data.first_name;
+                return escapeHtml(this.data.first_name);
             case 'club':
-                return this.data.name;
+                return escapeHtml(this.data.name);
         }
     }
 
@@ -75,6 +109,18 @@ class ChatGeneralForm {
 
     get chat_url() {
         return '/im?sel=' + this.id
+    }
+
+    get messages() {
+        const fnl = [];
+        this.chunks.forEach(chunk => {
+            chunk.getMessages().forEach(msg => {
+                fnl.push(msg);
+
+            })
+        });
+
+        return fnl;
     }
 
     static async resolveById(id) {
@@ -104,7 +150,7 @@ class ChatGeneralForm {
     async getMessages(offset = 0) {
         const messages = await window.OVKAPI.call('messages.getHistory', {
             'peer_id': this.id,
-            'offset': offset,
+            'start_message_id': offset,
             'count': ChatGeneralForm.MESSAGES_PER_PAGE,
             'extended': 1,
             'fields': ChatGeneralForm.base_fields
@@ -118,12 +164,30 @@ class ChatGeneralForm {
             arr.push(new ChatMessage(item));
         });
 
-        return _l;
+        // messages comes from new to old
+        return new MessagesChunk(_l, true);
     }
 
-    async moveOffset() {
-        this.offset += ChatGeneralForm.MESSAGES_PER_PAGE;
-        return await this.getMessages(this.offset);
+    getOldestMessage() {
+        let latest = null;
+        this.chunks.forEach(ch => {
+            let _l = ch.latest_message;
+            if (!latest) {
+                latest = _l;
+                return;
+            }
+
+            if (latest.id > _l.id) {
+                latest = _l;
+            }
+        })
+
+        return latest;
+    }
+
+    async moveUp() {
+        const _id = this.getOldestMessage().id;
+        console.log(await this.getMessages(_id))
     }
 
     async sendMessage(msg) {
@@ -136,9 +200,9 @@ class ChatGeneralForm {
         console.info('sent message to ' + this.id)
     }
 
-    _appendMessages(messages) {
+    _appendMessagesChunk(messages) {
         this._messages_inited = true;
-        messages.forEach(m => this.messages.push(m));
+        this.chunks.push(messages)
     }
 
     _getLocalMessages() {
@@ -188,7 +252,11 @@ class ChatMessage {
     }
 
     get text() {
-        return this.data.text;
+        return escapeHtml(this.data.text);
+    }
+
+    get id() {
+        return this.data.id;
     }
 
     get attachments() {

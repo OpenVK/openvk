@@ -1,8 +1,8 @@
 class Messenger {
     async init() {
-        this.appEl = document.querySelector(".messenger-app--messages");
-        this.view = new MessengerViewModel();
         this.insert_type = 'page'; // page / fast_chat
+        this.view = new MessengerViewModel();
+        // this.view = new MessengerViewModel();
         // fastchat sounds like a deutsch surname xd
     }
 
@@ -16,8 +16,10 @@ class Messenger {
             return;
         }
 
-        this.appeared = true;
         container.insertAdjacentHTML('beforeend', this.view.template);
+        this.view.appEl = container.querySelector(".messenger-app");
+        this.view.messagesList = container.querySelector(".messenger-app--messages-array");
+        this.view._changeHeight();
 
         ko.applyBindings(this.view, container);
     }
@@ -50,28 +52,30 @@ class MessengerViewModel {
         </div>
         <div class="messenger-app">
             <div class="messenger-app--messages">
-                <div class="messenger-app--messages-array" data-bind="foreach: { data: messages, as: 'msg' }">
+                <div class="messenger-app--messages-array" data-bind="foreach: { data: messages, as: 'msg' }, event: { scroll: onMessagesScroll }">
                     <div class="messenger-app--messages---message" data-bind="css: { 'same-author': $index() > 0 && $parent.messages()[$index() - 1].doHideHead(msg)}">
-                        <div class="_avatar">
-                            <img class="ava" data-bind="attr: { src: sender.avatar_any, alt: sender.name }" />
-                        </div>
-                        <div class="_content">
-                            <a class="_sender" href="#" data-bind="attr: { href: sender.link }">
-                                <strong data-bind="text: sender.name"></strong>
-                            </a>
-                            <span class="text" data-bind="html: text"></span>
-                            <div data-bind="foreach: attachments" class="attachments">
-                                <div class="msg-attach-j">
-                                    <div data-bind="if: type === 'photo'" class="msg-attach-j-photo">
-                                        <a data-bind="attr: { href: link }">
-                                            <img data-bind="attr: { src: photo.url, alt: photo.caption  }" />
-                                        </a>
+                        <div class="messenger-app--messages---message--wrap">
+                            <div class="_avatar">
+                                <img class="ava" data-bind="attr: { src: sender.avatar_any, alt: sender.name }" />
+                            </div>
+                            <div class="_content">
+                                <a class="_sender" href="#" data-bind="attr: { href: sender.link }">
+                                    <strong data-bind="text: sender.name"></strong>
+                                </a>
+                                <span class="text" data-bind="html: text"></span>
+                                <div data-bind="foreach: attachments" class="attachments">
+                                    <div class="msg-attach-j">
+                                        <div data-bind="if: type === 'photo'" class="msg-attach-j-photo">
+                                            <a data-bind="attr: { href: link }">
+                                                <img data-bind="attr: { src: photo.url, alt: photo.caption  }" />
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="time" align="right">
-                            <span></span>
+                        <div class="time">
+                            <span data-bind="html: id"></span>
                         </div>
                     </div>
                 </div>
@@ -91,11 +95,11 @@ class MessengerViewModel {
         `
         this.opened_tabs = ko.observableArray([]);
         this.messages = ko.pureComputed(function() {
-            console.log()
             return window.im._messages;
         });
         this.currentDraft = ko.observable('');
         this.drafts = {};
+        this.scrolls = {};
         this.current_chat = ko.observable(null); // index of element
 
         /*
@@ -112,6 +116,8 @@ class MessengerViewModel {
         };*/
     }
 
+    // Events
+
     onTextareaKeyPress(model, e) {
         const ta = e.target;
         if(e.which === 13) {
@@ -126,6 +132,16 @@ class MessengerViewModel {
         
         return true;
     }
+
+    onMessagesScroll(model, e) {
+        const _scroll = e.target.scrollTop;
+        // Прокрутка вверх
+        if (_scroll < 21) {
+            window.im.corresponder.moveUp();
+        }
+    }
+
+    // Actions
 
     sendMessage(model) {
         if(model.currentDraft() === "") return false;
@@ -197,11 +213,13 @@ class MessengerViewModel {
     // Drafts
 
     _saveDraft(to_chat) {
+        // Also saves scroll progress
         if (!to_chat) {
             return;
         }
 
         this.drafts[to_chat.peer.id] = this.currentDraft();
+        this.scrolls[to_chat.peer.id] = this.messagesList.scrollTop;
         console.info('saved draft for peer ' + to_chat.peer.id);
         this._eraseCurrentDraft();
     }
@@ -215,48 +233,66 @@ class MessengerViewModel {
         this.currentDraft('');
     }
 
+    _scrollTo(scroll_progress) {
+        this.messagesList.scrollTop = scroll_progress;
+    }
+
+    _scrollToEnd() {
+        this._scrollTo(this.messagesList.scrollHeight);
+    }
+
+    // todo change
+    _changeHeight() {
+        let maybe_distance = 100;
+        let tabs_height = u('.messages--peers-tabs').nodes[0].clientHeight;
+        this.appEl.parentNode.style.height = window.outerHeight - tabs_height - maybe_distance + 'px';
+    }
+
     _loadDraft(for_chat) {
-        console.log(for_chat)
         if (!for_chat) {
             return;
         }
 
         const _draft = this.drafts[for_chat.peer.id];
-        if (!_draft || _draft == '') {
-            return;
+        if (_draft && _draft != '') {
+            console.info('loaded draft for peer ' + for_chat.peer.id);
+
+            this.currentDraft(_draft);
         }
-
-        console.info('loaded draft for peer ' + for_chat.peer.id);
-
-        this.currentDraft(_draft);
+        const _scroll = this.scrolls[for_chat.peer.id];
+        if (_scroll) {
+            this._scrollTo(_scroll);
+        } else {
+            this._scrollToEnd();
+        }
     }
 }
 
 class LongPollConnection {
-    listenLongpool() {
+    async create() {
+        this.lp = await window.OVKAPI.call('messages.getLongPollServer', {});
+    }
+
+    listen() {
+        console.log(this.lp)
         let xhr = new XMLHttpRequest();
-        xhr.open("GET", "/im12", true);
+        xhr.open("GET", this.lp.server + '?key='+this.lp.key + '&ts=' + this.lp.ts + '&pts=' + this.lp.pts, true);
         xhr.onload = () => {
             let data = JSON.parse(xhr.responseText);
             data.forEach(event => {
-                event = event.event;
-                if(event.type !== "newMessage")
-                    return;
+                window.im.onEventReceived(event);
+                //event = event.event;
+                //if(event.type !== "newMessage")
+                //    return;
                 //else if(event.message.sender.id !== {$correspondent->getId()})
                 //    return;
-                else if(this.offset >= event.message.uuid)
-                    return void(console.warn());
-
-                this.addMessage(event.message);
+                //else if(this.offset >= event.message.uuid)
+                //    return void(console.warn());
                 //this.offset = event.message.uuid;
             });
 
-            listenLongpool();
+            //this.listen();
         };
         xhr.send();
-    }
-
-    constructor() {
-        listenLongpool();
     }
 }
