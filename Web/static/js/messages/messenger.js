@@ -274,24 +274,17 @@ class LongPollConnection {
     }
 
     listen() {
-        console.log(this.lp)
         let xhr = new XMLHttpRequest();
         xhr.open("GET", this.lp.server + '?key='+this.lp.key + '&ts=' + this.lp.ts + '&pts=' + this.lp.pts, true);
         xhr.onload = () => {
             let data = JSON.parse(xhr.responseText);
-            data.forEach(event => {
-                window.im.onEventReceived(event);
-                //event = event.event;
-                //if(event.type !== "newMessage")
-                //    return;
-                //else if(event.message.sender.id !== {$correspondent->getId()})
-                //    return;
-                //else if(this.offset >= event.message.uuid)
-                //    return void(console.warn());
-                //this.offset = event.message.uuid;
-            });
-
-            //this.listen();
+            console.log(data);
+            if (data?.updates?.length > 0)
+                data.updates.forEach(event => {
+                    window.im.onEventReceived(event);
+                });
+            this.lp.ts = data.ts
+            this.listen();
         };
         xhr.send();
     }
