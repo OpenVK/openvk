@@ -3,9 +3,9 @@ body.no-scroll {
     height: 100vh;
 }
 
-body.no-scroll .messenger-app--messages .messenger-app--messages-array {
+/*body.no-scroll .messenger-app--messages .messenger-app--messages-array {
     overflow-y: auto;
-}
+}*/
 
 .crp-list {
     margin: 10px -6px -10px -11px;
@@ -124,7 +124,7 @@ body.no-scroll .messenger-app--messages .messenger-app--messages-array {
 .messenger-app--messages {
     display: flex;
     flex-direction: column;
-    justify-content: end;
+    /*justify-content: end;*/
     height: 70%;
     overflow-y: auto;
 }

@@ -56,11 +56,11 @@ class MessengerViewModel {
                     <div class="messenger-app--messages---message" data-bind="css: { 'same-author': $index() > 0 && $parent.messages()[$index() - 1].doHideHead(msg)}">
                         <div class="messenger-app--messages---message--wrap">
                             <div class="_avatar">
-                                <img class="ava" data-bind="attr: { src: sender.avatar_any, alt: sender.name }" />
+                                <img class="ava" data-bind="attr: { src: sender.avatar_any, alt: sender.full_name }" />
                             </div>
                             <div class="_content">
                                 <a class="_sender" href="#" data-bind="attr: { href: sender.link }">
-                                    <strong data-bind="text: sender.name"></strong>
+                                    <strong data-bind="text: sender.full_name"></strong>
                                 </a>
                                 <span class="text" data-bind="html: text"></span>
                                 <div data-bind="foreach: attachments" class="attachments">
@@ -101,19 +101,6 @@ class MessengerViewModel {
         this.drafts = {};
         this.scrolls = {};
         this.current_chat = ko.observable(null); // index of element
-
-        /*
-        this.loadHistory = _ => {
-            window.Msg._loadHistory();
-        };
-
-        this.onMessagesScroll   = (model, e) => {
-            if(e.target.scrollTop < 21)
-                model.loadHistory();
-        };
-        this.onTextareaKeyPress = (model, e) => {
-
-        };*/
     }
 
     // Events
@@ -169,12 +156,10 @@ class MessengerViewModel {
             }
         })
 
-        // какая разница
-        // но тут проблема что я не выделил conversation из метода в класс и поэтому это странно
         if (!is) {
-            return {
+            return new Conversation({
                 'peer': chat_general_form
-            };
+            });
         }
 
         return is;

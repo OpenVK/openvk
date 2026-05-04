@@ -39,7 +39,7 @@ class MessagesChunk {
 }
 
 class ChatGeneralForm {
-    static swag = 2000000000000;
+    static swag = 2000000000;
     static MESSAGES_PER_PAGE = 10;
     static base_fields = 'photo_100'
 
@@ -214,6 +214,26 @@ class ChatGeneralForm {
     }
 }
 
+class Conversation {
+    constructor(conversation_item) {
+        this._conversation = conversation_item.conversation;
+        this._last_message = new ChatMessage(conversation_item.last_message);
+        this.peer = conversation_item.peer;
+    }
+
+    get last_message() {
+        return this._last_message;
+    }
+
+    get conversation() {
+        return this._conversation;
+    }
+
+    get id() {
+        return this.peer.id;
+    }
+}
+
 function _authorize(arr, get_id = null, set_id = null, finalize = null) {
     let fin = [];
 
@@ -240,6 +260,7 @@ class ChatMessage {
 
     doHideHead(another_msg) {
         let _time_eq = this.data.date - another_msg.data.date;
+        // если прошло больше минуты с отправки
         return this.data.from_id == another_msg.data.from_id && _time_eq < ChatMessage.AUTHOR_NAME_HIDE_TIMEOUT;
     }
 
@@ -273,6 +294,23 @@ class ChatMessage {
         if (_at.length == 0) {
             return '';
         }
+    }
+
+    static fromEvent(event) {
+        const [, id, flags, peer, ts, subject, text, attachments, randomId] = event;
+
+        const msg = new ChatMessage();
+        msg.data = {
+            'id': id,
+            'flags': flags,
+            'peer': peer,
+            'ts': ts,
+            'text': text,
+            'attachments': attachments,
+            'random_id': randomId
+        }
+
+        return msg;
     }
 
     setText(text) {
