@@ -1,5 +1,10 @@
 class ConversationsViewModel {
     constructor() {
+        this.indexes_order = ko.observableArray([]);
+        // todo поменять
+    }
+
+    _st() {
         this.conversations = ko.observableArray(window.im.conversations.convs);
     }
 }
@@ -56,19 +61,44 @@ class Conversations {
             fields: ChatGeneralForm.base_fields
         });
 
-        _authorize(convs, (item) => {
+        return _authorize(convs, (item) => {
             return item.conversation.peer.id
         }, (item, author) => {
-            console.log(item, author)
             item.peer = new ChatGeneralForm(author);
-        });
-
-        return convs.items;
+        }, (item, lists) => {
+            lists.push(new Conversation(item));
+        });;
     }
 
     async init() {
-        this.convs = await this.getConversations();
+        this.all_convs = await this.getConversations();
+        // new -> old
         this.view = new ConversationsViewModel();
+        this.all_convs.forEach(item => {
+            this.view.indexes_order.push(item.id);
+        });
+        this.view._st();
+    }
+
+    // когда перезагрузится страница то всё равно в другом порядке будет
+    swapConvs(conv_1, conv_2) {
+
+    }
+
+    _findConv(id) {
+        const _l = this.all_convs.filter(itm => {return itm.peer.id == id});
+
+        return _l[0];
+    }
+
+    // Есть общий список со всеми переписками и есть массив с их порядком
+    get convs() {
+        const _ret = [];
+        this.view.indexes_order().forEach(id => {
+            _ret.push(this._findConv(id));
+        });
+
+        return _ret;
     }
 
     hasAppeared(container) {

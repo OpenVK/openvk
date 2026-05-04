@@ -208,6 +208,7 @@ window.im = new (class {
 
         const code = event[0];
 
+        // todo сделай это без свича
         switch (code) {
             case 1: { // MsgReplaceFlagsEvent
                 const messageId = event[1];
@@ -234,9 +235,8 @@ window.im = new (class {
             }
 
             case 4: { // NewMessageEvent
-                const [, id, flags, peer, ts, subject, text, attachments, randomId] = event;
-                console.log(`New msg [${id}] from ${peer}: ${text}`);
-                if (attachments) console.log("Attached:", attachments);
+                this._messageSent(event)
+
                 break;
             }
 
@@ -346,5 +346,17 @@ window.im = new (class {
             default:
                 console.log("unknown event", code, event);
         }
+    }
+
+    // Events
+
+    // думаю не принципиально куда размещать методы всё равно это вряд ли кто то увидит
+    _messageSent(event) {
+        const _msg = ChatMessage.fromEvent(event);
+
+        // finding conversation
+        const _crs = this.corresponder;
+
+        _crs.chunks[0].messages.push(_msg)
     }
 })()
