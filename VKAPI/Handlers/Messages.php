@@ -24,9 +24,81 @@ final class Messages extends VKAPIRequestHandler
         if (!$this->broker->isEnabled()) {
             throw new \openvk\VKAPI\Exceptions\APIErrorException("IM Service is disabled");
         }
-        if (!$this->broker->ping($this->broker->getLongPollBaseUrl() ."")) {
+        if (!$this->broker->ping((int) $this->getUser() ?? 0)) {
             throw new \openvk\VKAPI\Exceptions\APIErrorException("IM Service is unreachable");
         }
+    }
+
+    protected function resolveSender($group_id = 0): int
+    {
+        $sender_id = $this->getUser()->getId();
+        if ($group_id > 0) {
+            $club = (new ClubRepo())->get((int)$group_id);
+            
+            if (!$club) {
+                $this->fail(100, "One of the parameters specified was missing or invalid: group_id -> club not found");
+            }
+
+            if ($club->isBanned()) {
+                $this->fail(15, "Access denied: this community is blocked");
+            }
+
+            if (!$club->canBeModifiedBy($this->getUser())) {
+                $this->fail(15, "Access denied: you are not an administrator of this community");
+            }
+
+            $sender_id = ((int)$club->getId()) * -1;
+        }
+        return $sender_id;
+    }
+
+    protected function resolvePeer(
+        int $user_id = -1,
+        int $peer_id = 0,
+        int $chat_id = -1,
+        string $domain = ""
+    ): ?int {
+        if (!empty($domain)) {
+            $uRepo = new USRRepo();
+            $cRepo = new ClubRepo();
+            $peerObj = $uRepo->getByShortUrl($domain) ?: $cRepo->getByShortUrl($domain);
+            
+            if (!$peerObj) return null;
+
+            $id = (int)$peerObj->getId();
+            return ($peerObj instanceof Club) ? -$id : $id;
+        }
+
+        if ($chat_id > 0) {
+            return 2000000000 + $chat_id;
+        }
+
+        if ($peer_id !== 0) {
+            return $peer_id;
+        }
+
+        if ($user_id > 0) {
+            return $user_id;
+        }
+
+        return null;
+    }
+
+    protected function replaceAttachments(&$attachments)
+    {
+        if (empty($attachments)) {
+            $attachments = [];
+            return;
+        }
+
+        $parsed = parseAttachments($attachments, ['photo', 'video', 'audio', 'doc', 'poll']);
+        $result = [];
+
+        foreach ($parsed as $attachment) {
+            $result[] = $attachment->toApiAttachment($this->getUser());
+        }
+
+        $attachments = $result;
     }
 
     /**
@@ -85,16 +157,18 @@ final class Messages extends VKAPIRequestHandler
     //             Longpoll
     // ----------------------------------
 
-    public function getLongPollHistory(int $ts = -1, int $preview_length = 0, int $events_limit = 1000, int $msgs_limit = 1000): object
+    public function getLongPollHistory(int $ts = -1, int $preview_length = 0, int $events_limit = 1000, int $msgs_limit = 1000, int $group_id = 0): object
     {
         $this->requireUser();
         $this->ensureBrokerActive();
 
-        $response = $this->broker->invokeMethod($this->getUser()->getId(), "messages.getLongPollHistory", [
+        $senderId = $this->resolveSender($group_id);
+
+        $response = $this->broker->invokeMethod($senderId, "messages.getLongPollHistory", [
             "ts" => $ts,
             "events_limit" => $events_limit,
             "msgs_limit" => $msgs_limit,
-            "version" => 3
+            "version" => 2
         ]);
 
         if (!$response) {
@@ -138,7 +212,7 @@ final class Messages extends VKAPIRequestHandler
         $baseUrl = $this->broker->getLongPollBaseUrl();
 
         // защита от дурочка
-        if (!$this->broker->ping($baseUrl)) {
+        if (!$this->broker->pingLP($baseUrl)) {
             $this->fail(500, "LongPoll server is unreachable. Check proxy settings for /nim endpoint.");
         }
 
@@ -161,14 +235,6 @@ final class Messages extends VKAPIRequestHandler
     // ----------------------------------
     //             Messages
     // ----------------------------------
-
-    private function resolvePeer(int $user_id = -1, int $peer_id = -1, int $chat_id = -1): ?int
-    {
-        if ($chat_id > 0) return 2000000000 + $chat_id;
-        if ($peer_id !== 0) return $peer_id; 
-        if ($user_id !== -1) return $user_id;
-        return null;
-    }
 
     public function getById(string $message_ids, int $preview_length = 0, int $extended = 0): object
     {
@@ -194,25 +260,10 @@ final class Messages extends VKAPIRequestHandler
         $result = (object) $data['response'];
 
         if ($extended == 1) {
-            $uRepo = new USRRepo();
-            $cRepo = new ClubRepo();
-
-            $result->profiles = [];
-            if (!empty($data['response']['profiles'])) {
-                foreach ($data['response']['profiles'] as $uid) {
-                    $user = $uRepo->get((int)$uid);
-                    if ($user) $result->profiles[] = $user->toVkApiStruct($this->getUser());
-                }
-            }
-
-            $result->groups = [];
-            if (!empty($data['response']['groups'])) {
-                foreach ($data['response']['groups'] as $gid) {
-                    $group = $cRepo->get(abs((int)$gid));
-                    if ($group) $result->groups[] = $group->toVkApiStruct($this->getUser());
-                }
-            }
+            $this->hydrateExtendedData($result);
         }
+
+        $this->replaceAttachments($result->attachments);
 
         return $result;
     }
@@ -234,10 +285,6 @@ final class Messages extends VKAPIRequestHandler
         $this->requireUser();
         $this->willExecuteWriteAction();
         $this->ensureBrokerActive();
-
-        if (!$this->broker->isEnabled()) {
-            $this->fail(950, "IM Service is temporarily unavailable");
-        }
 
         if ($user_id === -1 && $peer_id === 0 && $domain === "" && $chat_id === -1 && $user_ids === "") {
             $this->fail(100, "One of the parameters specified was missing or invalid: no recipient");
@@ -272,32 +319,10 @@ final class Messages extends VKAPIRequestHandler
         $uRepo = (new USRRepo());
         $cRepo = new ClubRepo();
         
-        $sender_id = $this->getUser()->getId();
-        if ($group_id > 0) {
-            $club = (new ClubRepo())->get((int)$group_id);
-            
-            if (!$club) {
-                $this->fail(100, "One of the parameters specified was missing or invalid: group_id -> club not found");
-            }
+        $sender_id = $this->resolveSender($group_id);
 
-            if ($club->isBanned()) {
-                $this->fail(15, "Access denied: this community is blocked");
-            }
-
-            if (!$club->canBeModifiedBy($this->getUser())) {
-                $this->fail(15, "Access denied: you are not an administrator of this community");
-            }
-
-            $sender_id = ((int)$club->getId()) * -1;
-        }
-
-        if (!empty($domain)) {
-            $peerObj = $uRepo->getByShortUrl($domain) ?: $cRepo->getByShortUrl($domain);
-            $resolvedId = $peerObj ? $peerObj->getId() : null;
-            if ($peerObj instanceof Club) $resolvedId = -$resolvedId; 
-        } else {
-            $resolvedId = $this->resolvePeer($user_id, $peer_id, $chat_id);
-        }
+        $resolvedId = $this->resolvePeer($user_id, $peer_id, $chat_id, $domain);
+        
 
         if (is_null($resolvedId) || $resolvedId === 0) {
             $this->fail(936, "There is no peer with this id");
@@ -389,6 +414,476 @@ final class Messages extends VKAPIRequestHandler
         }
     }
     
+    public function edit(
+        int $peer_id = 0,
+        int $message_id = 0,
+        string $message = "",
+        string $attachment = "",
+        int $keep_forward_messages = 0,
+        int $group_id = 0,
+        string $domain = "",
+        int $user_id = -1,
+    ) {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        $this->ensureBrokerActive();
+
+        if ($message_id <= 0) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: message_id is required");
+        }
+
+        $resolvedId = $this->resolvePeer($user_id, $peer_id, -1, $domain);
+
+        if (is_null($resolvedId) || $resolvedId === 0) {
+            $this->fail(936, "There is no peer with this id");
+        }
+
+        if (empty($message) && empty($attachment)) {
+            $this->fail(100, "Empty messages are not allowed");
+        }
+
+        $sender_id = $this->resolveSender($group_id);
+
+        $params = [
+            "peer_id"    => (string) $resolvedId,
+            "message_id" => (string) $message_id,
+            "message"    => $message,
+            "attachment" => $attachment,
+            "keep_forward_messages" => (string) $keep_forward_messages
+        ];
+
+        try {
+            $response = $this->broker->invokeMethod($sender_id, "messages.edit", $params);
+
+            if ($response === false) {
+                $this->fail(950, "IM Server unreachable");
+            }
+
+            $data = json_decode($response, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $this->fail(950, "Internal error: Invalid JSON from IM Server");
+            }
+
+            if (isset($data['error'])) {
+                $errorCode = $data['error']['error_code'] ?? 500;
+                $errorMsg = $data['error']['error_msg'] ?? "IM Error";
+                $this->fail($errorCode, $errorMsg);
+            }
+
+            return isset($data['response']) ? (int)$data['response'] : $data;
+        } catch (\Exception $e) {
+            $this->fail(500, "Broker failure: " . $e->getMessage());
+        }
+    }
+
+    public function delete(
+        string $message_ids = "",
+        int $delete_for_all = 0,
+        int $group_id = 0
+    ) {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        $this->ensureBrokerActive();
+
+        if (empty($message_ids)) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: message_ids is empty");
+        }
+
+        $sender_id = $this->resolveSender($group_id);
+
+        $params = [
+            "message_ids"    => $message_ids,
+            "delete_for_all" => (string)$delete_for_all
+        ];
+
+        try {
+            $response = $this->broker->invokeMethod($sender_id, "messages.delete", $params);
+
+            if ($response === false) {
+                $this->fail(950, "IM Server unreachable");
+            }
+
+            $data = json_decode($response, true);
+
+            if (isset($data['error'])) {
+                $this->fail($data['error']['error_code'] ?? 500, $data['error']['error_msg'] ?? "IM Error");
+            }
+
+            return $data['response'] ?? $data;
+
+        } catch (\Exception $e) {
+            $this->fail(500, "Broker failure: " . $e->getMessage());
+        }
+    }
+    public function restore(
+        int $message_id = 0,
+        int $group_id = 0
+    ) {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        $this->ensureBrokerActive();
+
+        if ($message_id <= 0) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: message_id is required");
+        }
+
+        $sender_id = $this->resolveSender($group_id);
+
+        $params = [
+            "message_id" => (string)$message_id
+        ];
+
+        try {
+            $response = $this->broker->invokeMethod($sender_id, "messages.restore", $params);
+
+            if ($response === false) {
+                $this->fail(950, "IM Server unreachable");
+            }
+
+            $data = json_decode($response, true);
+
+            if (isset($data['error'])) {
+                $this->fail($data['error']['error_code'] ?? 500, $data['error']['error_msg'] ?? "IM Error");
+            }
+
+            return (int)($data['response'] ?? $data);
+
+        } catch (\Exception $e) {
+            $this->fail(500, "Broker failure: " . $e->getMessage());
+        }
+    }
+
+    public function search(
+        string $q = "",
+        int $peer_id = 0,
+        string $domain = "",
+        int $user_id = -1,
+        string $date = "",
+        int $preview_length = 0,
+        int $offset = 0,
+        int $count = 20,
+        int $extended = 0,
+        int $group_id = 0
+    ) {
+        $this->requireUser();
+        $this->ensureBrokerActive();
+
+        if (!$this->broker->isEnabled()) {
+            $this->fail(950, "IM Service is temporarily unavailable");
+        }
+
+        if (empty($q)) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: q is empty");
+        }
+
+        $resolvedId = $this->resolvePeer($user_id, $peer_id, -1, $domain);
+
+        $sender_id = $this->resolveSender($group_id);
+
+        $params = [
+            "q"              => $q,
+            "count"          => (string)min(abs($count), 100),
+            "offset"         => (string)abs($offset),
+            "preview_length" => (string)max(0, $preview_length),
+            "extended"       => $extended ? "1" : "0"
+        ];
+
+        if ($resolvedId !== 0) {
+            $params["peer_id"] = (string)$resolvedId;
+        }
+
+        if (!empty($date)) {
+            $params["date"] = $date; // DDMMYYYY
+        }
+
+        try {
+            $response = $this->broker->invokeMethod($sender_id, "messages.search", $params);
+
+            if ($response === false) {
+                $this->fail(950, "IM Server unreachable");
+            }
+
+            $data = json_decode($response, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $this->fail(950, "Internal error: Invalid JSON from IM Server");
+            }
+
+            if (isset($data['error'])) {
+                $this->fail($data['error']['error_code'] ?? 500, $data['error']['error_msg'] ?? "IM Error");
+            }
+
+            $result = $data['response'] ?? $data;
+
+            if ($extended == 1) {
+                $this->hydrateExtendedData($result);
+            }
+
+            $this->replaceAttachments($result->attachments);
+
+            return $data['response'] ?? $data;
+
+        } catch (\Exception $e) {
+            $this->fail(500, "Broker failure: " . $e->getMessage());
+        }
+    }
+
+    public function pin(
+        int $peer_id = 0,
+        int $message_id = 0,
+        string $domain = "",
+        int $user_id = -1,
+        int $group_id = 0
+    ) {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        $this->ensureBrokerActive();
+
+        if ($message_id <= 0) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: message_id is required");
+        }
+
+        $resolvedId = $this->resolvePeer($user_id, $peer_id, -1, $domain);
+
+        if (!$resolvedId) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: peer_id is required");
+        }
+
+        $sender_id = $this->resolveSender($group_id);
+
+        $params = [
+            "peer_id"    => (string)$resolvedId,
+            "message_id" => (string)$message_id
+        ];
+
+        try {
+            $response = $this->broker->invokeMethod($sender_id, "messages.pin", $params);
+
+            if ($response === false) {
+                $this->fail(950, "IM Server unreachable");
+            }
+
+            $data = json_decode($response, true);
+
+            if (isset($data['error'])) {
+                $this->fail($data['error']['error_code'] ?? 500, $data['error']['error_msg'] ?? "IM Error");
+            }
+
+            return $data['response'] ?? $data;
+
+        } catch (\Exception $e) {
+            $this->fail(500, "Broker failure: " . $e->getMessage());
+        }
+    }
+
+    public function unpin(
+        int $peer_id = 0,
+        string $domain = "",
+        int $user_id = -1,
+        int $group_id = 0
+    ) {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        $this->ensureBrokerActive();
+
+        $resolvedId = $this->resolvePeer($user_id, $peer_id, -1, $domain);
+
+        if (!$resolvedId) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: peer_id is required");
+        }
+
+        $sender_id = $this->resolveSender($group_id);
+
+        $params = [
+            "peer_id" => (string)$resolvedId
+        ];
+
+        try {
+            $response = $this->broker->invokeMethod($sender_id, "messages.unpin", $params);
+
+            if ($response === false) {
+                $this->fail(950, "IM Server unreachable");
+            }
+
+            $data = json_decode($response, true);
+
+            if (isset($data['error'])) {
+                $this->fail($data['error']['error_code'] ?? 500, $data['error']['error_msg'] ?? "IM Error");
+            }
+
+            return (int)($data['response'] ?? $data);
+
+        } catch (\Exception $e) {
+            $this->fail(500, "Broker failure: " . $e->getMessage());
+        }
+    }
+
+    public function getImportantMessages(
+        int $count = 20,
+        int $offset = 0,
+        int $extended = 0,
+        int $group_id = 0
+    ) {
+        $this->requireUser();
+        $this->ensureBrokerActive();
+
+        $sender_id = $this->resolveSender($group_id);
+
+        $params = [
+            "count"    => (string)$count,
+            "offset"   => (string)$offset,
+            "extended" => (string)$extended
+        ];
+
+        try {
+            $response = $this->broker->invokeMethod($sender_id, "messages.getImportantMessages", $params);
+
+            if ($response === false) {
+                $this->fail(950, "IM Server unreachable");
+            }
+
+            $data = json_decode($response, true);
+
+            if (isset($data['error'])) {
+                $this->fail($data['error']['error_code'] ?? 500, $data['error']['error_msg'] ?? "IM Error");
+            }
+
+            return $data['response'] ?? $data;
+
+        } catch (\Exception $e) {
+            $this->fail(500, "Broker failure: " . $e->getMessage());
+        }
+    }
+
+    public function markAsImportant(
+        string $message_ids = "",
+        int $important = 1,
+        int $group_id = 0
+    ) {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        $this->ensureBrokerActive();
+
+        if (empty($message_ids)) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: message_ids is empty");
+        }
+
+        $sender_id = $this->resolveSender($group_id);
+
+        $params = [
+            "message_ids" => $message_ids,
+            "important"   => (string)$important
+        ];
+
+        try {
+            $response = $this->broker->invokeMethod($sender_id, "messages.markAsImportant", $params);
+
+            if ($response === false) {
+                $this->fail(950, "IM Server unreachable");
+            }
+
+            $data = json_decode($response, true);
+
+            if (isset($data['error'])) {
+                $this->fail($data['error']['error_code'] ?? 500, $data['error']['error_msg'] ?? "IM Error");
+            }
+
+            return $data['response'] ?? $data;
+
+        } catch (\Exception $e) {
+            $this->fail(500, "Broker failure: " . $e->getMessage());
+        }
+    }
+
+    public function markAsRead(
+        int $peer_id = 0,
+        int $start_message_id = 0,
+        string $message_ids = "",
+        int $group_id = 0
+    ) {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        $this->ensureBrokerActive();
+
+        if ($peer_id === 0 && empty($message_ids)) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: peer_id or message_ids is required");
+        }
+
+        $sender_id = $this->resolveSender($group_id);
+
+        $params = [
+            "peer_id"          => (string)$peer_id,
+            "start_message_id" => (string)$start_message_id,
+            "message_ids"      => $message_ids
+        ];
+
+        try {
+            $response = $this->broker->invokeMethod($sender_id, "messages.markAsRead", $params);
+
+            if ($response === false) {
+                $this->fail(950, "IM Server unreachable");
+            }
+
+            $data = json_decode($response, true);
+
+            if (isset($data['error'])) {
+                $this->fail($data['error']['error_code'] ?? 500, $data['error']['error_msg'] ?? "IM Error");
+            }
+
+            return 1;
+        } catch (\Exception $e) {
+            $this->fail(500, "Broker failure: " . $e->getMessage());
+        }
+    }
+
+    public function getByConversationMessageID(
+        int $peer_id = 0,
+        string $conversation_message_ids = "",
+        int $extended = 0,
+        string $fields = "",
+        int $group_id = 0
+    ) {
+        $this->requireUser();
+        $this->ensureBrokerActive();
+
+        if ($peer_id === 0 || empty($conversation_message_ids)) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: peer_id or conversation_message_ids is empty");
+        }
+
+        $sender_id = $this->resolveSender($group_id);
+
+        $params = [
+            "peer_id"                  => (string)$peer_id,
+            "conversation_message_ids" => $conversation_message_ids,
+            "extended"                 => (string)$extended,
+            "fields"                   => $fields
+        ];
+
+        try {
+            $response = $this->broker->invokeMethod($sender_id, "messages.getByConversationMessageID", $params);
+
+            if ($response === false) {
+                $this->fail(950, "IM Server unreachable");
+            }
+
+            $data = json_decode($response, true);
+
+            if (isset($data['error'])) {
+                $this->fail($data['error']['error_code'] ?? 500, $data['error']['error_msg'] ?? "IM Error");
+            }
+
+            if ($extended) {
+                $this->hydrateExtendedData($data, $fields);
+            }
+
+            return $data['response'] ?? $data;
+
+        } catch (\Exception $e) {
+            $this->fail(500, "Broker failure: " . $e->getMessage());
+        }
+    }
+
     // ----------------------------------
     //               Chats
     // ----------------------------------
@@ -404,24 +899,7 @@ final class Messages extends VKAPIRequestHandler
         $this->requireUser();
         $this->ensureBrokerActive();
 
-        $current_uid = $this->getUser()->getId();
-        if ($group_id > 0) {
-            $club = (new ClubRepo())->get((int)$group_id);
-            
-            if (!$club) {
-                $this->fail(100, "One of the parameters specified was missing or invalid: group_id -> club not found");
-            }
-
-            if ($club->isBanned()) {
-                $this->fail(15, "Access denied: this community is blocked");
-            }
-
-            if (!$club->canBeModifiedBy($this->getUser())) {
-                $this->fail(15, "Access denied: you are not an administrator of this community");
-            }
-
-            $current_uid = ((int)$club->getId()) * -1;
-        }
+        $current_uid = $this->resolveSender($group_id);
 
         $params = [
             "offset"   => $offset,
@@ -470,6 +948,10 @@ final class Messages extends VKAPIRequestHandler
                         $item['conversation']['chat_settings']['title'] = "Беседа №" . $chatId;
                     }
                 }
+
+                if (isset($item['last_message']['attachments'])) {
+                    $this->replaceAttachments($item['last_message']['attachments']);
+                }
             }
         }
 
@@ -493,7 +975,7 @@ final class Messages extends VKAPIRequestHandler
         int $start_message_id = 0, 
         int $rev = 0, 
         int $extended = 0, 
-        string $fields = "" // unsupported yet
+        string $fields = ""
     ): object {
         $this->requireUser();
         $this->ensureBrokerActive();
@@ -526,6 +1008,8 @@ final class Messages extends VKAPIRequestHandler
         if ($extended == 1) {
             $this->hydrateExtendedData($result, $fields);
         }
+
+        $this->replaceAttachments($result->attachments);
 
         return $result;
     }
@@ -562,34 +1046,16 @@ final class Messages extends VKAPIRequestHandler
             $this->fail(100, "One of the parameters specified was missing or invalid: type");
         }
 
-        $resolvedPeerId = $this->resolvePeer($user_id, $peer_id);
+        $resolvedId = $this->resolvePeer($user_id, $peer_id);
 
-        if (is_null($resolvedPeerId) || $resolvedPeerId === 0) {
+        if (is_null($resolvedId) || $resolvedId === 0) {
             $this->fail(100, "One of the parameters specified was missing or invalid: peer_id is required");
         }
 
-        $sender_id = $this->getUser()->getId();
-        if ($group_id > 0) {
-            $cRepo = new ClubRepo();
-            $club = $cRepo->get((int)$group_id);
-            
-            if (!$club) {
-                $this->fail(100, "One of the parameters specified was missing or invalid: group_id -> club not found");
-            }
-
-            if ($club->isBanned()) {
-                $this->fail(15, "Access denied: this community is blocked");
-            }
-
-            if (!$club->canBeModifiedBy($this->getUser())) {
-                $this->fail(15, "Access denied: you are not an administrator of this community");
-            }
-
-            $sender_id = ((int)$club->getId()) * -1;
-        }
+        $sender_id = $this->resolveSender($group_id);
 
         $params = [
-            "peer_id" => (string) $resolvedPeerId,
+            "peer_id" => (string) $resolvedId,
             "type"    => $type,
         ];
 

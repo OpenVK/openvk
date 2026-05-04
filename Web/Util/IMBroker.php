@@ -62,7 +62,14 @@ class IMBroker
         return (ovk_is_ssl() ? "https://" : "http://") . $_SERVER['HTTP_HOST'] . "/nim";
     }
 
-    public function ping(string $url): bool
+    public function ping($uid): bool 
+    {
+        $resp = $this->invokeMethod($uid, "im.GetMe");
+        if (!$resp) return false;
+        return true;
+    }
+
+    public function pingLP(): bool
     {
         try {
             $ctx = stream_context_create([
@@ -72,7 +79,7 @@ class IMBroker
                 ]
             ]);
             
-            $ping = @file_get_contents($url . "?health=1", false, $ctx);
+            $ping = @file_get_contents($this->getLongPollBaseUrl() . "?health=1", false, $ctx);
             
             if ($ping === "OK") {
                 return true;
