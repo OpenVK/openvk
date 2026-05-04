@@ -410,6 +410,14 @@ class Document extends Media
         return $res;
     }
 
+    public function toApiAttachment(User $user): object 
+    {
+        return (object) [
+            "type" => "doc",
+            "doc"  => $this->toVkApiStruct($user),
+        ];
+    }
+
     public function delete(bool $softly = true, bool $all_copies = false): void
     {
         if ($all_copies) {

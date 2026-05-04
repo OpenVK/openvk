@@ -351,4 +351,58 @@ class Poll extends Attachable
             return null;
         }
     }
+
+    public function toVkApiStruct(?User $user = null): object
+    {
+        $results = $this->getResults($user);
+        $answers = [];
+        
+        foreach ($results->options as $answer) {
+            $answers[] = (object) [
+                "id"    => (int) $answer->id,
+                "rate"  => (float) $answer->pct,
+                "text"  => (string) $answer->name,
+                "votes" => (int) $answer->votes,
+            ];
+        }
+
+        $userVote = [];
+        if ($user) {
+            $votes = $this->getUserVote($user);
+            if ($votes) {
+                foreach ($votes as $vote) {
+                    $userVote[] = (int) $vote[0];
+                }
+            }
+        }
+
+        return (object) [
+            "multiple"       => $this->isMultipleChoice(),
+            "end_date"       => $this->endsAt() ? $this->endsAt()->timestamp() : 0,
+            "closed"         => $this->hasEnded(),
+            "is_board"       => false,
+            "can_edit"       => false,
+            "can_vote"       => $user ? $this->canVote($user) : false,
+            "can_report"     => false,
+            "can_share"      => true,
+            "created"        => 0, // блин надо бы это конечно поправить
+            "id"             => (int) $this->getId(),
+            "owner_id"       => (int) $this->getOwner()->getId(),
+            "question"       => (string) $this->getTitle(),
+            "votes"          => (int) $this->getVoterCount(),
+            "disable_unvote" => !$this->isRevotable(),
+            "anonymous"      => $this->isAnonymous(),
+            "answer_ids"     => $userVote,
+            "answers"        => $answers,
+            "author_id"      => (int) $this->getOwner()->getId(),
+        ];
+    }
+
+    public function toApiAttachment(?User $user = null): array
+    {
+        return [
+            "type" => "poll",
+            "poll" => $this->toVkApiStruct($user),
+        ];
+    }
 }

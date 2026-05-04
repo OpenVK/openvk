@@ -381,6 +381,14 @@ class Photo extends Media
         return $res;
     }
 
+    public function toApiAttachment(): array
+    {
+        return [
+            "type"  => "photo",
+            "photo" => $this->toVkApiStruct(true, false),
+        ];
+    }
+
     public function canBeViewedBy(?User $user = null): bool
     {
         if ($this->isDeleted() || $this->getOwner()->isDeleted()) {

@@ -445,6 +445,15 @@ class Audio extends Media
         return $obj;
     }
 
+    public function toApiAttachment(User $user): object
+    {
+        return (object) [
+            "type"  => "audio",
+            "audio" => $this->toVkApiStruct($user),
+        ];
+    }
+
+
     public function setAlbum(Playlist $album): void
     {
         $this->stateChanges("playlist_id", $album->getId());

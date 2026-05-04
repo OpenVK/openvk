@@ -209,6 +209,11 @@ class Video extends Media
         return $this->getApiStructure($user);
     }
 
+    public function toApiAttachment(User $user): object
+    {
+        return $this->getApiStructure($user);
+    }
+
     public function setLink(string $link): string
     {
         if (preg_match(file_get_contents(__DIR__ . "/../VideoDrivers/regex/youtube.txt"), $link, $matches)) {
