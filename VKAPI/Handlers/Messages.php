@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace openvk\VKAPI\Handlers;
 
 use openvk\Web\Util\IMBroker;
-use openvk\Web\Models\Repositories\{Users as USRRepo, Clubs as ClubRepo};
+use openvk\Web\Models\Repositories\{Users as USRRepo, Clubs as ClubRepo, Chats};
 use openvk\Web\Models\Entities\{Club as ClubEnt};
 use openvk\VKAPI\Handlers\{Users as APIUsers, Groups as APIClubs};
 
@@ -811,6 +811,89 @@ final class Messages extends VKAPIRequestHandler
         $this->requireUser();
         
         return $this->invoke("im.getMe", [], $group_id);
+    }
+
+    // May be broken lmao
+    public function getConversationsById(string $peer_ids, int $extended = 0, string $fields = "")
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $peer_ids = explode(',', $peer_ids);
+        $result   = [];
+
+        foreach ($peer_ids as $peer_id) {
+            $peer_id = (int) $peer_id;
+
+            if ($peer_id < 0) {
+                $club = (new ClubRepo())->get(abs($peer_id));
+                if (!$club || $club->isBanned()) {
+                    continue;
+                }
+
+                if (!$club->canBeViewedBy($this->getUser())) {
+                    continue;
+                }
+            } else {
+                $user = (new USRRepo())->get($peer_id);
+                if (!$user || $user->isDeleted() || $user->isBanned()) {
+                    continue;
+                }
+
+                if (!$user->canBeViewedBy($this->getUser())) {
+                    continue;
+                }
+            }
+
+            $result[] = $this->getConversationById($peer_id, $extended, $fields);
+        }
+
+        return $result;
+    }
+
+    // Chat methods
+    public function getChat(int $chat_id): object
+    {
+        $this->requireUser();
+
+        $chats = new Chats();
+        $chat = $chats->get($chat_id);
+        if (!$chat) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: chat not found");
+        }
+
+        $userIds = array_map(fn($u) => $u->getId(), $chat->getUsers());
+        if (!in_array($this->getUser()->getId(), $userIds)) {
+            $this->fail(15, "Access denied");
+        }
+
+        return (object) [
+            'id' => $chat->getId(),
+            'type' => $chat->getRecord()->type,
+            'title' => $chat->getRecord()->title,
+            'admin_id' => $chat->getRecord()->admin_id,
+            'users' => $userIds,
+            'push_settings' => $chat->getPushSettings(),
+            'photo_50' => $chat->getRecord()->photo_50,
+            'photo_100' => $chat->getRecord()->photo_100,
+            'photo_200' => $chat->getRecord()->photo_200,
+            'left' => $chat->isLeft(),
+            'kicked' => $chat->isKicked(),
+        ];
+    }
+
+    public function createChat(string $title, string $user_ids): object
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $userIds = array_map('intval', explode(',', $user_ids));
+        $users = array_merge([$this->getUser()->getId()], $userIds);
+
+        $chats = new Chats();
+        $chat = $chats->create('chat', $title, $this->getUser()->getId(), $users);
+
+        return (object) ['chat_id' => $chat->getId()];
     }
 
     /*

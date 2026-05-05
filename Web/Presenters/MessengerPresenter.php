@@ -6,18 +6,20 @@ namespace openvk\Web\Presenters;
 
 use Chandler\Signaling\SignalManager;
 use openvk\Web\Events\NewMessageEvent;
-use openvk\Web\Models\Repositories\{Users, Clubs, Messages};
-use openvk\Web\Models\Entities\{Message, Correspondence};
+use openvk\Web\Models\Repositories\{Users, Clubs, Messages, Chats};
+use openvk\Web\Models\Entities\{Message, Correspondence, Chat};
 
 final class MessengerPresenter extends OpenVKPresenter
 {
     private $messages;
+    private $chats;
     private $signaler;
     protected $presenterName = "messenger";
 
     public function __construct(Messages $messages)
     {
         $this->messages = $messages;
+        $this->chats = new Chats();
         $this->signaler = SignalManager::i();
 
         parent::__construct();
@@ -94,5 +96,43 @@ final class MessengerPresenter extends OpenVKPresenter
                 ],
             ]));
         }, $id, $time);
+    }
+
+    public function renderChat(int $id): void
+    {
+        $this->assertUserLoggedIn();
+
+        $chat = $this->chats->get($id);
+        if (!$chat) {
+            $this->notFound();
+        }
+
+        // Check if user is in chat
+        $userIds = array_map(fn($u) => $u->getId(), $chat->getUsers());
+        if (!in_array($this->user->id, $userIds)) {
+            $this->notFound();
+        }
+
+        $this->template->chat = $chat;
+    }
+
+    public function renderCreateChat(): void
+    {
+        $this->assertUserLoggedIn();
+
+        if ($this->request->isMethod('POST')) {
+            $title = $this->postParam('title');
+            $userIds = $this->postParam('users'); // array of user ids
+
+            if (!$title || empty($userIds)) {
+                $this->flashFail("err", tr("error"), tr("chat_create_error"));
+                return;
+            }
+
+            $users = array_merge([$this->user->id], $userIds);
+            $chat = $this->chats->create('chat', $title, $this->user->id, $users);
+
+            $this->redirect("/messenger/chat/" . $chat->getId());
+        }
     }
 }
