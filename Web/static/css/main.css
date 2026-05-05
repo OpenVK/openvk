@@ -92,7 +92,7 @@ h1 {
 #page_act {
     border-bottom: 1px solid #d5dde6;
     padding: 2px 10px 5px;
-    color: #2B587A;
+    color: #525252;
     width: 608px;
     margin-left: -10px;
 }
@@ -197,7 +197,7 @@ h1 {
 }
 
 .navigation .link_soon {
-    color: #2B587A63;
+    color: #52525263;
 }
 .navigation .link_soon:hover {
     background:#DAE1E8;
@@ -2238,7 +2238,7 @@ h4.gift_cat_header {
 }
 
 .content_search_list_name_h4 {
-    color: #2b587a;
+    color: #525252;
     font-weight: bold;
 }
 
@@ -2301,7 +2301,7 @@ h4.gift_cat_header {
 }
 
 .summaryBar .summary {
-    color: #45688E;
+    color: #696969;
     font-weight: bold;
     padding-top: 3px;
     padding-bottom: 4px;
@@ -3229,8 +3229,8 @@ a.poll-retract-vote {
 .searchList #used, .verticalGrayTabs #used {
     color: #ffffff !important;
     padding: 5px 9px 5px 9px;
-    border: solid 0.125rem #4F4F4F;
-    background: #606060;
+    border: solid 0.125rem #4F4F4F30;
+    background: #606060aa;
 }
 
 .searchList #used a, .verticalGrayTabs #used a {
@@ -3240,14 +3240,14 @@ a.poll-retract-vote {
 .searchList li, .searchList a, .verticalGrayTabs a {
     display: block;
     font-size: 12px;
-    color: #2B587A !important;
+    color: #525252 !important;
     cursor: pointer;
     padding: 5px 9px 5px 9px;
 }
 
 .searchList a:hover, .verticalGrayTabs a:hover {
     margin-left: 0px;
-    color: #2B587A !important;
+    color: #525252 !important;
     background: #ebebeb;
 }
 

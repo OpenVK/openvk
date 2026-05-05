@@ -168,7 +168,6 @@
                 </div>
             </div>
 
-            {block sidebar}
             <div class="sidebar">
                 <div class="navigation">
                     {ifset $thisUser}
@@ -347,8 +346,6 @@
                     {/ifset}
                     </div>
                 </div>
-            {/block}
-            {block page_body}
             <div class="page_body">
                 <div id="wrapH">
                     <div id="wrapHI">
@@ -382,7 +379,6 @@
                     </div>
                 {/ifset}
             </div>
-            {/block}
             
         </div>
 
@@ -508,6 +504,5 @@
 {if isset($parentModule) && substr($parentModule, 0, 21) !== 'libchandler:absolute.'}
     <!-- INCLUDING TEMPLATE FROM PARENTMODULE: {$parentModule} -->
 
-    {include sidebar}
-    {include page_body}
+    {include content}
 {/if}

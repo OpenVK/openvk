@@ -3,6 +3,10 @@
     margin-top: -2px;
 }
 
+.sidebar.dev {
+    display: none;
+}
+
 .dev_main_head {
     padding: 20px 10px 20px 40px;
     background: #f2f2f2;

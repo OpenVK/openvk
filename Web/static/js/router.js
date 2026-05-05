@@ -140,9 +140,7 @@ window.router = new class {
         bsdnHydrate()
 
         u('.page_body').toggleClass('dev', location.pathname.startsWith('/dev'));
-
-        if (location.pathname.startsWith('/dev')) u('.sidebar').css('display', 'none');
-        else u('.sidebar').css('display', '');
+        u('.sidebar').toggleClass('dev', location.pathname.startsWith('/dev'));
 
         if(u('.paginator:not(.paginator-at-top)').length > 0) {
             showMoreObserver.observe(u('.paginator:not(.paginator-at-top)').nodes[0])
@@ -163,6 +161,11 @@ window.router = new class {
             bubbles: true,
             cancelable: true
         }))*/
+    }
+
+    onPageLoad() {
+        u('.page_body').toggleClass('dev', location.pathname.startsWith('/dev'));
+        u('.sidebar').toggleClass('dev', location.pathname.startsWith('/dev'));
     }
 
     __unlinkObservers() {
@@ -440,5 +443,6 @@ window.addEventListener('popstate', (e) => {
 })
 
 window.addEventListener('DOMContentLoaded', () => {
+    window.router.onPageLoad()
     window.router.applyTweaks()
 })

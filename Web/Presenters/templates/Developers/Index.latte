@@ -4,18 +4,12 @@
     {tr("dev_title")}
 {/block}
 
-{block sidebar} {/block}
+{block header}
+    {tr("dev_title")}
+    {css "css/dev.css"}
+{/block}
 
-{block page_body}
-<div class="page_body dev">
-	<div id="wrapH">
-		<div id="wrapHI">
-			<div class="page_yellowheader">
-				{tr("dev_title")}
-                {css "css/dev.css"}
-			</div>
-		</div>
-	</div>
+{block wrap}
     <div class="wrap2">
         <div class="wrap1">
             <div class="page_wrap">
@@ -67,5 +61,4 @@
             </div>
         </div>
     </div>
-</div>
 {/block}
