@@ -2,30 +2,37 @@
 
 {block title}{$heading}{/block}
 
-{block header}
-    {$heading}
-	{css "css/dev.css"}
-{/block}
+{block sidebar} {/block}
 
-{block wrap}
-<div class="wrap2">
-	<div class="wrap1">
-		<div class="dev_wrap">
-			<div class="dev_page_cont">
-				{$content|noescape}
+{block page_body}
+<div class="page_body dev">
+	<div id="wrapH">
+		<div id="wrapHI">
+			<div class="page_yellowheader">
+				{$heading}
+				{css "css/dev.css"}
 			</div>
-			<div id="dev_sidebar" class="dev_sidebar fl_r">
-				<div id="dev_mlist_cont">
-					<div id="dev_page_narrow" style="">
-						{foreach $devMenu as $item}
-							<a 
-								id="dev_mlist_{$item['href']}" 
-								href="/dev/{$item['href']}" 
-								class="dev_section_{$item['type']} {if $currentSection == $item['href']}dev_mlist_sel{/if}"
-							>
-								{tr($item['name'])}
-							</a>
-						{/foreach}
+		</div>
+	</div>
+	<div class="wrap2">
+		<div class="wrap1">
+			<div class="dev_wrap">
+				<div class="dev_page_cont">
+					{$content|noescape}
+				</div>
+				<div id="dev_sidebar" class="dev_sidebar fl_r">
+					<div id="dev_mlist_cont">
+						<div id="dev_page_narrow" style="">
+							{foreach $devMenu as $item}
+								<a 
+									id="dev_mlist_{$item['href']}" 
+									href="/dev/{$item['href']}" 
+									class="dev_section_{$item['type']} {if $currentSection == $item['href']}dev_mlist_sel{/if}"
+								>
+									{tr($item['name'])}
+								</a>
+							{/foreach}
+						</div>
 					</div>
 				</div>
 			</div>

@@ -139,6 +139,11 @@ window.router = new class {
         window.scrollTo(0, scrolling ?? 0)
         bsdnHydrate()
 
+        u('.page_body').toggleClass('dev', location.pathname.startsWith('/dev'));
+
+        if (location.pathname.startsWith('/dev')) u('.sidebar').css('display', 'none');
+        else u('.sidebar').css('display', '');
+
         if(u('.paginator:not(.paginator-at-top)').length > 0) {
             showMoreObserver.observe(u('.paginator:not(.paginator-at-top)').nodes[0])
         }
