@@ -61,7 +61,7 @@ class Conversations {
             fields: ChatGeneralForm.base_fields
         });
 
-        return _authorize(convs, (item) => {
+        return _authorize(convs.items, convs.profiles, convs.groups, (item) => {
             return item.conversation.peer.id
         }, (item, author) => {
             item.peer = new ChatGeneralForm(author);
