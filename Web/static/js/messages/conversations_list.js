@@ -87,7 +87,6 @@ class Conversations {
 
     _findConv(id) {
         const _l = this.all_convs.filter(itm => {return itm.peer.id == id});
-
         return _l[0];
     }
 
