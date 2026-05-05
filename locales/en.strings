@@ -1051,6 +1051,14 @@
 "is_x_audio_many" = "Just $1 audios.";
 "is_x_audio_other" = "Just $1 audios.";
 
+/* Chats */
+
+"chat" = "Chat";
+"create_chat" = "Create chat";
+"chat_title" = "Chat title";
+"add_users" = "Add users";
+"chat_create_error" = "Error creating chat";
+
 /* Notifications */
 
 "feedback" = "Feedback";
