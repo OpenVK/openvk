@@ -169,7 +169,7 @@ class ChatGeneralForm {
         return new MessagesChunk(_l, true);
     }
 
-    getOldestMessage() {
+    /*getOldestMessage() {
         let latest = null;
         this.chunks.forEach(ch => {
             let _l = ch.latest_message;
@@ -189,7 +189,7 @@ class ChatGeneralForm {
     async moveUp() {
         const _id = this.getOldestMessage().id;
         console.log(await this.getMessages(_id))
-    }
+    }*/
 
     async sendMessage(msg) {
         const resp = await window.OVKAPI.call('messages.send', {
@@ -201,13 +201,19 @@ class ChatGeneralForm {
         console.info('sent message to ' + this.id)
     }
 
+    _pushNewMessage(msg) {
+        this._getMostActualChunk().messages.push(msg);
+        window.im.messenger.view._triggerUpdate();
+    }
+
+    _getMostActualChunk() {
+        console.log(this.id, this.chunks)
+        return this.chunks[0];
+    }
+
     _appendMessagesChunk(messages) {
         this._messages_inited = true;
         this.chunks.push(messages)
-    }
-
-    _getLocalMessages() {
-        return this.messages;
     }
 
     _isMessagesInited() {
@@ -293,6 +299,14 @@ class ChatMessage {
         return this.data.id;
     }
 
+    get peer_id() {
+        return this.data.peer;
+    }
+
+    get from_id() {
+        return this.data.from_id;
+    }
+
     get attachments() {
         const _at = this.data.attachments;
         if (!_at) {
@@ -312,16 +326,15 @@ class ChatMessage {
     static fromEvent(event) {
         const [, id, flags, peer, ts, subject, text, attachments, randomId] = event;
 
-        const msg = new ChatMessage();
-        msg.data = {
+        const msg = new ChatMessage({
             'id': id,
             'flags': flags,
-            'peer': peer,
-            'ts': ts,
+            'from_id': peer,
+            'peer': ts,
             'text': text,
             'attachments': attachments,
             'random_id': randomId
-        };
+        });
         msg._guessSender();
 
         return msg;

@@ -206,18 +206,6 @@ window.im = new (class {
         }
     }
 
-    // Messages of current chat
-    get _messages() {
-        try {
-            const _chat = this.messenger.view.getCurrentChat();
-
-            return _chat.peer._getLocalMessages();
-        } catch(e) {
-            console.error(e);
-            return []
-        }
-    }
-
     // Current corresponder
     get corresponder() {
         try {
@@ -239,13 +227,5 @@ window.im = new (class {
         } else {
             this.selectTab('conversations');
         }
-    }
-
-    // LongPoll listener
-
-    onEventReceived(event) {
-        if (!Array.isArray(event)) return;
-
-        this.event_handler.handle(event);
     }
 })()

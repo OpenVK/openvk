@@ -32,10 +32,14 @@ class Messenger {
         const text = model.currentDraft();
         const corresponder = window.im.corresponder;
 
-        const msg = new ChatMessage();
+        const msg = new ChatMessage({
+            'peer': window.im.current.id
+        });
+        msg._guessSender();
         msg.setText(text);
 
-        await corresponder.sendMessage(msg);
+        const _sent = await corresponder.sendMessage(msg)
+        //corresponder._pushNewMessage(msg);
     }
 }
 
@@ -94,13 +98,24 @@ class MessengerViewModel {
         </div>
         `
         this.opened_tabs = ko.observableArray([]);
-        this.messages = ko.pureComputed(function() {
-            return window.im._messages;
-        });
         this.currentDraft = ko.observable('');
         this.drafts = {};
         this.scrolls = {};
         this.current_chat = ko.observable(null); // index of element
+        this.messagesTrigger = ko.observable(0);
+        this.messages = ko.pureComputed(() => {
+            this.messagesTrigger();
+            const _chat = this.getCurrentChat();
+            if (!_chat) {
+                return [];
+            }
+
+            return _chat.peer.messages;
+        });
+    }
+
+    _triggerUpdate() {
+        this.messagesTrigger(this.messagesTrigger() + 1);
     }
 
     // Events
@@ -266,9 +281,9 @@ class LongPollConnection {
             console.log(data);
             if (data?.updates?.length > 0)
                 data.updates.forEach(event => {
-                    window.im.onEventReceived(event);
+                    window.im.event_handler.handle(event);
                 });
-            this.lp.ts = data.ts
+            this.lp.ts = data.ts;
             this.listen();
         };
         xhr.send();

@@ -7,13 +7,15 @@ class EventHandler {
         };
     }
 
-    handle(event) {
+    async handle(event) {
+        if (!Array.isArray(event)) return;
+
         const method = this.codes[event[0]];
         if (!method) {
-            console.info('неизвестный ивент.  ', event[0]);
+            console.info('неизвестный ивент,  ', event[0]);
         };
 
-        method(event);
+        await method(event);
         /*switch (code) {
             case 1: { 
                 const messageId = event[1];
@@ -153,12 +155,11 @@ class EventHandler {
         }*/
     }
 
-    NewMessageEvent(event) {
+    async NewMessageEvent(event) {
         const _msg = ChatMessage.fromEvent(event);
 
         // finding conversation
-        const _crs = window.im.corresponder;
-
-        _crs.chunks[0].messages.push(_msg)
+        const _crs = window.im.conversations._findConv(_msg.peer_id);
+        _crs.peer._pushNewMessage(_msg);
     }
 }
