@@ -140,6 +140,7 @@ window.router = new class {
         bsdnHydrate()
 
         u('.page_body').toggleClass('dev', location.pathname.startsWith('/dev'));
+        u('.page_footer').toggleClass('dev', location.pathname.startsWith('/dev'));
         u('.sidebar').toggleClass('dev', location.pathname.startsWith('/dev'));
 
         if(u('.paginator:not(.paginator-at-top)').length > 0) {
@@ -165,6 +166,7 @@ window.router = new class {
 
     onPageLoad() {
         u('.page_body').toggleClass('dev', location.pathname.startsWith('/dev'));
+        u('.page_footer').toggleClass('dev', location.pathname.startsWith('/dev'));
         u('.sidebar').toggleClass('dev', location.pathname.startsWith('/dev'));
     }
 

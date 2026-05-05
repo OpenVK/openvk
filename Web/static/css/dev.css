@@ -3,6 +3,10 @@
     margin-top: -2px;
 }
 
+.page_footer.dev {
+    margin-left: 0px;
+}
+
 .sidebar.dev {
     display: none;
 }
