@@ -156,7 +156,8 @@ class ChatGeneralForm {
             'fields': ChatGeneralForm.base_fields
         });
 
-        const _l = _authorize(messages, (item) => {
+        window.im.cached_profiles._moveToProfileCache(messages.profiles, messages.groups);
+        const _l = _authorize(messages.items, messages.profiles, messages.groups, (item) => {
             return item.from_id;
         }, (item, author) => {
             item.sender = new ChatGeneralForm(author);
@@ -234,12 +235,18 @@ class Conversation {
     }
 }
 
-function _authorize(arr, get_id = null, set_id = null, finalize = null) {
+function _authorize(items, profiles = null, groups = null, get_id = null, set_id = null, finalize = null) {
     let fin = [];
 
-    arr.items.forEach(item => {
+    items.forEach(item => {
         const _id = get_id(item);
-        const author = find_author(_id, arr.profiles, arr.groups)
+        let author = null;
+
+        if (!profiles && !groups) {
+            author = window.im.cached_profiles._findCachedProfileById(_id);
+        } else {
+            author = find_author(_id, profiles, groups)
+        }
 
         set_id(item, author);
 
@@ -268,6 +275,12 @@ class ChatMessage {
         this.data = item;
     }
 
+    _guessSender() {
+        //if (!this.data.sender) {
+        this.data.sender = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(this.data.peer);
+    }
+
+    // Sender задаётся в другом файле
     get sender() {
         return this.data.sender;
     }
@@ -308,7 +321,8 @@ class ChatMessage {
             'text': text,
             'attachments': attachments,
             'random_id': randomId
-        }
+        };
+        msg._guessSender();
 
         return msg;
     }
