@@ -19,7 +19,7 @@ final class MessengerPresenter extends OpenVKPresenter
     public function __construct(Messages $messages)
     {
         $this->messages = $messages;
-        //$this->chats = new Chats();
+        $this->chats = new Chats();
         $this->signaler = SignalManager::i();
 
         parent::__construct();
