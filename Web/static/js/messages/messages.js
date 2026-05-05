@@ -283,7 +283,7 @@ class ChatMessage {
 
     _guessSender() {
         //if (!this.data.sender) {
-        this.data.sender = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(this.data.peer);
+        this.data.sender = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(this.data.from_id);
     }
 
     // Sender задаётся в другом файле
@@ -326,11 +326,12 @@ class ChatMessage {
     static fromEvent(event) {
         const [, id, flags, peer, ts, subject, text, attachments, randomId] = event;
 
+        // todo: add ts here
         const msg = new ChatMessage({
             'id': id,
             'flags': flags,
-            'from_id': peer,
-            'peer': ts,
+            'from_id': attachments.from,
+            'peer': peer,
             'text': text,
             'attachments': attachments,
             'random_id': randomId
