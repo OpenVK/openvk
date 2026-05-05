@@ -1,0 +1,12 @@
+id: classic
+version: "0.0.1.0"
+openvk_version: 0
+enabled: 1
+metadata:
+    name:
+        _: "OpenVK Classic"
+        en: "OpenVK Classic"
+        ru: "OpenVK Classic"
+        uk: "OpenVK Classic"
+    author: "OpenVK Team"
+    description: "OpenVK theme in classic style (before 2026)"

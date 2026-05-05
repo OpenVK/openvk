@@ -41,7 +41,7 @@ nobold span {
 
 a {
     text-decoration: none;
-    color: #2B587A;
+    color: #595959;
     cursor: pointer;
 }
 
@@ -79,7 +79,7 @@ h1 {
 .page_header {
     position: relative;
     width: 791px;
-    height: 45px;
+    height: 41px;
     background: url('../img/header.png');
     background-repeat: no-repeat;
     background-position: 0;
@@ -106,8 +106,8 @@ h1 {
 .home_button_custom {
     width: 175px;
     text-indent: 58px;
-    line-height: 41px;
-    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+    line-height: 40px;
+    text-shadow: -1px 1px 0 rgba(0, 0, 0, 0.5);
     font-weight: bold;
     color: white;
     white-space: nowrap;
@@ -121,14 +121,13 @@ h1 {
     padding-right: 8px;
     text-transform: lowercase;
     float: right;
+    margin-top: -3px;
 }
 
 .header_navigation .link {
     display: inline-block;
     height: 29px;
     padding: 11px 4px 0 7px;
-    background: url('../img/divider.png') no-repeat;
-    background-size: 1.5px 41px;
 }
 
 .page_header.search_expanded .header_navigation .header_divider_stick {
@@ -164,9 +163,8 @@ h1 {
 
 .navigation .link {
     display: block;
-    padding: 3px 3px 3px 6px;
+    padding: 4px 3px 4px 6px;
     text-decoration: none;
-    border-top: 1px solid #fff;
     color: #000;
     border-bottom: 0;
     border-left: 0;
@@ -180,7 +178,6 @@ h1 {
 
 .navigation .link:hover {
     background-color: #E4E4E4;
-    border-top: 1px solid #CCCCCC;
 }
 
 .navigation .link_soon {
@@ -261,7 +258,6 @@ h1 {
 
 #backdropEditor {
     position: relative;
-    border: 4px inset #cfcfcf;
     padding: 8px;
     width: 550px;
     height: 270px;
@@ -283,7 +279,11 @@ h1 {
 
 #backdropFilePicker > #spacer {
     display: inline-block;
-    width: calc(550px - 16px - 38px - 171px);
+    width: 340px!important;
+}
+
+#backdropFilePicker > .button {
+    margin-left: 5px;
 }
 
 .upLeftErrors {
@@ -329,7 +329,7 @@ h1 {
 }
 
 .page_yellowheader {
-    padding: 4px 10px;
+    padding: 6px 10px;
     font-weight: bold;
     background: url('../img/header_yellow.png') repeat-x;
     background-color: #EEE5B8;
@@ -449,12 +449,11 @@ h1 {
 .profile_link {
     display: block;
     box-sizing: border-box;
-    padding: 3px;
+    padding: 4px;
     background: transparent;
     border: none;
-    border-bottom: 1px solid #CCC;
     font-size: 11px;
-    color: #2b587a;
+    color: #525252;
     width: 200px;
     text-align: left;
     cursor: pointer;
@@ -612,11 +611,11 @@ table {
 
 .button {
     border-radius: 2px;
-    border: #595959;
+    border: 1px solid #595959;
     font-size: 11px;
     outline: none;
     white-space: nowrap;
-    background: #595959;
+    background: url('../img/button_bg.png') #595959;
     background-position: 0 -16px;
     color: #fff;
     padding: 5px 9px;
@@ -669,7 +668,7 @@ input[type=radio] {
 }
 
 input[type=checkbox] {
-    background-image: url("data:image/gif;base64,R0lGODlhDwA4ALMAAP//////AP8A//8AAAD//wD/AAAA/wAAADtZd8XKzuHh4crKysHBwba2tv///wAAACH5BAEAAA4ALAAAAAAPADgAAASzcMlJqVsg653X5SDgYeE2luaHdup6rmKLvq5c0rMdjlUvXb6eDoRAkFBF4yqZOBKLi2aJSUNomE1VEoCNkRLJYiLB+oLF5LJmjBinnOO0BncDBi2NvH6/dzQUgIGCgA1+g4cKhX+IgoqMjYaPhJGSjpKJlI+WlZmMm5qdiIp8pHl+paShh0WLj0mtiEywg0kMCbOBTAyUCLlolkkKWJiLZ8PEgGxogZtsY5CwcYOfnqeofREAOw==");
+    background-image: url("../img/checkbox.gif");
     width: 15px;
 }
 
@@ -719,7 +718,7 @@ input[type="number"] {
     float: left;
     width: 200px;
     margin-right: 10px;
-    border-right: 1px #eeeeee solid;
+    border-right: 0px #eeeeee solid;
 }
 
 .left_big_block {
@@ -734,11 +733,11 @@ input[type="number"] {
 }
 
 .content_title_expanded {
-    background-image: url('../img/flex_arrow_open2.png')!important;
-    background-repeat: no-repeat;
+    background-image: none;
     background-color: #e6e6e6;
-    border-top: #8B8B8B solid 1px;
-    padding: 3px 8px 3px 24px;
+    border-top: #C0C0C0 solid 1px;
+    border-bottom: #C0C0C0 solid 1px;
+    padding: 5px 8px 5px 8px;
     margin-top: 5px;
     font-weight: bold;
     color: #626262;
@@ -748,11 +747,12 @@ input[type="number"] {
 }
 
 .content_title_unexpanded {
-    background-image: url('../img/flex_arrow_shut.gif')!important;
+    background-image: none;
     background-repeat: no-repeat;
     background-color: #eee;
     border-top: solid 1px #ccc;
-    padding: 3px 8px 3px 24px;
+    border-bottom: solid 1px #ccc;
+    padding: 5px 8px 5px 8px;
     font-weight: bold;
     color: #888;
     font-size: 11px;
@@ -768,11 +768,11 @@ input[type="number"] {
     border-bottom: 1px solid #EEEEEE;
     color: #777777;
     padding: 3px 8px;
-    border-top: #ccc solid 1px;
+    border-top: 0px solid #ccc;
 }
 
 .content {
-    padding: 8px;
+    padding: 0px;
 }
 
 .content-withouttop {
@@ -803,7 +803,8 @@ input[type~="date"],
 input[type~="datetime-local"],
 select {
     border: 1px solid #C0CAD5;
-    padding: 3px;
+    padding: 5px;
+    background: #fff;
     font-size: 11px;
     font-family: tahoma, verdana, arial, sans-serif;
     width: 100%;
@@ -822,7 +823,7 @@ select {
 
 h4 {
     border-bottom: 1px solid #E8EBEE;
-    color: #45688E;
+    color: #333;
     font-size: 12px;
     font-weight: bold;
     margin: 0;
@@ -1132,7 +1133,7 @@ table.User {
 }
 
 .msg {
-    width: 70%;
+    width: 96%;
     margin: auto;
     margin-bottom: 5pt;
     padding: 8pt;
@@ -1468,10 +1469,10 @@ textarea {
 
 .completeness-gauge {
     position: relative;
-    width: 95%;
+    width: 100%;
     height: 16px;
     background-color: #e6e6e6;
-    border-top: 1px solid #bbb;
+    border-top: 0px solid #bbb;
 }
 
 .completeness-gauge>div {
@@ -1711,6 +1712,8 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
     font-size: 10px;
     margin-right: 3px;
     float: left;
+    font-weight: bold;
+    color: #626262;
 }
 
 .like_wrap.tidy .likeCnt {
@@ -1736,7 +1739,7 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
 .ugc-table td {
     vertical-align: top !important;
     font-size: 11px;
-    line-height: 13px;
+    line-height: 15px;
     margin: 0;
     padding: 1px 0;
 }
@@ -1769,14 +1772,14 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
 }
 
 .profileName {
-    color: #45688E;
+    color: #595959;
     font-size: 11px;
     font-weight: bold;
     margin: 0;
 }
 
 .profileName h2 {
-    color: #45688E;
+    color: #595959;
     font-size: 13px;
     margin: 0;
     padding: 0;
@@ -1965,7 +1968,7 @@ h4.gift_cat_header {
     border: 1px solid darkgrey;
     background-color: white;
     z-index: 32;
-    margin-top: -7px;
+    margin-top: -5px;
     margin-left: -16px;
     box-shadow: 0 1px 3px -1px;
     user-select: none;
@@ -1976,6 +1979,8 @@ h4.gift_cat_header {
     gap: 5px;
     padding: 2px 6px;
     cursor: pointer;
+    align-items: center;
+    line-height: 10px;
 }
 
 #wallAttachmentMenu>a>img {
@@ -1991,6 +1996,24 @@ h4.gift_cat_header {
     background-color: #eee;
     text-align: center;
 }
+
+#wallAttachmentMenu img {
+    box-sizing: border-box;
+    content: none;
+    padding-left: 20px;
+    width: 20px;
+    height: 20px;
+    background-image: url("../img/attach_icons.png");
+}
+
+#__videoAttachment img { background-position-y: 196px; }
+#__audioAttachment img { background-position-y: 173px; }
+#__documentAttachment img { background-position-y: 152px; }
+#__notesAttachment img { background-position-y: 86px; }
+[onclick="initGraffiti(event);"] img { background-position-y: 65px; }
+[onclick="initPoll(event);"] img { background-position-y: 110px; }
+#__geoAttacher img {background-position-y: 131px;}
+#__sourceAttacher img {background-position-y: 44px;}
 
 #ovkDraw {
     border: 1px solid #757575;
@@ -2463,7 +2486,7 @@ li {
     margin-top: 10px;
     padding: 7px;
     background-color: #f6f6f6;
-    border-bottom: 1.5px solid #DDDDDD;
+    border-radius: 3px;
     text-align: center;
     user-select: none;
 }
@@ -2474,7 +2497,7 @@ li {
 }
 
 #bday b {
-    color: #45688E;
+    color: #595959;
     font-size: 12px;
 }
 
@@ -3285,9 +3308,10 @@ a.poll-retract-vote {
 }
 
 .page_wrap_content .page_search_options .search_option .search_option_content select {
-    padding-left: 3px;
-    padding-top: 3px;
-    padding-bottom: 3px;
+    padding-left: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 2px;
     width: 100%;
 }
 
