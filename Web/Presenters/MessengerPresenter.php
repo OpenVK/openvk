@@ -8,6 +8,7 @@ use Chandler\Signaling\SignalManager;
 use openvk\Web\Events\NewMessageEvent;
 use openvk\Web\Models\Repositories\{Users, Clubs, Messages};
 use openvk\Web\Models\Entities\{Message, Correspondence};
+use openvk\Web\Util\IMBroker;
 
 final class MessengerPresenter extends OpenVKPresenter
 {
@@ -38,6 +39,11 @@ final class MessengerPresenter extends OpenVKPresenter
     {
         $this->assertUserLoggedIn();
 
+        $im = IMBroker::i();
+        $isAvailable = $im->isEnabled() && $im->pingLP();
+        
+        $this->template->imAvailable = $isAvailable;
+        
         // #КакаоПрокакалось
     }
 
