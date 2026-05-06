@@ -13,7 +13,7 @@ class MessagesChunk {
     }
 
     // not oldest, but first in array
-    get first_messages() {
+    get first_message() {
         if (this.do_reverse) {
             return this.messages[this.messages.length - 1];
         } else {
@@ -27,6 +27,35 @@ class MessagesChunk {
         } else {
             return this.messages[0];
         }
+    }
+
+    async fetch(data) {
+        const params = {
+            'count': ChatGeneralForm.MESSAGES_PER_PAGE,
+            'extended': 1,
+            'fields': ChatGeneralForm.base_fields
+        };
+
+        Object.assign(params, data);
+        const messages = await window.OVKAPI.call('messages.getHistory', params);
+
+        window.im.cached_profiles._moveToProfileCache(messages.profiles, messages.groups);
+
+        const _l = _authorize(messages.items, messages.profiles, messages.groups, (item) => {
+            return item.from_id;
+        }, (item, author) => {
+            item.sender = new ChatGeneralForm(author);
+        }, (item, arr) => {
+            arr.push(new ChatMessage(item));
+        });
+
+        _l.forEach(msg => {
+            this.messages.push(msg);
+        })
+    }
+
+    isEnd() {
+        return this.messages.length < this.count;
     }
 
     getMessages() {
@@ -48,13 +77,13 @@ class MessagesChunk {
 
 class ChatGeneralForm {
     static swag = 2000000000;
-    static MESSAGES_PER_PAGE = 10;
+    static MESSAGES_PER_PAGE = 20;
     static base_fields = 'photo_100'
 
     constructor(item) {
         this.data = item || {};
-        this.chunks = [];
-        this.msg_offset = 0;
+        this.message_chunks = [];
+        this.message_chunks_order = [];
     }
 
     get id() {
@@ -119,9 +148,17 @@ class ChatGeneralForm {
         return '/im?sel=' + this.id
     }
 
+    get chunks() {
+        const y = [];
+        this.message_chunks_order.forEach(order => {
+            y.push(this.message_chunks[order]);
+        })
+
+        return y;
+    }
+
     get messages() {
         const fnl = [];
-        console.log(this.chunks[0].latest_message.text)
         this.chunks.forEach(chunk => {
             chunk.getMessages().forEach(msg => {
                 fnl.push(msg);
@@ -156,26 +193,16 @@ class ChatGeneralForm {
         }
     }
 
-    async getMessages(offset = 0) {
-        const messages = await window.OVKAPI.call('messages.getHistory', {
-            'peer_id': this.id,
-            'start_message_id': offset,
-            'count': ChatGeneralForm.MESSAGES_PER_PAGE,
-            'extended': 1,
-            'fields': ChatGeneralForm.base_fields
+    async getMessages(message_id, offset = 0) {
+        const rev = true;
+        const messages = new MessagesChunk([], rev);
+        await messages.fetch({
+            'start_message_id': message_id,
+            'offset': 0,
+            'peer_id': this.id
         });
 
-        window.im.cached_profiles._moveToProfileCache(messages.profiles, messages.groups);
-        const _l = _authorize(messages.items, messages.profiles, messages.groups, (item) => {
-            return item.from_id;
-        }, (item, author) => {
-            item.sender = new ChatGeneralForm(author);
-        }, (item, arr) => {
-            arr.push(new ChatMessage(item));
-        });
-
-        // messages comes from new to old
-        return new MessagesChunk(_l, true);
+        return messages;
     }
 
     /*getOldestMessage() {
@@ -193,11 +220,6 @@ class ChatGeneralForm {
         })
 
         return latest;
-    }
-
-    async moveUp() {
-        const _id = this.getOldestMessage().id;
-        console.log(await this.getMessages(_id))
     }*/
 
     async sendMessage(msg) {
@@ -216,16 +238,44 @@ class ChatGeneralForm {
     }
 
     _getMostActualChunk() {
-        return this.chunks[0];
+        return this.message_chunks[0];
     }
 
-    _appendMessagesChunk(messages) {
+    _getLatestChunk() {
+        return this.message_chunks[this.message_chunks.length - 1];
+    }
+
+    _isEndReached() {
+        return this._end_reached ?? false;
+    }
+
+    _appendMessagesChunk(messages, before = false) {
         this._messages_inited = true;
-        this.chunks.push(messages)
+        let id = this.message_chunks.push(messages);
+        // todo относительно какого то чанка
+        if (before) {
+            this.message_chunks_order.unshift(id - 1);
+        } else {
+            this.message_chunks_order.push(id - 1);
+        }
     }
 
     _isMessagesInited() {
         return this._messages_inited;
+    }
+
+    // Pagination
+    async _messagesLoad_UpFromLastChunk() {
+        if (this._isEndReached()) {
+            return;
+        }
+
+        const _id = this._getLatestChunk().first_message;
+        const msgs = await this.getMessages(_id.id);
+
+        this._end_reached = msgs.isEnd();
+        this._appendMessagesChunk(msgs, true);
+        window.im.messenger.view._triggerUpdate();
     }
 }
 
@@ -259,7 +309,7 @@ function _authorize(items, profiles = null, groups = null, get_id = null, set_id
         if (!profiles && !groups) {
             author = window.im.cached_profiles._findCachedProfileById(_id);
         } else {
-            author = find_author(_id, profiles, groups)
+            author = find_author(_id, profiles, groups);
         }
 
         set_id(item, author);

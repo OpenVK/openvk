@@ -60,14 +60,24 @@ class Conversations {
             extended: 1,
             fields: ChatGeneralForm.base_fields
         });
+        const lists = [];
 
-        return _authorize(convs.items, convs.profiles, convs.groups, (item) => {
-            return item.conversation.peer.id
-        }, (item, author) => {
-            item.peer = new ChatGeneralForm(author);
-        }, (item, lists) => {
+        // Профили выносятся в кэш, в peer будет создана ссылка
+        convs.profiles.forEach(prof => {
+            window.im.cached_profiles._addProfileCache(new ChatGeneralForm(prof));
+        });
+        convs.groups.forEach(group => {
+            window.im.cached_profiles._addProfileCache(new ChatGeneralForm(group));
+        });
+
+        convs.items.forEach(item => {
+            const id = item.conversation.peer.id;
+            item.peer = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(id);
+
             lists.push(new Conversation(item));
-        });;
+        })
+
+        return lists;
     }
 
     async init() {

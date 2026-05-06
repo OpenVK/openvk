@@ -28,7 +28,6 @@ class ProfilesCache {
             return null;
         }
 
-        console.log(similar)
         return similar[0];
     }
 
