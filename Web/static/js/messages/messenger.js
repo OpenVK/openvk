@@ -67,11 +67,11 @@ class MessengerViewModel {
                                     <strong data-bind="text: sender.full_name"></strong>
                                 </a>
                                 <span class="text" data-bind="html: text"></span>
-                                <div data-bind="foreach: attachments" class="attachments">
+                                <div data-bind="foreach: { data: attachments, as: 'attachment' }" class="attachments">
                                     <div class="msg-attach-j">
-                                        <div data-bind="if: type === 'photo'" class="msg-attach-j-photo">
-                                            <a data-bind="attr: { href: link }">
-                                                <img data-bind="attr: { src: photo.url, alt: photo.caption  }" />
+                                        <div data-bind="if: attachment.type === 'photo'" class="msg-attach-j-photo">
+                                            <a data-bind="attr: { href: attachment.photo.link }">
+                                                <img data-bind="attr: { src: attachment.photo.photo_130, alt: '...'  }" />
                                             </a>
                                         </div>
                                     </div>
