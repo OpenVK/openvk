@@ -41,9 +41,9 @@ final class MessengerPresenter extends OpenVKPresenter
 
         $im = IMBroker::i();
         $isAvailable = $im->isEnabled() && $im->pingLP();
-        
+
         $this->template->imAvailable = $isAvailable;
-        
+
         // #КакаоПрокакалось
     }
 

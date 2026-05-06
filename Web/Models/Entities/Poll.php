@@ -360,7 +360,7 @@ class Poll extends Attachable
     {
         $results = $this->getResults($user);
         $answers = [];
-        
+
         foreach ($results->options as $answer) {
             $answers[] = (object) [
                 "id"    => (int) $answer->id,
