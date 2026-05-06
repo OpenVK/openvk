@@ -1,29 +1,58 @@
 class ConversationsViewModel {
     constructor() {
         this.indexes_order = ko.observableArray([]);
+        this.conversations_list = ko.pureComputed(() => {
+            this._check_count();
+
+            return window.im.conversations.convs;
+        })
+        this._check_count = ko.observable(0);
+        this.has_more_items = ko.pureComputed(() => {
+            this._check_count();
+            // todo REWRITE
+            if (!window.im.conversations.total_convs) {
+                return true;
+            }
+
+            return window.im.conversations.loaded_convs_count < window.im.conversations.total_convs
+        });
         // todo поменять
+    }
+
+    _update() {
+        console.log(this.conversations_list())
+        this._check_count(this._check_count() + 1);
     }
 
     _st() {
         this.conversations = ko.observableArray(window.im.conversations.convs);
     }
+
+    async loadNext() {
+        await window.im.conversations._loadNext();
+        this._update();
+    }
 }
 
 class Conversations {
     constructor() {
+        this.total_convs = 0;
         this.template = `
         <div class="crp-list scroll_container">
-            <div data-bind="foreach: window.im.conversations.convs">
+            <div data-bind="foreach: conversations_list">
                 <div class="scroll_node crp-entry" data-bind="event: { click: async function(data, event) { await window.im.selectChat(this) } }">
                     <div class="crp-entry--image">
                         <img data-bind="attr: { src: peer.avatar_any }"
                         loading="lazy" />
                     </div>
                     <div class="crp-entry--info">
-                        <a data-bind="attr: { href: peer.chat_url }, html: peer.name "></a><br/>
+                        <a data-bind="attr: { href: peer.chat_url }, html: peer.full_name "></a><br/>
                     </div>
                     <div class="crp-entry--message"></div>
                 </div>
+            </div>
+            <div data-bind="if: has_more_items, event: { click: loadNext }">
+                ${tr('show_next')}
             </div>
         </div>
         `
@@ -54,10 +83,12 @@ class Conversations {
         return new ChatGeneralForm(_n);
     }
 
-    async getConversations() {
+    async getConversations(offset = 0) {
         // adding profiles to conversation items
         let convs = await window.OVKAPI.call("messages.getConversations", {
             extended: 1,
+            count: 1,
+            offset: offset,
             fields: ChatGeneralForm.base_fields
         });
         const lists = [];
@@ -77,17 +108,42 @@ class Conversations {
             lists.push(new Conversation(item));
         })
 
+        if (!this.total_convs) {
+            this.total_convs = convs.count;
+        }
+
         return lists;
     }
 
-    async init() {
-        this.all_convs = await this.getConversations();
-        // new -> old
-        this.view = new ConversationsViewModel();
-        this.all_convs.forEach(item => {
+    get loaded_convs_count() {
+        if (!this.all_convs) {
+            return 0;
+        }
+
+        return this.all_convs.length;
+    }
+
+    _appendConvs(convs) {
+        if (!this.all_convs) {
+            this.all_convs = [];
+        }
+
+        convs.forEach(item => {
+            this.all_convs.push(item);
             this.view.indexes_order.push(item.id);
         });
-        this.view._st();
+    }
+
+    async _loadNext() {
+        // хз какой тут оффсет может быть
+        let convs = await this.getConversations(this.loaded_convs_count);
+        this._appendConvs(convs);
+    }
+
+    async init() {
+        this.view = new ConversationsViewModel();
+        await this._loadNext();
+        //this.view._st();
     }
 
     // когда перезагрузится страница то всё равно в другом порядке будет
@@ -102,12 +158,15 @@ class Conversations {
 
     // Есть общий список со всеми переписками и есть массив с их порядком
     get convs() {
-        const _ret = [];
+        /*const _ret = [];
         this.view.indexes_order().forEach(id => {
             _ret.push(this._findConv(id));
-        });
+        });*/
 
-        return _ret;
+        return this.all_convs.slice(0).sort((a, b) => {
+            //console.log(a.peer.full_name, a.last_updated, '\n', b.peer.full_name, b.last_updated, Number(a.last_updated), Number(b.last_updated))
+            return Number(b.last_updated) - Number(a.last_updated);
+        });
     }
 
     hasAppeared(container) {
@@ -127,5 +186,37 @@ class Conversations {
 
     hide(container) {
         container.classList.add('hidden')
+    }
+}
+
+class Conversation {
+    constructor(conversation_item) {
+        this._conversation = conversation_item.conversation;
+        this._last_message = new ChatMessage(conversation_item.last_message);
+        this.peer = conversation_item.peer;
+    }
+
+    get last_message() {
+        try {
+            if (this.peer) {
+                return this.peer._getLatestChunk().latest_message;
+            }
+        // no mesages
+        } catch(e) {}
+
+        console.log(this._last_message)
+        return this._last_message;
+    }
+
+    get conversation() {
+        return this._conversation;
+    }
+
+    get last_updated() {
+        return this.last_message.sent;
+    }
+
+    get id() {
+        return this.peer.id;
     }
 }

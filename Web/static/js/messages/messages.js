@@ -233,7 +233,7 @@ class ChatGeneralForm {
     }
 
     _pushNewMessage(msg) {
-        this._getMostActualChunk()._pushMessage(msg);
+        this._getLatestChunk()._pushMessage(msg);
         window.im.messenger.view._triggerUpdate();
     }
 
@@ -242,7 +242,7 @@ class ChatGeneralForm {
     }
 
     _getLatestChunk() {
-        return this.message_chunks[this.message_chunks.length - 1];
+        return this.message_chunks[this.message_chunks_order[this.message_chunks_order.length - 1]];
     }
 
     _isEndReached() {
@@ -276,26 +276,6 @@ class ChatGeneralForm {
         this._end_reached = msgs.isEnd();
         this._appendMessagesChunk(msgs, true);
         window.im.messenger.view._triggerUpdate();
-    }
-}
-
-class Conversation {
-    constructor(conversation_item) {
-        this._conversation = conversation_item.conversation;
-        this._last_message = new ChatMessage(conversation_item.last_message);
-        this.peer = conversation_item.peer;
-    }
-
-    get last_message() {
-        return this._last_message;
-    }
-
-    get conversation() {
-        return this._conversation;
-    }
-
-    get id() {
-        return this.peer.id;
     }
 }
 
@@ -344,6 +324,10 @@ class ChatMessage {
         this.data.sender = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(this.data.from_id);
     }
 
+    get sent() {
+        return new Date(this.data.date * 1000);
+    }
+
     // Sender задаётся в другом файле
     get sender() {
         return this.data.sender;
@@ -389,6 +373,7 @@ class ChatMessage {
             'id': id,
             'flags': flags,
             'from_id': attachments.from,
+            'date': ts,
             'peer': peer,
             'text': text,
             'attachments': attachments,

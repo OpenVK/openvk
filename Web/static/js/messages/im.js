@@ -148,7 +148,7 @@ window.im = new (class {
             `);
             this.root.querySelector(".tabs").insertAdjacentHTML('beforeend', `
                 <a data-tab="${tab}" onclick="window.im.selectTab('${tab}', event)" class="tab">
-                    ${tab}
+                    ${tr('messenger_tab_' + tab)}
                 </a>
             `);
         })
