@@ -410,7 +410,7 @@ class Document extends Media
         return $res;
     }
 
-    public function toApiAttachment(User $user): object 
+    public function toApiAttachment(User $user): object
     {
         return (object) [
             "type" => "doc",

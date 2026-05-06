@@ -749,7 +749,7 @@ class User extends RowModel
             $data = json_decode($response, true);
 
             return (int) ($data['response']['count'] ?? 0);
-            
+
         } catch (\Exception $e) {
             error_log("IM Broker error: " . $e->getMessage());
             return 0;

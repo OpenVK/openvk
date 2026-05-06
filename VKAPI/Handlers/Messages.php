@@ -30,8 +30,8 @@ final class Messages extends VKAPIRequestHandler
     {
         $sender_id = $this->getUser()->getId();
         if ($group_id > 0) {
-            $club = (new ClubRepo())->get((int)$group_id);
-            
+            $club = (new ClubRepo())->get((int) $group_id);
+
             if (!$club) {
                 $this->fail(100, "One of the parameters specified was missing or invalid: group_id -> club not found");
             }
@@ -44,7 +44,7 @@ final class Messages extends VKAPIRequestHandler
                 $this->fail(15, "Access denied: you are not an administrator of this community");
             }
 
-            $sender_id = ((int)$club->getId()) * -1;
+            $sender_id = ((int) $club->getId()) * -1;
         }
         return $sender_id;
     }
@@ -59,10 +59,12 @@ final class Messages extends VKAPIRequestHandler
             $uRepo = new USRRepo();
             $cRepo = new ClubRepo();
             $peerObj = $uRepo->getByShortUrl($domain) ?: $cRepo->getByShortUrl($domain);
-            
-            if (!$peerObj) return null;
 
-            $id = (int)$peerObj->getId();
+            if (!$peerObj) {
+                return null;
+            }
+
+            $id = (int) $peerObj->getId();
             return ($peerObj instanceof Club) ? -$id : $id;
         }
 
@@ -98,9 +100,13 @@ final class Messages extends VKAPIRequestHandler
         }
 
         if (is_object($peer)) {
-            if (method_exists($peer, 'isBanned') && $peer->isBanned()) $this->fail(18, "Recipient is banned");
-            if (method_exists($peer, 'isDeleted') && $peer->isDeleted()) $this->fail(18, "Recipient was deleted");
-            
+            if (method_exists($peer, 'isBanned') && $peer->isBanned()) {
+                $this->fail(18, "Recipient is banned");
+            }
+            if (method_exists($peer, 'isDeleted') && $peer->isDeleted()) {
+                $this->fail(18, "Recipient was deleted");
+            }
+
             $senderId = $this->resolveSender($groupId);
             if ($peerId > 0 && $peerId < 2000000000 && $senderId !== $peerId) {
                 if (method_exists($peer, 'getPrivacyPermission')) {
@@ -164,14 +170,14 @@ final class Messages extends VKAPIRequestHandler
     private function hydrateExtendedData(&$payload, string $fields = ""): void
     {
         $isObject = is_object($payload);
-        $data = $isObject ? (array)$payload : $payload;
-        
+        $data = $isObject ? (array) $payload : $payload;
+
         if (!empty($data['profiles'])) {
             $userIDs = [];
             foreach ($data['profiles'] as $uData) {
-                $userIDs[] = is_array($uData) ? ($uData['id'] ?? 0) : (int)$uData;
+                $userIDs[] = is_array($uData) ? ($uData['id'] ?? 0) : (int) $uData;
             }
-            
+
             $userIDs = array_unique(array_filter($userIDs));
 
             if (!empty($userIDs)) {
@@ -185,14 +191,14 @@ final class Messages extends VKAPIRequestHandler
         if (!empty($data['groups'])) {
             $groupIDs = [];
             foreach ($data['groups'] as $gData) {
-                $gid = is_array($gData) ? ($gData['id'] ?? 0) : abs((int)$gData);
+                $gid = is_array($gData) ? ($gData['id'] ?? 0) : abs((int) $gData);
                 $groupIDs[] = $gid;
             }
-            
+
             $groupIDs = array_unique(array_filter($groupIDs));
 
             if (!empty($groupIDs)) {
-                $apiGroups = new APIClubs(); 
+                $apiGroups = new APIClubs();
                 $data['groups'] = $apiGroups->getById(implode(',', $groupIDs), "", $fields);
             }
         } else {
@@ -217,10 +223,10 @@ final class Messages extends VKAPIRequestHandler
         $this->requireUser();
 
         $params = [
-            "ts"           => (string)$ts,
-            "events_limit" => (string)$events_limit,
-            "msgs_limit"   => (string)$msgs_limit,
-            "version"      => "2"
+            "ts"           => (string) $ts,
+            "events_limit" => (string) $events_limit,
+            "msgs_limit"   => (string) $msgs_limit,
+            "version"      => "2",
         ];
 
         $data = $this->invoke("messages.getLongPollHistory", $params, $group_id);
@@ -241,15 +247,15 @@ final class Messages extends VKAPIRequestHandler
         }
 
         $params = [
-            "version"  => (string)$version,
-            "need_pts" => (string)$need_pts
+            "version"  => (string) $version,
+            "need_pts" => (string) $need_pts,
         ];
 
         if ($group_id > 0) {
-            $params['group_id'] = (string)$group_id;
+            $params['group_id'] = (string) $group_id;
         }
 
-        $data = $this->invoke("messages.getLongPollServer", $params, (int)$group_id);
+        $data = $this->invoke("messages.getLongPollServer", $params, (int) $group_id);
         $data['server'] = $baseUrl;
 
         return $data;
@@ -307,11 +313,13 @@ final class Messages extends VKAPIRequestHandler
 
         if (!empty($user_ids)) {
             $ids = preg_split("%, ?%", $user_ids);
-            if (count($ids) > 100) $this->fail(913, "Too many recipients");
+            if (count($ids) > 100) {
+                $this->fail(913, "Too many recipients");
+            }
 
             $rIds = [];
             foreach ($ids as $id) {
-                $rIds[] = $this->send(-1, (int)$id, "", -1, $group_id, "", $message, $sticker_id, 1, $attachment, rand(1, 2147483647));
+                $rIds[] = $this->send(-1, (int) $id, "", -1, $group_id, "", $message, $sticker_id, 1, $attachment, rand(1, 2147483647));
             }
             return $rIds;
         }
@@ -322,8 +330,12 @@ final class Messages extends VKAPIRequestHandler
         }
 
         // TODO
-        if ($sticker_id !== -1) $this->fail(-151, "Stickers are not implemented");
-        if (empty($message) && empty($attachment)) $this->fail(100, "Message text is empty or invalid");
+        if ($sticker_id !== -1) {
+            $this->fail(-151, "Stickers are not implemented");
+        }
+        if (empty($message) && empty($attachment)) {
+            $this->fail(100, "Message text is empty or invalid");
+        }
 
         if ($forGodSakePleaseDoNotReportAboutMyOnlineActivity == 0) {
             $this->getUser()->updOnline($this->getPlatform());
@@ -339,11 +351,13 @@ final class Messages extends VKAPIRequestHandler
             "random_id"  => (string) ($random_id ?: rand(1, 2147483647)),
         ];
 
-        if ($reply_to > 0) $params["reply_to"] = (string) $reply_to;
+        if ($reply_to > 0) {
+            $params["reply_to"] = (string) $reply_to;
+        }
 
         return (int) $this->invoke("messages.send", $params, $group_id);
     }
-    
+
     public function edit(
         int $peer_id = 0,
         int $message_id = 0,
@@ -375,7 +389,7 @@ final class Messages extends VKAPIRequestHandler
             "message_id"            => (string) $message_id,
             "message"               => $message,
             "attachment"            => $attachment,
-            "keep_forward_messages" => (string) $keep_forward_messages
+            "keep_forward_messages" => (string) $keep_forward_messages,
         ];
 
         $result = $this->invoke("messages.edit", $params, $group_id);
@@ -394,7 +408,7 @@ final class Messages extends VKAPIRequestHandler
 
         $params = [
             "message_ids"    => $message_ids,
-            "delete_for_all" => (string)$delete_for_all
+            "delete_for_all" => (string) $delete_for_all,
         ];
 
         return $this->invoke("messages.delete", $params, $group_id);
@@ -410,7 +424,7 @@ final class Messages extends VKAPIRequestHandler
         }
 
         $params = [
-            "message_id" => (string)$message_id
+            "message_id" => (string) $message_id,
         ];
 
         return (int) $this->invoke("messages.restore", $params, $group_id);
@@ -438,14 +452,14 @@ final class Messages extends VKAPIRequestHandler
 
         $params = [
             "q"              => $q,
-            "count"          => (string)min(abs($count), 100),
-            "offset"         => (string)abs($offset),
-            "preview_length" => (string)max(0, $preview_length),
-            "extended"       => $extended ? "1" : "0"
+            "count"          => (string) min(abs($count), 100),
+            "offset"         => (string) abs($offset),
+            "preview_length" => (string) max(0, $preview_length),
+            "extended"       => $extended ? "1" : "0",
         ];
 
         if ($resolvedId !== 0) {
-            $params["peer_id"] = (string)$resolvedId;
+            $params["peer_id"] = (string) $resolvedId;
         }
 
         if (!empty($date)) {
@@ -489,8 +503,8 @@ final class Messages extends VKAPIRequestHandler
         }
 
         $params = [
-            "peer_id"    => (string)$resolvedId,
-            "message_id" => (string)$message_id
+            "peer_id"    => (string) $resolvedId,
+            "message_id" => (string) $message_id,
         ];
 
         return $this->invoke("messages.pin", $params, $group_id);
@@ -511,7 +525,7 @@ final class Messages extends VKAPIRequestHandler
         }
 
         $params = [
-            "peer_id" => (string)$resolvedId
+            "peer_id" => (string) $resolvedId,
         ];
 
         return (int) $this->invoke("messages.unpin", $params, $group_id);
@@ -526,9 +540,9 @@ final class Messages extends VKAPIRequestHandler
         $this->requireUser();
 
         $params = [
-            "count"    => (string)$count,
-            "offset"   => (string)$offset,
-            "extended" => (string)$extended
+            "count"    => (string) $count,
+            "offset"   => (string) $offset,
+            "extended" => (string) $extended,
         ];
 
         $data = $this->invoke("messages.getImportantMessages", $params, $group_id);
@@ -562,7 +576,7 @@ final class Messages extends VKAPIRequestHandler
 
         $params = [
             "message_ids" => $message_ids,
-            "important"   => (string)$important
+            "important"   => (string) $important,
         ];
 
         return $this->invoke("messages.markAsImportant", $params, $group_id);
@@ -582,9 +596,9 @@ final class Messages extends VKAPIRequestHandler
         }
 
         $params = [
-            "peer_id"          => (string)$peer_id,
-            "start_message_id" => (string)$start_message_id,
-            "message_ids"      => $message_ids
+            "peer_id"          => (string) $peer_id,
+            "start_message_id" => (string) $start_message_id,
+            "message_ids"      => $message_ids,
         ];
 
         $this->invoke("messages.markAsRead", $params, $group_id);
@@ -606,10 +620,10 @@ final class Messages extends VKAPIRequestHandler
         }
 
         $params = [
-            "peer_id"                  => (string)$peer_id,
+            "peer_id"                  => (string) $peer_id,
             "conversation_message_ids" => $conversation_message_ids,
-            "extended"                 => (string)$extended,
-            "fields"                   => $fields
+            "extended"                 => (string) $extended,
+            "fields"                   => $fields,
         ];
 
         $data = $this->invoke("messages.getByConversationMessageID", $params, $group_id);
@@ -644,10 +658,10 @@ final class Messages extends VKAPIRequestHandler
         $this->requireUser();
 
         $params = [
-            "offset"   => (string)$offset,
-            "count"    => (string)$count,
+            "offset"   => (string) $offset,
+            "count"    => (string) $count,
             "filter"   => $filter,
-            "extended" => (string)$extended,
+            "extended" => (string) $extended,
         ];
 
         $payload = $this->invoke("messages.getConversations", $params, $group_id);
@@ -671,7 +685,7 @@ final class Messages extends VKAPIRequestHandler
                     "can_see_invite_link"    => false,
                     "can_change_invite_link" => false,
                     "can_moderate"           => false,
-                    "can_copy_chat"          => false
+                    "can_copy_chat"          => false,
                 ];
 
                 $conversation['chat_settings']['acl'] = array_merge($defaultAcl, $settings['acl'] ?? []);
@@ -699,14 +713,14 @@ final class Messages extends VKAPIRequestHandler
     // ----------------------------------
 
     public function getHistory(
-        int $offset = 0, 
-        int $count = 20, 
-        int $user_id = 0, 
-        int $peer_id = 0, 
+        int $offset = 0,
+        int $count = 20,
+        int $user_id = 0,
+        int $peer_id = 0,
         int $chat_id = 0,
-        int $start_message_id = 0, 
-        int $rev = 0, 
-        int $extended = 0, 
+        int $start_message_id = 0,
+        int $rev = 0,
+        int $extended = 0,
         string $fields = "",
         int $group_id = 0
     ): array {
@@ -715,13 +729,13 @@ final class Messages extends VKAPIRequestHandler
         $resolvedPeerId = $this->resolvePeer($user_id, $peer_id, $chat_id);
 
         $params = [
-            "offset"           => (string)$offset,
-            "count"            => (string)min(abs($count), 200),
-            "peer_id"          => (string)$resolvedPeerId,
-            "start_message_id" => (string)$start_message_id,
-            "rev"              => (string)$rev,
-            "extended"         => (string)$extended,
-            "fields"           => $fields
+            "offset"           => (string) $offset,
+            "count"            => (string) min(abs($count), 200),
+            "peer_id"          => (string) $resolvedPeerId,
+            "start_message_id" => (string) $start_message_id,
+            "rev"              => (string) $rev,
+            "extended"         => (string) $extended,
+            "fields"           => $fields,
         ];
 
         $data = $this->invoke("messages.getHistory", $params, $group_id);
@@ -745,7 +759,8 @@ final class Messages extends VKAPIRequestHandler
     //              Status
     // ----------------------------------
 
-    public function getLastActivity(int $user_id) {
+    public function getLastActivity(int $user_id)
+    {
         $uRepo = (new USRRepo());
         $u = $uRepo->get($user_id);
 
@@ -754,7 +769,7 @@ final class Messages extends VKAPIRequestHandler
         }
 
         return (object) [
-            "online" => (int)$u->isOnline(),
+            "online" => (int) $u->isOnline(),
             "time"   => $u->getOnline()->timestamp(),
         ];
     }
@@ -779,7 +794,7 @@ final class Messages extends VKAPIRequestHandler
         }
 
         $params = [
-            "peer_id" => (string)$resolvedId,
+            "peer_id" => (string) $resolvedId,
             "type"    => $type,
         ];
 
@@ -802,14 +817,14 @@ final class Messages extends VKAPIRequestHandler
     public function getUnreadConversations(int $group_id = 0)
     {
         $this->requireUser();
-        
+
         return $this->invoke("im.getUnreadConversations", [], $group_id);
     }
 
     public function getMe(int $group_id = 0)
     {
         $this->requireUser();
-        
+
         return $this->invoke("im.getMe", [], $group_id);
     }
 

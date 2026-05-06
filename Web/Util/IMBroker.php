@@ -7,7 +7,7 @@ namespace openvk\Web\Util;
 use Predis\Client as RedisClient;
 use Exception;
 
-class IMBroker 
+class IMBroker
 {
     private static ?self $instance = null;
     private RedisClient $redis;
@@ -54,7 +54,7 @@ class IMBroker
     public function getLongPollBaseUrl(): string
     {
         $configUrl = OPENVK_ROOT_CONF["openvk"]["credentials"]["im"]["lp_server_addr"] ?? null;
-        
+
         if ($configUrl) {
             return (ovk_is_ssl() ? "https://" : "http://") . $configUrl . "/nim";
         }
@@ -62,10 +62,12 @@ class IMBroker
         return (ovk_is_ssl() ? "https://" : "http://") . $_SERVER['HTTP_HOST'] . "/nim";
     }
 
-    public function ping($uid): bool 
+    public function ping($uid): bool
     {
         $resp = $this->invokeMethod($uid, "im.GetMe");
-        if (!$resp) return false;
+        if (!$resp) {
+            return false;
+        }
         return true;
     }
 
@@ -75,12 +77,12 @@ class IMBroker
             $ctx = stream_context_create([
                 "http" => [
                     "timeout" => 2,
-                    "ignore_errors" => true
-                ]
+                    "ignore_errors" => true,
+                ],
             ]);
-            
+
             $ping = @file_get_contents($this->getLongPollBaseUrl() . "?health=1", false, $ctx);
-            
+
             if ($ping === "OK") {
                 return true;
             }
@@ -96,9 +98,9 @@ class IMBroker
         if (!$this->enabled) {
             return false;
         }
-        return $this->invokeWithKey($userId, function(string $key, string $serverUrl) use ($method, $queryParams) {
+        return $this->invokeWithKey($userId, function (string $key, string $serverUrl) use ($method, $queryParams) {
             $params = array_merge(['key' => $key], $queryParams);
-            
+
             $baseUrl = rtrim($serverUrl, '/');
 
             $url = $baseUrl . '/method/' . ltrim($method, '/') . '?' . http_build_query($params);
@@ -106,8 +108,8 @@ class IMBroker
             $context = stream_context_create([
                 'http' => [
                     'timeout' => 30,
-                    'ignore_errors' => true
-                ]
+                    'ignore_errors' => true,
+                ],
             ]);
 
             return @file_get_contents($url, false, $context);
@@ -117,7 +119,7 @@ class IMBroker
     public function invokeWithKey(int $userId, callable $callback)
     {
         $key = $this->getOneActionKey($userId);
-        
+
         try {
             return $callback($key, $this->serverUrl);
         } finally {
@@ -131,7 +133,7 @@ class IMBroker
             throw new Exception("IM Broker is disabled in configuration.");
         }
 
-        $token = bin2hex(random_bytes(16)); 
+        $token = bin2hex(random_bytes(16));
         $redisKey = $this->prefix . $token;
 
         $this->redis->set($redisKey, $userId, 'EX', 60);
