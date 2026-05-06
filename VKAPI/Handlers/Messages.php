@@ -65,7 +65,7 @@ final class Messages extends VKAPIRequestHandler
             }
 
             $id = (int) $peerObj->getId();
-            return ($peerObj instanceof Club) ? -$id : $id;
+            return ($peerObj instanceof ClubEnt) ? -$id : $id;
         }
 
         if ($chat_id > 0) {
