@@ -8,6 +8,7 @@
 "home" = "Главная";
 "welcome" = "Добро пожаловать";
 "to_top" = "Вверх";
+"show_next" = "Показать далее";
 
 /* Login */
 
@@ -1335,6 +1336,9 @@
 "enter_message" = "Введите сообщение";
 "messages_error_1" = "Сообщение не доставлено";
 "messages_error_1_description" = "При отправке этого сообщения произошла ошибка общего характера...";
+
+"messenger_tab_conversations" = "Диалоги";
+"messenger_tab_messenger" = "Сообщения";
 
 /* Polls */
 "poll" = "Опрос";

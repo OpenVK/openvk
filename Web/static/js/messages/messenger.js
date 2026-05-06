@@ -33,7 +33,8 @@ class Messenger {
         const corresponder = window.im.corresponder;
 
         const msg = new ChatMessage({
-            'peer': window.im.current.id
+            'peer': window.im.current.id,
+            'date': Number(new Date()) - 1000
         });
         msg._guessSender();
         msg.setText(text);
@@ -117,6 +118,7 @@ class MessengerViewModel {
 
     _triggerUpdate() {
         this.messagesTrigger(this.messagesTrigger() + 1);
+        window.im.conversations.view._update();
     }
 
     // Events
