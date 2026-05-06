@@ -1063,6 +1063,7 @@ table.User {
 #auth .container_gray {
     margin-left: -10px;
     margin-bottom: -10px;
+    margin-top: -10px;
     width: 603px;
 }
 

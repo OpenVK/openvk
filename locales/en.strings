@@ -1396,6 +1396,8 @@
 
 /* Messages */
 
+"messages_unavailable" = "Messaging is currently unavailable or disabled on this server";
+
 "all_messages" = "All messages";
 
 "search_messages" = "Search messages";
