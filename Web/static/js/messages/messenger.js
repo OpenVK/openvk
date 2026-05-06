@@ -55,8 +55,8 @@ class MessengerViewModel {
             </div>
         </div>
         <div class="messenger-app">
-            <div class="messenger-app--messages">
-                <div class="messenger-app--messages-array" data-bind="foreach: { data: messages, as: 'msg' }, event: { scroll: onMessagesScroll }">
+            <div class="messenger-app--messages" data-bind="event: { scroll: onMessagesScroll }">
+                <div class="messenger-app--messages-array" data-bind="foreach: { data: messages, as: 'msg' } ">
                     <div class="messenger-app--messages---message" data-bind="css: { 'same-author': $index() > 0 && $parent.messages()[$index() - 1].doHideHead(msg)}">
                         <div class="messenger-app--messages---message--wrap">
                             <div class="_avatar">
@@ -99,6 +99,7 @@ class MessengerViewModel {
         `
         this.opened_tabs = ko.observableArray([]);
         this.currentDraft = ko.observable('');
+        this.is_loading = ko.observable(false);
         this.drafts = {};
         this.scrolls = {};
         this.current_chat = ko.observable(null); // index of element
@@ -135,12 +136,18 @@ class MessengerViewModel {
         return true;
     }
 
-    onMessagesScroll(model, e) {
+    async onMessagesScroll(model, e) {
+        if (this.is_loading()) {
+            return;
+        }
+
+        this.is_loading(true);
         const _scroll = e.target.scrollTop;
         // Прокрутка вверх
         if (_scroll < 21) {
-            window.im.corresponder.moveUp();
+            await window.im.corresponder._messagesLoad_UpFromLastChunk();
         }
+        this.is_loading(false);
     }
 
     // Actions
