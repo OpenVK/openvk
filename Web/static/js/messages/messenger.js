@@ -58,7 +58,7 @@ class MessengerViewModel {
         <div class="messenger-app">
             <div class="messenger-app--messages" data-bind="event: { scroll: onMessagesScroll }">
                 <div class="messenger-app--messages-array" data-bind="foreach: { data: messages, as: 'msg' } ">
-                    <div class="messenger-app--messages---message" data-bind="css: { 'same-author': $index() > 0 && $parent.messages()[$index() - 1].doHideHead(msg)}">
+                    <div class="messenger-app--messages---message" data-bind="css: { 'msg-selected': window.im.messenger.view.isMessageSelected(msg), 'same-author': $index() > 0 && $parent.messages()[$index() - 1].doHideHead(msg)}, event: { click: function() { window.im.messenger.view.toggleMessageSelection(msg) } }">
                         <div class="messenger-app--messages---message--wrap">
                             <div class="_avatar">
                                 <img class="ava" data-bind="attr: { src: sender.avatar_any, alt: sender.full_name }" />
@@ -105,6 +105,7 @@ class MessengerViewModel {
         this.scrolls = {};
         this.current_chat = ko.observable(null); // index of element
         this.messagesTrigger = ko.observable(0);
+        this.selected_messages = ko.observableArray([]);
         this.messages = ko.pureComputed(() => {
             this.messagesTrigger();
             const _chat = this.getCurrentChat();
@@ -117,8 +118,12 @@ class MessengerViewModel {
     }
 
     _triggerUpdate() {
-        this.messagesTrigger(this.messagesTrigger() + 1);
+        this._triggerUpdateSlightly();
         window.im.conversations.view._update();
+    }
+
+    _triggerUpdateSlightly() {
+        this.messagesTrigger(this.messagesTrigger() + 1);
     }
 
     // Events
@@ -138,6 +143,16 @@ class MessengerViewModel {
         return true;
     }
 
+    toggleMessageSelection(model, e) {
+        console.log(this.selected_messages, this.selected_messages())
+        if (!this.isMessageSelected(model)) {
+            this.selectMessage(model);
+        } else {
+            this.unselectMessage(model);
+        }
+        this._triggerUpdateSlightly();
+    }
+
     async onMessagesScroll(model, e) {
         if (this.is_loading()) {
             return;
@@ -150,6 +165,20 @@ class MessengerViewModel {
             await window.im.corresponder._messagesLoad_UpFromLastChunk();
         }
         this.is_loading(false);
+    }
+
+    // messages select
+
+    selectMessage(msg) {
+        this.selected_messages.push(msg.id);
+    }
+
+    unselectMessage(msg) {
+        this.selected_messages.remove(msg.id);
+    }
+
+    isMessageSelected(msg) {
+        return this.selected_messages().indexOf(msg.id) != -1;
     }
 
     // Actions
