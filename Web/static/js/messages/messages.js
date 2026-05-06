@@ -1,7 +1,7 @@
 class MessagesChunk {
     constructor(items, do_reverse = false, count = 10, msg_offset = null) {
         this.messages = [];
-        this.do_reverse = do_reverse;
+        this.do_reverse = do_reverse; // True - сообщения от новых к старым
         this.count = count;
         this.msg_offset = msg_offset;
         this.latest_message_index = 0;
@@ -31,9 +31,17 @@ class MessagesChunk {
 
     getMessages() {
         if (this.do_reverse) {
-            return this.messages.reverse();
+            return Array.from(this.messages).reverse();
         } else {
             return this.messages;
+        }
+    }
+
+    _pushMessage(msg) {
+        if (this.do_reverse) {
+            this.messages.unshift(msg);
+        } else {
+            this.messages.push(msg);
         }
     }
 }
@@ -113,6 +121,7 @@ class ChatGeneralForm {
 
     get messages() {
         const fnl = [];
+        console.log(this.chunks[0].latest_message.text)
         this.chunks.forEach(chunk => {
             chunk.getMessages().forEach(msg => {
                 fnl.push(msg);
@@ -202,12 +211,11 @@ class ChatGeneralForm {
     }
 
     _pushNewMessage(msg) {
-        this._getMostActualChunk().messages.push(msg);
+        this._getMostActualChunk()._pushMessage(msg);
         window.im.messenger.view._triggerUpdate();
     }
 
     _getMostActualChunk() {
-        console.log(this.id, this.chunks)
         return this.chunks[0];
     }
 

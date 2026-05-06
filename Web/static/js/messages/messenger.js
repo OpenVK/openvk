@@ -276,7 +276,8 @@ class LongPollConnection {
     listen() {
         let xhr = new XMLHttpRequest();
         const mode = 2 + 8 + 32 + 64 + 128 // w/ attach, extended, pts, w/ extra, w/ random_id
-        xhr.open("GET", this.lp.server + '?key='+this.lp.key + '&ts=' + this.lp.ts + '&pts=' + this.lp.pts + "&mode=" + mode, true);
+        const connection_string = this.lp.server + '?key='+this.lp.key + '&ts=' + this.lp.ts + '&pts=' + this.lp.pts + "&mode=" + mode;
+        xhr.open("GET", connection_string, true);
         xhr.onload = () => {
             let data = JSON.parse(xhr.responseText);
             console.log(data);
