@@ -38,3 +38,25 @@ Fetches Toncoin transactions for payment processing.
 
 ### upgrade
 Performs database upgrades and migrations.
+
+## Available Commands for local development
+
+### generate-users
+Creates test user accounts for local development.
+
+**Usage:**
+```bash
+# Create one user (default)
+php openvkctl generate-users
+
+# Create 20 users
+php openvkctl generate-users --count=20
+
+# Create 20 users
+php openvkctl generate-users -c 20
+```
+
+**Options:**
+- `--count`, `-c`: Number of users to create (default: 1)
+
+The command prints a table with profile ID, email, password, and profile URL for each created user.
