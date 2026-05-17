@@ -720,6 +720,7 @@
 "your_email_address" = "Адрес Вашей электронной почты";
 "your_page_address" = "Адрес Вашей страницы";
 "page_address" = "Адрес страницы";
+"marital_status_user_id" = "ID пользователя";
 "current_email_address" = "Текущий адрес";
 "new_email_address" = "Новый адрес";
 "save_email_address" = "Сохранить адрес";

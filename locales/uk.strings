@@ -692,6 +692,7 @@
 "your_email_address" = "Адреса Вашої електронної пошти";
 "your_page_address" = "Адреса Вашої сторінки";
 "page_address" = "Адрес сторінки";
+"marital_status_user_id" = "ID користувача";
 "current_email_address" = "Поточна адреса";
 "new_email_address" = "Нова адреса";
 "save_email_address" = "Зберегти адресу";

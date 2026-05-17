@@ -465,6 +465,7 @@
 "your_email_address" = "Адрес Вашего почтового ящика";
 "your_page_address" = "Адрес Вашего досье";
 "page_address" = "Адрес досье";
+"marital_status_user_id" = "ID пользователя";
 "current_email_address" = "Текущий адрес";
 "page_id" = "Номер досье";
 "you_can_also" = "Вы также можете";

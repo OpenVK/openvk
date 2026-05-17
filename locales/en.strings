@@ -748,6 +748,7 @@
 "your_email_address" = "Your Email address";
 "your_page_address" = "Your address page";
 "page_address" = "Address page";
+"marital_status_user_id" = "User ID";
 "current_email_address" = "Current email address";
 "new_email_address" = "New email address";
 "save_email_address" = "Save email address";
