@@ -52,12 +52,11 @@ class GenerateUsersCommand extends Command
         for ($i = 1; $i <= $count; $i++) {
             $email = "generated.{$prefixTimeForEmail}.{$i}@localhost.localdomain";
             $password = $this->generatePassword();
-            $lastName = "User" . bin2hex(random_bytes(3));
 
             try {
                 $user = new User();
                 $user->setFirst_Name("Test");
-                $user->setLast_Name($lastName);
+                $user->setLast_Name('TEST LAST NAME');
                 $user->setSex(0);
                 $user->setEmail($email);
                 $user->setSince(date("Y-m-d H:i:s"));
