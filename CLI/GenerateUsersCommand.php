@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace openvk\CLI;
 
 use Chandler\Security\User as ChandlerUser;
+use Faker\Factory as FakerFactory;
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use openvk\Web\Util\Validator;
@@ -38,6 +39,7 @@ class GenerateUsersCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        $faker = FakerFactory::create("en_US");
         $count = (int) $input->getOption("count");
 
         if ($count < 1) {
@@ -47,21 +49,20 @@ class GenerateUsersCommand extends Command
         }
 
         $created = [];
-        $prefixTimeForEmail = dechex(time());
 
         for ($i = 1; $i <= $count; $i++) {
-            $email = "generated.{$prefixTimeForEmail}.{$i}@localhost.localdomain";
+            $email = $faker->unique()->safeEmail();
             $password = $this->generatePassword();
 
             try {
                 $user = new User();
-                $user->setFirst_Name("Test");
-                $user->setLast_Name('TEST LAST NAME');
+                $user->setFirst_Name($faker->firstName());
+                $user->setLast_Name($faker->lastName());
                 $user->setSex(0);
                 $user->setEmail($email);
                 $user->setSince(date("Y-m-d H:i:s"));
                 $user->setRegistering_Ip("127.0.0.1");
-                $user->setBirthday(strtotime("1999-01-01"));
+                $user->setBirthday($faker->dateTimeBetween("-60 years", "-18 years")->getTimestamp());
                 $user->setActivated(1);
             } catch (InvalidUserNameException $ex) {
                 $io->error("Failed to set name for user #{$i}: " . $ex->getMessage());
