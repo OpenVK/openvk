@@ -31,11 +31,9 @@ _[English](README.md)_
 
 1. Установите PHP 8.2, веб-сервер, Composer, Node.js, NPM и [Chandler](https://github.com/openvk/chandler)
 
-* PHP 8 пока ещё тестируется, работоспособность движка на этой версии PHP пока не гарантируется.
-
 2. Установите MySQL-совместимую базу данных.
 
-* Мы рекомендуем использовать Persona Server, но любая MySQL-совместимая база данных должна работать.
+* Мы рекомендуем использовать MariaDB или Percona Server, но любая MySQL-совместимая база данных должна работать.
 * Сервер должен поддерживать хотя бы MySQL 5.6, рекомендуется использовать MySQL 8.0+.
 * Поддержка для MySQL 4.1+ находится в процессе, а пока замените `utf8mb4` и `utf8mb4_unicode_520_ci` на `utf8` и `utf8_unicode_ci` в SQL-файлах, соответственно.
 
@@ -69,6 +67,18 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 
 💡Запутались? Полное руководство по установке доступно [здесь](https://docs.openvk.org/openvk_engine/centos8_installation/) (CentOS 8 [и](https://almalinux.org/ru/) [семейство](https://yum.oracle.com/oracle-linux-isos.html)).
 
+### Уведомления в реальном времени
+
+Вы можете установить Redis для уведомлений в реальном времени (если вы, конечно, включили Event DB в конфиге). 
+
+1. Установите Redis в вашу операционную систему 
+2. Поставьте `notificationsBroker` внутри `credentials` на `true`
+
+Оно должно заработать сразу же из коробки. Если нет, попробуйте отредактировать настройки Redis и OpenVK.
+
+> [!WARNING]
+> Kafka в OpenVK устарела начиная с [этого коммита](https://github.com/OpenVK/openvk/commit/e99cdd1b08002dbfbd1aaef2cbc52ccbe34026c6) и больше не используется в кодовой базе OpenVK. Если вы наткнулись на любое упоминание Kafka в исходном коде, в конфиге или в документации, мы должны вас оповестить о том, что оно не будет работать и информация о ней устарела. Совсем. 
+
 # Установка в Docker/Kubernetes
 Подробные иструкции можно найти в `install/automated/docker/README.md` и `install/automated/kubernetes/README.md` соответственно.
 
@@ -87,7 +97,7 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 * [GitHub Discussions](https://github.com/openvk/openvk/discussions)
 * Чат в Matrix: #ovk:matrix.org
 
-**Внимание**: баг-трекер, форум, Telegram- и Matrix-чат являются публичными местами, и жалобы в OVK обслуживается волонтерами. Если вам нужно сообщить о чем-то, что не должно быть раскрыто широкой публике (например, сообщение об уязвимости), пожалуйста, свяжитесь с нами напрямую по этому адресу: **openvk [собачка] tutanota [точка] com**.
+**Внимание**: баг-трекер, форум, Telegram- и Matrix-чат являются публичными местами, и жалобы в OVK обслуживается волонтерами. Если вам нужно сообщить о чем-то, что не должно быть раскрыто широкой публике (например, сообщение об уязвимости), пожалуйста, свяжитесь с нами напрямую по этому адресу: **contact [собачка] openvk [точка] org**.
 
 <a href="https://codeberg.org/OpenVK/openvk">
     <img alt="Get it on Codeberg" src="https://codeberg.org/Codeberg/GetItOnCodeberg/media/branch/main/get-it-on-blue-on-white.png" height="60">
