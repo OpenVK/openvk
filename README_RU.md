@@ -92,7 +92,7 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 
 * [Баг-трекер](https://github.com/openvk/openvk/projects/1)
 * [Помощь в OVK](https://openvk.org/support?act=new)
-* Telegram-чат: Перейдите на [наш канал](https://t.me/openvk) и откройте обсуждение в меню нашего канала.
+* Telegram-чат: Перейдите на [наш канал](https://t.me/openvkenglish) и откройте обсуждение в меню нашего канала. (_внимание: помощь доступна только на английском языке_)
 * [Reddit](https://www.reddit.com/r/openvk/)
 * [GitHub Discussions](https://github.com/openvk/openvk/discussions)
 * Чат в Matrix: #ovk:matrix.org
