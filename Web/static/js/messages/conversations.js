@@ -32,15 +32,31 @@ class ConversationsViewModel {
         await window.im.conversations._loadNext();
         this._update();
     }
+
+    _chatCreationModal() {
+        const msg = new CMessageBox({
+            title: 'chat creation',
+            body: `<input placeholder="name" id="chat_create_name" type="text">`,
+            buttons: [tr('create'), tr('cancel')],
+            callbacks: [async () => {
+                const name = msg.getNode().querySelector('#chat_create_name')
+
+                await window.OVKAPI.call()
+            }, () => {}]
+        })
+    }
 }
 
 class Conversations {
     constructor() {
         this.total_convs = 0;
         this.template = `
-        <div class="crp-list scroll_container">
+        <div class="crp-list">
+            <div>
+                <input type="button" class="button" value="create chat" data-bind="event: { click: window.im.conversations.view._chatCreationModal }">
+            </div>
             <div data-bind="foreach: conversations_list">
-                <div class="scroll_node crp-entry" data-bind="event: { click: async function(data, event) { await window.im.selectChat(this) } }">
+                <div class="crp-entry" data-bind="event: { click: async function(data, event) { await window.im.selectChat(this) } }">
                     <div class="crp-entry--image">
                         <img data-bind="attr: { src: peer.avatar_any }"
                         loading="lazy" />
