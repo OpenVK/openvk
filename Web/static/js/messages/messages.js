@@ -337,6 +337,10 @@ class ChatMessage {
         return escapeHtml(this.data.text);
     }
 
+    get global_id() {
+        return this.data.global_id;
+    }
+
     get id() {
         return this.data.id;
     }

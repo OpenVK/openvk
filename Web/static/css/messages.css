@@ -121,6 +121,14 @@ body.no-scroll {
     padding: 10px 60px;
 }
 
+.messages--actions {
+    display: none;
+}
+
+.messages--actions.shown {
+    display: block;
+}
+
 .messenger-app--messages {
     display: flex;
     flex-direction: column;

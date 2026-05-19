@@ -55,6 +55,11 @@ class MessengerViewModel {
                 </div>    
             </div>
         </div>
+        <div class="messages--actions" data-bind="css: { 'shown': window.im.messenger.view.selected_messages_count > 0 }">
+            <div>
+                <a data-bind="text: 'delete', event: { 'click': window.im.messenger.view.callDeletion }"></a>
+            </div>
+        </div>
         <div class="messenger-app">
             <div class="messenger-app--messages" data-bind="event: { scroll: onMessagesScroll }">
                 <div class="messenger-app--messages-array" data-bind="foreach: { data: messages, as: 'msg' } ">
@@ -144,7 +149,6 @@ class MessengerViewModel {
     }
 
     toggleMessageSelection(model, e) {
-        console.log(this.selected_messages, this.selected_messages())
         if (!this.isMessageSelected(model)) {
             this.selectMessage(model);
         } else {
@@ -179,6 +183,31 @@ class MessengerViewModel {
 
     isMessageSelected(msg) {
         return this.selected_messages().indexOf(msg.id) != -1;
+    }
+
+    get selected_messages_count() {
+        return this.selected_messages().length;
+    }
+
+    callDeletion() {
+        const ids = this.selected_messages();
+        const msg = new CMessageBox({
+            title: ids.length,
+            body: 'SURE?',
+            buttons: ['YESSS', 'No'],
+            callbacks: [async () => {
+                const delete_for_all = true;
+                let ids2 = [];
+                ids.forEach(item => {
+                    ids2.push(this.getCurrentChat().peer.id + '_' + item);
+                })
+
+                await window.OVKAPI.call('messages.delete', {
+                    'message_ids': ids2,
+                    'delete_for_all': Number(delete_for_all)
+                });
+            }, () => {}]
+        })
     }
 
     // Actions
