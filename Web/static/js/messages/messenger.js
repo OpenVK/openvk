@@ -46,6 +46,34 @@ class Messenger {
 
 class MessengerViewModel {
     constructor() {
+        this.msg_template_ko = `
+        <div class="messenger-app--messages---message" data-bind="css: { 'msg-selected': window.im.messenger.view.isMessageSelected(msg), 'same-author': $index() > 0 && chunk.messages[$index() - 1].doHideHead(msg)}, event: { click: function() { window.im.messenger.view.toggleMessageSelection(msg) } }">
+            <div class="messenger-app--messages---message--wrap">
+                <div class="_avatar">
+                    <img class="ava" data-bind="attr: { src: sender.avatar_any, alt: sender.full_name }" />
+                </div>
+                <div class="_content">
+                    <a class="_sender" href="#" data-bind="attr: { href: sender.link }">
+                        <strong data-bind="text: sender.full_name"></strong>
+                    </a>
+                    <span class="text" data-bind="html: text"></span>
+                    <div data-bind="foreach: { data: attachments, as: 'attachment' }" class="attachments">
+                        <div class="msg-attach-j">
+                            <div data-bind="if: attachment.type === 'photo'" class="msg-attach-j-photo">
+                                <a data-bind="attr: { href: attachment.photo.link }">
+                                    <img data-bind="attr: { src: attachment.photo.photo_130, alt: '...'  }" />
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="time">
+                <span data-bind="html: msg.id"></span>
+                <span data-bind="html: msg.readable_date"></span>
+            </div>
+        </div>
+        `
         this.template = `
         <div>
             <div data-bind="foreach: opened_tabs" class="messages--peers-tabs">
@@ -62,32 +90,15 @@ class MessengerViewModel {
         </div>
         <div class="messenger-app">
             <div class="messenger-app--messages" data-bind="event: { scroll: onMessagesScroll }">
-                <div class="messenger-app--messages-array" data-bind="foreach: { data: messages, as: 'msg' } ">
-                    <div class="messenger-app--messages---message" data-bind="css: { 'msg-selected': window.im.messenger.view.isMessageSelected(msg), 'same-author': $index() > 0 && $parent.messages()[$index() - 1].doHideHead(msg)}, event: { click: function() { window.im.messenger.view.toggleMessageSelection(msg) } }">
-                        <div class="messenger-app--messages---message--wrap">
-                            <div class="_avatar">
-                                <img class="ava" data-bind="attr: { src: sender.avatar_any, alt: sender.full_name }" />
-                            </div>
-                            <div class="_content">
-                                <a class="_sender" href="#" data-bind="attr: { href: sender.link }">
-                                    <strong data-bind="text: sender.full_name"></strong>
-                                </a>
-                                <span class="text" data-bind="html: text"></span>
-                                <div data-bind="foreach: { data: attachments, as: 'attachment' }" class="attachments">
-                                    <div class="msg-attach-j">
-                                        <div data-bind="if: attachment.type === 'photo'" class="msg-attach-j-photo">
-                                            <a data-bind="attr: { href: attachment.photo.link }">
-                                                <img data-bind="attr: { src: attachment.photo.photo_130, alt: '...'  }" />
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                <div class="messenger-app--messages-array" data-bind="foreach: { data: messages, as: 'chunk' } ">
+                    <div class="messenger-app--messages-day">
+                        <div class="messenger-app--messages-day-time">
+                            <b data-bind="html: chunk.readable_date"></b>
                         </div>
-                        <div class="time">
-                            <span data-bind="html: id"></span>
+                        <div data-bind="foreach: { data: chunk.messages, as: 'msg' } ">
+                            ${this.msg_template_ko}
                         </div>
-                    </div>
+                    </div>    
                 </div>
             </div>
             <div class="messenger-app--input">
@@ -118,7 +129,7 @@ class MessengerViewModel {
                 return [];
             }
 
-            return _chat.peer.messages;
+            return _chat.peer.divided_messages;
         });
     }
 

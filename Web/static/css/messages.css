@@ -141,6 +141,14 @@ body.no-scroll {
     margin-top: 3px;
 }
 
+.messenger-app--messages .messenger-app--messages-day-time {
+    display: flex;
+    justify-content: center;
+    padding: 5px 0px;
+    border-bottom: 1px solid gray;
+    margin: 5px 0px;
+}
+
 .messenger-app--messages---message > .messenger-app--messages---message--wrap {
     padding: 0px 60px;
     display: inline-block;
