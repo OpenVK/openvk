@@ -75,6 +75,16 @@ class MessagesChunk {
     }
 }
 
+class DayChunk extends MessagesChunk {
+    setDay(date) {
+        this.date = date;
+    }
+
+    get readable_date() {
+        return this.date;
+    }
+}
+
 class ChatGeneralForm {
     static swag = 2000000000;
     static MESSAGES_PER_PAGE = 20;
@@ -149,12 +159,11 @@ class ChatGeneralForm {
     }
 
     get chunks() {
-        const y = [];
-        this.message_chunks_order.forEach(order => {
-            y.push(this.message_chunks[order]);
-        })
-
-        return y;
+        return this.message_chunks.slice(0).sort((a, b) => {
+            const aTime = a.first_message?.sent || 0;
+            const bTime = b.first_message?.sent || 0;
+            return bTime - aTime;
+        });
     }
 
     get messages() {
@@ -167,6 +176,32 @@ class ChatGeneralForm {
         });
 
         return fnl;
+    }
+
+    get divided_messages() {
+        const dayChunks = [];
+        const dateMap = new Map();
+        this.chunks.forEach(chunk => {
+            chunk.getMessages().forEach(msg => {
+            //console.log(msg)
+            if (!msg.sent) return;
+            const dateKey = msg.sent.toISOString().split('T')[0];
+
+            if (!dateMap.has(dateKey)) {
+                const dayChunk = new DayChunk([]);
+                dayChunk.setDay(dateKey);
+                dayChunks.push(dayChunk);
+                dateMap.set(dateKey, dayChunk);
+            }
+
+            dateMap.get(dateKey)._pushMessage(msg);
+            //fnl.push(msg);
+            })
+        })
+
+        dayChunks.sort((a, b) => a.date.localeCompare(b.date));
+
+        return dayChunks;
     }
 
     static async resolveById(id) {
@@ -196,6 +231,7 @@ class ChatGeneralForm {
     async getMessages(message_id, offset = 0) {
         const rev = true;
         const messages = new MessagesChunk([], rev);
+        messages.latest_message_index = message_id;
         await messages.fetch({
             'start_message_id': message_id,
             'offset': 0,
@@ -242,7 +278,7 @@ class ChatGeneralForm {
     }
 
     _getLatestChunk() {
-        return this.message_chunks[this.message_chunks_order[this.message_chunks_order.length - 1]];
+        return this.chunks[this.chunks.length - 1];
     }
 
     _isEndReached() {
@@ -253,11 +289,11 @@ class ChatGeneralForm {
         this._messages_inited = true;
         let id = this.message_chunks.push(messages);
         // todo относительно какого то чанка
-        if (before) {
+        /*if (before) {
             this.message_chunks_order.unshift(id - 1);
         } else {
             this.message_chunks_order.push(id - 1);
-        }
+        }*/
     }
 
     _isMessagesInited() {
@@ -271,11 +307,17 @@ class ChatGeneralForm {
         }
 
         const _id = this._getLatestChunk().first_message;
+        console.log(_id.id)
         const msgs = await this.getMessages(_id.id);
 
         this._end_reached = msgs.isEnd();
-        this._appendMessagesChunk(msgs, true);
-        window.im.messenger.view._triggerUpdate();
+
+        if (!this._end_reached) {
+            this._appendMessagesChunk(msgs, true);
+            window.im.messenger.view._triggerUpdate();
+        } else {
+            console.log('end is reached!')
+        }
     }
 }
 
@@ -367,6 +409,15 @@ class ChatMessage {
         if (_at.length == 0) {
             return '';
         }
+    }
+
+    get readable_date() {
+        // в зависимости от локализации конечно
+        return this.sent.toLocaleTimeString('ru-RU', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
     }
 
     static fromEvent(event) {
