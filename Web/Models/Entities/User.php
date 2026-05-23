@@ -117,13 +117,14 @@ class User extends RowModel
         return new ChandlerUser($this->getRecord()->ref("ChandlerUsers", "user"));
     }
 
-    public function getURL(): string
+    public function getURL(bool $trimBackslash = false): string
     {
+        $backslash = $trimBackslash ? '' : '/';
         if (!is_null($this->getShortCode())) {
-            return "/" . $this->getShortCode();
-        } else {
-            return "/id" . $this->getId();
+            return $backslash . $this->getShortCode();
         }
+
+        return $backslash . "id" . $this->getId();
     }
 
     public function getAvatarUrl(string $size = "miniscule", $avPhoto = null): string

@@ -126,7 +126,7 @@
                         <td width="120" valign="top"></td>
                         <td>
                             <input type="text" placeholder="{_marital_status_user_id}" name="maritalstatus-user"
-                                   n:attr="value => $user->getMaritalStatusUser() ? ltrim($user->getMaritalStatusUser()->getURL(), '/') : ''" />
+                                   n:attr="value => $user->getMaritalStatusUser() ? $user->getMaritalStatusUser()->getURL(true) : ''" />
                         </td>
                     </tr>
                     <tr>
