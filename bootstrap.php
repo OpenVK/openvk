@@ -16,7 +16,7 @@ function _ovk_check_environment(): void
     }
 
     if (!version_compare(PHP_VERSION, "7.3.0", ">=")) {
-        $problems[] = "Incompatible PHP version: " . PHP_VERSION . " (7.3+ required, 7.4+ recommended)";
+        $problems[] = "Incompatible PHP version: " . PHP_VERSION . " (7.3+ required, 8.2 recommended)";
     }
 
     if (!is_dir(__DIR__ . "/vendor")) {
