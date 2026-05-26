@@ -14,7 +14,7 @@
 {/if}
 {var $compact = isset($compact) ? true : false}
 
-
+{var $bigText = mb_strlen($post->getText()) > 520 || substr_count($post->getText(), "\n") + 1 > 10}
 
 <table border="0" style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, $post->isExplicit() ? post-nsfw">
     <tbody>
@@ -74,8 +74,11 @@
                     <div class="text" id="text{$post->getPrettyId()}">
                         {var $owner = $author->getId()}
 
-                        <span data-text="{$post->getText(false)}" class="really_text">{$post->getText()|noescape}</span>
-
+                        <span data-text="{$post->getText(false)}" class="really_text {if $bigText}collapsed_text{/if}">{$post->getText()|noescape}</span>
+                        {if $bigText}
+                        <a class="collapse_button" onclick="javascript:expandText({$post->getPrettyId()})">{_show_more}</a>
+                        {/if}
+                        
                         {var $width = ($bigWall ?? false) ? 550 : 320}
                         {if isset($nestedLevel)}
                             {var $width = $width - 70 * $nestedLevel}
