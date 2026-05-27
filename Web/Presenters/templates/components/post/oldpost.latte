@@ -76,7 +76,7 @@
 
                         <span data-text="{$post->getText(false)}" class="really_text {if $bigText}collapsed_text{/if}">{$post->getText()|noescape}</span>
                         {if $bigText}
-                        <a class="collapse_button" onclick="javascript:expandText({$post->getPrettyId()})">{_show_more}</a>
+                        <a class="collapse_button" onclick="javascript:expandText(this)">{_show_more}</a>
                         {/if}
                         
                         {var $width = ($bigWall ?? false) ? 550 : 320}

@@ -317,13 +317,13 @@ function short_geo_name(address_osm)
     return escapeHtml(final_arr.join(', '))
 }
 
-function expandText(id)
+function expandText(item)
 {
-    if (document.getElementById("text" + id).querySelector(".really_text").classList.contains("collapsed_text")) {
-        document.getElementById("text" + id).querySelector(".really_text").classList.remove("collapsed_text")
-        document.getElementById("text" + id).querySelector(".collapse_button").textContent = tr("show_less")
+    if (item.parentElement.querySelector(".really_text").classList.contains("collapsed_text")) {
+        item.parentElement.querySelector(".really_text").classList.remove("collapsed_text")
+        item.textContent = tr("show_less")
     } else {
-        document.getElementById("text" + id).querySelector(".really_text").classList.add("collapsed_text")
-        document.getElementById("text" + id).querySelector(".collapse_button").textContent = tr("show_more")
+        item.parentElement.querySelector(".really_text").classList.add("collapsed_text")
+        item.textContent = tr("show_more")
     }
 }
