@@ -5,7 +5,7 @@
         "analyse": "phpstan analyse --memory-limit 1G"
     },
     "require": {
-        "php": "~7.3||~8.2",
+        "php": "~8.2",
         "whichbrowser/parser": "dev-master",
         "james-heinrich/getid3": "^1.9@dev",
         "rybakit/msgpack": "dev-master",
