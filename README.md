@@ -60,13 +60,13 @@ ln -s /path/to/chandler/extensions/available/commitcaptcha /path/to/chandler/ext
 ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions/enabled/
 ```
 
-5. Import `install/init-static-db.sql` to the **same database** you installed Chandler to and import all sqls from `install/sqls` to the **same database**
-6. Import `install/init-event-db.sql` to a **separate database**
-7. Copy `openvk-example.yml` to `openvk.yml` and change options to your liking
-8. Run `composer install` in OpenVK directory
-9. Run `composer install` in commitcaptcha directory
-10. Move to `Web/static/js` and execute `npm install`
-11. Set `openvk` as your root app in `chandler.yml`
+5. You need to set up 2 databases: one for main data (it is be configured in `chandler.yml`), and another one for events (it is configured in `openvk.yml`)
+6. Copy `openvk-example.yml` to `openvk.yml` and change options to your liking
+7. Run `composer install` in OpenVK directory
+8. Run `composer install` in commitcaptcha directory
+9. Move to `Web/static/js` and execute `npm install`
+10. Set `openvk` as your root app in `chandler.yml`
+11. Run database migrations by executing `./openvkctl upgrade`
 
 Once you are done, you can login as a system administrator on the network itself (no registration required):
 
@@ -99,14 +99,14 @@ It depends. You can keep the sources to yourself if you do not plan to distribut
 
 You may reach out to us via:
 
-* [Bug Tracker](https://github.com/openvk/openvk/projects/1)
-* [Ticketing System](https://openvk.org/support?act=new)
-* Telegram Chat: Go to [our channel](https://t.me/openvkenglish) and open discussion in our channel menu.
-* [Reddit](https://www.reddit.com/r/openvk/)
+* [Bug Tracker](https://github.com/OpenVK/openvk/issues)
 * [GitHub Discussions](https://github.com/openvk/openvk/discussions)
+* [Ticketing System](https://openvk.org/support?act=new)
+* [Discord Server](https://discord.gg/8TDpTeRw5k)
+* Telegram Chat: Go to [our channel](https://t.me/openvkenglish) and open discussion in our channel menu.
 * Matrix Chat: #openvk:matrix.org
 
-**Attention**: bug tracker, board, Telegram and Matrix chat are public places, ticketing system is being served by volunteers. If you need to report something that should not be immediately disclosed to general public (for instance, a vulnerability), please contact us directly via this email: **contact [at] openvk [dot] org**
+**Attention**: bug tracker, board, Telegram, Discord and Matrix chat are public places, ticketing system is being served by volunteers. If you need to report something that should not be immediately disclosed to general public (for instance, a vulnerability), please contact us directly via this email: **contact [at] openvk [dot] org**
 
 <a href="https://codeberg.org/OpenVK/openvk">
     <img alt="Get it on Codeberg" src="https://codeberg.org/Codeberg/GetItOnCodeberg/media/branch/main/get-it-on-blue-on-white.png" height="60">
