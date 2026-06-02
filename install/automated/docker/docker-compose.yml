@@ -31,7 +31,7 @@ services:
           condition: service_healthy
       acl_handler:
           condition: service_started
-      kafka:
+      redis:
           condition: service_started
 
   acl_handler:
@@ -53,7 +53,7 @@ services:
           create_host_path: false
 
   mariadb-primary:
-    image: mariadb:10.9
+    image: docker.io/mariadb:10.9
     container_name: mariadb-primary
     restart: unless-stopped
     volumes:
@@ -71,7 +71,7 @@ services:
       - MARIADB_RANDOM_ROOT_PASSWORD=yes
 
   mariadb-eventdb:
-    image: mariadb:10.9
+    image: docker.io/mariadb:10.9
     container_name: mariadb-eventdb
     restart: unless-stopped
     volumes:
@@ -88,23 +88,18 @@ services:
       - MARIADB_PASSWORD=openvk
       - MARIADB_RANDOM_ROOT_PASSWORD=yes
 
-  kafka:
-    image: apache/kafka:4.0.1
-    container_name: kafka
+  redis:
+    image: docker.io/redis:8.8-alpine
+    container_name: redis
     restart: unless-stopped
     volumes:
-      - kafka-data:/var/lib/kafka/data
-    environment:
-      KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_NODE_ID: 1
-      KAFKA_CLUSTER_ID: hG7d9e8fR0C1vT2xLk3mQ
-      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
-      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   phpmyadmin:
     image: docker.io/phpmyadmin:5
@@ -136,4 +131,4 @@ volumes:
   openvk-logs:
   mariadb-primary:
   mariadb-eventdb:
-  kafka-data:
+  redis-data:
