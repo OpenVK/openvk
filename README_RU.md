@@ -51,13 +51,13 @@ ln -s /path/to/chandler/extensions/available/commitcaptcha /path/to/chandler/ext
 ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions/enabled/
 ```
 
-5. Импортируйте `install/init-static-db.sql` в **ту же базу данных**, в которую вы установили Chandler, и импортируйте все SQL файлы из папки `install/sqls` в **ту же базу данных**
-6. Импортируйте `install/init-event-db.sql` в **отдельную базу данных** (Яндекс.Clickhouse также может быть использован, настоятельно рекомендуется)
-7. Скопируйте `openvk-example.yml` в `openvk.yml` и измените параметры под свои нужды
-8. Запустите `composer install` в директории OpenVK
-9. Запустите `composer install` в директории commitcaptcha
-10. Перейдите в `Web/static/js` и выполните `npm install`
-11. Установите `openvk` в качестве корневого приложения в файле `chandler.yml`
+5. Вам необходимо иметь 2 базы данных: одна для основных данных (указывается в `chandler.yml`), другая для событий (указывается в `openvk.yml`)
+6. Скопируйте `openvk-example.yml` в `openvk.yml` и измените параметры под свои нужды
+7. Запустите `composer install` в директории OpenVK
+8. Запустите `composer install` в директории commitcaptcha
+9. Перейдите в `Web/static/js` и выполните `npm install`
+10. Установите `openvk` в качестве корневого приложения в файле `chandler.yml`
+11. Запустите миграции базы данных, выполнив `./openvkctl upgrade`
 
 После этого вы можете войти как системный администратор в саму сеть (регистрация не требуется):
 
@@ -90,14 +90,14 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 
 Вы можете связаться с нами через:
 
-* [Баг-трекер](https://github.com/openvk/openvk/projects/1)
-* [Помощь в OVK](https://openvk.org/support?act=new)
-* Telegram-чат: Перейдите на [наш канал](https://t.me/openvkenglish) и откройте обсуждение в меню нашего канала. (_внимание: помощь доступна только на английском языке_)
-* [Reddit](https://www.reddit.com/r/openvk/)
+* [Баг-трекер](https://github.com/OpenVK/openvk/issues)
 * [GitHub Discussions](https://github.com/openvk/openvk/discussions)
+* [Помощь в OVK](https://openvk.org/support?act=new)
+* [Discord-сервер](https://discord.gg/8TDpTeRw5k)
+* Telegram-чат: Перейдите на [наш канал](https://t.me/openvkenglish) и откройте обсуждение в меню нашего канала. (_внимание: помощь доступна только на английском языке_)
 * Чат в Matrix: #ovk:matrix.org
 
-**Внимание**: баг-трекер, форум, Telegram- и Matrix-чат являются публичными местами, и жалобы в OVK обслуживается волонтерами. Если вам нужно сообщить о чем-то, что не должно быть раскрыто широкой публике (например, сообщение об уязвимости), пожалуйста, свяжитесь с нами напрямую по этому адресу: **contact [собачка] openvk [точка] org**.
+**Внимание**: баг-трекер, форум, Telegram-, Discord- и Matrix-чат являются публичными местами, и жалобы в OVK обслуживается волонтерами. Если вам нужно сообщить о чем-то, что не должно быть раскрыто широкой публике (например, сообщение об уязвимости), пожалуйста, свяжитесь с нами напрямую по этому адресу: **contact [собачка] openvk [точка] org**.
 
 <a href="https://codeberg.org/OpenVK/openvk">
     <img alt="Get it on Codeberg" src="https://codeberg.org/Codeberg/GetItOnCodeberg/media/branch/main/get-it-on-blue-on-white.png" height="60">
