@@ -1,7 +1,7 @@
 openvk:
     debug: true
     appearance:
-        name: "FreeBSD Instance"
+        name: "OpenVK community instance"
         motd: "Yet another OpenVK instance"
 
     preferences:
