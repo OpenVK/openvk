@@ -1,0 +1,116 @@
+openvk:
+    debug: false
+    appearance:
+        name: "OpenVK Test"
+        motd: "Screenshot Test Instance"
+
+    preferences:
+        femaleGenderPriority: true
+        nginxCacheTime: null
+        uploads:
+            disableLargeUploads: true
+            mode: "basic"
+        shortcodes:
+            minLength: 3
+            forbiddenNames: []
+        photos:
+            upgradeStructure: false
+            photoSaving: "quick"
+        videos:
+            disableUploading: true
+        docs:
+            maxSize: 10
+            allowedFormats: ["jpg", "jpeg", "png", "gif", "webp"]
+        apps:
+            withdrawTax: 8
+        security:
+            requireEmail: false
+            requirePhone: false
+            forcePhoneVerification: false
+            forceEmailVerification: false
+            forceStrongPassword: false
+            disablePasswordRestoring: true
+            enableSu: true
+            rateLimits:
+                actions: 9999
+                time: 1
+                maxViolations: 9999
+                maxViolationsAge: 9999
+                autoban: false
+                eventsLimit:
+                    enable: false
+        blacklists:
+            limit: 100
+            applyToAdmins: true
+        registration:
+            enable: true
+            disablingReason: ""
+            emailWhitelist:
+                enable: false
+                allowedHosts: []
+        support:
+            supportName: "Agent"
+            adminAccount: 1
+            fastAnswers: []
+        messages:
+            strict: false
+        music:
+            exposeOriginalURLs: true
+        newsfeed:
+            ignoredSourcesLimit: 50
+        notes:
+            disableHotlinking: true
+            allowedHosts: []
+        wall:
+            christian: false
+            anonymousPosting:
+                enable: false
+                account: 100
+            postSizes:
+                maxAttachments: 10
+                maxSize: 60000
+                processingLimit: 3000
+                emojiProcessingLimit: 1000
+        commerce: false
+        susLinks:
+            warnings: true
+            showReason: true
+        maintenanceMode:
+            all: false
+        ton:
+            enabled: false
+        menu:
+            links: []
+        about:
+            links: []
+        adPoster:
+            enable: false
+        bellsAndWhistles:
+            testLabel: false
+        defaultMobileTheme: ""
+        defaultFeaturePhoneTheme: ""
+        logs: false
+        news:
+            show: false
+
+    telemetry:
+        plausible:
+            enable: false
+        piwik:
+            enable: false
+        matomo:
+            enable: false
+
+    credentials:
+        smsc:
+            enable: false
+        telegram:
+            enable: false
+        eventDB:
+            enable: true
+            database:
+                dsn: "mysql:host=mariadb-eventdb;dbname=openvk_eventdb"
+                user: "openvk"
+                password: "openvk"
+        notificationsBroker:
+            enable: false

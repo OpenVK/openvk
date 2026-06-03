@@ -1,0 +1,24 @@
+chandler:
+    debug: false
+    websiteUrl: null
+    rootApp: "openvk"
+
+    preferences:
+        appendExtension: "xhtml"
+        adminUrl: "/chandlerd"
+        exposeChandler: true
+
+    extensions:
+        path: null
+        allEnabled: false
+
+    database:
+        dsn: "mysql:host=mariadb-primary;dbname=db"
+        user: "openvk"
+        password: "openvk"
+
+    security:
+        secret: "test-secret-do-not-use-in-production-1234567890abcdef"
+        csrfProtection: "permissive"
+        extendedValidation: false
+        sessionDuration: 14
