@@ -1,11 +1,11 @@
 #!/bin/tcsh
 
 ##########################################################################################################\
-#         OpenVK AutoInstallation Script for FreeBSD 13         #               /(        )`               #
+#         OpenVK AutoInstallation Script for FreeBSD 15         #               /(        )`               #
 # ------------------------------------------------------------- #               \ \___   / |               #
 #                                                               #               /- _  `-/  '               #
-# This script installs OpenVK on an empty FreeBSD 13 box.       #              (/\/ \ \   /\               #
-# Copyright (c) 2020 OpenVK contributors                        #              / /   | `    \              #
+# This script installs OpenVK on an empty FreeBSD 15 box/jail.  #              (/\/ \ \   /\               #
+# Copyright (c) 2026 OpenVK contributors                        #              / /   | `    \              #
 # ------------------------------------------------------------- #              O O   ) /    |              #
 #                                                               #              `-^--'`<     '              #
 # This scropt is free software; you can redistribute it and/or  #             (_.)  _  )   /               #
@@ -27,28 +27,23 @@ if ($? == 1) then
 endif
 
 set osVer = `freebsd-version -r`
-if ($osVer !~ "13.*") then
-    echo "Fatal Error: This installation supports only FreeBSD 13, but you have FreeBSD $osVer installed."
+if ($osVer !~ "15.*") then
+    echo "Fatal Error: This installation supports only FreeBSD 15, but you have FreeBSD $osVer installed."
     exit 201
 endif
 
-cd /tmp
-mkdir ovkinstall
-cd ovkinstall
+# Ask, just in case
+echo -n "This script will install OpenVK on your FreeBSD machine. It's recommended to run it in FreeBSD Jail via bastille or similar tool. Continue? (y/n)"
+set ans = $<
+
+if ( "$ans" != "y" && "$ans" != "Y" && "$ans" != "yes" && "$ans" != "YES") then
+    echo "Script aborted by user."
+    exit 1
+endif
 
 # Install required packages
-yes | pkg install git php74 mod_php74 php74-gd php74-mbstring php74-iconv php74-json php74-sodium php74-calendar php74-curl php74-brotli php74-zip php74-openssl php74-ctype php74-dom php74-fileinfo php74-PDO php74-pdo_mysql php74-sqlite3 php74-pdo_sqlite php74-sockets php74-tokenizer php74-opcache php74-posix php74-pecl-yaml php74-phar php74-filter php74-zlib php74-session php74-simplexml node www/npm mysql80-server mysql80-client ffmpeg
-rehash
-
-# Install package managers
-npm i -g yarn
-curl -LO https://getcomposer.org/installer
-php ./installer --install-dir=/bin --filename=composer --preview
-rm -f ./installer
-rehash
-
-# Download OVK distro
-git clone https://github.com/openvk/openvk.git
+pkg install -y git nginx php83 node24 npm-node24 mariadb118-server php83-composer mod_php83 php83-gd php83-mbstring php83-iconv php83-sodium php83-calendar php83-curl php83-brotli php83-zip php83-ctype php83-dom php83-fileinfo php83-pdo_mysql php83-sqlite3 php83-pdo_sqlite php83-sockets php83-tokenizer php83-opcache php83-posix php83-pecl-yaml php83-phar php83-filter php83-zlib php83-session php83-simplexml php83-pecl-imagick php83-xml
+rehash # upd exports
 
 # Install chandler
 mkdir /opt
@@ -57,7 +52,6 @@ git clone https://github.com/openvk/chandler.git
 
 cd chandler
 yes | composer install
-cp /tmp/ovkinstall/openvk/install/automated/common/chandler.yml /opt/chandler/chandler.yml
 chown -R www: .
 chmod -R 777 .
 
@@ -70,20 +64,20 @@ yes | composer install
 chown -R www: .
 chmod -R 777 .
 
-cd /opt/chandler
 ln -s /opt/chandler/extensions/available/commitcaptcha /opt/chandler/extensions/enabled/commitcaptcha
 
 # Install OpenVK
-cp -r /tmp/ovkinstall/openvk /opt/chandler/extensions/available/openvk
+cd /opt/chandler/extensions/available
+git clone https://github.com/openvk/openvk
+cd openvk
+yes | composer install
+# js static
+cd Web/static/js
+npm i
 ln -s /opt/chandler/extensions/available/openvk /opt/chandler/extensions/enabled/openvk
 
-cd ./extensions/available/openvk
-yes | composer install
-
-cd Web/static/js
-yarn install
-
-cp /tmp/ovkinstall/openvk/install/automated/common/openvk.template.yml /opt/chandler/extensions/available/openvk/openvk.yml
+cp /opt/chandler/extensions/available/openvk/install/automated/common/chandler.yml /opt/chandler/chandler.yml
+cp /opt/chandler/extensions/available/openvk/install/automated/common/openvk.template.yml /opt/chandler/extensions/available/openvk/openvk.yml
 
 cd ../../../
 chown -R www: .
@@ -94,37 +88,34 @@ sysrc mysql_enable="yes"
 service mysql-server start
 
 cd /opt/chandler
-mysql < /tmp/ovkinstall/openvk/install/automated/common/mk_db.sql
+mysql < /opt/chandler/extensions/available/openvk/install/automated/common/mk_db.sql
 mysql -p'justMonika' openvk < install/init-db.sql
-mysql -p'justMonika' openvk < /tmp/ovkinstall/openvk/install/init-static-db.sql
-mysql -p'justMonika' openvk-eventdb < /tmp/ovkinstall/openvk/install/init-event-db.sql
+mysql -p'justMonika' openvk < /opt/chandler/extensions/available/openvk/install/init-static-db.sql
+mysql -p'justMonika' openvk-eventdb < /opt/chandler/extensions/available/openvk/install/init-event-db.sql
 
-cd /tmp/ovkinstall/openvk/install/sqls
+cd /opt/chandler/extensions/available/openvk/install/sqls
 foreach migration (*.sql)
     mysql -p'justMonika' openvk < $migration
 end
 
 # Change database settings
-echo "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'justMonika'; FLUSH PRIVILEGES;" | mysql -p'justMonika';
+#echo "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'justMonika'; FLUSH PRIVILEGES;" | mysql -p'justMonika';
 
-sed -i'' -e 's:/var/run/mysql/mysql.sock:/tmp/mysql.sock:' /opt/chandler/chandler.yml
-sed -i'' -e 's:/var/run/mysql/mysql.sock:/tmp/mysql.sock:' /opt/chandler/extensions/available/openvk/openvk.yml
+#sed -i'' -e 's:/var/run/mysql/mysql.sock:/tmp/mysql.sock:' /opt/chandler/chandler.yml
+#sed -i'' -e 's:/var/run/mysql/mysql.sock:/tmp/mysql.sock:' /opt/chandler/extensions/available/openvk/openvk.yml
 
-# Alias folders
-rm -rf /usr/local/www/apache24/data
-ln -s /opt/chandler/htdocs /usr/local/www/apache24/data
+# NGINX
+sysrc php_fpm_enable="YES"
+service php_fpm start
 
-# Configure Apache
-cp /tmp/ovkinstall/openvk/install/automated/common/httpd.conf /usr/local/etc/apache24/httpd.conf
-cp /tmp/ovkinstall/openvk/install/automated/common/httpd-php.conf /usr/local/etc/apache24/Includes/php.conf
-sysrc apache24_enable="yes"
-service apache24 start
+cp /opt/chandler/extensions/available/openvk/install/automated/common/nginx.conf /usr/local/etc/nginx/nginx.conf
 
-# Cleanup
-rm -rf /opt/ovkinstall
+sysrc nginx_enable="YES"
+service nginx start
 
 # Enjoy
-echo "~================= OpenVK 2 Installed =================~"
+echo "~================ OpenVK is Installed! ================~"
 echo "               Use it: http://localhost:80/             "
-echo "       (for vagrant users: http://localhost:4000/)      "
+echo "  Default login: admin@localhost.localdomain6           "
+echo "       Password: admin                                  "
 echo "~======================================================~"
