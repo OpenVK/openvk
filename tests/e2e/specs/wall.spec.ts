@@ -1,14 +1,9 @@
 import { test, expect } from '@playwright/test';
-import { acceptCookies } from '../helpers.js';
+import { loginAsAlice } from '../helpers.js';
 
 test.describe('Wall', () => {
   test.beforeEach(async ({ page }) => {
-    await acceptCookies(page);
-    await page.goto('/login');
-    await page.fill('#fastLogin input[name="login"]', 'alice@test.local');
-    await page.fill('#fastLogin input[name="password"]', 'test123');
-    await page.click('#fastLogin input[type="submit"]');
-    await page.waitForURL(/\/alice/);
+    await loginAsAlice(page);
   });
 
   test('feed shows posts from friends', async ({ page }) => {
