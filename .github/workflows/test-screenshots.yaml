@@ -2,16 +2,17 @@ name: Screenshot Tests
 
 on:
   push:
-    branches: [develop, master]
   pull_request:
-    branches: [develop, master]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
+    
+    # 'push' runs on inner branches, 'pull_request' will run only on outer PRs
+    if: >
+      github.event_name == 'push'
+      || (github.event_name == 'pull_request'
+          && github.event.pull_request.head.repo.full_name != github.repository)
 
     steps:
       - uses: actions/checkout@v4
