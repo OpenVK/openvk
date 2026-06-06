@@ -125,8 +125,8 @@
                         n:attr="style => $user->getMaritalStatusUser() || ($user->getMaritalStatus() && !in_array($user->getMaritalStatus(), [0, 1, 8])) ? '' : 'display: none;'">
                         <td width="120" valign="top"></td>
                         <td>
-                            <input type="text" placeholder="{_page_address}" name="maritalstatus-user"
-                                   n:attr="value => $user->getMaritalStatusUser() ? $user->getMaritalStatusUser()->getId() : ''" />
+                            <input type="text" placeholder="{_marital_status_user_id}" name="maritalstatus-user"
+                                   n:attr="value => $user->getMaritalStatusUser() ? $user->getMaritalStatusUser()->getURL(true) : ''" />
                         </td>
                     </tr>
                     <tr>

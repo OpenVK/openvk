@@ -553,6 +553,7 @@
 "your_email_address" = "Adres Vašej elektronnoj počty";
 "your_page_address" = "Adres Vašej stranicy";
 "page_address" = "Adres stranicy";
+"marital_status_user_id" = "ID polzovatelia";
 "current_email_address" = "Tekusčij adres";
 "new_email_address" = "Novyj adres";
 "save_email_address" = "Sohranití adres";

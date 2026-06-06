@@ -799,12 +799,12 @@ async function withdraw(id) {
 }
 
 function toggleMaritalStatus(e) {
-    let elem = $("#maritalstatus-user");
-    $("#maritalstatus-user-select").empty();
+    let maritalstatus = $("#maritalstatus-user");
     if ([0, 1, 8].includes(Number(e.value))) {
-        elem.hide();
+        maritalstatus.hide();
+        maritalstatus.find('input[name="maritalstatus-user"]').val('');
     } else {
-        elem.show();
+        maritalstatus.show();
     }
 }
 

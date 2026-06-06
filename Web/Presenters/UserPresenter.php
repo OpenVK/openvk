@@ -199,16 +199,18 @@ final class UserPresenter extends OpenVKPresenter
                 }
 
                 if ($this->postParam("marialstatus") <= 8 && $this->postParam("marialstatus") >= 0) {
-                    $user->setMarital_Status($this->postParam("marialstatus"));
-                }
+                    $maritalStatus = (int) $this->postParam("marialstatus");
+                    $user->setMarital_Status($maritalStatus);
 
-                if ($this->postParam("maritalstatus-user")) {
-                    if (in_array((int) $this->postParam("marialstatus"), [0, 1, 8])) {
+                    if (in_array($maritalStatus, [0, 1, 8], true)) {
                         $user->setMarital_Status_User(null);
                     } else {
-                        $mUser = (new Users())->getByAddress($this->postParam("maritalstatus-user"));
-                        if ($mUser) {
-                            if ($mUser->getId() !== $this->user->id) {
+                        $partnerAddress = trim((string) $this->postParam("maritalstatus-user"));
+                        if (empty($partnerAddress)) {
+                            $user->setMarital_Status_User(null);
+                        } else {
+                            $mUser = (new Users())->getByAddress($partnerAddress);
+                            if ($mUser && $mUser->getId() !== $this->user->id) {
                                 $user->setMarital_Status_User($mUser->getId());
                             }
                         }
