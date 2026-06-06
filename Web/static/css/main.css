@@ -4493,3 +4493,13 @@ hr {
 .hidden {
     display: none !important;
 }
+
+.collapsed_text {
+    display: block;
+    max-height: 115px;
+    overflow: hidden;
+}
+
+.collapse_button {
+    display: block;
+}

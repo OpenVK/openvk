@@ -316,3 +316,14 @@ function short_geo_name(address_osm)
 
     return escapeHtml(final_arr.join(', '))
 }
+
+function expandText(item)
+{
+    if (item.parentElement.querySelector(".really_text").classList.contains("collapsed_text")) {
+        item.parentElement.querySelector(".really_text").classList.remove("collapsed_text")
+        item.textContent = tr("show_less")
+    } else {
+        item.parentElement.querySelector(".really_text").classList.add("collapsed_text")
+        item.textContent = tr("show_more")
+    }
+}

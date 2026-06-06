@@ -32,19 +32,17 @@ If you want, you can add your instance to the list above so that people can regi
 
 Here is our minimum hardware recommendation:
 
-* **CPU: Recent** (AMD Zen2 or equivalent) quad-core 2GHz+ CPU
-* **RAM:** At least 2GB RAM (we recommend 6GB or 8GB for OpenVK with Kafka)
+* **CPU:** Any dual-core 1GHz+ CPU or more powerful
+* **RAM:** At least 2GB RAM (we recommend 6GB or 8GB for OpenVK with Redis)
 * **Minimum database space:** 10GB
 
 ### Installation procedure
 
 1. Install PHP 8.2, web-server, Composer, Node.js, NPM and [Chandler](https://github.com/openvk/chandler)
 
-* PHP 8 is still being tested; the functionality of the engine on this version of PHP is not yet guaranteed.
-
 2. Install MySQL-compatible database.
 
-* We recommend using Percona Server, but any MySQL-compatible server should work too.
+* We recommend using MariaDB or Percona Server, but any MySQL-compatible server should work too.
 * Server should be compatible with at least MySQL 5.6, MySQL 8.0+ is recommended.
 * Support for MySQL 4.1+ is WIP, replace `utf8mb4` and `utf8mb4_unicode_520_ci` with `utf8` and `utf8_unicode_ci` in SQLs.
 
@@ -62,13 +60,13 @@ ln -s /path/to/chandler/extensions/available/commitcaptcha /path/to/chandler/ext
 ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions/enabled/
 ```
 
-5. Import `install/init-static-db.sql` to the **same database** you installed Chandler to and import all sqls from `install/sqls` to the **same database**
-6. Import `install/init-event-db.sql` to a **separate database** (Yandex.Clickhouse can also be used, highly recommended)
-7. Copy `openvk-example.yml` to `openvk.yml` and change options to your liking
-8. Run `composer install` in OpenVK directory
-9. Run `composer install` in commitcaptcha directory
-10. Move to `Web/static/js` and execute `npm install`
-11. Set `openvk` as your root app in `chandler.yml`
+5. You need to set up 2 databases: one for main data (it is be configured in `chandler.yml`), and another one for events (it is configured in `openvk.yml`)
+6. Copy `openvk-example.yml` to `openvk.yml` and change options to your liking
+7. Run `composer install` in OpenVK directory
+8. Run `composer install` in commitcaptcha directory
+9. Move to `Web/static/js` and execute `npm install`
+10. Set `openvk` as your root app in `chandler.yml`
+11. Run database migrations by executing `./openvkctl upgrade`
 
 Once you are done, you can login as a system administrator on the network itself (no registration required):
 
@@ -77,6 +75,18 @@ Once you are done, you can login as a system administrator on the network itself
   * It is recommended to change the password of the built-in account or disable it.
 
 💡 Confused? Full installation walkthrough is available [here](https://docs.openvk.org/openvk_engine/centos8_installation/) (CentOS 8 [and](https://almalinux.org/) [family](https://yum.oracle.com/oracle-linux-isos.html)).
+
+### Real-time notifs
+
+You can install Redis to take advantage of real-time notifications (if you enabled Event DB in config). 
+
+1. Install Redis from your beloved package manager in your OS
+2. Set `notificationsBroker` under `credentials` to `true`
+
+It should work out of box. If not, tweak Redis and OpenVK config settings
+
+> [!WARNING]
+> Kafka in OpenVK was been deprecated since [this commit](https://github.com/OpenVK/openvk/commit/e99cdd1b08002dbfbd1aaef2cbc52ccbe34026c6) and no longer used in OpenVK codebase. If you see any mention of Kafka in source code, config or documentation, you should know that this will not work at all. 
 
 ### Looking for Docker or Kubernetes deployment?
 See `install/automated/docker/README.md` and `install/automated/kubernetes/README.md` for Docker and Kubernetes deployment instructions.
@@ -89,14 +99,14 @@ It depends. You can keep the sources to yourself if you do not plan to distribut
 
 You may reach out to us via:
 
-* [Bug Tracker](https://github.com/openvk/openvk/projects/1)
-* [Ticketing System](https://openvk.org/support?act=new)
-* Telegram Chat: Go to [our channel](https://t.me/openvkenglish) and open discussion in our channel menu.
-* [Reddit](https://www.reddit.com/r/openvk/)
+* [Bug Tracker](https://github.com/OpenVK/openvk/issues)
 * [GitHub Discussions](https://github.com/openvk/openvk/discussions)
+* [Ticketing System](https://openvk.org/support?act=new)
+* [Discord Server](https://discord.gg/8TDpTeRw5k)
+* Telegram Chat: Go to [our channel](https://t.me/openvkenglish) and open discussion in our channel menu.
 * Matrix Chat: #openvk:matrix.org
 
-**Attention**: bug tracker, board, Telegram and Matrix chat are public places, ticketing system is being served by volunteers. If you need to report something that should not be immediately disclosed to general public (for instance, a vulnerability), please contact us directly via this email: **contact [at] ovk [dot] to**
+**Attention**: bug tracker, board, Telegram, Discord and Matrix chat are public places, ticketing system is being served by volunteers. If you need to report something that should not be immediately disclosed to general public (for instance, a vulnerability), please contact us directly via this email: **contact [at] openvk [dot] org**
 
 <a href="https://codeberg.org/OpenVK/openvk">
     <img alt="Get it on Codeberg" src="https://codeberg.org/Codeberg/GetItOnCodeberg/media/branch/main/get-it-on-blue-on-white.png" height="60">

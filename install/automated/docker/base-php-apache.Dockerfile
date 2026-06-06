@@ -17,7 +17,6 @@ RUN apt update; \
         intl \
         yaml \
         pdo_mysql \
-        rdkafka \
         imagick \
     && \
     rm -rf /var/lib/apt/lists/*

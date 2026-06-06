@@ -165,7 +165,10 @@ openvk:
                 password: "openvk"
         notificationsBroker:
             enable: true
-            kafka:
-                addr: "kafka"
-                port: 9092
-                topic: "OvkEvents"
+            redis:
+                addr: "redis"
+                port: 6379
+                password: ""
+            stream:
+                maxlen: 1000
+                prefix: "ovk_notifs"

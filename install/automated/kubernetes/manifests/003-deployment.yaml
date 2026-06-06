@@ -263,5 +263,44 @@ items:
               memory: 512Mi
         dnsPolicy: ClusterFirst
         restartPolicy: Always
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: redis
+    namespace: openvk
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: redis
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          app: redis
+      spec:
+        containers:
+        - image: docker.io/redis:8.8-alpine
+          imagePullPolicy: IfNotPresent
+          name: redis
+          ports:
+          - containerPort: 6379
+            name: redis
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+          volumeMounts:
+          - mountPath: /data
+            name: redis-data
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        volumes:
+        - name: redis-data
+          persistentVolumeClaim:
+            claimName: redis-pvc
 kind: List
 metadata: {}

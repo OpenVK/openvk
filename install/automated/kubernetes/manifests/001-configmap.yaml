@@ -134,10 +134,13 @@ data:
                   password: "openvk"
           notificationsBroker:
               enable: false
-              kafka:
-                  addr: "127.0.0.1"
-                  port: 9092
-                  topic: "OvkEvents"
+              redis:
+                  addr: "redis-svc"
+                  port: 6379
+                  password: ""
+              stream:
+                  maxlen: 1000
+                  prefix: "ovk_notifs"
   chandler.yml: |
     chandler:
       debug: true
