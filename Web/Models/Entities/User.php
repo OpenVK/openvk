@@ -1077,7 +1077,7 @@ class User extends RowModel
         ]);
     }
 
-    public function ban(string $reason, bool $deleteSubscriptions = true, $unban_time = null, ?int $initiator = null): void
+    public function ban(string $reason, bool $deleteSubscriptions = false, $unban_time = null, ?int $initiator = null): void
     {
         if ($deleteSubscriptions) {
             $subs = DatabaseConnection::i()->getContext()->table("subscriptions");
