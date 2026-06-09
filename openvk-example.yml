@@ -4,6 +4,11 @@ openvk:
         name: "OpenVK"
         motd: "Yet another OpenVK instance"
     
+    mirrors: # list all existing and previous domains without www. Won't work with different port
+        - "ovk.localhost"
+        - "ovk.local"
+
+
     preferences:
         femaleGenderPriority: true
         nginxCacheTime: null
