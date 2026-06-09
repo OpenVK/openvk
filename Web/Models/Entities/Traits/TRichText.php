@@ -46,8 +46,7 @@ trait TRichText
                     $href = rawurlencode($matches[1]);
                     $href = str_replace("%26amp%3B", "%26", $href);
                     $href = 'away.php?to=' . $href;
-                }
-                else {
+                } else {
                     $domainNPath = explode("/", $matches[3], 2);
                     $href = end($domainNPath);
                 }
