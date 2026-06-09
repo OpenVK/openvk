@@ -41,24 +41,20 @@ trait TRichText
         return preg_replace_callback(
             "%(([A-z]++):\/\/(\S*?\.\S*?))([\s)\[\]{},\"\'<]|\.\s|$)%",
             (function (array $matches): string {
-                $href = rawurlencode($matches[1]);
-                $href = str_replace("%26amp%3B", "%26", $href);
+                $isSameDomain = str_replace("www.", "", explode("/", $matches[3], 2)[0]) == str_replace("www.", "", $_SERVER["SERVER_NAME"]);
+                if (!$isSameDomain) {
+                    $href = rawurlencode($matches[1]);
+                    $href = str_replace("%26amp%3B", "%26", $href);
+                    $href = 'away.php?to=' . $href;
+                }
+                else {
+                    $domainNPath = explode("/", $matches[3], 2);
+                    $href = end($domainNPath);
+                }
                 $link = $matches[3];
-                # this string breaks ampersands
-                # $link = str_replace(";", "&#59;", $link);
                 $rel  = $this->isAd() ? "sponsored" : "ugc";
 
-                /*$server_domain = str_replace(':' . $_SERVER['SERVER_PORT'], '', $_SERVER['HTTP_HOST']);
-                if(str_contains($link, $server_domain)) {
-                    $replaced_link = str_replace(':' . $_SERVER['SERVER_PORT'], '', $link);
-                    $replaced_link = str_replace($server_domain, '', $replaced_link);
-
-                    return "<a href='$replaced_link' rel='$rel'>$link</a>" . htmlentities($matches[4]);
-                }
-
-                $link = htmlentities(urldecode($link));*/
-
-                return "<a href='/away.php?to=$href' rel='$rel' target='_blank'>$link</a>" . htmlentities($matches[4]);
+                return "<a href='/$href' rel='$rel' target='_blank'>$link</a>" . htmlentities($matches[4]);
             }),
             $text
         );
