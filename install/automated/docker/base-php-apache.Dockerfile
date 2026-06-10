@@ -18,5 +18,6 @@ RUN apt update; \
         yaml \
         pdo_mysql \
         imagick \
+        xdiff \
     && \
     rm -rf /var/lib/apt/lists/*
