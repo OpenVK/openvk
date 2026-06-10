@@ -517,7 +517,7 @@ final class AdminPresenter extends OpenVKPresenter
             $unban_time = time() + $user->getNewBanTime();
         }
 
-        $user->ban($this->queryParam("reason"), true, $unban_time, $this->user->identity->getId());
+        $user->ban($this->queryParam("reason"), false, $unban_time, $this->user->identity->getId());
         exit(json_encode([ "success" => true, "reason" => $this->queryParam("reason") ]));
     }
 
