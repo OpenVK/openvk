@@ -77,6 +77,30 @@ final class Notes extends VKAPIRequestHandler
         return $comment->getId();
     }
 
+    public function delete(int $note_id)
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $note = (new NotesRepo())->getNoteById($this->getUser()->getId(), $note_id);
+
+        if (!$note) {
+            $this->fail(15, "Access denied");
+        }
+
+        if ($note->isDeleted()) {
+            $this->fail(15, "Access denied");
+        }
+
+        if (!$note->canBeModifiedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        $note->delete();
+
+        return 1;
+    }
+
     public function edit(string $note_id, string $title = "", string $text = "", int $privacy = 0, int $comment_privacy = 0, string $privacy_view  = "", string $privacy_comment  = "")
     {
         $this->requireUser();
