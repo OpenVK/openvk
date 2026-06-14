@@ -265,7 +265,7 @@
                                     {foreach $bdayUsers as $u}
                                         {php $bdayListHtml .= '<a href="/id' . $u->getId() . '">' . $u->getMorphedName(startWithLastName: false) . '</a>'}
                                         {if $bdayCount == 2}
-                                            {if $iterator->isFirst()}{$bdayListHtml .= tr("bday_and")}{/if}
+                                            {if $iterator->isFirst()}{php $bdayListHtml .= tr("bday_and")}{/if}
                                         {elseif $bdayCount != 1}
                                             {if $iterator->isLast(2) and !$iterator->isLast()}
                                                 {php $bdayListHtml .= tr("bday_and")}
