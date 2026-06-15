@@ -1172,7 +1172,7 @@ class User extends RowModel
     public function setFirst_Name(string $firstName): void
     {
         $firstName = mb_convert_case($firstName, MB_CASE_TITLE);
-        if (!preg_match('%^[\p{Lu}\p{Lo}]\p{Mn}?(?:[\p{L&}\p{Lo}]\p{Mn}?){1,64}$%u', $firstName)) {
+        if (!preg_match('%^[\p{Lu}\p{Lo}]\p{Mn}?(?:[\p{L&}\p{Lo}-.]\p{Mn}?){1,64}$%u', $firstName)) {
             throw new InvalidUserNameException();
         }
 
@@ -1183,7 +1183,7 @@ class User extends RowModel
     {
         if (!empty($lastName)) {
             $lastName = mb_convert_case($lastName, MB_CASE_TITLE);
-            if (!preg_match('%^[\p{Lu}\p{Lo}]\p{Mn}?([\p{L&}\p{Lo}]\p{Mn}?){1,64}(\-\g<1>+)?$%u', $lastName)) {
+            if (!preg_match('%^[\p{Lu}\p{Lo}]\p{Mn}?([\p{L&}\p{Lo}-.]\p{Mn}?){0,64}(\-\g<1>+)?$%u', $lastName)) {
                 throw new InvalidUserNameException();
             }
         }
