@@ -210,6 +210,9 @@ final class Audio extends VKAPIRequestHandler
     {
         $this->requireUser();
 
+        if($owner_id == 0)
+            $owner_id = $this->getUser()->getRealId();
+
         $shuffleSeed    = null;
         $shuffleSeedStr = null;
         if ($shuffle == 1) {
