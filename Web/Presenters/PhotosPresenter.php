@@ -277,9 +277,11 @@ final class PhotosPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction(true);
 
         $upload_context = $this->queryParam("upload_context");
+        $isMessageUpload = $upload_context === "messages";
+        $album = null;
 
         if (is_null($this->queryParam("album"))) {
-            if ((int) $upload_context == $this->user->id) {
+            if (!$isMessageUpload && (int) $upload_context == $this->user->id) {
                 $album = $this->albums->getUserWallAlbum($this->user->identity);
             }
         } else {
@@ -339,6 +341,9 @@ final class PhotosPresenter extends OpenVKPresenter
                     $photo->setDescription("");
                     $photo->setFile($_FILES["photo_" . $i]);
                     $photo->setCreated(time());
+                    if ($isMessageUpload) {
+                        $photo->setIs_message_photo(1);
+                    }
                     $photo->save();
 
                     $photos[] = [
@@ -350,11 +355,10 @@ final class PhotosPresenter extends OpenVKPresenter
                         "pretty_id" => $photo->getPrettyId(),
                     ];
                 } catch (ISE $ex) {
-                    $name = $album->getName();
-                    $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию в $name.", 500, true);
+                    $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию" . ($album ? " в " . $album->getName() : "") . ".", 500, true);
                 }
 
-                if ($album != null) {
+                if (!$isMessageUpload && $album != null) {
                     $album->addPhoto($photo);
                     $album->setEdited(time());
                     $album->save();

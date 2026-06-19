@@ -1,0 +1,2 @@
+ALTER TABLE `photos` ADD COLUMN `is_message_photo` TINYINT(1) NOT NULL DEFAULT 0;
+ALTER TABLE `videos` ADD COLUMN `is_message_video` TINYINT(1) NOT NULL DEFAULT 0;

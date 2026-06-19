@@ -7,12 +7,15 @@ namespace openvk\Web\Models\Entities;
 use openvk\Web\Util\Shell\Shell;
 use openvk\Web\Util\Shell\Exceptions\{ShellUnavailableException, UnknownCommandException};
 use openvk\Web\Models\VideoDrivers\VideoDriver;
+use openvk\Web\Models\Entities\Traits\TMessageAttachment;
 use Nette\InvalidStateException as ISE;
 
 define("VIDEOS_FRIENDLY_ERROR", "Uploads are disabled on this instance :<");
 
 class Video extends Media
 {
+    use TMessageAttachment;
+
     public const TYPE_DIRECT  = 0;
     public const TYPE_EMBED   = 1;
     public const TYPE_UNKNOWN = -1;
@@ -339,10 +342,25 @@ class Video extends Media
         return "/video" . $this->getPrettyId();
     }
 
+    public function isMessageVideo(): bool
+    {
+        return (bool) $this->getRecord()->is_message_video;
+    }
+
     public function canBeViewedBy(?User $user = null): bool
     {
         if ($this->isDeleted() || $this->getOwner()->isDeleted()) {
             return false;
+        }
+
+        if ($this->isMessageVideo()) {
+            if (!$user) {
+                return false;
+            }
+            if ($user->getId() === $this->getOwner()->getId()) {
+                return true;
+            }
+            return $this->isViewableByMessageParticipant($user);
         }
 
         if (get_class($this->getOwner()) == "openvk\\Web\\Models\\Entities\\User") {

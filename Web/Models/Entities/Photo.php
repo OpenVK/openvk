@@ -9,12 +9,15 @@ use Nette\Utils\ImageException;
 use Nette\Utils\UnknownImageFileException;
 use openvk\Web\Models\Entities\Album;
 use openvk\Web\Models\Repositories\Albums;
+use openvk\Web\Models\Entities\Traits\TMessageAttachment;
 use Chandler\Database\DatabaseConnection as DB;
 use Nette\InvalidStateException as ISE;
 use Nette\Utils\Image;
 
 class Photo extends Media
 {
+    use TMessageAttachment;
+
     protected $tableName     = "photos";
     protected $fileExtension = "jpeg";
 
@@ -381,10 +384,25 @@ class Photo extends Media
         return $res;
     }
 
+    public function isMessagePhoto(): bool
+    {
+        return (bool) $this->getRecord()->is_message_photo;
+    }
+
     public function canBeViewedBy(?User $user = null): bool
     {
         if ($this->isDeleted() || $this->getOwner()->isDeleted()) {
             return false;
+        }
+
+        if ($this->isMessagePhoto()) {
+            if (!$user) {
+                return false;
+            }
+            if ($user->getId() === $this->getOwner()->getId()) {
+                return true;
+            }
+            return $this->isViewableByMessageParticipant($user);
         }
 
         if (!is_null($this->getAlbum())) {
