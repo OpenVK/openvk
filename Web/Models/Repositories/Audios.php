@@ -89,7 +89,7 @@ class Audios
             "owner" => $owner,
             "id"    => $vId,
         ])->fetch();
-        
+
         return $this->toPlaylist($playlist);
     }
 

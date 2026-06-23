@@ -22,7 +22,8 @@ class Videos
         $this->videos  = $this->context->table("videos");
     }
 
-    private function toVideo(?ActiveRow $ar): ?Video {
+    private function toVideo(?ActiveRow $ar): ?Video
+    {
         return is_null($ar) ? null : new Video($ar);
     }
 

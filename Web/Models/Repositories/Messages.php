@@ -9,6 +9,7 @@ use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Entities\Message;
 use openvk\Web\Models\Entities\Correspondence;
 use Chandler\Database\DatabaseConnection;
+use Nette\Database\Table\ActiveRow;
 
 class Messages
 {
