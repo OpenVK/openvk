@@ -50,7 +50,7 @@ trait TRichText
                     $domainNPath = explode("/", $matches[3], 2);
                     $href = end($domainNPath);
                 }
-                $link = $matches[3];
+                $link = str_replace("\r", "", $matches[0]); // clears caret return that triggered <br> to be spawned
                 $rel  = $this->isAd() ? "sponsored" : "ugc";
 
                 return "<a href='/$href' rel='$rel' target='_blank'>$link</a>" . htmlentities($matches[4]);
@@ -135,9 +135,10 @@ trait TRichText
         if ($html) {
             if ($proc) {
                 $text = $this->formatLinks($text);
+                // Mentions: @user, @user (name), [id1|name]
                 $text = preg_replace("%@([A-Za-z0-9]++) \(((?:[\p{L&}\p{Lo} 0-9]\p{Mn}?)++)\)%Xu", "[$1|$2]", $text);
                 $text = preg_replace("%([\n\r\s]|^)(@([A-Za-z0-9]++))%Xu", "$1[$3|@$3]", $text);
-                $text = preg_replace("%\[([A-Za-z0-9]++)\|((?:[\p{L&}\p{Lo} 0-9@]\p{Mn}?)++)\]%Xu", "<a href='/$1'>$2</a>", $text);
+                $text = preg_replace("%\[([A-Za-z0-9]++)\|((?:[\p{L&}\p{Lo} 0-9\.\-\`\'@]\p{Mn}?)++)\]%Xu", "<a href='/$1'>$2</a>", $text);
                 $text = preg_replace_callback("%([\n\r\s]|^)(\#([\p{L}_0-9][\p{L}_0-9\(\)\-\']+[\p{L}_0-9\(\)]|[\p{L}_0-9]{1,2}))%Xu", function ($m) {
                     $slug = rawurlencode($m[3]);
 
