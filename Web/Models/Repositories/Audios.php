@@ -10,6 +10,7 @@ use openvk\Web\Models\Entities\Club;
 use openvk\Web\Models\Entities\Playlist;
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Repositories\Util\EntityStream;
+use Nette\Database\Table\ActiveRow;
 
 class Audios
 {
@@ -19,6 +20,10 @@ class Audios
     private $playlists;
     private $playlistImports;
     private $playlistRels;
+
+    /* aggressive sql caching */
+    private static $cache = [];
+    private static $cachePlaylist = [];
 
     public const ORDER_NEW     = 0;
     public const ORDER_POPULAR = 1;
@@ -38,24 +43,24 @@ class Audios
         $this->playlistRels    = $this->context->table("playlist_relations");
     }
 
+    private function toAudio(?ActiveRow $ar): ?Audio
+    {
+        return is_null($ar) ? null : new Audio($ar);
+    }
+
+    private function toPlaylist(?ActiveRow $ar): ?Playlist
+    {
+        return is_null($ar) ? null : new Playlist($ar);
+    }
+
     public function get(int $id): ?Audio
     {
-        $audio = $this->audios->get($id);
-        if (!$audio) {
-            return null;
-        }
-
-        return new Audio($audio);
+        return self::$cache[$id] ??= $this->toAudio($this->audios->get($id));
     }
 
     public function getPlaylist(int $id): ?Playlist
     {
-        $playlist = $this->playlists->get($id);
-        if (!$playlist) {
-            return null;
-        }
-
-        return new Playlist($playlist);
+        return self::$cachePlaylist[$id] ??= $this->toPlaylist($this->playlists->get($id));
     }
 
     public function getByOwnerAndVID(int $owner, int $vId): ?Audio
@@ -64,11 +69,8 @@ class Audios
             "owner"      => $owner,
             "virtual_id" => $vId,
         ])->fetch();
-        if (!$audio) {
-            return null;
-        }
 
-        return new Audio($audio);
+        return $this->toAudio($audio);
     }
 
     public function getPlaylistByOwnerAndVID(int $owner, int $vId): ?Playlist
@@ -77,11 +79,8 @@ class Audios
             "owner" => $owner,
             "id"    => $vId,
         ])->fetch();
-        if (!$playlist) {
-            return null;
-        }
 
-        return new Playlist($playlist);
+        return $this->toPlaylist($playlist);
     }
 
     public function getByEntityID(int $entity, int $offset = 0, ?int $limit = null, ?int& $deleted = nullptr): \Traversable

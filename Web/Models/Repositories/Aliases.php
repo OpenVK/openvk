@@ -15,6 +15,9 @@ class Aliases
     private $context;
     private $aliases;
 
+    // used for shortcode strings itself, not ids
+    private static $cache = [];
+
     public function __construct()
     {
         $this->context = DB::i()->getContext();
@@ -33,6 +36,6 @@ class Aliases
 
     public function getByShortcode(string $shortcode): ?Alias
     {
-        return $this->toAlias($this->aliases->where("shortcode", $shortcode)->fetch());
+        return self::$cache[$shortcode] ??= $this->toAlias($this->aliases->where("shortcode", $shortcode)->fetch());
     }
 }

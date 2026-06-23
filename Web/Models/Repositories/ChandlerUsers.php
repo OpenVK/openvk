@@ -14,6 +14,8 @@ class ChandlerUsers
     private $context;
     private $users;
 
+    private static $cache = [];
+
     public function __construct()
     {
         $this->context = DB::i()->getContext();
@@ -27,7 +29,7 @@ class ChandlerUsers
 
     public function get(int $id): ?ChandlerUser
     {
-        return (new Users())->get($id)->getChandlerUser();
+        return self::$cache[$id] ??= (new Users())->get($id)->getChandlerUser();
     }
 
     public function getById(string $UUID): ?ChandlerUser

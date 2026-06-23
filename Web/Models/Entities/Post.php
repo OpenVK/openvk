@@ -23,7 +23,7 @@ class Post extends Postable
             "target" => $this->getRecord()->id,
         ];
 
-        if ((sizeof(DB::i()->getContext()->table("likes")->where($searchData)) > 0) !== $liked) {
+        if ((DB::i()->getContext()->table("likes")->where($searchData)->count("*") > 0) !== $liked) {
             if ($this->getOwner(false)->getId() !== $user->getId() && !($this->getOwner() instanceof Club)) {
                 (new LikeNotification($this->getOwner(false), $this, $user))->emit();
             }
@@ -78,11 +78,10 @@ class Post extends Postable
 
     public function getRepostCount(): int
     {
-        return sizeof(
-            $this->getRecord()
+        return $this->getRecord()
                  ->related("attachments.attachable_id")
                  ->where("attachable_type", get_class($this))
-        );
+                 ->count("*");
     }
 
     public function isPinned(): bool

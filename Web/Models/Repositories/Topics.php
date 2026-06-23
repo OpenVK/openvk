@@ -14,6 +14,8 @@ class Topics
     private $context;
     private $topics;
 
+    private static $cache = [];
+
     public function __construct()
     {
         $this->context = DatabaseConnection::i()->getContext();
@@ -27,7 +29,7 @@ class Topics
 
     public function get(int $id): ?Topic
     {
-        return $this->toTopic($this->topics->get($id));
+        return self::$cache[$id] ??= $this->toTopic($this->topics->get($id));
     }
 
     public function getTopicById(int $club, int $topic): ?Topic

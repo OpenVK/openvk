@@ -92,10 +92,10 @@ abstract class Postable extends Attachable
 
     public function getLikesCount(): int
     {
-        return sizeof(DB::i()->getContext()->table("likes")->where([
+        return DB::i()->getContext()->table("likes")->where([
             "model"  => static::class,
             "target" => $this->getRecord()->id,
-        ])->group("origin"));
+        ])->count("DISTINCT origin");
     }
 
     public function getLikers(int $page = 1, ?int $perPage = null): \Traversable
@@ -149,7 +149,7 @@ abstract class Postable extends Attachable
             "target" => $this->getRecord()->id,
         ];
 
-        if (sizeof(DB::i()->getContext()->table("likes")->where($searchData)) > 0) {
+        if (DB::i()->getContext()->table("likes")->where($searchData)->count("*") > 0) {
             DB::i()->getContext()->table("likes")->where($searchData)->delete();
             return false;
         }
@@ -185,7 +185,7 @@ abstract class Postable extends Attachable
             "target" => $this->getRecord()->id,
         ];
 
-        return sizeof(DB::i()->getContext()->table("likes")->where($searchData)) > 0;
+        return DB::i()->getContext()->table("likes")->where($searchData)->count("*") > 0;
     }
 
     public function setVirtual_Id(int $id): void

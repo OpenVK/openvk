@@ -14,6 +14,8 @@ class Notes
     private $context;
     private $notes;
 
+    private static $cache = [];
+
     public function __construct()
     {
         $this->context = DatabaseConnection::i()->getContext();
@@ -27,7 +29,7 @@ class Notes
 
     public function get(int $id): ?Note
     {
-        return $this->toNote($this->notes->get($id));
+        return self::$cache[$id] ??= $this->toNote($this->notes->get($id));
     }
 
     public function getUserNotes(User $user, int $page = 1, ?int $perPage = null, string $sort = "DESC"): \Traversable

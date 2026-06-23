@@ -13,6 +13,8 @@ class BannedLinks
     private $context;
     private $bannedLinks;
 
+    private static $cache = [];
+
     public function __construct()
     {
         $this->context = DB::i()->getContext();
@@ -26,7 +28,7 @@ class BannedLinks
 
     public function get(int $id): ?BannedLink
     {
-        return $this->toBannedLink($this->bannedLinks->get($id));
+        return self::$cache[$id] ??= $this->toBannedLink($this->bannedLinks->get($id));
     }
 
     public function getList(?int $page = 1): \Traversable
