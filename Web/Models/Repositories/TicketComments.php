@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace openvk\Web\Models\Repositories;
 
 use openvk\Web\Models\Entities\TicketComment;
+use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
 
 class TicketComments

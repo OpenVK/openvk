@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace openvk\Web\Models\Repositories;
 
 use Chandler\Database\DatabaseConnection;
+use Nette\Database\Table\ActiveRow;
 use openvk\Web\Models\Entities\Poll;
 
 class Polls
