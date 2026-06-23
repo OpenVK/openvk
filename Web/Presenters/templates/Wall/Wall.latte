@@ -28,9 +28,7 @@
                 <div n:attr="id => ($type != 'search' ? 'ki' : 'activetabs')" class="tab">
                     <a n:attr="id => ($type != 'search' ? 'ki' : 'act_tab_a')" href="/wall{$owner}?type=search">{_header_search}</a>
                 </div>
-                <div n:attr="id => ($type != 'search' ? 'ki' : 'activetabs')" class="tab right">
-                    <a href="/wall{$owner}/rss">{_read_in_rss}</a>
-                </div>
+                <a href="/wall{$owner}/rss" class="side_link">{_read_in_rss}</a>
             </div>
 
             <div n:if="$canPost && $type == 'all'" class="content_subtitle">
