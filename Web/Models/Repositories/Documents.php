@@ -14,6 +14,9 @@ class Documents
     private $context;
     private $documents;
 
+    /* aggressive sql caching */
+    private static $cache = [];
+
     public function __construct()
     {
         $this->context  = DatabaseConnection::i()->getContext();
@@ -27,7 +30,7 @@ class Documents
 
     public function get(int $id): ?Document
     {
-        return $this->toDocument($this->documents->get($id));
+        return self::$cache[$id] ??= $this->toDocument($this->documents->get($id));
     }
 
     # By "Virtual ID" and "Absolute ID" (to not leak owner's id).

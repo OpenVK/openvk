@@ -16,6 +16,9 @@ class Clubs
     private $clubs;
     private $coadmins;
 
+    /* aggressive sql caching */
+    private static $cache = [];
+
     public function __construct()
     {
         $this->context  = DatabaseConnection::i()->getContext();
@@ -50,7 +53,7 @@ class Clubs
 
     public function get(int $id): ?Club
     {
-        return $this->toClub($this->clubs->get($id));
+        return self::$cache[$id] ??= $this->toClub($this->clubs->get($id));
     }
 
     public function getByIds(array $ids = []): array
@@ -59,7 +62,7 @@ class Clubs
         $clubs_array = [];
 
         foreach ($clubs as $club) {
-            $clubs_array[] =  $this->toClub($club);
+            $clubs_array[] = $this->toClub($club);
         }
 
         return $clubs_array;

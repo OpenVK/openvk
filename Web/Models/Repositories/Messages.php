@@ -15,20 +15,23 @@ class Messages
     private $context;
     private $messages;
 
+    /* aggressive sql caching */
+    private static $cache = [];
+
     public function __construct()
     {
         $this->context  = DatabaseConnection::i()->getContext();
         $this->messages = $this->context->table("messages");
     }
 
+    private function toMessage(?ActiveRow $ar): ?Message
+    {
+        return is_null($ar) ? null : new Message($ar);
+    }
+
     public function get(int $id): ?Message
     {
-        $msg = $this->messages->get($id);
-        if (!$msg) {
-            return null;
-        }
-
-        return new Message($msg);
+        return self::$cache[$id] ??= $this->toMessage($this->messages->get($id));
     }
 
     public function getCorrespondencies(RowModel $correspondent, int $page = 1, ?int $perPage = null, ?int $offset = null): \Traversable

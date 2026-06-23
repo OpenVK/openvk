@@ -6,12 +6,17 @@ namespace openvk\Web\Models\Repositories;
 
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Entities\{Gift, GiftCategory};
+use Nette\Database\Table\ActiveRow;
 
 class Gifts
 {
     private $context;
     private $gifts;
     private $cats;
+
+    /* aggressive sql caching */
+    private static $cache = [];
+    private static $cache_category = [];
 
     public function __construct()
     {
@@ -20,24 +25,24 @@ class Gifts
         $this->cats    = $this->context->table("gift_categories");
     }
 
+    private function toGift(?ActiveRow $ar): ?Gift
+    {
+        return is_null($ar) ? null : new Gift($ar);
+    }
+
+    private function toGiftCategory(?ActiveRow $ar): ?GiftCategory
+    {
+        return is_null($ar) ? null : new GiftCategory($ar);
+    }
+
     public function get(int $id): ?Gift
     {
-        $gift = $this->gifts->get($id);
-        if (!$gift) {
-            return null;
-        }
-
-        return new Gift($gift);
+        return self::$cache[$id] ??= $this->toGift($this->gifts->get($id));
     }
 
     public function getCat(int $id): ?GiftCategory
     {
-        $cat = $this->cats->get($id);
-        if (!$cat) {
-            return null;
-        }
-
-        return new GiftCategory($cat);
+        return self::$cache_category[$id] ??= $this->toGiftCategory($this->cats->get($id));
     }
 
     public function getCategories(int $page, ?int $perPage = null, &$count = nullptr): \Traversable
