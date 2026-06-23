@@ -15,6 +15,8 @@ class Applications
     private $apps;
     private $appRels;
 
+    private static $cache = [];
+
     public function __construct()
     {
         $this->context = DatabaseConnection::i()->getContext();
@@ -29,7 +31,7 @@ class Applications
 
     public function get(int $id): ?Application
     {
-        return $this->toApp($this->apps->get($id));
+        return self::$cache[$id] ??= $this->toApp($this->apps->get($id));
     }
 
     public function getList(int $page = 1, ?int $perPage = null): \Traversable
