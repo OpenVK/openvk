@@ -60,17 +60,7 @@ class Audios
 
     public function getPlaylist(int $id): ?Playlist
     {
-        $cache_entity = @self::$cachePlaylist[$id];
-        if (isset($cache_entity)) {
-            return $cache_entity;
-        }
-
-        $playlist = $this->toPlaylist($this->playlists->get($id));
-        if (!is_null($playlist)) {
-            $cache_entity = $playlist;
-        }
-
-        return $playlist;
+        return self::$cachePlaylist[$id] ??= $this->toPlaylist($this->playlists->get($id));
     }
 
     public function getByOwnerAndVID(int $owner, int $vId): ?Audio
