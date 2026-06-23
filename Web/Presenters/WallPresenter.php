@@ -175,7 +175,7 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         header("Content-Type: application/rss+xml");
-        exit($feed);
+        exit((string)$feed);
     }
 
     public function renderFeed(): void

@@ -288,6 +288,7 @@
 "users_posts" = "Posts by $1";
 "clubs_posts" = "Group's posts";
 "others_posts" = "Others posts";
+"read_in_rss" = "Read in RSS";
 
 "show_more" = "Show more";
 "show_less" = "Show less";

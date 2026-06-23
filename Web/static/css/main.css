@@ -1096,6 +1096,10 @@ table.User {
     border-radius: 3px 3px 0 0;
 }
 
+.tab.right {
+    float: right;
+}
+
 .tab:hover {
     background: #E4E4E4;
 }
