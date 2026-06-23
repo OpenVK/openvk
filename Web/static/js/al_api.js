@@ -12,11 +12,19 @@ window.API = new Proxy(Object.create(null), {
                         xhr.responseType = "arraybuffer";
 
                         xhr.onload = e => {
-                            let resp = msgpack.decode(new Uint8Array(e.target.response));
-                            if(typeof resp.error !== "undefined")
-                                rej(resp.error);
-                            else
-                                resolv(resp.result);
+                            try {
+                                let resp = msgpack.decode(new Uint8Array(e.target.response));
+                                if(typeof resp.error !== "undefined")
+                                    rej(resp.error);
+                                else
+                                    resolv(resp.result);
+                            } catch (e) {
+                                rej({
+                                    "code": -1,
+                                    "message": `Network error`,
+                                    "error": e
+                                })
+                            }
                         };
 
                         xhr.send(msgpack.encode({
