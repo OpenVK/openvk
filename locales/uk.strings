@@ -2272,3 +2272,4 @@
 "faves_few" = "$1 вподобання";
 "faves_many" = "$1 вподобань";
 "faves_other" = "$1 вподобань";
+"read_in_rss" = "Читати в RSS";
