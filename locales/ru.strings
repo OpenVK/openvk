@@ -2481,3 +2481,13 @@
 "timezone--765" = "(GMT+12:45): Острова Чатем";
 "timezone--780" = "(GMT+13): Нукуалофа, Апиа";
 "timezone--840" = "(GMT+14): Киритимати (о-ва Лайн)";
+"suggestion_successfully_published" = "Пост успешно опубликован";
+"suggestion_successfully_declined" = "Пост успешно отклонён";
+"deleted_avatar_notification" = "Фотография успешно удалена";
+"failed_to_transfer_points" = "Не удалось передать голоса";
+"active" = "активный";
+"verified" = "верифицированный";
+"can_be_unbanned_now" = "может быть разблокирован прямо сейчас";
+"nospam_templates" = "Активные шаблоны noSpam";
+"verified_groups" = "верифицированный";
+"banned_groups" = "заблокированный";
