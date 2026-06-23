@@ -16,6 +16,8 @@ class ChandlerGroups
     private $members;
     private $perms;
 
+    private static $cache = [];
+
     public function __construct()
     {
         $this->context = DB::i()->getContext();
@@ -26,7 +28,7 @@ class ChandlerGroups
 
     public function get(string $UUID): ?ActiveRow
     {
-        return $this->groups->where("id", $UUID)->fetch();
+        return self::$cache[$UUID] ??= $this->groups->where("id", $UUID)->fetch();
     }
 
     public function getList(): \Traversable

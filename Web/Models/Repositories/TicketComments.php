@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace openvk\Web\Models\Repositories;
 
 use openvk\Web\Models\Entities\TicketComment;
+use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
 
 class TicketComments
@@ -12,6 +13,8 @@ class TicketComments
     use \Nette\SmartObject;
     private $context;
     private $comments;
+
+    private static $cache = [];
 
     public function __construct()
     {
@@ -26,15 +29,14 @@ class TicketComments
         }
     }
 
+    private function toTicketComment(?ActiveRow $ar): ?TicketComment
+    {
+        return is_null($ar) ? null : new TicketComment($ar);
+    }
+
     public function get(int $id): ?TicketComment
     {
-        $comment = $this->comments->get($id);
-        ;
-        if (!is_null($comment)) {
-            return new TicketComment($comment);
-        } else {
-            return null;
-        }
+        return self::$cache[$id] ??= $this->toTicketComment($this->comments->get($id));
     }
 
     public function getCountByAgent(int $agent_id, int $mark = null): int

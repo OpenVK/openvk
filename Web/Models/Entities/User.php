@@ -42,6 +42,10 @@ class User extends RowModel
     public const NSFW_TOLERANT      = 1;
     public const NSFW_FULL_TOLERANT = 2;
 
+    /* aggressive caching */
+    private $_avatarAlbum = null;
+    private $_avatarPhoto = false; // false - not resolved, null - no avatar
+
     protected function _abstractRelationGenerator(string $filename, int $page = 1, int $limit = 6): \Traversable
     {
         $id     = $this->getId();
@@ -156,18 +160,27 @@ class User extends RowModel
         }
 
         $pid = $avPhoto->getPrettyId();
-        $aid = (new Albums())->getUserAvatarAlbum($this)->getId();
+        $aid = $this->getAvatarAlbum()->getId();
 
         return "/photo$pid?from=album$aid";
     }
 
+    public function getAvatarAlbum(): ?Album
+    {
+        return $this->_avatarAlbum ??= (new Albums())->getUserAvatarAlbum($this);
+    }
+
     public function getAvatarPhoto(): ?Photo
     {
-        $avAlbum  = (new Albums())->getUserAvatarAlbum($this);
+        if ($this->_avatarPhoto !== false) {
+            return $this->_avatarPhoto;
+        }
+
+        $avAlbum  = $this->getAvatarAlbum();
         $avCount  = $avAlbum->getPhotosCount();
         $avPhotos = $avAlbum->getPhotos($avCount, 1);
 
-        return iterator_to_array($avPhotos)[0] ?? null;
+        return $this->_avatarPhoto = iterator_to_array($avPhotos)[0] ?? null;
     }
 
     public function getFirstName(bool $pristine = false): string

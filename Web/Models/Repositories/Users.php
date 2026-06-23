@@ -17,6 +17,9 @@ class Users
     private $users;
     private $aliases;
 
+    /* aggressive sql caching */
+    private static $cache = [];
+
     public function __construct()
     {
         $this->context = DatabaseConnection::i()->getContext();
@@ -31,7 +34,7 @@ class Users
 
     public function get(int $id): ?User
     {
-        return $this->toUser($this->users->get($id));
+        return self::$cache[$id] ??= $this->toUser($this->users->get($id));
     }
 
     public function getByIds(array $ids = []): array

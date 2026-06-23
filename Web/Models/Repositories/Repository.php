@@ -17,6 +17,9 @@ abstract class Repository
     protected $tableName;
     protected $modelName;
 
+    /* aggressive sql caching */
+    private static $cache = [];
+
     public function __construct()
     {
         $this->context = DatabaseConnection::i()->getContext();
@@ -31,7 +34,7 @@ abstract class Repository
 
     public function get(int $id)
     {
-        return $this->toEntity($this->table->get($id));
+        return self::$cache[$id] ??= $this->toEntity($this->table->get($id));
     }
 
     public function size(bool $withDeleted = false): int

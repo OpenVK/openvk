@@ -14,6 +14,9 @@ class Reports
     private $context;
     private $reports;
 
+    /* aggressive sql caching */
+    private static $cache = [];
+
     public function __construct()
     {
         $this->context = DatabaseConnection::i()->getContext();
@@ -49,7 +52,7 @@ class Reports
 
     public function get(int $id): ?Report
     {
-        return $this->toReport($this->reports->get($id));
+        return self::$cache[$id] ??= $this->toReport($this->reports->get($id));
     }
 
     public function getByContentId(int $id): ?Report

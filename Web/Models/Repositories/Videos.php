@@ -7,9 +7,12 @@ namespace openvk\Web\Models\Repositories;
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Entities\Video;
 use Chandler\Database\DatabaseConnection;
+use Nette\Database\Table\ActiveRow;
 
 class Videos
 {
+    private static $cache = [];
+
     private $context;
     private $videos;
 
@@ -19,14 +22,14 @@ class Videos
         $this->videos  = $this->context->table("videos");
     }
 
+    private function toVideo(?ActiveRow $ar): ?Video
+    {
+        return is_null($ar) ? null : new Video($ar);
+    }
+
     public function get(int $id): ?Video
     {
-        $videos = $this->videos->get($id);
-        if (!$videos) {
-            return null;
-        }
-
-        return new Video($videos);
+        return self::$cache[$id] ??= $this->toVideo($this->videos->get($id));
     }
 
     public function getByOwnerAndVID(int $owner, int $vId): ?Video
@@ -35,11 +38,8 @@ class Videos
             "owner"      => $owner,
             "virtual_id" => $vId,
         ])->fetch();
-        if (!$videos) {
-            return null;
-        }
 
-        return new Video($videos);
+        return $this->toVideo($videos);
     }
 
     public function getByUser(User $user, int $page = 1, ?int $perPage = null): \Traversable

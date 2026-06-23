@@ -14,6 +14,8 @@ class Tickets
     private $context;
     private $tickets;
 
+    private static $cache = [];
+
     public function __construct()
     {
         $this->context = DatabaseConnection::i()->getContext();
@@ -34,7 +36,7 @@ class Tickets
 
     public function getTicketCount(int $state = 0): int
     {
-        return sizeof($this->tickets->where(["deleted" => 0, "type" => $state]));
+        return $this->tickets->where(["deleted" => 0, "type" => $state])->count("*");
     }
 
     public function getTicketsByUserId(int $userId, int $page = 1): \Traversable
@@ -66,6 +68,6 @@ class Tickets
 
     public function get(int $id): ?Ticket
     {
-        return $this->toTicket($this->tickets->get($id));
+        return self::$cache[$id] ??= $this->toTicket($this->tickets->get($id));
     }
 }
