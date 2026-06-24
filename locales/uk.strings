@@ -2419,3 +2419,4 @@
 "admin_overview_chandler_group_not_found" = "Системні групи прав відсутні";
 "admin_overview_chandler_groups_missing" = "Групи прав необхідні для повного доступу до керування інстанса (Helpdesk, модерація, noSpam)";
 "admin_overview_chandler_groups_create_missing" = "Створити відсутні групи прав";
+
