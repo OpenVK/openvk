@@ -113,6 +113,10 @@ window.router = new class {
             document.body.classList.remove('menu-expanded')
         }
 
+        if (isMobile()) {
+            document.querySelector('.mobile_title span').innerHTML = escapeHtml(parsed_content.querySelector('.mobile_title span').innerHTML)
+        }
+
         window.setBaseTitle(parsed_content.title)
 
         scripts_to_append.forEach(append_me => {
@@ -272,12 +276,16 @@ window.router = new class {
     }
 }
 
-function isMobileAndExpanded() {
-    return screen.availWidth < 770 && document.body.classList.contains('menu-expanded');
+function isMobile() {
+    return window.innerWidth < 770
 }
 
-u(document).on('click', '.home_button, .page_header', (e) => {
-    if (screen.availWidth < 770) {
+function isMobileAndExpanded() {
+    return isMobile() && document.body.classList.contains('menu-expanded');
+}
+
+u(document).on('click', '.page_header', (e) => {
+    if (window.innerWidth < 770 && !e.target.closest('.link')) {
         e.preventDefault();
         e.stopPropagation();
 
@@ -287,7 +295,6 @@ u(document).on('click', '.home_button, .page_header', (e) => {
         } else {
             document.body.classList.remove('menu-expanded');
         }
-        console.log(e)
     }
 })
 

@@ -11,6 +11,10 @@ function expand_comment_textarea(id) {
 
 function hidePanel(panel, count = 0)
 {
+    if (isMobile()) {
+        return;
+    }
+
     $(panel).toggleClass("content_title_expanded content_title_unexpanded");
     $(panel).next('div').slideToggle(300);
     if(count != 0){

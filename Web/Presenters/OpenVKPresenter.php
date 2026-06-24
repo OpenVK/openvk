@@ -345,7 +345,7 @@ abstract class OpenVKPresenter extends SimplePresenter
         if ($featurephonetheme && $this->isOldThing($whichbrowser) && Session::i()->get("_tempTheme") == null) {
             $this->setSessionTheme($featurephonetheme);
         } elseif ($mobiletheme && $whichbrowser->isType('mobile') && Session::i()->get("_tempTheme") == null) {
-            $this->setSessionTheme($mobiletheme);
+            #$this->setSessionTheme($mobiletheme); there is an adaptive styles
         }
 
         $theme = null;

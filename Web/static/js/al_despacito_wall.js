@@ -6,6 +6,10 @@ let scrolledAndHidden = false;
 
 let smallBlockObserver = new IntersectionObserver(entries => {
     entries.forEach(x => {
+        if (isMobile()) {
+            return;
+        }
+
         window.requestAnimationFrame(() => {
             let pastHeight = u('.page_content').nodes[0].getBoundingClientRect().height;
             if(x.isIntersecting)

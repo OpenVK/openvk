@@ -85,6 +85,10 @@ h1 {
     background-position: 0;
 }
 
+.page_header .mobile_title {
+    display: none;
+}
+
 .page_custom_header {
     background: url('../img/header_custom.png');
 }

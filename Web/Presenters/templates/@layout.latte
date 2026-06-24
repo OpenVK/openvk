@@ -1,10 +1,13 @@
 {var $instance_name = \OPENVK_ROOT_CONF['openvk']['appearance']['name']}
+
+{capture $pageTitle}{ifset title}{include title}{/ifset}{/capture}
+
 {if !isset($parentModule) || substr($parentModule, 0, 21) === 'libchandler:absolute.'}
 <!DOCTYPE html>
 <html>
     <head>
         <title>
-            {ifset title}{include title} - {/ifset}{$instance_name}
+            {ifset title}{$pageTitle} - {/ifset}{$instance_name}
         </title>
         <meta charset="utf-8" />
         <link rel="shortcut icon" href="/assets/packages/static/openvk/img/icon.ico" />
@@ -105,6 +108,13 @@
             <div id="xhead" class="dm"></div>
             <div class="page_header{if $instance_name != \OPENVK_DEFAULT_INSTANCE_NAME} page_custom_header{/if}{if $atSearch ?? false} search_expanded search_expanded_at_all{/if}">
                 <a href="/" class="home_button{if $instance_name != \OPENVK_DEFAULT_INSTANCE_NAME} home_button_custom{/if}" title="{$instance_name}">{if $instance_name != \OPENVK_DEFAULT_INSTANCE_NAME}{$instance_name}{/if}</a>
+                <div class="mobile_title">
+                    {ifset title}
+                        <span>
+                            {$pageTitle}
+                        </span>
+                    {/ifset}
+                </div>
                 <div n:if="isset($thisUser) ? (!$thisUser->isBanned() XOR !$thisUser->isActivated()) : true" class="header_navigation">
                     {ifset $thisUser}
                         {if $thisUser->isDeactivated()}
@@ -174,37 +184,37 @@
                     {ifset $thisUser}
                         {if !$thisUser->isBanned() XOR !$thisUser->isActivated() XOR $thisUser->isDeactivated()}
                             <a href="/edit" class="link edit-button">{_edit_button}</a>
-                            <a href="{$thisUser->getURL()}" class="link" title="{_my_page} [Alt+Shift+.]" accesskey=".">{_my_page}</a>
-                            <a href="/friends{$thisUser->getId()}" class="link">{_my_friends}
+                            <a href="{$thisUser->getURL()}" class="link my_page" title="{_my_page} [Alt+Shift+.]" accesskey=".">{_my_page}</a>
+                            <a id="my_friends" href="/friends{$thisUser->getId()}" class="link my_friends">{_my_friends}
                                 <object type="internal/link" n:if="$thisUser->getRequestsCount() > 0">
                                     <a href="/friends{$thisUser->getId()}?act=incoming" class="linkunderline">
                                        (<b>{$thisUser->getRequestsCount()}</b>)
                                     </a>
                                 </object>
                             </a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('photos')" href="/albums{$thisUser->getId()}" class="link">{_my_photos}</a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('videos')" href="/videos{$thisUser->getId()}" class="link">{_my_videos}</a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('audios')" href="/audios{$thisUser->getId()}" class="link">{_my_audios}</a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('messages')" href="/im" class="link">{_my_messages}
+                            <a n:if="$thisUser->getLeftMenuItemStatus('photos')" href="/albums{$thisUser->getId()}" class="link my_photos">{_my_photos}</a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('videos')" href="/videos{$thisUser->getId()}" class="link my_videos">{_my_videos}</a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('audios')" href="/audios{$thisUser->getId()}" class="link my_audios">{_my_audios}</a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('messages')" href="/im" class="link my_messages">{_my_messages}
                                 <object type="internal/link" n:if="$thisUser->getUnreadMessagesCount() > 0">
                                     (<b>{$thisUser->getUnreadMessagesCount()}</b>)
                                 </object>
                             </a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('notes')" href="/notes{$thisUser->getId()}" class="link">{_my_notes}</a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('groups')" href="/groups{$thisUser->getId()}" class="link">{_my_groups}</a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('news')" href="/feed" class="link" title="{_my_feed} [Alt+Shift+,]" accesskey=",">{_my_feed}</a>
-                            <a href="/notifications" class="link" title="{_my_feedback} [Alt+Shift+N]" accesskey="n">{_my_feedback}
+                            <a n:if="$thisUser->getLeftMenuItemStatus('notes')" href="/notes{$thisUser->getId()}" class="link my_notes">{_my_notes}</a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('groups')" href="/groups{$thisUser->getId()}" class="link my_groups">{_my_groups}</a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('news')" href="/feed" class="link my_feed" title="{_my_feed} [Alt+Shift+,]" accesskey=",">{_my_feed}</a>
+                            <a href="/notifications" class="link my_feedback" title="{_my_feedback} [Alt+Shift+N]" accesskey="n">{_my_feedback}
                                 <object type="internal/link" n:if="$thisUser->getNotificationsCount() > 0">
                                     (<b>{$thisUser->getNotificationsCount()}</b>)
                                 </object>
                             </a>
-                            <a href="/settings" class="link">{_my_settings}</a>
+                            <a href="/settings" class="link my_settings">{_my_settings}</a>
 
                             {if $thisUser->getLeftMenuItemStatus('docs') || $thisUser->getLeftMenuItemStatus('apps')}
                                 <div class="menu_divider"></div>
-                                <a n:if="$thisUser->getLeftMenuItemStatus('apps')" href="/apps?act=installed" class="link">{_apps}</a>
-                                <a n:if="$thisUser->getLeftMenuItemStatus('docs')" href="/docs" class="link">{_my_documents}</a>
-                                {*<a n:if="$thisUser->getLeftMenuItemStatus('fave')" href="/fave" class="link">{_bookmarks_tab}</a>*}
+                                <a n:if="$thisUser->getLeftMenuItemStatus('apps')" href="/apps?act=installed" class="link my_apps">{_apps}</a>
+                                <a n:if="$thisUser->getLeftMenuItemStatus('docs')" href="/docs" class="link my_documents">{_my_documents}</a>
+                                {*<a n:if="$thisUser->getLeftMenuItemStatus('fave')" href="/fave" class="link my_bookmarks">{_bookmarks_tab}</a>*}
                             {/if}
 
                             {var $canAccessAdminPanel = $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
@@ -214,18 +224,18 @@
 
                             {var $menuLinksAvaiable   = sizeof(\OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0 && $thisUser->getLeftMenuItemStatus('links')}
                             <div n:if="$canAccessAdminPanel || $canAccessHelpdesk || $canAccessReports || $canAccessNsp || $menuLinksAvaiable" class="menu_divider"></div>
-                            <a href="/admin" class="link" n:if="$canAccessAdminPanel" title="{_admin} [Alt+Shift+A]" accesskey="a" rel="nofollow">{_admin}</a>
-                            <a href="/support/tickets" class="link" n:if="$canAccessHelpdesk">{_helpdesk}
+                            <a href="/admin" class="link my_admin" n:if="$canAccessAdminPanel" title="{_admin} [Alt+Shift+A]" accesskey="a" rel="nofollow">{_admin}</a>
+                            <a href="/support/tickets" class="link my_support" n:if="$canAccessHelpdesk">{_helpdesk}
                                 {if $helpdeskTicketNotAnsweredCount > 0}
                                     (<b>{$helpdeskTicketNotAnsweredCount}</b>)
                                 {/if}
                             </a>
-                            <a n:if="$canAccessReports" href="/scumfeed" class="link" rel="nofollow">{tr("reports")}
+                            <a n:if="$canAccessReports" href="/scumfeed" class="link my_reports" rel="nofollow">{tr("reports")}
                                 {if $reportNotAnsweredCount > 0}
                                     (<b>{$reportNotAnsweredCount}</b>)
                                 {/if}
                             </a>
-                            <a n:if="$canAccessNsp" href="/noSpam" class="link" rel="nofollow">
+                            <a n:if="$canAccessNsp" href="/noSpam" class="link my_spam" rel="nofollow">
                                 noSpam
                             </a>
                         <a
@@ -239,7 +249,7 @@
                             <div id="_groupListPinnedGroups">
                                 <div n:if="$thisUser->getPinnedClubCount() > 0" class="menu_divider"></div>
 
-                                <a n:foreach="$thisUser->getPinnedClubs() as $pinnedclub" href="{$pinnedclub->getURL()}" class="link group_link">
+                                <a n:foreach="$thisUser->getPinnedClubs() as $pinnedclub" href="{$pinnedclub->getURL()}" class="link group_link pinned_club">
                                     {ovk_proc_strtr($pinnedclub->getName(), 14)}
 
                                     <object type="internal/link" style="white-space: normal;" id="sug{$pinnedclub->getId()}" n:if="$pinnedclub->getSuggestedPostsCount($thisUser) > 0 && $pinnedclub->getWallType() == 2">
