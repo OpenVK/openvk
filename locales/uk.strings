@@ -2273,3 +2273,13 @@
 "faves_many" = "$1 вподобань";
 "faves_other" = "$1 вподобань";
 "read_in_rss" = "Читати в RSS";
+"show_less" = "Відобразити менше";
+"suggestion_successfully_declined" = "Допис успішно відхилено";
+"suggestion_successfully_published" = "Допис успішно опубліковано";
+"suggested_posts_in_group_by_you_zero" = "Ви не запропонували жодного допису до цієї групи";
+"suggested_posts_in_group_by_you_one" = "Ви запропонували один допис до цієї групи";
+"deleted_avatar_notification" = "Фотографію успішно видалено";
+"my_gifts" = "Мої подарунки";
+"gift_back" = "Відправити подарунок у відповідь";
+"notif_4_18_14" = "Користувач згадав вас";
+"notif_4_5_14" = "Група згадала вас";
