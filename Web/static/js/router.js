@@ -108,7 +108,11 @@ window.router = new class {
         }
         
         u("meta[name=csrf]").attr("value", u(parsed_content.querySelector('meta[name=csrf]')).attr('value'))
-        
+
+        if (isMobileAndExpanded()) {
+            document.body.classList.remove('menu-expanded')
+        }
+
         window.setBaseTitle(parsed_content.title)
 
         scripts_to_append.forEach(append_me => {
@@ -267,6 +271,25 @@ window.router = new class {
         }
     }
 }
+
+function isMobileAndExpanded() {
+    return screen.availWidth < 770 && document.body.classList.contains('menu-expanded');
+}
+
+u(document).on('click', '.home_button, .page_header', (e) => {
+    if (screen.availWidth < 770) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const ch = document.body.classList.contains('menu-expanded');
+        if (!ch) {
+            document.body.classList.add('menu-expanded');
+        } else {
+            document.body.classList.remove('menu-expanded');
+        }
+        console.log(e)
+    }
+})
 
 u(document).on('click', 'a', async (e) => {
     if(e.defaultPrevented) {

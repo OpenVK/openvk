@@ -1,0 +1,124 @@
+@media screen and (max-width: 770px) {
+    body {
+        background: red;
+        width: 100%;
+    }
+
+    body, table, .page_body, .button, select {
+        font-size: 20px;
+        overflow-x: hidden;
+    }
+
+    body.dimmed {
+        overflow-x: auto;
+    }
+
+    .page_yellowheader {
+        width: unset !important;
+    }
+
+    .sidebar,
+    .page_footer {
+        display: none;
+    }
+
+    .layout {
+        width: unset !important;
+    }
+
+    .sidebar {
+        width: 100vw;
+        float: unset !important;
+        margin: unset !important;
+    }
+
+    .toTop {
+        display: none !important;
+        visibility: hidden;
+    }
+
+    .page_header {
+        height: 70px;
+        width: 100vw;
+        background: #565656;
+    }
+
+    .page_body {
+        float: unset !important;
+        margin-right: unset !important;
+        width: 100vw !important;
+    }
+
+    .page_body .page_content {
+        width: 100% !important;
+    }
+
+    .tabs {
+        width: 100% !important;
+    }
+
+    .container_gray {
+        width: 100% !important;
+    }
+
+    .page_footer {
+        background: white !important;
+        margin-left: unset !important;
+    }
+
+    .navigation .link {
+        padding: 8px 3px 3px 11px;
+        background: white;
+        margin-bottom: unset !important;
+        font-size: unset !important;
+    }
+
+    .ovk-diag {
+        margin: unset !important;
+        margin-top: unset !important;
+        margin-bottom: unset !important;
+        width: 100% !important;
+        height: 100%;
+    }
+
+    .ovk-diag-cont {
+        width: 98% !important;
+        top: 0;
+        left: 0;
+        height: 92%;
+        transform: unset !important;
+        margin-right: unset !important;
+    }
+
+    .ovk-diag-body {
+        max-height: 86vh;
+        height: 100% !important;
+    }
+
+    /* Menu */
+
+    body.menu-expanded .page_body {
+        display: none !important;
+    }
+
+    body.menu-expanded .sidebar,
+    body.menu-expanded .page_footer {
+        display: block;
+    }
+
+    /* Header */
+
+    .home_button {
+        background: url(/assets/packages/static/openvk/img/mobile/logo.png);
+        background-repeat: no-repeat;
+        background-size: contain;
+        width: 45px;
+        height: 45px;
+        top: 10px;
+        left: 15px;
+    }
+
+    .header_navigation .link:not(#search_box) {
+        display: none;
+    }
+}
