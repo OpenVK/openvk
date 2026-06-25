@@ -343,16 +343,27 @@ class Interpreter
         throw new APIErrorException("Runtime error: expression is not callable", 13);
     }
 
-    /** @return array{0: string, 1: string}|null */
+    /** @return array{0: string, 1: string}|null [section, method] ; section is "" for legacy unprefixed methods */
     private function matchApiCallee(array $callee): ?array
     {
+        if ($callee["kind"] !== "member") {
+            return null;
+        }
+
+        $object = $callee["object"];
+
+        // API.method(...) — legacy method with no section
+        if ($object["kind"] === "name" && $object["name"] === "API") {
+            return ["", $callee["name"]];
+        }
+
+        // API.section.method(...)
         if (
-            $callee["kind"] === "member"
-            && $callee["object"]["kind"] === "member"
-            && $callee["object"]["object"]["kind"] === "name"
-            && $callee["object"]["object"]["name"] === "API"
+            $object["kind"] === "member"
+            && $object["object"]["kind"] === "name"
+            && $object["object"]["name"] === "API"
         ) {
-            return [$callee["object"]["name"], $callee["name"]];
+            return [$object["name"], $callee["name"]];
         }
 
         return null;
@@ -380,11 +391,13 @@ class Interpreter
             $request[$key] = $this->toRequestValue($value);
         }
 
+        $label = $object === "" ? $method : "$object.$method";
+
         try {
             return ($this->apiCallback)($object, $method, $request);
         } catch (APIErrorException $ex) {
             $this->executeErrors[] = [
-                "method"     => "$object.$method",
+                "method"     => $label,
                 "error_code" => $ex->getCode(),
                 "error_msg"  => $ex->getMessage(),
             ];
