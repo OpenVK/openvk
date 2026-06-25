@@ -125,6 +125,11 @@ final class Users extends VKAPIRequestHandler
                                 }
 
                                 break;
+                            case "nickname":
+                                if ($usr->getShortCode() != null) {
+                                    $response[$i]->nickname = $usr->getPseudo();
+                                }
+                                break;
                             case "screen_name":
                                 if ($usr->getShortCode() != null) {
                                     $response[$i]->screen_name = $usr->getShortCode();
@@ -207,7 +212,10 @@ final class Users extends VKAPIRequestHandler
                                     break;
                                 }
 
-                                $response[$i]->city = $usr->getCity();
+                                $response[$i]->city = (object) [
+                                    'id' => 0,
+                                    'title' => $usr->getCity()
+                                ];
                                 break;
                             case "interests":
                                 if (!$canView) {
