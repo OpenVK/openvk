@@ -149,7 +149,7 @@ final class Newsfeed extends VKAPIRequestHandler
         return $response;
     }
 
-    public function getRecommended(string $fields = "", string $start_from = "", int $start_time = 0, int $end_time = 0, int $offset = 0, int $count = 30, int $extended = 0, int $rss = 0, int $return_banned = 0)
+    public function getRecommended(string $fields = "", string $start_from = "", int $start_time = 0, int $end_time = 0, int $offset = 0, int $count = 30, int $extended = 1, int $rss = 0, int $return_banned = 0)
     {
         // getGlobal alias
         return $this->getGlobal($fields, $start_from, $start_time, $end_time, $offset, $count, $extended, $rss, $return_banned);
