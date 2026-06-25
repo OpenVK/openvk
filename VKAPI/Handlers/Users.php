@@ -253,14 +253,6 @@ final class Users extends VKAPIRequestHandler
                                 $response[$i]->rating = $usr->getRating();
                                 break;
                             case "counters":
-                                $response[$i]->counters = (object) [
-                                    "friends_count" => $usr->getFriendsCount(),
-                                    "photos_count" => (new Photos())->getUserPhotosCount($usr),
-                                    "videos_count" => (new Videos())->getUserVideosCount($usr),
-                                    "audios_count" => (new Audios())->getUserCollectionSize($usr),
-                                    "notes_count" => (new Notes())->getUserNotesCount($usr),
-                                ];
-                                break;
                             case "correct_counters":
                                 $response[$i]->counters = (object) [
                                     "friends" => $usr->getFriendsCount(),
