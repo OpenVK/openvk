@@ -71,6 +71,12 @@ final class Users extends VKAPIRequestHandler
                     $canView = $usr->canBeViewedBy($this->getUser());
                     foreach ($flds as $field) {
                         switch ($field) {
+                            case "first_name_gen":
+                                $response[$i]->first_name_gen = $usr->getMorphedName("genitive", false, false);
+                                break;
+                            case "last_name_gen":
+                                $response[$i]->last_name_gen = $usr->getMorphedName("genitive", false, true);
+                                break;
                             case "verified":
                                 $response[$i]->verified = (int) $usr->isVerified();
                                 break;

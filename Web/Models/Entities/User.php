@@ -236,9 +236,12 @@ class User extends RowModel
             } else {
                 $name = $this->getFirstName() . " " . $this->getLastName();
             }
-        } else {
+        } else if ($startWithLastName == false) {
             $name = $this->getFirstName();
+        } else {
+            $name = $this->getLastName();
         }
+
         if (!preg_match("/^[А-Яа-яЁё\s-]+$/u", $name)) {
             return $name;
         } # name is probably not russian

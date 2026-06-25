@@ -66,4 +66,12 @@ abstract class VKAPIRequestHandler
             $this->fail(29, "You have been rate limited.");
         }
     }
+
+    protected function createHandler(string $handlerClass): VKAPIRequestHandler {
+        if (!class_exists($handlerClass)) {
+            throw new \Exception(`Class $handlerClass not found`);
+        }
+
+        return new $handlerClass($this->getUser(), $this->getPlatform());
+    }
 }
