@@ -155,6 +155,7 @@
             let acceptsStale   = {$acceptsStale};
             let origin         = {$origin};
             let redirectUri    = {$redirectUri};
+            let responseType   = {$responseType};
 
             document.querySelector("#authDeny").addEventListener("click", () => {
                 if (usePostMessage) {
@@ -185,7 +186,12 @@
                     return;
                 }
 
-                window.location.href = redirectUri + (new URLSearchParams(ret)).toString();
+                let newhref = redirectUri + (new URLSearchParams(ret)).toString();
+                if (responseType == 'token') {
+                    newhref = newhref.replace("?", "#");
+                }
+                
+                window.location.href = newhref;
             });
             //]]>
         </script>

@@ -512,7 +512,8 @@ final class VKAPIPresenter extends OpenVKPresenter
         $stale   = $this->queryParam("accepts_stale") ?? '0';
         $origin  = null;
         $url     = $this->queryParam("redirect_uri");
-        
+        $responseType = $this->queryParam("response_type") ?? 'php';
+
         if (!is_null($this->queryParam("client_id"))) {
             $client = $this->resolveAppIdToString($this->queryParam("client_id"));
         }
@@ -544,11 +545,16 @@ final class VKAPIPresenter extends OpenVKPresenter
             }
         }
 
+        if (!in_array($responseType, ['php', 'token'])) {
+            exit("<b>Error:</b> response_type can equal 'php' or 'token' only.");
+        }
+
         $this->template->clientName     = $client;
         $this->template->usePostMessage = $postmsg == '1';
         $this->template->acceptsStale   = $stale == '1';
         $this->template->origin         = $origin;
         $this->template->redirectUri    = $url;
+        $this->template->responseType   = $responseType;
     }
 
     private function resolveAppIdToString(string $id): ?string
