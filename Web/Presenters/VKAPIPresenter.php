@@ -458,7 +458,7 @@ final class VKAPIPresenter extends OpenVKPresenter
 
         $code = $this->requestParam("code");
         if ($user->is2faEnabled() && !($code === (new Totp())->GenerateToken(Base32::decode($user->get2faSecret())) || $user->use2faBackupCode((int) $code))) {
-            if ($this->requestParam("2fa_supported") == "1") {
+            if (empty($code)) {
                 $this->twofaFail($user->getId());
             } else {
                 $this->fail(28, "Invalid 2FA code", "internal", "acquireToken");
