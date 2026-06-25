@@ -60,8 +60,8 @@ final class Groups extends VKAPIRequestHandler
                         "id" => $usr->getId(),
                         "name" => $usr->getName(),
                         "screen_name" => $usr->getShortCode(),
-                        "is_closed" => 1,
-                        "can_access_closed" => 0,
+                        "is_closed" => 0,
+                        "can_access_closed" => 1,
                         "photo_50" => $usr->getAvatarURL(),
                         "photo_100" => $usr->getAvatarURL("tiny"),
                         "photo_200" => $usr->getAvatarURL("normal")
