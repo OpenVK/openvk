@@ -42,18 +42,18 @@ final class Polls extends VKAPIRequestHandler
             "multiple"       => $poll->isMultipleChoice(),
             "end_date"       => $poll->endsAt() == null ? 0 : $poll->endsAt()->timestamp(),
             "closed"         => $poll->hasEnded(),
-            "is_board"       => false,
-            "can_edit"       => false,
-            "can_vote"       => $poll->canVote($this->getUser()),
-            "can_report"     => false,
-            "can_share"      => true,
+            "is_board"       => 0,
+            "can_edit"       => 0,
+            "can_vote"       => (int) $poll->canVote($this->getUser()),
+            "can_report"     => 0,
+            "can_share"      => 1,
             "created"        => 0,
             "id"             => $poll->getId(),
             "owner_id"       => $poll->getOwner()->getId(),
             "question"       => $poll->getTitle(),
             "votes"          => $poll->getVoterCount(),
             "disable_unvote" => !$poll->isRevotable(),
-            "anonymous"      => $poll->isAnonymous(),
+            "anonymous"      => (int) $poll->isAnonymous(),
             "answer_ids"     => $userVote,
             "answers"        => $answers,
             "author_id"      => $poll->getOwner()->getId(),
@@ -136,14 +136,14 @@ final class Polls extends VKAPIRequestHandler
         $voters = array_slice($poll->getVoters($answer_ids, 1, $offset + $count), $offset);
         $res = (object) [
             "answer_id" => $answer_ids,
-            "users"     => [],
+            "users"     => (object) ['items' => []],
         ];
 
         foreach ($voters as $voter) {
-            $res->users[] = $voter->toVkApiStruct();
+            $res->users->items[] = $voter->toVkApiStruct(null, 'photo_50,photo_100,photo_200');
         }
 
-        return $res;
+        return (array) [$res];
     }
 
     public function create(string $question, string $add_answers, bool $disable_unvote = false, bool $is_anonymous = false, bool $is_multiple = false, int $end_date = 0)

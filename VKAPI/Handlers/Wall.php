@@ -281,7 +281,7 @@ final class Wall extends VKAPIRequestHandler
                     "id"                => $user->getId(),
                     "last_name"         => $user->getLastName(),
                     "can_access_closed" => (int) $user->canBeViewedBy($this->getUser()),
-                    "is_closed"         => $user->isClosed(),
+                    "is_closed"         => (int) $user->isClosed(),
                     "sex"               => $user->isFemale() ? 1 : ($user->isNeutral() ? 0 : 2),
                     "screen_name"       => $user->getShortCode(),
                     "photo_50"          => $user->getAvatarUrl(),
