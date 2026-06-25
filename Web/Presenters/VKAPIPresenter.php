@@ -259,6 +259,13 @@ final class VKAPIPresenter extends OpenVKPresenter
                     $identity = $token->getUser();
                     $platform = $token->getPlatform();
                 }
+            } else if(!is_null($_SERVER['HTTP_AUTHORIZATION'])) {
+                $token = str_replace('Bearer ', '', $_SERVER['HTTP_AUTHORIZATION']);
+                $token = (new APITokens())->getByCode($token);
+                if ($token) {
+                    $identity = $token->getUser();
+                    $platform = $token->getPlatform();
+                }
             }
         }
 
