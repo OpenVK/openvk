@@ -878,4 +878,37 @@ final class Audio extends VKAPIRequestHandler
 
         return (int) $album->unbookmark($this->getUser());
     }
+
+    public function getPlaylists(int $owner_id = 0, int $offset = 0, int $count = 50, int $drop_private = 1): object
+    {
+        // alias of getPlaylists
+        return $this->getAlbums($owner_id, $offset, $count, $drop_private);
+    }
+
+    public function getPlaylistById(int $owner_id = 0, int $playlist_id = 0): object
+    {
+        $playlist = (new Audios())->getPlaylistByOwnerAndVID($owner_id, $playlist_id);
+        
+        if (!$playlist || $playlist->isDeleted()) {
+            $this->fail(15, "Access error");
+        }
+
+        return (object) [
+            "id" => $playlist->getId(),
+            "owner_id" => $playlist->getOwnerId(),
+            "raw_id" => $playlist->getPrettyId(),
+            "title" => $playlist->getName(),
+            "cover_url" => $playlist->getCoverURL(),
+            "last_updated" => $playlist->getEditTime()?->timestamp(),
+            "explicit" => 0,
+            "followed" => 0,
+            "official" => 0,
+            "listens" => 0,
+            "size" => $playlist->size(),
+            "covers" => [],
+            "description" => $playlist->getDescription(),
+            "raw_description" => $playlist->getDescription(),
+            "list" => [],
+        ];
+    }
 }

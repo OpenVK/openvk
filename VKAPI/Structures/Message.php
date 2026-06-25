@@ -18,7 +18,7 @@ final class Message
     public $attachments = [];
     public $fwd_messages = [];
     public $emoji;
-    public $important = true;
+    public $important = 0;
     public $deleted = 0;
     public $random_id = null;
 }

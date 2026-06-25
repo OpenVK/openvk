@@ -63,8 +63,8 @@ final class Users extends VKAPIRequestHandler
                         "id"                => $usr->getId(),
                         "first_name"        => $usr->getFirstName(true),
                         "last_name"         => $usr->getLastName(true),
-                        "is_closed"         => $usr->isClosed(),
-                        "can_access_closed" => (bool) $usr->canBeViewedBy($this->getUser()),
+                        "is_closed"         => (int) $usr->isClosed(),
+                        "can_access_closed" => (int) $usr->canBeViewedBy($this->getUser()),
                     ];
 
                     $flds = explode(',', $fields);
@@ -72,7 +72,7 @@ final class Users extends VKAPIRequestHandler
                     foreach ($flds as $field) {
                         switch ($field) {
                             case "verified":
-                                $response[$i]->verified = intval($usr->isVerified());
+                                $response[$i]->verified = (int) $usr->isVerified();
                                 break;
                             case "sex":
                                 $response[$i]->sex = $usr->isFemale() ? 1 : ($usr->isNeutral() ? 0 : 2);

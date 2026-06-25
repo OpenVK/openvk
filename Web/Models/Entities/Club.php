@@ -490,11 +490,11 @@ class Club extends RowModel
         $res->id          = $this->getId();
         $res->name        = $this->getName();
         $res->screen_name = $this->getShortCode() ?? "club" . $this->getId();
-        $res->is_closed   = false;
+        $res->is_closed   = 0;
         $res->type        = 'group';
         $res->is_member   = $user ? (int) $this->getSubscriptionStatus($user) : 0;
         $res->deactivated = null;
-        $res->can_access_closed = true;
+        $res->can_access_closed = 1;
 
         if (!is_array($fields)) {
             $fields = explode(',', $fields);

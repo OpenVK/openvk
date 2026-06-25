@@ -178,7 +178,7 @@ final class VKAPIPresenter extends OpenVKPresenter
                 exit(json_encode([
                     "error" => "insufficient_storage",
                     "error_description" => "There are $maxFiles pending already. Please save them before uploading more :3",
-                    "pending_uploads" => $pendingInfo,
+                    "pending_uploads" => $pendingInfo
                 ]));
             }
 
@@ -206,7 +206,7 @@ final class VKAPIPresenter extends OpenVKPresenter
         ]));
     }
 
-    private function getPendingUploadInfo(string $folder, string $userId): array
+    private function getPendingUploadInfo(string $folder, int $userId): array
     {
         $pendingFiles = glob("$folder/$userId" . "_*.oct");
         $pendingInfo = [];
@@ -388,6 +388,19 @@ final class VKAPIPresenter extends OpenVKPresenter
             }
 
             $token = (new APITokens())->getStaleByUser($uId, $platform);
+        }
+
+        // in case if vk app was patched
+        switch ($this->requestParam("client_id"))
+        {
+            case '4083558':
+                $platform = "VFeed";
+                break;
+            case '2685278':
+                $platform = "Kate Mobile";
+                break;
+            default:
+                break;
         }
 
         if (is_null($token)) {

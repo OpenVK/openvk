@@ -1553,13 +1553,13 @@ class User extends RowModel
         $res = (object) [];
 
         $res->id = $this->getId();
-        $res->first_name = $this->getFirstName();
-        $res->last_name = $this->getLastName();
+        $res->first_name  = $this->getFirstName();
+        $res->last_name   = $this->getLastName();
         $res->deactivated = $this->isDeactivated();
         $res->is_closed   = $this->isClosed();
 
         if (!is_null($relation_user)) {
-            $res->can_access_closed  = (bool) $this->canBeViewedBy($relation_user);
+            $res->can_access_closed = (int) $this->canBeViewedBy($relation_user);
         }
 
         if (!is_array($fields)) {

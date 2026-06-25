@@ -179,12 +179,14 @@ class Post extends Postable
                 case 'openvk_flux_android':
                 case 'openvk_refresh_android':
                 case 'openvk_legacy_android':
+                case 'Kate Mobile':
                     return 'android';
                     break;
 
                 case 'openvk_native_ios':
                 case 'openvk_ios':
                 case 'openvk_legacy_ios':
+                case 'VFeed':
                     return 'iphone';
                     break;
 
