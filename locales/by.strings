@@ -569,3 +569,17 @@
 "bday_tomorrow" = "Заўтра";
 "bday_reminder_text" = "$1 дзень нараджэння $2.";
 "bday_and" = " i ";
+"forgot_password" = "Забылiся пароль?";
+"checkbox_in_registration" = "Я згодны з <a href='/privacy'>палiтыкай прыватнасці</a> i <a href='/terms'>палiтыкай сайта</a>";
+"checkbox_in_registration_unchecked" = "Каб зарэгістравацца, вы павінны пагадзіцца з палітыкай прыватнасці і правіламі.";
+"login_failed" = "Памылка ўваходу";
+"invalid_username_or_password" = "Няверны лагiн цi пароль. <a href='/restore'>Забылі пароль?</a>";
+"failed_to_register" = "Не ўдалося зарэгістравацца";
+"reset_password" = "Скінуць пароль";
+"2fa_code_2" = "Код двухфактарнай аўтэнтыфікацыі";
+"password_successfully_reset" = "Ваш пароль паспяхова скінуты.";
+"password_reset_email_sent" = "Калі вы зарэгістраваны, вы атрымаеце інструкцыі на электронную пошту.";
+"password_reset_error" = "Адбылася нечаканая памылка пры скідзе пароля.";
+"password_reset_rate_limit_error" = "Вы не можаце рабіць гэта так часта, прабачце.";
+"registration_closed" = "Рэгістрацыя закрыта.";
+"invites_you_to" = "<strong>$1</strong> запрашае вас у $2";
