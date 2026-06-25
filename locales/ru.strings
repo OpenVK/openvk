@@ -635,6 +635,7 @@
 "menu_registration" = "Регистрация";
 "menu_help" = "Помощь";
 "menu_logout" = "Выйти";
+"menu_logout_confirm" = "Вы действительно хотите выйти?";
 "menu_support" = "Поддержка";
 
 "header_home" = "главная";

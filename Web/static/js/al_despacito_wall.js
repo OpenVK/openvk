@@ -6,7 +6,7 @@ let scrolledAndHidden = false;
 
 let smallBlockObserver = new IntersectionObserver(entries => {
     entries.forEach(x => {
-        if (isMobile()) {
+        if (window.isMobile && isMobile()) {
             return;
         }
 

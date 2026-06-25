@@ -138,7 +138,7 @@
                                 <a href="/support">{_header_help} <b n:if="$ticketAnsweredCount > 0">({$ticketAnsweredCount})</b></a>
                             </div>
                             <div class="link">
-                                <a href="/logout?hash={urlencode($csrfToken)}">{_header_log_out}</a>
+                                <a id="logout_link" href="/logout?hash={urlencode($csrfToken)}">{_header_log_out}</a>
                             </div>
                             <div class="link header_divider_stick" id="search_box">
                                 <div id="search_box_fr">
@@ -227,12 +227,16 @@
                             <a href="/admin" class="link my_admin" n:if="$canAccessAdminPanel" title="{_admin} [Alt+Shift+A]" accesskey="a" rel="nofollow">{_admin}</a>
                             <a href="/support/tickets" class="link my_support" n:if="$canAccessHelpdesk">{_helpdesk}
                                 {if $helpdeskTicketNotAnsweredCount > 0}
+                                    <div class="navigation_counter">
                                     (<b>{$helpdeskTicketNotAnsweredCount}</b>)
+                                    </div>
                                 {/if}
                             </a>
                             <a n:if="$canAccessReports" href="/scumfeed" class="link my_reports" rel="nofollow">{tr("reports")}
                                 {if $reportNotAnsweredCount > 0}
+                                    <div class="navigation_counter">
                                     (<b>{$reportNotAnsweredCount}</b>)
+                                    </div>
                                 {/if}
                             </a>
                             <a n:if="$canAccessNsp" href="/noSpam" class="link my_spam" rel="nofollow">

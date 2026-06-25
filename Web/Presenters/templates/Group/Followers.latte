@@ -51,7 +51,7 @@
 {block description}
     {var $user    = $x instanceof $Manager ? $x->getUser() : $x}
     {var $manager = $x instanceof $Manager ? $x : $club->getManager($user, !$club->canBeModifiedBy($thisUser))}
-    <table>
+    <table class="flexable_table">
         <tbody>
             <tr>
                 <td width="120" valign="top"><span class="nobold">{_pronouns}: </span></td>

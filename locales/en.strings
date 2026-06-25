@@ -653,6 +653,7 @@
 "menu_help" = "Help";
 
 "menu_logout" = "Log out";
+"menu_logout_confirm" = "Actually log out?";
 "menu_support" = "Support";
 
 "header_home" = "home";
