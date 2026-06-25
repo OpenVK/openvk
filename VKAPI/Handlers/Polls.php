@@ -69,10 +69,16 @@ final class Polls extends VKAPIRequestHandler
         return (object) $response;
     }
 
-    public function addVote(int $poll_id, string $answers_ids)
+    public function addVote(int $poll_id, string $answer_ids = "", string $answer_id = "")
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
+
+        if (empty($answer_ids) && empty($answer_id)) {
+            $this->fail(100, "Required parameter 'answer_ids' or 'answer_id' is missing.");
+        } else if (empty($answer_ids)) {
+            $answer_ids = $answer_id;
+        }
 
         $poll = (new PollsRepo())->get($poll_id);
 
@@ -81,7 +87,7 @@ final class Polls extends VKAPIRequestHandler
         }
 
         try {
-            $poll->vote($this->getUser(), explode(",", $answers_ids));
+            $poll->vote($this->getUser(), explode(",", $answer_ids));
             return 1;
         } catch (AlreadyVotedException $ex) {
             return 0;
