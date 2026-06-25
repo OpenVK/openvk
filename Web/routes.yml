@@ -391,6 +391,8 @@ routes:
       handler: "VKAPI->tokenLogin"
     - url: "/authorize"
       handler: "VKAPI->OAuthLogin"
+    - url: "/blank.html"
+      handler: "About->APIBlank"
     - url: "/admin/sandbox"
       handler: "About->sandbox"
     - url: "/admin/chandler/groups"
