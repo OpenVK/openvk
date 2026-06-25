@@ -350,7 +350,7 @@ class Photo extends Media
 
         $res->id       = $res->pid = $this->getVirtualId();
         $res->owner_id = $res->user_id = $this->getOwner()->getId();
-        $res->aid      = $res->album_id = null;
+        $res->aid      = $res->album_id = 0;
         $res->width    = $this->getDimensions()[0];
         $res->height   = $this->getDimensions()[1];
         $res->date     = $res->created = $this->getPublicationTime()->timestamp();
@@ -372,8 +372,16 @@ class Photo extends Media
         }
 
         if ($extended) {
-            $res->likes       = $this->getLikesCount();
-            $res->comments    = $this->getCommentsCount();
+            $res->likes       = [
+                "likes" => $this->getLikesCount(),
+                "user_likes" => 0,
+                "can_like" => 1,
+                "can_publish" => 1,
+            ];
+            $res->comments    = [
+                "count" => $this->getCommentsCount(),
+                "can_post" => 1,
+            ];
             $res->can_comment = 1;
             $res->can_repost  = 1;
         }

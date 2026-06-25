@@ -408,7 +408,7 @@ final class Photos extends VKAPIRequestHandler
         return $res;
     }
 
-    public function get(int $owner_id, int $album_id, string $photo_ids = "", bool $extended = false, bool $photo_sizes = false, int $offset = 0, int $count = 10)
+    public function get(int $owner_id, int $album_id, string $photo_ids = "", bool $extended = false, bool $photo_sizes = true, int $offset = 0, int $count = 10)
     {
         $this->requireUser();
 

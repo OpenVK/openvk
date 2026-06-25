@@ -62,12 +62,12 @@ final class Newsfeed extends VKAPIRequestHandler
         }
 
         $response = (new Wall())->getById(implode(',', $rposts), $extended, $fields, $this->getUser());
-        
+
         if ($lastPost) {
             $response->next_from = "{$lastPost->created}_{$lastPost->id}";
         }
-        
-        foreach($response->items as $post) {
+
+        foreach ($response->items as $post) {
             $post->type = "post";
             $post->source_id = $post->owner_id;
         }
@@ -136,12 +136,12 @@ final class Newsfeed extends VKAPIRequestHandler
         }
 
         $response = (new Wall())->getById(implode(',', $rposts), $extended, $fields, $this->getUser());
-        
+
         if ($lastPost) {
             $response->next_from = "{$lastPost->created}_{$lastPost->id}";
         }
-        
-        foreach($response->items as $post) {
+
+        foreach ($response->items as $post) {
             $post->type = "post";
             $post->source_id = $post->owner_id;
         }
@@ -154,7 +154,7 @@ final class Newsfeed extends VKAPIRequestHandler
         // getGlobal alias
         return $this->getGlobal($fields, $start_from, $start_time, $end_time, $offset, $count, $extended, $rss, $return_banned);
     }
-    
+
     public function getByType(string $feed_type = 'top', string $fields = "", int $start_from = 0, int $start_time = 0, int $end_time = 0, int $offset = 0, int $count = 30, int $extended = 0, int $return_banned = 0)
     {
         $this->requireUser();

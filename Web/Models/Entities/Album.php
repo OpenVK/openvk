@@ -95,7 +95,7 @@ class Album extends MediaCollection
         $res = (object) [];
 
         $res->id              = $this->getId();
-        $res->thumb_id        = !is_null($this->getCoverPhoto()) ? $this->getCoverPhoto()->getPrettyId() : '0';
+        $res->thumb_id        = !is_null($this->getCoverPhoto()) ? $this->getCoverPhoto()->getId() : '0';
         $res->owner_id        = $this->getOwner()->getRealId();
         $res->title           = $this->getName();
         $res->description     = $this->getDescription();

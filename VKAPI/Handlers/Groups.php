@@ -64,7 +64,7 @@ final class Groups extends VKAPIRequestHandler
                         "can_access_closed" => 1,
                         "photo_50" => $usr->getAvatarURL(),
                         "photo_100" => $usr->getAvatarURL("tiny"),
-                        "photo_200" => $usr->getAvatarURL("normal")
+                        "photo_200" => $usr->getAvatarURL("normal"),
                     ];
 
                     $flds = explode(',', $fields);

@@ -888,7 +888,7 @@ final class Audio extends VKAPIRequestHandler
     public function getPlaylistById(int $owner_id = 0, int $playlist_id = 0): object
     {
         $playlist = (new Audios())->getPlaylistByOwnerAndVID($owner_id, $playlist_id);
-        
+
         if (!$playlist || $playlist->isDeleted()) {
             $this->fail(15, "Access error");
         }

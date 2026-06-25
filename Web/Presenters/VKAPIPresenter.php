@@ -471,8 +471,7 @@ final class VKAPIPresenter extends OpenVKPresenter
         }
 
         // in case if vk app was patched
-        switch ($this->requestParam("client_id"))
-        {
+        switch ($this->requestParam("client_id")) {
             case '4083558':
                 $platform = "VFeed";
                 break;

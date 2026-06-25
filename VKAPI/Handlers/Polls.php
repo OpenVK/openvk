@@ -76,7 +76,7 @@ final class Polls extends VKAPIRequestHandler
 
         if (empty($answer_ids) && empty($answer_id)) {
             $this->fail(100, "Required parameter 'answer_ids' or 'answer_id' is missing.");
-        } else if (empty($answer_ids)) {
+        } elseif (empty($answer_ids)) {
             $answer_ids = $answer_id;
         }
 
