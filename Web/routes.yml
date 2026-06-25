@@ -381,6 +381,8 @@ routes:
       handler: "Admin->bansHistory"
     - url: "/upload/photo/{text}"
       handler: "VKAPI->photoUpload"
+    - url: "/method/execute"
+      handler: "VKAPI->execute"
     - url: "/method/{text}.{text}"
       handler: "VKAPI->route"
     - url: "/token"

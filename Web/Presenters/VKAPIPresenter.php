@@ -178,7 +178,7 @@ final class VKAPIPresenter extends OpenVKPresenter
                 exit(json_encode([
                     "error" => "insufficient_storage",
                     "error_description" => "There are $maxFiles pending already. Please save them before uploading more :3",
-                    "pending_uploads" => $pendingInfo
+                    "pending_uploads" => $pendingInfo,
                 ]));
             }
 
@@ -206,7 +206,7 @@ final class VKAPIPresenter extends OpenVKPresenter
         ]));
     }
 
-    private function getPendingUploadInfo(string $folder, int $userId): array
+    private function getPendingUploadInfo(string $folder, string $userId): array
     {
         $pendingFiles = glob("$folder/$userId" . "_*.oct");
         $pendingInfo = [];
@@ -230,31 +230,32 @@ final class VKAPIPresenter extends OpenVKPresenter
         return $pendingInfo;
     }
 
-    public function renderRoute(string $object, string $method): void
+    /**
+     * Resolves the calling identity (and client platform) from the request, exactly as the
+     * normal API entrypoint does. On authorization problems it emits an error and exits.
+     *
+     * @return array{0: ?User, 1: ?string} [identity, platform]
+     */
+    private function resolveIdentity(string $object, string $method): array
     {
-        $callback = $this->queryParam("callback");
         $authMechanism = $this->queryParam("auth_mechanism") ?? "token";
         if ($authMechanism === "roaming") {
-            if ($callback) {
+            if ($this->queryParam("callback")) {
                 $this->fail(-1, "User authorization failed: roaming mechanism is unavailable with jsonp.", $object, $method);
             }
 
             if (!$this->user->identity) {
                 $this->fail(5, "User authorization failed: roaming mechanism is selected, but user is not logged in.", $object, $method);
-            } else {
-                $identity = $this->user->identity;
-                $platform = null;
             }
+
+            $identity = $this->user->identity;
+            $platform = null;
         } else {
-            if (is_null($this->requestParam("access_token"))) {
-                $identity = null;
-                $platform = null;
-            } else {
+            $identity = null;
+            $platform = null;
+            if (!is_null($this->requestParam("access_token"))) {
                 $token = (new APITokens())->getByCode($this->requestParam("access_token"));
-                if (!$token) {
-                    $identity = null;
-                    $platform = null;
-                } else {
+                if ($token) {
                     $identity = $token->getUser();
                     $platform = $token->getPlatform();
                 }
@@ -265,26 +266,39 @@ final class VKAPIPresenter extends OpenVKPresenter
             $this->fail(18, "User account is deactivated", $object, $method);
         }
 
+        return [$identity, $platform];
+    }
+
+    /**
+     * Instantiates the handler for $object, binds $params (name => value) to the target
+     * method's signature and invokes it, returning the raw result. Reused by both the normal
+     * API entrypoint and the `execute` method. Errors are thrown as APIErrorException
+     * (unknown method => 3, missing required param => 100) rather than emitted directly.
+     *
+     * @param array<string, mixed> $params
+     */
+    private function callAPIMethod(string $object, string $method, array $params, $identity, $platform, ?bool &$hasRss = null)
+    {
         $object       = ucfirst(strtolower($object));
         $handlerClass = "openvk\\VKAPI\\Handlers\\$object";
         if (!class_exists($handlerClass)) {
-            $this->badMethod($object, $method);
+            throw new APIErrorException("Unknown method passed.", 3);
         }
 
         $handler = new $handlerClass($identity, $platform);
         if (!is_callable([$handler, $method])) {
-            $this->badMethod($object, $method);
+            throw new APIErrorException("Unknown method passed.", 3);
         }
 
-        $has_rss = false;
+        $hasRss = false;
         $route  = new \ReflectionMethod($handler, $method);
-        $params = [];
+        $args   = [];
         foreach ($route->getParameters() as $parameter) {
             if ($parameter->getName() == 'rss') {
-                $has_rss = true;
+                $hasRss = true;
             }
 
-            $val = $this->requestParam($parameter->getName());
+            $val = $params[$parameter->getName()] ?? null;
             if (is_null($val)) {
                 if ($parameter->allowsNull()) {
                     $val = null;
@@ -293,7 +307,7 @@ final class VKAPIPresenter extends OpenVKPresenter
                 } elseif ($parameter->isOptional()) {
                     $val = null;
                 } else {
-                    $this->badMethodCall($object, $method, $parameter->getName());
+                    throw new APIErrorException("Required parameter '" . $parameter->getName() . "' missing.", 100);
                 }
             }
 
@@ -301,10 +315,10 @@ final class VKAPIPresenter extends OpenVKPresenter
                 // Проверка типа параметра
                 $type = $parameter->getType();
                 if (($type && !$type->isBuiltin()) || is_null($val)) {
-                    $params[] = $val;
+                    $args[] = $val;
                 } else {
                     settype($val, $parameter->getType()->getName());
-                    $params[] = $val;
+                    $args[] = $val;
                 }
             } catch (\Throwable $e) {
                 // Just ignore the exception, since
@@ -312,10 +326,21 @@ final class VKAPIPresenter extends OpenVKPresenter
             }
         }
 
-        define("VKAPI_DECL_VER", $this->requestParam("v") ?? "4.100");
+        if (!defined("VKAPI_DECL_VER")) {
+            define("VKAPI_DECL_VER", $this->requestParam("v") ?? "4.100");
+        }
 
+        return $handler->{$method}(...$args);
+    }
+
+    public function renderRoute(string $object, string $method): void
+    {
+        $callback = $this->queryParam("callback");
+        [$identity, $platform] = $this->resolveIdentity($object, $method);
+
+        $has_rss = false;
         try {
-            $res = $handler->{$method}(...$params);
+            $res = $this->callAPIMethod($object, $method, $_REQUEST, $identity, $platform, $has_rss);
         } catch (APIErrorException $ex) {
             $this->fail($ex->getCode(), $ex->getMessage(), $object, $method);
         }
@@ -340,6 +365,61 @@ final class VKAPIPresenter extends OpenVKPresenter
             } else {
                 header("Content-Type: application/json");
             }
+        }
+
+        $size = strlen($result);
+        header("Content-Length: $size");
+
+        exit($result);
+    }
+
+    public function renderExecute(): void
+    {
+        $callback = $this->queryParam("callback");
+        [$identity, $platform] = $this->resolveIdentity("execute", "");
+
+        $code = $this->requestParam("code");
+        if (is_null($code)) {
+            $this->fail(100, "Required parameter 'code' missing.", "execute", "");
+        }
+
+        // Everything except the reserved keys is exposed to the script via Args.
+        $reserved = ["code", "access_token", "v", "callback", "auth_mechanism", "requestPort"];
+        $args     = [];
+        foreach ($_REQUEST as $key => $value) {
+            if (!in_array($key, $reserved, true)) {
+                $args[$key] = $value;
+            }
+        }
+
+        try {
+            $tokens = (new \openvk\VKAPI\VKScript\Lexer($code))->tokenize();
+            $ast    = (new \openvk\VKAPI\VKScript\Parser($tokens))->parse();
+
+            $interpreter = new \openvk\VKAPI\VKScript\Interpreter(
+                function (string $object, string $method, array $params) use ($identity, $platform) {
+                    return $this->callAPIMethod($object, $method, $params, $identity, $platform);
+                },
+                $args
+            );
+
+            $res    = $interpreter->run($ast);
+            $errors = $interpreter->getExecuteErrors();
+        } catch (APIErrorException $ex) {
+            $this->fail($ex->getCode(), $ex->getMessage(), "execute", "");
+        }
+
+        $payload = ["response" => $res];
+        if (!empty($errors)) {
+            $payload["execute_errors"] = $errors;
+        }
+
+        $result = json_encode($payload);
+        if ($callback) {
+            $result = $callback . '(' . $result . ')';
+            header('Content-Type: application/javascript');
+        } else {
+            header("Content-Type: application/json");
         }
 
         $size = strlen($result);
