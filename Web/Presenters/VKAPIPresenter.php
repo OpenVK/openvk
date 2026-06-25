@@ -478,16 +478,7 @@ final class VKAPIPresenter extends OpenVKPresenter
         }
 
         // in case if vk app was patched
-        switch ($this->requestParam("client_id")) {
-            case '4083558':
-                $platform = "VFeed";
-                break;
-            case '2685278':
-                $platform = "Kate Mobile";
-                break;
-            default:
-                break;
-        }
+        $platform ??= $this->resolveAppIdToString($this->requestParam("client_id")); 
 
         if (is_null($token)) {
             $tokenIsStale = false;
@@ -521,8 +512,13 @@ final class VKAPIPresenter extends OpenVKPresenter
         $stale   = $this->queryParam("accepts_stale") ?? '0';
         $origin  = null;
         $url     = $this->queryParam("redirect_uri");
+        
+        if (!is_null($this->queryParam("client_id"))) {
+            $client = $this->resolveAppIdToString($this->queryParam("client_id"));
+        }
+
         if (is_null($url) || is_null($client)) {
-            exit("<b>Error:</b> redirect_uri and client_name params are required.");
+            exit("<b>Error:</b> redirect_uri and client_name (or client_id) params are required.");
         }
 
         if ($url != "about:blank") {
@@ -553,5 +549,22 @@ final class VKAPIPresenter extends OpenVKPresenter
         $this->template->acceptsStale   = $stale == '1';
         $this->template->origin         = $origin;
         $this->template->redirectUri    = $url;
+    }
+
+    private function resolveAppIdToString(string $id): ?string
+    {
+        switch ($id)
+        {
+            case '4083558':
+                return "VFeed";
+            case '2685278':
+                return "Kate Mobile";
+            case '3680547':
+                return "VK for iOS";
+            case '2274003':
+                return "VK for Android";
+            default:
+                return "unknown";
+        }
     }
 }
