@@ -32,7 +32,7 @@
         display: none;
     }
 
-    .unnecessary_block_content {
+    .hide_on_mobiles {
         display: none;
     }
 
@@ -62,10 +62,6 @@
         font-size: 14px;
         font-weight: 700;
         box-sizing: border-box;
-    }
-
-    .px-8 {
-        /*padding: 8px 8px;*/
     }
 
     #backdropFilePicker > #spacer {
@@ -166,6 +162,15 @@
         position: fixed;
         z-index: 1023;
         top: 0;
+    }
+
+    .articleView_link {
+        display: none;
+    }
+
+    .articleView {
+        z-index: 1026;
+        width: 100%;
     }
 
     .page_header:active {
@@ -539,19 +544,19 @@
         font-weight: 600;
     }
 
-    table.flexable_table {
+    table.flexible_table {
         display: flex;
         flex-direction: column;
         margin: 0;
         width: 98%;
     }
 
-    table.flexable_table td[width="120"],
-    table.flexable_table td {
+    table.flexible_table td[width="120"],
+    table.flexible_table td {
         text-align: left;
     }
 
-    table.flexable_table thead, tbody {
+    table.flexible_table thead, tbody {
         display: flex;
         flex-direction: column;
         gap: 13px;
@@ -562,22 +567,22 @@
         margin-bottom: 10px !important;
     }
 
-    table.flexable_table tr {
+    table.flexible_table tr {
         display: flex;
         flex-direction: column;
         text-align: left !important;
     }
 
-    table.flexable_table td, table.flexable_table th {
+    table.flexible_table td, table.flexible_table th {
         width: 100% !important;
         display: block;
     }
 
-    table.flexable_table .not_flexable_tr td {
+    table.flexible_table .not_flexible_tr td {
         width: unset !important;
     }
 
-    table.flexable_table .not_flexable_tr {
+    table.flexible_table .not_flexible_tr {
         flex-direction: row;
     }
 
@@ -808,7 +813,7 @@
         max-height: 248px;
     }
 
-    .unnecessary_block_content_name {
+    .hide_on_mobiles_name {
         display: none;
     }
 

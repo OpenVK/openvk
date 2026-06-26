@@ -251,7 +251,7 @@
                         <a href="/friends{$user->getId()}?act=online">{_all_title}</a>
                     </div>
                 </div>
-                <div class="unnecessary_block_content content_list">
+                <div class="hide_on_mobiles content_list">
                     <div class="cl_element" n:foreach="$user->getFriendsOnline(1) as $friend">
                         <div class="cl_avatar">
                             <a href="{$friend->getURL()}">
@@ -277,7 +277,7 @@
                         <a href="/albums{$user->getId()}">{_all_title}</a>
                     </div>
                 </div>
-                <div class="unnecessary_block_content" style="padding: 5px;">
+                <div class="hide_on_mobiles" style="padding: 5px;">
                     <div class="ovk-album" style="display: inline-block;" n:foreach="$albums as $album">
                         <div style="text-align: center;float: left;height: 54pt;width: 100px;">
                             {var $cover = $album->getCoverPhoto()}
@@ -305,7 +305,7 @@
                         <a href="/videos{$user->getId()}">{_all_title}</a>
                     </div>
                 </div>
-                <div class="unnecessary_block_content" style="padding: 5px;">
+                <div class="hide_on_mobiles" style="padding: 5px;">
                     <div class="ovk-video" n:foreach="$videos as $video">
                         <a href="/video{$video->getPrettyId()}" class="preview" align="center" id="videoOpen" data-id="{$video->getPrettyId()}">
                             <img
@@ -332,7 +332,7 @@
                     </div>
                 </div>
 				
-				<div class="unnecessary_block_content" style="padding: 5px 8px 15px 8px;">
+				<div class="hide_on_mobiles" style="padding: 5px 8px 15px 8px;">
                     <ul class="notes_titles" n:foreach="$notes as $note">
 						<li class="written">
 							<a href="/note{$note->getPrettyId()}">
@@ -360,7 +360,7 @@
                         <a href="/groups{$user->getId()}">{_all_title}</a>
                     </div>
                 </div>
-                <div class="unnecessary_block_content" style="padding-left: 5px;">
+                <div class="hide_on_mobiles" style="padding-left: 5px;">
                     <div style="display: inline;" n:foreach="$user->getClubs(1) as $club">
                         <a href="club{$club->getId()}">{$club->getName()}</a> {if !$iterator->last}•{/if}
                     </div>
@@ -622,7 +622,7 @@
                         <a href="/audios{$user->getId()}">{_all_title}</a>
                     </div>
                 </div>
-                <div class="unnecessary_block_content content_list long">
+                <div class="hide_on_mobiles content_list long">
                     <div class="audio" n:foreach="$audios as $audio" style="width: 100%;">
                         {include "../Audio/player.latte", audio => $audio}
                     </div>
