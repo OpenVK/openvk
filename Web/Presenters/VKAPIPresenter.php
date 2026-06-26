@@ -557,7 +557,7 @@ final class VKAPIPresenter extends OpenVKPresenter
         $this->template->responseType   = $responseType;
     }
 
-    private function resolveAppIdToString(string $id): ?string
+    private function resolveAppIdToString(string $id = ""): ?string
     {
         switch ($id)
         {
