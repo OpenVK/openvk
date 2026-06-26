@@ -1021,12 +1021,15 @@ class User extends RowModel
                 case 'openvk_flux_android':
                 case 'openvk_refresh_android':
                 case 'openvk_legacy_android':
+                case 'Kate Mobile':
+                case 'VK for Android':
                     return 'android';
                     break;
 
                 case 'openvk_native_ios':
                 case 'openvk_ios':
                 case 'openvk_legacy_ios':
+                case 'VK for iOS':
                     return 'iphone';
                     break;
 
@@ -1601,6 +1604,9 @@ class User extends RowModel
                     break;
                 case 'reg_date':
                     $res->reg_date = $this->getRegistrationTime()->timestamp();
+                    break;
+                case 'nickname':
+                    $res->nickname = $this->getPseudo();
                     break;
                 case 'nickname':
                     $res->nickname = $this->getPseudo();

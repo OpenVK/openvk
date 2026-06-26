@@ -164,6 +164,7 @@ final class Users extends VKAPIRequestHandler
                                             $platform = 4;
                                             break;
 
+                                        case 'web':
                                         case null:
                                             $platform = 7;
                                             break;
@@ -179,6 +180,16 @@ final class Users extends VKAPIRequestHandler
                                     ];
                                 }
                                 // no break
+                            case "online":
+                                if ($usr->onlineStatus() == 0) {
+                                    $response[$i]->online = 1;
+
+                                    $platform = $usr->getOnlinePlatform(false);
+                                    if ($platform !== null) {
+                                        $response[$i]->online_mobile = 1;
+                                    }
+                                }
+                                break;
                             case "music":
                                 if (!$canView) {
                                     break;
