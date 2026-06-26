@@ -391,6 +391,8 @@ routes:
       handler: "VKAPI->tokenLogin"
     - url: "/authorize"
       handler: "VKAPI->OAuthLogin"
+    - url: "/2fa"
+      handler: "VKAPI->TwoFactorLogin"
     - url: "/blank.html"
       handler: "About->APIBlank"
     - url: "/admin/sandbox"

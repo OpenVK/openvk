@@ -50,7 +50,7 @@ final class VKAPIPresenter extends OpenVKPresenter
         exit(json_encode($payload));
     }
 
-    private function twofaFail(int $userId): void
+    private function twofaFail(int $userId, string $data): void
     {
         header("HTTP/1.1 401 Unauthorized");
         header("Content-Type: application/json");
@@ -61,7 +61,7 @@ final class VKAPIPresenter extends OpenVKPresenter
             "validation_type"   => "2fa_app",
             "validation_sid"    => "2fa_" . $userId . "_2839041_randommessdontread",
             "phone_mask"        => "+374 ** *** 420",
-            "redirect_url"      => "https://http.cat/418", // Not implemented yet :( So there is a photo of cat :3
+            "redirect_uri"      => ovk_scheme(true) . $_SERVER["HTTP_HOST"] . "/2fa?data=" . base64_encode($data),
             "validation_resend" => "nowhere",
         ];
 
@@ -456,10 +456,18 @@ final class VKAPIPresenter extends OpenVKPresenter
         $uId  = $chUser->related("profiles.user")->fetch()->id;
         $user = (new Users())->get($uId);
 
+        $platform     = $this->requestParam("client_name");
+        $platform   ??= $this->resolveAppIdToString($this->requestParam("client_id"));
+
         $code = $this->requestParam("code");
         if ($user->is2faEnabled() && !($code === (new Totp())->GenerateToken(Base32::decode($user->get2faSecret())) || $user->use2faBackupCode((int) $code))) {
             if (empty($code)) {
-                $this->twofaFail($user->getId());
+                $data = (object) [
+                    "login" => $this->requestParam("username"),
+                    "password" => $this->requestParam("password"),
+                    "client_name" => $platform,
+                ];
+                $this->twofaFail($user->getId(), json_encode($data));
             } else {
                 $this->fail(28, "Invalid 2FA code", "internal", "acquireToken");
             }
@@ -467,7 +475,6 @@ final class VKAPIPresenter extends OpenVKPresenter
 
         $token        = null;
         $tokenIsStale = true;
-        $platform     = $this->requestParam("client_name");
         $acceptsStale = $this->requestParam("accepts_stale");
         if ($acceptsStale == "1") {
             if (is_null($platform)) {
@@ -476,9 +483,6 @@ final class VKAPIPresenter extends OpenVKPresenter
 
             $token = (new APITokens())->getStaleByUser($uId, $platform);
         }
-
-        // in case if vk app was patched
-        $platform ??= $this->resolveAppIdToString($this->requestParam("client_id"));
 
         if (is_null($token)) {
             $tokenIsStale = false;
@@ -555,6 +559,64 @@ final class VKAPIPresenter extends OpenVKPresenter
         $this->template->origin         = $origin;
         $this->template->redirectUri    = $url;
         $this->template->responseType   = $responseType;
+    }
+
+    public function renderTwoFactorLogin()
+    {
+        $base64 = $this->requestParam("data");
+        if (empty($base64)) {
+            exit("<b>Error:</b> Empty request.");
+        }
+
+        $decoded = base64_decode($base64);
+
+        if ($decoded == false) {
+            exit("<b>Error:</b> Invalid base64 data.");
+        }
+
+        $parsed = json_decode($decoded);
+
+        if (!is_array($parsed) && empty($parsed->login) && empty($parsed->password) && empty($parsed->client_name)) {
+            exit("<b>Error:</b> Invalid login data.");
+        }
+
+        $chUser = DB::i()->getContext()->table("ChandlerUsers")->where("login", $parsed->login)->fetch();
+        if (!$chUser) {
+            exit("<b>Error:</b> Invalid login and password.");
+        }
+
+        $auth = Authenticator::i();
+        if (!$auth->verifyCredentials($chUser->id, $parsed->password)) {
+            exit("<b>Error:</b> Invalid login and password.");
+        }
+
+        $uId  = $chUser->related("profiles.user")->fetch()->id;
+        $user = (new Users())->get($uId);
+        $platform = $parsed->client_name;
+
+        $this->template->base64 = $base64;
+        $this->template->platform = $platform;
+
+        $code = $this->requestParam("code");
+        if ($user->is2faEnabled() && empty($code)) {
+            // intended
+        } else if ($user->is2faEnabled() && !empty($code)) {
+            if ($code === (new Totp())->GenerateToken(Base32::decode($user->get2faSecret())) || !empty($user->use2faBackupCode((int) $code))) {
+                $token = new APIToken();
+                $token->setUser($user);
+                $token->setPlatform($platform ?? "api"); // since this is a browser we will just throw "api"
+                $token->save();
+                $this->redirect('/blank.html#access_token=' . $token->getFormattedToken() . '&expires_in=0&user_id=' . $uId);
+            } else {
+                $this->flashFail("err", tr('incorrect_code'), tr('incorrect_2fa_code'));
+            }
+        } else {
+            $token = new APIToken();
+            $token->setUser($user);
+            $token->setPlatform($platform ?? "api");
+            $token->save();
+            $this->redirect('/blank.html#access_token=' . $token->getFormattedToken() . '&expires_in=0&user_id=' . $uId);
+        }
     }
 
     private function resolveAppIdToString(string $id = ""): ?string
