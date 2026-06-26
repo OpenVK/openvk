@@ -178,6 +178,6 @@ final class AboutPresenter extends OpenVKPresenter
 
     public function renderDev(): void
     {
-        $this->redirect("https://docs.ovk.to/");
+        $this->redirect("https://openvk.github.io/docs/");
     }
 }
