@@ -11,7 +11,7 @@ use openvk\Web\Models\Entities\Club;
 
 final class Groups extends VKAPIRequestHandler
 {
-    public function get(int $user_id = 0, string $fields = "", int $offset = 0, int $count = 6, bool $online = false, string $filter = "groups"): object
+    public function get(int $user_id = 0, string $fields = "", int $offset = 0, int $count = 6, bool $online = false, string $filter = "groups", int $extended = 0): object
     {
         $this->requireUser();
 
@@ -35,7 +35,7 @@ final class Groups extends VKAPIRequestHandler
             }
 
             if (!$user->getPrivacyPermission('groups.read', $this->getUser())) {
-                $this->fail(15, "Access denied: this user chose to hide his groups.");
+                $this->fail(260, "Access to the groups list is denied due to the user's privacy settings");
             }
 
             foreach ($user->getClubs($offset, $filter == "admin", $count, true) as $club) {
@@ -55,15 +55,16 @@ final class Groups extends VKAPIRequestHandler
         if (!empty($clbs)) {
             for ($i = 0; $i < $ic; $i++) {
                 $usr = $clbs[$i];
-                if (is_null($usr)) {
-
-                } else {
+                if (!is_null($usr)) {
                     $rClubs[$i] = (object) [
                         "id" => $usr->getId(),
                         "name" => $usr->getName(),
                         "screen_name" => $usr->getShortCode(),
-                        "is_closed" => false,
-                        "can_access_closed" => true,
+                        "is_closed" => 0,
+                        "can_access_closed" => 1,
+                        "photo_50" => $usr->getAvatarURL(),
+                        "photo_100" => $usr->getAvatarURL("tiny"),
+                        "photo_200" => $usr->getAvatarURL("normal"),
                     ];
 
                     $flds = explode(',', $fields);
@@ -81,15 +82,6 @@ final class Groups extends VKAPIRequestHandler
                                 break;
                             case "photo_max":
                                 $rClubs[$i]->photo_max = $usr->getAvatarURL("original"); // ORIGINAL ANDREI CHINITEL 🥵🥵🥵🥵
-                                break;
-                            case "photo_50":
-                                $rClubs[$i]->photo_50 = $usr->getAvatarURL();
-                                break;
-                            case "photo_100":
-                                $rClubs[$i]->photo_100 = $usr->getAvatarURL("tiny");
-                                break;
-                            case "photo_200":
-                                $rClubs[$i]->photo_200 = $usr->getAvatarURL("normal");
                                 break;
                             case "photo_200_orig":
                                 $rClubs[$i]->photo_200_orig = $usr->getAvatarURL("normal");
@@ -182,10 +174,10 @@ final class Groups extends VKAPIRequestHandler
                     "id"                => $clb->getId(),
                     "name"              => $clb->getName(),
                     "screen_name"       => $clb->getShortCode() ?? "club" . $clb->getId(),
-                    "is_closed"         => false,
+                    "is_closed"         => 0,
                     "type"              => "group",
                     "is_member"         => !is_null($this->getUser()) ? (int) $clb->getSubscriptionStatus($this->getUser()) : 0,
-                    "can_access_closed" => true,
+                    "can_access_closed" => 1,
                 ];
 
                 $flds = explode(',', $fields);

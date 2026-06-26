@@ -862,6 +862,7 @@
 "oauth_scope_all" = "profile information, status, list of friends, photos, wall posts, audios, videos, notifications, fishing rod handle, messages, gifts, <b>your e-mail</b>, polls, communities, discussions, notes, <b>payment method</b>, likes and comments";
 "oauth_grant" = "Allow";
 "oauth_deny" = "Deny";
+"oauth_app_twofactor" = "Before using $1 app, please enter your Two-Factor code received from the application.";
 
 /* Sorting */
 

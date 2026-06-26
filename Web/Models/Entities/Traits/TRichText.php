@@ -69,6 +69,7 @@ trait TRichText
         $contentColumn = property_exists($this, "overrideContentColumn") ? $this->overrideContentColumn : "content";
         $text = $this->getRecord()->{$contentColumn};
         $text = preg_replace("%@([A-Za-z0-9]++) \(((?:[\p{L&}\p{Lo} 0-9]\p{Mn}?)++)\)%Xu", "[$1|$2]", $text);
+        $text = preg_replace("%\*([A-Za-z0-9]++) \(((?:[\p{L&}\p{Lo} 0-9]\p{Mn}?)++)\)%Xu", "[$1|$2]", $text);
         $text = preg_replace("%([\n\r\s]|^)(@([A-Za-z0-9]++))%Xu", "$1[$3|@$3]", $text);
 
         $resolvedUsers = $skipUsers;
@@ -137,6 +138,7 @@ trait TRichText
                 $text = $this->formatLinks($text);
                 // Mentions: @user, @user (name), [id1|name]
                 $text = preg_replace("%@([A-Za-z0-9]++) \(((?:[\p{L&}\p{Lo} 0-9]\p{Mn}?)++)\)%Xu", "[$1|$2]", $text);
+                $text = preg_replace("%\*([A-Za-z0-9]++) \(((?:[\p{L&}\p{Lo} 0-9]\p{Mn}?)++)\)%Xu", "[$1|$2]", $text);
                 $text = preg_replace("%([\n\r\s]|^)(@([A-Za-z0-9]++))%Xu", "$1[$3|@$3]", $text);
                 $text = preg_replace("%\[([A-Za-z0-9]++)\|((?:[\p{L&}\p{Lo} 0-9\.\-\`\'@]\p{Mn}?)++)\]%Xu", "<a href='/$1'>$2</a>", $text);
                 $text = preg_replace_callback("%([\n\r\s]|^)(\#([\p{L}_0-9][\p{L}_0-9\(\)\-\']+[\p{L}_0-9\(\)]|[\p{L}_0-9]{1,2}))%Xu", function ($m) {
