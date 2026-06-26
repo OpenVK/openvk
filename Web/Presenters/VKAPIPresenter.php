@@ -600,7 +600,7 @@ final class VKAPIPresenter extends OpenVKPresenter
         $code = $this->requestParam("code");
         if ($user->is2faEnabled() && empty($code)) {
             // intended
-        } else if ($user->is2faEnabled() && !empty($code)) {
+        } elseif ($user->is2faEnabled() && !empty($code)) {
             if ($code === (new Totp())->GenerateToken(Base32::decode($user->get2faSecret())) || !empty($user->use2faBackupCode((int) $code))) {
                 $token = new APIToken();
                 $token->setUser($user);
