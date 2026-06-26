@@ -236,7 +236,7 @@ class User extends RowModel
             } else {
                 $name = $this->getFirstName() . " " . $this->getLastName();
             }
-        } else if ($startWithLastName == false) {
+        } elseif ($startWithLastName == false) {
             $name = $this->getFirstName();
         } else {
             $name = $this->getLastName();

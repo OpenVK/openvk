@@ -259,7 +259,7 @@ final class VKAPIPresenter extends OpenVKPresenter
                     $identity = $token->getUser();
                     $platform = $token->getPlatform();
                 }
-            } else if(!is_null($_SERVER['HTTP_AUTHORIZATION'])) {
+            } elseif (!is_null($_SERVER['HTTP_AUTHORIZATION'])) {
                 $token = str_replace('Bearer ', '', $_SERVER['HTTP_AUTHORIZATION']);
                 $token = (new APITokens())->getByCode($token);
                 if ($token) {
@@ -478,7 +478,7 @@ final class VKAPIPresenter extends OpenVKPresenter
         }
 
         // in case if vk app was patched
-        $platform ??= $this->resolveAppIdToString($this->requestParam("client_id")); 
+        $platform ??= $this->resolveAppIdToString($this->requestParam("client_id"));
 
         if (is_null($token)) {
             $tokenIsStale = false;
@@ -559,8 +559,7 @@ final class VKAPIPresenter extends OpenVKPresenter
 
     private function resolveAppIdToString(string $id = ""): ?string
     {
-        switch ($id)
-        {
+        switch ($id) {
             case '4083558':
                 return "VFeed";
             case '2685278':

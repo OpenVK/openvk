@@ -225,7 +225,7 @@ final class Users extends VKAPIRequestHandler
 
                                 $response[$i]->city = (object) [
                                     'id' => 0,
-                                    'title' => $usr->getCity()
+                                    'title' => $usr->getCity(),
                                 ];
                                 break;
                             case "interests":
@@ -291,7 +291,7 @@ final class Users extends VKAPIRequestHandler
                                     "user_photos" => 0, // FIXME: not implemented
                                     "albums" => (new Albums())->getUserAlbumsCount($usr),
                                     "followers" => $usr->getFollowersCount(),
-                                    "gifts" => $usr->getGiftCount()
+                                    "gifts" => $usr->getGiftCount(),
                                 ];
                                 break;
                             case "guid":

@@ -67,7 +67,8 @@ abstract class VKAPIRequestHandler
         }
     }
 
-    protected function createHandler(string $handlerClass): VKAPIRequestHandler {
+    protected function createHandler(string $handlerClass): VKAPIRequestHandler
+    {
         if (!class_exists($handlerClass)) {
             throw new \Exception(`Class $handlerClass not found`);
         }

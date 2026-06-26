@@ -30,15 +30,15 @@ final class Execute extends VKAPIRequestHandler
             "money_p2p_params" => (object) [
                 "min_amount" => 100,
                 "max_amount" => 75000,
-                "currency" => "SPAMTON"
+                "currency" => "SPAMTON",
             ],
             "audio_ads" => (object) [
                 "day_limit" => 10000,
                 "track_limit" => 10000,
                 "types_allowed" => [],
                 "sections" => ["my","user_playlists","group_playlists","my_playlists","recent","audio_feed","recs",
-                               "recs_audio","recs_album","search","global_search","group_list","user_list",
-                               "user_wall","group_wall","feed","other"]
+                    "recs_audio","recs_album","search","global_search","group_list","user_list",
+                    "user_wall","group_wall","feed","other"],
             ],
             "profiler_settings" => (object) [
                 "api_requests" => true,
@@ -48,36 +48,36 @@ final class Execute extends VKAPIRequestHandler
                 "settings" => [
                     (object) [
                         "name" => "audio_ads",
-                        "available" => false
+                        "available" => false,
                     ],
                     (object) [
                         "name" => "audio_background_limit",
                         "available" => false,
-                        "value" => "1440"
+                        "value" => "1440",
                     ],
                     (object) [
                         "name" => "gif_autoplay",
-                        "available" => true
+                        "available" => true,
                     ],
                     (object) [
                         "name" => "audio_restrictions",
-                        "available" => false
+                        "available" => false,
                     ],
                     (object) [
                         "name" => "stories",
-                        "available" => false
+                        "available" => false,
                     ],
                     (object) [
                         "name" => "masks",
-                        "available" => false
+                        "available" => false,
                     ],
                     (object) [
                         "name" => "video_autoplay",
-                        "available" => true
-                    ]
+                        "available" => true,
+                    ],
                 ],
-                "community_comments" => false
-            ]
+                "community_comments" => false,
+            ],
         ];
         $counters = (object) [
             "friends"       => $this->getUser()->getFollowersCount(),
@@ -98,7 +98,7 @@ final class Execute extends VKAPIRequestHandler
             "refresh_timeout_recommended" => 600000,
             "items" => [],
             "profiles" => [],
-            "groups" => []
+            "groups" => [],
         ];
 
         return (object) [
@@ -110,7 +110,7 @@ final class Execute extends VKAPIRequestHandler
             'allow_buy_votes' => 1,
             'ads_stoplist' => [],
             'show_html_games' => 0,
-            'defaultAudioPlayer' => 'standard'
+            'defaultAudioPlayer' => 'standard',
         ];
     }
 
