@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include <en>
 
 "__locale" = "lv_LV.UTF-8;Lav";
@@ -556,3 +557,4 @@
 "privacy_value_only_me" = "Tikai es";
 "privacy_value_only_me_dative" = "Tikai man";
 "privacy_value_nobody" = "Neviens";
+
