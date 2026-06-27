@@ -132,6 +132,10 @@ openvk:
             src: "https://example.org/ad_poster.jpeg"
             caption: "Ad caption"
             link: "https://example.org/product.aspx?id=10&from=ovk"
+        siteAlert:
+            enable: false
+            text: "Global alert example <b>with HTML</b>"
+            canBeDismissed: true
         bellsAndWhistles:
             testLabel: false
         defaultMobileTheme: ""
