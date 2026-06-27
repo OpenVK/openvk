@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{_2fa_code} - {$instance_name}</title>
+    <link rel="stylesheet" href="/assets/packages/static/openvk/css/main-oauth.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="ovk_logo"></div>
+        </div>
+        <div class="msg msg_{$flashMessage->type}" n:ifset="$flashMessage">
+            <b>{$flashMessage->title}</b><br />
+            {$flashMessage->msg|noescape}
+        </div>
+        <div class="main">
+            <div class="content">
+
+                <div class="section">
+                    <div class="oauth_main">
+
+                        <h2>{_two_factor_authentication}</h2>
+                        {tr(oauth_app_twofactor, $platform)}
+                        <br><br>
+                        <form method="get">
+                            <table cellspacing="7" cellpadding="0" width="40%" border="0" align="center">
+                                <tbody>
+                                    <tr style="text-align: right;">
+                                        <td>
+                                            <span class="nobold">{_code}: </span>
+                                        </td>
+                                        <td>
+                                            <input type="number" name="code" autocomplete="off" required=""
+                                                autofocus="">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <center>
+                                <input type="hidden" name="data" value="{php echo $base64}">
+                                <input type="submit" value="{_log_in}" class="button">
+                            </center>
+                        </form>
+
+                        <div class="st_clearb"> </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+</body>
+
+</html>

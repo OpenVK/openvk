@@ -1940,7 +1940,7 @@
 "tour_section_11_title_1" = "Теми оформлення";
 "tour_section_11_text_1" = "Після реєстрації, як стандартна тема, у вас буде класична тема оформлення";
 "tour_section_11_text_2" = "Деяких нових користувачів може налякати чинна класична тема, яка виглядає дуже архаїчно";
-"tour_section_11_text_3" = "<b>Але не біда:</b> Ви можете обрати іншу тему з каталогу, або створити свою, ознайомившись з <a href='https://docs.ovk.to/'>документацією</a>";
+"tour_section_11_text_3" = "<b>Але не біда:</b> Ви можете обрати іншу тему з каталогу, або створити свою, ознайомившись з <a href='https://openvk.org/dev'>документацією</a>";
 "tour_section_11_bottom_text_1" = "Каталог тем доступний у розділі &quot;Мої Налаштування&quot; у вкладці &quot;Інтерфейс&quot; ";
 "tour_section_11_wordart" = "<img src='/assets/packages/static/openvk/img/tour/wordart.png' width='65%'>";
 
@@ -2272,3 +2272,14 @@
 "faves_few" = "$1 вподобання";
 "faves_many" = "$1 вподобань";
 "faves_other" = "$1 вподобань";
+"read_in_rss" = "Читати в RSS";
+"show_less" = "Відобразити менше";
+"suggestion_successfully_declined" = "Допис успішно відхилено";
+"suggestion_successfully_published" = "Допис успішно опубліковано";
+"suggested_posts_in_group_by_you_zero" = "Ви не запропонували жодного допису до цієї групи";
+"suggested_posts_in_group_by_you_one" = "Ви запропонували один допис до цієї групи";
+"deleted_avatar_notification" = "Фотографію успішно видалено";
+"my_gifts" = "Мої подарунки";
+"gift_back" = "Відправити подарунок у відповідь";
+"notif_4_18_14" = "Користувач згадав вас";
+"notif_4_5_14" = "Група згадала вас";

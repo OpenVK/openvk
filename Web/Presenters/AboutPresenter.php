@@ -171,8 +171,13 @@ final class AboutPresenter extends OpenVKPresenter
         exit;
     }
 
+    public function renderAPIBlank(): void
+    {
+        // well
+    }
+
     public function renderDev(): void
     {
-        $this->redirect("https://docs.openvk.org/");
+        $this->redirect("https://openvk.github.io/docs/");
     }
 }

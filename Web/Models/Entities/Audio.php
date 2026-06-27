@@ -415,9 +415,8 @@ class Audio extends Media
         $obj->genre_str  = $this->getGenre();
         $obj->owner_id   = $this->getOwner()->getRealId();
 
-        $obj->lyrics = null;
         if (!is_null($this->getLyrics())) {
-            $obj->lyrics = $this->getId();
+            $obj->lyrics_id = $this->getId();
         }
 
         $album = $this->getAlbum();
