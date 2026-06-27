@@ -1,10 +1,13 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include <en>
 
 "__locale" = "lv_LV.UTF-8;Lav";
 
 /* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
 
+=======
+>>>>>>> 1ad6fe4f (chore(l10n): update Latvian translation)
 "welcome" = "Laipni lūgti";
 "to_top" = "Augšup";
 "log_in" = "Ielogoties";
