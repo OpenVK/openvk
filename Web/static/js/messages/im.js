@@ -123,6 +123,7 @@ window.im = new (class {
         this.messenger.view.setChat(conv, false);
         this.selectTab('messenger');
         this.messenger.view._loadDraft(conv);
+        this.messenger.view._scrollToEnd();
     }
 
     // Current user. Do not confuse with window.im.corresponder!

@@ -50,7 +50,9 @@ body.no-scroll {
 }
 
 .crp-entry--image>img {
-    max-width: 50px;
+    object-fit: contain;
+    height: 50px;
+    width: 50px;
     border-radius: 3px;
 }
 
@@ -123,6 +125,10 @@ body.no-scroll {
 
 .messages--actions {
     display: none;
+    position: absolute;
+    width: 100%;
+    height: 50px;
+    background: #000000;
 }
 
 .messages--actions.shown {
@@ -144,9 +150,14 @@ body.no-scroll {
 .messenger-app--messages .messenger-app--messages-day-time {
     display: flex;
     justify-content: center;
-    padding: 5px 0px;
-    border-bottom: 1px solid gray;
     margin: 5px 0px;
+}
+
+.messenger-app--messages .messenger-app--messages-day-time b {
+    background: gray;
+    color: white;
+    padding: 5px 5px;
+    user-select: none;
 }
 
 .messenger-app--messages---message > .messenger-app--messages---message--wrap {
@@ -176,11 +187,13 @@ body.no-scroll {
 
 .messenger-app--messages---message ._avatar {
     width: 36px;
+    max-height: 36px;
 }
 
 .messenger-app--messages---message .ava {
     width: 36px;
     height: 37px;
+    display: block;
     object-fit: cover;
     border-radius: 3px;
 }
@@ -230,6 +243,7 @@ body.no-scroll {
 
 .messenger-app--tab-messenger {
     margin: 0px 0px -10px -10px;
+    position: relative;
 }
 
 .messenger-app--input {
@@ -271,14 +285,24 @@ body.no-scroll {
     font-weight: 900;
 }
 
+.messages--peers-tabs {
+    display: flex;
+}
+
 .messages--peers-tabs .messages--peers-tab {
+    display: flex;
+    flex-direction: row;
+}
+
+.messages--peers-tabs .messages--peers-tab a {
     color: #37ff13;
-    font-size: 27px;
+    font-size: 16px;
     background: black;
-    margin: 5px 10px 0px 0px;
+    display: flex;
 }
 
 .messages--peers-tabs .messages--peers-tab-close {
-    padding: 9px 12px;
+    padding: 4px 7px;
     background: #66f0cc;
+    display: block;
 }

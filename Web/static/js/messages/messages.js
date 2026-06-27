@@ -183,7 +183,6 @@ class ChatGeneralForm {
         const dateMap = new Map();
         this.chunks.forEach(chunk => {
             chunk.getMessages().forEach(msg => {
-            //console.log(msg)
             if (!msg.sent) return;
             const dateKey = msg.sent.toISOString().split('T')[0];
 
@@ -211,6 +210,7 @@ class ChatGeneralForm {
 
         if (id > this.swag) {
             // chats or smth
+            // TODO
             return;
         } else {
             if (id > 0) {
@@ -226,6 +226,15 @@ class ChatGeneralForm {
                 return __[0]
             }
         }
+    }
+
+    static async resolveByIdAndReturnClass(id) {
+        const c = await ChatGeneralForm.resolveById(id)
+        if (c == null) {
+            return undefined
+        }
+
+        return new ChatGeneralForm(c)
     }
 
     async getMessages(message_id, offset = 0) {
@@ -259,16 +268,34 @@ class ChatGeneralForm {
     }*/
 
     async sendMessage(msg) {
+        this._pushNewMessage(msg);
         const resp = await window.OVKAPI.call('messages.send', {
             'peer_id': this.id,
             'message': msg.text,
-            'attachments': msg.str_attachments
-        });
+            'attachments': msg.str_attachments,
+        }); // returns id
 
-        console.info('sent message to ' + this.id)
+        msg.data.id = resp
+        console.info('IM | Sent message to ' + this.id)
+    }
+
+    _findMessageById(msg) {
+        let f = null;
+        this.messages.forEach(e => {
+            if (f != null) {
+                return;
+            }
+
+            if (e.id == msg.msg) {
+                f = e;
+            }
+        })
+
+        return f;
     }
 
     _pushNewMessage(msg) {
+        console.log('IM | Pushed msg ', msg)
         this._getLatestChunk()._pushMessage(msg);
         window.im.messenger.view._triggerUpdate();
     }
@@ -278,6 +305,10 @@ class ChatGeneralForm {
     }
 
     _getLatestChunk() {
+        if (this.chunks[this.chunks.length - 1] == undefined) {
+            this.chunks.push(new MessagesChunk([]))
+        }
+
         return this.chunks[this.chunks.length - 1];
     }
 
@@ -302,22 +333,32 @@ class ChatGeneralForm {
 
     // Pagination
     async _messagesLoad_UpFromLastChunk() {
+        console.log('IM | Scrolling chat ' + this.id + '.')
+
         if (this._isEndReached()) {
             return;
         }
 
         const _id = this._getLatestChunk().first_message;
-        console.log(_id.id)
         const msgs = await this.getMessages(_id.id);
 
         this._end_reached = msgs.isEnd();
+
+        const prev_scroll = window.im.messenger.view.messagesListBlock.scrollTop;
+        const prev_height = window.im.messenger.view.messagesListBlock.scrollHeight;
 
         if (!this._end_reached) {
             this._appendMessagesChunk(msgs, true);
             window.im.messenger.view._triggerUpdate();
         } else {
-            console.log('end is reached!')
+            console.log('IM | End of chat ' +this.id+ ' is reached!')
         }
+
+        setTimeout(() => {
+            let new_scroll = prev_scroll + (window.im.messenger.view.messagesListBlock.scrollHeight - prev_height);
+
+            window.im.messenger.view._scrollTo(new_scroll)
+        }, 1)
     }
 }
 
