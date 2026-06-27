@@ -159,7 +159,12 @@ class EventHandler {
         const _msg = ChatMessage.fromEvent(event);
 
         // finding conversation
-        const _crs = window.im.conversations._findConv(_msg.peer_id);
-        _crs.peer._pushNewMessage(_msg);
+        const _crs = await window.im.conversations._findConvFromApi(_msg.peer_id);
+        const found = _crs.peer._findMessageById(_msg);
+        if (found) {
+            _crs.peer._pushNewMessage(_msg);
+        } else {
+            found.data = _msg.data;
+        }
     }
 }

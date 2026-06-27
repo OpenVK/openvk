@@ -18,6 +18,7 @@ class Messenger {
 
         container.insertAdjacentHTML('beforeend', this.view.template);
         this.view.appEl = container.querySelector(".messenger-app");
+        this.view.messagesListBlock = container.querySelector(".messenger-app--messages");
         this.view.messagesList = container.querySelector(".messenger-app--messages-array");
         this.view._changeHeight();
 
@@ -33,13 +34,14 @@ class Messenger {
         const corresponder = window.im.corresponder;
 
         const msg = new ChatMessage({
-            'peer': window.im.current.id,
-            'date': Number(new Date()) - 1000
+            'from_id': window.im.current.id,
+            'peer_id': corresponder.id,
+            'date': Math.round((new Date()).getTime() / 1000)
         });
         msg._guessSender();
         msg.setText(text);
 
-        const _sent = await corresponder.sendMessage(msg)
+        return await corresponder.sendMessage(msg)
         //corresponder._pushNewMessage(msg);
     }
 }
@@ -69,16 +71,18 @@ class MessengerViewModel {
                 </div>
             </div>
             <div class="time">
-                <span data-bind="html: msg.id"></span>
-                <span data-bind="html: msg.readable_date"></span>
+                <div data-bind="if: msg.id != null">
+                    <span data-bind="html: msg.id"></span>
+                    <span data-bind="html: msg.readable_date"></span>
+                </div>
             </div>
         </div>
         `
         this.template = `
         <div>
             <div data-bind="foreach: opened_tabs" class="messages--peers-tabs">
-                <div>
-                    <a class="messages--peers-tab" data-bind="text: peer.name, event: { click: function() { window.im.selectChat(this) } }"></a>
+                <div class="messages--peers-tab">
+                    <a data-bind="text: peer.name, event: { click: function() { window.im.selectChat(this) } }"></a>
                     <span class="messages--peers-tab-close" data-bind="text: 'x', event: { click: function () { window.im.closeChat(this) } }"></span>
                 </div>    
             </div>
@@ -86,6 +90,9 @@ class MessengerViewModel {
         <div class="messages--actions" data-bind="css: { 'shown': window.im.messenger.view.selected_messages_count > 0 }">
             <div>
                 <a data-bind="text: 'delete', event: { 'click': window.im.messenger.view.callDeletion }"></a>
+            </div>
+            <div>
+                <a data-bind="text: 'unselect', event: { 'click': window.im.messenger.view.unselect }"></a>
             </div>
         </div>
         <div class="messenger-app">
@@ -165,7 +172,7 @@ class MessengerViewModel {
         } else {
             this.unselectMessage(model);
         }
-        this._triggerUpdateSlightly();
+        //this._triggerUpdateSlightly();
     }
 
     async onMessagesScroll(model, e) {
@@ -221,12 +228,24 @@ class MessengerViewModel {
         })
     }
 
+    unselect() {
+        this.selected_messages([]);
+    }
+
     // Actions
 
-    sendMessage(model) {
+    async sendMessage(model) {
         if(model.currentDraft() === "") return false;
+        if (true) {
+            this._scrollToEnd();
+        }
 
-        window.im.messenger.sendToCurrentCorresponder(model)
+        window.im.messenger.sendToCurrentCorresponder(model).then(e => {
+            // TODO: do not move if scrolled too up
+            if (true) {
+                this._scrollToEnd();
+            }
+        })
 
         this._eraseDraftFor({'peer': window.im.current});
         this._eraseCurrentDraft();
@@ -259,6 +278,7 @@ class MessengerViewModel {
     }
 
     setChat(conv, pushstate = true) {
+        console.log('IM | Set chat to ' + conv.peer.id);
         this.current_chat(this.opened_tabs().indexOf(conv));
 
         if (pushstate) {
@@ -297,8 +317,8 @@ class MessengerViewModel {
         }
 
         this.drafts[to_chat.peer.id] = this.currentDraft();
-        this.scrolls[to_chat.peer.id] = this.messagesList.scrollTop;
-        console.info('saved draft for peer ' + to_chat.peer.id);
+        this.scrolls[to_chat.peer.id] = this.messagesListBlock.scrollTop;
+        console.info('IM | Saved draft for peer ' + to_chat.peer.id);
         this._eraseCurrentDraft();
     }
 
@@ -312,11 +332,15 @@ class MessengerViewModel {
     }
 
     _scrollTo(scroll_progress) {
-        this.messagesList.scrollTop = scroll_progress;
+        ko.tasks.schedule(() => {
+            this.messagesListBlock.scroll({
+                top: scroll_progress
+            });
+        });
     }
 
     _scrollToEnd() {
-        this._scrollTo(this.messagesList.scrollHeight);
+        this._scrollTo(this.messagesListBlock.scrollHeight);
     }
 
     // todo change
@@ -358,7 +382,6 @@ class LongPollConnection {
         xhr.open("GET", connection_string, true);
         xhr.onload = () => {
             let data = JSON.parse(xhr.responseText);
-            console.log(data);
             if (data?.updates?.length > 0)
                 data.updates.forEach(event => {
                     window.im.event_handler.handle(event);

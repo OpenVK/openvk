@@ -20,7 +20,6 @@ class ConversationsViewModel {
     }
 
     _update() {
-        console.log(this.conversations_list())
         this._check_count(this._check_count() + 1);
     }
 
@@ -99,11 +98,11 @@ class Conversations {
         return new ChatGeneralForm(_n);
     }
 
-    async getConversations(offset = 0) {
+    async getConversations(offset = 0, count = 100) {
         // adding profiles to conversation items
         let convs = await window.OVKAPI.call("messages.getConversations", {
             extended: 1,
-            count: 1,
+            count: count,
             offset: offset,
             fields: ChatGeneralForm.base_fields
         });
@@ -169,7 +168,30 @@ class Conversations {
 
     _findConv(id) {
         const _l = this.all_convs.filter(itm => {return itm.peer.id == id});
+        if (_l[0] == undefined) {
+            throw Error('Not found chat')
+        }
+    
         return _l[0];
+    }
+
+    async _findConvFromApi(id) {
+        try {
+            return this._findConv(id)
+        } catch(e) {}
+
+        const b = await ChatGeneralForm.resolveByIdAndReturnClass(id)
+        if (!b) {
+            throw Error('Not found chat')
+        }
+
+        const c = new Conversation({
+            'peer': b
+        })
+    
+        this.all_convs.push(c)
+
+        return c
     }
 
     // Есть общий список со всеми переписками и есть массив с их порядком
@@ -220,7 +242,6 @@ class Conversation {
         // no mesages
         } catch(e) {}
 
-        console.log(this._last_message)
         return this._last_message;
     }
 
