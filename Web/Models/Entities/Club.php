@@ -511,7 +511,7 @@ class Club extends RowModel
                     $res->site = $this->getWebsite();
                     break;
                 case 'description':
-                    $res->description = $this->getDescription();
+                    $res->description = $this->getDescription() ?? '';
                     break;
                 case 'background':
                     $res->background = $this->getBackDropPictureURLs();
