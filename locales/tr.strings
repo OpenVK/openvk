@@ -38,7 +38,7 @@
 "nickname" = "Takma ad";
 "online" = "Çevrimiçi";
 "was_online" = "çevrimiçiydi";
-"was_online_m" = "çevrimiçiydi"; 
+"was_online_m" = "çevrimiçiydi";
 /* For male and femail */
 
 "was_online_f" = "çevrimiçiydi";
@@ -556,3 +556,4 @@
 "bday_and" = " ve ";
 
 /* Translated by @WindowZ414 - @WindowZ414 tarafından çevirildi */
+
