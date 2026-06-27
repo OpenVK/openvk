@@ -41,7 +41,7 @@ final class Newsfeed extends VKAPIRequestHandler
         }, iterator_to_array($subs));
         $ids[] = $this->getUser()->getId();
 
-       $wallCondition = "(`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`)";
+        $wallCondition = "(`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`)";
         if ($with_alien_wall_posts == 1) {
             $wallCondition = "(`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0)";
         }
@@ -95,7 +95,7 @@ final class Newsfeed extends VKAPIRequestHandler
         } else {
             $queryBase .= " AND ((`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`)) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
         }
-        
+
         if ($this->getUser()->getNsfwTolerance() === User::NSFW_INTOLERANT) {
             $queryBase .= " AND `nsfw` = 0";
         }
