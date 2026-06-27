@@ -46,6 +46,8 @@
         {/ifset}
     </head>
     <body {if isset($thisUser)}data-themepack="{$thisUser->getStyle()}"{/if}>
+        {include "components/globalalert.latte"}
+
         <div id="sudo-banner" n:if="isset($thisUser) && $userTainted">
             <p>
                 {_you_entered_as} <b>{$thisUser->getCanonicalName()}</b>. {_please_rights}

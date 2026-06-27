@@ -1561,12 +1561,26 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
     width: 75%;
 }
 
-#sudo-banner {
+#sudo-banner, .global-alert {
     background: #fffae6;
-    border-color: #fffae6;
+    border-bottom: 1px solid #ffefb0;
     color: #172b4d;
     padding: 8px;
     text-align: center;
+}
+
+.global-alert .dismiss {
+    float: right;
+    height: 16px;
+    width: 16px;
+    overflow: auto;
+    background: url("/assets/packages/static/openvk/img/input_clear.gif") no-repeat 0 0;
+    opacity: 0.1;
+    transition-duration: 0.3s;
+}
+
+.global-alert .dismiss:hover {
+    opacity: 0.4;
 }
 
 #sudo-banner p {
