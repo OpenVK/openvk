@@ -206,7 +206,7 @@ final class Messages extends VKAPIRequestHandler
         $users = [];
         foreach ($convos as $convo) {
             $correspondents = $convo->getCorrespondents();
-            if ($correspondents[0]->getId() === $this->getUser()->getId()) {
+            if ($correspondents[0]->getId() == $this->getUser()->getId()) {
                 $peer = $correspondents[1];
             } else {
                 $peer = $correspondents[0];
@@ -239,26 +239,33 @@ final class Messages extends VKAPIRequestHandler
             $lastMessagePreview = null;
             if (!is_null($lastMessage)) {
                 $listConvo->last_message_id = $lastMessage->getId();
-
-                if ($lastMessage->getSender()->getId() === $this->getUser()->getId()) {
-                    $author = $lastMessage->getRecipient()->getId();
-                } else {
-                    $author = $lastMessage->getSender()->getId();
+                if ($lastMessage->isUnread()) {
+                    $listConvo->unread_count = 1;
                 }
+                
+                $listConvo->in_read = $convo->getLastReadedMessage($peer->getId())?->getId() ?? 0;
+                $listConvo->out_read = $convo->getLastReadedMessage($this->getUser()->getId())?->getId() ?? 0;
+                
+
+                $author = $lastMessage->getSender()->getId();
 
                 $lastMessagePreview             = new APIMsg();
                 $lastMessagePreview->id         = $lastMessage->getId();
-                $lastMessagePreview->user_id    = $author;
-                $lastMessagePreview->from_id    = $lastMessage->getSender()->getId();
+                $lastMessagePreview->from_id    = $author == $this->getUser()->getId() ? $this->getUser()->getId() : $peer->getId();
+                if (VKAPI_DECL_VER_MAJOR >= 5 && VKAPI_DECL_VER_MINOR >= 80) {
+                    $lastMessagePreview->peer_id = $peer->getId();
+                } else {
+                    $lastMessagePreview->user_id = $peer->getId();
+                    $lastMessagePreview->read_state = (int) !$lastMessage->isUnread();
+                }
                 $lastMessagePreview->date       = $lastMessage->getSendTime()->timestamp();
-                $lastMessagePreview->read_state = 1;
-                $lastMessagePreview->out        = (int) ($lastMessage->getSender()->getId() === $this->getUser()->getId());
+                $lastMessagePreview->out        = (int) ($author == $this->getUser()->getId());
                 $lastMessagePreview->body       = $lastMessage->getText(false);
                 $lastMessagePreview->text       = $lastMessage->getText(false);
                 $lastMessagePreview->emoji      = true;
 
                 if ($extended == 1) {
-                    $users[] = $author;
+                    $users[] = $peer->getId();
                 }
             }
 
@@ -330,7 +337,7 @@ final class Messages extends VKAPIRequestHandler
                     "last_conversation_message_id" => $user->getId(),
                     "in_read_cmid" => $user->getId(),
                     "out_read_cmid" => $user->getId(),
-                    "is_marked_unread" => $iterator[0]->isUnread(),
+                    "is_marked_unread" => 0,
                     "important" => false, // целестора когда релиз
                     "can_write" => [
                         "allowed" => ($user->getId() === $this->getUser()->getId() || $user->getPrivacyPermission('messages.write', $this->getUser()) === true),
@@ -397,12 +404,14 @@ final class Messages extends VKAPIRequestHandler
                         "local_id" => $user_id,
                         "type" => "user"
                     ],
-                    "in_read" => $dialogue->getLastMessage(true, $peer->getId())->getId(), // TODO: check if it's read
-                    "out_read" => $dialogue->getLastMessage(false, $peer->getId())->getId(),
                     "last_message_id" => $dialogue->getPreviewMessage()->getId(),
                 ]
             ]
         ];
+
+        
+        $output['conversations'][0]->in_read = $dialogue->getLastReadedMessage($peer->getId())?->getId() ?? 0; // TODO: check if it's read
+        $output['conversations'][0]->out_read = $dialogue->getLastReadedMessage($this->getUser()->getId())?->getId() ?? 0;
 
         if ($extended == 1) {
             $users[] = $this->getUser()->getId();

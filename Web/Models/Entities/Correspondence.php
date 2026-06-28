@@ -148,26 +148,32 @@ class Correspondence
      *
      * @returns Message|null - message, if any
      */
-    public function getLastMessage(bool $in, int $user_id): ?Message
+    public function getLastReadedMessage(int $user_id): ?Message
     {
-        $query  = file_get_contents(__DIR__ . "/../sql/get-messages.tsql");
+        $query = file_get_contents(__DIR__ . "/../sql/get-messages.tsql");
+        $query = str_replace("\n  AND (`id` > ?)", "\n  AND (`unread` = 0)", $query);
         $params = [
             [get_class($this->correspondents[0]), get_class($this->correspondents[1])],
             [$this->correspondents[0]->getId(), $this->correspondents[1]->getId()],
-            [1],
+            [1], // limit
+            [0], // offset
         ];
-        if ($in == true && $user_id == $this->correspondents[0]->getId() || $in == false && $user_id == $this->correspondents[1]->getId()) {
-            $params = array_merge($params[0], $params[1], $params[0], $params[1], $params[2]);
-        } elseif ($in == true && $user_id == $this->correspondents[1]->getId() || $in == false && $user_id == $this->correspondents[0]->getId()) {
-            $params = array_merge(array_reverse($params[0]), array_reverse($params[1]), array_reverse($params[0]), array_reverse($params[1]), $params[2]);
+
+        if ($user_id == $this->correspondents[0]->getId()) {
+            $params = array_merge($params[0], $params[1], $params[0], $params[1], $params[2], $params[3]);
+        } else if ($user_id == $this->correspondents[1]->getId()) {
+            $params = array_merge(array_reverse($params[0]), array_reverse($params[1]), array_reverse($params[0]), array_reverse($params[1]), $params[2], $params[3]);
         }
-        $query = str_replace("\n  AND (`id` > ?)", "", $query);
-        $params[] = 0;
-
-
-        $msgs = DatabaseConnection::i()->getConnection()->query($query, ...$params);
-        $msg = new ActiveRow((array) iterator_to_array($msgs)[0], $this->messages);
-        return new Message($msg);
+        
+        $connection = DatabaseConnection::i()->getConnection();
+        $msgs = $connection->query($query, ...$params);
+        $msgRow = $msgs->fetch();
+        if ($msgRow !== null) {
+            $msg = new ActiveRow((array) $msgRow, $this->messages);
+            return new Message($msg);
+        } else {
+            return null;
+        }
     }
 
     /**

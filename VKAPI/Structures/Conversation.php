@@ -11,6 +11,7 @@ final class Conversation
     public $chat_settings;
     public $in_read = 1;
     public $out_read = 1;
+    public $unread_count = 0;
     public $is_marked_unread = false;
     public $important = false;
     public $can_write;
