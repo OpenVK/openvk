@@ -1,11 +1,46 @@
-body.no-scroll {
+body.no-scroll .messenger-app--tab-messenger {
     overflow-y: hidden;
-    height: 100vh;
+    min-height: 100vh;
 }
 
-/*body.no-scroll .messenger-app--messages .messenger-app--messages-array {
-    overflow-y: auto;
-}*/
+body.no-scroll .toTop {
+    /*display: none; */
+}
+
+body.no-scroll #wrapH {
+    position: fixed;
+    top: 43px;
+    width: 630px;
+}
+
+body.no-scroll .page_footer {
+    display: none;
+}
+
+body.no-scroll .messenger-app--global-tabs {
+    position: fixed;
+    top: 65px;
+    padding-top: 8px;
+    background: white;
+}
+
+body.no-scroll .messages--peers-tabs {
+    position: fixed;
+    top: 97px;
+    padding: 8px 10px;
+    box-sizing: border-box;
+    width: 627px;
+    gap: 5px;
+}
+
+body.no-scroll .page_header {
+    position: fixed;
+}
+
+body.no-scroll .sidebar {
+    position: fixed;
+    top: 44px;
+}
 
 .crp-list {
     margin: 10px -6px -10px -11px;
@@ -125,7 +160,7 @@ body.no-scroll {
 
 .messages--actions {
     display: none;
-    position: absolute;
+    position: fixed;
     width: 100%;
     height: 50px;
     background: #000000;
@@ -138,9 +173,15 @@ body.no-scroll {
 .messenger-app--messages {
     display: flex;
     flex-direction: column;
-    /*justify-content: end;*/
     height: 70%;
-    overflow-y: auto;
+    padding-bottom: 26px;
+    min-height: 100vh;
+    margin-top: auto;
+}
+
+.messenger-app--messages .messenger-app--messages-array {
+    margin-top: auto;
+    padding-bottom: 60px;
 }
 
 .messenger-app--messages---message {
@@ -237,22 +278,27 @@ body.no-scroll {
 }
 
 .messenger-app {
-    width: 628px;
     height: 100%;
 }
 
 .messenger-app--tab-messenger {
-    margin: 0px 0px -10px -10px;
-    position: relative;
+    margin: 111px 0px -10px -10px;
+}
+
+.messenger-app,
+.messenger-app--input {
+    width: 628px;
 }
 
 .messenger-app--input {
+    box-sizing: border-box;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     background-color: #f9f9f9;
-    height: 80px !important;
     border-top: 1px solid #d6d6d6;
+    position: fixed;
+    bottom: 0px;
 }
 
 .messenger-app--input---messagebox {
@@ -292,6 +338,7 @@ body.no-scroll {
 .messages--peers-tabs .messages--peers-tab {
     display: flex;
     flex-direction: row;
+    gap: 3px;
 }
 
 .messages--peers-tabs .messages--peers-tab a {

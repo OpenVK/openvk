@@ -315,6 +315,11 @@ $(document).on("scroll", () => {
     const currentScrollTop = $(document).scrollTop();
     const navigation = $(".navigation");
 
+    if (window.im && window.im.is_active) {
+        window.im.messenger.view.onMessagesScroll()
+        return;
+    }
+
     if(navigation.find("#fastLogin").length > 0) return;
 
     const scrollNavigation = (top) => {

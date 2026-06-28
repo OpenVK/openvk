@@ -13,6 +13,7 @@ class Messenger {
     appear(container = null) {
         container.classList.remove('hidden');
         if (this.hasAppeared(container)) {
+            this.view._loadDraft(this.view.getCurrentChat())
             return;
         }
 
@@ -20,7 +21,6 @@ class Messenger {
         this.view.appEl = container.querySelector(".messenger-app");
         this.view.messagesListBlock = container.querySelector(".messenger-app--messages");
         this.view.messagesList = container.querySelector(".messenger-app--messages-array");
-        this.view._changeHeight();
 
         ko.applyBindings(this.view, container);
     }
@@ -98,8 +98,8 @@ class MessengerViewModel {
                 <a data-bind="text: 'unselect', event: { 'click': window.im.messenger.view.unselect }"></a>
             </div>
         </div>
-        <div class="messenger-app">
-            <div class="messenger-app--messages" data-bind="event: { scroll: onMessagesScroll }">
+        <div class="messenger-app" data-bind="event: { scroll: onMessagesScroll }">
+            <div class="messenger-app--messages">
                 <div class="messenger-app--messages-array" data-bind="foreach: { data: messages, as: 'chunk' } ">
                     <div class="messenger-app--messages-day">
                         <div class="messenger-app--messages-day-time">
@@ -187,19 +187,20 @@ class MessengerViewModel {
 
     async onMessagesScroll(model, e) {
         // Scroll event. If scroll < 21, tries to load more older messages
-        // If scroll is near at the end, tries to load 
+        // If scroll is near at the end, tries to load more newer messages if is neccessary
         if (this.is_loading()) {
             return;
         }
 
         this.is_loading(true);
-        const _scroll = e.target.scrollTop;
+        //const _scroll = e.target.scrollTop;
+        const _scroll = document.documentElement.scrollTop;
         // Scrolling up
         if (_scroll < 21) {
             await window.im.corresponder._messagesLoad_UpFromLastChunk();
         } else { // Scrolling down
-            // Take my heart and make me happy!
-            const scrollBottom = e.target.scrollHeight - _scroll - e.target.clientHeight
+            // Cocojambo
+            const scrollBottom = document.documentElement.scrollHeight - _scroll - document.documentElement.clientHeight
 
             if (scrollBottom < 10) {
                 if (window.im.corresponder._chunks_HasMoreNewerChunkRelativelyToCurrentChat()) {
@@ -359,7 +360,7 @@ class MessengerViewModel {
         }
 
         this.drafts[to_chat.peer.id] = this.currentDraft();
-        this.scrolls[to_chat.peer.id] = this.messagesListBlock.scrollTop;
+        this.scrolls[to_chat.peer.id] = document.documentElement.scrollTop;
         console.info('IM | Saved draft for peer ' + to_chat.peer.id);
         this._eraseCurrentDraft();
     }
@@ -394,15 +395,14 @@ class MessengerViewModel {
     }
 
     _scrollTo(scroll_progress) {
-        ko.tasks.schedule(() => {
-            this.messagesListBlock.scroll({
-                top: scroll_progress
-            });
+        console.log( this.scrolls)
+        document.documentElement.scroll({
+            top: scroll_progress
         });
     }
 
     _scrollToEnd() {
-        this._scrollTo(this.messagesListBlock.scrollHeight);
+        this._scrollTo(document.documentElement.scrollHeight);
     }
 
     _changeHeight() {
