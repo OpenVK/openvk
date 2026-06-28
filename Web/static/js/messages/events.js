@@ -159,12 +159,16 @@ class EventHandler {
         const _msg = ChatMessage.fromEvent(event);
 
         // finding conversation
-        const _crs = await window.im.conversations._findConvFromApi(_msg.peer_id);
-        const found = _crs.peer._findMessageById(_msg);
-        if (found) {
-            _crs.peer._pushNewMessage(_msg);
-        } else {
-            found.data = _msg.data;
-        }
+        setTimeout(async () => {
+            console.log('IM | New message with id '+ _msg.id)
+            const _crs = await window.im.conversations._findConvFromApi(_msg.peer_id);
+            const found = _crs.peer._findMessageById(_msg.id);
+            if (found == null) {
+                _crs.peer._pushNewMessage(_msg);
+            } else {
+                found.data = _msg.data;
+                window.im.messenger.view._triggerUpdate();
+            }
+        }, 100) // longpoll is faster than messages.send result
     }
 }

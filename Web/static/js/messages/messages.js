@@ -86,7 +86,9 @@ class DayChunk extends MessagesChunk {
 }
 
 class ChatGeneralForm {
-    static swag = 2000000000;
+    // Representation of User, Club or Chat. Its not divided to the "info" part and messages part
+
+    static swag = 2000000000; // ids of the chats are bigger than that number
     static MESSAGES_PER_PAGE = 20;
     static base_fields = 'photo_100'
 
@@ -105,6 +107,14 @@ class ChatGeneralForm {
             case 'chat':
                 return this.data.id + this.swag;
         }
+    }
+
+    get is_deleted_by_me() {
+        return this.data.deleted_by_me == 1
+    }
+
+    get is_deleted() {
+        return this.data.deleted == 1
     }
 
     get supposed_type() {
@@ -168,6 +178,10 @@ class ChatGeneralForm {
 
     get messages() {
         const fnl = [];
+        if (this._cached_all_messages != undefined) {
+            return this._cached_all_messages
+        }
+
         this.chunks.forEach(chunk => {
             chunk.getMessages().forEach(msg => {
                 fnl.push(msg);
@@ -175,6 +189,7 @@ class ChatGeneralForm {
             })
         });
 
+        this._cached_all_messages = fnl;
         return fnl;
     }
 
@@ -201,6 +216,10 @@ class ChatGeneralForm {
         dayChunks.sort((a, b) => a.date.localeCompare(b.date));
 
         return dayChunks;
+    }
+
+    _removeCache() {
+        this._cached_all_messages = undefined
     }
 
     static async resolveById(id) {
@@ -274,19 +293,18 @@ class ChatGeneralForm {
             'message': msg.text,
             'attachments': msg.str_attachments,
         }); // returns id
-
         msg.data.id = resp
         console.info('IM | Sent message to ' + this.id)
     }
 
-    _findMessageById(msg) {
+    _findMessageById(id) {
         let f = null;
         this.messages.forEach(e => {
             if (f != null) {
                 return;
             }
 
-            if (e.id == msg.msg) {
+            if (e.id == id) {
                 f = e;
             }
         })
@@ -297,6 +315,7 @@ class ChatGeneralForm {
     _pushNewMessage(msg) {
         console.log('IM | Pushed msg ', msg)
         this._getLatestChunk()._pushMessage(msg);
+        this._removeCache()
         window.im.messenger.view._triggerUpdate();
     }
 
@@ -354,11 +373,17 @@ class ChatGeneralForm {
             console.log('IM | End of chat ' +this.id+ ' is reached!')
         }
 
-        setTimeout(() => {
-            let new_scroll = prev_scroll + (window.im.messenger.view.messagesListBlock.scrollHeight - prev_height);
+        if (!this._end_reached) {
+            setTimeout(() => {
+                let new_scroll = prev_scroll + (window.im.messenger.view.messagesListBlock.scrollHeight - prev_height);
 
-            window.im.messenger.view._scrollTo(new_scroll)
-        }, 1)
+                window.im.messenger.view._scrollTo(new_scroll)
+            }, 1)
+        }
+    }
+
+    _chunks_HasMoreNewerChunkRelativelyToCurrentChat() {
+        return false;
     }
 }
 
@@ -478,6 +503,16 @@ class ChatMessage {
         msg._guessSender();
 
         return msg;
+    }
+
+    setDeleted(by_me = false) {
+        // I'm afraid to remove message from array, so it will just remove text and attachment
+        this.data.deleted = 1;
+        if (by_me) {
+            this.data.deleted_by_me = 1;
+        }
+        this.data.text = tr('message_is_deleted');
+        this.data.attachments = [];
     }
 
     setText(text) {

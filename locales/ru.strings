@@ -1340,6 +1340,8 @@
 "messenger_tab_conversations" = "Диалоги";
 "messenger_tab_messenger" = "Сообщения";
 
+"message_is_deleted" = "Сообщение удалено";
+
 /* Polls */
 "poll" = "Опрос";
 "create_poll" = "Новый опрос";
