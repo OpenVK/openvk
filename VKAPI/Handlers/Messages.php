@@ -195,7 +195,7 @@ final class Messages extends VKAPIRequestHandler
         return 1;
     }
 
-    public function getConversations(int $offset = 0, int $count = 20, string $filter = "all", int $extended = 0, string $fields = ""): object
+    public function getConversations(int $offset = 0, int $count = 20, string $filter = "all", int $extended = 1, string $fields = ""): object
     {
         $this->requireUser();
 
@@ -221,9 +221,19 @@ final class Messages extends VKAPIRequestHandler
                 "local_id" => $peer->getId(),
             ];
 
-            $canWrite = $peer->getSubscriptionStatus($this->getUser()) === 3;
-            $listConvo->can_write = [
-                "allowed" => $canWrite,
+            if ($peer->getPrivacyPermission('messages.write', $this->getUser())) {
+                $listConvo->can_write = [
+                    "allowed" => true,
+                ];
+            } else {
+                $listConvo->can_write = [
+                    "allowed" => false,
+                    "reason" => 901,
+                ];
+            }
+            $listConvo->chat_settings = (object) [
+                "title" => "",
+                "active_ids" => [],
             ];
 
             $lastMessagePreview = null;
@@ -270,7 +280,8 @@ final class Messages extends VKAPIRequestHandler
             return (object) [
                 "count"    => $convosCount,
                 "items"    => $list,
-                "profiles" => (!empty($users) ? (new APIUsers())->get(implode(',', $users), $fields, 0, $count + 1) : []),
+                "profiles" => (!empty($users) ? (new APIUsers())->get(implode(',', $users), $fields . ',photo_50,photo_100,photo_200', 0, $count + 1) : []),
+                "groups"   => []
             ];
         }
     }
@@ -360,7 +371,11 @@ final class Messages extends VKAPIRequestHandler
 
             $rMsg = new APIMsg();
             $rMsg->id         = $msgU->id;
-            $rMsg->user_id    = $msgU->sender_id === $this->getUser()->getId() ? $msgU->recipient_id : $msgU->sender_id;
+            if (VKAPI_DECL_VER_MAJOR >= 5 && VKAPI_DECL_VER_MINOR >= 38) {
+                $rMsg->peer_id = $msgU->sender_id == $this->getUser()->getId() ? $msgU->recipient_id : $msgU->sender_id;
+            } else {
+                $rMsg->user_id = $msgU->sender_id == $this->getUser()->getId() ? $msgU->recipient_id : $msgU->sender_id;
+            }
             $rMsg->from_id    = $msgU->sender_id;
             $rMsg->date       = $msgU->created;
             $rMsg->read_state = 1;
@@ -375,6 +390,18 @@ final class Messages extends VKAPIRequestHandler
         $output = [
             "count" => sizeof($results),
             "items" => $results,
+            "conversations" => [
+                (object) [
+                    "peer" => (object) [
+                        "id" => $user_id,
+                        "local_id" => $user_id,
+                        "type" => "user"
+                    ],
+                    "in_read" => $dialogue->getLastMessage(true, $peer->getId())->getId(), // TODO: check if it's read
+                    "out_read" => $dialogue->getLastMessage(false, $peer->getId())->getId(),
+                    "last_message_id" => $dialogue->getPreviewMessage()->getId(),
+                ]
+            ]
         ];
 
         if ($extended == 1) {

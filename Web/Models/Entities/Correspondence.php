@@ -144,6 +144,33 @@ class Correspondence
     }
 
     /**
+     * Get last message from correspondence from user.
+     *
+     * @returns Message|null - message, if any
+     */
+    public function getLastMessage(bool $in, int $user_id): ?Message
+    {
+        $query  = file_get_contents(__DIR__ . "/../sql/get-messages.tsql");
+        $params = [
+            [get_class($this->correspondents[0]), get_class($this->correspondents[1])],
+            [$this->correspondents[0]->getId(), $this->correspondents[1]->getId()],
+            [1],
+        ];
+        if ($in == true && $user_id == $this->correspondents[0]->getId() || $in == false && $user_id == $this->correspondents[1]->getId()) {
+            $params = array_merge($params[0], $params[1], $params[0], $params[1], $params[2]);
+        } elseif ($in == true && $user_id == $this->correspondents[1]->getId() || $in == false && $user_id == $this->correspondents[0]->getId()) {
+            $params = array_merge(array_reverse($params[0]), array_reverse($params[1]), array_reverse($params[0]), array_reverse($params[1]), $params[2]);
+        }
+        $query = str_replace("\n  AND (`id` > ?)", "", $query);
+        $params[] = 0;
+
+
+        $msgs = DatabaseConnection::i()->getConnection()->query($query, ...$params);
+        $msg = new ActiveRow((array) iterator_to_array($msgs)[0], $this->messages);
+        return new Message($msg);
+    }
+
+    /**
      * Send message.
      *
      * @deprecated
