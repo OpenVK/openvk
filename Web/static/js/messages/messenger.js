@@ -49,7 +49,10 @@ class Messenger {
 class MessengerViewModel {
     constructor() {
         this.msg_template_ko = `
-        <div class="messenger-app--messages---message" data-bind="css: { 'msg-selected': window.im.messenger.view.isMessageSelected(msg), 'same-author': $index() > 0 && chunk.messages[$index() - 1].doHideHead(msg)}, event: { click: function() { window.im.messenger.view.toggleMessageSelection(msg) } }">
+        <div class="messenger-app--messages---message" data-bind="css: { 
+        'msg-selected': window.im.messenger.view.isMessageSelected(msg), 
+        'same-author': $index() > 0 && chunk.messages[$index() - 1].doHideHead(msg)}, 
+        event: { click: function() { window.im.messenger.view.toggleMessageSelection(msg) } }">
             <div class="messenger-app--messages---message--wrap">
                 <div class="_avatar">
                     <img class="ava" data-bind="attr: { src: sender.avatar_any, alt: sender.full_name }" />
@@ -138,20 +141,26 @@ class MessengerViewModel {
 
             return _chat.peer.divided_messages;
         });
+
+        // consts
+        this.MAX_SELECTED_MESSAGES = 100;
     }
 
     _triggerUpdate() {
+        // Updates messages and conversations.
         this._triggerUpdateSlightly();
         window.im.conversations.view._update();
     }
 
     _triggerUpdateSlightly() {
+        // Updates messages.
         this.messagesTrigger(this.messagesTrigger() + 1);
     }
 
     // Events
 
     onTextareaKeyPress(model, e) {
+        // Clicking "Enter" at textarea
         const ta = e.target;
         if(e.which === 13) {
             if(!e.metaKey && !e.shiftKey) {
@@ -167,6 +176,7 @@ class MessengerViewModel {
     }
 
     toggleMessageSelection(model, e) {
+        // Toggles message selection.
         if (!this.isMessageSelected(model)) {
             this.selectMessage(model);
         } else {
@@ -176,15 +186,30 @@ class MessengerViewModel {
     }
 
     async onMessagesScroll(model, e) {
+        // Scroll event. If scroll < 21, tries to load more older messages
+        // If scroll is near at the end, tries to load 
         if (this.is_loading()) {
             return;
         }
 
         this.is_loading(true);
         const _scroll = e.target.scrollTop;
-        // Прокрутка вверх
+        // Scrolling up
         if (_scroll < 21) {
             await window.im.corresponder._messagesLoad_UpFromLastChunk();
+        } else { // Scrolling down
+            // Take my heart and make me happy!
+            const scrollBottom = e.target.scrollHeight - _scroll - e.target.clientHeight
+
+            if (scrollBottom < 10) {
+                if (window.im.corresponder._chunks_HasMoreNewerChunkRelativelyToCurrentChat()) {
+                    console.log('IM | Scrolled to the beginning')
+                }
+            }
+
+            if (scrollBottom > 600) {
+                console.log('IM | Scrolled too up')
+            }
         }
         this.is_loading(false);
     }
@@ -204,31 +229,42 @@ class MessengerViewModel {
     }
 
     get selected_messages_count() {
+        // Count of the selected messages
         return this.selected_messages().length;
     }
 
     callDeletion() {
+        // Shows deletion confirmation. The messages that are going to be deleted are the selected messages
         const ids = this.selected_messages();
+        console.log('IM | Going to delete ' + ids.length + ' messages')
+        const current_chat = this.getCurrentChat();
         const msg = new CMessageBox({
-            title: ids.length,
+            title: 'MESAGE DELETIONS',
             body: 'SURE?',
             buttons: ['YESSS', 'No'],
             callbacks: [async () => {
                 const delete_for_all = true;
                 let ids2 = [];
                 ids.forEach(item => {
-                    ids2.push(this.getCurrentChat().peer.id + '_' + item);
+                    let m = current_chat.peer._findMessageById(item);
+                    ids2.push(current_chat.peer.id + '_' + item);
+                    m.setDeleted(true);
                 })
+                this._triggerUpdate();
+                this.unselect()
 
-                await window.OVKAPI.call('messages.delete', {
+                // there will be deletion event received
+                /*await window.OVKAPI.call('messages.delete', {
                     'message_ids': ids2,
                     'delete_for_all': Number(delete_for_all)
-                });
+                });*/
+
             }, () => {}]
         })
     }
 
     unselect() {
+        // Removes selection from all messages
         this.selected_messages([]);
     }
 
@@ -251,14 +287,15 @@ class MessengerViewModel {
         this._eraseCurrentDraft();
     }
 
-    // why these methods are there???
     // Chat tabs
 
     hasChat(conversation) {
+        // Is tab with this conversation exists.
         return this.opened_tabs().indexOf(conversation) != -1;
     }
 
     getChatWith(chat_general_form) {
+        // Finds conversation object or returns new from chat
         let is = null;
 
         window.im.conversations.convs.forEach(item => {
@@ -278,8 +315,10 @@ class MessengerViewModel {
     }
 
     setChat(conv, pushstate = true) {
+        // Selects another chat
         console.log('IM | Set chat to ' + conv.peer.id);
         this.current_chat(this.opened_tabs().indexOf(conv));
+        this.unselect()
 
         if (pushstate) {
             window.im._pushState('/im?sel=' + conv.peer.id);
@@ -287,10 +326,12 @@ class MessengerViewModel {
     }
 
     addChat(conv) {
+        // Opens tab with some peer
         return this.opened_tabs.push(conv) - 1;
     }
 
     getCurrentChat() {
+        // Gets opened chat tab
         return this.opened_tabs()[this.current_chat()];
     }
 
@@ -305,13 +346,14 @@ class MessengerViewModel {
     }
 
     closeChat(conv) {
+        // Removes tab with this conversation
         this.opened_tabs.remove(conv);
     }
 
     // Drafts
 
     _saveDraft(to_chat) {
-        // Also saves scroll progress
+        // Saves text at textarea and saves scroll
         if (!to_chat) {
             return;
         }
@@ -323,31 +365,13 @@ class MessengerViewModel {
     }
 
     _eraseDraftFor(chat) {
+        // Removes draft (when it was sent or smth)
         this.drafts[chat.peer.id] = undefined;
         console.info('erased draft for ' + chat.peer.id);
     }
 
     _eraseCurrentDraft() {
         this.currentDraft('');
-    }
-
-    _scrollTo(scroll_progress) {
-        ko.tasks.schedule(() => {
-            this.messagesListBlock.scroll({
-                top: scroll_progress
-            });
-        });
-    }
-
-    _scrollToEnd() {
-        this._scrollTo(this.messagesListBlock.scrollHeight);
-    }
-
-    // todo change
-    _changeHeight() {
-        let maybe_distance = 100;
-        let tabs_height = u('.messages--peers-tabs').nodes[0].clientHeight;
-        this.appEl.parentNode.style.height = window.outerHeight - tabs_height - maybe_distance + 'px';
     }
 
     _loadDraft(for_chat) {
@@ -367,6 +391,24 @@ class MessengerViewModel {
         } else {
             this._scrollToEnd();
         }
+    }
+
+    _scrollTo(scroll_progress) {
+        ko.tasks.schedule(() => {
+            this.messagesListBlock.scroll({
+                top: scroll_progress
+            });
+        });
+    }
+
+    _scrollToEnd() {
+        this._scrollTo(this.messagesListBlock.scrollHeight);
+    }
+
+    _changeHeight() {
+        let maybe_distance = 100;
+        let tabs_height = u('.messages--peers-tabs').nodes[0].clientHeight;
+        this.appEl.parentNode.style.height = window.outerHeight - tabs_height - maybe_distance + 'px';
     }
 }
 

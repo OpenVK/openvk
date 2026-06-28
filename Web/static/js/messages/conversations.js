@@ -49,6 +49,7 @@ class ConversationsViewModel {
 class Conversations {
     constructor() {
         this.total_convs = 0;
+        this.CONVERSATIONS_PER_PAGE = 100;
         this.template = `
         <div class="crp-list">
             <div>
@@ -98,11 +99,11 @@ class Conversations {
         return new ChatGeneralForm(_n);
     }
 
-    async getConversations(offset = 0, count = 100) {
+    async getConversations(offset = 0) {
         // adding profiles to conversation items
         let convs = await window.OVKAPI.call("messages.getConversations", {
             extended: 1,
-            count: count,
+            count: this.CONVERSATIONS_PER_PAGE,
             offset: offset,
             fields: ChatGeneralForm.base_fields
         });
