@@ -35,4 +35,6 @@ test.describe('Public pages', () => {
     await page.goto('/reg');
     await expect(page.locator('.page_body')).toHaveScreenshot('reg.png');
   });
+
+
 });
