@@ -219,6 +219,9 @@ class Conversations {
         }
 
         this.node = container.insertAdjacentHTML('beforeend', this.template);
+        document.documentElement.scroll({
+            top: 0
+        })
 
         ko.applyBindings(this.view, container);
     }

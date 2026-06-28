@@ -140,7 +140,7 @@ window.im = new (class {
     // Tabs
     _initTabs() {
         this.root.insertAdjacentHTML('beforeend', `
-            <div class=".messenger-app--global-tabs tabs"></div>
+            <div class="messenger-app--global-tabs tabs"></div>
         `);
 
         this.tabs.forEach(tab => {
@@ -204,6 +204,11 @@ window.im = new (class {
         } else {
             u('body').removeClass('no-scroll');
         }
+    }
+
+    get is_active() {
+        const is_chat_page = location.pathname.startsWith('/im')
+        return this.tab == 'messenger' && is_chat_page
     }
 
     // Current corresponder
