@@ -382,7 +382,7 @@ class Document extends Media
     {
         $res = new \stdClass();
         $res->id = $this->getId();
-        if ($this->getOwnerID() == $user->getId() && $this->isOwnerHidden()) {
+        if ($this->isOwnerHidden() && $user !== null && $this->getOwnerID() == $user->getId()) {
             $res->owner_id = $this->getOwnerID();
         } elseif (!$this->isOwnerHidden()) {
             $res->owner_id = $this->getOwnerID();
