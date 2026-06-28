@@ -26,8 +26,11 @@ final class Users extends VKAPIRequestHandler
             $user_ids = (string) $authuser->getId();
         }
 
-
-        $usrs = explode(',', $user_ids);
+        if (!empty($user_ids)) {
+            $usrs = explode(',', $user_ids);
+        } else {
+            $usrs = [];
+        }
         $response = [];
 
         $ic = sizeof($usrs);
@@ -39,7 +42,7 @@ final class Users extends VKAPIRequestHandler
         $usrs = array_slice($usrs, $offset * $count);
 
         for ($i = 0; $i < $ic; $i++) {
-            if ($usrs[$i] != 0) {
+            if ((int) $usrs[$i] != 0) {
                 $usr = $users->get((int) $usrs[$i]);
                 if (is_null($usr) || $usr->isDeleted()) {
                     $response[$i] = (object) [
