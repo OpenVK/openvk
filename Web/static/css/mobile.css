@@ -37,7 +37,7 @@
     }
 
     .cookies-popup {
-        height: 160px;
+        height: fit-content;
         font-size: 17px;
     }
 
