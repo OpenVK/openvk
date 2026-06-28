@@ -7,7 +7,7 @@ namespace openvk\Web\Models\Entities;
 use Chandler\Database\DatabaseConnection;
 use Chandler\Signaling\SignalManager;
 use Chandler\Security\Authenticator;
-use openvk\Web\Events\NewMessageEvent;
+use openvk\Web\Events\{NewMessageEvent, TypingEvent};
 use openvk\Web\Models\Entities\Message;
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\RowModel;
@@ -209,5 +209,22 @@ class Correspondence
         }
 
         return $message;
+    }
+
+    /**
+     * Send typing event.
+     *
+     * @returns true|false
+     */
+    public function sendTypingEvent()
+    {
+        $ids     = [$this->correspondents[0]->getId(), $this->correspondents[1]->getId()];
+
+        if ($ids[0] !== $ids[1]) {
+            $event = new TypingEvent($ids[0]);
+            (SignalManager::i())->triggerEvent($event, $ids[1]);
+        }
+
+        return true;
     }
 }

@@ -175,4 +175,23 @@ final class MessengerPresenter extends OpenVKPresenter
         header("Content-Type: application/json");
         exit(json_encode($msg->simplify()));
     }
+
+    public function renderApiSendTypingStatus(int $sel): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        $sel = $this->getCorrespondent($sel);
+        if ($sel->getId() !== $this->user->id && !$sel->getPrivacyPermission('messages.write', $this->user->identity)) {
+            header("HTTP/1.1 403 Forbidden");
+            exit();
+        }
+
+        $cor = new Correspondence($this->user->identity, $sel);
+        $result = $cor->sendTypingEvent();
+
+        header("HTTP/1.1 202 Accepted");
+        header("Content-Type: application/json");
+        exit(json_encode($result));
+    }
 }

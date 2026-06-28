@@ -41,6 +41,9 @@
                     </div>
                 </div>
             </div>
+            <div class="messenger-app--typing-status" style="display:none;opacity:0;">
+                {tr('message_user_typing', $correspondent->getFirstName())}
+            </div>
         </div>
         <div class="messenger-app--input">
             {if $correspondent->getId() === $thisUser->getId() || $correspondent->getPrivacyPermission('messages.write', $thisUser)}
@@ -100,7 +103,10 @@
             constructor(messages = []) {
                 this.ko     = ko.applyBindings(new MessengerViewModel(messages));
                 this.appEl  = document.querySelector(".messenger-app--messages");
+                this.typeEl = document.querySelector(".messenger-app--typing-status");
                 this.offset = 0;
+                
+                this.typingTimer = null;
                 
                 this._loadHistory();
                 this._setupListener();
@@ -127,15 +133,22 @@
                         let data = JSON.parse(xhr.responseText);
                         data.forEach(event => {
                             event = event.event;
-                            if(event.type !== "newMessage")
-                                return;
-                            else if(event.message.sender.id !== {$correspondent->getId()})
-                                return;
-                            else if(this.offset >= event.message.uuid)
+                            if(this.offset >= event.message.uuid)
                                 return void(console.warn("Gay message recieved, skipping. [-WHeterosexual]"));
                             
-                            this.addMessage(event.message);
-                            this.offset = event.message.uuid;
+                            switch (event.type) {
+                                case "newMessage":
+                                    if(event.message.sender.id === {$correspondent->getId()}) {
+                                        this.addMessage(event.message);
+                                        this.offset = event.message.uuid;
+                                    }
+                                    break;
+                                case "typing":
+                                    if(event.message === {$correspondent->getId()}) {
+                                        this.setTypingStatus();
+                                    }
+                                    break;
+                            }
                         });
                         
                         listenLongpool();
@@ -160,6 +173,19 @@
                 if(scroll) {
                     this.appEl.scrollTop = this.appEl.scrollHeight;
                 }
+            }
+            
+            setTypingStatus() {
+                if (this.typeEl.style.display == "block" && this.typeTimer !== null) {
+                    clearTimeout(this.typeTimer);
+                }
+                this.typeEl.style.opacity = 1;
+                this.typeEl.style.display = "block";
+                this.typeTimer = setTimeout(() => {
+                    setTimeout(() => { this.typeEl.style.display = "none" }, 250);
+                    this.typeEl.style.opacity = 0;
+                    this.typeTimer = null;
+                }, 6000);
             }
             
             _patchMessage(tempId, message) {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace openvk\VKAPI\Handlers;
 
-use openvk\Web\Events\NewMessageEvent;
+use openvk\Web\Events\{NewMessageEvent, TypingEvent};
 use openvk\Web\Models\Entities\{Correspondence, Message};
 use openvk\Web\Models\Repositories\{Messages as MSGRepo, Users as USRRepo};
 use openvk\VKAPI\Structures\{Message as APIMsg, Conversation as APIConvo};
@@ -521,5 +521,31 @@ final class Messages extends VKAPIRequestHandler
         }
 
         return 1;
+    }
+
+    public function setActivity(int $user_id = 0, string $type = "typing", int $peer_id = 0)
+    {
+        if (empty($user_id) && empty($peer_id)) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: user_id or peer_id");
+        } elseif (empty($peer_id)) {
+            $peer_id = $user_id;
+        }
+    
+        $peer = $this->resolvePeer($peer_id, $peer_id);
+        $peer = (new USRRepo())->get($peer);
+
+        if (!$peer) {
+            $this->fail(936, "There is no peer with this id");
+        }
+
+        $chat = new Correspondence($this->getUser(), $peer);
+
+        switch ($type) {
+            case "typing":
+                return (int) $chat->sendTypingEvent();
+                break;
+            default:
+                $this->fail(1, "Not implemented");
+        }
     }
 }
