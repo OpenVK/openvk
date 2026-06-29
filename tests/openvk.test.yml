@@ -3,6 +3,10 @@ openvk:
     appearance:
         name: "OpenVK Test"
         motd: "Screenshot Test Instance"
+    
+    mirrors: # list all existing and previous domains without www. Won't work with different port
+        - "ovk.localhost"
+        - "ovk.local"
 
     preferences:
         femaleGenderPriority: true
@@ -85,6 +89,10 @@ openvk:
             links: []
         adPoster:
             enable: false
+        siteAlert:
+            enable: false
+            text: "Global alert example <b>with HTML</b>"
+            canBeDismissed: true
         bellsAndWhistles:
             testLabel: false
         defaultMobileTheme: ""
