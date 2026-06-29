@@ -304,9 +304,9 @@ class Playlist extends MediaCollection
         $props[] = tr("audios_count", $this->size());
         $props[] = "<span id='listensCount'>" . tr("listens_count", $this->getListens()) . "</span>";
         if ($length > 0) {
-            $props[] = "<span>".tr("minutes_count", $length)."</span>";
+            $props[] = "<span>" . tr("minutes_count", $length)."</span>";
         }
-        $props[] = "<span>".tr("created_playlist") . " " . $this->getPublicationTime() . "</span>";
+        $props[] = "<span>" . tr("created_playlist") . " " . $this->getPublicationTime() . "</span>";
         # if($this->getEditTime()) $props[] = tr("updated_playlist") . " " . $this->getEditTime();
 
         return implode(" <span class='tire'>•</span> ", $props);
