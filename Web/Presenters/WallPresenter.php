@@ -193,7 +193,7 @@ final class WallPresenter extends OpenVKPresenter
         $ids[] = $this->user->id;
 
         $perPage = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);
-        $withAlienWallPosts = (int) ($_GET["with_alien_wall_posts"] ?? 0);
+        $withAlienWallPosts = (int) ($this->queryParam("with_alien_wall_posts") ?? 0);
 
         $wallCondition = "(`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`)";
         if ($withAlienWallPosts === 1) {
@@ -230,7 +230,7 @@ final class WallPresenter extends OpenVKPresenter
         $page  = (int) ($_GET["p"] ?? 1);
         $pPage = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);
 
-        $withAlienWallPosts = (int) ($_GET["with_alien_wall_posts"] ?? 0);
+        $withAlienWallPosts = (int) ($this->queryParam("with_alien_wall_posts") ?? 0);
 
         $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) LEFT JOIN `profiles` ON LEAST(`posts`.`wall`, 0) = 0 AND `profiles`.`id` = ABS(`posts`.`wall`)";
         if ($withAlienWallPosts === 1) {
