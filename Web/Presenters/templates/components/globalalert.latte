@@ -4,31 +4,30 @@
 </div>
 
 <script>
-    let cookie = decodeURIComponent(document.cookie).split(";");
+    let cookie = document.cookie.split(";");
     let alertElement = u('.global-alert').nodes[0];
+    let alertContent = '';
     if (alertElement) {
-        let alertContent = encodeURI(alertElement.innerText);
+        alertContent = encodeURI(alertElement.innerText);
         let alertDismissed = false;
-        for(let i = 0; i < cookie.length; i++) {
+        for (let i = 0; i < cookie.length; i++) {
             let c = cookie[i].trim();
-            while (c.charAt(0) == ' ') {
-                c = c.substring(1);
-            }
-            if(c == "alertDismissed=" + alertContent) {
+            
+            if (c == "alertDismissed=" + alertContent) {
                 alertDismissed = true;
                 break;
             }
         }
-        if(!alertDismissed) {
+        if (!alertDismissed) {
             u(".global-alert").nodes[0].style.display = "block";
         }
+    }
 
-        function dismissGlobalAlert() {
-            let expires = (new Date(Date.now() + 40000000000)).toUTCString();
-            
-            document.cookie = "alertDismissed=" + alertContent + ";expires=" + expires + ";SameSite=Strict";
-            u(".global-alert").nodes[0].style.display = "none";
-        }
+    function dismissGlobalAlert() {
+        let expires = (new Date(Date.now() + 40000000000)).toUTCString();
+        
+        document.cookie = "alertDismissed=" + alertContent + ";expires=" + expires + ";SameSite=Strict";
+        u(".global-alert").nodes[0].style.display = "none";
     }
     
 </script>
