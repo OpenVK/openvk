@@ -304,12 +304,12 @@ class Playlist extends MediaCollection
         $props[] = tr("audios_count", $this->size());
         $props[] = "<span id='listensCount'>" . tr("listens_count", $this->getListens()) . "</span>";
         if ($length > 0) {
-            $props[] = tr("minutes_count", $length);
+            $props[] = "<span>".tr("minutes_count", $length)."</span>";
         }
-        $props[] = tr("created_playlist") . " " . $this->getPublicationTime();
+        $props[] = "<span>".tr("created_playlist") . " " . $this->getPublicationTime() . "</span>";
         # if($this->getEditTime()) $props[] = tr("updated_playlist") . " " . $this->getEditTime();
 
-        return implode(" • ", $props);
+        return implode(" <span class='tire'>•</span> ", $props);
     }
 
     public function isUnlisted(): bool

@@ -393,7 +393,7 @@
             <p>{tr("additional_fields_description", ovkGetQuirk("users.max-fields"))}</p>
             <form id="additional_fields_form" method="POST" enctype="multipart/form-data">
                 <div class="edit_field_container_inserts">
-                    <table data-iterator="{$f_iterator}" class="outline_table edit_field_container_item" width="80%" border="0" align="center" n:foreach="$thisUser->getAdditionalFields() as $field">
+                    <table data-iterator="{$f_iterator}" class="flexible_table outline_table edit_field_container_item" width="80%" border="0" align="center" n:foreach="$thisUser->getAdditionalFields() as $field">
                         <tbody>
                             <tr>
                                 <td width="150">

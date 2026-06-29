@@ -285,7 +285,7 @@ function isMobileAndExpanded() {
 }
 
 u(document).on('click', '.page_header', (e) => {
-    if (window.innerWidth < 770 && !e.target.closest('.link')) {
+    if (isMobile() && !e.target.closest('.link')) {
         e.preventDefault();
         e.stopPropagation();
 

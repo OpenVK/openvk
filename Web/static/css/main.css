@@ -719,6 +719,20 @@ input[type="number"] {
     padding: 10px;
 }
 
+.reg_h4 {
+    margin-left: 60px;
+}
+
+#reg_block {
+    margin: 10px;
+}
+
+#reg_checkbox {
+    margin-left: 100px; 
+    margin-right: 100px;
+    text-align: center;
+}
+
 .left_small_block {
     float: left;
     width: 200px;
@@ -777,6 +791,11 @@ input[type="number"] {
 
 .content {
     padding: 8px;
+}
+
+.content .list_view_item_actions {
+    max-width: 150px;
+    min-width: unset !important;
 }
 
 .content-withouttop {

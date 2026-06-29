@@ -198,7 +198,7 @@ function showIncreaseRatingDialog(coinsCount, userUrl, hash) {
             <a href="/settings?act=finance.top-up">${tr("apply_voucher")} &raquo;</a>
         </div>
         <form action="/increase_social_credits" method="post" id="increase_rating_form" style="margin-top: 30px">
-            <table cellspacing="7" cellpadding="0" border="0" align="center">
+            <table class="flexible_table" cellspacing="7" cellpadding="0" border="0" align="center">
                 <tbody>
                     <tr>
                         <td width="120" valign="top">
@@ -318,6 +318,10 @@ let lastScrollTop = 0;
 $(document).on("scroll", () => {
     const currentScrollTop = $(document).scrollTop();
     const navigation = $(".navigation");
+
+    if (window.isMobile && isMobile()) {
+        return;
+    }
 
     if(navigation.find("#fastLogin").length > 0) return;
 
