@@ -4,27 +4,31 @@
 </div>
 
 <script>
-    let cookie = document.cookie.split(";");
-    let alertContent = encodeURI(u('.global-alert').nodes[0].innerText);
-    let alertDismissed = false;
-    for(let i = 0; i < cookie.length; i++) {
-        let c = cookie[i].trim();
-        while (c.charAt(0) == ' ') {
-            c = c.substring(1);
+    let cookie = decodeURIComponent(document.cookie).split(";");
+    let alertElement = u('.global-alert').nodes[0];
+    if (alertElement) {
+        let alertContent = encodeURI(alertElement.innerText);
+        let alertDismissed = false;
+        for(let i = 0; i < cookie.length; i++) {
+            let c = cookie[i].trim();
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if(c == "alertDismissed=" + alertContent) {
+                alertDismissed = true;
+                break;
+            }
         }
-        if(c == "alertDismissed=" + alertContent) {
-            alertDismissed = true;
-            break;
+        if(!alertDismissed) {
+            u(".global-alert").nodes[0].style.display = "block";
         }
-    }
-    if(!alertDismissed) {
-        u(".global-alert").nodes[0].style.display = "block";
-    }
 
-    function dismissGlobalAlert() {
-        let expires = (new Date(Date.now() + 40000000000)).toUTCString();
-        
-        document.cookie = "alertDismissed=" + alertContent + ";expires=" + expires + ";SameSite=Strict";
-        u(".global-alert").nodes[0].style.display = "none";
+        function dismissGlobalAlert() {
+            let expires = (new Date(Date.now() + 40000000000)).toUTCString();
+            
+            document.cookie = "alertDismissed=" + alertContent + ";expires=" + expires + ";SameSite=Strict";
+            u(".global-alert").nodes[0].style.display = "none";
+        }
     }
+    
 </script>
