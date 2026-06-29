@@ -25,7 +25,11 @@
             <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/resource/xmas.css" />
         {/if}
     {else}
-        {css "css/main.css"}
+        {if $isRtl}
+            {css "css/main-rtl.css"}
+        {else}
+            {css "css/main.css"}
+        {/if}
         {css "css/bsdn.css"}
         {css "css/dialog.css"}
         {css "css/notifications.css"}
