@@ -1,5 +1,5 @@
 import { test, expect } from '../fixtures.js';
-import { acceptCookies } from '../helpers.js';
+import { acceptCookies, loginAsAlice } from '../helpers.js';
 
 test.describe('Public pages', () => {
   test.beforeEach(async ({ page }) => {
@@ -36,5 +36,31 @@ test.describe('Public pages', () => {
     await expect(page.locator('.page_body')).toHaveScreenshot('reg.png');
   });
 
+  test('shows language page', async ({ page }) => {
+    await page.goto('/language');
+    await expect(page.locator('.page_body')).toHaveScreenshot('language.png');
+  });
 
+  test('shows version page', async ({ page }) => {
+    await page.goto('/about:openvk');
+    await expect(page.locator('.page_body')).toHaveScreenshot('version.png', {
+      mask: [page.locator('table .v').filter({ hasText: /Altair/ })],
+    });
+  });
+
+  test('shows badbrowser page', async ({ page }) => {
+    await page.goto('/badbrowser.php');
+    await expect(page.locator('.page_body')).toHaveScreenshot('badbrowser.png');
+  });
+});
+
+test.describe('Invite', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsAlice(page);
+  });
+
+  test('shows invite page', async ({ page }) => {
+    await page.goto('/invite');
+    await expect(page.locator('.page_body')).toHaveScreenshot('invite.png');
+  });
 });
