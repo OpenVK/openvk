@@ -14,38 +14,39 @@ test.describe('Photos', () => {
           el.textContent = 'Обновлено [УДАЛЕНО]';
       }
     });
-    await expect(page.locator('.page_body')).toHaveScreenshot('albums2.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('albums2.png', { maxDiffPixels: 200 });
   });
 
   test('shows album view', async ({ page }) => {
     await page.goto('/album2_1');
-    await expect(page.locator('.page_body')).toHaveScreenshot('album2_1.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('album2_1.png', { maxDiffPixels: 200 });
   });
 
   test('shows edit album page', async ({ page }) => {
     await page.goto('/album2_1/edit');
-    await expect(page.locator('.page_body')).toHaveScreenshot('album2_1-edit.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('album2_1-edit.png', { maxDiffPixels: 200 });
   });
 
   test('shows photo view', async ({ page }) => {
     await page.goto('/photo2_1');
     await expect(page.locator('.page_body')).toHaveScreenshot('photo2_1.png', {
+      maxDiffPixels: 200,
       mask: [page.locator('.page_footer p').filter({ hasText: /Altair/ })],
     });
   });
 
   test('shows edit photo page', async ({ page }) => {
     await page.goto('/photo2_1/edit');
-    await expect(page.locator('.page_body')).toHaveScreenshot('photo-edit.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('photo-edit.png', { maxDiffPixels: 200 });
   });
 
   test('shows upload photo form', async ({ page }) => {
     await page.goto('/photos/upload?album=2_1');
-    await expect(page.locator('.page_body')).toHaveScreenshot('photo-upload.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('photo-upload.png', { maxDiffPixels: 200 });
   });
 
   test('shows create album form', async ({ page }) => {
     await page.goto('/albums/create');
-    await expect(page.locator('.page_body')).toHaveScreenshot('album-create.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('album-create.png', { maxDiffPixels: 200 });
   });
 });

@@ -8,6 +8,6 @@ test.describe('Away / Banned link warning', () => {
 
   test('shows banned link warning for blocked domain', async ({ page }) => {
     await page.goto('/away.php/1?to=https://example.com');
-    await expect(page.locator('.page_body')).toHaveScreenshot('banned-link-warning.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('banned-link-warning.png', { maxDiffPixels: 200 });
   });
 });

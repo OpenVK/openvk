@@ -8,6 +8,15 @@ export async function acceptCookies(page: Page): Promise<void> {
   }]);
 }
 
+export async function loginAsAdmin(page: Page): Promise<void> {
+  await acceptCookies(page);
+  await page.goto('/login');
+  await page.fill('#fastLogin input[name="login"]', 'admin@test.local');
+  await page.fill('#fastLogin input[name="password"]', 'test123');
+  await page.click('#fastLogin input[type="submit"]');
+  await page.waitForURL(/\/sysop|\/id1/);
+}
+
 export async function loginAsAlice(page: Page): Promise<void> {
   await acceptCookies(page);
   await page.goto('/login');

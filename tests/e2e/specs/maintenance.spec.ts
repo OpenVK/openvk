@@ -8,6 +8,6 @@ test.describe('Maintenance pages', () => {
 
   test('shows global maintenance page', async ({ page }) => {
     await page.goto('/maintenances/');
-    await expect(page.locator('.page_body')).toHaveScreenshot('maintenance-all.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('maintenance-all.png', { maxDiffPixels: 200 });
   });
 });

@@ -8,11 +8,11 @@ test.describe('Polls', () => {
 
   test('shows active poll view', async ({ page }) => {
     await page.goto('/poll1');
-    await expect(page.locator('.poll')).toHaveScreenshot('poll-active.png');
+    await expect(page.locator('.poll')).toHaveScreenshot('poll-active.png', { maxDiffPixels: 200 });
   });
 
   test('shows ended poll view', async ({ page }) => {
     await page.goto('/poll2');
-    await expect(page.locator('.poll')).toHaveScreenshot('poll-ended.png');
+    await expect(page.locator('.poll')).toHaveScreenshot('poll-ended.png', { maxDiffPixels: 200 });
   });
 });

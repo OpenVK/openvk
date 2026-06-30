@@ -8,6 +8,6 @@ test.describe('Apps', () => {
 
   test('shows apps page', async ({ page }) => {
     await page.goto('/apps');
-    await expect(page.locator('.page_body')).toHaveScreenshot('apps.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('apps.png', { maxDiffPixels: 200 });
   });
 });

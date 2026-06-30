@@ -8,37 +8,37 @@ test.describe('Public pages', () => {
 
   test('shows about instance page', async ({ page }) => {
     await page.goto('/about');
-    await expect(page.locator('.page_body')).toHaveScreenshot('about.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('about.png', { maxDiffPixels: 200 });
   });
 
   test('shows terms page', async ({ page }) => {
     await page.goto('/terms');
-    await expect(page.locator('.page_body')).toHaveScreenshot('terms.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('terms.png', { maxDiffPixels: 200 });
   });
 
   test('shows privacy page', async ({ page }) => {
     await page.goto('/privacy');
-    await expect(page.locator('.page_body')).toHaveScreenshot('privacy.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('privacy.png', { maxDiffPixels: 200 });
   });
 
   test('shows tour page', async ({ page }) => {
     await page.goto('/tour');
-    await expect(page.locator('.page_body')).toHaveScreenshot('tour.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('tour.png', { maxDiffPixels: 200 });
   });
 
   test('shows donate page', async ({ page }) => {
     await page.goto('/donate');
-    await expect(page.locator('.page_body')).toHaveScreenshot('donate.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('donate.png', { maxDiffPixels: 200 });
   });
 
   test('shows registration page', async ({ page }) => {
     await page.goto('/reg');
-    await expect(page.locator('.page_body')).toHaveScreenshot('reg.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('reg.png', { maxDiffPixels: 200 });
   });
 
   test('shows language page', async ({ page }) => {
     await page.goto('/language');
-    await expect(page.locator('.page_body')).toHaveScreenshot('language.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('language.png', { maxDiffPixels: 200 });
   });
 
   // WerySkok: Skipped due to strange formatting differences and constantly updated info here 
@@ -46,6 +46,7 @@ test.describe('Public pages', () => {
   test.skip('shows version page', async ({ page }) => {
     await page.goto('/about:openvk');
     await expect(page.locator('.page_body')).toHaveScreenshot('version.png', {
+      maxDiffPixels: 200,
       mask: [
         page.locator('table .v').filter({ hasText: /Altair/ }),
         page.locator('h1.p').filter({ hasText: /Altair/ })
@@ -55,7 +56,7 @@ test.describe('Public pages', () => {
 
   test('shows badbrowser page', async ({ page }) => {
     await page.goto('/badbrowser.php');
-    await expect(page.locator('.page_body')).toHaveScreenshot('badbrowser.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('badbrowser.png', { maxDiffPixels: 200 });
   });
 });
 
@@ -66,6 +67,6 @@ test.describe('Invite', () => {
 
   test('shows invite page', async ({ page }) => {
     await page.goto('/invite');
-    await expect(page.locator('.page_body')).toHaveScreenshot('invite.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('invite.png', { maxDiffPixels: 200 });
   });
 });

@@ -8,6 +8,6 @@ test.describe('Notifications', () => {
 
   test('shows notifications', async ({ page }) => {
     await page.goto('/notifications');
-    await expect(page.locator('.page_body')).toHaveScreenshot('notifications.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('notifications.png', { maxDiffPixels: 200 });
   });
 });

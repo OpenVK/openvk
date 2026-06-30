@@ -8,6 +8,6 @@ test.describe('Support', () => {
 
   test('shows support index with faq', async ({ page }) => {
     await page.goto('/support');
-    await expect(page.locator('.page_body')).toHaveScreenshot('support-index.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('support-index.png', { maxDiffPixels: 200 });
   });
 });

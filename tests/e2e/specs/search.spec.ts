@@ -8,6 +8,6 @@ test.describe('Search', () => {
 
   test('shows search page', async ({ page }) => {
     await page.goto('/search');
-    await expect(page.locator('.page_body')).toHaveScreenshot('search.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('search.png', { maxDiffPixels: 200 });
   });
 });

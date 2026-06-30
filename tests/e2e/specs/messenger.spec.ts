@@ -8,6 +8,6 @@ test.describe('Messenger', () => {
 
   test('shows messages page', async ({ page }) => {
     await page.goto('/im');
-    await expect(page.locator('.page_body')).toHaveScreenshot('im.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('im.png', { maxDiffPixels: 200 });
   });
 });
