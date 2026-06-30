@@ -1,10 +1,6 @@
 import { test, expect } from '../fixtures.js';
 import { acceptCookies } from '../helpers.js';
 
-// Admin tests require an admin user (admin@test.local). These tests may fail
-// if the test database does not have the admin@test.local account configured.
-// In that scenario, provide a custom loginAsAdmin helper or use the admin
-// seed data from install/sqls/.
 async function loginAsAdmin(page: import('@playwright/test').Page): Promise<void> {
   await acceptCookies(page);
   await page.goto('/login');
@@ -37,6 +33,20 @@ test.describe('Admin panel', () => {
   test('shows admin clubs list', async ({ page }) => {
     await page.goto('/admin/clubs');
     await expect(page).toHaveScreenshot('admin-clubs.png', {
+      mask: [page.locator('section.footer-body').filter({ hasText: /Altair/ })],
+    });
+  });
+
+  test('shows admin banned links list', async ({ page }) => {
+    await page.goto('/admin/bannedLinks');
+    await expect(page).toHaveScreenshot('admin-banned-links.png', {
+      mask: [page.locator('section.footer-body').filter({ hasText: /Altair/ })],
+    });
+  });
+
+  test('shows admin banned link detail', async ({ page }) => {
+    await page.goto('/admin/bannedLink/id1');
+    await expect(page).toHaveScreenshot('admin-banned-link-detail.png', {
       mask: [page.locator('section.footer-body').filter({ hasText: /Altair/ })],
     });
   });
