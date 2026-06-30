@@ -1988,6 +1988,10 @@
         font-size: 15px;
     }
 
+    #openvkVersionPage .full_width .e {
+        width: 100% !important;
+    }
+
     #openvkVersionPage table.short_first_column .e {
         width: 100px !important;
     }
