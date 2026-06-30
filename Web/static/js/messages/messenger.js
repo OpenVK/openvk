@@ -31,7 +31,9 @@ class Messenger {
 
     async sendToCurrentCorresponder(model) {
         const text = model.currentDraft();
-        const reply_to = model.replyTo();
+        const reply_to = model.replyTo()
+        let reply_param = null;
+        let attachments_list = null;
         const corresponder = window.im.corresponder;
 
         const msg = new ChatMessage({
@@ -41,13 +43,18 @@ class Messenger {
         });
 
         if (reply_to) {
-            msg['reply_message'] = reply_to;
+            reply_param = reply_to;
+        }
+
+        const attachments = collect_attachments(u('.messenger-app--input---messagebox'))
+        if (attachments.length > 0) {
+            attachments_list = attachments;
         }
 
         msg._guessSender();
         msg.setText(text);
 
-        return await corresponder.sendMessage(msg)
+        return await corresponder.sendMessage(msg, reply_param, attachments_list)
         //corresponder._pushNewMessage(msg);
     }
 }
@@ -74,6 +81,21 @@ class MessengerViewModel {
                                 <a data-bind="attr: { href: attachment.photo.link }">
                                     <img data-bind="attr: { src: attachment.photo.photo_130, alt: '...'  }" />
                                 </a>
+                            </div>
+                            <div data-bind="if: attachment.type === 'video'" class="msg-attach-j-video">
+                                <a data-bind="attr: { href: '/video' + attachment.video.owner_id + '_' + attachment.video.id }">
+                                    <span data-bind="text: attachment.video.title "></span>
+                                </a>
+                            </div>
+                            <div data-bind="if: attachment.type === 'doc'" class="msg-attach-j-doc">
+                                <a data-bind="attr: { href: '/doc' + attachment.doc.owner_id + '_' + attachment.doc.id }">
+                                    <span data-bind="text: attachment.doc.title "></span>
+                                </a>
+                            </div>
+                            <div data-bind="if: attachment.type === 'audio'" class="msg-attach-j-audio">
+                                <a data-bind="text: attachment.audio.artist "></a>
+                                —
+                                <span data-bind="text: attachment.audio.title "></span>
                             </div>
                         </div>
                     </div>
@@ -121,21 +143,60 @@ class MessengerViewModel {
                     </div>    
                 </div>
             </div>
-            <div class="messenger-app-end" data-bind="css: { 'reply-selected': replyTo }">
+            <div class="messenger-app-end" id="write" data-bind="css: { 'reply-selected': replyTo }">
                 <div class="input-reply" data-bind="if: replyTo">
                     <span data-bind="html: replyTo.text"></span>
                     <span data-bind="text: 'close', event: { click: removeReply }"></span>
                 </div>
-                <div class="messenger-app--input">
-                    <img class="ava" data-bind="attr: { src: window.im.current.avatar_any, alt: window.im.current.full_name }" />
-                    <div class="messenger-app--input---messagebox">
-                        <textarea
+                <div class="post-buttons">
+                    <div class="messenger-app--input">
+                        <img class="ava" data-bind="attr: { src: window.im.current.avatar_any, alt: window.im.current.full_name }" />
+                        <div class="messenger-app--input---messagebox">
+                            <textarea
                                 data-bind="value: currentDraft, event: { keydown: onTextareaKeyPress }"
                                 name="message"
+                                class="small-textarea"
                                 placeholder="${tr('enter_message')}"></textarea>
-                        <button data-bind="event: { click: sendMessage }" class="button">${tr('send')}</button>
+                            
+                            <div class="post-horizontal"></div>
+                            <div class="post-vertical"></div>
+                            <div class="input--messagebox-buttons">
+                                <button data-bind="event: { click: sendMessage }" class="button">${tr('send')}</button>
+                                <div>
+                                    <a class='menu_toggler'>
+                                        ${tr('attach')}
+                                    </a>
+
+                                    <div id="wallAttachmentMenu" class="up_direction hidden">
+                                        <a class="header menu_toggler">
+                                            ${tr('attach')}
+                                        </a>
+                                        <a id="__photoAttachment">
+                                            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
+                                            ${tr('photo')}
+                                        </a>
+                                        <a id="__videoAttachment">
+                                            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
+                                            ${tr('video')}
+                                        </a>
+                                        <a id="__audioAttachment">
+                                            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/audio-ac3.png" />
+                                            ${tr('audio')}
+                                        </a>
+                                        <a id="__documentAttachment">
+                                            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-octet-stream.png" />
+                                            ${tr('document')}
+                                        </a>
+                                        <a onclick="initGraffiti(event);">
+                                            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/draw-brush.png" />
+                                            ${tr('graffiti')}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <img class="ava" data-bind="event: { click: togglePeerInfo }, attr: { src: window.im.corresponder.avatar_any, alt: window.im.corresponder.full_name }" />
                     </div>
-                    <img class="ava" data-bind="event: { click: togglePeerInfo }, attr: { src: window.im.corresponder.avatar_any, alt: window.im.corresponder.full_name }" />
                 </div>
             </div>
         </div>
@@ -349,7 +410,9 @@ class MessengerViewModel {
     // Actions
 
     async sendMessage(model) {
-        if(model.currentDraft() === "") return false;
+        const _tmp_atts = collect_attachments(u('.messenger-app--input---messagebox'));
+
+        if(model.currentDraft() === "" && _tmp_atts.length == 0) return false;
         if (true) {
             this._scrollToEnd();
         }
@@ -447,6 +510,9 @@ class MessengerViewModel {
         // Removes draft (when it was sent or smth)
         this.drafts[chat.peer.id] = undefined;
         console.info('erased draft for ' + chat.peer.id);
+
+        u('.messenger-app--input---messagebox .post-horizontal').html('')
+        u('.messenger-app--input---messagebox .post-vertical').html('')
     }
 
     _eraseCurrentDraft() {

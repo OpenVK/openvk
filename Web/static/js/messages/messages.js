@@ -286,7 +286,7 @@ class ChatGeneralForm {
         return latest;
     }*/
 
-    async sendMessage(msg) {
+    async sendMessage(msg, reply_to = null, attachments = null) {
         this._pushNewMessage(msg);
         const datas = {
             'peer_id': this.id,
@@ -294,8 +294,12 @@ class ChatGeneralForm {
             'attachments': msg.str_attachments,
         }
 
-        if (msg['reply_message'] != null) {
-            datas['reply_to'] = msg['reply_message'].id;
+        if (reply_to != null) {
+            datas['reply_to'] = reply_to.id;
+        }
+
+        if (attachments != null) {
+            datas['attachment'] = attachments.join(',')
         }
 
         const resp = await window.OVKAPI.call('messages.send', datas); // returns id

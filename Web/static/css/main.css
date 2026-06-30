@@ -1749,6 +1749,12 @@ h4.gift_cat_header {
     user-select: none;
 }
 
+#wallAttachmentMenu.up_direction {
+    margin-top: -119px;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
 #wallAttachmentMenu>a {
     display: flex;
     gap: 5px;
