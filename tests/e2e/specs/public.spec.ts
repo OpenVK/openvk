@@ -44,7 +44,10 @@ test.describe('Public pages', () => {
   test('shows version page', async ({ page }) => {
     await page.goto('/about:openvk');
     await expect(page.locator('.page_body')).toHaveScreenshot('version.png', {
-      mask: [page.locator('table .v').filter({ hasText: /Altair/ })],
+      mask: [
+        page.locator('table .v').filter({ hasText: /Altair/ }),
+        page.locator('h1.p').filter({ hasText: /Altair/ })
+      ],
     });
   });
 
