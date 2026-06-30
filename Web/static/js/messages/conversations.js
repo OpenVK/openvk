@@ -110,10 +110,10 @@ class Conversations {
         const lists = [];
 
         // Профили выносятся в кэш, в peer будет создана ссылка
-        convs.profiles.forEach(prof => {
+        convs.profiles?.forEach(prof => {
             window.im.cached_profiles._addProfileCache(new ChatGeneralForm(prof));
         });
-        convs.groups.forEach(group => {
+        convs.groups?.forEach(group => {
             window.im.cached_profiles._addProfileCache(new ChatGeneralForm(group));
         });
 
