@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures.js';
 import { acceptCookies } from '../helpers.js';
 
 test.describe('Public pages', () => {
