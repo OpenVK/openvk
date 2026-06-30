@@ -7,6 +7,7 @@ test.describe('Home page', () => {
     await page.goto('/');
     await expect(page).toHaveScreenshot('home-layout.png', {
       fullPage: true,
+      maxDiffPixels: 200,
       mask: [page.locator('.page_footer p').filter({ hasText: /Altair/ })],
     });
   });

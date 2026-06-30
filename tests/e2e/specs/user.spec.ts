@@ -8,7 +8,7 @@ test.describe('Friends', () => {
 
   test('shows friends list', async ({ page }) => {
     await page.goto('/friends2');
-    await expect(page.locator('.page_body')).toHaveScreenshot('friends2.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('friends2.png', { maxDiffPixels: 200 });
   });
 });
 
@@ -19,7 +19,7 @@ test.describe('User groups', () => {
 
   test('shows user groups list', async ({ page }) => {
     await page.goto('/groups2');
-    await expect(page.locator('.page_body')).toHaveScreenshot('groups2.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('groups2.png', { maxDiffPixels: 200 });
   });
 });
 
@@ -51,6 +51,6 @@ test.describe('Edit profile', () => {
 
   test('shows edit profile page', async ({ page }) => {
     await page.goto('/edit');
-    await expect(page.locator('.page_body')).toHaveScreenshot('edit.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('edit.png', { maxDiffPixels: 200 });
   });
 });

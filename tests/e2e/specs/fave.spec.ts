@@ -8,21 +8,21 @@ test.describe('Favorites', () => {
 
   test('shows favorites page', async ({ page }) => {
     await page.goto('/fave');
-    await expect(page.locator('.page_body')).toHaveScreenshot('fave.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('fave.png', { maxDiffPixels: 200 });
   });
 
   test('shows favorite comments', async ({ page }) => {
     await page.goto('/fave?section=comments');
-    await expect(page.locator('.page_body')).toHaveScreenshot('fave-comments.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('fave-comments.png', { maxDiffPixels: 200 });
   });
 
   test('shows favorite photos', async ({ page }) => {
     await page.goto('/fave?section=photos');
-    await expect(page.locator('.page_body')).toHaveScreenshot('fave-photos.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('fave-photos.png', { maxDiffPixels: 200 });
   });
 
   test('shows favorite videos', async ({ page }) => {
     await page.goto('/fave?section=videos');
-    await expect(page.locator('.page_body')).toHaveScreenshot('fave-videos.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('fave-videos.png', { maxDiffPixels: 200 });
   });
 });

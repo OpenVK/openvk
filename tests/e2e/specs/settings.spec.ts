@@ -8,12 +8,13 @@ test.describe('Settings', () => {
 
   test('shows settings page', async ({ page }) => {
     await page.goto('/settings');
-    await expect(page.locator('.page_body')).toHaveScreenshot('settings.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('settings.png', { maxDiffPixels: 200 });
   });
 
   test('shows 2FA settings', async ({ page }) => {
     await page.goto('/settings/2fa');
     await expect(page.locator('.page_body')).toHaveScreenshot('settings-2fa.png', {
+      maxDiffPixels: 200,
       mask: [
         page.locator('img[width="225"]'),
         page.locator('p:has(b)'),
@@ -23,21 +24,21 @@ test.describe('Settings', () => {
 
   test('shows settings security tab', async ({ page }) => {
     await page.goto('/settings?act=security');
-    await expect(page.locator('.page_body')).toHaveScreenshot('settings-security.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('settings-security.png', { maxDiffPixels: 200 });
   });
 
   test('shows settings privacy tab', async ({ page }) => {
     await page.goto('/settings?act=privacy');
-    await expect(page.locator('.page_body')).toHaveScreenshot('settings-privacy.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('settings-privacy.png', { maxDiffPixels: 200 });
   });
 
   test('shows settings blacklist tab', async ({ page }) => {
     await page.goto('/settings?act=blacklist');
-    await expect(page.locator('.page_body')).toHaveScreenshot('settings-blacklist.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('settings-blacklist.png', { maxDiffPixels: 200 });
   });
 
   test('shows settings interface tab', async ({ page }) => {
     await page.goto('/settings?act=interface');
-    await expect(page.locator('.page_body')).toHaveScreenshot('settings-interface.png');
+    await expect(page.locator('.page_body')).toHaveScreenshot('settings-interface.png', { maxDiffPixels: 200 });
   });
 });

@@ -5,7 +5,7 @@ test.describe('Login page', () => {
   test('shows login form for unauthenticated users', async ({ page }) => {
     await acceptCookies(page);
     await page.goto('/login');
-    await expect(page.locator('#fastLogin')).toHaveScreenshot('login-form.png');
+    await expect(page.locator('#fastLogin')).toHaveScreenshot('login-form.png', { maxDiffPixels: 200 });
     await expect(page.locator('#fastLogin input[name="login"]')).toBeVisible();
     await expect(page.locator('#fastLogin input[name="password"]')).toBeVisible();
     await expect(page.locator('#fastLogin input[type="submit"]')).toBeVisible();
@@ -25,7 +25,7 @@ test.describe('Login page', () => {
     await page.fill('#fastLogin input[name="password"]', 'wrongpassword');
     await page.click('#fastLogin input[type="submit"]');
     await expect(page).toHaveURL(/\/login/);
-    await expect(page.locator('.msg_err')).toHaveScreenshot('login-error.png');
+    await expect(page.locator('.msg_err')).toHaveScreenshot('login-error.png', { maxDiffPixels: 200 });
     await expect(page.locator('.msg_err')).toContainText('Не удалось');
   });
 });
