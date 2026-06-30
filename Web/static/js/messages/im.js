@@ -131,6 +131,7 @@ window.im = new (class {
         let _v = await window.OVKAPI.call('users.get', {'user_ids': window.openvk.current_id, 'fields': ChatGeneralForm.base_fields});
         this._currents = [new ChatGeneralForm(_v[0])];
         this._current_id = 0;
+        this.cached_profiles._addProfileCache(this.current)
     }
 
     get current() {
