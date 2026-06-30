@@ -288,11 +288,17 @@ class ChatGeneralForm {
 
     async sendMessage(msg) {
         this._pushNewMessage(msg);
-        const resp = await window.OVKAPI.call('messages.send', {
+        const datas = {
             'peer_id': this.id,
             'message': msg.text,
             'attachments': msg.str_attachments,
-        }); // returns id
+        }
+
+        if (msg['reply_message'] != null) {
+            datas['reply_to'] = msg['reply_message'].id;
+        }
+
+        const resp = await window.OVKAPI.call('messages.send', datas); // returns id
         msg.data.id = resp
         console.info('IM | Sent message to ' + this.id)
     }

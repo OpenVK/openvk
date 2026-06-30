@@ -31,13 +31,19 @@ class Messenger {
 
     async sendToCurrentCorresponder(model) {
         const text = model.currentDraft();
+        const reply_to = model.replyTo();
         const corresponder = window.im.corresponder;
 
         const msg = new ChatMessage({
             'from_id': window.im.current.id,
             'peer_id': corresponder.id,
-            'date': Math.round((new Date()).getTime() / 1000)
+            'date': Math.round((new Date()).getTime() / 1000),
         });
+
+        if (reply_to) {
+            msg['reply_message'] = reply_to;
+        }
+
         msg._guessSender();
         msg.setText(text);
 
@@ -52,7 +58,7 @@ class MessengerViewModel {
         <div class="messenger-app--messages---message" data-bind="css: { 
         'msg-selected': window.im.messenger.view.isMessageSelected(msg), 
         'same-author': $index() > 0 && chunk.messages[$index() - 1].doHideHead(msg)}, 
-        event: { click: function() { window.im.messenger.view.toggleMessageSelection(msg) } }">
+        event: { mousedown: window.im.messenger.view.onMessageClick }">
             <div class="messenger-app--messages---message--wrap">
                 <div class="_avatar">
                     <img class="ava" data-bind="attr: { src: sender.avatar_any, alt: sender.full_name }" />
@@ -81,7 +87,7 @@ class MessengerViewModel {
             </div>
         </div>
         `
-        this.template = `
+        this.chat_template = `
         <div>
             <div data-bind="foreach: opened_tabs" class="messages--peers-tabs">
                 <div class="messages--peers-tab">
@@ -97,8 +103,12 @@ class MessengerViewModel {
             <div>
                 <a data-bind="text: 'unselect', event: { 'click': window.im.messenger.view.unselect }"></a>
             </div>
+            <div data-bind="if: window.im.messenger.view.selected_messages_count == 1">
+                <a data-bind="text: 'reply', event: { 'click': window.im.messenger.view.onReplyButtonClick }"></a>
+            </div>
         </div>
         <div class="messenger-app" data-bind="event: { scroll: onMessagesScroll }">
+            <div data-bind="event: { click: onScrollDownButtonClick }" id="messenger-app--down-button">DOWN</div>
             <div class="messenger-app--messages">
                 <div class="messenger-app--messages-array" data-bind="foreach: { data: messages, as: 'chunk' } ">
                     <div class="messenger-app--messages-day">
@@ -111,21 +121,40 @@ class MessengerViewModel {
                     </div>    
                 </div>
             </div>
-            <div class="messenger-app--input">
-                <img class="ava" data-bind="attr: { src: window.im.current.avatar_any, alt: window.im.current.full_name }" />
-                <div class="messenger-app--input---messagebox">
-                    <textarea
-                            data-bind="value: currentDraft, event: { keydown: onTextareaKeyPress }"
-                            name="message"
-                            placeholder="${tr('enter_message')}"></textarea>
-                    <button data-bind="event: { click: sendMessage }" class="button">${tr('send')}</button>
+            <div class="messenger-app-end" data-bind="css: { 'reply-selected': replyTo }">
+                <div class="input-reply" data-bind="if: replyTo">
+                    <span data-bind="html: replyTo.text"></span>
+                    <span data-bind="text: 'close', event: { click: removeReply }"></span>
                 </div>
-                <img class="ava" data-bind="attr: { src: window.im.corresponder.avatar_any, alt: window.im.corresponder.full_name }" />
+                <div class="messenger-app--input">
+                    <img class="ava" data-bind="attr: { src: window.im.current.avatar_any, alt: window.im.current.full_name }" />
+                    <div class="messenger-app--input---messagebox">
+                        <textarea
+                                data-bind="value: currentDraft, event: { keydown: onTextareaKeyPress }"
+                                name="message"
+                                placeholder="${tr('enter_message')}"></textarea>
+                        <button data-bind="event: { click: sendMessage }" class="button">${tr('send')}</button>
+                    </div>
+                    <img class="ava" data-bind="event: { click: togglePeerInfo }, attr: { src: window.im.corresponder.avatar_any, alt: window.im.corresponder.full_name }" />
+                </div>
             </div>
         </div>
         `
+        this.peer_template = `
+            <div>
+                <a data-bind="event: { click: togglePeerInfo }">back</a>
+            </div>
+        `
+        this.template = `
+            <div id="chat-page" data-bind="css: { 'peer-shown': is_showing_profile }">
+                <div class="chat-window">${this.chat_template}</div>
+                <div class="peer-window">${this.peer_template}</div>
+            </div>
+        `
         this.opened_tabs = ko.observableArray([]);
         this.currentDraft = ko.observable('');
+        this.replyTo = ko.observable(null);
+        this.is_showing_profile = ko.observable(false);
         this.is_loading = ko.observable(false);
         this.drafts = {};
         this.scrolls = {};
@@ -175,6 +204,36 @@ class MessengerViewModel {
         return true;
     }
 
+    onMessageClick(model, e) {
+        if (e.buttons !== 1 && e.type == 'mousemove') {
+            return;
+        }
+
+        if (window.im.messenger.view.replyTo() != null) {
+            return;
+        }
+
+        const target = e.target;
+        if (!target.matches('.text, .time span') || window.im.messenger.view.selected_messages_count > 0) {
+            e.preventDefault();
+            window.im.messenger.view.toggleMessageSelection(model, e);
+        }
+    }
+
+    onReplyButtonClick(model, e) {
+        const ids = this.selected_messages();
+
+        const current_chat = this.getCurrentChat();
+        const m = current_chat.peer._findMessageById(ids[0]);
+
+        this.unselect();
+        this.replyTo(m);
+    }
+
+    removeReply(model, e) {
+        this.replyTo(undefined);
+    }
+
     toggleMessageSelection(model, e) {
         // Toggles message selection.
         if (!this.isMessageSelected(model)) {
@@ -183,6 +242,19 @@ class MessengerViewModel {
             this.unselectMessage(model);
         }
         //this._triggerUpdateSlightly();
+    }
+
+    togglePeerInfo(model, e) {
+        if (this.is_showing_profile()) {
+            this.is_showing_profile(false);
+            return;
+        }
+
+        this.is_showing_profile(true);
+    }
+
+    onScrollDownButtonClick() {
+        this._scrollToEnd()
     }
 
     async onMessagesScroll(model, e) {
@@ -210,6 +282,9 @@ class MessengerViewModel {
 
             if (scrollBottom > 600) {
                 console.log('IM | Scrolled too up')
+                document.querySelector('.messenger-app--tab-messenger').classList.add('messenger-app--overscrolled')
+            } else {
+                document.querySelector('.messenger-app--tab-messenger').classList.remove('messenger-app--overscrolled')
             }
         }
         this.is_loading(false);
@@ -237,7 +312,9 @@ class MessengerViewModel {
     callDeletion() {
         // Shows deletion confirmation. The messages that are going to be deleted are the selected messages
         const ids = this.selected_messages();
+
         console.log('IM | Going to delete ' + ids.length + ' messages')
+
         const current_chat = this.getCurrentChat();
         const msg = new CMessageBox({
             title: 'MESAGE DELETIONS',
@@ -286,6 +363,7 @@ class MessengerViewModel {
 
         this._eraseDraftFor({'peer': window.im.current});
         this._eraseCurrentDraft();
+        this.removeReply();
     }
 
     // Chat tabs

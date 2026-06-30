@@ -1,10 +1,16 @@
 body.no-scroll .messenger-app--tab-messenger {
     overflow-y: hidden;
+    overflow-x: hidden;
     min-height: 100vh;
 }
 
 body.no-scroll .toTop {
     /*display: none; */
+}
+
+body.no-scroll {
+    overflow-x: hidden;
+    scrollbar-gutter: unset;
 }
 
 body.no-scroll #wrapH {
@@ -31,6 +37,7 @@ body.no-scroll .messages--peers-tabs {
     box-sizing: border-box;
     width: 627px;
     gap: 5px;
+    background: white;
 }
 
 body.no-scroll .page_header {
@@ -124,6 +131,17 @@ body.no-scroll .sidebar {
     margin-bottom: 1.2rem;
 }
 
+.messenger-app #messenger-app--down-button {
+    position: fixed;
+    bottom: 113px;
+    right: 37px;
+    background: white;
+    padding: 5px 5px;
+    border: 1px solid black;
+    cursor: pointer;
+    display: none;
+}
+
 .crp-entry--message---av img {
     max-width: 32px;
     border-radius: 3px;
@@ -154,8 +172,20 @@ body.no-scroll .sidebar {
     display: inline-block;
 }
 
-.messenger-app--input {
-    padding: 10px 60px;
+/* toggle */
+#chat-page .peer-window,
+#chat-page.peer-shown .chat-window {
+    display: none;
+}
+
+#chat-page .chat-window,
+#chat-page.peer-shown .peer-window {
+    display: inline-block;
+}
+
+.peer-window {
+    position: relative;
+    top: 100px;
 }
 
 .messages--actions {
@@ -174,7 +204,7 @@ body.no-scroll .sidebar {
     display: flex;
     flex-direction: column;
     height: 70%;
-    padding-bottom: 26px;
+    padding-bottom: 45px;
     min-height: 100vh;
     margin-top: auto;
 }
@@ -285,6 +315,10 @@ body.no-scroll .sidebar {
     margin: 111px 0px -10px -10px;
 }
 
+.messenger-app--tab-messenger.messenger-app--overscrolled #messenger-app--down-button {
+    display: block;
+}
+
 .messenger-app,
 .messenger-app--input {
     width: 628px;
@@ -297,8 +331,7 @@ body.no-scroll .sidebar {
     justify-content: space-between;
     background-color: #f9f9f9;
     border-top: 1px solid #d6d6d6;
-    position: fixed;
-    bottom: 0px;
+    padding: 10px 60px;
 }
 
 .messenger-app--input---messagebox {
@@ -313,6 +346,8 @@ body.no-scroll .sidebar {
     height: 50px !important;
     resize: none;
     margin-bottom: 8px !important;
+    padding: 3px 6px;
+    font-size: 11px;
 }
 
 .messenger-app--input .blocked {
@@ -329,6 +364,21 @@ body.no-scroll .sidebar {
     margin-right: -50%;
     transform: translate(-50%, -50%);
     font-weight: 900;
+}
+
+.messenger-app-end {
+    position: fixed;
+    bottom: 0px;
+}
+
+.messenger-app-end .input-reply {
+    display: none;
+    background: #968e8e;
+    padding: 10px 59px;
+}
+
+.messenger-app-end.reply-selected .input-reply {
+    display: block;
 }
 
 .messages--peers-tabs {
