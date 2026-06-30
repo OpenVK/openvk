@@ -86,7 +86,7 @@ services:
     working_dir: /tests/e2e
     command: >
       sh -c "
-        npm ci 2>/dev/null &&
+        npm ci 2>/dev/stdout &&
         exec npx playwright test
       "
     environment:
