@@ -41,7 +41,9 @@ test.describe('Public pages', () => {
     await expect(page.locator('.page_body')).toHaveScreenshot('language.png');
   });
 
-  test('shows version page', async ({ page }) => {
+  // WerySkok: Skipped due to strange formatting differences and constantly updated info here 
+  // (including commit hashes)
+  test.skip('shows version page', async ({ page }) => {
     await page.goto('/about:openvk');
     await expect(page.locator('.page_body')).toHaveScreenshot('version.png', {
       mask: [
