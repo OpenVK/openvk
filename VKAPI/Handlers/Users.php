@@ -62,16 +62,16 @@ final class Users extends VKAPIRequestHandler
                 } elseif ($usrs[$i] == null) {
 
                 } else {
+                    $canView = $usr->canBeViewedBy($this->getUser());
                     $response[$i] = (object) [
                         "id"                => $usr->getId(),
                         "first_name"        => $usr->getFirstName(true),
                         "last_name"         => $usr->getLastName(true),
                         "is_closed"         => (int) $usr->isClosed(),
-                        "can_access_closed" => (int) $usr->canBeViewedBy($this->getUser()),
+                        "can_access_closed" => (int) $canView,
                     ];
 
                     $flds = explode(',', $fields);
-                    $canView = $usr->canBeViewedBy($this->getUser());
                     foreach ($flds as $field) {
                         switch ($field) {
                             case "first_name_gen":

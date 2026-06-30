@@ -334,7 +334,7 @@ final class VKAPIPresenter extends OpenVKPresenter
         }
 
         if (!defined("VKAPI_DECL_VER")) {
-            $version = $this->requestParam("v") ?? "5.199"; // last ver as of 28.06.2026
+            $version = $this->requestParam("v") ?? "5.9999"; // 9999 for ovk apps
             define("VKAPI_DECL_VER", $version);
             define("VKAPI_DECL_VER_MAJOR", intval(explode('.', $version)[0] ?? "5"));
             define("VKAPI_DECL_VER_MINOR", intval(explode('.', $version)[1] ?? "100"));
