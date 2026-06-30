@@ -5,20 +5,22 @@
 
 <script>
     let cookie = document.cookie.split(";");
-    let alertContent = encodeURI(u('.global-alert').nodes[0].innerText);
-    let alertDismissed = false;
-    for(let i = 0; i < cookie.length; i++) {
-        let c = cookie[i].trim();
-        while (c.charAt(0) == ' ') {
-            c = c.substring(1);
+    let alertElement = u('.global-alert').nodes[0];
+    let alertContent = '';
+    if (alertElement) {
+        alertContent = encodeURI(alertElement.innerText);
+        let alertDismissed = false;
+        for (let i = 0; i < cookie.length; i++) {
+            let c = cookie[i].trim();
+            
+            if (c == "alertDismissed=" + alertContent) {
+                alertDismissed = true;
+                break;
+            }
         }
-        if(c == "alertDismissed=" + alertContent) {
-            alertDismissed = true;
-            break;
+        if (!alertDismissed) {
+            u(".global-alert").nodes[0].style.display = "block";
         }
-    }
-    if(!alertDismissed) {
-        u(".global-alert").nodes[0].style.display = "block";
     }
 
     function dismissGlobalAlert() {
@@ -27,4 +29,5 @@
         document.cookie = "alertDismissed=" + alertContent + ";expires=" + expires + ";SameSite=Strict";
         u(".global-alert").nodes[0].style.display = "none";
     }
+    
 </script>
