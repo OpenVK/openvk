@@ -20,20 +20,15 @@ async function globalSetup(): Promise<void> {
     console.warn('  OPENVK_TESTS_FORCE=1 set, proceeding anyway.\n');
   }
 
-  const mysql = `mysql -h ${dbHost} -u ${dbUser} -p${dbPass} ${dbName} --ssl-mode=DISABLED --default-character-set=utf8mb4`;
   const mysqldump = `mysqldump -h ${dbHost} -u ${dbUser} -p${dbPass} ${dbName} --ssl-mode=DISABLED --default-character-set=utf8mb4`;
 
-  // Take snapshot on first run (post-seed state)
+  // Take snapshot on first run (post-seed state).
+  // Per-test restoration is handled by fixtures.ts.
   if (execSync(`test -f ${snapshotFile} && echo exists || echo notexists`).toString().trim() === 'notexists') {
     console.log('Taking DB snapshot...');
     execSync(`${mysqldump} > ${snapshotFile}`, { stdio: 'inherit' });
     console.log('Snapshot saved.');
   }
-
-  // Restore to clean state
-  console.log('Restoring DB to seed state...');
-  execSync(`${mysql} < ${snapshotFile}`, { stdio: 'inherit' });
-  console.log('DB restored.');
 }
 
 export default globalSetup;
