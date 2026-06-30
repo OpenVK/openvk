@@ -47,6 +47,7 @@
 
     .cookies-popup .contanier {
         width: auto;
+        height: fit-content;
         padding: 10px 10px;
         gap: 10px;
     }
@@ -91,8 +92,26 @@
         display: none;
     }
 
+    #backdropFilePicker {
+        display: flex;
+        justify-content: space-between;
+        padding: 0px 12px;
+        margin: 0px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
     #backdropFilePicker > #spacer {
-        width: unset !important;
+        display: none;
+    }
+
+    #backdropEditor {
+        width: unset;
+        height: 204px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        padding: 0px;
+        background-position: center;
     }
 
     .page_yellowheader a {
@@ -132,8 +151,13 @@
     }
 
     .page_footer p {
-        padding-left: 48px;
-        padding-right: 48px;
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .page_footer p,
+    .page_footer a {
+        color: #969696;
     }
 
     input, button {
@@ -180,6 +204,12 @@
         background-color: unset;
         border-bottom: unset;
         border-top: 1px solid #d8d8d8;
+        font-size: 14px;
+    }
+
+    #news b,
+    #votesBalance a {
+        font-size: 14px;
     }
 
     .floating_sidebar,
@@ -200,7 +230,7 @@
         align-items: center;
         justify-content: center;
         position: fixed;
-        z-index: 299;
+        z-index: 298;
         top: 0;
     }
 
@@ -380,6 +410,8 @@
         float: unset !important;
         position: absolute;
         right: 20px;
+        padding-top: 12px;
+        box-sizing: border-box;
     }
 
     #search_box {
@@ -402,18 +434,22 @@
         align-items: center;
     }
 
+    body .search_expanded_at_all .header_navigation {
+        padding-top: 0px;
+    }
+
     body.menu-expanded .header_navigation .link:not(#search_box) {
         display: block;
     }
 
-    body.menu-expanded .header_navigation .link:not(#search_box) {
+    body.menu-expanded .header_navigation .link:not(#search_box),
+    body.menu-expanded .search_expanded_at_all .header_navigation {
         display: inline-flex;
         align-items: center;
         font-size: 10px;
         padding: 0px;
-        height: auto;
+        height: 5px;
         padding: 0px 4px;
-        margin-top: 13px;
     }
 
     .header_navigation #search_box,
@@ -456,6 +492,7 @@
         white-space: nowrap;
         overflow: hidden;
         font-size: 17px;
+        text-shadow: 0px 0px 4px black;
         color: white;
     }
 
@@ -651,6 +688,12 @@
         gap: 13px;
     }
 
+    table.not_flexible_table tbody {
+        display: unset;
+        flex-direction: unset;
+        gap: unset;
+    }
+
     .auth_table {
         padding: 0% 0% 0% 0%;
         margin-bottom: 10px !important;
@@ -703,6 +746,7 @@
     .summaryBar.padding {
         padding-bottom: 18px;
         height: unset;
+        box-sizing: border-box;
     }
 
     .summaryBar .summary {
@@ -732,6 +776,8 @@
     .verticalGrayTabsWrapper {
         width: 100%;
         font-size: 16px;
+        border-top: unset;
+        border-left: unset;
     }
 
     .searchList li, .searchList a, .verticalGrayTabs a {
@@ -813,7 +859,7 @@
         position: static;
         display: flex;
         flex-direction: column;
-        z-index: 299;
+        z-index: 297;
     }
 
     #wallAttachmentMenu>a {
@@ -911,6 +957,12 @@
     .content_page_error {
         padding: 100px 3px;
         margin-bottom: 50px;
+        text-align: center;
+    }
+
+    .summaryBarHideable {
+        display: block !important;
+        padding-bottom: 10px !important;
     }
 
     #search_page {
@@ -1057,10 +1109,6 @@
 
     /* Audios */
 
-    .audioEntry .status:hover .mediaInfo .info {
-        background: rgba(0, 0, 0, 0.373);
-    }
-
     .page_wrap_content_main.audios_padding {
         padding: unset;
     }
@@ -1088,7 +1136,11 @@
     }
 
     #upload_container .upload_container_element {
-        padding: 0px 12px;
+        padding: 12px 12px;
+    }
+
+    #upload_container .upload_container_element .upload_container_name {
+        padding: 0px;
     }
 
     .bigPlayer .trackPanel .track .selectableTrackLoadProgress {
@@ -1096,31 +1148,34 @@
     }
 
     .bigPlayer {
-        height: 50px;
+        width: 105%;
+        height: 80px;
+        margin-top: -8px;
+        box-shadow: unset;
+    }
+
+    .bigPlayer #album_info {
+        width: 100%;
+        box-shadow: unset;
+        top: 79px;
     }
 
     .bigPlayer .bigPlayerWrapper {
         display: block;
     }
 
-    .bigPlayer .volumePanel {
-        position: absolute;
-        right: 0;
-        top: 22px;
-        display: none;
-    }
-
     .bigPlayer .playButtons {
         position: absolute;
-        top: 6px;
-        left: 12px;
+        top: 10px;
+        left: 15px;
     }
 
     .bigPlayer .additionalButtons {
         position: absolute;
         align-items: end;
         bottom: 3px;
-        left: 13px;
+        top: 14px;
+        left: 90px;
         height: 14px;
     }
 
@@ -1137,17 +1192,22 @@
     }
 
     .bigPlayer .trackPanel {
-        margin-left: 8px;
-        width: 100%;
+        width: 94%;
         position: absolute;
-        left: 80px;
-        top: 12px;
+        left: 0px;
+        top: 38px;
         gap: 8px;
     }
 
+    .bigPlayer .trackInfo a {
+        pointer-events: none;
+    }
+
     .bigPlayer .volumePanel {
-        right: -4px;
-        top: 47px;
+        display: none;
+        position: absolute;
+        left: 153px;
+        top: 2px;
     }
 
     .bigPlayer .trackInfo .trackName {
@@ -1293,7 +1353,7 @@
     }
 
     .audiosSideContainer {
-        width: 93% !important;
+        width: 98% !important;
     }
 
     .vertical-attachment .audioEntry .status {
@@ -1303,6 +1363,8 @@
     .audiosDiv {
         display: flex;
         flex-direction: column-reverse;
+        margin: unset;
+        width: 100%;
     }
 
     .searchList hr, .verticalGrayTabs hr {
@@ -1377,6 +1439,12 @@
         font-size: 15px;
     }
 
+    #upload_container {
+        padding: 10px 8px;
+        border: unset;
+        margin: 2px 0px 0px 0px;
+    }
+
     /* Docs */
 
     .docListViewItem .doc_icon {
@@ -1436,7 +1504,7 @@
         margin: unset;
         width: 100% !important;
         min-width: unset !important;
-        min-height: 100%;
+        min-height: 100% !important;
         box-sizing: border-box;
     }
 
@@ -1705,6 +1773,8 @@
 
     .post .attachments_b > .attachment {
         float: unset !important;
+        width: 100% !important;
+        height: 100% !important;
     }
 
     .sort_link,
@@ -1809,6 +1879,26 @@
         width: 100% !important;
     }
 
+    #noSpam-page {
+        flex-direction: column;
+    }
+
+    #noSpam-page #noSpam-form {
+        width: 100% !important;
+    }
+
+    #noSpam-page #noSpam-results {
+        width: 100% !important;
+    }
+
+    .reportsTabs {
+        gap: 12px !important;
+    }
+
+    .reportsTabs #activetabs {
+        font-weight: unset !important;
+    }
+
     /* Tour */
 
     #tour {
@@ -1892,6 +1982,14 @@
 
     .page_wrap_content .page_search_options #search_reset {
         display: none; /* To not misclick */
+    }
+
+    #openvkVersionPage table {
+        font-size: 15px;
+    }
+
+    #openvkVersionPage table.short_first_column .e {
+        width: 100px !important;
     }
 }
 
