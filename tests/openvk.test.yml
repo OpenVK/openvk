@@ -75,7 +75,7 @@ openvk:
                 maxSize: 60000
                 processingLimit: 3000
                 emojiProcessingLimit: 1000
-        commerce: false
+        commerce: true
         susLinks:
             warnings: true
             showReason: true
