@@ -193,12 +193,7 @@ final class WallPresenter extends OpenVKPresenter
         $ids[] = $this->user->id;
 
         $perPage = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);
-        $withAlienWallPosts = (int) ($this->queryParam("with_alien_wall_posts") ?? 0);
-
-        $wallCondition = "(`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`)";
-        if ($withAlienWallPosts === 1) {
-            $wallCondition = "(`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0)";
-        }
+        $withAlienWallPosts = (int) ($_GET["with_alien_wall_posts"] ?? 0);
 
         $posts   = DatabaseConnection::i()
                    ->getContext()
@@ -207,8 +202,11 @@ final class WallPresenter extends OpenVKPresenter
                    ->where("wall IN (?)", $ids)
                    ->where("deleted", 0)
                    ->where("suggested", 0)
-                   ->where($wallCondition)
                    ->order("created DESC");
+
+        if ($withAlienWallPosts === 0) {
+            $posts->where("(`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`)");
+        }
         $this->template->paginatorConf = (object) [
             "count"   => sizeof($posts),
             "page"    => (int) ($_GET["p"] ?? 1),
@@ -230,13 +228,13 @@ final class WallPresenter extends OpenVKPresenter
         $page  = (int) ($_GET["p"] ?? 1);
         $pPage = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);
 
-        $withAlienWallPosts = (int) ($this->queryParam("with_alien_wall_posts") ?? 0);
+        $withAlienWallPosts = (int) ($_GET["with_alien_wall_posts"] ?? 0);
 
         $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) LEFT JOIN `profiles` ON LEAST(`posts`.`wall`, 0) = 0 AND `profiles`.`id` = ABS(`posts`.`wall`)";
-        if ($withAlienWallPosts === 1) {
-            $queryBase .= " WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND ((`profiles`.`profile_type` = 0 AND `profiles`.`hide_global_feed` = 0) OR `profiles`.`first_name` IS NULL) AND ((`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0)) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
-        } else {
-            $queryBase .= " WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND ((`profiles`.`profile_type` = 0 AND `profiles`.`hide_global_feed` = 0) OR `profiles`.`first_name` IS NULL) AND ((`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`)) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
+        $queryBase .= " WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND ((`profiles`.`profile_type` = 0 AND `profiles`.`hide_global_feed` = 0) OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
+        
+        if ($withAlienWallPosts === 0) {
+            $queryBase .= " AND ((`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`))";
         }
 
         if ($this->user->identity->getNsfwTolerance() === User::NSFW_INTOLERANT) {
