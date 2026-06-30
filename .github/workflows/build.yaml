@@ -20,23 +20,23 @@ jobs:
 
         steps:
             - name: Set up QEMU
-              uses: docker/setup-qemu-action@v3
+              uses: docker/setup-qemu-action@v4
 
             - name: Set up Docker Buildx
               id: buildx
-              uses: docker/setup-buildx-action@v3
+              uses: docker/setup-buildx-action@v4
               with:
                   platforms: linux/amd64,linux/arm64
 
             - name: Change repository string to lowercase
               id: repositorystring
-              uses: Entepotenz/change-string-case-action-min-dependencies@v1.1.0
+              uses: Entepotenz/change-string-case-action-min-dependencies@v1.2.0
               with:
                   string: ${{ github.repository }}
 
             - name: Base image meta
               id: basemeta
-              uses: docker/metadata-action@v5
+              uses: docker/metadata-action@v6
               with:
                   images: |
                       ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.BASE_IMAGE_NAME}}
@@ -54,7 +54,7 @@ jobs:
               run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
             - name: Build base image
-              uses: docker/build-push-action@v6
+              uses: docker/build-push-action@v7
               with:
                   platforms: linux/amd64,linux/arm64
                   file: install/automated/docker/openvk.Dockerfile
