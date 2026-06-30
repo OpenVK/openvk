@@ -334,6 +334,13 @@ body.no-scroll .sidebar {
     padding: 10px 60px;
 }
 
+.messenger-app--input .input--messagebox-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px !important;
+}
+
 .messenger-app--input---messagebox {
     box-sizing: border-box;
     padding: 0 10px;
@@ -345,7 +352,6 @@ body.no-scroll .sidebar {
     width: 100%;
     height: 50px !important;
     resize: none;
-    margin-bottom: 8px !important;
     padding: 3px 6px;
     font-size: 11px;
 }

@@ -521,7 +521,7 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_arg =
     await docs_reciever.page(docs_reciever.stat.page + 1)
 }
 u(document).on('click', '#__documentAttachment', async (e) => {
-    const form = u(e.target).closest('form') 
+    const form = u(e.target).closest('#write') 
     const targ = u(e.target).closest("#__documentAttachment")
     let entity_source = "user"
     let entity_id = 0

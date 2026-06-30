@@ -1365,7 +1365,7 @@ u(document).on("drop", '#write', function(e) {
 // !!! PHOTO PICKER !!!
 u(document).on("click", "#__photoAttachment", async (e) => {
     const photos_per_page = 23
-    const form = u(e.target).closest('form') 
+    const form = u(e.target).closest('#write') 
     const club = Number(e.currentTarget.dataset.club ?? 0)
     const msg = new CMessageBox({
         title: tr('select_photo'),
@@ -1502,7 +1502,7 @@ u(document).on("click", "#__photoAttachment", async (e) => {
 
 u(document).on('click', '#__videoAttachment', async (e) => {
     const per_page = 10
-    const form = u(e.target).closest('form') 
+    const form = u(e.target).closest('#write') 
     const msg = new CMessageBox({
         title: tr('selecting_video'),
         body: `
@@ -1669,7 +1669,7 @@ u(document).on('click', '#__videoAttachment', async (e) => {
 
 u(document).on('click', '#__notesAttachment', async (e) => {
     const per_page = 10
-    const form = u(e.target).closest('form') 
+    const form = u(e.target).closest('#write') 
     const msg = new CMessageBox({
         title: tr('select_note'),
         body: `
