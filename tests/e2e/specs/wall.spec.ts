@@ -6,6 +6,11 @@ test.describe('Wall', () => {
     await loginAsAlice(page);
   });
 
+  test('shows global feed', async ({ page }) => {
+    await page.goto('/feed/all');
+    await expect(page.locator('.page_body')).toHaveScreenshot('feed-all.png');
+  });
+
   test('feed shows posts from friends', async ({ page }) => {
     await page.goto('/feed');
     await expect(page.locator('text=Hello world! This is my very first post on OpenVK')).toBeVisible();

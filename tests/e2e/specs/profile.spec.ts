@@ -15,6 +15,8 @@ test.describe('User profile', () => {
       mask: [
         page.locator('.page_footer p').filter({ hasText: /Altair/ }),
         page.locator('#basicInfo tr').filter({ hasText: 'День рождения' }),
+        page.locator('.mediaInfo'),
+        page.locator('.mini_timer'),
       ],
     });
   });

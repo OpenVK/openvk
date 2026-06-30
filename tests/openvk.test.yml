@@ -21,7 +21,7 @@ openvk:
             upgradeStructure: false
             photoSaving: "quick"
         videos:
-            disableUploading: true
+            disableUploading: false
         docs:
             maxSize: 10
             allowedFormats: ["jpg", "jpeg", "png", "gif", "webp"]
@@ -33,7 +33,7 @@ openvk:
             forcePhoneVerification: false
             forceEmailVerification: false
             forceStrongPassword: false
-            disablePasswordRestoring: true
+            disablePasswordRestoring: false
             enableSu: true
             rateLimits:
                 actions: 9999

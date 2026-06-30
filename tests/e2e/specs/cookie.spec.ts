@@ -4,6 +4,7 @@ declare function agreeWithCookies(): void;
 
 test.describe('Cookie consent', () => {
   test('shows cookie banner and allows accepting', async ({ page }) => {
+    await page.context().clearCookies();
     await page.goto('/');
     await expect(page.locator('.cookies-popup')).toBeVisible();
     await expect(page.locator('.cookies-popup')).toHaveScreenshot('cookie-banner.png');
