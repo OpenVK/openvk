@@ -41,6 +41,9 @@
 
         {include "_includeCSS.latte"}
 
+        <meta property="og:site_name" content="{$instance_name}" />
+        <meta name="twitter:card" content="summary" />
+
         {ifset headIncludes}
             {include headIncludes}
         {/ifset}

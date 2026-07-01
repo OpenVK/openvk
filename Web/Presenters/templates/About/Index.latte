@@ -1,5 +1,13 @@
 {extends "../@layout.latte"}
+{var $instance_name = \OPENVK_ROOT_CONF['openvk']['appearance']['name']}
 {block title}{_welcome}{/block}
+
+{block headIncludes}
+    <meta property="og:title" content="{_welcome} — {$instance_name}" />
+    <meta property="og:url" content="{$baseUrl}/" />
+    <meta property="og:description" content="{tr('register_meta_desc', $instance_name)}" />
+    <meta name="twitter:title" content="{_welcome} — {$instance_name}" />
+{/block}
 
 {block header}
     {_welcome}
