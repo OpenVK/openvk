@@ -413,6 +413,7 @@ final class Wall extends VKAPIRequestHandler
                     }
                 }
 
+                $signerId = null;
                 if ($post->isSigned()) {
                     $actualAuthor = $post->getOwner(false);
                     $signerId     = $actualAuthor->getId();

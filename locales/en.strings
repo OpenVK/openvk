@@ -1406,6 +1406,7 @@
 "no_messages" = "No one has written to you yet.";
 "messages_blocked" = "Unfortunately, your message cannot be sent due to this user's privacy settings.";
 "enter_message" = "Enter message";
+"message_user_typing" = "$1 is typing a message...";
 
 "messages_error_1" = "Message not delivered";
 "messages_error_1_description" = "There was a general error in sending this message...";

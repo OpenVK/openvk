@@ -896,19 +896,8 @@ final class Audio extends VKAPIRequestHandler
         return (object) [
             "id" => $playlist->getId(),
             "owner_id" => $playlist->getOwnerId(),
-            "raw_id" => $playlist->getPrettyId(),
             "title" => $playlist->getName(),
             "cover_url" => $playlist->getCoverURL(),
-            "last_updated" => $playlist->getEditTime()?->timestamp(),
-            "explicit" => 0,
-            "followed" => 0,
-            "official" => 0,
-            "listens" => 0,
-            "size" => $playlist->size(),
-            "covers" => [],
-            "description" => $playlist->getDescription(),
-            "raw_description" => $playlist->getDescription(),
-            "list" => [],
         ];
     }
 }

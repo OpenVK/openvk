@@ -198,7 +198,6 @@ final class WallPresenter extends OpenVKPresenter
                    ->table("posts")
                    ->select("id")
                    ->where("wall IN (?)", $ids)
-                   ->where("(wall < 0 AND (flags & 128) > 0) OR (wall > 0 AND wall = owner)")
                    ->where("deleted", 0)
                    ->where("suggested", 0)
                    ->order("created DESC");
@@ -224,8 +223,7 @@ final class WallPresenter extends OpenVKPresenter
         $pPage = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);
 
         $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) LEFT JOIN `profiles` ON LEAST(`posts`.`wall`, 0) = 0 AND `profiles`.`id` = ABS(`posts`.`wall`)";
-        $queryBase .= " WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND (`profiles`.`profile_type` = 0 OR `profiles`.`first_name` IS NULL)";
-        $queryBase .= " AND ((`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`)) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
+        $queryBase .= "WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND ((`profiles`.`profile_type` = 0 AND `profiles`.`hide_global_feed` = 0) OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
 
         if ($this->user->identity->getNsfwTolerance() === User::NSFW_INTOLERANT) {
             $queryBase .= " AND `nsfw` = 0";

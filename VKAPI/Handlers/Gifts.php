@@ -12,8 +12,6 @@ final class Gifts extends VKAPIRequestHandler
 {
     public function get(int $user_id = 0, int $count = 10, int $offset = 0)
     {
-        # There is no extended :)
-
         $this->requireUser();
 
         $server_url = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
@@ -37,9 +35,11 @@ final class Gifts extends VKAPIRequestHandler
 
         foreach ($user_gifts as $gift) {
             $gift_item[] = [
+                "id"        => $gift->id,
                 "from_id"   => $gift->anon == true ? 0 : $gift->sender->getId(),
                 "message"   => $gift->caption == null ? "" : $gift->caption,
                 "date"      => $gift->sent->timestamp(),
+                "privacy"   => $gift->anon == true ? 1 : 0,
                 "gift"      => [
                     "id"          => $gift->gift->getId(),
                     "thumb_256"   => $server_url . $gift->gift->getImage(2),
@@ -49,7 +49,7 @@ final class Gifts extends VKAPIRequestHandler
             ];
         }
 
-        return $gift_item;
+        return $this->generateItems($user->getGiftCount(), $gift_item);
     }
 
     public function send(int $user_ids, int $gift_id, string $message = "", int $privacy = 0)

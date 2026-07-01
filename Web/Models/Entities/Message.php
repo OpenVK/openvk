@@ -21,6 +21,15 @@ class Message extends RowModel
     protected $tableName = "messages";
 
     /**
+     * Get message ID.
+     *
+     * @returns int
+     */
+    public function getId(): ?int
+    {
+        return $this->getRecord()->id;
+    }
+    /**
      * Get origin of the message.
      *
      * Returns either user or club.

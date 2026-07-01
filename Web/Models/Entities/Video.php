@@ -180,8 +180,7 @@ class Video extends Media
                 "player" => !$fromYoutube ? $this->getURL() : $this->getVideoDriver()->getURL(),
                 "files" => !$fromYoutube ? [
                     "mp4_480" => $this->getURL(),
-                ] : null,
-                "platform" => $fromYoutube ? "youtube" : null,
+                ] : [],
                 "added" => 0,
                 "repeat" => 0,
                 "type" => "video",
@@ -193,6 +192,9 @@ class Video extends Media
                 ],
             ],
         ];
+        if ($fromYoutube) {
+            $res->video['platform'] = "youtube";
+        }
 
         if (!is_null($user)) {
             $res->video["likes"] = [

@@ -112,16 +112,13 @@ final class Docs extends VKAPIRequestHandler
         }
 
         $documents = (new Documents())->getDocumentsByOwner($owner_id, $order, $type);
-        $res = (object) [
-            "count" => $documents->size(),
-            "items" => [],
-        ];
+        $items = [];
 
         foreach ($documents->offsetLimit($offset, $count) as $doc) {
-            $res->items[] = $doc->toVkApiStruct($this->getUser(), $return_tags == 1);
+            $items[] = $doc->toVkApiStruct($this->getUser(), $return_tags == 1);
         }
 
-        return $res;
+        return $this->generateItems($documents->size(), $items);
     }
 
     public function getById(string $docs, int $return_tags = 0): array
