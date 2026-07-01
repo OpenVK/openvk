@@ -10,6 +10,7 @@ openvk:
 
 
     preferences:
+        defaultLanguage: "ru"
         femaleGenderPriority: true
         nginxCacheTime: null
         uploads:

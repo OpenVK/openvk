@@ -12,6 +12,7 @@ data:
           - "ovk.local"
       
       preferences:
+          defaultLanguage: "ru"
           femaleGenderPriority: true
           nginxCacheTime: null
           uploads:

@@ -9,6 +9,7 @@ openvk:
         - "ovk.local"
 
     preferences:
+        defaultLanguage: "ru"
         femaleGenderPriority: true
         nginxCacheTime: 120
         uploads:
