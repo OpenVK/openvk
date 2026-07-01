@@ -664,6 +664,20 @@ class User extends RowModel
         ];
     }
 
+    public function isFriendsWith(int $userId): bool
+    {
+        if ($userId === $this->getId()) {
+            return false;
+        }
+
+        $targetUser = (new Users())->get($userId);
+        if (!$targetUser) {
+            return false;
+        }
+        
+        return $this->getSubscriptionStatus($targetUser) === User::SUBSCRIPTION_MUTUAL;
+    }
+
     public function getFriends(int $page = 1, int $limit = 6): \Traversable
     {
         return $this->_abstractRelationGenerator("get-friends", $page, $limit);
