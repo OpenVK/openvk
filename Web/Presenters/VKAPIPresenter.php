@@ -521,7 +521,7 @@ final class VKAPIPresenter extends OpenVKPresenter
         $url     = $this->queryParam("redirect_uri");
         $responseType = $this->queryParam("response_type") ?? 'php';
 
-        if (!is_null($this->queryParam("client_id"))) {
+        if (!empty($this->queryParam("client_id")) && empty($client)) {
             $client = $this->resolveAppIdToString($this->queryParam("client_id"));
         }
 
@@ -622,7 +622,7 @@ final class VKAPIPresenter extends OpenVKPresenter
         }
     }
 
-    private function resolveAppIdToString(string $id = ""): ?string
+    private function resolveAppIdToString(?string $id = ""): ?string
     {
         switch ($id) {
             case '4083558':
