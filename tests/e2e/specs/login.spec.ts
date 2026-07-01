@@ -26,6 +26,6 @@ test.describe('Login page', () => {
     await page.click('#fastLogin input[type="submit"]');
     await expect(page).toHaveURL(/\/login/);
     await expect(page.locator('.msg_err')).toHaveScreenshot('login-error.png', { maxDiffPixels: 200 });
-    await expect(page.locator('.msg_err')).toContainText('Не удалось');
+    await expect(page.locator('.msg_err')).toContainText('Login failed');
   });
 });
