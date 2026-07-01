@@ -36,7 +36,7 @@ class TypingEvent implements ILPEmitable
         return [
             61,                               # event type
             $this->payload,                   # userId
-            1
+            1,
         ];
     }
 }

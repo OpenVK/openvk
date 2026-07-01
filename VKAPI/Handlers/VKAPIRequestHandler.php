@@ -78,8 +78,7 @@ abstract class VKAPIRequestHandler
 
     public function generateItems(int $count, array $items)
     {
-        if (VKAPI_DECL_VER_MAJOR >= 5)
-        {
+        if (VKAPI_DECL_VER_MAJOR >= 5) {
             return (object) [
                 'count' => $count,
                 'items' => $items,

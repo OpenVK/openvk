@@ -192,8 +192,7 @@ class Video extends Media
                 ],
             ],
         ];
-        if ($fromYoutube)
-        {
+        if ($fromYoutube) {
             $res->video['platform'] = "youtube";
         }
 

@@ -161,10 +161,10 @@ class Correspondence
 
         if ($user_id == $this->correspondents[0]->getId()) {
             $params = array_merge($params[0], $params[1], $params[0], $params[1], $params[2], $params[3]);
-        } else if ($user_id == $this->correspondents[1]->getId()) {
+        } elseif ($user_id == $this->correspondents[1]->getId()) {
             $params = array_merge(array_reverse($params[0]), array_reverse($params[1]), array_reverse($params[0]), array_reverse($params[1]), $params[2], $params[3]);
         }
-        
+
         $connection = DatabaseConnection::i()->getConnection();
         $msgs = $connection->query($query, ...$params);
         $msgRow = $msgs->fetch();

@@ -897,7 +897,7 @@ final class Audio extends VKAPIRequestHandler
             "id" => $playlist->getId(),
             "owner_id" => $playlist->getOwnerId(),
             "title" => $playlist->getName(),
-            "cover_url" => $playlist->getCoverURL()
+            "cover_url" => $playlist->getCoverURL(),
         ];
     }
 }

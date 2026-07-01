@@ -242,10 +242,10 @@ final class Messages extends VKAPIRequestHandler
                 if ($lastMessage->isUnread()) {
                     $listConvo->unread_count = 1;
                 }
-                
+
                 $listConvo->in_read = $convo->getLastReadedMessage($peer->getId())?->getId() ?? 0;
                 $listConvo->out_read = $convo->getLastReadedMessage($this->getUser()->getId())?->getId() ?? 0;
-                
+
 
                 $author = $lastMessage->getSender()->getId();
 
@@ -288,7 +288,7 @@ final class Messages extends VKAPIRequestHandler
                 "count"    => $convosCount,
                 "items"    => $list,
                 "profiles" => (!empty($users) ? (new APIUsers())->get(implode(',', $users), $fields . ',photo_50,photo_100,photo_200', 0, $count + 1) : []),
-                "groups"   => []
+                "groups"   => [],
             ];
         }
     }
@@ -402,14 +402,14 @@ final class Messages extends VKAPIRequestHandler
                     "peer" => (object) [
                         "id" => $user_id,
                         "local_id" => $user_id,
-                        "type" => "user"
+                        "type" => "user",
                     ],
                     "last_message_id" => $dialogue->getPreviewMessage()->getId(),
-                ]
-            ]
+                ],
+            ],
         ];
 
-        
+
         $output['conversations'][0]->in_read = $dialogue->getLastReadedMessage($peer->getId())?->getId() ?? 0; // TODO: check if it's read
         $output['conversations'][0]->out_read = $dialogue->getLastReadedMessage($this->getUser()->getId())?->getId() ?? 0;
 
@@ -539,7 +539,7 @@ final class Messages extends VKAPIRequestHandler
         } elseif (empty($peer_id)) {
             $peer_id = $user_id;
         }
-    
+
         $peer = $this->resolvePeer($peer_id, $peer_id);
         $peer = (new USRRepo())->get($peer);
 
