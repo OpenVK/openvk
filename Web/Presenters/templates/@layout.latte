@@ -109,12 +109,25 @@
             <div class="page_header{if $instance_name != \OPENVK_DEFAULT_INSTANCE_NAME} page_custom_header{/if}{if $atSearch ?? false} search_expanded search_expanded_at_all{/if}">
                 <a href="/" class="home_button{if $instance_name != \OPENVK_DEFAULT_INSTANCE_NAME} home_button_custom{/if}" title="{$instance_name}">{if $instance_name != \OPENVK_DEFAULT_INSTANCE_NAME}{$instance_name}{/if}</a>
                 <div class="mobile_title">
+                    <span>
                     {ifset title}
-                        <span>
-                            {$pageTitle}
-                        </span>
+                        {$pageTitle}
                     {/ifset}
+                    </span>
                 </div>
+                {ifset $thisUser}
+                {var $notificationsCount = $thisUser->getNotificationsCount()}
+                {var $unreadMessagesCount = $thisUser->getUnreadMessagesCount()}
+
+                <a id="fast_notifications" href="/notifications" class="mobiles_only">
+                    <object n:class="$notificationsCount == 0 ? zero_counter : '' ">
+                        <b>{$notificationsCount}</b>
+                    </object>
+                    <object n:class="$unreadMessagesCount == 0 ? zero_counter : '' ">
+                        <b>{$unreadMessagesCount}</b>
+                    </object>
+                </a>
+                {/ifset}
                 <div n:if="isset($thisUser) ? (!$thisUser->isBanned() XOR !$thisUser->isActivated()) : true" class="header_navigation">
                     {ifset $thisUser}
                         {if $thisUser->isDeactivated()}
@@ -184,8 +197,12 @@
                     {ifset $thisUser}
                         {if !$thisUser->isBanned() XOR !$thisUser->isActivated() XOR $thisUser->isDeactivated()}
                             <a href="/edit" class="link edit-button">{_edit_button}</a>
+                            <a href="{$thisUser->getURL()}" id="myPagePreview" class="link my_page mobiles_only">
+                                <img src="{$thisUser->getAvatarURL()}">
+                                <span>{$thisUser->getCanonicalName()}</span>
+                            </a>
                             <a href="{$thisUser->getURL()}" class="link my_page" title="{_my_page} [Alt+Shift+.]" accesskey=".">{_my_page}</a>
-                            <a id="my_friends" href="/friends{$thisUser->getId()}" class="link my_friends">{_my_friends}
+                            <a href="/friends{$thisUser->getId()}" class="link my_friends">{_my_friends}
                                 <object type="internal/link" n:if="$thisUser->getRequestsCount() > 0">
                                     <a href="/friends{$thisUser->getId()}?act=incoming" class="linkunderline">
                                        (<b>{$thisUser->getRequestsCount()}</b>)
@@ -196,16 +213,16 @@
                             <a n:if="$thisUser->getLeftMenuItemStatus('videos')" href="/videos{$thisUser->getId()}" class="link my_videos">{_my_videos}</a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('audios')" href="/audios{$thisUser->getId()}" class="link my_audios">{_my_audios}</a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('messages')" href="/im" class="link my_messages">{_my_messages}
-                                <object type="internal/link" n:if="$thisUser->getUnreadMessagesCount() > 0">
-                                    (<b>{$thisUser->getUnreadMessagesCount()}</b>)
+                                <object type="internal/link" n:if="$unreadMessagesCount > 0">
+                                    (<b>{$unreadMessagesCount}</b>)
                                 </object>
                             </a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('notes')" href="/notes{$thisUser->getId()}" class="link my_notes">{_my_notes}</a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('groups')" href="/groups{$thisUser->getId()}" class="link my_groups">{_my_groups}</a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('news')" href="/feed" class="link my_feed" title="{_my_feed} [Alt+Shift+,]" accesskey=",">{_my_feed}</a>
                             <a href="/notifications" class="link my_feedback" title="{_my_feedback} [Alt+Shift+N]" accesskey="n">{_my_feedback}
-                                <object type="internal/link" n:if="$thisUser->getNotificationsCount() > 0">
-                                    (<b>{$thisUser->getNotificationsCount()}</b>)
+                                <object type="internal/link" n:if="$notificationsCount > 0">
+                                    (<b>{$notificationsCount}</b>)
                                 </object>
                             </a>
                             <a href="/settings" class="link my_settings">{_my_settings}</a>
@@ -247,7 +264,7 @@
                           n:foreach="\OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links'] as $menuItem"
                           href="{$menuItem['url']}"
                           target="_blank"
-                          class="link">
+                          class="link custom_instance_link">
                             {strpos($menuItem["name"], "@") === 0 ? tr(substr($menuItem["name"], 1)) : $menuItem["name"]}
                         </a>
                             <div id="_groupListPinnedGroups">
@@ -264,7 +281,9 @@
                                 </a>
                             </div>
 
-                            <div id="news" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['news']['show']">
+                            <a href="javascript:toDesktopVersion()" class="link less_accent_link fullsize mobiles_only">{_mobile_desktop_version}</a>
+
+                            <div class="navigation_infos" id="news" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['news']['show']">
                                 <b>{_news} </b>
                                 <hr size="1">
                                 <text>{$newsText}...</text>
@@ -272,7 +291,7 @@
                                 <a href="{$newsLink}">{_news_more}</a>
                             </div>
 
-                            <div id="bday" n:if="$showBday">
+                            <div class="navigation_infos" id="bday" n:if="$showBday">
                                 <b>{_bday_reminder}</b>
                                 <hr size="1">
                                 <text>
@@ -293,14 +312,14 @@
                                 </text>
                             </div>
 
-                            <div n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $thisUser->getCoins() != 0" id="votesBalance">
+                            <div class="navigation_infos" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $thisUser->getCoins() != 0" id="votesBalance">
                                 {tr("you_still_have_x_points", $thisUser->getCoins())|noescape}
                                 <br /><br />
 
                                 <a href="/settings?act=finance">{_top_up_your_account} &#xbb;</a>
                             </div>
 
-                            <a n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable'] && $thisUser->getLeftMenuItemStatus('poster')" href="{php echo \OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['link']}" >
+                            <a class="psa-poster-url" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable'] && $thisUser->getLeftMenuItemStatus('poster')" href="{php echo \OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['link']}" >
                                 <img src="{php echo \OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['src']}" alt="{php echo \OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['caption']}" class="psa-poster" style="max-width: 100%; margin-top: 10px;" />
                             </a>
 
@@ -317,9 +336,9 @@
                                     <img src="/assets/packages/static/openvk/img/photos.svg">
                                 </a>
                                 <a id="minilink-messenger" class="minilink" href="/im">
-                                    <object type="internal/link" n:if="$thisUser->getUnreadMessagesCount() > 0">
+                                    <object type="internal/link" n:if="$unreadMessagesCount > 0">
                                         <div class="counter">
-                                            +{$thisUser->getUnreadMessagesCount()}
+                                            +{$unreadMessagesCount}
                                         </div>
                                     </object>
                                     <img src="/assets/packages/static/openvk/img/messages.svg">
@@ -328,9 +347,9 @@
                                     <img src="/assets/packages/static/openvk/img/groups.svg">
                                 </a>
                                 <a id="minilink-notifications" class="minilink" href="/notifications">
-                                    <object type="internal/link" n:if="$thisUser->getNotificationsCount() > 0">
+                                    <object type="internal/link" n:if="$notificationsCount > 0">
                                         <div class="counter">
-                                            +{$thisUser->getNotificationsCount()}
+                                            +{$notificationsCount}
                                         </div>
                                     </object>
                                     <img src="/assets/packages/static/openvk/img/feedback.svg">

@@ -151,7 +151,7 @@ u(document).on('click', '#__feed_settings_link', (e) => {
                                     <input type='number' min='1' max='${PAGES_COUNT}' id='pageNumber' value='${CURRENT_PAGE}' placeholder='${CURRENT_PAGE}'>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="not_flexible_tr">
                                 <td width="120" valign="top">
                                     <span class="nobold">
                                         <input type='checkbox' name='showIgnored' id="showIgnored" ${CURRENT_RETURN_BANNED == 1 ? 'checked' : ''}>

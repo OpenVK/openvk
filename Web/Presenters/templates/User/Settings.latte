@@ -439,6 +439,7 @@
         
         {elseif $isFinance}
         
+        <div id="finance_settings_block">
         <div style="width: 75%; display: inline-block;">
             {presenter "openvk!Support->knowledgeBaseArticle", "points"}
             {php $transferPointsHtml = str_replace('\\"', '"', tr("also_you_can_transfer_points", $thisUser->getCoins(), rawurlencode($csrfToken)))}
@@ -457,7 +458,8 @@
                 </small>
             </div>
         </div>
-        
+        </div>
+
         {script "js/node_modules/textfit/textFit.min.js"}
         <script>
             let balance = document.querySelector("#balance");

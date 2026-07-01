@@ -85,7 +85,10 @@ h1 {
     background-position: 0;
 }
 
-.page_header .mobile_title {
+.page_header .mobile_title,
+#fast_notifications,
+#myPagePreview,
+.navigation .link.fullsize {
     display: none;
 }
 

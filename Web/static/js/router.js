@@ -284,8 +284,9 @@ function isMobileAndExpanded() {
     return isMobile() && document.body.classList.contains('menu-expanded');
 }
 
+// Mobile theme header
 u(document).on('click', '.page_header', (e) => {
-    if (isMobile() && !e.target.closest('.link')) {
+    if (isMobile() && !e.target.closest('.link, #fast_notifications')) {
         e.preventDefault();
         e.stopPropagation();
 
@@ -297,6 +298,11 @@ u(document).on('click', '.page_header', (e) => {
         }
     }
 })
+
+function toDesktopVersion() {
+    u("link[href^='/assets/packages/static/openvk/css/mobile.css']").remove();
+    u("meta[name='viewport']").remove();
+}
 
 u(document).on('click', 'a', async (e) => {
     if(e.defaultPrevented) {

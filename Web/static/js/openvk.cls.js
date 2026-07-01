@@ -70,7 +70,7 @@ function showCoinsTransferDialog(coinsCount, hash) {
             ${tr("points_transfer_dialog_header_2")} <b>${tr("points_amount", coinsCount)}</b>
         </div>
         <form action="/coins_transfer" method="post" id="coins_transfer_form" style="margin-top: 30px">
-            <table cellspacing="7" cellpadding="0" border="0" align="center">
+            <table class="flexible_table" cellspacing="7" cellpadding="0" border="0" align="center">
                 <tbody>
                     <tr>
                         <td width="120" valign="top">

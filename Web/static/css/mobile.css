@@ -11,17 +11,25 @@
         overflow-x: hidden;
     }
 
-    body, table, .page_body {
-        font-size: 20px;
+    body, .page_body,
+    .action_links {
+        font-size: 14px;
+    }
+
+    table {
+        font-size: 16px;
     }
 
     select, .button {
         font-size: 14px;
+    }
+
+    .button {
         font-weight: 700;
     }
 
     label {
-        font-size: 18px;
+        font-size: 16px;
     }
 
     select {
@@ -69,6 +77,10 @@
     .mobile_unset_margin {
         margin-left: 0px !important;
         margin-right: 0px !important;
+    }
+
+    .mobiles_only {
+        display: block;
     }
 
     .reg_h4 {
@@ -198,13 +210,22 @@
         background: unset;
     }
 
-    #votesBalance, #news, #bday {
+    #votesBalance, #news, #bday, .navigation_infos {
         width: 100%;
-        padding-top: 30px 8px;
+        padding: 8px 45px;
         background-color: unset;
         border-bottom: unset;
-        border-top: 1px solid #d8d8d8;
         font-size: 14px;
+        text-align: left;
+        box-sizing: border-box;
+    }
+
+    .navigation_infos a,
+    .navigation_infos text,
+    .navigation_infos b,
+    #news b,
+    .navigation_infos {
+        color: #888888;
     }
 
     #news b,
@@ -223,7 +244,7 @@
     }
 
     .page_header {
-        height: 49px;
+        height: 49px !important;
         width: 100vw;
         background: linear-gradient(#707070, #3b3b3b);
         display: flex;
@@ -232,6 +253,33 @@
         position: fixed;
         z-index: 298;
         top: 0;
+    }
+
+    .page_header #fast_notifications {
+        display: block;
+        position: absolute;
+        right: 12px;
+        background: url(/assets/packages/static/openvk/img/mobile/notifications.png);
+        background-repeat: no-repeat;
+        background-size: contain;
+        width: 24px;
+        height: 24px;
+    }
+
+    .page_header #fast_notifications object,
+    .page_header #fast_notifications b {
+        display: inline-block;
+        font-size: 13px;
+    }
+
+    .page_header #fast_notifications object.zero_counter {
+        display: none;
+    }
+
+    .page_header #fast_notifications object {
+        background: red;
+        color: white;
+        padding: 0px 2px;
     }
 
     .articleView_link {
@@ -375,7 +423,8 @@
     }
 
     body.menu-expanded .page_header .mobile_title,
-    body .page_header.search_expanded_at_all .mobile_title {
+    body .page_header.search_expanded_at_all .mobile_title,
+    body.menu-expanded .page_header #fast_notifications {
         display: none;
     }
 
@@ -392,7 +441,7 @@
     /* Header */
 
     .home_button {
-        background: url(/assets/packages/static/openvk/img/mobile/logo.png);
+        background: url(/assets/packages/static/openvk/img/mobile/logo.png) !important;
         background-repeat: no-repeat;
         background-size: contain;
         width: 24px;
@@ -448,7 +497,7 @@
         align-items: center;
         font-size: 10px;
         padding: 0px;
-        height: 5px;
+        height: 12px;
         padding: 0px 4px;
     }
 
@@ -496,6 +545,28 @@
         color: white;
     }
 
+    #myPagePreview {
+        display: flex !important;
+        gap: 13px;
+        justify-content: normal;
+        align-items: center;
+        padding: 12px 3px 12px 16px;
+        background-color: #ededed47;
+    }
+
+    #myPagePreview img {
+        width: 40px;
+    }
+
+    #myPagePreview span {
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    .navigation .link.my_page {
+        display: none;
+    }
+
     /* footer */
 
     .page_footer {
@@ -539,11 +610,25 @@
     }
 
     .navigation .link.my_page::before {
-        background: unset;
+        display: none;
     }
 
-    .navigation .link.my_friends::before {
+    .navigation .link.my_friends::before,
+    .navigation .link.pinned_club::before {
         background-position: 0px -67px;
+    }
+
+    .navigation .link.fullsize {
+        display: block;
+    }
+
+    .navigation .link.less_accent_link {
+        color: #777;
+        font-weight: normal;
+    }
+
+    .navigation .link.fullsize::before {
+        background-position: 0px -266px;
     }
 
     .navigation .link.my_photos::before {
@@ -603,16 +688,23 @@
         background-position: 0px -393px;
     }
 
-    .navigation .link.my_apps::before {
-        background-position: 0px -393px;
-    }
-
     .navigation .link.my_documents::before {
         background-position: 0px -393px;
     }
 
     .navigation .link.my_apps::before {
-        background-position: 0px -373px;
+        background-position: 0px -375px;
+        height: 17px;
+    }
+
+    .navigation .link.my_admin::before,
+    .navigation .link.my_reports::before,
+    .navigation .link.my_spam::before {
+        background-position: 0px -310px;
+    }
+
+    .navigation .link.my_notes::before {
+        background-position: 0px -310px;
     }
 
     .navigation-lang {
@@ -838,6 +930,13 @@
         font-size: 16px;
     }
 
+    .repost-icon,
+    .heart {
+        height: 16px !important;
+        width: 16px !important;
+        background-size: 100% !important;
+    }
+
     .heart {
         background: url('/assets/packages/static/openvk/img/like.gif') no-repeat 0px 0;
         background-size: cover;
@@ -845,9 +944,23 @@
         width: 16px;
     }
 
+    .post-author .pin,
+    .post-author .delete,
+    .post-author .report,
+    .post-author .edit {
+        height: 16px !important;
+        width: 17px !important;
+        background-size: 13px !important;
+    }
+
     .like_tooltip_wrapper .like_tooltip_head span, .like_tooltip_wrapper .like_tooltip_head a {
         height: 20px;
         font-size: 16px;
+    }
+
+    .like_tooltip_wrapper .like_tooltip_body img {
+        width: 36px;
+        height: 36px;
     }
 
     #wallAttachmentMenu {
@@ -1125,6 +1238,7 @@
 
     .audioEntry:hover .status {
         width: 95%;
+        z-index: 100;
     }
 
     .audioEntry .buttons {
@@ -1241,8 +1355,8 @@
         min-width: unset !important;
         font-size: 14px;
         position: absolute;
-        right: 0;
-        bottom: 10px;
+        right: 9px;
+        bottom: 24px;
         text-shadow: 0px 0px 3px black;
     }
 
@@ -1291,6 +1405,8 @@
     #ajax_audio_player #aj_player_close_btn {
         width: 19px;
         height: 22px;
+        background-position: 0px -121px;
+        background-size: 407px;
     }
 
     #aj_player_tracks {
@@ -1428,6 +1544,8 @@
 
     .audioEntry .status:hover .mediaInfo {
         position: unset;
+        color: white;
+        text-shadow: rgb(0, 0, 0) 1px 0px 0px, rgb(0, 0, 0) 0.540302px 0.841471px 0px, rgb(0, 0, 0) -0.416147px 0.909297px 0px, rgb(0, 0, 0) -0.989992px 0.14112px 0px, rgb(0, 0, 0) -0.653644px -0.756802px 0px, rgb(0, 0, 0) 0.283662px -0.958924px 0px, rgb(0, 0, 0) 0.96017px -0.279415px 0px;
     }
 
     .audioEntry.nowPlaying .playIcon {
@@ -1702,7 +1820,6 @@
     /* Posts */
 
     .side_link {
-        float: unset;
         font-size: 14px;
     }
 
@@ -1712,6 +1829,7 @@
 
     .post-menu {
         height: unset;
+        margin-top: 8px;
     }
 
     #post_page_meta {
@@ -1745,6 +1863,7 @@
 
     .post {
         margin-bottom: 10px;
+        overflow-x: auto;
     }
 
     .post .post-menu-s .post-avatar {
@@ -1932,6 +2051,26 @@
         width: 100% !important;
     }
 
+    .psa-poster-url {
+        margin: 10px 0px;
+        display: block;
+    }
+
+    .psa-poster {
+        width: 100%;
+    }
+
+    #finance_settings_block {
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 15px;
+    }
+
+    #finance_settings_block > div {
+        width: 100% !important;
+        float: unset !important;
+    }
+
     /* Friends */
 
     .paginator {
@@ -1969,6 +2108,8 @@
 
     .action_links>.profile_link, .action_links>.profile_link_form>.profile_link {
         width: 100%;
+        font-size: 13px;
+        white-space: nowrap;
     }
 
     .list_view_item_info {
@@ -2008,7 +2149,7 @@
     }
 }
 
-@media screen and (max-width: 320px) {
+@media screen and (max-width: 400px) {
     .header_navigation {
         right: -7px;
     }

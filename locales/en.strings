@@ -676,6 +676,7 @@
 "footer_developers" = "developers";
 "footer_choose_language" = "choose language";
 "footer_privacy" = "privacy";
+"language_add_strings" = "Help with the translation";
 
 /* Settings */
 

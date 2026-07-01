@@ -657,6 +657,7 @@
 "footer_developers" = "разработчикам";
 "footer_choose_language" = "выбрать язык";
 "footer_privacy" = "приватность";
+"language_add_strings" = "Добавить строки перевода";
 
 /* Settings */
 
