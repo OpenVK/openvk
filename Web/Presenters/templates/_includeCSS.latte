@@ -17,6 +17,8 @@
             {/if}
         {/if}
 
+        {css "css/mobile.css"}
+
         {* remove the "n:if" if you having issues with your theme *}
 
         <link n:if="$theme->getId() != 'mobile_ovk'" rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/stylesheet/styles.css" />
@@ -31,6 +33,7 @@
         {css "css/notifications.css"}
         {css "css/avatar-edit.css"}
         {css "css/audios.css"}
+        {css "css/mobile.css"}
 
         {if $isXmas}
             {css "css/xmas.css"}
@@ -55,6 +58,7 @@
     {css "css/nsfw-posts.css"}
     {css "css/notifications.css"}
     {css "css/audios.css"}
+    {css "css/mobile.css"}
 
     {if $isXmas}
         {css "css/xmas.css"}

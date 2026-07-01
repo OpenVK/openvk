@@ -6,7 +6,7 @@
 {/block}
 
 {block content}
-    <div class="container_gray bottom" style="margin: -10px -10px 10px;">
+    <div id="deactivated_block" class="container_gray bottom" style="margin: -10px -10px 10px;">
         {tr("profile_deactivated_msg", $thisUser->getDeactivationDate()->format("%e %B %G" . tr("time_at_sp") . "%R"))|noescape}
     </div>
 

@@ -653,6 +653,7 @@
 "menu_help" = "Help";
 
 "menu_logout" = "Log out";
+"menu_logout_confirm" = "Do you actually want to log out?";
 "menu_support" = "Support";
 
 "header_home" = "home";
@@ -675,6 +676,7 @@
 "footer_developers" = "developers";
 "footer_choose_language" = "choose language";
 "footer_privacy" = "privacy";
+"language_add_strings" = "Help with the translation";
 
 /* Settings */
 
@@ -809,7 +811,7 @@
 "backdrop_short" = "Backdrop";
 "backdrop" = "Page Backdrop";
 "backdrop_desc" = "You can set two pictures as the backdrop for your profile or group. They will be displayed on the left and right edges of the page, adding personality to your profile.";
-"backdrop_warn" = "The images will be arranged as shown in the layout above. Their height will be automatically increased to occupy 100% of the screen height, with a blur in the middle. You cannot replace the background of the main OpenVK interface or add audio.";
+"backdrop_warn" = "The images will be arranged as shown in the layout above. Their height will be automatically increased to occupy 100% of the screen height, with a blur in the middle. You cannot replace the background of the main OpenVK interface or add audio. The backdrop will be visible only on wide displays.";
 "backdrop_about_adding" = "You can upload only one picture, although depending on the design, the end result may look imperfect. You can also change only one picture: if you already have two images set up and you want to change one, upload only one, and the other won't be removed. To remove both images, press the button below; you can't remove pictures individually.";
 "backdrop_save" = "Save Backdrop Picture(s)";
 "backdrop_remove" = "Remove All Backdrop Pictures";

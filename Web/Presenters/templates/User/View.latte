@@ -223,7 +223,7 @@
                         <a href="/friends{$user->getId()}">{_all_title}</a>
                     </div>
                 </div>
-                <div class="content_list">
+                <div class="content_list hide_on_mobiles">
                     <div class="cl_element" n:foreach="$user->getFriends(1) as $friend">
                         <div class="cl_avatar">
                             <a href="{$friend->getURL()}">
@@ -251,7 +251,7 @@
                         <a href="/friends{$user->getId()}?act=online">{_all_title}</a>
                     </div>
                 </div>
-                <div class="content_list">
+                <div class="hide_on_mobiles content_list">
                     <div class="cl_element" n:foreach="$user->getFriendsOnline(1) as $friend">
                         <div class="cl_avatar">
                             <a href="{$friend->getURL()}">
@@ -277,7 +277,7 @@
                         <a href="/albums{$user->getId()}">{_all_title}</a>
                     </div>
                 </div>
-                <div style="padding: 5px;">
+                <div class="hide_on_mobiles" style="padding: 5px;">
                     <div class="ovk-album" style="display: inline-block;" n:foreach="$albums as $album">
                         <div style="text-align: center;float: left;height: 54pt;width: 100px;">
                             {var $cover = $album->getCoverPhoto()}
@@ -305,7 +305,7 @@
                         <a href="/videos{$user->getId()}">{_all_title}</a>
                     </div>
                 </div>
-                <div style="padding: 5px;">
+                <div class="hide_on_mobiles" style="padding: 5px;">
                     <div class="ovk-video" n:foreach="$videos as $video">
                         <a href="/video{$video->getPrettyId()}" class="preview" align="center" id="videoOpen" data-id="{$video->getPrettyId()}">
                             <img
@@ -332,7 +332,7 @@
                     </div>
                 </div>
 				
-				<div style="padding: 5px 8px 15px 8px;">
+				<div class="hide_on_mobiles" style="padding: 5px 8px 15px 8px;">
                     <ul class="notes_titles" n:foreach="$notes as $note">
 						<li class="written">
 							<a href="/note{$note->getPrettyId()}">
@@ -360,7 +360,7 @@
                         <a href="/groups{$user->getId()}">{_all_title}</a>
                     </div>
                 </div>
-                <div style="padding-left: 5px;">
+                <div class="hide_on_mobiles" style="padding-left: 5px;">
                     <div style="display: inline;" n:foreach="$user->getClubs(1) as $club">
                         <a href="club{$club->getId()}">{$club->getName()}</a> {if !$iterator->last}•{/if}
                     </div>
@@ -390,7 +390,7 @@
     </div>
     
     <div class="right_big_block">
-        <div class="page_info">
+        <div class="page_info_main page_info">
             <div n:if="!is_null($alert = $user->getAlert())" class="user-alert">{strpos($alert, "@") === 0 ? tr(substr($alert, 1)) : $alert}</div>
             {var $thatIsThisUser = isset($thisUser) && $user->getId() == $thisUser->getId()}
             <div n:if="$thatIsThisUser" class="page_status_popup" id="status_editor" style="display: none;">
@@ -594,18 +594,18 @@
             {/capture}
             <div>
             <div style="padding: 10px 8px 15px 8px;" n:ifcontent>
-                <h4 style="border-bottom: none; font-size: 11px; padding: 0; display: inline-block;">{_contact_information} {ifset $thisUser}{if $thisUser->getId() == $user->getId()}<a href="/edit?act=contacts" class="edit_link">[ {_edit} ]</a>{/if}{/ifset}</h4>
+                <h4 class="user_info_h4" style="border-bottom: none; font-size: 11px; padding: 0; display: inline-block;">{_contact_information} {ifset $thisUser}{if $thisUser->getId() == $user->getId()}<a href="/edit?act=contacts" class="edit_link">[ {_edit} ]</a>{/if}{/ifset}</h4>
                 {if !empty($contactInfo_Tmp)}
                     {$contactInfo_Tmp|noescape}
                 {else}
-                    <div style="padding: 15px;color:gray;text-align: center;">{_no_information_provided}</div>
+                    <div class="user_info_none" style="padding: 15px;color:gray;text-align: center;">{_no_information_provided}</div>
                 {/if}
                 <br>
-                <h4 style="border-bottom: none; font-size: 11px; padding: 0; display: inline-block;">{_personal_information} {ifset $thisUser}{if $thisUser->getId() == $user->getId()}<a href="/edit?act=interests" class="edit_link">[ {_edit} ]</a>{/if}{/ifset}</h4>
+                <h4 class="user_info_h4" style="border-bottom: none; font-size: 11px; padding: 0; display: inline-block;">{_personal_information} {ifset $thisUser}{if $thisUser->getId() == $user->getId()}<a href="/edit?act=interests" class="edit_link">[ {_edit} ]</a>{/if}{/ifset}</h4>
                 {if !empty($uInfo_Tmp)}
                     {$uInfo_Tmp|noescape}
                 {else}
-                    <div style="padding-top: 15px;color:gray;text-align: center;">{_no_information_provided}</div>
+                    <div class="user_info_none" style="padding-top: 15px;color:gray;text-align: center;">{_no_information_provided}</div>
                 {/if}
             </div>
             </div>
@@ -622,7 +622,7 @@
                         <a href="/audios{$user->getId()}">{_all_title}</a>
                     </div>
                 </div>
-                <div class="content_list long">
+                <div class="hide_on_mobiles content_list long">
                     <div class="audio" n:foreach="$audios as $audio" style="width: 100%;">
                         {include "../Audio/player.latte", audio => $audio}
                     </div>
@@ -644,7 +644,7 @@
                         <a href="/gifts{$user->getId()}">{_all_title}</a>
                     </div>
                 </div>
-                <div class="content_list long">
+                <div class="content_list long hide_on_mobiles">
                     <div class="cl_element" style="width: 25%;" n:foreach="$user->getGifts(1, 4) as $giftDescriptor">
                         {var $hideInfo = !is_null($thisUser) ? ($giftDescriptor->anon ? $thisUser->getId() !== $user->getId() : false) : false}
                         <div class="cl_avatar">
