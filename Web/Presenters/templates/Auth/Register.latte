@@ -9,8 +9,11 @@
     {if !$referer}
         <meta name="description" content="{tr('register_meta_desc', \OPENVK_ROOT_CONF['openvk']['appearance']['name'])}" />
     {else}
+        {var $refAvatar = $referer->getAvatarUrl()}
         <meta property="og:title" content="{tr('register_referer_meta_title', $referer->getFullName(), \OPENVK_ROOT_CONF['openvk']['appearance']['name'])}" />
-        <meta property="og:image" content="{$referer->getAvatarUrl()}" />
+        <meta property="og:image" content="{$refAvatar}" />
+        <meta name="twitter:title" content="{tr('register_referer_meta_title', $referer->getFullName(), \OPENVK_ROOT_CONF['openvk']['appearance']['name'])}" />
+        <meta name="twitter:image" content="{$refAvatar}" />
         
         <meta name="description"
               content="{tr('register_referer_meta_desc', $referer->getFullName(), \OPENVK_ROOT_CONF['openvk']['appearance']['name'])}" />

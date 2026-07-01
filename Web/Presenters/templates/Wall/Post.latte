@@ -1,6 +1,27 @@
 {extends "../@layout.latte"}
 {block title}{_post}{/block}
 
+{block headIncludes}
+    {var $postText = $post->getText(false)}
+    {var $postDesc = strlen($postText) > 200 ? substr($postText, 0, 197) . '...' : $postText}
+    {php $ogImageUrl = null}
+    {foreach $post->getChildren() as $child}
+        {if $child instanceof \openvk\Web\Models\Entities\Photo}
+            {php $ogImageUrl = $child->getURLBySizeId('normal')}
+            {breakIf true}
+        {/if}
+    {/foreach}
+    <meta property="og:title" content="{_post}" />
+    <meta property="og:url" content="{$baseUrl}/wall{$post->getPrettyId()}" />
+    <meta n:if="!empty($postDesc)" property="og:description" content="{$postDesc}" />
+    <meta n:if="!is_null($ogImageUrl)" property="og:image" content="{$ogImageUrl}" />
+    <meta property="og:type" content="article" />
+    <meta name="twitter:title" content="{_post}" />
+    <meta n:if="!empty($postDesc)" name="twitter:description" content="{$postDesc}" />
+    <meta n:if="!is_null($ogImageUrl)" name="twitter:image" content="{$ogImageUrl}" />
+    <meta n:if="!is_null($ogImageUrl)" n:attr="name => 'twitter:card'" content="summary_large_image" />
+{/block}
+
 {block header}
 	<a href="{$wallOwner->getURL()}">
 		{$wallOwner->getCanonicalName()}

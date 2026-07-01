@@ -1,6 +1,17 @@
 {extends "../@layout.latte"}
 {block title}{_view_topic} "{$topic->getTitle()}"{/block}
 
+{block headIncludes}
+    {var $topicText = $topic->getText()}
+    {var $topicDesc = strlen($topicText) > 200 ? substr($topicText, 0, 197) . '...' : $topicText}
+    <meta property="og:title" content="{$topic->getTitle()}" />
+    <meta property="og:url" content="{$baseUrl}/topic{$topic->getPrettyId()}" />
+    <meta property="og:type" content="article" />
+    <meta n:if="!empty($topicDesc)" property="og:description" content="{$topicDesc}" />
+    <meta name="twitter:title" content="{$topic->getTitle()}" />
+    <meta n:if="!empty($topicDesc)" name="twitter:description" content="{$topicDesc}" />
+{/block}
+
 {block header}
     <a href="{$club->getURL()}">{$club->getCanonicalName()}</a>
     » 
