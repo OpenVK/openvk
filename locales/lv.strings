@@ -1,4 +1,8 @@
+#include <en>
+
 "__locale" = "lv_LV.UTF-8;Lav";
+
+/* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
 
 "welcome" = "Laipni lūgti";
 "to_top" = "Augšup";
