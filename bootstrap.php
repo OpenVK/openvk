@@ -111,7 +111,7 @@ function bmask(int $input, array $options = []): Bitmask
 function tr(string $stringId, ...$variables): string
 {
     $localizer = Localizator::i();
-    $lang      = Session::i()->get("lang", "ru");
+    $lang      = Session::i()->get("lang", getDefaultLanguage());
     if ($stringId === "__lang") {
         return $lang;
     }
@@ -160,6 +160,11 @@ function tr(string $stringId, ...$variables): string
     return $output;
 }
 
+function getDefaultLanguage(): string
+{
+    return OPENVK_ROOT_CONF["openvk"]["preferences"]["defaultLanguage"] ?? "ru";
+}
+
 function setLanguage($lg): void
 {
     if (isLanguageAvailable($lg)) {
@@ -171,7 +176,7 @@ function setLanguage($lg): void
 
 function getLanguage(): string
 {
-    return Session::i()->get("lang", "ru");
+    return Session::i()->get("lang", getDefaultLanguage());
 }
 
 function getLanguages(): array
@@ -192,11 +197,25 @@ function isLanguageAvailable($lg): bool
 
 function getBrowsersLanguage(): array
 {
-    if ($_SERVER['HTTP_ACCEPT_LANGUAGE'] != false) {
-        return mb_split(",", mb_split(";", $_SERVER['HTTP_ACCEPT_LANGUAGE'])[0]);
-    } else {
+    if (!isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) || $_SERVER['HTTP_ACCEPT_LANGUAGE'] === false) {
         return [];
     }
+
+    $languages = [];
+    $parts = explode(",", $_SERVER['HTTP_ACCEPT_LANGUAGE']);
+
+    foreach ($parts as $part) {
+        $part = trim($part);
+        $langCode = explode(";", $part)[0];
+        $langCode = trim($langCode);
+        $normalized = mb_strtolower(explode("-", $langCode)[0]);
+
+        if (!empty($normalized)) {
+            $languages[] = $normalized;
+        }
+    }
+
+    return $languages;
 }
 
 function eventdb(): ?DatabaseConnection
@@ -460,12 +479,11 @@ return (function () {
 
     setlocale(LC_TIME, "POSIX");
 
-    # TODO: Default language in config
     if (Session::i()->get("lang") == null) {
-        $languages = array_reverse(getBrowsersLanguage());
-        foreach ($languages as $lg) {
+        foreach (getBrowsersLanguage() as $lg) {
             if (isLanguageAvailable($lg)) {
                 setLanguage($lg);
+                break;
             }
         }
     }
