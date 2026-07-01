@@ -75,4 +75,17 @@ abstract class VKAPIRequestHandler
 
         return new $handlerClass($this->getUser(), $this->getPlatform());
     }
+
+    public function generateItems(int $count, array $items)
+    {
+        if (VKAPI_DECL_VER_MAJOR >= 5) {
+            return (object) [
+                'count' => $count,
+                'items' => $items,
+            ];
+        } else {
+            array_unshift($items, $count);
+            return $items;
+        }
+    }
 }

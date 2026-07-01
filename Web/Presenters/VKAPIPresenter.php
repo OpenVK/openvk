@@ -334,7 +334,10 @@ final class VKAPIPresenter extends OpenVKPresenter
         }
 
         if (!defined("VKAPI_DECL_VER")) {
-            define("VKAPI_DECL_VER", $this->requestParam("v") ?? "4.100");
+            $version = $this->requestParam("v") ?? "5.9999"; // 9999 for ovk apps
+            define("VKAPI_DECL_VER", $version);
+            define("VKAPI_DECL_VER_MAJOR", intval(explode('.', $version)[0] ?? "5"));
+            define("VKAPI_DECL_VER_MINOR", intval(explode('.', $version)[1] ?? "100"));
         }
 
         return $handler->{$method}(...$args);
@@ -518,7 +521,7 @@ final class VKAPIPresenter extends OpenVKPresenter
         $url     = $this->queryParam("redirect_uri");
         $responseType = $this->queryParam("response_type") ?? 'php';
 
-        if (!is_null($this->queryParam("client_id"))) {
+        if (!empty($this->queryParam("client_id")) && empty($client)) {
             $client = $this->resolveAppIdToString($this->queryParam("client_id"));
         }
 
@@ -619,7 +622,7 @@ final class VKAPIPresenter extends OpenVKPresenter
         }
     }
 
-    private function resolveAppIdToString(string $id = ""): ?string
+    private function resolveAppIdToString(?string $id = ""): ?string
     {
         switch ($id) {
             case '4083558':

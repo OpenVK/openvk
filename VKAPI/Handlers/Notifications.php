@@ -18,7 +18,7 @@ final class Notifications extends VKAPIRequestHandler
         string $filters = "",
         int $start_time = 0,
         int $end_time = 0,
-        int $archived = 0
+        int $archived = 1
     ) {
         $this->requireUser();
 
