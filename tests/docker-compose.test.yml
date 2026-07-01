@@ -1,0 +1,97 @@
+name: openvk-test
+
+services:
+  openvk:
+    build:
+      context: ..
+      dockerfile: install/automated/docker/openvk.Dockerfile
+      args:
+        INSTALL_TEST_DEPS: "true"
+    user: www-data
+    entrypoint: ["/opt/chandler/extensions/available/openvk/tests/entrypoint.sh"]
+    depends_on:
+      mariadb-primary:
+        condition: service_healthy
+      mariadb-eventdb:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./openvk.test.yml:/opt/chandler/extensions/available/openvk/openvk.yml:ro
+      - ./chandler.test.yml:/opt/chandler/chandler.yml:ro
+      - ./entrypoint.sh:/opt/chandler/extensions/available/openvk/tests/entrypoint.sh:ro
+      - ./seed-data.sql:/opt/chandler/extensions/available/openvk/tests/seed-data.sql:ro
+    environment:
+      DB_HOST: mariadb-primary
+      DB_USER: openvk
+      DB_PASSWORD: openvk
+      DB_NAME: db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/robots.txt"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 60s
+    ports:
+      - 8088:80
+
+  mariadb-primary:
+    image: docker.io/mariadb:10.9
+    tmpfs: /var/lib/mysql
+    environment:
+      MARIADB_DATABASE: db
+      MARIADB_USER: openvk
+      MARIADB_PASSWORD: openvk
+      MARIADB_RANDOM_ROOT_PASSWORD: yes
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 15s
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  mariadb-eventdb:
+    image: docker.io/mariadb:10.9
+    tmpfs: /var/lib/mysql
+    environment:
+      MARIADB_DATABASE: openvk_eventdb
+      MARIADB_USER: openvk
+      MARIADB_PASSWORD: openvk
+      MARIADB_RANDOM_ROOT_PASSWORD: yes
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 15s
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: docker.io/redis:8.8-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  playwright:
+    build:
+      context: .
+      dockerfile: playwright.Dockerfile
+    depends_on:
+      openvk:
+        condition: service_healthy
+    volumes:
+      - ./e2e:/tests/e2e
+    working_dir: /tests/e2e
+    command: >
+      sh -c "
+        npm ci 2>&1 &&
+        exec npx playwright test
+      "
+    environment:
+      BASE_URL: http://openvk:80
+      DB_HOST: mariadb-primary
+      DB_USER: openvk
+      DB_PASSWORD: openvk
+      DB_NAME: db

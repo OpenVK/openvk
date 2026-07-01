@@ -1,0 +1,36 @@
+name: Screenshot Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    # 'push' runs on inner branches, 'pull_request' will run only on outer PRs
+    if: >
+      github.event_name == 'push'
+      || (github.event_name == 'pull_request'
+          && github.event.pull_request.head.repo.full_name != github.repository)
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build test images
+        run: docker compose -f tests/docker-compose.test.yml build
+
+      - name: Run full test stack
+        run: >
+          docker compose -f tests/docker-compose.test.yml up
+          --abort-on-container-exit
+          --exit-code-from playwright
+          --no-build
+
+      - name: Upload test results on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-results
+          path: tests/e2e/test-results/
+          retention-days: 30
