@@ -1345,7 +1345,7 @@ table.User {
     width: 100px;
 }
 
-.messenger-app--typing_status {
+.messenger-app--typing-status {
 	color: grey;
 	margin-left: 67px;
     transition: opacity 0.25s;
