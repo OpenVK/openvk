@@ -60,6 +60,8 @@ final class Notifications extends VKAPIRequestHandler
                     "last_name"  => $sxModel->getLastName(),
                     "photo"      => $sxModel->getAvatarUrl(),
                     "photo_medium_rec" => $sxModel->getAvatarUrl("tiny"),
+                    "photo_50"      => $sxModel->getAvatarUrl("tiny"),
+                    "photo_100"     => $sxModel->getAvatarUrl("normal"),
                     "screen_name"      => $sxModel->getURL(true),
                 ];
 
