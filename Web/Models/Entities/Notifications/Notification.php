@@ -14,8 +14,8 @@ class Notification
     private $recipient;
     public $originModel;
     public $targetModel;
-    private $time;
-    private $data;
+    public $time;
+    public $data;
 
     protected $actionCode = null;
     protected $threshold  = -1;
