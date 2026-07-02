@@ -569,7 +569,7 @@ final class AdminPresenter extends OpenVKPresenter
         if (empty($token)) {
             $this->flashFail("succ", tr("error_when_searching"), '😔');
         }
-        
+
         DatabaseConnection::i()->getContext()->table("ChandlerTokens")->where("token", $token)->delete();
 
         $this->flashFail("succ", tr("changes_saved"), '👍');
