@@ -313,6 +313,7 @@
 "outcoming_req" = "Исходящие";
 "req" = "Заявки";
 "friends_online" = "Друзья онлайн";
+"friends_common" = "Общие друзья";
 "all_friends" = "Все друзья";
 "req_zero" = "Не найдено ни одной заявки...";
 "req_one" = "Найдена $1 заявка";
@@ -329,6 +330,11 @@
 "friends_online_few" = "$1 друга онлайн";
 "friends_online_many" = "$1 друзей онлайн";
 "friends_online_other" = "$1 друзей онлайн";
+"friends_common_zero" = "Ни одного общего друга ";
+"friends_common_one" = "$1 общий друг";
+"friends_common_few" = "$1 общих друга";
+"friends_common_many" = "$1 общих друзей";
+"friends_common_other" = "$1 общих друзей";
 "friends_list_zero" = "У Вас пока нет друзей";
 "friends_list_one" = "У Вас $1 друг";
 "friends_list_few" = "У Вас $1 друга";
@@ -349,6 +355,11 @@
 "friends_list_online_few" = "У Вас $1 друга онлайн";
 "friends_list_online_many" = "У Вас $1 друзей онлайн";
 "friends_list_online_other" = "У Вас $1 друзей онлайн";
+"friends_list_common_zero" = "У Вас пока нет общих друзей";
+"friends_list_common_one" = "У Вас $1 общий друг";
+"friends_list_common_few" = "У Вас $1 общих друга";
+"friends_list_common_many" = "У Вас $1 общих друзей";
+"friends_list_common_other" = "У Вас $1 общих друзей";
 
 /* Group */
 

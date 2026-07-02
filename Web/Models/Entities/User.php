@@ -46,14 +46,16 @@ class User extends RowModel
     private $_avatarAlbum = null;
     private $_avatarPhoto = false; // false - not resolved, null - no avatar
 
-    protected function _abstractRelationGenerator(string $filename, int $page = 1, int $limit = 6): \Traversable
+    protected function _abstractRelationGenerator(string $filename, int $page = 1, int $limit = 6, $second_id = null): \Traversable
     {
         $id     = $this->getId();
+        $second_id = $second_id ?? $id;
+
         $query  = "SELECT id FROM\n" . file_get_contents(__DIR__ . "/../sql/$filename.tsql");
         $query .= "\n LIMIT " . $limit . " OFFSET " . (($page - 1) * $limit);
 
         $ids = [];
-        $rels = DatabaseConnection::i()->getConnection()->query($query, $id, $id);
+        $rels = DatabaseConnection::i()->getConnection()->query($query, $id, $second_id);
         foreach ($rels as $rel) {
             $rel = (new Users())->get($rel->id);
             if (!$rel) {
@@ -68,12 +70,14 @@ class User extends RowModel
         }
     }
 
-    protected function _abstractRelationCount(string $filename): int
+    protected function _abstractRelationCount(string $filename, $second_id = null): int
     {
         $id    = $this->getId();
+        $second_id = $second_id ?? $id;
+
         $query = "SELECT COUNT(*) AS cnt FROM\n" . file_get_contents(__DIR__ . "/../sql/$filename.tsql");
 
-        return (int) DatabaseConnection::i()->getConnection()->query($query, $id, $id)->fetch()->cnt;
+        return (int) DatabaseConnection::i()->getConnection()->query($query, $id, $second_id)->fetch()->cnt;
     }
 
     public function getId(): int
@@ -698,6 +702,16 @@ class User extends RowModel
     public function getFriendsOnlineCount(): int
     {
         return $this->_abstractRelationCount("get-online-friends");
+    }
+
+    public function getCommonFriends(User $me, int $page = 1, int $limit = 6): \Traversable
+    {
+        return $this->_abstractRelationGenerator("get-common-friends", $page, $limit, $me->getId());
+    }
+
+    public function getCommonFriendsCount(User $me): int
+    {
+        return $this->_abstractRelationCount("get-common-friends", $me->getId());
     }
 
     public function getFriendsBday(bool $today): array

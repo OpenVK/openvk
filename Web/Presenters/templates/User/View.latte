@@ -210,6 +210,25 @@
             {/if}
         </div>
         <br />
+        <div n:if="$thisUser != NULL && $thisUser->getId() != $user->getId() && $user->getPrivacyPermission('friends.read', $thisUser ?? NULL) && $commonFriendsCount = $user->getCommonFriendsCount($thisUser) > 0">
+            <div class="content_title_expanded" onclick="hidePanel(this, {$commonFriendsCount});">
+                {_friends_common}
+            </div>
+            <div>
+                <div class="content_subtitle">
+                    {tr("friends_common", $commonFriendsCount)}
+                    <div style="float:right;">
+                        <a href="/friends{$user->getId()}?act=common">{_all_title}</a>
+                    </div>
+                </div>
+                <div class="content_list">
+                    {foreach $user->getCommonFriends($thisUser, 1) as $friend}
+                        {include "Thumb.latte", user => $friend}
+                    {/foreach}
+                </div>
+            </div>
+        </div>
+        <br/>
         <div n:if="$user->getFriendsCount() > 0 && $user->getPrivacyPermission('friends.read', $thisUser ?? NULL)">
             {var $friendCount = $user->getFriendsCount()}
             
@@ -224,17 +243,9 @@
                     </div>
                 </div>
                 <div class="content_list">
-                    <div class="cl_element" n:foreach="$user->getFriends(1) as $friend">
-                        <div class="cl_avatar">
-                            <a href="{$friend->getURL()}">
-                                <img class="ava" src="{$friend->getAvatarUrl('miniscule')}" />
-                            </a>
-                        </div>
-                        <a href="{$friend->getURL()}" class="cl_name">
-                            <text class="cl_fname">{$friend->getFirstName()}</text>
-                            <text class="cl_lname">{$friend->getLastName()}</text>
-                        </a>    
-                    </div>
+                    {foreach $user->getFriends(1) as $friend}
+                        {include "Thumb.latte", user => $friend}
+                    {/foreach}
                 </div>
             </div>
         </div>
@@ -252,17 +263,9 @@
                     </div>
                 </div>
                 <div class="content_list">
-                    <div class="cl_element" n:foreach="$user->getFriendsOnline(1) as $friend">
-                        <div class="cl_avatar">
-                            <a href="{$friend->getURL()}">
-                                <img class="ava" src="{$friend->getAvatarUrl('miniscule')}" />
-                            </a>
-                        </div>
-                        <a href="{$friend->getURL()}" class="cl_name">
-                            <text class="cl_fname">{$friend->getFirstName()}</text>
-                            <text class="cl_lname">{$friend->getLastName()}</text>
-                        </a>    
-                    </div>
+                    {foreach $user->getFriendsOnline(1) as $friend}
+                    {include "Thumb.latte", user => $friend}
+                    {/foreach}
                 </div>
             </div>
         </div>
