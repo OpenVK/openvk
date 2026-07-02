@@ -1,37 +1,8 @@
 {extends "../@listView.latte"}
 {var $perPage = 6} {* Why 6? Check User::_abstractRelationGenerator *}
 
-{var $act = $_GET["act"] ?? "friends"}
-
-{if $act == "incoming"}
-    {var $iterator = iterator_to_array($user->getRequests($page))}
-    {var $count    = $user->getRequestsCount()}
-{elseif $act == "outcoming"}
-    {var $iterator = iterator_to_array($user->getSubscriptions($page))}
-    {var $count    = $user->getSubscriptionsCount()}
-{elseif $act == "followers"}
-    {var $iterator = iterator_to_array($user->getFollowers($page))}
-    {var $count    = $user->getFollowersCount()}
-{elseif $act == "online"}
-    {var $iterator = iterator_to_array($user->getFriendsOnline($page))}
-    {var $count    = $user->getFriendsOnlineCount()}
-{else}
-    {var $iterator = iterator_to_array($user->getFriends($page))}
-    {var $count    = $user->getFriendsCount()}
-{/if}
-
 {block title}
-    {if $act == "incoming"}
-        {_incoming_req}
-    {elseif $act == "outcoming"}
-        {_outcoming_req}
-    {elseif $act == "followers"}
-        {_followers}
-    {elseif $act == "online"}
-        {_friends_online}
-    {else}
-        {_friends}
-    {/if}
+    {include "Friends/Title.latte", act => $act}
 {/block} 
 
 {block header}
@@ -39,17 +10,7 @@
         {_my_friends}
     {else}
         <a href="{$user->getURL()}">{$user->getCanonicalName()}</a> »
-        {if $act == "incoming"}
-            {_incoming_req}
-        {elseif $act == "outcoming"}
-            {_outcoming_req}
-        {elseif $act == "followers"}
-            {_followers}
-        {elseif $act == "online"}
-            {_friends_online}
-        {else}
-            {_friends}
-        {/if}
+        {include "Friends/Title.latte", act => $act}
     {/if}
 {/block}
 
@@ -62,6 +23,9 @@
     </div>
     <div n:if="!is_null($thisUser) && $user->getId() === $thisUser->getId()" n:attr="id => ($act === 'incoming' || $act === 'followers' || $act === 'outcoming' ? 'activetabs' : 'ki')" class="tab">
         <a n:attr="id => ($act === 'incoming' || $act === 'followers' || $act === 'outcoming' ? 'act_tab_a' : 'ki')" href="?act=incoming">{_req}</a>
+    </div>
+    <div n:if="!is_null($thisUser) && $user->getId() !== $thisUser->getId()" n:attr="id => ($act === 'common' ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => ($act === 'common' ? 'act_tab_a' : 'ki')" href="?act=common">{_friends_common}</a>
     </div>
 {/block}
 
@@ -97,6 +61,8 @@
                 {else}
                     {tr("friends_list", $count)}
                 {/if}
+            {elseif $act == "common"}
+                {tr("friends_list_common", $count)}
             {else}
                 {tr("friends", $count)}
             {/if}

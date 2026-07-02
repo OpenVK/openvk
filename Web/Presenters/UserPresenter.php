@@ -95,20 +95,54 @@ final class UserPresenter extends OpenVKPresenter
             $this->template->user = $user;
         }
 
-        $this->template->mode = in_array($this->queryParam("act"), [
-            "incoming", "outcoming", "friends",
+        $this->template->act = in_array($this->queryParam("act"), [
+            "incoming", "outcoming", "friends", "common", "online"
         ]) ? $this->queryParam("act")
-           : "friends";
+            : "friends";
+
         $this->template->page = $page;
 
         if (!is_null($this->user->identity)) {
-            if ($this->template->mode !== "friends" && $this->user->id !== $id) {
+            if (!in_array($this->template->act, ["friends", "common"]) && $this->user->id !== $id) {
                 $name = $user->getFullName();
                 $this->flash("err", tr("error_access_denied_short"), tr("error_viewing_subs", $name));
 
                 $this->redirect($user->getURL());
             }
         }
+
+        if ($this->template->act === "common" && is_null($this->user->identity)) {
+            $this->template->act = "friends";
+        }
+
+        switch ($this->template->act) {
+            case "incoming":
+                $iterator = $user->getRequests($page);
+                $count    = $user->getRequestsCount();
+                break;
+            case "outcoming":
+                $iterator = $user->getSubscriptions($page);
+                $count    = $user->getSubscriptionsCount();
+                break;
+            case "followers":
+                $iterator = $user->getFollowers($page);
+                $count    = $user->getFollowersCount();
+                break;
+            case "online":
+                $iterator = $user->getFriendsOnline($page);
+                $count    = $user->getFriendsOnlineCount();
+                break;
+            case "common":
+                $iterator = $user->getCommonFriends($this->user->identity, $page);
+                $count    = $user->getCommonFriendsCount($this->user->identity);
+                break;
+            default:
+                $iterator = $user->getFriends($page);
+                $count    = $user->getFriendsCount();
+                break;
+        }
+        $this->template->iterator = iterator_to_array($iterator);
+        $this->template->count = $count;
     }
 
     public function renderGroups(int $id): void
