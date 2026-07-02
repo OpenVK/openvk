@@ -1732,6 +1732,7 @@
 "admin_tab_main" = "General";
 "admin_tab_ban" = "Ban";
 "admin_tab_followers" = "Followers";
+"admin_tab_sessions" = "Sessions";
 
 "admin_overview" = "Overview";
 "admin_overview_summary" = "Summary";

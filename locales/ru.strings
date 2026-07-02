@@ -1631,6 +1631,7 @@
 "admin_tab_main" = "Главное";
 "admin_tab_ban" = "Блокировка";
 "admin_tab_followers" = "Участники";
+"admin_tab_sessions" = "Сессии";
 "admin_overview" = "Обзор";
 "admin_overview_summary" = "Сводка";
 "admin_content" = "Пользовательский контент";
