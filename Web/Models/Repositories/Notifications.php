@@ -83,6 +83,17 @@ class Notifications
 
         $results  = $this->getEDB()->query($this->getQuery($user, false, $offset, $archived, $page, $perPage));
         foreach ($results->fetchAll() as $notif) {
+            $class = 'openvk\Web\Models\Entities\Notifications\\';
+
+            switch($notif->modelAction) {
+                case 0:
+                    $class .= 'LikeNotification';
+                    break;
+                default:
+                    $class .= 'Notification';
+                    break;
+            }
+
             yield $this->assemble(
                 $notif->modelAction,
                 $notif->originModelType,
@@ -91,7 +102,8 @@ class Notifications
                 $notif->targetModelId,
                 $notif->recipientId,
                 $notif->timestamp,
-                $notif->additionalData
+                $notif->additionalData,
+                $class
             );
         }
     }
