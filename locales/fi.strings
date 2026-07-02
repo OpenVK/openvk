@@ -1,1 +1,25 @@
-
+"home" = "Etusivu";
+"welcome" = "Tervetuloa";
+"to_top" = "Sivun alkuun";
+"log_in" = "Kirjaudu sisään";
+"password" = "Salasana";
+"registration" = "Ilmoittautuminen";
+"forgot_password" = "Unohditko salasanasi?";
+"checkbox_in_registration" = "Hyväksyn <a href='/privacy'>tietosuojakäytännön</a> ja <a href='/terms'>sivuston käyttöehdot</a>";
+"checkbox_in_registration_unchecked" = "Rekisteröitymisen edellytyksenä on, että hyväksyt tietosuojakäytännön ja säännöt.";
+"login_failed" = "Kirjautuminen epäonnistui";
+"invalid_username_or_password" = "Antamasi käyttäjätunnus tai salasana on virheellinen. <a href='/restore'>Unohditko salasanasi?</a>";
+"failed_to_register" = "Rekisteröinti epäonnistui";
+"referral_link_invalid" = "Suosituslinkki ei ole kelvollinen.";
+"registration_disabled" = "Järjestelmänvalvoja on poistanut rekisteröitymismahdollisuuden käytöstä.";
+"user_already_exists" = "Tällä sähköpostiosoitteella on jo olemassa käyttäjä.";
+"access_recovery" = "Pääsyn palautus";
+"page_access_recovery" = "Palauta pääsy sivulle";
+"access_recovery_info" = "Unohditko salasanasi? Älä huoli, syötä tietosi, niin lähetämme sinulle sähköpostiviestin, jossa on ohjeet tilisi palauttamiseen.";
+"access_recovery_info_2" = "Syötä uusi salasanasi. Kaikki nykyiset istunnot keskeytetään ja pääsytunnukset peruutetaan.";
+"reset_password" = "Nollaa salasana";
+"2fa_code_2" = "Kaksivaiheisen tunnistautumisen koodi";
+"password_successfully_reset" = "Salasanasi on nollattu onnistuneesti.";
+"password_reset_email_sent" = "Jos olet rekisteröitynyt, saat ohjeet sähköpostitse.";
+"password_reset_error" = "Salasanan nollaamisen yhteydessä tapahtui odottamaton virhe.";
+"password_reset_rate_limit_error" = "Et voi tehdä sitä niin usein, valitan.";
