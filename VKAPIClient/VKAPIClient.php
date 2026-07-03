@@ -19,6 +19,7 @@ class VKAPIClient
     private string $apiVersion;
     private bool $verifySsl;
     private int $cacheTtl;
+    private string $cacheDir;
 
     /** @var array<string, array{data: array, time: int}> */
     private static array $responseCache = [];
@@ -41,7 +42,13 @@ class VKAPIClient
         $this->accessToken = $accessToken ?? ($vkConf["access_token"] ?? "");
         $this->apiVersion = $apiVersion ?? ($vkConf["api_version"] ?? "5.131");
         $this->verifySsl = $verifySsl ?? ($vkConf["verify_ssl"] ?? true);
-        $this->cacheTtl = $cacheTtl ?? ($vkConf["cache_ttl"] ?? 60);
+        $this->cacheTtl = $cacheTtl ?? ($vkConf["cache_ttl"] ?? 300);
+
+        // Директория для файлового кеша (между запросами)
+        $this->cacheDir = OPENVK_ROOT . "/tmp/cache/vk_api";
+        if (!is_dir($this->cacheDir)) {
+            @mkdir($this->cacheDir, 0777, true);
+        }
     }
 
     public static function i(): self
@@ -73,9 +80,6 @@ class VKAPIClient
         string $httpMethod = "GET",
     ): array {
 
-        bdump($method);
-        bdump([...$params]);
-
         $params["access_token"] = $this->accessToken;
         $params["v"] = $this->apiVersion;
 
@@ -84,17 +88,33 @@ class VKAPIClient
             $params["fields"] = "photo_50,photo_100";
         }
 
-        // Проверка кеша
+        // Проверка кеша (сначала in-memory, потом файловый)
         if ($this->cacheTtl > 0) {
             $cacheKey = $this->buildCacheKey($method, $params);
+
+            // In-memory cache (время жизни — один запрос)
             if (isset(self::$responseCache[$cacheKey])) {
                 $elapsed = time() - self::$responseCache[$cacheKey]["time"];
                 if ($elapsed < $this->cacheTtl) {
-                    bdump($cacheKey);
                     return self::$responseCache[$cacheKey]["data"];
                 }
 
                 unset(self::$responseCache[$cacheKey]);
+            }
+
+            // Файловый кеш (между запросами)
+            $cacheFile = $this->cacheDir . "/" . $cacheKey . ".json";
+            if (file_exists($cacheFile)) {
+                $elapsed = time() - filemtime($cacheFile);
+                if ($elapsed < $this->cacheTtl) {
+                    $cached = json_decode(file_get_contents($cacheFile), true);
+                    if ($cached !== null) {
+                        self::$responseCache[$cacheKey] = ["data" => $cached, "time" => time()];
+                        return $cached;
+                    }
+                }
+
+                @unlink($cacheFile);
             }
         }
 
@@ -106,6 +126,9 @@ class VKAPIClient
                 "data" => $result,
                 "time" => time(),
             ];
+
+            // Файловый кеш
+            @file_put_contents($cacheFile, json_encode($result));
         }
 
         return $result;
