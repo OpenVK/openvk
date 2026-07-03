@@ -160,7 +160,14 @@ final class PhotosPresenter extends OpenVKPresenter
 
     public function renderAlbum(int $owner, int $id): void
     {
-        $album = $this->albums->get($id);
+        $album = null;
+
+        if (OPENVK_ROOT_CONF["openvk"]["vk"]["enabled"] ?? false) {
+            $album = $this->albums->loadByOwnerAndId($owner, $id);
+        } else {
+            $album = $this->albums->get($id);
+        }
+
         if (!$album) {
             $this->notFound();
         }

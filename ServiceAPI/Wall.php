@@ -15,7 +15,7 @@ class Wall implements Handler
     protected $notes;
     protected $videos;
 
-    public function __construct(?User $user)
+    public function __construct($user)
     {
         $this->user  = $user;
         $this->posts = new Posts();

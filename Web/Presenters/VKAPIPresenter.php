@@ -11,6 +11,7 @@ use openvk\Web\Models\Entities\{User, APIToken};
 use openvk\Web\Models\Repositories\{Users, APITokens};
 use lfkeitel\phptotp\{Base32, Totp};
 use WhichBrowser;
+use openvk\VKAPIClient\VKAPIClient;
 
 final class VKAPIPresenter extends OpenVKPresenter
 {
@@ -347,6 +348,27 @@ final class VKAPIPresenter extends OpenVKPresenter
     {
         $callback = $this->queryParam("callback");
         [$identity, $platform] = $this->resolveIdentity($object, $method);
+
+        // VK API proxy mode: when roaming auth and VK mode enabled, proxy to real VK API
+        $vkConf = OPENVK_ROOT_CONF["openvk"]["vk"] ?? [];
+        if (($vkConf["enabled"] ?? false) && $this->queryParam("auth_mechanism") === "roaming") {
+            try {
+                $vkParams = $_REQUEST;
+                unset($vkParams["auth_mechanism"], $vkParams["callback"], $vkParams["requestPort"]);
+
+                // If access_token is provided in request, use it; otherwise use config token
+                if (!empty($vkParams["access_token"])) {
+                    \openvk\VKAPIClient\VKAPIClient::i()->setAccessToken($vkParams["access_token"]);
+                }
+
+                $response = \openvk\VKAPIClient\VKAPIClient::i()->call($object . "." . $method, $vkParams);
+
+                header("Content-Type: application/json");
+                exit(json_encode(["response" => $response]));
+            } catch (\Throwable $ex) {
+                $this->fail($ex->getCode() ?: 1, $ex->getMessage(), $object, $method);
+            }
+        }
 
         $has_rss = false;
         try {

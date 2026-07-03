@@ -14,7 +14,7 @@ abstract class VKAPIRequestHandler
     protected $user;
     protected $platform;
 
-    public function __construct(?User $user = null, ?string $platform = null)
+    public function __construct($user = null, ?string $platform = null)
     {
         $this->user     = $user;
         $this->platform = $platform;
@@ -30,7 +30,7 @@ abstract class VKAPIRequestHandler
         $this->fail(9, "Rate limited");
     }
 
-    protected function getUser(): ?User
+    protected function getUser()
     {
         return $this->user;
     }

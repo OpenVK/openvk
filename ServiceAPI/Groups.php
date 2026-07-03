@@ -12,7 +12,7 @@ class Groups implements Handler
     protected $user;
     protected $groups;
 
-    public function __construct(?User $user)
+    public function __construct($user)
     {
         $this->user  = $user;
         $this->groups = new Clubs();

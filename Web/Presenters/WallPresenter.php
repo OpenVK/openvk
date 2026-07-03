@@ -13,6 +13,7 @@ use Nette\InvalidStateException as ISE;
 use Bhaktaraz\RSSGenerator\Item;
 use Bhaktaraz\RSSGenerator\Feed;
 use Bhaktaraz\RSSGenerator\Channel;
+use openvk\Web\Models\VK\Entities\Post as VKPost;
 
 final class WallPresenter extends OpenVKPresenter
 {
@@ -25,8 +26,12 @@ final class WallPresenter extends OpenVKPresenter
         parent::__construct();
     }
 
-    private function logPostView(Post $post, int $wall): void
+    private function logPostView($post, int $wall): void
     {
+        if (OPENVK_ROOT_CONF["openvk"]["vk"]["enabled"] ?? false) {
+            return;
+        }
+
         if (is_null($this->user->id)) {
             return;
         }
@@ -180,6 +185,12 @@ final class WallPresenter extends OpenVKPresenter
 
     public function renderFeed(): void
     {
+        $vkConf = OPENVK_ROOT_CONF["openvk"]["vk"] ?? [];
+        if (($vkConf["enabled"] ?? false) && ($vkConf["proxy_feed"] ?? false)) {
+            $this->renderVkFeed();
+            return;
+        }
+
         $this->assertUserLoggedIn();
 
         $id    = $this->user->id;
@@ -211,8 +222,43 @@ final class WallPresenter extends OpenVKPresenter
         ];
         $this->template->posts = [];
         foreach ($posts->page((int) ($_GET["p"] ?? 1), $perPage) as $post) {
-            $this->template->posts[] = $this->posts->get($post->id);
+            $this->template->posts[] = $this->posts->getByOwnerAndVID($post->owner_id, $post->id);
         }
+    }
+
+    private function renderVkFeed(): void
+    {
+        $this->assertUserLoggedIn();
+
+        $count = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);
+        $page = (int) ($_GET["p"] ?? 1);
+
+        try {
+            $response = \openvk\VKAPIClient\VKAPIClient::i()->newsfeedGet(["post", "photo", "photo_tag"], $count, ["offset" => $count * ($page - 1)]);
+        } catch (\Throwable $e) {
+            $this->flashFail("err", tr("error"), "VK API error: " . $e->getMessage());
+            return;
+        }
+
+        $posts = [];
+        foreach ($response["items"] ?? [] as $item) {
+            $posts[] = new VKPost($item);
+        }
+
+        $this->template->_template = "Wall/Feed.latte";
+        $this->template->globalFeed = false;
+        $this->template->posts = $posts;
+        $this->template->paginatorConf = (object) [
+            "count"   => $response["count"] ?? 0,
+            "page"    => $page,
+            "amount"  => count($posts),
+            "perPage" => $count,
+            "tidy"    => false,
+            "atTop"   => false,
+        ];
+
+        // Not needed for VK feed
+        $this->template->user = null;
     }
 
     public function renderGlobalFeed(): void

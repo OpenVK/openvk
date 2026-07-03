@@ -9,6 +9,7 @@ use openvk\Web\Util\Sms;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Entities\{Photo, Post, EmailChangeVerification};
 use openvk\Web\Models\Entities\Notifications\{CoinsTransferNotification, RatingUpNotification};
+use openvk\VKAPIClient\VKAPIClient;
 use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Videos, Notes, Vouchers, EmailChangeVerifications, Audios, Faves};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use openvk\Web\Util\Validator;
@@ -962,44 +963,49 @@ final class UserPresenter extends OpenVKPresenter
         $page    = (int) ($this->queryParam("p") ?? 1);
         $section = $this->queryParam("section") ?? "posts";
         $display_section = "posts";
-        $data    = null;
+        $data    = [];
         $count   = 0;
 
-        switch ($section) {
-            default:
-                $this->notFound();
-                break;
-            case 'wall':
-            case 'post':
-            case 'posts':
-                $data = (new Faves())->fetchLikesSection($this->user->identity, 'Post', $page);
-                $count = (new Faves())->fetchLikesSectionCount($this->user->identity, 'Post');
-                $display_section = "posts";
-                break;
-            case 'comment':
-            case 'comments':
-                $data = (new Faves())->fetchLikesSection($this->user->identity, 'Comment', $page);
-                $count = (new Faves())->fetchLikesSectionCount($this->user->identity, 'Comment');
-                $display_section = "comments";
-                break;
-            case 'photo':
-            case 'photos':
-                $data = (new Faves())->fetchLikesSection($this->user->identity, 'Photo', $page);
-                $count = (new Faves())->fetchLikesSectionCount($this->user->identity, 'Photo');
-                $display_section = "photos";
-                break;
-            case 'video':
-            case 'videos':
-                $data = (new Faves())->fetchLikesSection($this->user->identity, 'Video', $page);
-                $count = (new Faves())->fetchLikesSectionCount($this->user->identity, 'Video');
-                $display_section = "videos";
-                break;
+        $perPage = OPENVK_DEFAULT_PER_PAGE;
+        $offset  = ($page - 1) * $perPage;
+
+        $typeMap = [
+            'wall'    => 'post',
+            'post'    => 'post',
+            'posts'   => 'post',
+            'comment' => 'comment',
+            'comments'=> 'comment',
+            'photo'   => 'photo',
+            'photos'  => 'photo',
+            'video'   => 'video',
+            'videos'  => 'video',
+        ];
+
+        if (isset($typeMap[$section])) {
+            $type          = $typeMap[$section];
+            $display_section = $type === 'post' ? 'posts' : $type . 's';
+
+            try {
+                $response = VKAPIClient::i()->call("bookmarks.get", [
+                    "count"  => min($perPage, 100),
+                    "offset" => $offset,
+                    "type"   => $type,
+                ]);
+
+                $data  = $response["items"] ?? [];
+                $count = (int) ($response["count"] ?? 0);
+            } catch (\Throwable) {
+                $data  = [];
+                $count = 0;
+            }
+        } else {
+            $this->notFound();
         }
 
-        $this->template->data = iterator_to_array($data);
-        $this->template->count = $count;
-        $this->template->page  = $page;
-        $this->template->perPage = OPENVK_DEFAULT_PER_PAGE;
+        $this->template->data   = $data;
+        $this->template->count  = $count;
+        $this->template->page   = $page;
+        $this->template->perPage = $perPage;
         $this->template->section = $display_section;
 
         $this->template->paginatorConf = (object) [

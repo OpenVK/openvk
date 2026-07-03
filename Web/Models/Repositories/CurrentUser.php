@@ -13,8 +13,11 @@ class CurrentUser
     private $ip;
     private $useragent;
 
-    public function __construct(?User $user = null, ?string $ip = null, ?string $useragent = null)
-    {
+    public function __construct(
+        $user = null,
+        ?string $ip = null,
+        ?string $useragent = null,
+    ) {
         if ($user) {
             $this->user = $user;
         }

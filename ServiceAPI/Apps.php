@@ -15,7 +15,7 @@ class Apps implements Handler
     private $user;
     private $apps;
 
-    public function __construct(?User $user)
+    public function __construct($user)
     {
         $this->user = $user;
         $this->apps = new Applications();

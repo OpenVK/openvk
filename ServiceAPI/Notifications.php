@@ -15,7 +15,7 @@ class Notifications implements Handler
     protected $user;
     protected $notifs;
 
-    public function __construct(?User $user)
+    public function __construct($user)
     {
         $this->user  = $user;
         $this->notifs = new N();

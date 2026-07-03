@@ -15,7 +15,7 @@ class Polls implements Handler
     protected $user;
     protected $polls;
 
-    public function __construct(?User $user)
+    public function __construct($user)
     {
         $this->user  = $user;
         $this->polls = new PollRepo();

@@ -1,4 +1,4 @@
-{if $attachment instanceof \openvk\Web\Models\Entities\Photo}
+{if $attachment instanceof \openvk\Web\Models\Entities\Photo || $attachment instanceof \openvk\Web\Models\VK\Entities\Photo}
     {if !$attachment->isDeleted()}
         {var $link = "/photo" . ($attachment->isAnonymous() ? ("s/" . base_convert((string) $attachment->getId(), 10, 32)) : $attachment->getPrettyId())}
         <a href="{$link}" onclick="OpenMiniature(event, {$attachment->getURLBySizeId('larger')}, {$parent->getPrettyId()}, {$attachment->getPrettyId()}, {$parentType})">
@@ -9,7 +9,7 @@
             <img class="media" src="/assets/packages/static/openvk/img/camera_200.png" alt="{_attach_no_longer_available}" />
         </a>
     {/if}
-{elseif $attachment instanceof \openvk\Web\Models\Entities\Video}
+{elseif $attachment instanceof \openvk\Web\Models\Entities\Video || $attachment instanceof \openvk\Web\Models\VK\Entities\Video}
     {if $tilesCount <= 1}
         {if $attachment->getType() === 0}
             <div class="bsdn media" data-name="{$attachment->getName()}" data-author="{$attachment->getOwner()->getCanonicalName()}">
@@ -41,36 +41,36 @@
             <img class="media media_makima" src="{$attachment->getThumbnailURL()}" loading=lazy />
         </a>
     {/if}
-{elseif $attachment instanceof \openvk\Web\Models\Entities\Poll}
+{elseif $attachment instanceof \openvk\Web\Models\Entities\Poll || $attachment instanceof \openvk\Web\Models\VK\Entities\Poll}
     {presenter "openvk!Poll->view", $attachment->getId()}
-{elseif $attachment instanceof \openvk\Web\Models\Entities\Note}
+{elseif $attachment instanceof \openvk\Web\Models\Entities\Note || $attachment instanceof \openvk\Web\Models\VK\Entities\Note}
     <div data-att_type='note' data-att_id="{$attachment->getPrettyId()}">
         <div class="attachment_note">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
-            
+
             <div class='attachment_note_content'>
                 <span class="attachment_note_text">{_note}</span>
                 <span class="attachment_note_name"><a href="javascript:void(showArticle({$attachment->getId()}));">{ovk_proc_strtr($attachment->getName(), 66)}</a></span>
             </div>
         </div>
     </div>
-{elseif $attachment instanceof \openvk\Web\Models\Entities\Post}
+{elseif $attachment instanceof \openvk\Web\Models\Entities\Post || $attachment instanceof \openvk\Web\Models\VK\Entities\Post}
     {var $nestedLevel = ($nestedLevel ?? 0) + 1}
     {if $nestedLevel > 2}
         <a href="/wall{$attachment->getPrettyId()}">{_open_post}</a>
     {else}
         {include "post.latte", post => $attachment, compact => true, nestedLevel => $nestedLevel}
     {/if}
-{elseif $attachment instanceof \openvk\Web\Models\Entities\Audio}
+{elseif $attachment instanceof \openvk\Web\Models\Entities\Audio || $attachment instanceof \openvk\Web\Models\VK\Entities\Audio}
     <div style="width:100%;" data-att_type='audio' data-att_id="{$attachment->getPrettyId()}">
         {include "../Audio/player.latte", audio => $attachment}
     </div>
-{elseif $attachment instanceof \openvk\Web\Models\Entities\Document}
+{elseif $attachment instanceof \openvk\Web\Models\Entities\Document || $attachment instanceof \openvk\Web\Models\VK\Entities\Document}
     <div style="width:100%;">
         <div style="display:none" data-att_type="doc" data-att_id="{$attachment->getPrettiestId()}">
             <div class="docMainItem attachment_doc attachment_note">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
-                
+
                 <div class='attachment_note_content'>
                     <span class="attachment_note_text">{_document}</span>
                     <span class="attachment_note_name"><a href="/doc{$attachment->getPrettyId()}">{ovk_proc_strtr($attachment->getName(), 40)}</a></span>

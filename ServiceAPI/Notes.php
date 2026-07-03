@@ -10,7 +10,7 @@ class Notes implements Handler
     protected $user;
     protected $notes;
 
-    public function __construct(?User $user)
+    public function __construct($user)
     {
         $this->user  = $user;
         $this->notes = new NoteRepo();
