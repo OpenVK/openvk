@@ -6,12 +6,13 @@
     body {
         background: white;
         width: 100%;
-        font-family: tahoma,verdana,arial,sans-serif;
+        font-family: tahoma, verdana, arial, sans-serif;
         scrollbar-gutter: auto !important;
         overflow-x: hidden;
     }
 
-    body, .page_body,
+    body,
+    .page_body,
     .action_links {
         font-size: 14px;
     }
@@ -20,7 +21,8 @@
         font-size: 16px;
     }
 
-    select, .button {
+    select,
+    .button {
         font-size: 14px;
     }
 
@@ -138,7 +140,12 @@
         color: #727272;
     }
 
-    #wrapHI, #wrapH,.wrap2,.wrap1,.page-wrap, .page_wrap {
+    #wrapHI,
+    #wrapH,
+    .wrap2,
+    .wrap1,
+    .page-wrap,
+    .page_wrap {
         border-right: unset !important;
         border-left: unset !important;
         border-top: unset !important;
@@ -172,13 +179,14 @@
         color: #969696;
     }
 
-    input, button {
+    input,
+    button {
         font-size: unset;
     }
 
-    input[type='text'],
-    input[type='password'],
-    input[type='email'],
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
     input[type="number"] {
         padding: 4px;
         background-color: #fff;
@@ -210,7 +218,10 @@
         background: unset;
     }
 
-    #votesBalance, #news, #bday, .navigation_infos {
+    #votesBalance,
+    #news,
+    #bday,
+    .navigation_infos {
         width: 100%;
         padding: 8px 45px;
         background-color: unset;
@@ -292,7 +303,7 @@
     }
 
     .page_header:active {
-        background: linear-gradient(#3b3b3b, #595959)
+        background: linear-gradient(#3b3b3b, #595959);
     }
 
     .page_body {
@@ -374,7 +385,8 @@
     }
 
     .navigation .link object,
-    .navigation .link object a { /* )))) */
+    .navigation .link object a {
+        /* )))) */
         color: #abadae;
     }
 
@@ -467,10 +479,12 @@
         height: 100% !important;
     }
 
-    #search_box input[type='search'] {
+    #search_box input[type="search"] {
         height: 30px;
         width: 227px;
-        background: #fff url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 9px 8px;
+        background: #fff
+            url("/assets/packages/static/openvk/img/search_icon.png") no-repeat
+            9px 8px;
         border-radius: 6px;
         background-size: 13px 13px;
         padding-left: 30px !important;
@@ -507,7 +521,7 @@
         padding: 0px 0px 0px 7px;
     }
 
-    .page_header.search_expanded select[name='section'] {
+    .page_header.search_expanded select[name="section"] {
         display: none !important;
     }
 
@@ -601,7 +615,7 @@
         background-repeat: no-repeat;
         position: absolute;
         display: block;
-        content: '';
+        content: "";
         width: 23px;
         height: 20px;
         left: 15px;
@@ -697,14 +711,20 @@
         height: 17px;
     }
 
-    .navigation .link.my_admin::before,
-    .navigation .link.my_reports::before,
     .navigation .link.my_spam::before {
-        background-position: 0px -310px;
+        background-position: 0px -484px;
+    }
+
+    .navigation .link.my_reports::before {
+        background-position: 0px -507px;
+    }
+
+    .navigation .link.my_admin::before {
+        background-position: 0px -436px;
     }
 
     .navigation .link.my_notes::before {
-        background-position: 0px -310px;
+        background-position: -1px -415px;
     }
 
     .navigation-lang {
@@ -746,7 +766,7 @@
         height: 31px;
     }
 
-    .tab, 
+    .tab,
     .mb_tab {
         font-size: 14px;
     }
@@ -774,7 +794,8 @@
         text-align: left;
     }
 
-    table.flexible_table thead, tbody {
+    table.flexible_table thead,
+    tbody {
         display: flex;
         flex-direction: column;
         gap: 13px;
@@ -812,7 +833,8 @@
         text-align: left !important;
     }
 
-    table.flexible_table td, table.flexible_table th {
+    table.flexible_table td,
+    table.flexible_table th {
         width: 100% !important;
         display: block;
     }
@@ -825,7 +847,9 @@
         flex-direction: row;
     }
 
-    .button.primary, .fileInput, input[type=color] {
+    .button.primary,
+    .fileInput,
+    input[type="color"] {
         font-weight: 700;
         background-color: #595959;
         color: #fff;
@@ -859,7 +883,8 @@
         height: 20px;
     }
 
-    .searchList, .verticalGrayTabs {
+    .searchList,
+    .verticalGrayTabs {
         padding: 6px 4px 6px 4px;
         display: block;
         margin-bottom: 10px;
@@ -872,7 +897,9 @@
         border-left: unset;
     }
 
-    .searchList li, .searchList a, .verticalGrayTabs a {
+    .searchList li,
+    .searchList a,
+    .verticalGrayTabs a {
         display: inline-block;
         font-size: 16px;
     }
@@ -913,11 +940,12 @@
         background: unset;
     }
 
-    .ovk-video>.preview, .video-preview {
+    .ovk-video > .preview,
+    .video-preview {
         margin-right: 10px;
     }
 
-    .page_wrap_content_main .video-preview { 
+    .page_wrap_content_main .video-preview {
         width: 100px;
     }
 
@@ -938,7 +966,8 @@
     }
 
     .heart {
-        background: url('/assets/packages/static/openvk/img/like.gif') no-repeat 0px 0;
+        background: url("/assets/packages/static/openvk/img/like.gif") no-repeat
+            0px 0;
         background-size: cover;
         height: 16px;
         width: 16px;
@@ -953,7 +982,8 @@
         background-size: 13px !important;
     }
 
-    .like_tooltip_wrapper .like_tooltip_head span, .like_tooltip_wrapper .like_tooltip_head a {
+    .like_tooltip_wrapper .like_tooltip_head span,
+    .like_tooltip_wrapper .like_tooltip_head a {
         height: 20px;
         font-size: 16px;
     }
@@ -975,7 +1005,7 @@
         z-index: 297;
     }
 
-    #wallAttachmentMenu>a {
+    #wallAttachmentMenu > a {
         padding: 5px 6px;
         font-size: 12px;
     }
@@ -1005,11 +1035,11 @@
 
     /* Pages */
 
-    #profile_link, 
+    #profile_link,
     .profile_links .profile_link,
     #profile_links .profile_link,
     .media-page-wrapper-actions .profile_link,
-    .item_links .profile_link  {
+    .item_links .profile_link {
         padding: 8px 8px;
         font-size: 15px;
         width: 100% !important;
@@ -1098,7 +1128,8 @@
         height: 19px;
     }
 
-    .left_small_block, .right_small_block {
+    .left_small_block,
+    .right_small_block {
         width: 105%;
         float: unset;
         margin-left: -7px;
@@ -1116,7 +1147,8 @@
         margin-left: 7px;
     }
 
-    .right_big_block, .left_big_block {
+    .right_big_block,
+    .left_big_block {
         width: 105%;
         float: unset;
         margin-left: -7px;
@@ -1201,7 +1233,9 @@
         font-size: 14px;
     }
 
-    .gift_sel:hover>.gift_price, .gift_sel:hover>.gift_limit, .gift_sel .gift_free {
+    .gift_sel:hover > .gift_price,
+    .gift_sel:hover > .gift_limit,
+    .gift_sel .gift_free {
         font-size: 14px;
     }
 
@@ -1374,13 +1408,20 @@
         position: unset;
     }
 
-    #ajax_audio_player #aj_player_track #aj_player_track_name #aj_player_track_title {
+    #ajax_audio_player
+        #aj_player_track
+        #aj_player_track_name
+        #aj_player_track_title {
         display: flex;
         flex-direction: column;
         max-width: 90% !important;
     }
 
-    #ajax_audio_player #aj_player_track #aj_player_track_name #aj_player_track_title .tire {
+    #ajax_audio_player
+        #aj_player_track
+        #aj_player_track_name
+        #aj_player_track_title
+        .tire {
         display: none;
     }
 
@@ -1413,7 +1454,8 @@
         display: none !important;
     }
 
-    .playlistListView .playlistInfo .playlistMeta, .playlistListView .playlistInfo .playlistMeta span {
+    .playlistListView .playlistInfo .playlistMeta,
+    .playlistListView .playlistInfo .playlistMeta span {
         font-size: 15px;
     }
 
@@ -1483,7 +1525,8 @@
         width: 100%;
     }
 
-    .searchList hr, .verticalGrayTabs hr {
+    .searchList hr,
+    .verticalGrayTabs hr {
         display: none;
     }
 
@@ -1545,7 +1588,14 @@
     .audioEntry .status:hover .mediaInfo {
         position: unset;
         color: white;
-        text-shadow: rgb(0, 0, 0) 1px 0px 0px, rgb(0, 0, 0) 0.540302px 0.841471px 0px, rgb(0, 0, 0) -0.416147px 0.909297px 0px, rgb(0, 0, 0) -0.989992px 0.14112px 0px, rgb(0, 0, 0) -0.653644px -0.756802px 0px, rgb(0, 0, 0) 0.283662px -0.958924px 0px, rgb(0, 0, 0) 0.96017px -0.279415px 0px;
+        text-shadow:
+            rgb(0, 0, 0) 1px 0px 0px,
+            rgb(0, 0, 0) 0.540302px 0.841471px 0px,
+            rgb(0, 0, 0) -0.416147px 0.909297px 0px,
+            rgb(0, 0, 0) -0.989992px 0.14112px 0px,
+            rgb(0, 0, 0) -0.653644px -0.756802px 0px,
+            rgb(0, 0, 0) 0.283662px -0.958924px 0px,
+            rgb(0, 0, 0) 0.96017px -0.279415px 0px;
     }
 
     .audioEntry.nowPlaying .playIcon {
@@ -1770,17 +1820,30 @@
         position: relative;
     }
 
-    .attachment_selector #attachment_insert .videosInsert .video_list .video-preview {
+    .attachment_selector
+        #attachment_insert
+        .videosInsert
+        .video_list
+        .video-preview {
         width: 80px;
         margin-right: unset;
     }
 
-    .attachment_selector #attachment_insert .videosInsert .video_list .video-preview img {
+    .attachment_selector
+        #attachment_insert
+        .videosInsert
+        .video_list
+        .video-preview
+        img {
         max-width: 100%;
         object-fit: cover;
     }
 
-    .attachment_selector #attachment_insert .videosInsert .video_list .action_links {
+    .attachment_selector
+        #attachment_insert
+        .videosInsert
+        .video_list
+        .action_links {
         position: absolute;
         top: 0;
         right: 0;
@@ -1951,7 +2014,8 @@
         width: 70%;
     }
 
-    .messenger-app--messages---message ._content span, .messenger-app--messages---message ._content>a {
+    .messenger-app--messages---message ._content span,
+    .messenger-app--messages---message ._content > a {
         font-size: 15px;
     }
 
@@ -1975,7 +2039,7 @@
         text-align: unset;
     }
 
-    #new_ticket_form center input[type='text'],
+    #new_ticket_form center input[type="text"],
     #new_ticket_form center textarea {
         width: 100% !important;
     }
@@ -2106,7 +2170,8 @@
         min-width: 140px !important;
     }
 
-    .action_links>.profile_link, .action_links>.profile_link_form>.profile_link {
+    .action_links > .profile_link,
+    .action_links > .profile_link_form > .profile_link {
         width: 100%;
         font-size: 13px;
         white-space: nowrap;
