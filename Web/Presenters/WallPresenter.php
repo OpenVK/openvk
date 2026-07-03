@@ -222,7 +222,7 @@ final class WallPresenter extends OpenVKPresenter
         ];
         $this->template->posts = [];
         foreach ($posts->page((int) ($_GET["p"] ?? 1), $perPage) as $post) {
-            $this->template->posts[] = $this->posts->getByOwnerAndVID($post->owner_id, $post->id);
+            $this->template->posts[] = $this->posts->get($post->id);
         }
     }
 

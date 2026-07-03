@@ -332,7 +332,7 @@ final class AudioPresenter extends OpenVKPresenter
 
             $audio = $this->audios->get($id);
 
-            if ($audio && !$audio->isDeleted() && !$audio->isWithdrawn()) {
+            if ($audio && !is_array($audio) && !$audio->isDeleted() && !$audio->isWithdrawn()) {
                 if (!empty($this->postParam("playlist"))) {
                     $playlist = (new Audios())->getPlaylist((int) $this->postParam("playlist"));
 
@@ -820,6 +820,10 @@ final class AudioPresenter extends OpenVKPresenter
                 break;
             case "playlist_context":
                 $playlist = $this->audios->getPlaylist($ctx_id);
+
+                if (!$playlist) {
+                    $playlist = $this->audios->getPlaylistByOwnerAndVID((int) ($this->postParam("context_entity2")), $ctx_id);
+                }
 
                 if (!$playlist || $playlist->isDeleted()) {
                     $this->flashFail("err", "Error", "Can't get queue", 80, true);

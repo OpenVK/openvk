@@ -80,6 +80,9 @@ class VKAPIClient
         string $httpMethod = "GET",
     ): array {
 
+        bdump($method);
+        bdump([...$params]);
+
         $params["access_token"] = $this->accessToken;
         $params["v"] = $this->apiVersion;
 

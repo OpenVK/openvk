@@ -47,6 +47,7 @@ class Audio extends VkEntity
 
     public function getTitle(): string
     {
+        bdump($this->data);
         return $this->data["title"] ?? ($this->data["name"] ?? "Unknown Track");
     }
 
@@ -124,20 +125,10 @@ class Audio extends VkEntity
 
     public function getLyrics(): ?string
     {
-        return $this->data['lyrics_id'] ?? null;
+        return $this->data["lyrics"] ?? null;
     }
 
     public function isWithdrawn(): bool
-    {
-        return false;
-    }
-
-    public function isAvailable(): bool
-    {
-        return true;
-    }
-
-    public function isExplicit(): bool
     {
         return false;
     }
@@ -196,5 +187,20 @@ class Audio extends VkEntity
     public function getKeys(): ?object
     {
         return null;
+    }
+
+    public function isAvailable(): bool
+    {
+        return !empty($this->data["url"]);
+    }
+
+    public function isExplicit(): bool
+    {
+        return (bool) ($this->data["explicit"] ?? false);
+    }
+
+    public function canBeModifiedBy($who): bool
+    {
+        return false;
     }
 }

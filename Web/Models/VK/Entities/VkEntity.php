@@ -8,6 +8,12 @@ abstract class VkEntity
     public function getId(): int { return (int) ($this->data["id"] ?? 0); }
     public function getOwnerId(): int { return (int) ($this->data["owner_id"] ?? 0); }
     public function getPrettyId(): string { return $this->getOwnerId() . "_" . $this->getId(); }
+
+    public function toVkApiStruct($user)
+    {
+        return (object)$this->data;
+    }
+
     public function canBeModifiedBy($user): bool
     {
         return $this->getOwnerId() == $user->getId();

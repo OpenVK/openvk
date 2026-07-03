@@ -56,6 +56,13 @@ class Photo extends VkEntity
 
     public function getURL(): string
     {
+        if ($this->data["photo_600"]) {
+            return $this->data["photo_600"];
+        }
+        if ($this->data["photo_300"]) {
+            return $this->data["photo_300"];
+        }
+
         return $this->getURLBySizeId("normal");
     }
 
