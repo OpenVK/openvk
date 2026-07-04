@@ -4,7 +4,7 @@
 
 {block headIncludes}
     {var $vidDesc = $video->getDescription()}
-    {var $vidDescTrimmed = !is_null($vidDesc) && strlen($vidDesc) > 200 ? substr($vidDesc, 0, 197) . '...' : $vidDesc}
+    {var $vidDescTrimmed = !is_null($vidDesc) && mb_strlen($vidDesc) > 200 ? mb_substr($vidDesc, 0, 197) . '...' : $vidDesc}
     {var $thumbUrl = $video->getThumbnailURL()}
     {var $vidDims = $video->getDimensions()}
     <meta property="og:title" content="{$video->getName()} — {$instance_name}" />
