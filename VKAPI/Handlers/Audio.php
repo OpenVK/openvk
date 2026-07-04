@@ -900,4 +900,11 @@ final class Audio extends VKAPIRequestHandler
             "cover_url" => $playlist->getCoverURL(),
         ];
     }
+
+    public function subscribeToQueue(): object
+    {
+        # dummy function
+
+        return (object) ["url" => ""];
+    }
 }
