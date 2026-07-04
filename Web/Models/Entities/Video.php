@@ -179,7 +179,7 @@ class Video extends Media
                 "is_favorite" => false,
                 "player" => !$fromYoutube ? $this->getURL() : $this->getVideoDriver()->getURL(),
                 "files" => !$fromYoutube ? [
-                    "mp4_480" => $this->getURL(),
+                    "mp4_480" => $this->getURL() . "#vkuservideo",
                 ] : [],
                 "added" => 0,
                 "repeat" => 0,
