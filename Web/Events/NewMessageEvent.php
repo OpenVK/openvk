@@ -43,7 +43,7 @@ class NewMessageEvent implements ILPEmitable
             256,                              # checked for spam flag
             $peer,                            # TODO calculate peer correctly
             $msg->getSendTime()->timestamp(), # creation time in unix
-            $msg->getText(),                  # text (formatted)
+            $msg->getText(false),             # text (formatted)
             (object) [],                      # empty additional info
             (object) [],                      # empty attachments
             $msg->getId() << 2,               # id as random_id
