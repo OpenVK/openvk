@@ -4,12 +4,13 @@
 
 {block headIncludes}
     {var $photoUrl = $photo->getURLBySizeId('normal')}
-    {var $photoDims = $photo->getDimensions()}
+    {php $photoDims = null}
+    {php try { $photoDims = $photo->getDimensions(); } catch(\Throwable $e) { $photoDims = null; } }
     <meta property="og:title" content="{_photo} — {$instance_name}" />
     <meta property="og:url" content="{$baseUrl}/photo{$photo->getPrettyId()}" />
     <meta property="og:image" content="{$photoUrl}" />
-    <meta property="og:image:width" content="{$photoDims[0]}" />
-    <meta property="og:image:height" content="{$photoDims[1]}" />
+    <meta n:if="!is_null($photoDims)" property="og:image:width" content="{$photoDims[0]}" />
+    <meta n:if="!is_null($photoDims)" property="og:image:height" content="{$photoDims[1]}" />
     <meta property="og:type" content="article" />
     <meta n:if="!empty($photo->getDescription())" property="og:description" content="{strlen($photo->getDescription()) > 300 ? substr($photo->getDescription(), 0, 297) . '...' : $photo->getDescription()}" />
     <meta name="twitter:title" content="{_photo} — {$instance_name}" />
