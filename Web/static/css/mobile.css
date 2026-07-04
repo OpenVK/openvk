@@ -1225,11 +1225,17 @@
     .page_info_main {
         position: absolute;
         top: 93px;
-        left: 39%;
+        left: 35%;
         width: 65%;
         overflow-x: hidden;
         overflow-y: auto;
         height: 248px;
+        padding-left: 11px;
+        box-sizing: border-box;
+    }
+
+    .page_info_main.page_info_main_profile {
+        padding-left: 11px;
     }
 
     .tour {
