@@ -103,6 +103,7 @@ final class Messages extends VKAPIRequestHandler
             if (method_exists($peer, 'isBanned') && $peer->isBanned()) {
                 $this->fail(18, "Recipient is banned");
             }
+            // TODO: Add deleted field to group
             if (method_exists($peer, 'isDeleted') && $peer->isDeleted()) {
                 $this->fail(18, "Recipient was deleted");
             }
@@ -167,7 +168,7 @@ final class Messages extends VKAPIRequestHandler
      * * @param array|object $payload Ссылка на данные от IM сервиса
      * @param string $fields Дополнительные поля для USRRepo
      */
-    private function hydrateExtendedData(&$payload, string $fields = ""): void
+    private function hydrateExtendedData(&$payload, string $fields = "photo_200,online"): void
     {
         $isObject = is_object($payload);
         $data = $isObject ? (array) $payload : $payload;
@@ -673,7 +674,7 @@ final class Messages extends VKAPIRequestHandler
         int $peer_id = 0,
         string $conversation_message_ids = "",
         int $extended = 0,
-        string $fields = "",
+        string $fields = "photo_200,online",
         int $group_id = 0
     ) {
         $this->requireUser();
@@ -807,7 +808,7 @@ final class Messages extends VKAPIRequestHandler
         int $count = 20,
         string $filter = "all",
         int $extended = 0,
-        string $fields = "",
+        string $fields = "photo200,online",
         int $group_id = 0
     ): array {
         $this->requireUser();
@@ -1051,7 +1052,7 @@ final class Messages extends VKAPIRequestHandler
         int $start_message_id = 0,
         int $rev = 0,
         int $extended = 0,
-        string $fields = "",
+        string $fields = "photo_200,online",
         int $group_id = 0
     ): array {
         $this->requireUser();
