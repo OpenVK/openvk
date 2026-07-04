@@ -1079,6 +1079,10 @@
     color: white;
 }
 
+#ajax_audio_player #aj_player_track #aj_player_track_name #aj_player_track_title .tire {
+    display: inline;
+}
+
 #ajax_audio_player #aj_time {
     cursor: pointer;
 }

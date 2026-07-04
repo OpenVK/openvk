@@ -133,7 +133,7 @@ u(document).on('click', '#__feed_settings_link', (e) => {
                 const CURRENT_RETURN_BANNED = Number(__temp_url.searchParams.get('return_banned') ?? 0)
                 const COUNT = [1, 5, 10, 20, 30, 40, 50]
                 u('#_feed_settings_container #__content').html(`
-                    <table cellspacing="7" cellpadding="0" border="0" align="center">
+                    <table class="flexible_table" cellspacing="7" cellpadding="0" border="0" align="center">
                         <tbody>
                             <tr>
                                 <td width="120" valign="top">
@@ -151,7 +151,7 @@ u(document).on('click', '#__feed_settings_link', (e) => {
                                     <input type='number' min='1' max='${PAGES_COUNT}' id='pageNumber' value='${CURRENT_PAGE}' placeholder='${CURRENT_PAGE}'>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="not_flexible_tr">
                                 <td width="120" valign="top">
                                     <span class="nobold">
                                         <input type='checkbox' name='showIgnored' id="showIgnored" ${CURRENT_RETURN_BANNED == 1 ? 'checked' : ''}>
