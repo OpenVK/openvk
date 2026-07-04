@@ -2,6 +2,17 @@
 
 {block title}{_album} {$album->getName()}{/block}
 
+{block headIncludes}
+    {var $albumCover = $album->getCoverPhoto()}
+    {var $albumCoverUrl = !is_null($albumCover) ? $albumCover->getURLBySizeId('normal') : ''}
+    <meta property="og:title" content="{$album->getName()} — {$instance_name}" />
+    <meta property="og:url" content="{$baseUrl}/album{$album->getPrettyId()}" />
+    <meta n:if="!empty($albumCoverUrl)" property="og:image" content="{$albumCoverUrl}" />
+    <meta property="og:type" content="article" />
+    <meta name="twitter:title" content="{$album->getName()} — {$instance_name}" />
+    <meta n:if="!empty($albumCoverUrl)" name="twitter:image" content="{$albumCoverUrl}" />
+{/block}
+
 {block header}
     {var $isClub = ($album->getOwner() instanceof openvk\Web\Models\Entities\Club)}
     
