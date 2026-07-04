@@ -313,6 +313,7 @@ abstract class OpenVKPresenter extends SimplePresenter
         }
 
         $this->template->baseUrl = ovk_scheme(true) . $_SERVER['HTTP_HOST'];
+        $this->template->instance_name = OPENVK_ROOT_CONF['openvk']['appearance']['name'];
 
         header("X-OpenVK-User-Validated: $userValidated");
         header("X-Accel-Expires: $cacheTime");

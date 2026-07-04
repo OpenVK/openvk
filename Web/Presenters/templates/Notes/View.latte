@@ -4,11 +4,11 @@
 
 {block headIncludes}
     {var $notePreview = $note->getPreview(200)}
-    <meta property="og:title" content="{$note->getName()}" />
+    <meta property="og:title" content="{$note->getName()} — {$instance_name}" />
     <meta property="og:url" content="{$baseUrl}/note{$note->getPrettyId()}" />
     <meta property="og:type" content="article" />
     <meta n:if="!empty($notePreview)" property="og:description" content="{$notePreview}" />
-    <meta name="twitter:title" content="{$note->getName()}" />
+    <meta name="twitter:title" content="{$note->getName()} — {$instance_name}" />
     <meta n:if="!empty($notePreview)" name="twitter:description" content="{$notePreview}" />
 {/block}
 

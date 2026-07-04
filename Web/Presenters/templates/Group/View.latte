@@ -11,12 +11,12 @@
     {var $clubDesc = $club->getDescription()}
     {var $clubDescTrimmed = !is_null($clubDesc) && strlen($clubDesc) > 200 ? substr($clubDesc, 0, 197) . '...' : $clubDesc}
     {var $clubAvatar = $club->getAvatarUrl('normal')}
-    <meta property="og:title" content="{$club->getName()}" />
+    <meta property="og:title" content="{$club->getName()} — {$instance_name}" />
     <meta property="og:url" content="{$baseUrl}{$club->getURL()}" />
     <meta property="og:image" content="{$clubAvatar}" />
     <meta property="og:type" content="profile" />
     <meta n:if="!empty($clubDescTrimmed)" property="og:description" content="{$clubDescTrimmed}" />
-    <meta name="twitter:title" content="{$club->getName()}" />
+    <meta name="twitter:title" content="{$club->getName()} — {$instance_name}" />
     <meta name="twitter:image" content="{$clubAvatar}" />
     <meta n:if="!empty($clubDescTrimmed)" name="twitter:description" content="{$clubDescTrimmed}" />
     {/if}

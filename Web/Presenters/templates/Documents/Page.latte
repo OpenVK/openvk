@@ -6,11 +6,11 @@
 
 {block headIncludes}
     {var $docPreview = $doc->isImage() ? $doc->getPreview()->getURLBySizeId('normal') : ($doc->isGif() ? $doc->getURL() : '')}
-    <meta property="og:title" content="{_document}: {$doc->getName()}" />
+    <meta property="og:title" content="{_document}: {$doc->getName()} — {$instance_name}" />
     <meta property="og:url" content="{$baseUrl}/doc{$doc->getPrettiestId()}" />
     <meta property="og:type" content="article" />
     <meta n:if="!empty($docPreview)" property="og:image" content="{$docPreview}" />
-    <meta name="twitter:title" content="{_document}: {$doc->getName()}" />
+    <meta name="twitter:title" content="{_document}: {$doc->getName()} — {$instance_name}" />
     <meta n:if="!empty($docPreview)" name="twitter:image" content="{$docPreview}" />
 {/block}
 
