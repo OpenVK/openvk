@@ -74,6 +74,15 @@ final class AdminPresenter extends OpenVKPresenter
         return $repo->find($query)->page($page, 20);
     }
 
+    private function createPaginatorConf(int $count, int $page, int $perPage): object
+    {
+        return (object) [
+            "count"   => $count,
+            "page"    => $page,
+            "perPage" => $perPage,
+        ];
+    }
+
     private function searchPlaylists(&$count)
     {
         $query = $this->queryParam("q") ?? "";
@@ -175,6 +184,7 @@ final class AdminPresenter extends OpenVKPresenter
     public function renderUsers(): void
     {
         $this->template->users = $this->searchResults($this->users, $this->template->count);
+        $this->template->paginatorConf = $this->createPaginatorConf($this->template->count, (int) ($this->queryParam("p") ?? 1), 20);
     }
 
     public function renderUser(int $id): void
@@ -232,6 +242,7 @@ final class AdminPresenter extends OpenVKPresenter
     public function renderClubs(): void
     {
         $this->template->clubs = $this->searchResults($this->clubs, $this->template->count);
+        $this->template->paginatorConf = $this->createPaginatorConf($this->template->count, (int) ($this->queryParam("p") ?? 1), 20);
     }
 
     public function renderClub(int $id): void
@@ -275,8 +286,10 @@ final class AdminPresenter extends OpenVKPresenter
     {
         $this->warnIfNoCommerce();
 
+        $page = (int) ($this->queryParam("p") ?? 1);
         $this->template->count    = $this->vouchers->size();
-        $this->template->vouchers = iterator_to_array($this->vouchers->enumerate((int) ($this->queryParam("p") ?? 1)));
+        $this->template->vouchers = iterator_to_array($this->vouchers->enumerate($page));
+        $this->template->paginatorConf = $this->createPaginatorConf($this->template->count, $page, 20);
     }
 
     public function renderVoucher(int $id): void
@@ -333,8 +346,10 @@ final class AdminPresenter extends OpenVKPresenter
     {
         $this->warnIfNoCommerce();
 
+        $page = (int) ($this->queryParam("p") ?? 1);
         $this->template->act        = $this->queryParam("act") ?? "list";
-        $this->template->categories = iterator_to_array($this->gifts->getCategories((int) ($this->queryParam("p") ?? 1), null, $this->template->count));
+        $this->template->categories = iterator_to_array($this->gifts->getCategories($page, null, $this->template->count));
+        $this->template->paginatorConf = $this->createPaginatorConf($this->template->count, $page, 20);
     }
 
     public function renderGiftCategory(string $slug, int $id): void
@@ -407,8 +422,10 @@ final class AdminPresenter extends OpenVKPresenter
             $this->redirect("/admin/gifts/" . $cat->getSlug() . "." . $catId . "/");
         }
 
+        $page = (int) ($this->queryParam("p") ?? 1);
         $this->template->cat   = $cat;
-        $this->template->gifts = iterator_to_array($cat->getGifts((int) ($this->queryParam("p") ?? 1), null, $this->template->count));
+        $this->template->gifts = iterator_to_array($cat->getGifts($page, null, $this->template->count));
+        $this->template->paginatorConf = $this->createPaginatorConf($this->template->count, $page, 20);
     }
 
     public function renderGift(int $id): void
@@ -577,8 +594,11 @@ final class AdminPresenter extends OpenVKPresenter
 
     public function renderBannedLinks(): void
     {
-        $this->template->links = $this->bannedLinks->getList((int) $this->queryParam("p") ?: 1);
+        $page = (int) $this->queryParam("p") ?: 1;
+        $this->template->links = $this->bannedLinks->getList($page);
+        $this->template->count = $this->bannedLinks->getTotalCount();
         $this->template->users = new Users();
+        $this->template->paginatorConf = $this->createPaginatorConf($this->template->count, $page, OPENVK_DEFAULT_PER_PAGE);
     }
 
     public function renderBannedLink(int $id): void
@@ -808,11 +828,14 @@ final class AdminPresenter extends OpenVKPresenter
 
     public function renderMusic(): void
     {
+        $page = (int) ($this->queryParam("p") ?? 1);
         $this->template->mode = in_array($this->queryParam("act"), ["audios", "playlists"]) ? $this->queryParam("act") : "audios";
         if ($this->template->mode === "audios") {
             $this->template->audios = $this->searchResults($this->audios, $this->template->count);
+            $this->template->paginatorConf = $this->createPaginatorConf($this->template->count, $page, 20);
         } else {
             $this->template->playlists = $this->searchPlaylists($this->template->count);
+            $this->template->paginatorConf = $this->createPaginatorConf($this->template->count, $page, 20);
         }
     }
 
@@ -908,6 +931,7 @@ final class AdminPresenter extends OpenVKPresenter
 
         $this->template->logs   = $logs;
         $this->template->count  = $count;
+        $this->template->paginatorConf = $this->createPaginatorConf($count, $page, 20);
         $this->template->object_types = (new Logs())->getTypes();
     }
 }

@@ -43,6 +43,11 @@ class BannedLinks
         return sizeof($this->bannedLinks->fetch());
     }
 
+    public function getTotalCount(): int
+    {
+        return $this->bannedLinks->count("*");
+    }
+
     public function getByDomain(string $domain): ?Selection
     {
         return $this->bannedLinks->where("domain", $domain);

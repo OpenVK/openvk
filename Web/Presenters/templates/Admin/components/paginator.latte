@@ -1,0 +1,81 @@
+{var $space = $conf->space ?? 3}
+{var $pageCount = max(1, (int) ceil($conf->count / $conf->perPage))}
+{var $page = max(1, (int) ($conf->page ?? 1))}
+{var $queryLessP = array_merge($_GET, ['p' => '__PAGE__'])}
+
+<div n:if="$pageCount > 1" class="aui-paginator">
+    <ol class="aui-nav aui-nav-pagination" data-base-href="?{http_build_query($queryLessP, '', '&', \PHP_QUERY_RFC3986)}" data-max="{$pageCount}">
+        <li n:if="$page > 1" class="aui-nav-first"><a href="?{http_build_query(array_merge($_GET, ['p' => 1]), '', '&', \PHP_QUERY_RFC3986)}">&laquo;</a></li>
+        {for $j = $page - ($space - 1); $j <= $page + ($space - 1); $j++}
+            <li n:if="$j > 0 && $j <= $pageCount" n:attr="class => $page === $j ? 'aui-nav-selected' : ''">
+                <span n:if="$page === $j" class="aui-paginator-current" tabindex="0" role="button"><span class="assistive">{_admin_page}:</span> {$j}</span>
+                <span n:if="$page === $j" class="aui-paginator-jump" style="display:none">
+                    <input type="number" class="text medium-field" min="1" max="{$pageCount}" value="{$page}" placeholder="{$page} / {$pageCount}" />
+                </span>
+                <a n:if="$page !== $j" href="?{http_build_query(array_merge($_GET, ['p' => $j]), '', '&', \PHP_QUERY_RFC3986)}">{$j}</a>
+            </li>
+        {/for}
+        <li n:if="$page < $pageCount" class="aui-nav-last"><a href="?{http_build_query(array_merge($_GET, ['p' => $pageCount]), '', '&', \PHP_QUERY_RFC3986)}">&raquo;</a></li>
+    </ol>
+</div>
+
+<script>
+(function() {
+    var paginator = document.querySelector('.aui-paginator');
+    if (!paginator) return;
+
+    var nav = paginator.querySelector('.aui-nav-pagination');
+    var currentLi = paginator.querySelector('.aui-nav-selected');
+    if (!currentLi) return;
+
+    var currentSpan = currentLi.querySelector('.aui-paginator-current');
+    var jumpSpan = currentLi.querySelector('.aui-paginator-jump');
+    var jumpInput = jumpSpan ? jumpSpan.querySelector('input') : null;
+    if (!currentSpan || !jumpSpan || !jumpInput) return;
+
+    var baseHref = nav.getAttribute('data-base-href');
+    var maxPage = parseInt(nav.getAttribute('data-max'), 10);
+    var visible = false;
+
+    function showInput() {
+        visible = true;
+        currentSpan.style.display = 'none';
+        jumpSpan.style.display = 'inline-block';
+        jumpInput.focus();
+        jumpInput.select();
+    }
+
+    function hideInput() {
+        visible = false;
+        currentSpan.style.display = '';
+        jumpSpan.style.display = 'none';
+    }
+
+    function goToPage(num) {
+        num = Math.max(1, Math.min(maxPage, parseInt(num, 10) || 1));
+        if (num === parseInt(currentSpan.textContent, 10)) {
+            hideInput();
+            return;
+        }
+        window.location.href = baseHref.replace('__PAGE__', String(num));
+    }
+
+    currentSpan.addEventListener('click', function(e) {
+        e.preventDefault();
+        showInput();
+    });
+
+    jumpInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            goToPage(jumpInput.value);
+        } else if (e.key === 'Escape') {
+            hideInput();
+        }
+    });
+
+    jumpInput.addEventListener('blur', function() {
+        if (visible) hideInput();
+    });
+})();
+</script>

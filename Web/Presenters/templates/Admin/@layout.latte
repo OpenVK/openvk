@@ -91,6 +91,27 @@
                 white-space: pre-wrap;
                 word-break: break-all;
             }
+
+            .aui-paginator {
+                display: flex;
+                justify-content: flex-end;
+                padding: 12px 0;
+            }
+            .aui-paginator .aui-nav-pagination {
+                display: flex;
+                height: 30px;
+                align-items: center;
+            }
+            .aui-paginator .aui-nav-pagination .aui-paginator-current {
+                cursor: pointer;
+            }
+            .aui-paginator .aui-nav-pagination .aui-paginator-jump input {
+                width: 70px;
+                height: 30px;
+                text-align: center;
+                font-size: 14px;
+                box-sizing: border-box;
+            }
         </style>
         <title>{include title} - {_admin} {$instance_name}</title>
     </head>

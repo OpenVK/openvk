@@ -39,8 +39,5 @@
             </tr>
         </tbody>
     </table>
-    <div align="right">
-        <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?p={($_GET['p'] ?? 1) - 1}">«</a>
-        <a class="aui-button" href="?p={($_GET['p'] ?? 1) + 1}">»</a>
-    </div>
+    {include "components/paginator.latte", conf => $paginatorConf}
 {/block}
