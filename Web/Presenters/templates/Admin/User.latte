@@ -9,7 +9,21 @@
 {/block}
 
 {block content}
+    {var $isMain       = $mode === 'info'}
+    {var $isSessions   = $mode === 'sessions'}
+
+    {if $isMain}
     <div class="aui-tabs horizontal-tabs">
+        <nav class="aui-navgroup aui-navgroup-horizontal">
+            <div class="aui-navgroup-inner">
+                <div class="aui-navgroup-primary">
+                    <ul class="aui-nav">
+                        <li class="aui-nav-selected"><a href="?act=info">{_admin_tab_main}</a></li>
+                        <li><a href="?act=sessions">{_admin_tab_sessions}</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
         <form class="aui" method="POST">
             <div class="field-group">
                 <label for="avatar">{_avatar}</label>
@@ -128,4 +142,41 @@
             </div>
         </form>
     </div>
+    {/if}
+
+    {if $isSessions}
+<div class="aui-tabs horizontal-tabs">
+        <nav class="aui-navgroup aui-navgroup-horizontal">
+            <div class="aui-navgroup-inner">
+                <div class="aui-navgroup-primary">
+                    <ul class="aui-nav">
+                        <li><a href="?act=main">{_admin_tab_main}</a></li>
+                        <li class="aui-nav-selected"><a href="?act=sessions">{_admin_tab_sessions}</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <table class="aui">
+            <thead>
+            <tr>
+                <th>IP</th>
+                <th>User-agent</th>
+                <th>{_admin_actions}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr n:foreach="$sessions as $session">
+                <td>{$session->ip}</td>
+                <td>{php echo new WhichBrowser\Parser($session->ua)->toString()}</td>
+                <td>
+                    <a class="aui-button aui-button-primary" href="/admin/session/delete?token={$session->token}&hash={rawurlencode($csrfToken)}">
+                        <span class="aui-icon aui-icon-small aui-iconfont-trash">{_delete}</span>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+        </table>
+    </div>
+    {/if}
+
 {/block}

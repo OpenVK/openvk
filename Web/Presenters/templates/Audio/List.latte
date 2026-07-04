@@ -3,7 +3,7 @@
 {block title}
     {if $mode == 'list'}
         {if $ownerId > 0}
-            {_audios} {$owner->getMorphedName("genitive", false)}
+            {_audios} {$owner->getMorphedName("genitive", false, false)}
         {else}
             {_audios_group}
         {/if}
@@ -17,7 +17,7 @@
         {$alone_audio->getName()}
     {else}
         {if $ownerId > 0}
-            {_playlists} {$owner->getMorphedName("genitive", false)}
+            {_playlists} {$owner->getMorphedName("genitive", false, false)}
         {else}
             {_playlists_group}
         {/if}

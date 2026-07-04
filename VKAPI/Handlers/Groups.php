@@ -54,62 +54,9 @@ final class Groups extends VKAPIRequestHandler
 
         if (!empty($clbs)) {
             for ($i = 0; $i < $ic; $i++) {
-                $usr = $clbs[$i];
-                if (!is_null($usr)) {
-                    $rClubs[$i] = (object) [
-                        "id" => $usr->getId(),
-                        "name" => $usr->getName(),
-                        "screen_name" => $usr->getShortCode(),
-                        "is_closed" => 0,
-                        "can_access_closed" => 1,
-                        "photo_50" => $usr->getAvatarURL(),
-                        "photo_100" => $usr->getAvatarURL("tiny"),
-                        "photo_200" => $usr->getAvatarURL("normal"),
-                    ];
-
-                    $flds = explode(',', $fields);
-
-                    foreach ($flds as $field) {
-                        switch ($field) {
-                            case "verified":
-                                $rClubs[$i]->verified = intval($usr->isVerified());
-                                break;
-                            case "has_photo":
-                                $rClubs[$i]->has_photo = is_null($usr->getAvatarPhoto()) ? 0 : 1;
-                                break;
-                            case "photo_max_orig":
-                                $rClubs[$i]->photo_max_orig = $usr->getAvatarURL();
-                                break;
-                            case "photo_max":
-                                $rClubs[$i]->photo_max = $usr->getAvatarURL("original"); // ORIGINAL ANDREI CHINITEL 🥵🥵🥵🥵
-                                break;
-                            case "photo_200_orig":
-                                $rClubs[$i]->photo_200_orig = $usr->getAvatarURL("normal");
-                                break;
-                            case "photo_400_orig":
-                                $rClubs[$i]->photo_400_orig = $usr->getAvatarURL("normal");
-                                break;
-                            case "members_count":
-                                $rClubs[$i]->members_count = $usr->getFollowersCount();
-                                break;
-                            case "can_suggest":
-                                $rClubs[$i]->can_suggest = !$usr->canBeModifiedBy($this->getUser()) && $usr->getWallType() == 2;
-                                break;
-                            case "background":
-                                $backgrounds = $usr->getBackDropPictureURLs();
-                                $rClubs[$i]->background = $backgrounds;
-                                break;
-                            case "suggested_count":
-                                if ($usr->getWallType() != 2) {
-                                    $rClubs[$i]->suggested_count = null;
-                                    break;
-                                }
-
-                                $rClubs[$i]->suggested_count = $usr->getSuggestedPostsCount($this->getUser());
-
-                                break;
-                        }
-                    }
+                $clb = $clbs[$i];
+                if (!is_null($clb)) {
+                    $rClubs[$i] = $clb->toVkApiStruct($this->user, $fields . ",photo_50,photo_100,photo_200");
                 }
             }
         } else {
@@ -170,96 +117,7 @@ final class Groups extends VKAPIRequestHandler
             } elseif ($clbs[$i] == null) {
 
             } else {
-                $response[$i] = (object) [
-                    "id"                => $clb->getId(),
-                    "name"              => $clb->getName(),
-                    "screen_name"       => $clb->getShortCode() ?? "club" . $clb->getId(),
-                    "is_closed"         => 0,
-                    "type"              => "group",
-                    "is_member"         => !is_null($this->getUser()) ? (int) $clb->getSubscriptionStatus($this->getUser()) : 0,
-                    "can_access_closed" => 1,
-                ];
-
-                $flds = explode(',', $fields);
-
-                foreach ($flds as $field) {
-                    switch ($field) {
-                        case "verified":
-                            $response[$i]->verified = intval($clb->isVerified());
-                            break;
-                        case "has_photo":
-                            $response[$i]->has_photo = is_null($clb->getAvatarPhoto()) ? 0 : 1;
-                            break;
-                        case "photo_max_orig":
-                            $response[$i]->photo_max_orig = $clb->getAvatarURL();
-                            break;
-                        case "photo_max":
-                            $response[$i]->photo_max = $clb->getAvatarURL();
-                            break;
-                        case "photo_50":
-                            $response[$i]->photo_50 = $clb->getAvatarURL();
-                            break;
-                        case "photo_100":
-                            $response[$i]->photo_100 = $clb->getAvatarURL("tiny");
-                            break;
-                        case "photo_200":
-                            $response[$i]->photo_200 = $clb->getAvatarURL("normal");
-                            break;
-                        case "photo_200_orig":
-                            $response[$i]->photo_200_orig = $clb->getAvatarURL("normal");
-                            break;
-                        case "photo_400_orig":
-                            $response[$i]->photo_400_orig = $clb->getAvatarURL("normal");
-                            break;
-                        case "members_count":
-                            $response[$i]->members_count = $clb->getFollowersCount();
-                            break;
-                        case "site":
-                            $response[$i]->site = $clb->getWebsite();
-                            break;
-                        case "description":
-                            $response[$i]->description = $clb->getDescription();
-                            break;
-                        case "can_suggest":
-                            $response[$i]->can_suggest = !$clb->canBeModifiedBy($this->getUser()) && $clb->getWallType() == 2;
-                            break;
-                        case "background":
-                            $backgrounds = $clb->getBackDropPictureURLs();
-                            $response[$i]->background = $backgrounds;
-                            break;
-                            # unstandard feild
-                        case "suggested_count":
-                            if ($clb->getWallType() != 2) {
-                                $response[$i]->suggested_count = null;
-                                break;
-                            }
-
-                            $response[$i]->suggested_count = $clb->getSuggestedPostsCount($this->getUser());
-                            break;
-                        case "contacts":
-                            $contacts = [];
-                            $contactTmp = $clb->getManagers(1, true);
-
-                            foreach ($contactTmp as $contact) {
-                                $contacts[] = [
-                                    "user_id" => $contact->getUser()->getId(),
-                                    "desc"    => $contact->getComment(),
-                                ];
-                            }
-
-                            $response[$i]->contacts = $contacts;
-                            break;
-                        case "can_post":
-                            if (!is_null($this->getUser())) {
-                                if ($clb->canBeModifiedBy($this->getUser())) {
-                                    $response[$i]->can_post = true;
-                                } else {
-                                    $response[$i]->can_post = $clb->canPost();
-                                }
-                            }
-                            break;
-                    }
-                }
+                $response[$i] = $clb->toVkApiStruct($this->user, $fields . ",photo_50,photo_100,photo_200");
             }
         }
 
@@ -282,16 +140,10 @@ final class Groups extends VKAPIRequestHandler
         }
 
         if (!$array || sizeof($array) < 1) {
-            return (object) [
-                "count" => 0,
-                "items" => [],
-            ];
+            return $this->generateItems(0, []);
         }
 
-        return (object) [
-            "count" => $find->size(),
-            "items" => $this->getById(implode(',', $array), "", $fields),
-        ];
+        return $this->generateItems($find->size(), $this->getById(implode(',', $array), "", $fields));
     }
 
     public function join(int $group_id)

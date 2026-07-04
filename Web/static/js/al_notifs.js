@@ -17,6 +17,7 @@ function incrementNotificationsCounter() {
             counterObject.innerHTML = ' (<b>1</b>)';
             link.appendChild(counterObject);
         } else {
+            counterObject.classList.remove('zero_counter');
             const bTag = counterObject.querySelector('b');
             if (bTag) {
                 let currentCount = parseInt(bTag.textContent) || 0;

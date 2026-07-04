@@ -85,6 +85,13 @@ h1 {
     background-position: 0;
 }
 
+.page_header .mobile_title,
+#fast_notifications,
+#myPagePreview,
+.navigation .link.fullsize {
+    display: none;
+}
+
 .page_custom_header {
     background: url('../img/header_custom.png');
 }
@@ -360,6 +367,7 @@ h1 {
 .page_content {
     display: inline-block;
     width: 610px;
+    position: relative;
 }
 
 .page_wrap {
@@ -715,6 +723,20 @@ input[type="number"] {
     padding: 10px;
 }
 
+.reg_h4 {
+    margin-left: 60px;
+}
+
+#reg_block {
+    margin: 10px;
+}
+
+#reg_checkbox {
+    margin-left: 100px; 
+    margin-right: 100px;
+    text-align: center;
+}
+
 .left_small_block {
     float: left;
     width: 200px;
@@ -773,6 +795,11 @@ input[type="number"] {
 
 .content {
     padding: 8px;
+}
+
+.content .list_view_item_actions {
+    max-width: 150px;
+    min-width: unset !important;
 }
 
 .content-withouttop {
@@ -1345,6 +1372,13 @@ table.User {
     width: 100px;
 }
 
+.messenger-app--typing-status {
+	color: grey;
+	margin-left: 67px;
+    transition: opacity 0.25s;
+    opacity: 1;
+}
+
 .messenger-app--input {
     background-color: #f9f9f9;
     height: 80px !important;
@@ -1561,12 +1595,26 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
     width: 75%;
 }
 
-#sudo-banner {
+#sudo-banner, .global-alert {
     background: #fffae6;
-    border-color: #fffae6;
+    border-bottom: 1px solid #ffefb0;
     color: #172b4d;
     padding: 8px;
     text-align: center;
+}
+
+.global-alert .dismiss {
+    float: right;
+    height: 16px;
+    width: 16px;
+    overflow: auto;
+    background: url("/assets/packages/static/openvk/img/input_clear.gif") no-repeat 0 0;
+    opacity: 0.1;
+    transition-duration: 0.3s;
+}
+
+.global-alert .dismiss:hover {
+    opacity: 0.4;
 }
 
 #sudo-banner p {
@@ -2545,6 +2593,10 @@ li {
     padding: 1px 1px;
     border-radius: 2px;
     height: 11px;
+}
+
+.navigation_counter {
+    display: inline;
 }
 
 #app_news_container {

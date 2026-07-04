@@ -38,7 +38,7 @@
                 {/if}
                 <div class='summaryBar summaryBarFlex padding'>
                     <div class='summary'>
-                        <b>{tr("results", $count)} {tr("showing_x_y", $page, $count)}</b>
+                        <b>{tr("results", $count)} <span class="showing_x_y_text">{tr("showing_x_y", $page, $count)}</span></b>
                     </div>
 
                     {include "../components/paginator.latte", conf => $paginatorConf}
@@ -57,7 +57,7 @@
                                                         <img src="{$dat->getAvatarUrl('tiny')}" width="75" alt="{_photo}" loading='lazy' />
                                                     </a>
                                                 </td>
-                                                <td valign="top" style="width: 100%">
+                                                <td class="list_view_item_info" valign="top" style="width: 100%">
                                                     <a href="{$dat->getURL()}">
                                                         <b>
                                                             <text style="overflow: hidden;">&nbsp;{$dat->getCanonicalName()}  
@@ -157,7 +157,7 @@
                                                         <img src="{$dat->getAvatarUrl('tiny')}" width="75" alt="{_photo}" loading='lazy' />
                                                     </a>
                                                 </td>
-                                                <td valign="top" style="width: 100%">
+                                                <td class="list_view_item_info" valign="top" style="width: 100%">
                                                     <a href="{$dat->getURL()}">
                                                         <b>
                                                             <text style="overflow: hidden;">&nbsp;{$dat->getCanonicalName()}  
@@ -216,7 +216,7 @@
                                                         <img src="{$dat->getAvatarUrl('miniscule')}" width="75" alt="{_photo}" loading='lazy' />
                                                     </a>
                                                 </td>
-                                                <td valign="top" style="width: 100%">
+                                                <td class="list_view_item_info" valign="top" style="width: 100%">
                                                     <a href="/app{$dat->getId()}">
                                                         <b>
                                                             <text style="overflow: hidden;">

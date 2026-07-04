@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository_owner == 'OpenVK'
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - uses: pixta-dev/repository-mirroring-action@v1

@@ -7,6 +7,7 @@ namespace openvk\VKAPI\Structures;
 final class Message
 {
     public $id;
+    public $peer_id;
     public $user_id;
     public $from_id;
     public $date;

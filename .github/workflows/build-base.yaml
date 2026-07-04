@@ -14,20 +14,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
         with:
           lfs: false
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v4
 
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v4
 
       - name: Change repository string to lowercase
         id: repositorystring
-        uses: Entepotenz/change-string-case-action-min-dependencies@v1.1.0
+        uses: Entepotenz/change-string-case-action-min-dependencies@v1.2.0
         with:
           string: ${{ github.repository }}
 
@@ -44,20 +44,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
         with:
           lfs: false
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v4
 
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v4
 
       - name: Change repository string to lowercase
         id: repositorystring
-        uses: Entepotenz/change-string-case-action-min-dependencies@v1.1.0
+        uses: Entepotenz/change-string-case-action-min-dependencies@v1.2.0
         with:
           string: ${{ github.repository }}
 

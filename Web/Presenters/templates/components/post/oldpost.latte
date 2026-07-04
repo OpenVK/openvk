@@ -138,7 +138,7 @@
                     {/if}
 
                     {if !($forceNoDeleteLink ?? false) && $canBeDeleted}
-                        <a href="/wall{$post->getPrettyId()}/delete">{_delete}</a> &nbsp;|&nbsp;
+                        <span class="oldPostDelete"><a href="/wall{$post->getPrettyId()}/delete">{_delete}</a> &nbsp;|&nbsp;</span>
                     {/if} 
 
                     {if $feedIgnoreButton ?? false && !$canBeDeleted}
