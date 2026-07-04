@@ -167,7 +167,7 @@
         <tbody>
             <tr n:foreach="$sessions as $session">
                 <td>{$session->ip}</td>
-                <td>{php echo new WhichBrowser\Parser($session->ua)->toString()}</td>
+                <td>{php echo (new WhichBrowser\Parser($session->ua))->toString()}</td>
                 <td>
                     <a class="aui-button aui-button-primary" href="/admin/session/delete?token={$session->token}&hash={rawurlencode($csrfToken)}">
                         <span class="aui-icon aui-icon-small aui-iconfont-trash">{_delete}</span>
