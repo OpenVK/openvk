@@ -862,36 +862,52 @@ final class AdminPresenter extends OpenVKPresenter
 
     public function renderLogs(): void
     {
-        $filter = [];
+        $page = max(1, (int) ($this->queryParam("p") ?? 1));
+
+        $selection = $this->context->table("ChandlerLogs");
 
         if ($this->queryParam("id")) {
             $id = (int) $this->queryParam("id");
-            $filter["id"] = $id;
+            $selection->where("id", $id);
             $this->template->id = $id;
         }
         if ($this->queryParam("type") !== null && $this->queryParam("type") !== "any") {
             $type = in_array($this->queryParam("type"), [0, 1, 2, 3]) ? (int) $this->queryParam("type") : 0;
-            $filter["type"] = $type;
+            $selection->where("type", $type);
             $this->template->type = $type;
         }
         if ($this->queryParam("uid")) {
             $user = $this->queryParam("uid");
-            $filter["user"] = $user;
+            $selection->where("user", $user);
             $this->template->user = $user;
         }
         if ($this->queryParam("obj_id")) {
             $obj_id = (int) $this->queryParam("obj_id");
-            $filter["object_id"] = $obj_id;
+            $selection->where("object_id", $obj_id);
             $this->template->obj_id = $obj_id;
         }
         if ($this->queryParam("obj_type") !== null && $this->queryParam("obj_type") !== "any") {
             $obj_type = "openvk\\Web\\Models\\Entities\\" . $this->queryParam("obj_type");
-            $filter["object_model"] = $obj_type;
+            $selection->where("object_model", $obj_type);
             $this->template->obj_type = $obj_type;
         }
 
-        $logs = iterator_to_array((new Logs())->search($filter));
-        $this->template->logs = $logs;
+        $table = $selection;
+
+        $count  = (clone $table)->count("*");
+        $offset = ($page - 1) * 20;
+        $rows   = $table->limit(20, $offset)->order("id DESC")->fetchAll();
+
+        $logs = [];
+        foreach ($rows as $row) {
+            $log = (new Logs())->get($row->id);
+            if ($log) {
+                $logs[] = $log;
+            }
+        }
+
+        $this->template->logs   = $logs;
+        $this->template->count  = $count;
         $this->template->object_types = (new Logs())->getTypes();
     }
 }
