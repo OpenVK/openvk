@@ -1,7 +1,4 @@
-{var $instance_name = \OPENVK_ROOT_CONF['openvk']['appearance']['name']}
-
 {capture $pageTitle}{ifset title}{include title}{/ifset}{/capture}
-
 {if !isset($parentModule) || substr($parentModule, 0, 21) === 'libchandler:absolute.'}
 <!DOCTYPE html>
 <html>
@@ -44,6 +41,9 @@
         {/if}
 
         {include "_includeCSS.latte"}
+
+        <meta property="og:site_name" content="{$instance_name}" />
+        <meta name="twitter:card" content="summary" />
 
         {ifset headIncludes}
             {include headIncludes}

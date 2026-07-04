@@ -5,6 +5,15 @@
     {$name}
 {/block}
 
+{block headIncludes}
+    <meta property="og:title" content="{$name} — {$instance_name}" />
+    <meta property="og:url" content="{$baseUrl}/app{$id}" />
+    <meta property="og:type" content="website" />
+    <meta n:if="!is_null($description)" property="og:description" content="{strlen($description) > 300 ? substr($description, 0, 297) . '...' : $description}" />
+    <meta name="twitter:title" content="{$name} — {$instance_name}" />
+    <meta n:if="!is_null($description)" name="twitter:description" content="{strlen($description) > 200 ? substr($description, 0, 197) . '...' : $description}" />
+{/block}
+
 {block header}
     {$name}
     <a style="float: right;" onClick="reportApp({$id})" n:if="$canReport ?? false">{_report}</a>

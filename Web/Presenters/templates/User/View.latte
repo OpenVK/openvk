@@ -8,15 +8,20 @@
 
 {block headIncludes}
     {if $user->getPrivacyPermission('page.read', $thisUser ?? NULL)}
-    <!-- openGraph -->
-    <meta property="og:title" content="{$user->getCanonicalName()}" />
-    <meta property="og:url" content="http://{$_SERVER['HTTP_HOST']}{$user->getURL()}" />
-    <meta property="og:image" content="{$user->getAvatarUrl('normal')}" />
+    {var $ogDescription = $user->getStatus() ?? $user->getDescription() ?? ''}
+    {var $ogDescriptionTrimmed = strlen($ogDescription) > 200 ? substr($ogDescription, 0, 197) . '...' : $ogDescription}
+    {var $avatarUrl = $user->getAvatarUrl('normal')}
+    <meta property="og:title" content="{$user->getCanonicalName()} — {$instance_name}" />
+    <meta property="og:url" content="{$baseUrl}{$user->getURL()}" />
+    <meta property="og:image" content="{$avatarUrl}" />
     <meta property="og:type" content="profile" />
     <meta property="og:first_name" content="{$user->getFirstName()}" />
     <meta property="og:last_name" content="{$user->getLastName()}" />
     <meta n:if="!is_null($user->getShortcode())" property="og:username" content="{$user->getShortcode()}" />
     <meta property="og:gender" content="{($user->isFemale() ? 'fe' : '')}male" />
+    <meta n:if="!empty($ogDescriptionTrimmed)" property="og:description" content="{$ogDescriptionTrimmed}" />
+    <meta name="twitter:title" content="{$user->getCanonicalName()} — {$instance_name}" />
+    <meta name="twitter:image" content="{$avatarUrl}" />
     
     <!-- json-ld -->
     <script type="application/ld+json">
@@ -24,7 +29,7 @@
             "@context": "http://schema.org/",
             "type": "Person",
             "name": {$user->getCanonicalName()},
-            "url": {('http://') . $_SERVER['HTTP_HOST'] . $user->getURL()}
+            "url": {$baseUrl . $user->getURL()}
         }
     </script>
     {else} 
