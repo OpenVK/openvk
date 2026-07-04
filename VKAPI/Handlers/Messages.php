@@ -464,7 +464,7 @@ final class Messages extends VKAPIRequestHandler
             $this->fail(-151, "Not implemented");
         }
 
-        $url = "http" . (ovk_is_ssl() ? "s" : "") . "://$_SERVER[HTTP_HOST]/nim" . $this->getUser()->getId();
+        $url = "$_SERVER[HTTP_HOST]/nim" . $this->getUser()->getId();
         $key = openssl_random_pseudo_bytes(8);
         $key = bin2hex($key) . bin2hex($key ^ (~CHANDLER_ROOT_CONF["security"]["secret"] | ((string) $this->getUser()->getId())));
         $res = [
