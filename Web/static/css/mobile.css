@@ -1213,7 +1213,7 @@
         width: 30%;
         position: absolute !important;
         left: 18px;
-        top: 90px;
+        top: 9px;
         max-height: 248px;
     }
 
@@ -1228,7 +1228,7 @@
 
     .page_info_main {
         position: absolute;
-        top: 93px;
+        top: 9px;
         left: 35%;
         width: 65%;
         overflow-x: hidden;
@@ -2217,11 +2217,24 @@
     #openvkVersionPage table.short_first_column .e {
         width: 100px !important;
     }
+
+    .docGalleryItem .doc_bottom_panel span {
+        font-size: 12px;
+    }
+
+    .video-wowzer {
+        font-size: 14px;
+    }
+
+    .expand_button {
+        font-size: 14px;
+    }
 }
 
 @media screen and (max-width: 510px) {
     .post .post-menu-s {
-        margin-left: -54px;
+        margin-right: 5px;
+        margin-left: -34px;
         margin-top: 16px;
     }
 
