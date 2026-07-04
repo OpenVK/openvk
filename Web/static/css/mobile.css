@@ -1201,6 +1201,8 @@
         border-bottom: unset;
         padding: 7px 16px;
         font-size: 13px;
+        width: 100vw;
+        box-sizing: border-box;
     }
 
     .avatar_block {
@@ -1223,7 +1225,7 @@
     .page_info_main {
         position: absolute;
         top: 93px;
-        left: 35%;
+        left: 39%;
         width: 65%;
         overflow-x: hidden;
         overflow-y: auto;
