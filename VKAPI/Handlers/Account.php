@@ -94,12 +94,12 @@ final class Account extends VKAPIRequestHandler
             "requests"      => $this->getUser()->getRequestsCount(),
         ];
 
-        if(!empty($filter)) {
+        if (!empty($filter)) {
             $response = [];
             $fields = explode(',', $filter);
 
             foreach ($fields as $field) {
-                if(isset($all_counters[$field])) {
+                if (isset($all_counters[$field])) {
                     $response[$field] = $all_counters[$field];
                 }
             }
