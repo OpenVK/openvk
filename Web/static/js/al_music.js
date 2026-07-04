@@ -1369,10 +1369,13 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
 
     u('#ctx_menu').remove()
     const ctx_type = u(e.target).closest('.bigPlayer, #ajax_audio_player').length > 0 ? 'main_player' : 'mini_player'
-    const parent = e.target.closest('.ctx_place')
-    if(!parent) {
+    const ctxPlace = e.target.closest('.ctx_place')
+    if(!ctxPlace) {
         return
     }
+
+    const pageContent = e.target.closest('.page_content')
+    const parent = pageContent ?? ctxPlace
 
     const rect = parent.getBoundingClientRect()
     let x, y;
@@ -1380,7 +1383,11 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
     x = e.pageX - rx
     y = e.pageY - ry
 
-    if((rect.height + rect.top) + 100 > window.innerHeight) {
+    if(pageContent) {
+        if(e.clientY + 100 > window.innerHeight) {
+            y -= 100
+        }
+    } else if((rect.height + rect.top) + 100 > window.innerHeight) {
         y = ((rect.height + 120) * -1)
     }
 
