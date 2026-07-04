@@ -1,0 +1,50 @@
+{extends "@layout.latte"}
+
+{block title}
+    {_logs} — {$post->getPrettyId()}
+{/block}
+
+{block heading}
+    {_logs} — {_deleted} {_post} #{$post->getPrettyId()}
+{/block}
+
+{block content}
+    {var $author = $post->getOwner(true)}
+    <form class="aui">
+        <div class="field-group">
+            <label for="id">ID</label>
+            <input class="text medium-field" type="text" id="id" disabled value="{$post->getId()}" />
+        </div>
+        <div class="field-group">
+            <label for="pretty_id">Pretty ID</label>
+            <input class="text medium-field" type="text" id="pretty_id" disabled value="{$post->getPrettyId()}" />
+        </div>
+        <div class="field-group">
+            <label for="author">{_author}</label>
+            <span id="author">
+                <span class="aui-avatar aui-avatar-xsmall">
+                    <span class="aui-avatar-inner">
+                        <img src="{$author->getAvatarUrl('miniscule')}" alt="{$author->getCanonicalName()}" style="object-fit: cover;" role="presentation" />
+                    </span>
+                </span>
+                <a href="/admin/users/id{$author->getId()}">{$author->getCanonicalName()}</a>
+            </span>
+        </div>
+        <div class="field-group">
+            <label for="time">{_logs_time}</label>
+            <input class="text medium-field" type="text" id="time" disabled value="{$post->getPublicationTime()}" />
+        </div>
+        <div class="field-group">
+            <label for="text">{_text}</label>
+            <textarea class="textarea" id="text" rows="15" disabled style="max-width: 100%;">{$post->getText(false)}</textarea>
+        </div>
+        <div class="field-group">
+            <label>Attachments</label>
+            <div id="attachments">
+                <p>(вложения удаляются вместе с постом, данные недоступны)</p>
+            </div>
+        </div>
+    </form>
+    <br/>
+    <a class="aui-button aui-button-link" href="/admin/logs">&larr; {_back}</a>
+{/block}

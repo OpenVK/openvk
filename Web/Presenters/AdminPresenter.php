@@ -969,15 +969,28 @@ final class AdminPresenter extends OpenVKPresenter
                 $userAvatar = null;
             }
 
-            $objectUrl = $log->getObjectURL();
-            if ($objectUrl === "#") {
+            if ($log->getTypeRaw() === 2 && $log->getObjectTable() === "posts") {
                 try {
                     $object = $log->getObject();
-                    if ($object && method_exists($object, "getPageURL")) {
-                        $objectUrl = $object->getPageURL();
+                    if ($object && method_exists($object, "getPrettyId")) {
+                        $objectUrl = "/admin/deleted/post/" . $object->getPrettyId();
+                    } else {
+                        $objectUrl = "#";
                     }
                 } catch (\Throwable $e) {
-                    unset($e);
+                    $objectUrl = "#";
+                }
+            } else {
+                $objectUrl = $log->getObjectURL();
+                if ($objectUrl === "#") {
+                    try {
+                        $object = $log->getObject();
+                        if ($object && method_exists($object, "getPageURL")) {
+                            $objectUrl = $object->getPageURL();
+                        }
+                    } catch (\Throwable $e) {
+                        unset($e);
+                    }
                 }
             }
 
@@ -993,5 +1006,15 @@ final class AdminPresenter extends OpenVKPresenter
         $this->template->count  = $count;
         $this->template->paginatorConf = $this->createPaginatorConf($count, $page, 20);
         $this->template->object_types = (new Logs())->getTypes();
+    }
+
+    public function renderDeletedPost(int $wall, int $post_id): void
+    {
+        $post = (new Posts())->getPostById($wall, $post_id);
+        if (!$post) {
+            $this->notFound();
+        }
+
+        $this->template->post = $post;
     }
 }

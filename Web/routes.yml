@@ -409,6 +409,8 @@ routes:
       handler: "Admin->chandlerGroup"
     - url: "/admin/chandler/users/{slug}"
       handler: "Admin->chandlerUser"
+    - url: "/admin/deleted/post/{num}_{num}"
+      handler: "Admin->deletedPost"
     - url: "/noSpam"
       handler: "NoSpam->index"
     - url: "/al_abuse/search"
