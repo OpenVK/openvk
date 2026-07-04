@@ -9,7 +9,7 @@
 {block headIncludes}
     {if $user->getPrivacyPermission('page.read', $thisUser ?? NULL)}
     {var $ogDescription = $user->getStatus() ?? $user->getDescription() ?? ''}
-    {var $ogDescriptionTrimmed = strlen($ogDescription) > 200 ? substr($ogDescription, 0, 197) . '...' : $ogDescription}
+    {var $ogDescriptionTrimmed = mb_strlen($ogDescription) > 200 ? mb_substr($ogDescription, 0, 197) . '...' : $ogDescription}
     {var $avatarUrl = $user->getAvatarUrl('normal')}
     <meta property="og:title" content="{$user->getCanonicalName()} — {$instance_name}" />
     <meta property="og:url" content="{$baseUrl}{$user->getURL()}" />

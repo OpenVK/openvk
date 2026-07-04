@@ -9,7 +9,7 @@
 {block headIncludes}
     {if !$club->isBanned()}
     {var $clubDesc = $club->getDescription()}
-    {var $clubDescTrimmed = !is_null($clubDesc) && strlen($clubDesc) > 200 ? substr($clubDesc, 0, 197) . '...' : $clubDesc}
+    {var $clubDescTrimmed = !is_null($clubDesc) && mb_strlen($clubDesc) > 200 ? mb_substr($clubDesc, 0, 197) . '...' : $clubDesc}
     {var $clubAvatar = $club->getAvatarUrl('normal')}
     <meta property="og:title" content="{$club->getName()} — {$instance_name}" />
     <meta property="og:url" content="{$baseUrl}{$club->getURL()}" />
