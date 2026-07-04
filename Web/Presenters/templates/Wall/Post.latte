@@ -3,7 +3,7 @@
 
 {block headIncludes}
     {var $postText = $post->getText(false)}
-    {var $postDesc = strlen($postText) > 200 ? substr($postText, 0, 197) . '...' : $postText}
+    {var $postDesc = mb_strlen($postText) > 200 ? mb_substr($postText, 0, 197) . '...' : $postText}
     {php $ogImageUrl = null}
     {foreach $post->getChildren() as $child}
         {if $child instanceof \openvk\Web\Models\Entities\Photo}
