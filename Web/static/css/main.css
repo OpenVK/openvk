@@ -360,6 +360,7 @@ h1 {
 .page_content {
     display: inline-block;
     width: 610px;
+    position: relative;
 }
 
 .page_wrap {
