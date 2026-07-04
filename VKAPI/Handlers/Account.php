@@ -87,13 +87,26 @@ final class Account extends VKAPIRequestHandler
     {
         $this->requireUser();
 
-        return (object) [
+        $all_counters = [
             "friends"       => $this->getUser()->getFollowersCount(),
             "notifications" => $this->getUser()->getNotificationsCount(),
             "messages"      => $this->getUser()->getUnreadMessagesCount(),
+            "requests"      => $this->getUser()->getRequestsCount(),
         ];
 
-        # TODO: Filter
+        if(!empty($filter)) {
+            $response = [];
+            $fields = explode(',', $filter);
+
+            foreach ($fields as $field) {
+                if(isset($all_counters[$field])) {
+                    $response[$field] = $all_counters[$field];
+                }
+            }
+            return (object) $response;
+        }
+
+        return (object) $all_counters;
     }
 
     public function saveProfileInfo(string $first_name = "", string $last_name = "", string $screen_name = "", int $sex = -1, int $relation = -1, string $bdate = "", int $bdate_visibility = -1, string $home_town = "", string $status = "", string $telegram = null): object
