@@ -163,10 +163,16 @@ class Video extends Media
                 "description" => $this->getDescription(),
                 "duration" => $this->getLength(),
                 "image" => [
-                    [
+                    (object) [
                         "url" => $this->getThumbnailURL(),
                         "width" => 320,
                         "height" => 240,
+                        "with_padding" => 1,
+                    ],
+                    (object) [
+                        "url" => $this->getThumbnailURL(),
+                        "width" => 130,
+                        "height" => 100,
                         "with_padding" => 1,
                     ],
                 ],
