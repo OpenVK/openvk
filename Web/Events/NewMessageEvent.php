@@ -44,11 +44,11 @@ class NewMessageEvent implements ILPEmitable
             $peer,                            # TODO calculate peer correctly
             $msg->getSendTime()->timestamp(), # creation time in unix
             $msg->getText(),                  # text (formatted)
-            [],                               # empty additional info
-            [],                               # empty attachments
+            (object) [],                      # empty additional info
+            (object) [],                      # empty attachments
             $msg->getId() << 2,               # id as random_id
             $peer,                            # conversation id
-            0,                                 # not edited yet
+            0,                                # not edited yet
         ];
     }
 }
