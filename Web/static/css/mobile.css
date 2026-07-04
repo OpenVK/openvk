@@ -1189,6 +1189,10 @@
         width: 100%;
     }
 
+    .wall_block .content_title_expanded {
+        width: 97%;
+    }
+
     .content_title_expanded {
         background-image: unset !important;
         border-top: unset;
