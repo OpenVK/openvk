@@ -33,14 +33,15 @@
 {/block}
 
 {block content}
+<div id="clubPage">
 <div class="left_big_block">
     <div n:if="!is_null($alert = $club->getAlert())" class="group-alert">{strpos($alert, "@") === 0 ? tr(substr($alert, 1)) : $alert}</div>
 
-    <div class="content_title_expanded" onclick="hidePanel(this);">
+    <div class="content_title_expanded hide_on_mobiles_name" onclick="hidePanel(this);">
         {_information}
     </div>
     
-    <div class="page_info">
+    <div class="page_info page_info_main">
         <table class="ugc-table">
             <tbody>
                 <tr>
@@ -75,7 +76,7 @@
                     <a href="/club{$club->getId()}/followers">{_all_title}</a>
                 </div>
             </div>
-            <div style="padding-left: 5px;" class="content_list long">
+            <div style="padding-left: 5px;" class="hide_on_mobiles content_list long">
                 <div class="cl_element" n:foreach="$club->getFollowers(1) as $follower">
                     <div class="cl_avatar">
                         <a href="{$follower->getURL()}">
@@ -101,7 +102,7 @@
                     <a href="/board{$club->getId()}">{_all_title}</a>
                 </div>
             </div>
-            <div>
+            <div class="hide_on_mobiles">
                 <div n:foreach="$topics as $topic" class="topic-list-item" style="padding: 8px;">
                     <b><a href="/topic{$topic->getPrettyId()}">{$topic->getTitle()}</a></b><br>
                     <span class="nobold">{tr("updated_at", $topic->getUpdateTime())}</span>
@@ -121,7 +122,7 @@
                     <a href="/audios-{$club->getId()}">{_all_title}</a>
                 </div>
             </div>
-            <div class="content_list long">
+            <div class="content_list long hide_on_mobiles">
                 <div class="audio" n:foreach="$audios as $audio" style="width: 100%;">
                     {include "../Audio/player.latte", audio => $audio}
                 </div>
@@ -195,7 +196,7 @@
             {if !$ignore_status}{_ignore_club}{else}{_unignore_club}{/if}
         </a>
     </div>
-    <div>
+    <div class="hide_on_mobiles">
         <div class="content_title_expanded" onclick="hidePanel(this);">
             {_group_type}
         </div>
@@ -304,7 +305,7 @@
                     <a href="/board{$club->getId()}">{_all_title}</a>
                 </div>
             </div>
-            <div>
+            <div class="hide_on_mobiles">
                 <div n:foreach="$topics as $topic" class="topic-list-item">
                     <b><a href="/topic{$topic->getPrettyId()}">{$topic->getTitle()}</a></b><br>
                     <span class="nobold">{tr("updated_at", $topic->getUpdateTime())}</span>
@@ -330,6 +331,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 
 {/block}

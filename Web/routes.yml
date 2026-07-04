@@ -351,6 +351,8 @@ routes:
       handler: "Admin->quickUnban"
     - url: "/admin/warn/{num}"
       handler: "Admin->quickWarn"
+    - url: "/admin/session/delete"
+      handler: "Admin->deleteSession"
     - url: "/admin/support/ban/{num}"
       handler: "Support->quickBanInSupport"
     - url: "/admin/support/unban/{num}"

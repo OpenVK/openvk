@@ -25,12 +25,12 @@
         <p n:if="!is_null($referer)" align="center">
             {tr("invites_you_to", $referer->getFullName(), \OPENVK_ROOT_CONF['openvk']['appearance']['name'])|noescape}
         </p>
-	<div style="margin: 10px;">
+	<div id="reg_block">
         <h2 class="header2">{_registration}</h2>
-	    <table cellspacing="10" cellpadding="0" border="0" align="center" style="margin: 9px;">
+	    <table id="reg_welcome" cellspacing="10" cellpadding="0" border="0" align="center" style="margin: 9px;">
 	        <tbody>
 	            <tr>
-	                <td>
+	                <td id="reg_icon">
 	                <img src="assets/packages/static/openvk/img/favicons/favicon64.png" style="width: 32px;" align="middle">
 	                </td>
 	                <td>
@@ -41,10 +41,10 @@
 	        </tbody>
 	    </table>
         <form method="POST" enctype="multipart/form-data">
-            <table cellspacing="7" cellpadding="0" width="52%" border="0" align="center">
+            <table class="flexible_table auth_table" cellspacing="7" cellpadding="0" width="52%" border="0" align="center">
                 <tbody>
                     <tr>
-                        <h4 style="margin-left: 60px;">{_main}</h4>
+                        <h4 class="reg_h4">{_main}</h4>
                     </tr>
                     <tr>
                         <td class="regform-left">
@@ -85,9 +85,9 @@
                     </tr>
                 </tbody>
 		        </table>
-		        <table cellspacing="7" cellpadding="0" width="52%" border="0" align="center">
+		        <table class="flexible_table auth_table" cellspacing="7" cellpadding="0" width="52%" border="0" align="center">
                         <tr>
-                        <h4 style="margin-left: 60px;">{_other_fields}</h4>
+                        <h4 class="reg_h4">{_other_fields}</h4>
                         </tr>
                     <tr>
                         <td class="regform-left">
@@ -120,7 +120,7 @@
                         </tr>
                     {/if}
                 </table>
-                    <div style="margin-left: 100px; margin-right: 100px; text-align: center;">
+                    <div id="reg_checkbox">
                         <input type="hidden" name="hash" value="{$csrfToken}" />
                         <input type="checkbox" required="true" name="confirmation" /> {_checkbox_in_registration|noescape}
                         <br /><br />

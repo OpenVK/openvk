@@ -51,7 +51,8 @@
     </div>
     {include "../components/post.latte", post => $post, forceNoCommentsLink => TRUE, forceNoDeleteLink => TRUE}
     <hr/>
-    <div style="float: left; min-height: 100px; width: 68%;">
+    <div id="post_page_meta">
+    <div class="item_comments" style="float: left; min-height: 100px; width: 68%;">
         {include "../components/comments.latte",
                  comments => $comments,
                  count => $cCount,
@@ -60,7 +61,7 @@
                  parent => $post,
                  sort => $sort}
     </div>
-    <div style="float: left; min-height: 100px; width: 32%;padding-left: 10px;width: 30%;">
+    <div class="item_links" id="post_acts" style="float: left; min-height: 100px; width: 32%;padding-left: 10px;width: 30%;">
         <h4>{_actions}</h4>
         {if isset($thisUser)}
             {var $canDelete = $post->canBeDeletedBy($thisUser)}
@@ -79,5 +80,6 @@
             {_changes_history}
         </a>
         <a n:if="$canReport ?? false" class="profile_link" style="display:block;width:96%;" href="javascript:reportPost({$post->getId()})">{_report}</a>
+    </div>
     </div>
 {/block}

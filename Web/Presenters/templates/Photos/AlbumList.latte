@@ -17,7 +17,7 @@
 
 {block size}
     <div style="padding-bottom: 0px; padding-top: 0;" class="summaryBar">
-        <div class="summary">
+        <div class="summary albumSummary">
             {if !is_null($thisUser) && $owner->getRealId() === $thisUser->getId()}
                 {tr("albums_list", $count)}
             {else}
@@ -47,7 +47,7 @@
     {var $cover   = $x->getCoverPhoto()}
     {var $preview = is_null($cover) ? "/assets/packages/static/openvk/img/camera_200.png" : $cover->getURLBySizeId("normal")}
 
-    <a href="/album{$x->getPrettyId()}">
+    <a class="albumCover" href="/album{$x->getPrettyId()}">
         <img src="{$preview}" alt="{$x->getName()}" style="height: 130px; width: 170px; object-fit: cover" loading=lazy />
     </a>
 {/block}

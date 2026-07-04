@@ -187,6 +187,9 @@ final class AdminPresenter extends OpenVKPresenter
         $this->template->user = $user;
         $this->template->c_groups_list = (new ChandlerGroups())->getList();
         $this->template->c_memberships = $this->chandlerGroups->getUsersMemberships($user->getChandlerGUID());
+        $this->template->sessions = iterator_to_array($user->getChandlerUser()->getSessions());
+
+        $this->template->mode = in_array($this->queryParam("act"), ["info", "sessions"]) ? $this->queryParam("act") : "info";
 
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {
             return;
@@ -556,6 +559,20 @@ final class AdminPresenter extends OpenVKPresenter
 
         $user->adminNotify("⚠️ " . $this->queryParam("message"));
         exit(json_encode([ "message" => $this->queryParam("message") ]));
+    }
+
+    public function renderDeleteSession(): void
+    {
+        $this->assertNoCSRF();
+
+        $token = $this->requestParam("token");
+        if (empty($token)) {
+            $this->flashFail("succ", tr("error_when_searching"), '😔');
+        }
+
+        DatabaseConnection::i()->getContext()->table("ChandlerTokens")->where("token", $token)->delete();
+
+        $this->flashFail("succ", tr("changes_saved"), '👍');
     }
 
     public function renderBannedLinks(): void
