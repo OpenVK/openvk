@@ -922,14 +922,74 @@ final class AdminPresenter extends OpenVKPresenter
         $rows   = $table->limit(20, $offset)->order("id DESC")->fetchAll();
 
         $logs = [];
+        $uuids = [];
         foreach ($rows as $row) {
             $log = (new Logs())->get($row->id);
             if ($log) {
                 $logs[] = $log;
+                $uuid = $log->getUser();
+                if ($uuid && $uuid !== "1") {
+                    $uuids[$uuid] = true;
+                }
             }
         }
 
-        $this->template->logs   = $logs;
+        $userMap = [];
+        if (!empty($uuids)) {
+            $profileRows = DatabaseConnection::i()->getContext()
+                ->table("profiles")
+                ->where("user", array_keys($uuids))
+                ->fetchPairs("user");
+
+            foreach ($profileRows as $uuid => $ar) {
+                try {
+                    $user = new User($ar);
+                    $userMap[$uuid] = (object) [
+                        "name"   => $user->getCanonicalName(),
+                        "avatar" => $user->getAvatarUrl("miniscule"),
+                    ];
+                } catch (\Throwable $e) {
+                    unset($e);
+                }
+            }
+        }
+
+        $result = [];
+        foreach ($logs as $log) {
+            $uuid = $log->getUser();
+
+            if ($uuid === "1") {
+                $userName = null;
+                $userAvatar = null;
+            } elseif (isset($userMap[$uuid])) {
+                $userName = $userMap[$uuid]->name;
+                $userAvatar = $userMap[$uuid]->avatar;
+            } else {
+                $userName = null;
+                $userAvatar = null;
+            }
+
+            $objectUrl = $log->getObjectURL();
+            if ($objectUrl === "#") {
+                try {
+                    $object = $log->getObject();
+                    if ($object && method_exists($object, "getPageURL")) {
+                        $objectUrl = $object->getPageURL();
+                    }
+                } catch (\Throwable $e) {
+                    unset($e);
+                }
+            }
+
+            $result[] = (object) [
+                "log"        => $log,
+                "userName"   => $userName,
+                "userAvatar" => $userAvatar,
+                "objectUrl"  => $objectUrl,
+            ];
+        }
+
+        $this->template->logs = $result;
         $this->template->count  = $count;
         $this->template->paginatorConf = $this->createPaginatorConf($count, $page, 20);
         $this->template->object_types = (new Logs())->getTypes();

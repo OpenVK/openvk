@@ -50,22 +50,28 @@
             </tr>
         </thead>
         <tbody>
-            <tr n:foreach="$logs as $log">
-                <td>{$log->getId()}</td>
+            <tr n:foreach="$logs as $item">
+                <td>{$item->log->getId()}</td>
                 <td>
-                    <a href="/admin/chandler/user/{$log->getUser()}" target="_blank">{$log->getUser()}</a>
-                </td>
-                <td>
-                    <span n:if="$log->getObjectAvatar()" class="aui-avatar aui-avatar-xsmall">
+                    <span n:if="$item->userAvatar" class="aui-avatar aui-avatar-xsmall">
                         <span class="aui-avatar-inner">
-                            <img src="{$log->getObjectAvatar()}" alt="{$log->getObjectName()}" style="object-fit: cover;" role="presentation" />
+                            <img src="{$item->userAvatar}" alt="{$item->userName}" style="object-fit: cover;" role="presentation" />
                         </span>
                     </span>
-                    <a href="{$log->getObjectURL()}">{$log->getObjectName()}</a>
+                    <a n:if="$item->log->getUser() !== '1'" href="/admin/chandler/users/{$item->log->getUser()}" target="_blank">{$item->userName ?? $item->log->getUser()}</a>
+                    <span n:if="$item->log->getUser() === '1'">Невошедший пользователь</span>
                 </td>
-                <td>{_$log->getTypeNom()}</td>
                 <td>
-                    {foreach $log->getChanges() as $change}
+                    <span n:if="$item->log->getObjectAvatar()" class="aui-avatar aui-avatar-xsmall">
+                        <span class="aui-avatar-inner">
+                            <img src="{$item->log->getObjectAvatar()}" alt="{$item->log->getObjectName()}" style="object-fit: cover;" role="presentation" />
+                        </span>
+                    </span>
+                    <a href="{$item->objectUrl}">{$item->log->getObjectName()}</a>
+                </td>
+                <td>{_$item->log->getTypeNom()}</td>
+                <td>
+                    {foreach $item->log->getChanges() as $change}
                         <div>
                             <b>{$change["field"]}</b>:
                             {if array_key_exists('diff', $change)}
