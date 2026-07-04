@@ -108,7 +108,7 @@ It depends. You can keep the sources to yourself if you do not plan to distribut
 
 ## Localization
 
-Wanna translate our project to your native language? You can try either:
+Want to translate our project to your native language? You can try either:
 
 * [Weblate](https://hosted.weblate.org/engage/openvk/) (simple way)
 * Send Pull Request to us (hard way)
