@@ -85,7 +85,7 @@ class Notifications
         foreach ($results->fetchAll() as $notif) {
             $class = 'openvk\Web\Models\Entities\Notifications\\';
 
-            switch($notif->modelAction) {
+            switch ($notif->modelAction) {
                 case 0:
                     $class .= 'LikeNotification';
                     break;
