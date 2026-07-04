@@ -200,6 +200,11 @@ window.player = new class {
                 return
             }
 
+            // Volume bar is useless on mobiles
+            if (window.isMobile && isMobile()) {
+                this.audioPlayer.volume = 1
+            }
+
             const volume = this.audioPlayer.volume;
             const ps = Math.ceil((volume * 100) / 1);
 
@@ -906,7 +911,7 @@ window.player = new class {
                             <div id='aj_player_track_name'>
                                 <a id='aj_player_track_title' class='noOverflow' style='max-width: 300px;'>
                                     <b>Unknown</b>
-                                    —
+                                    <div class="tire">—</div>
                                     <span>Untitled</span>
                                 </a>
 

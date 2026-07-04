@@ -11,6 +11,10 @@ function expand_comment_textarea(id) {
 
 function hidePanel(panel, count = 0)
 {
+    if (isMobile()) {
+        return;
+    }
+
     $(panel).toggleClass("content_title_expanded content_title_unexpanded");
     $(panel).next('div').slideToggle(300);
     if(count != 0){
@@ -66,7 +70,7 @@ function showCoinsTransferDialog(coinsCount, hash) {
             ${tr("points_transfer_dialog_header_2")} <b>${tr("points_amount", coinsCount)}</b>
         </div>
         <form action="/coins_transfer" method="post" id="coins_transfer_form" style="margin-top: 30px">
-            <table cellspacing="7" cellpadding="0" border="0" align="center">
+            <table class="flexible_table" cellspacing="7" cellpadding="0" border="0" align="center">
                 <tbody>
                     <tr>
                         <td width="120" valign="top">
@@ -194,7 +198,7 @@ function showIncreaseRatingDialog(coinsCount, userUrl, hash) {
             <a href="/settings?act=finance.top-up">${tr("apply_voucher")} &raquo;</a>
         </div>
         <form action="/increase_social_credits" method="post" id="increase_rating_form" style="margin-top: 30px">
-            <table cellspacing="7" cellpadding="0" border="0" align="center">
+            <table class="flexible_table" cellspacing="7" cellpadding="0" border="0" align="center">
                 <tbody>
                     <tr>
                         <td width="120" valign="top">
@@ -314,6 +318,10 @@ let lastScrollTop = 0;
 $(document).on("scroll", () => {
     const currentScrollTop = $(document).scrollTop();
     const navigation = $(".navigation");
+
+    if (window.isMobile && isMobile()) {
+        return;
+    }
 
     if(navigation.find("#fastLogin").length > 0) return;
 
