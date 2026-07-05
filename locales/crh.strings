@@ -1,9 +1,9 @@
 "registration" = "Qayd etilmek";
 "forgot_password" = "Parolni unuttıñmı?";
-"checkbox_in_registration" = "Men <a href='/privacy'>mahfiylik siyasetine</a> ve <a href='/şartlar'>saytqa razım";
+"checkbox_in_registration" = "Men <a href='/privacy'>mahfiylik siyasetine</a> ve <a href='/terms'>saytqa razım</a>";
 "checkbox_in_registration_unchecked" = "Qayd etilmek içün mahfiylik siyasetine ve qaidelerine razı olmaq kereksiñiz.";
 "login_failed" = "Kiriş mümkün olmadı";
-"invalid_username_or_password" = "Siz kirsetken qullanıcı adı ya da parol yañlış.  <a href='/restore'>Parolni unuttıñmı?</a>";
+"invalid_username_or_password" = "Siz kirsetken qullanıcı adı ya da parol yañlış. <a href='/restore'>Parolni unuttıñmı?</a>";
 "failed_to_register" = "Qayd etilmedi";
 "referral_link_invalid" = "Referal bağlantısı doğru degil.";
 "registration_disabled" = "Qayd etmek sistema administratorı tarafından söndürildi.";
