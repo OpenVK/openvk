@@ -41,11 +41,6 @@ final class Newsfeed extends VKAPIRequestHandler
         }, iterator_to_array($subs));
         $ids[] = $this->getUser()->getId();
 
-        $wallCondition = "(`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`)";
-        if ($with_alien_wall_posts == 1) {
-            $wallCondition = "(`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0)";
-        }
-
         $posts = DatabaseConnection::i()
                     ->getContext()
                     ->table("posts")
@@ -53,12 +48,15 @@ final class Newsfeed extends VKAPIRequestHandler
                     ->where("wall IN (?)", $ids)
                     ->where("deleted", 0)
                     ->where("suggested", 0)
-                    ->where($wallCondition)
                     ->where("created <= ?", $cursorTime)
                     ->where("created < ? OR id < ?", $cursorTime, $cursorId)
                     ->where("? <= created", empty($start_time) ? 0 : $start_time)
                     ->where("? >= created", empty($end_time) ? PHP_INT_MAX : $end_time)
                     ->order("created DESC, id DESC");
+
+        if ($with_alien_wall_posts == 0) {
+            $posts->where("(`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`)");
+        }
 
         $rposts = [];
         $lastPost = null;
@@ -88,12 +86,10 @@ final class Newsfeed extends VKAPIRequestHandler
         [$cursorTime, $cursorId] = $this->parseCursor($start_from);
 
         $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) LEFT JOIN `profiles` ON LEAST(`posts`.`wall`, 0) = 0 AND `profiles`.`id` = ABS(`posts`.`wall`)";
-        $queryBase .= " WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND (`profiles`.`profile_type` = 0 OR `profiles`.`first_name` IS NULL)";
+        $queryBase .= " WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND (`profiles`.`profile_type` = 0 OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
 
-        if ($with_alien_wall_posts === 1) {
-            $queryBase .= " AND ((`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0)) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
-        } else {
-            $queryBase .= " AND ((`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`)) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
+        if ($with_alien_wall_posts == 0) {
+            $queryBase .= " AND ((`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`))";
         }
 
         if ($this->getUser()->getNsfwTolerance() === User::NSFW_INTOLERANT) {
