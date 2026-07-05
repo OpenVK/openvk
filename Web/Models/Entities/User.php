@@ -995,6 +995,15 @@ class User extends RowModel
 
     public function isVerified(): bool
     {
+        if ($this->isDeleted() && !$this->isDeactivated()) {
+            if ($this->getRecord()->verified) {
+                $this->setVerified(0);
+                $this->save();
+            }
+
+            return false;
+        }
+
         return (bool) $this->getRecord()->verified;
     }
 
