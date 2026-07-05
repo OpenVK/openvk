@@ -1079,6 +1079,7 @@
 "bday_reminder_text" = "$1 день рождения $2.";
 "bday_and" = " и ";
 "points" = "Голоса";
+"balance" = "Баланс";
 "points_count" = "голосов";
 "on_your_account" = "на вашем счету";
 "top_up_your_account" = "Пополнить баланс";

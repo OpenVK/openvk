@@ -16,7 +16,7 @@
 
 {var $bigText = mb_strlen($post->getText()) > 520 || substr_count($post->getText(), "\n") + 1 > 10}
 
-<table border="0" style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, $post->isExplicit() ? post-nsfw">
+<table border="0" style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, post_oldschool, $post->isExplicit() ? post-nsfw">
     <tbody>
         <tr>
             <td class="post-author-ava" width="54" valign="top">
@@ -64,7 +64,7 @@
                     <br/>
                     <a href="{if $suggestion ?? false}javascript:void(0){else}/wall{$post->getPrettyId()}{/if}" class="date">
                         {$post->getPublicationTime()} <span n:if="$post->getEditTime()" class="editedMark">({_edited_short})</span>{if $post->isPinned()}, {_pinned}{/if}
-                        
+
                         <a n:if="!empty($platform)" class="client_app" data-app-tag="{$platform}" data-app-name="{$platformDetails['name']}" data-app-url="{$platformDetails['url']}" data-app-img="{$platformDetails['img']}">
                             <img src="/assets/packages/static/openvk/img/app_icons_mini/{$post->getPlatform(true)}.svg">
                         </a>
@@ -78,7 +78,7 @@
                         {if $bigText}
                         <a class="collapse_button" onclick="javascript:expandText(this)">{_show_more}</a>
                         {/if}
-                        
+
                         {var $width = ($bigWall ?? false) ? 550 : 320}
                         {if isset($nestedLevel)}
                             {var $width = $width - 70 * $nestedLevel}
@@ -133,31 +133,31 @@
                     {/if}
 
                     {if !($forceNoEditLink ?? false) && isset($thisUser) && $post->canBeEditedBy($thisUser)}
-                        <a id="editPost" 
-                           data-id="{$post->getPrettyId()}">{_edit}</a> &nbsp;|&nbsp;
+                        <a class="m_hide" id="editPost"
+                           data-id="{$post->getPrettyId()}">{_edit}</a> <span class="m_hide">&nbsp;|&nbsp;</span>
                     {/if}
 
                     {if !($forceNoDeleteLink ?? false) && $canBeDeleted}
-                        <span class="oldPostDelete"><a href="/wall{$post->getPrettyId()}/delete">{_delete}</a> &nbsp;|&nbsp;</span>
-                    {/if} 
+                        <span class="oldPostDelete m_hide"><a href="/wall{$post->getPrettyId()}/delete">{_delete}</a> &nbsp;|&nbsp;</span>
+                    {/if}
 
                     {if $feedIgnoreButton ?? false && !$canBeDeleted}
-                    <a id="__ignoreSomeoneFeed" data-val='1' data-id="{$wallOwner->getRealId()}">{_feed_ignore}</a> &nbsp;|&nbsp;
+                    <a class="m_hide" id="__ignoreSomeoneFeed" data-val='1' data-id="{$wallOwner->getRealId()}">{_feed_ignore}</a> &nbsp;|&nbsp;
                     {/if}
 
                     {if !$canBeDeleted}
-                        <a href="javascript:reportPost({$post->getId()})">{_report}</a> &nbsp;|&nbsp;
+                        <a class="m_hide" href="javascript:reportPost({$post->getId()})">{_report}</a> &nbsp;|&nbsp;
                     {/if}
 
                     {if !($forceNoPinLink ?? false) && $canBePinned}
                         {if $post->isPinned()}
-                            <a href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}">{_unpin}</a>
+                            <a class="m_hide" href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}">{_unpin}</a>
                         {else}
-                            <a href="/wall{$post->getPrettyId()}/pin?act=pin&hash={rawurlencode($csrfToken)}">{_pin}</a>
+                            <a class="m_hide" href="/wall{$post->getPrettyId()}/pin?act=pin&hash={rawurlencode($csrfToken)}">{_pin}</a>
                         {/if}
-                        &nbsp;|&nbsp;
+                        <span class="m_hide">&nbsp;|&nbsp;</span>
                     {/if}
-                    
+
                     <a n:if="!($forceNoCommentsLink ?? false)" href="/wall{$post->getPrettyId()}#comments">
                         {_comments}
                         {if $commentsCount > 0}
@@ -168,7 +168,7 @@
                     {if !($forceNoCommentsLink ?? false) && !($forceNoShareLink ?? false)}
                         &nbsp;|&nbsp;
                     {/if}
-                    
+
                     <a n:if="!($forceNoShareLink ?? false)" id="reposts{$post->getPrettyId()}" class="post-share-button" {ifset $thisUser} href="javascript:repost('{$post->getPrettyId()}', 'post')"{/ifset}>
                         {_share}
                         {if $repostsCount > 0}

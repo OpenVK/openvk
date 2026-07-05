@@ -35,8 +35,8 @@
             <a n:attr="id => ($isInterface ? 'act_tab_a' : 'ki')" href="/settings?act=interface">{_interface}</a>
         </div>
     </div>
-    
-    <div class="container_gray">
+
+    <div class="container_gray settings_padding">
         {if $isMain}
 
         <form action="/settings?act=main" method="POST" enctype="multipart/form-data">
@@ -80,7 +80,7 @@
 
                         </td>
                         <td>
-                            <input type="submit" value="{_save_email_address}" class="button" />
+                            <input type="submit" value="{_save_email_address}" class="fullsize_button button" />
                         </td>
                     </tr>
                 </tbody>
@@ -111,7 +111,7 @@
                         </td>
                         <td>
                             <input type="hidden" name="hash" value="{$csrfToken}" />
-                            <input type="submit" value="{_save}" class="button" />
+                            <input type="submit" value="{_save}" class="fullsize_button button" />
                         </td>
                     </tr>
                 </tbody>
@@ -121,7 +121,7 @@
         <br/>
         <div class="settings_delete">
             <a href="/fave">{_bookmarks_tab}</a>
-             • 
+             •
             <a href="/search?section=posts&from_me=1">{_s_posts}</a>
             <br><br>
             {_you_can_also} <a onClick="showProfileDeactivateDialog({$csrfToken})">{_delete_your_page}</a>.
@@ -170,7 +170,7 @@
                         </td>
                         <td>
                             <input type="hidden" name="hash" value="{$csrfToken}" />
-                            <input type="submit" value="{_change_password}" class="button" />
+                            <input type="submit" value="{_change_password}" class="fullsize_button button" />
                         </td>
                     </tr>
                 </tbody>
@@ -261,11 +261,11 @@
                 </tbody>
             </table>
         </form>
-        
+
         {elseif $isPrivacy}
 
         <form action="/settings?act=privacy" method="POST" enctype="multipart/form-data">
-            <table class="flexible_table" cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+            <table class="flexible_table fullsize_selects" cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
                 <tr>
                     <td width="120" valign="top">
                         <span class="nobold">{_privacy_setting_access_page}</span>
@@ -427,18 +427,18 @@
                 </tr>
                 <tr>
                     <td>
-                        
+
                     </td>
                     <td>
                         <input type="hidden" name="hash" value="{$csrfToken}" />
-                        <input type="submit" value="{_save}" class="button" />
+                        <input type="submit" value="{_save}" class="button fullsize_button" />
                     </td>
                 </tr>
             </table>
         </form>
-        
+
         {elseif $isFinance}
-        
+
         <div id="finance_settings_block">
         <div style="width: 75%; display: inline-block;">
             {presenter "openvk!Support->knowledgeBaseArticle", "points"}
@@ -463,13 +463,13 @@
         {script "js/node_modules/textfit/textFit.min.js"}
         <script>
             let balance = document.querySelector("#balance");
-            
+
             balance.style.width = Math.ceil(balance.parentNode.getBoundingClientRect().width) + "px";
             textFit(balance, { alignVert: true });
 
             function convertCurrency(coin) {
                 var currencyTON = {php echo \OPENVK_ROOT_CONF['openvk']['preferences']['ton']['rate']};
-                u(".coins_dialog_conv").nodes[0].innerHTML = coin * currencyTON + " TON"; 
+                u(".coins_dialog_conv").nodes[0].innerHTML = coin * currencyTON + " TON";
             }
 
             function showCoinsTopUpTroughTon() {
@@ -478,7 +478,7 @@
                         ${ tr("transfer_ton_contents") }
                     </div>
                     <div style="margin-top: 30px">` +
-                    {tr("transfer_ton_address", \OPENVK_ROOT_CONF['openvk']['preferences']['ton']['address'], str_replace("$1", ''.$thisUser->getId(), \OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["hint"]))} + 
+                    {tr("transfer_ton_address", \OPENVK_ROOT_CONF['openvk']['preferences']['ton']['address'], str_replace("$1", ''.$thisUser->getId(), \OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["hint"]))} +
                     `<div style="text-align: center;">
                         <img width="225" height="225" src="data:` + {$qrCodeType} + `;base64,` + {$qrCodeData} + `"><br>
                         <input oninput="convertCurrency(this.value)"> = <span class="coins_dialog_conv">0 TON</span>
@@ -489,9 +489,9 @@
                 ]);
             }
         </script>
-        
+
         {elseif $isFinanceTU}
-        
+
         <p>{_voucher_explanation} {_voucher_explanation_ex}</p>
         <form name="vouncher_form" action="/settings?act=finance.top-up" method="POST" enctype="multipart/form-data">
             <input type="text" name="key0" class="vouncher_input" size="6" maxlength="6" placeholder="123456" required="required" oninput="autoTab(this, document.vouncher_form.key1, undefined)" style="display: inline-block; width: 50px; text-align: center;" /> -
@@ -499,13 +499,13 @@
             <input type="text" name="key2" class="vouncher_input" size="6" maxlength="6" placeholder="345678" required="required" oninput="autoTab(this, document.vouncher_form.key3, document.vouncher_form.key1)" style="display: inline-block; width: 50px; text-align: center;" /> -
             <input type="text" name="key3" class="vouncher_input" size="6" maxlength="6" placeholder="90ABCD" required="required" oninput="autoTab(this, undefined, document.vouncher_form.key2)" style="display: inline-block; width: 50px; text-align: center;" />
             <br/><br/>
-            
+
             <input type="hidden" name="hash" value="{$csrfToken}" />
             <input type="submit" value="{_redeem}" class="button" />
         </form>
-        
+
         {elseif $isInterface}
-        
+
         <h4>{_ui_settings_interface}</h4>
         <form action="/settings?act=interface" method="POST" enctype="multipart/form-data">
             <table class="flexible_table" cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
@@ -592,11 +592,11 @@
                     </tr>
                     <tr>
                         <td>
-                            
+
                         </td>
                         <td>
                             <input type="hidden" name="hash" value="{$csrfToken}" />
-                            <input type="submit" value="{_save}" class="button" />
+                            <input type="submit" value="{_save}" class="button fullsize_button" />
                         </td>
                     </tr>
                 </tbody>
@@ -615,7 +615,7 @@
                 </tr>
             </tbody>
         </table>
-        
+
         <h4>{_ui_settings_timezone}</h4>
         <table class="flexible_table" cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
             <tbody>
@@ -631,10 +631,10 @@
                 </tr>
                 <tr>
                     <td>
-                        
+
                     </td>
                     <td>
-                        <a onClick="saveTimezoneSettings()" class="button">{_save}</a>
+                        <a onClick="saveTimezoneSettings()" class="button fullsize_button">{_save}</a>
                     </td>
                 </tr>
             </tbody>
@@ -774,7 +774,7 @@
                     </tr>
                     <tr>
                         <td>
-                            
+
                         </td>
                         <td>
                             <input type="hidden" name="hash" value="{$csrfToken}" />
@@ -798,7 +798,7 @@
                             <div class="info">
                                 <b class="noOverflow">
                                     <a href="{$item->getURL()}">
-                                        {$item->getCanonicalName()} 
+                                        {$item->getCanonicalName()}
                                     </a>
                                 </b>
                             </div>
@@ -809,5 +809,5 @@
             {/if}
         {/if}
     </div>
-    
+
 {/block}

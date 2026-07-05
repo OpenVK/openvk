@@ -204,30 +204,57 @@
                                 <span>{$thisUser->getCanonicalName()}</span>
                             </a>
                             <a href="{$thisUser->getURL()}" class="link my_page" title="{_my_page} [Alt+Shift+.]" accesskey=".">{_my_page}</a>
-                            <a href="/friends{$thisUser->getId()}" class="link my_friends">{_my_friends}
+                            <a href="/friends{$thisUser->getId()}" class="link my_friends">
+                                <span class="pc_v">{_my_friends}</span>
+                                <span class="mobile_v">{_mobile_friends}</span>
                                 <object type="internal/link" n:if="$thisUser->getRequestsCount() > 0">
                                     <a href="/friends{$thisUser->getId()}?act=incoming" class="linkunderline">
                                        (<b>{$thisUser->getRequestsCount()}</b>)
                                     </a>
                                 </object>
                             </a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('photos')" href="/albums{$thisUser->getId()}" class="link my_photos">{_my_photos}</a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('videos')" href="/videos{$thisUser->getId()}" class="link my_videos">{_my_videos}</a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('audios')" href="/audios{$thisUser->getId()}" class="link my_audios">{_my_audios}</a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('messages')" href="/im" class="link my_messages">{_my_messages}
+                            <a n:if="$thisUser->getLeftMenuItemStatus('photos')" href="/albums{$thisUser->getId()}" class="link my_photos">
+                                <span class="pc_v">{_my_photos}</span>
+                                <span class="mobile_v">{_mobile_photos}</span>
+                            </a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('videos')" href="/videos{$thisUser->getId()}" class="link my_videos">
+                                <span class="pc_v">{_my_videos}</span>
+                                <span class="mobile_v">{_mobile_videos}</span>
+                            </a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('audios')" href="/audios{$thisUser->getId()}" class="link my_audios">
+                                <span class="pc_v">{_my_audios}</span>
+                                <span class="mobile_v">{_mobile_audios}</span>
+                            </a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('messages')" href="/im" class="link my_messages">
+                                <span class="pc_v">{_my_messages}</span>
+                                <span class="mobile_v">{_mobile_messages}</span>
                                 <object type="internal/link" n:if="$unreadMessagesCount > 0">
                                     (<b>{$unreadMessagesCount}</b>)
                                 </object>
                             </a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('notes')" href="/notes{$thisUser->getId()}" class="link my_notes">{_my_notes}</a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('groups')" href="/groups{$thisUser->getId()}" class="link my_groups">{_my_groups}</a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('news')" href="/feed" class="link my_feed" title="{_my_feed} [Alt+Shift+,]" accesskey=",">{_my_feed}</a>
-                            <a href="/notifications" class="link my_feedback" title="{_my_feedback} [Alt+Shift+N]" accesskey="n">{_my_feedback}
+                            <a n:if="$thisUser->getLeftMenuItemStatus('notes')" href="/notes{$thisUser->getId()}" class="link my_notes">
+                                <span class="pc_v">{_my_notes}</span>
+                                <span class="mobile_v">{_mobile_notes}</span>
+                            </a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('groups')" href="/groups{$thisUser->getId()}" class="link my_groups">
+                                <span class="pc_v">{_my_groups}</span>
+                                <span class="mobile_v">{_mobile_groups}</span>
+                            </a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('news')" href="/feed" class="link my_feed" title="{_my_feed} [Alt+Shift+,]" accesskey=",">
+                                <span class="pc_v">{_my_feed}</span>
+                                <span class="mobile_v">{_news}</span>
+                            </a>
+                            <a href="/notifications" class="link my_feedback" title="{_my_feedback} [Alt+Shift+N]" accesskey="n">
+                                <span class="pc_v">{_my_feedback}</span>
+                                <span class="mobile_v">{_feedback}</span>
                                 <object type="internal/link" n:if="$notificationsCount > 0">
                                     (<b>{$notificationsCount}</b>)
                                 </object>
                             </a>
-                            <a href="/settings" class="link my_settings">{_my_settings}</a>
+                            <a href="/settings" class="link my_settings">
+                                <span class="pc_v">{_my_settings}</span>
+                                <span class="mobile_v">{_mobile_settings}</span>
+                            </a>
 
                             {if $thisUser->getLeftMenuItemStatus('docs') || $thisUser->getLeftMenuItemStatus('apps')}
                                 <div class="menu_divider"></div>
@@ -283,7 +310,12 @@
                                 </a>
                             </div>
 
+                            <a href="/search" class="link less_accent_link search_link mobiles_only">{_header_search}</a>
                             <a href="javascript:toDesktopVersion()" class="link less_accent_link fullsize mobiles_only">{_mobile_desktop_version}</a>
+                            <a href="/invite" class="link less_accent_link invite_link mobiles_only">{_invite}</a>
+                            <a href="/support" class="link less_accent_link support_link mobiles_only">{_menu_support}</a>
+                            <a href="/settings?act=finance" class="link less_accent_link finances_link mobiles_only">{_points}</a>
+                            <a href="/logout?hash={urlencode($csrfToken)}" id="logout_link" class="link less_accent_link logout mobiles_only">{_menu_logout}</a>
 
                             <div class="navigation_infos" id="news" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['news']['show']">
                                 <b>{_news} </b>
@@ -429,17 +461,17 @@
                 <a href="/dev" target="_blank" class="link">{_footer_developers}</a>
                 <a href="/privacy" class="link">{_footer_privacy}</a>
             </div>
-            <p>
+            <p class="navigation_centrize">
                 {var $currentUrl = $_SERVER["REQUEST_URI"]}
                 {foreach array_slice(getLanguages(), 0, 3) as $language}
-                    <a href="/language?lg={$language['code']}&hash={urlencode($csrfToken)}&jReturnTo={php echo rawurlencode($currentUrl)}" rel="nofollow" title="{$language['native_name']}" class="link">
+                    <a href="/language?lg={$language['code']}&hash={urlencode($csrfToken)}&jReturnTo={php echo rawurlencode($currentUrl)}" rel="nofollow" title="{$language['native_name']}" class="link link_lang">
                         <img src="/assets/packages/static/openvk/img/flags/{$language['flag']}.gif" alt="{$language['native_name']}">
                     </a>
                 {/foreach}
                 <a href="/language" class="link">all languages &raquo;</a>
             </p>
-            <p>OpenVK <a href="/about:openvk">{php echo OPENVK_VERSION}</a> | PHP: {phpversion()} | DB: {$dbVersion}</p>
-            <p n:ifcontent>
+            <p class="navigation_centrize">OpenVK <a href="/about:openvk">{php echo OPENVK_VERSION}</a> | PHP: {phpversion()} | DB: {$dbVersion}</p>
+            <p class="navigation_centrize" n:ifcontent>
                 {php echo OPENVK_ROOT_CONF["openvk"]["appearance"]["motd"]}
             </p>
         </div>
