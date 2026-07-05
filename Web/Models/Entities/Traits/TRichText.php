@@ -153,6 +153,9 @@ trait TRichText
             $text = $this->removeZalgo($text);
             $text = nl2br($text);
         } else {
+            $text = preg_replace("%@([A-Za-z0-9]++) \(((?:[\p{L&}\p{Lo} 0-9]\p{Mn}?)++)\)%Xu", "[$1|$2]", $text);
+            $text = preg_replace("%\*([A-Za-z0-9]++) \(((?:[\p{L&}\p{Lo} 0-9]\p{Mn}?)++)\)%Xu", "[$1|$2]", $text);
+            $text = preg_replace("%([\n\r\s]|^)(@([A-Za-z0-9]++))%Xu", "$1[$3|@$3]", $text);
             $text = str_replace("\r\n", "\n", $text);
         }
 

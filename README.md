@@ -38,7 +38,7 @@ Here is our minimum hardware recommendation:
 
 ### Installation procedure
 
-1. Install PHP 8.2, web-server, Composer, Node.js, NPM and [Chandler](https://github.com/openvk/chandler)
+1. Install PHP 8.2 or later, web-server, Composer, Node.js, NPM and [Chandler](https://github.com/openvk/chandler)
 
 2. Install MySQL-compatible database.
 
@@ -76,6 +76,17 @@ Once you are done, you can login as a system administrator on the network itself
 
 💡 Confused? Full installation walkthrough is available [here](https://docs.openvk.org/openvk_engine/centos8_installation/) (CentOS 8 [and](https://almalinux.org/) [family](https://yum.oracle.com/oracle-linux-isos.html)).
 
+### Auto-install script
+
+You can also use auto-install script for FreeBSD 15:
+
+```shell
+pkg install wget
+wget https://github.com/OpenVK/openvk/raw/refs/heads/master/install/automated/freebsd-15/install
+chmod +x install
+./install
+```
+
 ### Real-time notifs
 
 You can install Redis to take advantage of real-time notifications (if you enabled Event DB in config). 
@@ -95,6 +106,15 @@ See `install/automated/docker/README.md` and `install/automated/kubernetes/READM
 
 It depends. You can keep the sources to yourself if you do not plan to distribute your website binaries. If your website software must be distributed, it can stay non-OSS provided the OpenVK is not used as a primary application and is not modified. If you modified OpenVK for your needs or your work is based on it and you are planning to redistribute this, then you should license it under terms of any LGPL-compatible license (like OSL, GPL, LGPL etc).
 
+## Localization
+
+Want to translate our project to your native language? You can try either:
+
+* [Weblate](https://hosted.weblate.org/engage/openvk/) (simple way)
+* Send Pull Request to us (hard way)
+
+Localization is located in "locales" repository. List of languages is maintained in list.yml file, and the languages itself are in iOS String format.
+
 ## Where can I get assistance?
 
 You may reach out to us via:
@@ -111,3 +131,5 @@ You may reach out to us via:
 <a href="https://codeberg.org/OpenVK/openvk">
     <img alt="Get it on Codeberg" src="https://codeberg.org/Codeberg/GetItOnCodeberg/media/branch/main/get-it-on-blue-on-white.png" height="60">
 </a>
+
+[![Translation status](https://hosted.weblate.org/widget/openvk/openvk/svg-badge.svg)](https://hosted.weblate.org/engage/openvk/)

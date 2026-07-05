@@ -465,6 +465,11 @@ final class Messages extends VKAPIRequestHandler
         }
 
         $url = "$_SERVER[HTTP_HOST]/nim" . $this->getUser()->getId();
+
+        if (VKAPI_DECL_VER_MINOR == 9999) {
+            $url = ovk_scheme(true) . $url;
+        }
+
         $key = openssl_random_pseudo_bytes(8);
         $key = bin2hex($key) . bin2hex($key ^ (~CHANDLER_ROOT_CONF["security"]["secret"] | ((string) $this->getUser()->getId())));
         $res = [
