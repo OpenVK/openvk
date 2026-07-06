@@ -181,7 +181,7 @@
 "set_source_tip" = "Ja jūs lietojat citu autoru materiālus, ir svarīgi norādīt saiti uz oriģinālu.<br>To jūs varat izdarīt zemāk.";
 "add_signature" = "Autora paraksts";
 "contains_nsfw" = "Satur nepiemēroto saturu";
-"nsfw_warning" = "Šajā publikācijā mēdz būt NSFW saturs";
+"nsfw_warning" = "Šajā rakstā var būt NSFW saturs";
 "report" = "Ziņot";
 "attach" = "Pievienot";
 "detach" = "Atvienot";
