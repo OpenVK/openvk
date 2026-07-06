@@ -214,7 +214,7 @@
     }
 
     .sidebar {
-        width: 100vw;
+        width: 100vw !important;
         float: unset !important;
         margin: unset !important;
     }
@@ -269,12 +269,12 @@
 
     .page_header {
         height: 49px !important;
-        width: 100vw;
+        width: 100vw !important;
         background: linear-gradient(#707070, #3b3b3b);
         display: flex;
         align-items: center;
         justify-content: center;
-        position: fixed;
+        position: fixed !important;
         z-index: 298;
         top: 0;
     }
@@ -323,7 +323,7 @@
         float: unset !important;
         margin-right: unset !important;
         min-height: 80vh;
-        width: 100%;
+        width: 100% !important;
     }
 
     .page_body .page_content {
@@ -478,12 +478,12 @@
 
     .home_button {
         background: url(/assets/packages/static/openvk/img/mobile/logo.png) !important;
-        background-repeat: no-repeat;
         background-size: contain;
         width: 24px;
         height: 24px;
         top: 12px;
         left: 12px;
+        background-repeat: no-repeat !important;
     }
 
     .header_navigation .link:not(#search_box) {
@@ -583,7 +583,7 @@
         gap: 13px;
         justify-content: normal;
         align-items: center;
-        padding: 12px 3px 12px 16px;
+        padding: 12px 3px 12px 16px !important;
         background-color: #ededed47;
     }
 
@@ -618,7 +618,7 @@
     }
 
     .navigation .link {
-        padding: 10px 3px 10px 45px;
+        padding: 10px 3px 10px 45px !important;
     }
 
     .navigation .link,
@@ -826,9 +826,9 @@
 
     h4 {
         color: #505050;
-        margin-top: 5px;
-        margin-bottom: 10px;
-        font-size: 16px;
+        margin-top: 5px !important;
+        margin-bottom: 10px !important;
+        font-size: 16px !important;
         border-bottom: unset;
     }
 
@@ -973,6 +973,10 @@
         padding: 6px 4px 6px 4px;
         display: block;
         margin-bottom: 10px;
+    }
+
+    .searchList li, .searchList a, .verticalGrayTabs a {
+        font-size: 14px;
     }
 
     .verticalGrayTabsWrapper {
