@@ -224,6 +224,7 @@
 "all_news" = "Все новости";
 "posts_per_page" = "Количество записей на странице";
 "show_ignored_sources" = "Показывать игнорируемые источники";
+"with_alien_wall_posts" = "Показывать посты на чужих стенах";
 "auto_scroll" = "Автоматическая прокрутка";
 "ajax_routing" = "AJAX-переходы";
 "attachment" = "Вложение";

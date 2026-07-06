@@ -238,6 +238,7 @@
 "all_news" = "All news";
 "posts_per_page" = "Number of posts per page";
 "show_ignored_sources" = "Show ignored sources";
+"with_alien_wall_posts" = "Show posts on other users' walls";
 "auto_scroll" = "Autoscroll";
 "ajax_routing" = "AJAX-transitions";
 
