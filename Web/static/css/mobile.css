@@ -744,6 +744,8 @@
     .msg {
         width: 100%;
         box-sizing: border-box;
+        position: sticky;
+        top: 334px;
     }
 
     #sudo-banner {
