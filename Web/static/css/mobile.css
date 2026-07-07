@@ -744,6 +744,9 @@
     .msg {
         width: 100%;
         box-sizing: border-box;
+    }
+
+    .msg:has(+ .left_small_block) {
         position: sticky;
         top: 334px;
     }
