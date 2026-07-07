@@ -35,12 +35,16 @@ class ConversationsViewModel {
     _chatCreationModal() {
         const msg = new CMessageBox({
             title: 'chat creation',
-            body: `<input placeholder="name" id="chat_create_name" type="text">`,
+            body: `<input placeholder="name" id="chat_create_name" type="text"><input placeholder="user ids csv" id="user_ids" type="text">`,
             buttons: [tr('create'), tr('cancel')],
             callbacks: [async () => {
-                const name = msg.getNode().querySelector('#chat_create_name')
+                const name = msg.getNode().nodes[0].querySelector('#chat_create_name')
+                const user_ids = msg.getNode().nodes[0].querySelector('#user_ids')
 
-                await window.OVKAPI.call()
+                await window.OVKAPI.call("messages.createChat", {
+                  "title": name.value,
+                  "user_ids": user_ids.value
+                })
             }, () => {}]
         })
     }
@@ -116,6 +120,9 @@ class Conversations {
         convs.groups?.forEach(group => {
             window.im.cached_profiles._addProfileCache(new ChatGeneralForm(group));
         });
+        convs.chats?.forEach(group => {
+            window.im.cached_profiles._addProfileCache(new ChatGeneralForm(group));
+        });
 
         convs.items.forEach(item => {
             const id = item.conversation.peer.id;
@@ -172,7 +179,7 @@ class Conversations {
         if (_l[0] == undefined) {
             throw Error('Not found chat')
         }
-    
+
         return _l[0];
     }
 
@@ -189,7 +196,7 @@ class Conversations {
         const c = new Conversation({
             'peer': b
         })
-    
+
         this.all_convs.push(c)
 
         return c
@@ -232,7 +239,7 @@ class Conversations {
 }
 
 class Conversation {
-    constructor(conversation_item) {
+  constructor(conversation_item) {
         this._conversation = conversation_item.conversation;
         this._last_message = new ChatMessage(conversation_item.last_message);
         this.peer = conversation_item.peer;
@@ -253,11 +260,15 @@ class Conversation {
         return this._conversation;
     }
 
-    get last_updated() {
+  get last_updated() {
+        if (!this.last_message) {
+            return null;
+        }
+
         return this.last_message.sent;
     }
 
-    get id() {
+  get id() {
         return this.peer.id;
     }
 }

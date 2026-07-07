@@ -209,22 +209,22 @@ final class Messages extends VKAPIRequestHandler
 
         if (!empty($data['chats'])) {
             $chatIDs = [];
-            
+
             // Временная заглушка пока не готов API чатов
             foreach ($data['chats'] as $key => $chat) {
                 if (is_array($chat)) {
                     $chatId = $chat['id'] ?? 0;
                     $localChatId = $chatId > 2000000000 ? ($chatId - 2000000000) : $chatId;
-                    
+
                     if ($localChatId > 0) {
                         $chatIDs[] = $localChatId;
-                        $data['chats'][$key]['id'] = $chatId; 
+                        $data['chats'][$key]['id'] = $chatId;
                         $data['chats'][$key]['title'] = "Беседа №" . $localChatId;
                     }
                 } else {
                     $chatId = abs((int)$chat);
                     $localChatId = $chatId > 2000000000 ? ($chatId - 2000000000) : $chatId;
-                    
+
                     if ($localChatId > 0) {
                         $chatIDs[] = $localChatId;
                         $data['chats'][$key] = [
@@ -789,7 +789,7 @@ final class Messages extends VKAPIRequestHandler
         }
 
         $currentUser = $this->getUser();
-        
+
         if ($user_id === 0) {
             $user_id = $currentUser->getId();
         }
@@ -941,7 +941,7 @@ final class Messages extends VKAPIRequestHandler
         }
 
         $params = [
-            "q"        => $q, 
+            "q"        => $q,
             "extended" => "1"
         ];
         $response = $this->invoke("messages.searchConversations", $params, $group_id);
@@ -967,7 +967,7 @@ final class Messages extends VKAPIRequestHandler
 
             foreach ($stream as $user) {
                 $userId = (int) $user->getId();
-                
+
                 if (in_array($userId, $userIdsToCheck, true)) {
                     $matchedUserIds[] = $userId;
                 }
@@ -1540,30 +1540,4 @@ final class Messages extends VKAPIRequestHandler
         return 1;
     }
         */
-
-    public function setActivity(int $user_id = 0, string $type = "typing", int $peer_id = 0)
-    {
-        if (empty($user_id) && empty($peer_id)) {
-            $this->fail(100, "One of the parameters specified was missing or invalid: user_id or peer_id");
-        } elseif (empty($peer_id)) {
-            $peer_id = $user_id;
-        }
-
-        $peer = $this->resolvePeer($peer_id, $peer_id);
-        $peer = (new USRRepo())->get($peer);
-
-        if (!$peer) {
-            $this->fail(936, "There is no peer with this id");
-        }
-
-        $chat = new Correspondence($this->getUser(), $peer);
-
-        switch ($type) {
-            case "typing":
-                return (int) $chat->sendTypingEvent();
-                break;
-            default:
-                $this->fail(1, "Not implemented");
-        }
-    }
 }
