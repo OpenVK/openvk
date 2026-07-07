@@ -671,7 +671,7 @@ final class Messages extends VKAPIRequestHandler
         return 1;
     }
 
-    public function getByConversationMessageID(
+    public function getByConversationMessageId(
         int $peer_id = 0,
         string $conversation_message_ids = "",
         int $extended = 0,
@@ -691,7 +691,7 @@ final class Messages extends VKAPIRequestHandler
             "fields"                   => $fields,
         ];
 
-        $data = $this->invoke("messages.getByConversationMessageID", $params, $group_id);
+        $data = $this->invoke("messages.getByConversationMessageId", $params, $group_id);
 
         if (!empty($data['items'])) {
             foreach ($data['items'] as &$item) {
