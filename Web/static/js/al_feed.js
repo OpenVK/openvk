@@ -131,9 +131,10 @@ u(document).on('click', '#__feed_settings_link', (e) => {
                 const CURRENT_PERPAGE = Number(__temp_url.searchParams.get('posts') ?? 10)
                 const CURRENT_PAGE = Number(__temp_url.searchParams.get('p') ?? 1)
                 const CURRENT_RETURN_BANNED = Number(__temp_url.searchParams.get('return_banned') ?? 0)
+                const CURRENT_ALIEN_POSTS    = Number(__temp_url.searchParams.get('with_alien_wall_posts') ?? 0)
                 const COUNT = [1, 5, 10, 20, 30, 40, 50]
                 u('#_feed_settings_container #__content').html(`
-                    <table cellspacing="7" cellpadding="0" border="0" align="center">
+                    <table class="flexible_table" cellspacing="7" cellpadding="0" border="0" align="center">
                         <tbody>
                             <tr>
                                 <td width="120" valign="top">
@@ -151,7 +152,7 @@ u(document).on('click', '#__feed_settings_link', (e) => {
                                     <input type='number' min='1' max='${PAGES_COUNT}' id='pageNumber' value='${CURRENT_PAGE}' placeholder='${CURRENT_PAGE}'>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="not_flexible_tr">
                                 <td width="120" valign="top">
                                     <span class="nobold">
                                         <input type='checkbox' name='showIgnored' id="showIgnored" ${CURRENT_RETURN_BANNED == 1 ? 'checked' : ''}>
@@ -159,6 +160,16 @@ u(document).on('click', '#__feed_settings_link', (e) => {
                                 </td>
                                 <td>
                                     <label for='showIgnored'>${tr('show_ignored_sources')}</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="120" valign="top">
+                                    <span class="nobold">
+                                        <input type='checkbox' name='alienPosts' id="alienPosts" ${CURRENT_ALIEN_POSTS == 1 ? 'checked' : ''}>
+                                    </span>
+                                </td>
+                                <td>
+                                    <label for='alienPosts'>${tr('with_alien_wall_posts')}</label>
                                 </td>
                             </tr>
                             <tr>
@@ -176,6 +187,7 @@ u(document).on('click', '#__feed_settings_link', (e) => {
                     const INPUT_PAGES_COUNT = parseInt(u('#_feed_settings_container #__content #pageSelect').nodes[0].selectedOptions[0].value ?? '10')
                     const INPUT_PAGE        = parseInt(u('#_feed_settings_container #__content #pageNumber').nodes[0].value ?? '1')
                     const INPUT_IGNORED     = Number(u('#_feed_settings_container #__content #showIgnored').nodes[0].checked ?? false)
+                    const INPUT_ALIEN_POSTS = Number(u('#_feed_settings_container #__content #alienPosts').nodes[0].checked ?? false)
 
                     const FINAL_URL = new URL(location.href)
 
@@ -191,6 +203,12 @@ u(document).on('click', '#__feed_settings_link', (e) => {
                         FINAL_URL.searchParams.set('return_banned', 1)
                     } else {
                         FINAL_URL.searchParams.delete('return_banned')
+                    }
+
+                    if(INPUT_ALIEN_POSTS == 1) {
+                        FINAL_URL.searchParams.set('with_alien_wall_posts', 1)
+                    } else {
+                        FINAL_URL.searchParams.delete('with_alien_wall_posts')
                     }
                     
                     window.router.route(FINAL_URL.href)

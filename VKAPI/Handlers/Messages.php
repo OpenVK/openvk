@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace openvk\VKAPI\Handlers;
 
 use openvk\Web\Util\IMBroker;
-use openvk\Web\Models\Repositories\{Users as USRRepo, Clubs as ClubRepo};
-use openvk\Web\Models\Entities\{Club as ClubEnt};
+use openvk\Web\Models\Repositories\{Users as USRRepo, Clubs as ClubRepo, Messages as MSGRepo};
+use openvk\Web\Models\Entities\{Correspondence, Message, Club as ClubEnt};
 use openvk\VKAPI\Handlers\{Users as APIUsers, Groups as APIClubs};
+use openvk\VKAPI\Structures\{Message as APIMsg, Conversation as APIConvo};
 
 final class Messages extends VKAPIRequestHandler
 {
@@ -1197,7 +1198,7 @@ final class Messages extends VKAPIRequestHandler
         return 1;
     }
 
-    public function getConversations(int $offset = 0, int $count = 20, string $filter = "all", int $extended = 0, string $fields = ""): object
+    public function getConversations(int $offset = 0, int $count = 20, string $filter = "all", int $extended = 1, string $fields = ""): object
     {
         $this->requireUser();
 
@@ -1208,7 +1209,7 @@ final class Messages extends VKAPIRequestHandler
         $users = [];
         foreach ($convos as $convo) {
             $correspondents = $convo->getCorrespondents();
-            if ($correspondents[0]->getId() === $this->getUser()->getId()) {
+            if ($correspondents[0]->getId() == $this->getUser()->getId()) {
                 $peer = $correspondents[1];
             } else {
                 $peer = $correspondents[0];
@@ -1223,34 +1224,51 @@ final class Messages extends VKAPIRequestHandler
                 "local_id" => $peer->getId(),
             ];
 
-            $canWrite = $peer->getSubscriptionStatus($this->getUser()) === 3;
-            $listConvo->can_write = [
-                "allowed" => $canWrite,
+            if ($peer->getPrivacyPermission('messages.write', $this->getUser())) {
+                $listConvo->can_write = [
+                    "allowed" => true,
+                ];
+            } else {
+                $listConvo->can_write = [
+                    "allowed" => false,
+                    "reason" => 901,
+                ];
+            }
+            $listConvo->chat_settings = (object) [
+                "title" => "",
+                "active_ids" => [],
             ];
 
             $lastMessagePreview = null;
             if (!is_null($lastMessage)) {
                 $listConvo->last_message_id = $lastMessage->getId();
-
-                if ($lastMessage->getSender()->getId() === $this->getUser()->getId()) {
-                    $author = $lastMessage->getRecipient()->getId();
-                } else {
-                    $author = $lastMessage->getSender()->getId();
+                if ($lastMessage->isUnread()) {
+                    $listConvo->unread_count = 1;
                 }
+
+                $listConvo->in_read = $convo->getLastReadedMessage($peer->getId())?->getId() ?? 0;
+                $listConvo->out_read = $convo->getLastReadedMessage($this->getUser()->getId())?->getId() ?? 0;
+
+
+                $author = $lastMessage->getSender()->getId();
 
                 $lastMessagePreview             = new APIMsg();
                 $lastMessagePreview->id         = $lastMessage->getId();
-                $lastMessagePreview->user_id    = $author;
-                $lastMessagePreview->from_id    = $lastMessage->getSender()->getId();
+                $lastMessagePreview->from_id    = $author == $this->getUser()->getId() ? $this->getUser()->getId() : $peer->getId();
+                if (VKAPI_DECL_VER_MAJOR >= 5 && VKAPI_DECL_VER_MINOR >= 80) {
+                    $lastMessagePreview->peer_id = $peer->getId();
+                } else {
+                    $lastMessagePreview->user_id = $peer->getId();
+                    $lastMessagePreview->read_state = (int) !$lastMessage->isUnread();
+                }
                 $lastMessagePreview->date       = $lastMessage->getSendTime()->timestamp();
-                $lastMessagePreview->read_state = 1;
-                $lastMessagePreview->out        = (int) ($lastMessage->getSender()->getId() === $this->getUser()->getId());
+                $lastMessagePreview->out        = (int) ($author == $this->getUser()->getId());
                 $lastMessagePreview->body       = $lastMessage->getText(false);
                 $lastMessagePreview->text       = $lastMessage->getText(false);
                 $lastMessagePreview->emoji      = true;
 
                 if ($extended == 1) {
-                    $users[] = $author;
+                    $users[] = $peer->getId();
                 }
             }
 
@@ -1272,7 +1290,8 @@ final class Messages extends VKAPIRequestHandler
             return (object) [
                 "count"    => $convosCount,
                 "items"    => $list,
-                "profiles" => (!empty($users) ? (new APIUsers())->get(implode(',', $users), $fields, 0, $count + 1) : []),
+                "profiles" => (!empty($users) ? (new APIUsers())->get(implode(',', $users), $fields . ',photo_50,photo_100,photo_200', 0, $count + 1) : []),
+                "groups"   => [],
             ];
         }
     }
@@ -1321,7 +1340,7 @@ final class Messages extends VKAPIRequestHandler
                     "last_conversation_message_id" => $user->getId(),
                     "in_read_cmid" => $user->getId(),
                     "out_read_cmid" => $user->getId(),
-                    "is_marked_unread" => $iterator[0]->isUnread(),
+                    "is_marked_unread" => 0,
                     "important" => false, // целестора когда релиз
                     "can_write" => [
                         "allowed" => ($user->getId() === $this->getUser()->getId() || $user->getPrivacyPermission('messages.write', $this->getUser()) === true),
@@ -1362,7 +1381,11 @@ final class Messages extends VKAPIRequestHandler
 
             $rMsg = new APIMsg();
             $rMsg->id         = $msgU->id;
-            $rMsg->user_id    = $msgU->sender_id === $this->getUser()->getId() ? $msgU->recipient_id : $msgU->sender_id;
+            if (VKAPI_DECL_VER_MAJOR >= 5 && VKAPI_DECL_VER_MINOR >= 38) {
+                $rMsg->peer_id = $msgU->sender_id == $this->getUser()->getId() ? $msgU->recipient_id : $msgU->sender_id;
+            } else {
+                $rMsg->user_id = $msgU->sender_id == $this->getUser()->getId() ? $msgU->recipient_id : $msgU->sender_id;
+            }
             $rMsg->from_id    = $msgU->sender_id;
             $rMsg->date       = $msgU->created;
             $rMsg->read_state = 1;
@@ -1377,7 +1400,21 @@ final class Messages extends VKAPIRequestHandler
         $output = [
             "count" => sizeof($results),
             "items" => $results,
+            "conversations" => [
+                (object) [
+                    "peer" => (object) [
+                        "id" => $user_id,
+                        "local_id" => $user_id,
+                        "type" => "user",
+                    ],
+                    "last_message_id" => $dialogue->getPreviewMessage()->getId(),
+                ],
+            ],
         ];
+
+
+        $output['conversations'][0]->in_read = $dialogue->getLastReadedMessage($peer->getId())?->getId() ?? 0; // TODO: check if it's read
+        $output['conversations'][0]->out_read = $dialogue->getLastReadedMessage($this->getUser()->getId())?->getId() ?? 0;
 
         if ($extended == 1) {
             $users[] = $this->getUser()->getId();
@@ -1430,7 +1467,12 @@ final class Messages extends VKAPIRequestHandler
             $this->fail(-151, "Not implemented");
         }
 
-        $url = "http" . (ovk_is_ssl() ? "s" : "") . "://$_SERVER[HTTP_HOST]/nim" . $this->getUser()->getId();
+        $url = "$_SERVER[HTTP_HOST]/nim" . $this->getUser()->getId();
+
+        if (VKAPI_DECL_VER_MINOR == 9999) {
+            $url = ovk_scheme(true) . $url;
+        }
+
         $key = openssl_random_pseudo_bytes(8);
         $key = bin2hex($key) . bin2hex($key ^ (~CHANDLER_ROOT_CONF["security"]["secret"] | ((string) $this->getUser()->getId())));
         $res = [
@@ -1498,4 +1540,30 @@ final class Messages extends VKAPIRequestHandler
         return 1;
     }
         */
+
+    public function setActivity(int $user_id = 0, string $type = "typing", int $peer_id = 0)
+    {
+        if (empty($user_id) && empty($peer_id)) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: user_id or peer_id");
+        } elseif (empty($peer_id)) {
+            $peer_id = $user_id;
+        }
+
+        $peer = $this->resolvePeer($peer_id, $peer_id);
+        $peer = (new USRRepo())->get($peer);
+
+        if (!$peer) {
+            $this->fail(936, "There is no peer with this id");
+        }
+
+        $chat = new Correspondence($this->getUser(), $peer);
+
+        switch ($type) {
+            case "typing":
+                return (int) $chat->sendTypingEvent();
+                break;
+            default:
+                $this->fail(1, "Not implemented");
+        }
+    }
 }

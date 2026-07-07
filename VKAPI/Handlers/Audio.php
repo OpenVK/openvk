@@ -210,6 +210,10 @@ final class Audio extends VKAPIRequestHandler
     {
         $this->requireUser();
 
+        if ($owner_id == 0) {
+            $owner_id = $this->getUser()->getRealId();
+        }
+
         $shuffleSeed    = null;
         $shuffleSeedStr = null;
         if ($shuffle == 1) {
@@ -873,5 +877,34 @@ final class Audio extends VKAPIRequestHandler
         }
 
         return (int) $album->unbookmark($this->getUser());
+    }
+
+    public function getPlaylists(int $owner_id = 0, int $offset = 0, int $count = 50, int $drop_private = 1): object
+    {
+        // alias of getPlaylists
+        return $this->getAlbums($owner_id, $offset, $count, $drop_private);
+    }
+
+    public function getPlaylistById(int $owner_id = 0, int $playlist_id = 0): object
+    {
+        $playlist = (new Audios())->getPlaylistByOwnerAndVID($owner_id, $playlist_id);
+
+        if (!$playlist || $playlist->isDeleted()) {
+            $this->fail(15, "Access error");
+        }
+
+        return (object) [
+            "id" => $playlist->getId(),
+            "owner_id" => $playlist->getOwnerId(),
+            "title" => $playlist->getName(),
+            "cover_url" => $playlist->getCoverURL(),
+        ];
+    }
+
+    public function subscribeToQueue(): object
+    {
+        # dummy function
+
+        return (object) ["url" => ""];
     }
 }

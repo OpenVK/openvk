@@ -358,7 +358,7 @@ class Club extends RowModel
     {
         $rels = $this->getRecord()->related("group_coadmins.club")->page($page, 6);
         if ($ignoreHidden) {
-            $rels = $rels->where("hidden", false);
+            $rels = $rels->where("club_pinned", false);
         }
 
         foreach ($rels as $rel) {
@@ -490,11 +490,12 @@ class Club extends RowModel
         $res->id          = $this->getId();
         $res->name        = $this->getName();
         $res->screen_name = $this->getShortCode() ?? "club" . $this->getId();
-        $res->is_closed   = false;
+        $res->is_closed   = 0;
         $res->type        = 'group';
         $res->is_member   = $user ? (int) $this->getSubscriptionStatus($user) : 0;
+        $res->is_admin    = $user ? (int) $this->canBeModifiedBy($user) : 0;
         $res->deactivated = null;
-        $res->can_access_closed = true;
+        $res->can_access_closed = 1;
 
         if (!is_array($fields)) {
             $fields = explode(',', $fields);
@@ -510,7 +511,7 @@ class Club extends RowModel
                     $res->site = $this->getWebsite();
                     break;
                 case 'description':
-                    $res->description = $this->getDescription();
+                    $res->description = $this->getDescription() ?? '';
                     break;
                 case 'background':
                     $res->background = $this->getBackDropPictureURLs();
@@ -524,6 +525,12 @@ class Club extends RowModel
                 case 'photo_200':
                     $res->photo_200 = $this->getAvatarUrl('normal', $avatar_photo);
                     break;
+                case "photo_200_orig":
+                    $res->photo_200_orig = $this->getAvatarURL("normal", $avatar_photo);
+                    break;
+                case "photo_400_orig":
+                    $res->photo_400_orig = $this->getAvatarURL("normal", $avatar_photo);
+                    break;
                 case 'photo_max':
                     $res->photo_max = $this->getAvatarUrl('original', $avatar_photo);
                     break;
@@ -532,6 +539,47 @@ class Club extends RowModel
                     break;
                 case 'real_id':
                     $res->real_id = $this->getRealId();
+                    break;
+                case "can_suggest":
+                    $res->can_suggest = !$this->canBeModifiedBy($user) && $this->getWallType() == 2;
+                    break;
+                case "suggested_count":
+                    if ($this->getWallType() != 2) {
+                        $res->suggested_count = null;
+                        break;
+                    }
+
+                    $res->suggested_count = $this->getSuggestedPostsCount($user);
+                    break;
+                case "contacts":
+                    $contacts = [];
+                    $contactTmp = $this->getManagers(1, true);
+
+                    foreach ($contactTmp as $contact) {
+                        $contacts[] = [
+                            "user_id" => $contact->getUser()->getId(),
+                            "desc"    => $contact->getComment(),
+                        ];
+                    }
+
+                    if ($this->isOwnerClubPinned()) {
+                        $owner = (new Managers())->get($this->getOwner()->getId());
+                        array_unshift($contacts, [
+                            "user_id" => $owner->getUser()->getId(),
+                            "desc" => $owner->getComment(),
+                        ]);
+                    }
+
+                    $res->contacts = $contacts;
+                    break;
+                case "can_post":
+                    if (!is_null($user)) {
+                        if ($this->canBeModifiedBy($user)) {
+                            $res->can_post = true;
+                        } else {
+                            $res->can_post = $this->canPost();
+                        }
+                    }
                     break;
             }
         }

@@ -1,0 +1,33 @@
+<div class="global-alert" style="display: none;" n:if='\OPENVK_ROOT_CONF["openvk"]["preferences"]["siteAlert"]["enable"]'>
+    {php echo OPENVK_ROOT_CONF["openvk"]["preferences"]["siteAlert"]["text"]}
+    <a class="dismiss" onClick="dismissGlobalAlert()" n:if='\OPENVK_ROOT_CONF["openvk"]["preferences"]["siteAlert"]["canBeDismissed"]'></a>
+</div>
+
+<script>
+    let cookie = document.cookie.split(";");
+    let alertElement = u('.global-alert').nodes[0];
+    let alertContent = '';
+    if (alertElement) {
+        alertContent = encodeURI(alertElement.innerText);
+        let alertDismissed = false;
+        for (let i = 0; i < cookie.length; i++) {
+            let c = cookie[i].trim();
+            
+            if (c == "alertDismissed=" + alertContent) {
+                alertDismissed = true;
+                break;
+            }
+        }
+        if (!alertDismissed) {
+            u(".global-alert").nodes[0].style.display = "block";
+        }
+    }
+
+    function dismissGlobalAlert() {
+        let expires = (new Date(Date.now() + 40000000000)).toUTCString();
+        
+        document.cookie = "alertDismissed=" + alertContent + ";expires=" + expires + ";SameSite=Strict";
+        u(".global-alert").nodes[0].style.display = "none";
+    }
+    
+</script>

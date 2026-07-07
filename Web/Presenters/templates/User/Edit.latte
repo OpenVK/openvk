@@ -48,7 +48,7 @@
 
         <h4>{_main_information}</h4>
         <form action="/edit?act=main" method="POST" enctype="multipart/form-data">
-            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+            <table class="flexible_table" cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
                 <tbody>
                     <tr>
                         <td width="120" valign="top">
@@ -125,8 +125,8 @@
                         n:attr="style => $user->getMaritalStatusUser() || ($user->getMaritalStatus() && !in_array($user->getMaritalStatus(), [0, 1, 8])) ? '' : 'display: none;'">
                         <td width="120" valign="top"></td>
                         <td>
-                            <input type="text" placeholder="{_page_address}" name="maritalstatus-user"
-                                   n:attr="value => $user->getMaritalStatusUser() ? $user->getMaritalStatusUser()->getId() : ''" />
+                            <input type="text" placeholder="{_marital_status_user_id}" name="maritalstatus-user"
+                                   n:attr="value => $user->getMaritalStatusUser() ? $user->getMaritalStatusUser()->getURL(true) : ''" />
                         </td>
                     </tr>
                     <tr>
@@ -189,7 +189,7 @@
 
         <h4>{_contact_information}</h4>
         <form action="/edit?act=contacts" method="POST" enctype="multipart/form-data">
-            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+            <table class="flexible_table" cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
                 <tbody>
                     <tr>
                         <td width="120" valign="top">
@@ -248,7 +248,7 @@
 
         <h4>{_personal_information}</h4>
         <form action="/edit?act=interests" method="POST" enctype="multipart/form-data">
-            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+            <table class="flexible_table" cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
                 <tbody>
                     <tr>
                         <td width="120" valign="top">
@@ -331,7 +331,7 @@
 
         <h4>{_profile_picture}</h4>
         <form action="/al_avatars" method="POST" enctype="multipart/form-data">
-            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+            <table class="flexible_table" cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
                 <tbody>
                     <tr>
                         <td width="120" valign="top">
@@ -393,7 +393,7 @@
             <p>{tr("additional_fields_description", ovkGetQuirk("users.max-fields"))}</p>
             <form id="additional_fields_form" method="POST" enctype="multipart/form-data">
                 <div class="edit_field_container_inserts">
-                    <table data-iterator="{$f_iterator}" class="outline_table edit_field_container_item" width="80%" border="0" align="center" n:foreach="$thisUser->getAdditionalFields() as $field">
+                    <table data-iterator="{$f_iterator}" class="flexible_table outline_table edit_field_container_item" width="80%" border="0" align="center" n:foreach="$thisUser->getAdditionalFields() as $field">
                         <tbody>
                             <tr>
                                 <td width="150">

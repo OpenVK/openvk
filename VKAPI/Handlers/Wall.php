@@ -190,13 +190,13 @@ final class Wall extends VKAPIRequestHandler
                 "post_type"    => $post->getVkApiType(),
                 "text"         => $post->getText(false),
                 "copy_history" => $repost,
-                "can_edit"     => $post->canBeEditedBy($this->getUser()),
-                "can_delete"   => $post->canBeDeletedBy($this->getUser()),
-                "can_pin"      => $post->canBePinnedBy($this->getUser()),
-                "can_archive"  => false, # TODO MAYBE
-                "is_archived"  => false,
-                "is_pinned"    => $post->isPinned(),
-                "is_explicit"  => $post->isExplicit(),
+                "can_edit"     => (int) $post->canBeEditedBy($this->getUser()),
+                "can_delete"   => (int) $post->canBeDeletedBy($this->getUser()),
+                "can_pin"      => (int) $post->canBePinnedBy($this->getUser()),
+                "can_archive"  => 0, # TODO MAYBE
+                "is_archived"  => 0,
+                "is_pinned"    => (int) $post->isPinned(),
+                "is_explicit"  => (int) $post->isExplicit(),
                 "attachments"  => $attachments,
                 "post_source"  => $post->getPostSourceInfo(),
                 "comments"     => (object) [
@@ -280,8 +280,8 @@ final class Wall extends VKAPIRequestHandler
                     "first_name"        => $user->getFirstName(),
                     "id"                => $user->getId(),
                     "last_name"         => $user->getLastName(),
-                    "can_access_closed" => (bool) $user->canBeViewedBy($this->getUser()),
-                    "is_closed"         => $user->isClosed(),
+                    "can_access_closed" => (int) $user->canBeViewedBy($this->getUser()),
+                    "is_closed"         => (int) $user->isClosed(),
                     "sex"               => $user->isFemale() ? 1 : ($user->isNeutral() ? 0 : 2),
                     "screen_name"       => $user->getShortCode(),
                     "photo_50"          => $user->getAvatarUrl(),
@@ -413,6 +413,7 @@ final class Wall extends VKAPIRequestHandler
                     }
                 }
 
+                $signerId = null;
                 if ($post->isSigned()) {
                     $actualAuthor = $post->getOwner(false);
                     $signerId     = $actualAuthor->getId();
@@ -422,6 +423,7 @@ final class Wall extends VKAPIRequestHandler
                     "id"           => $post->getVirtualId(),
                     "from_id"      => $from_id,
                     "owner_id"     => $post->getTargetWall(),
+                    "post_id"     => $post->getVirtualId(),
                     "date"         => $post->getPublicationTime()->timestamp(),
                     "post_type"    => $post->getVkApiType(),
                     "text"         => $post->getText(false),
@@ -505,7 +507,7 @@ final class Wall extends VKAPIRequestHandler
                         "first_name"        => $user->getFirstName(),
                         "id"                => $user->getId(),
                         "last_name"         => $user->getLastName(),
-                        "can_access_closed" => (bool) $user->canBeViewedBy($this->getUser()),
+                        "can_access_closed" => (int) $user->canBeViewedBy($this->getUser()),
                         "is_closed"         => $user->isClosed(),
                         "sex"               => $user->isFemale() ? 1 : 2,
                         "screen_name"       => $user->getShortCode(),
@@ -847,7 +849,7 @@ final class Wall extends VKAPIRequestHandler
     }
 
 
-    public function getComments(int $owner_id, int $post_id, bool $need_likes = true, int $offset = 0, int $count = 10, string $fields = "sex,screen_name,photo_50,photo_100,online_info,online", string $sort = "asc", bool $extended = false)
+    public function getComments(int $owner_id, int $post_id, int $need_likes = 1, int $offset = 0, int $count = 10, string $fields = "sex,screen_name,photo_50,photo_100,online_info,online", string $sort = "asc", bool $extended = false)
     {
         $this->requireUser();
 
@@ -916,7 +918,7 @@ final class Wall extends VKAPIRequestHandler
                 $item['is_from_post_author'] = true;
             }
 
-            if ($need_likes == true) {
+            if ($need_likes == 1) {
                 $item['likes'] = [
                     "can_like"    => 1,
                     "count"       => $comment->getLikesCount(),

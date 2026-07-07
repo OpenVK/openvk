@@ -1,0 +1,227 @@
+body {
+  margin:0;
+  padding:0;
+  font-family: Tahoma, Arial, sans-serif;
+  font-size:12px;
+  background:#e6e6e6;
+}
+.container {
+  /*! width:600px; */
+  /*! margin:10px auto; */
+  /*! border-radius: 10px; */
+  background:#fff;
+  border:1px solid #3b3b3b;
+}
+.rl_l{
+  float: right;
+}
+
+.header {
+  background: #3B3B3B;
+  background: linear-gradient(0deg,rgba(59, 59, 59, 1) 0%, rgba(112, 112, 112, 1) 100%);;
+  color:#fff;
+  padding:6px 10px;
+  height: 40px;
+  border-bottom: 1px solid #3b3b3b;
+  /*! border-top-left-radius: 7px; */
+  /*! border-top-right-radius: 7px; */
+}
+
+.profile_avatar{
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    object-position: top;
+    margin-left: 8px;
+}
+
+.main {
+  overflow:hidden;
+  padding:10px;
+  display: flex;
+  justify-content: center;
+}
+.oauth_app_icon {
+  float: left;
+  width: 100px;
+  padding: 5px;
+}
+
+.content {
+  /* width: 460px; */
+  display: inline-block;
+  /*! float: right; */
+}
+
+
+.oauth_main{
+  padding: 10px;
+}
+
+.section {
+  margin-bottom:12px;
+  border:1px solid #cccccc;
+  background:#ffffff;
+  padding:5px;
+}
+.section h2 {
+  margin:0 0 6px 0;
+  font-size:14px;
+  color: #000;
+}
+
+.footer_choice {
+  border-top: 1px solid #3b3b3b;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+a.footer_choice_cancel {
+  color: #3b3b3b;
+  text-decoration: none;
+  margin-left: 10px;
+}
+
+a.footer_choice_cancel:hover{
+  color: #000;
+  text-decoration: none;
+}
+
+.ovk_logo{
+	width: 100%;
+	height: 29px;
+	float: left;
+  background: url('/assets/packages/static/openvk/img/logo_full.png');
+	background-size: 115px;
+  background-repeat: no-repeat;
+	margin-top: 5px;
+}
+
+.account{
+	height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.account a{
+  text-decoration: underline;
+  color: #fff;
+}
+
+.faq_card{
+    margin-top: 5px;
+}
+
+#faq_title_warn {
+    background: #ffaaaa;
+    margin: 0 5px;
+    padding: 5px;
+    font-weight: bold;
+    border: 1px solid #d79e9e;
+    border-bottom: 0;
+}
+
+#faq_title {
+    background: #fbf3c3;
+    margin: 0 5px;
+    padding: 5px;
+    font-weight: bold;
+    border: 1px solid #d7cf9e;
+    border-bottom: 0;
+}
+
+#faq_content {
+    background: #fafafa;
+    margin: 0 5px 10px;
+    padding: 5px 5px 5px 10px;
+    border: 1px solid #ddd;
+}
+
+
+.button {
+    border-radius: 2px;
+    border: #595959;
+    font-size: 11px;
+    outline: none;
+    white-space: nowrap;
+    background: #595959;
+    background-position: 0 -16px;
+    color: #fff;
+    padding: 5px 9px;
+    text-shadow: 0 1px 0 #686868;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.button:active {
+    background: #444444;
+}
+
+.button:hover {
+    color: #e8e8e8;
+}
+
+.button[disabled] {
+    filter: opacity(0.5);
+    cursor: not-allowed;
+}
+
+.button[disabled]:hover {
+    color: #fff;
+}
+
+.button-loading {
+    display: inline-block;
+    background-image: url('/assets/packages/static/openvk/img/loading_mini.gif');
+    width: 30px;
+    height: 7px;
+    margin-left: -3px;
+}
+
+input[class=button] {
+    padding: 5px 7px 4px;
+}
+
+.msg {
+    margin: auto;
+    margin-bottom: 5pt;
+    padding: 8pt;
+    background-color: #e6f2f3;
+}
+
+.msg.msg_succ {
+    border-color: #3b584f;
+    background-color: #ddf3d7;
+}
+
+.msg.msg_err {
+    border-color: #9a205e;
+    background-color: #f5e9ec;
+}
+
+input[type="text"],
+input[type="password"],
+input[type~="text"],
+input[type~="password"],
+input[type="email"],
+input[type="phone"],
+input[type~="email"],
+input[type~="phone"],
+input[type="search"],
+input[type~="search"],
+input[type~="date"],
+input[type~="datetime-local"],
+select {
+    border: 1px solid #C0CAD5;
+    padding: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    outline:none;
+    margin-bottom: 5px;
+}
+
+label{
+  margin-bottom: 5px;
+}

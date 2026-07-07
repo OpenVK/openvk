@@ -131,7 +131,9 @@ class Poll extends Attachable
 
         $optionsC = sizeof($unsOptions);
         $sOptions = $unsOptions;
-        usort($sOptions, function ($a, $b) { return $a->votes <=> $b->votes; });
+        usort($sOptions, function ($a, $b) {
+            return $a->votes <=> $b->votes;
+        });
         for ($i = 0; $i < $optionsC; $i++) {
             $unsOptions[$id]->rate = $optionsC - $i - 1;
         }
@@ -198,7 +200,9 @@ class Poll extends Attachable
             throw new AlreadyVotedException();
         }
 
-        $optionIds = array_map(function ($x) { return (int) $x; }, array_unique($optionIds));
+        $optionIds = array_map(function ($x) {
+            return (int) $x;
+        }, array_unique($optionIds));
         $validOpts = array_keys($this->getOptions());
         if (empty($optionIds) || (sizeof($optionIds) > 1 && !$this->isMultipleChoice())) {
             throw new UnexpectedValueException();

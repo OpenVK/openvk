@@ -1,6 +1,17 @@
 {extends "../@layout.latte"}
 {block title}{_view_topic} "{$topic->getTitle()}"{/block}
 
+{block headIncludes}
+    {php $topicDesc = null}
+    {php $firstComment = $topic->getFirstComment(); if($firstComment) { $raw = $firstComment->getText(false); $topicDesc = mb_strlen($raw) > 200 ? mb_substr($raw, 0, 197) . '...' : $raw; } }
+    <meta property="og:title" content="{$topic->getTitle()} — {$instance_name}" />
+    <meta property="og:url" content="{$baseUrl}/topic{$topic->getPrettyId()}" />
+    <meta property="og:type" content="article" />
+    <meta n:if="!is_null($topicDesc)" property="og:description" content="{$topicDesc}" />
+    <meta name="twitter:title" content="{$topic->getTitle()} — {$instance_name}" />
+    <meta n:if="!is_null($topicDesc)" name="twitter:description" content="{$topicDesc}" />
+{/block}
+
 {block header}
     <a href="{$club->getURL()}">{$club->getCanonicalName()}</a>
     » 

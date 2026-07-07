@@ -58,9 +58,11 @@ final class UserPresenter extends OpenVKPresenter
                 $this->template->_template = "User/deleted.latte";
             }
         } else {
-            $this->template->albums      = (new Albums())->getUserAlbums($user);
             $this->template->avatarAlbum = (new Albums())->getUserAvatarAlbum($user);
-            $this->template->albumsCount = (new Albums())->getUserAlbumsCount($user);
+            $this->template->albums      = array_values(array_filter(iterator_to_array((new Albums())->getUserAlbums($user)), function ($album) {
+                return !$album->isCreatedBySystem();
+            }));
+            $this->template->albumsCount = count($this->template->albums);
             $this->template->videos      = (new Videos())->getByUser($user, 1, 2);
             $this->template->videosCount = (new Videos())->getUserVideosCount($user);
             $this->template->notes       = (new Notes())->getUserNotes($user, 1, 4);
@@ -199,16 +201,18 @@ final class UserPresenter extends OpenVKPresenter
                 }
 
                 if ($this->postParam("marialstatus") <= 8 && $this->postParam("marialstatus") >= 0) {
-                    $user->setMarital_Status($this->postParam("marialstatus"));
-                }
+                    $maritalStatus = (int) $this->postParam("marialstatus");
+                    $user->setMarital_Status($maritalStatus);
 
-                if ($this->postParam("maritalstatus-user")) {
-                    if (in_array((int) $this->postParam("marialstatus"), [0, 1, 8])) {
+                    if (in_array($maritalStatus, [0, 1, 8], true)) {
                         $user->setMarital_Status_User(null);
                     } else {
-                        $mUser = (new Users())->getByAddress($this->postParam("maritalstatus-user"));
-                        if ($mUser) {
-                            if ($mUser->getId() !== $this->user->id) {
+                        $partnerAddress = trim((string) $this->postParam("maritalstatus-user"));
+                        if (empty($partnerAddress)) {
+                            $user->setMarital_Status_User(null);
+                        } else {
+                            $mUser = (new Users())->getByAddress($partnerAddress);
+                            if ($mUser && $mUser->getId() !== $this->user->id) {
                                 $user->setMarital_Status_User($mUser->getId());
                             }
                         }

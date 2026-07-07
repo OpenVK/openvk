@@ -43,6 +43,10 @@ class User extends RowModel
     public const NSFW_TOLERANT      = 1;
     public const NSFW_FULL_TOLERANT = 2;
 
+    /* aggressive caching */
+    private $_avatarAlbum = null;
+    private $_avatarPhoto = false; // false - not resolved, null - no avatar
+
     protected function _abstractRelationGenerator(string $filename, int $page = 1, int $limit = 6): \Traversable
     {
         $id     = $this->getId();
@@ -118,13 +122,14 @@ class User extends RowModel
         return new ChandlerUser($this->getRecord()->ref("ChandlerUsers", "user"));
     }
 
-    public function getURL(): string
+    public function getURL(bool $trimBackslash = false): string
     {
+        $backslash = $trimBackslash ? '' : '/';
         if (!is_null($this->getShortCode())) {
-            return "/" . $this->getShortCode();
-        } else {
-            return "/id" . $this->getId();
+            return $backslash . $this->getShortCode();
         }
+
+        return $backslash . "id" . $this->getId();
     }
 
     public function getAvatarUrl(string $size = "miniscule", $avPhoto = null): string
@@ -156,18 +161,27 @@ class User extends RowModel
         }
 
         $pid = $avPhoto->getPrettyId();
-        $aid = (new Albums())->getUserAvatarAlbum($this)->getId();
+        $aid = $this->getAvatarAlbum()->getId();
 
         return "/photo$pid?from=album$aid";
     }
 
+    public function getAvatarAlbum(): ?Album
+    {
+        return $this->_avatarAlbum ??= (new Albums())->getUserAvatarAlbum($this);
+    }
+
     public function getAvatarPhoto(): ?Photo
     {
-        $avAlbum  = (new Albums())->getUserAvatarAlbum($this);
+        if ($this->_avatarPhoto !== false) {
+            return $this->_avatarPhoto;
+        }
+
+        $avAlbum  = $this->getAvatarAlbum();
         $avCount  = $avAlbum->getPhotosCount();
         $avPhotos = $avAlbum->getPhotos($avCount, 1);
 
-        return iterator_to_array($avPhotos)[0] ?? null;
+        return $this->_avatarPhoto = iterator_to_array($avPhotos)[0] ?? null;
     }
 
     public function getFirstName(bool $pristine = false): string
@@ -223,9 +237,12 @@ class User extends RowModel
             } else {
                 $name = $this->getFirstName() . " " . $this->getLastName();
             }
-        } else {
+        } elseif ($startWithLastName == false) {
             $name = $this->getFirstName();
+        } else {
+            $name = $this->getLastName();
         }
+
         if (!preg_match("/^[А-Яа-яЁё\s-]+$/u", $name)) {
             return $name;
         } # name is probably not russian
@@ -881,6 +898,7 @@ class User extends RowModel
         $gifts = $this->getRecord()->related("gift_user_relations.receiver")->order("sent DESC")->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
         foreach ($gifts as $rel) {
             yield (object) [
+                "id"      => $rel->id,
                 "sender"  => (new Users())->get($rel->sender),
                 "gift"    => (new Gifts())->get($rel->gift),
                 "caption" => $rel->comment,
@@ -892,7 +910,7 @@ class User extends RowModel
 
     public function getGiftCount(): int
     {
-        return sizeof($this->getRecord()->related("gift_user_relations.receiver"));
+        return $this->getRecord()->related("gift_user_relations.receiver")->count("*");
     }
 
     public function get2faBackupCodes(): \Traversable
@@ -1037,12 +1055,15 @@ class User extends RowModel
                 case 'openvk_flux_android':
                 case 'openvk_refresh_android':
                 case 'openvk_legacy_android':
+                case 'Kate Mobile':
+                case 'VK for Android':
                     return 'android';
                     break;
 
                 case 'openvk_native_ios':
                 case 'openvk_ios':
                 case 'openvk_legacy_ios':
+                case 'VK for iOS':
                     return 'iphone';
                     break;
 
@@ -1110,7 +1131,7 @@ class User extends RowModel
         ]);
     }
 
-    public function ban(string $reason, bool $deleteSubscriptions = true, $unban_time = null, ?int $initiator = null): void
+    public function ban(string $reason, bool $deleteSubscriptions = false, $unban_time = null, ?int $initiator = null): void
     {
         if ($deleteSubscriptions) {
             $subs = DatabaseConnection::i()->getContext()->table("subscriptions");
@@ -1204,7 +1225,7 @@ class User extends RowModel
     public function setFirst_Name(string $firstName): void
     {
         $firstName = mb_convert_case($firstName, MB_CASE_TITLE);
-        if (!preg_match('%^[\p{Lu}\p{Lo}]\p{Mn}?(?:[\p{L&}\p{Lo}]\p{Mn}?){1,64}$%u', $firstName)) {
+        if (!preg_match('%^[\p{Lu}\p{Lo}]\p{Mn}?(?:[\p{L&}\p{Lo}\-\.]\p{Mn}?){1,64}$%u', $firstName)) {
             throw new InvalidUserNameException();
         }
 
@@ -1215,7 +1236,7 @@ class User extends RowModel
     {
         if (!empty($lastName)) {
             $lastName = mb_convert_case($lastName, MB_CASE_TITLE);
-            if (!preg_match('%^[\p{Lu}\p{Lo}]\p{Mn}?([\p{L&}\p{Lo}]\p{Mn}?){1,64}(\-\g<1>+)?$%u', $lastName)) {
+            if (!preg_match('%^[\p{Lu}\p{Lo}]\p{Mn}?([\p{L&}\p{Lo}\-\.]\p{Mn}?){0,64}(\-\g<1>+)?$%u', $lastName)) {
                 throw new InvalidUserNameException();
             }
         }
@@ -1572,13 +1593,13 @@ class User extends RowModel
         $res = (object) [];
 
         $res->id = $this->getId();
-        $res->first_name = $this->getFirstName();
-        $res->last_name = $this->getLastName();
+        $res->first_name  = $this->getFirstName();
+        $res->last_name   = $this->getLastName();
         $res->deactivated = $this->isDeactivated();
         $res->is_closed   = $this->isClosed();
 
         if (!is_null($relation_user)) {
-            $res->can_access_closed  = (bool) $this->canBeViewedBy($relation_user);
+            $res->can_access_closed = (int) $this->canBeViewedBy($relation_user);
         }
 
         if (!is_array($fields)) {
@@ -1617,6 +1638,9 @@ class User extends RowModel
                     break;
                 case 'reg_date':
                     $res->reg_date = $this->getRegistrationTime()->timestamp();
+                    break;
+                case 'nickname':
+                    $res->nickname = $this->getPseudo();
                     break;
                 case 'nickname':
                     $res->nickname = $this->getPseudo();

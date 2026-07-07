@@ -18,13 +18,13 @@ jobs:
       contents: read
     steps:
       - name: Code Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
-          extensions: gd, zip, intl, yaml, pdo_mysql, rdkafka, imagick
+          extensions: gd, zip, intl, yaml, pdo_mysql, imagick
           tools: composer:v2
           coverage: none
 

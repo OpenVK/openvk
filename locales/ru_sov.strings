@@ -465,6 +465,7 @@
 "your_email_address" = "Адрес Вашего почтового ящика";
 "your_page_address" = "Адрес Вашего досье";
 "page_address" = "Адрес досье";
+"marital_status_user_id" = "ID пользователя";
 "current_email_address" = "Текущий адрес";
 "page_id" = "Номер досье";
 "you_can_also" = "Вы также можете";
@@ -985,3 +986,15 @@
 "bday_tomorrow" = "Завтра";
 "bday_reminder_text" = "$1 день рождения $2.";
 "bday_and" = " и ";
+"checkbox_in_registration_unchecked" = "Вы должны согласиться с политикой конфиденциальности и условия использования OpenVK чтобы зарегистрироваться";
+"email_not_in_whitelist" = "К сожалению на данный момент ваш почтовый провайдер был запрещён.";
+"email_whitelist_desc" = "Разрешённые почтовые провайдеры: $1";
+"pronouns" = "Местоимения";
+"neutral" = "Они/Их";
+"additional_information" = "Дополнительное досье";
+"desc_none" = "Досье отсутствует";
+"show_my_birthday" = "Показать мой день рождения";
+"show_only_month_and_day" = "Показывать только месяц и день";
+"additional" = "Дополнительно";
+"additional_fields_description" = "Там вы можете добавить дополнительное досье о себе, например, ссылки на другие профили или ваши интересы. Максимально можно добавить такие поля стоимостью 1 доллар.";
+"additional_field_name" = "Имя";

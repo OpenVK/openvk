@@ -163,10 +163,16 @@ class Video extends Media
                 "description" => $this->getDescription(),
                 "duration" => $this->getLength(),
                 "image" => [
-                    [
+                    (object) [
                         "url" => $this->getThumbnailURL(),
                         "width" => 320,
                         "height" => 240,
+                        "with_padding" => 1,
+                    ],
+                    (object) [
+                        "url" => $this->getThumbnailURL(),
+                        "width" => 130,
+                        "height" => 100,
                         "with_padding" => 1,
                     ],
                 ],
@@ -179,9 +185,8 @@ class Video extends Media
                 "is_favorite" => false,
                 "player" => !$fromYoutube ? $this->getURL() : $this->getVideoDriver()->getURL(),
                 "files" => !$fromYoutube ? [
-                    "mp4_480" => $this->getURL(),
-                ] : null,
-                "platform" => $fromYoutube ? "youtube" : null,
+                    "mp4_480" => $this->getURL() . "#vkuservideo",
+                ] : [],
                 "added" => 0,
                 "repeat" => 0,
                 "type" => "video",
@@ -193,6 +198,9 @@ class Video extends Media
                 ],
             ],
         ];
+        if ($fromYoutube) {
+            $res->video['platform'] = "youtube";
+        }
 
         if (!is_null($user)) {
             $res->video["likes"] = [

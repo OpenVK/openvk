@@ -238,6 +238,7 @@
 "all_news" = "All news";
 "posts_per_page" = "Number of posts per page";
 "show_ignored_sources" = "Show ignored sources";
+"with_alien_wall_posts" = "Show posts on other users' walls";
 "auto_scroll" = "Autoscroll";
 "ajax_routing" = "AJAX-transitions";
 
@@ -288,8 +289,10 @@
 "users_posts" = "Posts by $1";
 "clubs_posts" = "Group's posts";
 "others_posts" = "Others posts";
+"read_in_rss" = "Read in RSS";
 
 "show_more" = "Show more";
+"show_less" = "Show less";
 "has_repost" = "Has repost";
 
 "likers_list" = "Likers list";
@@ -651,6 +654,7 @@
 "menu_help" = "Help";
 
 "menu_logout" = "Log out";
+"menu_logout_confirm" = "Do you actually want to log out?";
 "menu_support" = "Support";
 
 "header_home" = "home";
@@ -673,6 +677,7 @@
 "footer_developers" = "developers";
 "footer_choose_language" = "choose language";
 "footer_privacy" = "privacy";
+"language_add_strings" = "Help with the translation";
 
 /* Settings */
 
@@ -748,6 +753,7 @@
 "your_email_address" = "Your Email address";
 "your_page_address" = "Your address page";
 "page_address" = "Address page";
+"marital_status_user_id" = "User ID";
 "current_email_address" = "Current email address";
 "new_email_address" = "New email address";
 "save_email_address" = "Save email address";
@@ -806,7 +812,7 @@
 "backdrop_short" = "Backdrop";
 "backdrop" = "Page Backdrop";
 "backdrop_desc" = "You can set two pictures as the backdrop for your profile or group. They will be displayed on the left and right edges of the page, adding personality to your profile.";
-"backdrop_warn" = "The images will be arranged as shown in the layout above. Their height will be automatically increased to occupy 100% of the screen height, with a blur in the middle. You cannot replace the background of the main OpenVK interface or add audio.";
+"backdrop_warn" = "The images will be arranged as shown in the layout above. Their height will be automatically increased to occupy 100% of the screen height, with a blur in the middle. You cannot replace the background of the main OpenVK interface or add audio. The backdrop will be visible only on wide displays.";
 "backdrop_about_adding" = "You can upload only one picture, although depending on the design, the end result may look imperfect. You can also change only one picture: if you already have two images set up and you want to change one, upload only one, and the other won't be removed. To remove both images, press the button below; you can't remove pictures individually.";
 "backdrop_save" = "Save Backdrop Picture(s)";
 "backdrop_remove" = "Remove All Backdrop Pictures";
@@ -859,6 +865,7 @@
 "oauth_scope_all" = "profile information, status, list of friends, photos, wall posts, audios, videos, notifications, fishing rod handle, messages, gifts, <b>your e-mail</b>, polls, communities, discussions, notes, <b>payment method</b>, likes and comments";
 "oauth_grant" = "Allow";
 "oauth_deny" = "Deny";
+"oauth_app_twofactor" = "Before using $1 app, please enter your Two-Factor code received from the application.";
 
 /* Sorting */
 
@@ -1404,6 +1411,7 @@
 "no_messages" = "No one has written to you yet.";
 "messages_blocked" = "Unfortunately, your message cannot be sent due to this user's privacy settings.";
 "enter_message" = "Enter message";
+"message_user_typing" = "$1 is typing a message...";
 
 "messages_error_1" = "Message not delivered";
 "messages_error_1_description" = "There was a general error in sending this message...";
@@ -1729,6 +1737,7 @@
 "admin_tab_main" = "General";
 "admin_tab_ban" = "Ban";
 "admin_tab_followers" = "Followers";
+"admin_tab_sessions" = "Sessions";
 
 "admin_overview" = "Overview";
 "admin_overview_summary" = "Summary";
@@ -2155,7 +2164,7 @@
 "tour_section_11_title_1" = "Themes";
 "tour_section_11_text_1" = "Upon registration, the default theme will be set as your appearance.";
 "tour_section_11_text_2" = "Some new users might find the current default theme a bit dated.";
-"tour_section_11_text_3" = "<b>No worries:</b> You can create your own theme by reading the <a href='https://docs.ovk.to/'>documentation</a> or choose one from the catalog.";
+"tour_section_11_text_3" = "<b>No worries:</b> You can create your own theme by reading the <a href='https://openvk.org/dev'>documentation</a> or choose one from the catalog.";
 "tour_section_11_bottom_text_1" = "A catalog of themes is available under \"My Settings\" in the \"Interface\" tab.";
 "tour_section_11_wordart" = "<img src='/assets/packages/static/openvk/img/tour/wordart_en.png' width='65%'>";
 

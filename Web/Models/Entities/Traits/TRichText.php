@@ -41,24 +41,19 @@ trait TRichText
         return preg_replace_callback(
             "%(([A-z]++):\/\/(\S*?\.\S*?))([\s)\[\]{},\"\'<]|\.\s|$)%",
             (function (array $matches): string {
-                $href = rawurlencode($matches[1]);
-                $href = str_replace("%26amp%3B", "%26", $href);
-                $link = $matches[3];
-                # this string breaks ampersands
-                # $link = str_replace(";", "&#59;", $link);
+                $isSameDomain = str_replace("www.", "", explode("/", $matches[3], 2)[0]) == str_replace("www.", "", $_SERVER["SERVER_NAME"]);
+                if (!$isSameDomain) {
+                    $href = rawurlencode($matches[1]);
+                    $href = str_replace("%26amp%3B", "%26", $href);
+                    $href = 'away.php?to=' . $href;
+                } else {
+                    $domainNPath = explode("/", $matches[3], 2);
+                    $href = end($domainNPath);
+                }
+                $link = str_replace("\r", "", $matches[0]); // clears caret return that triggered <br> to be spawned
                 $rel  = $this->isAd() ? "sponsored" : "ugc";
 
-                /*$server_domain = str_replace(':' . $_SERVER['SERVER_PORT'], '', $_SERVER['HTTP_HOST']);
-                if(str_contains($link, $server_domain)) {
-                    $replaced_link = str_replace(':' . $_SERVER['SERVER_PORT'], '', $link);
-                    $replaced_link = str_replace($server_domain, '', $replaced_link);
-
-                    return "<a href='$replaced_link' rel='$rel'>$link</a>" . htmlentities($matches[4]);
-                }
-
-                $link = htmlentities(urldecode($link));*/
-
-                return "<a href='/away.php?to=$href' rel='$rel' target='_blank'>$link</a>" . htmlentities($matches[4]);
+                return "<a href='/$href' rel='$rel' target='_blank'>$link</a>" . htmlentities($matches[4]);
             }),
             $text
         );
@@ -74,6 +69,7 @@ trait TRichText
         $contentColumn = property_exists($this, "overrideContentColumn") ? $this->overrideContentColumn : "content";
         $text = $this->getRecord()->{$contentColumn};
         $text = preg_replace("%@([A-Za-z0-9]++) \(((?:[\p{L&}\p{Lo} 0-9]\p{Mn}?)++)\)%Xu", "[$1|$2]", $text);
+        $text = preg_replace("%\*([A-Za-z0-9]++) \(((?:[\p{L&}\p{Lo} 0-9]\p{Mn}?)++)\)%Xu", "[$1|$2]", $text);
         $text = preg_replace("%([\n\r\s]|^)(@([A-Za-z0-9]++))%Xu", "$1[$3|@$3]", $text);
 
         $resolvedUsers = $skipUsers;
@@ -140,9 +136,11 @@ trait TRichText
         if ($html) {
             if ($proc) {
                 $text = $this->formatLinks($text);
+                // Mentions: @user, @user (name), [id1|name]
                 $text = preg_replace("%@([A-Za-z0-9]++) \(((?:[\p{L&}\p{Lo} 0-9]\p{Mn}?)++)\)%Xu", "[$1|$2]", $text);
+                $text = preg_replace("%\*([A-Za-z0-9]++) \(((?:[\p{L&}\p{Lo} 0-9]\p{Mn}?)++)\)%Xu", "[$1|$2]", $text);
                 $text = preg_replace("%([\n\r\s]|^)(@([A-Za-z0-9]++))%Xu", "$1[$3|@$3]", $text);
-                $text = preg_replace("%\[([A-Za-z0-9]++)\|((?:[\p{L&}\p{Lo} 0-9@]\p{Mn}?)++)\]%Xu", "<a href='/$1'>$2</a>", $text);
+                $text = preg_replace("%\[([A-Za-z0-9]++)\|((?:[\p{L&}\p{Lo} 0-9\.\-\`\'@]\p{Mn}?)++)\]%Xu", "<a href='/$1'>$2</a>", $text);
                 $text = preg_replace_callback("%([\n\r\s]|^)(\#([\p{L}_0-9][\p{L}_0-9\(\)\-\']+[\p{L}_0-9\(\)]|[\p{L}_0-9]{1,2}))%Xu", function ($m) {
                     $slug = rawurlencode($m[3]);
 
@@ -155,6 +153,9 @@ trait TRichText
             $text = $this->removeZalgo($text);
             $text = nl2br($text);
         } else {
+            $text = preg_replace("%@([A-Za-z0-9]++) \(((?:[\p{L&}\p{Lo} 0-9]\p{Mn}?)++)\)%Xu", "[$1|$2]", $text);
+            $text = preg_replace("%\*([A-Za-z0-9]++) \(((?:[\p{L&}\p{Lo} 0-9]\p{Mn}?)++)\)%Xu", "[$1|$2]", $text);
+            $text = preg_replace("%([\n\r\s]|^)(@([A-Za-z0-9]++))%Xu", "$1[$3|@$3]", $text);
             $text = str_replace("\r\n", "\n", $text);
         }
 

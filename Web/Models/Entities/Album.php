@@ -95,7 +95,7 @@ class Album extends MediaCollection
         $res = (object) [];
 
         $res->id              = $this->getId();
-        $res->thumb_id        = !is_null($this->getCoverPhoto()) ? $this->getCoverPhoto()->getPrettyId() : 0;
+        $res->thumb_id        = !is_null($this->getCoverPhoto()) ? $this->getCoverPhoto()->getId() : '0';
         $res->owner_id        = $this->getOwner()->getRealId();
         $res->title           = $this->getName();
         $res->description     = $this->getDescription();
@@ -105,7 +105,7 @@ class Album extends MediaCollection
         $res->privacy_comment = 1;
         $res->upload_by_admins_only = 1;
         $res->comments_disabled = 0;
-        $res->can_upload      = $this->canBeModifiedBy($user); # thisUser недоступен в entities
+        $res->can_upload      = (int) $this->canBeModifiedBy($user); # thisUser недоступен в entities
         if ($need_covers) {
             $res->thumb_src   = $this->getCoverURL();
 

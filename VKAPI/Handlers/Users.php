@@ -26,8 +26,11 @@ final class Users extends VKAPIRequestHandler
             $user_ids = (string) $authuser->getId();
         }
 
-
-        $usrs = explode(',', $user_ids);
+        if (!empty($user_ids)) {
+            $usrs = explode(',', $user_ids);
+        } else {
+            $usrs = [];
+        }
         $response = [];
 
         $ic = sizeof($usrs);
@@ -39,7 +42,7 @@ final class Users extends VKAPIRequestHandler
         $usrs = array_slice($usrs, $offset * $count);
 
         for ($i = 0; $i < $ic; $i++) {
-            if ($usrs[$i] != 0) {
+            if ((int) $usrs[$i] != 0) {
                 $usr = $users->get((int) $usrs[$i]);
                 if (is_null($usr) || $usr->isDeleted()) {
                     $response[$i] = (object) [
@@ -59,20 +62,26 @@ final class Users extends VKAPIRequestHandler
                 } elseif ($usrs[$i] == null) {
 
                 } else {
+                    $canView = $usr->canBeViewedBy($this->getUser());
                     $response[$i] = (object) [
                         "id"                => $usr->getId(),
                         "first_name"        => $usr->getFirstName(true),
                         "last_name"         => $usr->getLastName(true),
-                        "is_closed"         => $usr->isClosed(),
-                        "can_access_closed" => (bool) $usr->canBeViewedBy($this->getUser()),
+                        "is_closed"         => (int) $usr->isClosed(),
+                        "can_access_closed" => (int) $canView,
                     ];
 
                     $flds = explode(',', $fields);
-                    $canView = $usr->canBeViewedBy($this->getUser());
                     foreach ($flds as $field) {
                         switch ($field) {
+                            case "first_name_gen":
+                                $response[$i]->first_name_gen = $usr->getMorphedName("genitive", false, false);
+                                break;
+                            case "last_name_gen":
+                                $response[$i]->last_name_gen = $usr->getMorphedName("genitive", false, true);
+                                break;
                             case "verified":
-                                $response[$i]->verified = intval($usr->isVerified());
+                                $response[$i]->verified = (int) $usr->isVerified();
                                 break;
                             case "sex":
                                 $response[$i]->sex = $usr->isFemale() ? 1 : ($usr->isNeutral() ? 0 : 2);
@@ -119,6 +128,11 @@ final class Users extends VKAPIRequestHandler
                                 }
 
                                 break;
+                            case "nickname":
+                                if ($usr->getShortCode() != null) {
+                                    $response[$i]->nickname = $usr->getPseudo();
+                                }
+                                break;
                             case "screen_name":
                                 if ($usr->getShortCode() != null) {
                                     $response[$i]->screen_name = $usr->getShortCode();
@@ -153,6 +167,7 @@ final class Users extends VKAPIRequestHandler
                                             $platform = 4;
                                             break;
 
+                                        case 'web':
                                         case null:
                                             $platform = 7;
                                             break;
@@ -168,6 +183,16 @@ final class Users extends VKAPIRequestHandler
                                     ];
                                 }
                                 // no break
+                            case "online":
+                                if ($usr->onlineStatus() == 0) {
+                                    $response[$i]->online = 1;
+
+                                    $platform = $usr->getOnlinePlatform(false);
+                                    if ($platform !== null) {
+                                        $response[$i]->online_mobile = 1;
+                                    }
+                                }
+                                break;
                             case "music":
                                 if (!$canView) {
                                     break;
@@ -201,7 +226,10 @@ final class Users extends VKAPIRequestHandler
                                     break;
                                 }
 
-                                $response[$i]->city = $usr->getCity();
+                                $response[$i]->city = (object) [
+                                    'id' => 0,
+                                    'title' => $usr->getCity(),
+                                ];
                                 break;
                             case "interests":
                                 if (!$canView) {
@@ -253,14 +281,6 @@ final class Users extends VKAPIRequestHandler
                                 $response[$i]->rating = $usr->getRating();
                                 break;
                             case "counters":
-                                $response[$i]->counters = (object) [
-                                    "friends_count" => $usr->getFriendsCount(),
-                                    "photos_count" => (new Photos())->getUserPhotosCount($usr),
-                                    "videos_count" => (new Videos())->getUserVideosCount($usr),
-                                    "audios_count" => (new Audios())->getUserCollectionSize($usr),
-                                    "notes_count" => (new Notes())->getUserNotesCount($usr),
-                                ];
-                                break;
                             case "correct_counters":
                                 $response[$i]->counters = (object) [
                                     "friends" => $usr->getFriendsCount(),
@@ -270,6 +290,11 @@ final class Users extends VKAPIRequestHandler
                                     "notes"   => (new Notes())->getUserNotesCount($usr),
                                     "groups"  => $usr->getClubCount(),
                                     "online_friends" => $usr->getFriendsOnlineCount(),
+                                    "mutual_friends" => 0, // FIXME: not implemented
+                                    "user_photos" => 0, // FIXME: not implemented
+                                    "albums" => (new Albums())->getUserAlbumsCount($usr),
+                                    "followers" => $usr->getFollowersCount(),
+                                    "gifts" => $usr->getGiftCount(),
                                 ];
                                 break;
                             case "guid":

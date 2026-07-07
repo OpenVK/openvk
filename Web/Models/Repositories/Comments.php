@@ -14,6 +14,9 @@ class Comments
     private $context;
     private $comments;
 
+    /* aggressive sql caching */
+    private static $cache = [];
+
     public function __construct()
     {
         $this->context  = DatabaseConnection::i()->getContext();
@@ -27,7 +30,7 @@ class Comments
 
     public function get(int $id): ?Comment
     {
-        return $this->toComment($this->comments->get($id));
+        return self::$cache[$id] ??= $this->toComment($this->comments->get($id));
     }
 
     public function getCommentsByTarget(Postable $target, int $page, ?int $perPage = null, ?string $sort = "ASC"): \Traversable

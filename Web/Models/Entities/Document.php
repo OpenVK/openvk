@@ -382,7 +382,13 @@ class Document extends Media
     {
         $res = new \stdClass();
         $res->id = $this->getId();
-        $res->owner_id = $this->getVirtualId();
+        if ($this->isOwnerHidden() && $user !== null && $this->getOwnerID() == $user->getId()) {
+            $res->owner_id = $this->getOwnerID();
+        } elseif (!$this->isOwnerHidden()) {
+            $res->owner_id = $this->getOwnerID();
+        } else {
+            $res->owner_id = 0;
+        }
         $res->title = $this->getName();
         $res->size  = $this->getFilesize();
         $res->ext   = $this->getFileExtension();

@@ -122,7 +122,7 @@ abstract class MediaCollection extends RowModel
 
     public function size(): int
     {
-        return sizeof($this->getRecord()->related("$this->relTableName.collection"));
+        return $this->getRecord()->related("$this->relTableName.collection")->count("*");
     }
 
     public function getCreationTime(): DateTime

@@ -7,6 +7,7 @@ namespace openvk\VKAPI\Structures;
 final class Message
 {
     public $id;
+    public $peer_id;
     public $user_id;
     public $from_id;
     public $date;
@@ -18,7 +19,7 @@ final class Message
     public $attachments = [];
     public $fwd_messages = [];
     public $emoji;
-    public $important = true;
+    public $important = 0;
     public $deleted = 0;
     public $random_id = null;
 }

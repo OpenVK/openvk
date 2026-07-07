@@ -60,5 +60,17 @@ items:
     selector:
       app: adminer
     type: ClusterIP
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: redis-svc
+    namespace: openvk
+  spec:
+    ports:
+    - name: redis
+      port: 6379
+    selector:
+      app: redis
+    type: ClusterIP
 kind: List
 metadata: {}

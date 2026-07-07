@@ -66,4 +66,26 @@ abstract class VKAPIRequestHandler
             $this->fail(29, "You have been rate limited.");
         }
     }
+
+    protected function createHandler(string $handlerClass): VKAPIRequestHandler
+    {
+        if (!class_exists($handlerClass)) {
+            throw new \Exception(`Class $handlerClass not found`);
+        }
+
+        return new $handlerClass($this->getUser(), $this->getPlatform());
+    }
+
+    public function generateItems(int $count, array $items)
+    {
+        if (VKAPI_DECL_VER_MAJOR >= 5) {
+            return (object) [
+                'count' => $count,
+                'items' => $items,
+            ];
+        } else {
+            array_unshift($items, $count);
+            return $items;
+        }
+    }
 }

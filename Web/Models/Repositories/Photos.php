@@ -6,11 +6,14 @@ namespace openvk\Web\Models\Repositories;
 
 use openvk\Web\Models\Entities\{Photo, User};
 use Chandler\Database\DatabaseConnection;
+use Nette\Database\Table\ActiveRow;
 
 class Photos
 {
     private $context;
     private $photos;
+
+    private static $cache = [];
 
     public function __construct()
     {
@@ -18,14 +21,14 @@ class Photos
         $this->photos  = $this->context->table("photos");
     }
 
+    private function toPhoto(?ActiveRow $ar): ?Photo
+    {
+        return is_null($ar) ? null : new Photo($ar);
+    }
+
     public function get(int $id): ?Photo
     {
-        $photo = $this->photos->get($id);
-        if (!$photo) {
-            return null;
-        }
-
-        return new Photo($photo);
+        return self::$cache[$id] ??= $this->toPhoto($this->photos->get($id));
     }
 
     public function getByOwnerAndVID(int $owner, int $vId): ?Photo
@@ -36,11 +39,7 @@ class Photos
             "system"     => 0,
             "private"    => 0,
         ])->fetch();
-        if (!$photo) {
-            return null;
-        }
-
-        return new Photo($photo);
+        return $this->toPhoto($photo);
     }
 
     public function getEveryUserPhoto(User $user, int $offset = 0, int $limit = 10): \Traversable
@@ -55,20 +54,18 @@ class Photos
         ])->order("id DESC");
 
         foreach ($photos->limit($limit, $offset) as $photo) {
-            yield new Photo($photo);
+            yield $this->toPhoto($photo);
         }
     }
 
     public function getUserPhotosCount(User $user)
     {
-        $photos = $this->photos->where([
+        return $this->photos->where([
             "owner"    => $user->getId(),
             "deleted"  => 0,
             "system"   => 0,
             "private"  => 0,
             "anonymous" => 0,
-        ]);
-
-        return sizeof($photos);
+        ])->count("*");
     }
 }

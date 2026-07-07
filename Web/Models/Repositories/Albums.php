@@ -16,6 +16,9 @@ class Albums
     private $context;
     private $albums;
 
+    /* aggressive sql caching */
+    private static $cache = [];
+
     public function __construct()
     {
         $this->context = DatabaseConnection::i()->getContext();
@@ -38,7 +41,7 @@ class Albums
 
     public function get(int $id): ?Album
     {
-        return $this->toAlbum($this->albums->get($id));
+        return self::$cache[$id] ??= $this->toAlbum($this->albums->get($id));
     }
 
     public function getUserAlbums(User $user, int $page = 1, ?int $perPage = null): \Traversable
