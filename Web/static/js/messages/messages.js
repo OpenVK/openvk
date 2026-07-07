@@ -88,7 +88,7 @@ class DayChunk extends MessagesChunk {
 class ChatGeneralForm {
     // Representation of User, Club or Chat. Its not divided to the "info" part and messages part
 
-    static swag = 2000000000; // ids of the chats are bigger than that number
+    static chat_number = 2000000000; // ids of the chats are bigger than that number
     static MESSAGES_PER_PAGE = 20;
     static base_fields = 'photo_100'
 
@@ -98,14 +98,18 @@ class ChatGeneralForm {
         this.message_chunks_order = [];
     }
 
-    get id() {
+  get id() {
         switch (this.supposed_type) {
             case 'user':
                 return this.data.id;
             case 'club':
                 return this.data.id * -1;
-            case 'chat':
-                return this.data.id + this.swag;
+          case 'chat':
+                if (this.data.id < this.chat_number) {
+                  return this.data.id + this.chat_number;
+                } else {
+                  return this.data.id;
+                }
         }
     }
 
@@ -143,6 +147,8 @@ class ChatGeneralForm {
                 return escapeHtml(this.data.first_name + ' ' + this.data.last_name);
             case 'club':
                 return escapeHtml(this.data.name);
+          case 'chat':
+                return escapeHtml(this.data.title);
         }
     }
 
@@ -151,7 +157,9 @@ class ChatGeneralForm {
             case 'user':
                 return escapeHtml(this.data.first_name);
             case 'club':
-                return escapeHtml(this.data.name);
+                  return escapeHtml(this.data.name);
+            case 'chat':
+                  return escapeHtml(this.data.title);
         }
     }
 
@@ -227,10 +235,13 @@ class ChatGeneralForm {
             return window.im._current;
         }
 
-        if (id > this.swag) {
-            // chats or smth
-            // TODO
-            return;
+        if (id > this.chat_number) {
+            const __ = await window.OVKAPI.call('messages.getConversationsById', {'peer_ids': id, 'fields': ChatGeneralForm.base_fields})
+
+            if (!__ || __.items.length == 0) {
+              return null;
+            }
+            return __.items[0].conversation.peer;
         } else {
             if (id > 0) {
                 const __ = await window.OVKAPI.call('users.get', {'user_ids': id, 'fields': ChatGeneralForm.base_fields})
@@ -249,6 +260,7 @@ class ChatGeneralForm {
 
     static async resolveByIdAndReturnClass(id) {
         const c = await ChatGeneralForm.resolveById(id)
+        console.log(c)
         if (c == null) {
             return undefined
         }
@@ -334,8 +346,9 @@ class ChatGeneralForm {
     }
 
     _getLatestChunk() {
-        if (this.chunks[this.chunks.length - 1] == undefined) {
-            this.chunks.push(new MessagesChunk([]))
+        if (this.message_chunks[this.message_chunks.length - 1] == undefined) {
+            const c = new MessagesChunk([]);
+            this.message_chunks.push(c);
         }
 
         return this.chunks[this.chunks.length - 1];

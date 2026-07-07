@@ -128,6 +128,12 @@
                 {ifset $thisUser}
                 {var $notificationsCount = $thisUser->getNotificationsCount()}
 
+                {if (OPENVK_ROOT_CONF["openvk"]["credentials"]["im"]["enable"] ?? false)}
+                    {var $unreadMessagesCount = $thisUser->getUnreadMessagesCount()}
+                {else}
+                    {var $unreadMessagesCount = 0}
+                {/if}
+
                 <a id="fast_notifications" href="/notifications" class="mobiles_only">
                     <object n:class="$notificationsCount == 0 ? zero_counter : '' ">
                         <b>{$notificationsCount}</b>
