@@ -1,274 +1,230 @@
-class ConversationsViewModel {
-    constructor() {
-        this.indexes_order = ko.observableArray([]);
-        this.conversations_list = ko.pureComputed(() => {
-            this._check_count();
+import { ChatMessage, ChatGeneralForm } from './messages.js';
+import { render, html, ConversationListView } from './components.js';
 
-            return window.im.conversations.convs;
-        })
-        this._check_count = ko.observable(0);
-        this.has_more_items = ko.pureComputed(() => {
-            this._check_count();
-            // todo REWRITE
-            if (!window.im.conversations.total_convs) {
-                return true;
-            }
+const tr = window.tr;
+const CMessageBox = window.CMessageBox;
 
-            return window.im.conversations.loaded_convs_count < window.im.conversations.total_convs
+export class ConversationsViewModel {
+  constructor() {
+    this._counter = 0;
+  }
+
+  _update() {
+    this._counter++;
+    const container = document.querySelector('div[data-window="conversations"]');
+    if (container && !container.classList.contains('hidden')) {
+      window.im.conversations._render(container);
+    }
+  }
+
+  async loadNext() {
+    await window.im.conversations._loadNext();
+    this._update();
+  }
+
+  _chatCreationModal() {
+    const msg = new CMessageBox({
+      title: 'chat creation',
+      body: '<input placeholder="name" id="chat_create_name" type="text"><input placeholder="user ids csv" id="user_ids" type="text">',
+      buttons: [tr('create'), tr('cancel')],
+      callbacks: [async () => {
+        const name = msg.getNode().nodes[0].querySelector('#chat_create_name');
+        const user_ids = msg.getNode().nodes[0].querySelector('#user_ids');
+
+        await window.OVKAPI.call('messages.createChat', {
+          'title': name.value,
+          'user_ids': user_ids.value,
         });
-        // todo поменять
-    }
-
-    _update() {
-        this._check_count(this._check_count() + 1);
-    }
-
-    _st() {
-        this.conversations = ko.observableArray(window.im.conversations.convs);
-    }
-
-    async loadNext() {
-        await window.im.conversations._loadNext();
-        this._update();
-    }
-
-    _chatCreationModal() {
-        const msg = new CMessageBox({
-            title: 'chat creation',
-            body: `<input placeholder="name" id="chat_create_name" type="text"><input placeholder="user ids csv" id="user_ids" type="text">`,
-            buttons: [tr('create'), tr('cancel')],
-            callbacks: [async () => {
-                const name = msg.getNode().nodes[0].querySelector('#chat_create_name')
-                const user_ids = msg.getNode().nodes[0].querySelector('#user_ids')
-
-                await window.OVKAPI.call("messages.createChat", {
-                  "title": name.value,
-                  "user_ids": user_ids.value
-                })
-            }, () => {}]
-        })
-    }
+      }, () => {}],
+    });
+  }
 }
 
-class Conversations {
-    constructor() {
-        this.total_convs = 0;
-        this.CONVERSATIONS_PER_PAGE = 100;
-        this.template = `
-        <div class="crp-list">
-            <div>
-                <input type="button" class="button" value="create chat" data-bind="event: { click: window.im.conversations.view._chatCreationModal }">
-            </div>
-            <div data-bind="foreach: conversations_list">
-                <div class="crp-entry" data-bind="event: { click: async function(data, event) { await window.im.selectChat(this) } }">
-                    <div class="crp-entry--image">
-                        <img data-bind="attr: { src: peer.avatar_any }"
-                        loading="lazy" />
-                    </div>
-                    <div class="crp-entry--info">
-                        <a data-bind="attr: { href: peer.chat_url }, html: peer.full_name "></a><br/>
-                    </div>
-                    <div class="crp-entry--message"></div>
-                </div>
-            </div>
-            <div data-bind="if: has_more_items, event: { click: loadNext }">
-                ${tr('show_next')}
-            </div>
-        </div>
-        `
-    }
+export class Conversations {
+  constructor() {
+    this.total_convs = 0;
+    this.CONVERSATIONS_PER_PAGE = 100;
+  }
 
-    async _resolveSel(sel) {
-        let _ = null;
+  async _resolveSel(sel) {
+    let _ = null;
 
-        try {
-            this.convs.forEach(item => {
-                if (item.peer.id === sel) {
-                    _ = item;
-                }
-            });
-        } catch(e) {
-            console.error(e);
+    try {
+      this.convs.forEach((item) => {
+        if (item.peer.id === sel) {
+          _ = item;
         }
-
-        if (_) {
-            return _.peer;
-        }
-
-        let _n = await ChatGeneralForm.resolveById(sel);
-        if (!_n) {
-            return null;
-        }
-
-        return new ChatGeneralForm(_n);
+      });
+    } catch (e) {
+      console.error(e);
     }
 
-    async getConversations(offset = 0) {
-        // adding profiles to conversation items
-        let convs = await window.OVKAPI.call("messages.getConversations", {
-            extended: 1,
-            count: this.CONVERSATIONS_PER_PAGE,
-            offset: offset,
-            fields: ChatGeneralForm.base_fields
-        });
-        const lists = [];
-
-        // Профили выносятся в кэш, в peer будет создана ссылка
-        convs.profiles?.forEach(prof => {
-            window.im.cached_profiles._addProfileCache(new ChatGeneralForm(prof));
-        });
-        convs.groups?.forEach(group => {
-            window.im.cached_profiles._addProfileCache(new ChatGeneralForm(group));
-        });
-        convs.chats?.forEach(group => {
-            window.im.cached_profiles._addProfileCache(new ChatGeneralForm(group));
-        });
-
-        convs.items.forEach(item => {
-            const id = item.conversation.peer.id;
-            item.peer = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(id);
-
-            lists.push(new Conversation(item));
-        })
-
-        if (!this.total_convs) {
-            this.total_convs = convs.count;
-        }
-
-        return lists;
+    if (_) {
+      return _.peer;
     }
 
-    get loaded_convs_count() {
-        if (!this.all_convs) {
-            return 0;
-        }
-
-        return this.all_convs.length;
+    let _n = await ChatGeneralForm.resolveById(sel);
+    if (!_n) {
+      return null;
     }
 
-    _appendConvs(convs) {
-        if (!this.all_convs) {
-            this.all_convs = [];
-        }
+    return new ChatGeneralForm(_n);
+  }
 
-        convs.forEach(item => {
-            this.all_convs.push(item);
-            this.view.indexes_order.push(item.id);
-        });
+  async getConversations(offset = 0) {
+    let convs = await window.OVKAPI.call('messages.getConversations', {
+      extended: 1,
+      count: this.CONVERSATIONS_PER_PAGE,
+      offset: offset,
+      fields: ChatGeneralForm.base_fields,
+    });
+
+    const lists = [];
+
+    convs.profiles?.forEach((prof) => {
+      window.im.cached_profiles._addProfileCache(new ChatGeneralForm(prof));
+    });
+    convs.groups?.forEach((group) => {
+      window.im.cached_profiles._addProfileCache(new ChatGeneralForm(group));
+    });
+    convs.chats?.forEach((group) => {
+      window.im.cached_profiles._addProfileCache(new ChatGeneralForm(group));
+    });
+
+    convs.items.forEach((item) => {
+      const id = item.conversation.peer.id;
+      item.peer = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(id);
+      lists.push(new Conversation(item));
+    });
+
+    if (!this.total_convs) {
+      this.total_convs = convs.count;
     }
 
-    async _loadNext() {
-        // хз какой тут оффсет может быть
-        let convs = await this.getConversations(this.loaded_convs_count);
-        this._appendConvs(convs);
+    return lists;
+  }
+
+  get loaded_convs_count() {
+    if (!this.all_convs) return 0;
+    return this.all_convs.length;
+  }
+
+  _appendConvs(convs) {
+    if (!this.all_convs) {
+      this.all_convs = [];
     }
 
-    async init() {
-        this.view = new ConversationsViewModel();
-        await this._loadNext();
-        //this.view._st();
+    convs.forEach((item) => {
+      this.all_convs.push(item);
+    });
+  }
+
+  async _loadNext() {
+    let convs = await this.getConversations(this.loaded_convs_count);
+    this._appendConvs(convs);
+  }
+
+  async init() {
+    this.view = new ConversationsViewModel();
+    await this._loadNext();
+  }
+
+  swapConvs(conv_1, conv_2) {}
+
+  _findConv(id) {
+    const _l = this.all_convs.filter((itm) => itm.peer.id == id);
+    if (_l[0] == undefined) {
+      throw Error('Not found chat');
+    }
+    return _l[0];
+  }
+
+  async _findConvFromApi(id) {
+    try {
+      return this._findConv(id);
+    } catch (e) {}
+
+    const b = await ChatGeneralForm.resolveByIdAndReturnClass(id);
+    if (!b) {
+      throw Error('Not found chat');
     }
 
-    // когда перезагрузится страница то всё равно в другом порядке будет
-    swapConvs(conv_1, conv_2) {
+    const c = new Conversation({ 'peer': b });
+    this.all_convs.push(c);
+    return c;
+  }
 
+  get convs() {
+    return (this.all_convs || []).slice(0).sort((a, b) => {
+      return Number(b.last_updated) - Number(a.last_updated);
+    });
+  }
+
+  get has_more_items() {
+    if (!this.total_convs) return true;
+    return this.loaded_convs_count < this.total_convs;
+  }
+
+  hasAppeared(container) {
+    return container.querySelector('.crp-list') != null;
+  }
+
+  appear(container) {
+    container.classList.remove('hidden');
+    if (this.hasAppeared(container)) {
+      this._render(container);
+      return;
     }
 
-    _findConv(id) {
-        const _l = this.all_convs.filter(itm => {return itm.peer.id == id});
-        if (_l[0] == undefined) {
-            throw Error('Not found chat')
-        }
+    this._render(container);
+    document.documentElement.scroll({ top: 0 });
+  }
 
-        return _l[0];
-    }
+  _render(container) {
+    const convs = this.convs;
 
-    async _findConvFromApi(id) {
-        try {
-            return this._findConv(id)
-        } catch(e) {}
+    render(html`
+      <${ConversationListView}
+        conversations=${convs}
+        hasMore=${this.has_more_items}
+        onLoadMore=${() => this.view.loadNext()}
+        onCreateChat=${() => this.view._chatCreationModal()}
+      />
+    `, container);
+  }
 
-        const b = await ChatGeneralForm.resolveByIdAndReturnClass(id)
-        if (!b) {
-            throw Error('Not found chat')
-        }
-
-        const c = new Conversation({
-            'peer': b
-        })
-
-        this.all_convs.push(c)
-
-        return c
-    }
-
-    // Есть общий список со всеми переписками и есть массив с их порядком
-    get convs() {
-        /*const _ret = [];
-        this.view.indexes_order().forEach(id => {
-            _ret.push(this._findConv(id));
-        });*/
-
-        return this.all_convs.slice(0).sort((a, b) => {
-            //console.log(a.peer.full_name, a.last_updated, '\n', b.peer.full_name, b.last_updated, Number(a.last_updated), Number(b.last_updated))
-            return Number(b.last_updated) - Number(a.last_updated);
-        });
-    }
-
-    hasAppeared(container) {
-        return container.querySelector('.crp-list') != null;
-    }
-
-    appear(container) {
-        container.classList.remove('hidden');
-        if (this.hasAppeared(container)) {
-            return;
-        }
-
-        this.node = container.insertAdjacentHTML('beforeend', this.template);
-        document.documentElement.scroll({
-            top: 0
-        })
-
-        ko.applyBindings(this.view, container);
-    }
-
-    hide(container) {
-        container.classList.add('hidden')
-    }
+  hide(container) {
+    container.classList.add('hidden');
+  }
 }
 
-class Conversation {
+export class Conversation {
   constructor(conversation_item) {
-        this._conversation = conversation_item.conversation;
-        this._last_message = new ChatMessage(conversation_item.last_message);
-        this.peer = conversation_item.peer;
-    }
+    this._conversation = conversation_item.conversation;
+    this._last_message = new ChatMessage(conversation_item.last_message);
+    this.peer = conversation_item.peer;
+  }
 
-    get last_message() {
-        try {
-            if (this.peer) {
-                return this.peer._getLatestChunk().latest_message;
-            }
-        // no mesages
-        } catch(e) {}
+  get last_message() {
+    try {
+      if (this.peer) {
+        return this.peer._getLatestChunk().latest_message;
+      }
+    } catch (e) {}
 
-        return this._last_message;
-    }
+    return this._last_message;
+  }
 
-    get conversation() {
-        return this._conversation;
-    }
+  get conversation() {
+    return this._conversation;
+  }
 
   get last_updated() {
-        if (!this.last_message) {
-            return null;
-        }
-
-        return this.last_message.sent;
-    }
+    if (!this.last_message) return null;
+    return this.last_message.sent;
+  }
 
   get id() {
-        return this.peer.id;
-    }
+    return this.peer.id;
+  }
 }
