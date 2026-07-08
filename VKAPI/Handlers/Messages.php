@@ -219,7 +219,15 @@ final class Messages extends VKAPIRequestHandler
                     if ($localChatId > 0) {
                         $chatIDs[] = $localChatId;
                         $data['chats'][$key]['id'] = $chatId;
+                        $data['chats'][$key]['type'] = 'chat';
+                        $data['chats'][$key]['admin_id'] = 0;
                         $data['chats'][$key]['title'] = "Беседа №" . $localChatId;
+                        $data['chats'][$key]['description'] = "";
+                        $data['chats'][$key]['photo_50'] = "";
+                        $data['chats'][$key]['photo_100'] = "";
+                        $data['chats'][$key]['photo_200'] = "";
+                        $data['chats'][$key]['left'] = 0;
+                        $data['chats'][$key]['kicked'] = 0;
                     }
                 } else {
                     $chatId = abs((int)$chat);
@@ -229,7 +237,15 @@ final class Messages extends VKAPIRequestHandler
                         $chatIDs[] = $localChatId;
                         $data['chats'][$key] = [
                             'id' => $chatId,
-                            'title' => "Беседа №" . $localChatId
+                            'type' => 'chat',
+                            'admin_id' => 0,
+                            'title' => "Беседа №" . $localChatId,
+                            'description' => "",
+                            'photo_50' => "",
+                            'photo_100' => "",
+                            'photo_200' => "",
+                            'left' => 0,
+                            'kicked' => 0
                         ];
                     }
                 }
