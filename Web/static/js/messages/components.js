@@ -1,0 +1,270 @@
+import { h, render as preactRender } from '../node_modules/preact/dist/preact.mjs';
+import htm from '../node_modules/htm/dist/htm.mjs';
+
+const tr = window.tr;
+
+const html = htm.bind(h);
+
+export { html, preactRender as render };
+
+function isSelected(msg) {
+  const view = window.im?.messenger?.view;
+  return view ? view.isMessageSelected(msg) : false;
+}
+
+function hideHead(msg, index, chunk) {
+  return index > 0 && chunk.messages[index - 1].doHideHead(msg);
+}
+
+export const MessageBubble = ({ msg, index, chunk }) => {
+  const cls = [
+    'messenger-app--messages---message',
+    isSelected(msg) ? 'msg-selected' : '',
+    hideHead(msg, index, chunk) ? 'same-author' : '',
+    msg.data.deleted ? 'msg-deleted' : '',
+  ].filter(Boolean).join(' ');
+
+  return html`
+    <div class="${cls}"
+      onMouseDown=${(e) => window.im?.messenger?.view?.onMessageClick(msg, e)}>
+      <div class="messenger-app--messages---message--wrap">
+        <div class="_avatar">
+          <img class="ava" src=${msg.sender.avatar_any} alt=${msg.sender.full_name} />
+        </div>
+        <div class="_content">
+          <a class="_sender" href=${msg.sender.page_url || msg.sender.chat_url}>
+            <strong>${msg.sender.full_name}</strong>
+          </a>
+          <span class="text">${msg.text}</span>
+          ${msg.attachments.length > 0 && html`
+            <div class="attachments">
+              ${msg.attachments.map((att) => html`<${Attachment} att=${att} />`)}
+            </div>
+          `}
+        </div>
+      </div>
+      <div class="time">
+        ${msg.id != null && html`
+          <div>
+            <span>${msg.id}</span>
+            <span>${msg.readable_date}</span>
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+};
+
+const Attachment = ({ att }) => {
+  switch (att.type) {
+    case 'photo':
+      return html`
+        <div class="msg-attach-j msg-attach-j-photo">
+          <a href=${att.photo.link}>
+            <img src=${att.photo.photo_130} alt="..." />
+          </a>
+        </div>`;
+    case 'video':
+      return html`
+        <div class="msg-attach-j msg-attach-j-video">
+          <a href=${'/video' + att.video.owner_id + '_' + att.video.id}>
+            <span>${att.video.title}</span>
+          </a>
+        </div>`;
+    case 'doc':
+      return html`
+        <div class="msg-attach-j msg-attach-j-doc">
+          <a href=${'/doc' + att.doc.owner_id + '_' + att.doc.id}>
+            <span>${att.doc.title}</span>
+          </a>
+        </div>`;
+    case 'audio':
+      return html`
+        <div class="msg-attach-j msg-attach-j-audio">
+          <a>${att.audio.artist}</a>
+          —
+          <span>${att.audio.title}</span>
+        </div>`;
+    default:
+      return null;
+  }
+};
+
+export const DayDivider = ({ date }) => {
+  return html`
+    <div class="messenger-app--messages-day-time">
+      <b>${date}</b>
+    </div>
+  `;
+};
+
+export const DayChunkView = ({ chunk }) => {
+  return html`
+    <div class="messenger-app--messages-day">
+      <${DayDivider} date=${chunk.readable_date} />
+      ${chunk.messages.map((msg, idx) => html`
+        <${MessageBubble} msg=${msg} index=${idx} chunk=${chunk} />
+      `)}
+    </div>
+  `;
+};
+
+export const MessageListView = ({ messages }) => {
+  return html`
+    <div class="messenger-app--messages">
+      <div class="messenger-app--messages-array">
+        ${messages.map((chunk) => html`<${DayChunkView} chunk=${chunk} />`)}
+      </div>
+    </div>
+  `;
+};
+
+export const PeerTab = ({ conv, active }) => {
+  return html`
+    <div class="messages--peers-tab${active ? ' active' : ''}">
+      <a onClick=${() => window.im?.selectChat(conv)}>${conv.peer.name}</a>
+      <span class="messages--peers-tab-close" onClick=${() => window.im?.closeChat(conv)}>x</span>
+    </div>
+  `;
+};
+
+export const PeerTabsView = ({ tabs, currentChat }) => {
+  return html`
+    <div class="messages--peers-tabs">
+      ${tabs.map((tab, idx) => html`
+        <${PeerTab} conv=${tab} active=${idx === currentChat} />
+      `)}
+    </div>
+  `;
+};
+
+export const ActionsBar = ({ count, onDelete, onUnselect, onReply }) => {
+  if (count === 0) return null;
+  return html`
+    <div class="messages--actions shown">
+      <div><a onClick=${onDelete}>delete</a></div>
+      <div><a onClick=${onUnselect}>unselect</a></div>
+      ${count === 1 && html`
+        <div><a onClick=${onReply}>reply</a></div>
+      `}
+    </div>
+  `;
+};
+
+export const AttachmentMenu = () => {
+  return html`
+    <div>
+      <a class="menu_toggler">${tr('attach')}</a>
+      <div id="wallAttachmentMenu" class="up_direction hidden">
+        <a class="header menu_toggler">${tr('attach')}</a>
+        <a id="__photoAttachment">
+          <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
+          ${tr('photo')}
+        </a>
+        <a id="__videoAttachment">
+          <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
+          ${tr('video')}
+        </a>
+        <a id="__audioAttachment">
+          <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/audio-ac3.png" />
+          ${tr('audio')}
+        </a>
+        <a id="__documentAttachment">
+          <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-octet-stream.png" />
+          ${tr('document')}
+        </a>
+        <a onClick=${(e) => typeof initGraffiti !== 'undefined' && initGraffiti(e)}>
+          <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/draw-brush.png" />
+          ${tr('graffiti')}
+        </a>
+      </div>
+    </div>
+  `;
+};
+
+export const InputArea = ({ replyTo, onRemoveReply, onSend, onKeyPress, currentDraft, onInput }) => {
+  return html`
+    <div class="messenger-app-end${replyTo ? ' reply-selected' : ''}">
+      ${replyTo && html`
+        <div class="input-reply">
+          <span>${replyTo.text}</span>
+          <span onClick=${onRemoveReply}>close</span>
+        </div>
+      `}
+      <div class="post-buttons">
+        <div class="messenger-app--input" id="write">
+          <img class="ava" src=${window.im.current.avatar_any} alt=${window.im.current.full_name} />
+          <div class="messenger-app--input---messagebox">
+            <textarea
+              class="small-textarea"
+              placeholder=${tr('enter_message')}
+              value=${currentDraft}
+              onInput=${onInput}
+              onKeyDown=${onKeyPress}></textarea>
+            <div class="post-horizontal"></div>
+            <div class="post-vertical"></div>
+            <div class="input--messagebox-buttons">
+              <button class="button" onClick=${onSend}>${tr('send')}</button>
+              <${AttachmentMenu} />
+            </div>
+          </div>
+          <img class="ava" src="${window.im?.corresponder?.avatar_any || ''}"
+               alt="${window.im?.corresponder?.full_name || ''}" />
+        </div>
+      </div>
+    </div>
+  `;
+};
+
+export const ChatView = ({ peer }) => {
+  if (!peer) return null;
+  const view = window.im?.messenger?.view;
+  if (!view) return null;
+
+  return html`
+    <div class="chat-window">
+      <${PeerTabsView} tabs=${view.opened_tabs} currentChat=${view.current_chat} />
+      <${ActionsBar}
+        count=${view.selected_messages.length}
+        onDelete=${() => view.callDeletion()}
+        onUnselect=${() => view.unselect()}
+        onReply=${() => view.onReplyButtonClick()}
+      />
+      <div class="messenger-app" onScroll=${(e) => view.onMessagesScroll(e)}>
+        <div id="messenger-app--down-button" style="display:none"
+             onClick=${() => view._scrollToEnd()}>DOWN</div>
+        <${MessageListView} messages=${peer.divided_messages} />
+      </div>
+    </div>
+  `;
+};
+
+export const ConversationItem = ({ conv }) => {
+  return html`
+    <div class="crp-entry" onClick=${() => window.im?.selectChat(conv)}>
+      <div class="crp-entry--image">
+        <img src=${conv.peer.avatar_any} loading="lazy" />
+      </div>
+      <div class="crp-entry--info">
+        <a href=${conv.peer.chat_url}>${conv.peer.full_name}</a><br/>
+      </div>
+      <div class="crp-entry--message"></div>
+    </div>
+  `;
+};
+
+export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCreateChat }) => {
+  return html`
+    <div class="crp-list">
+      <div>
+        <input type="button" class="button" value="create chat" onClick=${onCreateChat} />
+      </div>
+      ${conversations.map((conv) => html`<${ConversationItem} conv=${conv} />`)}
+      ${hasMore && html`
+        <div onClick=${onLoadMore} class="crp-load-more">
+          ${tr('show_next')}
+        </div>
+      `}
+    </div>
+  `;
+};

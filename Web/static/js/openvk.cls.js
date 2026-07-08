@@ -284,13 +284,13 @@ function openJsSettings() {
             <td>
                 <label for='ux.auto_scroll'>${tr('auto_scroll')}</label>
             </td>
-        </tr>    
+        </tr>
         <tr>
             <td width="120" valign="top"></td>
             <td>
                 <a href="javascript:openPluginSettings()">${tr('ui_settings_window')}</a>
             </td>
-        </tr>  
+        </tr>
     `)
 }
 

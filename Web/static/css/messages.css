@@ -4,8 +4,12 @@ body.no-scroll .messenger-app--tab-messenger {
     min-height: 100vh;
 }
 
-body.no-scroll .toTop {
-    /*display: none; */
+body.no-scroll .navigation {
+    top: unset !important;
+}
+
+body.no-scroll .floating_sidebar.show {
+    display: none;
 }
 
 body.no-scroll {
@@ -15,6 +19,7 @@ body.no-scroll {
 
 body.no-scroll #wrapH {
     position: fixed;
+    z-index: 4;
     top: 43px;
     width: 630px;
 }
@@ -28,10 +33,12 @@ body.no-scroll .messenger-app--global-tabs {
     top: 65px;
     padding-top: 8px;
     background: white;
+    z-index: 4;
 }
 
 body.no-scroll .messages--peers-tabs {
     position: fixed;
+    z-index: 4;
     top: 97px;
     padding: 8px 10px;
     box-sizing: border-box;
@@ -42,6 +49,7 @@ body.no-scroll .messages--peers-tabs {
 
 body.no-scroll .page_header {
     position: fixed;
+    z-index: 3;
 }
 
 body.no-scroll .sidebar {
@@ -191,13 +199,15 @@ body.no-scroll .sidebar {
 .messages--actions {
     display: none;
     position: fixed;
+    z-index: 4;
     width: 100%;
     height: 50px;
     background: #000000;
 }
 
 .messages--actions.shown {
-    display: block;
+    display: flex;
+    gap: 5px;
 }
 
 .messenger-app--messages {
@@ -212,6 +222,7 @@ body.no-scroll .sidebar {
 .messenger-app--messages .messenger-app--messages-array {
     margin-top: auto;
     padding-bottom: 60px;
+    z-index: 0;
 }
 
 .messenger-app--messages---message {
@@ -312,7 +323,7 @@ body.no-scroll .sidebar {
 }
 
 .messenger-app--tab-messenger {
-    margin: 111px 0px -10px -10px;
+    margin: 89px 0px -10px -10px;
 }
 
 .messenger-app--tab-messenger.messenger-app--overscrolled #messenger-app--down-button {

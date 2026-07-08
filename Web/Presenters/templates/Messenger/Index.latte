@@ -1,4 +1,5 @@
 {extends "../@layout.latte"}
+
 {block title}
     {if $imAvailable}
         {_my_messages}
@@ -17,20 +18,8 @@
 
 {block content}
     {if $imAvailable}
-        <script>
-            async function init() {
-                await window.im.init(document.querySelector('.page_content'));
-            }
-            init();
-        </script>
+        {include "partials/container.latte"}
     {else}
-        <div class="container_gray" style="margin-top: -10px">
-            <center style="background: white; border: #DEDEDE solid 1px; padding: 20px;">
-                <img src="/assets/packages/static/openvk/img/oof.apng" style="width: 20%;" />
-                <span style="color: #707070; margin: 10px 0; display: block;">
-                    {tr("messages_unavailable")|noescape}
-                </span>
-            </center>
-        </div>
+        {include "partials/maintenance.latte"}
     {/if}
 {/block}
