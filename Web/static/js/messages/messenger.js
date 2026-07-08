@@ -4,7 +4,6 @@ import { render, html, PeerTabsView, ActionsBar, MessageListView, InputArea } fr
 
 const u = window.u;
 const collect_attachments = window.collect_attachments;
-const CMessageBox = window.CMessageBox;
 
 export class Messenger {
   async init() {
@@ -24,8 +23,10 @@ export class Messenger {
       return;
     }
 
-    this.view.appEl = container;
     this.view._render(container);
+    this.view.messagesListBlock = container.querySelector(".messenger-app--messages");
+    this.view.messagesList  = container.querySelector(".messenger-app--messages-array");
+    this.view.appEl = container;
   }
 
   hide(container) {
@@ -107,7 +108,7 @@ export class MessengerViewModel {
             onUnselect=${() => this.unselect()}
             onReply=${() => this.onReplyButtonClick()}
           />
-          <div class="messenger-app" onScroll=${(e) => this.onMessagesScroll(e)}>
+          <div class="messenger-app">
             <div id="messenger-app--down-button" style="display:none"
                  onClick=${() => this._scrollToEnd()}>DOWN</div>
             <${MessageListView} messages=${peer ? peer.divided_messages : []} />

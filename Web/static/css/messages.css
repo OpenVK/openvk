@@ -219,6 +219,11 @@ body.no-scroll .sidebar {
     margin-top: auto;
 }
 
+.messenger-app--messages .messenger-special-message {
+    display: flex;
+    justify-content: center;
+}
+
 .messenger-app--messages .messenger-app--messages-array {
     margin-top: auto;
     padding-bottom: 60px;
@@ -227,6 +232,7 @@ body.no-scroll .sidebar {
 
 .messenger-app--messages---message {
     margin-top: 3px;
+    position: relative;
 }
 
 .messenger-app--messages .messenger-app--messages-day-time {

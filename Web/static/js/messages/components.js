@@ -24,6 +24,15 @@ export const MessageBubble = ({ msg, index, chunk }) => {
     msg.data.deleted ? 'msg-deleted' : '',
   ].filter(Boolean).join(' ');
 
+  console.log(msg.data.action, msg.is_action)
+
+  if (msg.is_action) {
+    const act = msg.data.action.type;
+    const typ = SystemMessages[act] ?? SystemMessages["unknown"];
+
+    return typ(msg);
+  }
+
   return html`
     <div class="${cls}"
       onMouseDown=${(e) => window.im?.messenger?.view?.onMessageClick(msg, e)}>
@@ -46,14 +55,45 @@ export const MessageBubble = ({ msg, index, chunk }) => {
       <div class="time">
         ${msg.id != null && html`
           <div>
-            <span>${msg.id}</span>
             <span>${msg.readable_date}</span>
+          </div>
+          <div>
+            <span>${msg.id}</span>
           </div>
         `}
       </div>
     </div>
   `;
 };
+
+export const SystemMessages = {
+  "chat_create": (msg) => {
+      return html`
+        <div class="messenger-special-message">
+            <div>
+                <a class="_sender" href=${msg.sender.page_url || msg.sender.chat_url}>
+                    <strong>${msg.sender.full_name} </strong>
+                </a>
+                <span class="text">${msg.text}</span>
+                <div>
+                    <span>${msg.readable_date}</span>
+                </div>
+            </div>
+        </div>
+    `;
+  },
+  "unknown": (msg) => {
+      return html`
+        <div class="${msg}">
+            <div class="messenger-app--messages---message--wrap">
+                <div class="_content">
+                <span class="text">${msg.text}</span>
+                </div>
+            </div>
+        </div>
+    `;
+  }
+}
 
 const Attachment = ({ att }) => {
   switch (att.type) {
@@ -230,7 +270,7 @@ export const ChatView = ({ peer }) => {
         onUnselect=${() => view.unselect()}
         onReply=${() => view.onReplyButtonClick()}
       />
-      <div class="messenger-app" onScroll=${(e) => view.onMessagesScroll(e)}>
+      <div class="messenger-app">
         <div id="messenger-app--down-button" style="display:none"
              onClick=${() => view._scrollToEnd()}>DOWN</div>
         <${MessageListView} messages=${peer.divided_messages} />

@@ -303,8 +303,9 @@ export class ChatGeneralForm {
     return this.message_chunks[0];
   }
 
-  _getLatestChunk() {
-    if (this.message_chunks[this.message_chunks.length - 1] == undefined) {
+  _getLatestChunk(create_empty = true) {
+    if (create_empty && this.chunks[this.chunks.length - 1] == undefined) {
+      console.log('IM | Adding empty chunk')//, this.chunks, this.data)
       const c = new MessagesChunk([]);
       this.message_chunks.push(c);
     }
@@ -413,6 +414,10 @@ export class ChatMessage {
 
   get id() {
     return this.data.id;
+  }
+
+  get is_action() {
+    return this.data.action != null;
   }
 
   get peer_id() {
