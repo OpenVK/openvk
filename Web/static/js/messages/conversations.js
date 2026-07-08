@@ -2,7 +2,6 @@ import { ChatMessage, ChatGeneralForm } from './messages.js';
 import { render, html, ConversationListView } from './components.js';
 
 const tr = window.tr;
-const CMessageBox = window.CMessageBox;
 
 export class ConversationsViewModel {
   constructor() {
@@ -208,7 +207,7 @@ export class Conversation {
   get last_message() {
     try {
       if (this.peer) {
-        return this.peer._getLatestChunk().latest_message;
+        return this.peer._getLatestChunk(false).latest_message;
       }
     } catch (e) {}
 
