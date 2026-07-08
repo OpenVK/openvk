@@ -92,7 +92,7 @@
 {/block}
 
 {block actions}
-    <a href="{$x->getURL()}" class="profile_link">{_check_community}</a>
+    <a href="{$x->getURL()}" class="profile_link hide_on_mobiles">{_check_community}</a>
     {if $x->canBeModifiedBy($thisUser ?? NULL)}
         {var $clubPinned = $thisUser->isClubPinned($x)}
         <a href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}" class="profile_link" n:if="$clubPinned || $thisUser->getPinnedClubCount() <= 10" id="_pinGroup" data-group-name="{$x->getName()}" data-group-url="{$x->getUrl()}">

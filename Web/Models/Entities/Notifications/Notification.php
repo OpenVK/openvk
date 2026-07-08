@@ -12,10 +12,10 @@ use openvk\Web\Util\NotificationBroker;
 class Notification
 {
     private $recipient;
-    private $originModel;
-    private $targetModel;
-    private $time;
-    private $data;
+    public $originModel;
+    public $targetModel;
+    public $time;
+    public $data;
 
     protected $actionCode = null;
     protected $threshold  = -1;
@@ -146,12 +146,12 @@ class Notification
             case 0:
                 $info["type"]     = "like_post";
                 $info["parent"]   = $this->getModel(0)->toNotifApiStruct();
-                $info["feedback"] = $this->getModel(1)->toVkApiStruct();
+                $info["feedback"] = $this->toFeedbackStruct();
                 break;
             case 1:
                 $info["type"]     = "copy_post";
                 $info["parent"]   = $this->getModel(0)->toNotifApiStruct();
-                $info["feedback"] = null; # todo
+                $info["feedback"] = null;
                 break;
             case 2:
                 switch ($origin_m) {
@@ -262,5 +262,10 @@ class Notification
         $res->feedback = $info["feedback"];
         $res->reply    = null; # Ответы на комментарии не реализованы
         return $res;
+    }
+
+    public function toFeedbackStruct()
+    {
+        return (object) [];
     }
 }

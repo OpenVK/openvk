@@ -108,7 +108,15 @@ window.router = new class {
         }
         
         u("meta[name=csrf]").attr("value", u(parsed_content.querySelector('meta[name=csrf]')).attr('value'))
-        
+
+        if (isMobileAndExpanded()) {
+            document.body.classList.remove('menu-expanded')
+        }
+
+        if (isMobile() && document.querySelector('.mobile_title span') && parsed_content.querySelector('.mobile_title span')) {
+            document.querySelector('.mobile_title span').innerHTML = escapeHtml(parsed_content.querySelector('.mobile_title span').innerHTML)
+        }
+
         window.setBaseTitle(parsed_content.title)
 
         scripts_to_append.forEach(append_me => {
@@ -268,6 +276,34 @@ window.router = new class {
     }
 }
 
+function isMobile() {
+    return window.innerWidth < 770
+}
+
+function isMobileAndExpanded() {
+    return isMobile() && document.body.classList.contains('menu-expanded');
+}
+
+// Mobile theme header
+u(document).on('click', '.page_header', (e) => {
+    if (isMobile() && !e.target.closest('.link, #fast_notifications')) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const ch = document.body.classList.contains('menu-expanded');
+        if (!ch) {
+            document.body.classList.add('menu-expanded');
+        } else {
+            document.body.classList.remove('menu-expanded');
+        }
+    }
+})
+
+function toDesktopVersion() {
+    u("link[href^='/assets/packages/static/openvk/css/mobile.css']").remove();
+    u("meta[name='viewport']").remove();
+}
+
 u(document).on('click', 'a', async (e) => {
     if(e.defaultPrevented) {
         console.log('AJAX | Skipping because default is prevented')
@@ -414,6 +450,20 @@ u(document).on('submit', 'form', async (e) => {
     await window.router.__integratePage()
 
     u('#ajloader').removeClass('shown')
+})
+
+u('#logout_link').on('click', (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    const msg = new CMessageBox({
+        title: tr('confirm'),
+        body: tr('menu_logout_confirm'),
+        buttons: [tr('yes'), tr('no')],
+        callbacks: [() => {
+            location.assign(e.target.href)
+        }, () => {}]
+    })
 })
 
 window.addEventListener('popstate', (e) => {

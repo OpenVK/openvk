@@ -1,6 +1,25 @@
 {extends "../@layout.latte"}
 
-{block title}{_video}{/block}
+{block title}{$video->getName()}{/block}
+
+{block headIncludes}
+    {var $vidDesc = $video->getDescription()}
+    {var $vidDescTrimmed = !is_null($vidDesc) && mb_strlen($vidDesc) > 200 ? mb_substr($vidDesc, 0, 197) . '...' : $vidDesc}
+    {var $thumbUrl = $video->getThumbnailURL()}
+    {var $vidDims = $video->getDimensions()}
+    <meta property="og:title" content="{$video->getName()} — {$instance_name}" />
+    <meta property="og:url" content="{$baseUrl}/video{$video->getPrettyId()}" />
+    <meta n:if="!empty($thumbUrl)" property="og:image" content="{$thumbUrl}" />
+    <meta n:if="!empty($vidDescTrimmed)" property="og:description" content="{$vidDescTrimmed}" />
+    <meta property="og:type" content="video.other" />
+    <meta n:if="$video->getType() === 0" property="og:video" content="{$video->getURL()}" />
+    <meta n:if="!is_null($vidDims) && $video->getType() === 0" property="og:video:width" content="{$vidDims[0]}" />
+    <meta n:if="!is_null($vidDims) && $video->getType() === 0" property="og:video:height" content="{$vidDims[1]}" />
+    <meta n:if="$video->getType() === 0" property="og:video:type" content="video/mp4" />
+    <meta name="twitter:title" content="{$video->getName()} — {$instance_name}" />
+    <meta n:if="!empty($thumbUrl)" name="twitter:image" content="{$thumbUrl}" />
+    <meta name="twitter:card" content="summary_large_image" />
+{/block}
 
 {block header}
     <a href="{$user->getURL()}">{$user->getCanonicalName()}</a>

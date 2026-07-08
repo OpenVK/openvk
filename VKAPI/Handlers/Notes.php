@@ -237,11 +237,11 @@ final class Notes extends VKAPIRequestHandler
 
         $arr = (object) [
             "count" => $note->getCommentsCount(),
-            "comments" => []];
+            "items" => []];
         $comments = array_slice(iterator_to_array($note->getComments(1, $count + $offset)), $offset);
 
         foreach ($comments as $comment) {
-            $arr->comments[] = $comment->toVkApiStruct($this->getUser(), false, false, $note);
+            $arr->items[] = $comment->toVkApiStruct($this->getUser(), false, false, $note);
         }
 
         return $arr;

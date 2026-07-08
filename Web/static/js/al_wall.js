@@ -1892,7 +1892,7 @@ function showFastVideoUpload(node) {
         switch(current_tab) {
             case 'file':
                 msg.getNode().find('#__content').html(`
-                    <table cellspacing="7" cellpadding="0" width="80%" border="0" align="center">
+                    <table class="flexible_table" cellspacing="7" cellpadding="0" width="80%" border="0" align="center">
                         <tbody>
                             <tr>
                                 <td width="120" valign="top"><span class="nobold">${tr('info_name')}:</span></td>
@@ -1918,7 +1918,7 @@ function showFastVideoUpload(node) {
                 break
             case 'youtube':
                 msg.getNode().find('#__content').html(`
-                    <table cellspacing="7" cellpadding="0" width="80%" border="0" align="center">
+                    <table class="flexible_table" cellspacing="7" cellpadding="0" width="80%" border="0" align="center">
                         <tbody>
                             <tr>
                                 <td width="120" valign="top"><span class="nobold">${tr('info_name')}:</span></td>
@@ -3016,7 +3016,7 @@ u(document).on("click", "#additional_field_append", (e) => {
     }
 
     u('.edit_field_container_inserts').append(`
-        <table data-iterator="${iterator}" class="outline_table edit_field_container_item" width="80%" border="0" align="center">
+        <table data-iterator="${iterator}" class="flexible_table outline_table edit_field_container_item" width="80%" border="0" align="center">
             <tbody>
                 <tr>
                     <td width="150">${tr("additional_field_name")}</td>
