@@ -746,6 +746,11 @@
         box-sizing: border-box;
     }
 
+    .msg:has(+ .left_small_block) {
+        position: sticky;
+        top: 334px;
+    }
+
     #sudo-banner {
         position: absolute;
         top: 48px;
