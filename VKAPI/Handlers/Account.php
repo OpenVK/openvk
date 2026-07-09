@@ -90,7 +90,7 @@ final class Account extends VKAPIRequestHandler
         $all_counters = [
             "friends"       => $this->getUser()->getRequestsCount(),
             "notifications" => $this->getUser()->getNotificationsCount(),
-            "messages"      => $this->getUser()->getUnreadMessagesCount()
+            "messages"      => $this->getUser()->getUnreadMessagesCount(),
         ];
 
         if (!empty($filter)) {
