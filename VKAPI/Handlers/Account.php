@@ -86,7 +86,7 @@ final class Account extends VKAPIRequestHandler
     public function getCounters(string $filter = ""): object
     {
         $this->requireUser();
-        
+
         $all_counters = [
             "friends"       => $this->getUser()->getRequestsCount(),
             "notifications" => $this->getUser()->getNotificationsCount(),
