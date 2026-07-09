@@ -1,0 +1,157 @@
+{extends "@layout.latte"}
+
+{block title}
+    {if $form->id === 0}
+        {_admin_stickerpack_new}
+    {else}
+        {$form->name}
+    {/if}
+{/block}
+
+{block heading}
+    {include title}
+{/block}
+
+{block content}
+    <form class="aui" method="POST">
+        <h3>{_admin_commonsettings}</h3>
+        <fieldset>
+            <div class="field-group">
+                <label for="id">
+                    ID
+                </label>
+                <input class="text long-field" type="number" id="id" name="id" disabled value="{$form->id}" />
+            </div>
+            <div class="field-group">
+                <label for="name">
+                    {_admin_name}
+                    <span class="aui-icon icon-required"></span>
+                </label>
+                <input class="text long-field" type="text" id="name" name="name" value="{$form->name}" />
+            </div>
+            <div class="field-group">
+                <label for="description">
+                    {_admin_description}
+                </label>
+                <textarea class="text long-field" id="description" name="description">{$form->description}</textarea>
+            </div>
+            <div class="field-group">
+                <label for="slug">
+                    Slug
+                    <span class="aui-icon icon-required"></span>
+                </label>
+                <input class="text long-field" type="text" id="slug" name="slug" value="{$form->slug}" />
+                <div class="description">URL-friendly identifier (e.g. "my-sticker-pack")</div>
+            </div>
+            <div class="field-group">
+                <label for="price">
+                    {_admin_price}
+                </label>
+                <input class="text long-field" type="number" id="price" name="price" min="0" value="{$form->price}" />
+            </div>
+            <div class="field-group">
+                <label for="end_time">
+                    End time (Unix timestamp)
+                </label>
+                <input class="text long-field" type="number" id="end_time" name="end_time" min="0" value="{$form->end_time}" />
+                <div class="description">Leave empty for no expiration.</div>
+            </div>
+            <div class="field-group">
+                <label for="author">
+                    Author name
+                </label>
+                <input class="text long-field" type="text" id="author" name="author" value="{$form->author}" />
+            </div>
+            <div class="field-group">
+                <label for="author_id">
+                    Author profile ID
+                </label>
+                <input class="text long-field" type="number" id="author_id" name="author_id" min="0" value="{$form->author_id}" />
+            </div>
+            <fieldset class="group">
+                <legend></legend>
+                <div class="checkbox" resolved="">
+                    <input class="checkbox" type="checkbox" name="unlisted" id="unlisted" n:attr="checked => $form->unlisted" />
+                    <span class="aui-form-glyph"></span>
+                    <label for="unlisted">Unlisted (hide from catalog)</label>
+                </div>
+            </fieldset>
+        </fieldset>
+
+        <div class="buttons-container">
+            <div class="buttons">
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input class="aui-button aui-button-primary submit" type="submit" value="{_save}">
+            </div>
+        </div>
+    </form>
+
+    <hr />
+
+    <h3>Stickers in this pack</h3>
+
+    <form class="aui" method="POST" enctype="multipart/form-data" action="/admin/stickers/id{$pack->getId()}/addSticker">
+        <div class="field-group">
+            <label for="sticker">
+                Upload sticker image
+                <span class="aui-icon icon-required"></span>
+            </label>
+            <input type="file" name="sticker[]" accept="image/png" required="required" />
+        </div>
+        <div class="field-group">
+            <label for="emoji">
+                Emoji
+            </label>
+            <input class="text" type="text" id="emoji" name="emoji" value="" placeholder="😀" />
+        </div>
+        <div class="buttons-container">
+            <div class="buttons">
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input class="aui-button aui-button-primary submit" type="submit" value="Add Sticker">
+            </div>
+        </div>
+    </form>
+
+    {if sizeof($stickers) > 0}
+        <table class="aui aui-table-list">
+            <thead>
+                <th>ID</th>
+                <th>Preview</th>
+                <th>Emoji</th>
+                <th>Actions</th>
+            </thead>
+            <tbody>
+                <tr n:foreach="$stickers as $sticker">
+                    <td style="vertical-align: middle;">
+                        {$sticker->getId()}
+                    </td>
+                    <td style="vertical-align: middle;">
+                        <img style="max-height: 64px;" src="{$sticker->getImageUrl(128)}" alt="Sticker #{$sticker->getId()}" />
+                    </td>
+                    <td style="vertical-align: middle;">
+                        {$sticker->getEmoji()}
+                    </td>
+                    <td style="vertical-align: middle; text-align: right;">
+                        <a class="aui-button aui-button-primary" href="/admin/stickers/id{$pack->getId()}/sticker/{$sticker->getId()}">
+                            <span class="aui-icon aui-icon-small aui-iconfont-new-edit">{_edit}</span>
+                        </a>
+                        <a class="aui-button" href="/admin/stickers/id{$pack->getId()}/sticker/{$sticker->getId()}?act=delete&hash={$csrfToken}">
+                            <span class="aui-icon aui-icon-small aui-iconfont-close">{_delete}</span>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    {else}
+        <center>
+            <p>No stickers in this pack yet.</p>
+        </center>
+    {/if}
+
+    <div align="right">
+        {var $isLast = ((20 * (($_GET['sp'] ?? 1) - 1)) + sizeof($stickers)) < $stickerCount}
+
+        <a n:if="(($_GET['sp'] ?? 1) > 1)" class="aui-button" href="?sp={($_GET['sp'] ?? 1) - 1}">&laquo;</a>
+        <a n:if="$isLast" class="aui-button" href="?sp={($_GET['sp'] ?? 1) + 1}">&raquo;</a>
+    </div>
+{/block}

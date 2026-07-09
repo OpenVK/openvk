@@ -245,7 +245,7 @@ export class MessengerViewModel {
         let ids2 = [];
         ids.forEach((item) => {
           let m = current_chat.peer._findMessageById(item);
-          ids2.push(current_chat.peer.id + '_' + item);
+          ids2.push(item);
           m.setDeleted(true);
         });
         await window.OVKAPI.call("messages.delete", {
