@@ -136,9 +136,19 @@ export class IM {
   }
 
   _initTabs() {
+    const _tabsContainer = document.createElement('div');
+    this.root.insertAdjacentHTML('afterbegin', `
+      <div id="tabs-wr" class="messenger-app--global-tabs tabs">
+        <div class="inner-tabs"></div>
+        <div id="spec-actions">
+          <a>${tr('to_friendslist')}</a>
+        </div>
+      </div>
+    `);
+
     const tabsContainer = document.createElement('div');
-    tabsContainer.className = 'messenger-app--global-tabs tabs';
-    this.root.appendChild(tabsContainer);
+    tabsContainer.className = '';
+    _tabsContainer.appendChild(tabsContainer);
 
     this.tabs.forEach((tab) => {
       const tabWindow = document.createElement('div');
@@ -151,7 +161,7 @@ export class IM {
       tabLink.className = 'tab';
       tabLink.textContent = tr('messenger_tab_' + tab);
       tabLink.onclick = (e) => this.selectTab(tab, e);
-      tabsContainer.appendChild(tabLink);
+      this.root.querySelector("#tabs-wr .inner-tabs").appendChild(tabLink);
     });
   }
 

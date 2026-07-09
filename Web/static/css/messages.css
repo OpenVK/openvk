@@ -44,7 +44,8 @@ body.no-scroll .messages--peers-tabs {
     box-sizing: border-box;
     width: 627px;
     gap: 5px;
-    background: white;
+    background: #F6F6F6;
+    border-bottom: 1px solid #707070;
 }
 
 body.no-scroll .page_header {
@@ -57,14 +58,41 @@ body.no-scroll .sidebar {
     top: 44px;
 }
 
+.messenger-app--tab-conversations {
+    margin: 0px -6px -10px -11px;
+    width: 629px;
+}
+
+#tabs-wr {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#show_more.crp-load-more {
+    margin-top: unset;
+}
+
+#conversations-top-buttons {
+    background: #F6F6F6;
+    display: flex;
+    justify-content: space-between;
+    gap: 11px;
+    padding: 11px 11px;
+    margin: 0px 0px 0px 1px;
+    box-sizing: border-box;
+}
+
+#conversations-top-buttons #conversations-search-bar {
+    width: 40%;
+}
+
 .crp-list {
-    margin: 10px -6px -10px -11px;
     display: flex;
     flex-direction: column;
     border-top: 1px solid #d6d6d6;
     max-height: 70%;
     overflow-y: auto;
-    width: 628px;
 }
 
 .crp-entry {
@@ -75,12 +103,20 @@ body.no-scroll .sidebar {
     border-bottom: 1px solid #d6d6d6;
 }
 
-.crp-entry:hover {
-    background-color: #f9f9f9;
+.crp-entry.unread {
+    background: #c6a99833;
 }
 
-.crp-entry:first-of-type {
-    border-top: 1px solid #d6d6d6;
+.crp-entry.crp-entry-replied-same .crp-entry--message---av {
+    width: 32px;
+}
+
+.crp-entry.crp-entry-replied-same .crp-entry--message---av img {
+    display: none;
+}
+
+.crp-entry:hover {
+    background-color: #373c4014;
 }
 
 .crp-entry--image,
@@ -170,6 +206,7 @@ body.no-scroll .sidebar {
     max-width: 310px;
     overflow: hidden;
     text-overflow: ellipsis;
+    margin-top: 10px;
     /* white-space: nowrap; */ /* myslivets: а как........... */
     margin-left: 3%;
 }
@@ -178,6 +215,10 @@ body.no-scroll .sidebar {
 .messenger-app--messages---message .time {
     color: #404036;
     display: inline-block;
+}
+
+.messenger-app--messages---message .message-id span {
+    color: purple;
 }
 
 /* toggle */
@@ -189,25 +230,35 @@ body.no-scroll .sidebar {
 #chat-page .chat-window,
 #chat-page.peer-shown .peer-window {
     display: inline-block;
+    width: 100%;
 }
 
 .peer-window {
     position: relative;
-    top: 100px;
+    padding: 19px 19px;
 }
 
 .messages--actions {
     display: none;
     position: fixed;
     z-index: 4;
-    width: 100%;
+    width: 627px;
     height: 50px;
-    background: #000000;
+    background: #F6F6F6;
+    border-bottom: 1px solid #707070;
+    padding: 14px 14px;
+    box-sizing: border-box;
 }
 
 .messages--actions.shown {
     display: flex;
-    gap: 5px;
+    justify-content: space-between;
+}
+
+.messages--actions .message-tab {
+    display: inline-block;
+    padding: 5px 6px;
+    margin-right: 6px;
 }
 
 .messenger-app--messages {
@@ -224,8 +275,15 @@ body.no-scroll .sidebar {
     justify-content: center;
 }
 
+.messenger-app--messages .messenger-special-message .date-mini {
+    display: inline-block;
+    margin-left: 10px;
+    color: var(--nobold);
+}
+
 .messenger-app--messages .messenger-app--messages-array {
     margin-top: auto;
+    padding-top: 80px;
     padding-bottom: 60px;
     z-index: 0;
 }
@@ -242,8 +300,7 @@ body.no-scroll .sidebar {
 }
 
 .messenger-app--messages .messenger-app--messages-day-time b {
-    background: gray;
-    color: white;
+    color: var(--nobold);
     padding: 5px 5px;
     user-select: none;
 }
@@ -266,11 +323,7 @@ body.no-scroll .sidebar {
 
 .messenger-app--messages---message.msg-selected {
     cursor: not-allowed;
-    background: linear-gradient(red, yellow);
-}
-
-.messenger-app--messages---message.msg-selected .text {
-    color: rgb(37, 23, 162);
+    background: #00000017;
 }
 
 .messenger-app--messages---message ._avatar {
@@ -346,7 +399,7 @@ body.no-scroll .sidebar {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    background-color: #f9f9f9;
+    background-color: var(--bg-slightly);
     border-top: 1px solid #d6d6d6;
     padding: 10px 60px;
 }
@@ -396,12 +449,14 @@ body.no-scroll .sidebar {
 
 .messenger-app-end .input-reply {
     display: none;
-    background: #968e8e;
+    background: var(--bg-slightly);
     padding: 10px 59px;
+    border-top: 1px solid var(--bg-slightly-border);
 }
 
 .messenger-app-end.reply-selected .input-reply {
-    display: block;
+    display: flex;
+    justify-content: space-between;
 }
 
 .messages--peers-tabs {
@@ -411,18 +466,36 @@ body.no-scroll .sidebar {
 .messages--peers-tabs .messages--peers-tab {
     display: flex;
     flex-direction: row;
-    gap: 3px;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 5px 3px 5px;
+    color: var(--text);
+    border-radius: 1px;
+}
+
+.messages--peers-tabs .messages--peers-tab:hover {
+    background: var(--text-rev);
+}
+
+.messages--peers-tabs .messages--peers-tab.selected {
+    background: var(--brand);
 }
 
 .messages--peers-tabs .messages--peers-tab a {
-    color: #37ff13;
-    font-size: 16px;
-    background: black;
+    font-size: 11px;
     display: flex;
 }
 
 .messages--peers-tabs .messages--peers-tab-close {
-    padding: 4px 7px;
-    background: #66f0cc;
     display: block;
+    height: 11px;
+}
+
+.messages--peers-tabs .messages--peers-tab.selected a,
+.messages--peers-tabs .messages--peers-tab.selected .messages--peers-tab-close {
+    color: var(--text-rev);
+}
+
+.messenger-app--input .peer-toggler {
+    cursor: pointer;
 }

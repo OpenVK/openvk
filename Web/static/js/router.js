@@ -482,6 +482,8 @@ window.addEventListener('popstate', (e) => {
 
     if (e.state != null) {
         if (window.im && e.state.from_messenger) {
+            u('.page_content').html('')
+
             window.im.init(document.querySelector('.page_content'));
             window.im._resolveState(e);
             return;

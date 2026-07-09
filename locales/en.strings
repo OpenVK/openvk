@@ -1407,7 +1407,7 @@
 
 "all_messages" = "All messages";
 
-"search_messages" = "Search messages";
+"search_messages" = "Search messages...";
 "no_messages" = "No one has written to you yet.";
 "messages_blocked" = "Unfortunately, your message cannot be sent due to this user's privacy settings.";
 "enter_message" = "Enter message";
@@ -1415,6 +1415,10 @@
 
 "messages_error_1" = "Message not delivered";
 "messages_error_1_description" = "There was a general error in sending this message...";
+"message_is_deleted" = "Missing message";
+
+"create_chat" = "New chat";
+"to_friendslist" = "Show friends list";
 
 /* Polls */
 "poll" = "Poll";

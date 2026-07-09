@@ -1,7 +1,12 @@
 :root {
     --common-hover: #f5f4f4;
     --common-2: #f0f1f2;
+    --bg-slightly: #f9f9f9;
+    --bg-slightly-border: #d6d6d6;
+    --text: black;
+    --text-rev: white;
     --brand: #606060;
+    --nobold: #868686;
 }
 
 html {
@@ -2822,11 +2827,15 @@ a.poll-retract-vote {
     padding: 11px 4px 0 7px;
 }
 
-#search_box input[type='search'] {
-    height: 20px;
+#search_box input[type='search'],
+.search_input {
     background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px;
     background-color: #fff;
     padding-left: 18px !important;
+}
+
+#search_box input[type='search'] {
+    height: 20px;
     width: 120px;
 }
 
@@ -3460,7 +3469,7 @@ body.article .floating_sidebar, body.article .page_content {
 #show_more {
     width: 100%;
     text-align: center;
-    background: #f0f0f0;
+    background: #00000014;
     height: 22px;
     padding-top: 9px;
     cursor: pointer;
