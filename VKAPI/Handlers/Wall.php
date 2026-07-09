@@ -930,7 +930,7 @@ final class Wall extends VKAPIRequestHandler
 
             $items[] = $item;
             if ($extended == true) {
-                if($comment->getOwner()->getId() > 0) {
+                if ($comment->getOwner()->getId() > 0) {
                     $profiles[] = $comment->getOwner()->getId();
                 } else {
                     $groups[] = $comment->getOwner()->getId() * -1;
