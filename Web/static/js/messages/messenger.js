@@ -119,12 +119,13 @@ export class MessengerViewModel {
               onKeyPress=${(e) => this.onTextareaKeyPress(e)}
               currentDraft=${this.currentDraft}
               onInput=${(e) => { this.currentDraft = e.target.value; }}
+              togglePeerInfo=${(e) => this.togglePeerInfo() }
             />
           </div>
         </div>
         ${this.is_showing_profile && html`
           <div class="peer-window">
-            <div><a onClick=${() => this.togglePeerInfo()}>back</a></div>
+            <div><a onClick=${() => this.togglePeerInfo()}>${tr('back')}</a></div>
           </div>
         `}
       </div>
@@ -237,9 +238,9 @@ export class MessengerViewModel {
 
     const current_chat = this.getCurrentChat();
     const box = new CMessageBox({
-      title: 'MESAGE DELETIONS',
-      body: 'SURE?',
-      buttons: ['YESSS', 'No'],
+      title: tr("message_deletion", ids.length),
+      body: tr("message_deletion_confirm"),
+      buttons: [tr('yes'), tr('no')],
       callbacks: [async () => {
         let ids2 = [];
         ids.forEach((item) => {
@@ -247,6 +248,10 @@ export class MessengerViewModel {
           ids2.push(current_chat.peer.id + '_' + item);
           m.setDeleted(true);
         });
+        await window.OVKAPI.call("messages.delete", {
+          "message_ids": ids2.join(","),
+          "peer_id": current_chat.peer.id
+        })
         this._triggerUpdate();
         this.unselect();
       }, () => {}],

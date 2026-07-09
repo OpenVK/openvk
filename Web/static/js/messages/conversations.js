@@ -188,12 +188,19 @@ export class Conversations {
         hasMore=${this.has_more_items}
         onLoadMore=${() => this.view.loadNext()}
         onCreateChat=${() => this.view._chatCreationModal()}
+        onSearch=${(e) => this.view._onMessagesSearch(e)}
       />
     `, container);
   }
 
   hide(container) {
     container.classList.add('hidden');
+  }
+
+  // search
+
+  async _onMessagesSearch(e) {
+    console.log(e)
   }
 }
 

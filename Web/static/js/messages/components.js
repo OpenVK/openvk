@@ -41,7 +41,7 @@ export const MessageBubble = ({ msg, index, chunk }) => {
           <img class="ava" src=${msg.sender.avatar_any} alt=${msg.sender.full_name} />
         </div>
         <div class="_content">
-          <a class="_sender" href=${msg.sender.page_url || msg.sender.chat_url}>
+          <a class="_sender" onClick=${(e) => { e.preventDefault(); e.stopPropagation(); window.im.messenger.view.togglePeerInfo()}}>
             <strong>${msg.sender.full_name}</strong>
           </a>
           <span class="text">${msg.text}</span>
@@ -57,7 +57,7 @@ export const MessageBubble = ({ msg, index, chunk }) => {
           <div>
             <span>${msg.readable_date}</span>
           </div>
-          <div>
+          <div class="message-id">
             <span>${msg.id}</span>
           </div>
         `}
@@ -75,9 +75,7 @@ export const SystemMessages = {
                     <strong>${msg.sender.full_name} </strong>
                 </a>
                 <span class="text">${msg.text}</span>
-                <div>
-                    <span>${msg.readable_date}</span>
-                </div>
+                <span class="date-mini">${msg.readable_date}</span>
             </div>
         </div>
     `;
@@ -161,7 +159,7 @@ export const MessageListView = ({ messages }) => {
 
 export const PeerTab = ({ conv, active }) => {
   return html`
-    <div class="messages--peers-tab${active ? ' active' : ''}">
+    <div class="messages--peers-tab${active ? ' selected' : ''}">
       <a onClick=${() => window.im?.selectChat(conv)}>${conv.peer.name}</a>
       <span class="messages--peers-tab-close" onClick=${() => window.im?.closeChat(conv)}>x</span>
     </div>
@@ -169,6 +167,8 @@ export const PeerTab = ({ conv, active }) => {
 };
 
 export const PeerTabsView = ({ tabs, currentChat }) => {
+  if (tabs.length < 2) { return }
+
   return html`
     <div class="messages--peers-tabs">
       ${tabs.map((tab, idx) => html`
@@ -182,11 +182,15 @@ export const ActionsBar = ({ count, onDelete, onUnselect, onReply }) => {
   if (count === 0) return null;
   return html`
     <div class="messages--actions shown">
-      <div><a onClick=${onDelete}>delete</a></div>
-      <div><a onClick=${onUnselect}>unselect</a></div>
-      ${count === 1 && html`
-        <div><a onClick=${onReply}>reply</a></div>
-      `}
+      <div>
+        <div class="message-tab"><a onClick=${onUnselect}>${tr("selected_messages", count)}</a></div>
+      </div>
+      <div>
+        <div class="message-tab"><a onClick=${onDelete}>${tr("delete_message")}</a></div>
+        ${count === 1 && html`
+            <div class="message-tab"><a onClick=${onReply}>${tr("reply_to_message")}</a></div>
+        `}
+      </div>
     </div>
   `;
 };
@@ -222,7 +226,7 @@ export const AttachmentMenu = () => {
   `;
 };
 
-export const InputArea = ({ replyTo, onRemoveReply, onSend, onKeyPress, currentDraft, onInput }) => {
+export const InputArea = ({ replyTo, onRemoveReply, onSend, onKeyPress, currentDraft, onInput, togglePeerInfo }) => {
   return html`
     <div class="messenger-app-end${replyTo ? ' reply-selected' : ''}">
       ${replyTo && html`
@@ -248,7 +252,7 @@ export const InputArea = ({ replyTo, onRemoveReply, onSend, onKeyPress, currentD
               <${AttachmentMenu} />
             </div>
           </div>
-          <img class="ava" src="${window.im?.corresponder?.avatar_any || ''}"
+          <img class="ava peer-toggler" onclick="${togglePeerInfo}" src="${window.im?.corresponder?.avatar_any || ''}"
                alt="${window.im?.corresponder?.full_name || ''}" />
         </div>
       </div>
@@ -280,28 +284,47 @@ export const ChatView = ({ peer }) => {
 };
 
 export const ConversationItem = ({ conv }) => {
+  const last_msg = conv.last_message;
+  const cls1 = ["crp-entry"];
+  if (last_msg && last_msg.data.from_id != conv.peer.id) {
+    cls1.push("crp-entry-replied-same");
+  }
+
   return html`
-    <div class="crp-entry" onClick=${() => window.im?.selectChat(conv)}>
+    <div class="${cls1.join(' ')}" onClick=${() => window.im?.selectChat(conv)}>
       <div class="crp-entry--image">
         <img src=${conv.peer.avatar_any} loading="lazy" />
       </div>
       <div class="crp-entry--info">
-        <a href=${conv.peer.chat_url}>${conv.peer.full_name}</a><br/>
+        <a href=${conv.peer.chat_url}>${ovk_proc_strtr(conv.peer.full_name, 30)}</a><br/>
+        ${last_msg && html`<span>${last_msg.conv_date}</span>`}
       </div>
-      <div class="crp-entry--message"></div>
+      <div class="crp-entry--message">
+        ${last_msg != null && html`
+        <div class="crp-entry--message---av">
+          <img src="${last_msg.sender.avatar_any}" />
+        </div>
+        <div class="crp-entry--message---text">
+        ${last_msg.conv_summary}
+        </div>`
+        }
+      </div>
     </div>
   `;
 };
 
-export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCreateChat }) => {
+export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCreateChat, onSearch }) => {
   return html`
+    <div id="conversations-top-buttons">
+        <div id="conversations-search-bar">
+            <input class="search_input" type="text" placeholder="${tr('search_messages')}" onChange=${onSearch} />
+        </div>
+        <input type="button" class="button" value="${tr('create_chat')}" onClick=${onCreateChat} />
+    </div>
     <div class="crp-list">
-      <div>
-        <input type="button" class="button" value="create chat" onClick=${onCreateChat} />
-      </div>
       ${conversations.map((conv) => html`<${ConversationItem} conv=${conv} />`)}
       ${hasMore && html`
-        <div onClick=${onLoadMore} class="crp-load-more">
+        <div onClick=${onLoadMore} id="show_more" class="crp-load-more">
           ${tr('show_next')}
         </div>
       `}

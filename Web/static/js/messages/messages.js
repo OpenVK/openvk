@@ -127,7 +127,7 @@ export class ChatGeneralForm {
   }
 
   get avatar_any() {
-    return this.data.photo_100;
+    return this.data.photo_100 ?? '/assets/packages/static/openvk/img/im/chat_meaningless.jpg';
   }
 
   get full_name() {
@@ -195,7 +195,7 @@ export class ChatGeneralForm {
     this.chunks.forEach((chunk) => {
       chunk.getMessages().forEach((msg) => {
         if (!msg.sent) return;
-        const dateKey = msg.sent.toISOString().split('T')[0];
+        const dateKey = msg.conv_day;
 
         if (!dateMap.has(dateKey)) {
           const dayChunk = new DayChunk([]);
@@ -401,11 +401,15 @@ export class ChatMessage {
   }
 
   get sender() {
+    if (!this.data.sender) {
+      this._guessSender();
+    }
+
     return this.data.sender;
   }
 
   get text() {
-    return window.escapeHtml(this.data.text);
+    return escapeHtml(this.data.text);
   }
 
   get global_id() {
@@ -440,11 +444,49 @@ export class ChatMessage {
   }
 
   get readable_date() {
-    return this.sent.toLocaleTimeString('ru-RU', {
+    return this.sent.toLocaleTimeString(navigator.language, {
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
     });
+  }
+
+  get conv_date() {
+    const date = this.sent;
+    let is_today = date.toDateString() == new Date().toDateString();
+
+    const diffMs = Date.now() - date;
+    const diffHours = diffMs / (1000 * 60 * 60);
+    const isLessThan6Hours = diffHours >= 0 && diffHours < 6;
+
+    if (isLessThan6Hours) {
+      return this.readable_date;
+    }
+
+    return this.conv_day;
+  }
+
+  get conv_day() {
+    const date = this.sent;
+    if (date.getFullYear() == new Date().getFullYear()) {
+      return date.toLocaleDateString(navigator.language)
+    } else {
+      return date.toLocaleDateString(navigator.language, {
+        month: '2-digit',
+        day: '2-digit'
+      })
+    }
+  }
+
+  get conv_summary() {
+    let f = "";
+    if (this.data.attachments.length > 0) {
+      f = ("(" + tr(this.data.attachments[0].type) + ")").toLowerCase();
+      f += " ";
+    }
+
+    f += this.data.text;
+    return ovk_proc_strtr(f, 100);
   }
 
   static fromEvent(event) {
