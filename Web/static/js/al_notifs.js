@@ -30,7 +30,7 @@ function incrementNotificationsCounter() {
 }
 
 async function setupNotificationListener() {
-    console.info("Setting up notifications listener...");
+    console.info("Notifications | Setting up notifications listener...");
     
     const POLL_INTERVAL = 10000;
     const CHECK_MORE_INTERVAL = 250;
@@ -44,11 +44,11 @@ async function setupNotificationListener() {
             if (notif) {
                 if (!isFirstRequest) {
                     playNotifSound();
-                    console.info("New notification", notif);
+                    console.info("Notifications | New notification", notif);
                     NewNotification(notif.title, notif.body, notif.ava, Function.noop, (notif.priority || 1) * 6000);
                     incrementNotificationsCounter();
                 } else {
-                    console.info("First request: skipping alert (syncing cursor)");
+                    console.info("Notifications | First request: skipping alert (syncing cursor)");
                 }
             }
             
@@ -56,17 +56,17 @@ async function setupNotificationListener() {
         } catch(rejection) {
             if (rejection.message === "Nothing to report" || rejection.code === 1983) {
                 if (isFirstRequest) {
-                    console.info("Cursor synced. Real-time notifications enabled.");
+                    console.info("Notifications | Cursor synced. Real-time notifications enabled.");
                     isFirstRequest = false; 
                 } else {
-                    console.info("No new notifications found, sleeping for " + POLL_INTERVAL/1000 + "s...")
+                    console.info("Notifications | No new notifications found, sleeping for " + POLL_INTERVAL/1000 + "s...")
                 }
                 await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL));
             } else if (rejection.message === "Disabled" || rejection.code === 1999) {
-                console.error("Real-time notifications are disabled. Aborting RPC polling until next page load", rejection);
+                console.error("Notifications | Real-time notifications are disabled. Aborting RPC polling until next page load", rejection);
                 break;
             } else {
-                console.error("Poll error, we'll try again in a minute...", rejection);
+                console.error("Notifications | Poll error, we'll try again in a minute...", rejection);
                 await new Promise(resolve => setTimeout(resolve, ERROR_RETRY_INTERVAL));
             }
         }
