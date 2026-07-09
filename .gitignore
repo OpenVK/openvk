@@ -13,6 +13,7 @@ themepacks/*
 !themepacks/openvk_modern
 !themepacks/midnight
 storage/*
+public/stickers/*
 !storage/.gitkeep
 
 data/knowledgebase/*

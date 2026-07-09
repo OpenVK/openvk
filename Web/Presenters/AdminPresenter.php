@@ -979,7 +979,6 @@ final class AdminPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("admin_sticker_image_bad"));
         }
 
-        $sticker->save();
         $pack->addSticker($sticker);
 
         $this->flash("succ", tr("admin_sticker_added"), tr("admin_sticker_added_desc"));
