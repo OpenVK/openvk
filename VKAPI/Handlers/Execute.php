@@ -127,4 +127,9 @@ final class Execute extends VKAPIRequestHandler
         $newsfeed = $this->createHandler(Newsfeed::class);
         return $newsfeed->get($fields, $start_from, $start_time, $end_time, $offset, $count, $extended, 0);
     }
+
+    public function getProfiles(string $user_ids = "0", string $fields = "", string $relation_case = "def", int $offset = 0, int $count = 100) {
+        $users = $this->createHandler(Users::class);
+        return $users->get($user_ids, $fields, $offset, $count);
+    }
 }
