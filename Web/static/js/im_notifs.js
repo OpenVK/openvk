@@ -8,7 +8,7 @@ class OVKLongPollListener {
 
     async initServer() {
         try {
-            console.log("[IM-LP] Получение параметров сервера...");
+            console.log("Msg notifs | Fetching server parameters...");
             const data = await window.OVKAPI.call('messages.getLongPollServer', { lp_version: 2 });
 
             if (data) {
@@ -17,9 +17,9 @@ class OVKLongPollListener {
                 this.ts = data.ts;
                 return true;
             }
-            throw new Error("Не удалось получить параметры LongPoll");
+            throw new Error("Longpoll server parameters fetch failed");
         } catch (error) {
-            console.error("[IM-LP] Ошибка инициализации:", error);
+            console.error("Msg notifs | Initialization error:", error);
             return false;
         }
     }
@@ -30,16 +30,16 @@ class OVKLongPollListener {
 
         let initialized = await this.initServer();
         while (!initialized) {
-            console.log("[IM-LP] Повторная попытка инициализации через 5 секунд...");
+            console.log("Msg notifs | Retrying init in 5s...");
             await new Promise(resolve => setTimeout(resolve, 5000));
             initialized = await this.initServer();
         }
 
-        console.log("[IM-LP] Слушатель успешно запущен.");
+        console.log("Msg notifs | Started up listener.");
 
         while (this.isLooping) {
             try {
-                console.log("[IM-LP] Ожидание обновлений...");
+                console.log("Msg notifs | Fetching updates...");
                 const url = `${this.server}?act=a_check&key=${this.key}&ts=${this.ts}&wait=25&mode=2&version=3`;
                 
                 const response = await fetch(url);
@@ -53,7 +53,7 @@ class OVKLongPollListener {
                     if (data.failed === 1) {
                         this.ts = data.ts;
                     } else if (data.failed === 2 || data.failed === 3) {
-                        console.warn(`[IM-LP] Код ошибки ${data.failed}. Переподключение...`);
+                        console.warn(`Msg notifs | Error ${data.failed}. Reconnecting...`);
                         await this.initServer();
                     }
                     continue;
@@ -68,7 +68,7 @@ class OVKLongPollListener {
                 }
 
             } catch (error) {
-                console.error("[IM-LP] Ошибка соединения. Перепodключение через 5 сек...", error);
+                console.error("Msg notifs | Connection error. Retrying in 5s...", error);
                 await new Promise(resolve => setTimeout(resolve, 5000));
             }
         }
@@ -76,7 +76,7 @@ class OVKLongPollListener {
 
     stop() {
         this.isLooping = false;
-        console.log("[IM-LP] Слушатель остановлен.");
+        console.log("Msg notifs | Listener stopped.");
     }
 
     async handleUpdate(update) {
@@ -93,12 +93,12 @@ class OVKLongPollListener {
             const isOutbox = (flags & 2) !== 0;
 
             if (!isOutbox) {
-                await this.triggerNotification(peerId, text);
+                await this.triggerNotification(peerId, text, timestamp);
             }
         }
     }
 
-    async triggerNotification(peerId, text) {
+    async triggerNotification(peerId, text, timestamp) {
         try {
             const fields = typeof ChatGeneralForm !== 'undefined' ? ChatGeneralForm.base_fields : 'photo_50';
             
@@ -110,11 +110,11 @@ class OVKLongPollListener {
             const from = userRes[0] || {};
 
             if (!from) {
-                console.warn(`[IM-LP] Не удалось получить данные пользователя с ID ${peerId}`);
+                console.warn(`Msg notifs | Failed to fetch user data with ID ${peerId}`);
                 return;
             }
 
-            let title = `Новое сообщение `;
+            let title = window.lang.im_notif_new_message || "New message";
             let ava = from.photo_50 || from.photo_100 || from.photo_200;
 
             if (userRes && userRes.response && userRes.response[0]) {
@@ -125,9 +125,9 @@ class OVKLongPollListener {
 
             const notif = {
                 title: title,
-                body: "<b>" + from.first_name + " " + from.last_name + ":</b> " + (escapeHtml(text) || "[Вложение или пустое сообщение]"),
+                body: "<b>" + from.first_name + " " + from.last_name + ":</b> " + (escapeHtml(text) || "[Attachment]"),
                 ava: ava,
-                priority: 1
+                priority: 1,
             };
 
             if (typeof NewNotification === 'function') {
@@ -140,11 +140,11 @@ class OVKLongPollListener {
                     (notif.priority || 1) * 6000
                 );
             } else {
-                console.log("[IM-LP] Получено сообщение, но функция NewNotification не найдена:", notif);
+                console.log("Msg notifs | Got a new message but NewNotification not found:", notif);
             }
 
         } catch (error) {
-            console.error("[IM-LP] Ошибка при формировании уведомления:", error);
+            console.error("Msg notifs | Error occurred while forming notification:", error);
         }
     }
 }
@@ -159,4 +159,26 @@ function escapeHtml(unsafe) {
 }
 
 const ovkListener = new OVKLongPollListener();
-ovkListener.start();
+
+function updateListenerState() {
+    const path = window.location.pathname;
+    const isChatPage = path.includes('/im') || path.includes('/gim');
+
+    if (isChatPage) {
+        if (ovkListener.isLooping) {
+            console.log("Msg notifs | Chats loaded -> Listener stopped.");
+            ovkListener.stop();
+        }
+    } else {
+        if (!ovkListener.isLooping) {
+            console.log("Msg notifs | Transition from chats -> Listener started.");
+            ovkListener.start();
+        }
+    }
+}
+
+window.addEventListener('popstate', updateListenerState);
+
+setInterval(updateListenerState, 1000);
+
+updateListenerState();
