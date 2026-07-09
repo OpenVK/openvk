@@ -53,11 +53,11 @@ class Sticker extends RowModel
             $image = new \Imagick($file);
             $image->setImageFormat("png");
 
-            $image->resizeImage(128, 128, \Imagick::FILTER_LANCZOS, 1, true);
-            $image->writeImage($dir . "128.png");
-
             $image->resizeImage(256, 256, \Imagick::FILTER_LANCZOS, 1, true);
             $image->writeImage($dir . "256.png");
+            
+            $image->resizeImage(128, 128, \Imagick::FILTER_LANCZOS, 1, true);
+            $image->writeImage($dir . "128.png");
 
             $image->clear();
             return true;
@@ -77,11 +77,11 @@ class Sticker extends RowModel
             $image = new \Imagick($file);
             $image->setImageFormat("png");
 
-            $image->resizeImage(128, 128, \Imagick::FILTER_LANCZOS, 1, true);
-            $image->writeImage($dir . "128_outline.png");
-
             $image->resizeImage(256, 256, \Imagick::FILTER_LANCZOS, 1, true);
             $image->writeImage($dir . "256_outline.png");
+
+            $image->resizeImage(128, 128, \Imagick::FILTER_LANCZOS, 1, true);
+            $image->writeImage($dir . "128_outline.png");
 
             $image->clear();
             return true;

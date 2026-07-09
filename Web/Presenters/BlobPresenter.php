@@ -48,7 +48,7 @@ final class BlobPresenter extends OpenVKPresenter
         exit;
     }
 
-    public function renderSticker(int $id, string $file)
+    public function renderSticker(int $id, $file)
     {
         header("Access-Control-Allow-Origin: *");
 
