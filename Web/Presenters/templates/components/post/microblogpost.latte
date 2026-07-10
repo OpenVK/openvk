@@ -45,7 +45,7 @@
                                 {elseif $wallOwner instanceof \openvk\Web\Models\Entities\Club}
                                 {tr("post_on_group_wall", ovk_proc_strtr($wallOwner->getName(), 52))}
                                 {else}
-                                {tr("post_on_user_wall", $wallOwner->getMorphedName("genitive", false))}
+                                {tr("post_on_user_wall", $wallOwner->getMorphedName("genitive", false, false))}
                                 {/if}
                             </b>
                         </a>

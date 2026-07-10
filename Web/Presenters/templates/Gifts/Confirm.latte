@@ -31,7 +31,7 @@
 
         <a href='{$user->getURL()}' class="side_link">
             {if $thisUser->getId() !== $user->getId()}
-                {tr("back_to_user", $user->getMorphedName("genitive", false))}
+                {tr("back_to_user", $user->getMorphedName("genitive", false, false))}
             {else}
                 {_back_to_my_page}
             {/if}
