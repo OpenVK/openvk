@@ -10,10 +10,10 @@ function initGraffiti(event) {
             canvas.getImage({includeWatermark: false}).toBlob(blob => {
                 let fName = "Graffiti-" + Math.ceil(performance.now()).toString() + ".jpeg";
                 let image = new File([blob], fName, {type: "image/jpeg", lastModified: new Date().getTime()});
-                
+
                 __uploadToTextarea(image, u(event.target).closest('#write'))
             }, "image/jpeg", 0.92);
-            
+
             canvas.teardown();
             msgbox.close()
         }, async function() {
@@ -24,10 +24,10 @@ function initGraffiti(event) {
             }
         }]
     })
-    
+
     let watermarkImage = new Image();
     watermarkImage.src = "/assets/packages/static/openvk/img/logo_watermark.gif";
-    
+
     msgbox.getNode().attr("style", "width: 750px;");
     canvas = LC.init(document.querySelector("#ovkDraw"), {
         backgroundColor: "#fff",
@@ -56,21 +56,21 @@ u(document).on('click', '.menu_toggler', (e) => {
 u(document).on("click", ".post-like-button", function(e) {
     e.preventDefault();
     e.stopPropagation()
-    
+
     var thisBtn = u(this).first();
     var link    = u(this).attr("href");
     var heart   = u(".heart", thisBtn);
     var counter = u(".likeCnt", thisBtn);
     var likes   = counter.text() === "" ? 0 : counter.text();
     var isLiked = heart.attr("id") === 'liked';
-    
+
     ky.post(link)
     heart.attr("id", isLiked ? '' : 'liked');
     counter.text(parseInt(likes) + (isLiked ? -1 : 1));
     if (counter.text() === "0") {
         counter.text("");
     }
-    
+
     return false;
 });
 
@@ -81,7 +81,7 @@ u(document).on("input", "textarea", function(e) {
     var newHeight = textArea.scrollHeight;
     textArea.style.height = newHeight + boost + "px";
     return;
-    
+
     // revert to original size if it is larger (possibly changed by user)
     // textArea.style.height = (newHeight > originalHeight ? (newHeight + boost) : originalHeight) + "px";
 });
@@ -135,7 +135,7 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
     photo_viewer.getNode().find("#ovk-photo-close, .ovk-photo-view-overlay").on("click", function(e) {
         photo_viewer.close()
     });
-	
+
     function __getIndex(photo_id = null) {
         return Object.keys(json.body).findIndex(item => item == (photo_id ?? currentImageid)) + 1
     }
@@ -207,7 +207,7 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
                     } else {
                         offset -= albums_per_page
                     }
-                    
+
                     await __loadContext(type, post, true, direction == 0)
                 } else {
                     return
@@ -227,7 +227,7 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
         if(type == 'post' || type == 'comment') {
             const form_data = new FormData()
             form_data.append('parentType', type);
-    
+
             const endpoint_url = `/iapi/getPhotosFromPost/${type == "post" ? id : "1_"+id}`
             const fetcher = await fetch(endpoint_url, {
                 method: 'POST',
@@ -258,7 +258,7 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
 
             if(!json)
                 json = {'body': []}
-            
+
             if(!inverse) {
                 json.body = Object.assign(converted_items, json.body)
             } else {
@@ -275,7 +275,7 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
     photo_viewer.getNode().find(".ovk-photo-slide-right").on("click", (e) => {
         __slidePhoto(1);
     })
-    
+
     if(!type) {
         imagesCount = 1
         json = {
@@ -287,7 +287,7 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
             'url': photo
         }
         currentImageid = photo_id
-        
+
         __reloadTitleBar()
         __loadDetails(photo_id)
     } else {
@@ -309,7 +309,7 @@ async function OpenVideo(video_arr = [], init_player = true)
     let video_api     = null
     try {
         video_api   = await window.OVKAPI.call('video.get', {'videos': `${video_owner}_${video_id}`, 'extended': 1})
-    
+
         if(!video_api.items || !video_api.items[0]) {
             throw new Error('Not found')
         }
@@ -642,7 +642,7 @@ $(document).on("click", "#_ajaxDelete", function(e) {
         },
         Function.noop
     ]);
-    
+
     e.stopPropagation()
     return e.preventDefault();
 });
@@ -652,7 +652,7 @@ $(document).on("click", "#_photoDelete, #_videoDelete, #_anotherDelete", functio
     formHtml    += "<input type='hidden' name='hash' value='" + u("meta[name=csrf]").attr("value") + "' />";
     formHtml    += "</form>";
     u("body").append(formHtml);
-    
+
     MessageBox(tr('warning'), tr('question_confirm'), [
         tr('yes'),
         tr('no')
@@ -664,7 +664,7 @@ $(document).on("click", "#_photoDelete, #_videoDelete, #_anotherDelete", functio
             u("#tmpPhDelF").remove();
         }),
     ]);
-    
+
     e.stopPropagation()
     return e.preventDefault();
 });
@@ -675,7 +675,7 @@ u(document).on("click", "#_noteDelete", function(e) {
     formHtml    += "<input type='hidden' name='hash' value='" + u("meta[name=csrf]").attr("value") + "' />";
     formHtml    += "</form>";
     u("body").append(formHtml);
-    
+
     MessageBox(tr('warning'), tr('question_confirm'), [
         tr('yes'),
         tr('no')
@@ -687,7 +687,7 @@ u(document).on("click", "#_noteDelete", function(e) {
             u("#tmpPhDelF").remove();
         }),
     ]);
-    
+
     e.stopPropagation()
     return e.preventDefault();
 });
@@ -702,7 +702,7 @@ u(document).on("click", "#_pinGroup", async function(e) {
     let groupName = u(this).attr("data-group-name");
     let groupUrl = u(this).attr("data-group-url");
     let list = u('#_groupListPinnedGroups');
-    
+
     thisButton.nodes[0].classList.add('loading');
     thisButton.nodes[0].classList.add('disable');
 
@@ -743,7 +743,7 @@ u(document).on("click", "#_pinGroup", async function(e) {
     if(list.nodes[0].children[0].className != "menu_divider" || list.nodes[0].children.length == 1) {
         list.nodes[0].children[0].remove();
     }
-    
+
     thisButton.nodes[0].classList.remove('loading');
     thisButton.nodes[0].classList.remove('disable');
 
@@ -880,22 +880,22 @@ tippy.delegate("body", {
         let client_name = that.reference.dataset.appName;
         let client_url = that.reference.dataset.appUrl;
         let client_img = that.reference.dataset.appImg;
-        
+
         if(client_name != undefined) {
             let res = {
                 'name':   client_name,
                 'url':    client_url,
                 'img':    client_img,
-                'app_tr': tr("app") 
+                'app_tr': tr("app")
             };
-    
+
             that.setContent(tooltipClientTemplate(res));
         } else {
             let res = {
                 'name': client_tag,
-                'app_tr': tr("app") 
+                'app_tr': tr("app")
             };
-    
+
             that.setContent(tooltipClientNoInfoTemplate(res));
         }
     }
@@ -993,12 +993,12 @@ u(document).on("click", "#editPost", async (e) => {
 
         const api_req = await window.OVKAPI.call(`wall.${type == 'post' ? 'getById' : 'getComment'}`, params)
         const api_post = api_req.items[0]
-        
+
         edit_place.html(`
             <div class='edit_menu'>
                 <form id="write">
                     <textarea placeholder="${tr('edit')}" name="text" style="width: 100%;resize: none;" class="expanded-textarea small-textarea">${api_post.text}</textarea>
-                    
+
                     <div class='post-buttons'>
                         <div class="post-horizontal"></div>
                         <div class="post-vertical"></div>
@@ -1025,7 +1025,7 @@ u(document).on("click", "#editPost", async (e) => {
                                 <a class='menu_toggler'>
                                     ${tr('attach')}
                                 </a>
-                                
+
                                 <div id="wallAttachmentMenu" class="hidden">
                                     <a class="header menu_toggler">
                                         ${tr('attach')}
@@ -1108,7 +1108,7 @@ u(document).on("click", "#editPost", async (e) => {
                     'html': tr('poll'),
                     'id': att[type].id,
                     'undeletable': true,
-                }, edit_place) 
+                }, edit_place)
             } else {
                 const found_block = post.find(`div[data-att_type='${type}'][data-att_id='${aid}']`)
                 __appendToTextarea({
@@ -1129,7 +1129,7 @@ u(document).on("click", "#editPost", async (e) => {
             const copyright = edit_place.find(`.edit_menu input[name='source']`)
             const collected_attachments = collect_attachments(edit_place.find('.post-buttons')).join(',')
             const params = {}
-            
+
             params['owner_id'] = id[0]
             params['post_id'] = id[1]
             params['message'] = text_node.nodes[0].value
@@ -1137,7 +1137,7 @@ u(document).on("click", "#editPost", async (e) => {
             if(nsfw_mark.length > 0) {
                 params['explicit'] = Number(nsfw_mark.nodes[0].checked)
             }
-            
+
             params['attachments'] = collected_attachments
             if(collected_attachments.length < 1) {
                 params['attachments'] = 'remove'
@@ -1165,7 +1165,7 @@ u(document).on("click", "#editPost", async (e) => {
                 u(ev.target).removeClass('lagged')
                 return
             }
-            
+
             let is_at_post_page = false
             try {
                 if(location.pathname.indexOf("wall") != -1 && location.pathname.split("_").length == 2) {
@@ -1182,7 +1182,7 @@ u(document).on("click", "#editPost", async (e) => {
 
             bsdnHydrate()
         })
-    
+
         edit_place.find('.edit_menu #__edit_cancel').on('click', (e) => {
             post.removeClass('editing')
         })
@@ -1218,12 +1218,12 @@ async function __uploadToTextarea(file, textareaNode) {
     form_data.append('photo_0', file)
     form_data.append('count', 1)
     form_data.append("hash", u("meta[name=csrf]").attr("value"))
-    
+
     if(filetype == 'photo') {
         const temp_url = URL.createObjectURL(file)
         const rand = random_int(0, 1000)
         textareaNode.find('.post-horizontal').append(`<a id='temp_filler${rand}' class="upload-item lagged"><img src='${temp_url}'></a>`)
-        
+
         const res = await fetch(`/photos/upload?upload_context=${textareaNode.nodes[0].dataset.id}`, {
             method: 'POST',
             body: form_data
@@ -1268,13 +1268,13 @@ async function __appendToTextarea(attachment_obj, textareaNode) {
 
         return
     }
-    
+
     indicator.append(`
         <a draggable="true" href='/${attachment_obj.type}${attachment_obj.id}' class="upload-item" data-type='${attachment_obj.type}' data-id="${attachment_obj.id}">
             <span class="upload-delete">×</span>
             ${attachment_obj.type == 'video' ? `<div class='play-button'><div class='play-button-ico'></div></div>` : ''}
             <img draggable="false" src="${attachment_obj.preview}" alt='...'>
-        </a>      
+        </a>
     `)
 }
 
@@ -1305,7 +1305,7 @@ u(document).on('dragover', '#write .post-horizontal .upload-item, .post-vertical
     if(target.nodes[0].dataset.id != current.nodes[0].dataset.id) {
         target.addClass('dragged')
     }
-    
+
     return
 })
 
@@ -1328,7 +1328,7 @@ u(document).on("drop", '#write', function(e) {
 
         e.dataTransfer.dropEffect = 'move'
         __uploadToTextarea(e.dataTransfer.files[0], u(e.target).closest('#write'))
-    } else if(e.dataTransfer.types.length < 1 || e.dataTransfer.types.includes('text/uri-list')) { 
+    } else if(e.dataTransfer.types.length < 1 || e.dataTransfer.types.includes('text/uri-list')) {
         e.preventDefault()
 
         const target = u(e.target).closest('.upload-item')
@@ -1351,7 +1351,7 @@ u(document).on("drop", '#write', function(e) {
 // !!! PHOTO PICKER !!!
 u(document).on("click", "#__photoAttachment", async (e) => {
     const photos_per_page = 23
-    const form = u(e.target).closest('#write') 
+    const form = u(e.target).closest('#write')
     const club = Number(e.currentTarget.dataset.club ?? 0)
     const msg = new CMessageBox({
         title: tr('select_photo'),
@@ -1362,7 +1362,7 @@ u(document).on("click", "#__photoAttachment", async (e) => {
                     <input type="file" multiple accept="image/*" id="__pickerQuickUpload" style="display:none">
                     <input type="button" class="button" value="${tr("upload_button")}" onclick="__pickerQuickUpload.click()">
                 </label>
-                
+
                 <select id="albumSelect">
                     <option value="0">${tr("all_photos")}</option>
                 </select>
@@ -1440,7 +1440,7 @@ u(document).on("click", "#__photoAttachment", async (e) => {
     u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) => {
         ev.preventDefault()
         ev.stopPropagation()
-        
+
         const target = u(ev.target).closest('.album-photo')
         const dataset = target.nodes[0].dataset
         const is_attached = (form.find(`.upload-item[data-type='photo'][data-id='${dataset.attachmentdata}']`)).length > 0
@@ -1488,14 +1488,14 @@ u(document).on("click", "#__photoAttachment", async (e) => {
 
 u(document).on('click', '#__videoAttachment', async (e) => {
     const per_page = 10
-    const form = u(e.target).closest('#write') 
+    const form = u(e.target).closest('#write')
     const msg = new CMessageBox({
         title: tr('selecting_video'),
         body: `
         <div class='attachment_selector'>
             <div class="topGrayBlock display_flex_row">
                 <a id='__fast_video_upload' href="/videos/upload"><input class='button' type='button' value='${tr("upload_button")}'></a>
-                
+
                 <input type="search" id="video_query" maxlength="20" placeholder="${tr("header_search")}">
             </div>
             <div id='attachment_insert'>
@@ -1509,7 +1509,7 @@ u(document).on('click', '#__videoAttachment', async (e) => {
 
     msg.getNode().attr('style', 'width: 630px;')
     msg.getNode().find('.ovk-diag-body').attr('style', 'height:335px;padding:0px;')
-    
+
     async function __recieveVideos(page, query = '') {
         u('#gif_loader').remove()
         u('#attachment_insert').append(`<div id='gif_loader'></div>`)
@@ -1530,7 +1530,7 @@ u(document).on('click', '#__videoAttachment', async (e) => {
 
         u("#gif_loader").remove()
         const pages_count = Math.ceil(Number(videos.count) / per_page)
-        
+
         if(pages_count < 1) {
             insert_place.append(query == '' ? tr('no_videos') : tr('no_videos_results'))
         }
@@ -1545,7 +1545,7 @@ u(document).on('click', '#__videoAttachment', async (e) => {
 
             if(video['owner_id'] > 0) {
                 const profile = profiles.find(prof => prof.id == video['owner_id'])
-                if(profile) {  
+                if(profile) {
                     author_name = profile['first_name'] + ' ' + profile['last_name']
                 }
             } else {
@@ -1619,7 +1619,7 @@ u(document).on('click', '#__videoAttachment', async (e) => {
     // add video
     u(".ovk-diag-body .attachment_selector").on("click", "#__attach_vid", async (ev) => {
         ev.preventDefault()
-        
+
         const target = u(ev.target).closest('.content')
         const button = target.find('#__attach_vid')
         const dataset = target.nodes[0].dataset
@@ -1655,7 +1655,7 @@ u(document).on('click', '#__videoAttachment', async (e) => {
 
 u(document).on('click', '#__notesAttachment', async (e) => {
     const per_page = 10
-    const form = u(e.target).closest('#write') 
+    const form = u(e.target).closest('#write')
     const msg = new CMessageBox({
         title: tr('select_note'),
         body: `
@@ -1673,7 +1673,7 @@ u(document).on('click', '#__notesAttachment', async (e) => {
 
     msg.getNode().attr('style', 'width: 340px;')
     msg.getNode().find('.ovk-diag-body').attr('style', 'height:335px;padding:0px;')
-    
+
     async function __recieveNotes(page) {
         u('#gif_loader').remove()
         u('#attachment_insert').append(`<div id='gif_loader'></div>`)
@@ -1692,7 +1692,7 @@ u(document).on('click', '#__notesAttachment', async (e) => {
         const pages_count = Math.ceil(Number(notes.count) / per_page)
 
         if(notes.count < 1) {
-            insert_place.append(tr('no_notes'))    
+            insert_place.append(tr('no_notes'))
         }
 
         notes.items.forEach(note => {
@@ -1735,7 +1735,7 @@ u(document).on('click', '#__notesAttachment', async (e) => {
     u(".ovk-diag-body .attachment_selector").on("click", "#__attach_note", async (ev) => {
         if(u(form).find(`.upload-item`).length > window.openvk.max_attachments) {
             makeError(tr('too_many_attachments'), 'Red', 10000, 1)
-            return    
+            return
         }
 
         const target = u(ev.target).closest('._content')
@@ -1757,7 +1757,7 @@ u(document).on('click', '#__notesAttachment', async (e) => {
                     <div class='vertical-attachment-content' draggable="false">
                         <div class="attachment_note">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
-                            
+
                             <div class='attachment_note_content'>
                                 <span class="attachment_note_text">${tr('note')}</span>
                                 <span class="attachment_note_name">${ovk_proc_strtr(escapeHtml(dataset.name), 66)}</span>
@@ -1888,7 +1888,7 @@ function showFastVideoUpload(node) {
         current_tab = tab_name
         u(`#_fast_video_upload .mb_tab`).attr('id', 'ki')
         u(`#_fast_video_upload .mb_tab[data-name='${current_tab}']`).attr('id', 'active')
-        
+
         switch(current_tab) {
             case 'file':
                 msg.getNode().find('#__content').html(`
@@ -1971,16 +1971,17 @@ u(document).on('click', '.post-buttons .upload-item', (e) => {
 u(document).on('click', '.post.post-nsfw .post-content', (e) => {
     e.preventDefault()
     e.stopPropagation()
-    
+
     if(window.openvk.current_id == 0) {
         return
     }
-    
+
     u(e.target).closest('.post-nsfw').removeClass('post-nsfw')
 })
 
 u(document).on('focusin', '#write', (e) => {
     const target = u(e.target).closest('#write')
+    target.addClass('expanded-textarea')
     target.find('.post-buttons').attr('style', 'display:block')
     target.find('.small-textarea').addClass('expanded-textarea')
 })
@@ -1995,13 +1996,13 @@ async function repost(id, repost_type = 'post') {
         body: `
             <form class='display_flex_column' style='gap: 5px;'>
                 <b>${tr('auditory')}</b>
-                
+
                 <div class='display_flex_column' style="gap: 2px;padding-left: 1px;">
                     <label>
                         <input type="radio" name="repost_type" value="wall" checked>
                         ${tr("in_wall")}
                     </label>
-                    
+
                     <label>
                         <input type="radio" name="repost_type" value="group">
                         ${tr("in_group")}
@@ -2029,7 +2030,7 @@ async function repost(id, repost_type = 'post') {
                                 <a class='menu_toggler'>
                                     ${tr('attach')}
                                 </a>
-                                
+
                                 <div id="wallAttachmentMenu" class="hidden">
                                     <a class="header menu_toggler">
                                         ${tr('attach')}
@@ -2067,11 +2068,11 @@ async function repost(id, repost_type = 'post') {
                 try {
                     club_id = parseInt(node.find(`select[name='selected_repost_club']`).nodes[0].selectedOptions[0].value)
                 } catch(e) {}
-    
+
                 const as_group = node.find(`input[name='asGroup']`).nodes[0].checked
                 const signed   = node.find(`input[name='signed']`).nodes[0].checked
                 const attachments = collect_attachments(node.find('.post-buttons')).join(',')
-    
+
                 const params = {}
                 switch(repost_type) {
                     case 'post':
@@ -2084,27 +2085,27 @@ async function repost(id, repost_type = 'post') {
                         params.object = `video${id}`
                         break
                 }
-    
+
                 params.message = message
                 if(type == 'group' && club_id != 0) {
                     params.group_id = club_id
                 }
-    
+
                 if(as_group) {
                     params.as_group = Number(as_group)
                 }
-                
+
                 if(signed) {
                     params.signed = Number(signed)
                 }
-    
+
                 if(attachments != '') {
                     params.attachments = attachments
                 }
-    
+
                 try {
                     res = await window.OVKAPI.call('wall.repost', params)
-    
+
                     if(u('#reposts' + id).length > 0) {
                         if(repostsCount.length > 0) {
                             repostsCount.html(previousVal + 1)
@@ -2112,7 +2113,7 @@ async function repost(id, repost_type = 'post') {
                             u('#reposts' + id).nodes[0].insertAdjacentHTML('beforeend', `(<b id='repostsCount${id}'>1</b>)`)
                         }
                     }
-    
+
                     NewNotification(tr('information_-1'), tr('shared_succ'), null, () => {window.router.route(`/wall${res.pretty_id}`)});
                 } catch(e) {
                     console.error(e)
@@ -2122,7 +2123,7 @@ async function repost(id, repost_type = 'post') {
             Function.noop
         ]
     });
-    
+
     u('.ovk-diag-body').attr('style', 'padding: 18px;')
     u('.ovk-diag-body').on('change', `input[name='repost_type']`, (e) => {
         const value = e.target.value
@@ -2146,7 +2147,7 @@ async function repost(id, repost_type = 'post') {
         const club_id = e.target.value
         u('.ovk-diag-body #__photoAttachment, .ovk-diag-body #__videoAttachment, .ovk-diag-body #__audioAttachment, .ovk-diag-body #__documentAttachment').attr('data-club', club_id)
     })
-    
+
     if(!window.openvk.writeableClubs) {
         window.openvk.writeableClubs = await window.OVKAPI.call('groups.get', {'filter': 'admin', 'count': 100})
     }
@@ -2217,7 +2218,7 @@ $(document).on("click", "#add_image", (e) => {
         document.querySelector(".ovk-diag-action").insertAdjacentHTML("beforeend", `
             <button class="button" style="margin-left: 4px;" id="_uploadImg">${tr("upload_button")}</button>
         `)
-        
+
         const image_div = document.getElementById('temp_uploadPic');
         const cropper = new Cropper(image_div, {
             aspectRatio: NaN,
@@ -2252,7 +2253,7 @@ $(document).on("click", "#add_image", (e) => {
                 formdata.append("ajax", 1)
                 formdata.append("on_wall", Number(document.querySelector("#publish_on_wall").checked))
                 formdata.append("hash", u("meta[name=csrf]").attr("value"))
-        
+
                 $.ajax({
                     type: "POST",
                     url: isGroup ? "/club" + group + "/al_avatar" : "/al_avatars",
@@ -2272,10 +2273,10 @@ $(document).on("click", "#add_image", (e) => {
                             fastError(response.flash.message)
                             return
                         }
-                        
+
                         document.querySelector("#bigAvatar").src = response.url
                         document.querySelector("#bigAvatar").parentNode.href = "/photo" + response.new_photo
-						
+
                         document.querySelector(".avatar_controls").style.display = "block"
                         document.querySelector(".avatar_controls .set_image").style.display = "block"
 						document.querySelector(".avatar_controls .avatarDelete").style.display = "block"
@@ -2331,7 +2332,7 @@ $(document).on("click", "#add_image", (e) => {
 
             fastError(err)
         });
-        
+
         function __closeConnection() {
             window._cameraStream.getTracks().forEach(track => track.stop())
         }
@@ -2353,7 +2354,7 @@ $(document).on("click", "#add_image", (e) => {
             context.drawImage(video, 0, 0, video.clientWidth, video.clientHeight);
             canvas.toBlob((blob) => {
                 $("#_takeSnap").remove()
-                
+
                 let file = new File([blob], "snapshot.jpg", {type: "image/jpeg", lastModified: new Date().getTime()})
                 let dt = new DataTransfer();
                 dt.items.add(file);
@@ -2458,7 +2459,7 @@ async function __processPaginatorNextPage(page)
     if(u(`.paginator:not(.paginator-at-top)`).nodes[0].closest('.scroll_container')) {
         container.nodes[0].append(u(`.paginator:not(.paginator-at-top)`).nodes[0].parentNode)
     }
-    
+
     if(window.player && window.player.isAtAudiosPage() && window.player.isAtCurrentContextPage()) {
         window.player.loadContext(page)
         window.player.__highlightActiveTrack()
@@ -2494,7 +2495,7 @@ const showMoreObserver = new IntersectionObserver(entries => {
             /*if(window.player && window.player.isAtAudiosPage() && !window.player.isAtCurrentContextPage()) {
                 return
             }*/
-            
+
             const target = u(x.target)
             if(target.length < 1 || target.hasClass('paginator-at-top')) {
                 return
@@ -2523,7 +2524,7 @@ const showMoreObserver = new IntersectionObserver(entries => {
             } catch(e) {
                 console.error(e)
             }
-            
+
             bsdnHydrate()
             u('.paginator:not(.paginator-at-top)').removeClass('lagged')
         }
@@ -2645,7 +2646,7 @@ u(document).on('mouseover mousemove mouseout', `div[data-tip='simple']`, (e) => 
     target.nodes[0].parentNode.insertAdjacentHTML('afterbegin', `
         <div class='tip_result' style='left:${e.layerX}px;'>
             ${escapeHtml(title)}
-        </div>    
+        </div>
     `)
 })
 
@@ -2741,7 +2742,7 @@ u(document).on('click', "#__geoAttacher", async (e) => {
             if(!currentMarker) {
                 return
             }
-            
+
             const geo_name = $(`#geo-name`).html()
             if(geo_name == '') {
                 return
@@ -3058,7 +3059,7 @@ u(document).on("submit", "#additional_fields_form", (e) => {
             node.focus()
             return
         }
-    }) 
+    })
 })
 
 if(Number(localStorage.getItem('ux.gif_autoplay') ?? 0) == 1) {
@@ -3078,10 +3079,91 @@ if(Number(localStorage.getItem('ux.gif_autoplay') ?? 0) == 1) {
         rootMargin: '0px',
         threshold: 0,
     })
-    
+
     if(u('.docGalleryItem').length > 0) {
         u('.docGalleryItem').nodes.forEach(item => {
             showMoreObserver.observe(item)
         })
     }
 }
+
+function appendEmoji(e) {
+    let emoji = e.currentTarget.dataset.emoji;
+    if (!emoji) return;
+
+    let textarea = u(e.target).closest('#write').find('.small-textarea').nodes[0];
+    if (!textarea) {
+        textarea = document.querySelector('.small-textarea');
+    }
+
+    if (textarea) {
+        let start = textarea.selectionStart;
+        let end = textarea.selectionEnd;
+        textarea.value = textarea.value.substring(0, start) + emoji + textarea.value.substring(end);
+        textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
+        textarea.focus();
+        textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+}
+
+(function() {
+    let emojiTippy = tippy.delegate("body", {
+        content: "",
+        allowHTML: true,
+        target: '.emoji_picker_entrypoint',
+        interactive: true,
+        interactiveDebounce: 0,
+        trigger: 'click',
+        placement: 'top',
+        theme: 'emoji light vk',
+        zIndex: 1024,
+        onShow: function(that) {
+            if (!window.emojiData) {
+                loadEmojiData().then(function() {
+                    that.setContent(renderEmojiGrid());
+                });
+            } else {
+              that.setContent(renderEmojiGrid());
+            }
+        }
+    });
+
+    function renderEmojiGrid() {
+        if (!window.emojiData) return '<div style="padding:30px;">' + tr('loading') + '...</div>';
+
+        var html = '<div class="emoji-picker">';
+        window.emojiData.forEach(function (group) {
+            if (group.slug == "flags") { // от греха подальше
+              return;
+            }
+
+            const localized_group = group.slug;
+            html += '<div class="emoji-picker-group">';
+            html += '<div>' + tr("emoji_group_"+localized_group) + '</div>';
+            html += '<div class="emoji-picker-group-items">';
+            group.emojis.forEach(function (item) {
+                if (parseFloat(item.emoji_version) > 15) { // они некорректно отрендерятся
+                  return;
+                }
+                html += '<span title="' + escapeHtml(item.name) +'" class="emoji-picker-item" onclick="appendEmoji(event)" data-emoji="' + item.emoji + '">' + item.emoji + '</span>';
+            });
+            html += '</div></div>';
+        });
+        html += `</div>
+        <div class="emoji-picker-footer">
+          <div class="sticker-tabs"></div>
+          <div class="sticker-store"></div>
+        </div>`;
+        return html;
+    }
+
+    function loadEmojiData() {
+        if (window.emojiData) return Promise.resolve(window.emojiData);
+        return fetch('/assets/packages/static/openvk/js/node_modules/unicode-emoji-json/data-by-group.json')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                window.emojiData = data;
+                return data;
+            });
+    }
+})();

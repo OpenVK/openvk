@@ -5,9 +5,11 @@
 {* default variables *}
 {var $anonHide = $anonHide ?? false}
 
-<div id="write" class='model_content_textarea' style="padding: 5px 0;" data-id="{isset($owner) ? (gettype($owner) == 'integer' ? $owner : $owner->getId())}">
+<div id="write" class='has_emoji_picker model_content_textarea' style="padding: 5px 0;" data-id="{isset($owner) ? (gettype($owner) == 'integer' ? $owner : $owner->getId())}">
     <form action="{$route}" method="post" enctype="multipart/form-data" style="margin:0;">
         <textarea id="wall-post-input{$textAreaId}" placeholder="{_write}" name="text" style="width: 100%;resize: none;" class="small-textarea" autocomplete="off"></textarea>
+        <div class="emoji_picker_entrypoint"></div>
+
         <div>
             <!-- padding to fix <br/> bug -->
         </div>
@@ -30,13 +32,13 @@
                         <script>
                             function onWallAsGroupClick(el) {
                                 document.querySelector("#forceSignOpt").style.display = el.checked ? "block" : "none";
-                                
+
                                 {if $anonEnabled}
                                     document.querySelector("#octoberAnonOpt").style.display = el.checked ? "none" : "block";
                                 {/if}
                             }
                         </script>
-                        
+
                         <label>
                             <input type="checkbox" name="as_group" onchange="onWallAsGroupClick(this)" checked /> {_post_as_group}
                         </label>
@@ -45,11 +47,11 @@
                         </label>
                     {/if}
                 {/if}
-                
+
                 <label n:if="$anonEnabled" id="octoberAnonOpt" {if $anonHide}style="display: none;"{/if}>
                     <input type="checkbox" name="anon" /> {_as_anonymous}
                 </label>
-                
+
                 <label>
                     <input type="checkbox" name="nsfw" /> {_contains_nsfw}
                 </label>
@@ -74,7 +76,7 @@
                 <a class='menu_toggler'>
                     {_attach}
                 </a>
-                
+
                 <div id="wallAttachmentMenu" class="hidden">
                     <a class="header menu_toggler">
                         {_attach}

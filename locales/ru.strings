@@ -1360,6 +1360,16 @@
 "message_deletion" = "Удаление $1 сообщений";
 "message_deletion_confirm" = "Удалить эти сообщения? Это действие нельзя будет отменить.";
 
+"emoji_group_smileys_emotion" = "Смайлы";
+"emoji_group_people_body" = "Люди";
+"emoji_group_animals_nature" = "Природа";
+"emoji_group_food_drink" = "Еда и напитки";
+"emoji_group_travel_places" = "Мир";
+"emoji_group_activities" = "Развлечения";
+"emoji_group_objects" = "Предметы";
+"emoji_group_symbols" = "Символы";
+"emoji_group_flags" = "Флаги государств и движений";
+
 /* Polls */
 "poll" = "Опрос";
 "create_poll" = "Новый опрос";

@@ -984,6 +984,23 @@ h4 {
     min-height: 48px;
 }
 
+.model_content_textarea.has_emoji_picker {
+    position: relative;
+}
+
+.model_content_textarea textarea {
+    padding: 4px 30px 4px 6px;
+}
+
+.model_content_textarea.has_emoji_picker.expanded-textarea .emoji_picker_entrypoint {
+    width: 20px;
+    height: 20px;
+    background: yellow;
+    position: absolute;
+    right: 5px;
+    top: 8px;
+}
+
 ul {
     list-style-type: square;
     color: #a2a2a2;
@@ -4340,4 +4357,51 @@ hr {
 
 .collapse_button {
     display: block;
+}
+
+.emoji-picker,
+.emoji-picker * {
+    scrollbar-width: none;
+}
+
+.emoji-picker {
+    width:250px;
+    max-height:200px;
+    overflow-y:auto;
+    padding:6px 8px 40px 8px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    position: relative;
+}
+
+.emoji-picker-footer {
+    bottom: 0;
+    height: 35px;
+    width: 100%;
+    background: gray;
+    position: absolute;
+    overflow-y:auto;
+}
+
+.emoji-picker .emoji-picker-group-items {
+    display:flex;
+    flex-wrap:wrap;
+    gap:3px;
+    box-sizing: border-box;
+}
+
+.emoji-picker .emoji-picker-group-items .emoji-picker-item {
+    cursor: pointer;
+    width: 19px;
+    height: 20px;
+}
+
+.tippy-box[data-theme~="emoji"] {
+    border-radius: 1px;
+}
+
+.tippy-box[data-theme~="emoji"] .tippy-content {
+    padding: 0px 0px !important;
 }
