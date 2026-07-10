@@ -68,9 +68,24 @@ class StickerPack extends RowModel
         return $this->getRecord()->author;
     }
 
-    public function getAuthorId(): ?int
+    public function getAuthorId(): ?string
     {
-        $id = $this->getRecord()->author_id;
+        return $this->getRecord()->author_id;
+    }
+
+    public function getAuthorIds(): array
+    {
+        $csv = $this->getRecord()->author_id;
+        if (empty($csv)) {
+            return [];
+        }
+
+        return array_map("intval", explode(",", $csv));
+    }
+
+    public function getOwnerId(): ?int
+    {
+        $id = $this->getRecord()->owner_id;
         return is_null($id) ? null : (int) $id;
     }
 
@@ -122,7 +137,22 @@ class StickerPack extends RowModel
         return DB::i()->getContext()->table("sticker_purchases")
             ->where("user", $user->getId())
             ->where("stickerpack", $this->getId())
+            ->where("purchased", 1)
             ->count("*") > 0;
+    }
+
+    public function getPurchaseStatus(User $user): int
+    {
+        $row = DB::i()->getContext()->table("sticker_purchases")
+            ->where("user", $user->getId())
+            ->where("stickerpack", $this->getId())
+            ->fetch();
+
+        if (!$row) {
+            return 0;
+        }
+
+        return (int) $row->purchased;
     }
 
     public function buy(User $user): bool
@@ -131,8 +161,18 @@ class StickerPack extends RowModel
             return false;
         }
 
-        if ($this->isPurchasedBy($user)) {
+        $existing = DB::i()->getContext()->table("sticker_purchases")
+            ->where("user", $user->getId())
+            ->where("stickerpack", $this->getId())
+            ->fetch();
+
+        if ($existing && (int) $existing->purchased === 1) {
             return false;
+        }
+
+        if ($existing && (int) $existing->purchased === 2) {
+            $existing->update(["purchased" => 1]);
+            return true;
         }
 
         $price = $this->getPrice();
@@ -150,10 +190,22 @@ class StickerPack extends RowModel
         DB::i()->getContext()->table("sticker_purchases")->insert([
             "user"       => $user->getId(),
             "stickerpack" => $this->getId(),
-            "purchased"  => time(),
+            "purchased"  => 1,
         ]);
 
         return true;
+    }
+
+    public function hideFromQuickAccess(User $user): void
+    {
+        $existing = DB::i()->getContext()->table("sticker_purchases")
+            ->where("user", $user->getId())
+            ->where("stickerpack", $this->getId())
+            ->fetch();
+
+        if ($existing && (int) $existing->purchased === 1) {
+            $existing->update(["purchased" => 2]);
+        }
     }
 
     public function giftTo(User $from, User $to): void
@@ -170,11 +222,20 @@ class StickerPack extends RowModel
             $from->save();
         }
 
-        DB::i()->getContext()->table("sticker_purchases")->insert([
-            "user"       => $to->getId(),
-            "stickerpack" => $this->getId(),
-            "purchased"  => time(),
-        ]);
+        $existing = DB::i()->getContext()->table("sticker_purchases")
+            ->where("user", $to->getId())
+            ->where("stickerpack", $this->getId())
+            ->fetch();
+
+        if ($existing) {
+            $existing->update(["purchased" => 1]);
+        } else {
+            DB::i()->getContext()->table("sticker_purchases")->insert([
+                "user"       => $to->getId(),
+                "stickerpack" => $this->getId(),
+                "purchased"  => 1,
+            ]);
+        }
     }
 
     public function setName(string $name): void
@@ -217,9 +278,14 @@ class StickerPack extends RowModel
         $this->stateChanges("author", $author);
     }
 
-    public function setAuthorId(?int $authorId): void
+    public function setAuthorId(?string $authorId): void
     {
         $this->stateChanges("author_id", $authorId);
+    }
+
+    public function setOwnerId(?int $ownerId): void
+    {
+        $this->stateChanges("owner_id", $ownerId);
     }
 
     public function setGiftSticker(?Sticker $sticker): void

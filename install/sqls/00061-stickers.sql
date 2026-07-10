@@ -1,6 +1,10 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
+DROP TABLE IF EXISTS `stickers`;
+DROP TABLE IF EXISTS `stickerpacks`;
+DROP TABLE IF EXISTS `sticker_relations`;
+
 CREATE TABLE IF NOT EXISTS `stickers` (
   `id` bigint(20) unsigned NOT NULL,
   `emoji` varchar(64) NOT NULL DEFAULT '',
@@ -14,7 +18,8 @@ CREATE TABLE IF NOT EXISTS `stickerpacks` (
   `description` text,
   `main_sticker_id` bigint(20) unsigned DEFAULT NULL,
   `author` varchar(256) DEFAULT NULL,
-  `author_id` bigint(20) unsigned DEFAULT NULL,
+  `author_id` varchar(256) DEFAULT NULL,
+  `owner_id` bigint(20) unsigned DEFAULT NULL,
   `slug` varchar(128) NOT NULL,
   `price` smallint(5) unsigned NOT NULL DEFAULT '0',
   `end_time` bigint(20) unsigned DEFAULT NULL,
@@ -34,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `sticker_purchases` (
   `id` bigint(20) unsigned NOT NULL,
   `user` bigint(20) unsigned NOT NULL,
   `stickerpack` bigint(20) unsigned NOT NULL,
-  `purchased` bigint(20) unsigned NOT NULL
+  `purchased` tinyint(1) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 ALTER TABLE `stickers`
@@ -47,7 +52,7 @@ ALTER TABLE `stickerpacks`
   ADD KEY `deleted` (`deleted`),
   ADD KEY `main_sticker_id` (`main_sticker_id`),
   ADD KEY `gift_sticker_id` (`gift_sticker_id`),
-  ADD KEY `author_id` (`author_id`);
+  ADD KEY `owner_id` (`owner_id`);
 
 ALTER TABLE `stickerpack_relations`
   ADD PRIMARY KEY (`id`),
@@ -71,7 +76,7 @@ ALTER TABLE `sticker_purchases`
 ALTER TABLE `stickerpacks`
   ADD CONSTRAINT `FK_stickerpack_main_sticker` FOREIGN KEY (`main_sticker_id`) REFERENCES `stickers` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_stickerpack_gift_sticker` FOREIGN KEY (`gift_sticker_id`) REFERENCES `stickers` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `FK_stickerpack_author` FOREIGN KEY (`author_id`) REFERENCES `profiles` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT `FK_stickerpack_owner` FOREIGN KEY (`owner_id`) REFERENCES `profiles` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 ALTER TABLE `stickerpack_relations`
   ADD CONSTRAINT `FK_sprel_stickerpack` FOREIGN KEY (`stickerpack`) REFERENCES `stickerpacks` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,

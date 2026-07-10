@@ -42,6 +42,15 @@ class Sticker extends RowModel
         $this->stateChanges("unlisted", (int) $unlisted);
     }
 
+    private function resizeTo(\Imagick $image, string $dir, int $size, bool $outline = false): void
+    {
+        $suffix = $outline ? "_outline" : "";
+        $copy = clone $image;
+        $copy->resizeImage($size, $size, \Imagick::FILTER_LANCZOS, 1, true);
+        $copy->writeImage($dir . $size . $suffix . ".png");
+        $copy->clear();
+    }
+
     public function saveImage(string $file): bool
     {
         $dir = OPENVK_ROOT . "/public/stickers/" . $this->getId() . "/";
@@ -53,11 +62,8 @@ class Sticker extends RowModel
             $image = new \Imagick($file);
             $image->setImageFormat("png");
 
-            $image->resizeImage(256, 256, \Imagick::FILTER_LANCZOS, 1, true);
-            $image->writeImage($dir . "256.png");
-            
-            $image->resizeImage(128, 128, \Imagick::FILTER_LANCZOS, 1, true);
-            $image->writeImage($dir . "128.png");
+            $this->resizeTo($image, $dir, 128);
+            $this->resizeTo($image, $dir, 256);
 
             $image->clear();
             return true;
@@ -77,11 +83,8 @@ class Sticker extends RowModel
             $image = new \Imagick($file);
             $image->setImageFormat("png");
 
-            $image->resizeImage(256, 256, \Imagick::FILTER_LANCZOS, 1, true);
-            $image->writeImage($dir . "256_outline.png");
-
-            $image->resizeImage(128, 128, \Imagick::FILTER_LANCZOS, 1, true);
-            $image->writeImage($dir . "128_outline.png");
+            $this->resizeTo($image, $dir, 128, true);
+            $this->resizeTo($image, $dir, 256, true);
 
             $image->clear();
             return true;
