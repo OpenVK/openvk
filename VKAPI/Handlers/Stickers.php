@@ -28,6 +28,7 @@ final class Stickers extends VKAPIRequestHandler
                 continue;
             }
 
+            $data = $pack->toVkApiStruct();
             $stickers = [];
             foreach ($pack->getStickers(1, 100) as $sticker) {
                 $stickers[] = [
@@ -40,13 +41,14 @@ final class Stickers extends VKAPIRequestHandler
                 ];
             }
 
-            $items[] = [
-                "id"           => $pack->getId(),
-                "name"         => $pack->getName(),
-                "slug"         => $pack->getSlug(),
-                "price"        => $pack->getPrice(),
-                "stickers"     => $stickers,
-            ];
+            $mainSticker = $pack->getMainSticker();
+
+            if ($mainSticker) {
+                $data["photo_256"] = $server_url . $mainSticker->getImageUrl(256);
+            }
+
+            $data["stickers"] = $stickers;
+            $items[] = $data;
             $i++;
         }
 
@@ -133,6 +135,28 @@ final class Stickers extends VKAPIRequestHandler
             "price"       => $pack->getPrice(),
             "purchased"   => $pack->isPurchasedBy($this->getUser()) ? 1 : 0,
             "stickers"    => $stickers,
+        ];
+    }
+
+    public function buy(int $stickerpack_id): object
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $repo = new StickersRepo();
+        $pack = $repo->getPack($stickerpack_id);
+
+        if (!$pack) {
+            $this->fail(15, "Sticker pack not found");
+        }
+
+        if (!$pack->buy($this->getUser())) {
+            $this->fail(15, "Cannot purchase this pack");
+        }
+
+        return (object) [
+            "success" => 1,
+            "pack_id" => $pack->getId(),
         ];
     }
 }

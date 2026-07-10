@@ -26,7 +26,11 @@ class StickerPack extends RowModel
     {
         $mainId = $this->getRecord()->main_sticker_id;
         if (!$mainId) {
-            return null;
+            $stickersList = iterator_to_array($this->getStickers(1, 2));
+
+            if (sizeof($stickersList) != 0) {
+                return $stickersList[0]->getId();
+            }
         }
 
         return new Sticker(DB::i()->getContext()->table("stickers")->get($mainId));
@@ -326,5 +330,15 @@ class StickerPack extends RowModel
     public function delete(bool $softly = true): void
     {
         parent::delete($softly);
+    }
+
+    public function toVkApiStruct(): array
+    {
+        return [
+            "id"    => $this->getId(),
+            "name"  => $this->getName(),
+            "slug"  => $this->getSlug(),
+            "price" => $this->getPrice(),
+        ];
     }
 }
