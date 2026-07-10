@@ -271,6 +271,7 @@ final class GroupPresenter extends OpenVKPresenter
             $club->setEveryone_Can_Create_Topics(empty($this->postParam("everyone_can_create_topics")) ? 0 : 1);
             $club->setDisplay_Topics_Above_Wall(empty($this->postParam("display_topics_above_wall")) ? 0 : 1);
             $club->setEveryone_can_upload_audios(empty($this->postParam("upload_audios")) ? 0 : 1);
+            $club->setIs_messages_enabled(empty($this->postParam("is_messages_enabled")) ? 0 : 1);
 
             if (!$club->isHidingFromGlobalFeedEnforced()) {
                 $club->setHide_From_Global_Feed(empty($this->postParam("hide_from_global_feed") ? 0 : 1));

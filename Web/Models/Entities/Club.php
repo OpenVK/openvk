@@ -171,6 +171,16 @@ class Club extends RowModel
         return (bool) $this->getRecord()->enforce_hiding_from_global_feed;
     }
 
+    public function isMessagesEnabled(): bool
+    {
+        return (bool) $this->getRecord()->is_messages_enabled;
+    }
+
+    public function isDeleted(): bool
+    {
+        return (bool) $this->getRecord()->deleted;
+    }
+
     public function getType(): int
     {
         return $this->getRecord()->type;
