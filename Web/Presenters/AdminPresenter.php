@@ -910,7 +910,7 @@ final class AdminPresenter extends OpenVKPresenter
         $pack = $this->stickers->getPack($id);
         if (!$pack) {
             $gen  = true;
-            $pack = $this->stickers->createPack("New Pack", "pack-" . time(), time());
+            $pack = $this->stickers->createPack("New Pack", "pack-" . time(), time(), $this->user->identity);
             $this->redirect("/admin/stickers/id" . $pack->getId());
         }
 
@@ -924,6 +924,7 @@ final class AdminPresenter extends OpenVKPresenter
         $this->template->form->unlisted    = $pack->isUnlisted();
         $this->template->form->author      = $pack->getAuthor() ?? "";
         $this->template->form->author_id   = $pack->getAuthorId();
+        $this->template->form->owner_id    = $pack->getOwnerId();
         $this->template->form->main_sticker = $pack->getMainSticker();
         $this->template->form->gift_sticker = $pack->getGiftSticker();
 
@@ -945,7 +946,7 @@ final class AdminPresenter extends OpenVKPresenter
         $pack->setPrice((int) $this->postParam("price"));
         $pack->setUnlisted(!empty($this->postParam("unlisted")));
         $pack->setAuthor($this->postParam("author"));
-        $pack->setAuthorId(!empty($this->postParam("author_id")) ? (int) $this->postParam("author_id") : null);
+        $pack->setAuthorId($this->postParam("author_id"));
 
         $endTime = $this->postParam("end_time");
         $pack->setEndTime(!empty($endTime) ? (int) $endTime : null);
@@ -967,21 +968,37 @@ final class AdminPresenter extends OpenVKPresenter
             $this->badRequest();
         }
 
-        if (!isset($_FILES["sticker"]) || $_FILES["sticker"]["error"][0] !== UPLOAD_ERR_OK) {
+        if (!isset($_FILES["sticker"])) {
             $this->flashFail("err", tr("error"), tr("admin_sticker_upload_failed"));
         }
 
-        $emoji = $this->postParam("emoji") ?? "";
-        $sticker = $this->stickers->createSticker($emoji);
+        $emojis = $this->postParam("emoji") ?? [];
+        $emojis = is_array($emojis) ? $emojis : [$emojis];
 
-        if (!$sticker->saveImage($_FILES["sticker"]["tmp_name"][0])) {
-            $sticker->delete(true);
+        $fileCount = 0;
+        $successCount = 0;
+        foreach ($_FILES["sticker"]["tmp_name"] as $idx => $tmpName) {
+            if ($_FILES["sticker"]["error"][$idx] !== UPLOAD_ERR_OK) {
+                continue;
+            }
+
+            $fileCount++;
+            $emoji = $emojis[$idx] ?? "";
+            $sticker = $this->stickers->createSticker($emoji);
+
+            if ($sticker->saveImage($tmpName)) {
+                $pack->addSticker($sticker);
+                $successCount++;
+            } else {
+                $sticker->delete(true);
+            }
+        }
+
+        if ($successCount === 0) {
             $this->flashFail("err", tr("error"), tr("admin_sticker_image_bad"));
         }
 
-        $pack->addSticker($sticker);
-
-        $this->flash("succ", tr("admin_sticker_added"), tr("admin_sticker_added_desc"));
+        $this->flash("succ", tr("admin_sticker_added"), tr("admin_sticker_added_desc", $successCount));
         $this->redirect("/admin/stickers/id" . $pack->getId());
     }
 

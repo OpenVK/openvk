@@ -134,12 +134,13 @@ class Stickers
         }
     }
 
-    public function createPack(string $name, string $slug, int $created): StickerPack
+    public function createPack(string $name, string $slug, int $created, User $created_by): StickerPack
     {
         $row = $this->packs->insert([
             "name"    => $name,
             "slug"    => $slug,
             "created" => $created,
+            "owner_id" => $created_by->getRealId()
         ]);
 
         return new StickerPack($row);

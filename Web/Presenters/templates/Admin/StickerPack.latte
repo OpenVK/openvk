@@ -64,9 +64,17 @@
             </div>
             <div class="field-group">
                 <label for="author_id">
-                    Author profile ID
+                    Author profile IDs (CSV)
                 </label>
-                <input class="text long-field" type="number" id="author_id" name="author_id" min="0" value="{$form->author_id}" />
+                <input class="text long-field" type="text" id="author_id" name="author_id" value="{$form->author_id}" />
+                <div class="description">Comma-separated list of profile IDs.</div>
+            </div>
+            <div class="field-group">
+                <label for="owner_id">
+                    Owner profile ID
+                </label>
+                <input class="text long-field" type="number" id="owner_id" name="owner_id" min="0" value="{$form->owner_id}" />
+                <div class="description">The admin who created this pack.</div>
             </div>
             <fieldset class="group">
                 <legend></legend>
@@ -91,26 +99,34 @@
     <h3>Stickers in this pack</h3>
 
     <form class="aui" method="POST" enctype="multipart/form-data" action="/admin/stickers/id{$pack->getId()}/addSticker">
-        <div class="field-group">
-            <label for="sticker">
-                Upload sticker image
-                <span class="aui-icon icon-required"></span>
-            </label>
-            <input type="file" name="sticker[]" accept="image/png" required="required" />
-        </div>
-        <div class="field-group">
-            <label for="emoji">
-                Emoji
-            </label>
-            <input class="text" type="text" id="emoji" name="emoji" value="" placeholder="😀" />
+        <div id="sticker-upload-rows">
+            <div class="field-group sticker-upload-row">
+                <label>
+                    Sticker image
+                    <span class="aui-icon icon-required"></span>
+                </label>
+                <input type="file" name="sticker[]" accept="image/png" required="required" />
+                <input class="text" type="text" name="emoji[]" value="" placeholder="😀 emoji" style="width: 100px; margin-left: 8px;" />
+                <a href="#" class="aui-button aui-button-link add-sticker-row" style="margin-left: 8px;">+</a>
+            </div>
         </div>
         <div class="buttons-container">
             <div class="buttons">
                 <input type="hidden" name="hash" value="{$csrfToken}" />
-                <input class="aui-button aui-button-primary submit" type="submit" value="Add Sticker">
+                <input class="aui-button aui-button-primary submit" type="submit" value="Add Stickers">
             </div>
         </div>
     </form>
+    <script>
+        document.querySelector('.add-sticker-row')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            var row = document.querySelector('.sticker-upload-row');
+            var clone = row.cloneNode(true);
+            clone.querySelector('input[type="file"]').value = '';
+            clone.querySelector('input[type="text"]').value = '';
+            row.parentNode.appendChild(clone);
+        });
+    </script>
 
     {if sizeof($stickers) > 0}
         <table class="aui aui-table-list">
