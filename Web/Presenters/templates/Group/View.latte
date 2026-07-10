@@ -223,8 +223,15 @@
     </div>
     <div n:ifset="$thisUser" id="profile_links">
         {if $club->canBeModifiedBy($thisUser)}
+            {if $club->isMessagesEnabled()}
+                <a href="/im?as={$club->getRealId()}" class="profile_link">{_view_group_messages}</a>
+            {/if}
             <a href="/club{$club->getId()}/edit" id="profile_link">{_edit_group}</a>
             <a href="/club{$club->getId()}/stats" rel="nofollow" id="profile_link">{_statistics}</a>
+        {else}
+            {if $club->isMessagesEnabled()}
+                <a id="_message_send" data-eid="{$club->getRealId()}" href="/im?sel={$club->getRealId()}" class="profile_link">{_send_message}</a>
+            {/if}
         {/if}
         {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
             <a href="/admin/clubs/id{$club->getId()}" id="profile_link">{_manage_group_action}</a>

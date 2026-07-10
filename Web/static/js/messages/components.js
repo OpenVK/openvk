@@ -24,8 +24,6 @@ export const MessageBubble = ({ msg, index, chunk }) => {
     msg.data.deleted ? 'msg-deleted' : '',
   ].filter(Boolean).join(' ');
 
-  console.log(msg.data.action, msg.is_action)
-
   if (msg.is_action) {
     const act = msg.data.action.type;
     const typ = SystemMessages[act] ?? SystemMessages["unknown"];
