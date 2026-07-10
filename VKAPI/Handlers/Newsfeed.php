@@ -199,7 +199,7 @@ final class Newsfeed extends VKAPIRequestHandler
         if (empty($rposts)) {
             return (object) [
                 "count" => 0,
-                "items" => []
+                "items" => [],
             ];
         }
 
