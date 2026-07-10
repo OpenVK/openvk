@@ -9,6 +9,7 @@ use openvk\Web\Models\Entities\Document;
 use openvk\Web\Models\Repositories\{Photos, Clubs, Albums, Videos, Notes, Audios, Documents};
 use openvk\Web\Models\Repositories\Users as UsersRepo;
 use openvk\Web\Models\Repositories\Gifts as GiftsRepo;
+use openvk\Web\Models\Repositories\Posts as PostsRepo;
 
 final class Execute extends VKAPIRequestHandler
 {
@@ -118,8 +119,27 @@ final class Execute extends VKAPIRequestHandler
 
     public function wallGetWrapNew(int $owner_id = 1, int $photo_sizes = 1, int $offset = 25, int $count = 25, string $extended = ''): object
     {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $users = new UsersRepo();
+        // $posts = new PostsRepo();
+
+        $user = $users->get($owner_id);
+        
+        if ($user == null) {
+            return (object) [
+                "count" => 0,
+                "items" => [],
+                "profiles" => [],
+                "groups" => [],
+                "fixed" => null,
+                "status" => [],
+            ];
+        }
+
         $response = (object) [
-            "count" => 0,
+            "count" => 0, // $posts->getPostCountOnUserWall($user->getId()),
             "items" => [
                 /*[
                     "id" => 12345,
@@ -152,16 +172,22 @@ final class Execute extends VKAPIRequestHandler
                 ]
                 */
             ],
-            // закреп
-            "fixed" => null, 
 
-            "status" => [
-                // "text" => ""
-                // "audio" => []
-            ],
+            "fixed" => null, // $posts->getPinnedPost($user->getId())->isPinned(), 
+
+            "status" => (object) [],
             // "postponed_count" => 0,
             // "suggested_count" => 0
         ];
+        
+        if ($user->getStatus() != null) {
+            $response->status->text = $user->getStatus();
+        }
+        $audioStatus = $user->getCurrentAudioStatus();
+        if ($audioStatus) {
+            $response->status->audio = $audioStatus->toVkApiStruct();
+        }
+        
         return $response;
     }
     
@@ -176,7 +202,6 @@ final class Execute extends VKAPIRequestHandler
         $user = $users->get($user_id);
 
         $server_url = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
-
 
         if (is_null($user)) {
             $response = (object) [
@@ -258,7 +283,7 @@ final class Execute extends VKAPIRequestHandler
 
         $audioStatus = $user->getCurrentAudioStatus();
         if ($audioStatus) {
-            $response->status = [$audioStatus->toVkApiStruct()];
+            $response->status = $audioStatus->toVkApiStruct();
         } else {
             $response->status = (object) [];
         }
@@ -295,6 +320,15 @@ final class Execute extends VKAPIRequestHandler
                 "platform" => $platform,
                 "time"     => $user->getOnline()->timestamp(),
             ];
+        }
+
+        if ($user->onlineStatus() == 0) {
+            $response->online = 1;
+
+            $platform = $user->getOnlinePlatform(false);
+            if ($platform !== null) {
+                $response->online_mobile = 1;
+            }
         }
 
         if ($canView) {
