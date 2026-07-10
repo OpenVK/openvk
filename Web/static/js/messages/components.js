@@ -236,15 +236,18 @@ export const InputArea = ({ replyTo, onRemoveReply, onSend, onKeyPress, currentD
         </div>
       `}
       <div class="post-buttons">
-        <div class="messenger-app--input" id="write">
+        <div class="model_content_textarea messenger-app--input has_emoji_picker expanded-textarea" id="write">
           <img class="ava" src=${window.im.current.avatar_any} alt=${window.im.current.full_name} />
           <div class="messenger-app--input---messagebox">
-            <textarea
-              class="small-textarea"
-              placeholder=${tr('enter_message')}
-              value=${currentDraft}
-              onInput=${onInput}
-              onKeyDown=${onKeyPress}></textarea>
+            <div style="position:relative;">
+                <textarea
+                class="small-textarea"
+                placeholder=${tr('enter_message')}
+                value=${currentDraft}
+                onInput=${onInput}
+                onKeyDown=${onKeyPress}></textarea>
+                <div class="emoji_picker_entrypoint"></div>
+            </div>
             <div class="post-horizontal"></div>
             <div class="post-vertical"></div>
             <div class="input--messagebox-buttons">
