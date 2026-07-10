@@ -4378,11 +4378,39 @@ hr {
 
 .emoji-picker-footer {
     bottom: 0;
-    height: 35px;
+    height: 30px;
     width: 100%;
     background: gray;
     position: absolute;
     overflow-y:auto;
+    display: grid;
+    grid-template-columns: 1fr 0fr;
+}
+
+.emoji-picker-footer .sticker-store {
+    width: 30px;
+    background: darkseagreen;
+}
+
+.emoji-picker-footer .s-tab {
+    width: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.emoji-picker-footer .s-tab {
+    cursor: pointer;
+}
+
+.emoji-picker-footer .s-tab-smileys {
+    background: cadetblue;
+}
+
+.emoji-picker-footer .sticker-tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
 }
 
 .emoji-picker .emoji-picker-group-items {
@@ -4390,6 +4418,11 @@ hr {
     flex-wrap:wrap;
     gap:3px;
     box-sizing: border-box;
+}
+
+.emoji-picker .emoji-picker-group .group-title {
+    font-size: 13px;
+    padding-bottom: 9px;
 }
 
 .emoji-picker .emoji-picker-group-items .emoji-picker-item {
