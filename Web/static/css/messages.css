@@ -217,8 +217,19 @@ body.no-scroll .sidebar {
     display: inline-block;
 }
 
-.messenger-app--messages---message .message-id span {
-    color: purple;
+.messenger-app--messages---message .time {
+    position: absolute;
+    top: 0px;
+    height: 100%;
+    display: block;
+    opacity: 0;
+    transition: 200ms opacity ease-in-out;
+    align-items: center;
+    right: 60px;
+}
+
+.messenger-app--messages---message .time span {
+    color: var(--nobold);
 }
 
 /* toggle */
@@ -293,6 +304,38 @@ body.no-scroll .sidebar {
     position: relative;
 }
 
+.messenger-app--messages---message:hover .click-territory {
+    opacity: 0.7;
+}
+
+.messenger-app--messages---message:hover .time {
+    opacity: 1;
+}
+
+.messenger-app--messages---message.msg-selected .click-territory {
+    opacity: 0.9;
+}
+
+.messenger-app--messages---message.same-author .checkmark {
+    margin: 0px 0px 0px 25px;
+}
+
+.messenger-app--messages---message--wrap .checkmark {
+    width: 20px;
+    height: 20px;
+    margin: 10px 0px 0px 25px;
+    background: crimson;
+}
+
+.messenger-app--messages---message--wrap .click-territory {
+    position: absolute;
+    width: 55px;
+    height: 100%;
+    left: 0;
+    opacity: 0;
+    transition: 200ms opacity;
+}
+
 .messenger-app--messages .messenger-app--messages-day-time {
     display: flex;
     justify-content: center;
@@ -307,7 +350,7 @@ body.no-scroll .sidebar {
 
 .messenger-app--messages---message > .messenger-app--messages---message--wrap {
     padding: 0px 60px;
-    display: inline-block;
+    display: inline-flex;
 }
 
 .messenger-app--messages---message > .messenger-app--messages---message--wrap > div {
@@ -342,12 +385,12 @@ body.no-scroll .sidebar {
 .messenger-app--messages---message ._content {
     width: 310px;
     line-height: 13.2pt;
-    padding-left: 6px;
+    padding-left: 10px;
 }
 
 .messenger-app--messages---message ._content span,
 .messenger-app--messages---message ._content>a {
-    display: block;
+    display: inline-block;
 }
 
 .messenger-app--messages---message ._content span {
@@ -454,9 +497,26 @@ body.no-scroll .sidebar {
     border-top: 1px solid var(--bg-slightly-border);
 }
 
+.messenger-app-end .input-reply .input-close {
+    width: 53px;
+    display: block;
+}
+
 .messenger-app-end.reply-selected .input-reply {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 0fr;
+    gap: 23px;
+}
+
+.messenger-app-end.reply-selected .input-type {
+    height: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.messenger-app-end.reply-selected .input-type {
+    cursor: pointer;
 }
 
 .messages--peers-tabs {

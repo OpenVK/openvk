@@ -35,14 +35,20 @@ export const MessageBubble = ({ msg, index, chunk }) => {
     <div class="${cls}"
       onMouseDown=${(e) => window.im?.messenger?.view?.onMessageClick(msg, e)}>
       <div class="messenger-app--messages---message--wrap">
+        <div class="click-territory">
+            <div class="checkmark"></div>
+            <div class="message-id">
+                <span>${msg.id}</span>
+            </div>
+        </div>
         <div class="_avatar">
           <img class="ava" src=${msg.sender.avatar_any} alt=${msg.sender.full_name} />
         </div>
         <div class="_content">
-          <a class="_sender" onClick=${(e) => { e.preventDefault(); e.stopPropagation(); window.im.messenger.view.togglePeerInfo()}}>
+          <a class="_sender" onClick=${(e) => { window.im?.messenger?.view?.onAuthorNameClick(msg, e) }}>
             <strong>${msg.sender.full_name}</strong>
           </a>
-          <span class="text">${msg.text}</span>
+          <span dangerouslySetInnerHTML=${{ __html: msg.text }} class="text" />
           ${msg.attachments.length > 0 && html`
             <div class="attachments">
               ${msg.attachments.map((att) => html`<${Attachment} att=${att} />`)}
@@ -52,12 +58,7 @@ export const MessageBubble = ({ msg, index, chunk }) => {
       </div>
       <div class="time">
         ${msg.id != null && html`
-          <div>
-            <span>${msg.readable_date}</span>
-          </div>
-          <div class="message-id">
-            <span>${msg.id}</span>
-          </div>
+          <span>${msg.readable_date}</span>
         `}
       </div>
     </div>
@@ -224,13 +225,13 @@ export const AttachmentMenu = () => {
   `;
 };
 
-export const InputArea = ({ replyTo, onRemoveReply, onSend, onKeyPress, currentDraft, onInput, togglePeerInfo }) => {
+export const InputArea = ({ replyTo, onRemoveReply, onSend, onKeyPress, currentDraft, onInput, togglePeerInfo, clickOnReply }) => {
   return html`
     <div class="messenger-app-end${replyTo ? ' reply-selected' : ''}">
       ${replyTo && html`
         <div class="input-reply">
-          <span>${replyTo.text}</span>
-          <span onClick=${onRemoveReply}>close</span>
+          <span onclick=${clickOnReply(replyTo)} aria-label="link" class="input-type">${replyTo.text}</span>
+          <span class="input-close" onClick=${onRemoveReply}>close</span>
         </div>
       `}
       <div class="post-buttons">

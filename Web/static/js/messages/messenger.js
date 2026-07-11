@@ -119,7 +119,8 @@ export class MessengerViewModel {
               onKeyPress=${(e) => this.onTextareaKeyPress(e)}
               currentDraft=${this.currentDraft}
               onInput=${(e) => { this.currentDraft = e.target.value; }}
-              togglePeerInfo=${(e) => this.togglePeerInfo() }
+              togglePeerInfo=${(e) => {this.togglePeerInfo()} }
+              clickOnReply=${(msg, e) => {this.clickOnReply(msg, e)} }
             />
           </div>
         </div>
@@ -149,11 +150,19 @@ export class MessengerViewModel {
     if (e.buttons !== 1 && e.type == 'mousemove') return;
     if (this.replyTo != null) return;
 
+    if (this.selected_messages_count == 0 && !e.target.closest(".click-territory")) {
+      return;
+    }
+
     const target = e.target;
     if (!target.matches('.text, .time span') || this.selected_messages.length > 0) {
       e.preventDefault();
       this.toggleMessageSelection(msg, e);
     }
+  }
+
+  clickOnReply(msg) {
+    console.log(msg)
   }
 
   onReplyButtonClick() {
@@ -163,6 +172,21 @@ export class MessengerViewModel {
     this.unselect();
     this.replyTo = m;
     this._render();
+  }
+
+  onAuthorNameClick(msg, e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (this.selected_messages_count > 0) {
+      return;
+    }
+
+    if (window.im.corresponder.supposed_type == "chat") {
+      window.im.messenger.view.togglePeerInfo(msg.sender);
+    } else {
+      window.im.messenger.view.togglePeerInfo();
+    }
   }
 
   removeReply() {
@@ -178,8 +202,13 @@ export class MessengerViewModel {
     }
   }
 
-  togglePeerInfo() {
-    this.is_showing_profile = !this.is_showing_profile;
+  togglePeerInfo(sender = null) {
+    if (!sender) {
+      this.is_showing_profile = !this.is_showing_profile;
+    } else {
+      // TODO
+    }
+
     this._render();
   }
 
