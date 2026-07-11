@@ -3,6 +3,7 @@
     --common-2: #f0f1f2;
     --bg-slightly: #f9f9f9;
     --bg-slightly-border: #d6d6d6;
+    --bg-hover: #4c4c4c29;
     --text: black;
     --text-rev: white;
     --brand: #606060;
@@ -2546,7 +2547,7 @@ a.poll-retract-vote {
     position: absolute;
     height: 30px;
     width: 30px;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 1);
 
     display: flex;
     justify-content: center;
@@ -2559,6 +2560,7 @@ a.poll-retract-vote {
     height: 15px;
     width: 12px;
     border-radius: 4px;
+    opacity: 0.8;
 }
 
 .upload-item.dragged {
@@ -2567,7 +2569,7 @@ a.poll-retract-vote {
 
 .post-horizontal .upload-item .upload-delete {
     position: absolute;
-    background: rgba(0, 0, 0, 1);
+    background: rgba(0, 0, 0, 0.7);
     padding: 2px 5px;
     text-decoration: none;
     color: #fff;

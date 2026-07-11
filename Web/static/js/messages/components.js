@@ -48,7 +48,7 @@ export const MessageBubble = ({ msg, index, chunk }) => {
           <a class="_sender" onClick=${(e) => { window.im?.messenger?.view?.onAuthorNameClick(msg, e) }}>
             <strong>${msg.sender.full_name}</strong>
           </a>
-          <span dangerouslySetInnerHTML=${{ __html: msg.text }} class="text" />
+          <p dangerouslySetInnerHTML=${{ __html: msg.text }} class="text" />
           ${msg.attachments.length > 0 && html`
             <div class="attachments">
               ${msg.attachments.map((att) => html`<${Attachment} att=${att} />`)}
@@ -182,7 +182,7 @@ export const ActionsBar = ({ count, onDelete, onUnselect, onReply }) => {
   return html`
     <div class="messages--actions shown">
       <div>
-        <div class="message-tab"><a onClick=${onUnselect}>${tr("selected_messages", count)}</a></div>
+        <div class="message-tab-counter message-tab"><a onClick=${onUnselect}>${tr("selected_messages", count)}</a></div>
       </div>
       <div>
         <div class="message-tab"><a onClick=${onDelete}>${tr("delete_message")}</a></div>

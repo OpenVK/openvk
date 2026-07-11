@@ -354,6 +354,7 @@ class Photo extends Media
         $res->width    = $this->getDimensions()[0];
         $res->height   = $this->getDimensions()[1];
         $res->date     = $res->created = $this->getPublicationTime()->timestamp();
+        $res->access_key = $this->getAccessKey();
         if ($photo_sizes) {
             $res->sizes = array_values($this->getVkApiSizes());
             $res->src_small    = $res->photo_75 = $this->getURLBySizeId("miniscule");
@@ -387,6 +388,16 @@ class Photo extends Media
         }
 
         return $res;
+    }
+
+    public function isSystem(): bool
+    {
+        return (bool) $this->getRecord()->private;
+    }
+
+    public function isPrivate(): bool
+    {
+        return (bool) $this->getRecord()->private || (bool) $this->getRecord()->unlisted;
     }
 
     public function toApiAttachment(): array
@@ -427,6 +438,12 @@ class Photo extends Media
         }
 
         return $photo;
+    }
+
+    public function setAsFromMessage(): void
+    {
+        $this->stateChanges("private", 1);
+        $this->stateChanges("unlisted", 1);
     }
 
     public function toNotifApiStruct()

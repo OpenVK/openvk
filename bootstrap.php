@@ -294,10 +294,12 @@ function parseAttachments($attachments, array $allow_types = ['photo', 'video', 
         'photo' => [
             'repo'   => 'openvk\Web\Models\Repositories\Photos',
             'method' => 'getByOwnerAndVID',
+            'withKey' => true,
         ],
         'video' => [
             'repo' => 'openvk\Web\Models\Repositories\Videos',
             'method' => 'getByOwnerAndVID',
+            'withKey' => true,
         ],
         'audio' => [
             'repo' => 'openvk\Web\Models\Repositories\Audios',

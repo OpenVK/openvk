@@ -32,14 +32,33 @@ class Videos
         return self::$cache[$id] ??= $this->toVideo($this->videos->get($id));
     }
 
-    public function getByOwnerAndVID(int $owner, int $vId): ?Video
+    public function getByOwnerAndVIDUnsafe(int $owner, int $vId): ?Video
     {
-        $videos = $this->videos->where([
+        $video = $this->videos->where([
             "owner"      => $owner,
             "virtual_id" => $vId,
         ])->fetch();
 
-        return $this->toVideo($videos);
+        return $this->toVideo($video);
+    }
+
+    public function getByOwnerAndVID(int $owner, int $vId, ?string $access_key = null): ?Video
+    {
+        $video = $this->videos->where([
+            "owner"      => $owner,
+            "virtual_id" => $vId,
+        ])->fetch();
+
+        if (is_null($video)) {
+            return null;
+        }
+
+        $n_video = new Video($video);
+        if (!$n_video->checkAccessKey($access_key)) {
+            return null;
+        }
+
+        return $n_video;
     }
 
     public function getByUser(User $user, int $page = 1, ?int $perPage = null): \Traversable

@@ -397,7 +397,7 @@ final class Photos extends VKAPIRequestHandler
 
         foreach ($photos_splitted_list as $photo_id) {
             $photo_s_id = explode("_", $photo_id);
-            $photo = (new PhotosRepo())->getByOwnerAndVID((int) $photo_s_id[0], (int) $photo_s_id[1]);
+            $photo = (new PhotosRepo())->getByOwnerAndVID((int) $photo_s_id[0], (int) $photo_s_id[1], $photo_s_id[2] ?? null);
             if (!$photo || $photo->isDeleted() || !$photo->canBeViewedBy($this->getUser())) {
                 continue;
             }
@@ -451,7 +451,7 @@ final class Photos extends VKAPIRequestHandler
             foreach ($photos as $photo) {
                 $id = explode("_", $photo);
 
-                $photo_entity = (new PhotosRepo())->getByOwnerAndVID((int) $id[0], (int) $id[1]);
+                $photo_entity = (new PhotosRepo())->getByOwnerAndVID((int) $id[0], (int) $id[1], $id[2] ?? null);
                 if (!$photo_entity || $photo_entity->isDeleted() || !$photo_entity->canBeViewedBy($this->getUser())) {
                     continue;
                 }
@@ -484,7 +484,7 @@ final class Photos extends VKAPIRequestHandler
         $this->requireUser();
         $this->willExecuteWriteAction();
 
-        $photo = (new PhotosRepo())->getByOwnerAndVID($owner_id, $photo_id);
+        $photo = (new PhotosRepo())->getByOwnerAndVIDUnsafe($owner_id, $photo_id);
 
         if (!$photo || $photo->isDeleted() || !$photo->canBeModifiedBy($this->getUser())) {
             $this->fail(21, "Access denied");
@@ -512,7 +512,7 @@ final class Photos extends VKAPIRequestHandler
                 return 0;
             }
 
-            $photo = (new PhotosRepo())->getByOwnerAndVID($owner_id, $photo_id);
+            $photo = (new PhotosRepo())->getByOwnerAndVIDUnsafe($owner_id, $photo_id);
             if (!$photo || $photo->isDeleted() || !$photo->canBeModifiedBy($this->getUser())) {
                 return 1;
             }
@@ -526,7 +526,7 @@ final class Photos extends VKAPIRequestHandler
 
             foreach ($photos_list as $photo_id) {
                 $id = explode("_", $photo_id);
-                $photo = (new PhotosRepo())->getByOwnerAndVID((int) $id[0], (int) $id[1]);
+                $photo = (new PhotosRepo())->getByOwnerAndVIDUnsafe((int) $id[0], (int) $id[1]);
                 if (!$photo || $photo->isDeleted() || !$photo->canBeModifiedBy($this->getUser())) {
                     continue;
                 }

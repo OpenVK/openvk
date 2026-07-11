@@ -1351,7 +1351,7 @@
 
 "create_chat" = "Новая беседа";
 "to_friendslist" = "К списку друзей";
-"selected_messages_one" = "Выбрано $1 сообщение";
+"selected_messages_one" = "Выбрано одно сообщение";
 "selected_messages" = "Выбрано $1 сообщений";
 "delete_message" = "Удалить";
 "reply_to_message" = "Ответить";

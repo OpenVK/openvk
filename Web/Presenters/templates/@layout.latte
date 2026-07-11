@@ -531,7 +531,7 @@
                 "audio_genres": {\openvk\Web\Models\Entities\Audio::genres},
                 "at_search": {$atSearch ?? false},
                 "max_attachments": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"] ?? 10},
-                "max_filesize_mb": 100,
+                "max_filesize_mb": 1000000,
                 "current_id": {ifset $thisUser}{$thisUser->getId()}{else}0{/ifset},
                 "disable_ajax": {$disable_ajax ?? 0},
                 "max_add_fields": {ovkGetQuirk("users.max-fields")},

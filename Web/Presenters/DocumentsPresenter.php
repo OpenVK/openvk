@@ -131,6 +131,7 @@ final class DocumentsPresenter extends OpenVKPresenter
         $tags = $this->postParam("tags");
         $folder = $this->postParam("folder");
         $owner_hidden = ($this->postParam("owner_hidden") ?? "off") === "on";
+        $is_from_messenger = $this->postParam("is_from_messenger") == "1";
 
         try {
             $document = new Document();
@@ -146,6 +147,9 @@ final class DocumentsPresenter extends OpenVKPresenter
                 "size"     => $upload["size"],
                 "preview_owner" => $this->user->id,
             ]);
+            if ($is_from_messenger) {
+                $document->setAsFromMessage();
+            }
 
             $document->save();
         } catch (\TypeError $e) {

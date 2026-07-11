@@ -96,6 +96,12 @@ class Document extends Media
         return true;
     }
 
+    public function setAsFromMessage(): void
+    {
+        $this->stateChanges("private", 1);
+        $this->stateChanges("unlisted", 1);
+    }
+
     public function setFile(array $file): void
     {
         if ($file["error"] !== UPLOAD_ERR_OK) {

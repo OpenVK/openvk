@@ -180,6 +180,7 @@ class Video extends Media
                 "height" => $dimensions ? $dimensions[1] : 480,
                 "id" => $this->getVirtualId(),
                 "owner_id" => $this->getOwner()->getId(),
+                "access_key" => $this->getAccessKey(),
                 "user_id" => $this->getOwner()->getId(),
                 "title" => $this->getName(),
                 "is_favorite" => false,
@@ -233,8 +234,20 @@ class Video extends Media
         }
 
         $this->stateChanges("link", $pointer);
+        $this->stateChanges("access_key", bin2hex(random_bytes(9)));
 
         return $pointer;
+    }
+
+    public function setAsFromMessage(): void
+    {
+        $this->stateChanges("private", 1);
+        $this->stateChanges("unlisted", 1);
+    }
+
+    public function isPrivate(): bool
+    {
+        return (bool) $this->getRecord()->private;
     }
 
     public function isDeleted(): bool
