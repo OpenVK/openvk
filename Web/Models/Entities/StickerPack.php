@@ -29,7 +29,7 @@ class StickerPack extends RowModel
             $stickersList = iterator_to_array($this->getStickers(1, 2));
 
             if (sizeof($stickersList) != 0) {
-                return $stickersList[0]->getId();
+                return new Sticker(DB::i()->getContext()->table("stickers")->get($stickersList[0]->getId()));
             }
         }
 
