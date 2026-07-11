@@ -2558,6 +2558,7 @@ a.poll-retract-vote {
     display: inline-block;
     height: 15px;
     width: 12px;
+    border-radius: 4px;
 }
 
 .upload-item.dragged {
@@ -2566,7 +2567,7 @@ a.poll-retract-vote {
 
 .post-horizontal .upload-item .upload-delete {
     position: absolute;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 1);
     padding: 2px 5px;
     text-decoration: none;
     color: #fff;
