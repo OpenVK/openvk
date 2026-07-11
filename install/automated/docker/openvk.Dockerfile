@@ -44,6 +44,13 @@ ADD . .
 ARG GITREPO=openvk/openvk
 FROM ghcr.io/${GITREPO}/php:8.2-apache
 
+ARG INSTALL_TEST_DEPS=
+RUN if [ -n "$INSTALL_TEST_DEPS" ]; then \
+        apt-get update -qq && \
+        DEBIAN_FRONTEND=noninteractive apt-get install -y -qq default-mysql-client curl && \
+        rm -rf /var/lib/apt/lists/*; \
+    fi
+
 COPY --from=nodejs --chown=www-data:www-data /opt/chandler /opt/chandler
 
 RUN ln -s /opt/chandler/extensions/available/commitcaptcha/ /opt/chandler/extensions/enabled/commitcaptcha && \

@@ -1,0 +1,1 @@
+UPDATE `profiles` SET `verified` = 0 WHERE `deleted` = 1 AND `deact_date` <= UNIX_TIMESTAMP() AND `verified` = 1;

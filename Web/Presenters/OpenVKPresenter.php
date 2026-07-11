@@ -312,9 +312,15 @@ abstract class OpenVKPresenter extends SimplePresenter
             $this->template->thisUser = null;
         }
 
+        $this->template->baseUrl = ovk_scheme(true) . $_SERVER['HTTP_HOST'];
+        $this->template->instance_name = OPENVK_ROOT_CONF['openvk']['appearance']['name'];
+
         header("X-OpenVK-User-Validated: $userValidated");
         header("X-Accel-Expires: $cacheTime");
-        setlocale(LC_TIME, ...(explode(";", tr("__locale"))));
+        $localeStr = tr("__locale");
+        if (!str_starts_with($localeStr, "@")) {
+            setlocale(LC_TIME, ...(explode(";", $localeStr)));
+        }
 
         if (!OPENVK_ROOT_CONF["openvk"]["preferences"]["maintenanceMode"]["all"]) {
             if ($this->presenterName && OPENVK_ROOT_CONF["openvk"]["preferences"]["maintenanceMode"][$this->presenterName]) {

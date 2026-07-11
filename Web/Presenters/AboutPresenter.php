@@ -89,13 +89,13 @@ final class AboutPresenter extends OpenVKPresenter
 
     public function renderExportJSLanguage($lg = null): void
     {
-        $localizer = Localizator::i();
-        $lang      = $lg;
-        if (is_null($lg)) {
+        if (is_null($lg) || !isLanguageAvailable($lg)) {
             $this->throwError(404, "Not found", "Language is not found");
         }
+
+        $localizer = Localizator::i();
         header("Content-Type: application/javascript");
-        echo "window.lang = " . json_encode($localizer->export($lang)) . ";"; # привет хардкод :DDD
+        echo "window.lang = " . json_encode($localizer->export($lg)) . ";";
         exit;
     }
 

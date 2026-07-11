@@ -1,3 +1,5 @@
+#include <ru>
+
 "__locale" = "ru_UDM.utf8;ru_UDM.UTF-8;Udm";
 "__WinEncoding" = "Windows-1251";
 
@@ -815,4 +817,3 @@
 "bday_tomorrow" = "Ӵуказе";
 "bday_reminder_text" = "$1 вордӥськем нуналзы $2.";
 "bday_and" = " но ";
-"checkbox_in_registration" = "";

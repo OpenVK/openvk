@@ -9,7 +9,7 @@
 {var $isEdit = $mode === "edit"}
 
 {if $agent != NULL}
-<div class="left_small_block">
+<div class="left_small_block support_agent_l">
     <img src="{$agent->getAvatarURL()}" style="width:100%;" />
     <div class="profile_links">
         <div n:if="$agent_id == $thisUser->getId()" id="profile_link" style="width: 194px;">
@@ -17,7 +17,7 @@
         </div>
     </div>
 </div>
-<div class="right_big_block">
+<div class="right_big_block support_agent_r">
     <div class="page_info">
         <div class="accountInfo clearFix">
             <a href="/id{$agent->getAgentId()}">

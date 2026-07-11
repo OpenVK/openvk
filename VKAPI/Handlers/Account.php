@@ -14,23 +14,23 @@ final class Account extends VKAPIRequestHandler
         $this->requireUser();
         $user = $this->getUser();
         $return_object = (object) [
-            "first_name"       => $user->getFirstName(),
-            "photo_200"        => $user->getAvatarURL("normal"),
-            "nickname"         => $user->getPseudo(),
-            "is_service_account" => false,
-            "id"               => $user->getId(),
-            "is_verified"      => $user->isVerified(),
+            "first_name"          => $user->getFirstName(),
+            "photo_200"           => $user->getAvatarURL("normal"),
+            "nickname"            => $user->getPseudo(),
+            "is_service_account"  => false,
+            "id"                  => $user->getId(),
+            "is_verified"         => $user->isVerified(),
             "verification_status" => $user->isVerified() ? 'verified' : 'unverified',
-            "last_name"        => $user->getLastName(),
-            "home_town"        => $user->getHometown(),
-            "status"           => $user->getStatus(),
-            "bdate"            => is_null($user->getBirthday()) ? '01.01.1970' : $user->getBirthday()->format('%e.%m.%Y'),
-            "bdate_visibility" => $user->getBirthdayPrivacy(),
-            "phone"            => "+420 ** *** 228",                       # TODO
-            "relation"         => $user->getMaritalStatus(),
-            "screen_name"      => $user->getShortCode(),
-            "sex"              => $user->isFemale() ? 1 : 2,
-            #"email"            => $user->getEmail(),
+            "last_name"           => $user->getLastName(),
+            "home_town"           => $user->getHometown(),
+            "status"              => $user->getStatus(),
+            "bdate"               => is_null($user->getBirthday()) ? '01.01.1970' : $user->getBirthday()->format('%e.%m.%Y'),
+            "bdate_visibility"    => $user->getBirthdayPrivacy(),
+            "phone"               => "+420 ** *** 228",                       # TODO
+            "relation"            => $user->getMaritalStatus(),
+            "screen_name"         => $user->getShortCode(),
+            "sex"                 => $user->isFemale() ? 1 : 2,
+            #"email"              => $user->getEmail(),
         ];
 
         $audio_status = $user->getCurrentAudioStatus();
@@ -87,13 +87,25 @@ final class Account extends VKAPIRequestHandler
     {
         $this->requireUser();
 
-        return (object) [
-            "friends"       => $this->getUser()->getFollowersCount(),
+        $all_counters = [
+            "friends"       => $this->getUser()->getRequestsCount(),
             "notifications" => $this->getUser()->getNotificationsCount(),
             "messages"      => $this->getUser()->getUnreadMessagesCount(),
         ];
 
-        # TODO: Filter
+        if (!empty($filter)) {
+            $response = [];
+            $fields = explode(',', $filter);
+
+            foreach ($fields as $field) {
+                if (isset($all_counters[$field])) {
+                    $response[$field] = $all_counters[$field];
+                }
+            }
+            return (object) $response;
+        }
+
+        return (object) $all_counters;
     }
 
     public function saveProfileInfo(string $first_name = "", string $last_name = "", string $screen_name = "", int $sex = -1, int $relation = -1, string $bdate = "", int $bdate_visibility = -1, string $home_town = "", string $status = "", string $telegram = null): object
