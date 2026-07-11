@@ -48,7 +48,7 @@ test.describe('Wall', () => {
     await page.goto('/search?section=posts&q=Hello');
     await expect(page.locator('table.post[data-id="2_1"]')).toHaveCount(0);
 
-    await page.goto('/logout');
+    await page.context().clearCookies();
     await loginAsBob(page);
     const response = await page.goto('/wall2_1');
     expect(response?.status()).toBe(403);
