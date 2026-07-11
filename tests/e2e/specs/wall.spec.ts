@@ -1,5 +1,5 @@
 import { test, expect } from '../fixtures.js';
-import { loginAsAlice } from '../helpers.js';
+import { loginAsAlice, loginAsBob } from '../helpers.js';
 
 test.describe('Wall', () => {
   test.beforeEach(async ({ page }) => {
@@ -38,5 +38,19 @@ test.describe('Wall', () => {
     await page.locator('table.post[data-id="2_1"] .archive.restore').click();
     await page.waitForURL('/wall2');
     await expect(page.getByText(postText, { exact: false })).toBeVisible();
+  });
+
+  test('archived posts are unavailable in global search and by direct link', async ({ page }) => {
+    await page.goto('/wall2');
+    await page.locator('table.post[data-id="2_1"] .archive').click();
+    await page.waitForURL('/wall2?type=archived');
+
+    await page.goto('/search?section=posts&q=Hello');
+    await expect(page.locator('table.post[data-id="2_1"]')).toHaveCount(0);
+
+    await page.goto('/logout');
+    await loginAsBob(page);
+    const response = await page.goto('/wall2_1');
+    expect(response?.status()).toBe(403);
   });
 });

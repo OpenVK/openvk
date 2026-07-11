@@ -25,3 +25,12 @@ export async function loginAsAlice(page: Page): Promise<void> {
   await page.click('#fastLogin input[type="submit"]');
   await page.waitForURL(/\/alice/);
 }
+
+export async function loginAsBob(page: Page): Promise<void> {
+  await acceptCookies(page);
+  await page.goto('/login');
+  await page.fill('#fastLogin input[name="login"]', 'bob@test.local');
+  await page.fill('#fastLogin input[name="password"]', 'test123');
+  await page.click('#fastLogin input[type="submit"]');
+  await page.waitForURL(/\/bob/);
+}

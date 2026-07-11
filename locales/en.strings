@@ -1063,6 +1063,8 @@
 "feedback" = "Feedback";
 "unread" = "Unread";
 "archive" = "Archive";
+"wall_archive" = "Post archive";
+"wall_archive_description" = "Archived posts are visible only to you. They do not appear on the wall, in feeds, or in search. Use the button next to a post to restore it.";
 "restore_post" = "Restore post";
 
 "notifications_like" = "$1 liked your $2post$3 from $4";

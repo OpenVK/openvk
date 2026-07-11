@@ -491,7 +491,7 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         if (!$post->canBeViewedBy($this->user->identity)) {
-            $this->flashFail("err", tr("error"), tr("forbidden"));
+            $this->throwError(403, "Forbidden", tr("forbidden"));
         }
 
         $this->logPostView($post, $wall);

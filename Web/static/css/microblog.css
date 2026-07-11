@@ -123,6 +123,8 @@
     background-size: 12px 12px;
     margin: 0 1px;
     opacity: 0.18;
+    position: relative;
+    top: -2px;
     transition-duration: 0.3s;
 }
 

@@ -793,6 +793,21 @@ input[type="number"] {
     border-top: #ccc solid 1px;
 }
 
+.archive_info_table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.archive_info_table td {
+    padding: 2px 0;
+}
+
+.archive_info_title {
+    width: 115px;
+    color: #555;
+    font-weight: bold;
+}
+
 .content {
     padding: 8px;
 }
