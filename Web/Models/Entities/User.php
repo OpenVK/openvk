@@ -42,6 +42,14 @@ class User extends RowModel
     public const NSFW_TOLERANT      = 1;
     public const NSFW_FULL_TOLERANT = 2;
 
+
+    public const PREFERENCES_COUNTS = [
+        'politViews' => 10,
+        'mainInLife' => 9,
+        'mainInPeople' => 9,
+        'viewsOnSubstances' => 6,
+    ];
+
     /* aggressive caching */
     private $_avatarAlbum = null;
     private $_avatarPhoto = false; // false - not resolved, null - no avatar
@@ -414,6 +422,36 @@ class User extends RowModel
         return $this->getRecord()->polit_views;
     }
 
+    public function getWorldview(): string
+    {
+        return $this->getRecord()->worldview;
+    }
+
+    public function getMainInLife(): int
+    {
+        return $this->getRecord()->main_in_life;
+    }
+
+    public function getMainInPeople(): int
+    {
+        return $this->getRecord()->main_in_people;
+    }
+
+    public function getViewsOnSmoking(): int
+    {
+        return $this->getRecord()->views_on_smoking;
+    }
+
+    public function getViewsOnAlcohol(): int
+    {
+        return $this->getRecord()->views_on_alcohol;
+    }
+
+    public function getInspires(): string
+    {
+        return $this->getRecord()->inspires;
+    }
+
     public function getMaritalStatus(): int
     {
         return $this->getRecord()->marital_status;
@@ -528,6 +566,59 @@ class User extends RowModel
         }
 
         return $result;
+    }
+
+    public function getPersonalInfo() {
+        $info = [];
+        if ($this->getPoliticalViews() > 0) {
+            $info[] = [
+                'label' => tr('politViews'),
+                'value' => tr('politViews_' . $this->getPoliticalViews()),
+            ];
+        }
+        if ($this->getWorldview() != '') {
+            $info[] = [
+                'label' => tr('worldview'),
+                'value' => $this->getWorldview(),
+            ];
+        }
+
+        if ($this->getMainInLife() > 0) {
+            $info[] = [
+                'label' => tr('mainInLife'),
+                'value' => tr('mainInLife_' . $this->getMainInLife()),
+            ];
+        }
+
+        if ($this->getMainInPeople() > 0) {
+            $info[] = [
+                'label' => tr('mainInPeople'),
+                'value' => tr('mainInPeople_' . $this->getMainInPeople()),
+            ];
+        }
+
+        if ($this->getViewsOnSmoking() > 0) {
+            $info[] = [
+                'label' => tr('viewsOnSmoking'),
+                'value' => tr('viewsOnSubstances_' . $this->getViewsOnSmoking()),
+            ];
+        }
+
+        if ($this->getViewsOnAlcohol() > 0) {
+            $info[] = [
+                'label' => tr('viewsOnAlcohol'),
+                'value' => tr('viewsOnSubstances_' . $this->getViewsOnAlcohol()),
+            ];
+        }
+
+        if ($this->getInspires() != '') {
+            $info[] = [
+                'label' => tr('inspires'),
+                'value' => $this->getInspires(),
+            ];
+        }
+
+        return $info;
     }
 
     public function getNotificationOffset(): int

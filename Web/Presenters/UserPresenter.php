@@ -7,7 +7,7 @@ namespace openvk\Web\Presenters;
 use Nette\InvalidStateException;
 use openvk\Web\Util\Sms;
 use openvk\Web\Themes\Themepacks;
-use openvk\Web\Models\Entities\{Photo, Post, EmailChangeVerification};
+use openvk\Web\Models\Entities\{Photo, Post, EmailChangeVerification, User};
 use openvk\Web\Models\Entities\Notifications\{CoinsTransferNotification, RatingUpNotification};
 use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Videos, Notes, Vouchers, EmailChangeVerifications, Audios, Faves};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
@@ -173,11 +173,20 @@ final class UserPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
+
+
+        $act = in_array($this->queryParam("act"), [
+            "main", "contacts", "interests", "avatar", "backdrop", "additional", "personal"
+        ]) ? $this->queryParam("act")
+            : "main";
+
+        $this->template->mode = $act;
+
         $user = $this->users->get($id);
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->willExecuteWriteAction($_GET['act'] === "status");
 
-            if ($_GET['act'] === "main" || $_GET['act'] == null) {
+            if ($act === "main" || $act == null) {
                 try {
                     $user->setFirst_Name(empty($this->postParam("first_name")) ? $user->getFirstName() : $this->postParam("first_name"));
                     $user->setLast_Name(empty($this->postParam("last_name")) ? "" : $this->postParam("last_name"));
@@ -217,10 +226,6 @@ final class UserPresenter extends OpenVKPresenter
                     }
                 }
 
-                if ($this->postParam("politViews") <= 9 && $this->postParam("politViews") >= 0) {
-                    $user->setPolit_Views($this->postParam("politViews"));
-                }
-
                 if ($this->postParam("pronouns") <= 2 && $this->postParam("pronouns") >= 0) {
                     switch ($this->postParam("pronouns")) {
                         case '0':
@@ -247,7 +252,26 @@ final class UserPresenter extends OpenVKPresenter
                         $this->flashFail("err", tr("error_segmentation"), "котлетки: Remote err!");
                     }
                 }
-            } elseif ($_GET['act'] === "contacts") {
+            } elseif ($act === "personal") {
+
+                if ($this->postParam("politViews") < User::PREFERENCES_COUNTS['politViews'] && $this->postParam("politViews") >= 0) {
+                    $user->setPolit_Views($this->postParam("politViews"));
+                }
+                $user->setWorldview(mb_substr($this->postParam("worldview") ?? "", 0, 256));
+                if ($this->postParam("mainInLife") < User::PREFERENCES_COUNTS['mainInLife'] && $this->postParam("mainInLife") >= 0) {
+                    $user->setMain_In_Life($this->postParam("mainInLife"));
+                }
+                if ($this->postParam("mainInPeople") < User::PREFERENCES_COUNTS['mainInPeople'] && $this->postParam("mainInPeople") >= 0) {
+                    $user->setMain_In_People($this->postParam("mainInPeople"));
+                }
+                if ($this->postParam("viewsOnSmoking") < User::PREFERENCES_COUNTS['viewsOnSubstances'] && $this->postParam("viewsOnSmoking") >= 0) {
+                    $user->setViews_On_Smoking($this->postParam("viewsOnSmoking"));
+                }
+                if ($this->postParam("viewsOnAlcohol") < User::PREFERENCES_COUNTS['viewsOnSubstances'] && $this->postParam("viewsOnAlcohol") >= 0) {
+                    $user->setViews_On_Alcohol($this->postParam("viewsOnAlcohol"));
+                }
+                $user->setInspires(mb_substr($this->postParam("inspires") ?? "", 0, 256));
+            } elseif ($act === "contacts") {
                 if (empty($this->postParam("email_contact")) || Validator::i()->emailValid($this->postParam("email_contact"))) {
                     $user->setEmail_Contact(empty($this->postParam("email_contact")) ? null : $this->postParam("email_contact"));
                 } else {
@@ -274,7 +298,7 @@ final class UserPresenter extends OpenVKPresenter
                 } else {
                     $user->setWebsite((!parse_url($website, PHP_URL_SCHEME) ? "https://" : "") . $website);
                 }
-            } elseif ($_GET['act'] === "interests") {
+            } elseif ($act === "interests") {
                 $user->setInterests(empty($this->postParam("interests")) ? null : ovk_proc_strtr($this->postParam("interests"), 1000));
                 $user->setFav_Music(empty($this->postParam("fav_music")) ? null : ovk_proc_strtr($this->postParam("fav_music"), 1000));
                 $user->setFav_Films(empty($this->postParam("fav_films")) ? null : ovk_proc_strtr($this->postParam("fav_films"), 1000));
@@ -310,7 +334,7 @@ final class UserPresenter extends OpenVKPresenter
                 $user->setBackDropPictures($pic1, $pic2);
                 $user->save();
                 $this->flashFail("succ", tr("backdrop_succ"), tr("backdrop_succ_desc"));
-            } elseif ($_GET['act'] === "status") {
+            } elseif ($act === "status") {
                 if (mb_strlen($this->postParam("status")) > 255) {
                     $statusLength = (string) mb_strlen($this->postParam("status"));
                     $this->flashFail("err", tr("error"), tr("error_status_too_long", $statusLength), null, true);
@@ -323,7 +347,7 @@ final class UserPresenter extends OpenVKPresenter
                 $this->returnJson([
                     "success" => true,
                 ]);
-            } elseif ($_GET['act'] === "additional") {
+            } elseif ($act === "additional") {
                 $maxAddFields = ovkGetQuirk("users.max-fields");
                 $items = [];
 
@@ -360,7 +384,7 @@ final class UserPresenter extends OpenVKPresenter
             }
 
             try {
-                if ($_GET['act'] !== "additional") {
+                if ($act !== "additional") {
                     $user->save();
                 }
             } catch (\PDOException $ex) {
@@ -373,11 +397,6 @@ final class UserPresenter extends OpenVKPresenter
 
             $this->flash("succ", tr("changes_saved"), tr("changes_saved_comment"));
         }
-
-        $this->template->mode = in_array($this->queryParam("act"), [
-            "main", "contacts", "interests", "avatar", "backdrop", "additional",
-        ]) ? $this->queryParam("act")
-            : "main";
 
         $this->template->user = $user;
     }

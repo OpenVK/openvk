@@ -1549,7 +1549,8 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
 }
 
 .ugc-table tr>td:nth-of-type(1) {
-    width: 120px;
+    width: 140px;
+    min-width: 140px;
     vertical-align: super;
 }
 
