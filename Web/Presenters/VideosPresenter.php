@@ -78,12 +78,17 @@ final class VideosPresenter extends OpenVKPresenter
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $is_ajax = (int) ($this->postParam('ajax') ?? '0') == 1;
+            $is_from_messenger = $this->postParam("is_from_messenger") == "1";
+
             if (!empty($this->postParam("name"))) {
                 $video = new Video();
                 $video->setOwner($this->user->id);
                 $video->setName(ovk_proc_strtr($this->postParam("name"), 61));
                 $video->setDescription(ovk_proc_strtr($this->postParam("desc"), 300));
                 $video->setCreated(time());
+                if ($is_from_messenger) {
+                    $video->setAsFromMessage();
+                }
 
                 try {
                     if (isset($_FILES["blob"]) && file_exists($_FILES["blob"]["tmp_name"])) {
@@ -101,6 +106,10 @@ final class VideosPresenter extends OpenVKPresenter
 
                 if ((int) ($this->postParam("unlisted") ?? '0') == 1) {
                     $video->setUnlisted(true);
+                }
+
+                if ($is_from_messenger) {
+                    $photo->setAsFromMessage();
                 }
 
                 $video->save();

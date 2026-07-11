@@ -1204,7 +1204,11 @@ u(document).on("click", "#editPost", async (e) => {
     post.addClass('editing')
 })
 
-async function __uploadToTextarea(file, textareaNode) {
+async function __uploadToTextarea(file, textareaNode, is_from_messenger = false) {
+    let node = textareaNode.nodes ? textareaNode.nodes[0] : textareaNode;
+    if (node && node.closest && node.closest(".messenger-app")) {
+        is_from_messenger = true;
+    }
     const MAX_FILESIZE = window.openvk.max_filesize_mb * 1024 * 1024
     let filetype = 'photo'
     if (file.type.startsWith('video/')) {
@@ -1232,6 +1236,10 @@ async function __uploadToTextarea(file, textareaNode) {
     form_data.append('count', 1)
     form_data.append("hash", u("meta[name=csrf]").attr("value"))
 
+    if (is_from_messenger == true) {
+        form_data.append("is_from_messenger", "1");
+    }
+
     if (filetype == 'photo') {
         const temp_url = URL.createObjectURL(file)
         const rand = random_int(0, 1000)
@@ -1252,7 +1260,8 @@ async function __uploadToTextarea(file, textareaNode) {
             __appendToTextarea({
                 'type': 'photo',
                 'preview': photo.url,
-                'id': photo.pretty_id,
+                'id': photo.pretty_id + "?key=" + photo.access_key,
+                'key': photo.access_key,
                 'fullsize_url': photo.link,
             }, textareaNode)
         })
@@ -1286,14 +1295,15 @@ async function __appendToTextarea(attachment_obj, textareaNode) {
         <a draggable="true" href='/${attachment_obj.type}${attachment_obj.id}' class="upload-item" data-type='${attachment_obj.type}' data-id="${attachment_obj.id}">
             <span class="upload-delete">×</span>
             ${attachment_obj.type == 'video' ? `<div class='play-button'><div class='play-button-ico'></div></div>` : ''}
-            <img draggable="false" src="${attachment_obj.preview}" alt='...'>
+            <img draggable="false" src="${attachment_obj.preview}?key=${attachment_obj.key ?? ""}" alt='...'>
         </a>
     `)
 }
 
 u(document).on('paste', '#write .small-textarea', (e) => {
     if (e.clipboardData.files.length === 1) {
-        __uploadToTextarea(e.clipboardData.files[0], u(e.target).closest('#write'))
+        let isMessenger = Boolean(u(e.target).closest('.messenger-app').length);
+        __uploadToTextarea(e.clipboardData.files[0], u(e.target).closest('#write'), isMessenger);
         return;
     }
 })
@@ -1337,10 +1347,10 @@ u(document).on("drop", '#write', function (e) {
     const current = u('.upload-item.currently_dragging')
     //console.log(e)
     if (e.dataTransfer.types.includes('Files')) {
-        e.preventDefault()
-
-        e.dataTransfer.dropEffect = 'move'
-        __uploadToTextarea(e.dataTransfer.files[0], u(e.target).closest('#write'))
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        let isMessenger = Boolean(u(e.target).closest('.messenger-app').length);
+        __uploadToTextarea(e.dataTransfer.files[0], u(e.target).closest('#write'), isMessenger);
     } else if (e.dataTransfer.types.length < 1 || e.dataTransfer.types.includes('text/uri-list')) {
         e.preventDefault()
 
