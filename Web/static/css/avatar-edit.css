@@ -41,14 +41,19 @@
     transition: all 200ms ease-in-out;
 }
 
-._add_image::before {
+._add_image::before,
+.avatar_variants #draw_image::before {
     margin-top: 2px;
     content: ' ';
-    background: url('/assets/packages/static/openvk/img/upload.png?v=2');
+    background: url('/assets/packages/static/openvk/img/upload.png?v=3');
     width: 10px;
     height: 10px;
     display: inline-block;
     margin-left: 15px;
+}
+
+.avatar_variants #draw_image::before {
+    background-position: 0px -19px;
 }
 
 .avatarDelete {

@@ -1,4 +1,4 @@
-function initGraffiti(event) {
+function initGraffiti(event, callback = null) {
     let canvas = null;
     const msgbox = new CMessageBox({
         title: tr("draw_graffiti"),
@@ -11,7 +11,11 @@ function initGraffiti(event) {
                 let fName = "Graffiti-" + Math.ceil(performance.now()).toString() + ".jpeg";
                 let image = new File([blob], fName, {type: "image/jpeg", lastModified: new Date().getTime()});
 
-                __uploadToTextarea(image, u(event.target).closest('#write'))
+                if (!callback) {
+                  __uploadToTextarea(image, u(event.target).closest('#write'))
+                } else {
+                  callback(image);
+                }
             }, "image/jpeg", 0.92);
 
             canvas.teardown();
@@ -38,6 +42,25 @@ function initGraffiti(event) {
             height: 480
         }
     });
+
+    window.canvas = canvas
+    msgbox.getNode().nodes[0].addEventListener('paste', (e) => {
+      if (e.clipboardData.files.length === 1) {
+        if (e.clipboardData.files[0].type.startsWith('image/')) {
+          const imageUrl = URL.createObjectURL(e.clipboardData.files[0]);
+          const img = new Image();
+          img.src = imageUrl;
+
+          let x = 0;
+          let y = 0;
+
+          console.log('Pasted image to grafitti!', x, y, img, img.naturalWidth, img.naturalHeight);
+          canvas.saveShape(LC.createShape('Image', { x: x, y: y, image: img }));
+        }
+      } else {
+        console.log(e)
+      }
+    })
 }
 
 u(document).on('click', '.menu_toggler', (e) => {
@@ -2375,6 +2398,25 @@ $(document).on("click", "#add_image", (e) => {
         }
     })
 })
+
+function uploadByGraffiti(group_id = null) {
+  initGraffiti(null, (image) => {
+    const fd = new FormData();
+    fd.append("blob", image)
+    fd.append("ajax", 1)
+    fd.append("on_wall", "0")
+    fd.append("hash", window.router.csrf)
+
+    fetch(group_id ? "/club" + group_id + "/al_avatar" : '/al_avatars', {
+      "method": "POST",
+      "body": fd
+    }).then(async (e) => {
+        response = await e.json();
+        document.querySelector("#bigAvatar").src = response.url
+        document.querySelector("#bigAvatar").parentNode.href = response.new_photo ? ("/photo" + response.new_photo) : "javascript:void(0)"
+    })
+  })
+}
 
 $(document).on("click", ".avatarDelete", (e) => {
     let isGroup = e.currentTarget.closest(".avatar_block").dataset.club != null
