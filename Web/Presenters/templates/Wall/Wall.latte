@@ -28,6 +28,9 @@
                 <div n:attr="id => ($type != 'search' ? 'ki' : 'activetabs')" class="tab">
                     <a n:attr="id => ($type != 'search' ? 'ki' : 'act_tab_a')" href="/wall{$owner}?type=search">{_header_search}</a>
                 </div>
+                <div n:if="$isOwnWall" n:attr="id => ($type != 'archived' ? 'ki' : 'activetabs')" class="tab">
+                    <a n:attr="id => ($type != 'archived' ? 'ki' : 'act_tab_a')" href="/wall{$owner}?type=archived">{_archive}</a>
+                </div>
                 <a href="/wall{$owner}/rss" class="side_link">{_read_in_rss}</a>
             </div>
 

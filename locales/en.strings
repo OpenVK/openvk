@@ -1063,6 +1063,7 @@
 "feedback" = "Feedback";
 "unread" = "Unread";
 "archive" = "Archive";
+"restore_post" = "Restore post";
 
 "notifications_like" = "$1 liked your $2post$3 from $4";
 "notifications_repost" = "$1 shared your $2post$3 from $4";

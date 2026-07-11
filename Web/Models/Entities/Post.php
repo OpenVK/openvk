@@ -165,6 +165,32 @@ class Post extends Postable
         return (bool) $this->getRecord()->deleted;
     }
 
+    public function isArchived(): bool
+    {
+        return (bool) $this->getRecord()->archived;
+    }
+
+    public function canBeArchivedBy(?User $user = null): bool
+    {
+        return $user !== null && $this->getTargetWall() > 0 && $this->getTargetWall() === $user->getId();
+    }
+
+    public function archive(): void
+    {
+        if ($this->isPinned()) {
+            $this->unpin();
+        }
+
+        $this->stateChanges("archived", true);
+        $this->save();
+    }
+
+    public function restoreFromArchive(): void
+    {
+        $this->stateChanges("archived", false);
+        $this->save();
+    }
+
     public function getOwnerPost(): int
     {
         return $this->getOwner(false)->getId();
@@ -286,7 +312,7 @@ class Post extends Postable
 
     public function canBePinnedBy(User $user = null): bool
     {
-        if (!$user) {
+        if (!$user || $this->isArchived()) {
             return false;
         }
 
@@ -353,6 +379,10 @@ class Post extends Postable
     public function canBeViewedBy(?User $user = null): bool
     {
         if ($this->isDeleted()) {
+            return false;
+        }
+
+        if ($this->isArchived() && !$this->canBeArchivedBy($user)) {
             return false;
         }
 

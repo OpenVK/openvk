@@ -193,8 +193,8 @@ final class Wall extends VKAPIRequestHandler
                 "can_edit"     => (int) $post->canBeEditedBy($this->getUser()),
                 "can_delete"   => (int) $post->canBeDeletedBy($this->getUser()),
                 "can_pin"      => (int) $post->canBePinnedBy($this->getUser()),
-                "can_archive"  => 0, # TODO MAYBE
-                "is_archived"  => 0,
+                "can_archive"  => (int) $post->canBeArchivedBy($this->getUser()),
+                "is_archived"   => (int) $post->isArchived(),
                 "is_pinned"    => (int) $post->isPinned(),
                 "is_explicit"  => (int) $post->isExplicit(),
                 "attachments"  => $attachments,
@@ -431,8 +431,8 @@ final class Wall extends VKAPIRequestHandler
                     "can_edit"     => $post->canBeEditedBy($this->getUser()),
                     "can_delete"   => $post->canBeDeletedBy($user),
                     "can_pin"      => $post->canBePinnedBy($user),
-                    "can_archive"  => false, # TODO MAYBE
-                    "is_archived"  => false,
+                    "can_archive"  => $post->canBeArchivedBy($user),
+                    "is_archived"   => $post->isArchived(),
                     "is_pinned"    => $post->isPinned(),
                     "is_explicit"  => $post->isExplicit(),
                     "post_source"  => $post->getPostSourceInfo(),

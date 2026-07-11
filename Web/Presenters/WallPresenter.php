@@ -85,6 +85,10 @@ final class WallPresenter extends OpenVKPresenter
         $iterator = null;
         $count = 0;
         $type = $this->queryParam("type") ?? "all";
+        $isOwnWall = $user > 0 && $this->user->identity !== null && $this->user->identity->getId() === $user;
+        if ($type === "archived" && !$isOwnWall) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
         $page = (int) ($_GET["p"] ?? 1);
         if ($page <= 0) {
             $page = 1;
@@ -109,12 +113,17 @@ final class WallPresenter extends OpenVKPresenter
                 $iterator = $foundPosts->page($page);
                 $count = $foundPosts->size();
                 break;
+            case "archived":
+                $iterator = $this->posts->getArchivedPosts($user, $page);
+                $count = $this->posts->getArchivedPostsCount($user);
+                break;
         }
 
         $this->template->owner   = $user;
         $this->template->canPost = $canPost;
         $this->template->count   = $count;
         $this->template->type    = $type;
+        $this->template->isOwnWall = $isOwnWall;
         $this->template->posts   = iterator_to_array($iterator);
         $this->template->paginatorConf = (object) [
             "count"   => $this->template->count,
@@ -202,6 +211,7 @@ final class WallPresenter extends OpenVKPresenter
                    ->where("wall IN (?)", $ids)
                    ->where("deleted", 0)
                    ->where("suggested", 0)
+                   ->where("archived", 0)
                    ->order("created DESC");
 
         if ($withAlienWallPosts === 0) {
@@ -231,7 +241,7 @@ final class WallPresenter extends OpenVKPresenter
         $withAlienWallPosts = (int) ($_GET["with_alien_wall_posts"] ?? 0);
 
         $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) LEFT JOIN `profiles` ON LEAST(`posts`.`wall`, 0) = 0 AND `profiles`.`id` = ABS(`posts`.`wall`)";
-        $queryBase .= " WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND ((`profiles`.`profile_type` = 0 AND `profiles`.`hide_global_feed` = 0) OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
+        $queryBase .= " WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND ((`profiles`.`profile_type` = 0 AND `profiles`.`hide_global_feed` = 0) OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0 AND `posts`.`archived` = 0";
 
         if ($withAlienWallPosts === 0) {
             $queryBase .= " AND ((`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`))";
@@ -475,7 +485,7 @@ final class WallPresenter extends OpenVKPresenter
 
     public function renderPost(int $wall, int $post_id): void
     {
-        $post = $this->posts->getPostById($wall, $post_id);
+        $post = $this->posts->getPostById($wall, $post_id, false, true);
         if (!$post || $post->isDeleted()) {
             $this->notFound();
         }
@@ -608,8 +618,8 @@ final class WallPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
 
-        $post = $this->posts->getPostById($wall, $post_id, true);
-        if (!$post) {
+        $post = $this->posts->getPostById($wall, $post_id, true, true);
+        if (!$post || ($post->isArchived() && !$post->canBeArchivedBy($this->user->identity))) {
             $this->notFound();
         }
         $user = $this->user->id;
@@ -672,6 +682,30 @@ final class WallPresenter extends OpenVKPresenter
 
         # TODO localize message based on language and ?act=(un)pin
         $this->flashFail("succ", tr("information_-1"), tr("changes_saved_comment"));
+    }
+
+    public function renderArchive(int $wall, int $post_id): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+        $this->assertNoCSRF();
+
+        $post = $this->posts->getPostById($wall, $post_id, false, true);
+        if (!$post || $post->isDeleted()) {
+            $this->notFound();
+        }
+
+        if (!$post->canBeArchivedBy($this->user->identity)) {
+            $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
+        }
+
+        if (($this->queryParam("act") ?? "archive") === "restore") {
+            $post->restoreFromArchive();
+        } else {
+            $post->archive();
+        }
+
+        $this->redirect("/wall" . $wall . ($post->isArchived() ? "?type=archived" : ""));
     }
 
     public function renderAccept()

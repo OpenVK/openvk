@@ -1020,6 +1020,7 @@
 "feedback" = "Ответы";
 "unread" = "Непрочитанное";
 "archive" = "Архив";
+"restore_post" = "Восстановить запись";
 "notifications_like" = "$1 оценил вашу $2запись$3 от $4";
 "notifications_repost" = "$1 поделился(-лась) вашей $2записью$3 от $4";
 "notifications_comment_under" = "$1 оставил(-ла) комментарий под $2";

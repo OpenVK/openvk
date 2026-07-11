@@ -986,6 +986,7 @@
 
     .post-author .pin,
     .post-author .delete,
+    .post-author .archive,
     .post-author .report,
     .post-author .edit {
         height: 16px !important;
@@ -1962,6 +1963,7 @@
     }
 
     .post-author .delete,
+    .post-author .archive,
     .post-author .pin,
     .post-author .edit {
         opacity: 0.7 !important;
