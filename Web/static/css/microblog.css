@@ -119,9 +119,10 @@
     height: 16px;
     width: 16px;
     overflow: auto;
-    background: url("/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/archive-insert.png") no-repeat 0 0;
-    margin: 0 3px;
-    opacity: 0.25;
+    background: url("/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/archive-insert.png") no-repeat center;
+    background-size: 12px 12px;
+    margin: 0 1px;
+    opacity: 0.18;
     transition-duration: 0.3s;
 }
 
@@ -130,7 +131,7 @@
 }
 
 .post-author .archive:hover {
-    opacity: 0.55;
+    opacity: 0.45;
 }
 
 .post-author .pin {
