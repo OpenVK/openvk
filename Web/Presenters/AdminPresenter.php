@@ -972,7 +972,7 @@ final class AdminPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("admin_sticker_upload_failed"));
         }
 
-        $emojis = $this->postParam("emoji") ?? [];
+        $emojis = $_POST["emoji"] ?? [];
         $emojis = is_array($emojis) ? $emojis : [$emojis];
 
         $fileCount = 0;
@@ -1036,7 +1036,7 @@ final class AdminPresenter extends OpenVKPresenter
                 }
 
                 $this->assertNoCSRF();
-                $sticker->setEmoji($this->postParam("emoji") ?? "");
+                $sticker->setEmoji($_POST["emoji"] ?? "");
                 $sticker->setUnlisted(!empty($this->postParam("unlisted")));
 
                 if (isset($_FILES["pic"]) && $_FILES["pic"]["error"] === UPLOAD_ERR_OK) {
