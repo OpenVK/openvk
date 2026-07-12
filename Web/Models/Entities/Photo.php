@@ -17,6 +17,7 @@ class Photo extends Media
 {
     protected $tableName     = "photos";
     protected $fileExtension = "jpeg";
+    protected $containsContextColumns = true;
 
     public const ALLOWED_SIDE_MULTIPLIER = 7;
 

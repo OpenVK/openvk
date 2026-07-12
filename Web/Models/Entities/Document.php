@@ -14,6 +14,7 @@ class Document extends Media
 {
     protected $tableName     = "documents";
     protected $fileExtension = "gif";
+    protected $containsContextColumns = true;
     private $tmp_format = null;
 
     public const VKAPI_TYPE_TEXT  = 1;

@@ -12,9 +12,9 @@ function initGraffiti(event, callback = null) {
                 let image = new File([blob], fName, { type: "image/jpeg", lastModified: new Date().getTime() });
 
                 if (!callback) {
-                  __uploadToTextarea(image, u(event.target).closest('#write'))
+                    __uploadToTextarea(image, u(event.target).closest('#write'))
                 } else {
-                  callback(image);
+                    callback(image);
                 }
             }, "image/jpeg", 0.92);
 
@@ -45,21 +45,21 @@ function initGraffiti(event, callback = null) {
 
     window.canvas = canvas
     msgbox.getNode().nodes[0].addEventListener('paste', (e) => {
-      if (e.clipboardData.files.length === 1) {
-        if (e.clipboardData.files[0].type.startsWith('image/')) {
-          const imageUrl = URL.createObjectURL(e.clipboardData.files[0]);
-          const img = new Image();
-          img.src = imageUrl;
+        if (e.clipboardData.files.length === 1) {
+            if (e.clipboardData.files[0].type.startsWith('image/')) {
+                const imageUrl = URL.createObjectURL(e.clipboardData.files[0]);
+                const img = new Image();
+                img.src = imageUrl;
 
-          let x = 0;
-          let y = 0;
+                let x = 0;
+                let y = 0;
 
-          console.log('Pasted image to grafitti!', x, y, img, img.naturalWidth, img.naturalHeight);
-          canvas.saveShape(LC.createShape('Image', { x: x, y: y, image: img }));
+                console.log('Pasted image to grafitti!', x, y, img, img.naturalWidth, img.naturalHeight);
+                canvas.saveShape(LC.createShape('Image', { x: x, y: y, image: img }));
+            }
+        } else {
+            console.log(e)
         }
-      } else {
-        console.log(e)
-      }
     })
 }
 
@@ -328,9 +328,10 @@ async function OpenVideo(video_arr = [], init_player = true) {
     CMessageBox.toggleLoader()
     const video_owner = video_arr[0]
     const video_id = video_arr[1]
+    const video_key = video_arr[2]
     let video_api = null
     try {
-        video_api = await window.OVKAPI.call('video.get', { 'videos': `${video_owner}_${video_id}`, 'extended': 1 })
+        video_api = await window.OVKAPI.call('video.get', { 'videos': `${video_owner}_${video_id}` + (video_key ? "_" + video_key : ""), 'extended': 1 })
 
         if (!video_api.items || !video_api.items[0]) {
             throw new Error('Not found')
@@ -1229,9 +1230,11 @@ u(document).on("click", "#editPost", async (e) => {
 
 async function __uploadToTextarea(file, textareaNode, is_from_messenger = false) {
     let node = textareaNode.nodes ? textareaNode.nodes[0] : textareaNode;
-    if (node && node.closest && node.closest(".messenger-app")) {
+    if (node && node.closest && node.closest(".messenger-app").length > 0) {
         is_from_messenger = true;
     }
+
+    console.log("Upload | Photo upload, ", textareaNode.closest(".messenger-app"), is_from_messenger)
     const MAX_FILESIZE = window.openvk.max_filesize_mb * 1024 * 1024
     let filetype = 'photo'
     if (file.type.startsWith('video/')) {
@@ -1283,7 +1286,7 @@ async function __uploadToTextarea(file, textareaNode, is_from_messenger = false)
             __appendToTextarea({
                 'type': 'photo',
                 'preview': photo.url,
-                'id': photo.pretty_id + "?key=" + photo.access_key,
+                'id': photo.pretty_id + (photo.access_key ? "_" + photo.access_key : ""),
                 'key': photo.access_key,
                 'fullsize_url': photo.link,
             }, textareaNode)
@@ -1582,7 +1585,7 @@ u(document).on('click', '#__videoAttachment', async (e) => {
         }
 
         videos.items.forEach(video => {
-            const pretty_id = `${video.owner_id}_${video.id}`
+            const pretty_id = `${video.owner_id}_${video.id}` + (video.access_key ? "_" + video.id : "")
             const is_attached = (form.find(`.upload-item[data-type='video'][data-id='${video.owner_id}_${video.id}']`)).length > 0
             let author_name = ''
 
@@ -1623,7 +1626,7 @@ u(document).on('click', '#__videoAttachment', async (e) => {
                                 <p>
                                     <span class='video-desc'>${ovk_proc_strtr(escapeHtml(video.description ?? ""), 140)}</span>
                                 </p>
-                                <span><a href="/id${video.owner_id}" target="_blank">${ovk_proc_strtr(escapeHtml(author_name ?? ""), 100)}</a></span>
+                                <span><a href="/${video.owner_id > 0 ? "id" + video.owner_id : "club" + video.owner_id * -1}" target="_blank">${ovk_proc_strtr(escapeHtml(author_name ?? ""), 100)}</a></span>
                             </td>
                             <td valign="top" class="action_links">
                                 <a class="profile_link" id="__attach_vid">${!is_attached ? tr("attach") : tr("detach")}</a>
@@ -1915,7 +1918,8 @@ function showFastVideoUpload(node) {
                 __appendToTextarea({
                     'type': 'video',
                     'preview': preview.url,
-                    'id': append_result.owner_id + '_' + append_result.id,
+                    'id': append_result.owner_id + '_' + append_result.id + (append_result.access_key ? '_' + append_result.access_key : ""),
+                    'key': append_result.access_key,
                     'fullsize_preview': preview.url,
                 }, node)
 
@@ -2416,22 +2420,22 @@ $(document).on("click", "#add_image", (e) => {
 })
 
 function uploadByGraffiti(group_id = null) {
-  initGraffiti(null, (image) => {
-    const fd = new FormData();
-    fd.append("blob", image)
-    fd.append("ajax", 1)
-    fd.append("on_wall", "0")
-    fd.append("hash", window.router.csrf)
+    initGraffiti(null, (image) => {
+        const fd = new FormData();
+        fd.append("blob", image)
+        fd.append("ajax", 1)
+        fd.append("on_wall", "0")
+        fd.append("hash", window.router.csrf)
 
-    fetch(group_id ? "/club" + group_id + "/al_avatar" : '/al_avatars', {
-      "method": "POST",
-      "body": fd
-    }).then(async (e) => {
-        response = await e.json();
-        document.querySelector("#bigAvatar").src = response.url
-        document.querySelector("#bigAvatar").parentNode.href = response.new_photo ? ("/photo" + response.new_photo) : "javascript:void(0)"
+        fetch(group_id ? "/club" + group_id + "/al_avatar" : '/al_avatars', {
+            "method": "POST",
+            "body": fd
+        }).then(async (e) => {
+            response = await e.json();
+            document.querySelector("#bigAvatar").src = response.url
+            document.querySelector("#bigAvatar").parentNode.href = response.new_photo ? ("/photo" + response.new_photo) : "javascript:void(0)"
+        })
     })
-  })
 }
 
 $(document).on("click", ".avatarDelete", (e) => {
