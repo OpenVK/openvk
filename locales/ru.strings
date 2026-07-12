@@ -8,6 +8,7 @@
 "home" = "Главная";
 "welcome" = "Добро пожаловать";
 "to_top" = "Вверх";
+"show_next" = "Показать далее";
 
 /* Login */
 
@@ -512,6 +513,7 @@
 "add_image" = "Поставить изображение";
 "add_image_group" = "Загрузить фотографию";
 "upload_new_picture" = "Загрузить новую фотографию";
+"draw_avatar" = "Нарисовать изображение";
 "uploading_new_image" = "Загрузка новой фотографии";
 "friends_avatar" = "Друзьям будет проще узнать Вас, если вы загрузите свою настоящую фотографию.";
 "groups_avatar" = "Хорошее фото сделает Ваше сообщество более узнаваемым.";
@@ -1333,14 +1335,41 @@
 
 /* Messages */
 
+"messages_unavailable" = "К сожалению, сообщения временно недоступны или не поддерживаются на этом сервере";
+
 "all_messages" = "Все сообщения";
-"search_messages" = "Поиск сообщений";
+"search_messages" = "Найти сообщения...";
 "no_messages" = "Никто Вам не писал, пока что.";
 "messages_blocked" = "Вы не можете отправить сообщение этому пользователю, поскольку он ограничил круг лиц, которые могут присылать ему сообщения.";
 "enter_message" = "Введите сообщение";
 "messages_error_1" = "Сообщение не доставлено";
 "messages_error_1_description" = "При отправке этого сообщения произошла ошибка общего характера...";
 "message_user_typing" = "$1 набирает сообщение...";
+
+"messenger_tab_conversations" = "Диалоги";
+"messenger_tab_messenger" = "Сообщения";
+"message_is_deleted" = "Сообщение удалено";
+
+"create_chat" = "Новая беседа";
+"to_friendslist" = "К списку друзей";
+"selected_messages_one" = "Выбрано одно сообщение";
+"selected_messages" = "Выбрано $1 сообщений";
+"delete_message" = "Удалить";
+"reply_to_message" = "Ответить";
+
+"message_deletion_one" = "Удаление сообщения";
+"message_deletion" = "Удаление $1 сообщений";
+"message_deletion_confirm" = "Удалить эти сообщения? Это действие нельзя будет отменить.";
+
+"emoji_group_smileys_emotion" = "Смайлы";
+"emoji_group_people_body" = "Люди";
+"emoji_group_animals_nature" = "Природа";
+"emoji_group_food_drink" = "Еда и напитки";
+"emoji_group_travel_places" = "Мир";
+"emoji_group_activities" = "Развлечения";
+"emoji_group_objects" = "Предметы";
+"emoji_group_symbols" = "Символы";
+"emoji_group_flags" = "Флаги государств и движений";
 
 /* Polls */
 "poll" = "Опрос";

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
 
 use morphos\Gender;
+use openvk\Web\Util\IMBroker;
 use openvk\Web\Themes\{Themepack, Themepacks};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
@@ -680,6 +681,20 @@ class User extends RowModel
         ];
     }
 
+    public function isFriendsWith(int $userId): bool
+    {
+        if ($userId === $this->getId()) {
+            return false;
+        }
+
+        $targetUser = (new Users())->get($userId);
+        if (!$targetUser) {
+            return false;
+        }
+        
+        return $this->getSubscriptionStatus($targetUser) === User::SUBSCRIPTION_MUTUAL;
+    }
+
     public function getFriends(int $page = 1, int $limit = 6): \Traversable
     {
         return $this->_abstractRelationGenerator("get-friends", $page, $limit);
@@ -751,7 +766,25 @@ class User extends RowModel
 
     public function getUnreadMessagesCount(): int
     {
-        return sizeof(DatabaseConnection::i()->getContext()->table("messages")->where(["recipient_id" => $this->getId(), "unread" => 1]));
+
+        try {
+            $broker = IMBroker::i();
+            if (!$broker->isEnabled()) {
+                return 0;
+            }
+
+            $response = $broker->invokeMethod($this->getId(), "im.getUnreadConversations");
+            if (empty($response) || !is_string($response)) {
+                return 0;
+            }
+            $data = json_decode($response, true);
+
+            return (int) ($data['response']['count'] ?? 0);
+
+        } catch (\Exception $e) {
+            error_log("IM Broker error: " . $e->getMessage());
+            return 0;
+        }
     }
 
     public function getClubs(int $page = 1, bool $admin = false, int $count = OPENVK_DEFAULT_PER_PAGE, bool $offset = false): \Traversable

@@ -171,6 +171,16 @@ class Club extends RowModel
         return (bool) $this->getRecord()->enforce_hiding_from_global_feed;
     }
 
+    public function isMessagesEnabled(): bool
+    {
+        return (bool) $this->getRecord()->is_messages_enabled;
+    }
+
+    public function isDeleted(): bool
+    {
+        return (bool) $this->getRecord()->deleted;
+    }
+
     public function getType(): int
     {
         return $this->getRecord()->type;
@@ -467,6 +477,15 @@ class Club extends RowModel
         }
 
         return $this->isEveryoneCanUploadAudios() || $this->canBeModifiedBy($user);
+    }
+
+    public function canUploadVideo(?User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        return $this->canBeModifiedBy($user);
     }
 
     public function canUploadDocs(?User $user): bool

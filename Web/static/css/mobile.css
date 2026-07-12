@@ -2027,8 +2027,28 @@
         padding: 10px 2%;
     }
 
-    .messenger-app--messages---message {
-        gap: 3px;
+    .messenger-app--global-tabs {
+        position: fixed;
+        top: 58px;
+        z-index: 100;
+    }
+
+    .messages--peers-tabs {
+        position: fixed;
+        z-index: 100;
+        top: 90px;
+        width: 100%;
+        padding: 0px 20px;
+        box-sizing: border-box;
+    }
+
+    .messenger-app-end, .messenger-app--input {
+        width: 100%;
+    }
+
+    .messenger-app--messages---message > .messenger-app--messages---message--wrap {
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .messenger-app--messages---message ._content {
@@ -2048,6 +2068,12 @@
     .messenger-app--messages---message .time {
         width: 100px;
         font-size: 13px;
+        position: absolute;
+        right: 0;
+    }
+
+    #chat-page .chat-window {
+        width: 100%;
     }
 
     /* Support */

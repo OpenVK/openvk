@@ -14,6 +14,7 @@ class Document extends Media
 {
     protected $tableName     = "documents";
     protected $fileExtension = "gif";
+    protected $containsContextColumns = true;
     private $tmp_format = null;
 
     public const VKAPI_TYPE_TEXT  = 1;
@@ -94,6 +95,12 @@ class Document extends Media
         $this->stateChanges("hash", $hash);
 
         return true;
+    }
+
+    public function setAsFromMessage(): void
+    {
+        $this->stateChanges("private", 1);
+        $this->stateChanges("unlisted", 1);
     }
 
     public function setFile(array $file): void
@@ -414,6 +421,14 @@ class Document extends Media
         }
 
         return $res;
+    }
+
+    public function toApiAttachment(User $user): object
+    {
+        return (object) [
+            "type" => "doc",
+            "doc"  => $this->toVkApiStruct($user),
+        ];
     }
 
     public function delete(bool $softly = true, bool $all_copies = false): void

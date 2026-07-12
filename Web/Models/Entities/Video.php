@@ -19,6 +19,7 @@ class Video extends Media
 
     protected $tableName     = "videos";
     protected $fileExtension = "mp4";
+    protected $containsContextColumns = true;
 
     protected $processingPlaceholder = "video/rendering";
 
@@ -178,9 +179,10 @@ class Video extends Media
                 ],
                 "width" => $dimensions ? $dimensions[0] : 640,
                 "height" => $dimensions ? $dimensions[1] : 480,
-                "id" => $this->getVirtualId(),
-                "owner_id" => $this->getOwner()->getId(),
-                "user_id" => $this->getOwner()->getId(),
+                "id" => $this->getCompromiseVirtualId(),
+                "owner_id" => $this->getOwner()->getRealId(),
+                "access_key" => $this->getAccessKey(),
+                "user_id" => $this->getOwner()->getRealId(),
                 "title" => $this->getName(),
                 "is_favorite" => false,
                 "player" => !$fromYoutube ? $this->getURL() : $this->getVideoDriver()->getURL(),
@@ -217,6 +219,11 @@ class Video extends Media
         return $this->getApiStructure($user);
     }
 
+    public function toApiAttachment(User $user): object
+    {
+        return $this->getApiStructure($user);
+    }
+
     public function setLink(string $link): string
     {
         if (preg_match(file_get_contents(__DIR__ . "/../VideoDrivers/regex/youtube.txt"), $link, $matches)) {
@@ -228,8 +235,20 @@ class Video extends Media
         }
 
         $this->stateChanges("link", $pointer);
+        $this->stateChanges("access_key", bin2hex(random_bytes(9)));
 
         return $pointer;
+    }
+
+    public function setAsFromMessage(): void
+    {
+        $this->stateChanges("private", 1);
+        $this->stateChanges("unlisted", 1);
+    }
+
+    public function isPrivate(): bool
+    {
+        return (bool) $this->getRecord()->private;
     }
 
     public function isDeleted(): bool

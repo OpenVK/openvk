@@ -29,6 +29,11 @@ abstract class Postable extends Attachable
     * @var string
     */
     protected $upperNodeReferenceColumnName = "owner";
+    protected $containsContextColumns = false;
+
+    public const COMMENTABLE_EVERYBODY = 0;
+    public const COMMENTABLE_FRIENDS = 1;
+    public const COMMENTABLE_ONLY_ME = 2;
 
     private function getTable(): Selection
     {
@@ -38,11 +43,19 @@ abstract class Postable extends Attachable
     public function getOwner(bool $real = false): RowModel
     {
         $oid = (int) $this->getRecord()->owner;
+
+        if (!$real && $this->hasContext()) {
+            $oid = (int) $this->getContextId();
+        }
+
         if (!$real && $this->isAnonymous()) {
             $oid = (int) OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["account"];
         }
 
-        $oid = abs($oid);
+        if ($real) {
+            $oid = abs($oid);
+        }
+
         if ($oid > 0) {
             return (new Users())->get($oid);
         } else {
@@ -50,13 +63,47 @@ abstract class Postable extends Attachable
         }
     }
 
+    public function getSecondOwner(): RowModel
+    {
+        if (!$this->hasContext()) {
+            return null;
+        }
+
+        if ($this->getRecord()->context_admin == 0) {
+            return null;
+        }
+
+        $oid = (int) $this->getContextId();
+
+        return (new Clubs())->get($oid * -1);
+    }
+
     public function getVirtualId(): int
     {
         return $this->getRecord()->virtual_id;
     }
 
+    public function getContextVirtualId(): int
+    {
+        return $this->getRecord()->context_vid;
+    }
+
+    public function getCompromiseVirtualId(): int
+    {
+        if ($this->hasContext()) {
+            return $this->getContextVirtualId();
+        } else {
+            return $this->getVirtualId();
+        }
+    }
+
     public function getPrettyId(): string
     {
+        $real = false;
+        if (!$real && $this->hasContext()) {
+            return $this->getContextId() . "_" . $this->getContextVirtualId();
+        }
+
         return $this->getRecord()->owner . "_" . $this->getVirtualId();
     }
 
@@ -117,7 +164,7 @@ abstract class Postable extends Attachable
         }
     }
 
-    public function getAccessKey(): string
+    public function getAccessKey(): ?string
     {
         return $this->getRecord()->access_key;
     }
@@ -136,9 +183,20 @@ abstract class Postable extends Attachable
         return (bool) $this->getRecord()->unlisted;
     }
 
+    public function isUnlisted(): bool
+    {
+        return (bool) $this->getRecord()->unlisted;
+    }
+
     public function isAnonymous(): bool
     {
         return (bool) $this->getRecord()->anonymous;
+    }
+
+    public function makeNotUnlisted(): void
+    {
+        $this->stateChanges("unlisted", 0);
+        $this->stateChanges("context_unlisted", 0);
     }
 
     public function toggleLike(User $user): bool
@@ -202,7 +260,7 @@ abstract class Postable extends Attachable
             throw new ISE("Can't presist post due to inability to calculate it's $vref post count. Have you set it?");
         }
 
-        $pCount = sizeof($this->getTable()->where($vref, $vid));
+        $pCount = $this->getTable()->where($vref, $vid)->count();
         if (is_null($this->getRecord())) {
             # lol allow ppl to taint created value
             if (!isset($this->changes["created"])) {
@@ -210,10 +268,75 @@ abstract class Postable extends Attachable
             }
 
             $this->stateChanges("virtual_id", $pCount + 1);
+
+            if ($this->hasContext()) {
+                $vid_contextual = $this->getContextId();
+                $vCount = $this->getTable()->where("context_id", $vid_contextual)->count();
+
+                $this->stateChanges("context_vid", $vCount + 1);
+            }
         } /*else {
             $this->stateChanges("edited", time());
         }*/
 
         parent::save($log);
+    }
+
+    public function setContext($club, bool $is_admin = false): void
+    {
+        $this->stateChanges("context_id", $club->getRealId());
+
+        if ($is_admin) {
+            $this->stateChanges("context_admin", 1);
+        }
+
+        if ($this->isUnlisted()) {
+            $this->stateChanges("context_unlisted", 1);
+        }
+    }
+
+    public function getContextId(): int
+    {
+        if (!$this->getRecord()) {
+            return $this->changes["context_id"];
+        }
+
+        return $this->getRecord()->context_id;
+    }
+
+    public function hasContext(): bool
+    {
+        if (!$this->containsContextColumns) {
+            return false;
+        }
+
+        return ($this->getRecord()->context_id != 0 && $this->getRecord()->context_id != null) || $this->changes["context_id"] != null;
+    }
+
+    public function canBeCommentedBy(?User $user): bool
+    {
+        $can = (int) $this->getRecord()->can_comment;
+
+        if (!$user) {
+            return false;
+        }
+
+        if ($can == Postable::COMMENTABLE_EVERYBODY) {
+            return true;
+        }
+
+        if ($can == Postable::COMMENTABLE_FRIENDS) {
+            return true;
+        }
+
+        if ($can == Postable::COMMENTABLE_ONLY_ME) {
+            if ($this->getOwner()->getRealId() > 0) {
+                return $this->getOwner()->getRealId() == $user->getRealId();
+            }
+
+            return $this->getOwner()->canBeModifiedBy($user);
+        }
+
+        return false;
     }
 }

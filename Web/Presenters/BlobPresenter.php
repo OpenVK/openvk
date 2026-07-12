@@ -47,4 +47,30 @@ final class BlobPresenter extends OpenVKPresenter
         readfile($path);
         exit;
     }
+
+    public function renderSticker(int $id, $file)
+    {
+        header("Access-Control-Allow-Origin: *");
+
+        $base = realpath(OPENVK_ROOT . "/public/stickers/" . $id);
+        $path = realpath(OPENVK_ROOT . "/public/stickers/" . $id . "/" . $file . ".png");
+
+        if (!$path || strpos($path, $base) !== 0) {
+            $this->notFound();
+        }
+
+        if (isset($_SERVER["HTTP_IF_NONE_MATCH"])) {
+            header("HTTP/1.1 304 Not Modified");
+            exit();
+        }
+
+        header("Content-Type: image/png");
+        header("Content-Size: " . filesize($path));
+        header("Cache-Control: public, max-age=1210000");
+        header("X-Accel-Expires: 1210000");
+        header("ETag: W/\"" . md5_file($path) . "\"");
+
+        readfile($path);
+        exit;
+    }
 }

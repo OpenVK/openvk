@@ -4,160 +4,1179 @@ declare(strict_types=1);
 
 namespace openvk\VKAPI\Handlers;
 
-use openvk\Web\Events\{NewMessageEvent, TypingEvent};
-use openvk\Web\Models\Entities\{Correspondence, Message};
-use openvk\Web\Models\Repositories\{Messages as MSGRepo, Users as USRRepo};
+use openvk\Web\Util\IMBroker;
+use openvk\Web\Models\Repositories\{Users as USRRepo, Clubs as ClubRepo, Messages as MSGRepo};
+use openvk\Web\Models\Entities\{Correspondence, Message, Club as ClubEnt};
+use openvk\VKAPI\Handlers\{Users as APIUsers, Groups as APIClubs};
 use openvk\VKAPI\Structures\{Message as APIMsg, Conversation as APIConvo};
-use openvk\VKAPI\Handlers\Users as APIUsers;
-use Chandler\Signaling\SignalManager;
 
 final class Messages extends VKAPIRequestHandler
 {
-    private function resolvePeer(int $user_id = -1, int $peer_id = -1): ?int
+    private IMBroker $broker;
+
+    public function __construct(...$otherDeps)
     {
-        if ($user_id === -1) {
-            if ($peer_id === -1) {
-                return null;
-            } elseif ($peer_id < 0) {
-                return null;
-            } elseif (($peer_id - 2000000000) > 0) {
+        parent::__construct(...$otherDeps);
+        $this->broker = IMBroker::i();
+    }
+
+    protected function ensureBrokerActive(): void
+    {
+        if (!$this->broker->isEnabled()) {
+            throw new \openvk\VKAPI\Exceptions\APIErrorException("IM Service is disabled");
+        }
+    }
+
+    protected function resolveSender($group_id = 0): int
+    {
+        $sender_id = $this->getUser()->getId();
+        if ($group_id > 0) {
+            $club = (new ClubRepo())->get((int) $group_id);
+
+            if (!$club) {
+                $this->fail(100, "One of the parameters specified was missing or invalid: group_id -> club not found");
+            }
+
+            if ($club->isBanned()) {
+                $this->fail(15, "Access denied: this community is blocked");
+            }
+
+            if (!$club->canBeModifiedBy($this->getUser())) {
+                $this->fail(15, "Access denied: you are not an administrator of this community");
+            }
+
+            $sender_id = ((int) $club->getId()) * -1;
+        }
+        return $sender_id;
+    }
+
+    protected function resolvePeer(
+        int $user_id = -1,
+        int $peer_id = 0,
+        int $chat_id = -1,
+        string $domain = ""
+    ): ?int {
+        if (!empty($domain)) {
+            $uRepo = new USRRepo();
+            $cRepo = new ClubRepo();
+            $peerObj = $uRepo->getByShortUrl($domain) ?: $cRepo->getByShortUrl($domain);
+
+            if (!$peerObj) {
                 return null;
             }
 
+            $id = (int) $peerObj->getId();
+            return ($peerObj instanceof ClubEnt) ? -$id : $id;
+        }
+
+        if ($chat_id > 0) {
+            return 2000000000 + $chat_id;
+        }
+
+        if ($peer_id !== 0) {
             return $peer_id;
         }
 
-        return $user_id;
+        if ($user_id > 0) {
+            return $user_id;
+        }
+
+        return null;
     }
+
+    protected function checkPeerAvailability(int $peerId, int $groupId): void
+    {
+        $uRepo = new USRRepo();
+        $cRepo = new ClubRepo();
+        $peer = null;
+
+        if ($peerId > 0 && $peerId < 2000000000) {
+            $peer = $uRepo->get($peerId);
+        } elseif ($peerId < 0) {
+            $peer = $cRepo->get(abs($peerId));
+        }
+
+        if (!$peer && $peerId < 2000000000) {
+            $this->fail(936, "There is no peer with this id");
+        }
+
+        if (is_object($peer)) {
+            if (method_exists($peer, 'isBanned') && $peer->isBanned()) {
+                $this->fail(18, "Recipient is banned");
+            }
+            // TODO: Add deleted field to group
+            if (method_exists($peer, 'isDeleted') && $peer->isDeleted()) {
+                $this->fail(18, "Recipient was deleted");
+            }
+
+            $senderId = $this->resolveSender($groupId);
+            if ($peerId > 0 && $peerId < 2000000000 && $senderId !== $peerId) {
+                if (method_exists($peer, 'getPrivacyPermission')) {
+                    if (!$peer->getPrivacyPermission('messages.write', $this->getUser())) {
+                        $this->fail(945, "This chat is disabled because of privacy settings");
+                    }
+                }
+            }
+        }
+    }
+
+    protected function invoke(string $method, array $params = [], int $group_id = 0)
+    {
+        $this->ensureBrokerActive();
+        $sender_id = $this->resolveSender($group_id);
+
+        try {
+            $response = $this->broker->invokeMethod($sender_id, $method, $params);
+
+            if ($response === false) {
+                $this->fail(950, "IM Server unreachable");
+            }
+
+            $data = json_decode($response, true);
+
+            if (isset($data['error'])) {
+                $this->fail(
+                    $data['error']['error_code'] ?? 500,
+                    $data['error']['error_msg'] ?? "IM Error"
+                );
+            }
+
+            return $data['response'] ?? $data;
+        } catch (\Exception $e) {
+            $this->fail(500, "Broker failure: " . $e->getMessage());
+        }
+    }
+
+    protected function replaceAttachments(&$attachments)
+    {
+        if (empty($attachments)) {
+            $attachments = [];
+            return;
+        }
+
+        $parsed = parseAttachments($attachments, ['photo', 'video', 'audio', 'doc', 'poll']);
+        $result = [];
+
+        foreach ($parsed as $attachment) {
+            $result[] = $attachment->toApiAttachment($this->getUser());
+        }
+
+        $attachments = $result;
+    }
+
+    /**
+     * Обогащает сырые ID пользователей и групп полноценными объектами для VK API.
+     * * @param array|object $payload Ссылка на данные от IM сервиса
+     * @param string $fields Дополнительные поля для USRRepo
+     */
+    private function hydrateExtendedData(&$payload, string $fields = "photo_200,online"): void
+    {
+        $isObject = is_object($payload);
+        $data = $isObject ? (array) $payload : $payload;
+
+        if (!empty($data['profiles'])) {
+            $userIDs = [];
+            foreach ($data['profiles'] as $uData) {
+                $userIDs[] = is_array($uData) ? ($uData['id'] ?? 0) : (int) $uData;
+            }
+
+            $userIDs = array_unique(array_filter($userIDs));
+
+            if (!empty($userIDs)) {
+                $apiUsers = new APIUsers();
+                $data['profiles'] = $apiUsers->get(implode(',', $userIDs), $fields);
+            }
+        } else {
+            $data['profiles'] = [];
+        }
+
+        if (!empty($data['groups'])) {
+            $groupIDs = [];
+            foreach ($data['groups'] as $gData) {
+                $gid = is_array($gData) ? ($gData['id'] ?? 0) : abs((int) $gData);
+                $groupIDs[] = $gid;
+            }
+
+            $groupIDs = array_unique(array_filter($groupIDs));
+
+            if (!empty($groupIDs)) {
+                $apiGroups = new APIClubs();
+                $data['groups'] = $apiGroups->getById(implode(',', $groupIDs), "", $fields);
+            }
+        } else {
+            $data['groups'] = [];
+        }
+
+        if (!empty($data['chats'])) {
+            $chatIDs = [];
+
+            // Временная заглушка пока не готов API чатов
+            foreach ($data['chats'] as $key => $chat) {
+                if (is_array($chat)) {
+                    $chatId = $chat['id'] ?? 0;
+                    $localChatId = $chatId > 2000000000 ? ($chatId - 2000000000) : $chatId;
+
+                    if ($localChatId > 0) {
+                        $chatIDs[] = $localChatId;
+                        $data['chats'][$key]['id'] = $chatId;
+                        $data['chats'][$key]['type'] = 'chat';
+                        $data['chats'][$key]['admin_id'] = 0;
+                        $data['chats'][$key]['title'] = "Беседа №" . $localChatId;
+                        $data['chats'][$key]['description'] = "";
+                        $data['chats'][$key]['photo_50'] = "";
+                        $data['chats'][$key]['photo_100'] = "";
+                        $data['chats'][$key]['photo_200'] = "";
+                        $data['chats'][$key]['left'] = 0;
+                        $data['chats'][$key]['kicked'] = 0;
+                    }
+                } else {
+                    $chatId = abs((int)$chat);
+                    $localChatId = $chatId > 2000000000 ? ($chatId - 2000000000) : $chatId;
+
+                    if ($localChatId > 0) {
+                        $chatIDs[] = $localChatId;
+                        $data['chats'][$key] = [
+                            'id' => $chatId,
+                            'type' => 'chat',
+                            'admin_id' => 0,
+                            'title' => "Беседа №" . $localChatId,
+                            'description' => "",
+                            'photo_50' => "",
+                            'photo_100' => "",
+                            'photo_200' => "",
+                            'left' => 0,
+                            'kicked' => 0
+                        ];
+                    }
+                }
+            }
+
+            $chatIDs = array_unique(array_filter($chatIDs));
+
+            /* TODO: Chat API
+            if (!empty($chatIDs)) {
+                $apiChats = new APIChats();
+                $data['chats'] = $apiChats->getById(implode(',', $chatIDs), "", $fields);
+            }
+            */
+        } else {
+            $data['chats'] = [];
+        }
+
+        if ($isObject) {
+            foreach ($data as $key => $value) {
+                $payload->{$key} = $value;
+            }
+        } else {
+            $payload = $data;
+        }
+    }
+
+    // ----------------------------------
+    //             Longpoll
+    // ----------------------------------
+
+    public function getLongPollHistory(int $ts = -1, int $pts = -1, int $preview_length = 0, int $events_limit = 1000, int $msgs_limit = 1000, int $group_id = 0): object
+    {
+        $this->requireUser();
+
+        $params = [
+            "ts"           => (string) $ts,
+            "events_limit" => (string) $events_limit,
+            "msgs_limit"   => (string) $msgs_limit,
+            "version"      => "2",
+        ];
+
+        $data = $this->invoke("messages.getLongPollHistory", $params, $group_id);
+        $result = (object) $data;
+
+        $this->hydrateExtendedData($result);
+
+        return $result;
+    }
+
+    public function getLongPollServer(int $need_pts = 1, int $version = 2, ?int $group_id = null): array
+    {
+        $this->requireUser();
+        $baseUrl = $this->broker->getLongPollBaseUrl();
+
+        if (!$this->broker->pingLP($baseUrl)) {
+            $this->fail(500, "LongPoll server is unreachable. Check proxy settings for /nim endpoint.");
+        }
+
+        $params = [
+            "version"  => (string) $version,
+            "need_pts" => (string) $need_pts,
+        ];
+
+        if ($group_id > 0) {
+            $params['group_id'] = (string) $group_id;
+        }
+
+        $data = $this->invoke("messages.getLongPollServer", $params, (int) $group_id);
+        $data['server'] = $baseUrl;
+
+        return $data;
+    }
+
+    // ----------------------------------
+    //             Messages
+    // ----------------------------------
 
     public function getById(string $message_ids, int $preview_length = 0, int $extended = 0): object
     {
         $this->requireUser();
 
-        $msgs  = new MSGRepo();
-        $ids   = preg_split("%, ?%", $message_ids);
-        $items = [];
-        foreach ($ids as $id) {
-            $message = $msgs->get((int) $id);
-            if (!$message) {
-                continue;
-            } elseif ($message->getSender()->getId() !== $this->getUser()->getId() && $message->getRecipient()->getId() !== $this->getUser()->getId()) {
-                continue;
+        $params = [
+            "message_ids"    => $message_ids,
+            "extended"       => (string) $extended,
+            "preview_length" => (string) $preview_length,
+        ];
+
+        $data = $this->invoke("messages.getById", $params);
+        $result = (object) $data;
+
+        if (!empty($result->items)) {
+            foreach ($result->items as &$item) {
+                if (isset($item['attachments'])) {
+                    $this->replaceAttachments($item['attachments']);
+                }
             }
-
-            $author = $message->getSender()->getId() === $this->getUser()->getId() ? $message->getRecipient()->getId() : $message->getSender()->getId();
-            $rMsg   = new APIMsg();
-
-            $rMsg->id         = $message->getId();
-            $rMsg->user_id    = $author;
-            $rMsg->from_id    = $message->getSender()->getId();
-            $rMsg->date       = $message->getSendTime()->timestamp();
-            $rMsg->read_state = 1;
-            $rMsg->out        = (int) ($message->getSender()->getId() === $this->getUser()->getId());
-            $rMsg->body       = $message->getText(false);
-            $rMsg->text       = $message->getText(false);
-            $rMsg->emoji      = true;
-
-            if ($preview_length > 0) {
-                $rMsg->body = ovk_proc_strtr($rMsg->body, $preview_length);
-            }
-            $rMsg->text = ovk_proc_strtr($rMsg->text, $preview_length);
-
-            $items[] = $rMsg;
         }
 
-        return (object) [
-            "count" => sizeof($items),
-            "items" => $items,
-        ];
+        if ($extended == 1) {
+            $this->hydrateExtendedData($result);
+        }
+
+        return $result;
     }
 
     public function send(
         int $user_id = -1,
-        int $peer_id = -1,
+        int $peer_id = 0,
         string $domain = "",
         int $chat_id = -1,
+        int $group_id = 0,
         string $user_ids = "",
         string $message = "",
         int $sticker_id = -1,
         int $forGodSakePleaseDoNotReportAboutMyOnlineActivity = 0,
-        string $attachment = ""
-    ) { # интересно почему не attachments
+        string $attachment = "",
+        int $random_id = 0,
+        int $reply_to = 0
+    ) {
         $this->requireUser();
         $this->willExecuteWriteAction();
+        $this->ensureBrokerActive();
+
+        if (!empty($user_ids)) {
+            $ids = preg_split("%, ?%", $user_ids);
+            if (count($ids) > 100) {
+                $this->fail(913, "Too many recipients");
+            }
+
+            $rIds = [];
+            foreach ($ids as $id) {
+                $rIds[] = $this->send(-1, (int) $id, "", -1, $group_id, "", $message, $sticker_id, 1, $attachment, rand(1, 2147483647));
+            }
+            return $rIds;
+        }
+
+        $resolvedId = $this->resolvePeer($user_id, $peer_id, $chat_id, $domain);
+        if (is_null($resolvedId)) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: no recipient");
+        }
+
+        // TODO
+        if ($sticker_id !== -1) {
+            $this->fail(-151, "Stickers are not implemented");
+        }
+        if (empty($message) && empty($attachment)) {
+            $this->fail(100, "Message text is empty or invalid");
+        }
 
         if ($forGodSakePleaseDoNotReportAboutMyOnlineActivity == 0) {
             $this->getUser()->updOnline($this->getPlatform());
         }
 
-        if ($chat_id !== -1) {
-            $this->fail(946, "Chats are not implemented");
-        } elseif ($sticker_id !== -1) {
-            $this->fail(-151, "Stickers are not implemented");
+        $this->checkPeerAvailability($resolvedId, $group_id);
+
+        # Finally we get to send a message!
+        $params = [
+            "peer_id"    => (string) $resolvedId,
+            "message"    => $message,
+            "attachment" => $attachment,
+            "random_id"  => (string) ($random_id ?: rand(1, 2147483647)),
+        ];
+
+        if ($reply_to > 0) {
+            $params["reply_to"] = (string) $reply_to;
         }
 
-        if (empty($message) && empty($attachment)) {
-            $this->fail(100, "Message text is empty or invalid");
+        return (int) $this->invoke("messages.send", $params, $group_id);
+    }
+
+    public function edit(
+        int $peer_id = 0,
+        int $message_id = 0,
+        string $message = "",
+        string $attachment = "",
+        int $keep_forward_messages = 0,
+        int $group_id = 0,
+        string $domain = "",
+        int $user_id = -1,
+    ) {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        if ($message_id <= 0) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: message_id is required");
         }
 
-        # lol recursion
-        if (!empty($user_ids)) {
-            $rIds = [];
-            $ids  = preg_split("%, ?%", $user_ids);
-            if (sizeof($ids) > 100) {
-                $this->fail(913, "Too many recipients");
-            }
-
-            foreach ($ids as $id) {
-                $rIds[] = $this->send(-1, $id, "", -1, "", $message);
-            }
-
-            return $rIds;
-        }
-
-        if (!empty($domain)) {
-            $peer = (new USRRepo())->getByShortCode($domain);
-        } else {
-            $peer = $this->resolvePeer($user_id, $peer_id);
-            $peer = (new USRRepo())->get($peer);
-        }
-
-        if (!$peer) {
+        $resolvedId = $this->resolvePeer($user_id, $peer_id, -1, $domain);
+        if (is_null($resolvedId) || $resolvedId === 0) {
             $this->fail(936, "There is no peer with this id");
         }
 
-        if ($this->getUser()->getId() !== $peer->getId() && !$peer->getPrivacyPermission('messages.write', $this->getUser())) {
-            $this->fail(945, "This chat is disabled because of privacy settings");
+        if (empty($message) && empty($attachment)) {
+            $this->fail(100, "Empty messages are not allowed");
         }
 
-        # Finally we get to send a message!
-        $chat = new Correspondence($this->getUser(), $peer);
-        $msg  = new Message();
-        $msg->setContent($message);
+        $params = [
+            "peer_id"               => (string) $resolvedId,
+            "message_id"            => (string) $message_id,
+            "message"               => $message,
+            "attachment"            => $attachment,
+            "keep_forward_messages" => (string) $keep_forward_messages,
+        ];
 
-        $msg = $chat->sendMessage($msg, true);
-        if (!$msg) {
-            $this->fail(950, "Internal error");
-        } elseif (!empty($attachment)) {
-            $attachs = parseAttachments($attachment);
+        $result = $this->invoke("messages.edit", $params, $group_id);
 
-            # Работают только фотки, остальное просто не будет отображаться.
-            if (sizeof($attachs) >= 10) {
-                $this->fail(15, "Too many attachments");
-            }
+        return (int) $result;
+    }
 
-            foreach ($attachs as $attach) {
-                if ($attach && !$attach->isDeleted() && $attach->getOwner()->getId() == $this->getUser()->getId()) {
-                    $msg->attach($attach);
-                } else {
-                    $this->fail(52, "One of the attachments is invalid");
+    public function delete(
+        string $message_ids = "",
+        int $delete_for_all = 0,
+        int $peer_id = 0,
+        int $group_id = 0,
+        string $domain = "",
+        int $user_id = -1
+    ) {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        if (empty($message_ids)) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: message_ids is empty");
+        }
+
+        $resolvedId = $this->resolvePeer($user_id, $peer_id, -1, $domain);
+        if (is_null($resolvedId) || $resolvedId === 0) {
+            $this->fail(936, "There is no peer with this id");
+        }
+
+        $params = [
+            "peer_id"        => (string) $resolvedId,
+            "message_ids"    => $message_ids,
+            "delete_for_all" => (string) $delete_for_all,
+        ];
+
+        return $this->invoke("messages.delete", $params, $group_id);
+    }
+
+    public function restore(
+        int $message_id = 0,
+        int $peer_id = 0,
+        int $group_id = 0,
+        string $domain = "",
+        int $user_id = -1
+    ) {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        if ($message_id <= 0) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: message_id is required");
+        }
+
+        $resolvedId = $this->resolvePeer($user_id, $peer_id, -1, $domain);
+        if (is_null($resolvedId) || $resolvedId === 0) {
+            $this->fail(936, "There is no peer with this id");
+        }
+
+        $params = [
+            "peer_id"    => (string) $resolvedId,
+            "message_id" => (string) $message_id,
+        ];
+
+        return (int) $this->invoke("messages.restore", $params, $group_id);
+    }
+
+    public function search(
+        string $q = "",
+        int $peer_id = 0,
+        string $domain = "",
+        int $user_id = -1,
+        string $date = "",
+        int $preview_length = 0,
+        int $offset = 0,
+        int $count = 20,
+        int $extended = 0,
+        int $group_id = 0
+    ) {
+        $this->requireUser();
+
+        if (empty($q)) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: q is empty");
+        }
+
+        $resolvedId = $this->resolvePeer($user_id, $peer_id, -1, $domain);
+
+        $params = [
+            "q"              => $q,
+            "count"          => (string) min(abs($count), 100),
+            "offset"         => (string) abs($offset),
+            "preview_length" => (string) max(0, $preview_length),
+            "extended"       => $extended ? "1" : "0",
+        ];
+
+        if ($resolvedId !== 0) {
+            $params["peer_id"] = (string) $resolvedId;
+        }
+
+        if (!empty($date)) {
+            $params["date"] = $date; // DDMMYYYY
+        }
+
+        $data = $this->invoke("messages.search", $params, $group_id);
+
+        if (!empty($data['items'])) {
+            foreach ($data['items'] as &$item) {
+                if (isset($item['attachments'])) {
+                    $this->replaceAttachments($item['attachments']);
                 }
             }
         }
 
-        return $msg->getId();
+        if ($extended == 1) {
+            $this->hydrateExtendedData($data);
+        }
+
+        return $data;
     }
 
+    public function pin(
+        int $peer_id = 0,
+        int $message_id = 0,
+        string $domain = "",
+        int $user_id = -1,
+        int $group_id = 0
+    ) {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        if ($message_id <= 0) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: message_id is required");
+        }
+
+        $resolvedId = $this->resolvePeer($user_id, $peer_id, -1, $domain);
+        if (!$resolvedId) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: peer_id is required");
+        }
+
+        $params = [
+            "peer_id"    => (string) $resolvedId,
+            "message_id" => (string) $message_id,
+        ];
+
+        return $this->invoke("messages.pin", $params, $group_id);
+    }
+
+    public function unpin(
+        int $peer_id = 0,
+        string $domain = "",
+        int $user_id = -1,
+        int $group_id = 0
+    ) {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $resolvedId = $this->resolvePeer($user_id, $peer_id, -1, $domain);
+        if (!$resolvedId) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: peer_id is required");
+        }
+
+        $params = [
+            "peer_id" => (string) $resolvedId,
+        ];
+
+        return (int) $this->invoke("messages.unpin", $params, $group_id);
+    }
+
+    public function getImportantMessages(
+        int $count = 20,
+        int $offset = 0,
+        int $extended = 0,
+        int $group_id = 0
+    ) {
+        $this->requireUser();
+
+        $params = [
+            "count"    => (string) $count,
+            "offset"   => (string) $offset,
+            "extended" => (string) $extended,
+        ];
+
+        $data = $this->invoke("messages.getImportantMessages", $params, $group_id);
+
+        if (!empty($data['items'])) {
+            foreach ($data['items'] as &$item) {
+                if (isset($item['attachments'])) {
+                    $this->replaceAttachments($item['attachments']);
+                }
+            }
+        }
+
+        if ($extended == 1) {
+            $this->hydrateExtendedData($data);
+        }
+
+        return $data;
+    }
+
+    public function markAsImportant(
+        string $message_ids = "",
+        int $important = 1,
+        int $group_id = 0
+    ) {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        if (empty($message_ids)) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: message_ids is empty");
+        }
+
+        $params = [
+            "message_ids" => $message_ids,
+            "important"   => (string) $important,
+        ];
+
+        return $this->invoke("messages.markAsImportant", $params, $group_id);
+    }
+
+    public function markAsRead(
+        int $peer_id = 0,
+        int $start_message_id = 0,
+        string $message_ids = "",
+        int $group_id = 0
+    ) {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        if ($peer_id === 0 && empty($message_ids)) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: peer_id or message_ids is required");
+        }
+
+        $params = [
+            "peer_id"          => (string) $peer_id,
+            "start_message_id" => (string) $start_message_id,
+            "message_ids"      => $message_ids,
+        ];
+
+        $this->invoke("messages.markAsRead", $params, $group_id);
+
+        return 1;
+    }
+
+    public function getByConversationMessageId(
+        int $peer_id = 0,
+        string $conversation_message_ids = "",
+        int $extended = 0,
+        string $fields = "photo_200,online",
+        int $group_id = 0
+    ) {
+        $this->requireUser();
+
+        if ($peer_id === 0 || empty($conversation_message_ids)) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: peer_id or conversation_message_ids is empty");
+        }
+
+        $params = [
+            "peer_id"                  => (string) $peer_id,
+            "conversation_message_ids" => $conversation_message_ids,
+            "extended"                 => (string) $extended,
+            "fields"                   => $fields,
+        ];
+
+        $data = $this->invoke("messages.getByConversationMessageId", $params, $group_id);
+
+        if (!empty($data['items'])) {
+            foreach ($data['items'] as &$item) {
+                if (isset($item['attachments'])) {
+                    $this->replaceAttachments($item['attachments']);
+                }
+            }
+        }
+
+        if ($extended) {
+            $this->hydrateExtendedData($data, $fields);
+        }
+
+        return $data;
+    }
+
+    // ----------------------------------
+    //               Chats
+    // ----------------------------------
+
+    public function createChat(string $title = "", string $user_ids = "", int $group_id = 0): int
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        $this->ensureBrokerActive();
+
+        if (empty($title)) {
+            $this->fail(100, "One of the parameters is missing: title");
+        }
+
+        if (empty($user_ids)) {
+            $this->fail(100, "One of the parameters is missing: user_ids");
+        }
+
+        $rawIds = preg_split("%, ?%", $user_ids);
+        $targetUserIds = array_filter(array_map('intval', $rawIds));
+        $currentUser = $this->getUser();
+
+        foreach ($targetUserIds as $id) {
+            if ($id === $currentUser->getId()) {
+                continue;
+            }
+
+            if (!$currentUser->isFriendsWith($id)) {
+                $this->fail(15, "Access denied: user with ID " . $id . " is not your friend");
+            }
+        }
+
+        $params = [
+            "title"    => $title,
+            "user_ids" => $user_ids,
+        ];
+
+        $chatId = $this->invoke("messages.createChat", $params, $group_id);
+
+        return (int) $chatId;
+    }
+
+    public function addChatUser(int $peer_id = 0, int $user_id = 0, int $group_id = 0): int
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        $this->ensureBrokerActive();
+
+        if ($peer_id === 0 || $user_id === 0) {
+            $this->fail(100, "One of the parameters is missing: peer_id or user_id");
+        }
+
+        if ($peer_id < 2000000000) {
+            $this->fail(15, "Access denied: cannot add user to direct message");
+        }
+
+        $params = [
+            "peer_id" => $peer_id,
+            "user_id" => $user_id,
+        ];
+
+        $this->invoke("messages.addChatUser", $params, $group_id);
+
+        return 1;
+    }
+
+    public function removeChatUser(int $peer_id = 0, int $user_id = 0, int $group_id = 0): int
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        $this->ensureBrokerActive();
+
+        if ($peer_id === 0) {
+            $this->fail(100, "One of the parameters is missing: peer_id");
+        }
+
+        if ($peer_id < 2000000000) {
+            $this->fail(15, "Access denied: cannot remove user from direct message");
+        }
+
+        $currentUser = $this->getUser();
+
+        if ($user_id === 0) {
+            $user_id = $currentUser->getId();
+        }
+
+        $params = [
+            "peer_id" => $peer_id,
+            "user_id" => $user_id,
+        ];
+
+        $this->invoke("messages.removeChatUser", $params, $group_id);
+
+        return 1;
+    }
+
+    public function getConversations(
+        int $offset = 0,
+        int $count = 20,
+        string $filter = "all",
+        int $extended = 0,
+        string $fields = "photo200,online",
+        int $group_id = 0
+    ): array {
+        $this->requireUser();
+
+        $params = [
+            "offset"   => (string) $offset,
+            "count"    => (string) $count,
+            "filter"   => $filter,
+            "extended" => (string) $extended,
+        ];
+
+        $payload = $this->invoke("messages.getConversations", $params, $group_id);
+
+        if (empty($payload['items'])) {
+            return $payload;
+        }
+
+        foreach ($payload['items'] as &$item) {
+            $conversation = &$item['conversation'];
+            $peer = $conversation['peer'] ?? null;
+
+            if ($peer && $peer['type'] === 'chat') {
+                $settings = $conversation['chat_settings'] ?? [];
+
+                $defaultAcl = [
+                    "can_invite"             => true,
+                    "can_change_info"        => false,
+                    "can_change_pin"         => false,
+                    "can_promote_users"      => false,
+                    "can_see_invite_link"    => false,
+                    "can_change_invite_link" => false,
+                    "can_moderate"           => false,
+                    "can_copy_chat"          => false,
+                ];
+
+                $conversation['chat_settings']['acl'] = array_merge($defaultAcl, $settings['acl'] ?? []);
+
+                if (empty($conversation['chat_settings']['title'])) {
+                    $chatId = $peer['id'] - 2000000000;
+                    $conversation['chat_settings']['title'] = "Беседа №" . $chatId;
+                }
+            }
+
+            if (isset($item['last_message']['attachments'])) {
+                $this->replaceAttachments($item['last_message']['attachments']);
+            }
+        }
+
+        if ($extended) {
+            $this->hydrateExtendedData($payload, $fields);
+        }
+
+        return $payload;
+    }
+
+    public function getConversationMembers(int $peer_id = 0, int $extended = 0, int $group_id = 0): array
+    {
+        $this->requireUser();
+        $this->ensureBrokerActive();
+
+        if ($peer_id === 0) {
+            $this->fail(100, "One of the parameters is missing: peer_id");
+        }
+
+        $params = [
+            "peer_id"  => $peer_id,
+            "extended" => $extended,
+        ];
+
+        $response = $this->invoke("messages.getConversationMembers", $params, $group_id);
+
+        if ($extended) {
+            $this->hydrateExtendedData($response);
+        }
+
+        return [
+            "count"    => (int)($response['count'] ?? 0),
+            "items"    => $response['items'] ?? [],
+            "profiles" => $response['profiles'] ?? [],
+            "groups"   => $response['groups'] ?? [],
+        ];
+    }
+
+    public function getConversationsById($peer_ids = '', int $extended = 0, int $group_id = 0): array
+    {
+        $this->requireUser();
+        $this->ensureBrokerActive();
+
+        // это костыль, я не знаю почему peer_ids не передаётся в метод.
+        if (empty($peer_ids)) {
+            $peer_ids = $_GET['peer_ids'] ?? $_POST['peer_ids'] ?? '';
+        }
+
+        if (empty($peer_ids)) {
+            $this->fail(100, "One of the parameters is missing: peer_ids");
+        }
+
+        $params = [
+            "peer_ids" => $peer_ids,
+            "extended" => $extended,
+        ];
+
+        $response = $this->invoke("messages.getConversationsById", $params, $group_id);
+
+        return [
+            "count"    => (int)($response['count'] ?? 0),
+            "items"    => $response['items'] ?? [],
+            "profiles" => $response['profiles'] ?? [],
+            "groups"   => $response['groups'] ?? [],
+        ];
+    }
+
+    // Это очень страшное кмк, стоит подумать над чем-то получше.
+    public function searchConversations(string $q = '', int $extended = 0, int $group_id = 0): array
+    {
+        $this->requireUser();
+        $this->ensureBrokerActive();
+
+        $q = trim($q);
+
+        if (empty($q)) {
+            $response = $this->invoke("messages.searchConversations", ["q" => "", "extended" => $extended], $group_id);
+            return [
+                "count"    => (int)($response['count'] ?? 0),
+                "items"    => $response['items'] ?? [],
+                "profiles" => $response['profiles'] ?? [],
+                "groups"   => $response['groups'] ?? [],
+            ];
+        }
+
+        $params = [
+            "q"        => $q,
+            "extended" => "1"
+        ];
+        $response = $this->invoke("messages.searchConversations", $params, $group_id);
+
+        $items = $response['items'] ?? [];
+        if (empty($items)) {
+            return ["count" => 0, "items" => [], "profiles" => [], "groups" => []];
+        }
+
+        $userIdsToCheck = [];
+        foreach ($items as $item) {
+            $peer = $item['conversation']['peer'] ?? null;
+            if ($peer && $peer['type'] === 'user') {
+                $userIdsToCheck[] = (int)$peer['id'];
+            }
+        }
+
+        $matchedUserIds = [];
+        if (!empty($userIdsToCheck)) {
+            $usersRepo = new USRRepo();
+
+            $stream = $usersRepo->find($q);
+
+            foreach ($stream as $user) {
+                $userId = (int) $user->getId();
+
+                if (in_array($userId, $userIdsToCheck, true)) {
+                    $matchedUserIds[] = $userId;
+                }
+            }
+        }
+
+        $filteredItems = [];
+        foreach ($items as $item) {
+            $peer = $item['conversation']['peer'] ?? null;
+            if (!$peer) continue;
+
+            if ($peer['type'] === 'chat') {
+                $filteredItems[] = $item;
+            } elseif ($peer['type'] === 'user' && in_array((int)$peer['id'], $matchedUserIds, true)) {
+                $filteredItems[] = $item;
+            }
+        }
+
+        if ($extended === 1) {
+            $this->hydrateExtendedData($response);
+        }
+
+        return [
+            "count"    => count($filteredItems),
+            "items"    => $filteredItems,
+            "profiles" => $response['profiles'] ?? [],
+            "groups"   => $response['groups'] ?? [],
+            "chats"    => $response['chats'] ?? [],
+        ];
+    }
+
+
+    public function markAsImportantConversation(int $peer_id = 0, int $important = 1, int $group_id = 0): int
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        $this->ensureBrokerActive();
+
+        if ($peer_id === 0) {
+            $this->fail(100, "One of the parameters is missing: peer_id");
+        }
+
+        $params = [
+            "peer_id"   => $peer_id,
+            "important" => $important === 1 ? "1" : "0",
+        ];
+
+        $this->invoke("messages.markAsImportantConversation", $params, $group_id);
+
+        return 1;
+    }
+
+    public function markAsAnsweredConversation(int $peer_id = 0, int $answered = 1, int $group_id = 0): int
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        $this->ensureBrokerActive();
+
+        if ($peer_id === 0) {
+            $this->fail(100, "One of the parameters is missing: peer_id");
+        }
+
+        $params = [
+            "peer_id"  => $peer_id,
+            "answered" => $answered === 1 ? "1" : "0",
+        ];
+
+        $this->invoke("messages.markAsAnsweredConversation", $params, $group_id);
+
+        return 1;
+    }
+
+    // ----------------------------------
+    //              History
+    // ----------------------------------
+
+    public function getHistory(
+        int $offset = 0,
+        int $count = 20,
+        int $user_id = 0,
+        int $peer_id = 0,
+        int $chat_id = 0,
+        int $start_message_id = 0,
+        int $rev = 0,
+        int $extended = 0,
+        string $fields = "photo_200,online",
+        int $group_id = 0
+    ): array {
+        $this->requireUser();
+
+        $resolvedPeerId = $this->resolvePeer($user_id, $peer_id, $chat_id);
+
+        $params = [
+            "offset"           => (string) $offset,
+            "count"            => (string) min(abs($count), 200),
+            "peer_id"          => (string) $resolvedPeerId,
+            "start_message_id" => (string) $start_message_id,
+            "rev"              => (string) $rev,
+            "extended"         => (string) $extended,
+            "fields"           => $fields,
+        ];
+
+        $data = $this->invoke("messages.getHistory", $params, $group_id);
+
+        if (!empty($data['items'])) {
+            foreach ($data['items'] as &$message) {
+                if (!empty($message['attachments'])) {
+                    $this->replaceAttachments($message['attachments']);
+                }
+            }
+        }
+
+        if ($extended == 1) {
+            $this->hydrateExtendedData($data, $fields);
+        }
+
+        return $data;
+    }
+
+    // ----------------------------------
+    //              Status
+    // ----------------------------------
+
+    public function getLastActivity(int $user_id)
+    {
+        $uRepo = (new USRRepo());
+        $u = $uRepo->get($user_id);
+
+        if (empty($u)) {
+            $this->fail(113, 'Unknown user id');
+        }
+
+        return (object) [
+            "online" => (int) $u->isOnline(),
+            "time"   => $u->getOnline()->timestamp(),
+        ];
+    }
+
+    public function setActivity(
+        int $user_id = 0,
+        string $type = "typing",
+        int $peer_id = 0,
+        int $group_id = 0
+    ) {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        if (!in_array($type, ['typing', 'audiomessage'])) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: type");
+        }
+
+        $resolvedId = $this->resolvePeer($user_id, $peer_id);
+
+        if (!$resolvedId) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: peer_id is required");
+        }
+
+        $params = [
+            "peer_id" => (string) $resolvedId,
+            "type"    => $type,
+        ];
+
+        $this->invoke("messages.setActivity", $params, $group_id);
+
+        return 1;
+    }
+
+    // ----------------------------------
+    //              Custom
+    // ----------------------------------
+
+    public function getUnreadMessages(int $group_id = 0)
+    {
+        $this->requireUser();
+
+        return $this->invoke("im.getUnreadMessages", [], $group_id);
+    }
+
+    public function getUnreadConversations(int $group_id = 0)
+    {
+        $this->requireUser();
+
+        return $this->invoke("im.getUnreadConversations", [], $group_id);
+    }
+
+    public function getMe(int $group_id = 0)
+    {
+        $this->requireUser();
+
+        return $this->invoke("im.getMe", [], $group_id);
+    }
+
+    /*
     public function delete(string $message_ids, int $spam = 0, int $delete_for_all = 0): object
     {
         $this->requireUser();
@@ -536,30 +1555,5 @@ final class Messages extends VKAPIRequestHandler
 
         return 1;
     }
-
-    public function setActivity(int $user_id = 0, string $type = "typing", int $peer_id = 0)
-    {
-        if (empty($user_id) && empty($peer_id)) {
-            $this->fail(100, "One of the parameters specified was missing or invalid: user_id or peer_id");
-        } elseif (empty($peer_id)) {
-            $peer_id = $user_id;
-        }
-
-        $peer = $this->resolvePeer($peer_id, $peer_id);
-        $peer = (new USRRepo())->get($peer);
-
-        if (!$peer) {
-            $this->fail(936, "There is no peer with this id");
-        }
-
-        $chat = new Correspondence($this->getUser(), $peer);
-
-        switch ($type) {
-            case "typing":
-                return (int) $chat->sendTypingEvent();
-                break;
-            default:
-                $this->fail(1, "Not implemented");
-        }
-    }
+        */
 }

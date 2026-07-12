@@ -2257,7 +2257,7 @@ function showAudioAttachment(type = 'form', form = null)
 }
 
 $(document).on("click", "#__audioAttachment", (e) => {
-    const form = e.target.closest("form")
+    const form = e.target.closest("#write")
     showAudioAttachment('form', form)
 })
 

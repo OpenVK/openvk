@@ -21,11 +21,11 @@ window.router = new class {
             _t_scr.setAttribute('integrity', script.getAttribute('integrity'))
         }
 
-        if(script.getAttribute('id')) { 
+        if(script.getAttribute('id')) {
             _t_scr.id = script.id
         }
 
-        if(script.getAttribute('type')) { 
+        if(script.getAttribute('type')) {
             _t_scr.type = script.type
         }
 
@@ -37,7 +37,7 @@ window.router = new class {
         } else {
             _t_scr.async = false
             _t_scr.textContent = script.textContent
-        }   
+        }
 
         //parent.children[idx].before(script)
         document.body.appendChild(_t_scr)
@@ -88,7 +88,7 @@ window.router = new class {
         } else {
             u('#backdrop').remove()
         }
-        
+
         if(u('.page_header #search_box select').length > 0 && page_header.find('#search_box select').length > 0) {
             u('.page_header #search_box select').nodes[0].value = page_header.find('#search_box select').nodes[0].value
         }
@@ -106,7 +106,7 @@ window.router = new class {
                 u('.page_header').removeClass('search_expanded')
             }
         }
-        
+
         u("meta[name=csrf]").attr("value", u(parsed_content.querySelector('meta[name=csrf]')).attr('value'))
 
         if (isMobileAndExpanded()) {
@@ -160,7 +160,11 @@ window.router = new class {
             await window.player._handlePageTransition()
         }
 
-        this.applyTweaks()
+        this.applyTweaks();
+
+        if (window.im) {
+            window.im._toggleScrollMode(false);
+        }
 
         /*window.document.dispatchEvent(new Event("DOMContentLoaded", {
             bubbles: true,
@@ -243,7 +247,7 @@ window.router = new class {
         } else {
             history.replaceState({'from_router': 1}, '', url)
         }
-        
+
         u('body').addClass('ajax_request_made')
 
         const parser = new DOMParser
@@ -259,10 +263,10 @@ window.router = new class {
         if(next_page_request.redirected) {
             history.replaceState({'from_router': 1}, '', next_page_request.url)
         }
-        
+
         this.__closeMsgs()
         this.__unlinkObservers()
-        
+
         u('body').removeClass('ajax_request_made')
 
         try {
@@ -309,7 +313,7 @@ u(document).on('click', 'a', async (e) => {
         console.log('AJAX | Skipping because default is prevented')
         return
     }
-    
+
     const target = u(e.target).closest('a')
     const dom_url = target.attr('href')
     const id = target.attr('id')
@@ -368,7 +372,7 @@ u(document).on('submit', 'form', async (e) => {
     if(e.defaultPrevented) {
         return
     }
-  
+
     if(u('#ajloader').hasClass('shown')) {
         e.preventDefault()
         return
@@ -444,7 +448,7 @@ u(document).on('submit', 'form', async (e) => {
 
         history.pushState({'from_router': 1}, '', __new_url)
     }
-    
+
     window.router.__appendPage(parsed_content)
     window.router.__closeMsgs()
     await window.router.__integratePage()
@@ -476,11 +480,19 @@ window.addEventListener('popstate', (e) => {
         return
     }*/
 
-    if(e.state != null) {
+    if (e.state != null) {
+        if (window.im && e.state.from_messenger) {
+            u('.page_content').html('')
+
+            window.im.init(document.querySelector('.page_content'));
+            window.im._resolveState(e);
+            return;
+        }
+
         window.router.route({
             url: location.href,
             push_state: false,
-        })
+        });
     }
 })
 
