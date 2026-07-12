@@ -122,18 +122,12 @@
                 {ifset $thisUser}
                 {var $notificationsCount = $thisUser->getNotificationsCount()}
 
-                {if (OPENVK_ROOT_CONF["openvk"]["credentials"]["im"]["enable"] ?? false)}
-                    {var $unreadMessagesCount = $thisUser->getUnreadMessagesCount()}
-                {else}
-                    {var $unreadMessagesCount = 0}
-                {/if}
-
                 <a id="fast_notifications" href="/notifications" class="mobiles_only">
                     <object n:class="$notificationsCount == 0 ? zero_counter : '' ">
                         <b>{$notificationsCount}</b>
                     </object>
-                    <object n:class="$unreadMessagesCount == 0 ? zero_counter : '' ">
-                        <b>{$unreadMessagesCount}</b>
+                    <object class="im_counter">
+                        <b>0</b>
                     </object>
                 </a>
                 {/ifset}
@@ -238,7 +232,7 @@
                                 <div class="pc_v">{_my_messages}</div>
                                 <div class="mobile_v">{_mobile_messages}</div>
                                 <object type="internal/link" n:if="$unreadMessagesCount > 0">
-                                    (<b>{$unreadMessagesCount}</b>)
+                                    (<b>0</b>)
                                 </object>
                             </a>
                             {/if}
@@ -403,9 +397,9 @@
                                 </a>
                                 {if (OPENVK_ROOT_CONF["openvk"]["credentials"]["im"]["enable"] ?? false)}
                                 <a id="minilink-messenger" class="minilink" href="/im">
-                                    <object type="internal/link" n:if="$unreadMessagesCount > 0">
+                                    <object type="internal/link" class="im_counter">
                                         <div class="counter">
-                                            +{$unreadMessagesCount}
+                                            +<b>0</b>
                                         </div>
                                     </object>
                                     <img src="/assets/packages/static/openvk/img/messages.svg">
@@ -539,7 +533,6 @@
 
         {ifset $thisUser}
             {script "js/al_notifs.js"}
-            {script "js/im_notifs.js"}
             {script "js/al_feed.js"}
         {/ifset}
 

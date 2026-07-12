@@ -420,8 +420,21 @@ body.no-scroll .sidebar {
     width: 100%;
 }
 
-.messenger-app--messages---message ._content .attachments>.msg-attach-j * {
+.messenger-app--messages---message ._content .attachments .msg-attach-j {
+    display: inline-block;
+}
+
+.messenger-app--messages---message ._content .attachments .msg-attach-j-photo img {
     max-width: 86%;
+    max-height: 100px;
+}
+
+.messenger-app--messages---message ._content .attachments .msg-attach-j-video {
+    width: 150px;
+}
+
+.messenger-app--messages---message ._content .attachments .msg-attach-j-video img {
+    width: 100%;
 }
 
 .messenger-app--messages---message ._content .attachments:not(:empty) {
@@ -504,6 +517,7 @@ body.no-scroll .sidebar {
 
 .messenger-app-end {
     position: fixed;
+    background: var(--bg-page);
     bottom: 0px;
 }
 

@@ -22,9 +22,14 @@ export class EventHandler {
 
   async NewMessageEvent(event) {
     const _msg = ChatMessage.fromEvent(event);
+    const _crs = await window.im.conversations._findConvFromApi(_msg.peer_id);
+
+    if (!window.im.is_active) {
+      triggerMessageNotification(_crs, _msg.text);
+      return;
+    }
 
     setTimeout(async () => {
-      const _crs = await window.im.conversations._findConvFromApi(_msg.peer_id);
       const found = _crs.peer._findMessageById(_msg.id);
       if (found == null) {
         _crs.peer._pushNewMessage(_msg);

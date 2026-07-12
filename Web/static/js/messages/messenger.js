@@ -137,6 +137,7 @@ export class MessengerViewModel {
     const ta = e.target;
     if (e.which === 13) {
       if (!e.metaKey && !e.shiftKey) {
+        e.preventDefault();
         ta.blur();
         this.sendMessage();
         ta.focus();
@@ -406,14 +407,38 @@ export class MessengerViewModel {
     let tabs_height = u('.messages--peers-tabs').nodes[0].clientHeight;
     this.appEl.parentNode.style.height = window.outerHeight - tabs_height - maybe_distance + 'px';
   }
+
+  // attachment
+
+  showPhoto(e, msg, attachment) {
+    console.log("Opened photo from messenger: ", e, msg, attachment);
+
+    let _attachments = [];
+    const ids = attachment.owner_id + '_' + attachment.id;
+    msg.attachments.forEach(item => {
+      if (item.type != "photo") { return }
+      item.photo.url = item.photo.src_original;
+      item.photo.id = item.photo.owner_id + '_' + attachment.id;
+
+      _attachments[item.photo.id] = item.photo;
+    })
+
+    OpenMiniature(e, _attachments[ids], 'post', ids + (attachment.access_key ? "_" + attachment.access_key : ""), "post", _attachments)
+  }
 }
 
 export class LongPollConnection {
-  async create() {
+  async create(group_id = null) {
     this.lp = await window.OVKAPI.call('messages.getLongPollServer', {});
+    console.log("LP | Created connection to the current user");
+  }
+
+  getFirstCounter() {
+    return this.lp.unread_count;
   }
 
   listen() {
+    console.log("LP | New cycle of listening");
     let xhr = new XMLHttpRequest();
     const mode = 2 + 8 + 32 + 64 + 128;
     const connection_string = this.lp.server + '?key=' + this.lp.key + '&ts=' + this.lp.ts + '&pts=' + this.lp.pts + '&mode=' + mode;

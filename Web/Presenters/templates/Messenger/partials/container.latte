@@ -1,9 +1,5 @@
-<script type="module">
-    import { IM } from '/assets/packages/static/openvk/js/messages/im.js';
-
-    if (window.im == null) {
-        window.im = new IM();
-    }
-
-     await window.im.init(document.querySelector('.page_content'));
+<script>
+    document.addEventListener("DOMContentLoaded", (e) => {
+        window.im.initImPage(document.querySelector('.page_content'));
+    })
 </script>

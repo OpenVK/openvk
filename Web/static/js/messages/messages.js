@@ -264,6 +264,7 @@ export class ChatGeneralForm {
 
   async sendMessage(msg, reply_to = null, attachments = null) {
     this._pushNewMessage(msg);
+    window.im.messenger.view._scrollToEnd();
     const datas = {
       'peer_id': this.id,
       'message': msg.text,
@@ -381,11 +382,11 @@ function _authorize(items, profiles = null, groups = null, get_id = null, set_id
 }
 
 export class ChatMessage {
-  static AUTHOR_NAME_HIDE_TIMEOUT = 100;
+  static AUTHOR_NAME_HIDE_TIMEOUT = 600; // 60 * 10
 
   doHideHead(another_msg) {
-    let _time_eq = this.data.date - another_msg.data.date;
-    return this.data.from_id == another_msg.data.from_id && _time_eq < ChatMessage.AUTHOR_NAME_HIDE_TIMEOUT;
+    let _time_eq = another_msg.data.date - this.data.date;
+    return this.data.from_id == another_msg.data.from_id && _time_eq < ChatMessage.AUTHOR_NAME_HIDE_TIMEOUT && this.is_action == false;
   }
 
   constructor(item = {}) {
