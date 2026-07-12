@@ -109,7 +109,7 @@ u(document).on("input", "textarea", function(e) {
     // textArea.style.height = (newHeight > originalHeight ? (newHeight + boost) : originalHeight) + "px";
 });
 
-async function OpenMiniature(e, photo, post, photo_id, type = "post") {
+async function OpenMiniature(e, photo, post, photo_id, type = "post", custom_context = null) {
     /*
     костыли но смешные однако
     */
@@ -247,7 +247,12 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
     }
 
     async function __loadContext(type, id, ref = false, inverse = false) {
-        if(type == 'post' || type == 'comment') {
+        if (custom_context) {
+          json = {"body": custom_context};
+          return;
+        }
+
+        if (type == 'post' || type == 'comment') {
             const form_data = new FormData()
             form_data.append('parentType', type);
 
@@ -316,6 +321,7 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
     } else {
         await __loadContext(type, post)
         shown_offset = offset + __getIndex()
+        currentImageid = photo_id;
 
         __reloadTitleBar();
         __loadDetails(json.body[currentImageid].id);
@@ -1271,11 +1277,12 @@ async function __uploadToTextarea(file, textareaNode, is_from_messenger = false)
 
         json_response.photos.forEach(photo => {
             __appendToTextarea({
-                'type': 'photo',
-                'preview': photo.url,
-                'id': photo.pretty_id + (photo.access_key ? "_" + photo.access_key : ""),
-                'key': photo.access_key,
-                'fullsize_url': photo.link,
+              'type': 'photo',
+              'preview': photo.url,
+              'page_url': photo.pretty_id + (photo.access_key ? "?key=" + photo.access_key : ""),
+              'id': photo.pretty_id + (photo.access_key ? "_" + photo.access_key : ""),
+              'key': photo.access_key,
+              'fullsize_url': photo.link,
             }, textareaNode)
         })
         u(`#temp_filler${rand}`).remove()
@@ -1305,10 +1312,10 @@ async function __appendToTextarea(attachment_obj, textareaNode) {
     }
 
     indicator.append(`
-        <a draggable="true" href='/${attachment_obj.type}${attachment_obj.id}' class="upload-item" data-type='${attachment_obj.type}' data-id="${attachment_obj.id}">
+        <a draggable="true" href='/${attachment_obj.type}${attachment_obj.page_url ? attachment_obj.page_url : attachment_obj.id}' class="upload-item" data-type='${attachment_obj.type}' data-id="${attachment_obj.id}">
             <span class="upload-delete">×</span>
             ${attachment_obj.type == 'video' ? `<div class='play-button'><div class='play-button-ico'></div></div>` : ''}
-            <img draggable="false" src="${attachment_obj.preview}?key=${attachment_obj.key ?? ""}" alt='...'>
+            <img draggable="false" src="${attachment_obj.preview}" alt='...'>
         </a>
     `)
 }
@@ -1490,6 +1497,7 @@ u(document).on("click", "#__photoAttachment", async (e) => {
             __appendToTextarea({
                 'type': 'photo',
                 'preview': dataset.preview,
+                'page_url': dataset.attachmentdata + (dataset.access_key ? "_" + dataset.access_key : ""),
                 'id': dataset.attachmentdata,
                 'fullsize_url': dataset.preview,
             }, form)
@@ -1902,6 +1910,7 @@ function showFastVideoUpload(node) {
               __appendToTextarea({
                 'type': 'video',
                 'preview': preview.url,
+                'page_url': append_result.owner_id + '_' + append_result.id + (append_result.access_key ? '?key=' + append_result.access_key : ""),
                 'id': append_result.owner_id + '_' + append_result.id + (append_result.access_key ? '_' + append_result.access_key : ""),
                 'key': append_result.access_key,
                 'fullsize_preview': preview.url,

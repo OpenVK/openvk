@@ -9,6 +9,7 @@ const u = window.u;
 class ProfilesCache {
   constructor() {
     this.cached_profiles = [];
+    this.unread_counter = 0;
   }
 
   _addProfileCache(profile) {
@@ -61,16 +62,14 @@ export class IM {
     }
   }
 
-  async init(container) {
+  async init() {
     if (window.OVKAPI == null) {
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
 
     this.cached_profiles = new ProfilesCache();
     this.event_handler = new EventHandler();
-    this.root = container;
     await this._loadCurrent();
-    this._initTabs();
 
     if (!this.conversations) {
       this.conversations = new Conversations();
@@ -82,14 +81,41 @@ export class IM {
       await this.messenger.init();
     }
 
+    this.lp = new LongPollConnection();
+    await this.lp.create();
+    this.lp.listen();
+
+    this.updateCounter(this.lp.getFirstCounter());
+
+    this.isReady = true;
+  }
+
+  async waitLoad() {
+    return new Promise(resolve => {
+      const check = () => {
+        if (this.isReady) {
+          resolve();
+        } else {
+          setTimeout(check, 100);
+        }
+      };
+      check();
+    });
+  }
+
+  async initImPage(container) {
+    this.addLoadSkeleton(container);
+    await this.waitLoad();
+    this.root = container;
+    this._initTabs();
     const found = await this._checkSel(new URL(location.href));
     if (!found) {
       this.selectTab('conversations');
     }
+  }
 
-    this.lp = new LongPollConnection();
-    await this.lp.create();
-    this.lp.listen();
+  addLoadSkeleton(container) {
+    container.innerHTML = "";
   }
 
   closeChat(conv) {
@@ -242,6 +268,26 @@ export class IM {
     } else {
       this.selectTab('conversations');
     }
+  }
+
+  // counter
+
+  updateCounter(new_number) {
+    this.unread_counter = new_number;
+
+    u(".im_counter b").html(new_number);
+
+    if (new_number == 0) {
+      u(".im_counter").removeClass("shown")
+      u(".im_counter").addClass("zero_counter")
+    } else {
+      u(".im_counter").addClass("shown")
+      u(".im_counter").removeClass("shown")
+    }
+  }
+
+  getCounter() {
+    return this.unread_counter;
   }
 }
 
@@ -480,3 +526,11 @@ cursor: pointer;
     }
   });
 }
+
+(async () => {
+    if (window.im == null) {
+        window.im = new IM();
+    }
+
+    await window.im.init();
+})()

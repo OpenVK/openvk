@@ -305,6 +305,10 @@ class Photo extends Media
             return $this->getURL();
         }
 
+        if ($this->getAccessKey() != null) {
+            return $size->url . "?key=" . $this->getAccessKey();
+        }
+
         return $size->url;
     }
 

@@ -101,7 +101,7 @@ function showDocumentUploadDialog(target = null, append_to_url = null, after_upl
 u(document).on("drop", "#_document_upload_frame", (e) => {
     e.dataTransfer.dropEffect = 'move';
     e.preventDefault()
-    
+
     u(`#_document_upload_frame #upload_btn`).nodes[0].files = e.dataTransfer.files
     u("#_document_upload_frame #upload_btn").trigger("change")
 })
@@ -225,7 +225,7 @@ u(document).on('click', '.docMainItem #add_icon', async (e) => {
         target.removeClass('lagged')
         return
     }
-    
+
     target.removeClass('lagged')
     target.attr('id', 'mark_icon')
 
@@ -236,19 +236,19 @@ u(document).on('click', '.docMainItem #add_icon', async (e) => {
 
 u(document).on('click', '.docMainItem #report_icon', (e) => {
     e.preventDefault()
-    
+
     const target = u(e.target).closest("#report_icon")
     const item   = target.closest('.docMainItem')
     const id = item.nodes[0].dataset.id.split("_")
 
     const msg = new CMessageBox({
-        title: tr("report_question"), 
+        title: tr("report_question"),
         unique_name: "report_doc",
         body: `
         ${tr("going_to_report_doc")}
         <br/>${tr("report_question_text")}
-        <br/><br/><b> ${tr("report_reason")}</b>: <input type='text' id='uReportMsgInput' placeholder='${tr("reason")}' />`, 
-        buttons: [tr("confirm_m"), tr("cancel")], 
+        <br/><br/><b> ${tr("report_reason")}</b>: <input type='text' id='uReportMsgInput' placeholder='${tr("reason")}' />`,
+        buttons: [tr("confirm_m"), tr("cancel")],
         callbacks: [(function() {
             res = document.querySelector("#uReportMsgInput").value;
             xhr = new XMLHttpRequest();
@@ -395,7 +395,7 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_arg =
             })
             const res = await req.text()
             const dom = new DOMParser
-            const pre = dom.parseFromString(res, "text/html") 
+            const pre = dom.parseFromString(res, "text/html")
             const pagesCount = Number(pre.querySelector("input[name='pagesCount']").value)
             const count = Number(pre.querySelector("input[name='count']").value)
             if(count < 1) {
@@ -408,7 +408,7 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_arg =
             pre.querySelectorAll("._content").forEach(doc => {
                 const res = u(`${doc.outerHTML}`)
                 const id  = res.attr("data-attachmentdata")
-                
+
                 res.find(".docMainItem").attr("style", "width: 85%;")
                 res.append(`
                 <div class="attachButton" id='__attach_doc'>
@@ -452,7 +452,7 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_arg =
             }
             return false
         }
-        
+
         attach(dataset, button) {
             if(this.isDocAttached(dataset.attachmentdata)) {
                 (form.find(`.upload-item[data-type='doc'][data-id='${dataset.attachmentdata}']`)).remove()
@@ -465,7 +465,7 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_arg =
                         <div class='vertical-attachment-content' draggable="false">
                             <div class="docMainItem attachment_doc attachment_note">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
-                                
+
                                 <div class='attachment_note_content'>
                                     <span class="attachment_note_text">${tr("document")}</span>
                                     <span class="attachment_note_name"><a href="/doc${_url[0]}_${_url[1]}?key=${_url[2]}">${ovk_proc_strtr(escapeHtml(dataset.name), 50)}</a></span>
@@ -521,7 +521,7 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_arg =
     await docs_reciever.page(docs_reciever.stat.page + 1)
 }
 u(document).on('click', '#__documentAttachment', async (e) => {
-    const form = u(e.target).closest('#write') 
+    const form = u(e.target).closest('#write')
     const targ = u(e.target).closest("#__documentAttachment")
     let entity_source = "user"
     let entity_id = 0

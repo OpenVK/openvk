@@ -315,6 +315,7 @@ final class Messages extends VKAPIRequestHandler
 
         $data = $this->invoke("messages.getLongPollServer", $params, (int) $group_id);
         $data['server'] = $baseUrl;
+        $data['unread_count'] = $this->getUser()->getUnreadMessagesCount();
 
         return $data;
     }

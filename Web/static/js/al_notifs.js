@@ -31,7 +31,7 @@ function incrementNotificationsCounter() {
 
 async function setupNotificationListener() {
     console.info("Notifications | Setting up notifications listener...");
-    
+
     const POLL_INTERVAL = 10000;
     const CHECK_MORE_INTERVAL = 250;
     const ERROR_RETRY_INTERVAL = 60000;
@@ -40,7 +40,7 @@ async function setupNotificationListener() {
     while(true) {
         try {
             const notif = await API.Notifications.fetch();
-            
+
             if (notif) {
                 if (!isFirstRequest) {
                     playNotifSound();
@@ -51,13 +51,13 @@ async function setupNotificationListener() {
                     console.info("Notifications | First request: skipping alert (syncing cursor)");
                 }
             }
-            
+
             await new Promise(resolve => setTimeout(resolve, CHECK_MORE_INTERVAL));
         } catch(rejection) {
             if (rejection.message === "Nothing to report" || rejection.code === 1983) {
                 if (isFirstRequest) {
                     console.info("Notifications | Cursor synced. Real-time notifications enabled.");
-                    isFirstRequest = false; 
+                    isFirstRequest = false;
                 } else {
                     console.info("Notifications | No new notifications found, sleeping for " + POLL_INTERVAL/1000 + "s...")
                 }
@@ -72,6 +72,43 @@ async function setupNotificationListener() {
         }
     }
 };
+
+async function triggerMessageNotification(conv, text, timestamp) {
+    try {
+        const fields = typeof ChatGeneralForm !== 'undefined' ? ChatGeneralForm.base_fields : 'photo_50';
+
+        const peer = conv.peer;
+        const title = peer.full_name;
+        const ava = peer.avatar_any || peer.photo_max || '';
+
+        const notif = {
+            title: escapeHtml(title),
+            body: "<b>" + escapeHtml(title) + ":</b> " + (escapeHtml(ovk_proc_strtr(text, 95)) || "[Attachment]"),
+            ava: ava,
+            priority: 1,
+        };
+
+        if (typeof NewNotification === 'function') {
+            playNotifSound();
+            NewNotification(
+                notif.title,
+                notif.body,
+                notif.ava,
+                () => {
+                  window.im.initImPage(document.querySelector('.page_content'));
+                  window.im.selectChat(conv);
+                },
+                (notif.priority || 1) * 6000
+            );
+            window.im.updateCounter(window.im.getCounter() + 1);
+        } else {
+            console.log("Msg notifs | Got a new message but NewNotification not found:", notif);
+        }
+
+    } catch (error) {
+        console.error("Msg notifs | Error occurred while forming notification:", error);
+    }
+}
 
 (async function() {
     await setupNotificationListener();

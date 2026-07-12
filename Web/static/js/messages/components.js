@@ -9,6 +9,7 @@ export { html, preactRender as render };
 
 function isSelected(msg) {
   const view = window.im?.messenger?.view;
+
   return view ? view.isMessageSelected(msg) : false;
 }
 
@@ -51,7 +52,7 @@ export const MessageBubble = ({ msg, index, chunk }) => {
           <p dangerouslySetInnerHTML=${{ __html: msg.text }} class="text" />
           ${msg.attachments.length > 0 && html`
             <div class="attachments">
-              ${msg.attachments.map((att) => html`<${Attachment} att=${att} />`)}
+              ${msg.attachments.map((att) => html`<${Attachment} msg=${msg} att=${att} />`)}
             </div>
           `}
         </div>
@@ -92,11 +93,11 @@ export const SystemMessages = {
   }
 }
 
-const Attachment = ({ att }) => {
+const Attachment = ({ msg, att }) => {
   switch (att.type) {
     case 'photo':
       return html`
-        <div class="msg-attach-j msg-attach-j-photo">
+        <div class="msg-attach-j msg-attach-j-photo" onclick=${(e) => {window.im.messenger.view.showPhoto(e, msg, att)}}>
           <a href=${att.photo.link}>
             <img src=${att.photo.photo_130} alt="..." />
           </a>
@@ -104,8 +105,10 @@ const Attachment = ({ att }) => {
     case 'video':
       return html`
         <div class="msg-attach-j msg-attach-j-video">
-          <a href=${'/video' + att.video.owner_id + '_' + att.video.id}>
-            <span>${att.video.title}</span>
+          <a class="compact_video" href=${'/video' + att.video.owner_id + '_' + att.video.id}>
+            <div class='play-button'><div class='play-button-ico'></div></div>
+            <img src=${att.video.image[0].url} alt="..." />
+            ${att.video.length ? `<span class="length">${fmtTime(att.video.length)}</span>` : ""}
           </a>
         </div>`;
     case 'doc':
@@ -200,26 +203,28 @@ export const AttachmentMenu = () => {
       <a class="menu_toggler">${tr('attach')}</a>
       <div id="wallAttachmentMenu" class="up_direction hidden">
         <a class="header menu_toggler">${tr('attach')}</a>
-        <a id="__photoAttachment">
-          <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
-          ${tr('photo')}
-        </a>
-        <a id="__videoAttachment">
-          <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
-          ${tr('video')}
-        </a>
-        <a id="__audioAttachment">
-          <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/audio-ac3.png" />
-          ${tr('audio')}
-        </a>
-        <a id="__documentAttachment">
-          <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-octet-stream.png" />
-          ${tr('document')}
-        </a>
-        <a onClick=${(e) => typeof initGraffiti !== 'undefined' && initGraffiti(e)}>
-          <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/draw-brush.png" />
-          ${tr('graffiti')}
-        </a>
+        <div class="_wrap">
+            <a id="__photoAttachment">
+            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
+            ${tr('photo')}
+            </a>
+            <a id="__videoAttachment">
+            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
+            ${tr('video')}
+            </a>
+            <a id="__audioAttachment">
+            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/audio-ac3.png" />
+            ${tr('audio')}
+            </a>
+            <a id="__documentAttachment">
+            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-octet-stream.png" />
+            ${tr('document')}
+            </a>
+            <a onClick=${(e) => typeof initGraffiti !== 'undefined' && initGraffiti(e)}>
+            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/draw-brush.png" />
+            ${tr('graffiti')}
+            </a>
+        </div>
       </div>
     </div>
   `;

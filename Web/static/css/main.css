@@ -1,6 +1,7 @@
 :root {
     --common-hover: #f5f4f4;
     --common-2: #f0f1f2;
+    --bg-page: white;
     --bg-slightly: #f9f9f9;
     --bg-slightly-border: #d6d6d6;
     --bg-hover: #4c4c4c29;
@@ -1819,18 +1820,23 @@ h4.gift_cat_header {
     flex-direction: column-reverse;
 }
 
-#wallAttachmentMenu>a {
+#wallAttachmentMenu>a,
+#wallAttachmentMenu ._wrap a {
     display: flex;
     gap: 5px;
     padding: 2px 6px;
+    white-space: nowrap;
     cursor: pointer;
 }
 
-#wallAttachmentMenu>a>img {
+#wallAttachmentMenu>a>img,
+#wallAttachmentMenu ._wrap img {
     vertical-align: middle;
+    height: 16px;
 }
 
-#wallAttachmentMenu>a:hover {
+#wallAttachmentMenu>a:hover,
+#wallAttachmentMenu ._wrap a:hover {
     background-color: #f0f0f0;
 }
 
@@ -2347,6 +2353,14 @@ li {
 
 .cookies-popup .contanier .text {
     width: 100%;
+}
+
+.im_counter {
+    display: none !important;
+}
+
+.im_counter.shown {
+    display: block !important;
 }
 
 .floating_sidebar {
