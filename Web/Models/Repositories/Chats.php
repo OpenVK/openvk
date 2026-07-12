@@ -34,19 +34,15 @@ class Chats
 
     public function getByChatId(int $chatId): ?Chat
     {
-        if (isset(self::$cacheByChatId[$chatId])) {
-            return self::$cacheByChatId[$chatId];
+        $row = $this->context->table("chats")
+            ->where("chat_id = ?", $chatId)
+            ->fetch();
+
+        if (!$row) {
+            return null;
         }
 
-        $row = $this->chats->where("chat_id", $chatId)->fetch();
-        $chat = $this->toChat($row);
-
-        if ($chat) {
-            self::$cache[$chat->getId()] = $chat;
-            self::$cacheByChatId[$chatId] = $chat;
-        }
-
-        return $chat;
+        return $this->toChat($row);
     }
 
     public function create(int $chatId, string $title = "", string $description = "", ?int $photoId = null): Chat

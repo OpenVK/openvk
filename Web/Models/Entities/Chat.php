@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
 
 use openvk\Web\Models\RowModel;
+use openvk\Web\Models\Repositories\Photos;
+
 
 class Chat extends RowModel
 {
@@ -38,7 +40,21 @@ class Chat extends RowModel
             return null;
         }
 
-        return Photo::getById($photoId);
+        $photoRepo = new Photos();
+
+        return $photoRepo->get($photoId);
+    }
+
+    public function getPhotoURL(string $size = "miniscule"): string | null
+    {
+        $serverUrl = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
+
+        $photo = $this->getPhoto();
+        if (is_null($photo)) {
+            return null; 
+        }
+
+        return $photo->getURLBySizeId($size);
     }
 
     public function hasPhoto(): bool
