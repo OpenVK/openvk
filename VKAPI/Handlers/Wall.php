@@ -323,8 +323,7 @@ final class Wall extends VKAPIRequestHandler
     public function getById(string $posts, int $extended = 0, string $fields = "", User $user = null)
     {
         if ($user == null) {
-            $this->requireUser();
-            $user = $this->getUser(); # костыли костыли крылышки
+            $user = $this->getUser();
         }
 
         $items    = [];
@@ -443,7 +442,7 @@ final class Wall extends VKAPIRequestHandler
                     ],
                     "likes" => (object) [
                         "count"       => $post->getLikesCount(),
-                        "user_likes"  => (int) $post->hasLikeFrom($user),
+                        "user_likes"  => $user !== null ? (int) $post->hasLikeFrom($user) : 0,
                         "can_like"    => 1,
                         "can_publish" => 1,
                     ],
