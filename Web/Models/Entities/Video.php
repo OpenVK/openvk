@@ -19,6 +19,7 @@ class Video extends Media
 
     protected $tableName     = "videos";
     protected $fileExtension = "mp4";
+    protected $containsContextColumns = true;
 
     protected $processingPlaceholder = "video/rendering";
 
@@ -178,10 +179,10 @@ class Video extends Media
                 ],
                 "width" => $dimensions ? $dimensions[0] : 640,
                 "height" => $dimensions ? $dimensions[1] : 480,
-                "id" => $this->getVirtualId(),
-                "owner_id" => $this->getOwner()->getId(),
+                "id" => $this->getCompromiseVirtualId(),
+                "owner_id" => $this->getOwner()->getRealId(),
                 "access_key" => $this->getAccessKey(),
-                "user_id" => $this->getOwner()->getId(),
+                "user_id" => $this->getOwner()->getRealId(),
                 "title" => $this->getName(),
                 "is_favorite" => false,
                 "player" => !$fromYoutube ? $this->getURL() : $this->getVideoDriver()->getURL(),

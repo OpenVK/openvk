@@ -302,6 +302,24 @@
             </div>
         </div>
     </div>
+    <div>
+        <div class="content_title_expanded" onclick="hidePanel(this, {$videosCount});">
+            {_videos}
+        </div>
+        <div>
+            <div class="content_subtitle">
+                {tr("videos", $videosCount)}
+                <div style="float:right;">
+                    <a href="/videos{$club->getRealId()}">{_all_title}</a>
+                </div>
+            </div>
+            <div class="hide_on_mobiles" style="padding: 5px;">
+                {foreach $videos as $video}
+                    {include "../Videos/ProfileVideo.latte", video => $video}
+                {/foreach}
+            </div>
+        </div>
+    </div>
     <div n:if="($topicsCount > 0 || $club->isEveryoneCanCreateTopics() || ($thisUser && $club->canBeModifiedBy($thisUser))) && !$club->isDisplayTopicsAboveWallEnabled()">
         <div class="content_title_expanded" onclick="hidePanel(this, {$topicsCount});">
             {_discussions}

@@ -17,6 +17,10 @@ function appendEmoji(e) {
     }
 }
 
+function sendSticker() {
+
+}
+
 (function() {
 let emojiTippy = tippy.delegate("body", {
     content: "",
@@ -27,6 +31,7 @@ let emojiTippy = tippy.delegate("body", {
     trigger: 'click',
     placement: 'top',
     theme: 'emoji light vk',
+    placement: 'bottom-end',
     zIndex: 1024,
     onShow: async function(that) {
         if (!window.emojiData) {

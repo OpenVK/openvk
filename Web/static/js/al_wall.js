@@ -329,9 +329,10 @@ async function OpenVideo(video_arr = [], init_player = true)
     CMessageBox.toggleLoader()
     const video_owner = video_arr[0]
     const video_id    = video_arr[1]
+    const video_key   = video_arr[2]
     let video_api     = null
     try {
-        video_api   = await window.OVKAPI.call('video.get', {'videos': `${video_owner}_${video_id}`, 'extended': 1})
+        video_api   = await window.OVKAPI.call('video.get', {'videos': `${video_owner}_${video_id}` + (video_key ? "_" + video_key: ""), 'extended': 1})
 
         if(!video_api.items || !video_api.items[0]) {
             throw new Error('Not found')
@@ -1214,10 +1215,12 @@ u(document).on("click", "#editPost", async (e) => {
     post.addClass('editing')
 })
 
-async function __uploadToTextarea(file, textareaNode, is_from_messenger) {
-    if (textareaNode.closest(".messenger-app")) {
+async function __uploadToTextarea(file, textareaNode, is_from_messenger = false) {
+    if (textareaNode.closest(".messenger-app").length > 0) {
       is_from_messenger = true;
     }
+
+    console.log("Upload | Photo upload, ", textareaNode.closest(".messenger-app"), is_from_messenger)
 
     const MAX_FILESIZE = window.openvk.max_filesize_mb * 1024 * 1024
     let filetype = 'photo'
@@ -1270,7 +1273,7 @@ async function __uploadToTextarea(file, textareaNode, is_from_messenger) {
             __appendToTextarea({
                 'type': 'photo',
                 'preview': photo.url,
-                'id': photo.pretty_id + "?key=" + photo.access_key,
+                'id': photo.pretty_id + (photo.access_key ? "_" + photo.access_key : ""),
                 'key': photo.access_key,
                 'fullsize_url': photo.link,
             }, textareaNode)
@@ -1312,7 +1315,7 @@ async function __appendToTextarea(attachment_obj, textareaNode) {
 
 u(document).on('paste', '#write .small-textarea', (e) => {
     if(e.clipboardData.files.length === 1) {
-        __uploadToTextarea(e.clipboardData.files[0], u(e.target).closest('#write'), is_msg)
+        __uploadToTextarea(e.clipboardData.files[0], u(e.target).closest('#write'))
         return;
     }
 })
@@ -1566,7 +1569,7 @@ u(document).on('click', '#__videoAttachment', async (e) => {
         }
 
         videos.items.forEach(video => {
-            const pretty_id = `${video.owner_id}_${video.id}`
+            const pretty_id = `${video.owner_id}_${video.id}` + (video.access_key ? "_" + video.id : "")
             const is_attached = (form.find(`.upload-item[data-type='video'][data-id='${video.owner_id}_${video.id}']`)).length > 0
             let author_name = ''
 
@@ -1607,7 +1610,7 @@ u(document).on('click', '#__videoAttachment', async (e) => {
                                 <p>
                                     <span class='video-desc'>${ovk_proc_strtr(escapeHtml(video.description ?? ""), 140)}</span>
                                 </p>
-                                <span><a href="/id${video.owner_id}" target="_blank">${ovk_proc_strtr(escapeHtml(author_name ?? ""), 100)}</a></span>
+                                <span><a href="/${video.owner_id > 0 ? "id" + video.owner_id : "club" + video.owner_id * -1}" target="_blank">${ovk_proc_strtr(escapeHtml(author_name ?? ""), 100)}</a></span>
                             </td>
                             <td valign="top" class="action_links">
                                 <a class="profile_link" id="__attach_vid">${!is_attached ? tr("attach") : tr("detach")}</a>
@@ -1896,11 +1899,12 @@ function showFastVideoUpload(node) {
             if(append_result.payload) {
                 append_result = append_result.payload
                 const preview = append_result.image[0]
-                __appendToTextarea({
-                    'type': 'video',
-                    'preview': preview.url,
-                    'id': append_result.owner_id + '_' + append_result.id,
-                    'fullsize_preview': preview.url,
+              __appendToTextarea({
+                'type': 'video',
+                'preview': preview.url,
+                'id': append_result.owner_id + '_' + append_result.id + (append_result.access_key ? '_' + append_result.access_key : ""),
+                'key': append_result.access_key,
+                'fullsize_preview': preview.url,
                 }, node)
 
                 window.messagebox_stack.forEach(msg_ => {
