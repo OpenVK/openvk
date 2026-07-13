@@ -95,8 +95,7 @@ async function triggerMessageNotification(conv, text, timestamp) {
                 notif.body,
                 notif.ava,
                 () => {
-                  window.im.initImPage(document.querySelector('.page_content'));
-                  window.im.selectChat(conv);
+                  window.im.initImPage(document.querySelector('.page_content'), peer.id);
                 },
                 (notif.priority || 1) * 6000
             );

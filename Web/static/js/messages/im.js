@@ -48,8 +48,8 @@ export class IM {
     this.is_switching = false;
   }
 
-  async _checkSel(loc) {
-    const _sel = Number(loc.searchParams.get('sel'));
+  async _checkSel(loc, sel_id = null) {
+    const _sel = sel_id == null ? Number(loc.searchParams.get('sel')) : sel_id;
     if (!_sel) return;
 
     const peer = await this.conversations._resolveSel(_sel);
@@ -104,15 +104,15 @@ export class IM {
     });
   }
 
-  async initImPage(container) {
+  async initImPage(container, sel_id = null) {
     this.addLoadSkeleton(container);
     await this.waitLoad();
     this.root = container;
     this._initTabs();
-    const found = await this._checkSel(new URL(location.href));
+    const found = await this._checkSel(new URL(location.href), sel_id);
     if (!found) {
       this.selectTab('conversations');
-    }
+	}
   }
 
   addLoadSkeleton(container) {
