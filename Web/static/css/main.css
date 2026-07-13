@@ -2360,7 +2360,7 @@ li {
 }
 
 .im_counter.shown {
-    display: block !important;
+    display: inline-block !important;
 }
 
 .floating_sidebar {

@@ -112,19 +112,32 @@ const Attachment = ({ msg, att }) => {
           </a>
         </div>`;
     case 'doc':
+      const ids = att.doc.owner_id + '_' + att.doc.id;
       return html`
-        <div class="msg-attach-j msg-attach-j-doc">
-          <a href=${'/doc' + att.doc.owner_id + '_' + att.doc.id}>
-            <span>${att.doc.title}</span>
-          </a>
+        <div class="msg-attach-w msg-attach-w-doc">
+            <a href=${'/doc' + ids + (att.doc.access_key ? "?key="+att.doc.access_key : "")} class="attachment_note attachment_doc">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"></polygon><polygon points="5 0 5 3 8 3 5 0"></polygon></svg>
+                <div class="docOpener attachment_note_content">
+                    <span class="attachment_note_name">
+                        <span>
+                          ${att.doc.title}
+                        </span>
+                    </span>
+                </div>
+            </a>
         </div>`;
     case 'audio':
       return html`
-        <div class="msg-attach-j msg-attach-j-audio">
-          <a>${att.audio.artist}</a>
-          —
-          <span>${att.audio.title}</span>
+        <div onclick=${(e) => { window.im.messenger.view.showAudio(e, msg, att) }} class="msg-attach-w msg-attach-w-audio">
+          <span class="_icon"></span>
+          <span class="_artist">${att.audio.artist}</span>
+          <span>—</span>
+          <span class="_title">${att.audio.title}</span>
         </div>`;
+    case 'post':
+		return html`
+			<div class="msg-attach-w msg-attach-w-post"></div>
+        `;
     default:
       return null;
   }
