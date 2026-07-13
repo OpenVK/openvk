@@ -360,7 +360,7 @@ export class MessengerViewModel {
 
   closeChat(conv) {
     const idx = this.opened_tabs.indexOf(conv);
-    if (idx !== -1) this.opened_tabs.splice(idx, 1);
+    if (idx !== -1) { this.opened_tabs.splice(idx, 1) };
   }
 
   _saveDraft(to_chat) {

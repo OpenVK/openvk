@@ -3254,3 +3254,101 @@ if(Number(localStorage.getItem('ux.gif_autoplay') ?? 0) == 1) {
         })
     }
 }
+
+async function ajax_posting(e, target) {
+  const u1 = location.href;
+
+  u('#ajloader').addClass('shown')
+
+  collect_attachments_node(target);
+
+  const form = e.target;
+  const upper_target = e.target.parentNode.parentNode.parentNode;
+  const form_data = serializeForm(form, e.submitter)
+  form_data.append("ajax", 1);
+
+  console.log("Ajax posting action");
+
+  const request_object = {
+    method: "POST",
+    headers: {
+      'X-OpenVK-Ajax-Query': '1',
+    },
+    body: form_data
+  };
+
+  const form_res = await fetch(form.action, request_object)
+  const form_result = await form_res.text();
+  u('#ajloader').removeClass('shown');
+
+  const u2 = location.href;
+
+  if (u1 != u2) {
+    return;
+  }
+
+  if (form_res.status !== 200) {
+    MessageBox(tr("error"), form_res.status, [tr("ok")], [Function.noop])
+    return;
+  }
+
+  try {
+    const f = JSON.parse(form_result);
+
+    if (f.flash != null) {
+      u('#ajloader').removeClass('shown');
+      MessageBox(escapeHtml(f.flash.title), escapeHtml(f.flash.message), [tr("ok")], [Function.noop])
+      return;
+    }
+  } catch (e) {
+    console.log("no errors!");
+  }
+
+
+  let append_type = "up";
+
+  if (form.action.includes("al_comments/create/") && (new URL(location.href)).searchParams.get("sort") != "desc") {
+    append_type = "down";
+  }
+
+  if (target.closest(".post-menu-s").length > 0) {
+    append_type = "comment_microblog";
+  }
+
+  const parser = new DOMParser();
+  const parsed_content = parser.parseFromString(form_result, 'text/html')
+  const parsed_post = parsed_content.querySelector(".post");
+  const ids = parsed_post.dataset.id;
+  const append_text = `<div class="scroll_node" data-uniqueid="${ids}">${parsed_post.outerHTML}</div>`
+
+  if (u(upper_target).find(".scroll_container").length == 0 && append_type != "comment_microblog") {
+    u(target).after(`<div class="scroll_container"></div>`)
+  }
+
+  if (append_type == "up") {
+    u(upper_target).find(".scroll_container").prepend(append_text);
+  }
+
+  if (append_type == "down") {
+    u(upper_target).find(".scroll_container").append(append_text);
+  }
+
+  if (append_type == "comment_microblog") {
+    target.closest(".commentsTextFieldWrap").before(append_text);
+  }
+
+  u("#none_tip").remove();
+
+  back_textarea_to_default(target);
+}
+
+function back_textarea_to_default(node) {
+  node.find(".post-horizontal, .post-vertical, .post-has-poll, .post-has-geo, .post-source").html("");
+  node.find("input[name='horizontal_attachments'],input[name='vertical_attachments'],input[name='geo']").nodes.forEach(el => {
+    el.value = '';
+  });
+  node.find(".post-opts input[type='checkbox']:not(input[name='as_group'])").nodes.forEach(el => {
+    el.checked = false;
+  })
+  node.find(".textareas textarea").last().value = "";
+}
