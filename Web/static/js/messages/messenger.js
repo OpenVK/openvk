@@ -411,19 +411,46 @@ export class MessengerViewModel {
   // attachment
 
   showPhoto(e, msg, attachment) {
-    console.log("Opened photo from messenger: ", e, msg, attachment);
+    if (typeof PhotoViewer === 'undefined') return;
 
-    let _attachments = [];
-    const ids = attachment.owner_id + '_' + attachment.id;
-    msg.attachments.forEach(item => {
-      if (item.type != "photo") { return }
-      item.photo.url = item.photo.src_original;
-      item.photo.id = item.photo.owner_id + '_' + attachment.id;
+    const photos = [];
+    const ids = attachment.photo.owner_id + '_' + attachment.photo.id + (attachment.photo.access_key ? '_' + attachment.photo.access_key : '');
 
-      _attachments[item.photo.id] = item.photo;
-    })
+    msg.attachments.forEach(function(item) {
+      if (item.type !== 'photo') return;
 
-    OpenMiniature(e, _attachments[ids], 'post', ids + (attachment.access_key ? "_" + attachment.access_key : ""), "post", _attachments)
+      const pid = item.photo.owner_id + '_' + item.photo.id + (item.photo.access_key ? '_' + item.photo.access_key : '');
+      const src = item.photo.src_original || item.photo.photo_2560 || item.photo.photo_1280 || item.photo.photo_807 || item.photo.photo_604 || item.photo.photo_130;
+
+      photos.push({
+        owner_id: item.photo.owner_id,
+        id: item.photo.id,
+        url: src,
+        access_key: item.photo.access_key,
+      });
+    });
+
+    const first = photos.find(function(p) {
+      return (p.owner_id + '_' + p.id) === (attachment.photo.owner_id + '_' + attachment.photo.id);
+    });
+
+    if (!first) {
+      console.log("IM | Messenger | Opening photo | Not found ", attachment, " image in", photos)
+      return;
+    };
+
+    console.log("IM | Messenger | Opening photo ", attachment, msg, photos)
+
+    const __photoViewer = new PhotoViewer();
+    __photoViewer.open(first.url, ids, {
+      customContext: photos,
+    });
+  }
+
+  showVideo(e, msg, attachment) {
+    e.preventDefault();
+    e.stopPropagation();
+    OpenVideo([attachment.video.owner_id, attachment.video.id, (attachment.video.access_key ? attachment.video.access_key : null)]);
   }
 }
 

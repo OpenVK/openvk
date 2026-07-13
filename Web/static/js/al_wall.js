@@ -6,23 +6,23 @@ function initGraffiti(event, callback = null) {
         close_on_buttons: false,
         warn_on_exit: true,
         buttons: [tr("save"), tr("cancel")],
-        callbacks: [function () {
-            canvas.getImage({ includeWatermark: false }).toBlob(blob => {
+        callbacks: [function() {
+            canvas.getImage({includeWatermark: false}).toBlob(blob => {
                 let fName = "Graffiti-" + Math.ceil(performance.now()).toString() + ".jpeg";
-                let image = new File([blob], fName, { type: "image/jpeg", lastModified: new Date().getTime() });
+                let image = new File([blob], fName, {type: "image/jpeg", lastModified: new Date().getTime()});
 
                 if (!callback) {
-                    __uploadToTextarea(image, u(event.target).closest('#write'))
+                  __uploadToTextarea(image, u(event.target).closest('#write'))
                 } else {
-                    callback(image);
+                  callback(image);
                 }
             }, "image/jpeg", 0.92);
 
             canvas.teardown();
             msgbox.close()
-        }, async function () {
+        }, async function() {
             const res = await msgbox.__showCloseConfirmationDialog()
-            if (res === true) {
+            if(res === true) {
                 canvas.teardown()
                 msgbox.close()
             }
@@ -45,28 +45,28 @@ function initGraffiti(event, callback = null) {
 
     window.canvas = canvas
     msgbox.getNode().nodes[0].addEventListener('paste', (e) => {
-        if (e.clipboardData.files.length === 1) {
-            if (e.clipboardData.files[0].type.startsWith('image/')) {
-                const imageUrl = URL.createObjectURL(e.clipboardData.files[0]);
-                const img = new Image();
-                img.src = imageUrl;
+      if (e.clipboardData.files.length === 1) {
+        if (e.clipboardData.files[0].type.startsWith('image/')) {
+          const imageUrl = URL.createObjectURL(e.clipboardData.files[0]);
+          const img = new Image();
+          img.src = imageUrl;
 
-                let x = 0;
-                let y = 0;
+          let x = 0;
+          let y = 0;
 
-                console.log('Pasted image to grafitti!', x, y, img, img.naturalWidth, img.naturalHeight);
-                canvas.saveShape(LC.createShape('Image', { x: x, y: y, image: img }));
-            }
-        } else {
-            console.log(e)
+          console.log('Pasted image to grafitti!', x, y, img, img.naturalWidth, img.naturalHeight);
+          canvas.saveShape(LC.createShape('Image', { x: x, y: y, image: img }));
         }
+      } else {
+        console.log(e)
+      }
     })
 }
 
 u(document).on('click', '.menu_toggler', (e) => {
     const post_buttons = $(e.target).closest('.post-buttons')
     const wall_attachment_menu = post_buttons.find('#wallAttachmentMenu')
-    if (wall_attachment_menu.is('.hidden')) {
+    if(wall_attachment_menu.is('.hidden')) {
         wall_attachment_menu.css({ opacity: 0 });
         wall_attachment_menu.toggleClass('hidden').fadeTo(250, 1);
     } else {
@@ -76,15 +76,15 @@ u(document).on('click', '.menu_toggler', (e) => {
     }
 })
 
-u(document).on("click", ".post-like-button", function (e) {
+u(document).on("click", ".post-like-button", function(e) {
     e.preventDefault();
     e.stopPropagation()
 
     var thisBtn = u(this).first();
-    var link = u(this).attr("href");
-    var heart = u(".heart", thisBtn);
+    var link    = u(this).attr("href");
+    var heart   = u(".heart", thisBtn);
     var counter = u(".likeCnt", thisBtn);
-    var likes = counter.text() === "" ? 0 : counter.text();
+    var likes   = counter.text() === "" ? 0 : counter.text();
     var isLiked = heart.attr("id") === 'liked';
 
     ky.post(link)
@@ -97,9 +97,9 @@ u(document).on("click", ".post-like-button", function (e) {
     return false;
 });
 
-u(document).on("input", "textarea", function (e) {
-    var boost = 5;
-    var textArea = e.target;
+u(document).on("input", "textarea", function(e) {
+    var boost             = 5;
+    var textArea          = e.target;
     textArea.style.height = "5px";
     var newHeight = textArea.scrollHeight;
     textArea.style.height = newHeight + boost + "px";
@@ -109,240 +109,346 @@ u(document).on("input", "textarea", function (e) {
     // textArea.style.height = (newHeight > originalHeight ? (newHeight + boost) : originalHeight) + "px";
 });
 
-async function OpenMiniature(e, photo, post, photo_id, type = "post", custom_context = null) {
-    /*
-    костыли но смешные однако
-    */
-    e.preventDefault();
-    e.stopPropagation()
+function pickBestPhotoUrl(sizes) {
+  if (!sizes || !Array.isArray(sizes) || sizes.length === 0) return '';
 
-    // Значения для переключения фоток
+  const sorted = sizes.slice().sort(function(a, b) {
+    return (b.width || 0) - (a.width || 0);
+  });
 
-    const albums_per_page = 20
-    let json;
-    let offset = type == 'album' ? (Number((new URL(location.href)).searchParams.get('p') ?? 1) - 1) * albums_per_page : 0
-    let shown_offset = 0
-
-    let imagesCount = 0;
-    let currentImageid = '0_0';
-
-    const photo_viewer = new CMessageBox({
-        title: '',
-        custom_template: u(`
-        <div class="ovk-photo-view-dimmer">
-            <div class="ovk-photo-view-overlay ovk-photo-view-overlay-left"></div>
-            <div class="ovk-photo-view-overlay ovk-photo-view-overlay-right">
-                <div class="ovk-photo-close-icon"></div>
-            </div>
-            <div class="ovk-photo-view">
-                <div class="photo_com_title">
-                    <text id="photo_com_title_photos">
-                        <img src="/assets/packages/static/openvk/img/loading_mini.gif">
-                    </text>
-                    <div>
-                        <a id="ovk-photo-close">${tr("close")}</a>
-                    </div>
-                </div>
-                <div class='photo_viewer_wrapper'>
-                    <div class="ovk-photo-slide-left"></div>
-                    <div class="ovk-photo-slide-right"></div>
-                    <img src="${photo}" id="ovk-photo-img">
-                </div>
-                <div class="ovk-photo-details">
-                    <img src="/assets/packages/static/openvk/img/loading_mini.gif">
-                </div>
-            </div>
-        </div>`)
-    })
-
-    photo_viewer.getNode().find("#ovk-photo-close, .ovk-photo-view-overlay").on("click", function (e) {
-        photo_viewer.close()
-    });
-
-    function __getIndex(photo_id = null) {
-        return Object.keys(json.body).findIndex(item => item == (photo_id ?? currentImageid)) + 1
-    }
-
-    function __getByIndex(id) {
-        const ids = Object.keys(json.body)
-        const _id = ids[id - 1]
-
-        return json.body[_id]
-    }
-
-    function __reloadTitleBar() {
-        photo_viewer.getNode().find("#photo_com_title_photos").last().innerHTML = imagesCount > 1 ? tr("photo_x_from_y", shown_offset, imagesCount) : tr("photo");
-    }
-
-    async function __loadDetails(photo_id) {
-        if (json.body[photo_id].cached == null) {
-            photo_viewer.getNode().find(".ovk-photo-details").last().innerHTML = '<img src="/assets/packages/static/openvk/img/loading_mini.gif">';
-            const photo_url = `/photo${photo_id}`
-            const photo_page = await fetch(photo_url)
-            const photo_text = await photo_page.text()
-            const parser = new DOMParser
-            const body = parser.parseFromString(photo_text, "text/html")
-            const details = body.querySelector('.ovk-photo-details')
-            json.body[photo_id].cached = details ? details.innerHTML : ''
-            if (photo_id == currentImageid) {
-                photo_viewer.getNode().find(".ovk-photo-details").last().innerHTML = details ? details.innerHTML : ''
-            }
-
-            photo_viewer.getNode().find(".ovk-photo-details .bsdn").nodes.forEach(bsdnInitElement)
-        } else {
-            photo_viewer.getNode().find(".ovk-photo-details").last().innerHTML = json.body[photo_id].cached
-        }
-
-        let modal = photo_viewer.getNode().find(".ovk-photo-view").nodes[0];
-        let style = window.getComputedStyle(modal);
-        let h = modal.offsetHeight + parseInt(style.marginBottom) + parseInt(style.marginTop);
-        let overlays = photo_viewer.getNode().find(".ovk-photo-view-overlay").nodes
-        overlays[0].style.height = h + "px";
-        overlays[1].style.height = h + "px";
-    }
-
-    async function __slidePhoto(direction) {
-        /* direction = 1 - right
-           direction = 0 - left */
-        if (json == undefined) {
-            console.log("Да подожди ты. Куда торопишься?");
-        } else {
-            let current_index = __getIndex()
-            if (current_index >= imagesCount && direction == 1) {
-                shown_offset = 1
-                current_index = 1
-            } else if (current_index <= 1 && direction == 0) {
-                shown_offset += imagesCount - 1
-                current_index = imagesCount
-            } else if (direction == 1) {
-                shown_offset += 1
-                current_index += 1
-            } else if (direction == 0) {
-                shown_offset -= 1
-                current_index -= 1
-            }
-
-            currentImageid = __getByIndex(current_index)
-            if (!currentImageid) {
-                if (type == 'album') {
-                    if (direction == 1) {
-                        offset += albums_per_page
-                    } else {
-                        offset -= albums_per_page
-                    }
-
-                    await __loadContext(type, post, true, direction == 0)
-                } else {
-                    return
-                }
-            }
-            currentImageid = currentImageid.id
-            let photoURL = json.body[currentImageid].url;
-
-            photo_viewer.getNode().find("#ovk-photo-img").last().src = ''
-            photo_viewer.getNode().find("#ovk-photo-img").last().src = photoURL;
-            __reloadTitleBar();
-            __loadDetails(json.body[currentImageid].id);
-        }
-    }
-
-    async function __loadContext(type, id, ref = false, inverse = false) {
-        if (custom_context) {
-            json = { "body": custom_context };
-            return;
-        }
-
-        if (type == 'post' || type == 'comment') {
-            const form_data = new FormData()
-            form_data.append('parentType', type);
-
-            const endpoint_url = `/iapi/getPhotosFromPost/${type == "post" ? id : "1_" + id}`
-            const fetcher = await fetch(endpoint_url, {
-                method: 'POST',
-                body: form_data,
-            })
-            json = await fetcher.json()
-            imagesCount = Object.entries(json.body).length
-        } else {
-            const params = {
-                'offset': offset,
-                'count': albums_per_page,
-                'owner_id': id.split('_')[0],
-                'album_id': id.split('_')[1],
-                'photo_sizes': 1
-            }
-
-            const result = await window.OVKAPI.call('photos.get', params)
-            const converted_items = {}
-
-            result.items.forEach(item => {
-                const id = item.owner_id + '_' + item.id
-                converted_items[id] = {
-                    'url': item.src_xbig,
-                    'id': id,
-                }
-            })
-            imagesCount = result.count
-
-            if (!json)
-                json = { 'body': [] }
-
-            if (!inverse) {
-                json.body = Object.assign(converted_items, json.body)
-            } else {
-                json.body = Object.assign(json.body, converted_items)
-            }
-        }
-
-        currentImageid = photo_id
-    }
-
-    photo_viewer.getNode().find(".ovk-photo-slide-left").on("click", (e) => {
-        __slidePhoto(0);
-    })
-    photo_viewer.getNode().find(".ovk-photo-slide-right").on("click", (e) => {
-        __slidePhoto(1);
-    })
-
-    if (!type) {
-        imagesCount = 1
-        json = {
-            'body': {}
-        }
-
-        json.body[photo_id] = {
-            'id': photo_id,
-            'url': photo
-        }
-        currentImageid = photo_id
-
-        __reloadTitleBar()
-        __loadDetails(photo_id)
-    } else {
-        await __loadContext(type, post)
-        shown_offset = offset + __getIndex()
-        currentImageid = photo_id;
-
-        __reloadTitleBar();
-        __loadDetails(json.body[currentImageid].id);
-    }
-
-    return photo_viewer.getNode()
+  return sorted[0].url || '';
 }
 
-async function OpenVideo(video_arr = [], init_player = true) {
+const photoViewerTemplate =
+`<div class="ovk-photo-view-dimmer">
+    <div class="ovk-photo-view-overlay ovk-photo-view-overlay-left"></div>
+    <div class="ovk-photo-view-overlay ovk-photo-view-overlay-right">
+        <div class="ovk-photo-close-icon"></div>
+    </div>
+    <div class="ovk-photo-view">
+        <div class="photo_com_title">
+            <text id="photo_com_title_photos">
+                <img src="/assets/packages/static/openvk/img/loading_mini.gif">
+            </text>
+            <div>
+                <a id="ovk-photo-close">${tr("close")}</a>
+            </div>
+        </div>
+        <div class="photo_viewer_wrapper">
+            <div class="ovk-photo-slide-left"></div>
+            <div class="ovk-photo-slide-right"></div>
+            <img src="/assets/packages/static/openvk/img/loading_mini.gif" id="ovk-photo-img">
+        </div>
+        <div class="ovk-photo-details">
+            <img src="/assets/packages/static/openvk/img/loading_mini.gif">
+        </div>
+    </div>
+</div>`;
+
+class PhotoViewer {
+  constructor() {
+    this.photoMap = {};
+    this.photoOrder = [];
+    this.currentId = null;
+    this.contextType = null;
+    this.contextId = null;
+    this.modal = null;
+    this.offset = 0;
+    this.ended_right = false;
+    this.setModal();
+  }
+
+  get count() {
+    return this.photoOrder.length;
+  }
+
+  get currentIndex() {
+    return this.photoOrder.indexOf(this.currentId);
+  }
+
+  setModal(photoUrl, photoId) {
+    this.modal = new CMessageBox({
+      title: '',
+      custom_template: u(photoViewerTemplate),
+    });
+
+    this.modal.getNode().find("#ovk-photo-close, .ovk-photo-view-overlay").on("click", () => {
+      this.modal.close();
+    });
+
+    this.modal.getNode().find(".ovk-photo-slide-left").on("click", () => {
+      this.slide(-1);
+    });
+
+    this.modal.getNode().find(".ovk-photo-slide-right").on("click", () => {
+      this.slide(1);
+    });
+  }
+
+  showPhoto(photoId) {
+    const entry = this.photoMap[photoId];
+    if (!entry) return;
+
+    console.log(entry)
+    this.currentId = photoId;
+    this.modal.getNode().find("#ovk-photo-img").last().src = entry.url;
+    this.modal.getNode().find("#photo_com_title_photos").last().innerHTML =
+      this.count > 1
+        ? tr("photo_x_from_y", this.currentIndex + 1, this.count)
+        : tr("photo");
+
+    this.loadDetails(photoId);
+  }
+
+  async loadDetails(photoId) {
+    const entry = this.photoMap[photoId];
+    if (!entry) return;
+
+    if (entry.cached) {
+      this.modal.getNode().find(".ovk-photo-details").last().innerHTML = entry.cached;
+    } else {
+      console.log("Photo | Not cached");
+      this.modal.getNode().find(".ovk-photo-details").last().innerHTML = '<img src="/assets/packages/static/openvk/img/loading_mini.gif">';
+
+      let res = null;
+
+      try {
+        let _photo_id = null;
+        const _ids = photoId.split("_");
+        if (_ids.length == 3) {
+          _photo_id = _ids[0] + "_" + _ids[1] + "?key=" + _ids[2]
+        } else {
+          _photo_id = _ids[0] + "_" + _ids[1]
+        }
+
+        res = await fetch('/photo' + _photo_id);
+
+        if (res.status == 404 || res.status.status == 403) {
+          throw Error("not found img");
+        }
+        const html = await res.text();
+        const doc = new DOMParser().parseFromString(html, "text/html");
+        const details = doc.querySelector('.ovk-photo-details');
+        entry.cached = details ? details.innerHTML : '';
+      } catch (e) {
+        entry.cached = "<div></div>";
+        console.error(entry, e);
+      }
+
+      if (photoId === this.currentId) {
+        this.modal.getNode().find(".ovk-photo-details").last().innerHTML = entry.cached;
+        this.modal.getNode().find(".ovk-photo-details .bsdn").nodes.forEach(bsdnInitElement);
+      }
+    }
+
+    const viewEl = this.modal.getNode().find(".ovk-photo-view").nodes[0];
+    const style = window.getComputedStyle(viewEl);
+    const h = viewEl.offsetHeight + parseInt(style.marginBottom) + parseInt(style.marginTop);
+    this.modal.getNode().find(".ovk-photo-view-overlay").nodes.forEach(function(el) {
+      el.style.height = h + "px";
+    });
+  }
+
+  async slide(direction) {
+    if (this.count === 0 || this.count === 1) return;
+
+    let idx = this.currentIndex + direction;
+
+    if (idx < 0) {
+      if (this.contextType === 'album') {
+        this.offset -= 20;
+        if (this.offset < 0) this.offset = 0;
+        await this.loadAlbumContext();
+        idx = this.photoOrder.length - 1;
+      } else {
+        idx = this.count - 1;
+      }
+    } else if (idx >= this.count) {
+      if (this.contextType === 'album') {
+        this.offset += 20;
+        await this.loadAlbumContext();
+        idx = 0;
+      } else {
+        idx = 0;
+      }
+    }
+
+    const nextId = this.photoOrder[idx];
+    if (nextId) {
+      this.showPhoto(nextId);
+    }
+  }
+
+  async loadPostContext(postId, isComment) {
+    const method = isComment ? 'wall.getComment' : 'wall.getById';
+    const params = isComment
+      ? { comment_id: postId.split('_')[1], owner_id: postId.split('_')[0] }
+      : { posts: postId };
+
+    let res;
+    try {
+      res = await window.OVKAPI.call(method, { ...params, extended: 0 });
+    } catch (e) {
+      return;
+    }
+
+    const items = res.items || res.response?.items || res;
+    const item = Array.isArray(items) ? items[0] : items;
+    if (!item) return;
+
+    const attachments = item.attachments || [];
+    attachments.forEach(function(att) {
+      if (att.type !== 'photo') return;
+      const p = att.photo;
+      const pid = p.owner_id + '_' + p.id;
+      if (this.photoMap[pid]) return;
+
+      this.photoMap[pid] = {
+        url: pickBestPhotoUrl(p.sizes),
+        id: pid,
+      };
+      this.photoOrder.push(pid);
+    }, this);
+  }
+
+  async loadAlbumContext() {
+    if (!this.contextId) return;
+    if (this.ended_right) return;
+
+    const parts = this.contextId.split('_');
+    const params = {
+      offset: this.offset,
+      count: 20,
+      owner_id: parts[0],
+      album_id: parts[1],
+      photo_sizes: 1,
+    };
+
+    if (this.rev) {
+      params["rev"] = 1;
+    }
+
+    let res;
+    try {
+      res = await window.OVKAPI.call('photos.get', params);
+    } catch (e) {
+      return;
+    }
+
+    const existing = {};
+    this.photoOrder.forEach(function(id) {
+      existing[id] = true;
+    });
+
+    if (!res.items) {
+      this.ended_right = true;
+      return;
+    }
+
+    res.items.forEach(function(item) {
+      const pid = item.owner_id + '_' + item.id + (item.access_key ? "_" + item.access_key : "");
+      if (existing[pid]) return;
+
+      this.photoMap[pid] = {
+        url: item.src_xbig || item.photo_2560 || pickBestPhotoUrl(item.sizes),
+        id: pid,
+      };
+      this.photoOrder.push(pid);
+    }, this);
+  }
+
+  async open(firstPhotoUrl, firstPhotoId, context) {
+    this.contextType = context.type || null;
+    this.contextId = context.id || null;
+    this.offset = context.offset || 0;
+    this.rev = context.reverse || false;
+    console.log(firstPhotoUrl, firstPhotoId, context)
+
+    if (context.customContext) {
+      if (Array.isArray(context.customContext)) {
+        context.customContext.forEach(function (item) {
+          const pid = item.owner_id + '_' + item.id + (item.access_key ? "_" + item.access_key : "");
+          this.photoMap[pid] = {
+            url: item.url || item.src_original || pickBestPhotoUrl(item.sizes),
+            id: pid,
+          };
+          this.photoOrder.push(pid);
+        }, this);
+      } else {
+        Object.keys(context.customContext).forEach(function(pid) {
+          const item = context.customContext[pid];
+          this.photoMap[pid] = {
+            url: item.url || item.src_original || pickBestPhotoUrl(item.sizes),
+            id: pid,
+          };
+          this.photoOrder.push(pid);
+        }, this);
+      }
+    } else if (this.contextType === 'album') {
+      await this.loadAlbumContext();
+    } else if (this.contextType === 'post' || this.contextType === 'comment') {
+      await this.loadPostContext(this.contextId, this.contextType === 'comment');
+    }
+
+    if (this.photoMap[firstPhotoId]) {
+      this.showPhoto(firstPhotoId);
+    } else {
+      this.photoMap[firstPhotoId] = {
+        url: firstPhotoUrl,
+        id: firstPhotoId,
+      };
+      if (this.photoOrder.indexOf(firstPhotoId) === -1) {
+        this.photoOrder.push(firstPhotoId);
+      }
+      this.showPhoto(firstPhotoId);
+    }
+
+    return this.modal.getNode();
+  }
+}
+
+async function OpenMiniature(e, photo, post, photo_id, type = "post", custom_context = null, reverse = false, custom_offset = null) {
+  e.preventDefault();
+  e.stopPropagation();
+
+  const albums_per_page = 20;
+  let offset = type === 'album'
+    ? (Number((new URL(location.href)).searchParams.get('p') ?? (window.router.scroll_page ?? 1)) - 1) * albums_per_page
+    : 0;
+
+  if (custom_offset != null) {
+    offset = custom_offset;
+  }
+
+  const __photoViewer = new PhotoViewer();
+
+  return __photoViewer.open(photo, photo_id, {
+    type: type,
+    id: type !== 'message' ? post : null,
+    offset: offset,
+    customContext: custom_context,
+    reverse: reverse
+  });
+}
+
+function OpenAvatar(e, photo_large, avatar_album, photo_id) {
+  OpenMiniature(e, photo_large, avatar_album, photo_id, "album", null, true, 0)
+}
+
+async function OpenVideo(video_arr = [], init_player = true)
+{
     CMessageBox.toggleLoader()
     const video_owner = video_arr[0]
-    const video_id = video_arr[1]
-    const video_key = video_arr[2]
-    let video_api = null
+    const video_id    = video_arr[1]
+    const video_key   = video_arr[2]
+    let video_api     = null
     try {
-        video_api = await window.OVKAPI.call('video.get', { 'videos': `${video_owner}_${video_id}` + (video_key ? "_" + video_key : ""), 'extended': 1 })
+        video_api   = await window.OVKAPI.call('video.get', {'videos': `${video_owner}_${video_id}` + (video_key ? "_" + video_key: ""), 'extended': 1})
 
-        if (!video_api.items || !video_api.items[0]) {
+        if(!video_api.items || !video_api.items[0]) {
             throw new Error('Not found')
         }
-    } catch (e) {
+    } catch(e) {
         CMessageBox.toggleLoader()
         fastError(e.message)
 
@@ -351,11 +457,11 @@ async function OpenVideo(video_arr = [], init_player = true) {
 
     // TODO: video lists
     const video_object = video_api.items[0]
-    const pretty_id = `${video_object.owner_id}_${video_object.id}`
-    const author = find_author(video_object.owner_id, video_api.profiles, video_api.groups)
+    const pretty_id    = `${video_object.owner_id}_${video_object.id}`
+    const author       = find_author(video_object.owner_id, video_api.profiles, video_api.groups)
     let player_html = ''
-    if (init_player) {
-        if (video_object.platform == 'youtube') {
+    if(init_player) {
+        if(video_object.platform == 'youtube') {
             const video_url = new URL(video_object.player)
             const video_id = video_url.pathname.replace('/', '')
             player_html = `
@@ -369,7 +475,7 @@ async function OpenVideo(video_arr = [], init_player = true) {
                allowfullscreen></iframe>
             `
         } else {
-            if (!video_object.is_processed) {
+            if(!video_object.is_processed) {
                 player_html = `<span class='gray'>${tr('video_processing')}</span>`
             } else {
                 const author_name = `${author.first_name} ${author.last_name}`
@@ -418,7 +524,7 @@ async function OpenVideo(video_arr = [], init_player = true) {
         `)
     })
 
-    if (video_object.platform != 'youtube' && video_object.is_processed) {
+    if(video_object.platform != 'youtube' && video_object.is_processed) {
         bsdnInitElement(msgbox.getNode().find('.bsdn').nodes[0])
     }
 
@@ -427,7 +533,7 @@ async function OpenVideo(video_arr = [], init_player = true) {
     })
 
     msgbox.getNode().find('#__toggle_comments').on('click', async (e) => {
-        if (msgbox.getNode().find('#ovk-player-info').hasClass('shown')) {
+        if(msgbox.getNode().find('#ovk-player-info').hasClass('shown')) {
             msgbox.getNode().find('#__toggle_comments').html(tr('show_comments'))
         } else {
             msgbox.getNode().find('#__toggle_comments').html(tr('close_comments'))
@@ -435,13 +541,13 @@ async function OpenVideo(video_arr = [], init_player = true) {
 
         let overlays = msgbox.getNode().find(".ovk-photo-view-overlay").nodes
         msgbox.getNode().find('#ovk-player-info').toggleClass('shown')
-        if (msgbox.getNode().find('#ovk-player-info').html().length < 1) {
+        if(msgbox.getNode().find('#ovk-player-info').html().length < 1) {
             u('#ovk-player-info').html(`<div id='gif_loader'></div>`)
 
             const fetcher = await fetch(`/video${pretty_id}`)
             const fetch_r = await fetcher.text()
             const dom_parser = new DOMParser
-            const results = u(dom_parser.parseFromString(fetch_r, 'text/html'))
+            const results =  u(dom_parser.parseFromString(fetch_r, 'text/html'))
             const details = results.find('.ovk-vid-details')
             details.find('.media-page-wrapper-description b').remove()
 
@@ -491,7 +597,7 @@ async function OpenVideo(video_arr = [], init_player = true) {
             u('.miniplayer').remove()
         })
 
-        $('.miniplayer').draggable({ cursor: 'grabbing', containment: 'window', cancel: '.miniplayer-body' })
+        $('.miniplayer').draggable({cursor: 'grabbing', containment: 'window', cancel: '.miniplayer-body'})
         $('.miniplayer').resizable({
             maxHeight: 2000,
             maxWidth: 3000,
@@ -513,59 +619,59 @@ u(document).on('click', '#videoOpen', (e) => {
         const split = vid.split('_')
 
         OpenVideo(split)
-    } catch (ec) {
+    } catch(ec) {
         return
     }
 })
 
-u(document).on("keydown", "#write > form", function (event) {
-    if (event.ctrlKey && event.keyCode === 13)
+u(document).on("keydown", "#write > form", function(event) {
+    if(event.ctrlKey && event.keyCode === 13)
         u(event.target).closest('form').find(`input[type='submit']`).nodes[0].click()
 });
 
 u(document).on('keydown', '.edit_menu #write', (e) => {
-    if (e.ctrlKey && e.keyCode === 13)
+    if(e.ctrlKey && e.keyCode === 13)
         e.target.closest('.edit_menu').querySelector('#__edit_save').click()
 })
 
 // Migrated from inline start
 function reportPhoto(photo_id) {
-    uReportMsgTxt = tr("going_to_report_photo");
-    uReportMsgTxt += "<br/>" + tr("report_question_text");
-    uReportMsgTxt += "<br/><br/><b>" + tr("report_reason") + "</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
+    uReportMsgTxt  = tr("going_to_report_photo");
+    uReportMsgTxt += "<br/>"+tr("report_question_text");
+    uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
 
     MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
-        (function () {
+        (function() {
             res = document.querySelector("#uReportMsgInput").value;
             xhr = new XMLHttpRequest();
             xhr.open("GET", "/report/" + photo_id + "?reason=" + res + "&type=photo", true);
-            xhr.onload = (function () {
-                if (xhr.responseText.indexOf("reason") === -1)
-                    MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
-                else
-                    MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
+            xhr.onload = (function() {
+            if(xhr.responseText.indexOf("reason") === -1)
+                MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
+            else
+                MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
             });
             xhr.send(null);
-        }),
+            }),
         Function.noop
     ]);
 }
 
 function reportVideo(video_id) {
-    uReportMsgTxt = tr("going_to_report_video");
-    uReportMsgTxt += "<br/>" + tr("report_question_text");
-    uReportMsgTxt += "<br/><br/><b>" + tr("report_reason") + "</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
+    uReportMsgTxt  = tr("going_to_report_video");
+    uReportMsgTxt += "<br/>"+tr("report_question_text");
+    uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
 
     MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
-        (function () {
+        (function() {
             res = document.querySelector("#uReportMsgInput").value;
             xhr = new XMLHttpRequest();
             xhr.open("GET", "/report/" + video_id + "?reason=" + res + "&type=video", true);
-            xhr.onload = (function () {
-                if (xhr.responseText.indexOf("reason") === -1)
-                    MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
-                else
-                    MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
+            xhr.onload = (function() {
+            if(xhr.responseText.indexOf("reason") === -1)
+                MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
+            else
+            MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
             });
             xhr.send(null);
         }),
@@ -574,17 +680,17 @@ function reportVideo(video_id) {
 }
 
 function reportUser(user_id) {
-    uReportMsgTxt = tr("going_to_report_user");
-    uReportMsgTxt += "<br/>" + tr("report_question_text");
-    uReportMsgTxt += "<br/><br/><b>" + tr("report_reason") + "</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
+    uReportMsgTxt  = tr("going_to_report_user");
+    uReportMsgTxt += "<br/>"+tr("report_question_text");
+    uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
 
     MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
-        (function () {
+        (function() {
             res = document.querySelector("#uReportMsgInput").value;
             xhr = new XMLHttpRequest();
             xhr.open("GET", "/report/" + user_id + "?reason=" + res + "&type=user", true);
-            xhr.onload = (function () {
-                if (xhr.responseText.indexOf("reason") === -1)
+            xhr.onload = (function() {
+                if(xhr.responseText.indexOf("reason") === -1)
                     MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
                 else
                     MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
@@ -596,21 +702,21 @@ function reportUser(user_id) {
 }
 
 function reportComment(comment_id) {
-    uReportMsgTxt = tr("going_to_report_comment");
-    uReportMsgTxt += "<br/>" + tr("report_question_text");
-    uReportMsgTxt += "<br/><br/><b>" + tr("report_reason") + "</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
+    uReportMsgTxt  = tr("going_to_report_comment");
+    uReportMsgTxt += "<br/>"+tr("report_question_text");
+    uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
 
     MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
-        (function () {
+        (function() {
             res = document.querySelector("#uReportMsgInput").value;
             xhr = new XMLHttpRequest();
             xhr.open("GET", "/report/" + comment_id + "?reason=" + res + "&type=comment", true);
-            xhr.onload = (function () {
-                if (xhr.responseText.indexOf("reason") === -1)
+            xhr.onload = (function() {
+                if(xhr.responseText.indexOf("reason") === -1)
                     MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
                 else
                     MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
-            });
+                });
             xhr.send(null);
         }),
         Function.noop
@@ -618,20 +724,20 @@ function reportComment(comment_id) {
 }
 
 function reportApp(id) {
-    uReportMsgTxt = tr('going_to_report_app');
-    uReportMsgTxt += "<br/>" + tr("report_question_text");
-    uReportMsgTxt += "<br/><br/><b>" + tr("report_reason") + "</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
+    uReportMsgTxt  = tr('going_to_report_app');
+    uReportMsgTxt += "<br/>"+tr("report_question_text");
+    uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
 
     MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
-        (function () {
+        (function() {
             res = document.querySelector("#uReportMsgInput").value;
             xhr = new XMLHttpRequest();
             xhr.open("GET", "/report/" + id + "?reason=" + res + "&type=app", true);
-            xhr.onload = (function () {
-                if (xhr.responseText.indexOf("reason") === -1)
-                    MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
-                else
-                    MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
+            xhr.onload = (function() {
+            if(xhr.responseText.indexOf("reason") === -1)
+                MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
+            else
+                MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
             });
             xhr.send(null);
         }),
@@ -640,29 +746,28 @@ function reportApp(id) {
 }
 
 function reportClub(club_id) {
-    uReportMsgTxt = tr("going_to_report_club");
-    uReportMsgTxt += "<br/>" + tr("report_question_text");
-    uReportMsgTxt += "<br/><br/><b>" + tr("report_reason") + "</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
+    uReportMsgTxt  = tr("going_to_report_club");
+    uReportMsgTxt += "<br/>"+tr("report_question_text");
+    uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
 
     MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
-        (function () {
+        (function() {
             res = document.querySelector("#uReportMsgInput").value;
             xhr = new XMLHttpRequest();
             xhr.open("GET", "/report/" + club_id + "?reason=" + res + "&type=group", true);
-            xhr.onload = (function () {
-                if (xhr.responseText.indexOf("reason") === -1)
-                    MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
-                else
-                    MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
+            xhr.onload = (function() {
+            if(xhr.responseText.indexOf("reason") === -1)
+                MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
+            else
+                MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
             });
             xhr.send(null);
-        }),
+            }),
         Function.noop
     ]);
 }
 
-/* on a post page */
-$(document).on("click", "#_ajaxDelete", function (e) {
+$(document).on("click", "#_ajaxDelete", function(e) {
     MessageBox(tr('warning'), tr('question_confirm'), [
         tr('yes'),
         tr('no')
@@ -677,50 +782,20 @@ $(document).on("click", "#_ajaxDelete", function (e) {
     return e.preventDefault();
 });
 
-/* on a wall */
-$(document).on("click", "#_wallDelete", function (e) {
-    MessageBox(tr('warning'), tr('question_confirm'), [
-        tr('yes'),
-        tr('no')
-    ], [
-        async () => {
-            const post = e.target.attributes['data'].value
-            const href = e.target.href + "?ajax=1"
-            const req = await fetch(href, {
-                method: "POST"
-            })
-            const response = await req.json()
-            if (response.success == true) {
-                let postElement = $(".content").find(`[data-uniqueid='${post}']`)
-                postElement[0].innerHTML = `<div class="post post-divider post-deleted">${tr('post_deleted')}</div>`
-                setTimeout(() => {
-                    postElement.slideToggle(300)
-                }, 4000)
-            } else {
-                makeError(response.flash.message)
-            }
-        },
-        Function.noop
-    ]);
-
-    e.stopPropagation()
-    return e.preventDefault();
-});
-
-$(document).on("click", "#_photoDelete, #_videoDelete, #_anotherDelete", function (e) {
+$(document).on("click", "#_photoDelete, #_videoDelete, #_anotherDelete", function(e) {
     var formHtml = "<form id='tmpPhDelF' action='" + u(this).attr("href") + "' >";
-    formHtml += "<input type='hidden' name='hash' value='" + u("meta[name=csrf]").attr("value") + "' />";
-    formHtml += "</form>";
+    formHtml    += "<input type='hidden' name='hash' value='" + u("meta[name=csrf]").attr("value") + "' />";
+    formHtml    += "</form>";
     u("body").append(formHtml);
 
     MessageBox(tr('warning'), tr('question_confirm'), [
         tr('yes'),
         tr('no')
     ], [
-        (function () {
+        (function() {
             u("#tmpPhDelF").nodes[0].submit();
         }),
-        (function () {
+        (function() {
             u("#tmpPhDelF").remove();
         }),
     ]);
@@ -730,20 +805,20 @@ $(document).on("click", "#_photoDelete, #_videoDelete, #_anotherDelete", functio
 });
 /* @rem-pai why this func wasn't named as "#_deleteDialog"? It looks universal IMO */
 
-u(document).on("click", "#_noteDelete", function (e) {
+u(document).on("click", "#_noteDelete", function(e) {
     var formHtml = "<form id='tmpPhDelF' action='" + u(this).attr("href") + "' >";
-    formHtml += "<input type='hidden' name='hash' value='" + u("meta[name=csrf]").attr("value") + "' />";
-    formHtml += "</form>";
+    formHtml    += "<input type='hidden' name='hash' value='" + u("meta[name=csrf]").attr("value") + "' />";
+    formHtml    += "</form>";
     u("body").append(formHtml);
 
     MessageBox(tr('warning'), tr('question_confirm'), [
         tr('yes'),
         tr('no')
     ], [
-        (function () {
+        (function() {
             u("#tmpPhDelF").nodes[0].submit();
         }),
-        (function () {
+        (function() {
             u("#tmpPhDelF").remove();
         }),
     ]);
@@ -753,7 +828,7 @@ u(document).on("click", "#_noteDelete", function (e) {
 });
 
 // TODO REWRITE cuz its a little broken
-u(document).on("click", "#_pinGroup", async function (e) {
+u(document).on("click", "#_pinGroup", async function(e) {
     e.preventDefault();
     e.stopPropagation()
 
@@ -767,40 +842,40 @@ u(document).on("click", "#_pinGroup", async function (e) {
     thisButton.nodes[0].classList.add('disable');
 
     let req = await ky(link);
-    if (req.ok == false) {
+    if(req.ok == false) {
         NewNotification(tr('error'), tr('error_1'), null);
         thisButton.nodes[0].classList.remove('loading');
         thisButton.nodes[0].classList.remove('disable');
         return;
     }
 
-    if (!parseAjaxResponse(await req.text())) {
+    if(!parseAjaxResponse(await req.text())) {
         thisButton.nodes[0].classList.remove('loading');
         thisButton.nodes[0].classList.remove('disable');
         return;
     }
 
     // Adding a divider if not already there
-    if (list.nodes[0].children.length == 0) {
+    if(list.nodes[0].children.length == 0) {
         list.nodes[0].append(u('<div class="menu_divider"></div>').first());
     }
 
     // Changing the button name
-    if (thisButton.html().trim() == tr('remove_from_left_menu')) {
+    if(thisButton.html().trim() == tr('remove_from_left_menu')) {
         thisButton.html(tr('add_to_left_menu'));
-        for (let i = 0; i < list.nodes[0].children.length; i++) {
+        for(let i = 0; i < list.nodes[0].children.length; i++) {
             let element = list.nodes[0].children[i];
-            if (element.pathname == groupUrl) {
+            if(element.pathname == groupUrl) {
                 element.remove();
             }
         }
-    } else {
+    }else{
         thisButton.html(tr('remove_from_left_menu'));
         list.nodes[0].append(u('<a href="' + groupUrl + '" class="link group_link">' + groupName + '</a>').first());
     }
 
     // Adding the group to the left group list
-    if (list.nodes[0].children[0].className != "menu_divider" || list.nodes[0].children.length == 1) {
+    if(list.nodes[0].children[0].className != "menu_divider" || list.nodes[0].children.length == 1) {
         list.nodes[0].children[0].remove();
     }
 
@@ -810,7 +885,7 @@ u(document).on("click", "#_pinGroup", async function (e) {
     return false;
 });
 
-u(document).handle("submit", "#_submitUserSubscriptionAction", async function (e) {
+u(document).handle("submit", "#_submitUserSubscriptionAction", async function(e) {
     e.preventDefault()
     e.stopPropagation()
 
@@ -852,7 +927,7 @@ function changeOwner(club, newOwner, newOwnerName) {
 
 async function withdraw(id) {
     let coins = await API.Apps.withdrawFunds(id);
-    if (coins == 0)
+    if(coins == 0)
         MessageBox(tr('app_withdrawal'), tr('app_withdrawal_empty'), ["OK"], [Function.noop]);
     else
         MessageBox(tr('app_withdrawal'), tr("app_withdrawal_created", window.coins), ["OK"], [Function.noop]);
@@ -868,19 +943,19 @@ function toggleMaritalStatus(e) {
     }
 }
 
-u(document).on("paste", ".vouncher_input", function (event) {
+u(document).on("paste", ".vouncher_input", function(event) {
     const vouncher = event.clipboardData.getData("text");
 
     let segments;
-    if (vouncher.length === 27) {
+    if(vouncher.length === 27) {
         segments = vouncher.split("-");
-        if (segments.length !== 4)
+        if(segments.length !== 4)
             segments = undefined;
-    } else if (vouncher.length === 24) {
+    } else if(vouncher.length === 24) {
         segments = chunkSubstr(vouncher, 6);
     }
 
-    if (segments !== undefined) {
+    if(segments !== undefined) {
         document.vouncher_form.key0.value = segments[0];
         document.vouncher_form.key1.value = segments[1];
         document.vouncher_form.key2.value = segments[2];
@@ -896,20 +971,27 @@ u(document).on("paste", ".vouncher_input", function (event) {
 var tooltipClientTemplate = Handlebars.compile(`
     <table>
         <tr>
-            {{#if img}}
             <td width="54" valign="top">
                 <img src="{{img}}" width="54" />
             </td>
             <td width="1"></td>
-            {{/if}}
             <td width="150" valign="top">
                 <text>
                     {{app_tr}}: <b>{{name}}</b>
-                </text>
-                {{#if url}}
-                <br/>
-                <a href="{{url}}" target="_blank" rel="noopener noreferrer">${tr("learn_more")}</a>
-                {{/if}}
+                </text><br/>
+                <a href="{{url}}">${tr("learn_more")}</a>
+            </td>
+        </tr>
+    </table>
+`);
+
+var tooltipClientNoInfoTemplate = Handlebars.compile(`
+    <table>
+        <tr>
+            <td width="150" valign="top">
+                <text>
+                    {{app_tr}}: <b>{{name}}</b>
+                </text><br/>
             </td>
         </tr>
     </table>
@@ -924,23 +1006,33 @@ tippy.delegate("body", {
     interactive: true,
     interactiveDebounce: 500,
 
-    onCreate: async function (that) {
+    onCreate: async function(that) {
         that._resolvedClient = null;
     },
 
-    onShow: async function (that) {
-        let ref = that.reference.dataset;
-        let client_name = ref.appName && ref.appName.trim() ? ref.appName.trim() : null;
-        let client_tag = ref.appTag && ref.appTag.trim() ? ref.appTag.trim() : null;
-        let client_url = ref.appUrl && ref.appUrl.trim() ? ref.appUrl.trim() : null;
-        let client_img = ref.appImg && ref.appImg.trim() ? ref.appImg.trim() : null;
+    onShow: async function(that) {
+        let client_tag = that.reference.dataset.appTag;
+        let client_name = that.reference.dataset.appName;
+        let client_url = that.reference.dataset.appUrl;
+        let client_img = that.reference.dataset.appImg;
 
-        that.setContent(tooltipClientTemplate({
-            'name': client_name || client_tag,
-            'url': client_url,
-            'img': client_img,
-            'app_tr': tr("app")
-        }));
+        if(client_name != undefined) {
+            let res = {
+                'name':   client_name,
+                'url':    client_url,
+                'img':    client_img,
+                'app_tr': tr("app")
+            };
+
+            that.setContent(tooltipClientTemplate(res));
+        } else {
+            let res = {
+                'name': client_tag,
+                'app_tr': tr("app")
+            };
+
+            that.setContent(tooltipClientNoInfoTemplate(res));
+        }
     }
 });
 
@@ -954,20 +1046,20 @@ tippy.delegate('body', {
     interactive: true,
     interactiveDebounce: 500,
 
-    onCreate: async function (that) {
+    onCreate: async function(that) {
         that._likesList = null;
     },
 
-    onShow: async function (that) {
-        const id = that.reference.dataset.id
+    onShow: async function(that) {
+        const id  = that.reference.dataset.id
         const type = that.reference.dataset.type
         let final_type = type
-        if (type == 'post') {
+        if(type == 'post') {
             final_type = 'wall'
         }
 
-        if (!that._likesList) {
-            that._likesList = await window.OVKAPI.call('likes.getList', { 'extended': 1, 'count': 6, 'type': type, 'owner_id': id.split('_')[0], 'item_id': id.split('_')[1] })
+        if(!that._likesList) {
+            that._likesList = await window.OVKAPI.call('likes.getList', {'extended': 1, 'count': 6, 'type': type, 'owner_id': id.split('_')[0], 'item_id': id.split('_')[1]})
         }
 
         const final_template = u(`
@@ -1015,19 +1107,19 @@ u(document).on("click", "#editPost", async (e) => {
     const id = post.attr('data-id').split('_')
 
     let type = 'post'
-    if (post.hasClass('comment')) {
+    if(post.hasClass('comment')) {
         type = 'comment'
     }
 
-    if (post.hasClass('editing')) {
+    if(post.hasClass('editing')) {
         post.removeClass('editing')
         return
     }
 
-    if (edit_place.html() == '') {
+    if(edit_place.html() == '') {
         target.addClass('lagged')
         const params = {}
-        if (type == 'post') {
+        if(type == 'post') {
             params['posts'] = post.attr('data-id')
         } else {
             params['owner_id'] = 1
@@ -1104,7 +1196,7 @@ u(document).on("click", "#editPost", async (e) => {
                 </form>
             </div>`)
 
-        if (api_post.copyright) {
+        if(api_post.copyright) {
             edit_place.find('.post-source').html(`
                 <span>${tr('source')}: <a>${escapeHtml(api_post.copyright.link)}</a></span>
                 <div id='remove_source_button'></div>
@@ -1116,7 +1208,7 @@ u(document).on("click", "#editPost", async (e) => {
             })
         }
 
-        if (api_post.copy_history && api_post.copy_history.length > 0) {
+        if(api_post.copy_history && api_post.copy_history.length > 0) {
             edit_place.find('.post-repost').html(`
                 <span>${tr('has_repost')}.</span>
             `)
@@ -1126,14 +1218,14 @@ u(document).on("click", "#editPost", async (e) => {
         api_post.attachments.forEach(att => {
             const type = att.type
             let aid = att[type].owner_id + '_' + att[type].id
-            if (att[type] && att[type].access_key) {
+            if(att[type] && att[type].access_key) {
                 aid += "_" + att[type].access_key
             }
 
-            if (type == 'video' || type == 'photo') {
+            if(type == 'video' || type == 'photo') {
                 let preview = ''
 
-                if (type == 'photo') {
+                if(type == 'photo') {
                     preview = att[type].sizes[1].url
                 } else {
                     preview = att[type].image[0].url
@@ -1144,7 +1236,7 @@ u(document).on("click", "#editPost", async (e) => {
                     'preview': preview,
                     'id': aid
                 }, edit_place)
-            } else if (type == 'poll') {
+            } else if(type == 'poll') {
                 __appendToTextarea({
                     'type': type,
                     'alignment': 'vertical',
@@ -1177,33 +1269,33 @@ u(document).on("click", "#editPost", async (e) => {
             params['post_id'] = id[1]
             params['message'] = text_node.nodes[0].value
 
-            if (nsfw_mark.length > 0) {
+            if(nsfw_mark.length > 0) {
                 params['explicit'] = Number(nsfw_mark.nodes[0].checked)
             }
 
             params['attachments'] = collected_attachments
-            if (collected_attachments.length < 1) {
+            if(collected_attachments.length < 1) {
                 params['attachments'] = 'remove'
             }
 
-            if (as_group.length > 0 && as_group.nodes[0].checked) {
+            if(as_group.length > 0 && as_group.nodes[0].checked) {
                 params['from_group'] = 1
             }
 
-            if (copyright.nodes[0].value != 'none') {
+            if(copyright.nodes[0].value != 'none') {
                 params['copyright'] = copyright.nodes[0].value
             }
 
             u(ev.target).addClass('lagged')
             // больше двух запросов !
             try {
-                if (type == 'post') {
+                if(type == 'post') {
                     await window.OVKAPI.call('wall.edit', params)
                 } else {
                     params['comment_id'] = id[1]
                     await window.OVKAPI.call('wall.editComment', params)
                 }
-            } catch (e) {
+            } catch(e) {
                 fastError(e.message)
                 u(ev.target).removeClass('lagged')
                 return
@@ -1211,10 +1303,10 @@ u(document).on("click", "#editPost", async (e) => {
 
             let is_at_post_page = false
             try {
-                if (location.pathname.indexOf("wall") != -1 && location.pathname.split("_").length == 2) {
+                if(location.pathname.indexOf("wall") != -1 && location.pathname.split("_").length == 2) {
                     is_at_post_page = true
                 }
-            } catch (e) { }
+            } catch(e) {}
 
             const new_post_html = await (await fetch(`/iapi/getPostTemplate/${id[0]}_${id[1]}?type=${type}&from_page=${is_at_post_page ? "post" : "another"}`, {
                 'method': 'POST'
@@ -1235,30 +1327,30 @@ u(document).on("click", "#editPost", async (e) => {
 })
 
 async function __uploadToTextarea(file, textareaNode, is_from_messenger = false) {
-    let node = textareaNode.nodes ? textareaNode.nodes[0] : textareaNode;
-    if (node && node.closest && node.closest(".messenger-app").length > 0) {
-        is_from_messenger = true;
+    if (textareaNode.closest(".messenger-app").length > 0) {
+      is_from_messenger = true;
     }
 
     console.log("Upload | Photo upload, ", textareaNode.closest(".messenger-app"), is_from_messenger)
+
     const MAX_FILESIZE = window.openvk.max_filesize_mb * 1024 * 1024
     let filetype = 'photo'
-    if (file.type.startsWith('video/')) {
+    if(file.type.startsWith('video/')) {
         filetype = 'video'
     }
 
-    if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
+    if(!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
         fastError(tr("only_images_accepted", escapeHtml(file.name)))
         throw new Error('Only images accepted')
     }
 
-    if (file.size > MAX_FILESIZE) {
+    if(file.size > MAX_FILESIZE) {
         fastError(tr("max_filesize", window.openvk.max_filesize_mb))
         throw new Error('Big file')
     }
 
     const horizontal_count = textareaNode.find('.post-horizontal > a').length
-    if (horizontal_count > window.openvk.max_attachments) {
+    if(horizontal_count > window.openvk.max_attachments) {
         fastError(tr("too_many_photos"))
         throw new Error('Too many attachments')
     }
@@ -1269,10 +1361,10 @@ async function __uploadToTextarea(file, textareaNode, is_from_messenger = false)
     form_data.append("hash", u("meta[name=csrf]").attr("value"))
 
     if (is_from_messenger == true) {
-        form_data.append("is_from_messenger", "1");
+      form_data.append("is_from_messenger", "1")
     }
 
-    if (filetype == 'photo') {
+    if(filetype == 'photo') {
         const temp_url = URL.createObjectURL(file)
         const rand = random_int(0, 1000)
         textareaNode.find('.post-horizontal').append(`<a id='temp_filler${rand}' class="upload-item lagged"><img src='${temp_url}'></a>`)
@@ -1282,7 +1374,7 @@ async function __uploadToTextarea(file, textareaNode, is_from_messenger = false)
             body: form_data
         })
         const json_response = await res.json()
-        if (!json_response.success) {
+        if(!json_response.success) {
             u(`#temp_filler${rand}`).remove()
             fastError((tr("error_uploading_photo") + json_response.flash.message))
             return
@@ -1290,12 +1382,12 @@ async function __uploadToTextarea(file, textareaNode, is_from_messenger = false)
 
         json_response.photos.forEach(photo => {
             __appendToTextarea({
-                'type': 'photo',
-                'preview': photo.url,
-                'page_url': photo.pretty_id + (photo.access_key ? "?key=" + photo.access_key : ""),
-                'id': photo.pretty_id + (photo.access_key ? "_" + photo.access_key : ""),
-                'key': photo.access_key,
-                'fullsize_url': photo.link,
+              'type': 'photo',
+              'preview': photo.url,
+              'page_url': photo.pretty_id + (photo.access_key ? "?key=" + photo.access_key : ""),
+              'id': photo.pretty_id + (photo.access_key ? "_" + photo.access_key : ""),
+              'key': photo.access_key,
+              'fullsize_url': photo.link,
             }, textareaNode)
         })
         u(`#temp_filler${rand}`).remove()
@@ -1309,7 +1401,7 @@ async function __appendToTextarea(attachment_obj, textareaNode) {
     const form = textareaNode.find('.post-buttons')
     const indicator = textareaNode.find('.post-horizontal')
 
-    if (attachment_obj.alignment == 'vertical') {
+    if(attachment_obj.alignment == 'vertical') {
         textareaNode.find('.post-vertical').append(`
             <div class="vertical-attachment upload-item" draggable="true" data-type='${attachment_obj.type}' data-id="${attachment_obj.id}">
                 <div class='vertical-attachment-content' draggable="false">
@@ -1334,9 +1426,8 @@ async function __appendToTextarea(attachment_obj, textareaNode) {
 }
 
 u(document).on('paste', '#write .small-textarea', (e) => {
-    if (e.clipboardData.files.length === 1) {
-        let isMessenger = Boolean(u(e.target).closest('.messenger-app').length);
-        __uploadToTextarea(e.clipboardData.files[0], u(e.target).closest('#write'), isMessenger);
+    if(e.clipboardData.files.length === 1) {
+        __uploadToTextarea(e.clipboardData.files[0], u(e.target).closest('#write'))
         return;
     }
 })
@@ -1354,11 +1445,11 @@ u(document).on('dragover', '#write .post-horizontal .upload-item, .post-vertical
     const target = u(e.target).closest('.upload-item')
     const current = u('.upload-item.currently_dragging')
 
-    if (current.length < 1) {
+    if(current.length < 1) {
         return
     }
 
-    if (target.nodes[0].dataset.id != current.nodes[0].dataset.id) {
+    if(target.nodes[0].dataset.id != current.nodes[0].dataset.id) {
         target.addClass('dragged')
     }
 
@@ -1376,23 +1467,21 @@ u(document).on('dragleave dragend', '#write .post-horizontal .upload-item, .post
     return
 })
 
-u(document).on("drop", '#write', function (e) {
+u(document).on("drop", '#write', function(e) {
     const current = u('.upload-item.currently_dragging')
     //console.log(e)
-    if (e.dataTransfer.types.includes('Files')) {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        let isMessenger = Boolean(u(e.target).closest('.messenger-app').length);
-        __uploadToTextarea(e.dataTransfer.files[0], u(e.target).closest('#write'), isMessenger);
-    } else if (e.dataTransfer.types.length < 1 || e.dataTransfer.types.includes('text/uri-list')) {
+    if(e.dataTransfer.types.includes('Files')) {
+        e.dataTransfer.dropEffect = 'move'
+        __uploadToTextarea(e.dataTransfer.files[0], u(e.target).closest('#write'))
+    } else if(e.dataTransfer.types.length < 1 || e.dataTransfer.types.includes('text/uri-list')) {
         e.preventDefault()
 
         const target = u(e.target).closest('.upload-item')
         u('.dragged').removeClass('dragged')
         current.removeClass('currently_dragging')
         //console.log(target)
-        if (!current.closest('.vertical-attachment').length < 1 && target.closest('.vertical-attachment').length < 1
-            || current.closest('.vertical-attachment').length < 1 && !target.closest('.vertical-attachment').length < 1) {
+        if(!current.closest('.vertical-attachment').length < 1 && target.closest('.vertical-attachment').length < 1
+         || current.closest('.vertical-attachment').length < 1 && !target.closest('.vertical-attachment').length < 1) {
             return
         }
 
@@ -1445,12 +1534,12 @@ u(document).on("click", "#__photoAttachment", async (e) => {
         let photos = null
 
         try {
-            if (album == 0) {
-                photos = await window.OVKAPI.call('photos.getAll', { 'owner_id': window.openvk.current_id, 'photo_sizes': 1, 'count': photos_per_page, 'offset': page * photos_per_page })
+            if(album == 0) {
+                photos = await window.OVKAPI.call('photos.getAll', {'owner_id': window.openvk.current_id, 'photo_sizes': 1, 'count': photos_per_page, 'offset': page * photos_per_page})
             } else {
-                photos = await window.OVKAPI.call('photos.get', { 'owner_id': club != 0 ? Math.abs(club) * -1 : window.openvk.current_id, 'album_id': album, 'photo_sizes': 1, 'count': photos_per_page, 'offset': page * photos_per_page })
+                photos = await window.OVKAPI.call('photos.get', {'owner_id': club != 0 ? Math.abs(club) * -1 : window.openvk.current_id, 'album_id': album, 'photo_sizes': 1, 'count': photos_per_page, 'offset': page * photos_per_page})
             }
-        } catch (e) {
+        } catch(e) {
             u("#attachment_insert_count h4").html(tr("is_x_photos", -1))
             u("#gif_loader").remove()
             insert_place.html("Invalid album")
@@ -1469,7 +1558,7 @@ u(document).on("click", "#__photoAttachment", async (e) => {
             `)
         })
 
-        if (page < pages_count - 1) {
+        if(page < pages_count - 1) {
             insert_place.append(`
             <div id="show_more" data-pagesCount="${pages_count}" data-page="${page + 1}">
                 <span>${tr('show_more')}</span>
@@ -1500,11 +1589,11 @@ u(document).on("click", "#__photoAttachment", async (e) => {
         const target = u(ev.target).closest('.album-photo')
         const dataset = target.nodes[0].dataset
         const is_attached = (form.find(`.upload-item[data-type='photo'][data-id='${dataset.attachmentdata}']`)).length > 0
-        if (is_attached) {
+        if(is_attached) {
             (form.find(`.upload-item[data-type='photo'][data-id='${dataset.attachmentdata}']`)).remove()
             target.removeClass('selected')
         } else {
-            if (form.find(`.upload-item`).length + 1 > window.openvk.max_attachments) {
+            if(form.find(`.upload-item`).length + 1 > window.openvk.max_attachments) {
                 makeError(tr('too_many_attachments'), 'Red', 10000, 1)
                 return
             }
@@ -1522,10 +1611,10 @@ u(document).on("click", "#__photoAttachment", async (e) => {
 
     // "upload" button
     u(".ovk-diag-body #__pickerQuickUpload").on('change', (ev) => {
-        for (file of ev.target.files) {
+        for(file of ev.target.files) {
             try {
                 __uploadToTextarea(file, form)
-            } catch (e) {
+            } catch(e) {
                 makeError(e.message)
                 return
             }
@@ -1535,8 +1624,8 @@ u(document).on("click", "#__photoAttachment", async (e) => {
     })
 
     __recievePhotos(0)
-    if (!window.openvk.photoalbums) {
-        window.openvk.photoalbums = await window.OVKAPI.call('photos.getAlbums', { 'owner_id': club != 0 ? Math.abs(club) * -1 : window.openvk.current_id })
+    if(!window.openvk.photoalbums) {
+        window.openvk.photoalbums = await window.OVKAPI.call('photos.getAlbums', {'owner_id': club != 0 ? Math.abs(club) * -1 : window.openvk.current_id})
     }
     window.openvk.photoalbums.items.forEach(item => {
         u('.ovk-diag-body #albumSelect').append(`<option value="${item.id}">${ovk_proc_strtr(escapeHtml(item.title), 20)}</option>`)
@@ -1574,12 +1663,12 @@ u(document).on('click', '#__videoAttachment', async (e) => {
         let videos = null
 
         try {
-            if (query == '') {
-                videos = await window.OVKAPI.call('video.get', { 'owner_id': window.openvk.current_id, 'extended': 1, 'count': per_page, 'offset': page * per_page })
+            if(query == '') {
+                videos = await window.OVKAPI.call('video.get', {'owner_id': window.openvk.current_id, 'extended': 1, 'count': per_page, 'offset': page * per_page})
             } else {
-                videos = await window.OVKAPI.call('video.search', { 'q': escapeHtml(query), 'extended': 1, 'count': per_page, 'offset': page * per_page })
+                videos = await window.OVKAPI.call('video.search', {'q': escapeHtml(query), 'extended': 1, 'count': per_page, 'offset': page * per_page})
             }
-        } catch (e) {
+        } catch(e) {
             u("#gif_loader").remove()
             insert_place.html("Err")
             return
@@ -1588,7 +1677,7 @@ u(document).on('click', '#__videoAttachment', async (e) => {
         u("#gif_loader").remove()
         const pages_count = Math.ceil(Number(videos.count) / per_page)
 
-        if (pages_count < 1) {
+        if(pages_count < 1) {
             insert_place.append(query == '' ? tr('no_videos') : tr('no_videos_results'))
         }
 
@@ -1600,14 +1689,14 @@ u(document).on('click', '#__videoAttachment', async (e) => {
             const profiles = videos.profiles
             const groups = videos.groups
 
-            if (video['owner_id'] > 0) {
+            if(video['owner_id'] > 0) {
                 const profile = profiles.find(prof => prof.id == video['owner_id'])
-                if (profile) {
+                if(profile) {
                     author_name = profile['first_name'] + ' ' + profile['last_name']
                 }
             } else {
                 const group = groups.find(grou => grou.id == Math.abs(video['owner_id']))
-                if (group) {
+                if(group) {
                     author_name = group['name']
                 }
             }
@@ -1646,20 +1735,20 @@ u(document).on('click', '#__videoAttachment', async (e) => {
             `)
         })
 
-        if (page < pages_count - 1) {
+        if(page < pages_count - 1) {
             insert_place.append(`
             <div id="show_more" data-pagesCount="${pages_count}" data-page="${page + 1}">
                 <span>${tr('show_more')}</span>
             </div>`)
         }
 
-        if (query != '') {
+        if(query != '') {
             highlightText(query, '.videosInsert', ['.video-name', '.video-desc'])
         }
     }
 
     u(".ovk-diag-body #video_query").on('change', (ev) => {
-        if (ev.target.value == u(".ovk-diag-body #video_query").nodes[0].value) {
+        if(ev.target.value == u(".ovk-diag-body #video_query").nodes[0].value) {
             u('#attachment_insert .videosInsert').html('')
             __recieveVideos(0, u(".ovk-diag-body #video_query").nodes[0].value)
         }
@@ -1681,11 +1770,11 @@ u(document).on('click', '#__videoAttachment', async (e) => {
         const button = target.find('#__attach_vid')
         const dataset = target.nodes[0].dataset
         const is_attached = (form.find(`.upload-item[data-type='video'][data-id='${dataset.attachmentdata}']`)).length > 0
-        if (is_attached) {
+        if(is_attached) {
             (form.find(`.upload-item[data-type='video'][data-id='${dataset.attachmentdata}']`)).remove()
             button.html(tr('attach'))
         } else {
-            if (form.find(`.upload-item`).length + 1 > window.openvk.max_attachments) {
+            if(form.find(`.upload-item`).length + 1 > window.openvk.max_attachments) {
                 makeError(tr('too_many_attachments'), 'Red', 10000, 1)
                 return
             }
@@ -1738,8 +1827,8 @@ u(document).on('click', '#__notesAttachment', async (e) => {
         let notes = null
 
         try {
-            notes = await window.OVKAPI.call('notes.get', { 'user_id': window.openvk.current_id, 'count': per_page, 'offset': per_page * page })
-        } catch (e) {
+            notes = await window.OVKAPI.call('notes.get', {'user_id': window.openvk.current_id, 'count': per_page, 'offset': per_page * page})
+        } catch(e) {
             u("#gif_loader").remove()
             insert_place.html("Err")
             return
@@ -1748,7 +1837,7 @@ u(document).on('click', '#__notesAttachment', async (e) => {
         u("#gif_loader").remove()
         const pages_count = Math.ceil(Number(notes.count) / per_page)
 
-        if (notes.count < 1) {
+        if(notes.count < 1) {
             insert_place.append(tr('no_notes'))
         }
 
@@ -1772,7 +1861,7 @@ u(document).on('click', '#__notesAttachment', async (e) => {
             `)
         })
 
-        if (page < pages_count - 1) {
+        if(page < pages_count - 1) {
             insert_place.append(`
             <div id="show_more" data-pagesCount="${pages_count}" data-page="${page + 1}">
                 <span>${tr('show_more')}</span>
@@ -1790,7 +1879,7 @@ u(document).on('click', '#__notesAttachment', async (e) => {
 
     // add note
     u(".ovk-diag-body .attachment_selector").on("click", "#__attach_note", async (ev) => {
-        if (u(form).find(`.upload-item`).length > window.openvk.max_attachments) {
+        if(u(form).find(`.upload-item`).length > window.openvk.max_attachments) {
             makeError(tr('too_many_attachments'), 'Red', 10000, 1)
             return
         }
@@ -1799,11 +1888,11 @@ u(document).on('click', '#__notesAttachment', async (e) => {
         const button = target.find('#__attach_note')
         const dataset = target.nodes[0].dataset
         const is_attached = (form.find(`.upload-item[data-type='note'][data-id='${dataset.attachmentdata}']`)).length > 0
-        if (is_attached) {
+        if(is_attached) {
             (form.find(`.upload-item[data-type='note'][data-id='${dataset.attachmentdata}']`)).remove()
             button.html(tr('attach'))
         } else {
-            if (form.find(`.upload-item`).length + 1 > window.openvk.max_attachments) {
+            if(form.find(`.upload-item`).length + 1 > window.openvk.max_attachments) {
                 makeError(tr('too_many_attachments'), 'Red', 10000, 1)
                 return
             }
@@ -1858,22 +1947,22 @@ function showFastVideoUpload(node) {
         </div>
         `,
         buttons: [tr('close'), tr('upload_button')],
-        callbacks: [() => { msg.close() }, async () => {
+        callbacks: [() => {msg.close()}, async () => {
             const video_name = u(`#_fast_video_upload input[name='name']`).nodes[0].value
             const video_desc = u(`#_fast_video_upload textarea[name='desc']`).nodes[0].value
-            let append_result = null
+            let   append_result = null
 
-            if (video_name.length < 1) {
+            if(video_name.length < 1) {
                 u(`#_fast_video_upload input[name='name']`).nodes[0].focus()
                 return
             }
 
-            const form_data = new FormData
-            switch (current_tab) {
+            const form_data  = new FormData
+            switch(current_tab) {
                 default:
                 case 'file':
                     const video_file = u(`#_fast_video_upload input[name='blob']`).nodes[0]
-                    if (video_file.files.length < 1) {
+                    if(video_file.files.length < 1) {
                         return
                     }
 
@@ -1897,7 +1986,7 @@ function showFastVideoUpload(node) {
                 case 'youtube':
                     const video_url = u(`#_fast_video_upload input[name='link']`).nodes[0]
                     const video_link = video_url.value
-                    if (video_link.length < 1) {
+                    if(video_link.length < 1) {
                         u(`#_fast_video_upload input[name='link']`).nodes[0].focus()
                         return
                     }
@@ -1920,16 +2009,16 @@ function showFastVideoUpload(node) {
                     break
             }
 
-            if (append_result.payload) {
+            if(append_result.payload) {
                 append_result = append_result.payload
                 const preview = append_result.image[0]
-                __appendToTextarea({
-                    'type': 'video',
-                    'preview': preview.url,
-                    'page_url': append_result.owner_id + '_' + append_result.id + (append_result.access_key ? '?key=' + append_result.access_key : ""),
-                    'id': append_result.owner_id + '_' + append_result.id + (append_result.access_key ? '_' + append_result.access_key : ""),
-                    'key': append_result.access_key,
-                    'fullsize_preview': preview.url,
+              __appendToTextarea({
+                'type': 'video',
+                'preview': preview.url,
+                'page_url': append_result.owner_id + '_' + append_result.id + (append_result.access_key ? '?key=' + append_result.access_key : ""),
+                'id': append_result.owner_id + '_' + append_result.id + (append_result.access_key ? '_' + append_result.access_key : ""),
+                'key': append_result.access_key,
+                'fullsize_preview': preview.url,
                 }, node)
 
                 window.messagebox_stack.forEach(msg_ => {
@@ -1948,7 +2037,7 @@ function showFastVideoUpload(node) {
         u(`#_fast_video_upload .mb_tab`).attr('id', 'ki')
         u(`#_fast_video_upload .mb_tab[data-name='${current_tab}']`).attr('id', 'active')
 
-        switch (current_tab) {
+        switch(current_tab) {
             case 'file':
                 msg.getNode().find('#__content').html(`
                     <table class="flexible_table" cellspacing="7" cellpadding="0" width="80%" border="0" align="center">
@@ -2031,7 +2120,7 @@ u(document).on('click', '.post.post-nsfw .post-content', (e) => {
     e.preventDefault()
     e.stopPropagation()
 
-    if (window.openvk.current_id == 0) {
+    if(window.openvk.current_id == 0) {
         return
     }
 
@@ -2047,7 +2136,7 @@ u(document).on('focusin', '#write', (e) => {
 
 async function repost(id, repost_type = 'post') {
     const repostsCount = u(`#repostsCount${id}`)
-    const previousVal = repostsCount.length > 0 ? Number(repostsCount.html()) : 0;
+    const previousVal  = repostsCount.length > 0 ? Number(repostsCount.html()) : 0;
 
     const msg = new CMessageBox({
         title: tr('share'),
@@ -2121,19 +2210,19 @@ async function repost(id, repost_type = 'post') {
         callbacks: [
             async () => {
                 const node = msg.getNode()
-                const message = node.find('#repostMsgInput').nodes[0].value
-                const type = node.find(`input[name='repost_type']:checked`).nodes[0].value
+                const message  = node.find('#repostMsgInput').nodes[0].value
+                const type     = node.find(`input[name='repost_type']:checked`).nodes[0].value
                 let club_id = 0
                 try {
                     club_id = parseInt(node.find(`select[name='selected_repost_club']`).nodes[0].selectedOptions[0].value)
-                } catch (e) { }
+                } catch(e) {}
 
                 const as_group = node.find(`input[name='asGroup']`).nodes[0].checked
-                const signed = node.find(`input[name='signed']`).nodes[0].checked
+                const signed   = node.find(`input[name='signed']`).nodes[0].checked
                 const attachments = collect_attachments(node.find('.post-buttons')).join(',')
 
                 const params = {}
-                switch (repost_type) {
+                switch(repost_type) {
                     case 'post':
                         params.object = `wall${id}`
                         break
@@ -2146,35 +2235,35 @@ async function repost(id, repost_type = 'post') {
                 }
 
                 params.message = message
-                if (type == 'group' && club_id != 0) {
+                if(type == 'group' && club_id != 0) {
                     params.group_id = club_id
                 }
 
-                if (as_group) {
+                if(as_group) {
                     params.as_group = Number(as_group)
                 }
 
-                if (signed) {
+                if(signed) {
                     params.signed = Number(signed)
                 }
 
-                if (attachments != '') {
+                if(attachments != '') {
                     params.attachments = attachments
                 }
 
                 try {
                     res = await window.OVKAPI.call('wall.repost', params)
 
-                    if (u('#reposts' + id).length > 0) {
-                        if (repostsCount.length > 0) {
+                    if(u('#reposts' + id).length > 0) {
+                        if(repostsCount.length > 0) {
                             repostsCount.html(previousVal + 1)
                         } else {
                             u('#reposts' + id).nodes[0].insertAdjacentHTML('beforeend', `(<b id='repostsCount${id}'>1</b>)`)
                         }
                     }
 
-                    NewNotification(tr('information_-1'), tr('shared_succ'), null, () => { window.router.route(`/wall${res.pretty_id}`) });
-                } catch (e) {
+                    NewNotification(tr('information_-1'), tr('shared_succ'), null, () => {window.router.route(`/wall${res.pretty_id}`)});
+                } catch(e) {
                     console.error(e)
                     fastError(e.message)
                 }
@@ -2187,7 +2276,7 @@ async function repost(id, repost_type = 'post') {
     u('.ovk-diag-body').on('change', `input[name='repost_type']`, (e) => {
         const value = e.target.value
 
-        switch (value) {
+        switch(value) {
             case 'wall':
                 u('#repost_signs').attr('style', 'display:none')
                 u(`select[name='selected_repost_club']`).attr('style', 'display:none')
@@ -2207,15 +2296,15 @@ async function repost(id, repost_type = 'post') {
         u('.ovk-diag-body #__photoAttachment, .ovk-diag-body #__videoAttachment, .ovk-diag-body #__audioAttachment, .ovk-diag-body #__documentAttachment').attr('data-club', club_id)
     })
 
-    if (!window.openvk.writeableClubs) {
-        window.openvk.writeableClubs = await window.OVKAPI.call('groups.get', { 'filter': 'admin', 'count': 100 })
+    if(!window.openvk.writeableClubs) {
+        window.openvk.writeableClubs = await window.OVKAPI.call('groups.get', {'filter': 'admin', 'count': 100})
     }
 
     window.openvk.writeableClubs.items.forEach(club => {
         u(`select[name='selected_repost_club']`).append(`<option value='${club.id}'>${ovk_proc_strtr(escapeHtml(club.name), 100)}</option>`)
     })
 
-    if (window.openvk.writeableClubs.items.length < 1) {
+    if(window.openvk.writeableClubs.items.length < 1) {
         u(`input[name='repost_type'][value='group']`).attr('disabled', 'disabled')
         u(`input[name='repost_type'][value='group']`).closest("label").addClass("lagged")
     }
@@ -2245,7 +2334,7 @@ $(document).on("click", "#add_image", (e) => {
     let msg = MessageBox(tr('uploading_new_image'), body, [
         tr('cancel')
     ], [
-        (function () {
+        (function() {
             u("#tmpPhDelF").remove();
         }),
     ]);
@@ -2328,7 +2417,7 @@ $(document).on("click", "#add_image", (e) => {
                         document.querySelector("html").style.overflowY = "scroll"
                         u(".ovk-diag-cont").remove();
 
-                        if (!response.success) {
+                        if(!response.success) {
                             fastError(response.flash.message)
                             return
                         }
@@ -2338,7 +2427,7 @@ $(document).on("click", "#add_image", (e) => {
 
                         document.querySelector(".avatar_controls").style.display = "block"
                         document.querySelector(".avatar_controls .set_image").style.display = "block"
-                        document.querySelector(".avatar_controls .avatarDelete").style.display = "block"
+						document.querySelector(".avatar_controls .avatarDelete").style.display = "block"
                         document.querySelector(".avatar_controls .upload_image").style.display = "none"
                     }
                 })
@@ -2366,7 +2455,7 @@ $(document).on("click", "#add_image", (e) => {
 
         let video = document.querySelector("#_takeSelfieFrame video")
 
-        if (!navigator.mediaDevices) {
+        if(!navigator.mediaDevices) {
             u("body").removeClass("dimmed");
             document.querySelector("html").style.overflowY = "scroll"
             u(".ovk-diag-cont").remove();
@@ -2377,20 +2466,20 @@ $(document).on("click", "#add_image", (e) => {
         }
 
         navigator.mediaDevices
-            .getUserMedia({ video: true, audio: false })
-            .then((stream) => {
-                video.srcObject = stream;
-                video.play()
+        .getUserMedia({ video: true, audio: false })
+        .then((stream) => {
+            video.srcObject = stream;
+            video.play()
 
-                window._cameraStream = stream
-            })
-            .catch((err) => {
-                u("body").removeClass("dimmed");
-                document.querySelector("html").style.overflowY = "scroll"
-                u(".ovk-diag-cont").remove();
+            window._cameraStream = stream
+        })
+        .catch((err) => {
+            u("body").removeClass("dimmed");
+            document.querySelector("html").style.overflowY = "scroll"
+            u(".ovk-diag-cont").remove();
 
-                fastError(err)
-            });
+            fastError(err)
+        });
 
         function __closeConnection() {
             window._cameraStream.getTracks().forEach(track => track.stop())
@@ -2414,7 +2503,7 @@ $(document).on("click", "#add_image", (e) => {
             canvas.toBlob((blob) => {
                 $("#_takeSnap").remove()
 
-                let file = new File([blob], "snapshot.jpg", { type: "image/jpeg", lastModified: new Date().getTime() })
+                let file = new File([blob], "snapshot.jpg", {type: "image/jpeg", lastModified: new Date().getTime()})
                 let dt = new DataTransfer();
                 dt.items.add(file);
 
@@ -2429,22 +2518,22 @@ $(document).on("click", "#add_image", (e) => {
 })
 
 function uploadByGraffiti(group_id = null) {
-    initGraffiti(null, (image) => {
-        const fd = new FormData();
-        fd.append("blob", image)
-        fd.append("ajax", 1)
-        fd.append("on_wall", "0")
-        fd.append("hash", window.router.csrf)
+  initGraffiti(null, (image) => {
+    const fd = new FormData();
+    fd.append("blob", image)
+    fd.append("ajax", 1)
+    fd.append("on_wall", "0")
+    fd.append("hash", window.router.csrf)
 
-        fetch(group_id ? "/club" + group_id + "/al_avatar" : '/al_avatars', {
-            "method": "POST",
-            "body": fd
-        }).then(async (e) => {
-            response = await e.json();
-            document.querySelector("#bigAvatar").src = response.url
-            document.querySelector("#bigAvatar").parentNode.href = response.new_photo ? ("/photo" + response.new_photo) : "javascript:void(0)"
-        })
+    fetch(group_id ? "/club" + group_id + "/al_avatar" : '/al_avatars', {
+      "method": "POST",
+      "body": fd
+    }).then(async (e) => {
+        response = await e.json();
+        document.querySelector("#bigAvatar").src = response.url
+        document.querySelector("#bigAvatar").parentNode.href = response.new_photo ? ("/photo" + response.new_photo) : "javascript:void(0)"
     })
+  })
 }
 
 $(document).on("click", ".avatarDelete", (e) => {
@@ -2459,7 +2548,7 @@ $(document).on("click", ".avatarDelete", (e) => {
         tr('yes'),
         tr('no')
     ], [
-        (function () {
+        (function() {
             let formdata = new FormData()
             formdata.append("hash", u("meta[name=csrf]").attr("value"))
 
@@ -2476,7 +2565,7 @@ $(document).on("click", ".avatarDelete", (e) => {
                     fastError(response.flash.message)
                 },
                 success: (response) => {
-                    if (!response.success) {
+                    if(!response.success) {
                         fastError(response.flash.message)
                         return
                     }
@@ -2490,7 +2579,7 @@ $(document).on("click", ".avatarDelete", (e) => {
                     document.querySelector("#bigAvatar").src = response.url
                     document.querySelector("#bigAvatar").parentNode.href = response.new_photo ? ("/photo" + response.new_photo) : "javascript:void(0)"
 
-                    if (!response.has_new_photo) {
+                    if(!response.has_new_photo) {
                         document.querySelector(".avatar_controls .set_image").style.display = "none"
                         document.querySelector(".avatar_controls .avatarDelete").style.display = "none"
                         document.querySelector(".avatar_controls .upload_image").style.display = "block"
@@ -2498,13 +2587,14 @@ $(document).on("click", ".avatarDelete", (e) => {
                 }
             })
         }),
-        (function () {
+        (function() {
             u("#tmpPhDelF").remove();
         }),
     ]);
 })
 
-async function __processPaginatorNextPage(page) {
+async function __processPaginatorNextPage(page)
+{
     const container = u('.scroll_container')
     const container_node = '.scroll_node'
     const parser = new DOMParser
@@ -2521,9 +2611,9 @@ async function __processPaginatorNextPage(page) {
     const nodes = parsed_content.querySelectorAll(container_node)
     nodes.forEach(node => {
         const unique_id = node.dataset.uniqueid
-        if (unique_id) {
+        if(unique_id) {
             const elements_unique = u(`.scroll_node[data-uniqueid='${unique_id}']`).length
-            if (elements_unique > 0) {
+            if(elements_unique > 0) {
                 console.info('AJAX | Found duplicates')
                 return
             }
@@ -2533,11 +2623,11 @@ async function __processPaginatorNextPage(page) {
     })
 
     u(`.paginator:not(.paginator-at-top)`).html(parsed_content.querySelector('.paginator:not(.paginator-at-top)').innerHTML)
-    if (u(`.paginator:not(.paginator-at-top)`).nodes[0].closest('.scroll_container')) {
+    if(u(`.paginator:not(.paginator-at-top)`).nodes[0].closest('.scroll_container')) {
         container.nodes[0].append(u(`.paginator:not(.paginator-at-top)`).nodes[0].parentNode)
     }
 
-    if (window.player && window.player.isAtAudiosPage() && window.player.isAtCurrentContextPage()) {
+    if(window.player && window.player.isAtAudiosPage() && window.player.isAtCurrentContextPage()) {
         window.player.loadContext(page)
         window.player.__highlightActiveTrack()
     }
@@ -2553,19 +2643,20 @@ async function __processPaginatorNextPage(page) {
     showMoreObserver.disconnect()
     showMoreObserver.observe(u('.paginator:not(.paginator-at-top)').nodes[0])
 
-    if (typeof __scrollHook != 'undefined') {
+    window.router.scroll_page = page;
+    if(typeof __scrollHook != 'undefined') {
         __scrollHook(page)
     }
 }
 
 const showMoreObserver = new IntersectionObserver(entries => {
     entries.forEach(async x => {
-        if (x.isIntersecting) {
-            if (Number(localStorage.getItem('ux.auto_scroll') ?? 1) == 0) {
+        if(x.isIntersecting) {
+            if(Number(localStorage.getItem('ux.auto_scroll') ?? 1) == 0) {
                 return
             }
 
-            if (u('.scroll_container').length < 1) {
+            if(u('.scroll_container').length < 1) {
                 return
             }
 
@@ -2574,22 +2665,22 @@ const showMoreObserver = new IntersectionObserver(entries => {
             }*/
 
             const target = u(x.target)
-            if (target.length < 1 || target.hasClass('paginator-at-top')) {
+            if(target.length < 1 || target.hasClass('paginator-at-top')) {
                 return
             }
-            if (target.hasClass('lagged')) {
+            if(target.hasClass('lagged')) {
                 return
             }
 
             const current_url = new URL(location.href)
-            if (current_url.searchParams && !isNaN(parseInt(current_url.searchParams.get('p')))) {
+            if(current_url.searchParams && !isNaN(parseInt(current_url.searchParams.get('p')))) {
                 return
             }
 
             target.addClass('lagged')
             const active_tab = target.find('.active')
-            const next_page = u(active_tab.nodes[0] ? active_tab.nodes[0].nextElementSibling : null)
-            if (next_page.length < 1) {
+            const next_page  = u(active_tab.nodes[0] ? active_tab.nodes[0].nextElementSibling : null)
+            if(next_page.length < 1) {
                 u('.paginator:not(.paginator-at-top)').removeClass('lagged')
                 return
             }
@@ -2598,7 +2689,7 @@ const showMoreObserver = new IntersectionObserver(entries => {
 
             try {
                 await __processPaginatorNextPage(page_number)
-            } catch (e) {
+            } catch(e) {
                 console.error(e)
             }
 
@@ -2612,7 +2703,7 @@ const showMoreObserver = new IntersectionObserver(entries => {
     threshold: 0,
 })
 
-if (u('.paginator:not(.paginator-at-top)').length > 0) {
+if(u('.paginator:not(.paginator-at-top)').length > 0) {
     showMoreObserver.observe(u('.paginator:not(.paginator-at-top)').nodes[0])
 }
 
@@ -2623,7 +2714,7 @@ u(document).on('click', '#__sourceAttacher', (e) => {
             <input type='text' maxlength='400' placeholder='...'>
         </div>
     `, [tr('cancel')], [
-        () => { Function.noop }
+        () => {Function.noop}
     ])
 
     __removeDialog = () => {
@@ -2638,12 +2729,12 @@ u(document).on('click', '#__sourceAttacher', (e) => {
 
     u('.ovk-diag-action #__setsrcbutton').on('click', async (ev) => {
         // Consts
-        const _u_target = u(e.target)
+        const _u_target        = u(e.target)
         const nearest_textarea = _u_target.closest('#write')
-        const source_output = nearest_textarea.find(`input[name='source']`)
-        const source_input = u(`#source_flex_kunteynir input[type='text']`)
-        const source_value = source_input.nodes[0].value ?? ''
-        if (source_value.length < 1) {
+        const source_output    = nearest_textarea.find(`input[name='source']`)
+        const source_input     = u(`#source_flex_kunteynir input[type='text']`)
+        const source_value     = source_input.nodes[0].value ?? ''
+        if(source_value.length < 1) {
             return
         }
 
@@ -2653,9 +2744,9 @@ u(document).on('click', '#__sourceAttacher', (e) => {
         const __checkCopyrightLinkRes = await fetch(`/method/wall.checkCopyrightLink?auth_mechanism=roaming&link=${encodeURIComponent(source_value)}`)
         const checkCopyrightLink = await __checkCopyrightLinkRes.json()
 
-        if (checkCopyrightLink.error_code) {
+        if(checkCopyrightLink.error_code) {
             __removeDialog()
-            switch (checkCopyrightLink.error_code) {
+            switch(checkCopyrightLink.error_code) {
                 default:
                 case 3102:
                     fastError(tr('error_adding_source_regex'))
@@ -2689,8 +2780,8 @@ u(document).on('click', '#__sourceAttacher', (e) => {
 })
 
 u(document).on('keyup', async (e) => {
-    if (u('#ovk-player-part .bsdn').length > 0) {
-        switch (e.keyCode) {
+    if(u('#ovk-player-part .bsdn').length > 0) {
+        switch(e.keyCode) {
             case 32:
                 u('#ovk-player-part .bsdn .bsdn_playButton').trigger('click')
                 break
@@ -2705,18 +2796,18 @@ u(document).on('keyup', async (e) => {
 })
 
 u(document).on('mouseover mousemove mouseout', `div[data-tip='simple']`, (e) => {
-    if (e.target.dataset.allow_mousemove != '1' && e.type == 'mousemove') {
+    if(e.target.dataset.allow_mousemove != '1' && e.type == 'mousemove') {
         return
     }
 
-    if (e.type == 'mouseout') {
+    if(e.type == 'mouseout') {
         u(`.tip_result`).remove()
         return
     }
 
     const target = u(e.target).closest(`div[data-tip='simple']`)
-    const title = target.attr('data-title')
-    if (title == '') {
+    const title  = target.attr('data-title')
+    if(title == '') {
         return
     }
 
@@ -2728,7 +2819,7 @@ u(document).on('mouseover mousemove mouseout', `div[data-tip='simple']`, (e) => 
 })
 
 function setStatusEditorShown(shown) {
-    if (shown) {
+    if(shown) {
         document.getElementById("status_editor").style.display = "block"
         document.querySelector("#status_editor input").focus()
     } else {
@@ -2738,11 +2829,11 @@ function setStatusEditorShown(shown) {
 
 u(document).on('click', (event) => {
     u('#ctx_menu').remove()
-    if (u('#status_editor').length < 1) {
+    if(u('#status_editor').length < 1) {
         return
     }
 
-    if (!event.target.closest("#status_editor") && !event.target.closest("#page_status_text"))
+    if(!event.target.closest("#status_editor") && !event.target.closest("#page_status_text"))
         setStatusEditorShown(false);
 })
 
@@ -2761,15 +2852,15 @@ async function changeStatus() {
     formData.append("status", status);
     formData.append("broadcast", Number(broadcast));
     formData.append("hash", document.status_popup_form.hash.value);
-    const response = await ky.post("/edit?act=status", { body: formData });
+    const response = await ky.post("/edit?act=status", {body: formData});
 
-    if (!parseAjaxResponse(await response.text())) {
+    if(!parseAjaxResponse(await response.text())) {
         document.status_popup_form.submit.innerHTML = tr("send");
         document.status_popup_form.submit.disabled = false;
         return;
     }
 
-    if (document.status_popup_form.status.value === "") {
+    if(document.status_popup_form.status.value === "") {
         document.querySelector("#page_status_text").innerHTML = `[ ${tr("change_status")} ]`;
         document.querySelector("#page_status_text").className = "edit_link page_status_edit_button";
     } else {
@@ -2791,7 +2882,7 @@ u(document).on('click', "#__geoAttacher", async (e) => {
     const buttons = form.find('.post-buttons')
 
     let current_coords = [54.51331, 36.2732]
-    let currentMarker = null
+    let currentMarker  = null
     const getCoords = async () => {
         const pos = await new Promise((resolve, reject) => {
             navigator.geolocation.getCurrentPosition((position) => {
@@ -2799,11 +2890,11 @@ u(document).on('click', "#__geoAttacher", async (e) => {
             }, () => {
                 resolve([54.51331, 36.2732])
             },
-                {
-                    enableHighAccuracy: true,
-                    timeout: 5000,
-                    maximumAge: 0,
-                })
+            {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0,
+            })
         })
 
         return pos
@@ -2816,12 +2907,12 @@ u(document).on('click', "#__geoAttacher", async (e) => {
         body: `<div id=\"osm-map\" style='height:75vh;'></div>`,
         buttons: [tr('attach'), tr('cancel')],
         callbacks: [() => {
-            if (!currentMarker) {
+            if(!currentMarker) {
                 return
             }
 
             const geo_name = $(`#geo-name`).html()
-            if (geo_name == '') {
+            if(geo_name == '') {
                 return
             }
 
@@ -2836,7 +2927,7 @@ u(document).on('click', "#__geoAttacher", async (e) => {
                 <span>${escapeHtml(geo_name)}</span>
                 <div id="small_remove_button"></div>
             `).addClass("appended-geo")
-        }, () => { }]
+        }, () => {}]
     })
 
     // by n1rwana
@@ -2853,7 +2944,7 @@ u(document).on('click', "#__geoAttacher", async (e) => {
         const lat = e.latlng.lat
         const lng = e.latlng.lng
 
-        if (currentMarker) map.removeLayer(currentMarker);
+        if(currentMarker) map.removeLayer(currentMarker);
 
         const marker_fetch_req = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=jsonv2`)
         const marker_fetch = await marker_fetch_req.json()
@@ -2878,7 +2969,7 @@ u(document).on('click', "#__geoAttacher", async (e) => {
         const lng = e.geocode.properties.lon
         const name = e.geocode.properties?.display_name ? short_geo_name(e.geocode.properties?.address) : tr('geotag')
 
-        if (currentMarker) map.removeLayer(currentMarker)
+        if(currentMarker) map.removeLayer(currentMarker)
 
         currentMarker = L.marker([lat, lng]).addTo(map)
         currentMarker.bindPopup(`<span id="geo-name">${escapeHtml(name)}</span>`).openPopup()
@@ -2896,12 +2987,12 @@ u(document).on('click', "#__geoAttacher", async (e) => {
     }).addTo(map)
 
     geo_msg.getNode().nodes[0].style = 'width:90%'
-    setTimeout(function () { map.invalidateSize() }, 100)
+    setTimeout(function(){ map.invalidateSize()}, 100)
 })
 
 u(document).on('click', '.post-has-geo #small_remove_button', (e) => {
     const form = u(e.target).closest('#write')
-    const geo = form.find('.post-has-geo')
+    const geo  = form.find('.post-has-geo')
     geo.remove()
     form.find(`input[name='geo']`).nodes[0].value = ''
 })
@@ -2927,14 +3018,14 @@ u(document).on('click', '#geo-name', (e) => {
 
 function openGeo(data, owner_id, virtual_id) {
     MessageBox(tr("geotag"), "<div id=\"osm-map\"></div>", [tr("nearest_posts"), tr("close")], [async () => {
-        const posts = await OVKAPI.call('wall.getNearby', { owner_id: owner_id, post_id: virtual_id })
+        const posts = await OVKAPI.call('wall.getNearby', {owner_id: owner_id, post_id: virtual_id})
         openNearPosts(posts)
     }, Function.noop]);
 
     let element = document.getElementById('osm-map');
     element.style = 'height: 80vh;';
 
-    let map = L.map(element, { attributionControl: false });
+    let map = L.map(element, {attributionControl: false});
     let target = L.latLng(data.lat, data.lng);
     map.setView(target, 15);
 
@@ -2946,7 +3037,7 @@ function openGeo(data, owner_id, virtual_id) {
     }).addTo(map);
 
     $(".ovk-diag-cont").width('80%');
-    setTimeout(function () { map.invalidateSize() }, 100);
+    setTimeout(function(){ map.invalidateSize()}, 100);
 }
 
 function tplPost(post) {
@@ -2998,7 +3089,7 @@ function openNearPosts(posts) {
         element.style = 'height: 80vh;';
 
         let markerLayers = L.layerGroup();
-        let map = L.map(element, { attributionControl: false });
+        let map = L.map(element, {attributionControl: false});
 
         markerLayers.addTo(map);
 
@@ -3047,7 +3138,7 @@ u(document).on('click', '#_bl_toggler', async (e) => {
 
     const target = u(e.target)
     const val = Number(target.attr('data-val'))
-    const id = Number(target.attr('data-id'))
+    const id  = Number(target.attr('data-id'))
     const name = target.attr('data-name')
 
     const fallback = (e) => {
@@ -3055,7 +3146,7 @@ u(document).on('click', '#_bl_toggler', async (e) => {
         target.removeClass('lagged')
     }
 
-    if (val == 1) {
+    if(val == 1) {
         const msg = new CMessageBox({
             title: tr('addition_to_bl'),
             body: `<span>${escapeHtml(tr('adding_to_bl_sure', name))}</span>`,
@@ -3063,9 +3154,9 @@ u(document).on('click', '#_bl_toggler', async (e) => {
             callbacks: [async () => {
                 try {
                     target.addClass('lagged')
-                    await window.OVKAPI.call('account.ban', { 'owner_id': id })
+                    await window.OVKAPI.call('account.ban', {'owner_id': id})
                     window.router.route(location.href)
-                } catch (e) {
+                } catch(e) {
                     fallback(e)
                 }
             }, () => Function.noop]
@@ -3073,9 +3164,9 @@ u(document).on('click', '#_bl_toggler', async (e) => {
     } else {
         try {
             target.addClass('lagged')
-            await window.OVKAPI.call('account.unban', { 'owner_id': id })
+            await window.OVKAPI.call('account.unban', {'owner_id': id})
             window.router.route(location.href)
-        } catch (e) {
+        } catch(e) {
             fallback(e)
         }
     }
@@ -3085,11 +3176,11 @@ u(document).on('click', '#_bl_toggler', async (e) => {
 
 u(document).on("click", "#additional_field_append", (e) => {
     let iterator = 0
-    if (u(`table[data-iterator]`).last()) {
+    if(u(`table[data-iterator]`).last()) {
         iterator = Number(u(`table[data-iterator]`).last().dataset.iterator) + 1
     }
 
-    if (iterator >= window.openvk.max_add_fields) {
+    if(iterator >= window.openvk.max_add_fields) {
         return
     }
 
@@ -3131,7 +3222,7 @@ u(document).on("click", ".edit_field_container_item #small_remove_button", (e) =
 
 u(document).on("submit", "#additional_fields_form", (e) => {
     u(`.edit_field_container_item input, .edit_field_container_item textarea`).nodes.forEach(node => {
-        if (node.value == "" || node.value == " ") {
+        if(node.value == "" || node.value == " ") {
             e.preventDefault()
             node.focus()
             return
@@ -3139,12 +3230,12 @@ u(document).on("submit", "#additional_fields_form", (e) => {
     })
 })
 
-if (Number(localStorage.getItem('ux.gif_autoplay') ?? 0) == 1) {
+if(Number(localStorage.getItem('ux.gif_autoplay') ?? 0) == 1) {
     const showMoreObserver = new IntersectionObserver(entries => {
         entries.forEach(async x => {
             doc_item = x.target.closest(".docGalleryItem")
-            if (doc_item.querySelector(".play-button") != null) {
-                if (x.isIntersecting) {
+            if(doc_item.querySelector(".play-button") != null) {
+                if(x.isIntersecting) {
                     doc_item.classList.add("playing")
                 } else {
                     doc_item.classList.remove("playing")
@@ -3157,116 +3248,9 @@ if (Number(localStorage.getItem('ux.gif_autoplay') ?? 0) == 1) {
         threshold: 0,
     })
 
-    if (u('.docGalleryItem').length > 0) {
+    if(u('.docGalleryItem').length > 0) {
         u('.docGalleryItem').nodes.forEach(item => {
             showMoreObserver.observe(item)
         })
     }
 }
-
-$(document).on("click", ".archive_post", function (e) {
-    e.preventDefault();
-    let url = $(this).attr("href");
-    let post = $(this).closest(".post, .post-horizontal");
-    let postContainer = $(this).closest(".scroll_node");
-
-    if (!url.includes("ajax=1")) {
-        url += (url.includes("?") ? "&" : "?") + "ajax=1";
-    }
-
-    $.get(url, function (response) {
-        if (response.success) {
-            let elementToRemove = postContainer.length ? postContainer : post;
-            elementToRemove.slideUp(200, function () {
-                $(this).remove();
-                window.dispatchEvent(new CustomEvent("archive:changed", {
-                    detail: response
-                }));
-            });
-        } else {
-            if (response.flash && response.flash.message) {
-                fastError(response.flash.message);
-            }
-        }
-    });
-});
-function appendEmoji(e) {
-    let emoji = e.currentTarget.dataset.emoji;
-    if (!emoji) return;
-
-    let textarea = u(e.target).closest('#write').find('.small-textarea').nodes[0];
-    if (!textarea) {
-        textarea = document.querySelector('.small-textarea');
-    }
-
-    if (textarea) {
-        let start = textarea.selectionStart;
-        let end = textarea.selectionEnd;
-        textarea.value = textarea.value.substring(0, start) + emoji + textarea.value.substring(end);
-        textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
-        textarea.focus();
-        textarea.dispatchEvent(new Event('input', { bubbles: true }));
-    }
-}
-
-(function () {
-    let emojiTippy = tippy.delegate("body", {
-        content: "",
-        allowHTML: true,
-        target: '.emoji_picker_entrypoint',
-        interactive: true,
-        interactiveDebounce: 0,
-        trigger: 'click',
-        placement: 'top',
-        theme: 'emoji light vk',
-        zIndex: 1024,
-        onShow: function (that) {
-            if (!window.emojiData) {
-                loadEmojiData().then(function () {
-                    that.setContent(renderEmojiGrid());
-                });
-            } else {
-                that.setContent(renderEmojiGrid());
-            }
-        }
-    });
-
-    function renderEmojiGrid() {
-        if (!window.emojiData) return '<div style="padding:30px;">' + tr('loading') + '...</div>';
-
-        var html = '<div class="emoji-picker">';
-        window.emojiData.forEach(function (group) {
-            if (group.slug == "flags") { // от греха подальше
-                return;
-            }
-
-            const localized_group = group.slug;
-            html += '<div class="emoji-picker-group">';
-            html += '<div>' + tr("emoji_group_" + localized_group) + '</div>';
-            html += '<div class="emoji-picker-group-items">';
-            group.emojis.forEach(function (item) {
-                if (parseFloat(item.emoji_version) > 15) { // они некорректно отрендерятся
-                    return;
-                }
-                html += '<span title="' + escapeHtml(item.name) + '" class="emoji-picker-item" onclick="appendEmoji(event)" data-emoji="' + item.emoji + '">' + item.emoji + '</span>';
-            });
-            html += '</div></div>';
-        });
-        html += `</div>
-        <div class="emoji-picker-footer">
-          <div class="sticker-tabs"></div>
-          <div class="sticker-store"></div>
-        </div>`;
-        return html;
-    }
-
-    function loadEmojiData() {
-        if (window.emojiData) return Promise.resolve(window.emojiData);
-        return fetch('/assets/packages/static/openvk/js/node_modules/unicode-emoji-json/data-by-group.json')
-            .then(function (r) { return r.json(); })
-            .then(function (data) {
-                window.emojiData = data;
-                return data;
-            });
-    }
-})();

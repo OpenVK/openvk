@@ -415,7 +415,7 @@ final class Photos extends VKAPIRequestHandler
         return $res;
     }
 
-    public function get(int $owner_id, string $album_id, string $photo_ids = "", bool $extended = false, bool $photo_sizes = true, int $offset = 0, int $count = 10, int $limit = null)
+    public function get(int $owner_id, string $album_id, string $photo_ids = "", bool $extended = false, bool $photo_sizes = true, int $offset = 0, int $count = 10, int $limit = null, bool $rev = false)
     {
         $this->requireUser();
 
@@ -437,7 +437,7 @@ final class Photos extends VKAPIRequestHandler
                 $this->fail(15, "Access denied");
             }
 
-            $photos = array_slice(iterator_to_array($album->getPhotos(1, $count + $offset)), $offset);
+            $photos = array_slice(iterator_to_array($album->getPhotos(1, $count + $offset, $rev)), $offset);
             $res["count"] = $album->size();
 
             foreach ($photos as $photo) {

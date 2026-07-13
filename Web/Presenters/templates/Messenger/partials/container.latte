@@ -1,5 +1,13 @@
 <script>
-    document.addEventListener("DOMContentLoaded", (e) => {
+    function loadPage() {
         window.im.initImPage(document.querySelector('.page_content'));
-    })
+    }
+
+    document.addEventListener("DOMContentLoaded", (e) => {
+        loadPage();
+    });
+
+    if (window.im != null) {
+        loadPage();
+    }
 </script>

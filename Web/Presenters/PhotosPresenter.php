@@ -247,8 +247,12 @@ final class PhotosPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
-        if (!$photo->forceSize($size)) {
-            chandler_http_panic(588, "Gone", "This thumbnail cannot be generated due to server misconfiguration");
+        try {
+            if (!$photo->forceSize($size)) {
+                chandler_http_panic(588, "Gone", "This thumbnail cannot be generated due to server misconfiguration");
+            }
+        } catch (\ImagickException $e) {
+            $this->redirect("/assets/packages/static/openvk/img/thumbnail_gone.jpg", 8);
         }
 
         $this->redirect($photo->getURLBySizeId($size), 8);
