@@ -986,7 +986,7 @@ h4 {
     min-height: 48px;
 }
 
-.model_content_textarea.has_emoji_picker {
+.model_content_textarea.has_emoji_picker .textareas {
     position: relative;
 }
 
@@ -1000,7 +1000,7 @@ h4 {
     background: yellow;
     position: absolute;
     right: 5px;
-    top: 8px;
+    top: 5px;
 }
 
 ul {

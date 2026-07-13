@@ -433,6 +433,10 @@ body.no-scroll .sidebar {
     width: 150px;
 }
 
+.messenger-app--messages---message ._content .attachments .msg-attach-j-video .compact_video {
+    width: 98%;
+}
+
 .messenger-app--messages---message ._content .attachments .msg-attach-j-video img {
     width: 100%;
 }

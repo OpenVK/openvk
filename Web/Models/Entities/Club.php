@@ -36,14 +36,21 @@ class Club extends RowModel
     public const WALL_OPEN     = 1;
     public const WALL_LIMITED  = 2;
 
+    private $_avatarAlbum = null;
+
     public function getId(): int
     {
         return $this->getRecord()->id;
     }
 
+    public function getAvatarAlbum(): ?Album
+    {
+        return $this->_avatarAlbum ??= (new Albums())->getClubAvatarAlbum($this);
+    }
+
     public function getAvatarPhoto(): ?Photo
     {
-        $avAlbum  = (new Albums())->getClubAvatarAlbum($this);
+        $avAlbum  = $this->getAvatarAlbum();
         $avCount  = $avAlbum->getPhotosCount();
         $avPhotos = $avAlbum->getPhotos($avCount, 1);
 

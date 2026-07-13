@@ -142,7 +142,8 @@ window.router = new class {
     }
 
     async __integratePage(scrolling = null) {
-        window.temp_y_scroll = null
+        window.temp_y_scroll = null;
+        window.router.scroll_page = null;
         u('.toTop').removeClass('has_down')
         window.scrollTo(0, scrolling ?? 0)
         bsdnHydrate()

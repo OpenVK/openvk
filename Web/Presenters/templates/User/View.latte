@@ -89,7 +89,7 @@
                     </div>
                 </div>
             {/if}
-            <a href="{$user->getAvatarLink()|nocheck}">
+            <a {if $hasAvatar}onclick="OpenAvatar(event, {$user->getAvatarUrl('large')}, {$user->getAvatarAlbum()->getPrettyId()}, {$user->getAvatarPhoto()->getPrettyIdWithKey()})" href="{$user->getAvatarLink()|nocheck}"{/if}>
                 <img src="{$user->getAvatarUrl('normal')}"
                      alt="{$user->getCanonicalName()}"
                      id="bigAvatar"

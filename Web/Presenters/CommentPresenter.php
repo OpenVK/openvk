@@ -66,6 +66,10 @@ final class CommentPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
+        if (!$entity->canBeCommentedBy($this->user->identity)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
         if ($entity instanceof Topic && $entity->isClosed()) {
             $this->notFound();
         }

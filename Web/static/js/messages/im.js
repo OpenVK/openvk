@@ -244,8 +244,9 @@ export class IM {
     }
   }
 
+  // Is messages page is open and messenger tab selected
   get is_active() {
-    const is_chat_page = location.pathname.startsWith('/im');
+    const is_chat_page = location.pathname == '/im';
     return this.tab == 'messenger' && is_chat_page;
   }
 

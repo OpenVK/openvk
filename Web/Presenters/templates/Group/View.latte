@@ -161,7 +161,7 @@
         </div>
         {/if}
 
-        <a href="{$avatarLink|nocheck}">
+        <a {if $hasAvatar}onclick="OpenAvatar(event, {$club->getAvatarUrl('large')}, {$club->getAvatarAlbum()->getPrettyId()}, {$club->getAvatarPhoto()->getPrettyIdWithKey()})"{/if} href="{$avatarLink|nocheck}">
             <img src="{$club->getAvatarUrl('normal')}" id="bigAvatar" style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
         </a>
     </div>

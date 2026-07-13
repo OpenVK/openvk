@@ -105,7 +105,7 @@ const Attachment = ({ msg, att }) => {
     case 'video':
       return html`
         <div class="msg-attach-j msg-attach-j-video">
-          <a class="compact_video" href=${'/video' + att.video.owner_id + '_' + att.video.id}>
+          <a onclick=${(e) => {window.im.messenger.view.showVideo(e, msg, att)}} class="compact_video" href=${'/video' + att.video.owner_id + '_' + att.video.id}>
             <div class='play-button'><div class='play-button-ico'></div></div>
             <img src=${att.video.image[0].url} alt="..." />
             ${att.video.length ? `<span class="length">${fmtTime(att.video.length)}</span>` : ""}
@@ -243,7 +243,7 @@ export const InputArea = ({ replyTo, onRemoveReply, onSend, onKeyPress, currentD
         <div class="model_content_textarea messenger-app--input has_emoji_picker expanded-textarea" id="write">
           <img class="ava" src=${window.im.current.avatar_any} alt=${window.im.current.full_name} />
           <div class="messenger-app--input---messagebox">
-            <div style="position:relative;">
+            <div class="textareas">
                 <textarea
                 class="small-textarea"
                 placeholder=${tr('enter_message')}

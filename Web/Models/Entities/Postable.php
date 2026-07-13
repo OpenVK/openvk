@@ -107,6 +107,15 @@ abstract class Postable extends Attachable
         return $this->getRecord()->owner . "_" . $this->getVirtualId();
     }
 
+    public function getPrettyIdWithKey(): string
+    {
+        if ($this->getAccessKey() != null) {
+            return $this->getPrettyId() . "_" . $this->getAccessKey();
+        }
+
+        return $this->getPrettyId();
+    }
+
     public function getPublicationTime(): DateTime
     {
         return new DateTime($this->getRecord()->created);
@@ -180,7 +189,11 @@ abstract class Postable extends Attachable
 
     public function isPrivate(): bool
     {
-        return (bool) $this->getRecord()->unlisted;
+        try {
+            return (bool) $this->getRecord()->unlisted;
+        } catch (\Nette\MemberAccessException $e) {
+            return false;
+        }
     }
 
     public function isUnlisted(): bool
@@ -315,10 +328,21 @@ abstract class Postable extends Attachable
 
     public function canBeCommentedBy(?User $user): bool
     {
-        $can = (int) $this->getRecord()->can_comment;
 
         if (!$user) {
             return false;
+        }
+
+        if (method_exists($this, "isPrivate") && $this->isPrivate()) {
+            return false;
+        }
+
+        $can = 0;
+
+        try {
+            $can = (int) $this->getRecord()->can_comment;
+        } catch(\Nette\MemberAccessException $e) {
+            return true;
         }
 
         if ($can == Postable::COMMENTABLE_EVERYBODY) {

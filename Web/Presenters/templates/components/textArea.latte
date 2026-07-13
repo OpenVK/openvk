@@ -7,8 +7,10 @@
 
 <div id="write" class='has_emoji_picker model_content_textarea' style="padding: 5px 0;" data-id="{isset($owner) ? (gettype($owner) == 'integer' ? $owner : $owner->getId())}">
     <form action="{$route}" method="post" enctype="multipart/form-data" style="margin:0;">
-        <textarea id="wall-post-input{$textAreaId}" placeholder="{_write}" name="text" style="width: 100%;resize: none;" class="small-textarea" autocomplete="off"></textarea>
-        <div class="emoji_picker_entrypoint"></div>
+        <div class="textareas">
+            <textarea id="wall-post-input{$textAreaId}" placeholder="{_write}" name="text" style="width: 100%;resize: none;" class="small-textarea" autocomplete="off"></textarea>
+            <div class="emoji_picker_entrypoint"></div>
+        </div>
 
         <div>
             <!-- padding to fix <br/> bug -->
