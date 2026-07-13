@@ -738,7 +738,7 @@ final class Messages extends VKAPIRequestHandler
         return (int) $chatId;
     }
 
-    public function addChatUser(int $peer_id = 0, int $user_id = 0, int $group_id = 0): int
+    public function addChatUser(int $peer_id = 0, string $user_id = "0", int $group_id = 0): int
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -750,6 +750,20 @@ final class Messages extends VKAPIRequestHandler
 
         if ($peer_id < 2000000000) {
             $this->fail(15, "Access denied: cannot add user to direct message");
+        }
+
+        $rawIds = preg_split("%, ?%", $user_id);
+        $targetUserIds = array_filter(array_map('intval', $rawIds));
+        $currentUser = $this->getUser();
+
+        foreach ($targetUserIds as $id) {
+            if ($id === $currentUser->getId()) {
+                continue;
+            }
+
+            if (!$currentUser->isFriendsWith($id)) {
+                $this->fail(15, "Access denied: user with ID " . $id . " is not your friend");
+            }
         }
 
         $params = [
