@@ -136,10 +136,12 @@ const Attachment = ({ msg, att }) => {
         </div>`;
     case 'post':
 		return html`
-			<div class="msg-attach-w msg-attach-w-post"></div>
+			<div class="msg-attach-w msg-attach-w-post">
+				<a href="/wall${att.post.owner_id}_${att.post.id}" target="_blank">${tr("post")}</a>
+			</div>
         `;
     default:
-      return null;
+      return html`<div class="msg-attach-w msg-attach-w-unknown">${tr("version_incompatibility")}</div>`;
   }
 };
 

@@ -2161,6 +2161,7 @@ async function repost(id, repost_type = 'post') {
                         ${tr("in_chat")}
                     </label>
 
+                    <select name="selected_repost_club" style='display:none;'></select>
                     <select name="selected_repost_chat" style='display:none;'></select>
                 </div>
 
@@ -2213,7 +2214,8 @@ async function repost(id, repost_type = 'post') {
         `,
         buttons: [tr('send'), tr('cancel')],
         callbacks: [
-            async () => {
+			async () => {
+				let res = null;
                 const node = msg.getNode()
                 const message  = node.find('#repostMsgInput').nodes[0].value
                 const type     = node.find(`input[name='repost_type']:checked`).nodes[0].value
@@ -2256,8 +2258,15 @@ async function repost(id, repost_type = 'post') {
                     params.attachments = attachments
                 }
 
-                try {
-                    res = await window.OVKAPI.call('wall.repost', params)
+				try {
+					if (type == "chat") {
+						params.peer_id = u("select[name='selected_repost_chat']").last().value;
+						params.attachment = params.object + (params.attachments ? "," + params.attachments : "");
+						params.attachments = null;
+                    	res = await window.OVKAPI.call('messages.send', params)
+					} else {
+                    	res = await window.OVKAPI.call('wall.repost', params)
+					}
 
                     if(u('#reposts' + id).length > 0) {
                         if(repostsCount.length > 0) {
@@ -2267,7 +2276,11 @@ async function repost(id, repost_type = 'post') {
                         }
                     }
 
-                    NewNotification(tr('information_-1'), tr('shared_succ'), null, () => {window.router.route(`/wall${res.pretty_id}`)});
+					if (type == "chat") {
+                    	NewNotification(tr('information_-1'), tr('shared_succ'), null, () => {window.im.initImPage(document.querySelector(".page_content"), params.peer_id)});
+					} else {
+                    	NewNotification(tr('information_-1'), tr('shared_succ'), null, () => {window.router.route(`/wall${res.pretty_id}`)});
+					}
                 } catch(e) {
                     console.error(e)
                     fastError(e.message)
@@ -2280,11 +2293,12 @@ async function repost(id, repost_type = 'post') {
     u('.ovk-diag-body').attr('style', 'padding: 18px;')
     u('.ovk-diag-body').on('change', `input[name='repost_type']`, (e) => {
         const value = e.target.value
+        u(`select[name='selected_repost_club']`).attr('style', 'display:none')
+        u(`select[name='selected_repost_chat']`).attr('style', 'display:none')
+		u('#repost_signs').attr('style', 'display:none');
 
         switch(value) {
             case 'wall':
-                u('#repost_signs').attr('style', 'display:none')
-                u(`select[name='selected_repost_club']`).attr('style', 'display:none')
                 u('.ovk-diag-body #__photoAttachment, .ovk-diag-body #__videoAttachment, .ovk-diag-body #__audioAttachment, .ovk-diag-body #__documentAttachment').attr('data-club', 0)
                 break
             case 'group':
@@ -2292,7 +2306,10 @@ async function repost(id, repost_type = 'post') {
                 u(`select[name='selected_repost_club']`).attr('style', 'display:block')
                 const club_id = u(`.ovk-diag-body select[name='selected_repost_club']`).nodes[0].value
                 u('.ovk-diag-body #__photoAttachment, .ovk-diag-body #__videoAttachment, .ovk-diag-body #__audioAttachment, .ovk-diag-body #__documentAttachment').attr('data-club', club_id)
-                break
+				break
+			case 'chat':
+				u(`select[name='selected_repost_chat']`).attr('style', 'display:block')
+				break;
         }
     })
 
