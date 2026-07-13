@@ -45,6 +45,7 @@ export class IM {
   constructor() {
     this.tabs = ['conversations', 'messenger'];
     this.tab = '';
+    this.is_switching = false;
   }
 
   async _checkSel(loc) {
@@ -130,6 +131,12 @@ export class IM {
   }
 
   async selectChat(conv) {
+    if (this.is_switching == true) {
+      return;
+    }
+
+    this.setSwitching(true);
+
     this.messenger.view.preselectChat(conv);
 
     const _url = new URL(location.href);
@@ -145,6 +152,8 @@ export class IM {
     this.selectTab('messenger');
     this.messenger.view._loadDraft(conv);
     this.messenger.view._scrollToEnd();
+
+    this.setSwitching(false);
   }
 
   async _loadCurrent() {
@@ -269,6 +278,10 @@ export class IM {
     } else {
       this.selectTab('conversations');
     }
+  }
+
+  setSwitching(val) {
+    this.is_switching = val;
   }
 
   // counter

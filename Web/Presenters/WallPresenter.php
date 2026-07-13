@@ -295,13 +295,14 @@ final class WallPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
 
         $wallOwner = ($wall > 0 ? (new Users())->get($wall) : (new Clubs())->get($wall * -1));
+        $isAjax = $this->postParam("ajax") == "1";
 
         if ($wallOwner === null) {
-            $this->flashFail("err", tr("failed_to_publish_post"), tr("error_4"));
+            $this->flashFail("err", tr("failed_to_publish_post"), tr("error_4"), 0, $isAjax);
         }
 
         if ($wallOwner->isBanned()) {
-            $this->flashFail("err", tr("error"), tr("forbidden"));
+            $this->flashFail("err", tr("error"), tr("forbidden"), 0, $isAjax);
         }
 
         if ($wall > 0) {
@@ -317,7 +318,7 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         if (!$canPost) {
-            $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
+            $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"), 0, $isAjax);
         }
 
         $anon = OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["enable"];
@@ -364,9 +365,9 @@ final class WallPresenter extends OpenVKPresenter
                 $poll = Poll::import($this->user->identity, $xml);
             }
         } catch (TooMuchOptionsException $e) {
-            $this->flashFail("err", tr("failed_to_publish_post"), tr("poll_err_to_much_options"));
+            $this->flashFail("err", tr("failed_to_publish_post"), tr("poll_err_to_much_options"), 0, $isAjax);
         } catch (\UnexpectedValueException $e) {
-            $this->flashFail("err", tr("failed_to_publish_post"), "Poll format invalid");
+            $this->flashFail("err", tr("failed_to_publish_post"), "Poll format invalid", 0, $isAjax);
         }
 
         $geo = null;
@@ -377,17 +378,17 @@ final class WallPresenter extends OpenVKPresenter
                 $latitude = number_format((float) $geo["lat"], 8, ".", '');
                 $longitude = number_format((float) $geo["lng"], 8, ".", '');
                 if ($latitude > 90 || $latitude < -90 || $longitude > 180 || $longitude < -180) {
-                    $this->flashFail("err", tr("error"), "Invalid latitude or longitude");
+                    $this->flashFail("err", tr("error"), "Invalid latitude or longitude", 0, $isAjax);
                 }
             }
         }
 
         if (empty($this->postParam("text")) && sizeof($horizontal_attachments) < 1 && sizeof($vertical_attachments) < 1 && !$poll) {
-            $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_empty_or_too_big"));
+            $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_empty_or_too_big"), 0, $isAjax);
         }
 
         if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->user->identity, "wall.post")) {
-            $this->flashFail("err", tr("error"), tr("limit_exceed_exception"));
+            $this->flashFail("err", tr("error"), tr("limit_exceed_exception"), 0, $isAjax);
         }
 
         $should_be_suggested = $wall < 0 && !$wallOwner->canBeModifiedBy($this->user->identity) && $wallOwner->getWallType() == 2;
@@ -419,7 +420,7 @@ final class WallPresenter extends OpenVKPresenter
             }
             $post->save();
         } catch (\LengthException $ex) {
-            $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_too_big"));
+            $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_too_big"), 0, $isAjax);
         }
 
         foreach ($horizontal_attachments as $horizontal_attachment) {
@@ -464,6 +465,14 @@ final class WallPresenter extends OpenVKPresenter
                     (new MentionNotification($mentionee, $post, $post->getOwner(), strip_tags($post->getText())))->emit();
                 }
             }
+        }
+
+        if ($isAjax == "1") {
+            $this->template->post = $post;
+            $this->template->commentSection = true;
+            $this->template->_template = "components/post.latte";
+
+            return;
         }
 
         if ($should_be_suggested) {

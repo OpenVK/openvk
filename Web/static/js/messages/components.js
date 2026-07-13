@@ -163,13 +163,13 @@ export const PeerTab = ({ conv, active }) => {
   return html`
     <div class="messages--peers-tab${active ? ' selected' : ''}">
       <a onClick=${() => window.im?.selectChat(conv)}>${conv.peer.name}</a>
-      <span class="messages--peers-tab-close" onClick=${() => window.im?.closeChat(conv)}>x</span>
+      <span class="messages--peers-tab-close" onClick=${() => window.im?.closeChat(conv)}>×</span>
     </div>
   `;
 };
 
 export const PeerTabsView = ({ tabs, currentChat }) => {
-  if (tabs.length < 2) { return }
+  if (tabs.length < 2) { return html`` }
 
   return html`
     <div class="messages--peers-tabs">

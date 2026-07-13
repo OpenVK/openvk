@@ -383,9 +383,11 @@ u(document).on('submit', 'form', async (e) => {
         return false
     }
 
-    if(e.target.closest('#write')) {
-        const target = u(e.target)
-        collect_attachments_node(target)
+    if (e.target.closest('#write')) {
+        e.preventDefault()
+        const target = u(e.target);
+        await ajax_posting(e, target);
+        return;
     }
 
     if((localStorage.getItem('ux.disable_ajax_routing') ?? 0) == 1 || window.openvk.current_id == 0) {
