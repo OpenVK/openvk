@@ -263,7 +263,7 @@ u(document).on('click', '.docMainItem #report_icon', (e) => {
         }), Function.noop]})
 })
 
-u(document).on("click", ".docListViewItem a.viewerOpener, a.docGalleryItem", async (e) => {
+u(document).on("click", ".docOpener, .docListViewItem a.viewerOpener, a.docGalleryItem", async (e) => {
     e.preventDefault()
     if(e.target.closest('.doc_volume_action')) {
         return
@@ -273,7 +273,7 @@ u(document).on("click", ".docListViewItem a.viewerOpener, a.docGalleryItem", asy
     }
 
     const target = u(e.target)
-    const link   = target.closest('a')
+    const link = target.closest('a')
     if(target.closest(".embeddable").length > 0) {
         target.closest(".embeddable").toggleClass("playing")
         return

@@ -2156,7 +2156,12 @@ async function repost(id, repost_type = 'post') {
                         ${tr("in_group")}
                     </label>
 
-                    <select name="selected_repost_club" style='display:none;'></select>
+                    <label>
+                        <input type="radio" name="repost_type" value="chat">
+                        ${tr("in_chat")}
+                    </label>
+
+                    <select name="selected_repost_chat" style='display:none;'></select>
                 </div>
 
                 <b>${tr('your_comment')}</b>
@@ -2303,6 +2308,11 @@ async function repost(id, repost_type = 'post') {
     window.openvk.writeableClubs.items.forEach(club => {
         u(`select[name='selected_repost_club']`).append(`<option value='${club.id}'>${ovk_proc_strtr(escapeHtml(club.name), 100)}</option>`)
     })
+
+	window.im.conversations.convs.forEach(conv => {
+		const peer = conv.peer;
+        u(`select[name='selected_repost_chat']`).append(`<option value='${peer.id}'>${ovk_proc_strtr(escapeHtml(peer.name), 100)}</option>`)
+	})
 
     if(window.openvk.writeableClubs.items.length < 1) {
         u(`input[name='repost_type'][value='group']`).attr('disabled', 'disabled')

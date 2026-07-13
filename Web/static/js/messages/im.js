@@ -291,12 +291,12 @@ export class IM {
 
     u(".im_counter b").html(new_number);
 
-    if (new_number == 0) {
+    if (this.unread_counter < 1) {
       u(".im_counter").removeClass("shown")
       u(".im_counter").addClass("zero_counter")
     } else {
       u(".im_counter").addClass("shown")
-      u(".im_counter").removeClass("shown")
+      u(".im_counter").removeClass("zero_counter")
     }
   }
 
