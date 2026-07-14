@@ -49,7 +49,7 @@ export class IM {
       { id: 'messenger', label: tr('messenger_tab_messenger'), visible: () => (this.messenger?.view?.getTabsCount() ?? 0) > 0 },
       { id: 'search', label: tr('search_messages'), visible: () => false },
       { id: 'friends', label: tr('friends_list'), visible: () => this.tab == "friends" },
-      { id: 'contact', label: tr('contact_info'), visible: () => this.messenger?.view?.is_showing_profile ?? false },
+      { id: 'contact', label: tr('contact_info'), visible: () => this.tab == "contact" },
     ];
     this.tab = '';
     this.is_switching = false;
@@ -126,12 +126,38 @@ export class IM {
     this._initTabs();
     const found = await this._checkSel(new URL(location.href), sel_id);
     if (!found) {
-      this.selectTab('conversations');
-	}
+        this.selectTab('conversations');
+  	}
+  }
+
+  async setChatByPeerId(sel_id) {
+    await this._checkSel(new URL(location.href), sel_id);
   }
 
   addLoadSkeleton(container) {
     container.innerHTML = "";
+  }
+
+  setPageTitle(title) {
+    document.title = title;
+  }
+
+  changeYellowHeader(text) {
+    u(".page_yellowheader").html(text);
+  }
+
+  changeYellowHeaderByPeer(peer) {
+    switch (peer.supposed_type) {
+      case "chat":
+        this.changeYellowHeader(tr("conversation_title_chat"));
+        break;
+      case "user":
+        this.changeYellowHeader(tr("conversation_title_user", escapeHtml(ovk_proc_strtr(peer.name, 50))));
+        break;
+      case "club":
+        this.changeYellowHeader(tr("conversation_title_club"));
+        break;
+    }
   }
 
   closeChat(conv) {
@@ -169,6 +195,8 @@ export class IM {
     this.messenger.view._loadDraft(conv);
     this.messenger.view._scrollToEnd();
 
+    this.changeYellowHeaderByPeer(conv.peer);
+
     this.setSwitching(false);
   }
 
@@ -200,10 +228,10 @@ export class IM {
   _renderTabBar() {
     if (!this.root) return;
 
-    let wrap = this.root.querySelector('#tabs-wr');
+    let wrap = this.root.querySelector('#tabs-wr2');
     if (!wrap) {
       wrap = document.createElement('div');
-      wrap.id = 'tabs-wr';
+      wrap.id = 'tabs-wr2';
       this.root.insertAdjacentElement('afterbegin', wrap);
     }
 
@@ -214,6 +242,8 @@ export class IM {
         onTabSelect=${(id) => this.selectTab(id)}
       />
     `, wrap);
+
+    this.changeYellowHeader(tr("conversations_count_title", Number(window.im.conversations.total_convs)));
   }
 
   updateTabs() {
@@ -225,25 +255,30 @@ export class IM {
       throw new Error('invalid tab');
     }
 
-	if (tab_name != "messenger") {
+  	if (tab_name != "messenger") {
         this._toggleScrollMode(false);
-	} else {
+  	} else {
         this._toggleScrollMode(true);
-	}
+  	}
 
     this.tab = tab_name;
     this._renderTabBar();
 
-    this.tabDefs.forEach((def) => {
-      const win = this._getTabWindow(def.id);
-      if (!win) return;
+    if (tab_name != "contact") {
+      u(".messenger-app--tab-messenger").removeClass("peer-shown");
+      this.tabDefs.forEach((def) => {
+        const win = this._getTabWindow(def.id);
+        if (!win) return;
 
-      if (def.id === tab_name) {
-        win.classList.remove('hidden');
-      } else {
-        win.classList.add('hidden');
-      }
-    });
+        if (def.id === tab_name) {
+          win.classList.remove('hidden');
+        } else {
+          win.classList.add('hidden');
+        }
+      });
+    } else {
+      u(".messenger-app--tab-messenger").addClass("peer-shown");
+    }
 
     switch (tab_name) {
       case 'conversations':
@@ -257,6 +292,8 @@ export class IM {
           this.selectTab('conversations');
           return;
         }
+
+        this.changeYellowHeaderByPeer(window.im.corresponder);
 
         this.conversations.hide(this._getTabWindow('conversations'));
         this.messenger.appear(this._getTabWindow('messenger'));
@@ -275,15 +312,90 @@ export class IM {
         break;
 
       case 'friends':
-        this._getTabWindow('friends').innerHTML = '';
-        render(html`<${FriendsPage} />`, this._getTabWindow('friends'));
+        this._initFriendsTab();
         break;
 
       case 'contact':
-        this._getTabWindow('contact').innerHTML = '';
-        render(html`<${ContactPage} />`, this._getTabWindow('contact'));
+        this.messenger.view._render();
+
+        if (typeof window.im !== 'undefined' && window.im.updateTabs) {
+     	    window.im.updateTabs();
+        }
+
         break;
     }
+  }
+
+  async _initFriendsTab(startOffset = 0) {
+    const win = this._getTabWindow('friends');
+    if (!win) return;
+
+	let res = {};
+    /*win.innerHTML = '<div style="padding:20px;text-align:center">' + tr('loading') + '...</div>';
+
+
+    try {
+      res = await window.OVKAPI.call('friends.get', {
+        offset: startOffset,
+        count: 100,
+        fields: 'photo_50,photo_100',
+      });
+    } catch (e) {
+      win.innerHTML = '<div style="padding:20px;text-align:center;color:#999">' + tr('error') + '</div>';
+      return;
+    }*/
+
+    const items = res.items || [];
+    const totalCount = res.count || res.length || items.length;
+
+    render(html`
+      <${FriendsPage}
+        friends=${items}
+        count=${totalCount}
+        onLoadMore=${() => this._initFriendsTab(startOffset + 100)}
+      />
+    `, win);
+  }
+
+  async _initContactTab() {
+    const win = this._getTabWindow('contact');
+    if (!win) return;
+
+    const peer = window.im.corresponder?.data ? window.im.corresponder : null;
+    if (!peer) {
+      render(html`<${ContactPage} peer=${null} />`, win);
+      return;
+    }
+
+    let user;
+    if (peer.supposed_type === 'chat') {
+      render(html`<div class="messenger-page-stub"><p>${tr('contact_info')}</p></div>`, win);
+      return;
+    }
+
+    try {
+      const res = await window.OVKAPI.call('users.get', {
+        user_ids: peer.id > 0 ? peer.id : Math.abs(peer.id),
+        fields: 'photo_50,photo_100,photo_200,online,last_seen',
+      });
+      user = res[0];
+    } catch (e) {
+      win.innerHTML = '<div style="padding:20px;text-align:center;color:#999">' + tr('error') + '</div>';
+      return;
+    }
+
+    if (!user) {
+      render(html`<${ContactPage} peer=${null} />`, win);
+      return;
+    }
+
+    const fakePeer = {
+      data: user,
+      supposed_type: peer.supposed_type,
+    };
+
+    win.innerHTML = '';
+    render(html`<${ContactPage} peer=${fakePeer} />`, win);
   }
 
   _getTabWindow(tab_name) {
