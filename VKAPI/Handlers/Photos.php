@@ -672,6 +672,7 @@ final class Photos extends VKAPIRequestHandler
             $photoObj = new Photo();
             $photoObj->setOwner($this->getUser()->getId());
             $photoObj->setCreated(time());
+            $photoObj->setAsFromMessage();
             $photoObj->setFile([
                 "tmp_name" => $imagePath,
                 "error"    => 0,
@@ -730,6 +731,8 @@ final class Photos extends VKAPIRequestHandler
             $photoObj = new Photo();
             $photoObj->setOwner($this->getUser()->getId());
             $photoObj->setCreated(time());
+            $photoObj->setUnlisted(1);
+            $photoObj->setSystem(1);
             $photoObj->setFile([
                 "tmp_name" => $imagePath,
                 "error"    => 0,

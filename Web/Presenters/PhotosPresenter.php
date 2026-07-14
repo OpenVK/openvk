@@ -313,7 +313,6 @@ final class PhotosPresenter extends OpenVKPresenter
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $is_from_messenger = $this->postParam("is_from_messenger") == "1";
 
-            bdump($is_from_messenger);
             if ($this->queryParam("act") == "finish") {
                 $result = json_decode($this->postParam("photos"), true);
 
