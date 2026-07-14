@@ -2,6 +2,7 @@ import { ChatGeneralForm } from './messages.js';
 import { EventHandler } from './events.js';
 import { Messenger, LongPollConnection } from './messenger.js';
 import { Conversations } from './conversations.js';
+import { render, html, TabBar, SearchPage, FriendsPage, ContactPage } from './components.js';
 
 const tr = window.tr;
 const u = window.u;
@@ -43,9 +44,23 @@ class ProfilesCache {
 
 export class IM {
   constructor() {
-    this.tabs = ['conversations', 'messenger'];
+    this.tabDefs = [
+      { id: 'conversations', label: tr('messenger_tab_conversations'), visible: () => true },
+      { id: 'messenger', label: tr('messenger_tab_messenger'), visible: () => (this.messenger?.view?.getTabsCount() ?? 0) > 0 },
+      { id: 'search', label: tr('search_messages'), visible: () => false },
+      { id: 'friends', label: tr('friends_list'), visible: () => this.tab == "friends" },
+      { id: 'contact', label: tr('contact_info'), visible: () => this.messenger?.view?.is_showing_profile ?? false },
+    ];
     this.tab = '';
     this.is_switching = false;
+  }
+
+  get visibleTabs() {
+    return this.tabDefs.filter(t => t.visible());
+  }
+
+  get tabs() {
+    return this.tabDefs.map(t => t.id);
   }
 
   async _checkSel(loc, sel_id = null) {
@@ -128,6 +143,7 @@ export class IM {
     }
 
     this.messenger.view.closeChat(conv);
+    this.messenger.view._render();
   }
 
   async selectChat(conv) {
@@ -171,33 +187,37 @@ export class IM {
   }
 
   _initTabs() {
-    const _tabsContainer = document.createElement('div');
-    this.root.insertAdjacentHTML('afterbegin', `
-      <div id="tabs-wr" class="messenger-app--global-tabs tabs">
-        <div class="inner-tabs"></div>
-        <div id="spec-actions">
-          <a>${tr('to_friendslist')}</a>
-        </div>
-      </div>
-    `);
-
-    const tabsContainer = document.createElement('div');
-    tabsContainer.className = '';
-    _tabsContainer.appendChild(tabsContainer);
-
-    this.tabs.forEach((tab) => {
+    this.tabDefs.forEach((tab) => {
       const tabWindow = document.createElement('div');
-      tabWindow.className = 'messenger-app--tab-' + tab;
-      tabWindow.setAttribute('data-window', tab);
+      tabWindow.className = 'messenger-app--tab-' + tab.id + ' hidden';
+      tabWindow.setAttribute('data-window', tab.id);
       this.root.appendChild(tabWindow);
-
-      const tabLink = document.createElement('a');
-      tabLink.setAttribute('data-tab', tab);
-      tabLink.className = 'tab';
-      tabLink.textContent = tr('messenger_tab_' + tab);
-      tabLink.onclick = (e) => this.selectTab(tab, e);
-      this.root.querySelector("#tabs-wr .inner-tabs").appendChild(tabLink);
     });
+
+    this._renderTabBar();
+  }
+
+  _renderTabBar() {
+    if (!this.root) return;
+
+    let wrap = this.root.querySelector('#tabs-wr');
+    if (!wrap) {
+      wrap = document.createElement('div');
+      wrap.id = 'tabs-wr';
+      this.root.insertAdjacentElement('afterbegin', wrap);
+    }
+
+    render(html`
+      <${TabBar}
+        tabs=${this.visibleTabs}
+        activeTab=${this.tab}
+        onTabSelect=${(id) => this.selectTab(id)}
+      />
+    `, wrap);
+  }
+
+  updateTabs() {
+    this._renderTabBar();
   }
 
   selectTab(tab_name) {
@@ -205,24 +225,41 @@ export class IM {
       throw new Error('invalid tab');
     }
 
+	if (tab_name != "messenger") {
+        this._toggleScrollMode(false);
+	} else {
+        this._toggleScrollMode(true);
+	}
+
     this.tab = tab_name;
+    this._renderTabBar();
+
+    this.tabDefs.forEach((def) => {
+      const win = this._getTabWindow(def.id);
+      if (!win) return;
+
+      if (def.id === tab_name) {
+        win.classList.remove('hidden');
+      } else {
+        win.classList.add('hidden');
+      }
+    });
 
     switch (tab_name) {
       case 'conversations':
         this.conversations.appear(this._getTabWindow('conversations'));
         this.messenger.hide(this._getTabWindow('messenger'));
         this._pushState('/im');
-        this._toggleScrollMode(false);
         break;
 
       case 'messenger':
         if (!window.im.corresponder) {
+          this.selectTab('conversations');
           return;
         }
 
         this.conversations.hide(this._getTabWindow('conversations'));
         this.messenger.appear(this._getTabWindow('messenger'));
-        this._toggleScrollMode(true);
 
         try {
           window.im._pushState('/im?sel=' + window.im.messenger.view.getCurrentChat().peer.id);
@@ -231,10 +268,22 @@ export class IM {
         }
 
         break;
-    }
 
-    u(this.root).find('.tabs .tab').attr('id', '');
-    u(this.root).find(`.tabs .tab[data-tab='${tab_name}']`).attr('id', 'activetabs');
+      case 'search':
+        this._getTabWindow('search').innerHTML = '';
+        render(html`<${SearchPage} />`, this._getTabWindow('search'));
+        break;
+
+      case 'friends':
+        this._getTabWindow('friends').innerHTML = '';
+        render(html`<${FriendsPage} />`, this._getTabWindow('friends'));
+        break;
+
+      case 'contact':
+        this._getTabWindow('contact').innerHTML = '';
+        render(html`<${ContactPage} />`, this._getTabWindow('contact'));
+        break;
+    }
   }
 
   _getTabWindow(tab_name) {

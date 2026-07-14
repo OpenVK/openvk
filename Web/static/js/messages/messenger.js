@@ -70,6 +70,7 @@ export class MessengerViewModel {
 		this.replyTo = null;
 		this.is_showing_profile = false;
 		this.is_loading = false;
+		this.had_more_one_tab = false;
 		this.drafts = {};
 		this.scrolls = {};
 		this.current_chat = null;
@@ -101,7 +102,7 @@ export class MessengerViewModel {
 		render(html`
       <div id="chat-page" class="${this.is_showing_profile ? 'peer-shown' : ''}">
         <div class="chat-window">
-          <${PeerTabsView} tabs=${this.opened_tabs} currentChat=${this.current_chat} />
+          <${PeerTabsView} hadTab=${this.had_more_one_tab} tabs=${this.opened_tabs} currentChat=${this.current_chat} />
           <${ActionsBar}
             count=${this.selected_messages.length}
             onDelete=${() => this.callDeletion()}
@@ -211,6 +212,10 @@ export class MessengerViewModel {
 		}
 
 		this._render();
+
+		if (typeof window.im !== 'undefined' && window.im.updateTabs) {
+			window.im.updateTabs();
+		}
 	}
 
 	onScrollDownButtonClick() {
@@ -333,6 +338,10 @@ export class MessengerViewModel {
 		this.current_chat = this.opened_tabs.indexOf(conv);
 		this.unselect();
 
+		if (this.opened_tabs.length > 1) {
+			this.had_more_one_tab = true;
+		}
+
 		if (pushstate) {
 			window.im._pushState('/im?sel=' + conv.peer.id);
 		}
@@ -340,6 +349,11 @@ export class MessengerViewModel {
 
 	addChat(conv) {
 		this.opened_tabs.push(conv);
+
+		if (typeof window.im !== 'undefined' && window.im.updateTabs) {
+			window.im.updateTabs();
+		}
+
 		return this.opened_tabs.length - 1;
 	}
 
@@ -361,6 +375,10 @@ export class MessengerViewModel {
 	closeChat(conv) {
 		const idx = this.opened_tabs.indexOf(conv);
 		if (idx !== -1) { this.opened_tabs.splice(idx, 1) };
+
+		if (typeof window.im !== 'undefined' && window.im.updateTabs) {
+			window.im.updateTabs();
+		}
 	}
 
 	_saveDraft(to_chat) {

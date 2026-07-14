@@ -616,6 +616,10 @@ body.no-scroll .sidebar {
     background: var(--brand);
 }
 
+.messages--peers-tabs .messages--peers-tab.selected a {
+	cursor: default;
+}
+
 .messages--peers-tabs .messages--peers-tab a {
     font-size: 11px;
     display: flex;
@@ -623,6 +627,7 @@ body.no-scroll .sidebar {
 
 .messages--peers-tabs .messages--peers-tab-close {
     display: block;
+    cursor: pointer;
     height: 11px;
 }
 
@@ -633,4 +638,28 @@ body.no-scroll .sidebar {
 
 .messenger-app--input .peer-toggler {
     cursor: pointer;
+}
+
+.messenger-page-stub {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    padding: 40px 20px;
+}
+
+.messenger-page-stub-content {
+    text-align: center;
+    color: var(--text);
+}
+
+.messenger-page-stub-content h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.messenger-page-stub-content p {
+    font-size: 13px;
+    color: var(--text-2ary);
 }
