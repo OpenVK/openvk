@@ -227,14 +227,23 @@ export class MessengerViewModel {
 
 		const _scroll = document.documentElement.scrollTop;
 
-		if (_scroll < 21) {
+    if (_scroll < 21) {
+      console.log("IM | Loading older chunk from API");
+			// ── Scrolled near the top → load older messages (scroll UP) ──
 			await window.im.corresponder._messagesLoad_UpFromLastChunk();
 		} else {
 			const scrollBottom = document.documentElement.scrollHeight - _scroll - document.documentElement.clientHeight;
 
 			if (scrollBottom < 10) {
+				// ── Scrolled near the bottom → load newer messages (scroll DOWN) ──
 				if (window.im.corresponder._chunks_HasMoreNewerChunkRelativelyToCurrentChat()) {
-					console.log('IM | Scrolled to the beginning');
+					// There's already a newer chunk available without fetching
+					console.log('IM | Switching to a newer chunk');
+					await window.im.corresponder._messagesLoad_DownFromCurrentChunk();
+				} else {
+					// No newer chunk loaded yet — fetch from API
+					console.log('IM | Loading newer chunk from API');
+					await window.im.corresponder._messagesLoad_DownFromCurrentChunk();
 				}
 			}
 
@@ -384,7 +393,10 @@ export class MessengerViewModel {
 		if (!to_chat) return;
 		this.drafts[to_chat.peer.id] = this.currentDraft;
 		this.scrolls[to_chat.peer.id] = document.documentElement.scrollTop;
-		this._eraseCurrentDraft();
+    this._eraseCurrentDraft();
+
+    console.log(this.scrolls);
+    console.log('Saved draft for ', to_chat, ", scroll: ", this.scrolls[to_chat.peer.id]);
 	}
 
 	_eraseDraftFor(chat) {
@@ -402,7 +414,7 @@ export class MessengerViewModel {
 		const _draft = this.drafts[for_chat.peer.id];
 		if (_draft && _draft !== '') {
 			this.currentDraft = _draft;
-		}
+    }
 		const _scroll = this.scrolls[for_chat.peer.id];
 		if (_scroll) {
 			this._scrollTo(_scroll);
@@ -413,11 +425,13 @@ export class MessengerViewModel {
     console.log("Loaded draft for ", for_chat, ", scroll: ", _scroll)
 	}
 
-	_scrollTo(scroll_progress) {
+  _scrollTo(scroll_progress) {
+    console.log("scrolling page to: ", scroll_progress)
 		document.documentElement.scroll({ top: scroll_progress });
 	}
 
-	_scrollToEnd() {
+  _scrollToEnd() {
+    console.log("scrolled page to the end");
 		this._scrollTo(document.documentElement.scrollHeight);
 	}
 
