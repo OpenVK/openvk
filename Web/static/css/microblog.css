@@ -217,3 +217,159 @@
     height: 48px;
     image-rendering: pixelated;
 }
+
+.archive_manager {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    min-height: 36px;
+    background: #f7f7f7;
+    border-bottom: 1px solid #ccc;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.archive_years {
+    display: flex;
+    align-items: stretch;
+    min-width: 0;
+}
+
+.archive_year,
+.archive_all_years,
+.archive_more_years > summary,
+.archive_actions > summary {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    min-height: 36px;
+    padding: 0 10px;
+    color: #555;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.archive_year {
+    border-bottom: 2px solid transparent;
+}
+
+.archive_year.is_current {
+    color: #2f5879;
+    border-bottom-color: #597da3;
+    font-weight: bold;
+}
+
+.archive_all_years {
+    margin-right: 2px;
+    border-right: 1px solid #ddd;
+}
+
+.archive_all_years.is_filter_active {
+    background: #e9e9e9;
+    color: #333;
+}
+
+.archive_more_years,
+.archive_actions {
+    position: relative;
+}
+
+.archive_more_years > summary,
+.archive_actions > summary {
+    list-style: none;
+}
+
+.archive_more_years > summary::-webkit-details-marker,
+.archive_actions > summary::-webkit-details-marker {
+    display: none;
+}
+
+.archive_more_years > summary::after,
+.archive_actions > summary::after {
+    content: "";
+    margin-left: 5px;
+    border: 4px solid transparent;
+    border-top-color: #777;
+    transform: translateY(2px);
+}
+
+.archive_more_years_menu,
+.archive_actions_menu {
+    position: absolute;
+    top: calc(100% - 1px);
+    z-index: 20;
+    background: #fff;
+    border: 1px solid #aaa;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.archive_more_years_menu {
+    left: 0;
+    min-width: 80px;
+}
+
+.archive_more_years_menu .archive_year {
+    min-height: 30px;
+    border-bottom: 0;
+}
+
+.archive_more_years_menu .archive_year:hover,
+.archive_actions_menu button:hover {
+    background: #e9edf1;
+}
+
+.archive_actions {
+    flex: 0 0 auto;
+    margin-left: auto;
+    border-left: 1px solid #ddd;
+}
+
+.archive_actions_menu {
+    right: 0;
+    width: 270px;
+    padding: 4px 0;
+}
+
+.archive_actions_menu form {
+    margin: 0;
+}
+
+.archive_actions_menu button {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 7px 12px;
+    border: 0;
+    background: transparent;
+    color: #2f5879;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.archive_actions_divider {
+    height: 1px;
+    margin: 4px 0;
+    background: #ddd;
+}
+
+@media (max-width: 700px) {
+    .archive_manager {
+        width: 100vw;
+    }
+
+    .archive_years {
+        overflow-x: auto;
+    }
+
+    .archive_year,
+    .archive_all_years,
+    .archive_more_years > summary,
+    .archive_actions > summary {
+        padding-right: 8px;
+        padding-left: 8px;
+        white-space: nowrap;
+    }
+}

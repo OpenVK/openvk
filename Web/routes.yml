@@ -129,6 +129,8 @@ routes:
       handler: "Wall->rss"
     - url: "/wall{num}/makePost"
       handler: "Wall->makePost"
+    - url: "/wall{num}/archive/manage"
+      handler: "Wall->archiveBulk"
     - url: "/wall{num}_{num}"
       handler: "Wall->post"
     - url: "/wall{num}_{num}/like"

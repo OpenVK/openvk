@@ -244,26 +244,74 @@ class Posts
         }
     }
 
-    public function getArchivedPostsFromWall(int $user, int $page = 1, ?int $perPage = null, ?int $offset = null): \Traversable
+    private function applyYearFilter(\Nette\Database\Table\Selection $selection, ?int $year): \Nette\Database\Table\Selection
+    {
+        if (!is_null($year)) {
+            $selection->where("created >= ? AND created < ?", mktime(0, 0, 0, 1, 1, $year), mktime(0, 0, 0, 1, 1, $year + 1));
+        }
+
+        return $selection;
+    }
+
+    public function getPostYearsOnWall(int $user): array
+    {
+        $years = [];
+        $posts = (clone $this->posts)->select("created")->where([
+            "wall"      => $user,
+            "deleted"   => false,
+            "suggested" => 0,
+        ]);
+
+        foreach ($posts as $post) {
+            $years[(int) date("Y", $post->created)] = true;
+        }
+
+        $years = array_keys($years);
+        rsort($years, SORT_NUMERIC);
+
+        return $years;
+    }
+
+    public function getArchivedPostsFromWall(int $user, int $page = 1, ?int $perPage = null, ?int $offset = null, ?int $year = null): \Traversable
     {
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
         $offset ??= $perPage * ($page - 1);
 
-        $sel = $this->posts->where([
+        $sel = (clone $this->posts)->where([
             "wall"      => $user,
             "deleted"   => false,
             "suggested" => 0,
             "archived"  => true,
-        ])->order("created DESC")->limit($perPage, $offset);
+        ]);
+        $this->applyYearFilter($sel, $year)->order("created DESC")->limit($perPage, $offset);
 
         foreach ($sel as $post) {
             yield new Post($post);
         }
     }
 
-    public function getArchivedCountOnUserWall(int $user): int
+    public function getArchivedCountOnUserWall(int $user, ?int $year = null): int
     {
-        return sizeof($this->posts->where(["wall" => $user, "deleted" => 0, "archived" => 1, "suggested" => 0]));
+        $posts = (clone $this->posts)->where(["wall" => $user, "deleted" => 0, "archived" => 1, "suggested" => 0]);
+
+        return sizeof($this->applyYearFilter($posts, $year));
+    }
+
+    public function setArchivedOnWall(int $user, bool $archived, ?int $year = null): int
+    {
+        $posts = (clone $this->posts)->where([
+            "wall"      => $user,
+            "deleted"   => false,
+            "suggested" => 0,
+        ]);
+        $this->applyYearFilter($posts, $year);
+
+        $changes = ["archived" => $archived];
+        if ($archived) {
+            $changes["pinned"] = false;
+        }
+
+        return $posts->update($changes);
     }
 
     public function getSuggestedPosts(int $club, int $page = 1, ?int $perPage = null, ?int $offset = null): \Traversable

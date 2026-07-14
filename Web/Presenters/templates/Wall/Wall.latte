@@ -51,10 +51,71 @@
                 </div>
                 <img class="archive_banner_icon" src="/assets/packages/static/openvk/img/post_archive_ic.png" width="48" height="48" alt="">
             </div>
+
+            {var $currentArchiveYear = $archiveYear ?? ($archiveYears[0] ?? NULL)}
+            <div n:if="$type == 'archive' && sizeof($archiveYears) > 0"
+                 class="archive_manager"
+                 data-archive-manager
+                 data-all-years-mode="{is_null($archiveYear) ? '1' : '0'}">
+                <div class="archive_years">
+                    <a n:class="archive_all_years, is_filter_active => is_null($archiveYear)" href="/wall{$owner}?type=archive">{_archive_all_years}</a>
+                    <a n:foreach="$archiveYears as $yearIndex => $year"
+                       n:if="$yearIndex < 6"
+                       n:class="archive_year, is_current => $year === $currentArchiveYear"
+                       data-archive-year-link="{$year}"
+                       href="/wall{$owner}?type=archive&year={$year}">{$year}</a>
+
+                    <details n:if="sizeof($archiveYears) > 6" class="archive_more_years">
+                        <summary data-default-label="{_archive_more}" data-year-template="{tr('archive_more_year', '__YEAR__')}">{_archive_more}</summary>
+                        <div class="archive_more_years_menu">
+                            <a n:foreach="$archiveYears as $yearIndex => $year"
+                               n:if="$yearIndex >= 6"
+                               n:class="archive_year, is_current => $year === $currentArchiveYear"
+                               data-archive-year-link="{$year}"
+                               href="/wall{$owner}?type=archive&year={$year}">{$year}</a>
+                        </div>
+                    </details>
+                </div>
+
+                <details class="archive_actions">
+                    <summary>{_actions}</summary>
+                    <div class="archive_actions_menu">
+                        <form method="post" action="/wall{$owner}/archive/manage">
+                            <input type="hidden" name="hash" value="{$csrfToken}">
+                            <input type="hidden" name="action" value="archive_year">
+                            <input type="hidden" name="year" value="{$currentArchiveYear}" data-archive-year-input>
+                            <button type="submit"
+                                    data-archive-year-template="{tr('archive_all_posts_from_year', '__YEAR__')}"
+                                    data-confirm="{tr('archive_confirm_year', $currentArchiveYear)}"
+                                    data-confirm-template="{tr('archive_confirm_year', '__YEAR__')}"
+                                    onclick="return confirm(this.dataset.confirm)">{tr("archive_all_posts_from_year", $currentArchiveYear)}</button>
+                        </form>
+                        <form method="post" action="/wall{$owner}/archive/manage">
+                            <input type="hidden" name="hash" value="{$csrfToken}">
+                            <input type="hidden" name="action" value="restore_year">
+                            <input type="hidden" name="year" value="{$currentArchiveYear}" data-archive-year-input>
+                            <button type="submit"
+                                    data-archive-year-template="{tr('restore_all_posts_from_year', '__YEAR__')}"
+                                    data-confirm="{tr('restore_confirm_year', $currentArchiveYear)}"
+                                    data-confirm-template="{tr('restore_confirm_year', '__YEAR__')}"
+                                    onclick="return confirm(this.dataset.confirm)">{tr("restore_all_posts_from_year", $currentArchiveYear)}</button>
+                        </form>
+                        <div class="archive_actions_divider"></div>
+                        <form method="post" action="/wall{$owner}/archive/manage">
+                            <input type="hidden" name="hash" value="{$csrfToken}">
+                            <input type="hidden" name="action" value="archive_all">
+                            <button type="submit" data-confirm="{_archive_confirm_all}" onclick="return confirm(this.dataset.confirm)">{_archive_all_posts}</button>
+                        </form>
+                    </div>
+                </details>
+            </div>
             
             <div class="content scroll_container">
                 {if sizeof($posts) > 0}
-                    <div class='scroll_node' n:foreach='$posts as $post'>
+                    <div class="scroll_node archive_post_node"
+                         n:foreach="$posts as $post"
+                         data-uniqueid="{$post->getPrettyId()}"
+                         n:attr="data-archive-year => $type == 'archive' ? $post->getPublicationTime()->format('%Y') : NULL">
                         <a name="postGarter={$post->getId()}"></a>
                         
                         {include "../components/post.latte", post => $post, commentSection => true}
@@ -73,6 +134,98 @@
                 }
 
                 __scrollHook()
+            </script>
+
+            <script n:if="$type == 'archive' && sizeof($archiveYears) > 0">
+                (function() {
+                    const manager = document.querySelector('[data-archive-manager]')
+                    if (!manager) {
+                        return
+                    }
+
+                    const allYearsMode = manager.dataset.allYearsMode === '1'
+                    let scheduled = false
+
+                    function applyCurrentYear(year) {
+                        if (!year) {
+                            return
+                        }
+
+                        year = String(year)
+
+                        manager.dataset.currentYear = year
+                        manager.querySelectorAll('[data-archive-year-link]').forEach(link => {
+                            link.classList.toggle('is_current', link.dataset.archiveYearLink === year)
+                        })
+                        manager.querySelectorAll('[data-archive-year-input]').forEach(input => {
+                            input.value = year
+                        })
+                        manager.querySelectorAll('[data-archive-year-template]').forEach(button => {
+                            button.textContent = button.dataset.archiveYearTemplate.replace('__YEAR__', year)
+                            button.dataset.confirm = button.dataset.confirmTemplate.replace('__YEAR__', year)
+                        })
+
+                        const more = manager.querySelector('.archive_more_years')
+                        if (more) {
+                            const summary = more.querySelector('summary')
+                            const currentInMore = more.querySelector('[data-archive-year-link="' + year + '"]')
+                            summary.textContent = currentInMore
+                                ? summary.dataset.yearTemplate.replace('__YEAR__', year)
+                                : summary.dataset.defaultLabel
+                        }
+                    }
+
+                    function updateYearFromScroll() {
+                        scheduled = false
+                        if (!allYearsMode) {
+                            return
+                        }
+
+                        const posts = Array.from(document.querySelectorAll('.archive_post_node[data-archive-year]'))
+                        if (posts.length === 0) {
+                            return
+                        }
+
+                        const referenceLine = manager.getBoundingClientRect().bottom + 96
+                        let currentPost = posts[0]
+                        for (const post of posts) {
+                            if (post.getBoundingClientRect().top <= referenceLine) {
+                                currentPost = post
+                            } else {
+                                break
+                            }
+                        }
+
+                        const reachedBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 4
+                        if (reachedBottom) {
+                            currentPost = posts[posts.length - 1]
+                        }
+
+                        applyCurrentYear(currentPost.dataset.archiveYear)
+                    }
+
+                    function scheduleYearUpdate() {
+                        if (scheduled) {
+                            return
+                        }
+
+                        scheduled = true
+                        requestAnimationFrame(updateYearFromScroll)
+                    }
+
+                    const previousScrollHook = window.__scrollHook
+                    window.__scrollHook = function(page) {
+                        if (typeof previousScrollHook === 'function') {
+                            previousScrollHook(page)
+                        }
+                        scheduleYearUpdate()
+                    }
+
+                    window.addEventListener('scroll', scheduleYearUpdate, { passive: true })
+                    window.addEventListener('archive:changed', scheduleYearUpdate)
+                    applyCurrentYear({$currentArchiveYear})
+                    scheduleYearUpdate()
+                })()
             </script>
         </div>
     </div>

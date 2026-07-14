@@ -84,6 +84,8 @@ final class WallPresenter extends OpenVKPresenter
 
         $iterator = null;
         $count = 0;
+        $archiveYears = [];
+        $archiveYear = null;
         $type = $this->queryParam("type") ?? "all";
         $page = (int) ($_GET["p"] ?? 1);
         if ($page <= 0) {
@@ -113,8 +115,13 @@ final class WallPresenter extends OpenVKPresenter
                 if (is_null($this->user->identity) || ($user > 0 && $this->user->id !== $user) || ($user < 0 && !$owner->canBeModifiedBy($this->user->identity))) {
                     $this->flashFail("err", tr("error"), tr("forbidden"));
                 }
-                $iterator = $this->posts->getArchivedPostsFromWall($user, $page);
-                $count = $this->posts->getArchivedCountOnUserWall($user);
+                $archiveYears = $this->posts->getPostYearsOnWall($user);
+                $requestedYear = (int) ($this->queryParam("year") ?? 0);
+                if (in_array($requestedYear, $archiveYears, true)) {
+                    $archiveYear = $requestedYear;
+                }
+                $iterator = $this->posts->getArchivedPostsFromWall($user, $page, null, null, $archiveYear);
+                $count = $this->posts->getArchivedCountOnUserWall($user, $archiveYear);
                 break;
         }
 
@@ -123,6 +130,8 @@ final class WallPresenter extends OpenVKPresenter
         $this->template->count   = $count;
         $this->template->type    = $type;
         $this->template->posts   = iterator_to_array($iterator);
+        $this->template->archiveYears = $archiveYears;
+        $this->template->archiveYear = $archiveYear;
         $this->template->paginatorConf = (object) [
             "count"   => $this->template->count,
             "page"    => (int) ($_GET["p"] ?? 1),
@@ -700,6 +709,56 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         $this->redirect($wall < 0 ? "/club" . ($wall * -1) : "/id" . $wall);
+    }
+
+    public function renderArchiveBulk(int $wall): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+            header("HTTP/1.1 405 Method Not Allowed");
+            exit;
+        }
+
+        $this->assertNoCSRF();
+
+        $wallOwner = ($wall > 0 ? (new Users())->get($wall) : (new Clubs())->get(abs($wall)));
+        if (!$wallOwner || $wallOwner->isBanned()) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
+        $canManageArchive = $wall > 0
+            ? $this->user->id === $wall
+            : $wallOwner->canBeModifiedBy($this->user->identity);
+        if (!$canManageArchive) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
+        $action = $this->postParam("action") ?? "";
+        $year = (int) ($this->postParam("year") ?? 0);
+        $availableYears = $this->posts->getPostYearsOnWall($wall);
+
+        switch ($action) {
+            case "archive_year":
+            case "restore_year":
+                if (!in_array($year, $availableYears, true)) {
+                    $this->flashFail("err", tr("error"), tr("archive_invalid_action"));
+                }
+
+                $this->posts->setArchivedOnWall($wall, $action === "archive_year", $year);
+                $redirect = "/wall" . $wall . "?type=archive&year=" . $year;
+                break;
+            case "archive_all":
+                $this->posts->setArchivedOnWall($wall, true);
+                $redirect = "/wall" . $wall . "?type=archive";
+                break;
+            default:
+                $this->flashFail("err", tr("error"), tr("archive_invalid_action"));
+        }
+
+        $this->flash("succ", tr("information_-1"), tr("changes_saved_comment"));
+        $this->redirect($redirect);
     }
 
     public function renderPin(int $wall, int $post_id): void

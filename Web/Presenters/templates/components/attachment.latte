@@ -55,11 +55,27 @@
         </div>
     </div>
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Post}
-    {var $nestedLevel = ($nestedLevel ?? 0) + 1}
-    {if $nestedLevel > 2}
-        <a href="/wall{$attachment->getPrettyId()}">{_open_post}</a>
+    {if $attachment->isArchived()}
+        {var $archivedPostAuthor = $attachment->getOwner()}
+        <div class="archived_repost_placeholder">
+            <div class="archived_repost_author">
+                <a href="{$archivedPostAuthor->getURL()}">
+                    <img src="{$archivedPostAuthor->getAvatarURL('miniscule')}" width="30" height="30" loading="lazy" alt="">
+                </a>
+                <span>
+                    <a href="{$archivedPostAuthor->getURL()}"><b>{$archivedPostAuthor->getCanonicalName()}</b></a>
+                    <img n:if="$archivedPostAuthor->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png" alt="">
+                </span>
+            </div>
+            <div class="archived_repost_message">{_archived_repost_unavailable}</div>
+        </div>
     {else}
-        {include "post.latte", post => $attachment, compact => true, nestedLevel => $nestedLevel}
+        {var $nestedLevel = ($nestedLevel ?? 0) + 1}
+        {if $nestedLevel > 2}
+            <a href="/wall{$attachment->getPrettyId()}">{_open_post}</a>
+        {else}
+            {include "post.latte", post => $attachment, compact => true, nestedLevel => $nestedLevel}
+        {/if}
     {/if}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Audio}
     <div style="width:100%;" data-att_type='audio' data-att_id="{$attachment->getPrettyId()}">
