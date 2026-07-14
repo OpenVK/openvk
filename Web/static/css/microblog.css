@@ -167,12 +167,51 @@
     float: right;
     height: 16px;
     width: 16px;
-    overflow: auto;
-    background: url("/assets/packages/static/openvk/img/archive_icon.png") no-repeat 0 0;
-    opacity: 0.2;
+    overflow: hidden;
+    background: url("/assets/packages/static/openvk/img/post_archive_ic.png") no-repeat center;
+    background-size: 20px 20px;
+    image-rendering: pixelated;
+    opacity: 0.55;
     transition-duration: 0.3s;
 }
 
 .post-author .archive_post:hover {
-    opacity: 0.6;
+    opacity: 0.9;
+}
+
+.archive_banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    min-height: 90px;
+    gap: 20px;
+    padding: 20px;
+}
+
+.archive_banner_text {
+    color: #111;
+    line-height: 14px;
+}
+
+.archive_banner_title,
+.archive_banner_description {
+    display: block;
+}
+
+.archive_banner_title {
+    margin-bottom: 5px;
+    font-size: 13px;
+    line-height: 16px;
+}
+
+.archive_banner_description {
+    color: #111;
+}
+
+.archive_banner_icon {
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+    image-rendering: pixelated;
 }

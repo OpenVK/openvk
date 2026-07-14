@@ -209,6 +209,7 @@ final class WallPresenter extends OpenVKPresenter
                    ->where("wall IN (?)", $ids)
                    ->where("deleted", 0)
                    ->where("suggested", 0)
+                   ->where("archived", 0)
                    ->order("created DESC");
 
         if ($withAlienWallPosts === 0) {
@@ -238,7 +239,7 @@ final class WallPresenter extends OpenVKPresenter
         $withAlienWallPosts = (int) ($_GET["with_alien_wall_posts"] ?? 0);
 
         $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) LEFT JOIN `profiles` ON LEAST(`posts`.`wall`, 0) = 0 AND `profiles`.`id` = ABS(`posts`.`wall`)";
-        $queryBase .= " WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND ((`profiles`.`profile_type` = 0 AND `profiles`.`hide_global_feed` = 0) OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
+        $queryBase .= " WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND ((`profiles`.`profile_type` = 0 AND `profiles`.`hide_global_feed` = 0) OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0 AND `posts`.`archived` = 0";
 
         if ($withAlienWallPosts === 0) {
             $queryBase .= " AND ((`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`))";
@@ -491,17 +492,8 @@ final class WallPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
-        if ($post->isArchived()) {
-            if (is_null($this->user->identity) || ($wall > 0 && $this->user->id !== $wall)) {
-                if ($wall < 0) {
-                    $wallOwner = (new Clubs())->get(abs($wall));
-                    if (!$wallOwner || !$wallOwner->canBeModifiedBy($this->user->identity)) {
-                        $this->flashFail("err", tr("error"), tr("forbidden"));
-                    }
-                } else {
-                    $this->flashFail("err", tr("error"), tr("forbidden"));
-                }
-            }
+        if ($post->isArchived() && !$post->canBeArchivedBy($this->user->identity)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
         $this->logPostView($post, $wall);
@@ -670,12 +662,12 @@ final class WallPresenter extends OpenVKPresenter
     {
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
+        $this->assertNoCSRF();
 
-        $post = $this->posts->getPostById($wall, $post_id, true);
-        if (!$post) {
+        $post = $this->posts->getPostById($wall, $post_id);
+        if (!$post || $post->isDeleted()) {
             $this->notFound();
         }
-        $user = $this->user->id;
 
         $wallOwner = ($wall > 0 ? (new Users())->get($wall) : (new Clubs())->get($wall * -1));
 
@@ -687,16 +679,16 @@ final class WallPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
-        if ($wall < 0) {
-            $canBeDeletedByOtherUser = $wallOwner->canBeModifiedBy($this->user->identity);
-        } else {
-            $canBeDeletedByOtherUser = false;
+        if (!$post->canBeArchivedBy($this->user->identity)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
-        if ($post->getOwnerPost() == $user || $post->getTargetWall() == $user || $canBeDeletedByOtherUser) {
-            $post->setArchived(!$post->isArchived());
-        } else {
-            $this->flashFail("err", tr("error"), tr("forbidden"));
+        $wasArchived = $post->isArchived();
+        $post->setArchived(!$wasArchived);
+        $post->save();
+
+        if ($wasArchived) {
+            $this->redirect("/wall" . $wall . "?type=archive");
         }
 
         $this->redirect($wall < 0 ? "/club" . ($wall * -1) : "/id" . $wall);

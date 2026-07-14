@@ -44,12 +44,12 @@
                 </form>
             </div>
             
-            <div n:if="$type == 'archive'" class="content_subtitle" style="display: flex; align-items: center; justify-content: space-between; padding: 10px;">
-                <div>
-                    <b>{_archive_banner_title}</b><br>
-                    <span class="nobold">{_archive_banner_desc}</span>
+            <div n:if="$type == 'archive'" class="content_subtitle archive_banner">
+                <div class="archive_banner_text">
+                    <b class="archive_banner_title">{_archive_banner_title}</b>
+                    <span class="nobold archive_banner_description">{_archive_banner_desc}</span>
                 </div>
-                <img src="/assets/packages/static/openvk/img/archive_banner.png" style="width: 50px; height: 50px;">
+                <img class="archive_banner_icon" src="/assets/packages/static/openvk/img/post_archive_ic.png" width="48" height="48" alt="">
             </div>
             
             <div class="content scroll_container">

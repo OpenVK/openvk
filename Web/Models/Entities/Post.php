@@ -170,9 +170,13 @@ class Post extends Postable
         return (bool) $this->getRecord()->archived;
     }
 
-    public function setArchived(bool $archived)
+    public function setArchived(bool $archived): void
     {
         $this->stateChanges("archived", $archived ? 1 : 0);
+
+        if ($archived && $this->isPinned()) {
+            $this->stateChanges("pinned", false);
+        }
     }
 
     public function getOwnerPost(): int
@@ -302,6 +306,19 @@ class Post extends Postable
 
         if ($this->getTargetWall() < 0) {
             return (new Clubs())->get(abs($this->getTargetWall()))->canBeModifiedBy($user);
+        }
+
+        return $this->getTargetWall() === $user->getId();
+    }
+
+    public function canBeArchivedBy(User $user = null): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        if ($this->getTargetWall() < 0) {
+            return $this->getWallOwner()->canBeModifiedBy($user);
         }
 
         return $this->getTargetWall() === $user->getId();
