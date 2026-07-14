@@ -47,7 +47,7 @@ export const MessageBubble = ({ msg, index, chunk }) => {
         </div>
         <div class="_content">
           <a class="_sender" onClick=${(e) => { window.im?.messenger?.view?.onAuthorNameClick(msg, e) }}>
-            <strong>${msg.sender.full_name}</strong>
+            <strong>${msg.sender.name}</strong>
           </a>
           <p dangerouslySetInnerHTML=${{ __html: msg.text }} class="text" />
           ${msg.attachments.length > 0 && html`
@@ -316,7 +316,7 @@ export const ConversationItem = ({ conv }) => {
         <img src=${conv.peer.avatar_any} loading="lazy" />
       </div>
       <div class="crp-entry--info">
-        <a href=${conv.peer.chat_url}>${ovk_proc_strtr(conv.peer.full_name, 30)}</a><br/>
+        <a>${ovk_proc_strtr(conv.peer.full_name, 30)}</a><br/>
         ${last_msg && html`<span>${last_msg.conv_date}</span>`}
       </div>
       <div class="crp-entry--message">
@@ -353,6 +353,7 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
 };
 
 export const TabBar = ({ tabs, activeTab, onTabSelect }) => {
+  console.log(activeTab)
   return html`
     <div id="tabs-wr" class="messenger-app--global-tabs tabs">
       <div class="inner-tabs">
@@ -365,7 +366,7 @@ export const TabBar = ({ tabs, activeTab, onTabSelect }) => {
           </a>
         `)}
       </div>
-      <div class="${activeTab != 'friends'}" id="spec-actions">
+      <div class="${activeTab == 'friends' ? 'hidden' : '' }" id="spec-actions">
         <a onclick=${() => { window.im.selectTab("friends")} }>${tr('to_friendslist')}</a>
       </div>
     </div>
@@ -378,14 +379,49 @@ export const SearchPage = () => {
   `;
 };
 
-export const FriendsPage = () => {
+export const FriendsPage = ({ friends, count, onLoadMore }) => {
   return html`
-  	${tr('friends_list')}
+    <div class="messenger-page">
+      <div class="friends-list">
+        ${friends.map((f) => html`
+          <div class="friends-list-item" onClick=${() => window.im?.selectChat(window.im.messenger.view.getChatWith({ id: f.id }))}>
+            <img src="${f.photo_100 || f.photo_50 || ''}" class="friends-list-ava" />
+            <span class="friends-list-name">${window.escapeHtml(f.first_name + ' ' + f.last_name)}</span>
+          </div>
+        `)}
+      </div>
+      ${friends.length < count ? html`
+        <div class="friends-load-more" onClick=${onLoadMore}>
+          ${tr('show_next')}
+        </div>
+      ` : ''}
+    </div>
   `;
 };
 
-export const ContactPage = () => {
+export const ContactPage = ({ peer }) => {
+  if (!peer) return html`<div class="messenger-page-stub"><p>${tr('no_user_selected')}</p></div>`;
+
+  const user = peer.data;
+  const isOnline = user.online == 1;
+  const lastSeen = user.last_seen ? new Date(user.last_seen.time * 1000).toLocaleString() : '';
+  const avatar = user.photo_200 || user.photo_100 || user.photo_50 || '';
+  const name = window.escapeHtml(user.first_name + ' ' + user.last_name);
+
   return html`
-  	${tr('contact_info')}
+    <div class="messenger-page-stub">
+      <div class="contact-info">
+        <img src="${avatar}" class="contact-info-ava" />
+        <div class="contact-info-name">${name}</div>
+        <div class="contact-info-online ${isOnline ? 'online' : 'offline'}">
+          ${isOnline ? tr('online') : (lastSeen ? tr('last_seen') + ' ' + lastSeen : tr('offline'))}
+        </div>
+        <div class="contact-info-actions">
+          <button class="button" onClick=${() => window.im?.selectChat(window.im.messenger.view.getChatWith({ id: user.id }))}>
+            ${tr('write_message')}
+          </button>
+        </div>
+      </div>
+    </div>
   `;
 };

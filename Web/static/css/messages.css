@@ -34,6 +34,7 @@ body.no-scroll .messenger-app--global-tabs {
     padding-top: 8px;
     background: white;
     z-index: 4;
+    width: 606px !important;
 }
 
 body.no-scroll .messages--peers-tabs {
@@ -45,7 +46,7 @@ body.no-scroll .messages--peers-tabs {
     width: 627px;
     gap: 5px;
     background: #F6F6F6;
-    border-bottom: 1px solid #707070;
+    border-bottom: 1px solid var(--bg-slightly-border);
 }
 
 body.no-scroll .page_header {
@@ -56,6 +57,10 @@ body.no-scroll .page_header {
 body.no-scroll .sidebar {
     position: fixed;
     top: 44px;
+}
+
+.messenger-app--global-tabs #spec-actions.hidden {
+	display: none;
 }
 
 .messenger-app--tab-conversations {
@@ -78,7 +83,7 @@ body.no-scroll .sidebar {
     display: flex;
     justify-content: space-between;
     gap: 11px;
-    padding: 11px 11px;
+    padding: 11px 11px 11px 10px;
     margin: 0px 0px 0px 1px;
     box-sizing: border-box;
 }
@@ -97,7 +102,7 @@ body.no-scroll .sidebar {
 
 .crp-entry {
     display: flex;
-    padding: 8px;
+    padding: 8px 10px;
     cursor: pointer;
     margin-left: 1px;
     border-bottom: 1px solid #d6d6d6;
@@ -233,13 +238,13 @@ body.no-scroll .sidebar {
 }
 
 /* toggle */
-#chat-page .peer-window,
-#chat-page.peer-shown .chat-window {
+.messenger-app--tab-messenger .peer-window,
+.messenger-app--tab-messenger.peer-shown .chat-window {
     display: none;
 }
 
-#chat-page .chat-window,
-#chat-page.peer-shown .peer-window {
+.messenger-app--tab-messenger .chat-window,
+.messenger-app--tab-messenger.peer-shown .peer-window {
     display: inline-block;
     width: 100%;
 }
@@ -268,7 +273,7 @@ body.no-scroll .sidebar {
 
 .messages--actions .message-tab {
     display: inline-block;
-    padding: 5px 6px;
+    padding: 5px 10px;
     margin-right: 6px;
     font-weight: bold;
 }
@@ -501,6 +506,10 @@ body.no-scroll .sidebar {
     margin: 89px 0px -10px -10px;
 }
 
+.messenger-app--tab-messenger.peer-shown {
+    margin: 0px 0px -10px -10px;
+}
+
 .messenger-app--tab-messenger.messenger-app--overscrolled #messenger-app--down-button {
     display: block;
 }
@@ -603,7 +612,7 @@ body.no-scroll .sidebar {
     flex-direction: row;
     align-items: center;
     gap: 5px;
-    padding: 3px 5px 3px 5px;
+    padding: 5px 10px;
     color: var(--text);
     border-radius: 1px;
 }

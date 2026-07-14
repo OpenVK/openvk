@@ -78,7 +78,8 @@ export class MessengerViewModel {
 		this.selected_messages = [];
 		this.MAX_SELECTED_MESSAGES = 100;
 		this.appEl = null;
-		this.messagesListBlock = null;
+    this.messagesListBlock = null;
+    this.toggled_peer_obj = null;
 	}
 
 	_triggerUpdate() {
@@ -97,10 +98,11 @@ export class MessengerViewModel {
 		if (!root) return;
 
 		const currentConv = this.getCurrentChat();
-		const peer = currentConv ? currentConv.peer : null;
+    const peer = currentConv ? currentConv.peer : null;
+    const display_peer = this.toggled_peer_obj ? this.toggled_peer_obj : peer;
 
 		render(html`
-      <div id="chat-page" class="${this.is_showing_profile ? 'peer-shown' : ''}">
+      <div id="chat-page" class="${window.im.tab == "contact" ? 'peer-shown' : ''}">
         <div class="chat-window">
           <${PeerTabsView} hadTab=${this.had_more_one_tab} tabs=${this.opened_tabs} currentChat=${this.current_chat} />
           <${ActionsBar}
@@ -125,9 +127,14 @@ export class MessengerViewModel {
             />
           </div>
         </div>
-        ${this.is_showing_profile && html`
+        ${window.im.tab == "contact" && html`
           <div class="peer-window">
             <div><a onClick=${() => this.togglePeerInfo()}>${tr('back')}</a></div>
+            <div>
+              <img src=${display_peer.avatar_any} alt=${tr('avatar')} />
+              <a href=${display_peer.page_url}>${display_peer.full_name}</a>
+              <a onClick=${() => { window.im.setChatByPeerId(display_peer.id) }}>${tr('write_message')}</a>
+            </div>
           </div>
         `}
       </div>
@@ -204,18 +211,18 @@ export class MessengerViewModel {
 		}
 	}
 
-	togglePeerInfo(sender = null) {
-		if (!sender) {
-			this.is_showing_profile = !this.is_showing_profile;
-		} else {
-			// TODO
-		}
+  togglePeerInfo(sender = null) {
+    console.log('toggle peer info ', window.im.tab)
 
-		this._render();
-
-		if (typeof window.im !== 'undefined' && window.im.updateTabs) {
-			window.im.updateTabs();
-		}
+    if (window.im.tab == 'contact') {
+      window.im.selectTab('messenger');
+      this.toggled_peer_obj = null;
+    } else {
+      this.toggled_peer_obj = sender;
+     	if (typeof window.im !== 'undefined' && window.im.selectTab) {
+  			window.im.selectTab('contact');
+  		}
+    }
 	}
 
 	onScrollDownButtonClick() {

@@ -1359,10 +1359,23 @@
 "reply_to_message" = "Ответить";
 
 "message_deletion_one" = "Удаление сообщения";
+"message_deletion_few" = "Удаление $1 сообщений";
+"message_deletion_many" = "Удаление $1 сообщений";
+"message_deletion_other" = "Удаление $1 сообщений";
 "message_deletion" = "Удаление $1 сообщений";
 "message_deletion_confirm" = "Удалить эти сообщения? Это действие нельзя будет отменить.";
 
-"messages_unable_to_load_audio" = "Не удалось загрузить аудио с id $1.";
+"conversations_count_title_one" = "Мои Сообщения";
+"conversations_count_title_few" = "Мои Сообщения";
+"conversations_count_title_many" = "$1 переписок";
+"conversations_count_title_other" = "$1 переписок";
+
+"conversation_title_user" = "Переписка с $1";
+"conversation_title_club" = "Переписка с сообществом";
+"conversation_title_chat" = "Переписка в беседе";
+
+"contact_info" = "Контакт";
+"write_message" = "Написать сообщение";
 
 /* Stickers */
 
@@ -1375,6 +1388,10 @@
 "emoji_group_objects" = "Предметы";
 "emoji_group_symbols" = "Символы";
 "emoji_group_flags" = "Флаги";
+
+/* Messages (Other) */
+
+"messages_unable_to_load_audio" = "Не удалось загрузить аудио с id $1.";
 
 /* Polls */
 "poll" = "Опрос";
@@ -1899,6 +1916,7 @@
 "exit_noun" = "Выход";
 "exit_confirmation" = "Уверены, что хотите выйти?";
 "apply" = "Применить";
+"back" = "Назад";
 
 /* User alerts */
 
