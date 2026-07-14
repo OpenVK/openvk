@@ -33,7 +33,7 @@ services:
       retries: 20
       start_period: 60s
     ports:
-      - 8089:80
+      - 8088:80
 
   mariadb-primary:
     image: docker.io/mariadb:10.9
