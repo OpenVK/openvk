@@ -390,13 +390,14 @@ class Document extends Media
         $res = new \stdClass();
         $res->id = $this->getId();
         if ($this->isOwnerHidden() && $user !== null && $this->getOwnerID() == $user->getId()) {
-            $res->owner_id = $this->getOwnerID();
+            $res->true_owner_id = $this->getOwnerID();
         } elseif (!$this->isOwnerHidden()) {
-            $res->owner_id = $this->getOwnerID();
+            $res->true_owner_id = $this->getOwnerID();
         } else {
-            $res->owner_id = 0;
+            $res->true_owner_id = 0;
         }
         $res->title = $this->getName();
+        $res->owner_id = $this->getVirtualId(); # see getPrettyId at this class
         $res->size  = $this->getFilesize();
         $res->ext   = $this->getFileExtension();
         $res->url   = $this->getURL();

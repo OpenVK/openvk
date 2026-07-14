@@ -128,7 +128,7 @@ const photoViewerTemplate =
     <div class="ovk-photo-view">
         <div class="photo_com_title">
             <text id="photo_com_title_photos">
-                <img src="/assets/packages/static/openvk/img/loading_mini.gif">
+                <img src="${_loader_link}">
             </text>
             <div>
                 <a id="ovk-photo-close">${tr("close")}</a>
@@ -137,10 +137,10 @@ const photoViewerTemplate =
         <div class="photo_viewer_wrapper">
             <div class="ovk-photo-slide-left"></div>
             <div class="ovk-photo-slide-right"></div>
-            <img src="/assets/packages/static/openvk/img/loading_mini.gif" id="ovk-photo-img">
+            <img src="${_loader_link}" id="ovk-photo-img">
         </div>
         <div class="ovk-photo-details">
-            <img src="/assets/packages/static/openvk/img/loading_mini.gif">
+            <img src="${_loader_link}">
         </div>
     </div>
 </div>`;
@@ -191,6 +191,7 @@ class PhotoViewer {
 
     console.log(entry)
     this.currentId = photoId;
+    this.modal.getNode().find("#ovk-photo-img").last().src = _loader_link;
     this.modal.getNode().find("#ovk-photo-img").last().src = entry.url;
     this.modal.getNode().find("#photo_com_title_photos").last().innerHTML =
       this.count > 1
@@ -362,7 +363,6 @@ class PhotoViewer {
     this.contextId = context.id || null;
     this.offset = context.offset || 0;
     this.rev = context.reverse || false;
-    console.log(firstPhotoUrl, firstPhotoId, context)
 
     if (context.customContext) {
       if (Array.isArray(context.customContext)) {
