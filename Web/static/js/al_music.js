@@ -2490,7 +2490,6 @@ u(document).on('click', '.PE_end #playlist_create, .PE_end #playlist_edit', asyn
 })
 
 async function showAudioWindow(ids) {
-
 	const fd = new FormData();
 	fd.append('ajax', '1');
 	fd.append('hash', window.router.csrf);

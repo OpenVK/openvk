@@ -181,8 +181,8 @@ export const PeerTab = ({ conv, active }) => {
   `;
 };
 
-export const PeerTabsView = ({ tabs, currentChat }) => {
-  if (tabs.length < 2) { return html`` }
+export const PeerTabsView = ({ had_more_one_tab, tabs, currentChat }) => {
+  if (tabs.length < 2 && !window.im.messenger.view.had_more_one_tab) { return html`` }
 
   return html`
     <div class="messages--peers-tabs">
@@ -349,5 +349,43 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
         </div>
       `}
     </div>
+  `;
+};
+
+export const TabBar = ({ tabs, activeTab, onTabSelect }) => {
+  return html`
+    <div id="tabs-wr" class="messenger-app--global-tabs tabs">
+      <div class="inner-tabs">
+        ${tabs.map((tab) => html`
+          <a data-tab="${tab.id}"
+             id="${tab.id === activeTab ? 'activetabs' : ''}"
+             class="tab"
+             onClick=${() => onTabSelect(tab.id)}>
+            ${tab.label}
+          </a>
+        `)}
+      </div>
+      <div class="${activeTab != 'friends'}" id="spec-actions">
+        <a onclick=${() => { window.im.selectTab("friends")} }>${tr('to_friendslist')}</a>
+      </div>
+    </div>
+  `;
+};
+
+export const SearchPage = () => {
+  return html`
+  	${tr('search_messages')}
+  `;
+};
+
+export const FriendsPage = () => {
+  return html`
+  	${tr('friends_list')}
+  `;
+};
+
+export const ContactPage = () => {
+  return html`
+  	${tr('contact_info')}
   `;
 };
