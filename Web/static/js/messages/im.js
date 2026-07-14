@@ -251,12 +251,18 @@ export class IM {
   }
 
   selectTab(tab_name) {
+
     if (this.tabs.indexOf(tab_name) == -1) {
       throw new Error('invalid tab');
     }
 
   	if (tab_name != "messenger") {
-        this._toggleScrollMode(false);
+      this._toggleScrollMode(false);
+      const current_chat = this.messenger.view.getCurrentChat();
+
+      if (current_chat != null) {
+        this.messenger.view._saveDraft(current_chat);
+      }
   	} else {
         this._toggleScrollMode(true);
   	}

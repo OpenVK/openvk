@@ -18,8 +18,8 @@ export class Messenger {
   appear(container = null) {
     container.classList.remove('hidden');
     if (this.hasAppeared(container)) {
-      this.view._loadDraft(this.view.getCurrentChat());
       this.view._render(container);
+      this.view._loadDraft(this.view.getCurrentChat());
       return;
     }
 
@@ -187,15 +187,7 @@ export class MessengerViewModel {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (this.selected_messages_count > 0) {
-			return;
-		}
-
-		if (window.im.corresponder.supposed_type == "chat") {
-			window.im.messenger.view.togglePeerInfo(msg.sender);
-		} else {
-			window.im.messenger.view.togglePeerInfo();
-		}
+		window.im.messenger.view.togglePeerInfo(msg.sender);
 	}
 
 	removeReply() {
@@ -416,7 +408,9 @@ export class MessengerViewModel {
 			this._scrollTo(_scroll);
 		} else {
 			this._scrollToEnd();
-		}
+    }
+
+    console.log("Loaded draft for ", for_chat, ", scroll: ", _scroll)
 	}
 
 	_scrollTo(scroll_progress) {

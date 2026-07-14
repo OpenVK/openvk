@@ -672,3 +672,84 @@ body.no-scroll .sidebar {
     font-size: 13px;
     color: var(--text-2ary);
 }
+
+.friends-list {
+    width: 100%;
+}
+
+.friends-list-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--bg-hover);
+    transition: background 0.1s;
+}
+
+.friends-list-item:hover {
+    background: var(--bg-hover);
+}
+
+.friends-list-ava {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.friends-list-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.friends-load-more {
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    color: var(--link);
+    font-size: 13px;
+}
+
+.friends-load-more:hover {
+    text-decoration: underline;
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 20px;
+    gap: 12px;
+}
+
+.contact-info-ava {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.contact-info-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.contact-info-online {
+    font-size: 13px;
+}
+
+.contact-info-online.online {
+    color: #4bb34b;
+}
+
+.contact-info-online.offline {
+    color: #999;
+}
+
+.contact-info-actions {
+    margin-top: 8px;
+}
