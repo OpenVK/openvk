@@ -2,6 +2,8 @@
     console.error('!!! You forgot to install NPM packages !!!')
 }
 
+const _loader_link = `/assets/packages/static/openvk/img/loading_mini.gif`;
+
 function expand_comment_textarea(id) {
     var el = document.getElementById('commentTextArea'+id);
     var wi = document.getElementById('wall-post-input'+id);

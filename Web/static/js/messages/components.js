@@ -97,11 +97,9 @@ const Attachment = ({ msg, att }) => {
   switch (att.type) {
     case 'photo':
       return html`
-        <div class="msg-attach-j msg-attach-j-photo" onclick=${(e) => {window.im.messenger.view.showPhoto(e, msg, att)}}>
-          <a href=${att.photo.link}>
+          <a onclick=${(e) => {window.im.messenger.view.showPhoto(e, msg, att)}} class="msg-attach-j msg-attach-j-photo" href=${att.photo.link}>
             <img src=${att.photo.photo_130} alt="..." />
-          </a>
-        </div>`;
+          </a>`;
     case 'video':
       return html`
         <div class="msg-attach-j msg-attach-j-video">
@@ -111,7 +109,7 @@ const Attachment = ({ msg, att }) => {
             ${att.video.length ? `<span class="length">${fmtTime(att.video.length)}</span>` : ""}
           </a>
         </div>`;
-    case 'doc':
+	case 'doc':
       const ids = att.doc.owner_id + '_' + att.doc.id;
       return html`
         <div class="msg-attach-w msg-attach-w-doc">

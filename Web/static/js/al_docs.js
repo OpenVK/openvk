@@ -286,7 +286,13 @@ u(document).on("click", ".docOpener, .docListViewItem a.viewerOpener, a.docGalle
     const parser  = new DOMParser
     const body    = parser.parseFromString(body_html, "text/html")
 
-    const preview = body.querySelector('.photo-page-wrapper-photo')
+	const preview = body.querySelector('.photo-page-wrapper-photo')
+
+	if (preview == null) {
+    	CMessageBox.toggleLoader()
+		return;
+	}
+
     const details = body.querySelector('.ovk-photo-details')
 
     u(preview.querySelector('.main_doc_block')).attr('id', 'ovk-photo-img')

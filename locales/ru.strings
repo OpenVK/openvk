@@ -1362,6 +1362,10 @@
 "message_deletion" = "Удаление $1 сообщений";
 "message_deletion_confirm" = "Удалить эти сообщения? Это действие нельзя будет отменить.";
 
+"messages_unable_to_load_audio" = "Не удалось загрузить аудио с id $1.";
+
+/* Stickers */
+
 "emoji_group_smileys_emotion" = "Смайлы";
 "emoji_group_people_body" = "Люди";
 "emoji_group_animals_nature" = "Природа";
@@ -1370,7 +1374,7 @@
 "emoji_group_activities" = "Развлечения";
 "emoji_group_objects" = "Предметы";
 "emoji_group_symbols" = "Символы";
-"emoji_group_flags" = "Флаги государств и движений";
+"emoji_group_flags" = "Флаги";
 
 /* Polls */
 "poll" = "Опрос";
