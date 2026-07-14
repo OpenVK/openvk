@@ -229,6 +229,8 @@
     background: #f7f7f7;
     border-bottom: 1px solid #ccc;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    margin: 0 -10px;
+    width: 627px;
 }
 
 .archive_years {
@@ -372,4 +374,45 @@
         padding-left: 8px;
         white-space: nowrap;
     }
+}
+
+.profile_openmenu {
+  width:200px;
+  position:absolute;
+  background:#fff;
+  margin-left:-2px;
+  box-shadow:0px 1px 1px 1px #e1e1e1;
+  -moz-box-shadow:0px 1px 1px 1px #e1e1e1;
+  -webkit-box-shadow:0px 1px 1px 1px #e1e1e1;
+  border:1px solid #aebdcc;
+  color:#21578b;
+  margin-top:-21px;
+  z-index:1;
+  user-select:none !important
+}
+.profile_openmenu * {
+  user-select:none !important
+}
+
+.sett_selected {
+  padding:3px 5px;
+  background:#eef2f6;
+  cursor:pointer
+}
+.sett_hover {
+  padding:3px 5px;
+  cursor:pointer
+}
+.sett_hover:hover {
+  padding:2px 5px;
+  background:#6d8fb3;
+  color:#fff;
+  border-top:1px solid #476d96;
+  border-bottom:1px solid #476d96
+}
+.sett_hover span {
+  color:#21578b
+}
+.sett_hover:hover span {
+  color:#fff !important
 }

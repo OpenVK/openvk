@@ -57,18 +57,28 @@
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Post}
     {if $attachment->isArchived()}
         {var $archivedPostAuthor = $attachment->getOwner()}
-        <div class="archived_repost_placeholder">
-            <div class="archived_repost_author">
-                <a href="{$archivedPostAuthor->getURL()}">
-                    <img src="{$archivedPostAuthor->getAvatarURL('miniscule')}" width="30" height="30" loading="lazy" alt="">
-                </a>
-                <span>
-                    <a href="{$archivedPostAuthor->getURL()}"><b>{$archivedPostAuthor->getCanonicalName()}</b></a>
-                    <img n:if="$archivedPostAuthor->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png" alt="">
-                </span>
-            </div>
-            <div class="archived_repost_message">{_archived_repost_unavailable}</div>
-        </div>
+        <table border="0" style="font-size: 11px; margin-top: 5px; width: 100%" class="post archived_repost_placeholder">
+            <tbody>
+                <tr>
+                    <td class="post-author-ava" width="54" valign="top">
+                        <a class="post-author-url" href="{$archivedPostAuthor->getURL()}">
+                            <img src="{$archivedPostAuthor->getAvatarURL('miniscule')}" width="25" class="post-avatar cCompactAvatars" />
+                        </a>
+                    </td>
+                    <td width="100%" valign="top">
+                        <div class="post-author">
+                            <a href="{$archivedPostAuthor->getURL()}"><b class="post-author-name">{$archivedPostAuthor->getCanonicalName()}</b></a>
+                            <img n:if="$archivedPostAuthor->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">
+                            <br>
+                            <a href="javascript:void(0)" class="date" style="color: grey; cursor: default;">{_archived_repost_unavailable}</a>
+                        </div>
+                        <div class="post-content">
+                            <div class="archived_repost_message" style="margin-top: 5px;">{_archived_repost_unavailable}</div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     {else}
         {var $nestedLevel = ($nestedLevel ?? 0) + 1}
         {if $nestedLevel > 2}
