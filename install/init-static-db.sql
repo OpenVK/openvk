@@ -190,7 +190,8 @@ CREATE TABLE `posts` (
   `flags` tinyint(3) UNSIGNED DEFAULT NULL,
   `nsfw` tinyint(1) NOT NULL DEFAULT 0,
   `ad` tinyint(1) NOT NULL DEFAULT 0,
-  `deleted` tinyint(1) DEFAULT 0
+  `deleted` tinyint(1) DEFAULT 0,
+  `archived` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 CREATE TABLE `profiles` (

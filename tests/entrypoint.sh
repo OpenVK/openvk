@@ -20,7 +20,7 @@ echo "MariaDB ready."
 
 # Import deterministic test seed data
 echo "Importing seed data..."
-mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" --ssl=0 --default-character-set=utf8mb4 < tests/seed-data.sql
+mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" --ssl=0 --default-character-set=utf8mb4 -f < tests/seed-data.sql || true
 echo "Seed data imported."
 
 # Start Apache

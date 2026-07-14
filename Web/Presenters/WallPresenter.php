@@ -109,6 +109,13 @@ final class WallPresenter extends OpenVKPresenter
                 $iterator = $foundPosts->page($page);
                 $count = $foundPosts->size();
                 break;
+            case "archive":
+                if (is_null($this->user->identity) || ($user > 0 && $this->user->id !== $user) || ($user < 0 && !$owner->canBeModifiedBy($this->user->identity))) {
+                    $this->flashFail("err", tr("error"), tr("forbidden"));
+                }
+                $iterator = $this->posts->getArchivedPostsFromWall($user, $page);
+                $count = $this->posts->getArchivedCountOnUserWall($user);
+                break;
         }
 
         $this->template->owner   = $user;
@@ -484,6 +491,19 @@ final class WallPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
+        if ($post->isArchived()) {
+            if (is_null($this->user->identity) || ($wall > 0 && $this->user->id !== $wall)) {
+                if ($wall < 0) {
+                    $wallOwner = (new Clubs())->get(abs($wall));
+                    if (!$wallOwner || !$wallOwner->canBeModifiedBy($this->user->identity)) {
+                        $this->flashFail("err", tr("error"), tr("forbidden"));
+                    }
+                } else {
+                    $this->flashFail("err", tr("error"), tr("forbidden"));
+                }
+            }
+        }
+
         $this->logPostView($post, $wall);
 
         $this->template->post     = $post;
@@ -641,6 +661,42 @@ final class WallPresenter extends OpenVKPresenter
             }
         } else {
             $this->flashFail("err", tr("failed_to_delete_post"), tr("login_required_error_comment"));
+        }
+
+        $this->redirect($wall < 0 ? "/club" . ($wall * -1) : "/id" . $wall);
+    }
+
+    public function renderArchive(int $wall, int $post_id): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        $post = $this->posts->getPostById($wall, $post_id, true);
+        if (!$post) {
+            $this->notFound();
+        }
+        $user = $this->user->id;
+
+        $wallOwner = ($wall > 0 ? (new Users())->get($wall) : (new Clubs())->get($wall * -1));
+
+        if ($wallOwner === null) {
+            $this->flashFail("err", tr("error"), tr("error_4"));
+        }
+
+        if ($wallOwner->isBanned()) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
+        if ($wall < 0) {
+            $canBeDeletedByOtherUser = $wallOwner->canBeModifiedBy($this->user->identity);
+        } else {
+            $canBeDeletedByOtherUser = false;
+        }
+
+        if ($post->getOwnerPost() == $user || $post->getTargetWall() == $user || $canBeDeletedByOtherUser) {
+            $post->setArchived(!$post->isArchived());
+        } else {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
         $this->redirect($wall < 0 ? "/club" . ($wall * -1) : "/id" . $wall);

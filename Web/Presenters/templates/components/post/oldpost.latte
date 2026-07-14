@@ -138,6 +138,8 @@
                     {/if}
 
                     {if !($forceNoDeleteLink ?? false) && $canBeDeleted}
+                        <span class="oldPostArchive" n:if="!$post->isArchived()"><a href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}">{_archive_action}</a> &nbsp;|&nbsp;</span>
+                        <span class="oldPostArchive" n:if="$post->isArchived()"><a href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}">{_unarchive_action}</a> &nbsp;|&nbsp;</span>
                         <span class="oldPostDelete"><a href="/wall{$post->getPrettyId()}/delete">{_delete}</a> &nbsp;|&nbsp;</span>
                     {/if} 
 

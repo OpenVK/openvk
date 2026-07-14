@@ -28,6 +28,9 @@
                 <div n:attr="id => ($type != 'search' ? 'ki' : 'activetabs')" class="tab">
                     <a n:attr="id => ($type != 'search' ? 'ki' : 'act_tab_a')" href="/wall{$owner}?type=search">{_header_search}</a>
                 </div>
+                <div n:if="(isset($thisUser) && $owner > 0 && $thisUser->getId() === $oObj->getId()) || (isset($thisUser) && $owner < 0 && $club->canBeModifiedBy($thisUser))" n:attr="id => ($type != 'archive' ? 'ki' : 'activetabs')" class="tab">
+                    <a n:attr="id => ($type != 'archive' ? 'ki' : 'act_tab_a')" href="/wall{$owner}?type=archive">{_archived_posts}</a>
+                </div>
                 <a href="/wall{$owner}/rss" class="side_link">{_read_in_rss}</a>
             </div>
 
@@ -39,6 +42,14 @@
                     <input type="text" name="q" autocomplete="off" value="{$_GET['q']}" />
                     <input type="submit" value="{_header_search}" class="button" />
                 </form>
+            </div>
+            
+            <div n:if="$type == 'archive'" class="content_subtitle" style="display: flex; align-items: center; justify-content: space-between; padding: 10px;">
+                <div>
+                    <b>{_archive_banner_title}</b><br>
+                    <span class="nobold">{_archive_banner_desc}</span>
+                </div>
+                <img src="/assets/packages/static/openvk/img/archive_banner.png" style="width: 50px; height: 50px;">
             </div>
             
             <div class="content scroll_container">
