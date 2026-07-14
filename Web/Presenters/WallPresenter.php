@@ -687,6 +687,14 @@ final class WallPresenter extends OpenVKPresenter
         $post->setArchived(!$wasArchived);
         $post->save();
 
+        if ($this->queryParam("ajax")) {
+            $this->returnJson([
+                "success" => true,
+                "archived" => !$wasArchived
+            ]);
+            return;
+        }
+
         if ($wasArchived) {
             $this->redirect("/wall" . $wall . "?type=archive");
         }

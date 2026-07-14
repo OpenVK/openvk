@@ -168,15 +168,13 @@
     height: 16px;
     width: 16px;
     overflow: hidden;
-    background: url("/assets/packages/static/openvk/img/post_archive_ic.png") no-repeat center;
-    background-size: 20px 20px;
-    image-rendering: pixelated;
-    opacity: 0.55;
+    background: url("/assets/packages/static/openvk/img/archive.gif") no-repeat 0 0;
+    opacity: 0.1;
     transition-duration: 0.3s;
 }
 
 .post-author .archive_post:hover {
-    opacity: 0.9;
+    opacity: 0.4;
 }
 
 .archive_banner {
@@ -187,6 +185,10 @@
     min-height: 90px;
     gap: 20px;
     padding: 20px;
+    margin: 0 -10px;
+    width: 627px;
+    border-top: none;
+    border-bottom: 1px solid #dae1e8;
 }
 
 .archive_banner_text {

@@ -25,11 +25,11 @@
                 <div n:attr="id => ($type != 'others' ? 'ki' : 'activetabs')" class="tab">
                     <a n:attr="id => ($type != 'others' ? 'ki' : 'act_tab_a')" href="/wall{$owner}?type=others">{_others_posts}</a>
                 </div>
-                <div n:attr="id => ($type != 'search' ? 'ki' : 'activetabs')" class="tab">
-                    <a n:attr="id => ($type != 'search' ? 'ki' : 'act_tab_a')" href="/wall{$owner}?type=search">{_header_search}</a>
-                </div>
                 <div n:if="(isset($thisUser) && $owner > 0 && $thisUser->getId() === $oObj->getId()) || (isset($thisUser) && $owner < 0 && $club->canBeModifiedBy($thisUser))" n:attr="id => ($type != 'archive' ? 'ki' : 'activetabs')" class="tab">
                     <a n:attr="id => ($type != 'archive' ? 'ki' : 'act_tab_a')" href="/wall{$owner}?type=archive">{_archived_posts}</a>
+                </div>
+                <div n:attr="id => ($type != 'search' ? 'ki' : 'activetabs')" class="tab">
+                    <a n:attr="id => ($type != 'search' ? 'ki' : 'act_tab_a')" href="/wall{$owner}?type=search">{_header_search}</a>
                 </div>
                 <a href="/wall{$owner}/rss" class="side_link">{_read_in_rss}</a>
             </div>

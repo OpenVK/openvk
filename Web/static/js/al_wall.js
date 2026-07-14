@@ -3085,3 +3085,25 @@ if(Number(localStorage.getItem('ux.gif_autoplay') ?? 0) == 1) {
         })
     }
 }
+
+$(document).on("click", ".archive_post", function(e) {
+    e.preventDefault();
+    let url = $(this).attr("href");
+    let post = $(this).closest(".post, .post-horizontal");
+    
+    if (!url.includes("ajax=1")) {
+        url += (url.includes("?") ? "&" : "?") + "ajax=1";
+    }
+    
+    $.get(url, function(response) {
+        if (response.success) {
+            post.slideUp(200, function() {
+                $(this).remove();
+            });
+        } else {
+            if (response.flash && response.flash.message) {
+                fastError(response.flash.message);
+            }
+        }
+    });
+});
