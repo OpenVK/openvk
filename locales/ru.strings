@@ -1075,6 +1075,21 @@
 "time_today" = "сегодня";
 "time_yesterday" = "вчера";
 
+"day_template" = "$1 $2";
+"day_template_with_year" = "$1 $2 $3 г.";
+"month_gen_1" = "Января";
+"month_gen_2" = "Февраля";
+"month_gen_3" = "Марта";
+"month_gen_4" = "Апреля";
+"month_gen_5" = "Мая";
+"month_gen_6" = "Июня";
+"month_gen_7" = "Июля";
+"month_gen_8" = "Августа";
+"month_gen_9" = "Сентября";
+"month_gen_10" = "Октября";
+"month_gen_11" = "Ноября";
+"month_gen_12" = "Декабря";
+
 "news" = "Новости";
 "news_more" = "Подробнее »";
 "bday_reminder" = "Напоминание";

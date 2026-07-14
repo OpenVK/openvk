@@ -172,33 +172,49 @@ export class IM {
     this.messenger.view._render();
   }
 
-  async selectChat(conv) {
-    if (this.is_switching == true) {
-      return;
-    }
+	async selectChat(conv) {
+	    if (this.is_switching == true) {
+	      return;
+	    }
 
-    this.setSwitching(true);
+      if (!conv || !conv.peer) {
+        console.error("Cannot load conversation ", conv);
+        return;
+      }
 
-    this.messenger.view.preselectChat(conv);
+      const cur_conv = this.messenger.view.getCurrentChat();
+      console.log(cur_conv, conv)
+      if (cur_conv && conv.peer.id == cur_conv.peer.id) {
+        console.info('Already loaded conversation ', conv);
+        return;
+      }
 
-    const _url = new URL(location.href);
-    const _start_from = _url.searchParams.get('start_from');
+	    this.setSwitching(true);
 
-    this.messenger.view._saveDraft(this.messenger.view.getCurrentChat());
-    if (!conv.peer._isMessagesInited()) {
-      const messages = await conv.peer.getMessages(_start_from);
-      conv.peer._appendMessagesChunk(messages);
-    }
+	    this.messenger.view.preselectChat(conv);
 
-    this.messenger.view.setChat(conv, false);
-    this.selectTab('messenger');
-    this.messenger.view._loadDraft(conv);
-    this.messenger.view._scrollToEnd();
+	    const _url = new URL(location.href);
+	    // `start_from_id` allows jumping to a specific message in the conversation.
+	    // When provided, the initial chunk is anchored to that message, letting the
+	    // user scroll up (older) and down (newer) from there.
+	    // Falls back to `start_from` for backward compatibility, then null (latest).
+	    const _start_from_id = _url.searchParams.get('start_from_id') || _url.searchParams.get('start_from');
 
-    this.changeYellowHeaderByPeer(conv.peer);
+	    this.messenger.view._saveDraft(this.messenger.view.getCurrentChat());
+	    if (!conv.peer._isMessagesInited()) {
+	      const messages = await conv.peer.getMessages(_start_from_id);
+	      conv.peer._appendMessagesChunk(messages);
+	    }
 
-    this.setSwitching(false);
-  }
+	    this.messenger.view.setChat(conv, false);
+	    this.selectTab('messenger');
+	    this.messenger.view._loadDraft(conv);
+	    this.messenger.view._scrollToEnd();
+
+	    this.changeYellowHeaderByPeer(conv.peer);
+			this.setSwitching(false);
+      this.setPageTitle(escapeHtml(ovk_proc_strtr(conv.peer.full_name, 100)));
+	  }
 
   async _loadCurrent() {
     let _v = await window.OVKAPI.call('users.get', {
@@ -251,18 +267,17 @@ export class IM {
   }
 
   selectTab(tab_name) {
-
     if (this.tabs.indexOf(tab_name) == -1) {
       throw new Error('invalid tab');
     }
 
   	if (tab_name != "messenger") {
-      this._toggleScrollMode(false);
       const current_chat = this.messenger.view.getCurrentChat();
-
       if (current_chat != null) {
         this.messenger.view._saveDraft(current_chat);
       }
+
+      this._toggleScrollMode(false);
   	} else {
         this._toggleScrollMode(true);
   	}
@@ -291,6 +306,7 @@ export class IM {
         this.conversations.appear(this._getTabWindow('conversations'));
         this.messenger.hide(this._getTabWindow('messenger'));
         this._pushState('/im');
+        this.setPageTitle(tr("messenger_tab_conversations"));
         break;
 
       case 'messenger':

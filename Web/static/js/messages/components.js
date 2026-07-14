@@ -34,6 +34,7 @@ export const MessageBubble = ({ msg, index, chunk }) => {
 
   return html`
     <div class="${cls}"
+      data-msg-id=${msg.id}
       onMouseDown=${(e) => window.im?.messenger?.view?.onMessageClick(msg, e)}>
       <div class="messenger-app--messages---message--wrap">
         <div class="click-territory">
