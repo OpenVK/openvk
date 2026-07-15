@@ -410,24 +410,30 @@ export class ChatGeneralForm {
     return f;
   }
 
-  /**
-   * Push a newly-arrived message into the *newest* chunk
-   * (the one at index 0 in the sorted chunks array).
-   */
-  _pushNewMessage(msg) {
-    const newest = this._getNewestChunk();
-    newest._pushMessage(msg);
-    this._removeCache();
-    window.im.messenger.view._triggerUpdate();
-  }
+    /**
+    * Push a newly-arrived message into the *newest* chunk
+    * (the one at index 0 in the sorted chunks array).
+    */
+    _pushNewMessage(msg, conv = null, check_chunk = true) {
+        const newest = this._getNewestChunk(check_chunk);
+
+        if (!newest && conv != null) {
+            conv.updateLastMessage(msg);
+            return;
+        }
+
+        newest._pushMessage(msg);
+        this._removeCache();
+        window.im.messenger.view._triggerUpdate();
+    }
 
   /**
    * Returns the newest chunk (index 0 of the sorted array).
    * Creates an empty one if none exist.
    */
-  _getNewestChunk() {
+  _getNewestChunk(check_chunk = true) {
     const sorted = this.chunks;
-    if (sorted.length === 0) {
+    if (sorted.length === 0 && check_chunk == true) {
       const c = new MessagesChunk([]);
       this.message_chunks.push(c);
       return c;
@@ -830,20 +836,20 @@ export class ChatMessage {
     get conv_day() {
         const date = this.sent;
         if (date.getFullYear() == new Date().getFullYear()) {
-        return date.toLocaleDateString(navigator.language)
+            return date.toLocaleDateString(navigator.language)
         } else {
-        return date.toLocaleDateString(navigator.language, {
-            month: '2-digit',
-            day: '2-digit'
-        })
+            return date.toLocaleDateString(navigator.language, {
+                month: '2-digit',
+                day: '2-digit'
+            })
         }
     }
 
     get conv_summary() {
         let f = "";
-        if (this.data.attachments.length > 0) {
-        f = ("(" + tr(this.data.attachments[0].type) + ")").toLowerCase();
-        f += " ";
+        if (this.data.attachments && this.data.attachments.length > 0) {
+            f = ("(" + tr(this.data.attachments[0].type) + ")").toLowerCase();
+            f += " ";
         }
 
         f += this.data.text;

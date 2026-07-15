@@ -179,58 +179,62 @@ export class Conversations {
     document.documentElement.scroll({ top: 0 });
   }
 
-  _render(container) {
-    const convs = this.convs;
+    _render(container) {
+        const convs = this.convs;
 
-    render(html`
-      <${ConversationListView}
-        conversations=${convs}
-        hasMore=${this.has_more_items}
-        onLoadMore=${() => this.view.loadNext()}
-        onCreateChat=${() => this.view._chatCreationModal()}
-        onSearch=${(e) => this.view._onMessagesSearch(e)}
-      />
-    `, container);
-  }
+        render(html`
+        <${ConversationListView}
+            conversations=${convs}
+            hasMore=${this.has_more_items}
+            onLoadMore=${() => this.view.loadNext()}
+            onCreateChat=${() => this.view._chatCreationModal()}
+            onSearch=${(e) => this.view._onMessagesSearch(e)}
+        />
+        `, container);
+    }
 
-  hide(container) {
-    container.classList.add('hidden');
-  }
+    hide(container) {
+        container.classList.add('hidden');
+    }
 
-  // search
+    // search
 
-  async _onMessagesSearch(e) {
-    console.log(e)
-  }
+    async _onMessagesSearch(e) {
+        console.log(e)
+    }
 }
 
 export class Conversation {
-  constructor(conversation_item) {
-    this._conversation = conversation_item.conversation;
-    this._last_message = new ChatMessage(conversation_item.last_message);
-    this.peer = conversation_item.peer;
-  }
+    constructor(conversation_item) {
+        this._conversation = conversation_item.conversation;
+        this._last_message = new ChatMessage(conversation_item.last_message);
+        this.peer = conversation_item.peer;
+    }
 
-  get last_message() {
-    try {
-      if (this.peer) {
-        return this.peer._getLatestChunk(false).latest_message;
-      }
-    } catch (e) {}
+    updateLastMessage(msg) {
+        this._last_message = msg;
+    }
 
-    return this._last_message;
-  }
+    get last_message() {
+        try {
+            if (this.peer) {
+                return this.peer._getLatestChunk(false).latest_message;
+            }
+        } catch (e) {}
 
-  get conversation() {
-    return this._conversation;
-  }
+        return this._last_message;
+    }
 
-  get last_updated() {
-    if (!this.last_message) return null;
-    return this.last_message.sent;
-  }
+    get conversation() {
+        return this._conversation;
+    }
 
-  get id() {
-    return this.peer.id;
-  }
+    get last_updated() {
+        if (!this.last_message) return null;
+        return this.last_message.sent;
+    }
+
+    get id() {
+        return this.peer.id;
+    }
 }
