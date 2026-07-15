@@ -169,14 +169,6 @@ export class ChatGeneralForm {
     }
   }
 
-  get is_deleted_by_me() {
-    return this.data.deleted_by_me == 1;
-  }
-
-  get is_deleted() {
-    return this.data.deleted == 1;
-  }
-
   get supposed_type() {
     if (this.data.first_name) return 'user';
     if (this.data.name) return 'club';
@@ -277,6 +269,7 @@ export class ChatGeneralForm {
       const chunk = sorted[i];
       chunk.getMessages().forEach((msg) => {
         if (!msg.sent) return;
+        if (msg.is_deleted_formally) return;
         const dateKey = msg.sort_date;
 
         if (!dateMap.has(dateKey)) {
@@ -294,6 +287,10 @@ export class ChatGeneralForm {
 
     return dayChunks;
   }
+
+    get is_muted() {
+        return false;
+    }
 
   _removeCache() {
     this._cached_all_messages = undefined;
@@ -387,7 +384,7 @@ export class ChatGeneralForm {
     const datas = {
       'peer_id': this.id,
       'message': msg.text,
-      'attachments': msg.str_attachments,
+      'attachment': msg.str_attachments,
     };
 
     if (reply_to != null) {
@@ -611,7 +608,7 @@ export class ChatGeneralForm {
         }
       }, 1);
     }
-  }
+}
 
   // ── scrolling DOWN (newer messages) ───────────────────────────────
 
@@ -732,146 +729,196 @@ function _authorize(items, profiles = null, groups = null, get_id = null, set_id
 // ── ChatMessage ────────────────────────────────────────────────────
 
 export class ChatMessage {
-  static AUTHOR_NAME_HIDE_TIMEOUT = 600; // 60 * 10
+    static AUTHOR_NAME_HIDE_TIMEOUT = 600; // 60 * 10
 
-  doHideHead(another_msg) {
-    let _time_eq = another_msg.data.date - this.data.date;
-    return this.data.from_id == another_msg.data.from_id && _time_eq < ChatMessage.AUTHOR_NAME_HIDE_TIMEOUT && this.is_action == false;
-  }
-
-  constructor(item = {}) {
-    this.data = item;
-  }
-
-  _guessSender() {
-    this.data.sender = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(this.data.from_id);
-  }
-
-  get sent() {
-    return new Date(this.data.date * 1000);
-  }
-
-  get sender() {
-    if (!this.data.sender) {
-      this._guessSender();
+    doHideHead(another_msg) {
+        let _time_eq = another_msg.data.date - this.data.date;
+        return this.data.from_id == another_msg.data.from_id && _time_eq < ChatMessage.AUTHOR_NAME_HIDE_TIMEOUT && this.is_action == false;
     }
 
-    return this.data.sender;
-  }
-
-  get text() {
-    return escapeHtml(this.data.text);
-  }
-
-  get global_id() {
-    return this.data.global_id;
-  }
-
-  get id() {
-    return this.data.id;
-  }
-
-  get is_action() {
-    return this.data.action != null;
-  }
-
-  get peer_id() {
-    return this.data.peer;
-  }
-
-  get from_id() {
-    return this.data.from_id;
-  }
-
-  get attachments() {
-    const _at = this.data.attachments;
-    if (!_at) return [];
-    return _at;
-  }
-
-  get str_attachments() {
-    const _at = this.attachments;
-    if (_at.length == 0) return '';
-  }
-
-  get readable_date() {
-    return this.sent.toLocaleTimeString(navigator.language, {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    });
-  }
-
-  get sort_date() {
-    return month_day_string(this.sent);
-  }
-
-  get conv_date() {
-    const date = this.sent;
-    let is_today = date.toDateString() == new Date().toDateString();
-
-    const diffMs = Date.now() - date;
-    const diffHours = diffMs / (1000 * 60 * 60);
-    const isLessThan6Hours = diffHours >= 0 && diffHours < 6;
-
-    if (isLessThan6Hours) {
-      return this.readable_date;
+    constructor(item = {}) {
+        this.data = item;
+        this.has_not_loaded_attachments = false;
     }
 
-    return this.conv_day;
-  }
+    async hydrateFromEvent(msg) {
+        this.data = msg.data;
 
-  get conv_day() {
-    const date = this.sent;
-    if (date.getFullYear() == new Date().getFullYear()) {
-      return date.toLocaleDateString(navigator.language)
-    } else {
-      return date.toLocaleDateString(navigator.language, {
-        month: '2-digit',
-        day: '2-digit'
-      })
-    }
-  }
-
-  get conv_summary() {
-    let f = "";
-    if (this.data.attachments.length > 0) {
-      f = ("(" + tr(this.data.attachments[0].type) + ")").toLowerCase();
-      f += " ";
+        if (this.has_not_loaded_attachments === true) {
+            this.has_not_loaded_attachments = false;
+        }
     }
 
-    f += this.data.text;
-    return ovk_proc_strtr(f, 100);
-  }
-
-  static fromEvent(event) {
-    const [, id, flags, peer, ts, subject, text, attachments, randomId] = event;
-
-    const msg = new ChatMessage({
-      'id': id,
-      'flags': flags,
-      'from_id': attachments.from,
-      'date': ts,
-      'peer': peer,
-      'text': text,
-      'attachments': attachments,
-      'random_id': randomId,
-    });
-    msg._guessSender();
-
-    return msg;
-  }
-
-  setDeleted(by_me = false) {
-    this.data.deleted = 1;
-    if (by_me) {
-      this.data.deleted_by_me = 1;
+    _guessSender() {
+        this.data.sender = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(this.data.from_id);
     }
-    this.data.text = tr('message_is_deleted');
-    this.data.attachments = [];
-  }
 
-  setText(text) {
-    this.data.text = text;
-  }
+    get sent() {
+        return new Date(this.data.date * 1000);
+    }
+
+    get sender() {
+        if (!this.data.sender) {
+        this._guessSender();
+        }
+
+        return this.data.sender;
+    }
+
+    get text() {
+        return escapeHtml(this.data.text);
+    }
+
+    get global_id() {
+        return this.data.global_id;
+    }
+
+    get id() {
+        return this.data.id;
+    }
+
+    get is_action() {
+        return this.data.action != null;
+    }
+
+    get peer_id() {
+        return this.data.peer;
+    }
+
+    get from_id() {
+        return this.data.from_id;
+    }
+
+    get attachments() {
+        const _at = this.data.attachments;
+        if (!_at) return [];
+        return _at;
+    }
+
+    get str_attachments() {
+        const _at = this.attachments;
+        if (_at.length == 0) return '';
+    }
+
+    get readable_date() {
+        return this.sent.toLocaleTimeString(navigator.language, {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        });
+    }
+
+    get sort_date() {
+        return month_day_string(this.sent);
+    }
+
+    get conv_date() {
+        const date = this.sent;
+        let is_today = date.toDateString() == new Date().toDateString();
+
+        const diffMs = Date.now() - date;
+        const diffHours = diffMs / (1000 * 60 * 60);
+        const isLessThan6Hours = diffHours >= 0 && diffHours < 6;
+
+        if (isLessThan6Hours) {
+        return this.readable_date;
+        }
+
+        return this.conv_day;
+    }
+
+    get conv_day() {
+        const date = this.sent;
+        if (date.getFullYear() == new Date().getFullYear()) {
+        return date.toLocaleDateString(navigator.language)
+        } else {
+        return date.toLocaleDateString(navigator.language, {
+            month: '2-digit',
+            day: '2-digit'
+        })
+        }
+    }
+
+    get conv_summary() {
+        let f = "";
+        if (this.data.attachments.length > 0) {
+        f = ("(" + tr(this.data.attachments[0].type) + ")").toLowerCase();
+        f += " ";
+        }
+
+        f += this.data.text;
+        return ovk_proc_strtr(f, 100);
+    }
+
+    static async fromEvent(event) {
+        const [, id, flags, peer, ts, subject, text, attachments, randomId] = event;
+        let new_attachments = null;
+
+        if (attachments['attach1']) {
+            let temp_str = [];
+            let i = 0;
+            let associative = Object.entries(attachments);
+            associative.forEach(item => {
+                if (item[0].startsWith("attach")) {
+                    const _type = associative[i + 1];
+                    if (!_type || _type[0] == "from") {
+                        return;
+                    }
+
+                    const type = _type[1];
+
+                    temp_str.push(type + item[1]);
+                }
+
+                i += 1;
+            });
+
+            // getting attachments manually bc LP does not returns them
+
+            const atts = await window.OVKAPI.call("utils.resolveAttachments", {
+                "attachments": temp_str.join(',')
+            });
+
+            new_attachments = atts;
+        }
+
+        const msg = new ChatMessage({
+            'id': id,
+            'flags': flags,
+            'from_id': attachments.from,
+            'date': ts,
+            'peer': peer,
+            'text': text,
+            'attachments': new_attachments,
+            'random_id': randomId,
+        });
+        msg._guessSender();
+
+        return msg;
+    }
+
+    get is_deleted_formally() {
+        return this.is_deleted && !this.is_deleted_by_me;
+    }
+
+    get is_deleted_by_me() {
+        return this.data.deleted_by_me == 1;
+    }
+
+    get is_deleted() {
+        return this.data.deleted == 1;
+    }
+
+    setDeleted(by_me = false) {
+        this.data.deleted = 1;
+        if (by_me) {
+            this.data.deleted_by_me = 1;
+        }
+        this.data.text = tr('message_is_deleted');
+        this.data.attachments = [];
+    }
+
+    setText(text) {
+        this.data.text = text;
+    }
 }

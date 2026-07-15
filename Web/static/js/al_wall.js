@@ -1682,7 +1682,7 @@ u(document).on('click', '#__videoAttachment', async (e) => {
         }
 
         videos.items.forEach(video => {
-            const pretty_id = `${video.owner_id}_${video.id}` + (video.access_key ? "_" + video.id : "")
+            const pretty_id = `${video.owner_id}_${video.id}` + (video.access_key ? "_" + video.access_key : "")
             const is_attached = (form.find(`.upload-item[data-type='video'][data-id='${video.owner_id}_${video.id}']`)).length > 0
             let author_name = ''
 
