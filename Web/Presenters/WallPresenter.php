@@ -699,7 +699,7 @@ final class WallPresenter extends OpenVKPresenter
         if ($this->queryParam("ajax")) {
             $this->returnJson([
                 "success" => true,
-                "archived" => !$wasArchived
+                "archived" => !$wasArchived,
             ]);
             return;
         }

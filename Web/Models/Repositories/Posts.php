@@ -6,7 +6,7 @@ namespace openvk\Web\Models\Repositories;
 
 use openvk\Web\Models\Entities\Post;
 use openvk\Web\Models\Entities\User;
-use Nette\Database\Table\ActiveRow;
+use Nette\Database\Table\{ActiveRow, Selection};
 use Chandler\Database\DatabaseConnection;
 
 class Posts
@@ -244,7 +244,7 @@ class Posts
         }
     }
 
-    private function applyYearFilter(\Nette\Database\Table\Selection $selection, ?int $year): \Nette\Database\Table\Selection
+    private function applyYearFilter(Selection $selection, ?int $year): Selection
     {
         if (!is_null($year)) {
             $selection->where("created >= ? AND created < ?", mktime(0, 0, 0, 1, 1, $year), mktime(0, 0, 0, 1, 1, $year + 1));
