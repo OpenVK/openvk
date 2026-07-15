@@ -3357,7 +3357,11 @@ async function ajax_posting(e, target) {
   }
 
   if (append_type == "down") {
-    u(upper_target).find(".scroll_container").append(append_text);
+      u(upper_target).find(".scroll_container").append(append_text);
+
+      if (window.messagebox_stack.length == 0) {
+          window.scrollTo(0, document.body.scrollHeight)
+      }
   }
 
   if (append_type == "comment_microblog") {
@@ -3378,4 +3382,107 @@ function back_textarea_to_default(node) {
     el.checked = false;
   })
   node.find(".textareas textarea").last().value = "";
+}
+
+function ajax_delete(event = null) {
+    if (event != null) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    const href = event.target.href;
+    const types = event.target.closest(".comment") ? "comment_from_page" : "post";
+    const m = MessageBox(tr("warning"), tr("question_confirm"), [tr("yes"), tr("no")], [() => {
+        const f = new FormData();
+        f.append("hash", window.router.csrf);
+        f.append("ajax", "1")
+
+        fetch(href, {
+            "method": "POST",
+            "body": f
+        }).then(f => {
+            f.text().then(text => {
+                try {
+                    const data = JSON.parse(text);
+                    if (f.status != 200) {
+                        fastError(f.status);
+                        return;
+                    }
+
+                    event.target.closest(".post").outerHTML = `<div class="post post-divider"><div class="post-deleted">${tr(types + "_is_deleted")}</div></div>`
+                } catch (e) {
+                    console.error(e);
+                    fastError(String(e));
+                }
+            })
+        })
+    }, () => {}]);
+}
+
+function ajax_pin(event = null) {
+    if (event != null) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    const action = event.target.classList.contains("unpin") ? "unpin" : "pin";
+    const href = event.target.href;
+    let msg = '.';
+
+    if (action == "pin") {
+        msg = tr("pin_confirmation");
+        // Да, оно может засчитать и репост
+        if (u(".post.is-pinned .pinned_mark").length > 0) {
+            msg = tr("pin_confirmation_2");
+        }
+    } else {
+        msg = tr("unpin_confirmation")
+    }
+
+    const m = MessageBox(tr("warning"), msg, [tr("yes"), tr("no")], [() => {
+        const f = new FormData();
+        f.append("hash", window.router.csrf);
+        f.append("ajax", "1")
+
+        fetch(href, {
+            "method": "POST",
+            "body": f
+        }).then(f => {
+            f.text().then(text => {
+                try {
+                    const data = JSON.parse(text);
+                    if (f.status != 200) {
+                        fastError(f.status);
+                        return;
+                    }
+
+                    const new_url = new URL(href);
+                    new_url.searchParams.set("hash", window.router.csrf);
+                    if (action === "pin") {
+                        new_url.searchParams.set("act", "unpin");
+                        event.target.classList.add("unpin");
+                        u(".post.is-pinned").removeClass("is-pinned");
+                        event.target.closest(".post").classList.add("is-pinned");
+
+                        if (event.target.innerHTML != "") {
+                            event.target.innerHTML = tr("unpin");
+                        }
+                    } else {
+                        new_url.searchParams.set("act", "pin");
+                        event.target.classList.remove("unpin");
+                        event.target.closest(".post").classList.remove("is-pinned");
+
+                        if (event.target.innerHTML != "") {
+                            event.target.innerHTML = tr("pin");
+                        }
+                    }
+
+                    event.target.href = new_url.toString();
+                } catch (e) {
+                    console.error(e);
+                    fastError(String(e));
+                }
+            })
+        })
+    }, () => {}]);
 }

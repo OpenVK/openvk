@@ -671,12 +671,11 @@ final class WallPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
 
         $post = $this->posts->getPostById($wall, $post_id, true);
+        $isAjax = $this->queryParam("ajax") == "1" || ($_SERVER["REQUEST_METHOD"] === "POST" && $this->postParam("ajax") == "1");
         if (!$post) {
             $this->notFound();
         }
         $user = $this->user->id;
-
-        $isAjax = $this->queryParam("ajax") == '1';
 
         $wallOwner = ($wall > 0 ? (new Users())->get($wall) : (new Clubs())->get($wall * -1));
 
@@ -814,16 +813,17 @@ final class WallPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
 
         $post = $this->posts->getPostById($wall, $post_id);
+        $isAjax = $_SERVER["REQUEST_METHOD"] === "POST" && $this->postParam("ajax") == "1";
         if (!$post) {
             $this->notFound();
         }
 
         if ($post->getWallOwner()->isBanned()) {
-            $this->flashFail("err", tr("error"), tr("forbidden"));
+            $this->flashFail("err", tr("error"), tr("forbidden"), 0, $isAjax);
         }
 
         if (!$post->canBePinnedBy($this->user->identity)) {
-            $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
+            $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"), 0, $isAjax);
         }
 
         if (($this->queryParam("act") ?? "pin") === "pin") {
@@ -833,7 +833,7 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         # TODO localize message based on language and ?act=(un)pin
-        $this->flashFail("succ", tr("information_-1"), tr("changes_saved_comment"));
+        $this->flashFail("succ", tr("information_-1"), tr("changes_saved_comment"), 0, $isAjax);
     }
 
     public function renderAccept()
