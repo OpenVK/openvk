@@ -877,6 +877,18 @@ h4 {
     display: block;
 }
 
+.post .pinned_mark {
+    display: none;
+}
+
+.post.is-pinned .pinned_mark {
+    display: inline;
+}
+
+.post.mini-post .pinned_mark {
+    display: none;
+}
+
 .post-author {
     background-color: #F6F6F6;
     border-top: #8B8B8B solid 1px;

@@ -186,6 +186,9 @@ export class IM {
       console.log(cur_conv, conv)
       if (cur_conv && conv.peer.id == cur_conv.peer.id) {
         console.info('Already loaded conversation ', conv);
+
+  	    this.messenger.view.setChat(conv, false);
+  	    this.selectTab('messenger');
         return;
       }
 

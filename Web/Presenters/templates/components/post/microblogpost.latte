@@ -20,7 +20,7 @@
 
 {var $bigText = mb_strlen($post->getText()) > 520 || substr_count($post->getText(), "\n") + 1 > 10}
 
-<table border="0" style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, !$compact ? post-divider, $post->isExplicit() ? post-nsfw">
+<table border="0" style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, !$compact ? post-divider, $post->isExplicit() ? post-nsfw, $post->isPinned() ? is-pinned, $compact ? mini-post">
     <tbody>
         <tr>
             <td class="post-author-ava" width="54" valign="top">
@@ -58,16 +58,16 @@
                         </a>
                     {/if}
 
-                    <span n:if="$post->isPinned()" class="nobold">{_pinned}</span>
+                    <span class="nobold pinned_mark">{_pinned}</span>
 
-                    <a n:if="$canBeDeleted && !($forceNoDeleteLink ?? false) && $compact == false" class="delete" href="/wall{$post->getPrettyId()}/delete"></a>
+                    <a onclick="ajax_delete(event)" n:if="$canBeDeleted && !($forceNoDeleteLink ?? false) && $compact == false" class="delete" href="/wall{$post->getPrettyId()}/delete"></a>
                     <a n:if="!$canBeDeleted" class="report" title="{_report}" href="javascript:reportPost({$post->getId()})"></a>
-                    
+
                     {if $canBePinned && !($forceNoPinLink ?? false) && $compact == false}
                         {if $post->isPinned()}
-                            <a class="pin" href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}"></a>
+                            <a onclick="ajax_pin(event)" class="pin unpin" href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}"></a>
                         {else}
-                            <a class="pin" href="/wall{$post->getPrettyId()}/pin?act=pin&hash={rawurlencode($csrfToken)}"></a>
+                            <a onclick="ajax_pin(event)" class="pin" href="/wall{$post->getPrettyId()}/pin?act=pin&hash={rawurlencode($csrfToken)}"></a>
                         {/if}
                     {/if}
 
@@ -81,7 +81,7 @@
                         {if $bigText}
                         <a class="collapse_button" onclick="javascript:expandText(this)">{_show_more}</a>
                         {/if}
-                        
+
                         {var $width = ($bigWall ?? false) ? 550 : 320}
                         {if isset($nestedLevel)}
                             {var $width = $width - 70 * $nestedLevel}
@@ -129,7 +129,7 @@
                     <a href="{if $suggestion ?? false}javascript:void(0){else}/wall{$post->getPrettyId()}{/if}" class="date">{$post->getPublicationTime()}
                         <span n:if="$post->getEditTime()" class="edited editedMark">({_edited_short})</span>
                     </a>
-                  
+
                     <a n:if="!empty($platform)" class="client_app" data-app-tag="{$platform}" data-app-name="{$platformDetails['name']}" data-app-url="{$platformDetails['url']}" data-app-img="{$platformDetails['img']}">
                         <img src="/assets/packages/static/openvk/img/app_icons_mini/{$post->getPlatform(true)}.svg">
                     </a>
@@ -137,7 +137,7 @@
                         &nbsp;
 
                         <a n:if="!($forceNoCommentsLink ?? false) && $commentsCount == 0" href="javascript:expand_comment_textarea({$commentTextAreaId})">{_comment}</a>
-                        
+
                         <div class="like_wrap">
                             <a n:if="!($forceNoShareLink ?? false)" id="reposts{$post->getPrettyId()}" class="post-share-button" href="javascript:repost('{$post->getPrettyId()}', 'post')">
                                 <div class="repost-icon" style="opacity: 0.4;"></div>

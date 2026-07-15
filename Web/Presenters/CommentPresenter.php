@@ -187,6 +187,7 @@ final class CommentPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
 
         $comment = (new Comments())->get($id);
+        $isAjax = $_SERVER["REQUEST_METHOD"] === "POST" && $this->postParam("ajax") == "1";
         if (!$comment) {
             $this->notFound();
         }
@@ -194,14 +195,16 @@ final class CommentPresenter extends OpenVKPresenter
             $this->throwError(403, "Forbidden", tr("error_access_denied"));
         }
         if ($comment->getTarget() instanceof Post && $comment->getTarget()->getWallOwner()->isBanned()) {
-            $this->flashFail("err", tr("error"), tr("forbidden"));
+            $this->flashFail("err", tr("error"), tr("forbidden"), 0, $isAjax);
         }
 
         $comment->delete();
         $this->flashFail(
             "succ",
             tr("success"),
-            tr("comment_will_not_appear")
+            tr("comment_will_not_appear"),
+            0,
+            $isAjax
         );
     }
 }

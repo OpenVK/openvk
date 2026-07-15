@@ -618,6 +618,7 @@ final class WallPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
 
         $post = $this->posts->getPostById($wall, $post_id, true);
+        $isAjax = $_SERVER["REQUEST_METHOD"] === "POST" && $this->postParam("ajax") == "1";
         if (!$post) {
             $this->notFound();
         }
@@ -626,11 +627,11 @@ final class WallPresenter extends OpenVKPresenter
         $wallOwner = ($wall > 0 ? (new Users())->get($wall) : (new Clubs())->get($wall * -1));
 
         if ($wallOwner === null) {
-            $this->flashFail("err", tr("failed_to_delete_post"), tr("error_4"));
+            $this->flashFail("err", tr("failed_to_delete_post"), tr("error_4"), 0, $isAjax);
         }
 
         if ($wallOwner->isBanned()) {
-            $this->flashFail("err", tr("error"), tr("forbidden"));
+            $this->flashFail("err", tr("error"), tr("forbidden"), 0, $isAjax);
         }
 
         if ($wall < 0) {
@@ -641,7 +642,7 @@ final class WallPresenter extends OpenVKPresenter
 
         if (!is_null($user)) {
             if ($post->getTargetWall() < 0 && !$post->getWallOwner()->canBeModifiedBy($this->user->identity) && $post->getWallOwner()->getWallType() != 1 && $post->getSuggestionType() == 0) {
-                $this->flashFail("err", tr("failed_to_delete_post"), tr("error_deleting_suggested"));
+                $this->flashFail("err", tr("failed_to_delete_post"), tr("error_deleting_suggested"), 0, $isAjax);
             }
 
             if ($post->getOwnerPost() == $user || $post->getTargetWall() == $user || $canBeDeletedByOtherUser) {
@@ -649,7 +650,11 @@ final class WallPresenter extends OpenVKPresenter
                 $post->delete();
             }
         } else {
-            $this->flashFail("err", tr("failed_to_delete_post"), tr("login_required_error_comment"));
+            $this->flashFail("err", tr("failed_to_delete_post"), tr("login_required_error_comment"), 0, $isAjax);
+        }
+
+        if ($isAjax) {
+            $this->flashFail("succ", tr("success"), "...", 0, $isAjax);
         }
 
         $this->redirect($wall < 0 ? "/club" . ($wall * -1) : "/id" . $wall);
@@ -661,16 +666,17 @@ final class WallPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
 
         $post = $this->posts->getPostById($wall, $post_id);
+        $isAjax = $_SERVER["REQUEST_METHOD"] === "POST" && $this->postParam("ajax") == "1";
         if (!$post) {
             $this->notFound();
         }
 
         if ($post->getWallOwner()->isBanned()) {
-            $this->flashFail("err", tr("error"), tr("forbidden"));
+            $this->flashFail("err", tr("error"), tr("forbidden"), 0, $isAjax);
         }
 
         if (!$post->canBePinnedBy($this->user->identity)) {
-            $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
+            $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"), 0, $isAjax);
         }
 
         if (($this->queryParam("act") ?? "pin") === "pin") {
@@ -680,7 +686,7 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         # TODO localize message based on language and ?act=(un)pin
-        $this->flashFail("succ", tr("information_-1"), tr("changes_saved_comment"));
+        $this->flashFail("succ", tr("information_-1"), tr("changes_saved_comment"), 0, $isAjax);
     }
 
     public function renderAccept()
