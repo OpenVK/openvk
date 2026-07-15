@@ -45,19 +45,26 @@ export class EventHandler {
 
         if (!window.im.is_active && !_crs.peer.is_muted) {
             triggerMessageNotification(_crs, _msg.text);
-            return;
         }
 
-        setTimeout(async () => {
-        const found = _crs.peer._findMessageById(_msg.id);
+        setTimeout(() => {
+            try {
+                const found = _crs.peer._findMessageById(_msg.id);
 
-        if (found == null) {
-            _crs.peer._pushNewMessage(_msg);
-        } else {
-            found.hydrateFromEvent(_msg);
-            window.im.messenger.view._triggerUpdate();
-            window.im.messenger.view._scrollToEnd();
-        }
+                console.log(_crs, found)
+                if (found == null) {
+                    _crs.peer._pushNewMessage(_msg);
+                } else {
+                    found.hydrateFromEvent(_msg);
+
+                    if (window.im.is_active) {
+                        window.im.messenger.view._triggerUpdate();
+                        window.im.messenger.view._scrollToEnd();
+                    }
+                }
+            } catch (e) {
+                console.error(e);
+            }
         }, 100);
     }
 }

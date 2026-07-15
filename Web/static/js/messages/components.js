@@ -51,7 +51,7 @@ export const MessageBubble = ({ msg, index, chunk }) => {
             <strong>${msg.sender.name}</strong>
           </a>
           <p dangerouslySetInnerHTML=${{ __html: msg.text }} class="text" />
-          ${msg.attachments.length > 0 && html`
+          ${msg.attachments && msg.attachments.length > 0 && html`
             <div class="attachments">
               ${msg.attachments.map((att) => html`<${Attachment} msg=${msg} att=${att} />`)}
             </div>
