@@ -56,6 +56,9 @@ export const MessageBubble = ({ msg, index, chunk }) => {
               ${msg.attachments.map((att) => html`<${Attachment} msg=${msg} att=${att} />`)}
             </div>
           `}
+          ${msg.has_not_loaded_attachments == true && html`
+              <img src=${_loader_link} />
+          `}
         </div>
       </div>
       <div class="time">

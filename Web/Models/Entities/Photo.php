@@ -405,7 +405,7 @@ class Photo extends Media
         return (bool) $this->getRecord()->private || (bool) $this->getRecord()->unlisted;
     }
 
-    public function toApiAttachment(): array
+    public function toApiAttachment(?User $user = null): array
     {
         return [
             "type"  => "photo",

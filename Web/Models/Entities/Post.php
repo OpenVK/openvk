@@ -386,6 +386,14 @@ class Post extends Postable
         return $res;
     }
 
+    public function toApiAttachment(): array
+    {
+        return [
+            "type"  => "wall",
+            "photo" => $this->toNotifApiStruct(),
+        ];
+    }
+
     public function canBeEditedBy(?User $user = null): bool
     {
         if (!$user) {

@@ -59,4 +59,30 @@ final class Utils extends VKAPIRequestHandler
 
         return $user->toVkApiStruct($this->getUser());
     }
+
+    public function resolveAttachments(string $attachments, int $allow_type = 0): array
+    {
+        $this->requireUser();
+
+        $allowTypes = ["photo", "video", "note", "audio"];
+        if ($allow_type == 0) {
+            $allowTypes = ["photo", "video", "doc", "audio", "wall"];
+        }
+
+        $a = parseAttachments($attachments, $allowTypes);
+        $r = [];
+
+        foreach ($a as $item) {
+            if ($item && method_exists($item, "toApiAttachment") && $item->canBeViewedBy($this->getUser())) {
+                $r[] = $item->toApiAttachment($this->getUser());
+            } else {
+                $r[] = [
+                    "type" => "unknown",
+                    "unknown" => []
+                ];
+            }
+        }
+
+        return $r;
+    }
 }

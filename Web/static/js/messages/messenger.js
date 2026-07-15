@@ -45,6 +45,7 @@ export class Messenger {
       'from_id': window.im.current.id,
       'peer_id': corresponder.id,
       'date': Math.round((new Date()).getTime() / 1000),
+
     });
 
     if (reply_to) {
@@ -53,7 +54,8 @@ export class Messenger {
 
     const attachments = collect_attachments(u('.messenger-app--input---messagebox'));
     if (attachments.length > 0) {
-      attachments_list = attachments;
+        attachments_list = attachments;
+        msg.has_not_loaded_attachments = true;
     }
 
     msg._guessSender();

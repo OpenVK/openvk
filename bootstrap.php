@@ -319,6 +319,10 @@ function parseAttachments($attachments, array $allow_types = ['photo', 'video', 
             'method' => 'getDocumentById',
             'withKey' => true,
         ],
+        'wall' => [
+            'repo' => 'openvk\Web\Models\Repositories\Posts',
+            'method' => 'getPostById'
+        ],
     ];
 
     foreach ($exploded_attachments as $attachment_string) {
