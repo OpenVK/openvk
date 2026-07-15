@@ -124,21 +124,28 @@ final class VKAPIPresenter extends OpenVKPresenter
         $folder   = __DIR__ . "/../../tmp/api-storage/photos";
         $maxSize  = OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["api"]["maxFileSize"];
         $maxFiles = OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["api"]["maxFilesPerDomain"];
+
         $usrFiles = sizeof(glob("$folder/$data[USER]_*.oct"));
         if ($usrFiles >= $maxFiles) {
-            $pendingInfo = $this->getPendingUploadInfo($folder, $data["USER"]);
-            header("HTTP/1.1 507 Insufficient Storage");
-            header("Content-Type: application/json");
-            exit(json_encode([
-                "error" => "insufficient_storage",
-                "error_description" => "There are $maxFiles pending already. Please save them before uploading more :3",
-                "pending_uploads" => $pendingInfo,
-            ]));
+            $usrFiles = $this->evictOldestPendingUploads($folder, (string) $data["USER"], $maxFiles);
+
+            if ($usrFiles >= $maxFiles) {
+                $pendingInfo = $this->getPendingUploadInfo($folder, $data["USER"]);
+
+                header("HTTP/1.1 507 Insufficient Storage");
+                header("Content-Type: application/json");
+                exit(json_encode([
+                    "error" => "insufficient_storage",
+                    "error_description" => "There are $maxFiles pending already. Please save them before uploading more :3",
+                    "pending_uploads" => $pendingInfo,
+                ]));
+            }
         }
 
         # Not multifile
         if ($data["MF"] === 0) {
             $file = $_FILES[$data["FIELD"]];
+
             if (!$file) {
                 header("HTTP/1.0 400");
                 exit("No file");
@@ -149,11 +156,15 @@ final class VKAPIPresenter extends OpenVKPresenter
                 header("HTTP/1.0 507 Insufficient Storage");
                 exit("File is too big");
             }
-
-            move_uploaded_file($file["tmp_name"], "$folder/$data[USER]_" . ($usrFiles + 1) . ".oct");
+            
+            $slot = $this->getNextUploadSlot($folder, (string) $data["USER"]);
+            if (!move_uploaded_file($file["tmp_name"], "$folder/$data[USER]_$slot.oct")) {
+                header("HTTP/1.0 500");
+                exit("File could not be saved");
+            }
             header("HTTP/1.0 202 Accepted");
 
-            $photo = $data["USER"] . "|" . ($usrFiles + 1) . "|" . $data["GROUP"];
+            $photo = $data["USER"] . "|" . $slot . "|" . $data["GROUP"];
             exit(json_encode([
                 "server" => "ephemeral",
                 "photo"  => $photo,
@@ -162,27 +173,35 @@ final class VKAPIPresenter extends OpenVKPresenter
         }
 
         $files = [];
+        $slot  = $this->getNextUploadSlot($folder, (string) $data["USER"]);
         for ($i = 1; $i <= 5; $i++) {
             $file = $_FILES[$data["FIELD"] . $i] ?? null;
             if (!$file || $file["error"] != UPLOAD_ERR_OK || $file["size"] > $maxSize) {
                 continue;
-            } elseif ((sizeof($files) + $usrFiles) > $maxFiles) {
-                # Clear uploaded files since they can't be saved anyway
-                foreach ($files as $f) {
-                    unlink($f);
-                }
+            } elseif ((sizeof($files) + $usrFiles) >= $maxFiles) {
+                $usrFiles = $this->evictOldestPendingUploads($folder, (string) $data["USER"], $maxFiles, array_keys($files));
 
-                $pendingInfo = $this->getPendingUploadInfo($folder, $data["USER"]);
-                header("HTTP/1.1 507 Insufficient Storage");
-                header("Content-Type: application/json");
-                exit(json_encode([
-                    "error" => "insufficient_storage",
-                    "error_description" => "There are $maxFiles pending already. Please save them before uploading more :3",
-                    "pending_uploads" => $pendingInfo,
-                ]));
+                if ((sizeof($files) + $usrFiles) >= $maxFiles) {
+                    foreach ($files as $id => $f) {
+                        @unlink("$folder/$data[USER]_$id.oct");
+                    }
+
+                    $pendingInfo = $this->getPendingUploadInfo($folder, $data["USER"]);
+
+                    header("HTTP/1.1 507 Insufficient Storage");
+                    header("Content-Type: application/json");
+                    exit(json_encode([
+                        "error" => "insufficient_storage",
+                        "error_description" => "There are $maxFiles pending already. Please save them before uploading more :3",
+                        "pending_uploads" => $pendingInfo,
+                    ]));
+                }
             }
 
-            $files[++$usrFiles] = move_uploaded_file($file["tmp_name"], "$folder/$data[USER]_$usrFiles.oct");
+            if (move_uploaded_file($file["tmp_name"], "$folder/$data[USER]_$slot.oct")) {
+                $files[$slot] = true;
+                $slot++;
+            }
         }
 
         if (sizeof($files) === 0) {
@@ -204,6 +223,54 @@ final class VKAPIPresenter extends OpenVKPresenter
             "album_id"    => "undefined",
             "hash"        => $manifestHash,
         ]));
+    }
+
+    private function evictOldestPendingUploads(string $folder, string $userId, int $maxFiles, array $protectedSlots = []): int
+    {
+        $files = [];
+
+        foreach (glob("$folder/{$userId}_*.oct") as $file) {
+            if (!preg_match("/_(\\d+)\\.oct$/", basename($file), $matches)) {
+                continue;
+            }
+
+            $slot = (int) $matches[1];
+            if (in_array($slot, $protectedSlots, true)) {
+                continue;
+            }
+
+            $mtime = @filemtime($file);
+            $files[] = ["path" => $file, "mtime" => $mtime === false ? 0 : $mtime];
+        }
+
+        usort($files, fn ($a, $b) => $a["mtime"] <=> $b["mtime"]);
+
+        $count = sizeof($files) + sizeof($protectedSlots);
+
+        foreach ($files as $file) {
+            if ($count < $maxFiles) {
+                break;
+            }
+
+            if (@unlink($file["path"])) {
+                $count--;
+            }
+        }
+
+        return $count;
+    }
+
+    private function getNextUploadSlot(string $folder, string $userId): int
+    {
+        $slot = 0;
+
+        foreach (glob("$folder/{$userId}_*.oct") as $file) {
+            if (preg_match("/_(\\d+)\\.oct$/", basename($file), $matches)) {
+                $slot = max($slot, (int) $matches[1]);
+            }
+        }
+
+        return $slot + 1;
     }
 
     private function getPendingUploadInfo(string $folder, string $userId): array
