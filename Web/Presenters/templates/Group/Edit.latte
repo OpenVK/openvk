@@ -63,6 +63,23 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
+                            <span class="nobold">{_location}: </span>
+                        </td>
+                        <td>
+                            <input type="text" name="location" value="{$club->getLocation()}" />
+                        </td>
+                    </tr>
+                    <tr n:if="$club->isEvent()">
+                        <td width="120" valign="top">
+                            <span class="nobold">{_event_start_date}: </span>
+                        </td>
+                        <td>
+                            <input type="date" name="start_date" value="{$club->getStartDate()->format('%Y-%m-%d')}" style="width:49%;" />
+                            <input type="time" name="start_time" value="{$club->getStartDate()->format('%H:%M')}" style="width:49%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
                             <span class="nobold">{_avatar}: </span>
                         </td>
                         <td>

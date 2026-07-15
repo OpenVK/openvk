@@ -60,6 +60,12 @@
                         </a>
                     </td>
                 </tr>
+                <tr n:if="$club->isEvent()">
+                    <td><span class="nobold">{_event_start_date}: </span></td>
+                    <td>
+                        {$club->getStartDate()->relative(-1)}
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
@@ -198,15 +204,31 @@
     </div>
     <div class="hide_on_mobiles">
         <div class="content_title_expanded" onclick="hidePanel(this);">
-            {_group_type}
+            {if $club->isEvent()}
+                {_event_type}
+            {elseif !$club->isEvent()}
+                {_group_type}
+            {/if}
         </div>
         <div style="padding:4px">
-            {_group_type_open}
+            {if $club->isEvent() && !$club->isClosed()}
+                {_event_type_open}
+            {elseif $club->isEvent() && $club->isClosed()}
+                {_event_type_closed}
+            {elseif !$club->isEvent() && !$club->isClosed()}
+                {_group_type_open}
+            {elseif !$club->isEvent() && $club->isClosed()}
+                {_group_type_closed}
+            {/if}
         </div>
     </div>
-    <div n:if="$club->getAdministratorsListDisplay() == 0">
+    <div n:if="$club->getAdministratorsListDisplay() == 0 || $club->isEvent()">
         <div class="content_title_expanded" onclick="hidePanel(this);">
-            {_creator}
+            {if $club->isEvent()}
+                {_event_host}
+            {else}
+                {_creator}
+            {/if}
         </div>
         <div class="avatar-list-item" style="padding: 8px;">
             {var $author = $club->getOwner()}

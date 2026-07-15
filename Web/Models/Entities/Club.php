@@ -82,6 +82,8 @@ class Club extends RowModel
     {
         if (!is_null($this->getShortCode())) {
             return "/" . $this->getShortCode();
+        } else if ($this->isEvent()) {
+            return "/event" . $this->getId();
         } else {
             return "/club" . $this->getId();
         }
@@ -171,9 +173,24 @@ class Club extends RowModel
         return (bool) $this->getRecord()->enforce_hiding_from_global_feed;
     }
 
+    /*
+     * Possible types:
+     * 1 - Open group
+     * 2 - Open event
+     */
     public function getType(): int
     {
         return $this->getRecord()->type;
+    }
+
+    public function isEvent(): bool
+    {
+        return $this->getRecord()->type === 2 ? true : false;
+    }
+
+    public function isClosed(): bool
+    {
+        return $this->getRecord()->closed === 1 ? true : false;
     }
 
     public function isVerified(): bool
@@ -190,7 +207,6 @@ class Club extends RowModel
     {
         return (bool) $this->getRecord()->wall;
     }
-
 
     public function setShortCode(?string $code = null): ?bool
     {
@@ -423,6 +439,11 @@ class Club extends RowModel
         return $this->getRecord()->website;
     }
 
+    public function getLocation(): ?string
+    {
+        return $this->getRecord()->location;
+    }
+
     public function ban(string $reason): void
     {
         $this->setBlock_Reason($reason);
@@ -491,7 +512,7 @@ class Club extends RowModel
         $res->name        = $this->getName();
         $res->screen_name = $this->getShortCode() ?? "club" . $this->getId();
         $res->is_closed   = 0;
-        $res->type        = 'group';
+        $res->type        = $this->isEvent() ? 'event' : 'group';
         $res->is_member   = $user ? (int) $this->getSubscriptionStatus($user) : 0;
         $res->is_admin    = $user ? (int) $this->canBeModifiedBy($user) : 0;
         $res->deactivated = null;
@@ -540,6 +561,11 @@ class Club extends RowModel
                 case 'real_id':
                     $res->real_id = $this->getRealId();
                     break;
+                case 'start_date':
+                    if ($this->isEvent()) {
+                        $res->start_date = $this->getStartDate()->timestamp();
+                    }
+                    break;
                 case "can_suggest":
                     $res->can_suggest = !$this->canBeModifiedBy($user) && $this->getWallType() == 2;
                     break;
@@ -585,5 +611,15 @@ class Club extends RowModel
         }
 
         return $res;
+    }
+
+    public function getStartDate(): ?DateTime
+    {
+        return !is_null($this->getRecord()->start_date) ? new DateTime($this->getRecord()->start_date) : null;
+    }
+
+    public function getFinishDate(): ?DateTime
+    {
+        return !is_null($this->getRecord()->finish_date) ? new DateTime($this->getRecord()->start_date) : null;
     }
 }

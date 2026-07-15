@@ -10,6 +10,7 @@ use openvk\Web\Models\Entities\Notifications\ClubModeratorNotification;
 use openvk\Web\Models\Repositories\{Clubs, Users, Albums, Managers, Topics, Audios, Posts, Documents};
 use Chandler\Security\Authenticator;
 use Nette\InvalidStateException as ISE;
+use Chandler\Session\Session;
 
 final class GroupPresenter extends OpenVKPresenter
 {
@@ -281,6 +282,15 @@ final class GroupPresenter extends OpenVKPresenter
                 $club->setWebsite(null);
             } else {
                 $club->setWebsite((!parse_url($website, PHP_URL_SCHEME) ? "https://" : "") . $website);
+            }
+
+            $club->setLocation($this->postParam("location") ?? null);
+
+            if (!empty($this->postParam("start_date")) && !empty($this->postParam("start_time")))
+            {
+                $sessionOffset = intval(Session::i()->get("_timezoneOffset")) * 60;
+                $parsedData = strtotime($this->postParam("start_date") . "T" . $this->postParam("start_time"));
+                $club->setStart_Date($parsedData + $sessionOffset);
             }
 
             if ($_FILES["ava"]["error"] === UPLOAD_ERR_OK) {

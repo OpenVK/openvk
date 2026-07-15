@@ -827,6 +827,7 @@ input[type~="phone"],
 input[type="search"],
 input[type~="search"],
 input[type~="date"],
+input[type~="time"],
 input[type~="datetime-local"],
 select {
     border: 1px solid #C0CAD5;

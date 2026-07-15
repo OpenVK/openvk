@@ -381,10 +381,14 @@
 "create_group" = "Create group";
 "group_managers" = "Managers";
 "group_type" = "Group type";
-"group_type_open" = "This is an open group. Anyone can enter it.";
+"group_type_open" = "This is an open group. Anyone can join it.";
 "group_type_closed" = "This is a closed group. To enter, you must submit a request.";
+"event_type" = "Event type";
+"event_type_open" = "This is an open event. Anyone can join it.";
+"event_type_closed" = "This is a closed event. To enter, you must request an invite.";
 "creator" = "Creator";
 "administrators" = "Administrators";
+"event_host" = "Host";
 "add_to_left_menu" = "Add to left menu";
 "remove_from_left_menu" = "Remove from left menu";
 "all_followers" = "All followers";
