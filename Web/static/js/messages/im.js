@@ -143,54 +143,59 @@ export class IM {
   }
 
   changeYellowHeader(text) {
-    u(".page_yellowheader").html(text);
+      u(".page_yellowheader").html(text);
   }
 
   changeYellowHeaderByPeer(peer) {
     switch (peer.supposed_type) {
-      case "chat":
-        this.changeYellowHeader(tr("conversation_title_chat"));
-        break;
-      case "user":
-        this.changeYellowHeader(tr("conversation_title_user", escapeHtml(ovk_proc_strtr(peer.name, 50))));
-        break;
-      case "club":
-        this.changeYellowHeader(tr("conversation_title_club"));
-        break;
+        case "chat":
+            this.changeYellowHeader(tr("conversation_title_chat"));
+            break;
+        case "user":
+            if (peer.id === window.openvk.current_id) {
+                this.changeYellowHeader(tr("saved_messages"));
+                break;
+            }
+
+            this.changeYellowHeader(tr("conversation_title_user", escapeHtml(ovk_proc_strtr(peer.name, 50))));
+            break;
+        case "club":
+            this.changeYellowHeader(tr("conversation_title_club"));
+            break;
     }
   }
 
-  closeChat(conv) {
-    if (this.messenger.view.getTabsCount() - 1 == 0) {
-      this.selectTab('conversations');
-    } else {
-      const _id = this.messenger.view.opened_tabs.indexOf(conv);
-      this.selectChat(this.messenger.view.opened_tabs[Math.max(0, _id - 1)]);
-    }
+    closeChat(conv) {
+        if (this.messenger.view.getTabsCount() - 1 == 0) {
+            this.selectTab('conversations');
+        } else {
+            const _id = this.messenger.view.opened_tabs.indexOf(conv);
+            this.selectChat(this.messenger.view.opened_tabs[Math.max(0, _id - 1)]);
+        }
 
-    this.messenger.view.closeChat(conv);
-    this.messenger.view._render();
-  }
+        this.messenger.view.closeChat(conv);
+        this.messenger.view._render();
+    }
 
 	async selectChat(conv) {
 	    if (this.is_switching == true) {
 	      return;
 	    }
 
-      if (!conv || !conv.peer) {
-        console.error("Cannot load conversation ", conv);
-        return;
-      }
+        if (!conv || !conv.peer) {
+            console.error("Cannot load conversation ", conv);
+            return;
+        }
 
-      const cur_conv = this.messenger.view.getCurrentChat();
-      console.log(cur_conv, conv)
-      if (cur_conv && conv.peer.id == cur_conv.peer.id) {
-        console.info('Already loaded conversation ', conv);
+        const cur_conv = this.messenger.view.getCurrentChat();
+        console.log(cur_conv, conv)
+        if (cur_conv && conv.peer.id == cur_conv.peer.id) {
+            console.info('Already loaded conversation ', conv);
 
-  	    this.messenger.view.setChat(conv, false);
-  	    this.selectTab('messenger');
-        return;
-      }
+       	    this.messenger.view.setChat(conv, false);
+       	    this.selectTab('messenger');
+            return;
+        }
 
 	    this.setSwitching(true);
 
@@ -215,9 +220,9 @@ export class IM {
 	    this.messenger.view._scrollToEnd();
 
 	    this.changeYellowHeaderByPeer(conv.peer);
-			this.setSwitching(false);
-      this.setPageTitle(escapeHtml(ovk_proc_strtr(conv.peer.full_name, 100)));
-	  }
+		this.setSwitching(false);
+        this.setPageTitle(escapeHtml(ovk_proc_strtr(conv.peer.full_name, 100)));
+	}
 
   async _loadCurrent() {
     let _v = await window.OVKAPI.call('users.get', {
@@ -324,9 +329,9 @@ export class IM {
         this.messenger.appear(this._getTabWindow('messenger'));
 
         try {
-          window.im._pushState('/im?sel=' + window.im.messenger.view.getCurrentChat().peer.id);
+            window.im._pushState('/im?sel=' + window.im.messenger.view.getCurrentChat().peer.id);
         } catch (e) {
-          console.error(e);
+            console.error(e);
         }
 
         break;

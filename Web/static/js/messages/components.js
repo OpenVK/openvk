@@ -23,6 +23,7 @@ export const MessageBubble = ({ msg, index, chunk }) => {
     isSelected(msg) ? 'msg-selected' : '',
     hideHead(msg, index, chunk) ? 'same-author' : '',
     msg.data.deleted ? 'msg-deleted' : '',
+    msg.is_error ? 'msg-error' : '',
   ].filter(Boolean).join(' ');
 
   if (msg.is_action) {
@@ -39,6 +40,9 @@ export const MessageBubble = ({ msg, index, chunk }) => {
       <div class="messenger-app--messages---message--wrap">
         <div class="click-territory">
             <div class="checkmark"></div>
+            ${msg.is_error && html`
+                <div class="error-checkmark" onClick=${(e) => { msg.tryToResend() }} title="${msg.data.error_text}"></div>
+            `}
             <div class="message-id">
                 <span>${msg.id}</span>
             </div>
@@ -50,6 +54,12 @@ export const MessageBubble = ({ msg, index, chunk }) => {
           <a class="_sender" onClick=${(e) => { window.im?.messenger?.view?.onAuthorNameClick(msg, e) }}>
             <strong>${msg.sender.name}</strong>
           </a>
+          ${msg.is_reply == true && html`
+              <div class="reply-msg" onClick="${() => { window.im.messenger.view.scrollToMessage(msg.data.reply_message.id, true) }}">
+                  <a class="reply-author">${msg.has_sender ? msg.sender.full_name : "..."}</a>
+                  <span dangerouslySetInnerHTML=${{ __html: msg.data.reply_message.conv_summary }} />
+              </div>
+          `}
           <p dangerouslySetInnerHTML=${{ __html: msg.text }} class="text" />
           ${msg.attachments && msg.attachments.length > 0 && html`
             <div class="attachments">
@@ -86,7 +96,7 @@ export const SystemMessages = {
   },
   "unknown": (msg) => {
       return html`
-        <div class="${msg}">
+        <div class="messenger-special-message">
             <div class="messenger-app--messages---message--wrap">
                 <div class="_content">
                 <span class="text">${msg.text}</span>
@@ -102,7 +112,7 @@ const Attachment = ({ msg, att }) => {
     case 'photo':
       return html`
           <a onclick=${(e) => {window.im.messenger.view.showPhoto(e, msg, att)}} class="msg-attach-j msg-attach-j-photo" href=${att.photo.link}>
-            <img src=${att.photo.photo_130} alt="..." />
+            <img src=${att.photo.photo_604 ?? att.photo.photo_130} alt="..." />
           </a>`;
     case 'video':
       return html`
@@ -179,7 +189,7 @@ export const MessageListView = ({ messages }) => {
 export const PeerTab = ({ conv, active }) => {
   return html`
     <div class="messages--peers-tab${active ? ' selected' : ''}">
-      <a onClick=${() => window.im?.selectChat(conv)}>${conv.peer.name}</a>
+      <a onClick=${() => window.im?.selectChat(conv)}>${conv.peer.conversations_name}</a>
       <span class="messages--peers-tab-close" onClick=${() => window.im?.closeChat(conv)}>×</span>
     </div>
   `;
@@ -197,21 +207,30 @@ export const PeerTabsView = ({ had_more_one_tab, tabs, currentChat }) => {
   `;
 };
 
-export const ActionsBar = ({ count, onDelete, onUnselect, onReply }) => {
-  if (count === 0) return null;
-  return html`
-    <div class="messages--actions shown">
-      <div>
-        <div class="message-tab-counter message-tab"><a onClick=${onUnselect}>${tr("selected_messages", count)}</a></div>
-      </div>
-      <div>
-        <div class="message-tab"><a onClick=${onDelete}>${tr("delete_message")}</a></div>
-        ${count === 1 && html`
-            <div class="message-tab"><a onClick=${onReply}>${tr("reply_to_message")}</a></div>
-        `}
-      </div>
-    </div>
-  `;
+export const ActionsBar = ({ selectedMessages, count, onDelete, onUnselect, onReply }) => {
+    if (count === 0) return null;
+    let canDeleteThemAll = true;
+
+    selectedMessages.forEach(msg => {
+        if (msg.can_delete() == false) {
+            canDeleteThemAll = false;
+        }
+    })
+
+    return html`
+        <div class="messages--actions shown">
+            <div>
+                <div class="message-tab-counter message-tab"><a onClick=${onUnselect}>${tr("selected_messages", count)}</a></div>
+            </div>
+            <div>
+                ${canDeleteThemAll == true && html`
+                <div class="message-tab"><a onClick=${onDelete}>${tr("delete_message")}</a></div>`}
+                ${count === 1 && html`
+                    <div class="message-tab"><a onClick=${onReply}>${tr("reply_to_message")}</a></div>
+                `}
+            </div>
+        </div>
+    `;
 };
 
 export const AttachmentMenu = () => {
@@ -252,15 +271,15 @@ export const InputArea = ({ replyTo, onRemoveReply, onSend, onKeyPress, currentD
     <div class="messenger-app-end${replyTo ? ' reply-selected' : ''}">
       ${replyTo && html`
         <div class="input-reply">
-          <span onclick=${clickOnReply(replyTo)} aria-label="link" class="input-type">${replyTo.text}</span>
-          <span class="input-close" onClick=${onRemoveReply}>close</span>
+          <span onclick=${() => { clickOnReply(replyTo) }} aria-label="link" class="input-type">${escapeHtml(tr("reply_to", replyTo.sender.full_name))}</span>
+          <span class="input-close" onClick=${onRemoveReply}>×</span>
         </div>
       `}
       <div class="post-buttons">
         <div class="model_content_textarea messenger-app--input has_emoji_picker expanded-textarea" id="write">
           <img class="ava" src=${window.im.current.avatar_any} alt=${window.im.current.full_name} />
           <div class="messenger-app--input---messagebox">
-            <div class="textareas">
+            <div class="textareas has_emoji_picker">
                 <textarea
                 class="small-textarea"
                 placeholder=${tr('enter_message')}
@@ -284,43 +303,20 @@ export const InputArea = ({ replyTo, onRemoveReply, onSend, onKeyPress, currentD
   `;
 };
 
-export const ChatView = ({ peer }) => {
-  if (!peer) return null;
-  const view = window.im?.messenger?.view;
-  if (!view) return null;
-
-  return html`
-    <div class="chat-window">
-      <${PeerTabsView} tabs=${view.opened_tabs} currentChat=${view.current_chat} />
-      <${ActionsBar}
-        count=${view.selected_messages.length}
-        onDelete=${() => view.callDeletion()}
-        onUnselect=${() => view.unselect()}
-        onReply=${() => view.onReplyButtonClick()}
-      />
-      <div class="messenger-app">
-        <div id="messenger-app--down-button" style="display:none"
-             onClick=${() => view._scrollToEnd()}>DOWN</div>
-        <${MessageListView} messages=${peer.divided_messages} />
-      </div>
-    </div>
-  `;
-};
-
 export const ConversationItem = ({ conv }) => {
   const last_msg = conv.last_message;
   const cls1 = ["crp-entry"];
-  if (last_msg && last_msg.data.from_id != conv.peer.id) {
-    cls1.push("crp-entry-replied-same");
+  if (last_msg && last_msg.data.from_id != conv.peer.id && conv.peer.is_saved_messages == true) {
+      cls1.push("crp-entry-replied-same");
   }
 
   return html`
     <div class="${cls1.join(' ')}" onClick=${() => window.im?.selectChat(conv)}>
       <div class="crp-entry--image">
-        <img src=${conv.peer.avatar_any} loading="lazy" />
+        <img src=${conv.peer.conversation_avatar_any} loading="lazy" />
       </div>
       <div class="crp-entry--info">
-        <a>${ovk_proc_strtr(conv.peer.full_name, 30)}</a><br/>
+        <a>${ovk_proc_strtr(conv.peer.conversations_full_name, 30)}</a><br/>
         ${last_msg && html`<span>${last_msg.conv_date}</span>`}
       </div>
       <div class="crp-entry--message">
@@ -328,10 +324,7 @@ export const ConversationItem = ({ conv }) => {
         <div class="crp-entry--message---av">
           <img src="${last_msg.sender.avatar_any}" />
         </div>
-        <div class="crp-entry--message---text">
-        ${last_msg.conv_summary}
-        </div>`
-        }
+        <div class="crp-entry--message---text" dangerouslySetInnerHTML=${{ __html: last_msg.conv_summary_with_attachments }} />`}
       </div>
     </div>
   `;

@@ -44,7 +44,7 @@ export class EventHandler {
         const _crs = await window.im.conversations._findConvFromApi(_msg.peer_id);
 
         if (!window.im.is_active && !_crs.peer.is_muted) {
-            triggerMessageNotification(_crs, _msg.text);
+            triggerMessageNotification(_crs, _msg.conv_summary);
         }
 
         setTimeout(() => {
