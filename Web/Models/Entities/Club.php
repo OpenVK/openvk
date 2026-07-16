@@ -542,6 +542,18 @@ class Club extends RowModel
                 case 'background':
                     $res->background = $this->getBackDropPictureURLs();
                     break;
+                case 'photo_id':
+                    $av = $this->getAvatarPhoto();
+
+                    if ($av != null) {
+                        $res->photo_id = $av->getVirtualId();
+                        $res->photo_pid = $av->getPrettyIdWithKey();
+                    } else {
+                        $res->photo_id = null;
+                        $res->photo_pid = null;
+                    }
+
+                    break;
                 case 'photo_50':
                     $res->photo_50 = $this->getAvatarUrl('miniscule', $avatar_photo);
                     break;

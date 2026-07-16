@@ -89,6 +89,18 @@ final class Users extends VKAPIRequestHandler
                             case "has_photo":
                                 $response[$i]->has_photo = is_null($usr->getAvatarPhoto()) ? 0 : 1;
                                 break;
+                            case "photo_id":
+                                $av = $usr->getAvatarPhoto();
+
+                                if ($av != null) {
+                                    $response[$i]->photo_id = $av->getVirtualId();
+                                    $response[$i]->photo_pid = $av->getPrettyIdWithKey();
+                                } else {
+                                    $response[$i]->photo_id = null;
+                                    $response[$i]->photo_pid = null;
+                                }
+
+                                break;
                             case "photo_max_orig":
                                 $response[$i]->photo_max_orig = $usr->getAvatarURL();
                                 break;
