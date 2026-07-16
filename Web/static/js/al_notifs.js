@@ -83,7 +83,7 @@ async function triggerMessageNotification(conv, text, timestamp) {
 
         const notif = {
             title: escapeHtml(title),
-            body: "<b>" + escapeHtml(title) + ":</b> " + (escapeHtml(ovk_proc_strtr(text, 95)) || "[Attachment]"),
+            body: "<b>" + escapeHtml(title) + ":</b> " + (ovk_proc_strtr(text, 95)),
             ava: ava,
             priority: 1,
         };

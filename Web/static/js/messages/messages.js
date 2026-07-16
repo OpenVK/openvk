@@ -119,296 +119,340 @@ export class DayChunk extends MessagesChunk {
 }
 
 export class ChatGeneralForm {
-  static chat_number = 2000000000;
-  static MESSAGES_PER_PAGE = 20;
-  static base_fields = 'photo_100';
+    static chat_number = 2000000000;
+    static MESSAGES_PER_PAGE = 20;
+    static base_fields = 'photo_100';
 
-  constructor(item) {
-    this.data = item || {};
-    this.message_chunks = [];
-    this.message_chunks_order = [];
+    constructor(item) {
+        this.data = item || {};
+        this.message_chunks = [];
+        this.message_chunks_order = [];
 
-    /**
-     * UID of the chunk the user is currently scrolled to / anchored at.
-     * Set after the first load. Changes when the user scrolls into a
-     * newly loaded chunk (see _messagesLoad_UpFromCurrentChunk and
-     * _messagesLoad_DownFromCurrentChunk).
-     */
-    this._currentChunkUid = null;
+        /**
+        * UID of the chunk the user is currently scrolled to / anchored at.
+        * Set after the first load. Changes when the user scrolls into a
+        * newly loaded chunk (see _messagesLoad_UpFromCurrentChunk and
+        * _messagesLoad_DownFromCurrentChunk).
+        */
+        this._currentChunkUid = null;
 
-    /**
-     * True when the API confirmed there are no older messages
-     * (scrolling UP is exhausted).
-     */
-    this._end_reached = false;
+        /**
+        * True when the API confirmed there are no older messages
+        * (scrolling UP is exhausted).
+        */
+        this._end_reached = false;
 
-    /**
-     * True when the API confirmed there are no newer messages
-     * (scrolling DOWN is exhausted — we are at the very end of the
-     * conversation).
-     */
-    this._beginning_reached = false;
+        /**
+        * True when the API confirmed there are no newer messages
+        * (scrolling DOWN is exhausted — we are at the very end of the
+        * conversation).
+        */
+        this._beginning_reached = false;
 
-    this._messages_inited = false;
-  }
+        this._messages_inited = false;
+    }
 
-  // ── identity ─────────────────────────────────────────────────────
+    // ── identity ─────────────────────────────────────────────────────
 
-  get id() {
-    switch (this.supposed_type) {
-      case 'user':
-        return this.data.id;
-      case 'club':
-        return this.data.id * -1;
-      case 'chat':
-        if (this.data.id < this.chat_number) {
-          return this.data.id + this.chat_number;
-        } else {
-          return this.data.id;
+    get id() {
+        switch (this.supposed_type) {
+        case 'user':
+            return this.data.id;
+        case 'club':
+            return this.data.id * -1;
+        case 'chat':
+            if (this.data.id < this.chat_number) {
+            return this.data.id + this.chat_number;
+            } else {
+            return this.data.id;
+            }
         }
     }
-  }
 
-  get supposed_type() {
-    if (this.data.first_name) return 'user';
-    if (this.data.name) return 'club';
-    return 'chat';
-  }
-
-  get can_write() {
-    return true;
-  }
-
-  get avatar_any() {
-    return this.data.photo_100 ?? '/assets/packages/static/openvk/img/im/chat_meaningless.jpg';
-  }
-
-  get full_name() {
-    switch (this.supposed_type) {
-      case 'user':
-        return window.escapeHtml(this.data.first_name + ' ' + this.data.last_name);
-      case 'club':
-        return window.escapeHtml(this.data.name);
-      case 'chat':
-        return window.escapeHtml(this.data.title);
-    }
-  }
-
-  get name() {
-    switch (this.supposed_type) {
-      case 'user':
-        return window.escapeHtml(this.data.first_name);
-      case 'club':
-        return window.escapeHtml(this.data.name);
-      case 'chat':
-        return window.escapeHtml(this.data.title);
-    }
-  }
-
-  get page_url() {
-    switch (this.supposed_type) {
-      case 'user':
-        return '/id' + this.data.id;
-      case 'club':
-        return '/club' + this.data.id;
-    }
-  }
-
-  get chat_url() {
-    return '/im?sel=' + this.id;
-  }
-
-  // ── chunk management ─────────────────────────────────────────────
-
-  /**
-   * Returns all chunks sorted newest-first.
-   *
-   * Sorting key: first_message (the *oldest* message when do_reverse=true)
-   * descending, so the chunk whose oldest message is the most recent comes
-   * first.
-   *
-   * Sorted order:  [newest_chunk, ..., oldest_chunk]
-   * Indices:       [0            , ..., N-1          ]
-   */
-  get chunks() {
-    return this.message_chunks.slice(0).sort((a, b) => {
-      const aTime = a.first_message?.sent || 0;
-      const bTime = b.first_message?.sent || 0;
-      return bTime - aTime;
-    });
-  }
-
-  /**
-   * Returns ALL messages from ALL chunks in chronological order.
-   * Iterates chunks from oldest to newest (reversed sorted order)
-   * so that the flattened result is oldest-to-newest overall.
-   */
-  get messages() {
-    const fnl = [];
-    if (this._cached_all_messages != undefined) {
-      return this._cached_all_messages;
+    get supposed_type() {
+        if (this.data.first_name) return 'user';
+        if (this.data.name) return 'club';
+        return 'chat';
     }
 
-    const sorted = this.chunks; // newest-first
-    for (let i = sorted.length - 1; i >= 0; i--) {
-      sorted[i].getMessages().forEach((msg) => fnl.push(msg));
+    get can_write() {
+        return true;
     }
 
-    this._cached_all_messages = fnl;
-    return fnl;
-  }
-
-  get divided_messages() {
-    const dayChunks = [];
-    const dateMap = new Map();
-
-    // Iterate chunks from oldest to newest so messages are pushed
-    // into each DayChunk in correct chronological order.
-    const sorted = this.chunks; // newest-first
-    for (let i = sorted.length - 1; i >= 0; i--) {
-      const chunk = sorted[i];
-      chunk.getMessages().forEach((msg) => {
-        if (!msg.sent) return;
-        if (msg.is_deleted_formally) return;
-        const dateKey = msg.sort_date;
-
-        if (!dateMap.has(dateKey)) {
-          const dayChunk = new DayChunk([]);
-          dayChunk.setDay(dateKey);
-          dayChunks.push(dayChunk);
-          dateMap.set(dateKey, dayChunk);
+    get conversation_avatar_any() {
+        if (this.id === window.openvk.current_id) {
+            return "/assets/packages/static/openvk/img/im/saved_messages.png";
         }
 
-        dateMap.get(dateKey)._pushMessage(msg);
-      });
+        return this.avatar_any;
     }
 
-    dayChunks.sort((a, b) => a.date.localeCompare(b.date));
+    get avatar_any() {
+        return this.data.photo_100 ?? '/assets/packages/static/openvk/img/im/chat_meaningless.jpg';
+    }
 
-    return dayChunks;
-  }
+    get conversations_full_name() {
+        if (this.id === window.openvk.current_id) {
+            return tr("saved_messages");
+        }
+
+        return this.full_name;
+    }
+
+    get full_name() {
+        switch (this.supposed_type) {
+            case 'user':
+                return window.escapeHtml(this.data.first_name + ' ' + this.data.last_name);
+            case 'club':
+                return window.escapeHtml(this.data.name);
+            case 'chat':
+                return window.escapeHtml(this.data.title);
+            }
+    }
+
+    get conversations_name() {
+        if (this.id === window.openvk.current_id) {
+            return tr("saved_messages");
+        }
+
+        return this.name;
+    }
+
+    get name() {
+        switch (this.supposed_type) {
+            case 'user':
+                return window.escapeHtml(this.data.first_name);
+            case 'club':
+                return window.escapeHtml(this.data.name);
+            case 'chat':
+                return window.escapeHtml(this.data.title);
+        }
+    }
+
+    get page_url() {
+        switch (this.supposed_type) {
+            case 'user':
+                return '/id' + this.data.id;
+            case 'club':
+                return '/club' + this.data.id;
+        }
+    }
+
+    get chat_url() {
+        return '/im?sel=' + this.id;
+    }
+
+    get is_saved_messages() {
+        return this.id === window.openvk.current_id;
+    }
+
+    // ── chunk management ─────────────────────────────────────────────
+
+    /**
+    * Returns all chunks sorted newest-first.
+    *
+    * Sorting key: first_message (the *oldest* message when do_reverse=true)
+    * descending, so the chunk whose oldest message is the most recent comes
+    * first.
+    *
+    * Sorted order:  [newest_chunk, ..., oldest_chunk]
+    * Indices:       [0            , ..., N-1          ]
+    */
+    get chunks() {
+        return this.message_chunks.slice(0).sort((a, b) => {
+        const aTime = a.first_message?.sent || 0;
+        const bTime = b.first_message?.sent || 0;
+        return bTime - aTime;
+        });
+    }
+
+    /**
+    * Returns ALL messages from ALL chunks in chronological order.
+    * Iterates chunks from oldest to newest (reversed sorted order)
+    * so that the flattened result is oldest-to-newest overall.
+    */
+    get messages() {
+        const fnl = [];
+        if (this._cached_all_messages != undefined) {
+            return this._cached_all_messages;
+        }
+
+        const sorted = this.chunks; // newest-first
+        for (let i = sorted.length - 1; i >= 0; i--) {
+            sorted[i].getMessages().forEach((msg) => fnl.push(msg));
+        }
+
+        this._cached_all_messages = fnl;
+        return fnl;
+    }
+
+    get divided_messages() {
+        const dayChunks = [];
+        const dateMap = new Map();
+
+        // Iterate chunks from oldest to newest so messages are pushed
+        // into each DayChunk in correct chronological order.
+        const sorted = this.chunks; // newest-first
+        for (let i = sorted.length - 1; i >= 0; i--) {
+            const chunk = sorted[i];
+            chunk.getMessages().forEach((msg) => {
+                if (!msg.sent) return;
+                if (msg.is_deleted_formally) return;
+                const dateKey = msg.sort_date;
+
+                if (!dateMap.has(dateKey)) {
+                    const dayChunk = new DayChunk([]);
+                    dayChunk.setDay(dateKey);
+                    dayChunks.push(dayChunk);
+                    dateMap.set(dateKey, dayChunk);
+                }
+
+                dateMap.get(dateKey)._pushMessage(msg);
+            });
+        }
+
+        dayChunks.sort((a, b) => a.date.localeCompare(b.date));
+
+        return dayChunks;
+    }
 
     get is_muted() {
         return false;
     }
 
-  _removeCache() {
-    this._cached_all_messages = undefined;
-  }
+    _removeCache() {
+        this._cached_all_messages = undefined;
+    }
 
   // ── initial loading ──────────────────────────────────────────────
 
-  static async resolveById(id) {
-    if (id == 0) {
-      return window.im._current;
-    }
-
-    if (id > this.chat_number) {
-      const __ = await window.OVKAPI.call('messages.getConversationsById', { 'peer_ids': id, 'fields': ChatGeneralForm.base_fields });
-
-      if (!__ || __.items.length == 0) {
-        return null;
-      }
-      return __.items[0].conversation.peer;
-    } else {
-      if (id > 0) {
-        const __ = await window.OVKAPI.call('users.get', { 'user_ids': id, 'fields': ChatGeneralForm.base_fields });
-        return __[0];
-      } else {
-        const __ = await window.OVKAPI.call('groups.getById', { 'group_ids': Math.abs(id), 'fields': ChatGeneralForm.base_fields });
-        if (__[0].type == 'undefined') {
-          return null;
+    static async resolveById(id) {
+        if (id == 0) {
+            return window.im._current;
         }
-        return __[0];
-      }
-    }
-  }
 
-  static async resolveByIdAndReturnClass(id) {
-    const c = await ChatGeneralForm.resolveById(id);
-    if (c == null) return undefined;
-    return new ChatGeneralForm(c);
-  }
+        if (id > this.chat_number) {
+            const __ = await window.OVKAPI.call('messages.getConversationsById', { 'peer_ids': id, 'fields': ChatGeneralForm.base_fields });
 
-  /**
-   * Fetch one page of messages from the API.
-   *
-   * @param {number|null} message_id  - start_message_id passed to VK API.
-   *        When null the API returns the most recent messages.
-   * @param {number} offset           - offset relative to start_message_id.
-   *        Negative values go further back in history.
-   */
-  async getMessages(message_id, offset = 0) {
-    const rev = true;
-    const messages = new MessagesChunk([], rev);
-    messages.latest_message_index = message_id;
-
-    const params = {
-      'start_message_id': message_id,
-      'offset': offset,
-      'peer_id': this.id,
-    };
-
-    await messages.fetch(params);
-
-    return messages;
-  }
-
-  /**
-   * Fetch messages *newer* than the given message_id.
-   * Uses a trick: offset=-count to get `count` messages *after*
-   * start_message_id (the VK API offset works in reverse when
-   * start_message_id is set — negative offset goes toward newer).
-   */
-  async getMessages_NewerThan(message_id) {
-    const rev = true;
-    const messages = new MessagesChunk([], rev);
-    messages.latest_message_index = message_id;
-
-    const params = {
-      'start_message_id': message_id,
-      'offset': -(ChatGeneralForm.MESSAGES_PER_PAGE),
-      'peer_id': this.id,
-    };
-
-    await messages.fetch(params);
-
-    return messages;
-  }
-
-  // ── sending ──────────────────────────────────────────────────────
-
-  async sendMessage(msg, reply_to = null, attachments = null) {
-    this._pushNewMessage(msg);
-    window.im.messenger.view._scrollToEnd();
-    const datas = {
-      'peer_id': this.id,
-      'message': msg.text,
-      'attachment': msg.str_attachments,
-    };
-
-    if (reply_to != null) {
-      datas['reply_to'] = reply_to.id;
+            if (!__ || __.items.length == 0) {
+                return null;
+            }
+            return __.items[0].conversation.peer;
+        } else {
+            if (id > 0) {
+                const __ = await window.OVKAPI.call('users.get', { 'user_ids': id, 'fields': ChatGeneralForm.base_fields });
+                return __[0];
+            } else {
+                const __ = await window.OVKAPI.call('groups.getById', { 'group_ids': Math.abs(id), 'fields': ChatGeneralForm.base_fields });
+                if (__[0].type == 'undefined') {
+                return null;
+                }
+                return __[0];
+            }
+        }
     }
 
-    if (attachments != null) {
-      datas['attachment'] = attachments.join(',');
+    static async resolveByIdAndReturnClass(id) {
+        const c = await ChatGeneralForm.resolveById(id);
+        if (c == null) return undefined;
+        return new ChatGeneralForm(c);
     }
 
-    const resp = await window.OVKAPI.call('messages.send', datas);
-    msg.data.id = resp;
-    console.info('IM | Sent message to ' + this.id);
-  }
+    /**
+    * Fetch one page of messages from the API.
+    *
+    * @param {number|null} message_id  - start_message_id passed to VK API.
+    *        When null the API returns the most recent messages.
+    * @param {number} offset           - offset relative to start_message_id.
+    *        Negative values go further back in history.
+    */
+    async getMessages(message_id, offset = 0) {
+        const rev = true;
+        const messages = new MessagesChunk([], rev);
+        messages.latest_message_index = message_id;
 
-  _findMessageById(id) {
-    let f = null;
-    this.messages.forEach((e) => {
-      if (f != null) return;
-      if (e.id == id) f = e;
-    });
+        const params = {
+            'start_message_id': message_id,
+            'offset': offset,
+            'peer_id': this.id,
+        };
 
-    return f;
-  }
+        await messages.fetch(params);
+
+        return messages;
+    }
+
+    /**
+    * Fetch messages *newer* than the given message_id.
+    * Uses a trick: offset=-count to get `count` messages *after*
+    * start_message_id (the VK API offset works in reverse when
+    * start_message_id is set — negative offset goes toward newer).
+    */
+    async getMessages_NewerThan(message_id) {
+        const rev = true;
+        const messages = new MessagesChunk([], rev);
+        messages.latest_message_index = message_id;
+
+        const params = {
+        'start_message_id': message_id,
+        'offset': -(ChatGeneralForm.MESSAGES_PER_PAGE),
+        'peer_id': this.id,
+        };
+
+        await messages.fetch(params);
+
+        return messages;
+    }
+
+    // ── sending ──────────────────────────────────────────────────────
+
+    async sendMessage(msg, reply_to = null, attachments = null) {
+        this._pushNewMessage(msg);
+        window.im.messenger.view._scrollToEnd();
+        const datas = {
+            'peer_id': this.id,
+            'message': msg.text,
+            'attachment': msg.str_attachments,
+        };
+
+        if (reply_to != null) {
+            datas['reply_to'] = reply_to.id;
+        }
+
+        if (attachments != null) {
+            datas['attachment'] = attachments.join(',');
+        }
+
+        try {
+            const resp = await window.OVKAPI.call('messages.send', datas);
+            msg.data.id = resp;
+            console.info('IM | Sent message to ' + this.id);
+        } catch (e) {
+            let d = String(e);
+            if (d.startsWith("Error: Broker failure")) {
+                d = d.replace("Error: Broker failure: ", "");
+            }
+
+            msg.data.error_text = d;
+            msg.data.resend_params = datas;
+            console.error('IM | Did not sent message to ' + this.id, ': ', e);
+            window.im.messenger.view._triggerUpdate();
+        }
+    }
+
+    _findMessageById(id) {
+        let f = null;
+        this.messages.forEach((e) => {
+            if (f != null) return;
+            if (e.id == id) f = e;
+        });
+
+        return f;
+    }
+
+    async _findMessageByIdFromApi(id) {
+        return this._findMessageById(id);
+    }
 
     /**
     * Push a newly-arrived message into the *newest* chunk
@@ -427,105 +471,105 @@ export class ChatGeneralForm {
         window.im.messenger.view._triggerUpdate();
     }
 
-  /**
-   * Returns the newest chunk (index 0 of the sorted array).
-   * Creates an empty one if none exist.
-   */
-  _getNewestChunk(check_chunk = true) {
-    const sorted = this.chunks;
-    if (sorted.length === 0 && check_chunk == true) {
-      const c = new MessagesChunk([]);
-      this.message_chunks.push(c);
-      return c;
-    }
-    return sorted[0];
-  }
-
-  /**
-   * Returns the first (newest) chunk in the sorted array,
-   * creating an empty one if needed.
-   * Despite the misleading name, this gives us the NEWEST chunk.
-   */
-  _getMostActualChunk() {
-    return this.message_chunks[0];
-  }
-
-  /**
-   * Returns the LAST chunk in the sorted array — i.e. the OLDEST one.
-   *
-   * Despite the name "_getLatestChunk", it returns the oldest chunk
-   * because `this.chunks` is sorted newest-first.
-   *
-   * Creates an empty chunk if none exist (when create_empty = true).
-   */
-  _getLatestChunk(create_empty = true) {
-    if (create_empty && this.chunks[this.chunks.length - 1] == undefined) {
-      console.log('IM | Adding empty chunk');
-      const c = new MessagesChunk([]);
-      this.message_chunks.push(c);
+    /**
+    * Returns the newest chunk (index 0 of the sorted array).
+    * Creates an empty one if none exist.
+    */
+    _getNewestChunk(check_chunk = true) {
+        const sorted = this.chunks;
+        if (sorted.length === 0 && check_chunk == true) {
+        const c = new MessagesChunk([]);
+        this.message_chunks.push(c);
+        return c;
+        }
+        return sorted[0];
     }
 
-    return this.chunks[this.chunks.length - 1];
-  }
-
-  // ── scrolling boundaries ─────────────────────────────────────────
-
-  _isEndReached() {
-    return this._end_reached ?? false;
-  }
-
-  _isBeginningReached() {
-    return this._beginning_reached ?? false;
-  }
-
-  /**
-   * Find the "current" chunk in the sorted chunks array.
-   * The current chunk is the one the user is anchored to.
-   *
-   * Returns { chunk, index } or null if no current chunk is set.
-   */
-  _findCurrentChunk() {
-    if (this._currentChunkUid == null) return null;
-    const sorted = this.chunks;
-    for (let i = 0; i < sorted.length; i++) {
-      if (sorted[i].uid === this._currentChunkUid) {
-        return { chunk: sorted[i], index: i };
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Mark a chunk as the "current" one by its UID.
-   */
-  _setCurrentChunkByUid(uid) {
-    this._currentChunkUid = uid;
-  }
-
-  // ── appending chunks ─────────────────────────────────────────────
-
-  /**
-   * Append a newly loaded chunk to the raw message_chunks array.
-   * Before appending, sets it as the _currentChunk if none is set yet.
-   */
-  _appendMessagesChunk(messages, before = false) {
-    this._messages_inited = true;
-
-    if (!before) {
-      this.message_chunks.unshift(messages);
-    } else {
-      this.message_chunks.push(messages);
+    /**
+    * Returns the first (newest) chunk in the sorted array,
+    * creating an empty one if needed.
+    * Despite the misleading name, this gives us the NEWEST chunk.
+    */
+    _getMostActualChunk() {
+        return this.message_chunks[0];
     }
 
-    // First ever chunk → make it the current chunk
-    if (this._currentChunkUid == null) {
-      this._currentChunkUid = messages.uid;
-    }
-  }
+    /**
+    * Returns the LAST chunk in the sorted array — i.e. the OLDEST one.
+    *
+    * Despite the name "_getLatestChunk", it returns the oldest chunk
+    * because `this.chunks` is sorted newest-first.
+    *
+    * Creates an empty chunk if none exist (when create_empty = true).
+    */
+    _getLatestChunk(create_empty = true) {
+        if (create_empty && this.chunks[this.chunks.length - 1] == undefined) {
+        console.log('IM | Adding empty chunk');
+        const c = new MessagesChunk([]);
+            this.message_chunks.push(c);
+        }
 
-  _isMessagesInited() {
-    return this._messages_inited;
-  }
+        return this.chunks[this.chunks.length - 1];
+    }
+
+    // ── scrolling boundaries ─────────────────────────────────────────
+
+    _isEndReached() {
+        return this._end_reached ?? false;
+    }
+
+    _isBeginningReached() {
+        return this._beginning_reached ?? false;
+    }
+
+    /**
+    * Find the "current" chunk in the sorted chunks array.
+    * The current chunk is the one the user is anchored to.
+    *
+    * Returns { chunk, index } or null if no current chunk is set.
+    */
+    _findCurrentChunk() {
+        if (this._currentChunkUid == null) return null;
+        const sorted = this.chunks;
+        for (let i = 0; i < sorted.length; i++) {
+            if (sorted[i].uid === this._currentChunkUid) {
+                return { chunk: sorted[i], index: i };
+            }
+        }
+        return null;
+    }
+
+    /**
+    * Mark a chunk as the "current" one by its UID.
+    */
+    _setCurrentChunkByUid(uid) {
+        this._currentChunkUid = uid;
+    }
+
+    // ── appending chunks ─────────────────────────────────────────────
+
+    /**
+    * Append a newly loaded chunk to the raw message_chunks array.
+    * Before appending, sets it as the _currentChunk if none is set yet.
+    */
+    _appendMessagesChunk(messages, before = false) {
+        this._messages_inited = true;
+
+        if (!before) {
+            this.message_chunks.unshift(messages);
+        } else {
+            this.message_chunks.push(messages);
+        }
+
+        // First ever chunk → make it the current chunk
+        if (this._currentChunkUid == null) {
+            this._currentChunkUid = messages.uid;
+        }
+    }
+
+    _isMessagesInited() {
+        return this._messages_inited;
+    }
 
   // ── scrolling UP (older messages) ─────────────────────────────────
 
@@ -745,6 +789,25 @@ export class ChatMessage {
     constructor(item = {}) {
         this.data = item;
         this.has_not_loaded_attachments = false;
+
+        if (item.reply_message != null) {
+            if (typeof item.reply_message.attachments == "string" && item.reply_message.attachments.length > 0) {
+                const a = item.reply_message.attachments.split(",");
+                const n = [];
+                a.forEach(i => {
+                    const _type = i.split('_')[0].replace(/[0-9]/g, '');
+                    const f = {};
+                    f['type'] = _type;
+                    f[_type] = {};
+
+                    n.push(f);
+                })
+
+                item.reply_message.attachments = n;
+            }
+
+            this.data.reply_message = new ChatMessage(item.reply_message);
+        }
     }
 
     async hydrateFromEvent(msg) {
@@ -765,14 +828,29 @@ export class ChatMessage {
 
     get sender() {
         if (!this.data.sender) {
-        this._guessSender();
+            this._guessSender();
         }
 
         return this.data.sender;
     }
 
-    get text() {
+    get has_sender() {
+        return this.data.from_id != null;
+    }
+
+    get text_escaped() {
         return escapeHtml(this.data.text);
+    }
+
+    get text() {
+        let text = escapeHtml(this.data.text)
+
+        console.log(nl2br(text))
+        return nl2br(text);
+    }
+
+    get reply() {
+        return this.data.reply_message;
     }
 
     get global_id() {
@@ -785,6 +863,14 @@ export class ChatMessage {
 
     get is_action() {
         return this.data.action != null;
+    }
+
+    get is_reply() {
+        return this.data.reply_message != null;
+    }
+
+    get is_error() {
+        return this.data.error_text != null;
     }
 
     get peer_id() {
@@ -808,9 +894,9 @@ export class ChatMessage {
 
     get readable_date() {
         return this.sent.toLocaleTimeString(navigator.language, {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
         });
     }
 
@@ -827,7 +913,7 @@ export class ChatMessage {
         const isLessThan6Hours = diffHours >= 0 && diffHours < 6;
 
         if (isLessThan6Hours) {
-        return this.readable_date;
+            return this.readable_date;
         }
 
         return this.conv_day;
@@ -848,44 +934,65 @@ export class ChatMessage {
     get conv_summary() {
         let f = "";
         if (this.data.attachments && this.data.attachments.length > 0) {
-            f = ("(" + tr(this.data.attachments[0].type) + ")").toLowerCase();
+            f = get_attachment_text(this.data.attachments[0]);
+        }
+
+        f += escapeHtml(this.data.text);
+
+        return f;
+    }
+
+    get conv_summary_with_attachments() {
+        let f = "";
+        if (this.data.attachments && this.data.attachments.length > 0) {
+            const c = this.data.attachments[0];
+
+            switch (c.type) {
+                case "photo":
+                    f += `<img class="conv_prev_img" src="${c.photo.photo_75}">`;
+
+                    console.log(this.data.text)
+                    if (this.data.text.length == 0) {
+                        f += get_attachment_text(this.data.attachments[0]);
+                    }
+
+                    break;
+                default:
+                    f += get_attachment_text(this.data.attachments[0]);
+                    break;
+            }
+
             f += " ";
         }
 
-        f += this.data.text;
-        return ovk_proc_strtr(f, 100);
+        f += ovk_proc_strtr(escapeHtml(this.data.text), 100);
+
+        return f;
     }
 
     static async fromEvent(event) {
         const [, id, flags, peer, ts, subject, text, attachments, randomId] = event;
         let new_attachments = null;
+        let reply_message = null;
 
         if (attachments['attach1']) {
-            let temp_str = [];
-            let i = 0;
-            let associative = Object.entries(attachments);
-            associative.forEach(item => {
-                if (item[0].startsWith("attach")) {
-                    const _type = associative[i + 1];
-                    if (!_type || _type[0] == "from") {
-                        return;
-                    }
+            const temp_str = get_attachments_list_from_lp(attachments);
+            new_attachments = await resolve_attachments(temp_str);
+        }
 
-                    const type = _type[1];
+        if (attachments['reply_to']) {
+            const peer_obj = await window.im.conversations._findConvFromApi(peer);
+            const reply_id = attachments['reply_to'];
 
-                    temp_str.push(type + item[1]);
-                }
-
-                i += 1;
-            });
-
-            // getting attachments manually bc LP does not returns them
-
-            const atts = await window.OVKAPI.call("utils.resolveAttachments", {
-                "attachments": temp_str.join(',')
-            });
-
-            new_attachments = atts;
+            const msg = await peer_obj.peer._findMessageByIdFromApi(reply_id);
+            if (msg != null) {
+                reply_message = msg;
+            } else {
+                reply_message = new ChatMessage({
+                    'id': reply_id,
+                    'text': '...'
+                });
+            }
         }
 
         const msg = new ChatMessage({
@@ -897,6 +1004,7 @@ export class ChatMessage {
             'text': text,
             'attachments': new_attachments,
             'random_id': randomId,
+            'reply_message': reply_message
         });
         msg._guessSender();
 
@@ -915,6 +1023,14 @@ export class ChatMessage {
         return this.data.deleted == 1;
     }
 
+    can_delete(club = null) {
+        if (this.data.from_id == window.openvk.current_id) {
+            return true;
+        }
+
+        return false;
+    }
+
     setDeleted(by_me = false) {
         this.data.deleted = 1;
         if (by_me) {
@@ -926,5 +1042,25 @@ export class ChatMessage {
 
     setText(text) {
         this.data.text = text;
+    }
+
+    // if message has exclamation mark
+    async tryToResend() {
+        let r = String(this.data.error_text);
+        this.data.error_text = null;
+        window.im.messenger.view._triggerUpdate();
+
+        try {
+            const resp = await window.OVKAPI.call('messages.send', this.data.resend_params);
+            this.data.id = resp;
+            console.info('IM | Resent message to ' + this.id);
+            this.data.error_text = null;
+            this.data.resend_params = null;
+        } catch (e) {
+            this.data.error_text = r;
+            console.error('IM | STILL can not send message to ' + this.id, ': ', e);
+        }
+
+        window.im.messenger.view._triggerUpdate();
     }
 }

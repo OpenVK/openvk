@@ -351,3 +351,42 @@ function month_day_string(date)
 
     return ret;
 }
+
+function get_attachments_list_from_lp(attachments) {
+    // returns "photo1_2,video1_3" from {"attach1": "1_2", "attach1_type": "photo"}
+    let temp_str = [];
+    let i = 0;
+    let associative = Object.entries(attachments);
+    associative.forEach(item => {
+        if (item[0].startsWith("attach")) {
+            const _type = associative[i + 1];
+            if (!_type || _type[0] == "from") {
+                return;
+            }
+
+            temp_str.push(_type[1] + item[1]);
+        }
+
+        i += 1;
+    });
+
+    return temp_str;
+}
+
+async function resolve_attachments(attachments) {
+    const atts = await window.OVKAPI.call("utils.resolveAttachments", {
+        "attachments": attachments.join(',')
+    });
+
+    return atts;
+}
+
+function get_attachment_text(attachment) {
+    f = (`<span class="conv_prev_attachment_text">(` + tr("preview_attachment_" + attachment.type) + ")</span>").toLowerCase();
+
+    return f;
+}
+
+function nl2br(str) {
+    return str.replace(/\n/g, '<br>');
+}

@@ -216,10 +216,24 @@ body.no-scroll .sidebar {
     margin-left: 3%;
 }
 
-.crp-entry--message---text,
+.crp-entry--message---text .conv_prev_img {
+    display: inline;
+    width: 20px;
+    height: 20px;
+    object-fit: cover;
+    border-radius: 2px;
+}
+
 .messenger-app--messages---message .time {
-    color: #404036;
-    display: inline-block;
+    color: var(--text-2);
+    display: inline;
+}
+
+.crp-entry--message---text {
+    color: var(--text-2);
+    display: inline-flex;
+    gap: 5px;
+    align-items: center;
 }
 
 .messenger-app--messages---message .time {
@@ -318,7 +332,7 @@ body.no-scroll .sidebar {
 }
 
 .messenger-app--messages---message {
-    margin-top: 3px;
+    margin-top: 10px;
     position: relative;
 }
 
@@ -334,7 +348,8 @@ body.no-scroll .sidebar {
     opacity: 0.9;
 }
 
-.messenger-app--messages---message.same-author .checkmark {
+.messenger-app--messages---message.same-author .checkmark,
+.messenger-app--messages---message.same-author .error-checkmark {
     margin: 0px 0px 0px 25px;
 }
 
@@ -360,6 +375,12 @@ body.no-scroll .sidebar {
     margin: 5px 0px;
 }
 
+body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-day-time {
+    position: fixed;
+    top: 133px;
+    width: 620px;
+}
+
 .messenger-app--messages .messenger-app--messages-day-time b {
     color: var(--nobold);
     padding: 5px 5px;
@@ -375,6 +396,37 @@ body.no-scroll .sidebar {
     margin: 0;
 }
 
+.messenger-app--messages---message ._content .reply-msg {
+    padding: 4px 8px 4px 8px;
+    border-left: 1px solid var(--nobold);
+    font-size: 10px;
+    margin: 3px 0px 3px 1px;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.messenger-app--messages---message.animated {
+    animation-duration: 5s;
+    animation-name: post-target;
+}
+
+.messenger-app--messages---message ._content .reply-msg:hover {
+    background: var(--bg-selected-mid);
+}
+
+.messenger-app--messages---message ._content .reply-msg .reply-author {
+    font-weight: bold;
+}
+
+.messenger-app--messages---message ._content .reply-msg span,
+.messenger-app--messages---message ._content .reply-msg a {
+    padding: 0;
+    white-space: nowrap;
+    height: 14px;
+    line-height: 13px;
+}
+
 .messenger-app--messages---message > .messenger-app--messages---message--wrap > div {
     display: inline-block;
 }
@@ -388,7 +440,26 @@ body.no-scroll .sidebar {
 
 .messenger-app--messages---message.msg-selected {
     cursor: not-allowed;
-    background: #00000017;
+    background: var(--bg-selected-mid);
+}
+
+.messenger-app--messages---message.msg-error {
+    background: var(--error-bg);
+}
+
+.messenger-app--messages---message.msg-error .checkmark {
+    display: none;
+}
+
+.messenger-app--messages---message.msg-error .error-checkmark {
+    width: 20px;
+    height: 20px;
+    margin: 10px 0px 0px 25px;
+    background: magenta;
+}
+
+.messenger-app--messages---message.msg-error .messenger-app--messages---message--wrap .click-territory {
+    opacity: 1;
 }
 
 .messenger-app--messages---message ._avatar {
@@ -407,7 +478,7 @@ body.no-scroll .sidebar {
 }
 
 .messenger-app--messages---message ._content {
-    width: 310px;
+    width: 400px;
     line-height: 13.2pt;
     padding-left: 10px;
 }
@@ -584,6 +655,7 @@ body.no-scroll .sidebar {
     width: 53px;
     display: block;
     cursor: pointer;
+    text-align: center;
 }
 
 .messenger-app-end.reply-selected .input-reply {
@@ -615,6 +687,7 @@ body.no-scroll .sidebar {
     padding: 5px 10px;
     color: var(--text);
     border-radius: 1px;
+    user-select: none;
 }
 
 .messages--peers-tabs .messages--peers-tab:hover {

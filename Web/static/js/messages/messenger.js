@@ -100,14 +100,15 @@ export class MessengerViewModel {
 		if (!root) return;
 
 		const currentConv = this.getCurrentChat();
-    const peer = currentConv ? currentConv.peer : null;
-    const display_peer = this.toggled_peer_obj ? this.toggled_peer_obj : peer;
+        const peer = currentConv ? currentConv.peer : null;
+        const display_peer = this.toggled_peer_obj ? this.toggled_peer_obj : peer;
 
 		render(html`
       <div id="chat-page" class="${window.im.tab == "contact" ? 'peer-shown' : ''}">
         <div class="chat-window">
           <${PeerTabsView} hadTab=${this.had_more_one_tab} tabs=${this.opened_tabs} currentChat=${this.current_chat} />
           <${ActionsBar}
+            selectedMessages=${this.selected_messages_objs}
             count=${this.selected_messages.length}
             onDelete=${() => this.callDeletion()}
             onUnselect=${() => this.unselect()}
@@ -173,7 +174,8 @@ export class MessengerViewModel {
 	}
 
 	clickOnReply(msg) {
-		console.log(msg)
+        console.log(msg)
+        this.scrollToMessage(msg);
 	}
 
 	onReplyButtonClick() {
@@ -197,27 +199,31 @@ export class MessengerViewModel {
 		this._render();
 	}
 
-	toggleMessageSelection(msg, e) {
-		if (!this.isMessageSelected(msg)) {
-			this.selectMessage(msg);
-		} else {
-			this.unselectMessage(msg);
-		}
-	}
+    toggleMessageSelection(msg, e) {
+        if (msg.id == null) {
+            return;
+        }
 
-  togglePeerInfo(sender = null) {
-    console.log('toggle peer info ', window.im.tab)
-
-    if (window.im.tab == 'contact') {
-      window.im.selectTab('messenger');
-      this.toggled_peer_obj = null;
-    } else {
-      this.toggled_peer_obj = sender;
-     	if (typeof window.im !== 'undefined' && window.im.selectTab) {
-  			window.im.selectTab('contact');
-  		}
+        if (!this.isMessageSelected(msg)) {
+            this.selectMessage(msg);
+        } else {
+            this.unselectMessage(msg);
+        }
     }
-	}
+
+    togglePeerInfo(sender = null) {
+        console.log('toggle peer info ', window.im.tab)
+
+        if (window.im.tab == 'contact') {
+            window.im.selectTab('messenger');
+            this.toggled_peer_obj = null;
+        } else {
+            this.toggled_peer_obj = sender;
+           	if (typeof window.im !== 'undefined' && window.im.selectTab) {
+            window.im.selectTab('contact');
+        }
+        }
+    }
 
 	onScrollDownButtonClick() {
 		this._scrollToEnd();
@@ -229,38 +235,38 @@ export class MessengerViewModel {
 
 		const _scroll = document.documentElement.scrollTop;
 
-    if (_scroll < 21) {
-      console.log("IM | Loading older chunk from API");
-			// ── Scrolled near the top → load older messages (scroll UP) ──
-			await window.im.corresponder._messagesLoad_UpFromLastChunk();
-		} else {
-			const scrollBottom = document.documentElement.scrollHeight - _scroll - document.documentElement.clientHeight;
+        if (_scroll < 21) {
+            console.log("IM | Loading older chunk from API");
+            // ── Scrolled near the top → load older messages (scroll UP) ──
+            await window.im.corresponder._messagesLoad_UpFromLastChunk();
+        } else {
+            const scrollBottom = document.documentElement.scrollHeight - _scroll - document.documentElement.clientHeight;
 
-			if (scrollBottom < 10) {
-				// ── Scrolled near the bottom → load newer messages (scroll DOWN) ──
-				if (window.im.corresponder._chunks_HasMoreNewerChunkRelativelyToCurrentChat()) {
-					// There's already a newer chunk available without fetching
-					console.log('IM | Switching to a newer chunk');
-					await window.im.corresponder._messagesLoad_DownFromCurrentChunk();
-				} else {
-					// No newer chunk loaded yet — fetch from API
-					console.log('IM | Loading newer chunk from API');
-					await window.im.corresponder._messagesLoad_DownFromCurrentChunk();
-				}
-			}
+            if (scrollBottom < 10) {
+                // ── Scrolled near the bottom → load newer messages (scroll DOWN) ──
+                if (window.im.corresponder._chunks_HasMoreNewerChunkRelativelyToCurrentChat()) {
+                // There's already a newer chunk available without fetching
+                    console.log('IM | Switching to a newer chunk');
+                    await window.im.corresponder._messagesLoad_DownFromCurrentChunk();
+                } else {
+                    // No newer chunk loaded yet — fetch from API
+                    console.log('IM | Loading newer chunk from API');
+                    await window.im.corresponder._messagesLoad_DownFromCurrentChunk();
+                }
+            }
 
-			if (scrollBottom > 600) {
-				document.querySelector('.messenger-app--tab-messenger').classList.add('messenger-app--overscrolled');
-			} else {
-				document.querySelector('.messenger-app--tab-messenger').classList.remove('messenger-app--overscrolled');
-			}
-		}
+            if (scrollBottom > 600) {
+                document.querySelector('.messenger-app--tab-messenger').classList.add('messenger-app--overscrolled');
+            } else {
+                document.querySelector('.messenger-app--tab-messenger').classList.remove('messenger-app--overscrolled');
+            }
+        }
 
-		this.is_loading = false;
+        this.is_loading = false;
 	}
 
-	selectMessage(msg) {
-		this.selected_messages.push(msg.id);
+    selectMessage(msg) {
+        this.selected_messages.push(msg.id);
 		this._render();
 	}
 
@@ -272,6 +278,18 @@ export class MessengerViewModel {
 
 	isMessageSelected(msg) {
 		return this.selected_messages.indexOf(msg.id) !== -1;
+	}
+
+    get selected_messages_objs() {
+        let objs = [];
+        const chat = this.getCurrentChat();
+        this.selected_messages.forEach(item => {
+            if (chat != null) {
+                objs.push(chat.peer._findMessageById(item));
+            }
+        })
+
+		return objs;
 	}
 
 	get selected_messages_count() {
@@ -395,10 +413,10 @@ export class MessengerViewModel {
 		if (!to_chat) return;
 		this.drafts[to_chat.peer.id] = this.currentDraft;
 		this.scrolls[to_chat.peer.id] = document.documentElement.scrollTop;
-    this._eraseCurrentDraft();
+        this._eraseCurrentDraft();
 
-    console.log(this.scrolls);
-    console.log('Saved draft for ', to_chat, ", scroll: ", this.scrolls[to_chat.peer.id]);
+        console.log(this.scrolls);
+        console.log('Saved draft for ', to_chat, ", scroll: ", this.scrolls[to_chat.peer.id]);
 	}
 
 	_eraseDraftFor(chat) {
@@ -415,27 +433,57 @@ export class MessengerViewModel {
 		if (!for_chat) return;
 		const _draft = this.drafts[for_chat.peer.id];
 		if (_draft && _draft !== '') {
-			this.currentDraft = _draft;
-    }
-		const _scroll = this.scrolls[for_chat.peer.id];
-		if (_scroll) {
-			this._scrollTo(_scroll);
-		} else {
-			this._scrollToEnd();
-    }
+            this.currentDraft = _draft;
+        }
+  		const _scroll = this.scrolls[for_chat.peer.id];
+  		if (_scroll) {
+ 			this._scrollTo(_scroll);
+  		} else {
+ 			this._scrollToEnd();
+        }
 
-    console.log("Loaded draft for ", for_chat, ", scroll: ", _scroll)
+        console.log("Loaded draft for ", for_chat, ", scroll: ", _scroll)
 	}
 
-  _scrollTo(scroll_progress) {
-    console.log("scrolling page to: ", scroll_progress)
+    _scrollTo(scroll_progress) {
+        console.log("scrolling page to: ", scroll_progress)
 		document.documentElement.scroll({ top: scroll_progress });
 	}
 
-  _scrollToEnd() {
-    console.log("scrolled page to the end");
+    _scrollToEnd() {
+        console.log("scrolled page to the end");
 		this._scrollTo(document.documentElement.scrollHeight);
 	}
+
+    scrollToMessage(msg, load_chunk_where_it_can_be = false) {
+        const msgId = typeof msg === 'object' ? msg.id : msg;
+
+        const el = this.messagesListBlock
+            ? this.messagesListBlock.querySelector(`[data-msg-id="${msgId}"]`)
+            : document.querySelector(`[data-msg-id="${msgId}"]`);
+
+        if (el) {
+            scrollTo({
+                top: el.offsetTop - 200,
+            });
+
+            el.classList.add("animated");
+
+            setTimeout(() => {
+                el.classList.remove("animated");
+            }, 5000);
+
+            console.log('IM | Scrolled to message #' + msgId);
+
+            return;
+        }
+
+        if (load_chunk_where_it_can_be) {
+            console.warn('IM | scrollToMessage: message #' + msgId + ' not found in DOM, chunk loading not yet implemented');
+        } else {
+            console.warn('IM | scrollToMessage: message #' + msgId + ' not found in DOM');
+        }
+    }
 
 	_changeHeight() {
 		let maybe_distance = 100;

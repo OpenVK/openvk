@@ -1398,6 +1398,16 @@
 "contact_info" = "Контакт";
 "write_message" = "Написать сообщение";
 
+"reply_to" = "Ответ на сообщение $1";
+
+"preview_attachment_photo" = "Фотография";
+"preview_attachment_video" = "Видео";
+"preview_attachment_doc" = "Документ";
+"preview_attachment_audio" = "Аудио";
+"preview_attachment_wall" = "Репост";
+
+"saved_messages" = "Избранное";
+
 /* Stickers */
 
 "emoji_group_smileys_emotion" = "Смайлы";

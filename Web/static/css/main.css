@@ -3,12 +3,16 @@
     --common-2: #f0f1f2;
     --bg-page: white;
     --bg-slightly: #f9f9f9;
+    --bg-selected-mid: #00000017;
     --bg-slightly-border: #d6d6d6;
     --bg-hover: #4c4c4c29;
     --text: black;
+    --text-2: #404036;
     --text-rev: white;
     --brand: #606060;
     --nobold: #868686;
+
+    --error-bg:  #f781812e;
 }
 
 html {
@@ -1002,7 +1006,7 @@ h4 {
     position: relative;
 }
 
-.model_content_textarea textarea {
+.has_emoji_picker.model_content_textarea textarea {
     padding: 4px 30px 4px 6px;
 }
 
