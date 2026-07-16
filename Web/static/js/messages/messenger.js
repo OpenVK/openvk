@@ -1,6 +1,6 @@
 import { ChatMessage, ChatGeneralForm } from './messages.js';
 import { Conversation } from './conversations.js';
-import { render, html, PeerTabsView, ActionsBar, MessageListView, InputArea } from './components.js';
+import { render, html, PeerTabsView, ActionsBar, MessageListView, PeerWindow, InputArea } from './components.js';
 
 const u = window.u;
 const collect_attachments = window.collect_attachments;
@@ -132,12 +132,7 @@ export class MessengerViewModel {
         </div>
         ${window.im.tab == "contact" && html`
           <div class="peer-window">
-            <div><a onClick=${() => this.togglePeerInfo()}>${tr('back')}</a></div>
-            <div>
-              <img src=${display_peer.avatar_any} alt=${tr('avatar')} />
-              <a href=${display_peer.page_url}>${display_peer.full_name}</a>
-              <a onClick=${() => { window.im.setChatByPeerId(display_peer.id) }}>${tr('write_message')}</a>
-            </div>
+            <${PeerWindow} peer=${display_peer} togglePeerInfo=${this.togglePeerInfo} />
           </div>
         `}
       </div>

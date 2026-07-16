@@ -390,6 +390,7 @@ class PhotoViewer {
       await this.loadPostContext(this.contextId, this.contextType === 'comment');
     }
 
+      console.log(this.photoMap)
     if (this.photoMap[firstPhotoId]) {
       this.showPhoto(firstPhotoId);
     } else {
@@ -432,7 +433,9 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post", custom_con
 }
 
 function OpenAvatar(e, photo_large, avatar_album, photo_id) {
-  OpenMiniature(e, photo_large, avatar_album, photo_id, "album", null, true, 0)
+    console.log("Open avatar ", avatar_album, photo_id);
+
+    OpenMiniature(e, photo_large, avatar_album, photo_id, "album", null, true, 0)
 }
 
 async function OpenVideo(video_arr = [], init_player = true)

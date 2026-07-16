@@ -746,83 +746,66 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     color: var(--text-2ary);
 }
 
-.friends-list {
-    width: 100%;
-}
-
-.friends-list-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 12px;
-    cursor: pointer;
-    border-bottom: 1px solid var(--bg-hover);
-    transition: background 0.1s;
-}
-
 .friends-list-item:hover {
     background: var(--bg-hover);
 }
 
-.friends-list-ava {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0;
+.peer-window {
+    background: var(--common-2);
+    display: inline-flex !important;
+    box-sizing: border-box;
+    width: 628px;
 }
 
-.friends-list-name {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text);
+.peer-window .back-side {
+    width: 90px;
 }
 
-.friends-load-more {
-    padding: 10px;
-    text-align: center;
-    cursor: pointer;
-    color: var(--link);
-    font-size: 13px;
-}
-
-.friends-load-more:hover {
-    text-decoration: underline;
-}
-
-.contact-info {
+.peer-window .peer-side {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 30px 20px;
-    gap: 12px;
+    width: 70%;
 }
 
-.contact-info-ava {
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
+.peer-window .peer-side .peer-info {
+    display: flex;
+    gap: 10px;
+}
+
+.peer-window .peer-side .peer-info .peer-avatar {
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+.peer-window .peer-side .peer-info .peer-avatar a {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.peer-window .peer-side .peer-actions {
+    margin-top: 10px;
+}
+
+.peer-window .peer-side .peer-info .peer-avatar img {
+    display: block;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
 }
 
-.contact-info-name {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--text);
+.peer-window .peer-side .peer-info .avatar-opener {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 20px;
+    background: red;
 }
 
-.contact-info-online {
-    font-size: 13px;
-}
+/* Friends */
 
-.contact-info-online.online {
-    color: #4bb34b;
-}
-
-.contact-info-online.offline {
-    color: #999;
-}
-
-.contact-info-actions {
-    margin-top: 8px;
+.friends-list .friends-list-item img {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
 }

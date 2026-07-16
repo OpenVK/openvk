@@ -370,20 +370,19 @@ export const TabBar = ({ tabs, activeTab, onTabSelect }) => {
   `;
 };
 
-export const SearchPage = () => {
+export const SearchPage = ({ query }) => {
   return html`
-  	${tr('search_messages')}
+    <input type="query" default="${tr('search_messages')}" value="${query}" />
   `;
 };
 
 export const FriendsPage = ({ friends, count, onLoadMore }) => {
   return html`
-    <div class="messenger-page">
       <div class="friends-list">
         ${friends.map((f) => html`
-          <div class="friends-list-item" onClick=${() => window.im?.selectChat(window.im.messenger.view.getChatWith({ id: f.id }))}>
-            <img src="${f.photo_100 || f.photo_50 || ''}" class="friends-list-ava" />
-            <span class="friends-list-name">${window.escapeHtml(f.first_name + ' ' + f.last_name)}</span>
+          <div class="friends-list-item" onClick=${() => window.im?.setChatByPeerId(f.id)}>
+            <img src="${f.avatar_any}" class="friends-list-ava" />
+            <span class="friends-list-name">${f.full_name}</span>
           </div>
         `)}
       </div>
@@ -392,7 +391,6 @@ export const FriendsPage = ({ friends, count, onLoadMore }) => {
           ${tr('show_next')}
         </div>
       ` : ''}
-    </div>
   `;
 };
 
@@ -400,9 +398,7 @@ export const ContactPage = ({ peer }) => {
   if (!peer) return html`<div class="messenger-page-stub"><p>${tr('no_user_selected')}</p></div>`;
 
   const user = peer.data;
-  const isOnline = user.online == 1;
   const lastSeen = user.last_seen ? new Date(user.last_seen.time * 1000).toLocaleString() : '';
-  const avatar = user.photo_200 || user.photo_100 || user.photo_50 || '';
   const name = window.escapeHtml(user.first_name + ' ' + user.last_name);
 
   return html`
@@ -422,3 +418,28 @@ export const ContactPage = ({ peer }) => {
     </div>
   `;
 };
+
+
+export const PeerWindow = ({ peer, togglePeerInfo }) => {
+    const isOnline = peer.online == 1;
+    const avatar = peer.data.photo_200 || peer.data.photo_100 || peer.data.photo_50 || '';
+    const has_avatar = true;
+
+    return html`
+    <div class="back-side"><a onClick=${() => togglePeerInfo()}>${tr('back')}</a></div>
+    <div class="peer-side">
+        <div class="peer-info">
+            <div class="peer-avatar">
+                <img src=${avatar} alt=${tr('avatar')} />
+                <a onClick=${(event) => { OpenAvatar(event, avatar, peer.id + '_profile', peer.data.photo_pid) }} class="avatar-opener hoverable"></a>
+            </div>
+            <a href=${peer.page_url}>${escapeHtml(peer.full_name)}</a>
+        </div>
+        <div class="peer-actions">
+            <a onClick=${() => { window.im.setChatByPeerId(peer.id) }}>${tr('write_message')}</a>
+        </div>
+        <div class="chat-members"></div>
+        <div class="chat-media"></div>
+    </div>
+    `;
+}

@@ -40,10 +40,11 @@ export class ConversationsViewModel {
 }
 
 export class Conversations {
-  constructor() {
-    this.total_convs = 0;
-    this.CONVERSATIONS_PER_PAGE = 100;
-  }
+    constructor() {
+        this.total_convs = 0;
+        this.CONVERSATIONS_PER_PAGE = 100;
+        this.q = null;
+    }
 
   async _resolveSel(sel) {
     let _ = null;
@@ -188,7 +189,7 @@ export class Conversations {
             hasMore=${this.has_more_items}
             onLoadMore=${() => this.view.loadNext()}
             onCreateChat=${() => this.view._chatCreationModal()}
-            onSearch=${(e) => this.view._onMessagesSearch(e)}
+            onSearch=${(e) => this._onMessagesSearch(e)}
         />
         `, container);
     }
@@ -200,7 +201,10 @@ export class Conversations {
     // search
 
     async _onMessagesSearch(e) {
-        console.log(e)
+        this.q = String(e.target.value);
+
+        e.target.value = "";
+        window.im.selectTab("search");
     }
 }
 

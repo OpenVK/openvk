@@ -121,7 +121,7 @@ export class DayChunk extends MessagesChunk {
 export class ChatGeneralForm {
     static chat_number = 2000000000;
     static MESSAGES_PER_PAGE = 20;
-    static base_fields = 'photo_100';
+    static base_fields = 'photo_100,photo_200,last_seen,photo_id,status';
 
     constructor(item) {
         this.data = item || {};
@@ -189,6 +189,10 @@ export class ChatGeneralForm {
 
     get avatar_any() {
         return this.data.photo_100 ?? '/assets/packages/static/openvk/img/im/chat_meaningless.jpg';
+    }
+
+    get avatar_big() {
+        return this.data.photo_200;
     }
 
     get conversations_full_name() {
@@ -324,7 +328,7 @@ export class ChatGeneralForm {
         this._cached_all_messages = undefined;
     }
 
-  // ── initial loading ──────────────────────────────────────────────
+    // ── initial loading ──────────────────────────────────────────────
 
     static async resolveById(id) {
         if (id == 0) {
@@ -411,7 +415,7 @@ export class ChatGeneralForm {
         window.im.messenger.view._scrollToEnd();
         const datas = {
             'peer_id': this.id,
-            'message': msg.text,
+            'message': msg.text_raw,
             'attachment': msg.str_attachments,
         };
 
@@ -838,6 +842,10 @@ export class ChatMessage {
         return this.data.from_id != null;
     }
 
+    get text_raw() {
+        return this.data.text;
+    }
+
     get text_escaped() {
         return escapeHtml(this.data.text);
     }
@@ -845,7 +853,6 @@ export class ChatMessage {
     get text() {
         let text = escapeHtml(this.data.text)
 
-        console.log(nl2br(text))
         return nl2br(text);
     }
 
