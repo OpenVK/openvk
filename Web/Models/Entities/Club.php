@@ -82,7 +82,7 @@ class Club extends RowModel
     {
         if (!is_null($this->getShortCode())) {
             return "/" . $this->getShortCode();
-        } else if ($this->isEvent()) {
+        } elseif ($this->isEvent()) {
             return "/event" . $this->getId();
         } else {
             return "/club" . $this->getId();
