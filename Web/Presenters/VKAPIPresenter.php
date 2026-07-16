@@ -156,7 +156,7 @@ final class VKAPIPresenter extends OpenVKPresenter
                 header("HTTP/1.0 507 Insufficient Storage");
                 exit("File is too big");
             }
-            
+
             $slot = $this->getNextUploadSlot($folder, (string) $data["USER"]);
             if (!move_uploaded_file($file["tmp_name"], "$folder/$data[USER]_$slot.oct")) {
                 header("HTTP/1.0 500");
@@ -243,7 +243,7 @@ final class VKAPIPresenter extends OpenVKPresenter
             $files[] = ["path" => $file, "mtime" => $mtime === false ? 0 : $mtime];
         }
 
-        usort($files, fn ($a, $b) => $a["mtime"] <=> $b["mtime"]);
+        usort($files, fn($a, $b) => $a["mtime"] <=> $b["mtime"]);
 
         $count = sizeof($files) + sizeof($protectedSlots);
 
