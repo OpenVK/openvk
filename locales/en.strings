@@ -374,6 +374,9 @@
 "join_community" = "Join community";
 "leave_community" = "Leave community";
 "check_community" = "View community";
+"ill_come_to_meeting" = "I'll come";
+"maybe_ill_come_to_meeting" = "Maybe I'll come";
+"ill_not_come_to_meeting" = "I'll not come";
 "min_6_community" = "Name of the group must have more that 6 characters";
 "participants" = "Participants";
 "groups" = "Groups";

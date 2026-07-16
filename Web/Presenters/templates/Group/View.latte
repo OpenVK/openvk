@@ -184,14 +184,22 @@
                 <input type="hidden" name="act" value="add" />
                 <input type="hidden" name="id"  value="{$club->getId()}" />
                 <input type="hidden" name="hash" value="{$csrfToken}" />
-                <input type="submit" id="profile_link" value="{_join_community}" />
+                {if $club->isEvent()}
+                    <input type="submit" id="profile_link" value="{_ill_come_to_meeting}" />
+                {else}
+                    <input type="submit" id="profile_link" value="{_join_community}" />
+                {/if}
             </form>
         {else}
             <form action="/setSub/club" method="post">
                 <input type="hidden" name="act" value="rem" />
                 <input type="hidden" name="id"  value="{$club->getId()}" />
                 <input type="hidden" name="hash" value="{$csrfToken}" />
-                <input type="submit" id="profile_link" value="{_leave_community}" />
+                {if $club->isEvent()}
+                    <input type="submit" id="profile_link" value="{_ill_not_come_to_meeting}" />
+                {else}
+                    <input type="submit" id="profile_link" value="{_leave_community}" />
+                {/if}
             </form>
         {/if}
         {var $canReport = $thisUser->getId() != $club->getOwner()->getId()}
