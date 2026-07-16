@@ -402,6 +402,7 @@
 "size" = "Size";
 "event_start_date" = "Start at";
 "event_finish_date" = "Ends at";
+"event_enable_finish_date" = "Specify end date";
 
 "administrators_one" = "$1 administrator";
 "administrators_other" = "$1 administrators";

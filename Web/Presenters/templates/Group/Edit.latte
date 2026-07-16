@@ -78,6 +78,18 @@
                             <input type="time" name="start_time" value="{$club->getStartDate()->format('%H:%M')}" style="width:49%;" />
                         </td>
                     </tr>
+                    <tr n:if="$club->isEvent()">
+                        <td width="120" valign="top">
+                            <span class="nobold">{_event_finish_date}: </span>
+                        </td>
+                        <td>
+                            <input type="checkbox" name="end_date_checked" value="1" n:attr="checked => !is_null($club->getFinishDate())" onclick="u('#finish_date_block').nodes[0].style.display = this.checked == true ? 'block' : 'none';" /> {_event_enable_finish_date}
+                            <div id="finish_date_block" n:attr="style => is_null($club->getFinishDate()) ? 'display: none;'">
+                                <input type="date" name="finish_date" value="{$club->getFinishDate()?->format('%Y-%m-%d')}" style="width:49%;" />
+                                <input type="time" name="finish_time" value="{$club->getFinishDate()?->format('%H:%M')}" style="width:49%;" />
+                            </div>
+                        </td>
+                    </tr>
                     <tr>
                         <td width="120" valign="top">
                             <span class="nobold">{_avatar}: </span>

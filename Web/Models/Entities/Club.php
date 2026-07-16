@@ -620,6 +620,6 @@ class Club extends RowModel
 
     public function getFinishDate(): ?DateTime
     {
-        return !is_null($this->getRecord()->finish_date) ? new DateTime($this->getRecord()->start_date) : null;
+        return !is_null($this->getRecord()->finish_date) ? new DateTime($this->getRecord()->finish_date) : null;
     }
 }

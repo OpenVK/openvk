@@ -286,10 +286,20 @@ final class GroupPresenter extends OpenVKPresenter
 
             $club->setLocation($this->postParam("location") ?? null);
 
-            if (!empty($this->postParam("start_date")) && !empty($this->postParam("start_time"))) {
+            if ($club->isEvent() && !empty($this->postParam("start_date")) && !empty($this->postParam("start_time"))) {
                 $sessionOffset = intval(Session::i()->get("_timezoneOffset")) * 60;
                 $parsedData = strtotime($this->postParam("start_date") . "T" . $this->postParam("start_time"));
                 $club->setStart_Date($parsedData + $sessionOffset);
+            } elseif ($club->isEvent()) {
+                $this->flashFail("err", tr("error"), tr("unknown_error"));
+            }
+
+            if ($club->isEvent() && $this->postParam("end_date_checked") != '1') {
+                $club->setFinish_Date(null);
+            } elseif ($club->isEvent() && !empty($this->postParam("finish_date")) && !empty($this->postParam("finish_time"))) {
+                $sessionOffset = intval(Session::i()->get("_timezoneOffset")) * 60;
+                $parsedData = strtotime($this->postParam("finish_date") . "T" . $this->postParam("finish_time"));
+                $club->setFinish_Date($parsedData + $sessionOffset);
             }
 
             if ($_FILES["ava"]["error"] === UPLOAD_ERR_OK) {

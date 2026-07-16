@@ -66,6 +66,12 @@
                         {$club->getStartDate()->relative(-1)}
                     </td>
                 </tr>
+                <tr n:if="$club->isEvent() && !is_null($club->getFinishDate())">
+                    <td><span class="nobold">{_event_finish_date}: </span></td>
+                    <td>
+                        {$club->getFinishDate()->relative(-1)}
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>

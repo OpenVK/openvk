@@ -400,6 +400,7 @@
 "hidden_no" = "Скрыт: Нет";
 "event_start_date" = "Начало";
 "event_finish_date" = "Окончание";
+"event_enable_finish_date" = "Указать дату окончания";
 
 "group_allow_post_for_everyone" = "Открытая";
 "group_limited_post" = "Предложка";
