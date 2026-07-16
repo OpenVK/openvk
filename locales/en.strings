@@ -394,8 +394,11 @@
 "all_followers" = "All followers";
 "only_administrators" = "Only administrators";
 "website" = "Website";
+"location" = "Location";
 "managed" = "Managed";
 "size" = "Size";
+"event_start_date" = "Start at";
+"event_finish_date" = "Ends at";
 
 "administrators_one" = "$1 administrator";
 "administrators_other" = "$1 administrators";
