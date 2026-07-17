@@ -336,12 +336,31 @@ class Club extends RowModel
 
     public function getFollowersCount(): int
     {
-        return sizeof($this->getFollowersQuery());
+        return sizeof($this->getFollowersQuery()->where('flags', 0));
     }
 
     public function getFollowers(int $page = 1, int $perPage = 6, string $sort = "target DESC"): \Traversable
     {
-        $rels = $this->getFollowersQuery($sort)->page($page, $perPage);
+        $rels = $this->getFollowersQuery($sort)->where('flags', 0)->page($page, $perPage);
+
+        foreach ($rels as $rel) {
+            $rel = (new Users())->get($rel->follower);
+            if (!$rel) {
+                continue;
+            }
+
+            yield $rel;
+        }
+    }
+
+    public function getPotentialFollowersCount(): int
+    {
+        return sizeof($this->getFollowersQuery()->where('flags', 1));
+    }
+
+    public function getPotentialFollowers(int $page = 1, int $perPage = 6, string $sort = "target DESC"): \Traversable
+    {
+        $rels = $this->getFollowersQuery($sort)->where('flags', 1)->page($page, $perPage);
 
         foreach ($rels as $rel) {
             $rel = (new Users())->get($rel->follower);

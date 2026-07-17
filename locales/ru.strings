@@ -362,8 +362,10 @@
 "leave_community" = "Выйти из группы";
 "check_community" = "Просмотр группы";
 "ill_come_to_meeting" = "Я приду";
-"maybe_ill_come_to_meeting" = "Возможно приду";
+"i_might_come_to_meeting" = "Возможно приду";
 "ill_not_come_to_meeting" = "Я не приду";
+"event_comers" = "Точно придут";
+"event_potential_comers" = "Возможно придут";
 "min_6_community" = "Название должно быть не менее 6 символов";
 "participants" = "Участники";
 "groups" = "Группы";

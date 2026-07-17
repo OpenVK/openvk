@@ -48,7 +48,7 @@
                     <td><span class="nobold">{_name_group}:</span></td>
                     <td><b>{$club->getName()}</b></td>    
                 </tr>
-                <tr>
+                <tr n:if="!empty($club->getDescriptionHtml())">
                     <td><span class="nobold">{_description}:</span></td>
                     <td>{$club->getDescriptionHtml()|noescape}</td>
                 </tr>
@@ -79,7 +79,11 @@
         {var $followersCount = $club->getFollowersCount()}
         
         <div class="content_title_expanded" onclick="hidePanel(this, {$followersCount});">
+        {if $club->isEvent()}
+            {_event_comers}
+        {else}
             {_participants}
+        {/if}
         </div>
         <div>
             <div class="content_subtitle">
@@ -90,6 +94,34 @@
             </div>
             <div style="padding-left: 5px;" class="hide_on_mobiles content_list long">
                 <div class="cl_element" n:foreach="$club->getFollowers(1) as $follower">
+                    <div class="cl_avatar">
+                        <a href="{$follower->getURL()}">
+                            <img class="ava" src="{$follower->getAvatarUrl('miniscule')}" />
+                        </a>
+                    </div>
+                    <a href="{$follower->getURL()}" class="cl_name">
+                        <text class="cl_fname">{$follower->getFirstName()}</text>
+                        <text class="cl_lname">{$follower->getLastName()}</text>
+                    </a>    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div n:if="$thisUser && $club->isEvent() && $club->getPotentialFollowersCount() > 0">
+        {var $potentialFollowersCount = $club->getPotentialFollowersCount()}
+        
+        <div class="content_title_expanded" onclick="hidePanel(this, {$potentialFollowersCount});">
+            {_event_potential_comers}
+        </div>
+        <div>
+            <div class="content_subtitle">
+                {tr("participants", $potentialFollowersCount)}
+                <div style="float:right;">
+                    <a href="/club{$club->getId()}/followers">{_all_title}</a>
+                </div>
+            </div>
+            <div style="padding-left: 5px;" class="hide_on_mobiles content_list long">
+                <div class="cl_element" n:foreach="$club->getPotentialFollowers(1) as $follower">
                     <div class="cl_avatar">
                         <a href="{$follower->getURL()}">
                             <img class="ava" src="{$follower->getAvatarUrl('miniscule')}" />
@@ -196,6 +228,15 @@
                     <input type="submit" id="profile_link" value="{_join_community}" />
                 {/if}
             </form>
+            {if $club->isEvent()}
+            <form action="/setSub/club" method="post">
+                <input type="hidden" name="act" value="add" />
+                <input type="hidden" name="flag" value="1" />
+                <input type="hidden" name="id"  value="{$club->getId()}" />
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="submit" id="profile_link" value="{_i_might_come_to_meeting}" />
+            </form>
+            {/if}
         {else}
             <form action="/setSub/club" method="post">
                 <input type="hidden" name="act" value="rem" />
