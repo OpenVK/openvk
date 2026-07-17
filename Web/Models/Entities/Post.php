@@ -307,11 +307,7 @@ class Post extends Postable
 
         if ($this->getTargetWall() < 0) {
             $wallOwner = $this->getWallOwner();
-            if (
-                !($wallOwner?->canBeModifiedBy($user) ?? false)
-                && ($wallOwner?->getWallType() ?? 0) != 1
-                && $this->getSuggestionType() == 0
-            ) {
+            if (!$wallOwner?->canBeModifiedBy($user) && $wallOwner?->getWallType() != 1 && $this->getSuggestionType() == 0) {
                 return false;
             }
         }
