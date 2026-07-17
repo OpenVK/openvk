@@ -957,6 +957,7 @@ class User extends RowModel
         $gifts = $this->getRecord()->related("gift_user_relations.receiver")->order("sent DESC")->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
         foreach ($gifts as $rel) {
             yield (object) [
+                "id"      => $rel->id,
                 "sender"  => (new Users())->get($rel->sender),
                 "gift"    => (new Gifts())->get($rel->gift),
                 "caption" => $rel->comment,
@@ -968,7 +969,7 @@ class User extends RowModel
 
     public function getGiftCount(): int
     {
-        return sizeof($this->getRecord()->related("gift_user_relations.receiver"));
+        return $this->getRecord()->related("gift_user_relations.receiver")->count("*");
     }
 
     public function get2faBackupCodes(): \Traversable
@@ -1086,6 +1087,15 @@ class User extends RowModel
 
     public function isVerified(): bool
     {
+        if ($this->isDeleted() && !$this->isDeactivated()) {
+            if ($this->getRecord()->verified) {
+                $this->setVerified(0);
+                $this->save();
+            }
+
+            return false;
+        }
+
         return (bool) $this->getRecord()->verified;
     }
 

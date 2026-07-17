@@ -18,7 +18,7 @@ final class Notifications extends VKAPIRequestHandler
         string $filters = "",
         int $start_time = 0,
         int $end_time = 0,
-        int $archived = 0
+        int $archived = 1
     ) {
         $this->requireUser();
 
@@ -46,7 +46,6 @@ final class Notifications extends VKAPIRequestHandler
                 $sxModel = $notif->getModel(0);
             }
 
-
             $tmpProfiles[] = $sxModel instanceof Club ? $sxModel->getId() * -1 : $sxModel->getId();
             $res->items[] = $notif->toVkApiStruct();
         }
@@ -55,12 +54,15 @@ final class Notifications extends VKAPIRequestHandler
             if ($id > 0) {
                 $sxModel = (new Users())->get($id);
                 $result  = (object) [
+                    "id"         => $sxModel->getId(),
                     "uid"        => $sxModel->getId(),
                     "first_name" => $sxModel->getFirstName(),
                     "last_name"  => $sxModel->getLastName(),
                     "photo"      => $sxModel->getAvatarUrl(),
                     "photo_medium_rec" => $sxModel->getAvatarUrl("tiny"),
-                    "screen_name"      => $sxModel->getShortCode(),
+                    "photo_50"      => $sxModel->getAvatarUrl("tiny"),
+                    "photo_100"     => $sxModel->getAvatarUrl("normal"),
+                    "screen_name"      => $sxModel->getURL(true),
                 ];
 
                 $res->profiles[] = $result;

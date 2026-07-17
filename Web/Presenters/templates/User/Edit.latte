@@ -53,7 +53,7 @@
 
         <h4>{_main_information}</h4>
         <form action="/edit?act=main" method="POST" enctype="multipart/form-data">
-            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+            <table class="flexible_table" cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
                 <tbody>
                     <tr>
                         <td width="120" valign="top">
@@ -182,7 +182,7 @@
 
         <h4>{_contact_information}</h4>
         <form action="/edit?act=contacts" method="POST" enctype="multipart/form-data">
-            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+            <table class="flexible_table" cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
                 <tbody>
                     <tr>
                         <td width="120" valign="top">
@@ -241,7 +241,7 @@
 
         <h4>{_personal_information}</h4>
         <form action="/edit?act=interests" method="POST" enctype="multipart/form-data">
-            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+            <table class="flexible_table" cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
                 <tbody>
                     <tr>
                         <td width="120" valign="top">
@@ -419,7 +419,7 @@
 
         <h4>{_profile_picture}</h4>
         <form action="/al_avatars" method="POST" enctype="multipart/form-data">
-            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+            <table class="flexible_table" cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
                 <tbody>
                     <tr>
                         <td width="120" valign="top">
@@ -481,7 +481,7 @@
             <p>{tr("additional_fields_description", ovkGetQuirk("users.max-fields"))}</p>
             <form id="additional_fields_form" method="POST" enctype="multipart/form-data">
                 <div class="edit_field_container_inserts">
-                    <table data-iterator="{$f_iterator}" class="outline_table edit_field_container_item" width="80%" border="0" align="center" n:foreach="$thisUser->getAdditionalFields() as $field">
+                    <table data-iterator="{$f_iterator}" class="flexible_table outline_table edit_field_container_item" width="80%" border="0" align="center" n:foreach="$thisUser->getAdditionalFields() as $field">
                         <tbody>
                             <tr>
                                 <td width="150">

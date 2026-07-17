@@ -7,10 +7,13 @@
 
 {block headIncludes}
     <meta property="og:type" content="music.album">
-    <meta property="og:title" content="{$playlist->getName()}">
+    <meta property="og:title" content="{$playlist->getName()} — {$instance_name}">
     <meta property="og:url" content="{$playlist->getURL()}">
-    <meta property="og:description" content="{$playlist->getDescription()}">
+    <meta property="og:description" content="{mb_strlen($playlist->getDescription() ?? '') > 300 ? mb_substr($playlist->getDescription(), 0, 297) . '...' : $playlist->getDescription()}">
     <meta property="og:image" content="{$cover_url}">
+    <meta name="twitter:title" content="{$playlist->getName()} — {$instance_name}">
+    <meta name="twitter:description" content="{mb_strlen($playlist->getDescription() ?? '') > 200 ? mb_substr($playlist->getDescription(), 0, 197) . '...' : $playlist->getDescription()}">
+    <meta name="twitter:image" content="{$cover_url}">
     
     <script type="application/ld+json">
         {

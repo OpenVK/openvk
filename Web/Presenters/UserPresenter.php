@@ -58,9 +58,11 @@ final class UserPresenter extends OpenVKPresenter
                 $this->template->_template = "User/deleted.latte";
             }
         } else {
-            $this->template->albums      = (new Albums())->getUserAlbums($user);
             $this->template->avatarAlbum = (new Albums())->getUserAvatarAlbum($user);
-            $this->template->albumsCount = (new Albums())->getUserAlbumsCount($user);
+            $this->template->albums      = array_values(array_filter(iterator_to_array((new Albums())->getUserAlbums($user)), function ($album) {
+                return !$album->isCreatedBySystem();
+            }));
+            $this->template->albumsCount = count($this->template->albums);
             $this->template->videos      = (new Videos())->getByUser($user, 1, 2);
             $this->template->videosCount = (new Videos())->getUserVideosCount($user);
             $this->template->notes       = (new Notes())->getUserNotes($user, 1, 4);

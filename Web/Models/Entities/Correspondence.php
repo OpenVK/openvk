@@ -7,7 +7,7 @@ namespace openvk\Web\Models\Entities;
 use Chandler\Database\DatabaseConnection;
 use Chandler\Signaling\SignalManager;
 use Chandler\Security\Authenticator;
-use openvk\Web\Events\NewMessageEvent;
+use openvk\Web\Events\{NewMessageEvent, TypingEvent};
 use openvk\Web\Models\Entities\Message;
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\RowModel;
@@ -144,6 +144,39 @@ class Correspondence
     }
 
     /**
+     * Get last message from correspondence from user.
+     *
+     * @returns Message|null - message, if any
+     */
+    public function getLastReadedMessage(int $user_id): ?Message
+    {
+        $query = file_get_contents(__DIR__ . "/../sql/get-messages.tsql");
+        $query = str_replace("\n  AND (`id` > ?)", "\n  AND (`unread` = 0)", $query);
+        $params = [
+            [get_class($this->correspondents[0]), get_class($this->correspondents[1])],
+            [$this->correspondents[0]->getId(), $this->correspondents[1]->getId()],
+            [1], // limit
+            [0], // offset
+        ];
+
+        if ($user_id == $this->correspondents[0]->getId()) {
+            $params = array_merge($params[0], $params[1], $params[0], $params[1], $params[2], $params[3]);
+        } elseif ($user_id == $this->correspondents[1]->getId()) {
+            $params = array_merge(array_reverse($params[0]), array_reverse($params[1]), array_reverse($params[0]), array_reverse($params[1]), $params[2], $params[3]);
+        }
+
+        $connection = DatabaseConnection::i()->getConnection();
+        $msgs = $connection->query($query, ...$params);
+        $msgRow = $msgs->fetch();
+        if ($msgRow !== null) {
+            $msg = new ActiveRow((array) $msgRow, $this->messages);
+            return new Message($msg);
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Send message.
      *
      * @deprecated
@@ -182,5 +215,22 @@ class Correspondence
         }
 
         return $message;
+    }
+
+    /**
+     * Send typing event.
+     *
+     * @returns true|false
+     */
+    public function sendTypingEvent()
+    {
+        $ids     = [$this->correspondents[0]->getId(), $this->correspondents[1]->getId()];
+
+        if ($ids[0] !== $ids[1]) {
+            $event = new TypingEvent($ids[0]);
+            (SignalManager::i())->triggerEvent($event, $ids[1]);
+        }
+
+        return true;
     }
 }
