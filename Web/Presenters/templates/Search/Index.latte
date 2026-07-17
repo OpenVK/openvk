@@ -242,7 +242,9 @@
                                 </script>
                             {elseif $section === 'posts'}
                                 <div class='scroll_node search_content' n:foreach="$data as $dat">
-                                    {if !$dat || $dat->getWallOwner()->isHideFromGlobalFeedEnabled()}
+                                    {var $wallOwner = $dat ? $dat->getWallOwner() : null}
+                                    {var $postOwner = $dat ? $dat->getOwner() : null}
+                                    {if !$dat || !$wallOwner || !$postOwner || $wallOwner->isHideFromGlobalFeedEnabled()}
                                         {_closed_group_post}.
                                     {else}
                                         {include "../components/post.latte", post => $dat, commentSection => true, onWallOf => true}
