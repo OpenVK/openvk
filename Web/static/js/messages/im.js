@@ -215,12 +215,17 @@ export class IM {
 	    // When provided, the initial chunk is anchored to that message, letting the
 	    // user scroll up (older) and down (newer) from there.
 	    // Falls back to `start_from` for backward compatibility, then null (latest).
-	    const _start_from_id = _url.searchParams.get('start_from_id') || _url.searchParams.get('start_from');
+	    const _start_from_id = _url.searchParams.get('start_from');
 
 	    this.messenger.view._saveDraft(this.messenger.view.getCurrentChat());
 	    if (!conv.peer._isMessagesInited()) {
-	      const messages = await conv.peer.getMessages(_start_from_id);
-	      conv.peer._appendMessagesChunk(messages);
+	        const messages = await conv.peer.getMessages(_start_from_id);
+            conv.peer._appendMessagesChunk(messages);
+
+            // т.к. последние на данный момент сообщения уже загружены
+            if (_start_from_id == null) {
+                conv.peer._beginning_reached = true;
+            }
 	    }
 
 	    this.messenger.view.setChat(conv, false);
@@ -504,6 +509,7 @@ class FriendsTab {
 
         if (ids.length < 2) {
             fastError(tr("error_chat_not_enough_friends"));
+            e.target.classList.remove("lagged");
             return;
         }
 
