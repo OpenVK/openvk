@@ -746,10 +746,6 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     color: var(--text-2ary);
 }
 
-.friends-list-item:hover {
-    background: var(--bg-hover);
-}
-
 .peer-window {
     background: var(--common-2);
     display: inline-flex !important;
@@ -804,8 +800,85 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 
 /* Friends */
 
-.friends-list .friends-list-item img {
-    width: 30px;
-    height: 30px;
+.messenger-app--tab-friends {
+    margin: 0px -8px -10px -10px;
+    position: relative;
+}
+
+.messenger-app--tab-friends .friends-list {
+    display: flex;
+    flex-direction: column;
+    margin-top: 7px;
+}
+
+.messenger-app--tab-friends .friends-list.friends-list-m {
+    padding-bottom: 42px;
+}
+
+.messenger-app--tab-friends .friends-list .friends-list-item {
+    padding: 5px 45px;
+    cursor: pointer;
+    font-weight: bold;
+    border-bottom: 1px solid var(--bg-slightly-border);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.messenger-app--tab-friends .friends-list .friends-list-item .inf {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.messenger-app--tab-friends .friends-list .friends-list-item:last-of-type {
+    border-bottom: unset;
+}
+
+.messenger-app--tab-friends .friends-list .friends-list-item:hover {
+    background: var(--common-2);
+}
+
+.messenger-app--tab-friends .friends-list .friends-list-item img {
+    width: 34px;
+    height: 34px;
     object-fit: cover;
+    border-radius: 2px;
+}
+
+.messenger-app--tab-friends .friends-list .friends-list-item.friends-selected {
+    background: var(--bg-selected-mid);
+}
+
+.messenger-app--tab-friends .friends-list .friends-list-online {
+    color: var(--bg-slightly-border);
+    margin-left: 3px;
+}
+
+.messenger-app--tab-friends .friends-list-top {
+    padding: 15px 44px;
+    border-bottom: 1px solid var(--bg-slightly-border);
+}
+
+.messenger-app--tab-friends .friends-list-top .inf {
+    width: 100%;
+}
+
+.messenger-app--tab-friends .friends-list-top,
+.messenger-app--tab-friends .friends-list-b {
+    background: var(--common-2);
+}
+
+.messenger-app--tab-friends .friends-list-b {
+    border-top: 1px solid var(--bg-slightly-border);
+    padding: 0px 44px 0px 44px;
+    position: absolute;
+    height: 35px;
+    width: 100%;
+    bottom: 0px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: end;
 }

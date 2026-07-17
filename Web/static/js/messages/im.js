@@ -9,60 +9,60 @@ const tr = window.tr;
 const u = window.u;
 
 class ProfilesCache {
-  constructor() {
-    this.cached_profiles = [];
-    this.unread_counter = 0;
-  }
-
-  _addProfileCache(profile) {
-    const similar = this._findCachedProfileById(profile.id);
-    if (similar) {
-      this.cached_profiles[this.cached_profiles.indexOf(similar)] = profile;
-    } else {
-      this.cached_profiles.push(profile);
+    constructor() {
+        this.cached_profiles = [];
+        this.unread_counter = 0;
     }
-  }
 
-  _moveToProfileCache(profiles, groups) {
-    profiles.forEach((profile) => {
-      this._addProfileCache(new ChatGeneralForm(profile));
-    });
-    groups.forEach((group) => {
-      this._addProfileCache(new ChatGeneralForm(group));
-    });
-  }
+    _addProfileCache(profile) {
+        const similar = this._findCachedProfileById(profile.id);
+        if (similar) {
+            this.cached_profiles[this.cached_profiles.indexOf(similar)] = profile;
+        } else {
+            this.cached_profiles.push(profile);
+        }
+    }
 
-  _findCachedProfileById(id) {
-    const similar = this.cached_profiles.filter((item) => item.id == id);
-    if (similar.length == 0) return null;
-    return similar[0];
-  }
+    _moveToProfileCache(profiles, groups) {
+        profiles.forEach((profile) => {
+            this._addProfileCache(new ChatGeneralForm(profile));
+        });
+        groups.forEach((group) => {
+            this._addProfileCache(new ChatGeneralForm(group));
+        });
+    }
 
-  _findCachedProfileByIdEvenIfNotCached(id) {
-    return this._findCachedProfileById(id);
-  }
+    _findCachedProfileById(id) {
+        const similar = this.cached_profiles.filter((item) => item.id == id);
+        if (similar.length == 0) return null;
+        return similar[0];
+    }
+
+    _findCachedProfileByIdEvenIfNotCached(id) {
+        return this._findCachedProfileById(id);
+    }
 }
 
 export class IM {
-  constructor() {
-    this.tabDefs = [
-      { id: 'conversations', label: tr('messenger_tab_conversations'), visible: () => true },
-      { id: 'messenger', label: tr('messenger_tab_messenger'), visible: () => (this.messenger?.view?.getTabsCount() ?? 0) > 0 },
-      { id: 'search', label: tr('search_messages_tab'), visible: () => this.tab == "search" },
-      { id: 'friends', label: tr('im_friends_list'), visible: () => this.tab == "friends" },
-      { id: 'contact', label: tr('contact_info'), visible: () => this.tab == "contact" },
-    ];
-    this.tab = '';
-    this.is_switching = false;
-  }
+    constructor() {
+        this.tabDefs = [
+        { id: 'conversations', label: tr('messenger_tab_conversations'), visible: () => true },
+        { id: 'messenger', label: tr('messenger_tab_messenger'), visible: () => (this.messenger?.view?.getTabsCount() ?? 0) > 0 },
+        { id: 'search', label: tr('search_messages_tab'), visible: () => this.tab == "search" },
+        { id: 'friends', label: () => { return (window.im.friends.referrer == 'chat_creation' ? tr('create_chat') : tr('im_friends_list')) }, visible: () => this.tab == "friends" },
+        { id: 'contact', label: tr('contact_info'), visible: () => this.tab == "contact" },
+        ];
+        this.tab = '';
+        this.is_switching = false;
+    }
 
-  get visibleTabs() {
-    return this.tabDefs.filter(t => t.visible());
-  }
+    get visibleTabs() {
+        return this.tabDefs.filter(t => t.visible());
+    }
 
-  get tabs() {
-    return this.tabDefs.map(t => t.id);
-  }
+    get tabs() {
+        return this.tabDefs.map(t => t.id);
+    }
 
     async _checkSel(loc, sel_id = null) {
         const _sel = sel_id == null ? Number(loc.searchParams.get('sel')) : sel_id;
@@ -115,18 +115,18 @@ export class IM {
         this.isReady = true;
     }
 
-  async waitLoad() {
-    return new Promise(resolve => {
-      const check = () => {
-        if (this.isReady) {
-          resolve();
-        } else {
-          setTimeout(check, 100);
-        }
-      };
-      check();
-    });
-  }
+    async waitLoad() {
+        return new Promise(resolve => {
+            const check = () => {
+                if (this.isReady) {
+                    resolve();
+                } else {
+                    setTimeout(check, 100);
+                }
+            };
+            check();
+        });
+    }
 
     async initImPage(container, sel_id = null) {
         this.addLoadSkeleton(container);
@@ -228,6 +228,8 @@ export class IM {
 	    this.messenger.view._loadDraft(conv);
 	    this.messenger.view._scrollToEnd();
 
+        u(".messenger-app--input---messagebox textarea").last().focus();
+
 	    this.changeYellowHeaderByPeer(conv.peer);
 		this.setSwitching(false);
         this.setPageTitle(escapeHtml(ovk_proc_strtr(conv.peer.full_name, 100)));
@@ -283,7 +285,7 @@ export class IM {
         this._renderTabBar();
     }
 
-    selectTab(tab_name) {
+    selectTab(tab_name, referrer = null) {
         if (this.tabs.indexOf(tab_name) == -1) {
             throw new Error('invalid tab');
         }
@@ -350,18 +352,18 @@ export class IM {
                 this.search.appear(this._getTabWindow('search'));
                 break;
 
-        case 'friends':
-            this.friends.appear(this._getTabWindow('friends'));
-            break;
+            case 'friends':
+                this.friends.appear(this._getTabWindow('friends'), referrer);
+                break;
 
-        case 'contact':
-            this.messenger.view._render();
+            case 'contact':
+                this.messenger.view._render();
 
-            if (typeof window.im !== 'undefined' && window.im.updateTabs) {
-           	    window.im.updateTabs();
-            }
+                if (typeof window.im !== 'undefined' && window.im.updateTabs) {
+               	    window.im.updateTabs();
+                }
 
-            break;
+                break;
     }
   }
 
@@ -440,6 +442,9 @@ class FriendsTab {
         this.has_inited = false;
         this.last_offset = 0;
         this.has_appeared = false;
+
+        this.referrer = null;
+        this.selected_friends = [];
     }
 
     async loadFriends(offset = 0, count = 10) {
@@ -459,6 +464,73 @@ class FriendsTab {
         })
     }
 
+    onFriendClick(e, peer) {
+        if (this.referrer == "chat_creation") {
+            const id = peer.id;
+            const t = e.target;
+            const f = t.closest(".friends-list-item");
+
+            if (peer.canBeInvitedBy() == false) {
+                makeError(tr("error_user_forbid_invites"), 'Red', 10000, 'forbid_invites' + peer.id);
+                f.querySelector('input').checked = false;
+                return;
+            }
+
+            if (this.selected_friends.indexOf(id) == -1) {
+                this.selected_friends.push(id);
+                f.classList.add("friends-selected");
+                f.querySelector('input').checked = true;
+            } else {
+                this.selected_friends = this.selected_friends.filter(item => item !== id);
+                f.classList.remove("friends-selected");
+                f.querySelector('input').checked = false;
+            }
+
+            console.log(e, this.selected_friends)
+            return;
+        }
+
+        window.im.setChatByPeerId(peer.id);
+    }
+
+    isSelected(peer) {
+        return this.selected_friends.indexOf(peer.id) != -1;
+    }
+
+    onCreateChat(e) {
+        e.target.classList.add("lagged");
+
+        const ids = this.selected_friends;
+
+        if (ids.length < 2) {
+            fastError(tr("error_chat_not_enough_friends"));
+            return;
+        }
+
+        const msg = new CMessageBox({
+            title: tr("create_chat"),
+            body: `<div><span>${tr('name_your_chat')}</span><input id="chatInputTitle" type="text"></div>`,
+            close_on_buttons: false,
+            buttons: [tr('create'), tr('cancel')],
+            callbacks: [() => {
+                let title = '';
+                title = document.querySelector("#chatInputTitle").value;
+                window.OVKAPI.call('messages.createChat', {
+                    'title': title,
+                    'user_ids': ids,
+                }).then((resp) => {
+                    e.target.classList.remove("lagged");
+                    msg.close();
+
+                    window.im.setChatByPeerId(resp + 2000000000);
+                }).catch(err => {
+                    fastError(String(err));
+                });
+            }, () => {}]
+        })
+
+    }
+
     async loadNext() {
         await this.loadFriends(this.last_offset + 10);
     }
@@ -468,24 +540,34 @@ class FriendsTab {
     }
 
     _render(container) {
+        const ref = this.referrer;
+
         render(html`
         <${FriendsPage}
             friends=${this.friends}
             count=${this.total_count}
+            referrer=${ref}
+            onFriendClick=${(e, peer) => this.onFriendClick(e, peer)}
+            onCreateChat=${(e) => this.onCreateChat(e)}
+            isSelected=${(peer) => this.isSelected(peer)}
             onLoadMore=${() => this.loadNext()}
         />
         `, container);
     }
 
-    appear(container) {
+    appear(container, referrer = null) {
+        this.referrer = referrer;
+        this.selected_friends = []; // nulling
+
         container.classList.remove('hidden');
+
         if (this.has_inited == false) {
             this.loadFriends().then(() => {
                 this.has_inited = true;
                 this._appear(container)
             })
         } else {
-            //this._appear(container);
+            this._appear(container)
         }
     }
 }

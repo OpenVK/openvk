@@ -121,7 +121,7 @@ export class DayChunk extends MessagesChunk {
 export class ChatGeneralForm {
     static chat_number = 2000000000;
     static MESSAGES_PER_PAGE = 20;
-    static base_fields = 'photo_100,photo_200,last_seen,photo_id,status';
+    static base_fields = 'photo_100,photo_200,photo_max,last_seen,photo_id,status,sex,can_write_private_message,can_invite';
 
     constructor(item) {
         this.data = item || {};
@@ -156,17 +156,17 @@ export class ChatGeneralForm {
 
     get id() {
         switch (this.supposed_type) {
-        case 'user':
-            return this.data.id;
-        case 'club':
-            return this.data.id * -1;
-        case 'chat':
-            if (this.data.id < this.chat_number) {
-            return this.data.id + this.chat_number;
-            } else {
-            return this.data.id;
+            case 'user':
+                return this.data.id;
+            case 'club':
+                return this.data.id * -1;
+            case 'chat':
+                if (this.data.id < this.chat_number) {
+                    return this.data.id + this.chat_number;
+                } else {
+                    return this.data.id;
+                }
             }
-        }
     }
 
     get supposed_type() {
@@ -176,7 +176,15 @@ export class ChatGeneralForm {
     }
 
     get can_write() {
-        return true;
+        return (this.data.can_write_private_message ?? 1) === 1;
+    }
+
+    canBeInvitedBy(group = null) {
+        if (group != null) {
+            return false;
+        }
+
+        return (this.data.can_invite ?? 1) === 1;
     }
 
     get conversation_avatar_any() {
@@ -195,6 +203,10 @@ export class ChatGeneralForm {
         return this.data.photo_200;
     }
 
+    get avatar_max() {
+        return this.data.photo_max;
+    }
+
     get conversations_full_name() {
         if (this.id === window.openvk.current_id) {
             return tr("saved_messages");
@@ -210,7 +222,7 @@ export class ChatGeneralForm {
             case 'club':
                 return window.escapeHtml(this.data.name);
             case 'chat':
-                return window.escapeHtml(this.data.title);
+                return window.escapeHtml(this.data.title ?? tr("chat"));
             }
     }
 
@@ -250,6 +262,39 @@ export class ChatGeneralForm {
         return this.id === window.openvk.current_id;
     }
 
+    get gender() {
+        console.log(this.data.sex)
+        if (this.data.sex == 1) {
+            return 'female'
+        }
+
+        if (this.data.sex == 2) {
+            return 'male'
+        }
+
+        return 'neutral';
+    }
+
+    get online_status_str() {
+        if (!this.data.last_seen) {
+            return tr("im_was_online_unkown_" + this.gender).toLowerCase();
+        }
+
+        const time = this.data.last_seen.time;
+        const date = new Date(time);
+        const today = new Date();
+
+        if (date.getDate() === today.getDate()) {
+            return tr("im_was_online_today_" + this.gender, "00:00").toLowerCase();
+        }
+
+        if (date.getDate() === today.getDate() - 1) {
+            return tr("im_was_online_yesterday_" + this.gender, "00:00").toLowerCase();
+        }
+
+        return tr("im_was_online_yesterday_" + this.gender, "00:00", "11.11.11").toLowerCase();
+    }
+
     // ── chunk management ─────────────────────────────────────────────
 
     /**
@@ -264,9 +309,9 @@ export class ChatGeneralForm {
     */
     get chunks() {
         return this.message_chunks.slice(0).sort((a, b) => {
-        const aTime = a.first_message?.sent || 0;
-        const bTime = b.first_message?.sent || 0;
-        return bTime - aTime;
+            const aTime = a.first_message?.sent || 0;
+            const bTime = b.first_message?.sent || 0;
+            return bTime - aTime;
         });
     }
 
@@ -482,9 +527,9 @@ export class ChatGeneralForm {
     _getNewestChunk(check_chunk = true) {
         const sorted = this.chunks;
         if (sorted.length === 0 && check_chunk == true) {
-        const c = new MessagesChunk([]);
-        this.message_chunks.push(c);
-        return c;
+            const c = new MessagesChunk([]);
+            this.message_chunks.push(c);
+            return c;
         }
         return sorted[0];
     }
@@ -991,9 +1036,9 @@ export class ChatMessage {
             const peer_obj = await window.im.conversations._findConvFromApi(peer);
             const reply_id = attachments['reply_to'];
 
-            const msg = await peer_obj.peer._findMessageByIdFromApi(reply_id);
-            if (msg != null) {
-                reply_message = msg;
+            const __msg = await peer_obj.peer._findMessageByIdFromApi(reply_id);
+            if (__msg != null) {
+                reply_message = __msg;
             } else {
                 reply_message = new ChatMessage({
                     'id': reply_id,
@@ -1005,7 +1050,7 @@ export class ChatMessage {
         const msg = new ChatMessage({
             'id': id,
             'flags': flags,
-            'from_id': attachments.from,
+            'from_id': attachments.from ? attachments.from : peer,
             'date': ts,
             'peer': peer,
             'text': text,
@@ -1015,6 +1060,7 @@ export class ChatMessage {
         });
         msg._guessSender();
 
+        console.log(msg.peer_id, msg.sender)
         return msg;
     }
 
@@ -1069,5 +1115,13 @@ export class ChatMessage {
         }
 
         window.im.messenger.view._triggerUpdate();
+    }
+
+    shouldBeNotified() {
+        if (this.data.from_id === window.openvk.current_id) {
+            return false;
+        }
+
+        return true;
     }
 }

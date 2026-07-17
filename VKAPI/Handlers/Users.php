@@ -382,6 +382,12 @@ final class Users extends VKAPIRequestHandler
                                     $response[$i]->bdate = null;
                                 }
                                 break;
+                            case "can_write_private_message":
+                                $response[$i]->can_write_private_message = 1;
+                                break;
+                            case "can_invite":
+                                $response[$i]->can_invite = 1;
+                                break;
                         }
                     }
 

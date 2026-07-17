@@ -73,17 +73,18 @@ async function setupNotificationListener() {
     }
 };
 
-async function triggerMessageNotification(conv, text, timestamp) {
+async function triggerMessageNotification(conv, msg, timestamp) {
     try {
         const fields = typeof ChatGeneralForm !== 'undefined' ? ChatGeneralForm.base_fields : 'photo_50';
 
         const peer = conv.peer;
+        const sender = msg.sender;
         const title = peer.full_name;
         const ava = peer.avatar_any || peer.photo_max || '';
 
         const notif = {
             title: escapeHtml(title),
-            body: "<b>" + escapeHtml(title) + ":</b> " + (ovk_proc_strtr(text, 95)),
+            body: "<b>" + escapeHtml(sender.full_name) + ":</b> " + (ovk_proc_strtr(msg.conv_summary, 95)),
             ava: ava,
             priority: 1,
         };

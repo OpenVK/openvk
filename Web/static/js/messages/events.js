@@ -13,6 +13,7 @@ export class EventHandler {
         if (!Array.isArray(event)) return;
 
         const method = this.codes[event[0]];
+        console.log("lp event: ", event)
         if (!method) {
             console.info('неизвестный ивент,  ', event[0]);
         }
@@ -41,10 +42,11 @@ export class EventHandler {
 
     async NewMessageEvent(event) {
         const _msg = await ChatMessage.fromEvent(event);
+        console.log(_msg)
         const _crs = await window.im.conversations._findConvFromApi(_msg.peer_id);
 
-        if (!window.im.is_active && !_crs.peer.is_muted) {
-            triggerMessageNotification(_crs, _msg.conv_summary);
+        if (!window.im.is_active && !_crs.peer.is_muted && _msg.shouldBeNotified()) {
+            triggerMessageNotification(_crs, _msg);
         }
 
         setTimeout(() => {

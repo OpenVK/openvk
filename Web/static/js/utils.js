@@ -7,7 +7,13 @@ function escapeHtml(text) {
       "'": '&#039;'
     };
 
-    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+    try {
+        return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+    } catch (e) {
+        console.error(e);
+
+        return "ESCAPEHTML_FAILED";
+    }
 }
 
 function highlightText(searchText, container_selector, selectors = []) {
@@ -333,7 +339,7 @@ function month_day_string(date)
     const current_year = new Date().getFullYear();
     const date_year = date.getFullYear();
     const day = date.getDate();
-    const month = date.getMonth();
+    const month = date.getMonth() + 1;
     const month_str = tr("month_gen_" + month).toLowerCase();
     let ret = null;
 

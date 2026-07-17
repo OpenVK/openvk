@@ -1362,6 +1362,7 @@
 "all_messages" = "Все сообщения";
 "search_messages" = "Найти сообщения...";
 "search_messages_tab" = "Поиск";
+"search_sinister_noun" = "Поиск...";
 "no_messages" = "Никто Вам не писал, пока что.";
 "messages_blocked" = "Вы не можете отправить сообщение этому пользователю, поскольку он ограничил круг лиц, которые могут присылать ему сообщения.";
 "enter_message" = "Введите сообщение";
@@ -1373,9 +1374,9 @@
 "messenger_tab_messenger" = "Сообщения";
 "message_is_deleted" = "Сообщение удалено";
 
-"create_chat" = "Новая беседа";
 "to_friendslist" = "К списку друзей";
 "selected_messages_one" = "Выбрано одно сообщение";
+"selected_messages_one" = "Выбрано сообщение";
 "selected_messages" = "Выбрано $1 сообщений";
 "delete_message" = "Удалить";
 "reply_to_message" = "Ответить";
@@ -1409,6 +1410,40 @@
 
 "saved_messages" = "Избранное";
 "im_friends_list" = "Список друзей";
+
+"im_online_currently" = "Online";
+
+"im_was_online_today_male" = "Был в сети в $1";
+"im_was_online_today_female" = "Была в сети в $1";
+"im_was_online_today_neutral" = "Были в сети в $1";
+
+"im_was_online_yesterday_male" = "Был в сети вчера в $1";
+"im_was_online_yesterday_female" = "Была в сети вчера в $1";
+"im_was_online_yesterday_neutral" = "Были в сети вчера в $1";
+
+"im_was_online_other_male" = "Был в сети $2 в $1";
+"im_was_online_other_female" = "Была в сети $2 в $1";
+"im_was_online_other_neutral" = "Были в сети $2 в $1";
+
+"im_was_online_unkown_male" = "Был в сети когда-то";
+"im_was_online_unkown_female" = "Была в сети когда-то";
+"im_was_online_unkown_neutral" = "Были в сети когда-то";
+
+"create_chat" = "Новая беседа";
+"create_chat_f" = "Создать беседу";
+"create_chat_tip_1" = "Выберите друзей, которых хотели бы видеть в своей беседе.";
+"create_chat_tip_2" = "Когда всё будет готово, нажмите кнопку внизу.";
+
+"error_user_forbid_invites" = "Пользователь запретил добавлять себя в беседы.";
+"error_chat_not_enough_friends" = "В беседе должно быть как минимум два других пользователя";
+"name_your_chat" = "Введите название беседы (или оставьте его пустым (пока что нет всё равно введи)";
+"chat" = "Беседа";
+
+/* System messages */
+
+"event_chat_creation_male" = "Создал беседу «$1»";
+"event_chat_creation_female" = "Создала беседу «$1»";
+"event_chat_creation_neutral" = "Создали беседу «$1»";
 
 /* Stickers */
 
