@@ -81,30 +81,32 @@ export const MessageBubble = ({ msg, index, chunk }) => {
 };
 
 export const SystemMessages = {
-  "chat_create": (msg) => {
-      return html`
-        <div class="messenger-special-message">
-            <div>
-                <a class="_sender" href=${msg.sender.page_url || msg.sender.chat_url}>
-                    <strong>${msg.sender.full_name} </strong>
-                </a>
-                <span class="text">${msg.text}</span>
-                <span class="date-mini">${msg.readable_date}</span>
-            </div>
-        </div>
-    `;
-  },
-  "unknown": (msg) => {
-      return html`
-        <div class="messenger-special-message">
-            <div class="messenger-app--messages---message--wrap">
-                <div class="_content">
-                <span class="text">${msg.text}</span>
+    "chat_create": (msg) => {
+        const sender = msg.sender;
+        const chat_title = msg.data.action.text;
+        return html`
+            <div class="messenger-special-message">
+                <div>
+                    <a class="_sender" onClick=${(e) => { window.im?.messenger?.view?.onAuthorNameClick(msg, e) }}>
+                        <strong>${sender.full_name} </strong>
+                    </a>
+                    <span class="text">${tr("event_chat_creation_" + sender.gender, chat_title).toLowerCase()}</span>
+                    <span class="date-mini">${msg.readable_date}</span>
                 </div>
             </div>
-        </div>
-    `;
-  }
+        `;
+    },
+    "unknown": (msg) => {
+        return html`
+            <div class="messenger-special-message">
+                <div class="messenger-app--messages---message--wrap">
+                    <div class="_content">
+                        <span class="text">${msg.text}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
 }
 
 const Attachment = ({ msg, att }) => {
@@ -350,7 +352,6 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
 };
 
 export const TabBar = ({ tabs, activeTab, onTabSelect }) => {
-  console.log(activeTab)
   return html`
     <div id="tabs-wr" class="messenger-app--global-tabs tabs">
       <div class="inner-tabs">
@@ -359,7 +360,7 @@ export const TabBar = ({ tabs, activeTab, onTabSelect }) => {
              id="${tab.id === activeTab ? 'activetabs' : ''}"
              class="tab"
              onClick=${() => onTabSelect(tab.id)}>
-            ${tab.label}
+            ${tab.label ? (typeof tab.label == 'string' ? tab.label : tab.label()) : ""}
           </a>
         `)}
       </div>
@@ -376,21 +377,48 @@ export const SearchPage = ({ query }) => {
   `;
 };
 
-export const FriendsPage = ({ friends, count, onLoadMore }) => {
-  return html`
-      <div class="friends-list">
-        ${friends.map((f) => html`
-          <div class="friends-list-item" onClick=${() => window.im?.setChatByPeerId(f.id)}>
-            <img src="${f.avatar_any}" class="friends-list-ava" />
-            <span class="friends-list-name">${f.full_name}</span>
-          </div>
-        `)}
-      </div>
-      ${friends.length < count ? html`
-        <div class="friends-load-more" onClick=${onLoadMore}>
-          ${tr('show_next')}
+export const FriendsPage = ({ friends, count, referrer, onFriendClick, onCreateChat, isSelected, onLoadMore }) => {
+    return html`
+        ${referrer == "chat_creation" && html`
+        <div class="friends-list-top">
+            <div class="inf">
+                <p>${tr('create_chat_tip_1')}</p>
+                <p>${tr('create_chat_tip_2')}</p>
+            </div>
         </div>
-      ` : ''}
+        `}
+        <div class="friends-list-top">
+            <div class="inf">
+                <input placeholder="${tr('search_sinister_noun')}" class="search_input" type="text" />
+            </div>
+        </div>
+        <div class="friends-list ${referrer == 'chat_creation' ? 'friends-list-m' : ''}">
+            ${friends.map((f) => html`
+            <div class="friends-list-item ${isSelected(f) ? 'friends-selected' : ''}" onClick=${(e) => { onFriendClick(e, f) }}>
+                <div class="inf">
+                    <img src="${f.avatar_any}" class="friends-list-ava" />
+
+                    <div>
+                        <a class="friends-list-name">${f.full_name}</a>
+                        <span class="friends-list-online">${f.online_status_str}</span>
+                    </div>
+                </div>
+                ${referrer == "chat_creation" && html`
+                    <div><input type="checkbox" /></div>
+                `}
+            </div>
+            `)}
+        </div>
+        ${friends.length < count ? html`
+            <div id="show_more" class="friends-load-more" onClick=${onLoadMore}>
+                ${tr('show_next')}
+            </div>
+        ` : ''}
+        ${referrer == "chat_creation" && html`
+            <div class="friends-list-b">
+                <input onClick=${(e) => { onCreateChat(e) }} class="button" type="button" value="${tr('create_chat_f')}" />
+            </div>
+        `}
   `;
 };
 
@@ -422,7 +450,7 @@ export const ContactPage = ({ peer }) => {
 
 export const PeerWindow = ({ peer, togglePeerInfo }) => {
     const isOnline = peer.online == 1;
-    const avatar = peer.data.photo_200 || peer.data.photo_100 || peer.data.photo_50 || '';
+    const avatar = peer.avatar_big || peer.data.photo_50 || '';
     const has_avatar = true;
 
     return html`
@@ -431,7 +459,7 @@ export const PeerWindow = ({ peer, togglePeerInfo }) => {
         <div class="peer-info">
             <div class="peer-avatar">
                 <img src=${avatar} alt=${tr('avatar')} />
-                <a onClick=${(event) => { OpenAvatar(event, avatar, peer.id + '_profile', peer.data.photo_pid) }} class="avatar-opener hoverable"></a>
+                <a onClick=${(event) => { OpenAvatar(event, peer.avatar_max, peer.id + '_profile', peer.data.photo_pid) }} class="avatar-opener hoverable"></a>
             </div>
             <a href=${peer.page_url}>${escapeHtml(peer.full_name)}</a>
         </div>

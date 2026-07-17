@@ -174,8 +174,8 @@ final class Messages extends VKAPIRequestHandler
             $userIDs = array_map(fn($u) => is_array($u) ? ($u['id'] ?? 0) : (int) $u, $payload['profiles']);
             $userIDs = array_unique(array_filter($userIDs));
 
-            $payload['profiles'] = !empty($userIDs) 
-                ? (new APIUsers())->get(implode(',', $userIDs), $fields) 
+            $payload['profiles'] = !empty($userIDs)
+                ? (new APIUsers())->get(implode(',', $userIDs), $fields)
                 : [];
         } else {
             $payload['profiles'] = [];
@@ -185,8 +185,8 @@ final class Messages extends VKAPIRequestHandler
             $groupIDs = array_map(fn($g) => abs(is_array($g) ? ($g['id'] ?? 0) : (int) $g), $payload['groups']);
             $groupIDs = array_unique(array_filter($groupIDs));
 
-            $payload['groups'] = !empty($groupIDs) 
-                ? (new APIClubs())->getById(implode(',', $groupIDs), "", $fields) 
+            $payload['groups'] = !empty($groupIDs)
+                ? (new APIClubs())->getById(implode(',', $groupIDs), "", $fields)
                 : [];
         } else {
             $payload['groups'] = [];
@@ -197,7 +197,7 @@ final class Messages extends VKAPIRequestHandler
             foreach ($payload['chats'] as $chat) {
                 $isArr = is_array($chat);
                 $idVal = $isArr ? ($chat['id'] ?? 0) : (int) $chat;
-                
+
                 $globalChatId = abs($idVal);
                 $localChatId = $globalChatId > 2000000000 ? ($globalChatId - 2000000000) : $globalChatId;
 
@@ -208,8 +208,8 @@ final class Messages extends VKAPIRequestHandler
                 $title = "Беседа №" . $localChatId;
                 $description = "";
                 $photos = [
-                    'photo_50'  => null, 
-                    'photo_100' => null, 
+                    'photo_50'  => null,
+                    'photo_100' => null,
                     'photo_200' => null
                 ];
 
@@ -234,7 +234,7 @@ final class Messages extends VKAPIRequestHandler
                 ], $photos);
             }
         }
-        
+
         $payload['chats'] = $extendedChats;
     }
 
@@ -836,7 +836,7 @@ final class Messages extends VKAPIRequestHandler
                 $chatIds[] = (int) ($peer['id'] - 2000000000);
             }
         }
-        
+
         if ($extended && !empty($payload['chats'])) {
             foreach ($payload['chats'] as $chat) {
                 $chatId = is_array($chat) ? ($chat['id'] ?? 0) : (int) $chat;
@@ -853,12 +853,12 @@ final class Messages extends VKAPIRequestHandler
             $chatsRepo = new ChatRepo();
             foreach ($chatIds as $cId) {
                 $chatObj = $chatsRepo->getByChatId($cId);
-                
+
                 if ($chatObj) {
                     $loadedChats[$cId] = $chatObj;
                     error_log("Chat $cId found. Title in DB is: '" . $chatObj->getTitle() . "'");
                 } else {
-                    $loadedChats[$cId] = null; 
+                    $loadedChats[$cId] = null;
                     error_log("Chat $cId NOT FOUND in DB!");
                 }
             }
@@ -976,6 +976,7 @@ final class Messages extends VKAPIRequestHandler
         return [
             "count"    => (int)($response['count'] ?? 0),
             "items"    => $response['items'] ?? [],
+            "chats"    => $response['chats'] ?? [],
             "profiles" => $response['profiles'] ?? [],
             "groups"   => $response['groups'] ?? [],
         ];
