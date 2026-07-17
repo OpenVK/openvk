@@ -140,9 +140,16 @@ final class GroupPresenter extends OpenVKPresenter
 
             $this->template->count         = $this->template->club->getManagersCount();
         } else {
-            $this->template->followers     = $this->template->club->getFollowers((int) ($this->queryParam("p") ?? 1));
-            $this->template->managers      = null;
-            $this->template->count         = $this->template->club->getFollowersCount();
+            if ($this->template->club->isEvent() && $this->queryParam("mightcome") == "1") {
+                $this->template->mightcome     = 1;
+                $this->template->followers     = $this->template->club->getPotentialFollowers((int) ($this->queryParam("p") ?? 1));
+                $this->template->managers      = null;
+                $this->template->count         = $this->template->club->getPotentialFollowersCount();
+            } else {
+                $this->template->followers     = $this->template->club->getFollowers((int) ($this->queryParam("p") ?? 1));
+                $this->template->managers      = null;
+                $this->template->count         = $this->template->club->getFollowersCount();
+            }
         }
 
         $this->template->paginatorConf = (object) [
