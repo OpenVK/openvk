@@ -226,7 +226,7 @@
                         <a href="/friends{$user->getId()}?act=common">{_all_title}</a>
                     </div>
                 </div>
-                <div class="content_list">
+                <div class="content_list hide_on_mobiles">
                     {foreach $user->getCommonFriends($thisUser, 1) as $friend}
                         {include "Thumb.latte", user => $friend}
                     {/foreach}
@@ -267,7 +267,7 @@
                         <a href="/friends{$user->getId()}?act=online">{_all_title}</a>
                     </div>
                 </div>
-                <div class="hide_on_mobiles content_list">
+                <div class="content_list hide_on_mobiles">
                     {foreach $user->getFriendsOnline(1) as $friend}
                         {include "Thumb.latte", user => $friend}
                     {/foreach}
