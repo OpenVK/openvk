@@ -198,7 +198,7 @@ final class UserPresenter extends OpenVKPresenter
 
 
         $act = in_array($this->queryParam("act"), [
-            "main", "contacts", "interests", "avatar", "backdrop", "additional", "personal"
+            "main", "contacts", "interests", "avatar", "backdrop", "additional", "personal",
         ]) ? $this->queryParam("act")
             : "main";
 

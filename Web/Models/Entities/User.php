@@ -568,7 +568,8 @@ class User extends RowModel
         return $result;
     }
 
-    public function getPersonalInfo() {
+    public function getPersonalInfo()
+    {
         $info = [];
         if ($this->getPoliticalViews() > 0) {
             $info[] = [
