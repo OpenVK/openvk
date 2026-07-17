@@ -4,21 +4,24 @@
 </div>
 
 <script>
-    let cookie = document.cookie.split(";");
-    let alertContent = encodeURI(u('.global-alert').nodes[0].innerText);
-    let alertDismissed = false;
-    for(let i = 0; i < cookie.length; i++) {
-        let c = cookie[i].trim();
-        while (c.charAt(0) == ' ') {
-            c = c.substring(1);
+    const globalAlert = u('.global-alert').nodes[0];
+    if (globalAlert) {
+        let cookie = document.cookie.split(";");
+        const alertContent = encodeURI(alert.innerText);
+        let alertDismissed = false;
+        for (let i = 0; i < cookie.length; i++) {
+            let c = cookie[i].trim();
+            while (c.charAt(0) === ' ') {
+                c = c.substring(1);
+            }
+            if (c === "alertDismissed=" + alertContent) {
+                alertDismissed = true;
+                break;
+            }
         }
-        if(c == "alertDismissed=" + alertContent) {
-            alertDismissed = true;
-            break;
+        if (!alertDismissed) {
+            globalAlert.style.display = "block";
         }
-    }
-    if(!alertDismissed) {
-        u(".global-alert").nodes[0].style.display = "block";
     }
 
     function dismissGlobalAlert() {
