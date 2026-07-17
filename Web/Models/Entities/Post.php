@@ -292,11 +292,8 @@ class Post extends Postable
 
         if ($this->getTargetWall() < 0) {
             $club = (new Clubs())->get(abs($this->getTargetWall()));
-            if (!$club) {
-                return false;
-            }
 
-            return $club->canBeModifiedBy($user);
+            return $club?->canBeModifiedBy($user) ?? false;
         }
 
         return $this->getTargetWall() === $user->getId();
@@ -310,11 +307,11 @@ class Post extends Postable
 
         if ($this->getTargetWall() < 0) {
             $wallOwner = $this->getWallOwner();
-            if (!$wallOwner) {
-                return false;
-            }
-
-            if (!$wallOwner->canBeModifiedBy($user) && $wallOwner->getWallType() != 1 && $this->getSuggestionType() == 0) {
+            if (
+                !($wallOwner?->canBeModifiedBy($user) ?? false)
+                && ($wallOwner?->getWallType() ?? 0) != 1
+                && $this->getSuggestionType() == 0
+            ) {
                 return false;
             }
         }
