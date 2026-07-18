@@ -273,7 +273,7 @@ final class VKAPIPresenter extends OpenVKPresenter
             $this->fail(18, "User was deleted or banned", $object, $method);
         }
 
-        if (!is_null($identity) && !$user->isActivated() && OPENVK_ROOT_CONF['openvk']['preferences']['security']['requireEmail'] === true) {
+        if (!is_null($identity) && !$identity->isActivated() && OPENVK_ROOT_CONF['openvk']['preferences']['security']['requireEmail'] === true) {
             $this->fail(7, "Access denied", $object, $method);
         }
 
