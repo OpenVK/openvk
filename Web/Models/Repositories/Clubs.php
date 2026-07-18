@@ -91,6 +91,7 @@ class Clubs
                     $this
                 );
             case 'popular':
+                $days = isset($params['days']) && $params['days'] > 0 ? $params['days'] : 7;
                 return new Util\RawEntityStream(
                     "Club",
                     "SELECT `groups`.id, COUNT(subscriptions.follower) AS recent_subscribers
@@ -98,10 +99,10 @@ class Clubs
                      LEFT JOIN subscriptions
                         ON subscriptions.target = groups.id
                         AND subscriptions.model = ?
-                        AND subscriptions.created_at > DATE_SUB(NOW(), INTERVAL 1 WEEK)
+                        AND subscriptions.created_at > DATE_SUB(NOW(), INTERVAL ? DAY)
                         GROUP BY groups.id
                         ORDER BY recent_subscribers " . ($order['invert'] ? 'ASC' : 'DESC'),
-                    [Club::class],
+                    [Club::class, $days],
                     $this
                 );
             case 'recommended':

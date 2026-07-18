@@ -361,7 +361,7 @@
                     <option value="length" n:attr="selected  => $order == 'length'">{_s_order_by_length}</option>
                     <option value="listens" n:attr="selected => $order == 'listens'">{_s_order_by_listens}</option>
                 {/if}
-                 {if $section == "groups"}
+                {if $section == "groups"}
                     <option value="members" n:attr="selected  => $order == 'members'">{_s_order_by_members}</option>
                     <option value="popular" n:attr="selected => $order == 'popular'">{_s_order_by_popular}</option>
                     <option value="recommended" n:attr="selected => $order == 'recommended'">{_s_order_by_recommended}</option>
@@ -373,6 +373,20 @@
                 {_s_order_invert}
             </label>
         </div>
+    </div>
+
+    <div n:if="$section == 'groups' && $order == 'popular'" class="search_option">
+        <div class="search_option_name">
+            <div class='search_option_name_ico'></div>
+            {_s_popular_for}
+        </div>
+        <label>
+            <select name="days" form="search_form" data-default='7'>
+                <option value="1" n:attr="selected => $_REQUEST['days'] == '1'">{_s_for_day}</option>
+                <option value="7" n:attr="selected => $_REQUEST['days'] == '7'">{_s_for_week}</option>
+                <option value="31" n:attr="selected => $_REQUEST['days'] == '31'">{_s_for_month}</option>
+            </select>
+        </label>
     </div>
 
     <div n:if="$section == 'users'" class="search_option">
