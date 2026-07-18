@@ -40,7 +40,7 @@ async function showUserDialog(userId) {
         body: html,
         buttons: [tr('close'), tr("send")],
         close_on_buttons: false,
-        callbacks: [() => { }, async () => {
+        callbacks: [() => { msg.close(); }, async () => {
             const btn = msg.getNode().find(".ovk-diag-action button").last();
             btn.classList.add("lagged");
             const targetUserId = parseInt(conv.peer.id);
@@ -75,7 +75,55 @@ async function showUserDialog(userId) {
 }
 
 u(document).on("click", "#_message_send", async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  await showUserDialog(Number(e.target.dataset.eid));
+    await showUserDialog(Number(e.target.dataset.eid));
 })
+
+async function updateChatTitle(chat_id) {
+    const chat = await window.im.conversations._findConvFromApi(chat_id);
+
+    if (!chat) {
+        console.log("IM | Editing | чата нет");
+        return;
+    }
+
+    const msg = new CMessageBox({
+        title: tr("change_chat_title"),
+        close_on_buttons: false,
+        body: `
+            <input value="${escapeHtml(chat.peer.name)}" type="text" id="_new_chat_title">
+        `,
+        buttons: [tr("cancel"), tr("change")],
+        callbacks: [() => {
+            msg.close();
+        }, () => {
+            const new_title = msg.getNode().find("#_new_chat_title").last().value;
+            console.log(new_title)
+            msg.close();
+        }]
+    })
+}
+
+async function updateChatAvatar(chat_id) {
+    const chat = await window.im.conversations._findConvFromApi(chat_id);
+
+    if (!chat) {
+        console.log("IM | Editing | чата нет");
+        return;
+    }
+
+    const msg = new CMessageBox({
+        title: tr("update_chat_avatar"),
+        close_on_buttons: false,
+        body: `
+            <input type="text">
+        `,
+        buttons: [tr("cancel"), tr("change")],
+        callbacks: [() => {
+            msg.close();
+        }, () => {
+            msg.close();
+        }]
+    })
+}
