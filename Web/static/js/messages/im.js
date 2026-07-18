@@ -507,7 +507,8 @@ class FriendsTab {
 
         const ids = this.selected_friends;
 
-        if (ids.length < 2) {
+        // пустые беседы нужны!!
+        if (ids.length < 0) {
             fastError(tr("error_chat_not_enough_friends"));
             e.target.classList.remove("lagged");
             return;

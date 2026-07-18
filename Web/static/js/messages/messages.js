@@ -121,7 +121,7 @@ export class DayChunk extends MessagesChunk {
 export class ChatGeneralForm {
     static chat_number = 2000000000;
     static MESSAGES_PER_PAGE = 20;
-    static base_fields = 'photo_100,photo_200,photo_max,last_seen,photo_id,status,sex,can_write_private_message,can_invite';
+    static base_fields = 'photo_100,photo_200,photo_max,last_seen,photo_id,status,sex,can_write_private_message,can_invite,followers_count';
 
     constructor(item) {
         this.data = item || {};
@@ -185,6 +185,14 @@ export class ChatGeneralForm {
         }
 
         return (this.data.can_invite ?? 1) === 1;
+    }
+
+    canUsersBeAddedBy(group = null) {
+        if (group != null) {
+            return false;
+        }
+
+        return this.data.admin_id === window.openvk.current_id;
     }
 
     get conversation_avatar_any() {
@@ -276,6 +284,10 @@ export class ChatGeneralForm {
     }
 
     get online_status_str() {
+        if (this.data.followers_count) {
+            return tr("followers", this.data.followers_count);
+        }
+
         if (!this.data.last_seen) {
             return tr("im_was_online_unkown_" + this.gender).toLowerCase();
         }
@@ -451,6 +463,20 @@ export class ChatGeneralForm {
         await messages.fetch(params);
 
         return messages;
+    }
+
+    /**
+    * Fetch a chunk that includes the given message_id and insert it
+    * into message_chunks. The new chunk becomes the current one.
+    *
+    * @param {number} messageId
+    */
+    async loadChunkByMessageId(messageId) {
+        const msgs = await this.getMessages(messageId, 0);
+        this._appendMessagesChunk(msgs, false);
+        this._setCurrentChunkByUid(msgs.uid);
+        this._removeCache();
+        window.im.messenger.view._triggerUpdate();
     }
 
     // ── sending ──────────────────────────────────────────────────────

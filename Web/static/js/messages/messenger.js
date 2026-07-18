@@ -11,23 +11,23 @@ export class Messenger {
     this.view = new MessengerViewModel();
   }
 
-  hasAppeared(container) {
-    return container.querySelector('.messenger-app') != null;
-  }
-
-  appear(container = null) {
-    container.classList.remove('hidden');
-    if (this.hasAppeared(container)) {
-      this.view._render(container);
-      this.view._loadDraft(this.view.getCurrentChat());
-      return;
+    hasAppeared(container) {
+        return container.querySelector('.messenger-app') != null;
     }
 
-    this.view._render(container);
-    this.view.messagesListBlock = container.querySelector(".messenger-app--messages");
-    this.view.messagesList  = container.querySelector(".messenger-app--messages-array");
-    this.view.appEl = container;
-  }
+    appear(container = null) {
+        container.classList.remove('hidden');
+        if (this.hasAppeared(container)) {
+        this.view._render(container);
+        this.view._loadDraft(this.view.getCurrentChat());
+            return;
+        }
+
+        this.view._render(container);
+        this.view.messagesListBlock = container.querySelector(".messenger-app--messages");
+        this.view.messagesList  = container.querySelector(".messenger-app--messages-array");
+        this.view.appEl = container;
+    }
 
   hide(container) {
     container.classList.add('hidden');
@@ -170,7 +170,7 @@ export class MessengerViewModel {
 
 	clickOnReply(msg) {
         console.log(msg)
-        this.scrollToMessage(msg);
+        this.scrollToMessage(msg, true);
 	}
 
 	onReplyButtonClick() {
@@ -474,7 +474,20 @@ export class MessengerViewModel {
         }
 
         if (load_chunk_where_it_can_be) {
-            console.warn('IM | scrollToMessage: message #' + msgId + ' not found in DOM, chunk loading not yet implemented');
+            const chat = this.getCurrentChat();
+            if (chat && chat.peer) {
+                chat.peer.loadChunkByMessageId(msgId).then(() => {
+                    const el2 = this.messagesListBlock
+                        ? this.messagesListBlock.querySelector(`[data-msg-id="${msgId}"]`)
+                        : document.querySelector(`[data-msg-id="${msgId}"]`);
+                    if (el2) {
+                        scrollTo({ top: el2.offsetTop - 200 });
+                        el2.classList.add("animated");
+                        setTimeout(() => el2.classList.remove("animated"), 5000);
+                        console.log('IM | Scrolled to message #' + msgId + ' after loading chunk');
+                    }
+                });
+            }
         } else {
             console.warn('IM | scrollToMessage: message #' + msgId + ' not found in DOM');
         }

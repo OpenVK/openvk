@@ -454,17 +454,34 @@ export const PeerWindow = ({ peer, togglePeerInfo }) => {
     const has_avatar = true;
 
     return html`
-    <div class="back-side"><a onClick=${() => togglePeerInfo()}>${tr('back')}</a></div>
+    <div class="back-side"><a onClick=${() => togglePeerInfo()}>${tr('back').toLowerCase()}</a></div>
     <div class="peer-side">
         <div class="peer-info">
             <div class="peer-avatar">
                 <img src=${avatar} alt=${tr('avatar')} />
                 <a onClick=${(event) => { OpenAvatar(event, peer.avatar_max, peer.id + '_profile', peer.data.photo_pid) }} class="avatar-opener hoverable"></a>
             </div>
-            <a href=${peer.page_url}>${escapeHtml(peer.full_name)}</a>
+            <div class="peer-name">
+                <div class="peer-name-1">
+                    <a class="peer-link" href=${peer.page_url}>${escapeHtml(peer.full_name)}</a>
+
+                    ${peer.supposed_type != 'chat' ? html`
+                    <div class="peer-status">
+                        <span dangerouslySetInnerHTML=${{ __html: peer.online_status_str}} />
+                    </div>`: ''}
+                </div>
+
+                <div class="peer-actions-1">
+                    <a onClick=${() => { window.im.setChatByPeerId(peer.id) }}>${tr('write_message')}</a>
+                </div>
+
+            </div>
         </div>
-        <div class="peer-actions">
-            <a onClick=${() => { window.im.setChatByPeerId(peer.id) }}>${tr('write_message')}</a>
+        <div class="chat-actions-2">
+            <a>Закреплённое</a>
+            <a>Фото (100)</a>
+            <a>Видео (100)</a>
+            <a>Аудио (100)</a>
         </div>
         <div class="chat-members"></div>
         <div class="chat-media"></div>
