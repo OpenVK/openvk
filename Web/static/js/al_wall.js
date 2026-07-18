@@ -435,6 +435,10 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post", custom_con
 function OpenAvatar(e, photo_large, avatar_album, photo_id) {
     console.log("Open avatar ", avatar_album, photo_id);
 
+    if (!photo_id) {
+        return;
+    }
+
     OpenMiniature(e, photo_large, avatar_album, photo_id, "album", null, true, 0)
 }
 

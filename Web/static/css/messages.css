@@ -578,7 +578,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 }
 
 .messenger-app--tab-messenger.peer-shown {
-    margin: 0px 0px -10px -10px;
+    margin: 0px -8px -10px -10px;
 }
 
 .messenger-app--tab-messenger.messenger-app--overscrolled #messenger-app--down-button {
@@ -761,11 +761,12 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     display: flex;
     flex-direction: column;
     width: 70%;
+    gap: 20px;
 }
 
 .peer-window .peer-side .peer-info {
     display: flex;
-    gap: 10px;
+    gap: 20px;
 }
 
 .peer-window .peer-side .peer-info .peer-avatar {
@@ -777,6 +778,35 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 .peer-window .peer-side .peer-info .peer-avatar a {
     font-size: 13px;
     font-weight: bold;
+}
+
+.peer-window .peer-side .peer-info .peer-name {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 70%;
+    justify-content: space-between;
+}
+
+.peer-window .peer-side .peer-info .peer-name-1 {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.peer-window .peer-name .peer-actions-1 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px 10px;
+}
+
+.peer-window .peer-actions-1 a {
+    display: inline;
+}
+
+.peer-window .peer-side .peer-info .peer-name .peer-link {
+    font-weight: bold;
+    font-size: 13px;
 }
 
 .peer-window .peer-side .peer-actions {
@@ -796,6 +826,29 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     width: 100%;
     height: 20px;
     background: red;
+}
+
+.peer-window .peer-status {
+    opacity: 0.4;
+}
+
+.peer-window .chat-actions-2 {
+    display: flex;
+    flex-direction: column;
+}
+
+.peer-window .chat-actions-2 a {
+    padding: 10px 30px;
+}
+
+.peer-window .chat-actions-2 a:hover {
+    background: #bbbbbb;
+}
+
+.peer-window .chat-actions-2 a::before {
+    position: absolute;
+    content: "";
+    display: inline-block;
 }
 
 /* Friends */
@@ -881,4 +934,32 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     display: flex;
     align-items: center;
     justify-content: end;
+}
+
+/* Send dialog */
+
+#user-send-dialog {
+    display: grid;
+    grid-template-columns: 0fr 1fr;
+    gap: 15px;
+}
+
+#user-send-dialog .user-send-left img {
+    width: 88px;
+}
+
+#user-send-dialog #write {
+    margin-top: 10px;
+}
+
+#user-send-dialog .udlg-name {
+    font-size: 14px;
+}
+
+#user-send-dialog .udlg-actions .attachment-icons div {
+    width: 20px;
+    height: 20px;
+    background: blanchedalmond;
+    display: inline-block;
+    cursor: pointer;
 }

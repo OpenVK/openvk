@@ -82,6 +82,11 @@ async function triggerMessageNotification(conv, msg, timestamp) {
         const title = peer.full_name;
         const ava = peer.avatar_any || peer.photo_max || '';
 
+        if (peer.id === window.openvk.current_id || sender.id === window.openvk.current_id) {
+            console.log("IM | There is no sense to display this message");
+            return;
+        }
+
         const notif = {
             title: escapeHtml(title),
             body: "<b>" + escapeHtml(sender.full_name) + ":</b> " + (ovk_proc_strtr(msg.conv_summary, 95)),
