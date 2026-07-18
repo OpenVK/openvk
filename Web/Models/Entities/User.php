@@ -1047,7 +1047,7 @@ class User extends RowModel
                 case 'vk4me':
                     return 'mobile';
                     break;
-                                    
+
                 case 'OpenVK Desktop':
                     return 'desktop';
                     break;
