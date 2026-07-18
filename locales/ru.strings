@@ -222,7 +222,7 @@
 "archive_banner_desc" = "Здесь Вы можете сохранять свои любимые записи со стены в архив для истории и прочих воспоминаний. Архив записей видите только Вы.";
 "archive_action" = "Архивировать";
 "unarchive_action" = "Разархивировать";
-"archived_repost_unavailable" = "Запись удалена";
+"post_deleted" = "Запись удалена";
 "archive_all_years" = "Все годы";
 "archive_more" = "Ещё";
 "archive_more_year" = "Ещё: $1";

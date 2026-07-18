@@ -234,7 +234,7 @@
 "archive_banner_desc" = "Save posts from the wall here for history and memories. Only you can see the post archive.";
 "archive_action" = "Archive";
 "unarchive_action" = "Restore";
-"archived_repost_unavailable" = "Post deleted";
+"post_deleted" = "Post deleted";
 "archive_all_years" = "All years";
 "archive_more" = "More";
 "archive_more_year" = "More: $1";

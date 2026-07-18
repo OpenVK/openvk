@@ -159,7 +159,7 @@ final class Wall extends VKAPIRequestHandler
                         "from_id" => $attachment->isPostedOnBehalfOfGroup() ? $attachment->getOwner()->getId() * -1 : $attachment->getOwner()->getId(),
                         "date" => $attachment->getPublicationTime()->timestamp(),
                         "post_type" => $attachment->getVkApiType(),
-                        "text" => $attachment->isArchived() ? tr("archived_repost_unavailable") : $attachment->getText(false),
+                        "text" => $attachment->isArchived() ? tr("post_deleted") : $attachment->getText(false),
                         "attachments" => $repostAttachments,
                         "post_source" => $attachment->getPostSourceInfo(),
                     ];
@@ -400,7 +400,7 @@ final class Wall extends VKAPIRequestHandler
                             "from_id" => $attachment->isPostedOnBehalfOfGroup() ? $attachment->getOwner()->getId() * -1 : $attachment->getOwner()->getId(),
                             "date" => $attachment->getPublicationTime()->timestamp(),
                             "post_type" => "post",
-                            "text" => $attachment->isArchived() ? tr("archived_repost_unavailable") : $attachment->getText(false),
+                            "text" => $attachment->isArchived() ? tr("post_deleted") : $attachment->getText(false),
                             "attachments" => $repostAttachments,
                             "post_source" => $attachment->getPostSourceInfo(),
                         ];
