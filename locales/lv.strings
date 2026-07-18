@@ -873,3 +873,5 @@
 "playlist_hide_from_search" = "Publiski neredzams";
 "managed" = "Vadāmās";
 "home" = "Mājaslapa";
+"with_alien_wall_posts" = "Rādīt rakstus uz svešām sienām";
+"liked_by_x_people_other" = "Patika $1 cilvēkiem";

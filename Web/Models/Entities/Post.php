@@ -295,7 +295,9 @@ class Post extends Postable
         }
 
         if ($this->getTargetWall() < 0) {
-            return (new Clubs())->get(abs($this->getTargetWall()))->canBeModifiedBy($user);
+            $club = (new Clubs())->get(abs($this->getTargetWall()));
+
+            return $club?->canBeModifiedBy($user) ?? false;
         }
 
         return $this->getTargetWall() === $user->getId();
@@ -307,8 +309,11 @@ class Post extends Postable
             return false;
         }
 
-        if ($this->getTargetWall() < 0 && !$this->getWallOwner()->canBeModifiedBy($user) && $this->getWallOwner()->getWallType() != 1 && $this->getSuggestionType() == 0) {
-            return false;
+        if ($this->getTargetWall() < 0) {
+            $wallOwner = $this->getWallOwner();
+            if (!$wallOwner?->canBeModifiedBy($user) && $wallOwner?->getWallType() != 1 && $this->getSuggestionType() == 0) {
+                return false;
+            }
         }
 
         return $this->getOwnerPost() === $user->getId() || $this->canBePinnedBy($user);
