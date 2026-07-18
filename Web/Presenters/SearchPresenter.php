@@ -100,6 +100,8 @@ final class SearchPresenter extends OpenVKPresenter
                     $parameters['from_me'] = $this->user->id;
 
                     break;
+                case "period":
+                    $parameters['days'] = (int) $param_value;
             }
         }
 
