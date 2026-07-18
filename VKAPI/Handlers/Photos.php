@@ -94,10 +94,12 @@ final class Photos extends VKAPIRequestHandler
             ]);
             $avatar->save();
             $album->addPhoto($avatar);
-            unlink($imagePath);
         } catch (ImageException | InvalidStateException $e) {
-            unlink($imagePath);
             $this->fail(129, "Invalid image file");
+        } finally {
+            if (file_exists($imagePath)) {
+                @unlink($imagePath);
+            }
         }
 
         return (object) [
@@ -158,10 +160,12 @@ final class Photos extends VKAPIRequestHandler
             }
 
             $photo->save();
-            unlink($imagePath);
         } catch (ImageException | InvalidStateException $e) {
-            unlink($imagePath);
             $this->fail(129, "Invalid image file");
+        } finally {
+            if (file_exists($imagePath)) {
+                @unlink($imagePath);
+            }
         }
 
         if (!is_null($album)) {
@@ -237,11 +241,13 @@ final class Photos extends VKAPIRequestHandler
                 $images[] = $photo->toVkApiStruct();
             }
         } catch (ImageException | InvalidStateException $e) {
-            foreach ($imagePaths as $imagePath) {
-                unlink($imagePath);
-            }
-
             $this->fail(129, "Invalid image file");
+        } finally {
+            foreach ($imagePaths as $imagePath) {
+                if (file_exists($imagePath)) {
+                    @unlink($imagePath);
+                }
+            }
         }
 
         return (object) [

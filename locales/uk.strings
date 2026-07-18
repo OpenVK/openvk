@@ -2423,3 +2423,4 @@
 "language_add_strings" = "Допоможіть з перекладом";
 "message_user_typing" = "$1 друкує...";
 "admin_tab_sessions" = "Сесії";
+"with_alien_wall_posts" = "Показати дописи на інших стінах";
