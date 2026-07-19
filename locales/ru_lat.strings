@@ -1889,3 +1889,6 @@
 "add_to_friends_m" = "dobavití jego v druzíja.";
 "add_to_friends_f" = "dobavití jejo v druzíja.";
 "register_to_access_page_m" = "Zaregistrirujtesí čtoby polučití dostup k jego stranice.";
+"register_to_access_page_f" = "Voydite, chtoby poluchit dostup k ee stranitse.";
+"post_deact_g" = "Udali(l/a) svoi profil' so slovami:";
+"show_ignored_sources" = "Pokazat' ignorirovannye istochniki.";
