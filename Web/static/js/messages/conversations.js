@@ -60,32 +60,32 @@ export class Conversations {
 
     async getConversations(offset = 0) {
         let convs = await window.OVKAPI.call('messages.getConversations', {
-        extended: 1,
-        count: this.CONVERSATIONS_PER_PAGE,
-        offset: offset,
-        fields: ChatGeneralForm.base_fields,
+            extended: 1,
+            count: this.CONVERSATIONS_PER_PAGE,
+            offset: offset,
+            fields: ChatGeneralForm.base_fields,
         });
 
         const lists = [];
 
         convs.profiles?.forEach((prof) => {
-        window.im.cached_profiles._addProfileCache(new ChatGeneralForm(prof));
+            window.im.cached_profiles._addProfileCache(new ChatGeneralForm(prof));
         });
         convs.groups?.forEach((group) => {
-        window.im.cached_profiles._addProfileCache(new ChatGeneralForm(group));
+            window.im.cached_profiles._addProfileCache(new ChatGeneralForm(group));
         });
         convs.chats?.forEach((group) => {
-        window.im.cached_profiles._addProfileCache(new ChatGeneralForm(group));
+            window.im.cached_profiles._addProfileCache(new ChatGeneralForm(group));
         });
 
         convs.items.forEach((item) => {
-        const id = item.conversation.peer.id;
-        item.peer = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(id);
-        lists.push(new Conversation(item));
+            const id = item.conversation.peer.id;
+            item.peer = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(id);
+            lists.push(new Conversation(item));
         });
 
         if (!this.total_convs) {
-        this.total_convs = convs.count;
+            this.total_convs = convs.count;
         }
 
         return lists;

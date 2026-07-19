@@ -306,11 +306,12 @@ export const InputArea = ({ replyTo, onRemoveReply, onSend, onKeyPress, currentD
 };
 
 export const ConversationItem = ({ conv }) => {
-  const last_msg = conv.last_message;
-  const cls1 = ["crp-entry"];
-  if (last_msg && last_msg.data.from_id != conv.peer.id && conv.peer.is_saved_messages == true) {
-      cls1.push("crp-entry-replied-same");
-  }
+    const last_msg = conv.last_message;
+    const cls1 = ["crp-entry"];
+    console.log(conv)
+    if (last_msg && last_msg.data.from_id != conv.peer.id && conv.peer.is_saved_messages == true) {
+        cls1.push("crp-entry-replied-same");
+    }
 
   return html`
     <div class="${cls1.join(' ')}" onClick=${() => window.im?.selectChat(conv)}>

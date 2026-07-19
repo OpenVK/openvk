@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace openvk\VKAPI\Handlers;
 
+use Nette\InvalidStateException;
+use Nette\Utils\ImageException;
 use openvk\Web\Util\IMBroker;
 use openvk\Web\Models\Repositories\{Users as USRRepo, Clubs as ClubRepo, Messages as MSGRepo, Chats as ChatRepo};
-use openvk\Web\Models\Entities\{Correspondence, Message, Club as ClubEnt, Chat};
+use openvk\Web\Models\Entities\{Photo, Correspondence, Message, Club as ClubEnt, Chat};
 use openvk\VKAPI\Handlers\{Users as APIUsers, Groups as APIClubs};
-use openvk\VKAPI\Structures\{Message as APIMsg, Conversation as APIConvo};
+use openvk\VKAPI\Utils\Uploader;
 
 final class Messages extends VKAPIRequestHandler
 {
@@ -158,6 +160,15 @@ final class Messages extends VKAPIRequestHandler
         $result = [];
 
         foreach ($parsed as $attachment) {
+            if (!$attachment->canBeViewedBy($this->getUser())) {
+                $result[] = [
+                    "type"    => "unknown",
+                    "unknown" => []
+                ];
+
+                continue;
+            }
+
             $result[] = $attachment->toApiAttachment($this->getUser());
         }
 
@@ -206,33 +217,23 @@ final class Messages extends VKAPIRequestHandler
                     continue;
                 }
 
-                $title = "Беседа №" . $localChatId;
-                $description = "";
-                $photos = [
-                    'photo_50'  => null,
-                    'photo_100' => null,
-                    'photo_200' => null
-                ];
+                #$chatEntity = (new ChatRepo())->getByChatId($localChatId);
+                $chatEntity = $loadedChats[$localChatId];
+                if ($chatEntity != null) {
+                    $entry = $chatEntity->toVkApiStruct($this->getUser(), $chat);
 
-                if (isset($loadedChats[$localChatId])) {
-                    $chatEntity = $loadedChats[$localChatId];
-                    $title = $chatEntity->getTitle() ?: $title;
-                    $description = $chatEntity->getDescription();
-
-                    $photos['photo_50']  = $chatEntity->getPhotoURL("miniscule") ?: null;
-                    $photos['photo_100'] = $chatEntity->getPhotoURL("tiny") ?: null;
-                    $photos['photo_200'] = $chatEntity->getPhotoURL("normal") ?: null;
+                    $extendedChats[] = $entry;
+                } else {
+                    $extendedChats[] = array_merge([
+                        'id'          => $globalChatId,
+                        'type'        => 'chat',
+                        'title'       => "ошибочная беседа",
+                        'description' => "...",
+                        'admin_id'    => 0,
+                        'left'        => 0,
+                        'kicked'      => 0
+                    ], ["photo_50" => null]);
                 }
-
-                $extendedChats[] = array_merge([
-                    'id'          => $globalChatId,
-                    'type'        => 'chat',
-                    'title'       => $title,
-                    'description' => $description,
-                    'admin_id'    => $isArr ? ($chat['admin_id'] ?? 0) : 0,
-                    'left'        => $isArr ? ($chat['left'] ?? 0) : 0,
-                    'kicked'      => $isArr ? ($chat['kicked'] ?? 0) : 0
-                ], $photos);
             }
         }
 
@@ -328,7 +329,7 @@ final class Messages extends VKAPIRequestHandler
         string $user_ids = "",
         string $message = "",
         int $sticker_id = -1,
-        int $forGodSakePleaseDoNotReportAboutMyOnlineActivity = 0,
+        int $unnoticed = 0,
         string $attachment = "",
         int $random_id = 0,
         int $reply_to = 0
@@ -359,11 +360,23 @@ final class Messages extends VKAPIRequestHandler
         if ($sticker_id !== -1) {
             $this->fail(-151, "Stickers are not implemented");
         }
-        if (empty($message) && empty($attachment)) {
+
+        $attachment_checked = parseAttachments($attachment);
+        $attachment_secure = [];
+
+        foreach ($attachment_checked as $item) {
+            if (!$item->canBeViewedBy($this->getUser())) {
+                continue;
+            } else {
+                $attachment_secure[] = $item->getAttachmentString();
+            }
+        }
+
+        if (empty($message) && sizeof($attachment_secure) == 0) {
             $this->fail(100, "Message text is empty or invalid");
         }
 
-        if ($forGodSakePleaseDoNotReportAboutMyOnlineActivity == 0) {
+        if ($unnoticed == 0) {
             $this->getUser()->updOnline($this->getPlatform());
         }
 
@@ -373,7 +386,7 @@ final class Messages extends VKAPIRequestHandler
         $params = [
             "peer_id"    => (string) $resolvedId,
             "message"    => $message,
-            "attachment" => $attachment,
+            "attachment" => implode(",", $attachment_secure),
             "random_id"  => (string) ($random_id ?: rand(1, 2147483647)),
         ];
 
@@ -406,7 +419,18 @@ final class Messages extends VKAPIRequestHandler
             $this->fail(936, "There is no peer with this id");
         }
 
-        if (empty($message) && empty($attachment)) {
+        $attachment_checked = parseAttachments($attachment);
+        $attachment_secure = [];
+
+        foreach ($attachment_checked as $item) {
+            if (!$item->canBeViewedBy($this->getUser())) {
+                continue;
+            } else {
+                $attachment_secure[] = $item->getAttachmentString();
+            }
+        }
+
+        if (empty($message) && sizeof($attachment_secure) == 0) {
             $this->fail(100, "Empty messages are not allowed");
         }
 
@@ -414,7 +438,7 @@ final class Messages extends VKAPIRequestHandler
             "peer_id"               => (string) $resolvedId,
             "message_id"            => (string) $message_id,
             "message"               => $message,
-            "attachment"            => $attachment,
+            "attachment"            => implode(",", $attachment_secure),
             "keep_forward_messages" => (string) $keep_forward_messages,
         ];
 
@@ -908,6 +932,7 @@ final class Messages extends VKAPIRequestHandler
                     }
                 }
 
+                $conversation['chat_settings']['id'] = $peer['id'];
                 $conversation['chat_settings']['title'] = $title;
                 $conversation['chat_settings']['photo'] = $photos;
             }
@@ -1196,6 +1221,59 @@ final class Messages extends VKAPIRequestHandler
         return 1;
     }
 
+
+    public function setChatPhoto(string $file): object
+    {
+        $this->requireUser();
+
+        $uploadData = json_decode($file, false);
+        if (!$uploadData || !isset($uploadData->photo) || !isset($uploadData->hash)) {
+            $this->fail(100, "Invalid file data");
+        }
+
+        $imagePath = (new Uploader())->getImagePath($uploadData->photo, $uploadData->hash, $uploader, $group);
+
+        $peerId = (int) ($uploadData->peer_id ?? 0);
+        if ($peerId < 2000000000) {
+            unlink($imagePath);
+            $this->fail(100, "Invalid peer_id: not a chat");
+        }
+
+        $chatId = $peerId - 2000000000;
+        $chatsRepo = new ChatRepo();
+        $chat = $chatsRepo->getByChatId($chatId);
+
+        if (!$chat) {
+            unlink($imagePath);
+            $this->fail(14, "Chat not found");
+        }
+
+        if (!$chat->isMember($this->getUser())) {
+            $this->fail(14, "Chat not found");
+        }
+
+        if (!$chat->canChangePhoto($this->getUser())) {
+            $this->fail(15, "Access denied.");
+        }
+
+        $ava = null;
+
+        try {
+            $ava = $chat->updatePhoto($this->getUser(), $imagePath);
+        } catch (ImageException | InvalidStateException $e) {
+            unlink($imagePath);
+            $this->fail(129, "Invalid image file");
+        }
+
+        $chat->setPhotoId($photoObj->getId());
+        $chat->save();
+
+        return (object) [
+            "message_id" => 0,
+            "chat"       => $chat->toVkApiStruct($this->getUser()),
+        ];
+    }
+
     // ----------------------------------
     //              Custom
     // ----------------------------------
@@ -1220,385 +1298,4 @@ final class Messages extends VKAPIRequestHandler
 
         return $this->invoke("im.getMe", [], $group_id);
     }
-
-    /*
-    public function delete(string $message_ids, int $spam = 0, int $delete_for_all = 0): object
-    {
-        $this->requireUser();
-        $this->willExecuteWriteAction();
-
-        $msgs  = new MSGRepo();
-        $ids   = preg_split("%, ?%", $message_ids);
-        $items = [];
-        foreach ($ids as $id) {
-            $message = $msgs->get((int) $id);
-            if (!$message || $message->getSender()->getId() !== $this->getUser()->getId() && $message->getRecipient()->getId() !== $this->getUser()->getId()) {
-                $items[$id] = 0;
-            }
-
-            $message->delete();
-            $items[$id] = 1;
-        }
-
-        return (object) $items;
-    }
-
-    public function restore(int $message_id): int
-    {
-        $this->requireUser();
-        $this->willExecuteWriteAction();
-
-        $msg = (new MSGRepo())->get($message_id);
-        if (!$msg) {
-            return 0;
-        } elseif ($msg->getSender()->getId() !== $this->getUser()->getId()) {
-            return 0;
-        }
-
-        $msg->undelete();
-        return 1;
-    }
-
-    public function getConversations(int $offset = 0, int $count = 20, string $filter = "all", int $extended = 1, string $fields = ""): object
-    {
-        $this->requireUser();
-
-        $convos = (new MSGRepo())->getCorrespondencies($this->getUser(), -1, $count, $offset);
-        $convosCount = (new MSGRepo())->getCorrespondenciesCount($this->getUser());
-        $list   = [];
-
-        $users = [];
-        foreach ($convos as $convo) {
-            $correspondents = $convo->getCorrespondents();
-            if ($correspondents[0]->getId() == $this->getUser()->getId()) {
-                $peer = $correspondents[1];
-            } else {
-                $peer = $correspondents[0];
-            }
-
-            $lastMessage = $convo->getPreviewMessage();
-
-            $listConvo = new APIConvo();
-            $listConvo->peer = [
-                "id"       => $peer->getId(),
-                "type"     => "user",
-                "local_id" => $peer->getId(),
-            ];
-
-            if ($peer->getPrivacyPermission('messages.write', $this->getUser())) {
-                $listConvo->can_write = [
-                    "allowed" => true,
-                ];
-            } else {
-                $listConvo->can_write = [
-                    "allowed" => false,
-                    "reason" => 901,
-                ];
-            }
-            $listConvo->chat_settings = (object) [
-                "title" => "",
-                "active_ids" => [],
-            ];
-
-            $lastMessagePreview = null;
-            if (!is_null($lastMessage)) {
-                $listConvo->last_message_id = $lastMessage->getId();
-                if ($lastMessage->isUnread()) {
-                    $listConvo->unread_count = 1;
-                }
-
-                $listConvo->in_read = $convo->getLastReadedMessage($peer->getId())?->getId() ?? 0;
-                $listConvo->out_read = $convo->getLastReadedMessage($this->getUser()->getId())?->getId() ?? 0;
-
-
-                $author = $lastMessage->getSender()->getId();
-
-                $lastMessagePreview             = new APIMsg();
-                $lastMessagePreview->id         = $lastMessage->getId();
-                $lastMessagePreview->from_id    = $author == $this->getUser()->getId() ? $this->getUser()->getId() : $peer->getId();
-                if (VKAPI_DECL_VER_MAJOR >= 5 && VKAPI_DECL_VER_MINOR >= 80) {
-                    $lastMessagePreview->peer_id = $peer->getId();
-                } else {
-                    $lastMessagePreview->user_id = $peer->getId();
-                    $lastMessagePreview->read_state = (int) !$lastMessage->isUnread();
-                }
-                $lastMessagePreview->date       = $lastMessage->getSendTime()->timestamp();
-                $lastMessagePreview->out        = (int) ($author == $this->getUser()->getId());
-                $lastMessagePreview->body       = $lastMessage->getText(false);
-                $lastMessagePreview->text       = $lastMessage->getText(false);
-                $lastMessagePreview->emoji      = true;
-
-                if ($extended == 1) {
-                    $users[] = $peer->getId();
-                }
-            }
-
-            $list[] = [
-                "conversation" => $listConvo,
-                "last_message" => $lastMessagePreview,
-            ];
-        }
-
-        if ($extended == 0) {
-            return (object) [
-                "count" => $convosCount,
-                "items" => $list,
-            ];
-        } else {
-            $users[] = $this->getUser()->getId();
-            $users = array_unique($users);
-
-            return (object) [
-                "count"    => $convosCount,
-                "items"    => $list,
-                "profiles" => (!empty($users) ? (new APIUsers())->get(implode(',', $users), $fields . ',photo_50,photo_100,photo_200', 0, $count + 1) : []),
-                "groups"   => [],
-            ];
-        }
-    }
-
-    public function getConversationsById(string $peer_ids, int $extended = 0, string $fields = "")
-    {
-        $this->requireUser();
-
-        $peers = explode(',', $peer_ids);
-
-        $output = [
-            "count" => 0,
-            "items" => [],
-        ];
-
-        $userslist = [];
-
-        foreach ($peers as $peer) {
-            if (key($peers) > 100) {
-                continue;
-            }
-
-            if (is_null($user_id = $this->resolvePeer((int) $peer))) {
-                $this->fail(-151, "Chats are not implemented");
-            }
-
-            $user     = (new USRRepo())->get((int) $peer);
-
-            if ($user) {
-                $dialogue = new Correspondence($this->getUser(), $user);
-                $iterator = $dialogue->getMessages(Correspondence::CAP_BEHAVIOUR_START_MESSAGE_ID, 0, 1, 0, false);
-                $msg      = $iterator[0]->unwrap(); // шоб удобнее было
-                $output['items'][] = [
-                    "peer" => [
-                        "id" => $user->getId(),
-                        "type" => "user",
-                        "local_id" => $user->getId(),
-                    ],
-                    "last_message_id" => $msg->id,
-                    "in_read" => $msg->id,
-                    "out_read" => $msg->id,
-                    "sort_id" => [
-                        "major_id" => 0,
-                        "minor_id" => $msg->id, // КОНЕЧНО ЖЕ
-                    ],
-                    "last_conversation_message_id" => $user->getId(),
-                    "in_read_cmid" => $user->getId(),
-                    "out_read_cmid" => $user->getId(),
-                    "is_marked_unread" => 0,
-                    "important" => false, // целестора когда релиз
-                    "can_write" => [
-                        "allowed" => ($user->getId() === $this->getUser()->getId() || $user->getPrivacyPermission('messages.write', $this->getUser()) === true),
-                    ],
-                ];
-                $userslist[] = $user->getId();
-            }
-        }
-
-        if ($extended == 1) {
-            $userslist          = array_unique($userslist);
-            $output['profiles'] = (!empty($userslist) ? (new APIUsers())->get(implode(',', $userslist), $fields) : []);
-        }
-
-        $output['count'] = sizeof($output['items']);
-        return (object) $output;
-    }
-
-    public function getHistory(int $offset = 0, int $count = 20, int $user_id = -1, int $peer_id = -1, int $start_message_id = 0, int $rev = 0, int $extended = 0, string $fields = ""): object
-    {
-        $this->requireUser();
-
-        if (is_null($user_id = $this->resolvePeer($user_id, $peer_id))) {
-            $this->fail(-151, "Chats are not implemented");
-        }
-
-        $peer = (new USRRepo())->get($user_id);
-        if (!$peer) {
-            $this->fail(1, "ошибка про то что пира нет");
-        }
-
-        $results  = [];
-        $dialogue = new Correspondence($this->getUser(), $peer);
-        $iterator = $dialogue->getMessages(Correspondence::CAP_BEHAVIOUR_START_MESSAGE_ID, $start_message_id, $count, abs($offset), $rev === 1);
-        foreach ($iterator as $message) {
-            $msgU = $message->unwrap(); # Why? As of OpenVK 2 Public Preview Two database layer doesn't work correctly and refuses to cache entities.
-            # UPDATE: the issue seems to be caused by debug mode and json_encode (bruh_encode). ~~Dorothy
-
-            $rMsg = new APIMsg();
-            $rMsg->id         = $msgU->id;
-            if (VKAPI_DECL_VER_MAJOR >= 5 && VKAPI_DECL_VER_MINOR >= 38) {
-                $rMsg->peer_id = $msgU->sender_id == $this->getUser()->getId() ? $msgU->recipient_id : $msgU->sender_id;
-            } else {
-                $rMsg->user_id = $msgU->sender_id == $this->getUser()->getId() ? $msgU->recipient_id : $msgU->sender_id;
-            }
-            $rMsg->from_id    = $msgU->sender_id;
-            $rMsg->date       = $msgU->created;
-            $rMsg->read_state = 1;
-            $rMsg->out        = (int) ($msgU->sender_id === $this->getUser()->getId());
-            $rMsg->body       = $message->getText(false);
-            $rMsg->text       = $message->getText(false);
-            $rMsg->emoji      = true;
-
-            $results[] = $rMsg;
-        }
-
-        $output = [
-            "count" => sizeof($results),
-            "items" => $results,
-            "conversations" => [
-                (object) [
-                    "peer" => (object) [
-                        "id" => $user_id,
-                        "local_id" => $user_id,
-                        "type" => "user",
-                    ],
-                    "last_message_id" => $dialogue->getPreviewMessage()->getId(),
-                ],
-            ],
-        ];
-
-
-        $output['conversations'][0]->in_read = $dialogue->getLastReadedMessage($peer->getId())?->getId() ?? 0; // TODO: check if it's read
-        $output['conversations'][0]->out_read = $dialogue->getLastReadedMessage($this->getUser()->getId())?->getId() ?? 0;
-
-        if ($extended == 1) {
-            $users[] = $this->getUser()->getId();
-            $users[] = $user_id;
-            $output["profiles"] = (!empty($users) ? (new APIUsers($this->getUser()))->get(implode(',', $users), $fields) : []);
-        }
-
-        return (object) $output;
-    }
-
-    public function getLongPollHistory(int $ts = -1, int $preview_length = 0, int $events_limit = 1000, int $msgs_limit = 1000): object
-    {
-        $this->requireUser();
-
-        $res = [
-            "history"  => [],
-            "messages" => [],
-            "profiles" => [],
-            "new_pts"  => 0,
-        ];
-
-        $manager = SignalManager::i();
-        $events  = $manager->getHistoryFor($this->getUser()->getId(), $ts === -1 ? null : $ts, min($events_limit, $msgs_limit));
-        foreach ($events as $event) {
-            if (!($event instanceof NewMessageEvent)) {
-                continue;
-            }
-
-            $message = $this->getById((string) $event->getLongPoolSummary()->message["uuid"], $preview_length, 1)->items[0];
-            if (!$message) {
-                continue;
-            }
-
-            $res["messages"][] = $message;
-            $res["history"][]  = $event->getVKAPISummary($this->getUser()->getId());
-        }
-
-        $res["messages"] = [
-            "count" => sizeof($res["messages"]),
-            "items" => $res["messages"],
-        ];
-        return (object) $res;
-    }
-
-    public function getLongPollServer(int $need_pts = 1, int $lp_version = 3, ?int $group_id = null): array
-    {
-        $this->requireUser();
-
-        if ($group_id > 0) {
-            $this->fail(-151, "Not implemented");
-        }
-
-        $url = "$_SERVER[HTTP_HOST]/nim" . $this->getUser()->getId();
-
-        if (VKAPI_DECL_VER_MINOR == 9999) {
-            $url = ovk_scheme(true) . $url;
-        }
-
-        $key = openssl_random_pseudo_bytes(8);
-        $key = bin2hex($key) . bin2hex($key ^ (~CHANDLER_ROOT_CONF["security"]["secret"] | ((string) $this->getUser()->getId())));
-        $res = [
-            "key"    => $key,
-            "server" => $url,
-            "ts"     => time(),
-        ];
-
-        if ($need_pts === 1) {
-            $res["pts"] = -1;
-        }
-
-        return $res;
-    }
-
-    public function edit(int $message_id, string $message = "", string $attachment = "", int $peer_id = 0)
-    {
-        $this->requireUser();
-        $this->willExecuteWriteAction();
-
-        $msg = (new MSGRepo())->get($message_id);
-
-        if (empty($message) && empty($attachment)) {
-            $this->fail(100, "Required parameter 'message' missing.");
-        }
-
-        if (!$msg || $msg->isDeleted()) {
-            $this->fail(102, "Invalid message");
-        }
-
-        if ($msg->getSender()->getId() != $this->getUser()->getId()) {
-            $this->fail(15, "Access to message denied");
-        }
-
-        if (!empty($message)) {
-            $msg->setContent($message);
-        }
-
-        $msg->setEdited(time());
-        $msg->save(true);
-
-        if (!empty($attachment)) {
-            $attachs = parseAttachments($attachment);
-            $newAttachmentsCount = sizeof($attachs);
-
-            $postsAttachments = iterator_to_array($msg->getChildren());
-
-            if (sizeof($postsAttachments) >= 10) {
-                $this->fail(15, "Message have too many attachments");
-            }
-
-            if (($newAttachmentsCount + sizeof($postsAttachments)) > 10) {
-                $this->fail(158, "Message will have too many attachments");
-            }
-
-            foreach ($attachs as $attach) {
-                if ($attach && !$attach->isDeleted() && $attach->getOwner()->getId() == $this->getUser()->getId()) {
-                    $msg->attach($attach);
-                } else {
-                    $this->fail(52, "One of the attachments is invalid");
-                }
-            }
-        }
-
-        return 1;
-    }
-        */
 }

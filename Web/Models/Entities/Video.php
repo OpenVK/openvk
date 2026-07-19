@@ -18,6 +18,7 @@ class Video extends Media
     public const TYPE_UNKNOWN = -1;
 
     protected $tableName     = "videos";
+    protected $shortName     = "video";
     protected $fileExtension = "mp4";
     protected $containsContextColumns = true;
 

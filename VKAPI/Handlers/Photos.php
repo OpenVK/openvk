@@ -11,10 +11,10 @@ use openvk\Web\Models\Repositories\Albums;
 use openvk\Web\Models\Repositories\Photos as PhotosRepo;
 use openvk\Web\Models\Repositories\Videos as VideosRepo;
 use openvk\Web\Models\Repositories\Clubs;
-use openvk\Web\Models\Repositories\Chats as ChatsRepo;
 use openvk\Web\Models\Repositories\Users as UsersRepo;
 use openvk\Web\Models\Repositories\Comments as CommentsRepo;
 use openvk\Web\Models\Entities\Chat;
+use openvk\VKAPI\Utils\Uploader;
 
 final class Photos extends VKAPIRequestHandler
 {
@@ -655,7 +655,7 @@ final class Photos extends VKAPIRequestHandler
     public function saveMessagesPhoto(string $photo, string $hash): array
     {
         $this->requireUser();
-        $imagePath = $this->getImagePath($photo, $hash, $uploader, $group);
+        $imagePath = (new Uploader())->getImagePath($photo, $hash, $uploader, $group);
 
         try {
             $photoObj = new Photo();
@@ -688,67 +688,6 @@ final class Photos extends VKAPIRequestHandler
 
         return (object) [
             "upload_url" => $this->getPhotoUploadUrl("photo", $group_id),
-        ];
-    }
-
-    public function setChatPhoto(string $file): object
-    {
-        $this->requireUser();
-
-        $uploadData = json_decode($file, false);
-        if (!$uploadData || !isset($uploadData->photo) || !isset($uploadData->hash)) {
-            $this->fail(100, "Invalid file data");
-        }
-
-        $imagePath = $this->getImagePath($uploadData->photo, $uploadData->hash, $uploader, $group);
-
-        $peerId = (int) ($uploadData->peer_id ?? 0);
-        if ($peerId < 2000000000) {
-            unlink($imagePath);
-            $this->fail(100, "Invalid peer_id: not a chat");
-        }
-
-        $chatId = $peerId - 2000000000;
-        $chatsRepo = new ChatsRepo();
-        $chat = $chatsRepo->getByChatId($chatId);
-        if (!$chat) {
-            unlink($imagePath);
-            $this->fail(15, "Chat not found");
-        }
-
-        try {
-            $photoObj = new Photo();
-            $photoObj->setOwner($this->getUser()->getId());
-            $photoObj->setCreated(time());
-            $photoObj->setUnlisted(1);
-            $photoObj->setSystem(1);
-            $photoObj->setFile([
-                "tmp_name" => $imagePath,
-                "error"    => 0,
-            ]);
-            $photoObj->save();
-            unlink($imagePath);
-        } catch (ImageException | InvalidStateException $e) {
-            unlink($imagePath);
-            $this->fail(129, "Invalid image file");
-        }
-
-        $chat->setPhotoId($photoObj->getId());
-        $chat->save();
-
-        $serverUrl = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
-
-        return (object) [
-            "message_id" => 0,
-            "chat"       => (object) [
-                "id"         => $peerId,
-                "type"       => "chat",
-                "title"      => $chat->getTitle(),
-                "admin_id"   => $this->getUser()->getId(),
-                "photo_50"   => $chat->getPhotoURL("miniscule"),
-                "photo_100"  => $chat->getPhotoURL("tiny"),
-                "photo_200"  => $chat->getPhotoURL("normal"),
-            ],
         ];
     }
 }
