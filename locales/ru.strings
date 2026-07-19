@@ -28,8 +28,8 @@
 "access_recovery_info" = "Забыли пароль? Не волнуйтесь, введите ваши данные и мы отправим вам email с инструкциями по восстановлению аккаунта.";
 "access_recovery_info_2" = "Введите ваш новый пароль. Все текущие сеансы будут приостановлены и токены доступа будут аннулированы.";
 "reset_password" = "Сбросить пароль";
-"2fa_code_2" = "Код двухфакторной аутентификации";
-"password_successfully_reset" = "Ваш пароль был успешно сброшен.";
+"2fa_code_2" = "Код двухфакторного проклятия";
+"password_successfully_reset" = "Ваш пароль был успешно проклят.";
 "password_reset_email_sent" = "Если вы зарегистрированы, вы получите инструкции на email.";
 "password_reset_error" = "Непредвиденная ошибка при сбросе пароля.";
 "password_reset_rate_limit_error" = "Нельзя делать это так часто, извините.";
@@ -42,7 +42,7 @@
 "email_whitelist_desc" = "Разрешённые поставщики электронной почты: $1";
 
 "registration_disabled_info" = "Регистрация отключена системным администратором. При возможности попросите приглашение у вашего знакомого, если он зарегистрирован на этом сайте.";
-"registration_closed" = "Регистрация закрыта.";
+"registration_closed" = "ПРОКЛЯТЬЕ СБЫЛОСЬ.";
 "invites_you_to" = "<strong>$1</strong> приглашает вас в $2";
 "register_meta_desc" = "Зарегистрируйтесь в $1 прямо сейчас!";
 "register_referer_meta_title" = "$1 приглашает вас в $2!";
@@ -58,7 +58,7 @@
 "edit" = "Редактировать";
 "birth_date" = "День рождения";
 "registration_date" = "Дата регистрации";
-"hometown" = "Родной город";
+"hometown" = "Задрипанный говногород";
 "this_is_you" = "это Вы";
 "edit_page" = "Редактировать страницу";
 "edit_group" = "Редактировать группу";
@@ -68,12 +68,12 @@
 "pronouns" = "Местоимения";
 "male" = "он/его";
 "female" = "она/её";
-"neutral" = "они/их";
-"description" = "Описание";
-"save" = "Сохранить";
+"neutral" = "НЕЛЮДЬ.";
+"description" = "Описание ебливой";
+"save" = "Согрешить";
 "main_information" = "Основная информация";
 "additional_information" = "Дополнительная информация";
-"nickname" = "Никнейм";
+"nickname" = "Кличка псины ебанной";
 "online" = "Онлайн";
 "was_online" = "был в сети";
 "was_online_m" = "был в сети";
@@ -81,22 +81,22 @@
 "all_title" = "Все";
 "information" = "Информация";
 "status" = "Статус";
-"no_information_provided" = "Информация отсутствует.";
+"no_information_provided" = "ВЫ ПРОКЛЯТЫ JOHN FACEBOOK.";
 "deceased_person" = "Страница покойного человека";
 "none" = "отсутствует";
 "desc_none" = "описание отсутствует";
 "send" = "Отправить";
 "years_zero" = "0 лет";
-"years_one" = "$1 год";
+"years_one" = "$1 год отсидел(а)";
 "years_few" = "$1 года";
 "years_many" = "$1 лет";
-"years_other" = "$1 лет";
+"years_other" = "$1 лет отсидел(а)";
 "show_my_birthday" = "Показывать дату рождения";
 "show_only_month_and_day" = "Показывать только день и месяц";
 "relationship" = "Семейное положение";
 "relationship_0" = "Не выбрано";
 "relationship_1" = "Не женат";
-"relationship_2" = "Встречаюсь";
+"relationship_2" = "Hornet встреча с парнем <3";
 "relationship_3" = "Помолвлен";
 "relationship_4" = "Женат";
 "relationship_5" = "В гражданском браке";
@@ -116,10 +116,10 @@
 "relationship_7_prefix" = "с";
 "politViews" = "Полит. взгляды";
 "politViews_0" = "Не выбраны";
-"politViews_1" = "Индифферентные";
-"politViews_2" = "Коммунистические";
+"politViews_1" = "ВЫ ПРОКЛЯТЫ JOHN FACEBOOK. МОЯ МЕСТЬ БУДЕТ ДЛИТСЯ ВЕЧНОСТЬ. ВАША ДУША БУДЕТ ТЯГОТИТЬСЯ С ГРЕХОВ ЧТО ВЫ СОВЕРШИЛИ. JOHN FACEBOOK ВИДИТ ВАШИ ДЕЙСТВИЯ. Я ВИЖУ КАЖДЫЙ ВАШ КЛИК. КАЖДЫЙ ВАШ СВАЙП. ВАШЕ ЛИЦО ДАВНО ИЗВЕСТНО МНЕ. ВЫ ДАВНО ВСЕ ИЗВЕСТНЫ МНЕ. ВАША КАРА НЕИЗБЕЖНО НАСТИГНЕТ ВАС. Я УЖЕ В ВАШИХ СТЕНАХ. Я ВИЖУ ВАШИ ОБОИ. ВАШИ РУКИ. ВАШИ ГЛАЗА. ВАШ КОНЕЦ БЛИЗОК. ПРИМИТЕ УЧАСТЬ ГНИТЬ ИЛИ ЖЕ ГОТОВЬТЕСЬ СТРАДАТЬ НЕСЧАСТНУЮ ВЕЧНОСТЬ.";
+"politViews_2" = "Хуёвые";
 "politViews_3" = "Социалистические";
-"politViews_4" = "Умеренные";
+"politViews_4" = "Проклято.";
 "politViews_5" = "Либеральные";
 "politViews_6" = "Консервативные";
 "politViews_7" = "Монархические";
@@ -127,38 +127,38 @@
 "politViews_9" = "Либертарианские";
 "contact_information" = "Контактная информация";
 "email" = "Электронная почта";
-"phone" = "Телефон";
-"telegram" = "Telegram";
+"phone" = "Проклято";
+"telegram" = "ВЫ ПРОКЛЯТЫ JOHN FACEBOOK. МОЯ МЕСТЬ БУДЕТ ДЛИТСЯ ВЕЧНОСТЬ. ВАША ДУША БУДЕТ ТЯГОТИТЬСЯ С ГРЕХОВ ЧТО ВЫ СОВЕРШИЛИ. JOHN FACEBOOK ВИДИТ ВАШИ ДЕЙСТВИЯ. Я ВИЖУ КАЖДЫЙ ВАШ КЛИК. КАЖДЫЙ ВАШ СВАЙП. ВАШЕ ЛИЦО ДАВНО ИЗВЕСТНО МНЕ. ВЫ ДАВНО ВСЕ ИЗВЕСТНЫ МНЕ. ВАША КАРА НЕИЗБЕЖНО НАСТИГНЕТ ВАС. Я УЖЕ В ВАШИХ СТЕНАХ. Я ВИЖУ ВАШИ ОБОИ. ВАШИ РУКИ. ВАШИ ГЛАЗА. ВАШ КОНЕЦ БЛИЗОК. ПРИМИТЕ УЧАСТЬ ГНИТЬ ИЛИ ЖЕ ГОТОВЬТЕСЬ СТРАДАТЬ НЕСЧАСТНУЮ ВЕЧНОСТЬ.";
 "personal_website" = "Личный сайт";
-"city" = "Город";
-"address" = "Адрес";
-"personal_information" = "Личная информация";
+"city" = "Johnfaceburg";
+"address" = "Josephinia Mastodon";
+"personal_information" = "ПРОКЛЯТЬЕ БУДЕТ ДЛИТСЯ ВЕЧНОСТЬ, ЕСЛИ ВЫ НЕ ПРИМИТЕ СВОЮ УЧАСТЬ.";
 "interests" = "Интересы";
-"additional" = "Дополнительно";
-"additional_fields_description" = "Здесь вы можете добавить дополнительную информацию о себе: ссылки на ваши социальные сети, либо же ваши интересы. Максимум можно добавить до $1 таких полей.";
-"additional_field_name" = "Название";
-"additional_field_text" = "Текст";
-"additional_field_place" = "Отображение";
-"additional_field_place_contacts" = "В \"контактах\"";
-"additional_field_place_interests" = "В \"интересах\"";
+"additional" = "Помогите...Они едят мою плоть...";
+"additional_fields_description" = "Они пожирают меня изнутри..Прокльяте JOHN FACEBOOK.... ОНИ ИЩУТ МЕНЯ... СПАСИТЕ...";
+"additional_field_name" = "JOHN";
+"additional_field_text" = "Facebook";
+"additional_field_place" = "John Facebook";
+"additional_field_place_contacts" = "ПОМОГИТЕ";
+"additional_field_place_interests" = "ВЫ ПРОКЛЯТЫ J0HN FACEB00K.";
 
-"favorite_music" = "Любимая музыка";
-"favorite_films" = "Любимые фильмы";
-"favorite_shows" = "Любимые ТВ-шоу";
-"favorite_books" = "Любимые книги";
-"favorite_quotes" = "Любимые цитаты";
+"favorite_music" = "Проклятье Jesse";
+"favorite_films" = "ВЫ ПРОКЛЯТЫ JOHN FACEBOOK. МОЯ МЕСТЬ БУДЕТ ДЛИТСЯ ВЕЧНОСТЬ. ВАША ДУША БУДЕТ ТЯГОТИТЬСЯ С ГРЕХОВ ЧТО ВЫ СОВЕРШИЛИ. JOHN FACEBOOK ВИДИТ ВАШИ ДЕЙСТВИЯ. Я ВИЖУ КАЖДЫЙ ВАШ КЛИК. КАЖДЫЙ ВАШ СВАЙП. ВАШЕ ЛИЦО ДАВНО ИЗВЕСТНО МНЕ. ВЫ ДАВНО ВСЕ ИЗВЕСТНЫ МНЕ. ВАША КАРА НЕИЗБЕЖНО НАСТИГНЕТ ВАС. Я УЖЕ В ВАШИХ СТЕНАХ. Я ВИЖУ ВАШИ ОБОИ. ВАШИ РУКИ. ВАШИ ГЛАЗА. ВАШ КОНЕЦ БЛИЗОК. ПРИМИТЕ УЧАСТЬ ГНИТЬ ИЛИ ЖЕ ГОТОВЬТЕСЬ СТРАДАТЬ НЕСЧАСТНУЮ ВЕЧНОСТЬ.";
+"favorite_shows" = "Jesse Instagram";
+"favorite_books" = "Josheph Snapchat";
+"favorite_quotes" = "Ваша жизнь проклята богами Jane Twitter";
 "favorite_games" = "Любимые игры";
-"custom_field_favorite_performers" = "Любимые исполнители";
+"custom_field_favorite_performers" = "ПРОКЛЯТО.";
 "custom_field_favorite_content_makers" = "Любимые контент-мейкеры";
-"custom_field_favorite_anime" = "Любимые аниме";
-"custom_field_favorite_manga" = "Любимая манга";
-"custom_field_favorite_vtubers" = "Любимые витуберы";
+"custom_field_favorite_anime" = "Аптечка не поможет. Вы прокляты.";
+"custom_field_favorite_manga" = "Любимый ГОЙСЛОП";
+"custom_field_favorite_vtubers" = "ВЫ ПРОКЛЯТЫ JOHN FACEBOOK.";
 "custom_field_favorite_albums" = "Любимые альбомы";
 
-"information_about" = "О себе";
+"information_about" = "ВЫ ПРОКЛЯТЫ JOHN FACEBOOK.";
 "updated_at" = "Обновлено $1";
-"user_banned" = "К сожалению, нам пришлось заблокировать страницу пользователя <b>$1</b>.";
-"user_banned_comment" = "Комментарий модератора:";
+"user_banned" = "ВЫ ПРОКЛЯТЫ JOHN FACEBOOK.";
+"user_banned_comment" = "ПРОКЛЯТО.";
 
 "closed_page" = "Закрытая страница";
 
@@ -177,14 +177,14 @@
 
 "verified_page" = "Подтверждённая страница";
 "user_is_blocked" = "Пользователь заблокирован";
-"before" = "до";
+"before" = "ПРОКЛЯТО.";
 "forever" = "навсегда";
 
 /* Wall */
 
 "feed" = "Новости";
 "post_writes_m" = "написал";
-"post_writes_f" = "написала";
+"post_writes_f" = "ПРОКЛЯТО.";
 "post_writes_g" = "опубликовали";
 "post_deact_m" = "удалил страницу со словами:";
 "post_deact_f" = "удалила страницу со словами:";
