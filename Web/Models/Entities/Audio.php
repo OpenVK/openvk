@@ -18,6 +18,7 @@ use openvk\Web\Models\Repositories\Audios;
 class Audio extends Media
 {
     protected $tableName     = "audios";
+    protected $shortName     = "audio";
     protected $fileExtension = "mpd";
 
     # Taken from winamp :D

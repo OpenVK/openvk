@@ -369,4 +369,9 @@ abstract class Postable extends Attachable
 
         return false;
     }
+
+    public function getAttachmentString(): string
+    {
+        return $this->shortName . $this->getPrettyIdWithKey();
+    }
 }

@@ -13,6 +13,7 @@ class Post extends Postable
 {
     use Traits\TRichText;
     protected $tableName = "posts";
+    protected $shortName = "wall";
     protected $upperNodeReferenceColumnName = "wall";
 
     private function setLikeRecursively(bool $liked, User $user, int $depth): void
