@@ -288,7 +288,7 @@ export const InputArea = ({ replyTo, onRemoveReply, onSend, onKeyPress, currentD
                 value=${currentDraft}
                 onInput=${onInput}
                 onKeyDown=${onKeyPress}></textarea>
-                <div class="emoji_picker_entrypoint"></div>
+                <div class="emoji_picker_entrypoint" data-stickers="1"></div>
             </div>
             <div class="post-horizontal"></div>
             <div class="post-vertical"></div>
@@ -447,7 +447,6 @@ export const ContactPage = ({ peer }) => {
     </div>
   `;
 };
-
 
 export const PeerWindow = ({ peer, togglePeerInfo }) => {
     const isOnline = peer.online == 1;

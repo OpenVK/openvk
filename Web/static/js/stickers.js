@@ -17,12 +17,11 @@ function appendEmoji(e) {
     }
 }
 
-function sendSticker() {
+function sendSticker(textarea) {
 
 }
 
-(function() {
-let emojiTippy = tippy.delegate("body", {
+const emojiTippy = tippy.delegate("body", {
     content: "",
     allowHTML: true,
     target: '.emoji_picker_entrypoint',
@@ -33,235 +32,166 @@ let emojiTippy = tippy.delegate("body", {
     theme: 'emoji light vk',
     placement: 'bottom-end',
     zIndex: 1024,
-    onShow: async function(that) {
-        if (!window.emojiData) {
-          await loadEmojiData();
-          that.setContent(renderEmojiGrid());
-        } else {
-          that.setContent(renderEmojiGrid());
+    delay: 0,
+    onShow: async function (that) {
+        const ref = that.reference;
+        if (window.emojiData == null) {
+            await loadEmojiData();
         }
+
+        console.log("Emoji | Displaying")
+
+        const allow_stickers = ref.dataset.stickers === "1";
+
+        that.setContent("");
+        const body = renderEmojiGrid(allow_stickers);
+        that.setContent(body.last());
     }
 });
 
-// clicking on tabs, document.querySelector(".emoji-picker").scrollTo(0, 10)
+function renderEmojiGrid(with_stickers = false) {
+    if (!window.emojiData) return `<div style="padding:30px;">${tr('loading')}...</div>`;
 
-function renderEmojiGrid() {
-    if (!window.emojiData) return '<div style="padding:30px;">' + tr('loading') + '...</div>';
+    const val = u(`
+    <div>
+        <div class="emoji-picker">
+            <div class="emoji-picker-group"></div>
+        </div>
+        <div class="emoji-picker-footer">
+            <div class="sticker-tabs">
+                <div class="s-tab s-tab-smileys"></div>
+            </div>
+            <div class="sticker-store"></div>
+        </div>
+    </div>`);
 
-    var html = '<div class="emoji-picker">';
     window.emojiData.forEach(function (group) {
-        if (group.slug == "flags") { // от греха подальше
-          return;
+        const localized_group = tr("emoji_group_"+group.slug);
+        let insert_slug = group.slug;
+
+        if (insert_slug != "flags") {
+            val.find(".emoji-picker-group").append(`
+                <div class="group-title-item" data-group="${insert_slug}">
+                    <div class="group-title">${localized_group}</div>
+                    <div class="emoji-picker-group-items"></div>
+                </div>
+            `);
+        } else {
+            insert_slug = "symbols";
         }
 
-        const localized_group = group.slug;
-        html += '<div class="emoji-picker-group">';
-        html += '<div class="group-title">' + tr("emoji_group_"+localized_group) + '</div>';
-        html += '<div class="emoji-picker-group-items">';
+        const block = val.find(`.emoji-picker-group .group-title-item[data-group="${insert_slug}"]`)
+        let i = 0;
         group.emojis.forEach(function (item) {
-            if (parseFloat(item.emoji_version) > 15) { // они некорректно отрендерятся
-              return;
+            if (parseFloat(item.emoji_version) > 15) { // они некорректно отобразятся
+                return;
             }
-            html += '<span title="' + escapeHtml(item.name) +'" class="emoji-picker-item" onclick="appendEmoji(event)" data-emoji="' + item.emoji + '">' + item.emoji + '</span>';
+
+            if (group.slug == "flags" && ([5, 6].includes(i) || i > 7)) {
+                return;
+            }
+
+            block.find(".emoji-picker-group-items").append(`<span title="${escapeHtml(item.name)}" class="emoji-picker-item" onclick="appendEmoji(event)" data-emoji="${item.emoji}">${item.emoji}</span>`);
+            i += 1;
         });
-        html += '</div></div>';
-    });
-    html += `</div>
-    <div class="emoji-picker-footer">
-      <div class="sticker-tabs">
-        <div class="s-tab s-tab-smileys"></div>`
-
-    window.openvk.stickers.items.forEach(pack => {
-        html += `<div class="s-tab"><img src="${pack.photo_256}"></div>`
     });
 
-    html += `
-      </div>
-      <div class="sticker-store"></div>
-    </div>`;
+    if (with_stickers == true) {
+        window.openvk.stickers.items.forEach(pack => {
+            val.find(".sticker-tabs").append(`<div class="s-tab"><img src="${pack.photo_256}"></div>`);
 
-    return html;
+            console.log(pack)
+            val.find(".emoji-picker-group").append(`
+            <div clas="group-title-item">
+                <div class="group-title">${escapeHtml(pack.name)}</div>
+                <div class="emoji-picker-group-items"></div>
+            </div>
+            `)
+        });
+    } else {
+        val.find(".emoji-picker-footer").remove();
+    }
+
+    return val;
 }
 
 async function _updStickersInfo() {
     try {
-        window.openvk.stickers = await window.OVKAPI.call("stickers.get", {});
+        window.openvk.stickers = await getStickerpacks();
     } catch(e) {
         window.openvk.stickers = { items: [] };
     }
 }
 
 async function loadEmojiData() {
-  if (window.emojiData) return Promise.resolve(window.emojiData);
-  await _updStickersInfo();
+    if (window.emojiData != null && window.openvk.stickers != null) {
+        return Promise.resolve(window.emojiData)
+    };
 
-  return fetch('/assets/packages/static/openvk/js/node_modules/unicode-emoji-json/data-by-group.json')
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-          window.emojiData = data;
-          return data;
-      });
-  }
+    await _updStickersInfo();
 
-    u(document).on('click', '.sticker-store', async function(e) {
-        var allPacks, myPacks;
+    const d = await fetch('/assets/packages/static/openvk/js/node_modules/unicode-emoji-json/data-by-group.json');
+    const j = await d.json();
 
-        try {
-            allPacks = await window.OVKAPI.call('stickers.getAll', {});
-        } catch(e) {
-            allPacks = { items: [] };
-        }
+    window.emojiData = j;
+}
 
-        try {
-            myPacks = await window.OVKAPI.call('stickers.get', {});
-        } catch(e) {
-            myPacks = { items: [] };
-        }
+async function getStickerpacks() {
+    return await window.OVKAPI.call('stickers.get', {});
+}
 
-        var myAllPacks = myPacks.items || [];
-        var myPurchasedIds = myAllPacks.map(function(p) { return p.id; });
-        var myAddedPacks = myAllPacks.filter(function(p) { return !p.price || p.price == 0; });
+async function getAllStickerpacks() {
+    return await window.OVKAPI.call('stickers.getAll', {});
+}
 
-        function renderTabHeader(activeTab) {
-            return '<div class="sticker-store-tabs" style="display:flex;gap:0;border-bottom:1px solid #ddd;margin-bottom:12px">' +
-                '<div class="tab' + (activeTab === 'all' ? ' selected' : '') + '" data-tab="all">' + tr('all') + '</div>' +
-                '<div class="tab' + (activeTab === 'myadded' ? ' selected' : '') + '" data-tab="myadded">' + tr('my') + '</div>' +
-                '<div class="tab' + (activeTab === 'myall' ? ' selected' : '') + '" data-tab="myall">' + tr('all_purchased') + '</div>' +
-                '</div>';
-        }
+async function getStickersFromPack(packId) {
+   return await window.OVKAPI.call('stickers.getFrom', { 'stickerpack_id': packId });
+}
 
-        // нужно переделать!!!!!
-        function renderPackList(packs) {
-            if (!packs || packs.length === 0) {
-                return '<div style="padding:30px;text-align:center;color:#999">' + tr('no_packs') + '</div>';
-            }
+async function buyStickerpack(buyPackId) {
+    try {
+        return await window.OVKAPI.call('stickers.buy', { 'stickerpack_id': buyPackId });
+    } catch(e) {
+        fastError(tr('purchase_failed'));
+        return;
+    }
+}
 
-            var html = '<div style="display:flex;flex-wrap:wrap;gap:10px">';
-            packs.forEach(function(pack) {
-                var thumb = pack.photo_256 || pack.photo_128 || '';
-                html += '<div class="sticker-pack-card" data-pack-id="' + pack.id + '" style="width:140px;padding:10px;border:1px solid #e5e5e5;border-radius:8px;cursor:pointer;text-align:center;background:#fafafa">';
-                if (thumb) {
-                    html += '<img src="' + thumb + '" style="width:80px;height:80px;object-fit:contain;display:block;margin:0 auto 6px" />';
-                }
-                html += '<div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escapeHtml(pack.name) + '</div>';
-                if (pack.price > 0) {
-                    html += '<div style="font-size:11px;color:#e67e22;margin-top:4px">' + pack.price + ' coins</div>';
-                } else {
-                    html += '<div style="font-size:11px;color:#27ae60;margin-top:4px">' + tr('free') + '</div>';
-                }
-                html += '</div>';
-            });
-            html += '</div>';
-            return html;
-        }
+// Recent smiles
 
-        function buildStoreBody(activeTab) {
-            var packs;
-            switch (activeTab) {
-                case 'myadded':
-                    packs = myAddedPacks;
-                    break;
-                case 'myall':
-                    packs = myAllPacks;
-                    break;
-                default:
-                    packs = allPacks.items || [];
-                    break;
-            }
-            return renderTabHeader(activeTab) + renderPackList(packs);
-        }
+function getRecentSmiles() {
+    const l = localStorage.getItem("recent_smiles") ?? "";
 
-        var currentTab = 'all';
-        var storeMsg = new CMessageBox({
-            title: tr('sticker_store'),
-            body: buildStoreBody(currentTab),
-            buttons: [tr('close')],
-            callbacks: [Function.noop]
-        });
+    return l.split("");
+}
 
-        var storeNode = storeMsg.getNode();
-        u(storeNode).on('click', '.sticker-store-tabs .tab', function(ev) {
-            var tab = ev.currentTarget.dataset.tab;
-            if (!tab) return;
-            currentTab = tab;
-            storeMsg.getNode().find('.ovk-diag-body').html(buildStoreBody(currentTab));
-        });
+function getRecentStickers() {
+    const l = localStorage.getItem("recent_sticker") ?? "[]";
 
-        u(storeNode).on('click', '.sticker-pack-card', async function(ev) {
-            var packId = parseInt(ev.currentTarget.dataset.packId);
-            if (!packId) return;
+    return JSON.parse(l);
+}
 
-            var allPacksArray = allPacks.items || [];
-            var allPacks2 = myAllPacks;
-            var pack = allPacksArray.find(function(p) { return p.id === packId; }) || allPacks2.find(function(p) { return p.id === packId; });
-            if (!pack) return;
+function addSmile(smile) {
+    const s = getRecentSmiles();
+    let g = s.filter(i => { return i != smile });
+    g.unshift(smile);
 
-            var packDetail;
-            try {
-                packDetail = await window.OVKAPI.call('stickers.getFrom', { 'stickerpack_id': packId });
-            } catch(e) {
-                return;
-            }
+    localStorage.setItem("recent_smiles", g.join(""));
 
-            var isPurchased = packDetail.purchased == 1;
-            var isFree = !packDetail.price || packDetail.price == 0;
+    return g;
+}
 
-            var detailHtml = '<div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #eee">';
-            if (packDetail.photo_256) {
-                detailHtml += '<img src="' + packDetail.photo_256 + '" style="width:80px;height:80px;object-fit:contain;flex-shrink:0" />';
-            }
-            detailHtml += '<div style="flex:1">';
-            detailHtml += '<div style="font-size:16px;font-weight:700">' + escapeHtml(packDetail.name) + '</div>';
-            if (packDetail.description) {
-                detailHtml += '<div style="font-size:12px;color:#666;margin-top:4px">' + escapeHtml(packDetail.description) + '</div>';
-            }
-            if (pack.slug) {
-                detailHtml += '<div style="font-size:11px;color:#999;margin-top:4px">@' + escapeHtml(pack.slug) + '</div>';
-            }
-            if (!isPurchased && packDetail.price > 0) {
-                detailHtml += '<div style="font-size:13px;color:#e67e22;margin-top:6px;font-weight:600">' + packDetail.price + ' coins</div>';
-            }
-            detailHtml += '</div>';
-            detailHtml += '<div>';
-            if (isPurchased) {
-                detailHtml += '<div class="button" style="background:#e8e8e8;color:#555;cursor:default">' + tr('purchased') + '</div>';
-            } else if (isFree) {
-                detailHtml += '<div class="button sticker-buy-btn" data-pack-id="' + packId + '">' + tr('add') + '</div>';
-            } else {
-                detailHtml += '<div class="button sticker-buy-btn" data-pack-id="' + packId + '">' + tr('buy_for', packDetail.price) + '</div>';
-            }
-            detailHtml += '</div></div>';
+function addSticker(sticker = {}) {
+    const s = getRecentStickers();
+    // let g = s.filter(i => { return i != smile });
+    s.unshift(sticker);
 
-            if (packDetail.stickers && packDetail.stickers.length > 0) {
-                detailHtml += '<div style="display:flex;flex-wrap:wrap;gap:6px">';
-                packDetail.stickers.forEach(function(st) {
-                    var src = st.photo_128 || '';
-                    detailHtml += '<img src="' + src + '" style="width:64px;height:64px;object-fit:contain;border:1px solid #eee;border-radius:6px;padding:4px" title="' + escapeHtml(st.emoji || '') + '" />';
-                });
-                detailHtml += '</div>';
-            }
+    localStorage.setItem("recent_sticker", JSON.stringify(s));
 
-            var detailMsg = new CMessageBox({
-                title: packDetail.name,
-                body: detailHtml,
-                buttons: [tr('close')],
-                callbacks: [Function.noop]
-            });
+    return s;
+}
 
-            u(detailMsg.getNode()).on('click', '.sticker-buy-btn', async function(buyEv) {
-                var buyPackId = parseInt(buyEv.currentTarget.dataset.packId);
-                if (!buyPackId) return;
-
-                try {
-                    await window.OVKAPI.call('stickers.buy', { 'stickerpack_id': buyPackId });
-                } catch(e) {
-                    fastError(tr('purchase_failed'));
-                    return;
-                }
-
-                detailMsg.close();
-                storeMsg.close();
-            });
-        });
-    });
-})();
+function clearRecentSmiles() {
+    localStorage.setItem("recent_smiles", "");
+    localStorage.setItem("recent_sticker", "");
+}
