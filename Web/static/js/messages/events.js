@@ -6,6 +6,7 @@ export class EventHandler {
             1: this.ReplaceFlags,
             2: null,
             4: this.NewMessageEvent,
+            61: this.TypingEvent,
         };
     }
 
@@ -68,5 +69,25 @@ export class EventHandler {
                 console.error(e);
             }
         }, 100);
+    }
+
+    async TypingEvent(event) {
+        const _peerId = event[1];
+        const _userIds = event[2];
+        let userIds = null;
+
+        if (Array.isArray(_userIds)) {
+            userIds = _userIds;
+        } else {
+            userIds = String(_userIds).split(",");
+        }
+
+        const conv = await window.im.conversations._findConvFromApi(_peerId);
+
+        if (conv != null) {
+            await conv.setTyping(userIds);
+        } else {
+            console.error("IM | Event 61 | not found peer: ", _peerId, userIds)
+        }
     }
 }

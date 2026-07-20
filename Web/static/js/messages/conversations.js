@@ -119,6 +119,7 @@ export class Conversations {
     swapConvs(conv_1, conv_2) {}
 
     _findConv(id) {
+        console.log("Trying to find convo with id", id)
         const _l = this.all_convs.filter((itm) => itm.peer.id == id);
         if (_l[0] == undefined) {
             throw Error('Not found chat');
@@ -138,6 +139,7 @@ export class Conversations {
             throw Error('Not found chat');
         }
 
+        console.log("Not found chat with id ", id, ", returning a new one.")
         const c = new Conversation({ 'peer': b });
         this.all_convs.push(c);
         return c;
@@ -202,10 +204,92 @@ export class Conversation {
         this._conversation = conversation_item.conversation;
         this._last_message = new ChatMessage(conversation_item.last_message);
         this.peer = conversation_item.peer;
+        this.activity_updated = new Date();
+        this.current_activity = {};
+    }
+
+    hasActivity() {
+        return this.getActivityMsg()[1].length > 0;
+    }
+
+    getActivityMsg() {
+        let s = "";
+        let names = [];
+        if (this.peer.supposed_type == "chat") {
+            const a = Object.entries(this.current_activity ?? {});
+
+            a.forEach(item => {
+                console.log(item[1])
+                if (item[1].conv) {
+                    names.push(item[1].conv.peer.name);
+                }
+            })
+
+            switch (names.length) {
+                case 0:
+                    break;
+                case 1:
+                    s = tr("messenger_typing_one_user", names[0]);
+                    break;
+                case 2:
+                    s = tr("messenger_typing_two_users", names[0], names[1]);
+                    break;
+                case 3:
+                    s = tr("messenger_typing_three_users", names[0], names[1], names[2]);
+                    break;
+                default:
+                    s = tr("messenger_typing_other", names.length)
+                    break
+            }
+
+            console.log(s, names)
+        } else {
+            const v = Object.values(this.current_activity);
+
+            if (v.length > 0) {
+                names.push("peer");
+                if (v[0].variant == "writing") {
+                    s = tr("messenger_typing_between_two")
+                }
+            }
+        }
+
+        return [s, names];
     }
 
     updateLastMessage(msg) {
         this._last_message = msg;
+    }
+
+    async setTyping(user_ids = [], variant = "writing") {
+        console.log("ryihjiyhyt", user_ids)
+        const REMOVE_TYPING_TIMEOUT = 5000;
+
+        for (const item of user_ids) {
+            console.log(item)
+            const val = {
+                "variant": variant,
+                "conv": await window.im.conversations._findConvFromApi(Number(item))
+            };
+
+            console.log(val);
+            this.current_activity[item] = val;
+        }
+
+        console.log("this.current_activity", this.current_activity);
+        window.im.messenger.view._triggerUpdate();
+
+        this.activity_updated = new Date();
+        const old = new Date(this.activity_updated);
+
+        setTimeout(() => {
+            console.log(this.activity_updated.getTime(), old.getTime())
+            if (this.activity_updated.getTime() == old.getTime()) {
+                console.info("IM | Conversations | Wiped activity for ", this, "!")
+                this.current_activity = {};
+                window.im.messenger.view._triggerUpdate();
+            }
+        }, REMOVE_TYPING_TIMEOUT);
     }
 
     get last_message() {

@@ -1441,6 +1441,12 @@
 "go_to_dialog" = "В диалог";
 "message_sent_excl" = "Сообщение отправлено!";
 
+"messenger_typing_between_two" = "Набирает сообщение";
+"messenger_typing_one_user" = "$1 набирает сообщение";
+"messenger_typing_two_users" = "$1 и $2 набирают";
+"messenger_typing_three_users" = "$1, $2 и $3 набирают";
+"messenger_typing_other" = "$1 набирают";
+
 /* System messages */
 
 "event_chat_creation_male" = "Создал беседу «$1»";

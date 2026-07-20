@@ -204,6 +204,7 @@ body.no-scroll .sidebar {
     display: inline-block;
     vertical-align: top;
     max-width: 50px;
+    min-width: 32px;
     border-radius: 3px;
 }
 
@@ -351,8 +352,8 @@ body.no-scroll .sidebar {
 }
 
 .messenger-app--messages---message .actions-2 {
-    right: 0;
     left: unset !important;
+    right: 20px;
 }
 
 .messenger-app--messages---message.msg-selected .actions-2 {
@@ -693,6 +694,28 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 
 .messenger-app-end.reply-selected .input-type {
     cursor: pointer;
+}
+
+.messenger-app .messenger-app-status {
+    padding: 10px 60px;
+}
+
+.messenger-app .messenger-app-status .write-bar {
+    padding: 0px 75px;
+    font-weight: bold;
+    max-height: 19px;
+    color: var(--nobold);
+}
+
+.messenger-app .messenger-app-status.shown .write-bar::before {
+    content: '';
+    background: black;
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    left: 87px;
+    margin-top: -1px;
 }
 
 .messages--peers-tabs {
