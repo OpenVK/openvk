@@ -382,8 +382,14 @@ export class IM {
         }*/
 
         if (enable) {
+            if (!u('body').hasClass('no-scroll')) {
+                window._prevScroll = scrollY;
+            }
+
             u('body').addClass('no-scroll');
         } else {
+            scrollTo(0, window._prevScroll);
+            window._prevScroll = null;
             u('body').removeClass('no-scroll');
         }
     }
