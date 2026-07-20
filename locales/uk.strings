@@ -357,13 +357,18 @@
 "group_type" = "Тип спільноти";
 "group_type_open" = "Це відкрита спільнота. Будь-хто може в неї вступити.";
 "group_type_closed" = "Це закрита спільнота. Для вступу необхідно подати заявку.";
+"event_type" = "Тип зустрічі";
+"event_type_open" = "Це відкрита зустріч. Будь-хто може в неї вступити.";
+"event_type_closed" = "Це закрита зустріч. Для вступу необхідно отримати запрошення.";
 "creator" = "Автор";
 "administrators" = "Адміністратори";
+"event_host" = "Організатор";
 "add_to_left_menu" = "Додати до лівого меню";
 "remove_from_left_menu" = "Видалити з лівого меню";
 "all_followers" = "Всі підписники";
 "only_administrators" = "Тільки адміністратори";
 "website" = "Сайт";
+"location" = "Місцезнаходження";
 "managed" = "Керовані";
 "size" = "Розмір";
 "administrators_one" = "$1 адміністратор";
@@ -377,6 +382,9 @@
 "set_comment" = "Змінити коментар";
 "hidden_yes" = "Прихований: Так";
 "hidden_no" = "Прихований: Ні";
+"event_start_date" = "Початок";
+"event_finish_date" = "Закінчення";
+"event_enable_finish_date" = "Вказати дату закінчення";
 
 "group_allow_post_for_everyone" = "Відкрита";
 "group_limited_post" = "Пропозиційна";
@@ -592,6 +600,7 @@
 "my_messages" = "Мої Повідомлення";
 "my_notes" = "Мої Нотатки";
 "my_groups" = "Мої Спільноти";
+"my_events" = "Мої Зустрічи";
 "my_feed" = "Мої Новини";
 "my_feedback" = "Мої Відповіді";
 "my_apps" = "Застосунки";
