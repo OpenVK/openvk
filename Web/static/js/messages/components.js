@@ -24,6 +24,7 @@ export const MessageBubble = ({ msg, index, chunk }) => {
     hideHead(msg, index, chunk) ? 'same-author' : '',
     msg.data.deleted ? 'msg-deleted' : '',
     msg.is_error ? 'msg-error' : '',
+    msg.is_got_edited ? 'msg-edited' : '',
   ].filter(Boolean).join(' ');
 
   if (msg.is_action) {
@@ -49,7 +50,7 @@ export const MessageBubble = ({ msg, index, chunk }) => {
         </div>
         <div class="actions-2">
             ${msg.canEdit() && html`
-                <div class="edit-icon"></div>
+                <div onClick=${(e) => { window.im.messenger.view.onEditButtonClick(e, msg) }} class="edit-icon"></div>
             `}
         </div>
         <div class="_avatar">
@@ -66,6 +67,7 @@ export const MessageBubble = ({ msg, index, chunk }) => {
               </div>
           `}
           <p dangerouslySetInnerHTML=${{ __html: msg.text }} class="text" />
+          <p class="msg-edit-mark">(${tr('edit_action_past').toLowerCase()})</p>
           ${msg.attachments && msg.attachments.length > 0 && html`
             <div class="attachments">
               ${msg.attachments.map((att) => html`<${Attachment} msg=${msg} att=${att} />`)}
@@ -295,13 +297,21 @@ export const WriteBar = ({ convo }) => {
     `;
 }
 
-export const InputArea = ({ replyTo, onRemoveReply, onSend, onKeyPress, currentDraft, onInput, togglePeerInfo, clickOnReply }) => {
-  return html`
-    <div class="messenger-app-end${replyTo ? ' reply-selected' : ''}">
-      ${replyTo && html`
-        <div class="input-reply">
+export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress, currentDraft, onInput, togglePeerInfo, clickOnReply }) => {
+    const is_editing = editMsg != null;
+
+    return html`
+    <div class="messenger-app-end${(replyTo || editMsg) ? ' m-selected' : ''}">
+      ${ replyTo && html`
+        <div class="input-reply input-m">
           <span onclick=${() => { clickOnReply(replyTo) }} aria-label="link" class="input-type">${escapeHtml(tr("reply_to", replyTo.sender.full_name))}</span>
           <span class="input-close" onClick=${onRemoveReply}>×</span>
+        </div>
+      `}
+       ${ editMsg && html`
+        <div class="input-edit input-m">
+          <span onclick=${() => { clickOnReply(editMsg) }} aria-label="link" class="input-type">edit of message</span>
+          <span class="input-close" onClick=${(e) => { window.im.messenger.view.cancelEdit() }}>×</span>
         </div>
       `}
       <div class="post-buttons">
@@ -320,7 +330,7 @@ export const InputArea = ({ replyTo, onRemoveReply, onSend, onKeyPress, currentD
             <div class="post-horizontal"></div>
             <div class="post-vertical"></div>
             <div class="input--messagebox-buttons">
-              <button class="button" onClick=${onSend}>${tr('send')}</button>
+              <button class="button" onClick=${onSend}>${ !is_editing ? tr('send') : tr('edit_action_lr')}</button>
               <${AttachmentMenu} />
             </div>
           </div>
@@ -341,7 +351,6 @@ export const ConversationItem = ({ conv }) => {
     }
 
     const d = last_msg != null && has_activity == false;
-    console.log(last_msg != null, has_activity == false)
     return html`
         <div class="${cls1.join(' ')}" onClick=${() => window.im?.selectChat(conv)}>
         <div class="crp-entry--image">
@@ -360,7 +369,7 @@ export const ConversationItem = ({ conv }) => {
             ${has_activity == true && html`
                 <div class="crp-entry--message---av"></div>
                 <div class="crp-entry--message---text">
-                    ${conv.getActivityMsg()[0]}
+                    ${(conv.getActivityMsg()[0] || "").toLowerCase()}
                 </div>
             `}
         </div>

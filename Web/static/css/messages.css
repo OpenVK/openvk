@@ -181,6 +181,15 @@ body.no-scroll .sidebar {
     margin-bottom: 1.2rem;
 }
 
+.messenger-app--messages---message .msg-edit-mark {
+    display: none;
+}
+
+.messenger-app--messages---message.msg-edited .msg-edit-mark {
+    display: inline;
+    color: #8c8c8c9c;
+}
+
 .messenger-app #messenger-app--down-button {
     position: fixed;
     bottom: 113px;
@@ -665,34 +674,34 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     bottom: 0px;
 }
 
-.messenger-app-end .input-reply {
+.messenger-app-end .input-m {
     display: none;
     background: var(--bg-slightly);
     padding: 10px 59px;
     border-top: 1px solid var(--bg-slightly-border);
 }
 
-.messenger-app-end .input-reply .input-close {
+.messenger-app-end .input-m .input-close {
     width: 53px;
     display: block;
     cursor: pointer;
     text-align: center;
 }
 
-.messenger-app-end.reply-selected .input-reply {
+.messenger-app-end.m-selected .input-m {
     display: grid;
     grid-template-columns: 1fr 0fr;
     gap: 23px;
 }
 
-.messenger-app-end.reply-selected .input-type {
+.messenger-app-end.m-selected .input-m {
     height: 12px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.messenger-app-end.reply-selected .input-type {
+.messenger-app-end.m-selected .input-m {
     cursor: pointer;
 }
 

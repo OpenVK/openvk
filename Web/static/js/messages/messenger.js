@@ -67,21 +67,32 @@ export class Messenger {
 
 export class MessengerViewModel {
 	constructor() {
-		this.opened_tabs = [];
-		this.currentDraft = '';
-		this.replyTo = null;
-		this.is_showing_profile = false;
-		this.is_loading = false;
-		this.had_more_one_tab = false;
-		this.drafts = {};
-		this.scrolls = {};
-		this.current_chat = null;
-		this.messagesTrigger = 0;
-		this.selected_messages = [];
-		this.MAX_SELECTED_MESSAGES = 100;
+        this.MAX_SELECTED_MESSAGES = 100;
+
 		this.appEl = null;
         this.messagesListBlock = null;
+
+        this.is_showing_profile = false;
+        this.is_loading = false;
+        this.had_more_one_tab = false;
+
+		this.currentDraft = '';
+        this.prevDraft = null;
+        this.prevAtts_1 = null;
+        this.prevAtts_2 = null; // Между вкладками прикрепления теряются(
+		this.drafts = {};
+		this.scrolls = {};
+
+		this.opened_tabs = [];
+        this.current_chat = null;
+		this.selected_messages = [];
+
+		this.messagesTrigger = 0;
+
         this.toggled_peer_obj = null;
+
+		this.replyTo = null;
+        this.editMsg = null;
 	}
 
     _triggerUpdate() {
@@ -117,6 +128,7 @@ export class MessengerViewModel {
             convo=${currentConv}
             messages=${peer ? peer.divided_messages : []} />
             <${InputArea}
+              editMsg=${this.editMsg}
               replyTo=${this.replyTo}
               onRemoveReply=${() => this.removeReply()}
               onSend=${() => this.sendMessage()}
@@ -211,10 +223,45 @@ export class MessengerViewModel {
 		window.im.messenger.view.togglePeerInfo(msg.sender);
 	}
 
-	removeReply() {
-		this.replyTo = null;
+    onEditButtonClick(e, msg) {
+        this.editMsg = msg;
+        this.prevDraft = String(this.currentDraft);
+        this.prevAtts_1 = this.appEl.querySelector(".post-horizontal").outerHTML;
+        this.prevAtts_2 = this.appEl.querySelector(".post-vertical").outerHTML;
+        this.currentDraft = "";
+
+        if (msg.text.length > 0) {
+            this.currentDraft = msg.text;
+        }
+
+        if (msg.attachments > 0) {
+            unpack_attachments_into_node(u(this.appEl.querySelector("#write")), msg.attachments);
+        }
+
 		this._render();
-	}
+    }
+
+    cancelEdit(render = true) {
+        this.editMsg = null;
+        this._clearAttachments();
+
+        if (this.prevDraft != null) {
+            this.currentDraft = String(this.prevDraft);
+            this.prevDraft = null;
+        }
+
+        if (render == true) {
+            this._render();
+        }
+    }
+
+	removeReply(render = true) {
+		this.replyTo = null;
+
+        if (render == true) {
+            this._render();
+        }
+    }
 
     toggleMessageSelection(msg, e) {
         if (msg.id == null) {
@@ -343,10 +390,18 @@ export class MessengerViewModel {
 		this._render();
 	}
 
+    // onSendMessageButtonClick
 	async sendMessage() {
 		const _tmp_atts = collect_attachments(u('.messenger-app--input---messagebox'));
 
 		if (this.currentDraft === '' && _tmp_atts.length == 0) return false;
+
+        if (this.editMsg != null) {
+            this.editMsg.edit(this.currentDraft, _tmp_atts);
+
+            this.cancelEdit();
+            return;
+        }
 
 		this._scrollToEnd();
 
@@ -379,9 +434,16 @@ export class MessengerViewModel {
 		return is;
 	}
 
-	setChat(conv, pushstate = true) {
-		this.current_chat = this.opened_tabs.indexOf(conv);
-		this.unselect();
+    setChat(conv, pushstate = true) {
+        const pr = Number(this.current_chat);
+        this.current_chat = this.opened_tabs.indexOf(conv);
+        this.unselect();
+
+        if (pr != this.current_chat) {
+            this._clearAttachments();
+            this.removeReply();
+            this.cancelEdit();
+        }
 
 		if (this.opened_tabs.length > 1) {
 			this.had_more_one_tab = true;
@@ -425,6 +487,15 @@ export class MessengerViewModel {
 			window.im.updateTabs();
 		}
 	}
+
+    _clearAttachments() {
+        try {
+            this.appEl.querySelector(".post-horizontal").innerHTML = "";
+            this.appEl.querySelector(".post-vertical").innerHTML = "";
+        } catch (e) {
+            console.error(e);
+        }
+    }
 
 	_saveDraft(to_chat) {
 		if (!to_chat) return;

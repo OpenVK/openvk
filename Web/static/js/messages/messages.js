@@ -973,7 +973,7 @@ export class ChatMessage {
     }
 
     get peer_id() {
-        return this.data.peer;
+        return this.data.peer_id;
     }
 
     get from_id() {
@@ -1094,12 +1094,14 @@ export class ChatMessage {
             }
         }
 
+        console.log(attachments.from, peer)
         const msg = new ChatMessage({
             'id': id,
             'flags': flags,
-            'from_id': attachments.from ? attachments.from : peer,
+            'from_id': attachments.from ? Number(attachments.from) : peer,
             'date': ts,
             'peer': peer,
+            'peer_id': peer,
             'text': text,
             'attachments': new_attachments,
             'random_id': randomId,
@@ -1107,7 +1109,12 @@ export class ChatMessage {
         });
         msg._guessSender();
 
-        console.log(msg.peer_id, msg.sender)
+        // temp fix
+        if (msg.peer_id == window.openvk.current_id) {
+            console.error("IM | WRONG PEER FROM EVENT!!!!!! USING ATTACHMENTS.FROM")
+            msg.data.peer_id = Number(attachments.from);
+        }
+
         return msg;
     }
 
@@ -1127,7 +1134,15 @@ export class ChatMessage {
         return this.data.is_sticker == 1;
     }
 
+    get is_got_edited() {
+        return this.data.edited == 1 || this.data.edited == true;
+    }
+
     canEdit(group = null) {
+        if (this.data.can_edit != null) {
+            return this.data.can_edit === 1;
+        }
+
         if (group != null) {
             return false;
         }
@@ -1140,6 +1155,7 @@ export class ChatMessage {
             return false;
         }
 
+        // return this.data.can_edit;
         return this.data.from_id === window.openvk.current_id;
     }
 
@@ -1164,6 +1180,16 @@ export class ChatMessage {
         this.data.text = text;
     }
 
+    async setAttachmentsFromLP(data) {
+        let new_attachments = null;
+        if (data['attach1']) {
+            const temp_str = get_attachments_list_from_lp(data);
+            new_attachments = await resolve_attachments(temp_str);
+        }
+
+        this.data.attachments = new_attachments;
+    }
+
     // if message has exclamation mark
     async tryToResend() {
         let r = String(this.data.error_text);
@@ -1182,6 +1208,30 @@ export class ChatMessage {
         }
 
         window.im.messenger.view._triggerUpdate();
+    }
+
+    async edit(text, attachments = []) {
+        let resp = null;
+        try {
+            resp = await window.OVKAPI.call("messages.edit", {
+                "peer_id": this.peer_id,
+                "message_id": this.id,
+                "message": text,
+                "keep_forward_messages": 1,
+                "attachment": attachments.join(",")
+            });
+        } catch (e) {
+            fastError(String(e));
+            console.error(e);
+            return;
+        }
+
+        this.data.text = text;
+        this.data.edited = true;
+
+        window.im.messenger.view._triggerUpdate();
+
+        console.log("successfuly edited ", this, resp)
     }
 
     shouldBeNotified() {

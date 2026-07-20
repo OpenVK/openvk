@@ -6,6 +6,7 @@ export class EventHandler {
             1: this.ReplaceFlags,
             2: null,
             4: this.NewMessageEvent,
+            5: this.EditMessageEvent,
             61: this.TypingEvent,
         };
     }
@@ -17,9 +18,9 @@ export class EventHandler {
         console.log("lp event: ", event)
         if (!method) {
             console.info('неизвестный ивент,  ', event[0]);
+        } else {
+            await method(event);
         }
-
-        await method(event);
     }
 
     async ReplaceFlags(event) {
@@ -69,6 +70,32 @@ export class EventHandler {
                 console.error(e);
             }
         }, 100);
+    }
+
+    async EditMessageEvent(event) {
+        const msgId = event[1];
+        const flags = event[2];
+        const peerId = event[3];
+        const editTime = event[5];
+        const text = event[5];
+        const attachments = event[6];
+        const idk = event[7];
+
+        const _crs = await window.im.conversations._findConvFromApi(peerId);
+        if (!_crs) {
+            return;
+        }
+
+        const found = _crs.peer._findMessageById(msgId);
+        if (!found) {
+            return;
+        }
+
+        found.setText(text);
+        await found.setAttachmentsFromLP(attachments);
+        found.data.edited = true;
+
+        window.im.messenger.view._triggerUpdate();
     }
 
     async TypingEvent(event) {
