@@ -136,7 +136,7 @@ export class Conversations {
 
         const b = await ChatGeneralForm.resolveByIdAndReturnClass(id);
         if (!b) {
-            throw Error('Not found chat');
+            throw Error('Not found chat '+ id);
         }
 
         console.log("Not found chat with id ", id, ", returning a new one.")

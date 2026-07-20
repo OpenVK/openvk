@@ -1982,6 +1982,8 @@
 "no" = "Нет";
 "cancel" = "Отмена";
 "edit_action" = "Изменить";
+"edit_action_lr" = "Отредактировать";
+"edit_action_past" = "Отредактировано";
 "transfer" = "Передать";
 "close" = "Закрыть";
 "success" = "Успех";

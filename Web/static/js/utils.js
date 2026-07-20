@@ -393,6 +393,58 @@ function get_attachment_text(attachment) {
     return f;
 }
 
+function unpack_attachments_into_node(textarea_node, attachments) {
+    attachments.forEach(attachment => {
+        const type = attachment.type
+        const obj = attachment[type];
+        if (!obj) {
+            obj = attachment;
+        }
+
+        let aid = obj.owner_id + '_' + obj.id + (obj.access_key ? "_" + obj.access_key : "")
+
+        if (type == 'video' || type == 'photo') {
+            let preview = ''
+
+            if(type == 'photo') {
+                preview = obj.sizes[1].url
+            } else {
+                preview = obj.image[0].url
+            }
+
+            __appendToTextarea({
+                'type': type,
+                'preview': preview,
+                'id': aid
+            }, textarea_node)
+        } else if(type == 'poll') {
+            __appendToTextarea({
+                'type': type,
+                'alignment': 'vertical',
+                'html': tr('poll'),
+                'id': obj.id,
+                'undeletable': true,
+            }, textarea_node)
+        } else if (type == 'wall') {
+            __appendToTextarea({
+                'type': type,
+                'alignment': 'vertical',
+                'html': tr('post'),
+                'id': obj.id,
+                'undeletable': true,
+            }, textarea_node)
+        } else {
+            const found_block = post.find(`div[data-att_type='${type}'][data-att_id='${aid}']`)
+            __appendToTextarea({
+                'type': type,
+                'alignment': 'vertical',
+                'html': found_block.html(),
+                'id': aid,
+            }, textarea_node)
+        }
+    })
+}
+
 function nl2br(str) {
     return str.replace(/\n/g, '<br>');
 }
