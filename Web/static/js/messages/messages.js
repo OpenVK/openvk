@@ -406,7 +406,7 @@ export class ChatGeneralForm {
             } else {
                 const __ = await window.OVKAPI.call('groups.getById', { 'group_ids': Math.abs(id), 'fields': ChatGeneralForm.base_fields });
                 if (__[0].type == 'undefined') {
-                return null;
+                    return null;
                 }
                 return __[0];
             }
@@ -1121,6 +1121,26 @@ export class ChatMessage {
 
     get is_deleted() {
         return this.data.deleted == 1;
+    }
+
+    get is_sticker() {
+        return this.data.is_sticker == 1;
+    }
+
+    canEdit(group = null) {
+        if (group != null) {
+            return false;
+        }
+
+        if (this.is_action == true) {
+            return false;
+        }
+
+        if (this.is_sticker == true) {
+            return false;
+        }
+
+        return this.data.from_id === window.openvk.current_id;
     }
 
     can_delete(club = null) {
