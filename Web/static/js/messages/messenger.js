@@ -1,6 +1,6 @@
 import { ChatMessage, ChatGeneralForm } from './messages.js';
 import { Conversation } from './conversations.js';
-import { render, html, PeerTabsView, ActionsBar, MessageListView, PeerWindow, InputArea } from './components.js';
+import { render, html, PeerTabsView, WriteBar, ActionsBar, MessageListView, PeerWindow, InputArea } from './components.js';
 
 const u = window.u;
 const collect_attachments = window.collect_attachments;
@@ -80,20 +80,18 @@ export class MessengerViewModel {
 		this.selected_messages = [];
 		this.MAX_SELECTED_MESSAGES = 100;
 		this.appEl = null;
-    this.messagesListBlock = null;
-    this.toggled_peer_obj = null;
+        this.messagesListBlock = null;
+        this.toggled_peer_obj = null;
 	}
 
-	_triggerUpdate() {
-		this.messagesTrigger++;
-		window.im.conversations.view._update();
-		this._render();
-	}
+    _triggerUpdate() {
+        window.im.conversations.view._update();
+        this._render();
+    }
 
-	_triggerUpdateSlightly() {
-		this.messagesTrigger++;
-		this._render();
-	}
+    _triggerUpdateSlightly() {
+        this._render();
+    }
 
 	_render(container) {
 		const root = container || this.appEl;
@@ -115,9 +113,9 @@ export class MessengerViewModel {
             onReply=${() => this.onReplyButtonClick()}
           />
           <div class="messenger-app">
-            <div id="messenger-app--down-button" style="display:none"
-                 onClick=${() => this._scrollToEnd()}>DOWN</div>
-            <${MessageListView} messages=${peer ? peer.divided_messages : []} />
+            <${MessageListView}
+            convo=${currentConv}
+            messages=${peer ? peer.divided_messages : []} />
             <${InputArea}
               replyTo=${this.replyTo}
               onRemoveReply=${() => this.removeReply()}
@@ -141,7 +139,17 @@ export class MessengerViewModel {
 
 	onTextareaKeyPress(e) {
 		const ta = e.target;
+
+        if (e.which !== 13) {
+			const now = Date.now();
+			if (!this._typingStarted) this._typingStarted = now;
+			if (now - this._typingStarted > 6000) { // 2s
+				this.setWriting();
+			}
+		}
+
 		if (e.which === 13) {
+			this._typingStarted = 0;
 			if (!e.metaKey && !e.shiftKey) {
 				e.preventDefault();
 				ta.blur();
@@ -151,6 +159,20 @@ export class MessengerViewModel {
 			}
 		}
 		return true;
+	}
+
+    async setWriting() {
+        this._typingStarted = 0;
+
+        const group_id = null;
+
+        console.log('IM | setWriting called');
+
+        await window.OVKAPI.call("messages.setActivity", {
+            "type": "typing",
+            "peer_id": window.im.corresponder.id,
+            "group_id": group_id
+        });
 	}
 
 	onMessageClick(msg, e) {

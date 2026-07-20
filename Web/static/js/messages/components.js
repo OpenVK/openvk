@@ -183,11 +183,16 @@ export const DayChunkView = ({ chunk }) => {
   `;
 };
 
-export const MessageListView = ({ messages }) => {
-  return html`
+export const MessageListView = ({ messages, convo }) => {
+    return html`
+    <div id="messenger-app--down-button" style="display:none" onClick=${() => window.im.messenger.view._scrollToEnd()}>DOWN</div>
     <div class="messenger-app--messages">
       <div class="messenger-app--messages-array">
-        ${messages.map((chunk) => html`<${DayChunkView} chunk=${chunk} />`)}
+         ${messages.map((chunk) => html`<${DayChunkView} chunk=${chunk} />`)}
+
+         <div>
+            <${WriteBar} convo=${convo} />
+         </div>
       </div>
     </div>
   `;
@@ -273,6 +278,23 @@ export const AttachmentMenu = () => {
   `;
 };
 
+export const WriteBar = ({ convo }) => {
+    let cls = ["messenger-app-status"];
+    const a = convo.getActivityMsg();
+
+    if (a[1].length > 0) {
+        cls.push("shown");
+    }
+
+    return html`
+        <div class="${cls.join(' ')}">
+            <div class="write-bar">
+                ${a[0]}
+            </div>
+        </div>
+    `;
+}
+
 export const InputArea = ({ replyTo, onRemoveReply, onSend, onKeyPress, currentDraft, onInput, togglePeerInfo, clickOnReply }) => {
   return html`
     <div class="messenger-app-end${replyTo ? ' reply-selected' : ''}">
@@ -312,30 +334,38 @@ export const InputArea = ({ replyTo, onRemoveReply, onSend, onKeyPress, currentD
 
 export const ConversationItem = ({ conv }) => {
     const last_msg = conv.last_message;
+    const has_activity = conv.hasActivity();
     const cls1 = ["crp-entry"];
-    console.log(conv)
-    if (last_msg && last_msg.data.from_id != conv.peer.id && conv.peer.is_saved_messages == true) {
+    if (last_msg && (last_msg.data.from_id != conv.peer.id || conv.peer.is_saved_messages == true)) {
         cls1.push("crp-entry-replied-same");
     }
 
-  return html`
-    <div class="${cls1.join(' ')}" onClick=${() => window.im?.selectChat(conv)}>
-      <div class="crp-entry--image">
-        <img src=${conv.peer.conversation_avatar_any} loading="lazy" />
-      </div>
-      <div class="crp-entry--info">
-        <a>${ovk_proc_strtr(conv.peer.conversations_full_name, 30)}</a><br/>
-        ${last_msg && html`<span>${last_msg.conv_date}</span>`}
-      </div>
-      <div class="crp-entry--message">
-        ${last_msg != null && html`
-        <div class="crp-entry--message---av">
-          <img src="${last_msg.sender.avatar_any}" />
+    const d = last_msg != null && has_activity == false;
+    console.log(last_msg != null, has_activity == false)
+    return html`
+        <div class="${cls1.join(' ')}" onClick=${() => window.im?.selectChat(conv)}>
+        <div class="crp-entry--image">
+            <img src=${conv.peer.conversation_avatar_any} loading="lazy" />
         </div>
-        <div class="crp-entry--message---text" dangerouslySetInnerHTML=${{ __html: last_msg.conv_summary_with_attachments }} />`}
-      </div>
-    </div>
-  `;
+        <div class="crp-entry--info">
+            <a>${ovk_proc_strtr(conv.peer.conversations_full_name, 30)}</a><br/>
+            ${last_msg && html`<span>${last_msg.conv_date}</span>`}
+        </div>
+        <div class="crp-entry--message">
+            ${d && html`
+            <div class="crp-entry--message---av">
+                <img src="${last_msg.sender.avatar_any}" />
+            </div>
+            <div class="crp-entry--message---text" dangerouslySetInnerHTML=${{ __html: last_msg.conv_summary_with_attachments }} />`}
+            ${has_activity == true && html`
+                <div class="crp-entry--message---av"></div>
+                <div class="crp-entry--message---text">
+                    ${conv.getActivityMsg()[0]}
+                </div>
+            `}
+        </div>
+        </div>
+    `;
 };
 
 export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCreateChat, onSearch }) => {
