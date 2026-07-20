@@ -33,7 +33,7 @@ class DateTime
             return ovk_strftime_safe("%e %B %Y ", $this->timestamp) . tr("time_at_sp") . ovk_strftime_safe(" %R", $this->timestamp);
         }
 
-        if (($this->timestamp + $sessionOffset) >= (strtotime("midnight") + $sessionOffset) && $dontUseRelativeTime == false) { # Today
+        if (($this->timestamp + ($sessionOffset * MINUTE)) >= (strtotime("midnight") + ($sessionOffset * MINUTE)) && $dontUseRelativeTime == false) { # Today
             if ($diff->h >= 1) {
                 return tr("time_today") . tr("time_at_sp") . ovk_strftime_safe(" %R", $this->timestamp);
             } elseif ($diff->i < 2) {
@@ -41,7 +41,7 @@ class DateTime
             } else {
                 return $diff->i === 5 ? tr("time_exactly_five_minutes_ago") : tr("time_minutes_ago", $diff->i);
             }
-        } elseif (($this->timestamp + $sessionOffset) >= (strtotime("-1day midnight") + $sessionOffset) && $dontUseRelativeTime == false) { # Yesterday
+        } elseif (($this->timestamp + ($sessionOffset * MINUTE)) >= (strtotime("-1day midnight") + ($sessionOffset * MINUTE)) && $dontUseRelativeTime == false) { # Yesterday
             return tr("time_yesterday") . tr("time_at_sp") . ovk_strftime_safe(" %R", $this->timestamp);
         } elseif (ovk_strftime_safe("%Y", $this->timestamp) === ovk_strftime_safe("%Y", time())) { # In this year
             return ovk_strftime_safe("%e %h ", $this->timestamp) . tr("time_at_sp") . ovk_strftime_safe(" %R", $this->timestamp);
