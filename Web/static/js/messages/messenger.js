@@ -255,6 +255,21 @@ export class MessengerViewModel {
         }
     }
 
+    _triggerCancelEditingDialog(callback = null) {
+        const cmsg = new CMessageBox({
+            title: "",
+            body: "вы хотите прервать редактирования все изменения потеряются(",
+            buttons: [tr("yes"), tr("no")],
+            callbacks: [() => {
+                this.cancelEdit();
+
+                if (callback) {
+                    callback();
+                }
+            }, () => {}]
+        })
+    }
+
 	removeReply(render = true) {
 		this.replyTo = null;
 
@@ -265,6 +280,20 @@ export class MessengerViewModel {
 
     toggleMessageSelection(msg, e) {
         if (msg.id == null) {
+            const c = new CMessageBox({
+                title: "удалииии",
+                body: "удалить сообщение которое даже не постаралось отправиться а так подло тебя подвело и ты мискликнул???",
+                buttons: [tr("yes"), tr("no")],
+                callbacks: [() => {
+                    msg.setDeleted();
+                    this._triggerUpdate();
+                }, () => {}]
+            })
+            return;
+        }
+
+        if (this.editMsg != null) {
+            this._triggerCancelEditingDialog();
             return;
         }
 
