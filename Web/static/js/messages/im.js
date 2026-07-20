@@ -377,9 +377,9 @@ export class IM {
     }
 
     _toggleScrollMode(enable = true) {
-        if (window.isMobile && window.isMobile()) {
+        /*if (window.isMobile && window.isMobile()) {
             return;
-        }
+        }*/
 
         if (enable) {
             u('body').addClass('no-scroll');
@@ -533,7 +533,7 @@ class FriendsTab {
                 }).catch(err => {
                     fastError(String(err));
                 });
-            }, () => {}]
+            }, () => {msg.close()}]
         })
 
     }

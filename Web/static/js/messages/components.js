@@ -47,6 +47,11 @@ export const MessageBubble = ({ msg, index, chunk }) => {
                 <span>${msg.id}</span>
             </div>
         </div>
+        <div class="actions-2">
+            ${msg.canEdit() && html`
+                <div class="edit-icon"></div>
+            `}
+        </div>
         <div class="_avatar">
           <img class="ava" src=${msg.sender.avatar_any} alt=${msg.sender.full_name} />
         </div>

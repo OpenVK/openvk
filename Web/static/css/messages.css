@@ -82,6 +82,7 @@ body.no-scroll .sidebar {
     background: #F6F6F6;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     gap: 11px;
     padding: 11px 11px 11px 10px;
     margin: 0px 0px 0px 1px;
@@ -336,7 +337,8 @@ body.no-scroll .sidebar {
     position: relative;
 }
 
-.messenger-app--messages---message:hover .click-territory {
+.messenger-app--messages---message:hover .click-territory,
+.messenger-app--messages---message:hover .actions-2 {
     opacity: 0.7;
 }
 
@@ -348,25 +350,43 @@ body.no-scroll .sidebar {
     opacity: 0.9;
 }
 
+.messenger-app--messages---message .actions-2 {
+    right: 0;
+    left: unset !important;
+}
+
+.messenger-app--messages---message.msg-selected .actions-2 {
+    display: none;
+}
+
 .messenger-app--messages---message.same-author .checkmark,
-.messenger-app--messages---message.same-author .error-checkmark {
+.messenger-app--messages---message.same-author .error-checkmark,
+.messenger-app--messages---message.same-author .actions-2 > div {
     margin: 0px 0px 0px 25px;
 }
 
-.messenger-app--messages---message--wrap .checkmark {
+.messenger-app--messages---message--wrap .checkmark,
+.messenger-app--messages---message .actions-2 > div {
     width: 20px;
     height: 20px;
     margin: 10px 0px 0px 25px;
     background: crimson;
 }
 
-.messenger-app--messages---message--wrap .click-territory {
+.messenger-app--messages---message--wrap .click-territory,
+.messenger-app--messages---message--wrap .actions-2 {
     position: absolute;
     width: 55px;
     height: 100%;
     left: 0;
     opacity: 0;
     transition: 200ms opacity;
+}
+
+.messenger-app--messages---message .actions-2 > div {
+    background: plum;
+    width: 20px;
+    height: 20px;
 }
 
 .messenger-app--messages .messenger-app--messages-day-time {

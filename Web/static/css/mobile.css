@@ -2004,6 +2004,7 @@
         margin-left: 8px;
         margin-right: 0px;
         font-size: 15px;
+        width: 115px;
     }
 
     .crp-entry--message {
@@ -2022,12 +2023,6 @@
         padding: 10px 2%;
     }
 
-    .messenger-app--global-tabs {
-        position: fixed;
-        top: 58px;
-        z-index: 100;
-    }
-
     .messages--peers-tabs {
         position: fixed;
         z-index: 100;
@@ -2044,10 +2039,31 @@
     .messenger-app--messages---message > .messenger-app--messages---message--wrap {
         width: 100%;
         box-sizing: border-box;
+        padding: 0px 0px;
+    }
+
+    .messenger-app--messages---message > .messenger-app--messages---message--wrap .click-territory {
+        left: unset;
+        right: 0;
+        width: 44px;
+    }
+
+    .messenger-app--messages---message .actions-2 {
+        right: 45px;
+        width: 44px;
     }
 
     .messenger-app--messages---message ._content {
         width: 70%;
+    }
+
+    .messages--peers-tabs .messages--peers-tab.selected a {
+        font-weight: bold;
+    }
+
+    .messages--peers-tabs .messages--peers-tab a,
+    .messages--peers-tabs .messages--peers-tab .messages--peers-tab-close {
+        font-size: 12px;
     }
 
     .messenger-app--messages---message ._content span,
@@ -2061,14 +2077,23 @@
     }
 
     .messenger-app--messages---message .time {
-        width: 100px;
+        max-width: 100px;
         font-size: 13px;
         position: absolute;
-        right: 0;
+        right: 72px;
     }
 
     #chat-page .chat-window {
         width: 100%;
+    }
+
+    .search_input {
+        background: url(/assets/packages/static/openvk/img/search_icon.png) no-repeat 7px 7px;
+        padding-left: 25px !important;
+    }
+
+    .messenger-app-end #wallAttachmentMenu {
+        position: relative;
     }
 
     /* Support */
@@ -2254,6 +2279,92 @@
 
     .expand_button {
         font-size: 14px;
+    }
+
+    /* new im */
+
+    .messenger-app--input---messagebox textarea {
+        font-size: 14px;
+    }
+
+    .messenger-app--messages---message ._content {
+        padding-left: 24px;
+    }
+
+    .messenger-app--tab-friends .friends-list .friends-list-item img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .messenger-app--tab-conversations {
+        width: unset;
+    }
+
+    .messenger-app--messages---message ._avatar {
+        width: 50px;
+        max-height: 50px;
+    }
+
+    .messenger-app--messages---message .ava {
+        width: 52px;
+        height: 52px;
+    }
+
+    body.no-scroll .messenger-app--tab-messenger {
+        overflow-y: unset;
+        overflow-x: unset;
+        min-height: unset;
+    }
+
+    body.no-scroll .navigation {
+        top: unset !important;
+    }
+
+    body.no-scroll {
+        overflow-x: unset;
+        scrollbar-gutter: unset;
+    }
+
+    body.no-scroll .messenger-app--global-tabs {
+        top: 78px;
+        margin-left: -7px;
+        width: 100% !important;
+    }
+
+    body.no-scroll .messages--peers-tabs {
+        top: 108px;
+    }
+
+    body.no-scroll .sidebar {
+        position: unset;
+        top: unset;
+    }
+
+    body.no-scroll #wrapH {
+        top: 49px;
+    }
+
+    .messages--actions {
+        width: 100%;
+        top: 112px;
+    }
+
+    .messenger-app--messages---message ._content {
+        padding-top: 2px;
+    }
+
+    .peer-window .peer-side .peer-info .peer-avatar {
+        width: 100px;
+        height: 100px;
+    }
+
+    .peer-window .peer-side .peer-info .peer-name-1 {
+        align-items: center;
+    }
+
+    .peer-window .peer-side .peer-info {
+        flex-direction: column;
+        align-items: center;
     }
 }
 
