@@ -729,6 +729,7 @@
 "ui_settings_window" = "Advanced settings";
 
 "search_for_groups" = "Search for groups";
+"search_for_events" = "Search for events";
 "search_for_users" = "Search for users";
 "search_for_posts" = "Search for posts";
 "search_for_comments" = "Search for comments";
@@ -2235,6 +2236,7 @@
 "s_params" = "Search params";
 "s_people" = "Users";
 "s_groups" = "Clubs";
+"s_events" = "Events";
 "s_apps" = "Applications";
 "s_posts" = "Posts";
 "s_comments" = "Comments";
@@ -2246,6 +2248,7 @@
 
 "s_by_people" = "for users";
 "s_by_groups" = "for groups";
+"s_by_events" = "for events";
 "s_by_posts" = "for posts";
 "s_by_comments" = "for comments";
 "s_by_videos" = "for videos";
