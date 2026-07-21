@@ -40,6 +40,7 @@ openvk:
             forceEmailVerification: false
             forceStrongPassword: false
             disablePasswordRestoring: true # turn this off if you have configured e-mail sending correctly
+            disableSubAddressing: false # aka plus sign
             enableSu: true
             rateLimits:
                 actions: 5

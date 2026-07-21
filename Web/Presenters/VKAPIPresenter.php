@@ -337,7 +337,11 @@ final class VKAPIPresenter extends OpenVKPresenter
         }
 
         if (!is_null($identity) && ($identity->isBanned() || $identity->isDeleted())) {
-            $this->fail(18, "User account is deactivated", $object, $method);
+            $this->fail(18, "User was deleted or banned", $object, $method);
+        }
+
+        if (!is_null($identity) && !$identity->isActivated() && OPENVK_ROOT_CONF['openvk']['preferences']['security']['requireEmail'] === true) {
+            $this->fail(7, "Access denied", $object, $method);
         }
 
         return [$identity, $platform];
@@ -525,6 +529,10 @@ final class VKAPIPresenter extends OpenVKPresenter
 
         $uId  = $chUser->related("profiles.user")->fetch()->id;
         $user = (new Users())->get($uId);
+
+        if (!$user->isActivated() && OPENVK_ROOT_CONF['openvk']['preferences']['security']['requireEmail'] === true) {
+            $this->fail(7, "Access denied", "internal", "acquireToken");
+        }
 
         $platform     = $this->requestParam("client_name");
         $platform   ??= $this->resolveAppIdToString($this->requestParam("client_id"));
