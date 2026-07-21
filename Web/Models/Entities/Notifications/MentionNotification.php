@@ -11,7 +11,7 @@ final class MentionNotification extends Notification
 {
     protected $actionCode = 4;
 
-    public function __construct(User $recipient, Postable $discussionHost, $mentioner, string $quote = "")
+    public function __construct(User $recipient, $mentioner, Postable $discussionHost, string $quote = "")
     {
         parent::__construct($recipient, $mentioner, $discussionHost, time(), $quote);
     }
