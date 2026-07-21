@@ -320,7 +320,9 @@ class Post extends Postable
         }
 
         if ($this->getTargetWall() < 0) {
-            return $this->getWallOwner()->canBeModifiedBy($user);
+            $club = $this->getWallOwner();
+
+            return $club?->canBeModifiedBy($user) ?? false;
         }
 
         return $this->getTargetWall() === $user->getId();
