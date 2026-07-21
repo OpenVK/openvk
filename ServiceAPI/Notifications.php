@@ -39,7 +39,7 @@ class Notifications implements Handler
             if (is_null($this->user)) {
                 $reject(1997, "User not authorized"); # hong kong 97 reference
             }
-            
+
             $userId = $this->user->getId();
 
             $session = Session::i();
