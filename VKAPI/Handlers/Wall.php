@@ -432,7 +432,7 @@ final class Wall extends VKAPIRequestHandler
                     "can_pin"      => $post->canBePinnedBy($user),
                     "can_archive"  => false, # TODO MAYBE
                     "is_archived"  => false,
-                    "is_pinned"    => $post->isPinned(),
+                    "is_pinned"    => (int) $post->isPinned(),
                     "is_explicit"  => $post->isExplicit(),
                     "post_source"  => $post->getPostSourceInfo(),
                     "attachments"  => $attachments,
@@ -546,9 +546,13 @@ final class Wall extends VKAPIRequestHandler
                 "groups"   => (array) $groupsFormatted,
             ];
         } else {
-            return (object) [
-                "items" => (array) $items,
-            ];
+            if (VKAPI_DECL_VER_MAJOR >= 5 && VKAPI_DECL_VER_MINOR >= 138) {
+                return (object) [
+                    "items" => (array) $items,
+                ];
+            } else {
+                return (array) $items;
+            }
         }
     }
 

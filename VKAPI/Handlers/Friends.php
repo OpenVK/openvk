@@ -158,7 +158,7 @@ final class Friends extends VKAPIRequestHandler
         return $response;
     }
 
-    public function getRequests(string $fields = "", int $out = 0, int $offset = 0, int $count = 100, int $extended = 0): object
+    public function getRequests(string $fields = "", int $out = 0, int $offset = 0, int $count = 100, int $extended = 0, int $suggested = 0): object
     {
         if ($count >= 1000) {
             $this->fail(100, "One of the required parameters was not passed or is invalid.");
@@ -170,13 +170,13 @@ final class Friends extends VKAPIRequestHandler
         $offset++;
         $followers = [];
 
-        if ($out != 0) {
+        if ($out == 0 && $suggested == 0) {
             foreach ($this->getUser()->getFollowers($offset, $count) as $follower) {
                 $followers[$i] = $follower->getId();
                 $i++;
             }
-        } else {
-            foreach ($this->getUser()->getRequests($offset, $count) as $follower) {
+        } elseif ($out == 1) {
+            foreach ($this->getUser()->getSubscriptions($offset, $count) as $follower) {
                 $followers[$i] = $follower->getId();
                 $i++;
             }
