@@ -92,6 +92,56 @@ final class GroupPresenter extends OpenVKPresenter
         }
     }
 
+    public function renderCreateEvent(): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            if (!empty($this->postParam("name")) && mb_strlen(trim($this->postParam("name"))) > 0 &&
+                !empty($this->postParam("start_date")) && mb_strlen(trim($this->postParam("start_date"))) > 0 &&
+                !empty($this->postParam("start_time")) && mb_strlen(trim($this->postParam("start_time"))) > 0) {
+                $club = new Club();
+                $club->setName($this->postParam("name"));
+                $club->setAbout(empty($this->postParam("about")) ? null : $this->postParam("about"));
+                $club->setOwner($this->user->id);
+                $club->setType(2);
+
+                $sessionOffset = intval(Session::i()->get("_timezoneOffset")) * 60;
+                $parsedData = strtotime($this->postParam("start_date") . "T" . $this->postParam("start_time"));
+                $club->setStart_Date($parsedData + $sessionOffset);
+
+                if ($this->postParam("end_date_checked") != '1') {
+                    $club->setFinish_Date(null);
+                } elseif ($club->isEvent() && !empty($this->postParam("finish_date")) && !empty($this->postParam("finish_time"))) {
+                    $sessionOffset = intval(Session::i()->get("_timezoneOffset")) * 60;
+                    $parsedData = strtotime($this->postParam("finish_date") . "T" . $this->postParam("finish_time"));
+                    $club->setFinish_Date($parsedData + $sessionOffset);
+                }
+
+                if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->user->identity, "groups.create")) {
+                    $this->flashFail("err", tr("error"), tr("limit_exceed_exception"));
+                }
+
+                try {
+                    $club->save();
+                } catch (\PDOException $ex) {
+                    if ($ex->getCode() == 23000) {
+                        $this->flashFail("err", tr("error"), tr("error_on_server_side"));
+                    } else {
+                        throw $ex;
+                    }
+                }
+
+                $club->toggleSubscription($this->user->identity);
+
+                $this->redirect("/event" . $club->getId());
+            } else {
+                $this->flashFail("err", tr("error"), tr("error_no_event_name"));
+            }
+        }
+    }
+
     public function renderSub(): void
     {
         $this->assertUserLoggedIn();

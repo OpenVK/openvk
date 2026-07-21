@@ -372,8 +372,8 @@
                 </div>
             </div>
         </div>
-        <div n:if="$user->getMeetingCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)">
-            {var $meetingCount = $user->getMeetingCount()}
+        <div n:if="$user->getEventsCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)">
+            {var $meetingCount = $user->getEventsCount()}
             <div class="content_title_expanded" onclick="hidePanel(this, {$meetingCount})">
                 {_meetings}
             </div>
@@ -381,11 +381,11 @@
                 <div class="content_subtitle">
                     {tr("meetings", $meetingCount)}
                     <div style="float:right;">
-                        <a href="/groups{$user->getId()}?act=meetings">{_all_title}</a>
+                        <a href="/events{$user->getId()}">{_all_title}</a>
                     </div>
                 </div>
                 <div style="padding-left: 5px;">
-                    <div style="display: inline;" n:foreach="$user->getMeetings(1) as $meeting">
+                    <div style="display: inline;" n:foreach="$user->getEvents(1) as $meeting">
                         <a href="/event{$meeting->getId()}">{$meeting->getName()}</a> {if !$iterator->last}•{/if}
                     </div>
                 </div>

@@ -847,7 +847,7 @@ class User extends RowModel
         return false;
     }
 
-    public function getMeetings(int $page = 1, bool $admin = false, int $count = OPENVK_DEFAULT_PER_PAGE, bool $offset = false): \Traversable
+    public function getEvents(int $page = 1, bool $admin = false, int $count = OPENVK_DEFAULT_PER_PAGE, bool $offset = false): \Traversable
     {
         if (!$offset) {
             $page = ($page - 1) * $count;
@@ -881,7 +881,7 @@ class User extends RowModel
         }
     }
 
-    public function getMeetingCount(bool $admin = false): int
+    public function getEventsCount(bool $admin = false): int
     {
         if ($admin) {
             $id    = $this->getId();
@@ -897,6 +897,22 @@ class User extends RowModel
         }
     }
 
+    /* 
+     * @deprecated Main term is Events now
+     */
+    public function getMeetings(int $page = 1, bool $admin = false, int $count = OPENVK_DEFAULT_PER_PAGE, bool $offset = false): \Traversable
+    {
+        return $this->getEvents($page, $admin, $count, $offset);
+    }
+
+    /* 
+     * @deprecated Main term is Events now
+     */
+    public function getMeetingsCount(bool $admin = false): int
+    {
+        return $this->getEventsCount($admin);
+    }
+    
     public function getGifts(int $page = 1, ?int $perPage = null): \Traversable
     {
         $gifts = $this->getRecord()->related("gift_user_relations.receiver")->order("sent DESC")->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
@@ -1300,6 +1316,7 @@ class User extends RowModel
                 "apps",
                 "docs",
                 "fave",
+                "events",
             ],
         ])->set($id, (int) $status)->toInteger();
 

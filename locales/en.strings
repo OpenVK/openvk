@@ -384,6 +384,7 @@
 "groups" = "Groups";
 "meetings" = "Meetings";
 "create_group" = "Create group";
+"create_event" = "Create event";
 "group_managers" = "Managers";
 "group_type" = "Group type";
 "group_type_open" = "This is an open group. Anyone can join it.";
@@ -497,6 +498,10 @@
 "meetings_zero" = "No meetings";
 "meetings_one" = "$1 meeting";
 "meetings_other" = "$1 meetings";
+
+"events_list_zero" = "You are not a member of any event";
+"events_list_one" = "You are a member in $1 event";
+"events_list_other" = "You are a member in $1 events";
 
 "search_by_groups" = "Explore Groups";
 
@@ -1614,6 +1619,7 @@
 
 "error_on_server_side" = "An error occurred on the server side. Contact your system administrator.";
 "error_no_group_name" = "You did not enter a group name.";
+"error_no_event_name" = "You did not enter a event name and/or event start date.";
 
 "success_action" = "Action successful";
 "connection_error" = "Connection error";
