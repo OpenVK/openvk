@@ -149,8 +149,25 @@ final class Friends extends VKAPIRequestHandler
         for ($i = 0; $i < sizeof($friends); $i++) {
             $friend = $users->get(intval($friends[$i]));
 
+            $friend_status = 0;
+
+            switch ($friend->getSubscriptionStatus($this->getUser())) {
+                case 3:
+                    $friend_status = 3;
+                    break;
+                case 0:
+                    $friend_status = 0;
+                    break;
+                case 1:
+                    $friend_status = 2;
+                    break;
+                case 2:
+                    $friend_status = 1;
+                    break;
+            }
+
             $response[] = (object) [
-                "friend_status" => $friend->getSubscriptionStatus($this->getUser()),
+                "friend_status" => $friend_status,
                 "user_id" 		=> $friend->getId(),
             ];
         }
