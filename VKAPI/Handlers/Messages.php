@@ -404,7 +404,7 @@ final class Messages extends VKAPIRequestHandler
                         "local_id" => $user_id,
                         "type" => "user",
                     ],
-                    "last_message_id" => $dialogue->getPreviewMessage()->getId(),
+                    "last_message_id" => $dialogue->getPreviewMessage()?->getId() ?? 0,
                 ],
             ],
         ];
