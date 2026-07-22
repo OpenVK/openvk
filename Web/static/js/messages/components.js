@@ -39,7 +39,7 @@ export const MessageBubble = ({ msg, index, chunk }) => {
       data-msg-id=${msg.id}
       onMouseDown=${(e) => window.im?.messenger?.view?.onMessageClick(msg, e)}>
       <div class="messenger-app--messages---message--wrap">
-        <div class="click-territory">
+        <div class="inlines click-territory">
             <div class="checkmark"></div>
             ${msg.is_error && html`
                 <div class="error-checkmark" onClick=${(e) => { msg.tryToResend() }} title="${msg.data.error_text}"></div>
@@ -52,11 +52,14 @@ export const MessageBubble = ({ msg, index, chunk }) => {
             ${msg.canEdit() && html`
                 <div onClick=${(e) => { window.im.messenger.view.onEditButtonClick(e, msg) }} class="edit-icon"></div>
             `}
+            ${msg.canPin() && html`
+                <div onClick=${(e) => { window.im.messenger.view.onPinButtonClick(e, msg) }} class="pin-icon"></div>
+            `}
         </div>
-        <div class="_avatar">
+        <div class="inlines _avatar">
           <img class="ava" src=${msg.sender.avatar_any} alt=${msg.sender.full_name} />
         </div>
-        <div class="_content">
+        <div class="inlines _content">
           <a class="_sender" onClick=${(e) => { window.im?.messenger?.view?.onAuthorNameClick(msg, e) }}>
             <strong>${msg.sender.name}</strong>
           </a>

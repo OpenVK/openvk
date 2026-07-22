@@ -7,6 +7,7 @@ export class EventHandler {
             2: null,
             4: this.NewMessageEvent,
             5: this.EditMessageEvent,
+            51: this.ChatUpdateEvent,
             61: this.TypingEvent,
         };
     }
@@ -96,6 +97,12 @@ export class EventHandler {
         found.data.edited = true;
 
         window.im.messenger.view._triggerUpdate();
+    }
+
+    async ChatUpdateEvent(event) {
+        const _type = event[1];
+        const peer_id = event[2];
+
     }
 
     async TypingEvent(event) {

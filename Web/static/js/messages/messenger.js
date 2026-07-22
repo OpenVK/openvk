@@ -279,6 +279,24 @@ export class MessengerViewModel {
         }
     }
 
+    onPinButtonClick(e, msg) {
+        const isPinned = msg.isPinned();
+        const cmsg = new CMessageBox({
+            title: "dfdsfdsf",
+            body: isPinned == true ? "открепить?" : "закрепить собщение?",
+            buttons: [tr("yes"), tr("no")],
+            callbacks: [async () => {
+                if (isPinned == true) {
+                    await msg.togglePin(false);
+                } else {
+                    await msg.togglePin(true);
+                }
+
+                this._triggerUpdate();
+            }, () => {}]
+        })
+    }
+
     _triggerCancelEditingDialog(callback = null) {
         const cmsg = new CMessageBox({
             title: "",
