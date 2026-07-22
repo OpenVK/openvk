@@ -1048,6 +1048,10 @@ class User extends RowModel
                     return 'mobile';
                     break;
 
+                case 'OpenVK Desktop':
+                    return 'desktop';
+                    break;
+
                 case null:
                     return null;
                     break;
