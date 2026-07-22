@@ -368,6 +368,12 @@ final class VKAPIPresenter extends OpenVKPresenter
             throw new APIErrorException("Unknown method passed.", 3);
         }
 
+        // Way to bypass restrictions in App Stores. Check code comment for isMusicAvailable func
+        if (!is_null($identity) && !$this->isMusicAvailable($identity->getId()) && $object == "Audio")
+        {
+            throw new APIErrorException("Unknown method passed.", 3);
+        }
+
         $hasRss = false;
         $route  = new \ReflectionMethod($handler, $method);
         $args   = [];
@@ -711,5 +717,17 @@ final class VKAPIPresenter extends OpenVKPresenter
             default:
                 return "unknown";
         }
+    }
+
+    /*
+     * This is the way to get around some App Store copyright rules
+     * for (maybe) official and third party apps, something 
+     * Durov's team maybe did when their app was gone from App Store 
+     * in 2014. Now it's deleted via EU sanctions, but that's 
+     * another story to tell.
+     */
+    private function isMusicAvailable(int $id): bool
+    {
+        return (bool) !in_array($id, OPENVK_ROOT_CONF["openvk"]["preferences"]["music"]["notAvailableFor"] ?? []);
     }
 }
