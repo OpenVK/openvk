@@ -31,19 +31,20 @@ export class Conversations {
         this.total_convs = 0;
         this.CONVERSATIONS_PER_PAGE = 100;
         this.q = null;
+        this.peer_id_search = null;
     }
 
     async _resolveSel(sel) {
         let _ = null;
 
         try {
-        this.convs.forEach((item) => {
-            if (item.peer.id === sel) {
-            _ = item;
-            }
-        });
+            this.convs.forEach((item) => {
+                if (item.peer.id === sel) {
+                _ = item;
+                }
+            });
         } catch (e) {
-        console.error(e);
+            console.error(e);
         }
 
         if (_) {

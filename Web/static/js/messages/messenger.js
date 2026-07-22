@@ -468,6 +468,11 @@ export class MessengerViewModel {
 
 		if (this.currentDraft === '' && _tmp_atts.length == 0) return false;
 
+        if (this.currentDraft.length > 55000) {
+            fastError("> 55000")
+            return;
+        }
+
         if (this.editMsg != null) {
             this.editMsg.edit(this.currentDraft, _tmp_atts);
 
@@ -713,7 +718,13 @@ export class MessengerViewModel {
 	async showAudio(e, msg, attachment) {
 		console.log("Opening audio ", attachment.audio)
 		await showAudioWindow(attachment.audio.owner_id + "_" + attachment.audio.global_id);
-	}
+    }
+
+    // other links from peer window
+
+    setSpecialMode(mode = null) {
+        this.special_mode = mode;
+    }
 }
 
 export class LongPollConnection {

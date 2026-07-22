@@ -3,6 +3,7 @@
     --common-2: #f0f1f2;
     --bg-page: white;
     --bg-slightly: #f9f9f9;
+    --bg-slightly-2: #d5d1d147;
     --bg-selected-mid: #00000017;
     --bg-slightly-border: #d6d6d6;
     --bg-hover: #4c4c4c29;
@@ -12,6 +13,7 @@
     --brand: #606060;
     --nobold: #868686;
 
+    --summary: #45688E;
     --error-bg:  #f781812e;
 }
 
