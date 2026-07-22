@@ -187,12 +187,16 @@ export class ChatGeneralForm {
         return (this.data.can_invite ?? 1) === 1;
     }
 
+    isAdmin() {
+        return this.data.admin_id === window.openvk.current_id;
+    }
+
     canUsersBeAddedBy(group = null) {
         if (group != null) {
             return false;
         }
 
-        return this.data.admin_id === window.openvk.current_id;
+        return this.isAdmin();
     }
 
     canPinMessages(group = null) {
@@ -200,7 +204,31 @@ export class ChatGeneralForm {
             return false;
         }
 
-        return this.data.admin_id === window.openvk.current_id;
+        return this.isAdmin();
+    }
+
+    canUpdateAvatar(as_group = null) {
+        if (as_group != null) {
+            return false;
+        }
+
+        if (this.supposed_type != "chat") {
+            return false;
+        }
+
+        return this.isAdmin();
+    }
+
+    canUpdateTitle(as_group = null) {
+        if (as_group != null) {
+            return false;
+        }
+
+        if (this.supposed_type != "chat") {
+            return false;
+        }
+
+        return this.isAdmin();
     }
 
     get conversation_avatar_any() {
@@ -839,27 +867,69 @@ export class ChatGeneralForm {
 
   // ── guards used by the scroll handler ─────────────────────────────
 
-  /**
-   * Returns true when there are already newer chunks loaded
-   * (relative to the current chunk).
-   */
-  _chunks_HasMoreNewerChunkRelativelyToCurrentChat() {
-    const current = this._findCurrentChunk();
-    if (!current) return false;
-    // If current is not at index 0, there is at least one newer chunk
-    return current.index > 0;
-  }
+    /**
+    * Returns true when there are already newer chunks loaded
+    * (relative to the current chunk).
+    */
+    _chunks_HasMoreNewerChunkRelativelyToCurrentChat() {
+        const current = this._findCurrentChunk();
+        if (!current) return false;
+        // If current is not at index 0, there is at least one newer chunk
+        return current.index > 0;
+    }
 
-  /**
-   * Returns true when there are already older chunks loaded
-   * (relative to the current chunk).
-   */
-  _chunks_HasMoreOlderChunkRelativelyToCurrentChat() {
-    const current = this._findCurrentChunk();
-    if (!current) return false;
-    // If current is not at the last index, there is at least one older chunk
-    return current.index < this.chunks.length - 1;
-  }
+    /**
+    * Returns true when there are already older chunks loaded
+    * (relative to the current chunk).
+    */
+    _chunks_HasMoreOlderChunkRelativelyToCurrentChat() {
+        const current = this._findCurrentChunk();
+        if (!current) return false;
+        // If current is not at the last index, there is at least one older chunk
+        return current.index < this.chunks.length - 1;
+    }
+
+        // update
+
+    async updateTitle(title) {
+        if (this.supposed_type != "chat") {
+            return;
+        }
+
+        alert("ты хочешь поменять название на " + title + " но эта функция ещё не сделана .")
+    }
+
+    async updateAvatar(blob) {
+        if (this.supposed_type != "chat") {
+            return;
+        }
+
+        const group_id = null;
+
+        const params = {
+            "chat_id": this.id - ChatGeneralForm.chat_number,
+            "group_id": group_id
+        }
+        const v = await window.OVKAPI.call("photos.getChatUploadServer", params);
+        const upload_url = v.upload_url;
+        const fd = new FormData();
+        fd.append("photo", blob);
+
+        const f = await fetch(upload_url, {
+            method: "POST",
+            body: fd
+        })
+        const j = await f.json();
+        const photo = j.photo;
+        const hash = j.hash;
+        const v1 = await window.OVKAPI.call("messages.setChatPhoto", {
+            "file": photo,
+            "hash": hash,
+            "chat_id": this.id - ChatGeneralForm.chat_number,
+        });
+
+        return v1;
+    }
 }
 
 // ── ChatMessage ────────────────────────────────────────────────────

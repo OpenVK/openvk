@@ -3,7 +3,7 @@ import { EventHandler } from './events.js';
 import { Messenger, LongPollConnection } from './messenger.js';
 import { Conversations } from './conversations.js';
 import { SearchTab } from './search.js';
-import { render, html, TabBar, FriendsPage, ContactPage } from './components.js';
+import { render, html, TabBar, FriendsPage } from './components.js';
 
 const tr = window.tr;
 const u = window.u;

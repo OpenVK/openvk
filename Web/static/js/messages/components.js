@@ -337,7 +337,7 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
               <${AttachmentMenu} />
             </div>
           </div>
-          <img class="ava peer-toggler" onclick="${togglePeerInfo}" src="${window.im?.corresponder?.avatar_any || ''}"
+          <img class="ava" src="${window.im?.corresponder?.avatar_any || ''}"
                alt="${window.im?.corresponder?.full_name || ''}" />
         </div>
       </div>
@@ -400,23 +400,29 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
 };
 
 export const TabBar = ({ tabs, activeTab, onTabSelect }) => {
-  return html`
-    <div id="tabs-wr" class="messenger-app--global-tabs tabs">
-      <div class="inner-tabs">
-        ${tabs.map((tab) => html`
-          <a data-tab="${tab.id}"
-             id="${tab.id === activeTab ? 'activetabs' : ''}"
-             class="tab"
-             onClick=${() => onTabSelect(tab.id)}>
-            ${tab.label ? (typeof tab.label == 'string' ? tab.label : tab.label()) : ""}
-          </a>
-        `)}
-      </div>
-      <div class="${activeTab == 'friends' ? 'hidden' : '' }" id="spec-actions">
-        <a onclick=${() => { window.im.selectTab("friends")} }>${tr('to_friendslist')}</a>
-      </div>
-    </div>
-  `;
+    const showSpecActions = activeTab != "friends";
+
+    return html`
+        <div id="tabs-wr" class="messenger-app--global-tabs tabs">
+        <div class="inner-tabs">
+            ${tabs.map((tab) => html`
+            <a data-tab="${tab.id}"
+                id="${tab.id === activeTab ? 'activetabs' : ''}"
+                class="tab"
+                onClick=${() => onTabSelect(tab.id)}>
+                ${tab.label ? (typeof tab.label == 'string' ? tab.label : tab.label()) : ""}
+            </a>
+            `)}
+        </div>
+        <div class="${showSpecActions == false ? 'hidden' : '' }" id="spec-actions">
+            ${activeTab == "messenger" ? html`
+                <a onclick=${() => { window.im.messenger.view.togglePeerInfo() }}>${tr('about_peer')}</a>
+                <span class="tab-divider">|</span>
+            ` : '' }
+            <a onclick=${() => { window.im.selectTab("friends")} }>${tr('to_friendslist')}</a>
+        </div>
+        </div>
+    `;
 };
 
 export const FriendsPage = ({ friends, count, referrer, onFriendClick, onCreateChat, isSelected, onLoadMore }) => {
@@ -464,32 +470,8 @@ export const FriendsPage = ({ friends, count, referrer, onFriendClick, onCreateC
   `;
 };
 
-export const ContactPage = ({ peer }) => {
-  if (!peer) return html`<div class="messenger-page-stub"><p>${tr('no_user_selected')}</p></div>`;
-
-  const user = peer.data;
-  const lastSeen = user.last_seen ? new Date(user.last_seen.time * 1000).toLocaleString() : '';
-  const name = window.escapeHtml(user.first_name + ' ' + user.last_name);
-
-  return html`
-    <div class="messenger-page-stub">
-      <div class="contact-info">
-        <img src="${avatar}" class="contact-info-ava" />
-        <div class="contact-info-name">${name}</div>
-        <div class="contact-info-online ${isOnline ? 'online' : 'offline'}">
-          ${isOnline ? tr('online') : (lastSeen ? tr('last_seen') + ' ' + lastSeen : tr('offline'))}
-        </div>
-        <div class="contact-info-actions">
-          <button class="button" onClick=${() => window.im?.selectChat(window.im.messenger.view.getChatWith({ id: user.id }))}>
-            ${tr('write_message')}
-          </button>
-        </div>
-      </div>
-    </div>
-  `;
-};
-
 export const PeerWindow = ({ peer, togglePeerInfo }) => {
+    const supposed_type = peer.supposed_type;
     const isOnline = peer.online == 1;
     const avatar = peer.avatar_big || peer.data.photo_50 || '';
     const has_avatar = true;
@@ -516,6 +498,14 @@ export const PeerWindow = ({ peer, togglePeerInfo }) => {
                     <a onClick=${() => { window.im.setChatByPeerId(peer.id) }}>${tr('write_message')}</a>
                 </div>
             </div>
+        </div>
+        <div>
+            ${ peer.canUpdateTitle() ? html`
+                <a onClick=${(e) => { updateChatTitle(e, peer) }}>Обновить название</a>
+            ` : "" }
+            ${ peer.canUpdateAvatar() ? html`
+                <a onClick=${(e) => { updateChatAvatar(e, peer) }}>Обновить аватар беседы</a>
+            ` : "" }
         </div>
         <div class="chat-actions-2">
             <a onClick=${(e) => { window.im.messenger.view.setSpecialMode("pinned") }}>Закреплённое</a>

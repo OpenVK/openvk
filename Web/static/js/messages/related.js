@@ -80,9 +80,7 @@ u(document).on("click", "#_message_send", async (e) => {
     await showUserDialog(Number(e.target.dataset.eid));
 })
 
-async function updateChatTitle(chat_id) {
-    const chat = await window.im.conversations._findConvFromApi(chat_id);
-
+function updateChatTitle(e, chat) {
     if (!chat) {
         console.log("IM | Editing | чата нет");
         return;
@@ -92,38 +90,24 @@ async function updateChatTitle(chat_id) {
         title: tr("change_chat_title"),
         close_on_buttons: false,
         body: `
-            <input value="${escapeHtml(chat.peer.name)}" type="text" id="_new_chat_title">
+            <input value="${escapeHtml(chat.name)}" type="text" id="_new_chat_title">
         `,
         buttons: [tr("cancel"), tr("change")],
         callbacks: [() => {
             msg.close();
-        }, () => {
+        }, async () => {
             const new_title = msg.getNode().find("#_new_chat_title").last().value;
-            console.log(new_title)
             msg.close();
+            await chat.updateTitle(new_title);
         }]
     })
 }
 
-async function updateChatAvatar(chat_id) {
-    const chat = await window.im.conversations._findConvFromApi(chat_id);
-
+function updateChatAvatar(e, chat) {
     if (!chat) {
         console.log("IM | Editing | чата нет");
         return;
     }
 
-    const msg = new CMessageBox({
-        title: tr("update_chat_avatar"),
-        close_on_buttons: false,
-        body: `
-            <input type="text">
-        `,
-        buttons: [tr("cancel"), tr("change")],
-        callbacks: [() => {
-            msg.close();
-        }, () => {
-            msg.close();
-        }]
-    })
+    OpenAvatarUpdateDialogue(null, chat, 1, 1)
 }

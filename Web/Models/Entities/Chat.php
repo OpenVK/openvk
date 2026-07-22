@@ -129,6 +129,7 @@ class Chat extends RowModel
 
         $this->stateChanges("photo_id", $photoObj->getId());
         $this->pushPhotoToHistory($photoObj);
+        $this->save();
 
         unlink($imagePath);
 
@@ -228,6 +229,7 @@ class Chat extends RowModel
     {
         $photo = $this->getPhoto();
 
+        bdump($a_data);
         $payload = [];
         $payload["type"] = "chat";
 
@@ -246,6 +248,8 @@ class Chat extends RowModel
             $payload["photo_50"] = $photo->getURLBySizeId("miniscule");
             $payload["photo_100"] = $photo->getURLBySizeId("tiny");
             $payload["photo_200"] = $photo->getURLBySizeId("normal");
+        } else {
+            $payload["photo_200"] = $payload["photo_100"] = $payload["photo_50"] = "/assets/packages/static/openvk/img/im/chat_meaningless.jpg";
         }
 
         $payload["users"] = [];
