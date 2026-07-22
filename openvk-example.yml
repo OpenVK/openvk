@@ -78,6 +78,7 @@ openvk:
             strict: false
         music:
             exposeOriginalURLs: true
+            notAvailableFor: []
         newsfeed:
             ignoredSourcesLimit: 50
         notes:
