@@ -136,8 +136,12 @@ class StickerPack extends RowModel
         return true;
     }
 
-    public function isPurchasedBy(User $user): bool
+    public function isPurchasedBy(?User $user): bool
     {
+        if (!$user) {
+            return false;
+        }
+
         return DB::i()->getContext()->table("sticker_purchases")
             ->where("user", $user->getId())
             ->where("stickerpack", $this->getId())
@@ -332,13 +336,23 @@ class StickerPack extends RowModel
         parent::delete($softly);
     }
 
-    public function toVkApiStruct(): array
+    public function toVkApiStruct(?User $user): array
     {
+        $server_url = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
+        $mainSticker = $this->getMainSticker();
+
         return [
-            "id"    => $this->getId(),
-            "name"  => $this->getName(),
-            "slug"  => $this->getSlug(),
-            "price" => $this->getPrice(),
+            "id"             => $this->getId(),
+            "name"           => $this->getName(),
+            "description"    => $this->getDescription() ?? "",
+            "slug"           => $this->getSlug(),
+            "price"          => $this->getPrice(),
+            "end_time"       => $this->getEndTime() ?? 0,
+            "purchased"      => $this->isPurchasedBy($user) ? 1 : 0,
+            "photo_128"      => $mainSticker ? ($server_url . $mainSticker->getImageUrl(128)) : "",
+            "photo_256"      => $mainSticker ? ($server_url . $mainSticker->getImageUrl(256)) : "",
+            "stickers_count" => $this->getStickersCount(),
+            "stickers"       => [],
         ];
     }
 }
