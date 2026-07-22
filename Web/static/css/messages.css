@@ -67,6 +67,14 @@ body.no-footer .page_footer {
 	display: none;
 }
 
+.messenger-app--global-tabs #spec-actions .tab-divider {
+    margin: 0px 4px 0px 4px;
+    color: var(--nobold);
+    user-select: none;
+    height: 7px;
+    display: inline-block;
+}
+
 .messenger-app--tab-conversations {
     margin: 0px -6px -10px -11px;
     width: 629px;

@@ -220,7 +220,8 @@ final class Messages extends VKAPIRequestHandler
                 #$chatEntity = (new ChatRepo())->getByChatId($localChatId);
                 $chatEntity = $loadedChats[$localChatId];
                 if ($chatEntity != null) {
-                    $entry = $chatEntity->toVkApiStruct($this->getUser(), [$chat]);
+                    bdump($chat);
+                    $entry = $chatEntity->toVkApiStruct($this->getUser(), $chat);
 
                     $extendedChats[] = $entry;
                 } else {
@@ -1222,26 +1223,18 @@ final class Messages extends VKAPIRequestHandler
     }
 
 
-    public function setChatPhoto(string $file): object
+    public function setChatPhoto(int $chat_id, string $file, string $hash): object
     {
         $this->requireUser();
 
-        $uploadData = json_decode($file, false);
-        if (!$uploadData || !isset($uploadData->photo) || !isset($uploadData->hash)) {
-            $this->fail(100, "Invalid file data");
+        $imagePath = (new Uploader())->getImagePath($file, $hash);
+
+        if ($chat_id > 2000000000) {
+            $chat_id = $chat_id - 2000000000;
         }
 
-        $imagePath = (new Uploader())->getImagePath($uploadData->photo, $uploadData->hash, $uploader, $group);
-
-        $peerId = (int) ($uploadData->peer_id ?? 0);
-        if ($peerId < 2000000000) {
-            unlink($imagePath);
-            $this->fail(100, "Invalid peer_id: not a chat");
-        }
-
-        $chatId = $peerId - 2000000000;
         $chatsRepo = new ChatRepo();
-        $chat = $chatsRepo->getByChatId($chatId);
+        $chat = $chatsRepo->getByChatId($chat_id);
 
         if (!$chat) {
             unlink($imagePath);
@@ -1264,9 +1257,6 @@ final class Messages extends VKAPIRequestHandler
             unlink($imagePath);
             $this->fail(129, "Invalid image file");
         }
-
-        $chat->setPhotoId($photoObj->getId());
-        $chat->save();
 
         return (object) [
             "message_id" => 0,

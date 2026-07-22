@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace openvk\VKAPI\Handlers;
+namespace openvk\VKAPI\Utils;
 
 use openvk\VKAPI\Exceptions\APIErrorException;
 

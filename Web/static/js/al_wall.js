@@ -2344,13 +2344,21 @@ async function repost(id, repost_type = 'post') {
     }
 }
 
-$(document).on("click", "#add_image", (e) => {
-    let isGroup = e.currentTarget.closest(".avatar_block").dataset.club != null
-    let group = isGroup ? e.currentTarget.closest(".avatar_block").dataset.club : 0
+function OpenAvatarUpdateDialogue(group = null, chat = null, aspectRatio = NaN, viewMode = 2) {
+    let str1 = tr("friends_avatar");
+    let str2 = tr("selected_area_user");
+    if (group != null) {
+        str1 = tr("groups_avatar");
+        str2 = tr("selected_area_club");
+    }
+    if (chat != null) {
+        str1 = tr("chats_avatar");
+        str2 = tr("selected_area_chat");
+    }
 
     let body = `
     <div id="avatarUpload">
-        <p>${isGroup == true ? tr('groups_avatar') : tr('friends_avatar')}</p>
+        <p>${str1}</p>
         <p>${tr('formats_avatar')}</p><br>
 
         <label class="button" style="margin-left:45%;user-select:none" id="uploadbtn">
@@ -2361,9 +2369,10 @@ $(document).on("click", "#add_image", (e) => {
         <br><br>
 
         <p>${tr('troubles_avatar')}</p>
-        <p>${tr('webcam_avatar')}</p>
+        ${chat != null ? '' : '<p>'+ tr('webcam_avatar') +'</p>' }
     </div>
     `
+    // кому нужно ставить фото с камеры на аватар группы? не знаю
 
     let msg = MessageBox(tr('uploading_new_image'), body, [
         tr('cancel')
@@ -2379,7 +2388,7 @@ $(document).on("click", "#add_image", (e) => {
     $("#avatarUpload input").on("change", (ev) => {
         let image = URL.createObjectURL(ev.currentTarget.files[0])
         $(".ovk-diag-body")[0].innerHTML = `
-            <span>${!isGroup ? tr("selected_area_user") : tr("selected_area_club")}</span>
+            <span>${str2}</span>
 
             <p style="margin-bottom: 10px;">${tr("selected_area_rotate")}</p>
 
@@ -2392,9 +2401,9 @@ $(document).on("click", "#add_image", (e) => {
                 </div>
             </div>
 
-            <label style="margin-top: 14px;display: block;">
+            ${ chat == null ? `<label style="margin-top: 14px;display: block;">
                 <input id="publish_on_wall" type="checkbox" checked>${tr("publish_on_wall")}
-            </label>
+            </label>` : "" }
         `
 
         document.querySelector(".ovk-diag-action").insertAdjacentHTML("beforeend", `
@@ -2403,7 +2412,7 @@ $(document).on("click", "#add_image", (e) => {
 
         const image_div = document.getElementById('temp_uploadPic');
         const cropper = new Cropper(image_div, {
-            aspectRatio: NaN,
+            aspectRatio: aspectRatio,
             zoomable: true,
             minCropBoxWidth: 150,
             minCropBoxHeight: 150,
@@ -2412,7 +2421,7 @@ $(document).on("click", "#add_image", (e) => {
             center: false,
             guides: false,
             modal: true,
-            viewMode: 2,
+            viewMode: viewMode,
             cropstart(event) {
                 document.querySelector(".cropper-container").classList.add("moving")
             },
@@ -2430,7 +2439,14 @@ $(document).on("click", "#add_image", (e) => {
                 imageSmoothingQuality: 'high',
             }).toBlob((blob) => {
                 document.querySelector("#_uploadImg").classList.add("lagged")
-                let formdata = new FormData()
+
+                if (chat != null) {
+                    chat.updateAvatar(blob)
+                    return;
+                }
+
+                let formdata = new FormData();
+
                 formdata.append("blob", blob)
                 formdata.append("ajax", 1)
                 formdata.append("on_wall", Number(document.querySelector("#publish_on_wall").checked))
@@ -2438,7 +2454,7 @@ $(document).on("click", "#add_image", (e) => {
 
                 $.ajax({
                     type: "POST",
-                    url: isGroup ? "/club" + group + "/al_avatar" : "/al_avatars",
+                    url: group != null ? "/club" + group + "/al_avatar" : "/al_avatars",
                     data: formdata,
                     processData: false,
                     contentType: false,
@@ -2549,6 +2565,12 @@ $(document).on("click", "#add_image", (e) => {
             })
         }
     })
+
+}
+$(document).on("click", "#add_image", (e) => {
+    let group = e.currentTarget.closest(".avatar_block").dataset.club
+
+    OpenAvatarUpdateDialogue(group)
 })
 
 function uploadByGraffiti(group_id = null) {
