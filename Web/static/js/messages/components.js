@@ -325,7 +325,7 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
                 value=${currentDraft}
                 onInput=${onInput}
                 onKeyDown=${onKeyPress}></textarea>
-                <div class="emoji_picker_entrypoint" data-stickers="1"></div>
+                <div class="emoji_picker_entrypoint"></div>
             </div>
             <div class="post-horizontal"></div>
             <div class="post-vertical"></div>

@@ -394,6 +394,7 @@ function get_attachment_text(attachment) {
 }
 
 function unpack_attachments_into_node(textarea_node, attachments) {
+    console.log(textarea_node, attachments)
     attachments.forEach(attachment => {
         const type = attachment.type
         const obj = attachment[type];

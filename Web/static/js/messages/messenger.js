@@ -45,7 +45,6 @@ export class Messenger {
       'from_id': window.im.current.id,
       'peer_id': corresponder.id,
       'date': Math.round((new Date()).getTime() / 1000),
-
     });
 
     if (reply_to) {
@@ -234,7 +233,8 @@ export class MessengerViewModel {
             this.currentDraft = msg.text;
         }
 
-        if (msg.attachments > 0) {
+        console.log(msg.attachments)
+        if (msg.attachments.length > 0) {
             unpack_attachments_into_node(u(this.appEl.querySelector("#write")), msg.attachments);
         }
 

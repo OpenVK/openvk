@@ -15,6 +15,8 @@ function appendEmoji(e) {
         textarea.focus();
         textarea.dispatchEvent(new Event('input', { bubbles: true }));
     }
+
+    addSmile(emoji);
 }
 
 function sendSticker(textarea) {
@@ -52,6 +54,7 @@ const emojiTippy = tippy.delegate("body", {
 function renderEmojiGrid(with_stickers = false) {
     if (!window.emojiData) return `<div style="padding:30px;">${tr('loading')}...</div>`;
 
+    const recent = getRecentSmiles();
     const val = u(`
     <div>
         <div class="emoji-picker">
@@ -61,9 +64,25 @@ function renderEmojiGrid(with_stickers = false) {
             <div class="sticker-tabs">
                 <div class="s-tab s-tab-smileys"></div>
             </div>
-            <div class="sticker-store"></div>
+            <div class="sticker-store" onclick="OpenStickersStore()"></div>
         </div>
     </div>`);
+
+    if (recent.length > 0) {
+        const localized_group = tr("emoji_group_recent");
+
+        val.find(".emoji-picker-group").append(`
+            <div class="group-title-item" data-group="recent">
+                <div class="group-title"><b>${localized_group}</b></div>
+                <div class="emoji-picker-group-items"></div>
+            </div>
+        `);
+        const block = val.find(`.emoji-picker-group .group-title-item[data-group="recent"]`)
+
+        recent.forEach((smile) => {
+            block.find(".emoji-picker-group-items").append(`<span class="emoji-picker-item" onclick="appendEmoji(event)" data-emoji="${smile}">${smile}</span>`)
+        });
+    }
 
     window.emojiData.forEach(function (group) {
         const localized_group = tr("emoji_group_"+group.slug);
@@ -72,7 +91,7 @@ function renderEmojiGrid(with_stickers = false) {
         if (insert_slug != "flags") {
             val.find(".emoji-picker-group").append(`
                 <div class="group-title-item" data-group="${insert_slug}">
-                    <div class="group-title">${localized_group}</div>
+                    <div class="group-title"><b>${localized_group}</b></div>
                     <div class="emoji-picker-group-items"></div>
                 </div>
             `);
@@ -103,7 +122,7 @@ function renderEmojiGrid(with_stickers = false) {
             console.log(pack)
             val.find(".emoji-picker-group").append(`
             <div clas="group-title-item">
-                <div class="group-title">${escapeHtml(pack.name)}</div>
+                <div class="group-title"><b>${escapeHtml(pack.name)}</b></div>
                 <div class="emoji-picker-group-items"></div>
             </div>
             `)
@@ -115,20 +134,18 @@ function renderEmojiGrid(with_stickers = false) {
     return val;
 }
 
-async function _updStickersInfo() {
+async function loadEmojiData() {
+    if (window.emojiData != null && window.openvk.stickers != null) {
+        return window.emojiData;
+    };
+
+    console.log("loading emoji data");
+
     try {
         window.openvk.stickers = await getStickerpacks();
     } catch(e) {
         window.openvk.stickers = { items: [] };
     }
-}
-
-async function loadEmojiData() {
-    if (window.emojiData != null && window.openvk.stickers != null) {
-        return Promise.resolve(window.emojiData)
-    };
-
-    await _updStickersInfo();
 
     const d = await fetch('/assets/packages/static/openvk/js/node_modules/unicode-emoji-json/data-by-group.json');
     const j = await d.json();
@@ -160,23 +177,23 @@ async function buyStickerpack(buyPackId) {
 // Recent smiles
 
 function getRecentSmiles() {
-    const l = localStorage.getItem("recent_smiles") ?? "";
-
-    return l.split("");
-}
-
-function getRecentStickers() {
-    const l = localStorage.getItem("recent_sticker") ?? "[]";
+    const l = localStorage.getItem("recent_smiles") ?? "[]";
 
     return JSON.parse(l);
 }
 
+function getRecentStickers() {
+    return JSON.parse(localStorage.getItem("recent_sticker") ?? "[]");
+}
+
 function addSmile(smile) {
     const s = getRecentSmiles();
-    let g = s.filter(i => { return i != smile });
+    let g = s.filter((i) => { return i != smile });
     g.unshift(smile);
 
-    localStorage.setItem("recent_smiles", g.join(""));
+    g = g.slice(0, 100);
+
+    localStorage.setItem("recent_smiles", JSON.stringify(g));
 
     return g;
 }
@@ -192,6 +209,107 @@ function addSticker(sticker = {}) {
 }
 
 function clearRecentSmiles() {
-    localStorage.setItem("recent_smiles", "");
-    localStorage.setItem("recent_sticker", "");
+    localStorage.setItem("recent_smiles", "[]");
+    localStorage.setItem("recent_sticker", "[]");
+}
+
+let _stickersActiveTab = 'all';
+
+function _renderStickersGrid(container, packs) {
+    container.html('');
+    if (!packs || packs.length === 0) {
+        container.append('<div class="stickers-empty">' + tr('no_stickers') + '</div>');
+        return;
+    }
+    packs.items.forEach(function (pack) {
+        const price = pack.price ? String(pack.price) : tr('free');
+        container.append(
+            `<div class="stickers-pack" onclick="OpenStickerpack(${pack.id})">
+                <img src="${(pack.photo_256 || pack.photo_128 || '')}">
+                <div class="stickers-pack-name">${escapeHtml(pack.name || '')}</div>
+                <div class="stickers-pack-price">${price}</div>
+            </div>`
+        );
+    });
+}
+
+async function _switchStickersTab(tabId, tabsEl, gridEl) {
+    _stickersActiveTab = tabId;
+
+    tabsEl.find('#activetabs').attr("id", "");
+    tabsEl.find('[data-sticker-tab="' + tabId + '"]').attr("id", "activetabs");
+
+    //gridEl.html('<div class="stickers-loading">' + tr('loading') + '...</div>');
+
+    let packs = [];
+    switch (tabId) {
+        case 'all':
+            packs = await getAllStickerpacks();
+            break;
+        case 'own':
+            packs = await getStickerpacks();
+            break;
+        case 'deleted':
+            const allPacks = await getAllStickerpacks();
+            const ownPacks = await getStickerpacks();
+            const ownIds = {};
+            ownPacks.forEach(function (p) { ownIds[p.id] = true; });
+            packs = allPacks.filter(function (p) { return !ownIds[p.id]; });
+            break;
+    }
+
+    _renderStickersGrid(gridEl, packs);
+}
+
+function OpenStickersStore() {
+    const cmsg = new CMessageBox({
+        title: tr("stickers_store"),
+        custom_template: u(`
+        <div class="ovk-photo-view-dimmer">
+            <div class="ovk-photo-view">
+                <div class="stickers-store">
+                    <div>
+                        <div class="mb_tabs"></div>
+                    </div>
+                    <div>
+                        <div class="stickers-grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `)
+    });
+
+    const container = cmsg.getNode();
+    const tabsEl = container.find('.mb_tabs');
+    const gridEl = container.find('.stickers-grid');
+
+    const tabDefs = [
+        { id: 'all',    label: tr('sticker_tab_all') },
+        { id: 'own',    label: tr('sticker_tab_own') },
+        { id: 'deleted', label: tr('sticker_tab_deleted') },
+    ];
+
+    tabDefs.forEach(function (tab) {
+        tabsEl.append(
+            `<div class="mb_tab" data-sticker-tab="${tab.id}">
+                ${escapeHtml(tab.label)}
+            </div>`
+        );
+    });
+
+    tabsEl.on('click', '[data-sticker-tab]', function () {
+        const tabId = this.dataset.stickerTab;
+        if (tabId === _stickersActiveTab) {
+            return;
+        };
+
+        _switchStickersTab(tabId, tabsEl, gridEl);
+    });
+
+    _switchStickersTab(_stickersActiveTab, tabsEl, gridEl);
+}
+
+function OpenStickerpack(pack_id) {
+
 }

@@ -4398,7 +4398,7 @@ hr {
 }
 
 .emoji-picker {
-    width:250px;
+    width: 233px;
     max-height:200px;
     overflow-y:auto;
     padding:6px 8px 40px 8px;
@@ -4454,8 +4454,12 @@ hr {
 }
 
 .emoji-picker .emoji-picker-group .group-title {
-    font-size: 13px;
-    padding-bottom: 9px;
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.emoji-picker .emoji-picker-group .group-title:first-of-type {
+    padding-top: unset;
 }
 
 .emoji-picker .emoji-picker-group-items .emoji-picker-item {

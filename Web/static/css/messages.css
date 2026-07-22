@@ -1015,3 +1015,9 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     display: inline-block;
     cursor: pointer;
 }
+
+/* Stickers */
+
+.stickers-store {
+
+}

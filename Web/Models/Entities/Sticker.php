@@ -103,4 +103,19 @@ class Sticker extends RowModel
 
         parent::delete($softly);
     }
+
+    public function toVkApiStruct(): array
+    {
+        $server_url = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
+
+        $res = [];
+        $res["id"] = $this->getId();
+        $res["emoji"] = $this->getEmoji();
+        $res["photo_128"] = $server_url . $this->getImageUrl(128);
+        $res["photo_256"] = $server_url . $this->getImageUrl(256);
+        $res["photo_128_outline"] = $server_url . $this->getImageUrl(128, true);
+        $res["photo_256_outline"] = $server_url . $this->getImageUrl(256, true);
+
+        return $res;
+    }
 }

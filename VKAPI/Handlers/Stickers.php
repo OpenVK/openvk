@@ -10,6 +10,11 @@ final class Stickers extends VKAPIRequestHandler
 {
     public function get(int $user_id = 0, int $count = 10, int $offset = 0): object
     {
+        return (object) [
+            'count' => 0,
+            'items' => [],
+        ];
+
         $this->requireUser();
 
         if ($user_id < 1) {
@@ -28,23 +33,10 @@ final class Stickers extends VKAPIRequestHandler
                 continue;
             }
 
-            $data = $pack->toVkApiStruct();
+            $data = $pack->toVkApiStruct($this->getUser());
             $stickers = [];
             foreach ($pack->getStickers(1, 100) as $sticker) {
-                $stickers[] = [
-                    "id"           => $sticker->getId(),
-                    "emoji"        => $sticker->getEmoji(),
-                    "photo_128"    => $server_url . $sticker->getImageUrl(128),
-                    "photo_256"    => $server_url . $sticker->getImageUrl(256),
-                    "photo_128_outline" => $server_url . $sticker->getImageUrl(128, true),
-                    "photo_256_outline" => $server_url . $sticker->getImageUrl(256, true),
-                ];
-            }
-
-            $mainSticker = $pack->getMainSticker();
-
-            if ($mainSticker) {
-                $data["photo_256"] = $server_url . $mainSticker->getImageUrl(256);
+                $stickers[] = $sticker->toVkApiStruct();
             }
 
             $data["stickers"] = $stickers;
@@ -57,6 +49,11 @@ final class Stickers extends VKAPIRequestHandler
 
     public function getAll(int $count = 10, int $offset = 0): object
     {
+        return (object) [
+            'count' => 0,
+            'items' => [],
+        ];
+
         $this->requireUser();
 
         $server_url = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
@@ -72,20 +69,7 @@ final class Stickers extends VKAPIRequestHandler
                 continue;
             }
 
-            $mainSticker = $pack->getMainSticker();
-
-            $items[] = [
-                "id"              => $pack->getId(),
-                "name"            => $pack->getName(),
-                "description"     => $pack->getDescription() ?? "",
-                "slug"            => $pack->getSlug(),
-                "price"           => $pack->getPrice(),
-                "end_time"        => $pack->getEndTime() ?? 0,
-                "purchased"       => $pack->isPurchasedBy($this->getUser()) ? 1 : 0,
-                "photo_128"       => $mainSticker ? ($server_url . $mainSticker->getImageUrl(128)) : "",
-                "photo_256"       => $mainSticker ? ($server_url . $mainSticker->getImageUrl(256)) : "",
-                "stickers_count"  => $pack->getStickersCount(),
-            ];
+            $items[] = $pack->toVkApiStruct($this->getUser());
             $i++;
         }
 
@@ -95,6 +79,11 @@ final class Stickers extends VKAPIRequestHandler
 
     public function getFrom(int $stickerpack_id): object
     {
+        return (object) [
+            'count' => 0,
+            'items' => [],
+        ];
+
         $this->requireUser();
 
         $repo = new StickersRepo();
@@ -116,30 +105,22 @@ final class Stickers extends VKAPIRequestHandler
         $server_url = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
         $stickers = [];
 
+        $pack_item = $pack->toVkApiStruct($this->getUser());
+
         foreach ($pack->getStickers(1, 100) as $sticker) {
-            $stickers[] = [
-                "id"           => $sticker->getId(),
-                "emoji"        => $sticker->getEmoji(),
-                "photo_128"    => $server_url . $sticker->getImageUrl(128),
-                "photo_256"    => $server_url . $sticker->getImageUrl(256),
-                "photo_128_outline" => $server_url . $sticker->getImageUrl(128, true),
-                "photo_256_outline" => $server_url . $sticker->getImageUrl(256, true),
-            ];
+            $pack_item["stickers"][] = $sticker->toVkApiStruct();
         }
 
-        return (object) [
-            "id"          => $pack->getId(),
-            "name"        => $pack->getName(),
-            "description" => $pack->getDescription() ?? "",
-            "slug"        => $pack->getSlug(),
-            "price"       => $pack->getPrice(),
-            "purchased"   => $pack->isPurchasedBy($this->getUser()) ? 1 : 0,
-            "stickers"    => $stickers,
-        ];
+        return (object) $pack_item;
     }
 
     public function buy(int $stickerpack_id): object
     {
+        return (object) [
+            "success" => 1,
+            "pack_id" => 0,
+        ];;
+
         $this->requireUser();
         $this->willExecuteWriteAction();
 
@@ -148,6 +129,10 @@ final class Stickers extends VKAPIRequestHandler
 
         if (!$pack) {
             $this->fail(15, "Sticker pack not found");
+        }
+
+        if (!$pack->isAvailable()) {
+            $this->fail(15, "Sticker not available");
         }
 
         if (!$pack->buy($this->getUser())) {
