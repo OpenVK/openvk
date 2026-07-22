@@ -49,6 +49,27 @@ final class WallPresenter extends OpenVKPresenter
         }
     }
 
+    private function getWithAlienWallPostsPreference(): int
+    {
+        if (isset($_GET["with_alien_wall_posts"])) {
+            $value = (int) $_GET["with_alien_wall_posts"];
+            $this->setWithAlienWallPostsCookie($value);
+
+            return $value;
+        }
+
+        $cookieValue = $_COOKIE["with_alien_wall_posts"] ?? "1";
+
+        return ($cookieValue === "1" || $cookieValue === "true") ? 1 : 0;
+    }
+
+    private function setWithAlienWallPostsCookie(int $value): void
+    {
+        $cookieValue = $value === 1 ? "1" : "0";
+        setcookie("with_alien_wall_posts", $cookieValue, time() + 60 * 60 * 24 * 365, "/", "", false, false);
+        $_COOKIE["with_alien_wall_posts"] = $cookieValue;
+    }
+
     public function renderWall(int $user, bool $embedded = false): void
     {
         $owner = ($user < 0 ? (new Clubs()) : (new Users()))->get(abs($user));
@@ -193,7 +214,7 @@ final class WallPresenter extends OpenVKPresenter
         $ids[] = $this->user->id;
 
         $perPage = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);
-        $withAlienWallPosts = (int) ($_GET["with_alien_wall_posts"] ?? 0);
+        $withAlienWallPosts = $this->getWithAlienWallPostsPreference();
 
         $posts   = DatabaseConnection::i()
                    ->getContext()
@@ -228,7 +249,7 @@ final class WallPresenter extends OpenVKPresenter
         $page  = (int) ($_GET["p"] ?? 1);
         $pPage = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);
 
-        $withAlienWallPosts = (int) ($_GET["with_alien_wall_posts"] ?? 0);
+        $withAlienWallPosts = $this->getWithAlienWallPostsPreference();
 
         $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) LEFT JOIN `profiles` ON LEAST(`posts`.`wall`, 0) = 0 AND `profiles`.`id` = ABS(`posts`.`wall`)";
         $queryBase .= " WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND ((`profiles`.`profile_type` = 0 AND `profiles`.`hide_global_feed` = 0) OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
