@@ -170,8 +170,12 @@ final class AuthPresenter extends OpenVKPresenter
             }
 
             $this->authenticator->authenticate($chUser->getId());
-            $this->redirect("/id" . $user->getId());
-            $user->save();
+
+            if (OPENVK_ROOT_CONF['openvk']['preferences']['registration']['redirectAfter'] == null) {
+                $this->redirect("/id" . $user->getId());
+            } else {
+                $this->redirect(OPENVK_ROOT_CONF['openvk']['preferences']['registration']['redirectAfter']);
+            }
         }
     }
 
