@@ -481,7 +481,7 @@ export class ChatGeneralForm {
 
     // ── sending ──────────────────────────────────────────────────────
 
-    async sendMessage(msg, reply_to = null, attachments = null) {
+    async sendMessage(msg, reply_to = null, attachments = null, wait_until_send = null) {
         this._pushNewMessage(msg);
         window.im.messenger.view._scrollToEnd();
         const datas = {
@@ -496,6 +496,15 @@ export class ChatGeneralForm {
 
         if (attachments != null) {
             datas['attachment'] = attachments.join(',');
+        }
+
+        if (wait_until_send != null) {
+            await new Promise(function (r) { setTimeout(r, wait_until_send); });
+        }
+
+        if (msg.is_deleted == true) {
+            console.info('IM | Maybe message send interrupted, so does not sending. ', this.id, msg);
+            return;
         }
 
         try {
