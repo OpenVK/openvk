@@ -33,6 +33,9 @@ export class Messenger {
     container.classList.add('hidden');
   }
 
+  static MESSAGE_CHUNK_LENGTH = 1000;
+  static MESSAGE_SEND_INTERVAL = 5000;
+
   async sendToCurrentCorresponder() {
     const view = this.view;
     const text = view.currentDraft;
@@ -41,26 +44,47 @@ export class Messenger {
     let attachments_list = null;
     const corresponder = window.im.corresponder;
 
-    const msg = new ChatMessage({
-      'from_id': window.im.current.id,
-      'peer_id': corresponder.id,
-      'date': Math.round((new Date()).getTime() / 1000),
-    });
+    const attachments = collect_attachments(u('.messenger-app--input---messagebox'));
+    if (attachments.length > 0) {
+        attachments_list = attachments;
+    }
 
     if (reply_to) {
       reply_param = reply_to;
     }
 
-    const attachments = collect_attachments(u('.messenger-app--input---messagebox'));
-    if (attachments.length > 0) {
-        attachments_list = attachments;
-        msg.has_not_loaded_attachments = true;
+    if (text.length <= Messenger.MESSAGE_CHUNK_LENGTH + 20) {
+      const msg = new ChatMessage({
+        'from_id': window.im.current.id,
+        'peer_id': corresponder.id,
+        'date': Math.round((new Date()).getTime() / 1000),
+      });
+      if (attachments_list) msg.has_not_loaded_attachments = true;
+      msg._guessSender();
+      msg.setText(text);
+      return await corresponder.sendMessage(msg, reply_param, attachments_list);
     }
 
-    msg._guessSender();
-    msg.setText(text);
+    // ── Split long message into chunks ──
+    const chunks = [];
+    for (let i = 0; i < text.length; i += Messenger.MESSAGE_CHUNK_LENGTH) {
+      chunks.push(text.slice(i, i + Messenger.MESSAGE_CHUNK_LENGTH));
+    }
 
-    return await corresponder.sendMessage(msg, reply_param, attachments_list);
+    const total = chunks.length;
+    for (let i = 0; i < total; i++) {
+      const isLast = i === total - 1;
+      const msg = new ChatMessage({
+        'from_id': window.im.current.id,
+        'peer_id': corresponder.id,
+        'date': Math.round((new Date()).getTime() / 1000),
+      });
+      if (isLast && attachments_list) msg.has_not_loaded_attachments = true;
+      msg._guessSender();
+      msg.setText(chunks[i]);
+
+      corresponder.sendMessage(msg, isLast ? reply_param : null, isLast ? attachments_list : null, isLast ? null : Messenger.MESSAGE_SEND_INTERVAL);
+    }
   }
 }
 
@@ -280,16 +304,17 @@ export class MessengerViewModel {
 
     toggleMessageSelection(msg, e) {
         if (msg.id == null) {
-            const c = new CMessageBox({
-                title: "удалииии",
-                body: "удалить сообщение которое даже не постаралось отправиться а так подло тебя подвело и ты мискликнул???",
-                buttons: [tr("yes"), tr("no")],
-                callbacks: [() => {
-                    msg.setDeleted();
-                    this._triggerUpdate();
-                }, () => {}]
-            })
-            return;
+            if (e.target.closest(".error-checkmark") == null) {
+                const c = new CMessageBox({
+                    title: "удалииии",
+                    body: "удалить сообщение которое даже не постаралось отправиться а так подло тебя подвело и ты мискликнул???",
+                    buttons: [tr("yes"), tr("no")],
+                    callbacks: [() => {
+                        msg.setDeleted();
+                        this._triggerUpdate();
+                    }, () => { }]
+                });
+            }
         }
 
         if (this.editMsg != null) {
@@ -543,7 +568,8 @@ export class MessengerViewModel {
 	}
 
 	_eraseCurrentDraft() {
-		this.currentDraft = '';
+        this.currentDraft = '';
+		u('.messenger-app--input---messagebox textarea').attr("style", "height: 50px;");
 	}
 
 	_loadDraft(for_chat) {
