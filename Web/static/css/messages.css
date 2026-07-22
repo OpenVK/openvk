@@ -59,6 +59,10 @@ body.no-scroll .sidebar {
     top: 44px;
 }
 
+body.no-footer .page_footer {
+    display: none;
+}
+
 .messenger-app--global-tabs #spec-actions.hidden {
 	display: none;
 }
@@ -634,8 +638,8 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    background: linear-gradient(180deg, var(--bg-slightly), #d5d1d147);
-    border-top: 1px solid #d6d6d6;
+    background: linear-gradient(180deg, var(--bg-slightly), var(--bg-slightly-2));
+    border-top: 1px solid var(--bg-slightly-border);
     padding: 10px 60px;
 }
 
@@ -880,6 +884,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     width: 100%;
     height: 100%;
     object-fit: cover;
+    image-rendering: -webkit-optimize-contrast;
 }
 
 .peer-window .peer-side .peer-info .avatar-opener {
@@ -1026,8 +1031,23 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     cursor: pointer;
 }
 
-/* Stickers */
+/* Search */
 
-.stickers-store {
+#search-page-im {
+    margin: 0px 0px 0px -10px;
+    width: 628px;
+}
 
+.search-up {
+    background: #F6F6F6;
+    border-bottom: 1px solid var(--bg-slightly-border);
+    padding: 15px 250px 15px 75px;
+}
+
+#search-page-im .search-summary {
+    padding: 10px 75px;
+}
+
+#search-page-im .search-summary b {
+    color: var(--summary);
 }

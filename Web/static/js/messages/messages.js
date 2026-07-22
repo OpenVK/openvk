@@ -862,33 +862,6 @@ export class ChatGeneralForm {
   }
 }
 
-// ── helper ─────────────────────────────────────────────────────────
-
-function _authorize(items, profiles = null, groups = null, get_id = null, set_id = null, finalize = null) {
-  let fin = [];
-
-  items.forEach((item) => {
-    const _id = get_id(item);
-    let author = null;
-
-    if (!profiles && !groups) {
-      author = window.im.cached_profiles._findCachedProfileById(_id);
-    } else {
-      author = window.find_author(_id, profiles, groups);
-    }
-
-    set_id(item, author);
-
-    if (finalize) {
-      finalize(item, fin);
-    }
-  });
-
-  if (finalize) {
-    return fin;
-  }
-}
-
 // ── ChatMessage ────────────────────────────────────────────────────
 
 export class ChatMessage {

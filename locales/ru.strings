@@ -1375,7 +1375,6 @@
 "message_is_deleted" = "Сообщение удалено";
 
 "to_friendslist" = "К списку друзей";
-"selected_messages_one" = "Выбрано одно сообщение";
 "selected_messages_one" = "Выбрано сообщение";
 "selected_messages" = "Выбрано $1 сообщений";
 "delete_message" = "Удалить";
@@ -1446,6 +1445,11 @@
 "messenger_typing_two_users" = "$1 и $2 набирают";
 "messenger_typing_three_users" = "$1, $2 и $3 набирают";
 "messenger_typing_other" = "$1 набирают";
+
+"messages_search_count_one" = "По данному запросу найдено одно сообщение";
+"messages_search_count_few" = "По данному запросу найдено $1 сообщения";
+"messages_search_count_many" = "По данному запросу найдено $1 сообщений";
+"messages_search_count_other" = "Найдено $1 сообщений";
 
 /* System messages */
 

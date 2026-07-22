@@ -2329,6 +2329,7 @@
         top: 78px;
         margin-left: -7px;
         width: 100% !important;
+        border-bottom: 1px solid var(--bg-slightly-border);
     }
 
     body.no-scroll .messages--peers-tabs {

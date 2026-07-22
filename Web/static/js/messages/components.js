@@ -419,12 +419,6 @@ export const TabBar = ({ tabs, activeTab, onTabSelect }) => {
   `;
 };
 
-export const SearchPage = ({ query }) => {
-  return html`
-    <input type="query" default="${tr('search_messages')}" value="${query}" />
-  `;
-};
-
 export const FriendsPage = ({ friends, count, referrer, onFriendClick, onCreateChat, isSelected, onLoadMore }) => {
     return html`
         ${referrer == "chat_creation" && html`
@@ -521,11 +515,10 @@ export const PeerWindow = ({ peer, togglePeerInfo }) => {
                 <div class="peer-actions-1">
                     <a onClick=${() => { window.im.setChatByPeerId(peer.id) }}>${tr('write_message')}</a>
                 </div>
-
             </div>
         </div>
         <div class="chat-actions-2">
-            <a>Закреплённое</a>
+            <a onClick=${(e) => { window.im.messenger.view.setSpecialMode("pinned") }}>Закреплённое</a>
             <a>Фото (100)</a>
             <a>Видео (100)</a>
             <a>Аудио (100)</a>
