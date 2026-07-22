@@ -250,12 +250,11 @@ body.no-scroll .sidebar {
 .messenger-app--messages---message .time {
     position: absolute;
     top: 0px;
-    height: 100%;
     display: block;
     opacity: 0;
     transition: 200ms opacity ease-in-out;
     align-items: center;
-    right: 60px;
+    right: 77px;
 }
 
 .messenger-app--messages---message .time span {
@@ -370,13 +369,11 @@ body.no-scroll .sidebar {
 }
 
 .messenger-app--messages---message.same-author .checkmark,
-.messenger-app--messages---message.same-author .error-checkmark,
-.messenger-app--messages---message.same-author .actions-2 > div {
+.messenger-app--messages---message.same-author .error-checkmark {
     margin: 0px 0px 0px 25px;
 }
 
-.messenger-app--messages---message--wrap .checkmark,
-.messenger-app--messages---message .actions-2 > div {
+.messenger-app--messages---message--wrap .checkmark {
     width: 20px;
     height: 20px;
     margin: 10px 0px 0px 25px;
@@ -393,10 +390,26 @@ body.no-scroll .sidebar {
     transition: 200ms opacity;
 }
 
+.messenger-app--messages---message .actions-2 {
+    display: inline-flex;
+    gap: 2px;
+}
+
+.messenger-app--messages---message > .messenger-app--messages---message--wrap .inlines {
+    display: inline-block;
+}
+
 .messenger-app--messages---message .actions-2 > div {
-    background: plum;
     width: 20px;
     height: 20px;
+}
+
+.messenger-app--messages---message .actions-2 .edit-icon {
+    background: plum;
+}
+
+.messenger-app--messages---message .actions-2 .pin-icon {
+    background: slateblue;
 }
 
 .messenger-app--messages .messenger-app--messages-day-time {
@@ -455,10 +468,6 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     white-space: nowrap;
     height: 14px;
     line-height: 13px;
-}
-
-.messenger-app--messages---message > .messenger-app--messages---message--wrap > div {
-    display: inline-block;
 }
 
 .messenger-app--input>.ava {

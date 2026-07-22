@@ -195,6 +195,14 @@ export class ChatGeneralForm {
         return this.data.admin_id === window.openvk.current_id;
     }
 
+    canPinMessages(group = null) {
+        if (group != null) {
+            return false;
+        }
+
+        return this.data.admin_id === window.openvk.current_id;
+    }
+
     get conversation_avatar_any() {
         if (this.id === window.openvk.current_id) {
             return "/assets/packages/static/openvk/img/im/saved_messages.png";
@@ -939,6 +947,10 @@ export class ChatMessage {
         return this.data.sender;
     }
 
+    get peer_object() {
+        return window.im.conversations._findConv(this.data.peer_id).peer;
+    }
+
     get has_sender() {
         return this.data.from_id != null;
     }
@@ -1147,6 +1159,14 @@ export class ChatMessage {
         return this.data.edited == 1 || this.data.edited == true;
     }
 
+    isPinned() {
+        return this.data.is_pinned == 1;
+    }
+
+    setPinned(val) {
+        this.data.is_pinned = val;
+    }
+
     canEdit(group = null) {
         if (this.data.can_edit != null) {
             return this.data.can_edit === 1;
@@ -1166,6 +1186,15 @@ export class ChatMessage {
 
         // return this.data.can_edit;
         return this.data.from_id === window.openvk.current_id;
+    }
+
+    canPin(club = null) {
+        const peer = this.peer_object;
+        if (peer.supposed_type == "chat") {
+            return peer.canPinMessages();
+        }
+
+        return peer.can_write;
     }
 
     can_delete(club = null) {
@@ -1241,6 +1270,26 @@ export class ChatMessage {
         window.im.messenger.view._triggerUpdate();
 
         console.log("successfuly edited ", this, resp)
+    }
+
+    async togglePin(action) {
+        let method = "pin";
+        if (action == false) {
+            method = "unpin";
+        }
+
+        try {
+            let resp = await window.OVKAPI.call("messages." + method, {
+                "peer_id": this.peer_id,
+                "message_id": this.id,
+            });
+        } catch (e) {
+            fastError(String(e));
+            console.error(e);
+            return;
+        }
+
+        this.setPinned(Boolean(action));
     }
 
     shouldBeNotified() {
