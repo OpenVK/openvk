@@ -47,19 +47,19 @@
                         </a>
                         {if !$timeOnly}
                             {if $comment->canBeDeletedBy($thisUser)}
-                                |
+                                <span>|</span>
                                 <a href="/comment{$comment->getId()}/delete" id="_ajaxDelete">{_delete}</a>
                             {/if}
                             {if $comment->canBeEditedBy($thisUser)}
-                                |
+                                <span>|</span>
                                 <a id="editPost" data-id="{$comment->getId()}">{_edit}</a>
                             {/if}
                             {if !$no_reply_button}
-                                |
+                                <span>|</span>
                                 <a class="comment-reply">{_reply}</a>
                             {/if}
                             {if $thisUser->getId() != $author->getRealId()}
-                                |
+                                <span>|</span>
                                 {var $canReport = true}
                                 <a href="javascript:reportComment({$comment->getId()})">{_report}</a>
                             {/if}

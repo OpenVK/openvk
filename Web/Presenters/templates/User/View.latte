@@ -4,7 +4,7 @@
     {var $backdrops = $user->getBackDropPictureURLs()}
 {/if}
 
-{block title}{$user->getCanonicalName()}{/block} 
+{block title}{$user->getCanonicalName()}{/block}
 
 {block headIncludes}
     {if $user->getPrivacyPermission('page.read', $thisUser ?? NULL)}
@@ -22,7 +22,7 @@
     <meta n:if="!empty($ogDescriptionTrimmed)" property="og:description" content="{$ogDescriptionTrimmed}" />
     <meta name="twitter:title" content="{$user->getCanonicalName()} — {$instance_name}" />
     <meta name="twitter:image" content="{$avatarUrl}" />
-    
+
     <!-- json-ld -->
     <script type="application/ld+json">
         {
@@ -32,7 +32,7 @@
             "url": {$baseUrl . $user->getURL()}
         }
     </script>
-    {else} 
+    {else}
     <meta name="robots" content="noindex, noarchive">
     {/if}
 {/block}
@@ -44,7 +44,7 @@
          src="/assets/packages/static/openvk/img/checkmark.png"
          />
     <span n:if="isset($thisUser) && $user->getId() == $thisUser->getId()"><b>({_this_is_you})</b></span>
-    
+
     <!-- DEBUG: ONLINE REPORT: static {$user->getOnline()->timestamp()}s adjusted {$user->getOnline()->timestamp() + 2505600}s real {time()}s -->
     <div n:if="$user->getOnline()->timestamp() + 2505600 > time()" style="float:right;">
         {if $user->isOnline()}
@@ -65,18 +65,18 @@
 
 {block content}
     {if !$user->isBanned()}
-    
+
     {if !$user->getPrivacyPermission('page.read', $thisUser ?? NULL)}
         <div class="msg msg_err">
             <b>{_forbidden}</b><br/>
             {_forbidden_comment}
         </div>
     {else}
-    
+
     <div class="left_small_block">
         <div class="avatar_block">
             {var $hasAvatar = !str_contains($user->getAvatarUrl('miniscule'), "/assets/packages/static/openvk/img/camera_200.png")}
-            
+
             {if $thisUser && $user->getId() == $thisUser->getId()}
                 <div class="avatar_controls">
                     <div {if !$hasAvatar}style="display:none"{/if} class="avatarDelete hoverable"></div>
@@ -109,7 +109,7 @@
                         {tr("login_as", $user->getFirstName())}
                     </a>
                 {/if}
-                
+
                 {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
                     <a href="/admin/users/id{$user->getId()}" class="profile_link" style="width: 194px;">
                         {_manage_user_action}
@@ -137,7 +137,7 @@
                         {/if}
                     </a>
                 {/if}
-                
+
                 <a style="width: 194px;" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $user->getGiftCount() == 0" href="/gifts?act=pick&user={$user->getId()}" class="profile_link">{_send_gift}</a>
                 <a style="width: 194px;" n:if="$user->getPrivacyPermission('messages.write', $thisUser)" href="/im?sel={$user->getId()}" class="profile_link" rel="nofollow">{_send_message}</a>
 
@@ -184,12 +184,12 @@
         </div>
         <div n:if="isset($thisUser) && !$thisUser->prefersNotToSeeRating()" class="profile-hints">
             {var $completeness = $user->getProfileCompletenessReport()}
-            
+
             <div n:class="completeness-gauge, $completeness->total >= 100 ? completeness-gauge-gold">
                 <div style="width: {$completeness->percent}%"></div>
                 <span>{$completeness->total}%</span>
             </div>
-            
+
             {if isset($thisUser) && $user->getId() === $thisUser->getId() && sizeof($completeness->unfilled) > 0}
                 <br/>
                 <a n:if="in_array('interests', $completeness->unfilled)" href="/edit?act=interests">
@@ -215,9 +215,9 @@
             {/if}
         </div>
         <br />
-        <div n:if="$user->getFriendsCount() > 0 && $user->getPrivacyPermission('friends.read', $thisUser ?? NULL)">
+        <div class="fictional_profile_section" n:if="$user->getFriendsCount() > 0 && $user->getPrivacyPermission('friends.read', $thisUser ?? NULL)">
             {var $friendCount = $user->getFriendsCount()}
-            
+
             <div class="content_title_expanded" onclick="hidePanel(this, {$friendCount});">
                 {_friends}
             </div>
@@ -238,14 +238,14 @@
                         <a href="{$friend->getURL()}" class="cl_name">
                             <text class="cl_fname">{$friend->getFirstName()}</text>
                             <text class="cl_lname">{$friend->getLastName()}</text>
-                        </a>    
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
-        <div n:if="$thisUser != NULL && $thisUser->getId() == $user->getId() && $user->getFriendsOnlineCount() > 0">
+        <div class="fictional_profile_section" n:if="$thisUser != NULL && $thisUser->getId() == $user->getId() && $user->getFriendsOnlineCount() > 0">
             {var $friendOnlineCount = $user->getFriendsOnlineCount()}
-            
+
             <div class="content_title_expanded" onclick="hidePanel(this, {$friendOnlineCount});">
                 {_friends_online}
             </div>
@@ -266,12 +266,12 @@
                         <a href="{$friend->getURL()}" class="cl_name">
                             <text class="cl_fname">{$friend->getFirstName()}</text>
                             <text class="cl_lname">{$friend->getLastName()}</text>
-                        </a>    
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
-        <div n:if="$albumsCount > 0 && $user->getPrivacyPermission('photos.read', $thisUser ?? NULL)">
+        <div class="fictional_profile_section" n:if="$albumsCount > 0 && $user->getPrivacyPermission('photos.read', $thisUser ?? NULL)">
             <div class="content_title_expanded" onclick="hidePanel(this, {$albumsCount});">
                 {_albums}
             </div>
@@ -286,7 +286,7 @@
                     <div class="ovk-album" style="display: inline-block;" n:foreach="$albums as $album">
                         <div style="text-align: center;float: left;height: 54pt;width: 100px;">
                             {var $cover = $album->getCoverPhoto()}
-                            
+
                             <img
                                 src="{is_null($cover)?'/assets/packages/static/openvk/img/camera_200.png':$cover->getURLBySizeId('small')}"
                                 style="max-width: 80px; max-height: 54pt;" loading=lazy />
@@ -299,7 +299,7 @@
                 </div>
             </div>
         </div>
-        <div n:if="$videosCount > 0 && $user->getPrivacyPermission('videos.read', $thisUser ?? NULL)">
+        <div class="fictional_profile_section" n:if="$videosCount > 0 && $user->getPrivacyPermission('videos.read', $thisUser ?? NULL)">
             <div class="content_title_expanded" onclick="hidePanel(this, {$videosCount});">
                 {_videos}
             </div>
@@ -325,7 +325,7 @@
                 </div>
             </div>
         </div>
-        <div n:if="$notesCount > 0 && $user->getPrivacyPermission('notes.read', $thisUser ?? NULL)">
+        <div class="fictional_profile_section" n:if="$notesCount > 0 && $user->getPrivacyPermission('notes.read', $thisUser ?? NULL)">
             <div class="content_title_expanded" onclick="hidePanel(this, {$notesCount});">
                 {_notes}
             </div>
@@ -336,7 +336,7 @@
                         <a href="/notes{$user->getId()}">{_all_title}</a>
                     </div>
                 </div>
-				
+
 				<div class="hide_on_mobiles" style="padding: 5px 8px 15px 8px;">
                     <ul class="notes_titles" n:foreach="$notes as $note">
 						<li class="written">
@@ -353,7 +353,7 @@
                 </div>
             </div>
         </div>
-        <div n:if="$user->getClubCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)">
+        <div class="fictional_profile_section" n:if="$user->getClubCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)">
             {var $clubsCount = $user->getClubCount()}
             <div class="content_title_expanded" onclick="hidePanel(this, {$clubsCount})">
                 {_groups}
@@ -372,7 +372,7 @@
                 </div>
             </div>
         </div>
-        <div n:if="$user->getMeetingCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)">
+        <div class="fictional_profile_section" n:if="$user->getMeetingCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)">
             {var $meetingCount = $user->getMeetingCount()}
             <div class="content_title_expanded" onclick="hidePanel(this, {$meetingCount})">
                 {_meetings}
@@ -391,9 +391,9 @@
                 </div>
             </div>
         </div>
-        
+
     </div>
-    
+
     <div class="right_big_block">
         <div class="page_info_main page_info_main_profile page_info">
             <div n:if="!is_null($alert = $user->getAlert())" class="user-alert">{strpos($alert, "@") === 0 ? tr(substr($alert, 1)) : $alert}</div>
@@ -433,7 +433,7 @@
                 </div>
             </div>
             <div>
-                <table id="basicInfo" class="ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0" n:if=" $user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
+                <table id="basicInfo" class="not_flexible_table ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0" n:if=" $user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
                     <tbody>
                         <tr>
                             <td class="label"><span class="nobold">{_pronouns}: </span></td>
@@ -473,13 +473,13 @@
                 </table>
 			</div>
         </div>
-        <div n:if="$user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
+        <div id="entityAdditionalInfoBlock" n:if="$user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
             <div class="content_title_expanded" onclick="hidePanel(this);">
                 {_information}
             </div>
-            
+
             {capture $contactInfo_Tmp}
-                <table class="ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0" n:ifcontent>
+                <table class="not_flexible_table ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0" n:ifcontent>
                   <tbody n:ifcontent>
                         <tr n:if="!is_null($user->getContactEmail())">
                             <td class="label"><span class="nobold">{_email}: </span></td>
@@ -523,13 +523,13 @@
                 </table>
             {/capture}
             {capture $uInfo_Tmp}
-                <table class="ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0" n:ifcontent>
+                <table class="not_flexible_table ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0" n:ifcontent>
                   <tbody n:ifcontent>
                     <tr n:if="!is_null($user->getInterests())">
                         <td class="label"><span class="nobold">{_interests}: </span></td>
                         <td class="data">
                             {var $interests = explode(", ", $user->getInterests())}
-                            
+
                             {foreach $interests as $interest}
                                 <span style="white-space: pre-line">{$interest}</span>{if $interest != end($interests)},{/if}
                             {/foreach}
@@ -558,7 +558,7 @@
                     </tr>
                     <tr n:if="!is_null($user->getFavoriteShows())">
                         <td class="label"><span class="nobold">{_favorite_shows}: </span></td>
-                        <td class="data">                        
+                        <td class="data">
                             {var $shows = explode(", ", $user->getFavoriteShows())}
 
                             {foreach $shows as $show}
@@ -616,7 +616,7 @@
             </div>
         </div>
 
-        <div n:if="$audiosCount > 0 && $user->getPrivacyPermission('audios.read', $thisUser ?? NULL)">
+        <div class="fictional_profile_section" n:if="$audiosCount > 0 && $user->getPrivacyPermission('audios.read', $thisUser ?? NULL)">
             <div class="content_title_expanded" onclick="hidePanel(this, {$audiosCount});">
                 {_audios}
             </div>
@@ -635,7 +635,7 @@
             </div>
         </div>
 
-        <div n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && ($giftCount = $user->getGiftCount()) > 0">
+        <div class="fictional_profile_section" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && ($giftCount = $user->getGiftCount()) > 0">
             <div class="content_title_expanded" onclick="hidePanel(this, {$giftCount});">
                 {_gifts}
             </div>
@@ -656,17 +656,17 @@
                             <a href="{$hideInfo ? 'javascript:false' : $giftDescriptor->sender->getURL()}">
                                 <img style="width: 70px; max-height: 70px;"
                                     src="{$giftDescriptor->gift->getImage(2)}"
-                                    alt="{$hideInfo ? tr('gift') : ($giftDescriptor->caption ?? tr('gift'))}" 
+                                    alt="{$hideInfo ? tr('gift') : ($giftDescriptor->caption ?? tr('gift'))}"
                                     title="{$hideInfo ? tr('gift') : ($giftDescriptor->caption ?? tr('gift'))}" loading=lazy />
-                            </a>  
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         {presenter "openvk!Wall->wallEmbedded", $user->getId()}
-        
+
         <script n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL)">
             function banUser() {
                 uBanMsgTxt  = "Вы собираетесь забанить пользователя " + {$user->getCanonicalName()} + ".";
@@ -693,12 +693,12 @@
                     Function.noop
                 ]);
             }
-            
+
             function warnUser() {
                 uBanMsgTxt  = "Вы собираетесь предупредить пользователя " + {$user->getCanonicalName()} + ".";
                 uBanMsgTxt += "<br/>Мы отправим уведомление пользователю в личные сообщения от имени аккаунта администратора.";
                 uBanMsgTxt += "<br/><br/><b>Текст предупреждения</b>: <input type='text' id='uWarnMsgInput' placeholder='придумайте что-нибудь крутое' />";
-                
+
                 MessageBox("Выдать предупреждение " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
                     (function() {
                         res = document.querySelector("#uWarnMsgInput").value;
@@ -764,9 +764,9 @@
             {/if}
         </script>
     </div>
-    
+
     {/if}
-    
+
     {else} {* isBanned() *}
         {include "banned.latte"}
     {/if}

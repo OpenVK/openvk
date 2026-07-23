@@ -1128,6 +1128,7 @@
 "bday_reminder_text" = "$1 is $2's birthday.";
 "bday_and" = " and ";
 "points" = "Votes";
+"balance" = "Votes balance";
 "points_count" = "votes";
 "on_your_account" = "on your account";
 "top_up_your_account" = "Get more";
