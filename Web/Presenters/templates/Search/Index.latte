@@ -206,6 +206,75 @@
 
                                     __scrollHook()
                                 </script>
+                            {elseif $section === 'events'}
+                                <div class='scroll_node search_content content def_row_content' n:foreach="$data as $dat">
+                                    <table>
+                                        <tbody>
+                                            <tr>
+                                                <td valign="top">
+                                                    <a href="{$dat->getURL()}">
+                                                        <img src="{$dat->getAvatarUrl('tiny')}" width="75" alt="{_photo}" loading='lazy' />
+                                                    </a>
+                                                </td>
+                                                <td class="list_view_item_info" valign="top" style="width: 100%">
+                                                    <a href="{$dat->getURL()}">
+                                                        <b>
+                                                            <text style="overflow: hidden;">&nbsp;{$dat->getCanonicalName()}  
+                                                                {if $order == "id"}
+                                                                    (id{$dat->getId()})
+                                                                {/if}
+                                                            </text>
+                                                            <img n:if="$dat->isVerified()" 
+                                                                class="name-checkmark"
+                                                                src="/assets/packages/static/openvk/img/checkmark.png"
+                                                            />
+                                                        </b>
+                                                    </a>
+
+                                                    <table class="ugc-table">
+                                                        <tbody>
+                                                            {if !empty($dat->getDescription())}
+                                                                <tr>
+                                                                    <td>
+                                                                        <span class="nobold">{_description}:</span>
+                                                                    </td>
+                                                                    <td data-highlight='_clubDesc'>
+                                                                        {$dat->getDescription() ?? '(' . tr("none") . ')'}
+                                                                    </td>
+                                                                </tr>
+                                                            {/if}
+                                                            <tr>
+                                                                <td>
+                                                                    <span class="nobold">{_size}:</span>
+                                                                </td>
+                                                                <td>
+                                                                    {tr("participants", $dat->getFollowersCount())}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <span class="nobold">{_event_start_date}:</span>
+                                                                </td>
+                                                                <td>
+                                                                    {$dat->getStartDate()}
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    <br/>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <script n:if='$count > 0 && !empty($query)'>
+                                    function __scrollHook(page) {
+                                        highlightText({$query}, '.page_wrap_content_main', ['text', "td[data-highlight='_clubDesc']"])
+                                    }
+
+                                    __scrollHook()
+                                </script>
                             {elseif $section === 'apps'}
                                 <div class='scroll_node search_content content def_row_content' n:foreach="$data as $dat">
                                     <table>
@@ -315,6 +384,7 @@
                         <div class="page_wrap_content_options_list verticalGrayTabs with_padding">
                             <a n:attr="id => $section === 'users' ? 'used'"    href="/search?section=users&q={urlencode($query)}">    {_s_people}</a>
                             <a n:attr="id => $section === 'groups' ? 'used'"   href="/search?section=groups&q={urlencode($query)}">   {_s_groups}</a>
+                            <a n:attr="id => $section === 'events' ? 'used'"   href="/search?section=events&q={urlencode($query)}">   {_s_events}</a>
                             <a n:attr="id => $section === 'posts' ? 'used'"    href="/search?section=posts&q={urlencode($query)}">    {_s_posts}</a>
                             <a n:attr="id => $section === 'videos' ? 'used'"   href="/search?section=videos&q={urlencode($query)}">   {_s_videos}</a>
                             <a n:attr="id => $section === 'apps' ? 'used'"     href="/search?section=apps&q={urlencode($query)}">     {_s_apps}</a>

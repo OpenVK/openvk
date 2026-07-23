@@ -68,7 +68,7 @@ class Clubs
         return $clubs_array;
     }
 
-    public function find(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false], int $page = 1, ?int $perPage = null): \Traversable
+    public function find(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false], int $page = 1, ?int $perPage = null, bool $andEvents = false): \Traversable
     {
         $query = "%$query%";
         $result = $this->clubs;
@@ -81,6 +81,30 @@ class Clubs
         }
 
         $result = $result->where("name LIKE ? OR about LIKE ?", $query, $query);
+        if (!$andEvents) {
+            $result = $result->where('type', 1);
+        }
+
+        if ($order_str) {
+            $result->order($order_str);
+        }
+
+        return new Util\EntityStream("Club", $result);
+    }
+
+    public function findEvents(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false], int $page = 1, ?int $perPage = null): \Traversable
+    {
+        $query = "%$query%";
+        $result = $this->clubs;
+        $order_str = 'id';
+
+        switch ($order['type']) {
+            case 'id':
+                $order_str = 'id ' . ($order['invert'] ? 'ASC' : 'DESC');
+                break;
+        }
+
+        $result = $result->where("name LIKE ? OR about LIKE ?", $query, $query)->where('type', 2);
 
         if ($order_str) {
             $result->order($order_str);

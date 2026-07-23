@@ -164,6 +164,7 @@
                                             <select name="section">
                                                 <option n:attr="selected => $section == 'users'" value="users">{_s_by_people}</option>
                                                 <option n:attr="selected => $section == 'groups'" value="groups">{_s_by_groups}</option>
+                                                <option n:attr="selected => $section == 'events'" value="events">{_s_by_events}</option>
                                                 <option n:attr="selected => $section == 'posts'" value="posts">{_s_by_posts}</option>
                                                 <option n:attr="selected => $section == 'videos'" value="videos">{_s_by_videos}</option>
                                                 <option n:attr="selected => $section == 'apps'" value="apps">{_s_by_apps}</option>
@@ -221,6 +222,7 @@
                             </a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('notes')" href="/notes{$thisUser->getId()}" class="link my_notes">{_my_notes}</a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('groups')" href="/groups{$thisUser->getId()}" class="link my_groups">{_my_groups}</a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('events')" href="/events{$thisUser->getId()}" class="link my_groups">{_my_events}</a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('news')" href="/feed" class="link my_feed" title="{_my_feed} [Alt+Shift+,]" accesskey=",">{_my_feed}</a>
                             <a href="/notifications" class="link my_feedback" title="{_my_feedback} [Alt+Shift+N]" accesskey="n">{_my_feedback}
                                 <object type="internal/link" n:if="$notificationsCount > 0">

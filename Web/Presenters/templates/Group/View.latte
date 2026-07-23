@@ -48,7 +48,7 @@
                     <td><span class="nobold">{_name_group}:</span></td>
                     <td><b>{$club->getName()}</b></td>    
                 </tr>
-                <tr>
+                <tr n:if="!empty($club->getDescriptionHtml())">
                     <td><span class="nobold">{_description}:</span></td>
                     <td>{$club->getDescriptionHtml()|noescape}</td>
                 </tr>
@@ -60,6 +60,18 @@
                         </a>
                     </td>
                 </tr>
+                <tr n:if="$club->isEvent()">
+                    <td><span class="nobold">{_event_start_date}: </span></td>
+                    <td>
+                        {$club->getStartDate()->relative(-1)}
+                    </td>
+                </tr>
+                <tr n:if="$club->isEvent() && !is_null($club->getFinishDate())">
+                    <td><span class="nobold">{_event_finish_date}: </span></td>
+                    <td>
+                        {$club->getFinishDate()->relative(-1)}
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
@@ -67,7 +79,11 @@
         {var $followersCount = $club->getFollowersCount()}
         
         <div class="content_title_expanded" onclick="hidePanel(this, {$followersCount});">
+        {if $club->isEvent()}
+            {_event_comers}
+        {else}
             {_participants}
+        {/if}
         </div>
         <div>
             <div class="content_subtitle">
@@ -78,6 +94,34 @@
             </div>
             <div style="padding-left: 5px;" class="hide_on_mobiles content_list long">
                 <div class="cl_element" n:foreach="$club->getFollowers(1) as $follower">
+                    <div class="cl_avatar">
+                        <a href="{$follower->getURL()}">
+                            <img class="ava" src="{$follower->getAvatarUrl('miniscule')}" />
+                        </a>
+                    </div>
+                    <a href="{$follower->getURL()}" class="cl_name">
+                        <text class="cl_fname">{$follower->getFirstName()}</text>
+                        <text class="cl_lname">{$follower->getLastName()}</text>
+                    </a>    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div n:if="$thisUser && $club->isEvent() && $club->getPotentialFollowersCount() > 0">
+        {var $potentialFollowersCount = $club->getPotentialFollowersCount()}
+        
+        <div class="content_title_expanded" onclick="hidePanel(this, {$potentialFollowersCount});">
+            {_event_potential_comers}
+        </div>
+        <div>
+            <div class="content_subtitle">
+                {tr("participants", $potentialFollowersCount)}
+                <div style="float:right;">
+                    <a href="/club{$club->getId()}/followers?mightcome=1">{_all_title}</a>
+                </div>
+            </div>
+            <div style="padding-left: 5px;" class="hide_on_mobiles content_list long">
+                <div class="cl_element" n:foreach="$club->getPotentialFollowers(1) as $follower">
                     <div class="cl_avatar">
                         <a href="{$follower->getURL()}">
                             <img class="ava" src="{$follower->getAvatarUrl('miniscule')}" />
@@ -107,11 +151,14 @@
                     <b><a href="/topic{$topic->getPrettyId()}">{$topic->getTitle()}</a></b><br>
                     <span class="nobold">{tr("updated_at", $topic->getUpdateTime())}</span>
                 </div>
+                <div class="section_empty" n:if="$topicsCount == 0">
+                    <a href="/topic{$club->getId()}" class="board">{_create}</a>
+                </div>
             </div>
         </div>
     </div>
 
-    <div n:if="$thisUser">
+    <div n:if="($thisUser && $audiosCount > 0) || ($thisUser && $club->canUploadAudio($thisUser))">
         <div class="content_title_expanded" onclick="hidePanel(this, {$audiosCount});">
             {_audios}
         </div>
@@ -126,6 +173,9 @@
                 <div class="audio" n:foreach="$audios as $audio" style="width: 100%;">
                     {include "../Audio/player.latte", audio => $audio}
                 </div>
+            </div>
+            <div class="section_empty" n:if="$audiosCount == 0">
+                <a href="/audios-{$club->getId()}" class="music">{_upload_button}</a>
             </div>
         </div>
     </div>
@@ -178,14 +228,31 @@
                 <input type="hidden" name="act" value="add" />
                 <input type="hidden" name="id"  value="{$club->getId()}" />
                 <input type="hidden" name="hash" value="{$csrfToken}" />
-                <input type="submit" id="profile_link" value="{_join_community}" />
+                {if $club->isEvent()}
+                    <input type="submit" id="profile_link" value="{_ill_come_to_meeting}" />
+                {else}
+                    <input type="submit" id="profile_link" value="{_join_community}" />
+                {/if}
             </form>
+            {if $club->isEvent()}
+            <form action="/setSub/club" method="post">
+                <input type="hidden" name="act" value="add" />
+                <input type="hidden" name="flag" value="1" />
+                <input type="hidden" name="id"  value="{$club->getId()}" />
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="submit" id="profile_link" value="{_i_might_come_to_meeting}" />
+            </form>
+            {/if}
         {else}
             <form action="/setSub/club" method="post">
                 <input type="hidden" name="act" value="rem" />
                 <input type="hidden" name="id"  value="{$club->getId()}" />
                 <input type="hidden" name="hash" value="{$csrfToken}" />
-                <input type="submit" id="profile_link" value="{_leave_community}" />
+                {if $club->isEvent()}
+                    <input type="submit" id="profile_link" value="{_ill_not_come_to_meeting}" />
+                {else}
+                    <input type="submit" id="profile_link" value="{_leave_community}" />
+                {/if}
             </form>
         {/if}
         {var $canReport = $thisUser->getId() != $club->getOwner()->getId()}
@@ -198,15 +265,31 @@
     </div>
     <div class="hide_on_mobiles">
         <div class="content_title_expanded" onclick="hidePanel(this);">
-            {_group_type}
+            {if $club->isEvent()}
+                {_event_type}
+            {elseif !$club->isEvent()}
+                {_group_type}
+            {/if}
         </div>
         <div style="padding:4px">
-            {_group_type_open}
+            {if $club->isEvent() && !$club->isClosed()}
+                {_event_type_open}
+            {elseif $club->isEvent() && $club->isClosed()}
+                {_event_type_closed}
+            {elseif !$club->isEvent() && !$club->isClosed()}
+                {_group_type_open}
+            {elseif !$club->isEvent() && $club->isClosed()}
+                {_group_type_closed}
+            {/if}
         </div>
     </div>
-    <div n:if="$club->getAdministratorsListDisplay() == 0">
+    <div n:if="$club->getAdministratorsListDisplay() == 0 || $club->isEvent()">
         <div class="content_title_expanded" onclick="hidePanel(this);">
-            {_creator}
+            {if $club->isEvent()}
+                {_event_host}
+            {else}
+                {_creator}
+            {/if}
         </div>
         <div class="avatar-list-item" style="padding: 8px;">
             {var $author = $club->getOwner()}
@@ -277,6 +360,9 @@
                     <a href="/albums{$club->getId() * -1}">{_all_title}</a>
                 </div>
             </div>
+            <div class="section_empty" n:if="$albumsCount == 0">
+                <a href="/albums{$club->getId()}" class="photo">{_upload_button}</a>
+            </div>
             <div style="padding: 5px;">
                 <div class="ovk-album" style="display: inline-block;" n:foreach="$albums as $album">
                     <div style="text-align: center;float: left;height: 54pt;width: 100px;">
@@ -310,6 +396,9 @@
                     <b><a href="/topic{$topic->getPrettyId()}">{$topic->getTitle()}</a></b><br>
                     <span class="nobold">{tr("updated_at", $topic->getUpdateTime())}</span>
                 </div>
+                <div class="section_empty" n:if="$topicsCount == 0">
+                    <a href="/topic{$club->getId()}" class="board">{_create}</a>
+                </div>
             </div>
         </div>
     </div>
@@ -328,6 +417,9 @@
                 {foreach $docs as $doc}
                     {include "../Documents/components/doc.latte", doc => $doc, hideButtons => true, noTags => true}
                 {/foreach}
+                <div class="section_empty" n:if="$docsCount == 0">
+                    <a href="/docs{$club->getRealId()}" class="docs">{_upload_button}</a>
+                </div>
             </div>
         </div>
     </div>

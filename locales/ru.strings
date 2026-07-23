@@ -361,22 +361,33 @@
 "join_community" = "Вступить в группу";
 "leave_community" = "Выйти из группы";
 "check_community" = "Просмотр группы";
+"ill_come_to_meeting" = "Я приду";
+"i_might_come_to_meeting" = "Возможно приду";
+"ill_not_come_to_meeting" = "Я не приду";
+"event_comers" = "Точно придут";
+"event_potential_comers" = "Возможно придут";
 "min_6_community" = "Название должно быть не менее 6 символов";
 "participants" = "Участники";
 "groups" = "Группы";
 "meetings" = "Встречи";
 "create_group" = "Создать группу";
+"create_event" = "Создать встречу";
 "group_managers" = "Руководство";
 "group_type" = "Тип группы";
 "group_type_open" = "Это открытая группа. В неё может вступить любой желающий.";
 "group_type_closed" = "Это закрытая группа. Для вступления необходимо подавать заявку.";
+"event_type" = "Тип встречи";
+"event_type_open" = "Это открытая встреча. В ней может поучавствовать любой желающий.";
+"event_type_closed" = "Это закрытая встреча. Для вступления Вы должны получить приглашение.";
 "creator" = "Создатель";
 "administrators" = "Администраторы";
+"event_host" = "Организатор";
 "add_to_left_menu" = "Добавить в левое меню";
 "remove_from_left_menu" = "Удалить из левого меню";
 "all_followers" = "Все подписчики";
 "only_administrators" = "Только администраторы";
 "website" = "Сайт";
+"location" = "Местоположение";
 "managed" = "Управляемые";
 "size" = "Размер";
 "administrators_one" = "$1 администратор";
@@ -390,6 +401,9 @@
 "set_comment" = "Изменить комментарий";
 "hidden_yes" = "Скрыт: Да";
 "hidden_no" = "Скрыт: Нет";
+"event_start_date" = "Начало";
+"event_finish_date" = "Окончание";
+"event_enable_finish_date" = "Указать дату окончания";
 
 "group_allow_post_for_everyone" = "Открытая";
 "group_limited_post" = "Предложка";
@@ -472,6 +486,9 @@
 "meetings_many" = "$1 встреч";
 "meetings_other" = "$1 встреч";
 "search_by_groups" = "Поиск по группам";
+"events_list_zero" = "Вы не учавствуете ни в одной группе";
+"events_list_one" = "Вы учавствуете в $1 встрече";
+"events_list_other" = "Вы учавствуете в $1 встречах";
 "group_banned" = "К сожалению, нам пришлось заблокировать сообщество <b>$1</b>.";
 
 "error_suggestions" = "Ошибка доступа к предложенным";
@@ -624,6 +641,7 @@
 "my_notes" = "Мои Заметки";
 "my_audios" = "Мои Аудиозаписи";
 "my_groups" = "Мои Группы";
+"my_events" = "Мои Встречи";
 "my_feed" = "Мои Новости";
 "my_feedback" = "Мои Ответы";
 "my_settings" = "Мои Настройки";
@@ -683,6 +701,7 @@
 "apply_style_for_this_device" = "Применить стиль только для этого устройства";
 "ui_settings_window" = "Дополнительные настройки";
 "search_for_groups" = "Поиск групп";
+"search_for_events" = "Поиск встреч";
 "search_for_users" = "Поиск людей";
 "search_for_posts" = "Поиск записей";
 "search_for_comments" = "Поиск комментариев";
@@ -1503,6 +1522,7 @@
 
 "error_on_server_side" = "Произошла ошибка на стороне сервера. Обратитесь к системному администратору.";
 "error_no_group_name" = "Вы не ввели название группы.";
+"error_no_event_name" = "Вы не ввели название встречи и/или не указали дату начала встречи.";
 
 "success_action" = "Операция успешна";
 "connection_error" = "Ошибка подключения";
@@ -2133,6 +2153,7 @@
 "s_params" = "Параметры поиска";
 "s_people" = "Пользователи";
 "s_groups" = "Группы";
+"s_events" = "Встречи";
 "s_apps" = "Приложения";
 "s_posts" = "Записи";
 "s_comments" = "Комментарии";
@@ -2144,6 +2165,7 @@
 
 "s_by_people" = "по пользователям";
 "s_by_groups" = "по группам";
+"s_by_events" = "по встречам";
 "s_by_posts" = "по записям";
 "s_by_comments" = "по комментариям";
 "s_by_videos" = "по видео";

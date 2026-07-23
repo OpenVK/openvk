@@ -374,24 +374,38 @@
 "join_community" = "Join community";
 "leave_community" = "Leave community";
 "check_community" = "View community";
+"ill_come_to_meeting" = "I'll come";
+"i_might_come_to_meeting" = "I might come";
+"ill_not_come_to_meeting" = "I'll not come";
+"event_comers" = "Will come";
+"event_potential_comers" = "Might come";
 "min_6_community" = "Name of the group must have more that 6 characters";
 "participants" = "Participants";
 "groups" = "Groups";
 "meetings" = "Meetings";
 "create_group" = "Create group";
+"create_event" = "Create event";
 "group_managers" = "Managers";
 "group_type" = "Group type";
-"group_type_open" = "This is an open group. Anyone can enter it.";
+"group_type_open" = "This is an open group. Anyone can join it.";
 "group_type_closed" = "This is a closed group. To enter, you must submit a request.";
+"event_type" = "Event type";
+"event_type_open" = "This is an open event. Anyone can join it.";
+"event_type_closed" = "This is a closed event. To enter, you must request an invite.";
 "creator" = "Creator";
 "administrators" = "Administrators";
+"event_host" = "Host";
 "add_to_left_menu" = "Add to left menu";
 "remove_from_left_menu" = "Remove from left menu";
 "all_followers" = "All followers";
 "only_administrators" = "Only administrators";
 "website" = "Website";
+"location" = "Location";
 "managed" = "Managed";
 "size" = "Size";
+"event_start_date" = "Start at";
+"event_finish_date" = "Ends at";
+"event_enable_finish_date" = "Specify end date";
 
 "administrators_one" = "$1 administrator";
 "administrators_other" = "$1 administrators";
@@ -484,6 +498,10 @@
 "meetings_zero" = "No meetings";
 "meetings_one" = "$1 meeting";
 "meetings_other" = "$1 meetings";
+
+"events_list_zero" = "You are not a member of any event";
+"events_list_one" = "You are a member in $1 event";
+"events_list_other" = "You are a member in $1 events";
 
 "search_by_groups" = "Explore Groups";
 
@@ -640,6 +658,7 @@
 "my_notes" = "My Notes";
 "my_audios" = "My Audios";
 "my_groups" = "My Groups";
+"my_events" = "My Events";
 "my_feed" = "My Feed";
 "my_feedback" = "My Feedback";
 "my_settings" = "My Settings";
@@ -710,6 +729,7 @@
 "ui_settings_window" = "Advanced settings";
 
 "search_for_groups" = "Search for groups";
+"search_for_events" = "Search for events";
 "search_for_users" = "Search for users";
 "search_for_posts" = "Search for posts";
 "search_for_comments" = "Search for comments";
@@ -1600,6 +1620,7 @@
 
 "error_on_server_side" = "An error occurred on the server side. Contact your system administrator.";
 "error_no_group_name" = "You did not enter a group name.";
+"error_no_event_name" = "You did not enter a event name and/or event start date.";
 
 "success_action" = "Action successful";
 "connection_error" = "Connection error";
@@ -2215,6 +2236,7 @@
 "s_params" = "Search params";
 "s_people" = "Users";
 "s_groups" = "Clubs";
+"s_events" = "Events";
 "s_apps" = "Applications";
 "s_posts" = "Posts";
 "s_comments" = "Comments";
@@ -2226,6 +2248,7 @@
 
 "s_by_people" = "for users";
 "s_by_groups" = "for groups";
+"s_by_events" = "for events";
 "s_by_posts" = "for posts";
 "s_by_comments" = "for comments";
 "s_by_videos" = "for videos";
