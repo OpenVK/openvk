@@ -563,10 +563,9 @@ class Club extends RowModel
                     }
 
                     if ($this->isOwnerClubPinned()) {
-                        $owner = (new Managers())->get($this->getOwner()->getId());
                         array_unshift($contacts, [
-                            "user_id" => $owner->getUser()->getId(),
-                            "desc" => $owner->getComment(),
+                            "user_id" => $this->getOwner()->getId(),
+                            "desc" => $this->getOwnerComment(),
                         ]);
                     }
 

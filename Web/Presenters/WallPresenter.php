@@ -478,7 +478,7 @@ final class WallPresenter extends OpenVKPresenter
 
             foreach ($mentions as $mentionee) {
                 if ($mentionee instanceof User) {
-                    (new MentionNotification($mentionee, $post, $post->getOwner(), strip_tags($post->getText())))->emit();
+                    (new MentionNotification($mentionee, $post->getOwner(), $post, strip_tags($post->getText())))->emit();
                 }
             }
         }
