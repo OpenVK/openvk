@@ -912,6 +912,20 @@ h4 {
     width: 98%;
 }
 
+.archived_repost_placeholder {
+    box-sizing: border-box;
+    width: 100%;
+    margin-top: 6px;
+}
+
+.archived_repost_message {
+    padding: 8px 10px;
+    border: 1px solid #d8d8d8;
+    background: #e9e9e9;
+    color: #777;
+    font-weight: bold;
+}
+
 .attachment .post {
     width: 102%;
 }
@@ -4554,4 +4568,209 @@ hr {
 
 .collapse_button {
     display: block;
+}
+
+/* Archive Banner and Manager Styles */
+.archive_banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    min-height: 90px;
+    gap: 20px;
+    padding: 20px;
+    margin: 0 -10px;
+    width: 627px;
+    border-top: none;
+    border-bottom: 1px solid #dae1e8;
+}
+
+.archive_banner_text {
+    color: #111;
+    line-height: 14px;
+}
+
+.archive_banner_title,
+.archive_banner_description {
+    display: block;
+}
+
+.archive_banner_title {
+    margin-bottom: 5px;
+    font-size: 13px;
+    line-height: 16px;
+}
+
+.archive_banner_description {
+    color: #111;
+}
+
+.archive_banner_icon {
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+    image-rendering: pixelated;
+}
+
+.archive_manager {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    min-height: 36px;
+    background: #f7f7f7;
+    border-bottom: 1px solid #ccc;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    margin: 0 -10px;
+    width: 627px;
+}
+
+.archive_years {
+    display: flex;
+    align-items: stretch;
+    min-width: 0;
+}
+
+.archive_year,
+.archive_all_years,
+.archive_more_years > summary,
+.archive_actions > summary {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    min-height: 36px;
+    padding: 0 10px;
+    color: #555;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.archive_year {
+    border-bottom: 2px solid transparent;
+}
+
+.archive_year.is_current {
+    color: #000;
+    border-bottom-color: #7e7e7e;
+    font-weight: bold;
+}
+
+.archive_all_years {
+    margin-right: 2px;
+    border-right: 1px solid #ddd;
+}
+
+.archive_all_years.is_filter_active {
+    background: #e9e9e9;
+    color: #333;
+}
+
+.archive_more_years,
+.archive_actions {
+    position: relative;
+}
+
+.archive_more_years > summary,
+.archive_actions > summary {
+    list-style: none;
+}
+
+.archive_more_years > summary::-webkit-details-marker,
+.archive_actions > summary::-webkit-details-marker {
+    display: none;
+}
+
+.archive_more_years > summary::after,
+.archive_actions > summary::after {
+    content: "";
+    margin-left: 5px;
+    border: 4px solid transparent;
+    border-top-color: #777;
+    transform: translateY(2px);
+}
+
+.archive_more_years_menu,
+.archive_actions_menu {
+    position: absolute;
+    top: calc(100% - 1px);
+    z-index: 20;
+    background: #fff;
+    border: 1px solid #aaa;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.archive_more_years_menu {
+    left: 0;
+    min-width: 80px;
+}
+
+.archive_more_years_menu .archive_year {
+    min-height: 30px;
+    border-bottom: 0;
+}
+
+.archive_more_years_menu .archive_year:hover,
+.archive_actions_menu button:hover {
+    background: #e9edf1;
+}
+
+.archive_actions {
+    flex: 0 0 auto;
+    margin-left: auto;
+    border-left: 1px solid #ddd;
+}
+
+.archive_actions_menu {
+    right: 0;
+    width: 230px;
+    padding: 0;
+}
+
+.archive_actions_menu form {
+    margin: 0;
+}
+
+.archive_actions_menu button {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 5px 12px;
+    border: 0;
+    background: transparent;
+    color: #5c5c5c;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.archive_actions_menu button:hover {
+    background: #8b8b8b;
+    color: #fff;
+}
+
+.archive_actions_divider {
+    height: 1px;
+    margin: 4px 0;
+    background: #ddd;
+}
+
+@media (max-width: 700px) {
+    .archive_manager {
+        width: 100vw;
+    }
+
+    .archive_years {
+        overflow-x: auto;
+    }
+
+    .archive_year,
+    .archive_all_years,
+    .archive_more_years > summary,
+    .archive_actions > summary {
+        padding-right: 8px;
+        padding-left: 8px;
+        white-space: nowrap;
+    }
 }

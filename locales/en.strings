@@ -229,6 +229,22 @@
 "wall_zero" = "no posts";
 "wall_one" = "$1 post";
 "wall_other" = "$1 posts";
+"archived_posts" = "Post archive";
+"archive_banner_title" = "This is the post archive";
+"archive_banner_desc" = "Save posts from the wall here for history and memories. Only you can see the post archive.";
+"archive_action" = "Archive";
+"unarchive_action" = "Restore";
+"post_deleted" = "Post deleted";
+"archive_all_years" = "All years";
+"archive_more" = "More";
+"archive_more_year" = "More: $1";
+"archive_all_posts_from_year" = "Archive all posts from $1";
+"restore_all_posts_from_year" = "Restore all posts from $1";
+"archive_all_posts" = "Archive every post";
+"archive_confirm_year" = "Archive every post published in $1?";
+"restore_confirm_year" = "Restore every post published in $1?";
+"archive_confirm_all" = "Archive every post on this wall?";
+"archive_invalid_action" = "Invalid post archive action.";
 "publish_post" = "Add post";
 "view_other_comments" = "View other comments";
 
