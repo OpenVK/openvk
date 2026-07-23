@@ -755,7 +755,7 @@ class User extends RowModel
         return sizeof(DatabaseConnection::i()->getContext()->table("messages")->where(["recipient_id" => $this->getId(), "unread" => 1]));
     }
 
-    public function getClubs(int $page = 1, bool $admin = false, int $count = OPENVK_DEFAULT_PER_PAGE, bool $offset = false): \Traversable
+    public function getClubs(int $page = 1, bool $admin = false, int $count = OPENVK_DEFAULT_PER_PAGE, bool $offset = false, bool $andEvents = false): \Traversable
     {
         if (!$offset) {
             $page = ($page - 1) * $count;
@@ -763,7 +763,9 @@ class User extends RowModel
 
         if ($admin) {
             $id     = $this->getId();
-            $query  = "SELECT `id` FROM `groups` WHERE `owner` = ? AND `type` = 1 UNION SELECT `club` as `id` FROM `group_coadmins` WHERE `user` = ?";
+            $query  = "SELECT `id` FROM `groups` WHERE `owner` = ? ";
+            $query .= $andEvents ? "" : "AND `type` = 1 ";
+            $query .= "UNION SELECT `club` as `id` FROM `group_coadmins` WHERE `user` = ?";
             $query .= " LIMIT " . $count . " OFFSET " . $page;
 
             $sel = DatabaseConnection::i()->getConnection()->query($query, $id, $id);
@@ -778,8 +780,12 @@ class User extends RowModel
         } else {
             $sel = $this->getRecord()
                         ->related("subscriptions.follower")
-                        ->where("target IN (SELECT id FROM groups WHERE type = ?)", 1)
                         ->limit($count, $page);
+            
+            if (!$andEvents) {
+                $sel = $sel->where("target IN (SELECT id FROM groups WHERE type = ?)", 1);
+            }
+
             foreach ($sel->where("model", "openvk\\Web\\Models\\Entities\\Club") as $target) {
                 $target = (new Clubs())->get($target->target);
                 if (!$target) {
@@ -791,11 +797,13 @@ class User extends RowModel
         }
     }
 
-    public function getClubCount(bool $admin = false): int
+    public function getClubCount(bool $admin = false, bool $andEvents = false): int
     {
         if ($admin) {
             $id    = $this->getId();
-            $query = "SELECT COUNT(*) AS `cnt` FROM (SELECT `id` FROM `groups` WHERE `owner` = ? AND `type` = 1 UNION SELECT `club` as `id` FROM `group_coadmins` WHERE `user` = ?) u0;";
+            $query = "SELECT COUNT(*) AS `cnt` FROM (SELECT `id` FROM `groups` WHERE `owner` = ? ";
+            $query .= $andEvents ? "": "AND `type` = 1 ";
+            $query .= "UNION SELECT `club` as `id` FROM `group_coadmins` WHERE `user` = ?) u0;";
 
             return (int) DatabaseConnection::i()->getConnection()->query($query, $id, $id)->fetch()->cnt;
         } else {

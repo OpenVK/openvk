@@ -68,7 +68,7 @@ class Clubs
         return $clubs_array;
     }
 
-    public function find(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false], int $page = 1, ?int $perPage = null): \Traversable
+    public function find(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false], int $page = 1, ?int $perPage = null, bool $andEvents = false): \Traversable
     {
         $query = "%$query%";
         $result = $this->clubs;
@@ -80,7 +80,10 @@ class Clubs
                 break;
         }
 
-        $result = $result->where("name LIKE ? OR about LIKE ?", $query, $query)->where('type', 1);
+        $result = $result->where("name LIKE ? OR about LIKE ?", $query, $query);
+        if (!$andEvents) {
+            $result = $result->where('type', 1);
+        }
 
         if ($order_str) {
             $result->order($order_str);
