@@ -151,11 +151,14 @@
                     <b><a href="/topic{$topic->getPrettyId()}">{$topic->getTitle()}</a></b><br>
                     <span class="nobold">{tr("updated_at", $topic->getUpdateTime())}</span>
                 </div>
+                <div class="section_empty" n:if="$topicsCount == 0">
+                    <a href="/topic{$club->getId()}" class="board">{_create}</a>
+                </div>
             </div>
         </div>
     </div>
 
-    <div n:if="$thisUser">
+    <div n:if="($thisUser && $audiosCount > 0) || ($thisUser && $club->canUploadAudio($thisUser))">
         <div class="content_title_expanded" onclick="hidePanel(this, {$audiosCount});">
             {_audios}
         </div>
@@ -170,6 +173,9 @@
                 <div class="audio" n:foreach="$audios as $audio" style="width: 100%;">
                     {include "../Audio/player.latte", audio => $audio}
                 </div>
+            </div>
+            <div class="section_empty" n:if="$audiosCount == 0">
+                <a href="/audios-{$club->getId()}" class="music">{_upload_button}</a>
             </div>
         </div>
     </div>
@@ -354,6 +360,9 @@
                     <a href="/albums{$club->getId() * -1}">{_all_title}</a>
                 </div>
             </div>
+            <div class="section_empty" n:if="$albumsCount == 0">
+                <a href="/albums{$club->getId()}" class="photo">{_upload_button}</a>
+            </div>
             <div style="padding: 5px;">
                 <div class="ovk-album" style="display: inline-block;" n:foreach="$albums as $album">
                     <div style="text-align: center;float: left;height: 54pt;width: 100px;">
@@ -387,6 +396,9 @@
                     <b><a href="/topic{$topic->getPrettyId()}">{$topic->getTitle()}</a></b><br>
                     <span class="nobold">{tr("updated_at", $topic->getUpdateTime())}</span>
                 </div>
+                <div class="section_empty" n:if="$topicsCount == 0">
+                    <a href="/topic{$club->getId()}" class="board">{_create}</a>
+                </div>
             </div>
         </div>
     </div>
@@ -405,6 +417,9 @@
                 {foreach $docs as $doc}
                     {include "../Documents/components/doc.latte", doc => $doc, hideButtons => true, noTags => true}
                 {/foreach}
+                <div class="section_empty" n:if="$docsCount == 0">
+                    <a href="/docs{$club->getRealId()}" class="docs">{_upload_button}</a>
+                </div>
             </div>
         </div>
     </div>
