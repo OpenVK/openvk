@@ -96,8 +96,8 @@
 "politViews" = "Politinės pažiūros";
 "politViews_0" = "Nepasirinkta";
 "politViews_1" = "Neutralios";
-"politViews_2" = "Komunistas";
-"politViews_3" = "Socialistas";
+"politViews_2" = "Komunistinės";
+"politViews_3" = "Socialistinės";
 "politViews_4" = "Nuosaikios";
 "politViews_5" = "Liberalios";
 "politViews_6" = "Konservatyvios";
@@ -648,3 +648,15 @@
 "backdrop_warn" = "Vaizdai bus išdėstyti taip, kaip parodyta aukščiau pateiktame makete. Jų aukštis bus automatiškai padidintas, kad užimtų 100% ekrano aukščio, o viduryje bus sulieta dalis. Negalite pakeisti pagrindinės OpenVK sąsajos fono ar pridėti garso. Fonas bus matomas tik plačiajuosčiuose ekranuose.";
 "backdrop_about_adding" = "Galite įkelti tik vieną paveikslėlį, nors, priklausomai nuo dizaino, galutinis rezultatas gali atrodyti netobulas. Taip pat galite pakeisti tik vieną paveikslėlį: jei jau turite du nustatytus paveikslėlius ir norite pakeisti vieną, įkelkite tik vieną, o kitas nebus pašalintas. Norėdami pašalinti abu paveikslėlius, paspauskite žemiau esantį mygtuką; negalite pašalinti paveikslėlių po vieną.";
 "backdrop_save" = "Išsaugoti fono paveikslėlį(-ius)";
+"backdrop_remove" = "Pašalinti Visus Fono Paveikslėlius";
+"backdrop_error_title" = "Klaida Išsaugant Fono Nustatymus";
+"backdrop_error_no_media" = "Vaizdai yra sugadinti arba nebuvo įkelti visi.";
+"backdrop_succ" = "Fono nustatymai sėkmingai išsaugoti";
+"backdrop_succ_rem" = "Fono paveikslėliai sėkmingai pašalinti";
+"backdrop_succ_desc" = "Naudotojai pradės matyti pakeitimus po 5 minučių.";
+"browse" = "Naršyti";
+"two_factor_authentication" = "Dviejų veiksnių autentifikavimas";
+"two_factor_authentication_disabled" = "Padidina saugumą, nes norint prisijungti prie paskyros reikia kodo iš 2FA programėlės, taip užtikrinant patikimą apsaugą nuo įsilaužimo.";
+"two_factor_authentication_enabled" = "Dviejų veiksnių autentifikavimas aktyvus. Jūsų paskyra yra saugiai apsaugota.";
+"two_factor_authentication_login" = "Įjungtas dviejų veiksnių autentifikavimas. Norėdami prisijungti, įveskite programoje gautą kodą.";
+"two_factor_authentication_settings_1" = "Dviejų veiksnių autentifikavimą per TOTP galima naudoti net ir neturint interneto ryšio. Jums reikės kodo generavimo programėlės, pvz., <b>Google Authenticator</b>, skirtos Android ir iOS, arba <b>FOSS Aegis ir andOTP</b>, skirtos Android. Įsitikinkite, kad jūsų telefono data ir laikas nustatyti teisingai.";
