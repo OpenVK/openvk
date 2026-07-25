@@ -100,8 +100,12 @@ final class SearchPresenter extends OpenVKPresenter
                     $parameters['from_me'] = $this->user->id;
 
                     break;
+                case "period":
+                    $parameters['days'] = (int) $param_value;
             }
         }
+
+        $parameters['auth_user_id'] = $this->user->id;
 
         $repo = $repos[$section] or $this->throwError(400, "Bad Request", "Invalid search entity $section.");
 

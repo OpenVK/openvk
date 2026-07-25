@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace openvk\Web\Models\Repositories;
 
-use openvk\Web\Models\Entities\{Club, Manager};
+use openvk\Web\Models\Entities\{Club, Manager, User};
 use openvk\Web\Models\Repositories\{Aliases, Users};
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
@@ -68,22 +68,61 @@ class Clubs
         return $clubs_array;
     }
 
-    public function find(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false], int $page = 1, ?int $perPage = null): \Traversable
+    public function find(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false]): \Traversable
     {
         $query = "%$query%";
-        $result = $this->clubs;
-        $order_str = 'id';
+        $result = $this->clubs->where("name LIKE ? OR about LIKE ?", $query, $query);
 
         switch ($order['type']) {
             case 'id':
-                $order_str = 'id ' . ($order['invert'] ? 'ASC' : 'DESC');
+                $result->order('id ' . ($order['invert'] ? 'DESC' : 'ASC'));
                 break;
-        }
-
-        $result = $result->where("name LIKE ? OR about LIKE ?", $query, $query);
-
-        if ($order_str) {
-            $result->order($order_str);
+            case 'members':
+                return new Util\RawEntityStream(
+                    "Club",
+                    "SELECT `groups`.id, COUNT(subscriptions.follower) AS subscribers
+                     FROM `groups`
+                     LEFT JOIN subscriptions
+                        ON subscriptions.target = groups.id
+                        AND subscriptions.model = ?
+                        GROUP BY groups.id
+                        ORDER BY subscribers " . ($order['invert'] ? 'ASC' : 'DESC'),
+                    [Club::class],
+                    $this
+                );
+            case 'popular':
+                $days = isset($params['days']) && $params['days'] > 0 ? $params['days'] : 7;
+                return new Util\RawEntityStream(
+                    "Club",
+                    "SELECT `groups`.id, COUNT(subscriptions.follower) AS recent_subscribers
+                     FROM `groups`
+                     LEFT JOIN subscriptions
+                        ON subscriptions.target = groups.id
+                        AND subscriptions.model = ?
+                        AND subscriptions.created_at > DATE_SUB(NOW(), INTERVAL ? DAY)
+                        GROUP BY groups.id
+                        ORDER BY recent_subscribers " . ($order['invert'] ? 'ASC' : 'DESC'),
+                    [Club::class, $days],
+                    $this
+                );
+            case 'recommended':
+                return new Util\RawEntityStream(
+                    "Club",
+                    "SELECT `groups`.id, COUNT(subscriptions.follower) AS friends_subscribers
+                     FROM `groups`
+                     LEFT JOIN subscriptions
+                        ON subscriptions.target = `groups`.id
+                        AND subscriptions.model = ?
+                        WHERE subscriptions.follower in (
+                            SELECT target FROM subscriptions s where s.model=? and s.follower=?
+                        )
+                        GROUP BY groups.id
+                        ORDER BY friends_subscribers " . ($order['invert'] ? 'ASC' : 'DESC'),
+                    [Club::class, User::class, $params['auth_user_id']],
+                    $this
+                );
+            default:
+                break;
         }
 
         return new Util\EntityStream("Club", $result);

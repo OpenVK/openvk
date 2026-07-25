@@ -1,0 +1,1 @@
+ALTER TABLE `subscriptions` ADD `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP AFTER `flags`;

@@ -2165,6 +2165,14 @@
 "s_order_by_creation_date" = "По дате создания";
 "s_order_by_publishing_date" = "По дате публикации";
 "s_order_by_upload_date" = "По дате загрузки";
+"s_order_by_members" = "По количеству подписчиков";
+"s_order_by_popular" = "По росту числа подписчиков";
+"s_order_by_recommended" = "Рекомендуемые вам";
+
+"s_popular_for" = "Считать прирост";
+"s_for_day" = "За прошедший день";
+"s_for_week" = "За неделю";
+"s_for_month" = "За месяц";
 
 "s_by_date" = "По дате";
 "s_registered_before" = "Зарегистрирован до";
