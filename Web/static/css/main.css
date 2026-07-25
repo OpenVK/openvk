@@ -799,7 +799,7 @@ input[type="number"] {
 
 .content .list_view_item_actions {
     max-width: 150px;
-    min-width: unset !important;
+    min-width: 150px !important;
 }
 
 .content-withouttop {
