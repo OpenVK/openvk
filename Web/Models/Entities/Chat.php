@@ -12,6 +12,7 @@ use PhpCsFixer\ConfigurationException\RequiredFixerConfigurationException;
 class Chat extends RowModel
 {
     protected $tableName = "chats";
+    public $hydratedData = [];
 
     //
     // Meta
@@ -119,8 +120,8 @@ class Chat extends RowModel
         $photoObj = new Photo();
         $photoObj->setOwner($user->getId());
         $photoObj->setCreated(time());
-        $photoObj->setUnlisted(1);
         $photoObj->setSystem(1);
+        $photoObj->setAsFromMessage();
         $photoObj->setFile([
             "tmp_name" => $imagePath,
             "error"    => 0,

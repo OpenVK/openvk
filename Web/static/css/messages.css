@@ -828,7 +828,18 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 }
 
 .peer-window .back-side {
-    width: 90px;
+    width: 70px;
+    margin-right: 20px;
+}
+
+.peer-window .back-side a {
+    display: block;
+    height: 100%;
+    padding: 20px 12px;
+}
+
+.peer-window .back-side a:hover {
+    background: var(--bg-slightly-2);
 }
 
 .peer-window .peer-side {
@@ -841,17 +852,29 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 .peer-window .peer-side .peer-info {
     display: flex;
     gap: 20px;
+    background: var(--bg-page);
+    border: 1px solid var(--bg-slightly-border);
+    margin: 0px -16px 0px -16px;
+    padding: 16px;
 }
 
 .peer-window .peer-side .peer-info .peer-avatar {
     position: relative;
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
 }
 
 .peer-window .peer-side .peer-info .peer-avatar a {
     font-size: 13px;
     font-weight: bold;
+}
+
+.peer-window .peer-side .peer-info .peer-avatar img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    image-rendering: -webkit-optimize-contrast;
 }
 
 .peer-window .peer-side .peer-info .peer-name {
@@ -887,40 +910,52 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     margin-top: 10px;
 }
 
-.peer-window .peer-side .peer-info .peer-avatar img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    image-rendering: -webkit-optimize-contrast;
-}
-
 .peer-window .peer-side .peer-info .avatar-opener {
     position: absolute;
     bottom: 0;
     width: 100%;
     height: 20px;
-    background: red;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.peer-window .peer-status {
-    opacity: 0.4;
+.peer-window .peer-side .peer-info .avatar-opener .lupa {
+    width: 12px;
+    height: 12px;
+    background: white;
+    opacity: 0.7;
+
+    transition: opacity 200ms ease-in-out;
 }
 
-.peer-window .chat-actions-2 {
+.peer-window .peer-side .peer-info .avatar-opener:hover .lupa {
+    opacity: 1;
+}
+
+.peer-window .peer-status span {
+    color: var(--bg-slightly-border);
+}
+
+.peer-window .chat-actions-common {
     display: flex;
     flex-direction: column;
 }
 
-.peer-window .chat-actions-2 a {
-    padding: 10px 30px;
+.peer-window .chat-actions-common a {
+    padding: 10px 30px 10px 40px;
 }
 
-.peer-window .chat-actions-2 a:hover {
-    background: #bbbbbb;
+.peer-window .chat-actions-common a b {
+    font-weight: bold;
 }
 
-.peer-window .chat-actions-2 a::before {
+.peer-window .chat-actions-common a:hover {
+    background: var(--bg-slightly-2);
+}
+
+.peer-window .chat-actions-common a::before {
     position: absolute;
     content: "";
     display: inline-block;
@@ -1096,7 +1131,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     vertical-align: top;
 }
 
-#im_container.compact .messenger-app, .messenger-app--input {
+#im_container.compact .messenger-app, #im_container.compact .messenger-app--input {
     width: 400px;
 }
 

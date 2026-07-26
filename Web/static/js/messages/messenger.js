@@ -1,7 +1,7 @@
 import { ChatMessage, ChatGeneralForm } from './messages.js';
 import { Conversation } from './conversations.js';
 import { MessageListView } from "./components/message.js"
-import { ErrorConversation, WriteBar, ActionsBar, PeerWindow, InputArea, PeerTabsView } from "./components/convos.js"
+import { PinnedMessages, ErrorConversation, WriteBar, ActionsBar, PeerWindow, InputArea, PeerTabsView } from "./components/convos.js"
 import { html, render } from './im.js';
 
 export class Messenger {
@@ -97,6 +97,7 @@ export class MessengerViewModel {
         this.is_showing_profile = false;
         this.is_loading = false;
         this.had_more_one_tab = false;
+        this.is_switching = false;
 
 		this.currentDraft = '';
         this.prevDraft = null;
@@ -126,11 +127,21 @@ export class MessengerViewModel {
         this._render();
     }
 
-	_render(container) {
+	_render(container, special_mode) {
 		const root = container || this.appEl;
 		if (!root) return;
 
         const currentConv = this.getCurrentChat();
+
+        if (special_mode != null) {
+            switch (special_mode) {
+                case "pinned":
+                    render(html`<${PinnedMessages} />`, root);
+                    return;
+                case "photos":
+                    break;
+            }
+        }
 
         if (!currentConv) {
             render(html`<${ErrorConversation} />`, root)
@@ -352,7 +363,13 @@ export class MessengerViewModel {
         }
     }
 
-    togglePeerInfo(sender = null) {
+    async togglePeerInfo(sender = null) {
+        if (this.is_switching == true) {
+            return;
+        }
+
+        this.is_switching = true;
+
         console.log('toggle peer info ', window.im.tab)
 
         if (window.im.tab == 'contact') {
@@ -360,10 +377,18 @@ export class MessengerViewModel {
             this.toggled_peer_obj = null;
         } else {
             this.toggled_peer_obj = sender;
+
+            const _c = window.im.corresponder;
+            if (_c.supposed_type == "chat" && !_c._hasLoadedMembers()) {
+                await _c.m_load(0);
+            }
+
            	if (typeof window.im !== 'undefined' && window.im.selectTab) {
-            window.im.selectTab('contact');
+                window.im.selectTab('contact');
+            }
         }
-        }
+
+        this.is_switching = false;
     }
 
 	onScrollDownButtonClick() {
@@ -727,8 +752,12 @@ export class MessengerViewModel {
 
     // other links from peer window
 
-    setSpecialMode(mode = null) {
-        this.special_mode = mode;
+    async setSpecialMode(mode = null) {
+        this._render(null, mode);
+    }
+
+    async resetSpecialMode() {
+        this._render(null, null);
     }
 }
 

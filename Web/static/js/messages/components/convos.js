@@ -227,43 +227,58 @@ export const PeerWindow = ({ peer, togglePeerInfo }) => {
     const isOnline = peer.online == 1;
     const avatar = peer.avatar_big || peer.data.photo_50 || '';
     const has_avatar = true;
+    const is_from_chat = window.im.corresponder.supposed_type == "chat" && peer.supposed_type != "chat";
 
     return html`
-    <div class="back-side"><a onClick=${() => togglePeerInfo()}>${tr('back').toLowerCase()}</a></div>
+    <div class="back-side"><a onClick=${() => togglePeerInfo()}>${tr('back')}</a></div>
     <div class="peer-side">
         <div class="peer-info">
-            <div class="peer-avatar">
+            <div class="peer-avatar sliding-thing-wrapper">
                 <img src=${avatar} alt=${tr('avatar')} />
-                <a onClick=${(event) => { OpenAvatar(event, peer.avatar_max, peer.id + '_profile', peer.data.photo_pid) }} class="avatar-opener hoverable"></a>
+                <a onClick=${(event) => { OpenAvatar(event, peer.avatar_max, peer.id + '_profile', peer.data.photo_pid) }} class="avatar-opener sliding-thing">
+                    <div class="lupa"></div>
+                </a>
             </div>
             <div class="peer-name">
                 <div class="peer-name-1">
                     <a class="peer-link" href=${peer.page_url}>${escapeHtml(peer.full_name)}</a>
 
-                    ${peer.supposed_type != 'chat' ? html`
                     <div class="peer-status">
-                        <span dangerouslySetInnerHTML=${{ __html: peer.online_status_str}} />
-                    </div>`: ''}
+                        <span dangerouslySetInnerHTML=${{ __html: peer.online_status_str }} />
+                    </div>
                 </div>
 
                 <div class="peer-actions-1">
-                    <a onClick=${() => { window.im.setChatByPeerId(peer.id) }}>${tr('write_message')}</a>
+                    <a class="button" onClick=${() => { window.im.setChatByPeerId(peer.id) }}>${tr('write_message')}</a>
                 </div>
             </div>
         </div>
-        <div>
+        <div class="chat-actions-common">
             ${ peer.canUpdateTitle() ? html`
                 <a onClick=${(e) => { updateChatTitle(e, peer) }}>Обновить название</a>
             ` : "" }
             ${ peer.canUpdateAvatar() ? html`
                 <a onClick=${(e) => { updateChatAvatar(e, peer) }}>Обновить аватар беседы</a>
             ` : "" }
+            ${ peer.canLeaveChat() ? html`
+                <a>Выйти</a>
+            ` : "" }
+            <a>Настройки</a>
+            <a onClick=${(e) => { peer.showAsJson() }}>ПОКАЖИ JSON</a>
+            <a>Поиск по сообщениям</a>
+            ${ peer.canViewInviteLinks() && html`<a>Пригласительные ссылки</a>` }
         </div>
-        <div class="chat-actions-2">
-            <a onClick=${(e) => { window.im.messenger.view.setSpecialMode("pinned") }}>Закреплённое</a>
-            <a>Фото (100)</a>
-            <a>Видео (100)</a>
-            <a>Аудио (100)</a>
+        ${is_from_chat === true && html`
+        <div class="chat-actions-usr chat-actions-common">
+            <a><b>Кикнуть</b></a>
+        </div>
+        `}
+        <div class="chat-actions-2 chat-actions-common">
+            <a onClick=${(e) => { window.im.messenger.view.setSpecialMode("pinned") }}><b>Закреплённое</b></a>
+            <a onClick=${(e) => { window.im.messenger.view.setSpecialMode("photos") }}><b>Фото</b> (100)</a>
+            <a onClick=${(e) => { window.im.messenger.view.setSpecialMode("videos") }}><b>Видео</b> (100)</a>
+            <a onClick=${(e) => { window.im.messenger.view.setSpecialMode("audios") }}><b>Аудио</b> (100)</a>
+            <a onClick=${(e) => { window.im.messenger.view.setSpecialMode("documents") }}><b>Документы</b> (100)</a>
         </div>
         <div class="chat-members"></div>
         <div class="chat-media"></div>
@@ -275,6 +290,14 @@ export const ErrorConversation = ({ }) => {
     return html`
         <div>
             <span>Select a convo</span>
+        </div>
+    `
+}
+
+export const PinnedMessages = ({ }) => {
+    return html`
+        <div>
+            <a onClick=${(e) => { window.im.messenger.view.resetSpecialMode() }}>1</a>
         </div>
     `
 }
