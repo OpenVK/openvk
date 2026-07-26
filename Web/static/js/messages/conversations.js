@@ -1,7 +1,6 @@
 import { ChatMessage, ChatGeneralForm } from './messages.js';
-import { render, html, ConversationListView } from './components.js';
-
-const tr = window.tr;
+import { ConversationListView } from "./components/convos.js"
+import { html, render } from './im.js';
 
 export class ConversationsViewModel {
     constructor() {
