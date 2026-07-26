@@ -6,7 +6,7 @@ namespace openvk\Web\Models\Entities;
 
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
-use openvk\Web\Models\Entities\{User, Manager};
+use openvk\Web\Models\Entities\{User, Manager, Chat};
 use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Managers, Posts};
 use Nette\Database\Table\{ActiveRow, GroupedSelection};
 use Chandler\Database\DatabaseConnection as DB;
@@ -181,6 +181,19 @@ class Club extends RowModel
     public function isMessagesEnabled(): bool
     {
         return (bool) $this->getRecord()->is_messages_enabled;
+    }
+
+    public function getLinkedChats(): array
+    {
+        $chats = DB::i()->getContext()->table("chats")
+            ->where("group_id = ?", $this->getId());
+
+        $result = [];
+        foreach ($chats as $row) {
+            $result[] = new Chat($row);
+        }
+
+        return $result;
     }
 
     public function isDeleted(): bool
