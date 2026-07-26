@@ -1,4 +1,4 @@
-﻿if (typeof u == 'undefined') {
+if (typeof u == 'undefined') {
     console.error('!!! You forgot to install NPM packages !!!')
 }
 
@@ -324,7 +324,7 @@ $(document).on("scroll", () => {
         return;
     }
 
-    if (window.im && window.im.is_active) {
+    if (window.im && window.im.is_active && !window.im.is_compact_mode_enabled) {
         window.im.messenger.view.onMessagesScroll();
         return;
     }

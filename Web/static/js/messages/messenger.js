@@ -1,15 +1,14 @@
 import { ChatMessage, ChatGeneralForm } from './messages.js';
 import { Conversation } from './conversations.js';
-import { render, html, PeerTabsView, WriteBar, ActionsBar, MessageListView, PeerWindow, InputArea } from './components.js';
-
-const u = window.u;
-const collect_attachments = window.collect_attachments;
+import { MessageListView } from "./components/message.js"
+import { ErrorConversation, WriteBar, ActionsBar, PeerWindow, InputArea, PeerTabsView } from "./components/convos.js"
+import { html, render } from './im.js';
 
 export class Messenger {
-  async init() {
-    this.insert_type = 'page';
-    this.view = new MessengerViewModel();
-  }
+    async init() {
+        this.insert_type = 'page';
+        this.view = new MessengerViewModel();
+    }
 
     hasAppeared(container) {
         return container.querySelector('.messenger-app') != null;
@@ -131,7 +130,13 @@ export class MessengerViewModel {
 		const root = container || this.appEl;
 		if (!root) return;
 
-		const currentConv = this.getCurrentChat();
+        const currentConv = this.getCurrentChat();
+
+        if (!currentConv) {
+            render(html`<${ErrorConversation} />`, root)
+            return;
+        }
+
         const peer = currentConv ? currentConv.peer : null;
         const display_peer = this.toggled_peer_obj ? this.toggled_peer_obj : peer;
 
@@ -728,30 +733,31 @@ export class MessengerViewModel {
 }
 
 export class LongPollConnection {
-  async create(group_id = null) {
-    this.lp = await window.OVKAPI.call('messages.getLongPollServer', {});
-    console.log("LP | Created connection to the current user");
-  }
+    async create(group_id = null) {
+        this.lp = await window.OVKAPI.call('messages.getLongPollServer', {});
+        console.log("LP | Created connection to the current user");
+    }
 
-  getFirstCounter() {
-    return this.lp.unread_count;
-  }
+    getFirstCounter() {
+        return this.lp.unread_count;
+    }
 
-  listen() {
-    console.log("LP | New cycle of listening");
-    let xhr = new XMLHttpRequest();
-    const mode = 2 + 8 + 32 + 64 + 128;
-    const connection_string = this.lp.server + '?key=' + this.lp.key + '&ts=' + this.lp.ts + '&pts=' + this.lp.pts + '&mode=' + mode;
-    xhr.open('GET', connection_string, true);
-    xhr.onload = () => {
-      let data = JSON.parse(xhr.responseText);
-      if (data?.updates?.length > 0)
-        data.updates.forEach((event) => {
-          window.im.event_handler.handle(event);
-        });
-      this.lp.ts = data.ts;
-      this.listen();
-    };
-    xhr.send();
-  }
+    listen() {
+        console.log("LP | New cycle of listening");
+        console.log(this.lp);
+        let xhr = new XMLHttpRequest();
+        const mode = 2 + 8 + 32 + 64 + 128;
+        const connection_string = this.lp.server + '?key=' + this.lp.key + '&ts=' + this.lp.ts + '&pts=' + this.lp.pts + '&mode=' + mode;
+        xhr.open('GET', connection_string, true);
+        xhr.onload = () => {
+            let data = JSON.parse(xhr.responseText);
+            if (data?.updates?.length > 0)
+                data.updates.forEach((event) => {
+                    window.im.event_handler.handle(event);
+                });
+                this.lp.ts = data.ts;
+                this.listen();
+            };
+            xhr.send();
+        }
 }

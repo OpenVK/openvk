@@ -272,6 +272,9 @@ window.tweaks = [
         addScrollHook(hide_posts)
         hide_posts()
     }),
+    new TweakOption("im.modern_mode", function () {
+        console.log("IM | Modern mode enabled!")
+    }),
 ]
 
 window.openPluginSettings = () => {

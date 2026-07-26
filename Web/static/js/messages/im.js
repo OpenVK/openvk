@@ -3,10 +3,19 @@ import { EventHandler } from './events.js';
 import { Messenger, LongPollConnection } from './messenger.js';
 import { Conversations } from './conversations.js';
 import { SearchTab } from './search.js';
-import { render, html, TabBar, FriendsPage } from './components.js';
 
-const tr = window.tr;
-const u = window.u;
+import { TabBar } from './components/convos.js';
+import { FriendsPage } from './components/extra.js';
+
+import htm from '../node_modules/htm/dist/htm.mjs';
+import { h, render as preactRender } from '../node_modules/preact/dist/preact.mjs';
+
+const html = htm.bind(h);
+
+export { html, preactRender as render };
+
+//const tr = window.tr;
+//const u = window.u;
 
 class ProfilesCache {
     constructor() {
@@ -62,6 +71,10 @@ export class IM {
 
     get tabs() {
         return this.tabDefs.map(t => t.id);
+    }
+
+    get is_compact_mode_enabled() {
+        return localStorage.getItem("tw.im.modern_mode") === "1";
     }
 
     async _checkSel(loc, sel_id = null) {
@@ -131,7 +144,11 @@ export class IM {
     async initImPage(container, sel_id = null) {
         this.addLoadSkeleton(container);
         await this.waitLoad();
-        this.root = container;
+
+        container.insertAdjacentHTML("beforeend", `
+            <div id="im_container" class="${this.is_compact_mode_enabled ? 'compact' : ''}"></div>
+        `);
+        this.root = container.querySelector("#im_container");
         this._initTabs();
         const found = await this._checkSel(new URL(location.href), sel_id);
         if (!found) {
@@ -270,12 +287,12 @@ export class IM {
 
         let wrap = this.root.querySelector('#tabs-wr2');
         if (!wrap) {
-        wrap = document.createElement('div');
-        wrap.id = 'tabs-wr2';
-        this.root.insertAdjacentElement('afterbegin', wrap);
+            wrap = document.createElement('div');
+            wrap.id = 'tabs-wr2';
+            this.root.insertAdjacentElement('afterbegin', wrap);
         }
 
-        render(html`
+        preactRender(html`
         <${TabBar}
             tabs=${this.visibleTabs}
             activeTab=${this.tab}
@@ -310,6 +327,10 @@ export class IM {
         this._renderTabBar();
 
         if (tab_name != "contact") {
+            if (window.im.is_compact_mode_enabled && (tab_name == "conversations" || tab_name == "messenger")) {
+                return;
+            }
+
             u(".messenger-app--tab-messenger").removeClass("peer-shown");
             this.tabDefs.forEach((def) => {
                 const win = this._getTabWindow(def.id);
@@ -327,8 +348,15 @@ export class IM {
 
         switch (tab_name) {
             case 'conversations':
-                this.conversations.appear(this._getTabWindow('conversations'));
-                this.messenger.hide(this._getTabWindow('messenger'));
+
+                if (!window.im.is_compact_mode_enabled) {
+                    this.messenger.hide(this._getTabWindow('messenger'));
+                    this.conversations.appear(this._getTabWindow('conversations'));
+                } else {
+                    this.messenger.appear(this._getTabWindow('messenger'));
+                    this.conversations.appear(this._getTabWindow('conversations'));
+                }
+
                 this._pushState('/im');
                 this.setPageTitle(tr("messenger_tab_conversations"));
                 break;
@@ -380,6 +408,10 @@ export class IM {
         /*if (window.isMobile && window.isMobile()) {
             return;
         }*/
+
+        if (window.im.is_compact_mode_enabled == true) {
+            return;
+        }
 
         if (enable) {
             if (!u('body').hasClass('no-scroll')) {
@@ -555,7 +587,7 @@ class FriendsTab {
     _render(container) {
         const ref = this.referrer;
 
-        render(html`
+        preactRender(html`
         <${FriendsPage}
             friends=${this.friends}
             count=${this.total_count}
