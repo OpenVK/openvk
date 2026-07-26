@@ -79,23 +79,71 @@ class Chat extends RowModel
 
     public function pushPhotoToHistory(Photo $photo): bool
     {
+        $history = $this->getPhotoHistory();
+        $id = $photo->getId();
+
+        if (in_array($id, $history)) {
+            return false;
+        }
+
+        array_unshift($history, $id);
+
+        if (sizeof($history) > 100) {
+            $history = array_slice($history, 0, 100);
+        }
+
+        $this->stateChanges("photos_history", implode(",", $history));
+
         return true;
     }
 
     public function removePhotoFromHistory(?Photo $photo = null): bool
     {
+        $history = $this->getPhotoHistory();
+        $id = $photo ? $photo->getId() : $this->getPhotoId();
+
+        $index = array_search($id, $history);
+        if ($index === false) {
+            return false;
+        }
+
+        array_splice($history, $index, 1);
+        $this->stateChanges("photos_history", implode(",", $history));
+
         return true;
     }
 
-    public function getPhotoHistory(): array
+    public function getPhotoHistory(bool $as_models = false): array
     {
-        # TODO: return photos that was
-        return [];
+        $raw = $this->getRecord()->photos_history;
+        if (empty($raw)) {
+            return [];
+        }
+
+        return array_map("intval", explode(",", $raw));
     }
 
     public function deleteCurrentPhoto(): bool
     {
+        $currentId = $this->getPhotoId();
+        if (!$currentId) {
+            return false;
+        }
+
+        $this->stateChanges("photo_id", null);
+
         return true;
+    }
+
+    public function getGroupId(): ?int
+    {
+        $gid = $this->getRecord()->group_id;
+        return is_null($gid) ? null : (int) $gid;
+    }
+
+    public function setGroupId(?int $groupId): void
+    {
+        $this->stateChanges("group_id", $groupId);
     }
 
     public function getPhotoURL(string $size = "miniscule"): string | null
