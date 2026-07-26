@@ -150,6 +150,8 @@ export class ChatGeneralForm {
         this._beginning_reached = false;
 
         this._messages_inited = false;
+        this._members = null;
+        this._total_members_count = 0;
     }
 
     // ── identity ─────────────────────────────────────────────────────
@@ -176,7 +178,11 @@ export class ChatGeneralForm {
     }
 
     get can_write() {
-        return (this.data.can_write_private_message ?? 1) === 1;
+        return (this.data.can_write_private_message ?? this.data.can_write ?? 1) === 1;
+    }
+
+    showAsJson() {
+        fastError(`<textarea>${JSON.stringify(this.data, null, 4)}</textarea>`);
     }
 
     canBeInvitedBy(group = null) {
@@ -229,6 +235,23 @@ export class ChatGeneralForm {
         }
 
         return this.isAdmin();
+    }
+
+    canViewInviteLinks(as_group = null)
+    {
+        if (as_group != null) {
+            return false;
+        }
+
+        if (this.supposed_type != "chat") {
+            return false;
+        }
+
+        return this.isAdmin();
+    }
+
+    canLeaveChat() {
+        return this.supposed_type == "chat";
     }
 
     get conversation_avatar_any() {
@@ -320,6 +343,10 @@ export class ChatGeneralForm {
     }
 
     get online_status_str() {
+        if (this.supposed_type == "chat") {
+            return Number(this._total_members_count) + " members"
+        }
+
         if (this.data.followers_count) {
             return tr("followers", this.data.followers_count);
         }
@@ -929,6 +956,22 @@ export class ChatGeneralForm {
         });
 
         return v1;
+    }
+
+    /* members */
+
+    _hasLoadedMembers() {
+        return this._members != null;
+    }
+
+    async m_load(offset = 0) {
+        const v = await window.OVKAPI.call("messages.getConversationMembers", {
+            "peer_id": this.id,
+            "extended": 1,
+        });
+
+        this._total_members_count = v.count;
+        console.log(v)
     }
 }
 
