@@ -234,20 +234,22 @@
                 <input type="hidden" name="act" value="add" />
                 <input type="hidden" name="id"  value="{$club->getId()}" />
                 <input type="hidden" name="hash" value="{$csrfToken}" />
-                {if $club->isEvent()}
+                {if $club->isEvent() && !$club->isEventOver()}
                     <input type="submit" id="profile_link" value="{_ill_come_to_meeting}" />
+                {elseif $club->isEvent() && $club->isEventOver()}
+                    <input type="submit" id="profile_link" value="{_add_to_list_event}" />
                 {else}
                     <input type="submit" id="profile_link" value="{_join_community}" />
                 {/if}
             </form>
-            {if $club->isEvent()}
-            <form action="/setSub/club" method="post">
-                <input type="hidden" name="act" value="add" />
-                <input type="hidden" name="flag" value="1" />
-                <input type="hidden" name="id"  value="{$club->getId()}" />
-                <input type="hidden" name="hash" value="{$csrfToken}" />
-                <input type="submit" id="profile_link" value="{_i_might_come_to_meeting}" />
-            </form>
+            {if $club->isEvent() && !$club->isEventOver()}
+                <form action="/setSub/club" method="post">
+                    <input type="hidden" name="act" value="add" />
+                    <input type="hidden" name="flag" value="1" />
+                    <input type="hidden" name="id"  value="{$club->getId()}" />
+                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                    <input type="submit" id="profile_link" value="{_i_might_come_to_meeting}" />
+                </form>
             {/if}
         {else}
             <form action="/setSub/club" method="post">

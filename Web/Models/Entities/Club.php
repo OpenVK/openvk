@@ -188,6 +188,11 @@ class Club extends RowModel
         return $this->getRecord()->type === 2 ? true : false;
     }
 
+    public function isEventOver(): bool
+    {
+        return $this->getStartDate()->timestamp() < time() ? true : false;
+    }
+
     public function isClosed(): bool
     {
         return $this->getRecord()->closed === 1 ? true : false;

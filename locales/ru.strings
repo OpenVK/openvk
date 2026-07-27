@@ -361,6 +361,7 @@
 "join_community" = "Вступить в группу";
 "leave_community" = "Выйти из группы";
 "check_community" = "Просмотр группы";
+"add_to_list_event" = "Добавить в список";
 "ill_come_to_meeting" = "Я приду";
 "i_might_come_to_meeting" = "Возможно приду";
 "ill_not_come_to_meeting" = "Я не приду";

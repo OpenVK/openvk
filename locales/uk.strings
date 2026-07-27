@@ -348,6 +348,12 @@
 "join_community" = "Вступити в спільноту";
 "leave_community" = "Вийти зі спільноти";
 "check_community" = "Перегляд спільноти";
+"add_to_list_event" = "Додати в перелік";
+"ill_come_to_meeting" = "Я прийду";
+"i_might_come_to_meeting" = "Можливо прийду";
+"ill_not_come_to_meeting" = "Я не прийду";
+"event_comers" = "Точно прийдуть";
+"event_potential_comers" = "Можливо прийдуть";
 "min_6_community" = "Назва має мати не менше 6 символів";
 "participants" = "Учасники";
 "groups" = "Спільноти";
