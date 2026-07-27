@@ -1334,7 +1334,7 @@ u(document).on("click", "#editPost", async (e) => {
 })
 
 async function __uploadToTextarea(file, textareaNode, is_from_messenger = false) {
-    if (textareaNode.closest(".messenger-app").length > 0) {
+    if (textareaNode.closest(".messenger-layer").length > 0) {
       is_from_messenger = true;
     }
 

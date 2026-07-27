@@ -362,7 +362,7 @@ final class Messages extends VKAPIRequestHandler
             $this->fail(-151, "Stickers are not implemented");
         }
 
-        $attachment_checked = parseAttachments($attachment);
+        $attachment_checked = parseAttachments($attachment, ["photo", "video", "doc", "audio", "wall"]);
         $attachment_secure = [];
 
         foreach ($attachment_checked as $item) {
@@ -420,7 +420,7 @@ final class Messages extends VKAPIRequestHandler
             $this->fail(936, "There is no peer with this id");
         }
 
-        $attachment_checked = parseAttachments($attachment);
+        $attachment_checked = parseAttachments($attachment, ["photo", "video", "doc", "audio", "wall"]);
         $attachment_secure = [];
 
         foreach ($attachment_checked as $item) {

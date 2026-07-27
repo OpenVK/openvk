@@ -2,7 +2,7 @@ async function showUserDialog(userId) {
     const conv = await window.im.conversations._findConvFromApi(userId);
 
     const html = `
-        <div id="user-send-dialog">
+        <div class="messenger-layer" id="user-send-dialog">
             <div class="user-send-left">
                 <img class="udlg-avatar" src="${conv.peer.avatar_any}" alt="" />
                 <a class="udlg-goto" style="text-align: right;">${tr('go_to_dialog').toLowerCase()} &rarr;</a>
@@ -17,7 +17,7 @@ async function showUserDialog(userId) {
 
                 <div id="write" class="has_emoji_picker model_content_textarea">
                     <div class="textareas">
-                        <textarea id="_text" class="udlg-textarea expanded-textarea small-textarea" placeholder="${tr('enter_message')}"></textarea>
+                        <textarea min-height: 190px; id="_text" class="udlg-textarea expanded-textarea small-textarea" placeholder="${tr('enter_message')}"></textarea>
                         <div class="emoji_picker_entrypoint"></div>
                     </div>
 

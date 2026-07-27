@@ -435,11 +435,10 @@ function unpack_attachments_into_node(textarea_node, attachments) {
                 'undeletable': true,
             }, textarea_node)
         } else {
-            const found_block = post.find(`div[data-att_type='${type}'][data-att_id='${aid}']`)
             __appendToTextarea({
                 'type': type,
                 'alignment': 'vertical',
-                'html': found_block.html(),
+                'html': tr("preview_attachment_" + type) + " " + ovk_proc_strtr(obj.title ?? obj.id, 100 * 2 - 9 + 4),
                 'id': aid,
             }, textarea_node)
         }
