@@ -60,6 +60,12 @@
                         </a>
                     </td>
                 </tr>
+                <tr n:if="!is_null($club->getLocation())">
+                    <td><span class="nobold">{_location}: </span></td>
+                    <td>
+                        {$club->getLocation()}
+                    </td>
+                </tr>
                 <tr n:if="$club->isEvent()">
                     <td><span class="nobold">{_event_start_date}: </span></td>
                     <td>
