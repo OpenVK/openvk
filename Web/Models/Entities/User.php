@@ -795,7 +795,7 @@ class User extends RowModel
             $sel = $this->getRecord()
                         ->related("subscriptions.follower")
                         ->limit($count, $page);
-            
+
             if (!$andEvents) {
                 $sel = $sel->where("target IN (SELECT id FROM groups WHERE type = ?)", 1);
             }
@@ -816,7 +816,7 @@ class User extends RowModel
         if ($admin) {
             $id    = $this->getId();
             $query = "SELECT COUNT(*) AS `cnt` FROM (SELECT `id` FROM `groups` WHERE `owner` = ? ";
-            $query .= $andEvents ? "": "AND `type` = 1 ";
+            $query .= $andEvents ? "" : "AND `type` = 1 ";
             $query .= "UNION SELECT `club` as `id` FROM `group_coadmins` WHERE `user` = ?) u0;";
 
             return (int) DatabaseConnection::i()->getConnection()->query($query, $id, $id)->fetch()->cnt;
