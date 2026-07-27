@@ -230,12 +230,12 @@ export const PeerWindow = ({ peer, togglePeerInfo }) => {
     const is_from_chat = window.im.corresponder.supposed_type == "chat" && peer.supposed_type != "chat";
 
     return html`
-    <div class="back-side"><a onClick=${() => togglePeerInfo()}>${tr('back')}</a></div>
+    <div class="back-side"><a onClick=${() => { window.im.messenger.view.togglePeerInfo() }}>${tr('back')}</a></div>
     <div class="peer-side">
         <div class="peer-info">
             <div class="peer-avatar sliding-thing-wrapper">
                 <img src=${avatar} alt=${tr('avatar')} />
-                <a onClick=${(event) => { OpenAvatar(event, peer.avatar_max, peer.id + '_profile', peer.data.photo_pid) }} class="avatar-opener sliding-thing">
+                <a onClick=${(event) => { OpenChatAvatar(event, peer) }} class="avatar-opener sliding-thing">
                     <div class="lupa"></div>
                 </a>
             </div>
@@ -290,14 +290,6 @@ export const ErrorConversation = ({ }) => {
     return html`
         <div>
             <span>Select a convo</span>
-        </div>
-    `
-}
-
-export const PinnedMessages = ({ }) => {
-    return html`
-        <div>
-            <a onClick=${(e) => { window.im.messenger.view.resetSpecialMode() }}>1</a>
         </div>
     `
 }

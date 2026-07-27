@@ -1226,6 +1226,7 @@ final class Messages extends VKAPIRequestHandler
     public function setChatPhoto(int $chat_id, string $file, string $hash): object
     {
         $this->requireUser();
+        $this->willExecuteWriteAction();
 
         $imagePath = (new Uploader())->getImagePath($file, $hash);
 
@@ -1267,6 +1268,32 @@ final class Messages extends VKAPIRequestHandler
     // ----------------------------------
     //              Custom
     // ----------------------------------
+
+    public function getChatAvatarHistory(int $chat_id)
+    {
+        $this->requireUser();
+
+        if ($chat_id > 2000000000) {
+            $chat_id = $chat_id - 2000000000;
+        }
+
+        $chatsRepo = new ChatRepo();
+        $chat = $chatsRepo->getByChatId($chat_id);
+
+        if (!$chat->isMember($this->getUser())) {
+            $this->fail(14, "Chat not found");
+        }
+
+        $photos = [];
+        foreach ($chat->getAvatarsHistory() as $photo) {
+            $photos[] = $photo->toVkApiStruct(true);
+        }
+
+        return (object) [
+            "count" => sizeof($photos),
+            "items" => $photos,
+        ];
+    }
 
     public function getUnreadMessages(int $group_id = 0)
     {

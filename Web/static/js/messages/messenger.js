@@ -1,7 +1,7 @@
 import { ChatMessage, ChatGeneralForm } from './messages.js';
 import { Conversation } from './conversations.js';
 import { MessageListView } from "./components/message.js"
-import { PinnedMessages, ErrorConversation, WriteBar, ActionsBar, PeerWindow, InputArea, PeerTabsView } from "./components/convos.js"
+import { ErrorConversation, WriteBar, ActionsBar, PeerWindow, InputArea, PeerTabsView } from "./components/convos.js"
 import { html, render } from './im.js';
 
 export class Messenger {
@@ -127,22 +127,11 @@ export class MessengerViewModel {
         this._render();
     }
 
-	_render(container, special_mode) {
+	_render(container, special_mode = null, messages = null) {
 		const root = container || this.appEl;
 		if (!root) return;
 
         const currentConv = this.getCurrentChat();
-
-        if (special_mode != null) {
-            switch (special_mode) {
-                case "pinned":
-                    render(html`<${PinnedMessages} />`, root);
-                    return;
-                case "photos":
-                    break;
-            }
-        }
-
         if (!currentConv) {
             render(html`<${ErrorConversation} />`, root)
             return;
@@ -151,8 +140,14 @@ export class MessengerViewModel {
         const peer = currentConv ? currentConv.peer : null;
         const display_peer = this.toggled_peer_obj ? this.toggled_peer_obj : peer;
 
-		render(html`
-      <div id="chat-page" class="${window.im.tab == "contact" ? 'peer-shown' : ''}">
+        if (!messages) {
+            messages = peer ? peer.divided_messages : [];
+        }
+
+        const is_rendering_contact_window = (window.im.tab == "contact" && special_mode === null);
+        console.log(window.im.tab, special_mode, is_rendering_contact_window)
+        render(html`
+      <div id="chat-page" class="${is_rendering_contact_window == true ? 'peer-shown' : ''}">
         <div class="chat-window">
           <${PeerTabsView} hadTab=${this.had_more_one_tab} tabs=${this.opened_tabs} currentChat=${this.current_chat} />
           <${ActionsBar}
@@ -164,8 +159,9 @@ export class MessengerViewModel {
           />
           <div class="messenger-app">
             <${MessageListView}
+            specialMode=${special_mode}
             convo=${currentConv}
-            messages=${peer ? peer.divided_messages : []} />
+            messages=${messages} />
             <${InputArea}
               editMsg=${this.editMsg}
               replyTo=${this.replyTo}
@@ -179,7 +175,7 @@ export class MessengerViewModel {
             />
           </div>
         </div>
-        ${window.im.tab == "contact" && html`
+        ${window.im.tab == "contact" && is_rendering_contact_window == true && html`
           <div class="peer-window">
             <${PeerWindow} peer=${display_peer} togglePeerInfo=${this.togglePeerInfo} />
           </div>
@@ -187,6 +183,28 @@ export class MessengerViewModel {
       </div>
     `, root);
 	}
+
+    async _renderSpecialMode(container, special_mode) {
+        console.log("IM | Rendering special mode " + special_mode);
+
+        let messages = [];
+        const currentConv = this.getCurrentChat();
+        const peer = currentConv ? currentConv.peer : null;
+        const display_peer = this.toggled_peer_obj ? this.toggled_peer_obj : peer;
+
+        switch (special_mode) {
+            default:
+                break;
+            case "pinned":
+                messages = display_peer ? display_peer.divided_messages : [];
+                break;
+            case "photos":
+                break;
+        }
+        console.log(display_peer, special_mode, messages)
+
+        this._render(container, special_mode, messages);
+    }
 
 	onTextareaKeyPress(e) {
 		const ta = e.target;
@@ -753,11 +771,11 @@ export class MessengerViewModel {
     // other links from peer window
 
     async setSpecialMode(mode = null) {
-        this._render(null, mode);
+        await this._renderSpecialMode(null, mode);
     }
 
     async resetSpecialMode() {
-        this._render(null, null);
+        this._render(null);
     }
 }
 

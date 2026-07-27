@@ -126,7 +126,7 @@ export class ChatGeneralForm {
     constructor(item) {
         this.data = item || {};
         this.message_chunks = [];
-        this.message_chunks_order = [];
+        this.pinned_message_chunks = [];
 
         /**
         * UID of the chunk the user is currently scrolled to / anchored at.
@@ -822,77 +822,77 @@ export class ChatGeneralForm {
         }
 }
 
-  // ── scrolling DOWN (newer messages) ───────────────────────────────
+    // ── scrolling DOWN (newer messages) ───────────────────────────────
 
-  /**
-   * Load newer messages relative to the current chunk.
-   *
-   * When scrolling DOWN (looking for newer messages):
-   * 1. Find the current chunk in the sorted array.
-   * 2. If there is already a chunk *before* it (at a lower index = newer),
-   *    just switch to it — no fetch needed.
-   * 3. Otherwise, fetch one page of messages newer than the current
-   *    chunk's newest message. The new chunk becomes the current one.
-   *
-   * Scrolling stops (isBeginning) when the API returns fewer messages
-   * than requested — there are no newer messages left.
-   */
-   async _messagesLoad_DownFromCurrentChunk() {
-       if (this._isBeginningReached()) return;
+    /**
+    * Load newer messages relative to the current chunk.
+    *
+    * When scrolling DOWN (looking for newer messages):
+    * 1. Find the current chunk in the sorted array.
+    * 2. If there is already a chunk *before* it (at a lower index = newer),
+    *    just switch to it — no fetch needed.
+    * 3. Otherwise, fetch one page of messages newer than the current
+    *    chunk's newest message. The new chunk becomes the current one.
+    *
+    * Scrolling stops (isBeginning) when the API returns fewer messages
+    * than requested — there are no newer messages left.
+    */
+    async _messagesLoad_DownFromCurrentChunk() {
+        if (this._isBeginningReached()) return;
 
-       const current = this._findCurrentChunk();
-       if (!current) return;
+        const current = this._findCurrentChunk();
+        if (!current) return;
 
-       const sorted = this.chunks;
+        const sorted = this.chunks;
 
-        // If there's already a newer chunk loaded, just switch to it
-        if (current.index > 0) {
-            const newerChunk = sorted[current.index - 1];
-            this._setCurrentChunkByUid(newerChunk.uid);
-            window.im.messenger.view._triggerUpdate();
+            // If there's already a newer chunk loaded, just switch to it
+            if (current.index > 0) {
+                const newerChunk = sorted[current.index - 1];
+                this._setCurrentChunkByUid(newerChunk.uid);
+                window.im.messenger.view._triggerUpdate();
 
-            // Scroll to keep the viewport stable
-            setTimeout(() => {
-                const block = window.im.messenger.view.messagesListBlock;
-                if (block) {
-                    const lastMsg = newerChunk.getMessages()[newerChunk.getMessages().length - 1];
-                    if (lastMsg && lastMsg.id) {
-                        const el = block.querySelector(`[data-msg-id="${lastMsg.id}"]`);
-                        if (el) el.scrollIntoView({ block: 'end' });
+                // Scroll to keep the viewport stable
+                setTimeout(() => {
+                    const block = window.im.messenger.view.messagesListBlock;
+                    if (block) {
+                        const lastMsg = newerChunk.getMessages()[newerChunk.getMessages().length - 1];
+                        if (lastMsg && lastMsg.id) {
+                            const el = block.querySelector(`[data-msg-id="${lastMsg.id}"]`);
+                            if (el) el.scrollIntoView({ block: 'end' });
+                        }
                     }
-                }
-            }, 1);
-            return;
-        }
+                }, 1);
+                return;
+            }
 
-        // ── No newer chunk exists → fetch one ──
-        const newestMsgInCurrent = current.chunk.latest_message;
-        if (!newestMsgInCurrent) return;
+            // ── No newer chunk exists → fetch one ──
+            const newestMsgInCurrent = current.chunk.latest_message;
+            if (!newestMsgInCurrent) return;
 
-        // Fetch messages newer than the newest message in the current chunk
-        let msgs = [];
+            // Fetch messages newer than the newest message in the current chunk
+            let msgs = [];
 
-        try {
-            msgs = await this.getMessages_NewerThan(newestMsgInCurrent.id);
-        } catch (e) {
-            console.error(e);
-        }
+            try {
+                msgs = await this.getMessages_NewerThan(newestMsgInCurrent.id);
+            } catch (e) {
+                console.error(e);
+            }
 
-        this._beginning_reached = msgs.isEnd();
+            this._beginning_reached = msgs.isEnd();
 
-        if (!this._beginning_reached) {
-            this._appendMessagesChunk(msgs, false);
-            this._setCurrentChunkByUid(msgs.uid);
-            window.im.messenger.view._triggerUpdate();
+            if (!this._beginning_reached) {
+                this._appendMessagesChunk(msgs, false);
+                this._setCurrentChunkByUid(msgs.uid);
+                window.im.messenger.view._triggerUpdate();
 
-            // If we were at the bottom-ish area, scroll to the bottom
-            setTimeout(() => {
-                window.im.messenger.view._scrollToEnd();
-            }, 1);
-        }
-  }
+                // If we were at the bottom-ish area, scroll to the bottom
+                setTimeout(() => {
+                    window.im.messenger.view._scrollToEnd();
+                }, 1);
+            }
+    }
 
-  // ── guards used by the scroll handler ─────────────────────────────
+    // ── guards used by the scroll handler ─────────────────────────────
 
     /**
     * Returns true when there are already newer chunks loaded
@@ -916,7 +916,7 @@ export class ChatGeneralForm {
         return current.index < this.chunks.length - 1;
     }
 
-        // update
+    // update
 
     async updateTitle(title) {
         if (this.supposed_type != "chat") {
@@ -958,7 +958,15 @@ export class ChatGeneralForm {
         return v1;
     }
 
-    /* members */
+    /* etc */
+
+    // pinned
+
+    async pinnedMessages_load() {
+        this.pinned_message_chunks;
+    }
+
+    // members
 
     _hasLoadedMembers() {
         return this._members != null;
