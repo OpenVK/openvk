@@ -1041,6 +1041,8 @@
 "bday_tomorrow" = "Завтра";
 "bday_reminder_text" = "$1 день народження $2.";
 "bday_and" = " та ";
+"event_reminder_text" = "Найближчим часом відбудеться подія $1.";
+"event_reminder_text_multiple" = "Найближчим часом відбудуться події $1.";
 "points" = "Голоси";
 "points_count" = "голосів";
 "on_your_account" = "на Вашому рахунку";

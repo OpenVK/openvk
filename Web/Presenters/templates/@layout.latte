@@ -295,10 +295,10 @@
                                 <a href="{$newsLink}">{_news_more}</a>
                             </div>
 
-                            <div class="navigation_infos" id="bday" n:if="$showBday">
+                            <div class="navigation_infos" id="bday" n:if="$showBday || $showUEvents">
                                 <b>{_bday_reminder}</b>
                                 <hr size="1">
-                                <text>
+                                <text n:if="$showBday">
                                     {var $bdayListHtml = ''}
                                     {foreach $bdayUsers as $u}
                                         {php $bdayListHtml .= '<a href="/id' . $u->getId() . '">' . $u->getMorphedName(startWithLastName: false) . '</a>'}
@@ -313,6 +313,27 @@
                                         {/if}
                                     {/foreach}
                                     {tr("bday_reminder_text", $isBdayToday ? tr("bday_today") : tr("bday_tomorrow"), $bdayListHtml)|noescape}
+                                </text>
+                                <text n:if="$showUEvents">
+                                    {var $eventsHtml = ''}
+                                    {foreach $uEvents as $e}
+                                        {php $eventsHtml .= '<a href="/event' . $e->getId() . '">' . $e->getName() . '</a>'}
+                                        {if $uEventsCount == 2}
+                                            {if $iterator->isFirst()}{php $eventsHtml .= tr("bday_and")}{/if}
+                                        {elseif $uEventsCount != 1}
+                                            {if $iterator->isLast(2) and !$iterator->isLast()}
+                                                {php $eventsHtml .= tr("bday_and")}
+                                            {elseif !$iterator->isLast()}
+                                                {php $eventsHtml .= ', '}
+                                            {/if}
+                                        {/if}
+                                    {/foreach}
+
+                                    {if $uEventsCount == 1}
+                                        {tr("event_reminder_text", $eventsHtml)|noescape}
+                                    {else}
+                                        {tr("event_reminder_text_multiple", $eventsHtml)|noescape}
+                                    {/if}
                                 </text>
                             </div>
 

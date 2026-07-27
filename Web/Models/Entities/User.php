@@ -720,6 +720,20 @@ class User extends RowModel
         return [];
     }
 
+    public function getUpcomingEvents(): \Traversable
+    {
+        $sel = $this->getRecord()->related("subscriptions.follower");
+        foreach ($sel->where("model", "openvk\\Web\\Models\\Entities\\Club")
+                      ->where("target IN (SELECT id FROM groups WHERE type = ? AND start_date < ? AND start_date > ?)", 2, time() + DAY, time()) as $target) {
+            $target = (new Clubs())->get($target->target);
+            if (!$target) {
+                continue;
+            }
+
+            yield $target;
+        }
+    }
+
     public function getFollowers(int $page = 1, int $limit = 6): \Traversable
     {
         return $this->_abstractRelationGenerator("get-followers", $page, $limit);

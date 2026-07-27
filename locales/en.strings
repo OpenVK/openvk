@@ -1147,6 +1147,8 @@
 "bday_tomorrow" = "Tomorrow";
 "bday_reminder_text" = "$1 is $2's birthday.";
 "bday_and" = " and ";
+"event_reminder_text" = "Event $1 will take place soon.";
+"event_reminder_text_multiple" = "Events $1 will take place soon.";
 "points" = "Votes";
 "points_count" = "votes";
 "on_your_account" = "on your account";
