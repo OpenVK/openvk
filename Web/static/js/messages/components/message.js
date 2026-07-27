@@ -13,7 +13,8 @@ function hideHead(msg, index, chunk) {
 
 export const MessageBubble = ({ msg, index, chunk }) => {
   const cls = [
-    'messenger-app--messages---message',
+      'messenger-app--messages---message',
+      'messenger-layer',
     isSelected(msg) ? 'msg-selected' : '',
     hideHead(msg, index, chunk) ? 'same-author' : '',
     msg.data.deleted ? 'msg-deleted' : '',

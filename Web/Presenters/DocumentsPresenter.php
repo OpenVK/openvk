@@ -126,6 +126,7 @@ final class DocumentsPresenter extends OpenVKPresenter
             $owner = $group->getRealId();
         }
 
+        $document = null;
         $upload = $_FILES["blob"];
         $name = $this->postParam("name");
         $tags = $this->postParam("tags");
@@ -165,8 +166,15 @@ final class DocumentsPresenter extends OpenVKPresenter
         if (!$isAjax) {
             $this->redirect("/docs" . (isset($group) ? $group->getRealId() : ""));
         } else {
+            if ($this->postParam("return_template") === "1") {
+                $this->template->_template = "Documents/components/doc.latte";
+                $this->template->doc = $document;
+                return;
+            }
+
             $this->returnJson([
                 "success"  => true,
+                "id"       => $document->getPrettyId(),
                 "redirect" => "/docs" . (isset($group) ? $group->getRealId() : ""),
             ]);
         }

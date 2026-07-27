@@ -175,7 +175,7 @@ class Document extends Media
 
     public function isPrivate(): bool
     {
-        return $this->getFolder() == Document::VKAPI_FOLDER_PRIVATE;
+        return $this->getFolder() == Document::VKAPI_FOLDER_PRIVATE || $this->getRecord()->private === 1;
     }
 
     public function isImage(): bool
