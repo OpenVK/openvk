@@ -202,53 +202,55 @@ class PhotoViewer {
   }
 
   async loadDetails(photoId) {
-    const entry = this.photoMap[photoId];
-    if (!entry) return;
+      const entry = this.photoMap[photoId];
+      if (!entry) return;
 
-    if (entry.cached) {
-      this.modal.getNode().find(".ovk-photo-details").last().innerHTML = entry.cached;
-    } else {
-      console.log("Photo | Not cached");
-      this.modal.getNode().find(".ovk-photo-details").last().innerHTML = '<img src="/assets/packages/static/openvk/img/loading_mini.gif">';
+      if (entry.cached) {
+          this.modal.getNode().find(".ovk-photo-details").last().innerHTML = entry.cached;
+      } else if (this.contextType != "chat") {
+          console.log("Photo | Not cached");
+          this.modal.getNode().find(".ovk-photo-details").last().innerHTML = '<img src="/assets/packages/static/openvk/img/loading_mini.gif">';
 
-      let res = null;
+          let res = null;
 
-      try {
-        let _photo_id = null;
-        const _ids = photoId.split("_");
-        if (_ids.length == 3) {
-          _photo_id = _ids[0] + "_" + _ids[1] + "?key=" + _ids[2]
-        } else {
-          _photo_id = _ids[0] + "_" + _ids[1]
+        try {
+            let _photo_id = null;
+            const _ids = photoId.split("_");
+            if (_ids.length == 3) {
+                _photo_id = _ids[0] + "_" + _ids[1] + "?key=" + _ids[2]
+            } else {
+                _photo_id = _ids[0] + "_" + _ids[1]
+            }
+
+            res = await fetch('/photo' + _photo_id);
+
+            if (res.status == 404 || res.status.status == 403) {
+                throw Error("not found img");
+            }
+            const html = await res.text();
+            const doc = new DOMParser().parseFromString(html, "text/html");
+            const details = doc.querySelector('.ovk-photo-details');
+            entry.cached = details ? details.innerHTML : '';
+        } catch (e) {
+            entry.cached = "<div></div>";
+            console.error(entry, e);
         }
 
-        res = await fetch('/photo' + _photo_id);
-
-        if (res.status == 404 || res.status.status == 403) {
-          throw Error("not found img");
+        if (photoId === this.currentId) {
+            this.modal.getNode().find(".ovk-photo-details").last().innerHTML = entry.cached;
+            this.modal.getNode().find(".ovk-photo-details .bsdn").nodes.forEach(bsdnInitElement);
         }
-        const html = await res.text();
-        const doc = new DOMParser().parseFromString(html, "text/html");
-        const details = doc.querySelector('.ovk-photo-details');
-        entry.cached = details ? details.innerHTML : '';
-      } catch (e) {
-        entry.cached = "<div></div>";
-        console.error(entry, e);
-      }
+      } else {
+          this.modal.getNode().find(".ovk-photo-details").last().innerHTML = photoId;
+        }
 
-      if (photoId === this.currentId) {
-        this.modal.getNode().find(".ovk-photo-details").last().innerHTML = entry.cached;
-        this.modal.getNode().find(".ovk-photo-details .bsdn").nodes.forEach(bsdnInitElement);
-      }
+        const viewEl = this.modal.getNode().find(".ovk-photo-view").nodes[0];
+        const style = window.getComputedStyle(viewEl);
+        const h = viewEl.offsetHeight + parseInt(style.marginBottom) + parseInt(style.marginTop);
+        this.modal.getNode().find(".ovk-photo-view-overlay").nodes.forEach(function(el) {
+            el.style.height = h + "px";
+        });
     }
-
-    const viewEl = this.modal.getNode().find(".ovk-photo-view").nodes[0];
-    const style = window.getComputedStyle(viewEl);
-    const h = viewEl.offsetHeight + parseInt(style.marginBottom) + parseInt(style.marginTop);
-    this.modal.getNode().find(".ovk-photo-view-overlay").nodes.forEach(function(el) {
-      el.style.height = h + "px";
-    });
-  }
 
   async slide(direction) {
     if (this.count === 0 || this.count === 1) return;
@@ -312,51 +314,63 @@ class PhotoViewer {
     }, this);
   }
 
-  async loadAlbumContext() {
-    if (!this.contextId) return;
-    if (this.ended_right) return;
+    async loadAlbumContext(custom = null) {
+        if (!this.contextId) return;
+        if (this.ended_right) return;
 
-    const parts = this.contextId.split('_');
-    const params = {
-      offset: this.offset,
-      count: 20,
-      owner_id: parts[0],
-      album_id: parts[1],
-      photo_sizes: 1,
-    };
+        const parts = String(this.contextId).split('_');
+        const params = {
+            offset: this.offset,
+            count: 20,
+            owner_id: parts[0],
+            album_id: parts[1],
+            photo_sizes: 1,
+        };
 
-    if (this.rev) {
-      params["rev"] = 1;
+        if (this.rev) {
+            params["rev"] = 1;
+        }
+
+        let res;
+        try {
+            if (custom == null) {
+                res = await window.OVKAPI.call('photos.get', params);
+            } else {
+                res = custom;
+            }
+        } catch (e) {
+            return;
+        }
+
+        const existing = {};
+        this.photoOrder.forEach(function(id) {
+            existing[id] = true;
+        });
+
+        if (!res.items) {
+            this.ended_right = true;
+            return;
+        }
+
+        res.items.forEach(function(item) {
+            const pid = item.owner_id + '_' + item.id + (item.access_key ? "_" + item.access_key : "");
+            if (existing[pid]) return;
+
+            this.photoMap[pid] = {
+                url: item.src_xbig || item.photo_2560 || pickBestPhotoUrl(item.sizes),
+                id: pid,
+            };
+            this.photoOrder.push(pid);
+        }, this);
+        console.log(this.photoMap, this.photoOrder)
     }
 
-    let res;
-    try {
-      res = await window.OVKAPI.call('photos.get', params);
-    } catch (e) {
-      return;
+    async loadChatAvatarContext() {
+        const avs = await window.OVKAPI.call("messages.getChatAvatarHistory", {
+            "chat_id": this.contextId,
+        })
+        await this.loadAlbumContext(avs);
     }
-
-    const existing = {};
-    this.photoOrder.forEach(function(id) {
-      existing[id] = true;
-    });
-
-    if (!res.items) {
-      this.ended_right = true;
-      return;
-    }
-
-    res.items.forEach(function(item) {
-      const pid = item.owner_id + '_' + item.id + (item.access_key ? "_" + item.access_key : "");
-      if (existing[pid]) return;
-
-      this.photoMap[pid] = {
-        url: item.src_xbig || item.photo_2560 || pickBestPhotoUrl(item.sizes),
-        id: pid,
-      };
-      this.photoOrder.push(pid);
-    }, this);
-  }
 
   async open(firstPhotoUrl, firstPhotoId, context) {
     this.contextType = context.type || null;
@@ -388,20 +402,27 @@ class PhotoViewer {
       await this.loadAlbumContext();
     } else if (this.contextType === 'post' || this.contextType === 'comment') {
       await this.loadPostContext(this.contextId, this.contextType === 'comment');
+    } else if (this.contextType === 'chat') {
+        await this.loadChatAvatarContext();
     }
 
       console.log(this.photoMap)
     if (this.photoMap[firstPhotoId]) {
       this.showPhoto(firstPhotoId);
     } else {
-      this.photoMap[firstPhotoId] = {
-        url: firstPhotoUrl,
-        id: firstPhotoId,
-      };
-      if (this.photoOrder.indexOf(firstPhotoId) === -1) {
-        this.photoOrder.push(firstPhotoId);
-      }
-      this.showPhoto(firstPhotoId);
+        if (firstPhotoId == "skip") {
+            firstPhotoId = this.photoOrder[0];
+        } else {
+            this.photoMap[firstPhotoId] = {
+                url: firstPhotoUrl,
+                id: firstPhotoId,
+            };
+            if (this.photoOrder.indexOf(firstPhotoId) === -1) {
+                this.photoOrder.push(firstPhotoId);
+            }
+        }
+
+        this.showPhoto(firstPhotoId);
     }
 
     return this.modal.getNode();
@@ -2441,7 +2462,9 @@ function OpenAvatarUpdateDialogue(group = null, chat = null, aspectRatio = NaN, 
                 document.querySelector("#_uploadImg").classList.add("lagged")
 
                 if (chat != null) {
-                    chat.updateAvatar(blob)
+                    chat.updateAvatar(blob).then((resp) => {
+                        msg.close();
+                    })
                     return;
                 }
 

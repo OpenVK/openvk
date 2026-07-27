@@ -31,6 +31,22 @@ class Photos
         return self::$cache[$id] ??= $this->toPhoto($this->photos->get($id));
     }
 
+    public function getByIds(array $ids = []): array
+    {
+        $photos = $this->photos->select('*')->where('id IN (?)', $ids);
+        $payload = [];
+
+        foreach ($photos as $photo) {
+            if ($photo->deleted == 1) {
+                continue;
+            }
+
+            $payload[] = $this->toPhoto($photo);
+        }
+
+        return $payload;
+    }
+
     public function getByOwnerAndVIDUnsafe(int $owner, int $vId): ?Photo
     {
         $photo = $this->photos->where([

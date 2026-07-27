@@ -113,14 +113,18 @@ class Chat extends RowModel
         return true;
     }
 
-    public function getPhotoHistory(bool $as_models = false): array
+    public function getAvatarsHistory(bool $ids_only = false): array
     {
         $raw = $this->getRecord()->photos_history;
         if (empty($raw)) {
             return [];
         }
 
-        return array_map("intval", explode(",", $raw));
+        if ($ids_only == true) {
+            return array_map("intval", explode(",", $raw));
+        }
+
+        return (new Photos)->getByIds(explode(",", $raw));
     }
 
     public function deleteCurrentPhoto(): bool
@@ -297,8 +301,9 @@ class Chat extends RowModel
             $payload["photo_50"] = $photo->getURLBySizeId("miniscule");
             $payload["photo_100"] = $photo->getURLBySizeId("tiny");
             $payload["photo_200"] = $photo->getURLBySizeId("normal");
+            $payload["avatar_max"] = $photo->getURLBySizeId("larger");
         } else {
-            $payload["photo_200"] = $payload["photo_100"] = $payload["photo_50"] = "/assets/packages/static/openvk/img/im/chat_meaningless.jpg";
+            $payload["avatar_max"] = $payload["photo_200"] = $payload["photo_100"] = $payload["photo_50"] = "/assets/packages/static/openvk/img/im/chat_meaningless.jpg";
         }
 
         $payload["users"] = [];

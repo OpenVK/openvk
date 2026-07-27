@@ -751,6 +751,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 
 .messages--peers-tabs {
     display: flex;
+    flex-wrap: wrap;
 }
 
 .messages--peers-tabs .messages--peers-tab {
