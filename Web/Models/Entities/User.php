@@ -877,7 +877,8 @@ class User extends RowModel
 
         if ($admin) {
             $id     = $this->getId();
-            $query  = "SELECT `id` FROM `groups` WHERE `owner` = ? AND WHERE `type` = 2 UNION SELECT `club` as `id` FROM `group_coadmins` WHERE `user` = ?";
+            $query  = "SELECT `id` FROM `groups` WHERE `owner` = ? AND `type` = 2 UNION SELECT `g`.`id` FROM `group_coadmins` AS `gc`";
+            $query .= " JOIN `groups` AS `g` ON `g`.`id` = `gc`.`club` WHERE `gc`.`user` = ? AND `g`.`type` = 2";
             $query .= " LIMIT " . $count . " OFFSET " . $page;
 
             $sel = DatabaseConnection::i()->getConnection()->query($query, $id, $id);
@@ -907,7 +908,8 @@ class User extends RowModel
     {
         if ($admin) {
             $id    = $this->getId();
-            $query = "SELECT COUNT(*) AS `cnt` FROM (SELECT `id` FROM `groups` WHERE `owner` = ? AND WHERE `type` = 2 UNION SELECT `club` as `id` FROM `group_coadmins` WHERE `user` = ?) u0;";
+            $query = "SELECT COUNT(*) AS `cnt` FROM (SELECT `id` FROM `groups` WHERE `owner` = ? AND `type` = 2 UNION SELECT `g`.`id` FROM `group_coadmins` AS `gc`";
+            $query .= " JOIN `groups` AS `g` ON `g`.`id` = `gc`.`club` WHERE `gc`.`user` = ? AND `g`.`type` = 2) u0;";
 
             return (int) DatabaseConnection::i()->getConnection()->query($query, $id, $id)->fetch()->cnt;
         } else {
