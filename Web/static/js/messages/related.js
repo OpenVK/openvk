@@ -125,3 +125,57 @@ function OpenChatAvatar(event, peer) {
 
     OpenAvatar(event, peer.avatar_max, peer.id + '_profile', peer.data.photo_pid);
 }
+
+function createChatTopic(group_id) {
+    const msg = new CMessageBox({
+        title: tr("create_topic_as_chat"),
+        close_on_buttons: false,
+        body: `
+        <div>
+            <p>${tr("create_topic_as_chat_desc")}</p>
+            <p>${tr("create_topic_as_chat_desc_2")}:</p>
+            <div>
+                <select id="chat_sel"></select>
+            </div>
+        </div>`,
+        buttons: [tr("create"), tr("cancel")],
+        callbacks: [async () => {
+            const val = msg.getNode().find("#chat_sel").last().value;
+
+            msg.close();
+
+            CMessageBox.toggleLoader();
+
+            let res = await window.OVKAPI.call("board.addChatTopic", {
+                "group_id": group_id,
+                "chat_id": val
+            }, true);
+
+            if (res.error_msg != null) {
+                if (res.error_code == 14) {
+                    fastError(tr("chat_topic_already_attached_error"));
+                } else {
+                    fastError(String(res.error_msg));
+                }
+
+                CMessageBox.toggleLoader();
+                return;
+            }
+
+            window.router.route("/topic" + group_id + "_" + res);
+            CMessageBox.toggleLoader();
+        }, () => {
+            msg.close();
+        }]
+    });
+
+    if (window.im) {
+        window.im.conversations.convs.forEach(item => {
+            if (item.peer && item.peer.supposed_type == "chat") {
+                msg.getNode().find("#chat_sel").append(`
+                    <option value="${item.peer.id}">${escapeHtml(item.peer.full_name)}</option>
+                `);
+            }
+        })
+    }
+}

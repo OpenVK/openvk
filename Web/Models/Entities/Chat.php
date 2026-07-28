@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace openvk\Web\Models\Entities;
 
+use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{User, Photo};
 use openvk\Web\Models\Repositories\Photos;
 use PhpCsFixer\ConfigurationException\RequiredFixerConfigurationException;
+use Chandler\Database\DatabaseConnection;
 
 class Chat extends RowModel
 {
@@ -36,6 +38,16 @@ class Chat extends RowModel
     public function getDescription(): string
     {
         return $this->getRecord()->description ?? "";
+    }
+
+    public function getEditTime(): ?DateTime
+    {
+        $edited = $this->getRecord()->edited;
+        if (is_null($edited)) {
+            return null;
+        }
+
+        return new DateTime($edited);
     }
 
     public function setDescription(string $description): void
@@ -139,17 +151,6 @@ class Chat extends RowModel
         return true;
     }
 
-    public function getGroupId(): ?int
-    {
-        $gid = $this->getRecord()->group_id;
-        return is_null($gid) ? null : (int) $gid;
-    }
-
-    public function setGroupId(?int $groupId): void
-    {
-        $this->stateChanges("group_id", $groupId);
-    }
-
     public function getPhotoURL(string $size = "miniscule"): string | null
     {
         $serverUrl = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
@@ -238,11 +239,21 @@ class Chat extends RowModel
             return false;
         }
 
-        if ($this->isCreator($user)) {
-            return true;
+        return $this->isCreator($user);
+    }
+
+    public function canAttachToTopic(?User $user): bool
+    {
+        if (!$user) {
+            return false;
         }
 
-        return false;
+        $topicsWith = DatabaseConnection::i()->getContext()->table("topics")->where(["deleted" => 0, "chat_id" => $this->getId()])->count();
+        if ($topicsWith > 0) {
+            return false;
+        }
+
+        return $this->isCreator($user);
     }
 
     //

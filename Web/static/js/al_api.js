@@ -55,7 +55,7 @@ const _pageLoaded = () => {
 };
 
 window.OVKAPI = new class {
-    async call(method, params) {
+    async call(method, params, return_exception = false) {
         if(!method) {
             return
         }
@@ -86,6 +86,10 @@ window.OVKAPI = new class {
         if(json_response.response) {
             return json_response.response
         } else {
+            if (return_exception == true) {
+                return json_response;
+            }
+
             throw new Error(json_response.error_msg)
         }
     }
