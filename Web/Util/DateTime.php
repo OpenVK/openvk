@@ -11,6 +11,7 @@ class DateTime
     public const RELATIVE_FORMAT_NORMAL = 0;
     public const RELATIVE_FORMAT_LOWER  = 1;
     public const RELATIVE_FORMAT_SHORT  = 2;
+    public const RELATIVE_DISABLED      = -1;
 
     private $timestamp;
     private $localizator;
@@ -21,7 +22,7 @@ class DateTime
         $this->localizator = Localizator::i();
     }
 
-    protected function zmdate(): string
+    protected function zmdate(bool $dontUseRelativeTime = false): string
     {
         $then = date_create("@" . $this->timestamp);
         $now  = date_create();
@@ -32,7 +33,7 @@ class DateTime
             return ovk_strftime_safe("%e %B %Y ", $this->timestamp) . tr("time_at_sp") . ovk_strftime_safe(" %R", $this->timestamp);
         }
 
-        if (($this->timestamp + $sessionOffset) >= (strtotime("midnight") + $sessionOffset)) { # Today
+        if (($this->timestamp + ($sessionOffset * MINUTE)) >= (strtotime("midnight") + ($sessionOffset * MINUTE)) && $dontUseRelativeTime == false) { # Today
             if ($diff->h >= 1) {
                 return tr("time_today") . tr("time_at_sp") . ovk_strftime_safe(" %R", $this->timestamp);
             } elseif ($diff->i < 2) {
@@ -40,7 +41,7 @@ class DateTime
             } else {
                 return $diff->i === 5 ? tr("time_exactly_five_minutes_ago") : tr("time_minutes_ago", $diff->i);
             }
-        } elseif (($this->timestamp + $sessionOffset) >= (strtotime("-1day midnight") + $sessionOffset)) { # Yesterday
+        } elseif (($this->timestamp + ($sessionOffset * MINUTE)) >= (strtotime("-1day midnight") + ($sessionOffset * MINUTE)) && $dontUseRelativeTime == false) { # Yesterday
             return tr("time_yesterday") . tr("time_at_sp") . ovk_strftime_safe(" %R", $this->timestamp);
         } elseif (ovk_strftime_safe("%Y", $this->timestamp) === ovk_strftime_safe("%Y", time())) { # In this year
             return ovk_strftime_safe("%e %h ", $this->timestamp) . tr("time_at_sp") . ovk_strftime_safe(" %R", $this->timestamp);
@@ -65,6 +66,8 @@ class DateTime
                 return mb_convert_case($this->zmdate(), MB_CASE_TITLE_SIMPLE);
             case static::RELATIVE_FORMAT_LOWER:
                 return $this->zmdate();
+            case static::RELATIVE_DISABLED:
+                return $this->zmdate(true);
             case static::RELATIVE_FORMAT_SHORT:
             default:
                 return "";

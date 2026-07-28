@@ -709,6 +709,16 @@
                             <span class="nobold">{_my_groups}</span>
                         </td>
                     </tr><tr>
+                        <td width="120" valign="top" align="right">
+                            <input
+                                  n:attr="checked => $user->getLeftMenuItemStatus('events')"
+                                  type="checkbox"
+                                  name="menu_eventoj" />
+                        </td>
+                        <td>
+                            <span class="nobold">{_my_events}</span>
+                        </td>
+                    </tr><tr>
                         <td width="120" valign="top" align="right" align="right">
                             <input
                                   n:attr="checked => $user->getLeftMenuItemStatus('news')"

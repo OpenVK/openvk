@@ -802,6 +802,46 @@ input[type="number"] {
     min-width: unset !important;
 }
 
+.section_empty {
+    text-align: center;
+    padding: 12px;
+    background-color: #f5f5f5;
+}
+
+.section_empty a {
+    display: flex;
+    vertical-align: middle;
+    align-items: center;
+    justify-content: center;
+}
+
+.section_empty a::before {
+    width: 24px;
+    height: 24px;
+    background-image: url('../img/group_icons.png');
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+    content: "";
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.section_empty a.docs::before {
+    background-position: 0px -120px;
+}
+
+.section_empty a.music::before {
+    background-position: 0px -48px;
+}
+
+.section_empty a.board::before {
+    background-position: 0px -24px;
+}
+
+.section_empty a.photo::before {
+    background-position: 0px 0px;
+}
+
 .content-withouttop {
     padding-top: 0;
 }
@@ -827,6 +867,7 @@ input[type~="phone"],
 input[type="search"],
 input[type~="search"],
 input[type~="date"],
+input[type~="time"],
 input[type~="datetime-local"],
 select {
     border: 1px solid #C0CAD5;
