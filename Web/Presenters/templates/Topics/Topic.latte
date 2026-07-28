@@ -14,9 +14,9 @@
 
 {block header}
     <a href="{$club->getURL()}">{$club->getCanonicalName()}</a>
-    » 
+    »
     <a href="/board{$club->getId()}">{_discussions}</a>
-    » 
+    »
     {_view_topic}
 
     <div style="float: right;" n:if="$topic->canBeModifiedBy($thisUser)">
@@ -33,8 +33,21 @@
             {_created} {$topic->getPublicationTime()}
         </div>
     </div>
-    <div style="margin-top: 20px;">
+    <div n:if="!$chat" style="margin-top: 20px;">
         <h4>{tr("topic_messages_count", $count)}</h4>
         {include "../components/comments.latte", comments => $comments, count => $count, page => $page, model => "topics", club => $club, readOnly => $topic->isClosed() || ($topic->isRestricted() && !$topic->getClub()->canBeModifiedBy($thisUser)), showTitle => false, parent => $topic}
+    </div>
+    <div n:if="$chat" id="chat-topic">
+        <span class="t1">{_topic_going_in_chat}</span>
+        <div class="chat-topic-preview">
+            <img src="{$chat->getPhotoURL("miniscule")}" alt="chat">
+            <div>
+                <b>{$chat->getTitle()}</b>
+                <span>сколько-то участников</span>
+            </div>
+        </div>
+        <div class="t3">
+            <input value="{_chat_join}" class="button" type="button" onclick="openChatTopic(event, {$topic->getPrettyId()})">
+        </div>
     </div>
 {/block}

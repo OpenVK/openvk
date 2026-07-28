@@ -157,7 +157,7 @@ class Chat extends RowModel
 
         $photo = $this->getPhoto();
         if (is_null($photo)) {
-            return null;
+            return "/assets/packages/static/openvk/img/im/chat_meaningless.jpg";
         }
 
         return $photo->getURLBySizeId($size);
@@ -197,6 +197,11 @@ class Chat extends RowModel
     public function isMember(?User $user): bool
     {
         return true;
+    }
+
+    public function isKicked(?User $user): bool
+    {
+        return false;
     }
 
     public function getMembersModels(?User $user): array
@@ -240,6 +245,15 @@ class Chat extends RowModel
         }
 
         return $this->isCreator($user);
+    }
+
+    public function canJoin(?User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        return !$this->isKicked($user);
     }
 
     public function canAttachToTopic(?User $user): bool

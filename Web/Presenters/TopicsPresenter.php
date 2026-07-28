@@ -64,6 +64,7 @@ final class TopicsPresenter extends OpenVKPresenter
         }
 
         $this->template->topic    = $topic;
+        $this->template->chat     = $topic->getChat();
         $this->template->club     = $topic->getClub();
         $this->template->count    = $topic->getCommentsCount();
         $this->template->page     = (int) ($this->queryParam("p") ?? 1);
@@ -173,7 +174,7 @@ final class TopicsPresenter extends OpenVKPresenter
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->willExecuteWriteAction();
-            $title = $this->postParam("title");
+            $title = $this->postParam("title") ?? "-";
 
             if (!$title) {
                 $this->flashFail("err", tr("failed_to_change_topic"), tr("no_title_specified"));

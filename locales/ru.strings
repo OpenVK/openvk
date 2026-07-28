@@ -1378,7 +1378,6 @@
 
 "to_friendslist" = "К списку друзей";
 "about_peer" = "Контакт";
-"selected_messages_one" = "Выбрано сообщение";
 "selected_messages" = "Выбрано $1 сообщений";
 "delete_message" = "Удалить";
 "reply_to_message" = "Ответить";
@@ -1458,6 +1457,11 @@
 "create_topic_as_chat_desc" = "Вы можете прикрепить чат к своей группе в виде темы. Чат не должен быть привязан к другой теме и вы должны иметь права администратора в нём.";
 "create_topic_as_chat_desc_2" = "Выберите чат из списка";
 "chat_topic_already_attached_error" = "Чат уже куда-то привязан.";
+"topic_going_in_chat" = "Обсуждение идёт в чате:";
+"chat_join" = "Присоединиться";
+
+"members_count_one" = "$1 участник";
+"members_count_one" = "$1 участник";
 
 /* System messages */
 

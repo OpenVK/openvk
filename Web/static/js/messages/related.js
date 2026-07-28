@@ -179,3 +179,20 @@ function createChatTopic(group_id) {
         })
     }
 }
+
+async function openChatTopic(event, prettyId) {
+    event.target.classList.add("lagged");
+
+    const group_id = prettyId.split("_")[0];
+    const topic_id = prettyId.split("_")[1];
+
+    let res = null;
+    try {
+        res = await window.OVKAPI.call("messages.joinChatByTopic", {
+            "group_id": group_id,
+            "topic_id": topic_id
+        });
+    } catch (e) {
+        fastError(e)
+    }
+}

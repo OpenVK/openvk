@@ -7,7 +7,7 @@ namespace openvk\VKAPI\Handlers;
 use Nette\InvalidStateException;
 use Nette\Utils\ImageException;
 use openvk\Web\Util\IMBroker;
-use openvk\Web\Models\Repositories\{Users as USRRepo, Clubs as ClubRepo, Messages as MSGRepo, Chats as ChatRepo};
+use openvk\Web\Models\Repositories\{Topics as TopicsRepo, Users as USRRepo, Clubs as ClubRepo, Messages as MSGRepo, Chats as ChatRepo};
 use openvk\Web\Models\Entities\{Photo, Correspondence, Message, Club as ClubEnt, Chat};
 use openvk\VKAPI\Handlers\{Users as APIUsers, Groups as APIClubs};
 use openvk\VKAPI\Utils\Uploader;
@@ -1293,6 +1293,31 @@ final class Messages extends VKAPIRequestHandler
             "count" => sizeof($photos),
             "items" => $photos,
         ];
+    }
+
+    public function joinChatByTopic(int $group_id, int $topic_id)
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $topic = (new TopicsRepo())->getTopicById($group_id, $topic_id);
+        if (!$topic || $topic->isChatAttached() == false) {
+            $this->fail(15, "Access denied");
+        }
+
+        $club = $topic->getClub();
+        if (!$club || $club->isBanned()) {
+            $this->fail(15, "Access denied");
+        }
+
+        $chat = $topic->getChat();
+        if (!$chat || !$chat->canJoin($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        $this->fail(4040404, "Not implemented");
+
+        return $chat->getId();
     }
 
     public function getUnreadMessages(int $group_id = 0)
