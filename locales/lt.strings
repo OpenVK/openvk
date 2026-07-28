@@ -1,3 +1,8 @@
+#include <en>
+
+"__locale" = "lt_LT.UTF-8;";
+"__transNames" = "[\P{script=Han}]; Russian-Latin/BGN; Any-Latin";
+
 "home" = "Pagrindinis";
 "welcome" = "Sveiki atvykę";
 "to_top" = "Į pradžią";
