@@ -2539,3 +2539,4 @@
 "nospam_templates" = "Активные шаблоны noSpam";
 "verified_groups" = "верифицированный";
 "banned_groups" = "заблокированный";
+"search_by_events" = "Поиск по встречам";
