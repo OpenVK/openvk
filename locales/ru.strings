@@ -1454,6 +1454,11 @@
 "messages_search_count_many" = "По данному запросу найдено $1 сообщений";
 "messages_search_count_other" = "Найдено $1 сообщений";
 
+"create_topic_as_chat" = "Создать тему из чата";
+"create_topic_as_chat_desc" = "Вы можете прикрепить чат к своей группе в виде темы. Чат не должен быть привязан к другой теме и вы должны иметь права администратора в нём.";
+"create_topic_as_chat_desc_2" = "Выберите чат из списка";
+"chat_topic_already_attached_error" = "Чат уже куда-то привязан.";
+
 /* System messages */
 
 "event_chat_creation_male" = "Создал беседу «$1»";
