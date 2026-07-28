@@ -505,6 +505,7 @@
 "events_list_other" = "You are a member in $1 events";
 
 "search_by_groups" = "Explore Groups";
+"search_by_events" = "Explore Events";
 
 "error_suggestions" = "Error accessing to suggestions";
 "error_suggestions_closed" = "This group has closed wall.";
