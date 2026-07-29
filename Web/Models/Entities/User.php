@@ -49,7 +49,7 @@ class User extends RowModel
     protected function _abstractRelationGenerator(string $filename, int $page = 1, int $limit = 6, $second_id = null): \Traversable
     {
         $id     = $this->getId();
-        $second_id = $second_id ?? $id;
+        $second_id ??= $id;
 
         $query  = "SELECT id FROM\n" . file_get_contents(__DIR__ . "/../sql/$filename.tsql");
         $query .= "\n LIMIT " . $limit . " OFFSET " . (($page - 1) * $limit);
@@ -73,7 +73,7 @@ class User extends RowModel
     protected function _abstractRelationCount(string $filename, $second_id = null): int
     {
         $id    = $this->getId();
-        $second_id = $second_id ?? $id;
+        $second_id ??= $id;
 
         $query = "SELECT COUNT(*) AS cnt FROM\n" . file_get_contents(__DIR__ . "/../sql/$filename.tsql");
 
