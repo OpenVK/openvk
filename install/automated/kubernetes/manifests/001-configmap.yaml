@@ -153,17 +153,7 @@ data:
   chandler.yml: |
     chandler:
       debug: true
-      websiteUrl: openvk.local
-      rootApp:    "openvk"
-      
-      preferences:
-          appendExtension: "xhtml"
-          adminUrl: "/chandlerd"
-          exposeChandler: true
-      
-      extensions:
-          path: null
-          allEnabled: false
+      rootApp: "openvk"
       
       database:
           dsn: "mysql:host=mariadb-primary-svc;dbname=db"

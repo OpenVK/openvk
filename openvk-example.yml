@@ -1,13 +1,46 @@
+chandler:
+    debug: true
+    websiteUrl: null
+    rootApp: "openvk"
+
+    preferences:
+        logs:
+            enabled: true
+            entitiesNamespace: "openvk\\Web\\Models\\Entities\\"
+
+    database:
+        dsn: "mysql:host=localhost;dbname=openvk"
+        user: "root"
+        password: "root"
+
+    security:
+        secret: ""
+        csrfProtection: "permissive"
+        extendedValidation: false
+        sessionDuration: 14
+
+    captcha:
+        enable: true
+
+    email:
+        host: "mail.example.com"
+        port: 465
+        user: "user"
+        pass: "word"
+        addr: "noreply@example.com"
+        ssl: true
+
+    redisUrl: "tcp://10.0.0.1:6379"
+
 openvk:
     debug: true
     appearance:
         name: "OpenVK"
         motd: "Yet another OpenVK instance"
-    
-    mirrors: # list all existing and previous domains without www. Won't work with different port
+
+    mirrors:
         - "ovk.localhost"
         - "ovk.local"
-
 
     preferences:
         defaultLanguage: "ru"
@@ -20,7 +53,7 @@ openvk:
                 maxFilesPerDomain: 10
                 maxFileSize: 25000000
         shortcodes:
-            minLength: 3 # won't affect existing short urls or the ones set via admin panel
+            minLength: 3
             forbiddenNames:
                 - "index.php"
         photos:
@@ -29,7 +62,7 @@ openvk:
         videos:
             disableUploading: false
         docs:
-            maxSize: 10 # in megabytes
+            maxSize: 10
             allowedFormats: ["jpg", "jpeg", "png", "gif", "webp", "psd", "aep", "docx", "doc", "odt", "txt", "md", "pptx", "ppt", "xls", "xlsx", "pdf", "djvu", "fb2", "ps", "apk", "zip", "7z", "mp4", "avi", "mp3", "flac"]
         apps:
             withdrawTax: 8
@@ -39,8 +72,8 @@ openvk:
             forcePhoneVerification: false
             forceEmailVerification: false
             forceStrongPassword: false
-            disablePasswordRestoring: true # turn this off if you have configured e-mail sending correctly
-            disableSubAddressing: false # aka plus sign
+            disablePasswordRestoring: true
+            disableSubAddressing: false
             enableSu: true
             rateLimits:
                 actions: 5
@@ -69,7 +102,7 @@ openvk:
                 allowedHosts: []
         support:
             supportName: "Agent"
-            adminAccount: 1 # Change this ok
+            adminAccount: 1
             fastAnswers:
                 - "This is a list of quick answers to common questions for support. Post your responses here and agents can send it quickly with just 3 clicks"
                 - "There can be as many answers as you want, but it is best to have a maximum of 10.\n\nYou can also remove all answers from the list to disable this feature"
@@ -117,11 +150,10 @@ openvk:
         ton:
             enabled: false
             address: "🅿"
-            testnet: false # Only for testing purposes.
-            rate: 0.02     # TONs per 1 coin
+            testnet: false
+            rate: 0.02
             regex: "ovk=([0-9]+)"
             hint: "ovk=$1"
-            # Please read docs to understand how to turn on automatic checking for new translations
         menu:
             links:
                 - name: "@left_menu_donate"
@@ -147,7 +179,7 @@ openvk:
         news:
             show: false
             groupId: 1
-    
+
     telemetry:
         plausible:
             enable: false
@@ -162,7 +194,7 @@ openvk:
             enable: false
             container: ""
             site: ""
-    
+
     credentials:
         smsc:
             enable: false
@@ -175,7 +207,7 @@ openvk:
         eventDB:
             enable: true
             database:
-                dsn: "mysql:unix_host=localhost;dbname=openvk-eventdb" # or unix_socket=/tmp/mysql.sock
+                dsn: "mysql:unix_host=localhost;dbname=openvk-eventdb"
                 user: "root"
                 password: "DATABASE_PASSWORD"
         notificationsBroker:
@@ -185,5 +217,5 @@ openvk:
                 port: 6379
                 password: ""
             stream:
-                maxlen: 1000         # Maximum notifications in memory at once
+                maxlen: 1000
                 prefix: "ovk_notifs"

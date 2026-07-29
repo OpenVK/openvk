@@ -35,29 +35,32 @@ _[English](README.md)_
 
 * Мы рекомендуем использовать MariaDB или Percona Server, но любая MySQL-совместимая база данных должна работать.
 * Сервер должен поддерживать хотя бы MySQL 5.6, рекомендуется использовать MySQL 8.0+.
-* Поддержка для MySQL 4.1+ находится в процессе, а пока замените `utf8mb4` и `utf8mb4_unicode_520_ci` на `utf8` и `utf8_unicode_ci` в SQL-файлах, соответственно.
 
-3. Установите [commitcaptcha](https://github.com/openvk/commitcaptcha) и OpenVK в качестве расширений Chandler:
-
-```bash
-git clone https://github.com/openvk/openvk /path/to/chandler/extensions/available/openvk
-git clone https://github.com/openvk/commitcaptcha /path/to/chandler/extensions/available/commitcaptcha
-```
-
-4. И включите их:
+3. Склонируйте Chandler и OpenVK:
 
 ```bash
-ln -s /path/to/chandler/extensions/available/commitcaptcha /path/to/chandler/extensions/enabled/
-ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions/enabled/
+git clone https://github.com/openvk/chandler /opt/chandler
+git clone https://github.com/openvk/openvk /opt/openvk
 ```
 
-5. Вам необходимо иметь 2 базы данных: одна для основных данных (указывается в `chandler.yml`), другая для событий (указывается в `openvk.yml`)
-6. Скопируйте `openvk-example.yml` в `openvk.yml` и измените параметры под свои нужды
-7. Запустите `composer install` в директории OpenVK
-8. Запустите `composer install` в директории commitcaptcha
-9. Перейдите в `Web/static/js` и выполните `npm install`
-10. Установите `openvk` в качестве корневого приложения в файле `chandler.yml`
-11. Запустите миграции базы данных, выполнив `./openvkctl upgrade`
+4. Установите зависимости:
+
+```bash
+cd /opt/chandler && composer install
+cd /opt/openvk && composer install
+cd Web/static/js && npm install
+```
+
+5. Создайте 2 базы данных: одну для основных данных, другую для событий.
+
+6. Скопируйте `openvk-example.yml` в `openvk.yml` и настройте под себя.  
+   Раздел `chandler:` в `openvk.yml` содержит все настройки фреймворка (БД, безопасность, капча).
+
+7. Запустите миграции БД:
+
+```bash
+cd /opt/openvk && ./openvkctl upgrade
+```
 
 После этого вы можете войти как системный администратор в саму сеть (регистрация не требуется):
 

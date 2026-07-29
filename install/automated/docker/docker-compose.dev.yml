@@ -1,20 +1,22 @@
 services:
   openvk:
     build:
-      context: ../../..
+      context: ../..
       dockerfile: install/automated/docker/openvk.Dockerfile
+      additional_contexts:
+        - chandler=/opt/chandler
     develop:
       watch:
-        - path: ../../..
+        - path: ../..
           action: sync
-          target: /opt/chandler/extensions/available/openvk
+          target: /opt/openvk
           ignore:
             - vendor/
-        - path: ../../../composer.json
+        - path: ../../composer.json
           action: rebuild
-        - path: ../../../composer.lock
+        - path: ../../composer.lock
           action: rebuild
-        - path: ../../../Web/static/js/package-lock.json
+        - path: ../../Web/static/js/package-lock.json
           action: rebuild
-        - path: ../../../Web/static/js/package.json
+        - path: ../../Web/static/js/package.json
           action: rebuild

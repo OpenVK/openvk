@@ -46,27 +46,31 @@ Here is our minimum hardware recommendation:
 * Server should be compatible with at least MySQL 5.6, MySQL 8.0+ is recommended.
 * Support for MySQL 4.1+ is WIP, replace `utf8mb4` and `utf8mb4_unicode_520_ci` with `utf8` and `utf8_unicode_ci` in SQLs.
 
-3. Install [commitcaptcha](https://github.com/openvk/commitcaptcha) and OpenVK as Chandler extensions like this:
+3. Clone Chandler and OpenVK:
 
 ```bash
-git clone https://github.com/openvk/openvk /path/to/chandler/extensions/available/openvk
-git clone https://github.com/openvk/commitcaptcha /path/to/chandler/extensions/available/commitcaptcha
+git clone https://github.com/openvk/chandler /opt/chandler
+git clone https://github.com/openvk/openvk /opt/openvk
 ```
 
-4. And enable them:
+4. Install dependencies:
 
 ```bash
-ln -s /path/to/chandler/extensions/available/commitcaptcha /path/to/chandler/extensions/enabled/
-ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions/enabled/
+cd /opt/chandler && composer install
+cd /opt/openvk && composer install
+cd Web/static/js && npm install
 ```
 
-5. You need to set up 2 databases: one for main data (it is be configured in `chandler.yml`), and another one for events (it is configured in `openvk.yml`)
-6. Copy `openvk-example.yml` to `openvk.yml` and change options to your liking
-7. Run `composer install` in OpenVK directory
-8. Run `composer install` in commitcaptcha directory
-9. Move to `Web/static/js` and execute `npm install`
-10. Set `openvk` as your root app in `chandler.yml`
-11. Run database migrations by executing `./openvkctl upgrade`
+5. Configure your database: you need 2 databases — one for main data, another for events.
+
+6. Copy `openvk-example.yml` to `openvk.yml` and edit to your liking.  
+   The `chandler:` section in `openvk.yml` contains all framework settings (database, security, captcha).
+
+7. Run database migrations:
+
+```bash
+cd /opt/openvk && ./openvkctl upgrade
+```
 
 Once you are done, you can login as a system administrator on the network itself (no registration required):
 

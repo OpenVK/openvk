@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
+cd /opt/openvk
+
 ./openvkctl upgrade --no-interaction --quick
 
 # first arg is `-f` or `--some-option`
