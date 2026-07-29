@@ -7,17 +7,17 @@ namespace openvk\CLI;
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\Entities\Notifications\CoinsTransferNotification;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 define("NANOTON", 1000000000);
 
+#[AsCommand(name: 'fetch-ton')]
 class FetchToncoinTransactions extends Command
 {
     private $transactions;
-
-    protected static $defaultName = "fetch-ton";
 
     public function __construct()
     {
