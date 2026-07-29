@@ -96,7 +96,7 @@ final class UserPresenter extends OpenVKPresenter
         }
 
         $this->template->act = in_array($this->queryParam("act"), [
-            "incoming", "outcoming", "friends", "common", "online"
+            "incoming", "outcoming", "friends", "common", "online",
         ]) ? $this->queryParam("act")
             : "friends";
 
