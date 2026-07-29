@@ -329,7 +329,7 @@ final class Users extends VKAPIRequestHandler
                                     break;
                                 }
 
-                                $response[$i]->blacklisted_by_me = (int)$usr->isBlacklistedBy($this->getUser());
+                                $response[$i]->blacklisted_by_me = (int) $usr->isBlacklistedBy($this->getUser());
                                 break;
                             case 'blacklisted':
                                 if (!$authuser) {
@@ -378,7 +378,7 @@ final class Users extends VKAPIRequestHandler
                                 }
                                 break;
                             case 'personal':
-                                $response[$i]->personal = (object)[
+                                $response[$i]->personal = (object) [
                                     'political' => $usr->getPoliticalViews(),
                                     'langs' => [], // FIXME: not implemented
                                     'inspired_by' => $usr->getInspires(),
