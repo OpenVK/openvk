@@ -46,7 +46,7 @@ class User extends RowModel
     public const PREFERENCES_COUNTS = [
         'politViews' => 10,
         'mainInLife' => 9,
-        'mainInPeople' => 9,
+        'mainInPeople' => 7,
         'viewsOnSubstances' => 6,
     ];
 
