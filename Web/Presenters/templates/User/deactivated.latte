@@ -7,7 +7,7 @@
 
 {block content}
     <div class="left_small_block">
-        <div>
+        <div class="avatar_block">
             <img src="{$user->getAvatarUrl('normal')}"
                 alt="{$user->getCanonicalName()}"
                 style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
@@ -15,7 +15,7 @@
     </div>
 
     <div class="right_big_block">
-        <div class="page_info">
+        <div class="page_info_main">
             <div class="accountInfo clearFix">
                 <div class="profileName">
                     <h2>{$user->getFullName()}</h2>
