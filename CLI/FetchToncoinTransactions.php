@@ -24,10 +24,10 @@ class FetchToncoinTransactions extends Command
         parent::__construct();
 
         $ctx = DatabaseConnection::i()->getContext();
-        if (array_any(
+        if (count(array_filter(
             $ctx->getStructure()->getTables(),
             fn($value) => $value["name"] === "cryptotransactions"
-        )) {
+        )) > 0) {
             $this->transactions = $ctx->table("cryptotransactions");
         }
     }
