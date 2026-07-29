@@ -297,7 +297,7 @@ final class Users extends VKAPIRequestHandler
                                     "notes"   => (new Notes())->getUserNotesCount($usr),
                                     "groups"  => $usr->getClubCount(),
                                     "online_friends" => $usr->getFriendsOnlineCount(),
-                                    "mutual_friends" => 0, // FIXME: not implemented
+                                    "mutual_friends" => $authuser ? $usr->getCommonFriendsCount($authuser) : 0,
                                     "user_photos" => 0, // FIXME: not implemented
                                     "albums" => (new Albums())->getUserAlbumsCount($usr),
                                     "followers" => $usr->getFollowersCount(),
