@@ -9,10 +9,9 @@ COPY install/automated/docker/fix-composer-repos.php /tmp/fix-composer-repos.php
 
 ADD composer.json .
 
-RUN mkdir -p extensions/available extensions/enabled && \
-    php /tmp/fix-composer-repos.php composer.json && \
+RUN php /tmp/fix-composer-repos.php composer.json && \
     composer install --no-interaction && \
-    rm -rf /tmp/chandler/.git /tmp/chandler/extensions && \
+    rm -rf /tmp/chandler/.git && \
     rm -rf /opt/openvk/vendor/openvk/chandler && \
     cp -rL /tmp/chandler /opt/openvk/vendor/openvk/chandler && \
     composer dump-autoload
@@ -43,8 +42,7 @@ RUN if [ -n "$INSTALL_TEST_DEPS" ]; then \
 
 COPY --from=nodejs --chown=www-data:www-data /opt/openvk /opt/openvk
 
-RUN mkdir -p /opt/openvk/extensions/available /opt/openvk/extensions/enabled && \
-    ln -s /opt/openvk/install/automated/docker/docker-openvk-* /usr/local/bin && \
+RUN ln -s /opt/openvk/install/automated/docker/docker-openvk-* /usr/local/bin && \
     rm -f /etc/apache2/sites-enabled/000-default.conf && \
     ln -s /opt/openvk/install/automated/common/10-openvk.conf /etc/apache2/sites-enabled/10-openvk.conf && \
     a2enmod rewrite

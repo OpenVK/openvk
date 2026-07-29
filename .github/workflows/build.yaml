@@ -19,6 +19,15 @@ jobs:
               && github.event.pull_request.head.repo.full_name != github.repository))
 
         steps:
+            - uses: actions/checkout@v7
+
+            - name: Checkout Chandler
+              uses: actions/checkout@v7
+              with:
+                  repository: openvk/chandler
+                  path: chandler
+                  ref: ${{ github.head_ref || github.ref_name }}
+
             - name: Set up QEMU
               uses: docker/setup-qemu-action@v4
 
@@ -58,6 +67,7 @@ jobs:
               with:
                   platforms: linux/amd64,linux/arm64
                   file: install/automated/docker/openvk.Dockerfile
+                  build-contexts: chandler=${{ github.workspace }}/chandler
                   tags: ${{ steps.basemeta.outputs.tags }}
                   labels: ${{ steps.basemeta.outputs.labels }}
                   push: ${{ github.event_name != 'pull_request' }}

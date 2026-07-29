@@ -19,6 +19,13 @@ jobs:
       - name: Code Checkout
         uses: actions/checkout@v7
 
+      - name: Checkout Chandler
+        uses: actions/checkout@v7
+        with:
+          repository: openvk/chandler
+          path: chandler
+          ref: ${{ github.head_ref || github.ref_name }}
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
@@ -26,7 +33,7 @@ jobs:
         working-directory: install/automated/docker
         run: |
           docker buildx build \
-            --build-context chandler=/opt/chandler \
+            --build-context chandler=${{ github.workspace }}/chandler \
             -t openvk ../../.. -f openvk.Dockerfile
 
       - name: Run PHPStan in Docker container
