@@ -55,7 +55,6 @@ if (!$chandlerRoot) {
         '/opt/chandler/chandler/Bootstrap.php',
     ];
     foreach ($candidates as $candidate) {
-        // Prefer the non-resolved path to preserve the directory relationship
         if (file_exists($candidate)) {
             $chandlerRoot = dirname(dirname($candidate));
             break;
@@ -73,11 +72,13 @@ if (!$chandlerRoot) {
     exit(1);
 }
 
+// Resolve to the real location for operations (backup, etc.)
+$chandlerRootReal = realpath($chandlerRoot) ?: $chandlerRoot;
 $isInsideExtensions = str_contains($ovkRoot, $chandlerRoot . '/extensions/');
 
 echo "\033[1mOpenVK — Structural Migration\033[0m\n";
 echo "  OpenVK root:     $ovkRoot\n";
-echo "  Chandler root:   $chandlerRoot\n";
+echo "  Chandler root:   $chandlerRootReal\n";
 echo "  Structure:       " . ($isInsideExtensions ? "old (inside extensions/)" : "standalone") . "\n";
 if ($extract) echo "  Target:          $targetOvk\n";
 if ($dryRun)  echo "  \033[33mDRY RUN — no changes will be made\033[0m\n";
@@ -87,7 +88,7 @@ echo "\n";
 
 info("Running pre-flight checks...");
 
-$checkDirs = [$ovkRoot, $chandlerRoot];
+$checkDirs = [$ovkRoot, $chandlerRootReal];
 if ($extract) $checkDirs[] = dirname($targetOvk);
 $permErrors = [];
 foreach ($checkDirs as $dir) {
@@ -124,7 +125,7 @@ if (!$dryRun && !$force) {
 // ─── Backup ──────────────────────────────────────────────────────────
 
 $timestamp = date('Ymd-His');
-$backupDir = is_writable(dirname($chandlerRoot)) ? dirname($chandlerRoot) : '/tmp';
+$backupDir = is_writable(dirname($chandlerRootReal)) ? dirname($chandlerRootReal) : '/tmp';
 $backupPath = $backupDir . '/chandler-backup-' . $timestamp;
 
 info("Creating backup of Chandler to $backupPath ...");
@@ -142,7 +143,7 @@ $rsyncExcludes[] = '--exclude=tmp';
 $rsyncExcludes[] = '--exclude=logs';
 
 if (!$dryRun) {
-    $cmd = 'rsync -a ' . implode(' ', $rsyncExcludes) . ' ' . escapeshellarg($chandlerRoot . '/') . ' ' . escapeshellarg($backupPath);
+    $cmd = 'rsync -a ' . implode(' ', $rsyncExcludes) . ' ' . escapeshellarg($chandlerRootReal . '/') . ' ' . escapeshellarg($backupPath);
     $result = run($cmd);
     if ($result === null) {
         warn("Backup may have failed. Check manually.");
@@ -158,7 +159,7 @@ if (!$dryRun) {
 $autoloadLoaded = false;
 $autoloadPaths = [
     $ovkRoot . '/vendor/autoload.php',
-    $chandlerRoot . '/vendor/autoload.php',
+    $chandlerRootReal . '/vendor/autoload.php',
     $backupPath . '/vendor/autoload.php',
 ];
 foreach ($autoloadPaths as $p) {
@@ -171,7 +172,7 @@ foreach ($autoloadPaths as $p) {
 
 // ─── Config merge ────────────────────────────────────────────────────
 
-$chandlerConfPath = $chandlerRoot . '/chandler.yml';
+$chandlerConfPath = $chandlerRootReal . '/chandler.yml';
 $ovkConfPath      = $ovkRoot . '/openvk.yml';
 
 if (file_exists($chandlerConfPath) && file_exists($ovkConfPath)) {
@@ -265,10 +266,10 @@ if ($isInsideExtensions) {
     info("Cleaning up old extension structure...");
 
     $itemsToRemove = [
-        $chandlerRoot . '/extensions/enabled/openvk',
+        $chandlerRootReal . '/extensions/enabled/openvk',
     ];
     if ($extract) {
-        $itemsToRemove[] = $chandlerRoot . '/extensions/available/openvk';
+        $itemsToRemove[] = $chandlerRootReal . '/extensions/available/openvk';
     }
     foreach ($itemsToRemove as $item) {
         if (file_exists($item) || is_link($item)) {
@@ -293,7 +294,7 @@ if ($isInsideExtensions) {
 
     // Clean up empty directories
     foreach (['extensions/enabled', 'extensions/available', 'extensions'] as $sub) {
-        $path = $chandlerRoot . '/' . $sub;
+        $path = $chandlerRootReal . '/' . $sub;
         if (is_dir($path)) {
             $it = new FilesystemIterator($path, FilesystemIterator::SKIP_DOTS);
             if (!$it->valid()) {
@@ -352,8 +353,8 @@ if (file_exists($ovkRoot . '/openvkctl')) {
     $errors++;
 }
 
-if (file_exists($chandlerRoot . '/vendor/autoload.php')) {
-    $output = run('php -r "require ' . var_export($chandlerRoot . '/vendor/autoload.php', true) . '; echo \'OK\';" 2>&1');
+if (file_exists($chandlerRootReal . '/vendor/autoload.php')) {
+    $output = run('php -r "require ' . var_export($chandlerRootReal . '/vendor/autoload.php', true) . '; echo \'OK\';" 2>&1');
     if (trim($output ?? '') === 'OK') {
         ok("Chandler autoloader OK.");
     } else {
@@ -373,7 +374,7 @@ if ($errors === 0) {
 
 echo "\n\033[1mNext steps:\033[0m\n";
 if ($extract && $isInsideExtensions) {
-    echo "  1. Change webserver DocumentRoot from $chandlerRoot/htdocs to $ovkRoot/htdocs\n";
+    echo "  1. Change webserver DocumentRoot from $chandlerRootReal/htdocs to $ovkRoot/htdocs\n";
     echo "  2. Update cron/systemd paths: $ovkRoot/openvkctl\n";
 }
 echo "  3. Review configuration: $ovkRoot/openvk.yml\n";
