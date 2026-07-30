@@ -3,6 +3,8 @@
 
 declare(strict_types=1);
 
+in_array('--help', $argv ?? []) && exit(showHelp());
+
 $extract      = in_array('--extract', $argv ?? [], true);
 $dryRun       = in_array('--dry-run', $argv ?? [], true);
 $force        = in_array('--force', $argv ?? [], true);
@@ -14,6 +16,34 @@ foreach ($argv ?? [] as $arg) {
         $targetOvk = substr($arg, strlen('--target-ovk='));
     if (str_starts_with($arg, '--chandler-root='))
         $chandlerRoot = substr($arg, strlen('--chandler-root='));
+}
+
+function showHelp(): int
+{
+    echo <<<HELP
+\033[1mOpenVK — Structural Migration\033[0m
+
+Migrates an OpenVK instance from the old Chandler extension structure
+(extensions/available/openvk) to the new standalone architecture.
+
+\033[1mUsage:\033[0m
+  php bin/upgrade-structure.php [options]
+
+\033[1mOptions:\033[0m
+  --extract               Move OpenVK out of extensions/ into a separate directory
+  --target-ovk=PATH       Target directory for --extract (default: /opt/openvk)
+  --chandler-root=PATH    Path to Chandler root (auto-detected by default)
+  --dry-run               Show what would be done without making changes
+  --force                 Skip permission and disk space checks
+  --help                  Show this help
+
+\033[1mExamples:\033[0m
+  php bin/upgrade-structure.php --dry-run --extract
+  php bin/upgrade-structure.php --extract --target-ovk=/var/www/openvk
+  php bin/upgrade-structure.php
+
+HELP;
+    return 0;
 }
 
 function info(string $msg): void { echo "  \033[36m→\033[0m $msg\n"; }
