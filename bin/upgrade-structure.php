@@ -193,10 +193,9 @@ $autoloadPaths = [
     $backupPath . '/vendor/autoload.php',
 ];
 foreach ($autoloadPaths as $p) {
-    if (file_exists($p)) {
+    if (file_exists($p) && !$autoloadLoaded) {
         require $p;
-        $autoloadLoaded = true;
-        break;
+        $autoloadLoaded = class_exists(\Symfony\Component\Yaml\Yaml::class);
     }
 }
 
@@ -263,9 +262,17 @@ if (file_exists($chandlerConfPath) && file_exists($ovkConfPath)) {
 if ($extract && $isInsideExtensions) {
     info("Extracting OpenVK to $targetOvk...");
 
-    if (file_exists($targetOvk)) {
-        error("Target $targetOvk already exists. Remove it first or use --target-ovk=...");
-        exit(1);
+    if (file_exists($targetOvk) || is_link($targetOvk)) {
+        $targetReal = realpath($targetOvk);
+        if ($targetReal && $targetReal === $ovkRoot) {
+            if (!$dryRun) {
+                if (is_link($targetOvk)) unlink($targetOvk);
+            }
+            ok("Removed symlink $targetOvk → current source.");
+        } else {
+            error("Target $targetOvk already exists. Remove it first or use --target-ovk=...");
+            exit(1);
+        }
     }
 
     if (!is_dir(dirname($targetOvk))) {
