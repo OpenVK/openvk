@@ -334,11 +334,11 @@ final class Photos extends VKAPIRequestHandler
             $albums_list = null;
             if ($owner_id > 0) {
                 # TODO rewrite to offset
-                $albums_list = array_slice(iterator_to_array((new Albums())->getUserAlbums($owner, 1, $count + $offset)), $offset);
-                $res["count"] = (new Albums())->getUserAlbumsCount($owner);
+                $albums_list = array_slice(iterator_to_array((new Albums())->getUserAlbums($owner, 1, $count + $offset, $this->getUser())), $offset);
+                $res["count"] = (new Albums())->getUserAlbumsCount($owner, $this->getUser());
             } else {
-                $albums_list = array_slice(iterator_to_array((new Albums())->getClubAlbums($owner, 1, $count + $offset)), $offset);
-                $res["count"] = (new Albums())->getClubAlbumsCount($owner);
+                $albums_list = array_slice(iterator_to_array((new Albums())->getClubAlbums($owner, 1, $count + $offset, $this->getUser())), $offset);
+                $res["count"] = (new Albums())->getClubAlbumsCount($owner, $this->getUser());
             }
         } else {
             $album_ids = explode(',', $album_ids);
@@ -377,7 +377,7 @@ final class Photos extends VKAPIRequestHandler
                 $this->fail(15, "Access denied");
             }
 
-            return (new Albums())->getUserAlbumsCount($__user);
+            return (new Albums())->getUserAlbumsCount($__user, $this->getUser());
         }
         if (!is_null($group_id)) {
             $__club = (new Clubs())->get($group_id);

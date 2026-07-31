@@ -7,7 +7,7 @@ namespace openvk\Web\Presenters;
 use Nette\InvalidStateException;
 use openvk\Web\Util\Sms;
 use openvk\Web\Themes\Themepacks;
-use openvk\Web\Models\Entities\{Photo, Post, EmailChangeVerification};
+use openvk\Web\Models\Entities\{Photo, Post, EmailChangeVerification, User};
 use openvk\Web\Models\Entities\Notifications\{CoinsTransferNotification, RatingUpNotification};
 use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Videos, Notes, Vouchers, EmailChangeVerifications, Audios, Faves};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
@@ -59,7 +59,7 @@ final class UserPresenter extends OpenVKPresenter
             }
         } else {
             $this->template->avatarAlbum = (new Albums())->getUserAvatarAlbum($user);
-            $this->template->albums      = array_values(array_filter(iterator_to_array((new Albums())->getUserAlbums($user)), function ($album) {
+            $this->template->albums      = array_values(array_filter(iterator_to_array((new Albums())->getUserAlbums($user, 1, null, null)), function ($album) {
                 return !$album->isCreatedBySystem();
             }));
             $this->template->albumsCount = count($this->template->albums);
@@ -618,20 +618,7 @@ final class UserPresenter extends OpenVKPresenter
                     $this->flashFail("err", tr("error"), tr("error_shorturl_incorrect"));
                 }
             } elseif ($_GET['act'] === "privacy") {
-                $settings = [
-                    "page.read",
-                    "page.info.read",
-                    "groups.read",
-                    "photos.read",
-                    "videos.read",
-                    "notes.read",
-                    "friends.read",
-                    "friends.add",
-                    "wall.write",
-                    "messages.write",
-                    "audios.read",
-                    "likes.read",
-                ];
+                $settings = User::SETTINGS_PRIVACY;
                 foreach ($settings as $setting) {
                     $input = $this->postParam(str_replace(".", "_", $setting));
                     $user->setPrivacySetting($setting, min(3, (int) abs((int) $input ?? $user->getPrivacySetting($setting))));

@@ -35,8 +35,8 @@ final class PhotosPresenter extends OpenVKPresenter
                 $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
             }
 
-            $this->template->albums  = $this->albums->getUserAlbums($user, (int) ($this->queryParam("p") ?? 1));
-            $this->template->count   = $this->albums->getUserAlbumsCount($user);
+            $this->template->albums  = $this->albums->getUserAlbums($user, (int) ($this->queryParam("p") ?? 1), null, $this->user->identity);
+            $this->template->count   = $this->albums->getUserAlbumsCount($user, $this->user->identity);
             $this->template->owner   = $user;
             $this->template->canEdit = false;
             if (!is_null($this->user->identity)) {
@@ -203,6 +203,7 @@ final class PhotosPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
+        $album = null;
         if (!is_null($this->queryParam("from"))) {
             if (preg_match("%^album([0-9]++)$%", $this->queryParam("from"), $matches) === 1) {
                 $album = $this->albums->get((int) $matches[1]);
@@ -219,6 +220,9 @@ final class PhotosPresenter extends OpenVKPresenter
         $this->template->cPage    = (int) ($this->queryParam("p") ?? 1);
         $this->template->comments = iterator_to_array($photo->getComments($this->template->cPage));
         $this->template->owner    = $photo->getOwner();
+
+        $this->template->canSave = $this->user->identity && (!$album || $album->getSpecialType() != Album::SPECIAL_SAVED) && $photo->isAvailableForSaving();
+        $this->template->canDeleteSaved = $this->user->identity && $album && $this->user->identity->getId() == $album->getOwner()->getId() && $album->getSpecialType() == Album::SPECIAL_SAVED;
     }
 
     public function renderAbsolutePhoto($id): void
@@ -449,5 +453,47 @@ final class PhotosPresenter extends OpenVKPresenter
         }
 
         $this->redirect("$_SERVER[HTTP_REFERER]");
+    }
+
+    public function renderSavePhoto(int $owner, int $photoId): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+        $this->assertNoCSRF();
+
+        $photo = $this->photos->getByOwnerAndVID($owner, $photoId);
+        if (!$photo) {
+            $this->notFound();
+        }
+        if (!$photo->canBeViewedBy($this->user->identity)) {
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+        }
+
+        $album = $this->albums->getUserSavedAlbum($this->user->identity);
+        $album->addPhoto($photo);
+
+        header("HTTP/1.1 204 No Content");
+        exit("");
+    }
+
+    public function renderDeleteSavedPhoto(int $owner, int $photoId): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+        $this->assertNoCSRF();
+
+        $album = $this->albums->getUserSavedAlbum($this->user->identity);
+        $photo = $this->photos->getByOwnerAndVID($owner, $photoId);
+        if (!$photo) {
+            $this->notFound();
+        }
+
+        if ($album->hasPhoto($photo)) {
+            $album->removePhoto($photo);
+        }
+        $album->setEdited(time());
+        $album->save();
+
+        $this->redirect("/album" . $album->getPrettyId());
     }
 }

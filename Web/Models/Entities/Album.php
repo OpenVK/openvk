@@ -10,6 +10,7 @@ class Album extends MediaCollection
 {
     public const SPECIAL_AVATARS = 16;
     public const SPECIAL_WALL    = 32;
+    public const SPECIAL_SAVED   = 64;
 
     protected $tableName       = "albums";
     protected $relTableName    = "album_relations";
@@ -17,9 +18,9 @@ class Album extends MediaCollection
     protected $entityClassName = 'openvk\Web\Models\Entities\Photo';
 
     protected $specialNames = [
-        16 => "_avatar_album",
-        32 => "_wall_album",
-        64 => "_saved_photos_album",
+        self::SPECIAL_AVATARS => "_avatar_album",
+        self::SPECIAL_WALL   => "_wall_album",
+        self::SPECIAL_SAVED  => "_saved_photos_album",
     ];
 
     public function getCoverURL(): ?string
@@ -75,6 +76,11 @@ class Album extends MediaCollection
         return $this->has($photo);
     }
 
+    public function getSpecialType(): ?int
+    {
+        return $this->getRecord()->special_type;
+    }
+
     public function canBeViewedBy(?User $user = null): bool
     {
         if ($this->isDeleted()) {
@@ -82,6 +88,9 @@ class Album extends MediaCollection
         }
 
         $owner = $this->getOwner();
+        if ($this->getSpecialType() === self::SPECIAL_SAVED && !$owner->getPrivacyPermission('photos.read_saved', $user)) {
+            return false;
+        }
 
         if (get_class($owner) == "openvk\\Web\\Models\\Entities\\User") {
             return $owner->canBeViewedBy($user) && $owner->getPrivacyPermission('photos.read', $user);

@@ -436,4 +436,9 @@ class Photo extends Media
 
         return $res;
     }
+
+    public function isAvailableForSaving(): bool
+    {
+        return $this->canBeViewedBy(); // разрешаем сохранять только общедоступные фото (?)
+    }
 }

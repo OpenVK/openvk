@@ -432,23 +432,25 @@ u(document).on('submit', 'form', async (e) => {
             break
     }
 
-    const parser = new DOMParser
-    const parsed_content = parser.parseFromString(form_result, 'text/html')
+    if (form_res.status !== 204) {
+        const parser = new DOMParser
+        const parsed_content = parser.parseFromString(form_result, 'text/html')
 
-    if(form_res.redirected) {
-        history.replaceState({'from_router': 1}, '', form_res.url)
-    } else {
-        const __new_url = new URL(form_res.url)
-        __new_url.searchParams.delete('al')
-        __new_url.searchParams.delete('hash')
+        if (form_res.redirected) {
+            history.replaceState({'from_router': 1}, '', form_res.url)
+        } else {
+            const __new_url = new URL(form_res.url)
+            __new_url.searchParams.delete('al')
+            __new_url.searchParams.delete('hash')
 
-        history.pushState({'from_router': 1}, '', __new_url)
+            history.pushState({'from_router': 1}, '', __new_url)
+        }
+
+        window.router.__appendPage(parsed_content)
+        window.router.__closeMsgs()
+        await window.router.__integratePage()
     }
-    
-    window.router.__appendPage(parsed_content)
-    window.router.__closeMsgs()
-    await window.router.__integratePage()
-
+    $(e.target).trigger('submitted');
     u('#ajloader').removeClass('shown')
 })
 

@@ -469,6 +469,15 @@ h1 {
     font-family: tahoma, verdana, arial, sans-serif;
 }
 
+#profile_link:disabled, .profile_link:disabled {
+    cursor: default;
+    color: unset;
+}
+
+#profile_link:disabled:hover, .profile_link:disabled:hover {
+    background: unset;
+}
+
 .profile_link_form {
     margin-bottom: 0;
 }

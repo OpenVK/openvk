@@ -514,8 +514,11 @@
 "photo" = "Фотография";
 "upload_button" = "Загрузить";
 "open_original" = "Открыть оригинал";
+"save_photo" = "Сохранить к себе";
+"photo_saved" = "Сохранено";
 "avatar_album" = "Фотографии со страницы";
 "wall_album" = "Фотографии со стены";
+"saved_photos_album" = "Сохранённые фотографии";
 "albums_zero" = "Ни одного альбома";
 "albums_one" = "$1 альбом";
 "albums_few" = "$1 альбома";
@@ -723,6 +726,7 @@
 "privacy_setting_read_info" = "Кому видно основную информацию моей страницы";
 "privacy_setting_see_groups" = "Кому видно мои группы и встречи";
 "privacy_setting_see_photos" = "Кому видно мои фотографии";
+"privacy_setting_see_saved_photos" = "Кому видно мои сохранённые фотографии";
 "privacy_setting_see_videos" = "Кому видно мои видеозаписи";
 "privacy_setting_see_notes" = "Кому видно мои заметки";
 "privacy_setting_see_friends" = "Кому видно моих друзей";

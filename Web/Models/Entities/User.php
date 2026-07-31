@@ -42,6 +42,22 @@ class User extends RowModel
     public const NSFW_TOLERANT      = 1;
     public const NSFW_FULL_TOLERANT = 2;
 
+    public const SETTINGS_PRIVACY = [
+        "page.read",
+        "page.info.read",
+        "groups.read",
+        "photos.read",
+        "videos.read",
+        "notes.read",
+        "friends.read",
+        "friends.add",
+        "wall.write",
+        "messages.write",
+        "audios.read",
+        "likes.read",
+        "photos.read_saved",
+    ];
+
     /* aggressive caching */
     private $_avatarAlbum = null;
     private $_avatarPhoto = false; // false - not resolved, null - no avatar
@@ -598,20 +614,7 @@ class User extends RowModel
     {
         return (int) bmask($this->getRecord()->privacy, [
             "length"   => 2,
-            "mappings" => [
-                "page.read",
-                "page.info.read",
-                "groups.read",
-                "photos.read",
-                "videos.read",
-                "notes.read",
-                "friends.read",
-                "friends.add",
-                "wall.write",
-                "messages.write",
-                "audios.read",
-                "likes.read",
-            ],
+            "mappings" => User::SETTINGS_PRIVACY,
         ])->get($id);
     }
 
@@ -1306,20 +1309,7 @@ class User extends RowModel
     {
         $this->stateChanges("privacy", bmask($this->changes["privacy"] ?? $this->getRecord()->privacy, [
             "length"   => 2,
-            "mappings" => [
-                "page.read",
-                "page.info.read",
-                "groups.read",
-                "photos.read",
-                "videos.read",
-                "notes.read",
-                "friends.read",
-                "friends.add",
-                "wall.write",
-                "messages.write",
-                "audios.read",
-                "likes.read",
-            ],
+            "mappings" => self::SETTINGS_PRIVACY,
         ])->set($id, $status)->toInteger());
     }
 

@@ -44,18 +44,29 @@ class Albums
         return self::$cache[$id] ??= $this->toAlbum($this->albums->get($id));
     }
 
-    public function getUserAlbums(User $user, int $page = 1, ?int $perPage = null): \Traversable
+    private function getUserQuery(User $user, ?User $for): \Nette\Database\Table\Selection
+    {
+        $albums  = $this->albums->where("owner", $user->getId())->where("deleted", false);
+
+        if (!$user->getPrivacyPermission('photos.read_saved', $for)) {
+            $albums->where("special_type NOT", [Album::SPECIAL_SAVED]);
+        }
+        return $albums;
+    }
+
+    public function getUserAlbums(User $user, int $page = 1, ?int $perPage = null, ?User $for): \Traversable
     {
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
-        $albums  = $this->albums->where("owner", $user->getId())->where("deleted", false);
+        $albums  = $this->getUserQuery($user, $for);
+
         foreach ($albums->page($page, $perPage) as $album) {
             yield new Album($album);
         }
     }
 
-    public function getUserAlbumsCount(User $user): int
+    public function getUserAlbumsCount(User $user, ?User $for): int
     {
-        $albums = $this->albums->where("owner", $user->getId())->where("deleted", false);
+        $albums  = $this->getUserQuery($user, $for);
         return sizeof($albums);
     }
 
@@ -76,23 +87,8 @@ class Albums
 
     public function getAvatarAlbumById(int $id, int $regTime): Album
     {
-        $data  = $this->getSpecialConditions($id, 16);
-        $album = $this->albums->where([
-            "owner" => $id,
-            "special_type" => 16,
-        ])->fetch();
-        if (!$album) {
-            $album = new Album();
-            $album->setName("[!!! internal album]");
-            $album->setOwner($id);
-            $album->setSpecial_Type(16);
-            $album->setCreated($regTime);
-            $album->save();
-
-            return $album;
-        }
-
-        return new Album($album);
+        $data  = $this->getSpecialConditions($id, Album::SPECIAL_AVATARS);
+        return $this->getOrCreateSpecialAlbum($id, Album::SPECIAL_AVATARS, $regTime);
     }
 
     public function getUserAvatarAlbum(User $user): Album
@@ -107,23 +103,9 @@ class Albums
 
     public function getUserWallAlbum(User $user): Album
     {
-        $data  = $this->getSpecialConditions($user->getId(), 32);
-        $album = $this->albums->where([
-            "owner" => $user->getId(),
-            "special_type" => 32,
-        ])->fetch();
-        if (!$album) {
-            $album = new Album();
-            $album->setName("[!!! internal album]");
-            $album->setOwner($user->getId());
-            $album->setSpecial_Type(32);
-            $album->setCreated($user->getRegistrationTime()->timestamp());
-            $album->save();
+        $data  = $this->getSpecialConditions($user->getId(), Album::SPECIAL_WALL);
 
-            return $album;
-        }
-
-        return new Album($album);
+        return $this->getOrCreateSpecialAlbum($user->getId(), Album::SPECIAL_WALL, $user->getRegistrationTime()->timestamp());
     }
 
     public function getAlbumByPhotoId(Photo $photo): ?Album
@@ -141,5 +123,31 @@ class Albums
         ])->fetch();
 
         return $album ? new Album($album) : null;
+    }
+
+    public function getUserSavedAlbum(User $user): Album
+    {
+        return $this->getOrCreateSpecialAlbum($user->getId(), Album::SPECIAL_SAVED, $user->getRegistrationTime()->timestamp());
+    }
+
+    private function getOrCreateSpecialAlbum(int $ownerId, int $specialType, int $regTime): Album
+    {
+        $album = $this->albums->where([
+            "owner" => $ownerId,
+            "special_type" => $specialType,
+        ])->fetch();
+
+        if (!$album) {
+            $album = new Album();
+            $album->setName("[!!! internal album]");
+            $album->setOwner($ownerId);
+            $album->setSpecial_Type($specialType);
+            $album->setCreated($regTime);
+            $album->save();
+
+            return $album;
+        }
+
+        return new Album($album);
     }
 }
