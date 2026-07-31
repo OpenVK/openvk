@@ -164,6 +164,7 @@
                                             <select name="section">
                                                 <option n:attr="selected => $section == 'users'" value="users">{_s_by_people}</option>
                                                 <option n:attr="selected => $section == 'groups'" value="groups">{_s_by_groups}</option>
+                                                <option n:attr="selected => $section == 'events'" value="events">{_s_by_events}</option>
                                                 <option n:attr="selected => $section == 'posts'" value="posts">{_s_by_posts}</option>
                                                 <option n:attr="selected => $section == 'videos'" value="videos">{_s_by_videos}</option>
                                                 <option n:attr="selected => $section == 'apps'" value="apps">{_s_by_apps}</option>
@@ -240,6 +241,7 @@
                                 <span class="pc_v">{_my_groups}</span>
                                 <span class="mobile_v">{_mobile_groups}</span>
                             </a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('events')" href="/events{$thisUser->getId()}" class="link my_groups">{_my_events}</a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('news')" href="/feed" class="link my_feed" title="{_my_feed} [Alt+Shift+,]" accesskey=",">
                                 <span class="pc_v">{_my_feed}</span>
                                 <span class="mobile_v">{_news}</span>
@@ -325,10 +327,10 @@
                                 <a href="{$newsLink}">{_news_more}</a>
                             </div>
 
-                            <div class="navigation_infos" id="bday" n:if="$showBday">
+                            <div class="navigation_infos" id="bday" n:if="$showBday || $showUEvents">
                                 <b>{_bday_reminder}</b>
                                 <hr size="1">
-                                <text>
+                                <text n:if="$showBday">
                                     {var $bdayListHtml = ''}
                                     {foreach $bdayUsers as $u}
                                         {php $bdayListHtml .= '<a href="/id' . $u->getId() . '">' . $u->getMorphedName(startWithLastName: false) . '</a>'}
@@ -343,6 +345,27 @@
                                         {/if}
                                     {/foreach}
                                     {tr("bday_reminder_text", $isBdayToday ? tr("bday_today") : tr("bday_tomorrow"), $bdayListHtml)|noescape}
+                                </text>
+                                <text n:if="$showUEvents">
+                                    {var $eventsHtml = ''}
+                                    {foreach $uEvents as $e}
+                                        {php $eventsHtml .= '<a href="/event' . $e->getId() . '">' . $e->getName() . '</a>'}
+                                        {if $uEventsCount == 2}
+                                            {if $iterator->isFirst()}{php $eventsHtml .= tr("bday_and")}{/if}
+                                        {elseif $uEventsCount != 1}
+                                            {if $iterator->isLast(2) and !$iterator->isLast()}
+                                                {php $eventsHtml .= tr("bday_and")}
+                                            {elseif !$iterator->isLast()}
+                                                {php $eventsHtml .= ', '}
+                                            {/if}
+                                        {/if}
+                                    {/foreach}
+
+                                    {if $uEventsCount == 1}
+                                        {tr("event_reminder_text", $eventsHtml)|noescape}
+                                    {else}
+                                        {tr("event_reminder_text_multiple", $eventsHtml)|noescape}
+                                    {/if}
                                 </text>
                             </div>
 

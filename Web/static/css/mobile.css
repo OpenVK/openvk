@@ -811,6 +811,11 @@
         border-color: #d7e0e7;
     }
 
+    .msg:has(+ .left_small_block) {
+        position: sticky;
+        top: 334px;
+    }
+
     #sudo-banner {
         position: absolute;
         top: 48px;

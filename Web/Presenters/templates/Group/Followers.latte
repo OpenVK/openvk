@@ -28,12 +28,25 @@
                 {_backdrop_short}
             </a>
         </div>
-		<div id="activetabs" class="tab">
-			<a id="act_tab_a" href="/club{$club->getId()}/followers">
-				{_followers}
-			</a>
-		</div>
 	{/if}
+    {if $club->isEvent()}
+    <div n:attr="id => ($mightcome === 1 ? 'ki' : 'activetabs')" class="tab">
+        <a n:attr="id => ($mightcome === 1 ? 'ki' : 'act_tab_a')" href="/club{$club->getId()}/followers">
+            {_event_comers}
+        </a>
+    </div>
+    <div n:attr="id => ($mightcome === 1 ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => ($mightcome === 1 ? 'act_tab_a' : 'ki')" href="/club{$club->getId()}/followers?mightcome=1">
+            {_event_potential_comers}
+        </a>
+    </div>
+    {else}
+    <div id="activetabs" class="tab">
+        <a id="act_tab_a" href="/club{$club->getId()}/followers">
+            {_followers}
+        </a>
+    </div>
+    {/if}
 {/block}
 
 {block link|strip|stripHtml}

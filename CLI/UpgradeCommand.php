@@ -19,7 +19,7 @@ class UpgradeCommand extends Command
     protected static $defaultName = "upgrade";
 
     private Connection $db;
-    private Connection $eventDb;
+    private ?Connection $eventDb;
 
     private array $chandlerTables = [
         "CHANDLERACLPERMISSIONALIASES",
@@ -34,7 +34,7 @@ class UpgradeCommand extends Command
     public function __construct()
     {
         $this->db = DatabaseConnection::i()->getConnection();
-        $this->eventDb = eventdb()->getConnection();
+        $this->eventDb = eventdb()?->getConnection();
 
         parent::__construct();
     }

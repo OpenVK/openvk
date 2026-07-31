@@ -161,7 +161,7 @@ final class CommentPresenter extends OpenVKPresenter
         $mentions = iterator_to_array($comment->resolveMentions($excludeMentions));
         foreach ($mentions as $mentionee) {
             if ($mentionee instanceof User) {
-                (new MentionNotification($mentionee, $entity, $comment->getOwner(), strip_tags($comment->getText())))->emit();
+                (new MentionNotification($mentionee, $comment->getOwner(), $entity, strip_tags($comment->getText())))->emit();
             }
         }
 

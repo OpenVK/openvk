@@ -124,21 +124,28 @@ final class VKAPIPresenter extends OpenVKPresenter
         $folder   = __DIR__ . "/../../tmp/api-storage/photos";
         $maxSize  = OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["api"]["maxFileSize"];
         $maxFiles = OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["api"]["maxFilesPerDomain"];
+
         $usrFiles = sizeof(glob("$folder/$data[USER]_*.oct"));
         if ($usrFiles >= $maxFiles) {
-            $pendingInfo = $this->getPendingUploadInfo($folder, $data["USER"]);
-            header("HTTP/1.1 507 Insufficient Storage");
-            header("Content-Type: application/json");
-            exit(json_encode([
-                "error" => "insufficient_storage",
-                "error_description" => "There are $maxFiles pending already. Please save them before uploading more :3",
-                "pending_uploads" => $pendingInfo,
-            ]));
+            $usrFiles = $this->evictOldestPendingUploads($folder, (string) $data["USER"], $maxFiles);
+
+            if ($usrFiles >= $maxFiles) {
+                $pendingInfo = $this->getPendingUploadInfo($folder, $data["USER"]);
+
+                header("HTTP/1.1 507 Insufficient Storage");
+                header("Content-Type: application/json");
+                exit(json_encode([
+                    "error" => "insufficient_storage",
+                    "error_description" => "There are $maxFiles pending already. Please save them before uploading more :3",
+                    "pending_uploads" => $pendingInfo,
+                ]));
+            }
         }
 
         # Not multifile
         if ($data["MF"] === 0) {
             $file = $_FILES[$data["FIELD"]];
+
             if (!$file) {
                 header("HTTP/1.0 400");
                 exit("No file");
@@ -150,10 +157,14 @@ final class VKAPIPresenter extends OpenVKPresenter
                 exit("File is too big");
             }
 
-            move_uploaded_file($file["tmp_name"], "$folder/$data[USER]_" . ($usrFiles + 1) . ".oct");
+            $slot = $this->getNextUploadSlot($folder, (string) $data["USER"]);
+            if (!move_uploaded_file($file["tmp_name"], "$folder/$data[USER]_$slot.oct")) {
+                header("HTTP/1.0 500");
+                exit("File could not be saved");
+            }
             header("HTTP/1.0 202 Accepted");
 
-            $photo = $data["USER"] . "|" . ($usrFiles + 1) . "|" . $data["GROUP"];
+            $photo = $data["USER"] . "|" . $slot . "|" . $data["GROUP"];
             exit(json_encode([
                 "server" => "ephemeral",
                 "photo"  => $photo,
@@ -162,27 +173,35 @@ final class VKAPIPresenter extends OpenVKPresenter
         }
 
         $files = [];
+        $slot  = $this->getNextUploadSlot($folder, (string) $data["USER"]);
         for ($i = 1; $i <= 5; $i++) {
             $file = $_FILES[$data["FIELD"] . $i] ?? null;
             if (!$file || $file["error"] != UPLOAD_ERR_OK || $file["size"] > $maxSize) {
                 continue;
-            } elseif ((sizeof($files) + $usrFiles) > $maxFiles) {
-                # Clear uploaded files since they can't be saved anyway
-                foreach ($files as $f) {
-                    unlink($f);
-                }
+            } elseif ((sizeof($files) + $usrFiles) >= $maxFiles) {
+                $usrFiles = $this->evictOldestPendingUploads($folder, (string) $data["USER"], $maxFiles, array_keys($files));
 
-                $pendingInfo = $this->getPendingUploadInfo($folder, $data["USER"]);
-                header("HTTP/1.1 507 Insufficient Storage");
-                header("Content-Type: application/json");
-                exit(json_encode([
-                    "error" => "insufficient_storage",
-                    "error_description" => "There are $maxFiles pending already. Please save them before uploading more :3",
-                    "pending_uploads" => $pendingInfo,
-                ]));
+                if ((sizeof($files) + $usrFiles) >= $maxFiles) {
+                    foreach ($files as $id => $f) {
+                        @unlink("$folder/$data[USER]_$id.oct");
+                    }
+
+                    $pendingInfo = $this->getPendingUploadInfo($folder, $data["USER"]);
+
+                    header("HTTP/1.1 507 Insufficient Storage");
+                    header("Content-Type: application/json");
+                    exit(json_encode([
+                        "error" => "insufficient_storage",
+                        "error_description" => "There are $maxFiles pending already. Please save them before uploading more :3",
+                        "pending_uploads" => $pendingInfo,
+                    ]));
+                }
             }
 
-            $files[++$usrFiles] = move_uploaded_file($file["tmp_name"], "$folder/$data[USER]_$usrFiles.oct");
+            if (move_uploaded_file($file["tmp_name"], "$folder/$data[USER]_$slot.oct")) {
+                $files[$slot] = true;
+                $slot++;
+            }
         }
 
         if (sizeof($files) === 0) {
@@ -204,6 +223,54 @@ final class VKAPIPresenter extends OpenVKPresenter
             "album_id"    => "undefined",
             "hash"        => $manifestHash,
         ]));
+    }
+
+    private function evictOldestPendingUploads(string $folder, string $userId, int $maxFiles, array $protectedSlots = []): int
+    {
+        $files = [];
+
+        foreach (glob("$folder/{$userId}_*.oct") as $file) {
+            if (!preg_match("/_(\\d+)\\.oct$/", basename($file), $matches)) {
+                continue;
+            }
+
+            $slot = (int) $matches[1];
+            if (in_array($slot, $protectedSlots, true)) {
+                continue;
+            }
+
+            $mtime = @filemtime($file);
+            $files[] = ["path" => $file, "mtime" => $mtime === false ? 0 : $mtime];
+        }
+
+        usort($files, fn($a, $b) => $a["mtime"] <=> $b["mtime"]);
+
+        $count = sizeof($files) + sizeof($protectedSlots);
+
+        foreach ($files as $file) {
+            if ($count < $maxFiles) {
+                break;
+            }
+
+            if (@unlink($file["path"])) {
+                $count--;
+            }
+        }
+
+        return $count;
+    }
+
+    private function getNextUploadSlot(string $folder, string $userId): int
+    {
+        $slot = 0;
+
+        foreach (glob("$folder/{$userId}_*.oct") as $file) {
+            if (preg_match("/_(\\d+)\\.oct$/", basename($file), $matches)) {
+                $slot = max($slot, (int) $matches[1]);
+            }
+        }
+
+        return $slot + 1;
     }
 
     private function getPendingUploadInfo(string $folder, string $userId): array
@@ -270,7 +337,11 @@ final class VKAPIPresenter extends OpenVKPresenter
         }
 
         if (!is_null($identity) && ($identity->isBanned() || $identity->isDeleted())) {
-            $this->fail(18, "User account is deactivated", $object, $method);
+            $this->fail(18, "User was deleted or banned", $object, $method);
+        }
+
+        if (!is_null($identity) && !$identity->isActivated() && OPENVK_ROOT_CONF['openvk']['preferences']['security']['requireEmail'] === true) {
+            $this->fail(7, "Access denied", $object, $method);
         }
 
         return [$identity, $platform];
@@ -294,6 +365,11 @@ final class VKAPIPresenter extends OpenVKPresenter
 
         $handler = new $handlerClass($identity, $platform);
         if (!is_callable([$handler, $method])) {
+            throw new APIErrorException("Unknown method passed.", 3);
+        }
+
+        // Way to bypass restrictions in App Stores. Check code comment for isMusicAvailable func
+        if (!is_null($identity) && !$this->isMusicAvailable($identity->getId()) && $object == "Audio") {
             throw new APIErrorException("Unknown method passed.", 3);
         }
 
@@ -458,6 +534,10 @@ final class VKAPIPresenter extends OpenVKPresenter
 
         $uId  = $chUser->related("profiles.user")->fetch()->id;
         $user = (new Users())->get($uId);
+
+        if (!$user->isActivated() && OPENVK_ROOT_CONF['openvk']['preferences']['security']['requireEmail'] === true) {
+            $this->fail(7, "Access denied", "internal", "acquireToken");
+        }
 
         $platform     = $this->requestParam("client_name");
         $platform   ??= $this->resolveAppIdToString($this->requestParam("client_id"));
@@ -636,5 +716,17 @@ final class VKAPIPresenter extends OpenVKPresenter
             default:
                 return "unknown";
         }
+    }
+
+    /*
+     * This is the way to get around some App Store copyright rules
+     * for (maybe) official and third party apps, something
+     * Durov's team maybe did when their app was gone from App Store
+     * in 2014. Now it's deleted via EU sanctions, but that's
+     * another story to tell.
+     */
+    private function isMusicAvailable(int $id): bool
+    {
+        return (bool) !in_array($id, OPENVK_ROOT_CONF["openvk"]["preferences"]["music"]["notAvailableFor"] ?? []);
     }
 }

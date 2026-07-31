@@ -21,7 +21,7 @@ final class Newsfeed extends VKAPIRequestHandler
         return [PHP_INT_MAX, PHP_INT_MAX];
     }
 
-    public function get(string $fields = "", string $start_from = "", int $start_time = 0, int $end_time = 0, int $offset = 0, int $count = 30, int $extended = 1, int $forGodSakePleaseDoNotReportAboutMyOnlineActivity = 0)
+    public function get(string $fields = "", string $start_from = "", int $start_time = 0, int $end_time = 0, int $offset = 0, int $count = 30, int $extended = 1, int $forGodSakePleaseDoNotReportAboutMyOnlineActivity = 0, int $with_alien_wall_posts = 0)
     {
         $this->requireUser();
 
@@ -48,12 +48,15 @@ final class Newsfeed extends VKAPIRequestHandler
                     ->where("wall IN (?)", $ids)
                     ->where("deleted", 0)
                     ->where("suggested", 0)
-                    ->where("(wall < 0 AND (flags & 128) > 0) OR (wall > 0 AND wall = owner)")
                     ->where("created <= ?", $cursorTime)
                     ->where("created < ? OR id < ?", $cursorTime, $cursorId)
                     ->where("? <= created", empty($start_time) ? 0 : $start_time)
                     ->where("? >= created", empty($end_time) ? PHP_INT_MAX : $end_time)
                     ->order("created DESC, id DESC");
+
+        if ($with_alien_wall_posts == 0) {
+            $posts->where("(`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`)");
+        }
 
         $rposts = [];
         $lastPost = null;
@@ -76,15 +79,18 @@ final class Newsfeed extends VKAPIRequestHandler
         return $response;
     }
 
-    public function getGlobal(string $fields = "", string $start_from = "", int $start_time = 0, int $end_time = 0, int $offset = 0, int $count = 30, int $extended = 1, int $rss = 0, int $return_banned = 0)
+    public function getGlobal(string $fields = "", string $start_from = "", int $start_time = 0, int $end_time = 0, int $offset = 0, int $count = 30, int $extended = 1, int $rss = 0, int $return_banned = 0, int $with_alien_wall_posts = 0)
     {
         $this->requireUser();
 
         [$cursorTime, $cursorId] = $this->parseCursor($start_from);
 
         $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) LEFT JOIN `profiles` ON LEAST(`posts`.`wall`, 0) = 0 AND `profiles`.`id` = ABS(`posts`.`wall`)";
-        $queryBase .= " WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND (`profiles`.`profile_type` = 0 OR `profiles`.`first_name` IS NULL)";
-        $queryBase .= " AND ((`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`)) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
+        $queryBase .= " WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND (`profiles`.`profile_type` = 0 OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
+
+        if ($with_alien_wall_posts == 0) {
+            $queryBase .= " AND ((`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`))";
+        }
 
         if ($this->getUser()->getNsfwTolerance() === User::NSFW_INTOLERANT) {
             $queryBase .= " AND `nsfw` = 0";
@@ -155,6 +161,60 @@ final class Newsfeed extends VKAPIRequestHandler
     {
         // getGlobal alias
         return $this->getGlobal($fields, $start_from, $start_time, $end_time, $offset, $count, $extended, $rss, $return_banned);
+    }
+
+    public function search(string $q = "", int $extended = 1, int $count = 30, int $start_time = 0, int $end_time = 0, string $start_from = "", string $fields = ""): object
+    {
+        [$cursorTime, $cursorId] = $this->parseCursor($start_from);
+
+        $start_time = empty($start_time) ? 0 : $start_time;
+        $end_time = empty($end_time) ? PHP_INT_MAX : $end_time;
+
+        $postsRepo = new PostsRepo();
+
+        $queryBase = DatabaseConnection::i()->getContext()
+            ->table("posts")
+            ->select("id, created")
+            ->where("content LIKE ?", "%{$q}%")
+            ->where("deleted", 0)
+            ->where("suggested", 0)
+            ->where("created <= ?", $cursorTime)
+            ->where("created < ? OR id < ?", $cursorTime, $cursorId)
+            ->where("? <= created", $start_time)
+            ->where("? >= created", $end_time);
+
+        if (!$this->userAuthorized() || $this->getUser()->getNsfwTolerance() === User::NSFW_INTOLERANT) {
+            $queryBase->where("nsfw", 0);
+        }
+
+        $queryBase->order("created DESC, id DESC");
+
+        $rposts = [];
+        $lastPost = null;
+        foreach ($queryBase->limit($count) as $post) {
+            $rposts[] = $postsRepo->get($post->id)->getPrettyId();
+            $lastPost = $post;
+        }
+
+        if (empty($rposts)) {
+            return (object) [
+                "count" => 0,
+                "items" => [],
+            ];
+        }
+
+        $response = (new Wall())->getById(implode(',', $rposts), $extended, $fields, $this->getUser());
+
+        if ($lastPost) {
+            $response->next_from = "{$lastPost->created}_{$lastPost->id}";
+        }
+
+        foreach ($response->items as $post) {
+            $post->type = "post";
+            $post->source_id = $post->owner_id;
+        }
+
+        return $response;
     }
 
     public function getByType(string $feed_type = 'top', string $fields = "", int $start_from = 0, int $start_time = 0, int $end_time = 0, int $offset = 0, int $count = 30, int $extended = 0, int $return_banned = 0)

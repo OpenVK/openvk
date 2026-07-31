@@ -45,6 +45,7 @@ final class SearchPresenter extends OpenVKPresenter
 
         $repos = [
             "groups"   => "clubs",
+            "events"   => "clubs",
             "users"    => "users",
             "posts"    => "posts",
             "videos"   => "videos",
@@ -107,11 +108,17 @@ final class SearchPresenter extends OpenVKPresenter
 
         $results = null;
         switch ($section) {
-            default:
+            case 'groups':
                 $results  = $this->{$repo}->find($query, $parameters, ['type' => $order, 'invert' => $invert]);
+                break;
+            case 'events':
+                $results  = $this->{$repo}->findEvents($query, $parameters, ['type' => $order, 'invert' => $invert]);
                 break;
             case 'audios_playlists':
                 $results  = $this->{$repo}->findPlaylists($query, $parameters, ['type' => $order, 'invert' => $invert]);
+                break;
+            default:
+                $results  = $this->{$repo}->find($query, $parameters, ['type' => $order, 'invert' => $invert]);
                 break;
         }
 

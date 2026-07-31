@@ -404,7 +404,7 @@ final class Messages extends VKAPIRequestHandler
                         "local_id" => $user_id,
                         "type" => "user",
                     ],
-                    "last_message_id" => $dialogue->getPreviewMessage()->getId(),
+                    "last_message_id" => $dialogue->getPreviewMessage()?->getId() ?? 0,
                 ],
             ],
         ];
@@ -539,6 +539,8 @@ final class Messages extends VKAPIRequestHandler
 
     public function setActivity(int $user_id = 0, string $type = "typing", int $peer_id = 0)
     {
+        $this->requireUser();
+
         if (empty($user_id) && empty($peer_id)) {
             $this->fail(100, "One of the parameters specified was missing or invalid: user_id or peer_id");
         } elseif (empty($peer_id)) {

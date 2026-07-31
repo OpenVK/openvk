@@ -205,6 +205,28 @@ class Posts
                 case 'wall_id':
                     $result->where("wall", $paramValue);
                     break;
+                case "ignore_private":
+                    if (!$paramValue) {
+                        break;
+                    }
+
+                    # Only public walls with existing owners (search must not 500 on deleted entities)
+                    $openUsers = $this->context->table("profiles")
+                        ->select("id")
+                        ->where(["deleted" => 0, "profile_type" => 0]);
+                    $publicGroups = $this->context->table("groups")
+                        ->select("id")
+                        ->where("hide_from_global_feed", 0);
+                    $result->where(
+                        "(wall > 0 AND wall IN (?)) OR (wall < 0 AND (-wall) IN (?))",
+                        $openUsers,
+                        $publicGroups
+                    );
+                    $result->where(
+                        "owner IN (?)",
+                        $this->context->table("profiles")->select("id")->where("deleted", 0)
+                    );
+                    break;
             }
         }
 
