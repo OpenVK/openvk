@@ -1102,6 +1102,7 @@
 "event_reminder_text" = "В ближайшее время состоится событие $1.";
 "event_reminder_text_multiple" = "В ближайшее время состоятся события $1.";
 "points" = "Голоса";
+"balance" = "Баланс";
 "points_count" = "голосов";
 "on_your_account" = "на вашем счету";
 "top_up_your_account" = "Пополнить баланс";

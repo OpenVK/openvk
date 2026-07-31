@@ -88,7 +88,12 @@ h1 {
 .page_header .mobile_title,
 #fast_notifications,
 #myPagePreview,
-.navigation .link.fullsize {
+.navigation .link.fullsize,
+.navigation .link.search_link,
+.navigation .link.invite_link,
+.navigation .link.support_link,
+.navigation .link.finances_link,
+.navigation .link.logout {
     display: none;
 }
 
@@ -188,6 +193,15 @@ h1 {
 .navigation .link:hover {
     background-color: #E4E4E4;
     border-top: 1px solid #CCCCCC;
+}
+
+.navigation .link .mobile_v {
+    display: none;
+}
+
+.navigation .link .pc_v {
+    display: inline-block;
+    padding: unset;
 }
 
 .navigation .link_soon {
@@ -732,7 +746,7 @@ input[type="number"] {
 }
 
 #reg_checkbox {
-    margin-left: 100px; 
+    margin-left: 100px;
     margin-right: 100px;
     text-align: center;
 }
