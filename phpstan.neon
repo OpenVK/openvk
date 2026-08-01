@@ -1,6 +1,7 @@
 parameters:
     level: 0
     paths:
+        - bin
         - CLI
         - ServiceAPI
         - VKAPI
@@ -11,4 +12,3 @@ parameters:
     
     bootstrapFiles:
         - chandler_loader.php
-        - bootstrap.php
