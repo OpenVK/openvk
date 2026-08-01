@@ -110,7 +110,7 @@
 "politViews_8" = "Ultrakonservatyvios";
 "politViews_9" = "Libertarinės";
 "contact_information" = "Kontaktinė informacija";
-"email" = "El. pašta";
+"email" = "El. paštas";
 "phone" = "Telefonas";
 "telegram" = "Telegram";
 "personal_website" = "Asmeninė svetainė";
@@ -506,7 +506,7 @@
 "my_videos" = "Mano Vaizdo Įrašai";
 "my_messages" = "Mano Žinutės";
 "my_notes" = "Mano Užrašai";
-"my_audios" = "Mano Audio";
+"my_audios" = "Mano Garso Įrašai";
 "my_groups" = "Mano Grupės";
 "my_feed" = "Mano Naujienos";
 "my_feedback" = "Mano Atsiliepimai";
@@ -755,3 +755,6 @@
 "audios_count_other" = "$1 garso įrašų";
 "track_unknown" = "Nežinomas";
 "track_noname" = "Be pavadinimo";
+"search_for_events" = "Ieškoti renginių";
+"add_to_list_event" = "Pridėti į sąrašą";
+"my_events" = "Mano Renginiai";
