@@ -24,7 +24,7 @@
 {block header}
     <a href="{$user->getURL()}">{$user->getCanonicalName()}</a>
     »
-    <a href="/videos{$user->getId()}">{_videos}</a>
+    <a href="/videos{$user->getRealId()}">{_videos}</a>
     »
     {_video}
 {/block}
@@ -67,7 +67,7 @@
             </div>
 
             <hr/>
-        
+
             <div class="media-page-wrapper-details">
                 <div class='media-page-wrapper-comments' id="comments">
                     {include "../components/comments.latte",
@@ -87,7 +87,7 @@
                     </a>
 
                     <div>
-                        <div n:if="isset($thisUser) && $thisUser->getId() === $user->getId()">
+                        <div n:if="isset($thisUser) && $video->canBeModifiedBy($thisUser)">
                             <a href="/video{$video->getPrettyId()}/edit" class="profile_link" style="display:block;width:96%;">
                                 {_edit}
                             </a>
@@ -111,7 +111,7 @@
                 </div>
             </div>
         </div>
-        
-        
+
+
     </div>
 {/block}

@@ -85,10 +85,11 @@
 						<span>{_add_image}</span></a>
                         <a {if !$hasAvatar}style="display:none"{/if} class="_add_image hoverable set_image" id="add_image">
 						<span>{_upload_new_picture}</span></a>
+		                <a {if $hasAvatar}style="display:none"{/if} class="_draw_avatar hoverable set_image" onclick="uploadByGraffiti()" id="draw_image"><span>{_draw_avatar}</span></a>
                     </div>
                 </div>
             {/if}
-            <a href="{$user->getAvatarLink()|nocheck}">
+            <a {if $hasAvatar}onclick="OpenAvatar(event, {$user->getAvatarUrl('large')}, {$user->getAvatarAlbum()->getPrettyId()}, {$user->getAvatarPhoto()->getPrettyIdWithKey()})" href="{$user->getAvatarLink()|nocheck}"{/if}>
                 <img src="{$user->getAvatarUrl('normal')}"
                      alt="{$user->getCanonicalName()}"
                      id="bigAvatar"
@@ -139,7 +140,7 @@
                 {/if}
 
                 <a style="width: 194px;" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $user->getGiftCount() == 0" href="/gifts?act=pick&user={$user->getId()}" class="profile_link">{_send_gift}</a>
-                <a style="width: 194px;" n:if="$user->getPrivacyPermission('messages.write', $thisUser)" href="/im?sel={$user->getId()}" class="profile_link" rel="nofollow">{_send_message}</a>
+                <a style="width: 194px;" n:if="$user->getPrivacyPermission('messages.write', $thisUser)" id="_message_send" data-eid="{$user->getRealId()}" href="/im?sel={$user->getId()}" class="profile_link">{_send_message}</a>
 
                 {var $subStatus = $user->getSubscriptionStatus($thisUser)}
                 {if $subStatus === 0}
@@ -311,17 +312,9 @@
                     </div>
                 </div>
                 <div class="hide_on_mobiles" style="padding: 5px;">
-                    <div class="ovk-video" n:foreach="$videos as $video">
-                        <a href="/video{$video->getPrettyId()}" class="preview" align="center" id="videoOpen" data-id="{$video->getPrettyId()}">
-                            <img
-                                src="{$video->getThumbnailURL()}"
-                                style="max-width: 170px; max-height: 127px; margin: auto;" />
-                        </a>
-                        <div>
-                            <b><a href="/video{$video->getPrettyId()}" id="videoOpen" data-id="{$video->getPrettyId()}">{ovk_proc_strtr($video->getName(), 30)}</a></b><br>
-                            <span style="font-size: 10px;">{$video->getPublicationTime()} | {_comments} ({$video->getCommentsCount()})</span>
-                        </div>
-                    </div>
+                    {foreach $videos as $video}
+                        {include "../Videos/ProfileVideo.latte", video => $video}
+                    {/foreach}
                 </div>
             </div>
         </div>

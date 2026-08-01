@@ -50,9 +50,9 @@ class Album extends MediaCollection
         return (new Photos())->get($cover);
     }
 
-    public function getPhotos(int $page = 1, ?int $perPage = null): \Traversable
+    public function getPhotos(int $page = 1, ?int $perPage = null, bool $rev = false): \Traversable
     {
-        return $this->fetch($page, $perPage);
+        return $this->fetch($page, $perPage, $rev);
     }
 
     public function getPhotosCount(): int

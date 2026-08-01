@@ -8,6 +8,7 @@
 "home" = "Главная";
 "welcome" = "Добро пожаловать";
 "to_top" = "Вверх";
+"show_next" = "Показать далее";
 
 /* Login */
 
@@ -210,6 +211,7 @@
 "auditory" = "Аудитория";
 "in_wall" = "на стену";
 "in_group" = "в группу";
+"in_chat" = "в переписку";
 "shown" = "Показано";
 "x_out_of" = "$1 из";
 "wall_zero" = "нет записей";
@@ -265,7 +267,7 @@
 "no_posts_abstract" = "Здесь никто ничего не написал... Пока.";
 "attach_no_longer_available" = "Это вложение больше недоступно.";
 "open_post" = "Открыть запись";
-"version_incompatibility" = "Не удалось отобразить это вложение. Возможно, база данных несовместима с текущей версией OpenVK.";
+"version_incompatibility" = "Не удалось отобразить это вложение.";
 "graffiti" = "Граффити";
 "reply" = "Ответить";
 "post_is_ad" = "Этот пост был размещён за взятку.";
@@ -311,6 +313,12 @@
 
 "change_geo_name" = "Изменить название точки";
 "change_geo_name_new" = "Новое название";
+
+"pin_confirmation" = "Вы действительно хотите закрепить эту запись?";
+"pin_confirmation_2" = "Вы действительно хотите закрепить эту запись? Текущая запись будет откреплена.";
+"unpin_confirmation" = "Вы действительно хотите открепить эту запись?";
+"post_is_deleted" = "Запись была удалена.";
+"comment_from_page_is_deleted" = "Комментарий был удалён.";
 
 /* Friends */
 
@@ -546,9 +554,11 @@
 "add_image" = "Поставить изображение";
 "add_image_group" = "Загрузить фотографию";
 "upload_new_picture" = "Загрузить новую фотографию";
+"draw_avatar" = "Нарисовать изображение";
 "uploading_new_image" = "Загрузка новой фотографии";
 "friends_avatar" = "Друзьям будет проще узнать Вас, если вы загрузите свою настоящую фотографию.";
 "groups_avatar" = "Хорошее фото сделает Ваше сообщество более узнаваемым.";
+"chats_avatar" = "Фотография чата поможет быстрее отличать его в списке диалогов.";
 "formats_avatar" = "Вы можете загрузить изображение в формате JPG, GIF или PNG.";
 "troubles_avatar" = "Если возникают проблемы с загрузкой, попробуйте выбрать фотографию меньшего размера.";
 "webcam_avatar" = "Если ваш компьютер оснащён веб-камерой, Вы можете <a id='_takeSelfie'>сделать моментальную фотографию »</a>";
@@ -558,6 +568,7 @@
 
 "selected_area_user" = "Выбранная область будет показываться на вашей странице.";
 "selected_area_club" = "Выбранная область будет показываться на странице сообщества.";
+"selected_area_chat" = "Выбранная область будет показываться как значок чата.";
 "selected_area_rotate" = "Если изображение ориентировано неправильно, фотографию можно повернуть.";
 
 "deleting_avatar" = "Удаление фотографии";
@@ -1108,6 +1119,21 @@
 "time_today" = "сегодня";
 "time_yesterday" = "вчера";
 
+"day_template" = "$1 $2";
+"day_template_with_year" = "$1 $2 $3 г.";
+"month_gen_1" = "Января";
+"month_gen_2" = "Февраля";
+"month_gen_3" = "Марта";
+"month_gen_4" = "Апреля";
+"month_gen_5" = "Мая";
+"month_gen_6" = "Июня";
+"month_gen_7" = "Июля";
+"month_gen_8" = "Августа";
+"month_gen_9" = "Сентября";
+"month_gen_10" = "Октября";
+"month_gen_11" = "Ноября";
+"month_gen_12" = "Декабря";
+
 "news" = "Новости";
 "news_more" = "Подробнее »";
 "bday_reminder" = "Напоминание";
@@ -1372,14 +1398,132 @@
 
 /* Messages */
 
+"messages_unavailable" = "К сожалению, сообщения временно недоступны или не поддерживаются на этом сервере";
+
 "all_messages" = "Все сообщения";
-"search_messages" = "Поиск сообщений";
+"search_messages" = "Найти сообщения...";
+"search_messages_tab" = "Поиск";
+"search_sinister_noun" = "Поиск...";
 "no_messages" = "Никто Вам не писал, пока что.";
 "messages_blocked" = "Вы не можете отправить сообщение этому пользователю, поскольку он ограничил круг лиц, которые могут присылать ему сообщения.";
 "enter_message" = "Введите сообщение";
 "messages_error_1" = "Сообщение не доставлено";
 "messages_error_1_description" = "При отправке этого сообщения произошла ошибка общего характера...";
 "message_user_typing" = "$1 набирает сообщение...";
+
+"messenger_tab_conversations" = "Диалоги";
+"messenger_tab_messenger" = "Сообщения";
+"message_is_deleted" = "Сообщение удалено";
+
+"to_friendslist" = "К списку друзей";
+"about_peer" = "Контакт";
+"selected_messages" = "Выбрано $1 сообщений";
+"delete_message" = "Удалить";
+"reply_to_message" = "Ответить";
+
+"message_deletion_one" = "Удаление сообщения";
+"message_deletion_few" = "Удаление $1 сообщений";
+"message_deletion_many" = "Удаление $1 сообщений";
+"message_deletion_other" = "Удаление $1 сообщений";
+"message_deletion" = "Удаление $1 сообщений";
+"message_deletion_confirm" = "Удалить эти сообщения? Это действие нельзя будет отменить.";
+
+"conversations_count_title_one" = "Мои Сообщения";
+"conversations_count_title_few" = "Мои Сообщения";
+"conversations_count_title_many" = "$1 переписок";
+"conversations_count_title_other" = "$1 переписок";
+
+"conversation_title_user" = "Переписка с $1";
+"conversation_title_club" = "Переписка с сообществом";
+"conversation_title_chat" = "Переписка в беседе";
+
+"contact_info" = "Контакт";
+"write_message" = "Написать сообщение";
+
+"reply_to" = "Ответ на сообщение $1";
+
+"preview_attachment_photo" = "Фотография";
+"preview_attachment_video" = "Видео";
+"preview_attachment_doc" = "Документ";
+"preview_attachment_audio" = "Аудио";
+"preview_attachment_wall" = "Репост";
+
+"saved_messages" = "Избранное";
+"im_friends_list" = "Список друзей";
+
+"im_online_currently" = "Online";
+
+"im_was_online_today_male" = "Был в сети в $1";
+"im_was_online_today_female" = "Была в сети в $1";
+"im_was_online_today_neutral" = "Были в сети в $1";
+
+"im_was_online_yesterday_male" = "Был в сети вчера в $1";
+"im_was_online_yesterday_female" = "Была в сети вчера в $1";
+"im_was_online_yesterday_neutral" = "Были в сети вчера в $1";
+
+"im_was_online_other_male" = "Был в сети $2 в $1";
+"im_was_online_other_female" = "Была в сети $2 в $1";
+"im_was_online_other_neutral" = "Были в сети $2 в $1";
+
+"im_was_online_unkown_male" = "Был в сети когда-то";
+"im_was_online_unkown_female" = "Была в сети когда-то";
+"im_was_online_unkown_neutral" = "Были в сети когда-то";
+
+"create_chat" = "Новая беседа";
+"create_chat_f" = "Создать беседу";
+"create_chat_tip_1" = "Выберите друзей, которых хотели бы видеть в своей беседе.";
+"create_chat_tip_2" = "Когда всё будет готово, нажмите кнопку внизу.";
+
+"error_user_forbid_invites" = "Пользователь запретил добавлять себя в беседы.";
+"error_chat_not_enough_friends" = "В беседе должно быть как минимум два других пользователя";
+"name_your_chat" = "Введите название беседы (или оставьте его пустым (пока что нет всё равно введи)";
+"chat" = "Беседа";
+"go_to_dialog" = "В диалог";
+"message_sent_excl" = "Сообщение отправлено!";
+
+"messenger_typing_between_two" = "Набирает сообщение";
+"messenger_typing_one_user" = "$1 набирает сообщение";
+"messenger_typing_two_users" = "$1 и $2 набирают";
+"messenger_typing_three_users" = "$1, $2 и $3 набирают";
+"messenger_typing_other" = "$1 набирают";
+
+"messages_search_count_one" = "По данному запросу найдено одно сообщение";
+"messages_search_count_few" = "По данному запросу найдено $1 сообщения";
+"messages_search_count_many" = "По данному запросу найдено $1 сообщений";
+"messages_search_count_other" = "Найдено $1 сообщений";
+
+"create_topic_as_chat" = "Создать тему из чата";
+"create_topic_as_chat_desc" = "Вы можете прикрепить чат к своей группе в виде темы. Чат не должен быть привязан к другой теме и вы должны иметь права администратора в нём.";
+"create_topic_as_chat_desc_2" = "Выберите чат из списка";
+"chat_topic_already_attached_error" = "Чат уже куда-то привязан.";
+"topic_going_in_chat" = "Обсуждение идёт в чате:";
+"chat_join" = "Присоединиться";
+
+"members_count_one" = "$1 участник";
+"members_count_one" = "$1 участник";
+
+/* System messages */
+
+"event_chat_creation_male" = "Создал беседу «$1»";
+"event_chat_creation_female" = "Создала беседу «$1»";
+"event_chat_creation_neutral" = "Создали беседу «$1»";
+
+/* Stickers */
+
+"emoji_group_recent" = "Недавние";
+"emoji_group_smileys_emotion" = "Смайлы";
+"emoji_group_people_body" = "Люди";
+"emoji_group_animals_nature" = "Природа";
+"emoji_group_food_drink" = "Еда и напитки";
+"emoji_group_travel_places" = "Мир";
+"emoji_group_activities" = "Развлечения";
+"emoji_group_objects" = "Предметы";
+"emoji_group_symbols" = "Символы";
+"emoji_group_flags" = "Флаги";
+
+/* Messages (Other) */
+
+"messages_unable_to_load_audio" = "Не удалось загрузить аудио с id $1.";
 
 /* Polls */
 "poll" = "Опрос";
@@ -1895,6 +2039,8 @@
 "no" = "Нет";
 "cancel" = "Отмена";
 "edit_action" = "Изменить";
+"edit_action_lr" = "Отредактировать";
+"edit_action_past" = "Отредактировано";
 "transfer" = "Передать";
 "close" = "Закрыть";
 "success" = "Успех";
@@ -1905,6 +2051,7 @@
 "exit_noun" = "Выход";
 "exit_confirmation" = "Уверены, что хотите выйти?";
 "apply" = "Применить";
+"back" = "Назад";
 
 /* User alerts */
 

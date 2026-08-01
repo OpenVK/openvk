@@ -17,7 +17,7 @@
 
 {var $bigText = mb_strlen($post->getText()) > 520 || substr_count($post->getText(), "\n") + 1 > 10}
 
-<table border="0" style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, post_oldschool, $post->isExplicit() ? post-nsfw">
+<table border="0" style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, post_oldschool, $post->isExplicit() ? post-nsfw, $post->isPinned() ? is-pinned, $compact ? mini-post">
     <tbody>
         <tr>
             <td class="post-author-ava" width="54" valign="top">
@@ -64,7 +64,7 @@
                     {/if}
                     <br/>
                     <a href="{if $suggestion ?? false}javascript:void(0){else}/wall{$post->getPrettyId()}{/if}" class="date">
-                        {$post->getPublicationTime()} <span n:if="$post->getEditTime()" class="editedMark">({_edited_short})</span>{if $post->isPinned()}, {_pinned}{/if}
+                        {$post->getPublicationTime()} <span n:if="$post->getEditTime()" class="editedMark">({_edited_short})</span><span class="pinned_mark">, {_pinned}</span>
 
                         <a n:if="!empty($platform)" class="client_app" data-app-tag="{$platform}" data-app-name="{$platformDetails['name']}" data-app-url="{$platformDetails['url']}" data-app-img="{$platformDetails['img']}">
                             <img src="/assets/packages/static/openvk/img/app_icons_mini/{$post->getPlatform(true)}.svg">
@@ -144,7 +144,7 @@
                     {/if}
 
                     {if !($forceNoDeleteLink ?? false) && $canBeDeleted}
-                        <span class="oldPostDelete m_hide"><a href="/wall{$post->getPrettyId()}/delete">{_delete}</a> &nbsp;|&nbsp;</span>
+                        <span class="oldPostDelete m_hide"><a onclick="ajax_delete(event)" href="/wall{$post->getPrettyId()}/delete">{_delete}</a> &nbsp;|&nbsp;</span>
                     {/if}
 
                     {if $feedIgnoreButton ?? false && !$canBeDeleted}
@@ -157,9 +157,9 @@
 
                     {if !($forceNoPinLink ?? false) && $canBePinned}
                         {if $post->isPinned()}
-                            <a class="m_hide" href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}">{_unpin}</a>
+                            <a onclick="ajax_pin(event)" class="m_hide" href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}">{_unpin}</a>
                         {else}
-                            <a class="m_hide" href="/wall{$post->getPrettyId()}/pin?act=pin&hash={rawurlencode($csrfToken)}">{_pin}</a>
+                            <a onclick="ajax_pin(event)" class="m_hide" href="/wall{$post->getPrettyId()}/pin?act=pin&hash={rawurlencode($csrfToken)}">{_pin}</a>
                         {/if}
                         <span class="m_hide">&nbsp;|&nbsp;</span>
                     {/if}

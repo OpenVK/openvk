@@ -122,6 +122,12 @@ abstract class Media extends Postable
         throw new ISE("Setting file hash manually is forbidden");
     }
 
+    # abstract
+    public function setAsFromMessage(): void
+    {
+        return;
+    }
+
     public function setFile(array $file): void
     {
         if ($file["error"] !== UPLOAD_ERR_OK) {
@@ -132,6 +138,7 @@ abstract class Media extends Postable
         $this->saveFile($file["tmp_name"], $hash);
 
         $this->stateChanges("hash", $hash);
+        $this->stateChanges("access_key", bin2hex(random_bytes(9)));
     }
 
     public function save(?bool $log = false): void

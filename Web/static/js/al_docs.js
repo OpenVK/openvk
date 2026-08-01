@@ -1,6 +1,7 @@
-function showDocumentUploadDialog(target = null, append_to_url = null, after_upload = null)
+function showDocumentUploadDialog(target = null, append_to_url = null, after_upload = null, textareaNode = null)
 {
     let file = null
+    const is_from_messenger = textareaNode.closest(".messenger-layer").length > 0;
     const cmsg = new CMessageBox({
         title: tr("document_uploading_in_general"),
         body: `
@@ -45,12 +46,12 @@ function showDocumentUploadDialog(target = null, append_to_url = null, after_upl
                 <p><b>${tr("info_name")}</b></p>
                 <input type="text" name="doc_name" value="${name}" placeholder="...">
 
-                <label>
+                <label class="remove-in-msg">
                     <input maxlength="255" value="0" type="radio" name="doc_access" checked>
                     ${tr("private_document")}
                 </label>
                 <br>
-                <label>
+                <label class="remove-in-msg">
                     <input value="3" type="radio" name="doc_access">
                     ${tr("public_document")}
                 </label>
@@ -58,7 +59,7 @@ function showDocumentUploadDialog(target = null, append_to_url = null, after_upl
                 <p><b>${tr("tags")}</b></p>
                 <input maxlength="256" type="text" name="doc_tags" placeholder="...">
                 <br>
-                <label>
+                <label class="remove-in-msg">
                     <input type="checkbox" name="doc_owner" checked>
                     ${tr("owner_is_hidden")}
                 </label>
@@ -74,34 +75,53 @@ function showDocumentUploadDialog(target = null, append_to_url = null, after_upl
                 fd.append("ajax", 1)
                 fd.append("hash", window.router.csrf)
 
+                if (is_from_messenger) {
+                    fd.append("is_from_messenger", "1");
+                    fd.append("return_template", "1");
+                }
+
                 const endpoint_url = `/docs/upload` + (!isNaN(append_to_url) ? "?gid="+append_to_url : '')
                 const fetcher = await fetch(endpoint_url, {
                     method: 'POST',
                     body: fd,
                 })
-                const json = await fetcher.json()
+                let is_success = false;
+                let payload = null;
 
-                if(json.success) {
+                if (is_from_messenger == true) {
+                    payload = await fetcher.text();
+                    is_success = payload != null;
+                } else {
+                    payload = await fetcher.json();
+                    is_success = payload.success;
+                }
+
+                if(is_success == true) {
                     if(target != "search") {
                         window.router.route(location.href)
                     } else {
-                        if(after_upload)
-                            after_upload()
+                        if (after_upload) {
+                            await after_upload(payload);
+                        }
                     }
                 } else {
-                    fastError(escapeHtml(json.flash.message))
+                    fastError(escapeHtml(payload.flash.message))
                 }
             }, Function.noop],
         })
         cmsg_2.getNode().find('.ovk-diag-body').attr('style', "padding:15px;")
         cmsg_2.getNode().attr('style', "width: 400px;")
+
+        if (is_from_messenger == true) {
+            cmsg_2.getNode().find(".remove-in-msg").attr("style", "display:none");
+        }
     })
 }
 
 u(document).on("drop", "#_document_upload_frame", (e) => {
     e.dataTransfer.dropEffect = 'move';
     e.preventDefault()
-    
+
     u(`#_document_upload_frame #upload_btn`).nodes[0].files = e.dataTransfer.files
     u("#_document_upload_frame #upload_btn").trigger("change")
 })
@@ -225,7 +245,7 @@ u(document).on('click', '.docMainItem #add_icon', async (e) => {
         target.removeClass('lagged')
         return
     }
-    
+
     target.removeClass('lagged')
     target.attr('id', 'mark_icon')
 
@@ -236,19 +256,19 @@ u(document).on('click', '.docMainItem #add_icon', async (e) => {
 
 u(document).on('click', '.docMainItem #report_icon', (e) => {
     e.preventDefault()
-    
+
     const target = u(e.target).closest("#report_icon")
     const item   = target.closest('.docMainItem')
     const id = item.nodes[0].dataset.id.split("_")
 
     const msg = new CMessageBox({
-        title: tr("report_question"), 
+        title: tr("report_question"),
         unique_name: "report_doc",
         body: `
         ${tr("going_to_report_doc")}
         <br/>${tr("report_question_text")}
-        <br/><br/><b> ${tr("report_reason")}</b>: <input type='text' id='uReportMsgInput' placeholder='${tr("reason")}' />`, 
-        buttons: [tr("confirm_m"), tr("cancel")], 
+        <br/><br/><b> ${tr("report_reason")}</b>: <input type='text' id='uReportMsgInput' placeholder='${tr("reason")}' />`,
+        buttons: [tr("confirm_m"), tr("cancel")],
         callbacks: [(function() {
             res = document.querySelector("#uReportMsgInput").value;
             xhr = new XMLHttpRequest();
@@ -263,7 +283,7 @@ u(document).on('click', '.docMainItem #report_icon', (e) => {
         }), Function.noop]})
 })
 
-u(document).on("click", ".docListViewItem a.viewerOpener, a.docGalleryItem", async (e) => {
+u(document).on("click", ".docOpener, .docListViewItem a.viewerOpener, a.docGalleryItem", async (e) => {
     e.preventDefault()
     if(e.target.closest('.doc_volume_action')) {
         return
@@ -273,7 +293,7 @@ u(document).on("click", ".docListViewItem a.viewerOpener, a.docGalleryItem", asy
     }
 
     const target = u(e.target)
-    const link   = target.closest('a')
+    const link = target.closest('a')
     if(target.closest(".embeddable").length > 0) {
         target.closest(".embeddable").toggleClass("playing")
         return
@@ -286,7 +306,13 @@ u(document).on("click", ".docListViewItem a.viewerOpener, a.docGalleryItem", asy
     const parser  = new DOMParser
     const body    = parser.parseFromString(body_html, "text/html")
 
-    const preview = body.querySelector('.photo-page-wrapper-photo')
+	const preview = body.querySelector('.photo-page-wrapper-photo')
+
+	if (preview == null) {
+    	CMessageBox.toggleLoader()
+		return;
+	}
+
     const details = body.querySelector('.ovk-photo-details')
 
     u(preview.querySelector('.main_doc_block')).attr('id', 'ovk-photo-img')
@@ -322,8 +348,8 @@ u(document).on("click", ".docListViewItem a.viewerOpener, a.docGalleryItem", asy
 
 // ctx > "wall" and maybe "messages" in future
 // source > "user" || "club" > source_arg
-async function __docAttachment(form, ctx = "wall", source = "user", source_arg = 0) {
-    const per_page = 10
+async function __docAttachment(form, ctx = "wall", source = "user", source_arg = 0, textareaNode = null) {
+    const per_page = 10;
     const msg = new CMessageBox({
         title: tr('select_doc'),
         custom_template: u(`
@@ -395,7 +421,7 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_arg =
             })
             const res = await req.text()
             const dom = new DOMParser
-            const pre = dom.parseFromString(res, "text/html") 
+            const pre = dom.parseFromString(res, "text/html")
             const pagesCount = Number(pre.querySelector("input[name='pagesCount']").value)
             const count = Number(pre.querySelector("input[name='count']").value)
             if(count < 1) {
@@ -408,7 +434,7 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_arg =
             pre.querySelectorAll("._content").forEach(doc => {
                 const res = u(`${doc.outerHTML}`)
                 const id  = res.attr("data-attachmentdata")
-                
+
                 res.find(".docMainItem").attr("style", "width: 85%;")
                 res.append(`
                 <div class="attachButton" id='__attach_doc'>
@@ -452,7 +478,7 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_arg =
             }
             return false
         }
-        
+
         attach(dataset, button) {
             if(this.isDocAttached(dataset.attachmentdata)) {
                 (form.find(`.upload-item[data-type='doc'][data-id='${dataset.attachmentdata}']`)).remove()
@@ -465,7 +491,7 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_arg =
                         <div class='vertical-attachment-content' draggable="false">
                             <div class="docMainItem attachment_doc attachment_note">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
-                                
+
                                 <div class='attachment_note_content'>
                                     <span class="attachment_note_text">${tr("document")}</span>
                                     <span class="attachment_note_name"><a href="/doc${_url[0]}_${_url[1]}?key=${_url[2]}">${ovk_proc_strtr(escapeHtml(dataset.name), 50)}</a></span>
@@ -509,10 +535,23 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_arg =
         await __docAttachment(form, "wall")
     })
     msg.getNode().on("click", "#_doc_picker_upload", async (e) => {
-        showDocumentUploadDialog("search", source_arg >= 0 ? NaN : Math.abs(source_arg), () => {
+        showDocumentUploadDialog("search", source_arg >= 0 ? NaN : Math.abs(source_arg), async (payload) => {
+            const is_from_messenger = textareaNode.closest(".messenger-layer").length > 0;
+            if (is_from_messenger == true) {
+                // ((((((((
+                const pre = new DOMParser().parseFromString(payload, "text/html");
+                const main_item = pre.querySelector(".docMainItem");
+                main_item.dataset.attachmentdata = main_item.dataset.id;
+                main_item.dataset.name = main_item.querySelector(".doc_name").innerHTML;
+
+                docs_reciever.attach(main_item.dataset, u("<div></div>"));
+                msg.close();
+                return;
+            }
+
             docs_reciever.clean()
             docs_reciever.page(1)
-        })
+        }, textareaNode);
     })
     msg.getNode().on("change", ".attachment_search input", async (e) => {
         await docs_reciever.search(ovk_proc_strtr(e.target.value, 100))
@@ -521,7 +560,7 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_arg =
     await docs_reciever.page(docs_reciever.stat.page + 1)
 }
 u(document).on('click', '#__documentAttachment', async (e) => {
-    const form = u(e.target).closest('form') 
+    const form = u(e.target).closest('#write')
     const targ = u(e.target).closest("#__documentAttachment")
     let entity_source = "user"
     let entity_id = 0
@@ -530,5 +569,5 @@ u(document).on('click', '#__documentAttachment', async (e) => {
         entity_id = Number(targ.attr('data-club'))
     }
 
-    await __docAttachment(form, "wall", entity_source, entity_id)
+    await __docAttachment(form, "wall", entity_source, entity_id, form)
 })

@@ -2,7 +2,7 @@ window.API = new Proxy(Object.create(null), {
     get(apiObj, name, recv) {
         if(name === "Types")
             return apiObj.Types;
-        
+
         return new Proxy(new window.String(name), {
             get(classSymbol, method, recv) {
                 return ((...args) => {
@@ -41,11 +41,21 @@ window.API = new Proxy(Object.create(null), {
 
 window.API.Types = {};
 window.API.Types.Message = (class Message {
-    
+
 });
 
+const _pageLoaded = () => {
+  return new Promise((resolve) => {
+    if (document.readyState === 'complete') {
+      resolve();
+    } else {
+      window.addEventListener('load', () => resolve());
+    }
+  });
+};
+
 window.OVKAPI = new class {
-    async call(method, params) {
+    async call(method, params, return_exception = false) {
         if(!method) {
             return
         }
@@ -56,8 +66,13 @@ window.OVKAPI = new class {
         })
 
         const __url_params = new URLSearchParams
-        __url_params.append("v", "5.200")
-        if(window.openvk.current_id != 0) {
+      __url_params.append("v", "5.200")
+
+      if (!window.openvk) {
+        await _pageLoaded();
+      }
+
+      if (window.openvk.current_id != 0) {
             __url_params.append("auth_mechanism", "roaming")
         }
 
@@ -71,6 +86,10 @@ window.OVKAPI = new class {
         if(json_response.response) {
             return json_response.response
         } else {
+            if (return_exception == true) {
+                return json_response;
+            }
+
             throw new Error(json_response.error_msg)
         }
     }

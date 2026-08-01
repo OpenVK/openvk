@@ -10,6 +10,7 @@ use openvk\Web\Models\Repositories\Clubs as ClubsRepo;
 use openvk\Web\Models\Repositories\Photos as PhotosRepo;
 use openvk\Web\Models\Repositories\Videos as VideosRepo;
 use openvk\Web\Models\Repositories\Comments as CommentsRepo;
+use openvk\Web\Models\Repositories\Chats as ChatRepo;
 use openvk\Web\Models\Entities\{Topic, Comment, User, Photo, Video};
 
 final class Board extends VKAPIRequestHandler
@@ -57,10 +58,49 @@ final class Board extends VKAPIRequestHandler
                 $comment->save();
             }
         } catch (\Throwable $e) {
-            return $topic->getId();
+            return $topic->getVirtualId();
         }
 
-        return $topic->getId();
+        return $topic->getVirtualId();
+    }
+
+    public function addChatTopic(int $group_id, int $chat_id)
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        if ($chat_id > 2000000000) {
+            $chat_id = $chat_id - 2000000000;
+        }
+
+        $club = (new ClubsRepo())->get($group_id);
+        if (!$club || !$club->canBeModifiedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        $chatsRepo = new ChatRepo();
+        $chatObj = $chatsRepo->getByChatId($chat_id);
+        if (!$chatObj) {
+            $this->fail(15, "Chat not found");
+        }
+        if (!$chatObj->canAttachToTopic($this->getUser())) {
+            $this->fail(14, "Can't attach this chat");
+        }
+
+        $flags = 0;
+        $flags |= 0b10000000;
+
+        $topic = new Topic();
+        $topic->setGroup($club->getId());
+        $topic->setOwner($this->getUser()->getId());
+        $topic->setTitle("-");
+        $topic->setCreated(time());
+        $topic->setChat_id($chatObj->getId());
+        $topic->setFlags($flags);
+
+        $topic->save();
+
+        return $topic->getVirtualId();
     }
 
     public function closeTopic(int $group_id, int $topic_id)

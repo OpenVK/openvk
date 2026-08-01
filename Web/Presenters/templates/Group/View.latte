@@ -113,7 +113,6 @@
             </div>
         </div>
     </div>
-
     <div class="fictional_profile_section" n:if="$thisUser && $club->isEvent() && $club->getPotentialFollowersCount() > 0">
         {var $potentialFollowersCount = $club->getPotentialFollowersCount()}
         
@@ -137,7 +136,7 @@
                     <a href="{$follower->getURL()}" class="cl_name">
                         <text class="cl_fname">{$follower->getFirstName()}</text>
                         <text class="cl_lname">{$follower->getLastName()}</text>
-                    </a>    
+                    </a>
                 </div>
             </div>
         </div>
@@ -204,6 +203,7 @@
 <div class="right_small_block">
     {var $avatarPhoto = $club->getAvatarPhoto()}
     {var $avatarLink = ((is_null($avatarPhoto) ? FALSE : $avatarPhoto->isAnonymous()) ? "/photo" . ("s/" . base_convert((string) $avatarPhoto->getId(), 10, 32)) : $club->getAvatarLink())}
+    {var $hasAvatar = $avatarPhoto != null}
     <div class="avatar_block" style="position:relative;" data-club="{$club->getId()}">
         {if $thisUser && $club->canBeModifiedBy($thisUser)}
         <div class="avatar_controls">
@@ -211,20 +211,27 @@
             <div class="avatar_variants">
                 <a {if $hasAvatar}style="display:none"{/if} class="_add_image hoverable upload_image" id="add_image">
                 <span>{_add_image}</span></a>
-                <a {if !$hasAvatar}style="display:none"{/if} class="_add_image hoverable set_image" id="add_image">
-                <span>{_upload_new_picture}</span></a>
+		        <a {if $hasAvatar}style="display:none"{/if} class="_draw_avatar hoverable set_image" onclick="uploadByGraffiti({$club->getId()})" id="draw_image"><span>{_draw_avatar}</span></a>
+                <a {if !$hasAvatar}style="display:none"{/if} class="_add_image hoverable set_image" id="add_image"><span>{_upload_new_picture}</span></a>
             </div>
         </div>
         {/if}
 
-        <a href="{$avatarLink|nocheck}">
+        <a {if $hasAvatar}onclick="OpenAvatar(event, {$club->getAvatarUrl('large')}, {$club->getAvatarAlbum()->getPrettyId()}, {$club->getAvatarPhoto()->getPrettyIdWithKey()})"{/if} href="{$avatarLink|nocheck}">
             <img src="{$club->getAvatarUrl('normal')}" id="bigAvatar" style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
         </a>
     </div>
     <div n:ifset="$thisUser" id="profile_links">
         {if $club->canBeModifiedBy($thisUser)}
+            {if $club->isMessagesEnabled()}
+                <a href="/im?as={$club->getRealId()}" class="profile_link">{_view_group_messages}</a>
+            {/if}
             <a href="/club{$club->getId()}/edit" id="profile_link">{_edit_group}</a>
             <a href="/club{$club->getId()}/stats" rel="nofollow" id="profile_link">{_statistics}</a>
+        {else}
+            {if $club->isMessagesEnabled()}
+                <a id="_message_send" data-eid="{$club->getRealId()}" href="/im?sel={$club->getRealId()}" class="profile_link">{_send_message}</a>
+            {/if}
         {/if}
         {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
             <a href="/admin/clubs/id{$club->getId()}" id="profile_link">{_manage_group_action}</a>
@@ -386,6 +393,24 @@
                         <span class="nobold">{tr("updated_at", $album->getEditTime() ?? $album->getCreationTime())}</span>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="content_title_expanded" onclick="hidePanel(this, {$videosCount});">
+            {_videos}
+        </div>
+        <div>
+            <div class="content_subtitle">
+                {tr("videos", $videosCount)}
+                <div style="float:right;">
+                    <a href="/videos{$club->getRealId()}">{_all_title}</a>
+                </div>
+            </div>
+            <div class="hide_on_mobiles" style="padding: 5px;">
+                {foreach $videos as $video}
+                    {include "../Videos/ProfileVideo.latte", video => $video}
+                {/foreach}
             </div>
         </div>
     </div>

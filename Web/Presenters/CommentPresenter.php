@@ -52,6 +52,8 @@ final class CommentPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
 
         $repoClass = $this->models[$repo] ?? null;
+        $isAjax = $this->postParam("ajax") == "1";
+
         if (!$repoClass) {
             chandler_http_panic(400, "Bad Request", "Unexpected $repo.");
         }
@@ -63,7 +65,11 @@ final class CommentPresenter extends OpenVKPresenter
         }
 
         if (!$entity->canBeViewedBy($this->user->identity)) {
-            $this->flashFail("err", tr("error"), tr("forbidden"));
+            $this->flashFail("err", tr("error"), tr("forbidden"), 0, $isAjax);
+        }
+
+        if (!$entity->canBeCommentedBy($this->user->identity)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"), 0, $isAjax);
         }
 
         if ($entity instanceof Topic && $entity->isClosed()) {
@@ -77,11 +83,11 @@ final class CommentPresenter extends OpenVKPresenter
         }
 
         if ($entity instanceof Post && $entity->getWallOwner()->isBanned()) {
-            $this->flashFail("err", tr("error"), tr("forbidden"));
+            $this->flashFail("err", tr("error"), tr("forbidden"), 0, $isAjax);
         }
 
         if ($entity instanceof Topic && $entity->isRestricted() && !$entity->getClub()->canBeModifiedBy($this->user->identity)) {
-            $this->flashFail("err", tr("error"), tr("forbidden"));
+            $this->flashFail("err", tr("error"), tr("forbidden"), 0, $isAjax);
         }
 
         $flags = 0;
@@ -94,7 +100,7 @@ final class CommentPresenter extends OpenVKPresenter
             try {
                 $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"]);
             } catch (ISE $ex) {
-                $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_when_publishing_comment_description"));
+                $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_when_publishing_comment_description"), 0, $isAjax);
             }
         }
 
@@ -115,7 +121,7 @@ final class CommentPresenter extends OpenVKPresenter
         }
 
         if (empty($this->postParam("text")) && sizeof($horizontal_attachments) < 1 && sizeof($vertical_attachments) < 1) {
-            $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_comment_empty"));
+            $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_comment_empty"), 0, $isAjax);
         }
 
         try {
@@ -128,7 +134,7 @@ final class CommentPresenter extends OpenVKPresenter
             $comment->setFlags($flags);
             $comment->save();
         } catch (\LengthException $ex) {
-            $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_comment_too_big"));
+            $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_comment_too_big"), 0, $isAjax);
         }
 
         foreach ($horizontal_attachments as $horizontal_attachment) {
@@ -165,6 +171,13 @@ final class CommentPresenter extends OpenVKPresenter
             }
         }
 
+        if ($isAjax == "1") {
+            $this->template->comment = $comment;
+            $this->template->_template = "components/comment.latte";
+
+            return;
+        }
+
         $this->flashFail("succ", tr("comment_is_added"), tr("comment_is_added_desc"));
     }
 
@@ -174,6 +187,7 @@ final class CommentPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
 
         $comment = (new Comments())->get($id);
+        $isAjax = $_SERVER["REQUEST_METHOD"] === "POST" && $this->postParam("ajax") == "1";
         if (!$comment) {
             $this->notFound();
         }
@@ -181,14 +195,16 @@ final class CommentPresenter extends OpenVKPresenter
             $this->throwError(403, "Forbidden", tr("error_access_denied"));
         }
         if ($comment->getTarget() instanceof Post && $comment->getTarget()->getWallOwner()->isBanned()) {
-            $this->flashFail("err", tr("error"), tr("forbidden"));
+            $this->flashFail("err", tr("error"), tr("forbidden"), 0, $isAjax);
         }
 
         $comment->delete();
         $this->flashFail(
             "succ",
             tr("success"),
-            tr("comment_will_not_appear")
+            tr("comment_will_not_appear"),
+            0,
+            $isAjax
         );
     }
 }

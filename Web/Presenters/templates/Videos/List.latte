@@ -14,16 +14,23 @@
     <div style="padding-bottom: 0px; padding-top: 0;" class="summaryBar">
         <div class="summary">
             {tr("videos", $count)}
-            <span n:if="isset($thisUser) && $thisUser->getId() == $user->getId() && !\OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading']">
-                &nbsp;|&nbsp;
-                <a href="/videos/upload">{_upload_video}</a>
-            </span>
+
+            {if isset($thisUser) && !\OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading']}
+                <span n:if="$thisUser->getId() == $user->getRealId()">
+                    &nbsp;|&nbsp;
+                    <a href="/videos/upload">{_upload_video}</a>
+                </span>
+                <span n:if="$user->getRealId() < 0 && $user->canUploadVideo($thisUser)">
+                    &nbsp;|&nbsp;
+                    <a href="/videos/upload?gid={$user->getId()}">{_upload_video}</a>
+                </span>
+            {/if}
         </div>
     </div>
 {/block}
 
 {block actions}
-    
+
 {/block}
 
 {* BEGIN ELEMENTS DESCRIPTION *}

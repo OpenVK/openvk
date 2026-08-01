@@ -13,6 +13,7 @@ class Post extends Postable
 {
     use Traits\TRichText;
     protected $tableName = "posts";
+    protected $shortName = "wall";
     protected $upperNodeReferenceColumnName = "wall";
 
     private function setLikeRecursively(bool $liked, User $user, int $depth): void
@@ -418,6 +419,14 @@ class Post extends Postable
         $res->copy_post_id  = null; # todo
 
         return $res;
+    }
+
+    public function toApiAttachment(): array
+    {
+        return [
+            "type"  => "wall",
+            "photo" => $this->toNotifApiStruct(),
+        ];
     }
 
     public function canBeEditedBy(?User $user = null): bool

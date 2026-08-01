@@ -96,11 +96,16 @@ abstract class MediaCollection extends RowModel
 
     abstract public function getCoverURL(): ?string;
 
-    public function fetchClassic(int $offset = 0, ?int $limit = null): \Traversable
+    public function fetchClassic(int $offset = 0, ?int $limit = null, bool $rev = false): \Traversable
     {
         $related = $this->getRecord()->related("$this->relTableName.collection")
-            ->limit($limit ?? OPENVK_DEFAULT_PER_PAGE, $offset)
-            ->order("media ASC");
+            ->limit($limit ?? OPENVK_DEFAULT_PER_PAGE, $offset);
+
+        if ($rev == true) {
+            $related = $related->order("media DESC");
+        } else {
+            $related = $related->order("media ASC");
+        }
 
         foreach ($related as $rel) {
             $media = $rel->ref($this->entityTableName, "media");
@@ -112,12 +117,12 @@ abstract class MediaCollection extends RowModel
         }
     }
 
-    public function fetch(int $page = 1, ?int $perPage = null): \Traversable
+    public function fetch(int $page = 1, ?int $perPage = null, bool $rev = false): \Traversable
     {
         $page      = max(1, $page);
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
 
-        return $this->fetchClassic($perPage * ($page - 1), $perPage);
+        return $this->fetchClassic($perPage * ($page - 1), $perPage, $rev);
     }
 
     public function size(): int

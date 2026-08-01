@@ -9,6 +9,7 @@ use Chandler\Database\Logs;
 use openvk\Web\Models\Entities\{Voucher, Gift, GiftCategory, User, BannedLink};
 use openvk\Web\Models\Repositories\{Audios,
     ChandlerGroups,
+    Stickers,
     ChandlerUsers,
     Users,
     Clubs,
@@ -31,10 +32,11 @@ final class AdminPresenter extends OpenVKPresenter
     private $bannedLinks;
     private $chandlerGroups;
     private $audios;
+    private $stickers;
     private $context;
     private $logs;
 
-    public function __construct(Users $users, Clubs $clubs, Vouchers $vouchers, Gifts $gifts, BannedLinks $bannedLinks, ChandlerGroups $chandlerGroups, Audios $audios)
+    public function __construct(Users $users, Clubs $clubs, Vouchers $vouchers, Gifts $gifts, BannedLinks $bannedLinks, ChandlerGroups $chandlerGroups, Audios $audios, Stickers $stickers)
     {
         $this->users    = $users;
         $this->clubs    = $clubs;
@@ -43,6 +45,7 @@ final class AdminPresenter extends OpenVKPresenter
         $this->bannedLinks = $bannedLinks;
         $this->chandlerGroups = $chandlerGroups;
         $this->audios = $audios;
+        $this->stickers = $stickers;
 
         $this->context = DatabaseConnection::i()->getContext();
         $this->logs = $this->context->table("ChandlerLogs");
@@ -893,5 +896,184 @@ final class AdminPresenter extends OpenVKPresenter
         $logs = iterator_to_array((new Logs())->search($filter));
         $this->template->logs = $logs;
         $this->template->object_types = (new Logs())->getTypes();
+    }
+
+    public function renderStickerPacks(): void
+    {
+        $page = (int) ($this->queryParam("p") ?? 1);
+        $this->template->packs = iterator_to_array($this->stickers->getAllPacks($page, null, $this->template->count));
+    }
+
+    public function renderStickerPack(int $id): void
+    {
+        $gen  = false;
+        $pack = $this->stickers->getPack($id);
+        if (!$pack) {
+            $gen  = true;
+            $pack = $this->stickers->createPack("New Pack", "pack-" . time(), time(), $this->user->identity);
+            $this->redirect("/admin/stickers/id" . $pack->getId());
+        }
+
+        $this->template->form = (object) [];
+        $this->template->form->id          = $id;
+        $this->template->form->name        = $pack->getName();
+        $this->template->form->description = $pack->getDescription() ?? "";
+        $this->template->form->slug        = $pack->getSlug();
+        $this->template->form->price       = $pack->getPrice();
+        $this->template->form->end_time    = $pack->getEndTime();
+        $this->template->form->unlisted    = $pack->isUnlisted();
+        $this->template->form->author      = $pack->getAuthor() ?? "";
+        $this->template->form->author_id   = $pack->getAuthorId();
+        $this->template->form->owner_id    = $pack->getOwnerId();
+        $this->template->form->main_sticker = $pack->getMainSticker();
+        $this->template->form->gift_sticker = $pack->getGiftSticker();
+
+        $this->template->pack = $pack;
+
+        $page = (int) ($this->queryParam("sp") ?? 1);
+        $this->template->stickers = iterator_to_array($pack->getStickers($page, null, $this->template->stickerCount));
+        $this->template->stickerCount = $pack->getStickersCount();
+
+        if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+            return;
+        }
+
+        $this->assertNoCSRF();
+
+        $pack->setName($this->postParam("name"));
+        $pack->setDescription($this->postParam("description"));
+        $pack->setSlug($this->postParam("slug"));
+        $pack->setPrice((int) $this->postParam("price"));
+        $pack->setUnlisted(!empty($this->postParam("unlisted")));
+        $pack->setAuthor($this->postParam("author"));
+        $pack->setAuthorId($this->postParam("author_id"));
+
+        $endTime = $this->postParam("end_time");
+        $pack->setEndTime(!empty($endTime) ? (int) $endTime : null);
+
+        $pack->save();
+
+        $this->flash("succ", tr("admin_stickerpack_saved"), tr("admin_stickerpack_saved_desc"));
+        $this->redirect("/admin/stickers/id" . $pack->getId());
+    }
+
+    public function renderAddSticker(int $id): void
+    {
+        $pack = $this->stickers->getPack($id);
+        if (!$pack) {
+            $this->notFound();
+        }
+
+        if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+            $this->badRequest();
+        }
+
+        if (!isset($_FILES["sticker"])) {
+            $this->flashFail("err", tr("error"), tr("admin_sticker_upload_failed"));
+        }
+
+        $emojis = $_POST["emoji"] ?? [];
+        $emojis = is_array($emojis) ? $emojis : [$emojis];
+
+        $fileCount = 0;
+        $successCount = 0;
+        foreach ($_FILES["sticker"]["tmp_name"] as $idx => $tmpName) {
+            if ($_FILES["sticker"]["error"][$idx] !== UPLOAD_ERR_OK) {
+                continue;
+            }
+
+            $fileCount++;
+            $emoji = $emojis[$idx] ?? "";
+            $sticker = $this->stickers->createSticker($emoji);
+
+            if ($sticker->saveImage($tmpName)) {
+                $pack->addSticker($sticker);
+                $successCount++;
+            } else {
+                $sticker->delete(true);
+            }
+        }
+
+        if ($successCount === 0) {
+            $this->flashFail("err", tr("error"), tr("admin_sticker_image_bad"));
+        }
+
+        $this->flash("succ", tr("admin_sticker_added"), tr("admin_sticker_added_desc", $successCount));
+        $this->redirect("/admin/stickers/id" . $pack->getId());
+    }
+
+    public function renderSticker(int $id, int $stickerId): void
+    {
+        $pack = $this->stickers->getPack($id);
+        $sticker = $this->stickers->get($stickerId);
+
+        if (!$pack || !$sticker) {
+            $this->notFound();
+        }
+
+        $act = $this->queryParam("act") ?? "edit";
+        switch ($act) {
+            case "delete":
+                $this->assertNoCSRF();
+                $pack->removeSticker($sticker);
+                $sticker->delete();
+                $this->flash("succ", tr("admin_sticker_deleted"), "");
+                $this->redirect("/admin/stickers/id" . $pack->getId());
+                break;
+            case "edit":
+            default:
+                $this->template->pack   = $pack;
+                $this->template->sticker = $sticker;
+                $this->template->form   = (object) [
+                    "id"      => $sticker->getId(),
+                    "emoji"   => $sticker->getEmoji(),
+                    "pic_128" => $sticker->getImageUrl(128),
+                    "pic_256" => $sticker->getImageUrl(256),
+                ];
+
+                if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+                    return;
+                }
+
+                $this->assertNoCSRF();
+                $sticker->setEmoji($_POST["emoji"] ?? "");
+                $sticker->setUnlisted(!empty($this->postParam("unlisted")));
+
+                if (isset($_FILES["pic"]) && $_FILES["pic"]["error"] === UPLOAD_ERR_OK) {
+                    $sticker->saveImage($_FILES["pic"]["tmp_name"]);
+                }
+
+                $sticker->save();
+                $this->flash("succ", tr("admin_sticker_saved"), "");
+                $this->redirect("/admin/stickers/id" . $pack->getId() . "/sticker/" . $sticker->getId());
+                break;
+        }
+    }
+
+    public function renderUploadStickerOutline(int $id, int $stickerId): void
+    {
+        $pack   = $this->stickers->getPack($id);
+        $sticker = $this->stickers->get($stickerId);
+
+        if (!$pack || !$sticker) {
+            $this->notFound();
+        }
+
+        if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+            $this->badRequest();
+        }
+
+        $this->assertNoCSRF();
+
+        if (!isset($_FILES["outline"]) || $_FILES["outline"]["error"] !== UPLOAD_ERR_OK) {
+            $this->flashFail("err", tr("error"), tr("admin_sticker_upload_failed"));
+        }
+
+        if (!$sticker->saveOutline($_FILES["outline"]["tmp_name"])) {
+            $this->flashFail("err", tr("error"), tr("admin_sticker_image_bad"));
+        }
+
+        $this->flash("succ", tr("admin_sticker_outline_uploaded"), "");
+        $this->redirect("/admin/stickers/id" . $pack->getId() . "/sticker/" . $sticker->getId());
     }
 }

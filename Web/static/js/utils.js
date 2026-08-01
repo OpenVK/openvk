@@ -6,8 +6,14 @@ function escapeHtml(text) {
       '"': '&quot;',
       "'": '&#039;'
     };
-    
-    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+
+    try {
+        return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+    } catch (e) {
+        console.error(e);
+
+        return "ESCAPEHTML_FAILED";
+    }
 }
 
 function highlightText(searchText, container_selector, selectors = []) {
@@ -20,7 +26,7 @@ function highlightText(searchText, container_selector, selectors = []) {
             newNode = newNode.replace(regexp, (match, ...args) => {
                 return `<span class='highlight'>${escapeHtml(match)}</span>`
             })
-            
+
             const tempDiv = document.createElement('div')
             tempDiv.innerHTML = newNode
 
@@ -79,7 +85,7 @@ function trim(string) {
     var newStr = string.substring(0, 10);
     if(newStr.length !== string.length)
         newStr += "…";
-    
+
     return newStr;
 }
 
@@ -136,12 +142,12 @@ function array_splice(array, key)
     return resultArray;
 }
 
-function strip_tags(text) 
+function strip_tags(text)
 {
     return text.replace(/(<([^>]+)>)/gi, "")
 }
 
-function find_author(id, profiles, groups) 
+function find_author(id, profiles, groups)
 {
     if(id > 0) {
         const profile = profiles.find(prof => prof.id == id)
@@ -182,7 +188,7 @@ function getRemainingTime(fullTime, time) {
     return "-" + fmtTime(timer)
 }
 
-function serializeForm(form, submitter = null) 
+function serializeForm(form, submitter = null)
 {
     const u_ = u(form)
     const inputs = u_.find('input, textarea, button, select')
@@ -218,7 +224,7 @@ function serializeForm(form, submitter = null)
                 if(inp.checked) {
                     fd.append(inp.name, inp.value)
                 }
-                
+
                 break
             case 'file':
                 if(!inp.multiple) {
@@ -257,17 +263,17 @@ async function copyToClipboard(text) {
     }
 }
 
-function remove_file_format(text) 
+function remove_file_format(text)
 {
     return text.replace(/\.[^.]*$/, '')
 }
 
-function sleep(time) 
+function sleep(time)
 {
     return new Promise((resolve) => setTimeout(resolve, time));
 }
 
-function collect_attachments_node(target) 
+function collect_attachments_node(target)
 {
     const horizontal_array = []
     const horizontal_input = target.find(`input[name='horizontal_attachments']`)
@@ -326,5 +332,145 @@ function expandText(item)
     } else {
         item.parentElement.querySelector(".really_text").classList.add("collapsed_text")
         item.textContent = tr("show_more")
+    }
+}
+
+function month_day_string(date)
+{
+    const current_year = new Date().getFullYear();
+    const date_year = date.getFullYear();
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const month_str = tr("month_gen_" + month).toLowerCase();
+    let ret = null;
+
+    if (current_year === date_year) {
+        ret = tr("day_template", day, month_str);
+    } else {
+        ret = tr("day_template_with_year", day, month_str, date_year);
+    }
+
+    // old langs
+
+    if (ret.startsWith("@")) {
+        return date.toLocaleDateString(navigator.language);
+    }
+
+    return ret;
+}
+
+function get_attachments_list_from_lp(attachments) {
+    // returns "photo1_2,video1_3" from {"attach1": "1_2", "attach1_type": "photo"}
+    let temp_str = [];
+    let i = 0;
+    let associative = Object.entries(attachments);
+    associative.forEach(item => {
+        if (item[0].startsWith("attach")) {
+            const _type = associative[i + 1];
+            if (!_type || _type[0] == "from") {
+                return;
+            }
+
+            temp_str.push(_type[1] + item[1]);
+        }
+
+        i += 1;
+    });
+
+    return temp_str;
+}
+
+async function resolve_attachments(attachments) {
+    const atts = await window.OVKAPI.call("utils.resolveAttachments", {
+        "attachments": attachments.join(',')
+    });
+
+    return atts;
+}
+
+function get_attachment_text(attachment) {
+    f = (`<span class="conv_prev_attachment_text">(` + tr("preview_attachment_" + attachment.type) + ")</span>").toLowerCase();
+
+    return f;
+}
+
+function unpack_attachments_into_node(textarea_node, attachments) {
+    console.log(textarea_node, attachments)
+    attachments.forEach(attachment => {
+        const type = attachment.type
+        const obj = attachment[type];
+        if (!obj) {
+            obj = attachment;
+        }
+
+        let aid = obj.owner_id + '_' + obj.id + (obj.access_key ? "_" + obj.access_key : "")
+
+        if (type == 'video' || type == 'photo') {
+            let preview = ''
+
+            if(type == 'photo') {
+                preview = obj.sizes[1].url
+            } else {
+                preview = obj.image[0].url
+            }
+
+            __appendToTextarea({
+                'type': type,
+                'preview': preview,
+                'id': aid
+            }, textarea_node)
+        } else if(type == 'poll') {
+            __appendToTextarea({
+                'type': type,
+                'alignment': 'vertical',
+                'html': tr('poll'),
+                'id': obj.id,
+                'undeletable': true,
+            }, textarea_node)
+        } else if (type == 'wall') {
+            __appendToTextarea({
+                'type': type,
+                'alignment': 'vertical',
+                'html': tr('post'),
+                'id': obj.id,
+                'undeletable': true,
+            }, textarea_node)
+        } else {
+            __appendToTextarea({
+                'type': type,
+                'alignment': 'vertical',
+                'html': tr("preview_attachment_" + type) + " " + ovk_proc_strtr(obj.title ?? obj.id, 100 * 2 - 9 + 4),
+                'id': aid,
+            }, textarea_node)
+        }
+    })
+}
+
+function nl2br(str) {
+    return str.replace(/\n/g, '<br>');
+}
+
+function _authorize(items, profiles = null, groups = null, get_id = null, set_id = null, finalize = null) {
+    let fin = [];
+
+    items.forEach((item) => {
+        const _id = get_id(item);
+        let author = null;
+
+        if (!profiles && !groups) {
+            author = window.im.cached_profiles._findCachedProfileById(_id);
+        } else {
+            author = window.find_author(_id, profiles, groups);
+        }
+
+        set_id(item, author);
+
+        if (finalize) {
+            finalize(item, fin);
+        }
+    });
+
+    if (finalize) {
+        return fin;
     }
 }

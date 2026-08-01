@@ -13,7 +13,9 @@ use Chandler\Database\DatabaseConnection;
 class Document extends Media
 {
     protected $tableName     = "documents";
+    protected $shortName     = "doc";
     protected $fileExtension = "gif";
+    protected $containsContextColumns = true;
     private $tmp_format = null;
 
     public const VKAPI_TYPE_TEXT  = 1;
@@ -96,6 +98,12 @@ class Document extends Media
         return true;
     }
 
+    public function setAsFromMessage(): void
+    {
+        $this->stateChanges("private", 1);
+        $this->stateChanges("unlisted", 1);
+    }
+
     public function setFile(array $file): void
     {
         if ($file["error"] !== UPLOAD_ERR_OK) {
@@ -167,7 +175,7 @@ class Document extends Media
 
     public function isPrivate(): bool
     {
-        return $this->getFolder() == Document::VKAPI_FOLDER_PRIVATE;
+        return $this->getFolder() == Document::VKAPI_FOLDER_PRIVATE || $this->getRecord()->private === 1;
     }
 
     public function isImage(): bool
@@ -383,13 +391,14 @@ class Document extends Media
         $res = new \stdClass();
         $res->id = $this->getId();
         if ($this->isOwnerHidden() && $user !== null && $this->getOwnerID() == $user->getId()) {
-            $res->owner_id = $this->getOwnerID();
+            $res->true_owner_id = $this->getOwnerID();
         } elseif (!$this->isOwnerHidden()) {
-            $res->owner_id = $this->getOwnerID();
+            $res->true_owner_id = $this->getOwnerID();
         } else {
-            $res->owner_id = 0;
+            $res->true_owner_id = 0;
         }
         $res->title = $this->getName();
+        $res->owner_id = $this->getVirtualId(); # see getPrettyId at this class
         $res->size  = $this->getFilesize();
         $res->ext   = $this->getFileExtension();
         $res->url   = $this->getURL();
@@ -414,6 +423,14 @@ class Document extends Media
         }
 
         return $res;
+    }
+
+    public function toApiAttachment(User $user): object
+    {
+        return (object) [
+            "type" => "doc",
+            "doc"  => $this->toVkApiStruct($user),
+        ];
     }
 
     public function delete(bool $softly = true, bool $all_copies = false): void
