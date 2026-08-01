@@ -134,14 +134,16 @@ final class Wall extends VKAPIRequestHandler
                 } elseif ($attachment instanceof \openvk\Web\Models\Entities\Post) {
                     $repostAttachments = [];
 
-                    foreach ($attachment->getChildren() as $repostAttachment) {
-                        if ($repostAttachment instanceof \openvk\Web\Models\Entities\Photo) {
-                            if ($repostAttachment->isDeleted()) {
-                                continue;
-                            }
+                    if (!$attachment->isArchived()) {
+                        foreach ($attachment->getChildren() as $repostAttachment) {
+                            if ($repostAttachment instanceof \openvk\Web\Models\Entities\Photo) {
+                                if ($repostAttachment->isDeleted()) {
+                                    continue;
+                                }
 
-                            $repostAttachments[] = $this->getApiPhoto($repostAttachment);
-                            /* Рекурсии, сука! Заказывали? */
+                                $repostAttachments[] = $this->getApiPhoto($repostAttachment);
+                                /* Рекурсии, сука! Заказывали? */
+                            }
                         }
                     }
 
@@ -157,7 +159,7 @@ final class Wall extends VKAPIRequestHandler
                         "from_id" => $attachment->isPostedOnBehalfOfGroup() ? $attachment->getOwner()->getId() * -1 : $attachment->getOwner()->getId(),
                         "date" => $attachment->getPublicationTime()->timestamp(),
                         "post_type" => $attachment->getVkApiType(),
-                        "text" => $attachment->getText(false),
+                        "text" => $attachment->isArchived() ? tr("post_deleted") : $attachment->getText(false),
                         "attachments" => $repostAttachments,
                         "post_source" => $attachment->getPostSourceInfo(),
                     ];
@@ -373,14 +375,16 @@ final class Wall extends VKAPIRequestHandler
                     } elseif ($attachment instanceof \openvk\Web\Models\Entities\Post) {
                         $repostAttachments = [];
 
-                        foreach ($attachment->getChildren() as $repostAttachment) {
-                            if ($repostAttachment instanceof \openvk\Web\Models\Entities\Photo) {
-                                if ($attachment->isDeleted()) {
-                                    continue;
-                                }
+                        if (!$attachment->isArchived()) {
+                            foreach ($attachment->getChildren() as $repostAttachment) {
+                                if ($repostAttachment instanceof \openvk\Web\Models\Entities\Photo) {
+                                    if ($attachment->isDeleted()) {
+                                        continue;
+                                    }
 
-                                $repostAttachments[] = $this->getApiPhoto($repostAttachment);
-                                /* Рекурсии, сука! Заказывали? */
+                                    $repostAttachments[] = $this->getApiPhoto($repostAttachment);
+                                    /* Рекурсии, сука! Заказывали? */
+                                }
                             }
                         }
 
@@ -396,7 +400,7 @@ final class Wall extends VKAPIRequestHandler
                             "from_id" => $attachment->isPostedOnBehalfOfGroup() ? $attachment->getOwner()->getId() * -1 : $attachment->getOwner()->getId(),
                             "date" => $attachment->getPublicationTime()->timestamp(),
                             "post_type" => "post",
-                            "text" => $attachment->getText(false),
+                            "text" => $attachment->isArchived() ? tr("post_deleted") : $attachment->getText(false),
                             "attachments" => $repostAttachments,
                             "post_source" => $attachment->getPostSourceInfo(),
                         ];
@@ -432,7 +436,7 @@ final class Wall extends VKAPIRequestHandler
                     "can_pin"      => $post->canBePinnedBy($user),
                     "can_archive"  => false, # TODO MAYBE
                     "is_archived"  => false,
-                    "is_pinned"    => $post->isPinned(),
+                    "is_pinned"    => (int) $post->isPinned(),
                     "is_explicit"  => $post->isExplicit(),
                     "post_source"  => $post->getPostSourceInfo(),
                     "attachments"  => $attachments,
@@ -546,9 +550,13 @@ final class Wall extends VKAPIRequestHandler
                 "groups"   => (array) $groupsFormatted,
             ];
         } else {
-            return (object) [
-                "items" => (array) $items,
-            ];
+            if (VKAPI_DECL_VER_MAJOR >= 5 && VKAPI_DECL_VER_MINOR >= 138) {
+                return (object) [
+                    "items" => (array) $items,
+                ];
+            } else {
+                return (array) $items;
+            }
         }
     }
 

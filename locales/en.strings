@@ -229,6 +229,22 @@
 "wall_zero" = "no posts";
 "wall_one" = "$1 post";
 "wall_other" = "$1 posts";
+"archived_posts" = "Post archive";
+"archive_banner_title" = "This is the post archive";
+"archive_banner_desc" = "Save posts from the wall here for history and memories. Only you can see the post archive.";
+"archive_action" = "Archive";
+"unarchive_action" = "Restore";
+"post_deleted" = "Post deleted";
+"archive_all_years" = "All years";
+"archive_more" = "More";
+"archive_more_year" = "More: $1";
+"archive_all_posts_from_year" = "Archive all posts from $1";
+"restore_all_posts_from_year" = "Restore all posts from $1";
+"archive_all_posts" = "Archive every post";
+"archive_confirm_year" = "Archive every post published in $1?";
+"restore_confirm_year" = "Restore every post published in $1?";
+"archive_confirm_all" = "Archive every post on this wall?";
+"archive_invalid_action" = "Invalid post archive action.";
 "publish_post" = "Add post";
 "view_other_comments" = "View other comments";
 
@@ -374,24 +390,39 @@
 "join_community" = "Join community";
 "leave_community" = "Leave community";
 "check_community" = "View community";
+"add_to_list_event" = "Add to list";
+"ill_come_to_meeting" = "I'll come";
+"i_might_come_to_meeting" = "I might come";
+"ill_not_come_to_meeting" = "I'll not come";
+"event_comers" = "Will come";
+"event_potential_comers" = "Might come";
 "min_6_community" = "Name of the group must have more that 6 characters";
 "participants" = "Participants";
 "groups" = "Groups";
 "meetings" = "Meetings";
 "create_group" = "Create group";
+"create_event" = "Create event";
 "group_managers" = "Managers";
 "group_type" = "Group type";
-"group_type_open" = "This is an open group. Anyone can enter it.";
+"group_type_open" = "This is an open group. Anyone can join it.";
 "group_type_closed" = "This is a closed group. To enter, you must submit a request.";
+"event_type" = "Event type";
+"event_type_open" = "This is an open event. Anyone can join it.";
+"event_type_closed" = "This is a closed event. To enter, you must request an invite.";
 "creator" = "Creator";
 "administrators" = "Administrators";
+"event_host" = "Host";
 "add_to_left_menu" = "Add to left menu";
 "remove_from_left_menu" = "Remove from left menu";
 "all_followers" = "All followers";
 "only_administrators" = "Only administrators";
 "website" = "Website";
+"location" = "Location";
 "managed" = "Managed";
 "size" = "Size";
+"event_start_date" = "Start at";
+"event_finish_date" = "Ends at";
+"event_enable_finish_date" = "Specify end date";
 
 "administrators_one" = "$1 administrator";
 "administrators_other" = "$1 administrators";
@@ -485,7 +516,12 @@
 "meetings_one" = "$1 meeting";
 "meetings_other" = "$1 meetings";
 
+"events_list_zero" = "You are not a member of any event";
+"events_list_one" = "You are a member in $1 event";
+"events_list_other" = "You are a member in $1 events";
+
 "search_by_groups" = "Explore Groups";
+"search_by_events" = "Explore Events";
 
 "error_suggestions" = "Error accessing to suggestions";
 "error_suggestions_closed" = "This group has closed wall.";
@@ -640,6 +676,7 @@
 "my_notes" = "My Notes";
 "my_audios" = "My Audios";
 "my_groups" = "My Groups";
+"my_events" = "My Events";
 "my_feed" = "My Feed";
 "my_feedback" = "My Feedback";
 "my_settings" = "My Settings";
@@ -710,6 +747,7 @@
 "ui_settings_window" = "Advanced settings";
 
 "search_for_groups" = "Search for groups";
+"search_for_events" = "Search for events";
 "search_for_users" = "Search for users";
 "search_for_posts" = "Search for posts";
 "search_for_comments" = "Search for comments";
@@ -1127,7 +1165,10 @@
 "bday_tomorrow" = "Tomorrow";
 "bday_reminder_text" = "$1 is $2's birthday.";
 "bday_and" = " and ";
+"event_reminder_text" = "Event $1 will take place soon.";
+"event_reminder_text_multiple" = "Events $1 will take place soon.";
 "points" = "Votes";
+"balance" = "Votes balance";
 "points_count" = "votes";
 "on_your_account" = "on your account";
 "top_up_your_account" = "Get more";
@@ -1600,6 +1641,7 @@
 
 "error_on_server_side" = "An error occurred on the server side. Contact your system administrator.";
 "error_no_group_name" = "You did not enter a group name.";
+"error_no_event_name" = "You did not enter a event name and/or event start date.";
 
 "success_action" = "Action successful";
 "connection_error" = "Connection error";
@@ -2215,6 +2257,7 @@
 "s_params" = "Search params";
 "s_people" = "Users";
 "s_groups" = "Clubs";
+"s_events" = "Events";
 "s_apps" = "Applications";
 "s_posts" = "Posts";
 "s_comments" = "Comments";
@@ -2226,6 +2269,7 @@
 
 "s_by_people" = "for users";
 "s_by_groups" = "for groups";
+"s_by_events" = "for events";
 "s_by_posts" = "for posts";
 "s_by_comments" = "for comments";
 "s_by_videos" = "for videos";

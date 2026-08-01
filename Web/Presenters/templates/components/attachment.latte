@@ -55,11 +55,37 @@
         </div>
     </div>
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Post}
-    {var $nestedLevel = ($nestedLevel ?? 0) + 1}
-    {if $nestedLevel > 2}
-        <a href="/wall{$attachment->getPrettyId()}">{_open_post}</a>
+    {if $attachment->isArchived()}
+        {var $archivedPostAuthor = $attachment->getOwner()}
+        <table border="0" style="font-size: 11px; margin-top: 5px; width: 100%" class="post archived_repost_placeholder">
+            <tbody>
+                <tr>
+                    <td class="post-author-ava" width="54" valign="top">
+                        <a class="post-author-url" href="{$archivedPostAuthor->getURL()}">
+                            <img src="{$archivedPostAuthor->getAvatarURL('miniscule')}" width="25" class="post-avatar cCompactAvatars" />
+                        </a>
+                    </td>
+                    <td width="100%" valign="top">
+                        <div class="post-author">
+                            <a href="{$archivedPostAuthor->getURL()}"><b class="post-author-name">{$archivedPostAuthor->getCanonicalName()}</b></a>
+                            <img n:if="$archivedPostAuthor->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">
+                            <br>
+                            <a href="javascript:void(0)" class="date" style="color: grey; cursor: default;">{_post_deleted}</a>
+                        </div>
+                        <div class="post-content">
+                            <div class="archived_repost_message" style="margin-top: 5px;">{_post_deleted}</div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     {else}
-        {include "post.latte", post => $attachment, compact => true, nestedLevel => $nestedLevel}
+        {var $nestedLevel = ($nestedLevel ?? 0) + 1}
+        {if $nestedLevel > 2}
+            <a href="/wall{$attachment->getPrettyId()}">{_open_post}</a>
+        {else}
+            {include "post.latte", post => $attachment, compact => true, nestedLevel => $nestedLevel}
+        {/if}
     {/if}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Audio}
     <div style="width:100%;" data-att_type='audio' data-att_id="{$attachment->getPrettyId()}">

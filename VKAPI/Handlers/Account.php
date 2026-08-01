@@ -30,7 +30,6 @@ final class Account extends VKAPIRequestHandler
             "relation"            => $user->getMaritalStatus(),
             "screen_name"         => $user->getShortCode(),
             "sex"                 => $user->isFemale() ? 1 : 2,
-            #"email"              => $user->getEmail(),
         ];
 
         $audio_status = $user->getCurrentAudioStatus();
@@ -57,6 +56,7 @@ final class Account extends VKAPIRequestHandler
             "lang"                          => 1,
             "no_wall_replies"               => 0,
             "own_posts_default"             => 0,
+            "music_available"               => (bool) !in_array($this->getUser()->getId(), OPENVK_ROOT_CONF["openvk"]["preferences"]["music"]["notAvailableFor"] ?? []),
         ];
     }
 
