@@ -59,7 +59,7 @@ final class UserPresenter extends OpenVKPresenter
             }
         } else {
             $this->template->avatarAlbum = (new Albums())->getUserAvatarAlbum($user);
-            $this->template->albums      = array_values(array_filter(iterator_to_array((new Albums())->getUserAlbums($user, 1, null, null)), function ($album) {
+            $this->template->albums      = array_values(array_filter(iterator_to_array((new Albums())->getUserAlbums($user, null, 1)), function ($album) {
                 return !$album->isCreatedBySystem();
             }));
             $this->template->albumsCount = count($this->template->albums);

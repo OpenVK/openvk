@@ -334,10 +334,10 @@ final class Photos extends VKAPIRequestHandler
             $albums_list = null;
             if ($owner_id > 0) {
                 # TODO rewrite to offset
-                $albums_list = array_slice(iterator_to_array((new Albums())->getUserAlbums($owner, 1, $count + $offset, $this->getUser())), $offset);
+                $albums_list = array_slice(iterator_to_array((new Albums())->getUserAlbums($owner, $this->getUser(), 1, $count + $offset)), $offset);
                 $res["count"] = (new Albums())->getUserAlbumsCount($owner, $this->getUser());
             } else {
-                $albums_list = array_slice(iterator_to_array((new Albums())->getClubAlbums($owner, 1, $count + $offset, $this->getUser())), $offset);
+                $albums_list = array_slice(iterator_to_array((new Albums())->getClubAlbums($owner, 1, $count + $offset)), $offset);
                 $res["count"] = (new Albums())->getClubAlbumsCount($owner, $this->getUser());
             }
         } else {

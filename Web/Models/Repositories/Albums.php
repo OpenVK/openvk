@@ -54,7 +54,7 @@ class Albums
         return $albums;
     }
 
-    public function getUserAlbums(User $user, int $page = 1, ?int $perPage = null, ?User $for): \Traversable
+    public function getUserAlbums(User $user, ?User $for, int $page = 1, ?int $perPage = null): \Traversable
     {
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
         $albums  = $this->getUserQuery($user, $for);
