@@ -313,6 +313,16 @@ abstract class OpenVKPresenter extends SimplePresenter
             } else {
                 $this->template->showBday = false;
             }
+
+            $uevents = iterator_to_array($this->user->identity->getUpcomingEvents());
+            $ueventsCount = sizeof($uevents);
+            if ($ueventsCount > 0) {
+                $this->template->showUEvents = true;
+                $this->template->uEvents = $uevents;
+                $this->template->uEventsCount = $ueventsCount;
+            } else {
+                $this->template->showUEvents = false;
+            }
         } else {
             $this->user = (object) [];
             $this->user->identity     = null;

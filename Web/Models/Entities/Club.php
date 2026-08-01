@@ -82,6 +82,8 @@ class Club extends RowModel
     {
         if (!is_null($this->getShortCode())) {
             return "/" . $this->getShortCode();
+        } elseif ($this->isEvent()) {
+            return "/event" . $this->getId();
         } else {
             return "/club" . $this->getId();
         }
@@ -171,9 +173,29 @@ class Club extends RowModel
         return (bool) $this->getRecord()->enforce_hiding_from_global_feed;
     }
 
+    /*
+     * Possible types:
+     * 1 - Open group
+     * 2 - Open event
+     */
     public function getType(): int
     {
         return $this->getRecord()->type;
+    }
+
+    public function isEvent(): bool
+    {
+        return $this->getRecord()->type === 2 ? true : false;
+    }
+
+    public function isEventOver(): bool
+    {
+        return $this->getStartDate()->timestamp() < time() ? true : false;
+    }
+
+    public function isClosed(): bool
+    {
+        return $this->getRecord()->closed === 1 ? true : false;
     }
 
     public function isVerified(): bool
@@ -190,7 +212,6 @@ class Club extends RowModel
     {
         return (bool) $this->getRecord()->wall;
     }
-
 
     public function setShortCode(?string $code = null): ?bool
     {
@@ -320,12 +341,31 @@ class Club extends RowModel
 
     public function getFollowersCount(): int
     {
-        return sizeof($this->getFollowersQuery());
+        return sizeof($this->getFollowersQuery()->where('flags', 0));
     }
 
     public function getFollowers(int $page = 1, int $perPage = 6, string $sort = "target DESC"): \Traversable
     {
-        $rels = $this->getFollowersQuery($sort)->page($page, $perPage);
+        $rels = $this->getFollowersQuery($sort)->where('flags', 0)->page($page, $perPage);
+
+        foreach ($rels as $rel) {
+            $rel = (new Users())->get($rel->follower);
+            if (!$rel) {
+                continue;
+            }
+
+            yield $rel;
+        }
+    }
+
+    public function getPotentialFollowersCount(): int
+    {
+        return sizeof($this->getFollowersQuery()->where('flags', 1));
+    }
+
+    public function getPotentialFollowers(int $page = 1, int $perPage = 6, string $sort = "target DESC"): \Traversable
+    {
+        $rels = $this->getFollowersQuery($sort)->where('flags', 1)->page($page, $perPage);
 
         foreach ($rels as $rel) {
             $rel = (new Users())->get($rel->follower);
@@ -423,6 +463,11 @@ class Club extends RowModel
         return $this->getRecord()->website;
     }
 
+    public function getLocation(): ?string
+    {
+        return $this->getRecord()->location;
+    }
+
     public function ban(string $reason): void
     {
         $this->setBlock_Reason($reason);
@@ -491,7 +536,7 @@ class Club extends RowModel
         $res->name        = $this->getName();
         $res->screen_name = $this->getShortCode() ?? "club" . $this->getId();
         $res->is_closed   = 0;
-        $res->type        = 'group';
+        $res->type        = $this->isEvent() ? 'event' : 'group';
         $res->is_member   = $user ? (int) $this->getSubscriptionStatus($user) : 0;
         $res->is_admin    = $user ? (int) $this->canBeModifiedBy($user) : 0;
         $res->deactivated = null;
@@ -540,6 +585,11 @@ class Club extends RowModel
                 case 'real_id':
                     $res->real_id = $this->getRealId();
                     break;
+                case 'start_date':
+                    if ($this->isEvent()) {
+                        $res->start_date = $this->getStartDate()->timestamp();
+                    }
+                    break;
                 case "can_suggest":
                     $res->can_suggest = !$this->canBeModifiedBy($user) && $this->getWallType() == 2;
                     break;
@@ -584,5 +634,15 @@ class Club extends RowModel
         }
 
         return $res;
+    }
+
+    public function getStartDate(): ?DateTime
+    {
+        return !is_null($this->getRecord()->start_date) ? new DateTime($this->getRecord()->start_date) : null;
+    }
+
+    public function getFinishDate(): ?DateTime
+    {
+        return !is_null($this->getRecord()->finish_date) ? new DateTime($this->getRecord()->finish_date) : null;
     }
 }

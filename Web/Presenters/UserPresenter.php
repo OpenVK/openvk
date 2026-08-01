@@ -131,6 +131,26 @@ final class UserPresenter extends OpenVKPresenter
         }
     }
 
+    public function renderEvents(int $id): void
+    {
+        $this->assertUserLoggedIn();
+
+        $user = $this->users->get($id);
+        if (!$user) {
+            $this->notFound();
+        } elseif (!$user->getPrivacyPermission('groups.read', $this->user->identity ?? null)) {
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+        } else {
+            if ($this->queryParam("act") === "managed" && $this->user->id !== $user->getId()) {
+                $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+            }
+
+            $this->template->user = $user;
+            $this->template->page = (int) ($this->queryParam("p") ?? 1);
+            $this->template->admin = $this->queryParam("act") == "managed";
+        }
+    }
+
     public function renderPinClub(): void
     {
         $this->assertUserLoggedIn();
@@ -672,6 +692,7 @@ final class UserPresenter extends OpenVKPresenter
                     "menu_mesagoj"   => "messages",
                     "menu_notatoj"   => "notes",
                     "menu_grupoj"    => "groups",
+                    "menu_eventoj"   => "events",
                     "menu_novajoj"   => "news",
                     "menu_ligiloj"   => "links",
                     "menu_standardo" => "poster",

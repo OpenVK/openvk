@@ -589,6 +589,7 @@ class User extends RowModel
                 "apps",
                 "docs",
                 "fave",
+                "events",
             ],
         ])->get($id);
     }
@@ -719,6 +720,20 @@ class User extends RowModel
         return [];
     }
 
+    public function getUpcomingEvents(): \Traversable
+    {
+        $sel = $this->getRecord()->related("subscriptions.follower");
+        foreach ($sel->where("model", "openvk\\Web\\Models\\Entities\\Club")
+                      ->where("target IN (SELECT id FROM groups WHERE type = ? AND start_date < ? AND start_date > ?)", 2, time() + DAY, time()) as $target) {
+            $target = (new Clubs())->get($target->target);
+            if (!$target) {
+                continue;
+            }
+
+            yield $target;
+        }
+    }
+
     public function getFollowers(int $page = 1, int $limit = 6): \Traversable
     {
         return $this->_abstractRelationGenerator("get-followers", $page, $limit);
@@ -754,7 +769,7 @@ class User extends RowModel
         return sizeof(DatabaseConnection::i()->getContext()->table("messages")->where(["recipient_id" => $this->getId(), "unread" => 1]));
     }
 
-    public function getClubs(int $page = 1, bool $admin = false, int $count = OPENVK_DEFAULT_PER_PAGE, bool $offset = false): \Traversable
+    public function getClubs(int $page = 1, bool $admin = false, int $count = OPENVK_DEFAULT_PER_PAGE, bool $offset = false, bool $andEvents = false): \Traversable
     {
         if (!$offset) {
             $page = ($page - 1) * $count;
@@ -762,7 +777,9 @@ class User extends RowModel
 
         if ($admin) {
             $id     = $this->getId();
-            $query  = "SELECT `id` FROM `groups` WHERE `owner` = ? UNION SELECT `club` as `id` FROM `group_coadmins` WHERE `user` = ?";
+            $query  = "SELECT `id` FROM `groups` WHERE `owner` = ? ";
+            $query .= $andEvents ? "" : "AND `type` = 1 ";
+            $query .= "UNION SELECT `club` as `id` FROM `group_coadmins` WHERE `user` = ?";
             $query .= " LIMIT " . $count . " OFFSET " . $page;
 
             $sel = DatabaseConnection::i()->getConnection()->query($query, $id, $id);
@@ -775,7 +792,14 @@ class User extends RowModel
                 yield $target;
             }
         } else {
-            $sel = $this->getRecord()->related("subscriptions.follower")->limit($count, $page);
+            $sel = $this->getRecord()
+                        ->related("subscriptions.follower")
+                        ->limit($count, $page);
+
+            if (!$andEvents) {
+                $sel = $sel->where("target IN (SELECT id FROM groups WHERE type = ?)", 1);
+            }
+
             foreach ($sel->where("model", "openvk\\Web\\Models\\Entities\\Club") as $target) {
                 $target = (new Clubs())->get($target->target);
                 if (!$target) {
@@ -787,16 +811,19 @@ class User extends RowModel
         }
     }
 
-    public function getClubCount(bool $admin = false): int
+    public function getClubCount(bool $admin = false, bool $andEvents = false): int
     {
         if ($admin) {
             $id    = $this->getId();
-            $query = "SELECT COUNT(*) AS `cnt` FROM (SELECT `id` FROM `groups` WHERE `owner` = ? UNION SELECT `club` as `id` FROM `group_coadmins` WHERE `user` = ?) u0;";
+            $query = "SELECT COUNT(*) AS `cnt` FROM (SELECT `id` FROM `groups` WHERE `owner` = ? ";
+            $query .= $andEvents ? "" : "AND `type` = 1 ";
+            $query .= "UNION SELECT `club` as `id` FROM `group_coadmins` WHERE `user` = ?) u0;";
 
             return (int) DatabaseConnection::i()->getConnection()->query($query, $id, $id)->fetch()->cnt;
         } else {
             $sel = $this->getRecord()->related("subscriptions.follower");
-            $sel = $sel->where("model", "openvk\\Web\\Models\\Entities\\Club");
+            $sel = $sel->where("model", "openvk\\Web\\Models\\Entities\\Club")
+                       ->where("target IN (SELECT id FROM groups WHERE type = ?)", 1);
 
             return sizeof($sel);
         }
@@ -842,22 +869,72 @@ class User extends RowModel
         return false;
     }
 
-    public function getMeetings(int $page = 1): \Traversable
+    public function getEvents(int $page = 1, bool $admin = false, int $count = OPENVK_DEFAULT_PER_PAGE, bool $offset = false): \Traversable
     {
-        $sel = $this->getRecord()->related("event_turnouts.user")->page($page, OPENVK_DEFAULT_PER_PAGE);
-        foreach ($sel as $target) {
-            $target = (new Clubs())->get($target->event);
-            if (!$target) {
-                continue;
-            }
+        if (!$offset) {
+            $page = ($page - 1) * $count;
+        }
 
-            yield $target;
+        if ($admin) {
+            $id     = $this->getId();
+            $query  = "SELECT `id` FROM `groups` WHERE `owner` = ? AND `type` = 2 UNION SELECT `g`.`id` FROM `group_coadmins` AS `gc`";
+            $query .= " JOIN `groups` AS `g` ON `g`.`id` = `gc`.`club` WHERE `gc`.`user` = ? AND `g`.`type` = 2";
+            $query .= " LIMIT " . $count . " OFFSET " . $page;
+
+            $sel = DatabaseConnection::i()->getConnection()->query($query, $id, $id);
+            foreach ($sel as $target) {
+                $target = (new Clubs())->get($target->id);
+                if (!$target) {
+                    continue;
+                }
+
+                yield $target;
+            }
+        } else {
+            $sel = $this->getRecord()->related("subscriptions.follower")->limit($count, $page);
+            foreach ($sel->where("model", "openvk\\Web\\Models\\Entities\\Club")
+                         ->where("target IN (SELECT id FROM groups WHERE type = ?)", 2) as $target) {
+                $target = (new Clubs())->get($target->target);
+                if (!$target) {
+                    continue;
+                }
+
+                yield $target;
+            }
         }
     }
 
-    public function getMeetingCount(): int
+    public function getEventsCount(bool $admin = false): int
     {
-        return sizeof($this->getRecord()->related("event_turnouts.user"));
+        if ($admin) {
+            $id    = $this->getId();
+            $query = "SELECT COUNT(*) AS `cnt` FROM (SELECT `id` FROM `groups` WHERE `owner` = ? AND `type` = 2 UNION SELECT `g`.`id` FROM `group_coadmins` AS `gc`";
+            $query .= " JOIN `groups` AS `g` ON `g`.`id` = `gc`.`club` WHERE `gc`.`user` = ? AND `g`.`type` = 2) u0;";
+
+            return (int) DatabaseConnection::i()->getConnection()->query($query, $id, $id)->fetch()->cnt;
+        } else {
+            $sel = $this->getRecord()->related("subscriptions.follower");
+            $sel = $sel->where("model", "openvk\\Web\\Models\\Entities\\Club")
+                       ->where("target IN (SELECT id FROM groups WHERE type = ?)", 2);
+
+            return sizeof($sel);
+        }
+    }
+
+    /*
+     * @deprecated Main term is Events now
+     */
+    public function getMeetings(int $page = 1, bool $admin = false, int $count = OPENVK_DEFAULT_PER_PAGE, bool $offset = false): \Traversable
+    {
+        return $this->getEvents($page, $admin, $count, $offset);
+    }
+
+    /*
+     * @deprecated Main term is Events now
+     */
+    public function getMeetingsCount(bool $admin = false): int
+    {
+        return $this->getEventsCount($admin);
     }
 
     public function getGifts(int $page = 1, ?int $perPage = null): \Traversable
@@ -1263,6 +1340,7 @@ class User extends RowModel
                 "apps",
                 "docs",
                 "fave",
+                "events",
             ],
         ])->set($id, (int) $status)->toInteger();
 
