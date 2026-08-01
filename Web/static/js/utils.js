@@ -216,6 +216,7 @@ function serializeForm(form, submitter = null)
             case 'search':
             case 'password':
             case 'date':
+            case 'time':
             case 'datetime-local':
                 fd.append(inp.name, inp.value)
                 break

@@ -3538,3 +3538,29 @@ function ajax_pin(event = null) {
         })
     }, () => {}]);
 }
+$(document).on("click", ".archive_post", function(e) {
+    e.preventDefault();
+    let url = $(this).attr("href");
+    let post = $(this).closest(".post, .post-horizontal");
+    let postContainer = $(this).closest(".scroll_node");
+    
+    if (!url.includes("ajax=1")) {
+        url += (url.includes("?") ? "&" : "?") + "ajax=1";
+    }
+    
+    $.get(url, function(response) {
+        if (response.success) {
+            let elementToRemove = postContainer.length ? postContainer : post;
+            elementToRemove.slideUp(200, function() {
+                $(this).remove();
+                window.dispatchEvent(new CustomEvent("archive:changed", {
+                    detail: response
+                }));
+            });
+        } else {
+            if (response.flash && response.flash.message) {
+                fastError(response.flash.message);
+            }
+        }
+    });
+});

@@ -22,10 +22,10 @@ final class Groups extends VKAPIRequestHandler
 
         $clbs = [];
         if ($user_id == 0) {
-            foreach ($this->getUser()->getClubs($offset, $filter == "admin", $count, true) as $club) {
+            foreach ($this->getUser()->getClubs($offset, $filter == "admin", $count, true, true) as $club) {
                 $clbs[] = $club;
             }
-            $clbsCount = $this->getUser()->getClubCount();
+            $clbsCount = $this->getUser()->getClubCount($filter == "admin", true);
         } else {
             $users = new UsersRepo();
             $user  = $users->get($user_id);
@@ -38,11 +38,11 @@ final class Groups extends VKAPIRequestHandler
                 $this->fail(260, "Access to the groups list is denied due to the user's privacy settings");
             }
 
-            foreach ($user->getClubs($offset, $filter == "admin", $count, true) as $club) {
+            foreach ($user->getClubs($offset, $filter == "admin", $count, true, true) as $club) {
                 $clbs[] = $club;
             }
 
-            $clbsCount = $user->getClubCount();
+            $clbsCount = $user->getClubCount($filter == "admin", true);
         }
 
         $rClubs = [];
@@ -133,7 +133,7 @@ final class Groups extends VKAPIRequestHandler
         $clubs = new ClubsRepo();
 
         $array = [];
-        $find  = $clubs->find($q);
+        $find  = $clubs->find($q, [], ['type' => 'id', 'invert' => false], 1, null, true);
 
         foreach ($find->offsetLimit($offset, $count) as $group) {
             $array[] = $group->getId();

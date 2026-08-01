@@ -106,6 +106,10 @@ final class AuthPresenter extends OpenVKPresenter
                 $this->flashFail("err", tr("invalid_email_address"), tr("invalid_email_address_comment"));
             }
 
+            if ((OPENVK_ROOT_CONF['openvk']['preferences']['security']['disableSubAddressing'] ?? false) === true && str_contains($this->postParam("email"), "+")) {
+                $this->flashFail("err", tr("invalid_email_address"), tr("invalid_email_address_comment"));
+            }
+
             if (OPENVK_ROOT_CONF['openvk']['preferences']['security']['forceStrongPassword']) {
                 if (!Validator::i()->passwordStrong($this->postParam("password"))) {
                     $this->flashFail("err", tr("error"), tr("error_weak_password"));

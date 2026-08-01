@@ -7,6 +7,7 @@
 {var $repostsCount = $post->getRepostCount()}
 {var $canBePinned = $post->canBePinnedBy($thisUser ?? NULL)}
 {var $canBeDeleted = $post->canBeDeletedBy($thisUser)}
+{var $canBeArchived = $post->canBeArchivedBy($thisUser ?? NULL)}
 {var $wallOwner = $post->getWallOwner()}
 {if $post->isDeactivationMessage() && $post->getText()}
     {var $deac = "post_deact"}
@@ -20,7 +21,7 @@
 
 {var $bigText = mb_strlen($post->getText()) > 520 || substr_count($post->getText(), "\n") + 1 > 10}
 
-<table border="0" style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, !$compact ? post-divider, $post->isExplicit() ? post-nsfw, $post->isPinned() ? is-pinned, $compact ? mini-post">
+<table border="0" style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, post_microblog, !$compact ? post-divider, $post->isExplicit() ? post-nsfw, $post->isPinned() ? is-pinned, $compact ? mini-post">
     <tbody>
         <tr>
             <td class="post-author-ava" width="54" valign="top">
@@ -29,7 +30,7 @@
                     <span n:if="!$post->isPostedOnBehalfOfGroup() && !$compact && $author->isOnline()" class="post-online">{_online}</span>
                 </a>
             </td>
-            <td width="100%" valign="top">
+            <td class="post-all-contents" width="100%" valign="top">
                 <div class="post-author">
                     <a href="{$author->getURL()}"><b class="post-author-name">{$author->getCanonicalName()}</b></a>
                     <img n:if="$author->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">
@@ -45,7 +46,7 @@
                                 {elseif $wallOwner instanceof \openvk\Web\Models\Entities\Club}
                                 {tr("post_on_group_wall", ovk_proc_strtr($wallOwner->getName(), 52))}
                                 {else}
-                                {tr("post_on_user_wall", $wallOwner->getMorphedName("genitive", false))}
+                                {tr("post_on_user_wall", $wallOwner->getMorphedName("genitive", false, false))}
                                 {/if}
                             </b>
                         </a>
@@ -70,6 +71,8 @@
                             <a onclick="ajax_pin(event)" class="pin" href="/wall{$post->getPrettyId()}/pin?act=pin&hash={rawurlencode($csrfToken)}"></a>
                         {/if}
                     {/if}
+                    <a n:if="$canBeArchived && !($forceNoDeleteLink ?? false) && $compact == false && !$post->isArchived()" class="archive_post" href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}" title="{_archive_action}"></a>
+                    <a n:if="$canBeArchived && !($forceNoDeleteLink ?? false) && $compact == false && $post->isArchived()" class="archive_post" href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}" title="{_unarchive_action}"></a>
 
                     {if $post->canBeEditedBy($thisUser) && !($forceNoEditLink ?? false) && $compact == false}
                         <a class="edit" id="editPost"></a>

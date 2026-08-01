@@ -96,6 +96,14 @@ abstract class OpenVKPresenter extends SimplePresenter
     protected function assertUserLoggedIn(bool $returnUrl = true): void
     {
         if (is_null($this->user->identity)) {
+            // AJAX navigations must not flash()+Set-Cookie: a cookieless request would
+            // overwrite a still-valid CHANDLERSESS and hard-log the user out.
+            if (($_SERVER["HTTP_X_OPENVK_AJAX_QUERY"] ?? "") === "1") {
+                header("HTTP/1.1 401 Unauthorized");
+                header("Content-Type: application/json; charset=UTF-8");
+                exit(json_encode(["error" => "login_required"]));
+            }
+
             $loginUrl = "/login";
             if ($returnUrl && $_SERVER["REQUEST_METHOD"] === "GET") {
                 $currentUrl = function_exists("get_current_url") ? get_current_url() : $_SERVER["REQUEST_URI"];
@@ -304,6 +312,16 @@ abstract class OpenVKPresenter extends SimplePresenter
                 $this->template->bdayCount = sizeof($bdays["users"]);
             } else {
                 $this->template->showBday = false;
+            }
+
+            $uevents = iterator_to_array($this->user->identity->getUpcomingEvents());
+            $ueventsCount = sizeof($uevents);
+            if ($ueventsCount > 0) {
+                $this->template->showUEvents = true;
+                $this->template->uEvents = $uevents;
+                $this->template->uEventsCount = $ueventsCount;
+            } else {
+                $this->template->showUEvents = false;
             }
         } else {
             $this->user = (object) [];

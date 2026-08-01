@@ -173,7 +173,7 @@
                     </form>
                 {/if}
 
-                <a n:if="!$blacklist_status" id="_bl_toggler" data-name="{$user->getMorphedName('genitive', false)}" data-val="1" data-id="{$user->getRealId()}" class="profile_link" style="display:block;width:96%;">{_bl_add}</a>
+                <a n:if="!$blacklist_status" id="_bl_toggler" data-name="{$user->getMorphedName('genitive', false, false)}" data-val="1" data-id="{$user->getRealId()}" class="profile_link" style="display:block;width:96%;">{_bl_add}</a>
                 {* 4 admins *}
                 <a n:if="$blacklist_status" id="_bl_toggler" data-val="0" data-id="{$user->getRealId()}" class="profile_link" style="display:block;width:96%;">{_bl_remove}</a>
                 <a class="profile_link" style="display:block;width:96%;" href="javascript:reportUser({$user->getId()})">{_report}</a>
@@ -216,7 +216,7 @@
             {/if}
         </div>
         <br />
-        <div n:if="$user->getFriendsCount() > 0 && $user->getPrivacyPermission('friends.read', $thisUser ?? NULL)">
+        <div class="fictional_profile_section" n:if="$user->getFriendsCount() > 0 && $user->getPrivacyPermission('friends.read', $thisUser ?? NULL)">
             {var $friendCount = $user->getFriendsCount()}
 
             <div class="content_title_expanded" onclick="hidePanel(this, {$friendCount});">
@@ -244,7 +244,7 @@
                 </div>
             </div>
         </div>
-        <div n:if="$thisUser != NULL && $thisUser->getId() == $user->getId() && $user->getFriendsOnlineCount() > 0">
+        <div class="fictional_profile_section" n:if="$thisUser != NULL && $thisUser->getId() == $user->getId() && $user->getFriendsOnlineCount() > 0">
             {var $friendOnlineCount = $user->getFriendsOnlineCount()}
 
             <div class="content_title_expanded" onclick="hidePanel(this, {$friendOnlineCount});">
@@ -272,7 +272,7 @@
                 </div>
             </div>
         </div>
-        <div n:if="$albumsCount > 0 && $user->getPrivacyPermission('photos.read', $thisUser ?? NULL)">
+        <div class="fictional_profile_section" n:if="$albumsCount > 0 && $user->getPrivacyPermission('photos.read', $thisUser ?? NULL)">
             <div class="content_title_expanded" onclick="hidePanel(this, {$albumsCount});">
                 {_albums}
             </div>
@@ -300,7 +300,7 @@
                 </div>
             </div>
         </div>
-        <div n:if="$videosCount > 0 && $user->getPrivacyPermission('videos.read', $thisUser ?? NULL)">
+        <div class="fictional_profile_section" n:if="$videosCount > 0 && $user->getPrivacyPermission('videos.read', $thisUser ?? NULL)">
             <div class="content_title_expanded" onclick="hidePanel(this, {$videosCount});">
                 {_videos}
             </div>
@@ -318,7 +318,7 @@
                 </div>
             </div>
         </div>
-        <div n:if="$notesCount > 0 && $user->getPrivacyPermission('notes.read', $thisUser ?? NULL)">
+        <div class="fictional_profile_section" n:if="$notesCount > 0 && $user->getPrivacyPermission('notes.read', $thisUser ?? NULL)">
             <div class="content_title_expanded" onclick="hidePanel(this, {$notesCount});">
                 {_notes}
             </div>
@@ -346,7 +346,7 @@
                 </div>
             </div>
         </div>
-        <div n:if="$user->getClubCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)">
+        <div class="fictional_profile_section" n:if="$user->getClubCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)">
             {var $clubsCount = $user->getClubCount()}
             <div class="content_title_expanded" onclick="hidePanel(this, {$clubsCount})">
                 {_groups}
@@ -365,8 +365,9 @@
                 </div>
             </div>
         </div>
-        <div n:if="$user->getMeetingCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)">
-            {var $meetingCount = $user->getMeetingCount()}
+
+        <div class="fictional_profile_section" n:if="$user->getEventsCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)">
+            {var $meetingCount = $user->getEventsCount()}
             <div class="content_title_expanded" onclick="hidePanel(this, {$meetingCount})">
                 {_meetings}
             </div>
@@ -374,11 +375,11 @@
                 <div class="content_subtitle">
                     {tr("meetings", $meetingCount)}
                     <div style="float:right;">
-                        <a href="/groups{$user->getId()}?act=meetings">{_all_title}</a>
+                        <a href="/events{$user->getId()}">{_all_title}</a>
                     </div>
                 </div>
                 <div style="padding-left: 5px;">
-                    <div style="display: inline;" n:foreach="$user->getMeetings(1) as $meeting">
+                    <div style="display: inline;" n:foreach="$user->getEvents(1) as $meeting">
                         <a href="/event{$meeting->getId()}">{$meeting->getName()}</a> {if !$iterator->last}•{/if}
                     </div>
                 </div>
@@ -426,7 +427,7 @@
                 </div>
             </div>
             <div>
-                <table id="basicInfo" class="ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0" n:if=" $user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
+                <table id="basicInfo" class="not_flexible_table ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0" n:if=" $user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
                     <tbody>
                         <tr>
                             <td class="label"><span class="nobold">{_pronouns}: </span></td>
@@ -466,13 +467,13 @@
                 </table>
 			</div>
         </div>
-        <div n:if="$user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
+        <div id="entityAdditionalInfoBlock" n:if="$user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
             <div class="content_title_expanded" onclick="hidePanel(this);">
                 {_information}
             </div>
 
             {capture $contactInfo_Tmp}
-                <table class="ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0" n:ifcontent>
+                <table class="not_flexible_table ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0" n:ifcontent>
                   <tbody n:ifcontent>
                         <tr n:if="!is_null($user->getContactEmail())">
                             <td class="label"><span class="nobold">{_email}: </span></td>
@@ -516,7 +517,7 @@
                 </table>
             {/capture}
             {capture $uInfo_Tmp}
-                <table class="ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0" n:ifcontent>
+                <table class="not_flexible_table ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0" n:ifcontent>
                   <tbody n:ifcontent>
                     <tr n:if="!is_null($user->getInterests())">
                         <td class="label"><span class="nobold">{_interests}: </span></td>
@@ -609,7 +610,7 @@
             </div>
         </div>
 
-        <div n:if="$audiosCount > 0 && $user->getPrivacyPermission('audios.read', $thisUser ?? NULL)">
+        <div class="fictional_profile_section" n:if="$audiosCount > 0 && $user->getPrivacyPermission('audios.read', $thisUser ?? NULL)">
             <div class="content_title_expanded" onclick="hidePanel(this, {$audiosCount});">
                 {_audios}
             </div>
@@ -628,7 +629,7 @@
             </div>
         </div>
 
-        <div n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && ($giftCount = $user->getGiftCount()) > 0">
+        <div class="fictional_profile_section" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && ($giftCount = $user->getGiftCount()) > 0">
             <div class="content_title_expanded" onclick="hidePanel(this, {$giftCount});">
                 {_gifts}
             </div>

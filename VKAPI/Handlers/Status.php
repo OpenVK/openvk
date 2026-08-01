@@ -27,14 +27,15 @@ final class Status extends VKAPIRequestHandler
             }
 
             $audioStatus = $user->getCurrentAudioStatus();
+            $res = [
+                "text" => $user->getStatus(),
+            ];
+
             if ($audioStatus) {
-                return [
-                    "status" => $user->getStatus(),
-                    "audio" => $audioStatus->toVkApiStruct(),
-                ];
+                $res["audio"] = $audioStatus->toVkApiStruct();
             }
 
-            return $user->getStatus();
+            return $res;
         }
     }
 
