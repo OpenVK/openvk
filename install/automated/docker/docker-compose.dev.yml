@@ -3,8 +3,6 @@ services:
     build:
       context: ../..
       dockerfile: install/automated/docker/openvk.Dockerfile
-      additional_contexts:
-        - chandler=${CHANDLER_PATH:-/opt/chandler}
     develop:
       watch:
         - path: ../..

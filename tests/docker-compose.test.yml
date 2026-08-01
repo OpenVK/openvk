@@ -7,8 +7,6 @@ services:
       dockerfile: install/automated/docker/openvk.Dockerfile
       args:
         INSTALL_TEST_DEPS: "true"
-      additional_contexts:
-        - chandler=${CHANDLER_PATH:-/opt/chandler}
     user: www-data
     entrypoint: ["/opt/openvk/tests/entrypoint.sh"]
     depends_on:
