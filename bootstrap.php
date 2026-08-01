@@ -9,14 +9,14 @@ function bootstrap_openvk(bool $headless = false): void
 {
     require __DIR__ . "/vendor/autoload.php";
 
-    define("CHANDLER_ROOT", __DIR__, false);
-    define("OPENVK_ROOT", __DIR__, false);
+    define("CHANDLER_ROOT", __DIR__);
+    define("OPENVK_ROOT", __DIR__);
 
     chandler_init_yaml_cache();
 
     $config = chandler_parse_yaml(__DIR__ . "/openvk.yml");
-    define("CHANDLER_ROOT_CONF", $config["chandler"], false);
-    define("OPENVK_ROOT_CONF", $config, false);
+    define("CHANDLER_ROOT_CONF", $config["chandler"]);
+    define("OPENVK_ROOT_CONF", $config);
 
     ExtensionManager::registerBuiltin("openvk", __DIR__, [
         "name" => "OpenVK",
