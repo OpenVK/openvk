@@ -4,17 +4,9 @@ FROM ghcr.io/${GITREPO}/php:8.2-cli AS builder
 
 WORKDIR /opt/openvk
 
-COPY --from=chandler . /tmp/chandler
-COPY install/automated/docker/fix-composer-repos.php /tmp/fix-composer-repos.php
-
 ADD composer.json .
 
-RUN php /tmp/fix-composer-repos.php composer.json && \
-    composer install --no-interaction && \
-    rm -rf /tmp/chandler/.git && \
-    rm -rf /opt/openvk/vendor/openvk/chandler && \
-    cp -rL /tmp/chandler /opt/openvk/vendor/openvk/chandler && \
-    composer dump-autoload
+RUN composer install --no-interaction 
 
 FROM docker.io/node:20 AS nodejs
 

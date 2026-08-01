@@ -7,13 +7,13 @@
     },
     "repositories": [
         {
-            "type": "path",
-            "url": "/opt/chandler"
+            "type": "vcs",
+            "url": "https://github.com/OpenVK/chandler"
         }
     ],
     "require": {
         "php": "~8.2",
-        "openvk/chandler": "*",
+        "openvk/chandler": "dev-restructurisation",
         "whichbrowser/parser": "dev-master",
         "james-heinrich/getid3": "^1.9@dev",
         "rybakit/msgpack": "dev-master",

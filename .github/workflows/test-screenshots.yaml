@@ -17,13 +17,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Checkout Chandler
-        uses: actions/checkout@v7
-        with:
-          repository: openvk/chandler
-          path: chandler
-          ref: ${{ github.head_ref || github.ref_name }}
-
       - name: Build test images
         env:
           CHANDLER_PATH: ${{ github.workspace }}/chandler
