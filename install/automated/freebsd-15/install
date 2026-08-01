@@ -45,16 +45,6 @@ endif
 pkg install -y git nginx php83 node24 npm-node24 mariadb118-server php83-composer mod_php83 php83-gd php83-mbstring php83-iconv php83-sodium php83-calendar php83-curl php83-brotli php83-zip php83-ctype php83-dom php83-fileinfo php83-pdo_mysql php83-sqlite3 php83-pdo_sqlite php83-sockets php83-tokenizer php83-opcache php83-posix php83-pecl-yaml php83-phar php83-filter php83-zlib php83-session php83-simplexml php83-pecl-imagick php83-xml
 rehash # upd exports
 
-# Install chandler
-mkdir /opt
-cd /opt
-git clone https://github.com/openvk/chandler.git
-
-cd chandler
-yes | composer install
-chown -R www: .
-chmod -R 777 .
-
 # Install OpenVK
 cd /opt
 git clone https://github.com/openvk/openvk
