@@ -12,60 +12,79 @@ $targetOvk    = '/opt/openvk';
 $chandlerRoot = null;
 
 foreach ($argv ?? [] as $arg) {
-    if (str_starts_with($arg, '--target-ovk='))
+    if (str_starts_with($arg, '--target-ovk=')) {
         $targetOvk = substr($arg, strlen('--target-ovk='));
-    if (str_starts_with($arg, '--chandler-root='))
+    }
+    if (str_starts_with($arg, '--chandler-root=')) {
         $chandlerRoot = substr($arg, strlen('--chandler-root='));
+    }
 }
 
 function showHelp(): int
 {
     echo <<<HELP
-\033[1mOpenVK — Structural Migration\033[0m
+        \033[1mOpenVK — Structural Migration\033[0m
 
-Migrates an OpenVK instance from the old Chandler extension structure
-(extensions/available/openvk) to the new standalone architecture.
+        Migrates an OpenVK instance from the old Chandler extension structure
+        (extensions/available/openvk) to the new standalone architecture.
 
-\033[1mUsage:\033[0m
-  php bin/upgrade-structure.php [options]
+        \033[1mUsage:\033[0m
+          php bin/upgrade-structure.php [options]
 
-\033[1mOptions:\033[0m
-  --extract               Move OpenVK out of extensions/ into a separate directory
-  --target-ovk=PATH       Target directory for --extract (default: /opt/openvk)
-  --chandler-root=PATH    Path to Chandler root (auto-detected by default)
-  --dry-run               Show what would be done without making changes
-  --force                 Skip permission and disk space checks
-  --help                  Show this help
+        \033[1mOptions:\033[0m
+          --extract               Move OpenVK out of extensions/ into a separate directory
+          --target-ovk=PATH       Target directory for --extract (default: /opt/openvk)
+          --chandler-root=PATH    Path to Chandler root (auto-detected by default)
+          --dry-run               Show what would be done without making changes
+          --force                 Skip permission and disk space checks
+          --help                  Show this help
 
-\033[1mExamples:\033[0m
-  php bin/upgrade-structure.php --dry-run --extract
-  php bin/upgrade-structure.php --extract --target-ovk=/var/www/openvk
-  php bin/upgrade-structure.php
+        \033[1mExamples:\033[0m
+          php bin/upgrade-structure.php --dry-run --extract
+          php bin/upgrade-structure.php --extract --target-ovk=/var/www/openvk
+          php bin/upgrade-structure.php
 
-HELP;
+        HELP;
     return 0;
 }
 
-function info(string $msg): void { echo "  \033[36m→\033[0m $msg\n"; }
-function ok(string $msg): void   { echo "  \033[32m✓\033[0m $msg\n"; }
-function warn(string $msg): void { echo "  \033[33m⚠\033[0m $msg\n"; }
-function error(string $msg): void{ echo "  \033[31m✗\033[0m $msg\n"; }
+function info(string $msg): void
+{
+    echo "  \033[36m→\033[0m $msg\n";
+}
+function ok(string $msg): void
+{
+    echo "  \033[32m✓\033[0m $msg\n";
+}
+function warn(string $msg): void
+{
+    echo "  \033[33m⚠\033[0m $msg\n";
+}
+function error(string $msg): void
+{
+    echo "  \033[31m✗\033[0m $msg\n";
+}
 
 function run(string $cmd, ?string $cwd = null): ?string
 {
     $descriptors = [['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']];
     $proc = proc_open($cmd, $descriptors, $pipes, $cwd);
-    if (!$proc) return null;
+    if (!$proc) {
+        return null;
+    }
     fclose($pipes[0]);
     $stdout = stream_get_contents($pipes[1]);
-    fclose($pipes[1]); fclose($pipes[2]);
+    fclose($pipes[1]);
+    fclose($pipes[2]);
     return proc_close($proc) === 0 ? ($stdout ?: '') : null;
 }
 
 function humanBytes(int $bytes): string
 {
     $units = ['B', 'KB', 'MB', 'GB'];
-    for ($i = 0; $bytes >= 1024 && $i < 3; $i++) $bytes /= 1024;
+    for ($i = 0; $bytes >= 1024 && $i < 3; $i++) {
+        $bytes /= 1024;
+    }
     return round($bytes, 1) . $units[$i];
 }
 
@@ -110,8 +129,12 @@ echo "\033[1mOpenVK — Structural Migration\033[0m\n";
 echo "  OpenVK root:     $ovkRoot\n";
 echo "  Chandler root:   $chandlerRootReal\n";
 echo "  Structure:       " . ($isInsideExtensions ? "old (inside extensions/)" : "standalone") . "\n";
-if ($extract) echo "  Target:          $targetOvk\n";
-if ($dryRun)  echo "  \033[33mDRY RUN — no changes will be made\033[0m\n";
+if ($extract) {
+    echo "  Target:          $targetOvk\n";
+}
+if ($dryRun) {
+    echo "  \033[33mDRY RUN — no changes will be made\033[0m\n";
+}
 echo "\n";
 
 // ─── Pre-flight ─────────────────────────────────────────────────────
@@ -119,10 +142,12 @@ echo "\n";
 info("Running pre-flight checks...");
 
 $checkDirs = [$ovkRoot, $chandlerRootReal];
-if ($extract) $checkDirs[] = dirname($targetOvk);
+if ($extract) {
+    $checkDirs[] = dirname($targetOvk);
+}
 $permErrors = [];
 foreach ($checkDirs as $dir) {
-    if (!is_dir($dir) && !@mkdir($dir, 0755, true)) {
+    if (!is_dir($dir) && !@mkdir($dir, 0o755, true)) {
         $permErrors[] = $dir;
     } elseif (!is_writable($dir)) {
         $permErrors[] = $dir;
@@ -130,10 +155,14 @@ foreach ($checkDirs as $dir) {
 }
 if ($permErrors) {
     error("Insufficient write permissions in:");
-    foreach ($permErrors as $d) error("  $d");
+    foreach ($permErrors as $d) {
+        error("  $d");
+    }
     $owner = posix_getpwuid(fileowner($permErrors[0]))['name'] ?? 'unknown';
     warn("Files are owned by '$owner'. Try: sudo -u $owner php bin/upgrade-structure.php");
-    if (!$force) exit(1);
+    if (!$force) {
+        exit(1);
+    }
     warn("--force: continuing anyway...");
 }
 
@@ -266,7 +295,9 @@ if ($extract && $isInsideExtensions) {
         $targetReal = realpath($targetOvk);
         if ($targetReal && $targetReal === $ovkRoot) {
             if (!$dryRun) {
-                if (is_link($targetOvk)) unlink($targetOvk);
+                if (is_link($targetOvk)) {
+                    unlink($targetOvk);
+                }
             }
             ok("Removed symlink $targetOvk → current source.");
         } else {
@@ -277,7 +308,7 @@ if ($extract && $isInsideExtensions) {
 
     if (!is_dir(dirname($targetOvk))) {
         if (!$dryRun) {
-            if (!@mkdir(dirname($targetOvk), 0755, true)) {
+            if (!@mkdir(dirname($targetOvk), 0o755, true)) {
                 error("Cannot create target directory.");
                 exit(1);
             }
@@ -335,14 +366,18 @@ if ($isInsideExtensions) {
         if (is_dir($path)) {
             $it = new FilesystemIterator($path, FilesystemIterator::SKIP_DOTS);
             if (!$it->valid()) {
-                if (!$dryRun) rmdir($path);
+                if (!$dryRun) {
+                    rmdir($path);
+                }
                 ok("Removed empty $path.");
             }
         }
     }
 
     if (file_exists($chandlerConfPath)) {
-        if (!$dryRun) unlink($chandlerConfPath);
+        if (!$dryRun) {
+            unlink($chandlerConfPath);
+        }
         ok("Removed $chandlerConfPath.");
     }
 }

@@ -18,7 +18,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 #[AsCommand(name: 'upgrade')]
 class UpgradeCommand extends Command
 {
-
     private Connection $db;
     private ?Connection $eventDb;
 

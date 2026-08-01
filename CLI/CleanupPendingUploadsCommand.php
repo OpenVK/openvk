@@ -13,7 +13,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand(name: 'cleanup-pending-uploads')]
 class CleanupPendingUploadsCommand extends Command
 {
-
     public function __construct()
     {
         parent::__construct();
