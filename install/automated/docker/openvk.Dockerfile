@@ -4,7 +4,7 @@ FROM ghcr.io/${GITREPO}/php:8.2-cli AS builder
 
 WORKDIR /opt/openvk
 
-ADD composer.json .
+COPY composer.json composer.lock /opt/openvk/
 
 RUN composer install --no-interaction 
 
