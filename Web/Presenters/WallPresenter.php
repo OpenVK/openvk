@@ -84,6 +84,8 @@ final class WallPresenter extends OpenVKPresenter
 
         $iterator = null;
         $count = 0;
+        $archiveYears = [];
+        $archiveYear = null;
         $type = $this->queryParam("type") ?? "all";
         $page = (int) ($_GET["p"] ?? 1);
         if ($page <= 0) {
@@ -109,6 +111,18 @@ final class WallPresenter extends OpenVKPresenter
                 $iterator = $foundPosts->page($page);
                 $count = $foundPosts->size();
                 break;
+            case "archive":
+                if (is_null($this->user->identity) || ($user > 0 && $this->user->id !== $user) || ($user < 0 && !$owner->canBeModifiedBy($this->user->identity))) {
+                    $this->flashFail("err", tr("error"), tr("forbidden"));
+                }
+                $archiveYears = $this->posts->getPostYearsOnWall($user);
+                $requestedYear = (int) ($this->queryParam("year") ?? 0);
+                if (in_array($requestedYear, $archiveYears, true)) {
+                    $archiveYear = $requestedYear;
+                }
+                $iterator = $this->posts->getArchivedPostsFromWall($user, $page, null, null, $archiveYear);
+                $count = $this->posts->getArchivedCountOnUserWall($user, $archiveYear);
+                break;
         }
 
         $this->template->owner   = $user;
@@ -116,6 +130,8 @@ final class WallPresenter extends OpenVKPresenter
         $this->template->count   = $count;
         $this->template->type    = $type;
         $this->template->posts   = iterator_to_array($iterator);
+        $this->template->archiveYears = $archiveYears;
+        $this->template->archiveYear = $archiveYear;
         $this->template->paginatorConf = (object) [
             "count"   => $this->template->count,
             "page"    => (int) ($_GET["p"] ?? 1),
@@ -202,6 +218,7 @@ final class WallPresenter extends OpenVKPresenter
                    ->where("wall IN (?)", $ids)
                    ->where("deleted", 0)
                    ->where("suggested", 0)
+                   ->where("archived", 0)
                    ->order("created DESC");
 
         if ($withAlienWallPosts === 0) {
@@ -231,7 +248,7 @@ final class WallPresenter extends OpenVKPresenter
         $withAlienWallPosts = (int) ($_GET["with_alien_wall_posts"] ?? 0);
 
         $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) LEFT JOIN `profiles` ON LEAST(`posts`.`wall`, 0) = 0 AND `profiles`.`id` = ABS(`posts`.`wall`)";
-        $queryBase .= " WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND ((`profiles`.`profile_type` = 0 AND `profiles`.`hide_global_feed` = 0) OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
+        $queryBase .= " WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND ((`profiles`.`profile_type` = 0 AND `profiles`.`hide_global_feed` = 0) OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0 AND `posts`.`archived` = 0";
 
         if ($withAlienWallPosts === 0) {
             $queryBase .= " AND ((`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`))";
@@ -484,6 +501,10 @@ final class WallPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
+        if ($post->isArchived() && !$post->canBeArchivedBy($this->user->identity)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
         $this->logPostView($post, $wall);
 
         $this->template->post     = $post;
@@ -644,6 +665,100 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         $this->redirect($wall < 0 ? "/club" . ($wall * -1) : "/id" . $wall);
+    }
+
+    public function renderArchive(int $wall, int $post_id): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+        $this->assertNoCSRF();
+
+        $post = $this->posts->getPostById($wall, $post_id);
+        if (!$post || $post->isDeleted()) {
+            $this->notFound();
+        }
+
+        $wallOwner = ($wall > 0 ? (new Users())->get($wall) : (new Clubs())->get($wall * -1));
+
+        if ($wallOwner === null) {
+            $this->flashFail("err", tr("error"), tr("error_4"));
+        }
+
+        if ($wallOwner->isBanned()) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
+        if (!$post->canBeArchivedBy($this->user->identity)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
+        $wasArchived = $post->isArchived();
+        $post->setArchived(!$wasArchived);
+        $post->save();
+
+        if ($this->queryParam("ajax")) {
+            $this->returnJson([
+                "success" => true,
+                "archived" => !$wasArchived,
+            ]);
+            return;
+        }
+
+        if ($wasArchived) {
+            $this->redirect("/wall" . $wall . "?type=archive");
+        }
+
+        $this->redirect($wall < 0 ? "/club" . ($wall * -1) : "/id" . $wall);
+    }
+
+    public function renderArchiveBulk(int $wall): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+            header("HTTP/1.1 405 Method Not Allowed");
+            exit;
+        }
+
+        $this->assertNoCSRF();
+
+        $wallOwner = ($wall > 0 ? (new Users())->get($wall) : (new Clubs())->get(abs($wall)));
+        if (!$wallOwner || $wallOwner->isBanned()) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
+        $canManageArchive = $wall > 0
+            ? $this->user->id === $wall
+            : $wallOwner->canBeModifiedBy($this->user->identity);
+        if (!$canManageArchive) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
+        $action = $this->postParam("action") ?? "";
+        $year = (int) ($this->postParam("year") ?? 0);
+        $availableYears = $this->posts->getPostYearsOnWall($wall);
+
+        switch ($action) {
+            case "archive_year":
+            case "restore_year":
+                if (!in_array($year, $availableYears, true)) {
+                    $this->flashFail("err", tr("error"), tr("archive_invalid_action"));
+                }
+
+                $this->posts->setArchivedOnWall($wall, $action === "archive_year", $year);
+                $redirect = "/wall" . $wall . "?type=archive&year=" . $year;
+                break;
+            case "archive_all":
+                $this->posts->setArchivedOnWall($wall, true);
+                $redirect = "/wall" . $wall . "?type=archive";
+                break;
+            default:
+                $this->flashFail("err", tr("error"), tr("archive_invalid_action"));
+        }
+
+        $this->flash("succ", tr("information_-1"), tr("changes_saved_comment"));
+        $this->redirect($redirect);
     }
 
     public function renderPin(int $wall, int $post_id): void

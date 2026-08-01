@@ -6,7 +6,7 @@ namespace openvk\Web\Models\Repositories;
 
 use openvk\Web\Models\Entities\Post;
 use openvk\Web\Models\Entities\User;
-use Nette\Database\Table\ActiveRow;
+use Nette\Database\Table\{ActiveRow, Selection};
 use Chandler\Database\DatabaseConnection;
 
 class Posts
@@ -36,9 +36,10 @@ class Posts
     public function getPinnedPost(int $user): ?Post
     {
         $post = (clone $this->posts)->where([
-            "wall"    => $user,
-            "pinned"  => true,
-            "deleted" => false,
+            "wall"     => $user,
+            "pinned"   => true,
+            "deleted"  => false,
+            "archived" => false,
         ])->fetch();
 
         return $this->toPost($post);
@@ -69,6 +70,7 @@ class Posts
             "pinned"    => false,
             "deleted"   => false,
             "suggested" => 0,
+            "archived"  => false,
         ])->order("created DESC")->limit($perPage, $offset);
 
         foreach ($sel as $post) {
@@ -85,6 +87,7 @@ class Posts
             "wall"      => $user,
             "deleted"   => false,
             "suggested" => 0,
+            "archived"  => false,
         ]);
 
         if ($user > 0) {
@@ -109,6 +112,7 @@ class Posts
             "wall"      => $user,
             "deleted"   => false,
             "suggested" => 0,
+            "archived"  => false,
         ]);
 
         if ($user > 0) {
@@ -130,6 +134,7 @@ class Posts
         $sel = $this->posts
                     ->where("MATCH (content) AGAINST (? IN BOOLEAN MODE)", "+$hashtag")
                     ->where("deleted", 0)
+                    ->where("archived", 0)
                     ->order("created DESC")
                     ->where("suggested", 0)
                     ->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
@@ -145,6 +150,7 @@ class Posts
         $sel = $this->posts
                     ->where("content LIKE ?", "%$hashtag%")
                     ->where("deleted", 0)
+                    ->where("archived", 0)
                     ->where("suggested", 0);
 
         return sizeof($sel);
@@ -171,7 +177,7 @@ class Posts
     public function find(string $query = "", array $params = [], array $order = ['type' => 'id', 'invert' => false]): Util\EntityStream
     {
         $query = "%$query%";
-        $result = $this->posts->where("content LIKE ?", $query)->where("deleted", 0)->where("suggested", 0);
+        $result = $this->posts->where("content LIKE ?", $query)->where("deleted", 0)->where("suggested", 0)->where("archived", 0);
         $order_str = 'id';
 
         switch ($order['type']) {
@@ -239,25 +245,95 @@ class Posts
 
     public function getPostCountOnUserWall(int $user): int
     {
-        return sizeof($this->posts->where(["wall" => $user, "deleted" => 0, "suggested" => 0]));
+        return sizeof($this->posts->where(["wall" => $user, "deleted" => 0, "suggested" => 0, "archived" => 0]));
     }
 
     public function getOwnersCountOnUserWall(int $user): int
     {
         if ($user > 0) {
-            return sizeof($this->posts->where(["wall" => $user, "deleted" => 0, "owner" => $user]));
+            return sizeof($this->posts->where(["wall" => $user, "deleted" => 0, "archived" => 0, "owner" => $user]));
         } else {
-            return sizeof($this->posts->where(["wall" => $user, "deleted" => 0, "suggested" => 0])->where("flags !=", 0));
+            return sizeof($this->posts->where(["wall" => $user, "deleted" => 0, "archived" => 0, "suggested" => 0])->where("flags !=", 0));
         }
     }
 
     public function getOthersCountOnUserWall(int $user): int
     {
         if ($user > 0) {
-            return sizeof($this->posts->where(["wall" => $user, "deleted" => 0])->where("owner !=", $user));
+            return sizeof($this->posts->where(["wall" => $user, "deleted" => 0, "archived" => 0])->where("owner !=", $user));
         } else {
-            return sizeof($this->posts->where(["wall" => $user, "deleted" => 0, "suggested" => 0])->where("flags", 0));
+            return sizeof($this->posts->where(["wall" => $user, "deleted" => 0, "archived" => 0, "suggested" => 0])->where("flags", 0));
         }
+    }
+
+    private function applyYearFilter(Selection $selection, ?int $year): Selection
+    {
+        if (!is_null($year)) {
+            $selection->where("created >= ? AND created < ?", mktime(0, 0, 0, 1, 1, $year), mktime(0, 0, 0, 1, 1, $year + 1));
+        }
+
+        return $selection;
+    }
+
+    public function getPostYearsOnWall(int $user): array
+    {
+        $years = [];
+        $posts = (clone $this->posts)->select("created")->where([
+            "wall"      => $user,
+            "deleted"   => false,
+            "suggested" => 0,
+        ]);
+
+        foreach ($posts as $post) {
+            $years[(int) date("Y", $post->created)] = true;
+        }
+
+        $years = array_keys($years);
+        rsort($years, SORT_NUMERIC);
+
+        return $years;
+    }
+
+    public function getArchivedPostsFromWall(int $user, int $page = 1, ?int $perPage = null, ?int $offset = null, ?int $year = null): \Traversable
+    {
+        $perPage ??= OPENVK_DEFAULT_PER_PAGE;
+        $offset ??= $perPage * ($page - 1);
+
+        $sel = (clone $this->posts)->where([
+            "wall"      => $user,
+            "deleted"   => false,
+            "suggested" => 0,
+            "archived"  => true,
+        ]);
+        $this->applyYearFilter($sel, $year)->order("created DESC")->limit($perPage, $offset);
+
+        foreach ($sel as $post) {
+            yield new Post($post);
+        }
+    }
+
+    public function getArchivedCountOnUserWall(int $user, ?int $year = null): int
+    {
+        $posts = (clone $this->posts)->where(["wall" => $user, "deleted" => 0, "archived" => 1, "suggested" => 0]);
+
+        return sizeof($this->applyYearFilter($posts, $year));
+    }
+
+    public function setArchivedOnWall(int $user, bool $archived, ?int $year = null): int
+    {
+        $posts = (clone $this->posts)->where([
+            "wall"      => $user,
+            "deleted"   => false,
+            "suggested" => 0,
+        ]);
+        $this->applyYearFilter($posts, $year);
+
+        $changes = ["archived" => $archived];
+        if ($archived) {
+            $changes["pinned"] = false;
+        }
+
+        return $posts->update($changes);
     }
 
     public function getSuggestedPosts(int $club, int $page = 1, ?int $perPage = null, ?int $offset = null): \Traversable
