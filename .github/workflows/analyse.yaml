@@ -26,7 +26,6 @@ jobs:
         working-directory: install/automated/docker
         run: |
           docker buildx build \
-            --build-context chandler=${{ github.workspace }}/chandler \
             -t openvk ../../.. -f openvk.Dockerfile
 
       - name: Run PHPStan in Docker container
