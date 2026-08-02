@@ -95,6 +95,25 @@ window.OpenVKPages = (function () {
         shrinkSource(true);
     }
 
+    function insertTable() {
+        var ta = getTextarea();
+        if (!ta) {
+            return;
+        }
+
+        var start = ta.selectionStart;
+        var end = ta.selectionEnd;
+        var snippet = "| Header | Header |\n| --- | --- |\n| Cell | Cell |\n";
+        if (start > 0 && ta.value.charAt(start - 1) !== "\n") {
+            snippet = "\n" + snippet;
+        }
+
+        ta.value = ta.value.substring(0, start) + snippet + ta.value.substring(end);
+        ta.focus();
+        ta.selectionStart = ta.selectionEnd = start + snippet.length;
+        shrinkSource(true);
+    }
+
     function togglePreview() {
         var ta = getTextarea();
         var preview = document.getElementById("page_preview");
@@ -263,6 +282,10 @@ window.OpenVKPages = (function () {
                 e.preventDefault();
                 if (toolbarLink.getAttribute("data-action") === "preview") {
                     togglePreview();
+                    return;
+                }
+                if (toolbarLink.getAttribute("data-action") === "table") {
+                    insertTable();
                     return;
                 }
                 var align = toolbarLink.getAttribute("data-align");

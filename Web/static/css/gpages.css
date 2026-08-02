@@ -44,7 +44,8 @@
 .wysiwyg_ich2,
 .wysiwyg_ich3,
 .wysiwyg_icwiki,
-.wysiwyg_icsource {
+.wysiwyg_icsource,
+.wysiwyg_ictable {
     float: left;
     width: 22px;
     height: 22px;
@@ -103,6 +104,30 @@
 
 .wysiwyg_icsource { background: url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -158px -39px; }
 .wysiwyg_icsource:hover { background: #fff url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -158px -39px; border: 1px solid #ddd; }
+
+.wysiwyg_ictable {
+    background:
+        linear-gradient(#7a8fa8, #7a8fa8) 5px 5px / 12px 1px no-repeat,
+        linear-gradient(#7a8fa8, #7a8fa8) 5px 10px / 12px 1px no-repeat,
+        linear-gradient(#7a8fa8, #7a8fa8) 5px 15px / 12px 1px no-repeat,
+        linear-gradient(#7a8fa8, #7a8fa8) 5px 5px / 1px 11px no-repeat,
+        linear-gradient(#7a8fa8, #7a8fa8) 11px 5px / 1px 11px no-repeat,
+        linear-gradient(#7a8fa8, #7a8fa8) 16px 5px / 1px 11px no-repeat;
+}
+.wysiwyg_ictable:hover {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    background-image:
+        linear-gradient(#7a8fa8, #7a8fa8),
+        linear-gradient(#7a8fa8, #7a8fa8),
+        linear-gradient(#7a8fa8, #7a8fa8),
+        linear-gradient(#7a8fa8, #7a8fa8),
+        linear-gradient(#7a8fa8, #7a8fa8),
+        linear-gradient(#7a8fa8, #7a8fa8);
+    background-size: 12px 1px, 12px 1px, 12px 1px, 1px 11px, 1px 11px, 1px 11px;
+    background-position: 5px 5px, 5px 10px, 5px 15px, 5px 5px, 11px 5px, 16px 5px;
+    background-repeat: no-repeat;
+}
 
 .wysiwyg_quote {
     padding: 10px;
@@ -307,6 +332,37 @@
 
 .wiki_page_body a.wiki-missing {
     color: #c00;
+}
+
+.wiki_page_body table.wiki_md_table,
+.page_preview_area table.wiki_md_table,
+.wiki_page_body table,
+.page_preview_area table {
+    border-collapse: collapse;
+    margin: 10px 0;
+    max-width: 100%;
+    font-size: 11px;
+}
+
+.wiki_page_body table.wiki_md_table th,
+.wiki_page_body table.wiki_md_table td,
+.page_preview_area table.wiki_md_table th,
+.page_preview_area table.wiki_md_table td,
+.wiki_page_body table th,
+.wiki_page_body table td,
+.page_preview_area table th,
+.page_preview_area table td {
+    border: 1px solid #c0cad5;
+    padding: 5px 8px;
+    vertical-align: top;
+}
+
+.wiki_page_body table.wiki_md_table th,
+.page_preview_area table.wiki_md_table th,
+.wiki_page_body table th,
+.page_preview_area table th {
+    background: #f0f2f5;
+    font-weight: bold;
 }
 
 .pages_help_table {

@@ -189,6 +189,17 @@ class GroupPage extends RowModel
 
         $html = (new Parsedown())->text($processed ?? $source);
 
+        // Parsedown emits style="text-align:…"; map to align= for XHTML purifier.
+        $html = preg_replace_callback(
+            '/<(t[dh])(\s[^>]*)?\sstyle="text-align:\s*(left|center|right);?"([^>]*)>/i',
+            static function (array $m): string {
+                $rest = ($m[2] ?? "") . ($m[4] ?? "");
+                $rest = preg_replace('/\sstyle="[^"]*"/i', "", $rest) ?? $rest;
+                return "<{$m[1]} align=\"{$m[3]}\"{$rest}>";
+            },
+            $html
+        ) ?? $html;
+
         $html = preg_replace_callback(
             '/<a href="(\/pages-\d+\/create\?title=[^"]+)">/',
             static function (array $m): string {
@@ -198,7 +209,7 @@ class GroupPage extends RowModel
         );
 
         $config = HTMLPurifier_Config::createDefault();
-        $config->set("Attr.AllowedClasses", ["wiki-missing", "underline"]);
+        $config->set("Attr.AllowedClasses", ["wiki-missing", "underline", "wiki_md_table"]);
         $config->set("Attr.DefaultInvalidImageAlt", "Unknown image");
         $config->set("AutoFormat.AutoParagraph", false);
         $config->set("AutoFormat.Linkify", true);
@@ -213,15 +224,16 @@ class GroupPage extends RowModel
             "img", "ul", "ol", "li", "hr", "br", "blockquote", "cite", "span", "code", "pre",
         ]);
         $config->set("HTML.AllowedAttributes", [
-            "table.summary", "td.abbr", "th.abbr", "a.href", "a.class", "a.title",
+            "table.summary", "table.class", "td.abbr", "th.abbr", "a.href", "a.class", "a.title",
             "img.src", "img.alt", "img.style", "div.style", "div.title", "span.class", "p.class",
-            "td.align", "th.align", "p.align", "div.align",
+            "td.align", "th.align", "td.style", "th.style", "p.align", "div.align",
         ]);
         $config->set("CSS.AllowedProperties", [
             "float", "height", "width", "max-height", "max-width", "font-weight", "text-align",
         ]);
 
-        return (new HTMLPurifier($config))->purify($html);
+        $html = (new HTMLPurifier($config))->purify($html);
+        return preg_replace('/<table\b(?![^>]*\bclass=)/i', '<table class="wiki_md_table"', $html) ?? $html;
     }
 
     public function getText(): string

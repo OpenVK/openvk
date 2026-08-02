@@ -1524,6 +1524,8 @@
 "markup_help_image" = "Изображение";
 "markup_help_wiki" = "Ссылка на другую страницу сообщества";
 "markup_help_wiki_label" = "Ссылка на страницу с другим текстом";
+"markup_help_table" = "Таблица";
+"markup_help_table_align" = "Таблица с выравниванием колонок (:--- слева, :---: по центру, ---: справа)";
 "failed_to_create_topic" = "Не удалось создать тему";
 "failed_to_change_topic" = "Не удалось изменить тему";
 "no_title_specified" = "Заголовок не указан.";

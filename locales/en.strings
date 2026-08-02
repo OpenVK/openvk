@@ -1603,6 +1603,8 @@
 "markup_help_image" = "Image";
 "markup_help_wiki" = "Link to another community page";
 "markup_help_wiki_label" = "Link to a page with custom label";
+"markup_help_table" = "Table";
+"markup_help_table_align" = "Table with column alignment (:--- left, :---: center, ---: right)";
 
 "topic_changes_saved_comment" = "The updated title and settings will appear on the topic page.";
 

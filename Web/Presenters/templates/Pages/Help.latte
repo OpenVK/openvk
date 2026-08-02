@@ -81,6 +81,50 @@
                     <td><a href="javascript:void(0)">label</a></td>
                     <td>{_markup_help_wiki_label}</td>
                 </tr>
+                <tr>
+                    <td>
+                        <code style="white-space: pre; display: inline-block; text-align: left;">| A | B |
+|---|---|
+| 1 | 2 |</code>
+                    </td>
+                    <td>
+                        <table class="wiki_md_table" cellspacing="0" cellpadding="0">
+                            <thead>
+                                <tr><th>A</th><th>B</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>1</td><td>2</td></tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td>{_markup_help_table}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <code style="white-space: pre; display: inline-block; text-align: left;">| L | C | R |
+|:--|:-:|--:|
+| a | b | c |</code>
+                    </td>
+                    <td>
+                        <table class="wiki_md_table" cellspacing="0" cellpadding="0">
+                            <thead>
+                                <tr>
+                                    <th align="left">L</th>
+                                    <th align="center">C</th>
+                                    <th align="right">R</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td align="left">a</td>
+                                    <td align="center">b</td>
+                                    <td align="right">c</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td>{_markup_help_table_align}</td>
+                </tr>
             </tbody>
         </table>
     </div>
