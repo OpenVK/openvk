@@ -22,7 +22,7 @@ openvk:
         name: "OpenVK community instance"
         motd: "Yet another OpenVK instance"
     
-    mirrors:
+    mirrors: # list all existing and previous domains without www. Won't work with different port
         - "ovk.localhost"
         - "ovk.local"
 
@@ -37,7 +37,7 @@ openvk:
                 maxFilesPerDomain: 10
                 maxFileSize: 25000000
         shortcodes:
-            minLength: 3
+            minLength: 3 # won't affect existing short urls or the ones set via admin panel
             forbiddenNames:
                 - "index.php"
         photos:
@@ -56,10 +56,10 @@ openvk:
                 autoban: true
         registration:
             enable: true
-            reason: ""
+            reason: "" # reason for disabling registration
         support:
             supportName: "Moderator"
-            adminAccount: 1
+            adminAccount: 1 # Change this ok
             fastAnswers:
                 - "This is a list of quick answers to common questions for support. Post your responses here and agents can send it quickly with just 3 clicks"
                 - "There can be as many answers as you want, but it is best to have a maximum of 10.\n\nYou can also remove all answers from the list to disable this feature"
@@ -118,7 +118,7 @@ openvk:
             token: "TOKEN_HERE"
             helpdeskChat: ""
         eventDB:
-            enable: true
+            enable: true # Better enable this
             database:
                 dsn: "mysql:unix_socket=/var/run/mysql/mysql.sock;dbname=openvk-eventdb"
                 user: "root"
@@ -130,5 +130,5 @@ openvk:
                 port: 6379
                 password: ""
             stream:
-                maxlen: 1000
+                maxlen: 1000         # Maximum notifications in memory at once
                 prefix: "ovk_notifs"
