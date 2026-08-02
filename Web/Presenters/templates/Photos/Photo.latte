@@ -78,10 +78,6 @@
                         <a href="/photo{$photo->getPrettyId()}/edit" class="profile_link" style="display:block;width:96%;">{_edit}</a>
                         <a id="_photoDelete" href="/photo{$photo->getPrettyId()}/delete" class="profile_link" style="display:block;width:96%;">{_delete}</a>
                     </div>
-                    <form n:if="$canDeleteSaved" action="/photo{$photo->getPrettyId()}/delete_saved" method="post">
-                        <input type="hidden" name="hash" value="{$csrfToken}" />
-                        <input type="submit" id="profile_link" value="{_delete}" style="display:block;width:96%;"/>
-                    </form>
                     <form class="save_photo" n:if="$canSave" action="/photo{$photo->getPrettyId()}/save" method="post">
                         <input type="hidden" name="hash" value="{$csrfToken}" />
                         <input type="submit" id="profile_link" value="{_save_photo}" style="display:block;width:96%;"/>

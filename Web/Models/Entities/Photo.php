@@ -441,4 +441,15 @@ class Photo extends Media
     {
         return $this->canBeViewedBy(); // разрешаем сохранять только общедоступные фото (?)
     }
+
+    public function copyFrom(Photo $photo): void
+    {
+        $record = $photo->getRecord();
+
+        $this->stateChanges("hash", $record->hash);
+        $this->setSizes($record->sizes);
+        $this->setWidth($record->width);
+        $this->setHeight($record->height);
+    }
+
 }
