@@ -1,5 +1,5 @@
 # Kubernetes deployment
-- Open `manifests/001-configmap.yaml` in your favorite editor, point `websiteUrl` to your domain name, then generate unique `secret` value for `chandler.yml` section.
+- Open `manifests/001-configmap.yaml` in your favorite editor, point `websiteUrl` to your domain name, then generate a unique `secret` value in the `chandler` section.
 - Open `manifests/002-pvc.yaml` in your favorite editor and set necessary `annotations` for your storage class. Depending on your Kubernetes version, you may also need to set `storageClassName` in `spec` section.
 - Open `manifests/005-ingress.yaml` in your favorite editor and set necessary `annotations` for your ingress controller, then point `host` to your domain name. Depending on your Kubernetes version, you may also need to set `ingressClassName` in `spec` section.
 - (optional) if you don't want to use ingress (e.g. when testing locally w/ `minikube`), you can open `manifests/004-svc.yaml` and set `type: LoadBalancer` for `openvk-svc` and other services.
