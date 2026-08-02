@@ -1968,12 +1968,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenVK/chandler.git",
-                "reference": "e8790d29d7448b616b6fe6e5e1e806cafa3b04a7"
+                "reference": "d9c8eb9a4d096f4796916220f2c5d7a717c5fc66"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenVK/chandler/zipball/e8790d29d7448b616b6fe6e5e1e806cafa3b04a7",
-                "reference": "e8790d29d7448b616b6fe6e5e1e806cafa3b04a7",
+                "url": "https://api.github.com/repos/OpenVK/chandler/zipball/d9c8eb9a4d096f4796916220f2c5d7a717c5fc66",
+                "reference": "d9c8eb9a4d096f4796916220f2c5d7a717c5fc66",
                 "shasum": ""
             },
             "require": {
@@ -2024,7 +2024,7 @@
                 "source": "https://github.com/OpenVK/chandler/tree/restructurisation",
                 "issues": "https://github.com/OpenVK/chandler/issues"
             },
-            "time": "2026-08-01T13:54:41+00:00"
+            "time": "2026-08-02T00:22:35+00:00"
         },
         {
             "name": "php81_bc/strftime",
