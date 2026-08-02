@@ -1,0 +1,31 @@
+{extends "../@layout.latte"}
+
+{block title}{_page_revision} — {$page->getTitle()}{/block}
+
+{block header}
+    <a href="{$page->getURL()}/history">{_page_tab_history}</a>
+    »
+    {$revision->getCreationTime()}
+{/block}
+
+{block content}
+{include "tabs.latte", club => $club, page => $page, tab => $tab}
+
+<article id="userContent" class="wiki_page_content">
+    <h2 class="wiki_page_title">{$revision->getTitle()}</h2>
+    <div class="pages_list_meta" style="margin-bottom: 10px;">
+        {$revision->getCreationTime()}
+        {var $editor = $revision->getEditor()}
+        {if $editor} — <a href="{$editor->getURL()}">{$editor->getCanonicalName()}</a>{/if}
+    </div>
+    <div class="wiki_page_body">
+        {$html|noescape}
+    </div>
+</article>
+
+<form n:if="isset($thisUser) && $page->canBeEditedBy($thisUser)" method="post" style="margin: 12px;">
+    <input type="hidden" name="hash" value="{$csrfToken}" />
+    <input type="hidden" name="restore" value="1" />
+    <input type="submit" class="button" value="{_page_restore}" data-confirm="{_page_restore_confirm}" onclick="return confirm(this.dataset.confirm)" />
+</form>
+{/block}

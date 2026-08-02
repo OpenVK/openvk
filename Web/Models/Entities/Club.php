@@ -36,6 +36,10 @@ class Club extends RowModel
     public const WALL_OPEN     = 1;
     public const WALL_LIMITED  = 2;
 
+    public const PAGES_DISABLED = 0;
+    public const PAGES_OPEN     = 1;
+    public const PAGES_LIMITED  = 2;
+
     public function getId(): int
     {
         return $this->getRecord()->id;
@@ -521,6 +525,51 @@ class Club extends RowModel
         }
 
         return $this->canBeModifiedBy($user);
+    }
+
+    public function getPagesType(): int
+    {
+        return (int) ($this->getRecord()->pages ?? 0);
+    }
+
+    public function isPagesEnabled(): bool
+    {
+        return $this->getPagesType() !== self::PAGES_DISABLED;
+    }
+
+    public function setPages(int $type): void
+    {
+        if ($type > 2 || $type < 0) {
+            throw new \LogicException("Invalid pages");
+        }
+
+        $this->stateChanges("pages", $type);
+    }
+
+    public function canManagePages(?User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        return $this->isPagesEnabled() && $this->canBeModifiedBy($user);
+    }
+
+    public function canCreatePages(?User $user): bool
+    {
+        if (!$user || !$this->isPagesEnabled()) {
+            return false;
+        }
+
+        if ($this->canBeModifiedBy($user)) {
+            return true;
+        }
+
+        if ($this->getPagesType() === self::PAGES_OPEN) {
+            return (bool) $this->getSubscriptionStatus($user);
+        }
+
+        return false;
     }
 
     public function getAudiosCollectionSize()

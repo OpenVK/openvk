@@ -856,6 +856,10 @@ input[type="number"] {
     background-position: 0px 0px;
 }
 
+.section_empty a.pages::before {
+    background-position: 0px -120px;
+}
+
 .content-withouttop {
     padding-top: 0;
 }

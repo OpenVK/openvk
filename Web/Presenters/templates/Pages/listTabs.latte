@@ -1,0 +1,16 @@
+{var $isList = ($mode ?? '') === 'list'}
+{var $isHelp = ($mode ?? '') === 'help'}
+{var $isCreate = ($mode ?? '') === 'create'}
+
+<div class="tabs">
+    <div n:attr="id => ($isList ? 'activetabs' : false)" class="tab">
+        <a n:attr="id => ($isList ? 'act_tab_a' : false)" href="/pages-{$club->getId()}">{_group_pages}</a>
+    </div>
+    <div n:attr="id => ($isHelp ? 'activetabs' : false)" class="tab">
+        <a n:attr="id => ($isHelp ? 'act_tab_a' : false)" href="/pages-{$club->getId()}/help">{_markup_help}</a>
+    </div>
+    <div n:if="$isCreate" id="activetabs" class="tab">
+        <a id="act_tab_a" href="/pages-{$club->getId()}/create">{_page_new_tab}</a>
+    </div>
+    <a class="side_link" href="{$club->getURL()}">{_to_community}</a>
+</div>

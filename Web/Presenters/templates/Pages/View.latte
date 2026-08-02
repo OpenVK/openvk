@@ -1,0 +1,22 @@
+{extends "../@layout.latte"}
+
+{block title}{$page->getTitle()} — {$club->getName()}{/block}
+
+{block header}
+    <a href="{$club->getURL()}">{$club->getName()}</a>
+    »
+    <a href="/pages-{$club->getId()}">{_group_pages}</a>
+    »
+    {$page->getTitle()}
+{/block}
+
+{block content}
+{include "tabs.latte", club => $club, page => $page, tab => $tab}
+
+<article id="userContent" class="wiki_page_content">
+    <h2 class="wiki_page_title">{$page->getTitle()}</h2>
+    <div class="wiki_page_body">
+        {$page->getText()|noescape}
+    </div>
+</article>
+{/block}

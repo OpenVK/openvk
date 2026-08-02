@@ -1,0 +1,102 @@
+{extends "../@layout.latte"}
+
+{block title}{_group_pages} — {$club->getName()}{/block}
+
+{block header}
+    <a href="{$club->getURL()}">{$club->getName()}</a> » {_group_pages}
+{/block}
+
+{block content}
+<style>
+    .pages_list .content_page_error {
+        min-height: 320px;
+        border: none;
+    }
+
+    .pages_list .content_page_error .pages_empty_msg {
+        width: 100%;
+        text-align: center;
+        color: #707070;
+    }
+</style>
+
+{include "listTabs.latte", club => $club, mode => 'list'}
+
+<div class="pages_info_box">
+    {_group_pages_descr}
+</div>
+
+<div n:if="$count > 0" class="summaryBar summaryBarFlex padding pages_summary_bar">
+    <div class="summary">
+        <b>
+            {tr("pages_count", $count)}
+            <span class="showing_x_y_text">{tr("showing_x_y", $showingFrom, $showingTo)}</span>
+        </b>
+        {if isset($thisUser) && $club->canCreatePages($thisUser)}
+            <span class="pages_summary_sep">|</span> <a href="/pages-{$club->getId()}/create">{_create_new_page}</a>
+        {/if}
+    </div>
+    {include "../components/paginator.latte", conf => $paginatorConf}
+</div>
+
+<div n:if="$count === 0" class="pages_action_bar">
+    {_pages_none}
+    {if isset($thisUser) && $club->canCreatePages($thisUser)}
+        <span class="pages_summary_sep">|</span> <a href="/pages-{$club->getId()}/create">{_create_new_page}</a>
+    {/if}
+</div>
+
+<div class="pages_list scroll_container">
+    <div n:foreach="$pages as $p" class="scroll_node pages_list_item" data-uniqueid="{$p->getId()}">
+        <div class="pages_list_icon"></div>
+        <div class="pages_list_body">
+            <div class="pages_list_title">
+                <a href="{$p->getURL()}">{$p->getTitle()}</a>
+                <span n:if="$p->isMain()" class="pages_main_badge">{_page_is_main}</span>
+            </div>
+            <div class="pages_list_meta">
+                {_author}: {var $owner = $p->getOwner()}{if $owner}<a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a>{else}—{/if}<br>
+                {_page_created} {$p->getPublicationTime()}
+                {if $p->getEditTime()}
+                    <br>{_page_updated} {$p->getEditTime()}{var $editor = $p->getEditor()}{if $editor}, <a href="{$editor->getURL()}">{$editor->getCanonicalName()}</a>{/if}
+                {/if}
+            </div>
+            <div class="pages_list_actions" n:if="isset($thisUser) && ($p->canBeEditedBy($thisUser) || $club->canManagePages($thisUser))">
+                <a n:if="$p->canBeEditedBy($thisUser)" href="{$p->getURL()}/edit">{_edit}</a>
+                <span n:if="$club->canBeModifiedBy($thisUser)">
+                    | <a href="{$p->getURL()}/delete?hash={rawurlencode($csrfToken)}" data-confirm="{_page_delete_confirm}" onclick="return confirm(this.dataset.confirm)">{_delete}</a>
+                </span>
+                <span n:if="$club->canManagePages($thisUser) && !$p->isMain()">
+                    | <a href="{$p->getURL()}/setMain?hash={rawurlencode($csrfToken)}">{_page_make_main}</a>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div n:if="$count === 0" class="content_page_error">
+        <div class="pages_empty_msg">
+            {_pages_empty}
+            {if isset($thisUser) && $club->canCreatePages($thisUser)}
+                <br><br>
+                <a href="/pages-{$club->getId()}/create">{_create_first_page}</a>
+            {/if}
+        </div>
+    </div>
+
+    {include "../components/paginator.latte", conf => $bottomPaginatorConf}
+</div>
+
+{if $paginatorConf->pageCount > 1}
+<script>
+    function __scrollHook() {
+        const shown = document.querySelectorAll(".pages_list.scroll_container > .scroll_node").length;
+        const el = document.querySelector(".pages_summary_bar .showing_x_y_text");
+        if (!el || shown < 1) {
+            return;
+        }
+
+        el.textContent = el.textContent.replace(/(\d+)([—–-])(\d+)/, "1$2" + shown);
+    }
+</script>
+{/if}
+{/block}

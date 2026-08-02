@@ -1,0 +1,377 @@
+/* Group Pages / Wiki WYSIWYG */
+.wysiwyg_inpt {
+    width: 100%;
+    max-width: 100%;
+    height: 520px;
+    overflow: auto;
+    outline: none;
+    box-sizing: border-box;
+    border: 1px solid #c6d4dc;
+    padding: 8px;
+    font-family: Tahoma, Verdana, Arial, sans-serif;
+    font-size: 11px;
+    resize: vertical;
+}
+
+.wysiwyg_inpt.page_source_compact {
+    height: 380px !important;
+}
+
+.wysiwyg_bbpanel {
+    background: #f0f0f0;
+    border: 1px solid #c6d4dc;
+    border-bottom: 0;
+    padding: 5px;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.wysiwyg_icphoto,
+.wysiwyg_icvideo,
+.wysiwyg_iclink,
+.wysiwyg_icsymbol,
+.wysiwyg_icbold,
+.wysiwyg_ici,
+.wysiwyg_icunderline,
+.wysiwyg_icpleft,
+.wysiwyg_icpcenter,
+.wysiwyg_icpright,
+.wysiwyg_icquote,
+.wysiwyg_iclist,
+.wysiwyg_ich1,
+.wysiwyg_ich2,
+.wysiwyg_ich3,
+.wysiwyg_icwiki,
+.wysiwyg_icsource {
+    float: left;
+    width: 22px;
+    height: 22px;
+    margin-right: 3px;
+    border: 1px solid #f0f0f0;
+    text-decoration: none;
+    color: transparent;
+    font-size: 0;
+    line-height: 0;
+    text-indent: -9999px;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.wysiwyg_iclink { background: url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -158px -19px; }
+.wysiwyg_iclink:hover { background: #fff url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -158px -19px; border: 1px solid #ddd; }
+
+.wysiwyg_icbold { background: url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat 2px 1px; }
+.wysiwyg_icbold:hover { background: #fff url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat 2px 1px; border: 1px solid #ddd; }
+
+.wysiwyg_ici { background: url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -19px 1px; }
+.wysiwyg_ici:hover { background: #fff url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -19px 1px; border: 1px solid #ddd; }
+
+.wysiwyg_icunderline { background: url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -38px 1px; }
+.wysiwyg_icunderline:hover { background: #fff url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -38px 1px; border: 1px solid #ddd; }
+
+.wysiwyg_icpleft { background: url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -119px 1px; }
+.wysiwyg_icpleft:hover { background: #fff url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -119px 1px; border: 1px solid #ddd; }
+
+.wysiwyg_icpcenter { background: url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -139px 1px; }
+.wysiwyg_icpcenter:hover { background: #fff url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -139px 1px; border: 1px solid #ddd; }
+
+.wysiwyg_icpright { background: url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -39px -39px; }
+.wysiwyg_icpright:hover { background: #fff url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -39px -39px; border: 1px solid #ddd; }
+
+.wysiwyg_icquote { background: url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -198px -19px; }
+.wysiwyg_icquote:hover { background: #fff url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -198px -19px; border: 1px solid #ddd; }
+
+.wysiwyg_iclist { background: url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -158px 1px; }
+.wysiwyg_iclist:hover { background: #fff url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -158px 1px; border: 1px solid #ddd; }
+
+.wysiwyg_ich1 { background: url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -238px 1px; }
+.wysiwyg_ich1:hover { background: #fff url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -238px 1px; border: 1px solid #ddd; }
+
+.wysiwyg_ich2 { background: url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -258px 1px; }
+.wysiwyg_ich2:hover { background: #fff url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -258px 1px; border: 1px solid #ddd; }
+
+.wysiwyg_ich3 { background: url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -278px 1px; }
+.wysiwyg_ich3:hover { background: #fff url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -278px 1px; border: 1px solid #ddd; }
+
+.wysiwyg_icphoto { background: url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -238px -19px; }
+.wysiwyg_icphoto:hover { background: #fff url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -238px -19px; border: 1px solid #ddd; }
+
+.wysiwyg_icwiki { background: url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -178px -39px; }
+.wysiwyg_icwiki:hover { background: #fff url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -178px -39px; border: 1px solid #ddd; }
+
+.wysiwyg_icsource { background: url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -158px -39px; }
+.wysiwyg_icsource:hover { background: #fff url("/assets/packages/static/openvk/img/icons/wysiwyg.gif") no-repeat -158px -39px; border: 1px solid #ddd; }
+
+.wysiwyg_quote {
+    padding: 10px;
+    background: #f0f0f0;
+    border-left: 10px solid #4274a4;
+}
+
+/* Pages UI */
+.pages_tabs_bar,
+.pages_editor_tabs {
+    background: #597da3;
+    padding: 6px 8px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.pages_tab,
+.pages_editor_tab {
+    color: #dae2e8;
+    text-decoration: none;
+    margin-right: 14px;
+    font-weight: bold;
+    font-size: 11px;
+}
+
+.pages_tab.active,
+.pages_editor_tab.active {
+    color: #fff;
+    border-bottom: 2px solid #fff;
+    padding-bottom: 2px;
+}
+
+.pages_tab_right {
+    float: right;
+    margin-right: 0;
+}
+
+.pages_info_box {
+    background: #f7f7f7;
+    border: 1px solid #dae2e8;
+    border-left: 0;
+    border-right: 0;
+    padding: 10px;
+    margin: 0 -10px 10px;
+    width: 627px;
+    box-sizing: border-box;
+    font-size: 11px;
+}
+
+.pages_action_bar {
+    margin: 8px 0 12px;
+    font-size: 11px;
+}
+
+.pages_summary_bar {
+    margin: 0 -10px 0;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.pages_summary_bar .summary {
+    font-weight: bold;
+}
+
+.pages_summary_bar .showing_x_y_text {
+    font-weight: normal;
+    color: #000;
+}
+
+.pages_summary_sep {
+    color: #000;
+    font-weight: normal;
+    margin: 0 2px;
+}
+
+.pages_summary_bar .paginator {
+    float: none;
+    margin-top: 0;
+}
+
+.pages_list .paginator.paginator-at-bottom {
+    float: right;
+}
+
+.pages_list_item {
+    display: flex;
+    padding: 10px 0;
+    border-bottom: 1px solid #e7e7e7;
+}
+
+.pages_list_icon {
+    width: 22px;
+    height: 22px;
+    margin: 2px 10px 0 0;
+    flex-shrink: 0;
+    background: url("../img/note_icon.png") no-repeat center;
+}
+
+.pages_list_body {
+    flex: 1;
+}
+
+.pages_list_title {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.pages_list_meta {
+    color: #777;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.pages_list_actions {
+    margin-top: 6px;
+    font-size: 11px;
+}
+
+.pages_main_badge {
+    color: #777;
+    font-weight: normal;
+    margin-left: 6px;
+    font-size: 11px;
+}
+
+.page_title_input {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 0;
+    border: 1px solid #c6d4dc;
+    border-bottom: 0;
+    padding: 7px 8px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.page_edit_form {
+    margin-top: 14px;
+    margin-bottom: 10px;
+}
+
+.page_edit_form .wysiwyg_bbpanel,
+.page_edit_form .wysiwyg_inpt,
+.page_edit_form .page_preview_area {
+    max-width: 100%;
+    width: 100%;
+}
+
+.page_source_area {
+    display: block;
+}
+
+.page_preview_area {
+    width: 100%;
+    max-width: 100%;
+    min-height: 200px;
+    border: 1px solid #c6d4dc;
+    padding: 10px;
+    box-sizing: border-box;
+    background: #fff;
+}
+
+.page_edit_footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 14px;
+    margin-bottom: 6px;
+    padding-top: 2px;
+}
+
+.page_edit_footer_right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.page_edit_footer_right a {
+    margin-right: 0;
+}
+
+.wiki_page_content {
+    padding: 10px;
+}
+
+.wiki_page_title {
+    margin: 0 0 10px;
+    font-size: 16px;
+}
+
+.wiki_page_body {
+    line-height: 1.45;
+    word-wrap: break-word;
+}
+
+.wiki_page_body img {
+    max-width: 100%;
+}
+
+.wiki_page_body a.wiki-missing {
+    color: #c00;
+}
+
+.pages_help_table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+
+.pages_help_table th {
+    text-align: left;
+    padding: 6px 8px;
+    border-bottom: 1px solid #c0c0c0;
+    background: #f0f0f0;
+    font-weight: bold;
+}
+
+.pages_help_table td {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+.pages_help_table code {
+    background: #f5f5f5;
+    padding: 2px 6px;
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    font-family: Consolas, "Courier New", monospace;
+    white-space: nowrap;
+}
+
+.pages_help_table td:first-child {
+    width: 30%;
+}
+
+.pages_help_table td:nth-child(2) {
+    width: 30%;
+}
+
+.pages_history_item {
+    padding: 8px 10px;
+    border-bottom: 1px solid #e7e7e7;
+}
+
+.pages_history_table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+
+.pages_history_table th {
+    text-align: left;
+    padding: 6px 8px;
+    border-bottom: 1px solid #c0c0c0;
+    background: #f0f0f0;
+    font-weight: bold;
+}
+
+.pages_history_table td {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+.pages_history_table td:nth-child(2) {
+    white-space: nowrap;
+    color: #777;
+}

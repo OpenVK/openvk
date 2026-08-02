@@ -1,0 +1,71 @@
+{extends "../@layout.latte"}
+
+{block title}{_create_new_page} — {$club->getName()}{/block}
+
+{block header}
+    <a href="{$club->getURL()}">{$club->getName()}</a>
+    »
+    <a href="/pages-{$club->getId()}">{_group_pages}</a>
+    »
+    {_create_new_page}
+{/block}
+
+{block content}
+{include "listTabs.latte", club => $club, mode => 'create'}
+
+<form method="post" id="page_edit_form" class="page_edit_form">
+    <input type="hidden" name="hash" value="{$csrfToken}" />
+    <input type="hidden" name="view_access" id="page_view_access" value="0" />
+    <input type="hidden" name="edit_access" id="page_edit_access" value="2" />
+    <input type="text" name="title" class="page_title_input" value="{$prefillTitle}" maxlength="255" placeholder="{_page_title_placeholder}" />
+
+    <div class="wysiwyg_bbpanel" id="page_toolbar">
+        <a href="javascript:void(0)" class="wysiwyg_icbold" data-md="**|**" title="Bold"></a>
+        <a href="javascript:void(0)" class="wysiwyg_ici" data-md="*|*" title="Italic"></a>
+        <a href="javascript:void(0)" class="wysiwyg_iclist" data-md="- " title="List"></a>
+        <a href="javascript:void(0)" class="wysiwyg_ich1" data-md="# |" title="H1"></a>
+        <a href="javascript:void(0)" class="wysiwyg_ich2" data-md="## |" title="H2"></a>
+        <a href="javascript:void(0)" class="wysiwyg_ich3" data-md="### |" title="H3"></a>
+        <a href="javascript:void(0)" class="wysiwyg_icquote" data-md="> |" title="Quote"></a>
+        <a href="javascript:void(0)" class="wysiwyg_iclink" data-md="[|](url)" title="Link"></a>
+        <a href="javascript:void(0)" class="wysiwyg_icphoto" data-md="![|](url)" title="Image"></a>
+        <a href="javascript:void(0)" class="wysiwyg_icwiki" data-md="[[|]]" title="Wiki link"></a>
+        <a href="javascript:void(0)" class="wysiwyg_icsource" data-action="preview" title="Preview"></a>
+    </div>
+
+    <textarea name="source" id="page_source" class="wysiwyg_inpt page_source_area" placeholder="{_page_source_placeholder}"></textarea>
+    <div id="page_preview" class="page_preview_area" style="display:none;" data-club="{$club->getId()}"></div>
+
+    <div class="page_edit_footer">
+        <button type="button" id="page_access_btn" class="button page_access_btn">{_page_access}</button>
+        <div class="page_edit_footer_right">
+            <a href="javascript:void(0)" id="page_preview_btn">{_page_preview}</a>
+            <input type="submit" class="button" value="{_save_page}" />
+        </div>
+    </div>
+</form>
+
+{script "js/al_pages.js"}
+<script>
+    window.OpenVKPages && window.OpenVKPages.init();
+    (function () {
+        var ta = document.getElementById("page_source");
+        if (!ta) {
+            return;
+        }
+        function lockCompact() {
+            ta.dataset.pagesLocked = "1";
+            ta.classList.add("page_source_compact");
+            ta.style.height = "380px";
+        }
+        if (ta.value.length > 0) {
+            lockCompact();
+            return;
+        }
+        ta.addEventListener("input", function onFirstInput() {
+            lockCompact();
+            ta.removeEventListener("input", onFirstInput);
+        });
+    })();
+</script>
+{/block}

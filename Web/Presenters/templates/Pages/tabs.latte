@@ -1,0 +1,23 @@
+{var $pageUrl = $page->getURL()}
+{var $isView = $tab === 'view'}
+{var $isEdit = $tab === 'edit'}
+{var $isHistory = $tab === 'history'}
+
+<div class="tabs">
+    <div class="tab">
+        <a href="/pages-{$club->getId()}">{_group_pages}</a>
+    </div>
+    <div class="tab">
+        <a href="/pages-{$club->getId()}/help">{_markup_help}</a>
+    </div>
+    <div n:attr="id => ($isView ? 'activetabs' : false)" class="tab">
+        <a n:attr="id => ($isView ? 'act_tab_a' : false)" href="{$pageUrl}">{_page_tab_view}</a>
+    </div>
+    <div n:if="isset($thisUser) && $page->canBeEditedBy($thisUser)" n:attr="id => ($isEdit ? 'activetabs' : false)" class="tab">
+        <a n:attr="id => ($isEdit ? 'act_tab_a' : false)" href="{$pageUrl}/edit">{_page_tab_edit}</a>
+    </div>
+    <div n:attr="id => ($isHistory ? 'activetabs' : false)" class="tab">
+        <a n:attr="id => ($isHistory ? 'act_tab_a' : false)" href="{$pageUrl}/history">{_page_tab_history}</a>
+    </div>
+    <a class="side_link" href="/pages-{$club->getId()}">{_back_to_pages}</a>
+</div>

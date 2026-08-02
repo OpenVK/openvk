@@ -81,6 +81,39 @@
             </tbody>
         </table>
     </div>
+
+    <div class="fictional_profile_section" n:if="$club->isPagesEnabled()">
+        <div class="content_title_expanded" onclick="hidePanel(this, {$pagesCount});">
+            {_group_pages_main}
+        </div>
+        <div>
+            <div n:if="$pagesCount > 0" class="content_subtitle">
+                {tr("pages_count", $pagesCount)}
+                <div style="float:right;">
+                    <a href="/pages-{$club->getId()}">{_all_pages}</a>
+                </div>
+            </div>
+            <div n:if="$mainPage" class="wiki_page_body" style="padding: 8px;">
+                <div n:if="$mainPage->canBeViewedBy($thisUser ?? null)">
+                    <b><a href="{$mainPage->getURL()}">{$mainPage->getTitle()}</a></b>
+                    <div style="margin-top: 6px;">
+                        {$mainPage->getText()|noescape}
+                    </div>
+                </div>
+                <div n:else class="section_empty">
+                    {_page_access_denied}
+                </div>
+            </div>
+            <div class="section_empty" n:if="!$mainPage && $pagesCount === 0">
+                <a n:if="isset($thisUser) && $club->canCreatePages($thisUser)" href="/pages-{$club->getId()}/create" class="pages">{_create_first_page}</a>
+                <span n:if="!(isset($thisUser) && $club->canCreatePages($thisUser))">{_pages_empty}</span>
+            </div>
+            <div n:if="!$mainPage && $pagesCount > 0" style="padding: 8px;">
+                <a href="/pages-{$club->getId()}">{tr("pages_count", $pagesCount)}</a>
+            </div>
+        </div>
+    </div>
+
     <div class="fictional_profile_section" n:if="$thisUser && $club->getFollowersCount() > 0">
         {var $followersCount = $club->getFollowersCount()}
 
@@ -224,6 +257,7 @@
     <div n:ifset="$thisUser" id="profile_links">
         {if $club->canBeModifiedBy($thisUser)}
             <a href="/club{$club->getId()}/edit" id="profile_link">{_edit_group}</a>
+            <a n:if="$club->isPagesEnabled()" href="/pages-{$club->getId()}" id="profile_link">{_edit_group_pages}</a>
             <a href="/club{$club->getId()}/stats" rel="nofollow" id="profile_link">{_statistics}</a>
         {/if}
         {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}

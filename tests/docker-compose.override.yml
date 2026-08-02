@@ -1,0 +1,21 @@
+services:
+  openvk:
+    ports: !override
+      - "18088:80"
+    volumes:
+      - ./openvk.test.yml:/opt/chandler/extensions/available/openvk/openvk.yml:ro
+      - ./chandler.test.yml:/opt/chandler/chandler.yml:ro
+      - ./entrypoint.sh:/opt/chandler/extensions/available/openvk/tests/entrypoint.sh:ro
+      - ./seed-data.sql:/opt/chandler/extensions/available/openvk/tests/seed-data.sql:ro
+      - ../Web/Presenters/templates/Pages:/opt/chandler/extensions/available/openvk/Web/Presenters/templates/Pages:ro
+      - ../Web/Presenters/PagesPresenter.php:/opt/chandler/extensions/available/openvk/Web/Presenters/PagesPresenter.php:ro
+      - ../Web/Models/Entities/GroupPage.php:/opt/chandler/extensions/available/openvk/Web/Models/Entities/GroupPage.php:ro
+      - ../Web/Models/Entities/GroupPageRevision.php:/opt/chandler/extensions/available/openvk/Web/Models/Entities/GroupPageRevision.php:ro
+      - ../Web/Models/Repositories/GroupPages.php:/opt/chandler/extensions/available/openvk/Web/Models/Repositories/GroupPages.php:ro
+      - ../Web/Models/Entities/Club.php:/opt/chandler/extensions/available/openvk/Web/Models/Entities/Club.php:ro
+      - ../Web/Presenters/templates/Group/View.latte:/opt/chandler/extensions/available/openvk/Web/Presenters/templates/Group/View.latte:ro
+      - ../Web/static/css/gpages.css:/opt/chandler/extensions/available/openvk/Web/static/css/gpages.css:ro
+      - ../Web/static/js/al_pages.js:/opt/chandler/extensions/available/openvk/Web/static/js/al_pages.js:ro
+      - ../Web/Presenters/templates/_includeCSS.latte:/opt/chandler/extensions/available/openvk/Web/Presenters/templates/_includeCSS.latte:ro
+      - ../locales/ru.strings:/opt/chandler/extensions/available/openvk/locales/ru.strings:ro
+      - ../locales/en.strings:/opt/chandler/extensions/available/openvk/locales/en.strings:ro

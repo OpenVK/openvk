@@ -1,0 +1,50 @@
+{extends "../@layout.latte"}
+
+{block title}{_page_tab_history} — {$page->getTitle()}{/block}
+
+{block header}
+    <a href="{$club->getURL()}">{$club->getName()}</a>
+    »
+    <a href="{$page->getURL()}">{$page->getTitle()}</a>
+    »
+    {_page_tab_history}
+{/block}
+
+{block content}
+{include "tabs.latte", club => $club, page => $page, tab => $tab}
+
+<div class="container_gray" style="margin-top: 10px;">
+    <div class="content">
+        <table class="pages_history_table" cellspacing="0" cellpadding="0" n:if="$count > 0">
+            <thead>
+                <tr>
+                    <th>{_page_history_col_title}</th>
+                    <th>{_page_history_col_bytes}</th>
+                    <th>{_page_history_col_time}</th>
+                    <th>{_page_history_col_author}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr n:foreach="$revisions as $rev">
+                    <td>
+                        <a href="{$page->getURL()}/history/{$rev->getId()}">{$rev->getTitle()}</a>
+                    </td>
+                    <td>{tr("page_history_bytes", strlen($rev->getSource()))}</td>
+                    <td>{$rev->getCreationTime()}</td>
+                    <td>
+                        {var $editor = $rev->getEditor()}
+                        {if $editor}
+                            <a href="{$editor->getURL()}">{$editor->getCanonicalName()}</a>
+                        {else}
+                            —
+                        {/if}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div n:if="$count === 0" class="pages_empty">{_page_no_revisions}</div>
+    </div>
+</div>
+
+{include "../components/paginator.latte", conf => $paginatorConf}
+{/block}

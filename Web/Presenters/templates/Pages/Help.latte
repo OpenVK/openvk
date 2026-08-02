@@ -1,0 +1,88 @@
+{extends "../@layout.latte"}
+
+{block title}{_markup_help} — {$club->getName()}{/block}
+
+{block header}
+    <a href="{$club->getURL()}">{$club->getName()}</a>
+    »
+    <a href="/pages-{$club->getId()}">{_group_pages}</a>
+    »
+    {_markup_help}
+{/block}
+
+{block content}
+{include "listTabs.latte", club => $club, mode => 'help'}
+
+<div class="container_gray" style="margin-top: 10px;">
+    <p style="margin: 0 0 10px;">{_markup_help_intro}</p>
+
+    <div class="content">
+        <table class="pages_help_table" cellspacing="0" cellpadding="0">
+            <thead>
+                <tr>
+                    <th>{_markup_help_col_syntax}</th>
+                    <th>{_markup_help_col_result}</th>
+                    <th>{_markup_help_col_descr}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>**text**</code></td>
+                    <td><strong>text</strong></td>
+                    <td>{_markup_help_bold}</td>
+                </tr>
+                <tr>
+                    <td><code>*text*</code></td>
+                    <td><em>text</em></td>
+                    <td>{_markup_help_italic}</td>
+                </tr>
+                <tr>
+                    <td><code># Heading</code></td>
+                    <td><strong style="font-size: 1.4em;">Heading</strong></td>
+                    <td>{_markup_help_h1}</td>
+                </tr>
+                <tr>
+                    <td><code>## Heading</code></td>
+                    <td><strong style="font-size: 1.2em;">Heading</strong></td>
+                    <td>{_markup_help_h2}</td>
+                </tr>
+                <tr>
+                    <td><code>### Heading</code></td>
+                    <td><strong>Heading</strong></td>
+                    <td>{_markup_help_h3}</td>
+                </tr>
+                <tr>
+                    <td><code>- item</code></td>
+                    <td><ul style="margin: 0; padding-left: 18px;"><li>item</li></ul></td>
+                    <td>{_markup_help_list}</td>
+                </tr>
+                <tr>
+                    <td><code>&gt; quote</code></td>
+                    <td><blockquote class="wysiwyg_quote" style="margin: 0;">quote</blockquote></td>
+                    <td>{_markup_help_quote}</td>
+                </tr>
+                <tr>
+                    <td><code>[text](url)</code></td>
+                    <td><a href="javascript:void(0)">text</a></td>
+                    <td>{_markup_help_link}</td>
+                </tr>
+                <tr>
+                    <td><code>![alt](url)</code></td>
+                    <td><span class="nobold">[{_markup_help_image}]</span></td>
+                    <td>{_markup_help_image}</td>
+                </tr>
+                <tr>
+                    <td><code>{="[[Page title]]"}</code></td>
+                    <td><a href="javascript:void(0)">Page title</a></td>
+                    <td>{_markup_help_wiki}</td>
+                </tr>
+                <tr>
+                    <td><code>{="[[Page title|label]]"}</code></td>
+                    <td><a href="javascript:void(0)">label</a></td>
+                    <td>{_markup_help_wiki_label}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{/block}

@@ -178,6 +178,16 @@ INSERT INTO group_coadmins (user, club, comment, id) VALUES
 (2, 1, 'Owner', 1),
 (3, 1, 'Moderator', 2);
 
+-- Enable Materials (wiki pages) for Test Group and seed a main page
+UPDATE `groups` SET pages = 1 WHERE id = 1;
+
+INSERT INTO group_pages (id, `group`, virtual_id, owner, title, source, cached_html, is_main, view_access, edit_access, created, edited, deleted) VALUES
+(1, 1, 1, 2, 'Welcome Page', '# Hello group\n\nWelcome to our community wiki page!\n\n- Rule one\n- Rule two\n\nSee also [[Rules]].', NULL, 1, 0, 2, @ts_base - 2 * @ts_day, @ts_base - 1 * @ts_hour, 0);
+
+INSERT INTO group_page_revisions (id, page, editor, title, source, created) VALUES
+(1, 1, 2, 'Welcome Page', '# Hello group\n\nWelcome to our community wiki page!', @ts_base - 2 * @ts_day),
+(2, 1, 2, 'Welcome Page', '# Hello group\n\nWelcome to our community wiki page!\n\n- Rule one\n- Rule two\n\nSee also [[Rules]].', @ts_base - 1 * @ts_hour);
+
 -- Group wall posts (Bob posts to group, Alice posts as owner)
 INSERT INTO posts (id, owner, wall, virtual_id, created, edited, content, flags, nsfw, ad, deleted, suggested) VALUES
 (12, 3, 1, 1, @ts_base - 10 * @ts_hour, NULL, 'Hello group! Bob here, just joined.', NULL, 0, 0, 0, 0),
@@ -409,6 +419,8 @@ ALTER TABLE photos            AUTO_INCREMENT = 100;
 ALTER TABLE videos            AUTO_INCREMENT = 100;
 ALTER TABLE notes             AUTO_INCREMENT = 100;
 ALTER TABLE topics            AUTO_INCREMENT = 100;
+ALTER TABLE group_pages       AUTO_INCREMENT = 100;
+ALTER TABLE group_page_revisions AUTO_INCREMENT = 100;
 ALTER TABLE audios            AUTO_INCREMENT = 100;
 ALTER TABLE playlists         AUTO_INCREMENT = 100;
 ALTER TABLE polls             AUTO_INCREMENT = 100;
