@@ -13,25 +13,27 @@
 
 {block content}
     <form id="noteFactory" method="POST">
-        <input type="text" name="name" placeholder="{_name_note}" style="width:603px;" value="{$note->getName()}" />
+        <input type="text" name="name" placeholder="{_name_note}" style="width:603px;box-sizing:border-box;" value="{$note->getName()}" />
         <br/><br/>
+        {include "xhtmlToolbar.latte"}
         <textarea name="html" style="display:none;"></textarea>
-        <div id="editor" style="width:600px;height:300px;border:1px solid grey"></div>
-        
+        <div id="editor" style="width:603px;height:300px;border:1px solid grey;box-sizing:border-box;"></div>
+
         <p><i>{_something_is_supported_from_xhtml|noescape}</i></p>
-        
+
         <input type="hidden" name="hash" value="{$csrfToken}" />
         <button class="button">{_save}</button>
         &nbsp;
         <a href="/note{$note->getOwner()->getId()}_{$note->getVirtualId()}" class="button">{_cancel}</a>
     </form>
-    
+
     {script "js/node_modules/monaco-editor/min/vs/loader.js"}
     {script "js/node_modules/requirejs/bin/r.js"}
+    {script "js/al_notes.js"}
     <script>
         require.config({
             paths: {
-                'vs': '/assets/packages/static/openvk/js/node_modules/monaco-editor/min/vs' 
+                'vs': '/assets/packages/static/openvk/js/node_modules/monaco-editor/min/vs'
             }
         });
         require(['vs/editor/editor.main'], function() {
@@ -41,9 +43,9 @@
                 language: "html"
             });
         });
-        
+
         document.querySelector("#noteFactory").addEventListener("submit", function() {
-            document.querySelector("textarea").value = window._editor.getValue();
+            document.querySelector("textarea[name=html]").value = window._editor.getValue();
         });
     </script>
 {/block}

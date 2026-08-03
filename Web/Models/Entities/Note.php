@@ -230,10 +230,10 @@ class Note extends Postable
         ]);
         $config->set("HTML.AllowedAttributes", [
             "table.summary", "td.abbr", "th.abbr", "a.href", "img.src", "img.alt", "img.style",
-            "div.style", "div.title", "span.class", "p.class",
+            "div.style", "div.title", "div.align", "span.class", "p.class", "p.align",
         ]);
         $config->set("CSS.AllowedProperties", [
-            "float", "height", "width", "max-height", "max-width", "font-weight",
+            "float", "height", "width", "max-height", "max-width", "font-weight", "text-align",
         ]);
         $config->set("Attr.AllowedClasses", ["underline"]);
         $config->set("Filter.Custom", [new SecurityFilter()]);
