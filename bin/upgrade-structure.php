@@ -207,8 +207,9 @@ if (!$dryRun) {
     $result = run($cmd);
     if ($result === null) {
         warn("Backup may have failed. Check manually.");
+        exit(1);
     } else {
-        ok("Backup created at $backupPath.");
+        ok($isInsideExtensions ? "Backup (without OpenVK storage) created at $backupPath." : "Backup created at $backupPath.");
     }
 } else {
     ok("[DRY-RUN] Would create backup at $backupPath.");
