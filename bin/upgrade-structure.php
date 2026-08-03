@@ -159,7 +159,8 @@ if ($permErrors) {
         error("  $d");
     }
     $owner = posix_getpwuid(fileowner($permErrors[0]))['name'] ?? 'unknown';
-    warn("Files are owned by '$owner'. Try: sudo -u $owner php bin/upgrade-structure.php");
+    $sudo  = $owner === 'root' || $owner === 'unknown' ? "sudo php bin/upgrade-structure.php" : "sudo -u $owner php bin/upgrade-structure.php";
+    warn("Files are owned by '$owner'. Try: $sudo");
     if (!$force) {
         exit(1);
     }
