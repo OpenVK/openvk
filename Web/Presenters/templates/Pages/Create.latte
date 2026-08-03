@@ -5,7 +5,7 @@
 {block header}
     <a href="{$club->getURL()}">{$club->getName()}</a>
     »
-    <a href="/pages-{$club->getId()}">{_group_pages}</a>
+    <a href="/notes-{$club->getId()}">{_group_pages}</a>
     »
     {_create_new_page}
 {/block}
@@ -40,6 +40,11 @@
     <div class="page_edit_footer">
         <button type="button" id="page_access_btn" class="button page_access_btn">{_page_access}</button>
         <div class="page_edit_footer_right">
+            <label class="page_keep_revisions">
+                <input type="hidden" name="keep_revisions" value="0" />
+                <input type="checkbox" name="keep_revisions" value="1" checked />
+                {_note_keep_revisions}
+            </label>
             <a href="javascript:void(0)" id="page_preview_btn">{_page_preview}</a>
             <input type="submit" class="button" value="{_save_page}" />
         </div>

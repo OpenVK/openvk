@@ -1537,6 +1537,7 @@
 "create_new_page" = "Create a new page";
 "page_new_tab" = "New page";
 "pages_only_one" = "The only page";
+"note_keep_revisions" = "Keep edit history";
 "pages_none" = "No pages";
 "pages_empty" = "No pages yet";
 "pages_count_zero" = "No pages";

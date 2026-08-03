@@ -178,15 +178,15 @@ INSERT INTO group_coadmins (user, club, comment, id) VALUES
 (2, 1, 'Owner', 1),
 (3, 1, 'Moderator', 2);
 
--- Enable Materials (wiki pages) for Test Group and seed a main page
+-- Enable Materials (wiki notes) for Test Group and seed a main club note
 UPDATE `groups` SET pages = 1 WHERE id = 1;
 
-INSERT INTO group_pages (id, `group`, virtual_id, owner, title, source, cached_html, is_main, view_access, edit_access, created, edited, deleted) VALUES
-(1, 1, 1, 2, 'Welcome Page', '# Hello group\n\nWelcome to our community wiki page!\n\n- Rule one\n- Rule two\n\nSee also [[Rules]].', NULL, 1, 0, 2, @ts_base - 2 * @ts_day, @ts_base - 1 * @ts_hour, 0);
+INSERT INTO notes (id, owner, created_by, virtual_id, created, edited, name, source, cached_content, format, deleted, is_main, view_access, edit_access, keep_revisions, anonymous) VALUES
+(2, -1, 2, 1, @ts_base - 2 * @ts_day, @ts_base - 1 * @ts_hour, 'Welcome Page', '# Hello group\n\nWelcome to our community wiki page!\n\n- Rule one\n- Rule two\n\nSee also [[Rules]].', NULL, 1, 0, 1, 0, 2, 1, 0);
 
-INSERT INTO group_page_revisions (id, page, editor, title, source, created) VALUES
-(1, 1, 2, 'Welcome Page', '# Hello group\n\nWelcome to our community wiki page!', @ts_base - 2 * @ts_day),
-(2, 1, 2, 'Welcome Page', '# Hello group\n\nWelcome to our community wiki page!\n\n- Rule one\n- Rule two\n\nSee also [[Rules]].', @ts_base - 1 * @ts_hour);
+INSERT INTO note_revisions (id, note, editor, title, source, created) VALUES
+(1, 2, 2, 'Welcome Page', '# Hello group\n\nWelcome to our community wiki page!', @ts_base - 2 * @ts_day),
+(2, 2, 2, 'Welcome Page', '# Hello group\n\nWelcome to our community wiki page!\n\n- Rule one\n- Rule two\n\nSee also [[Rules]].', @ts_base - 1 * @ts_hour);
 
 -- Group wall posts (Bob posts to group, Alice posts as owner)
 INSERT INTO posts (id, owner, wall, virtual_id, created, edited, content, flags, nsfw, ad, deleted, suggested) VALUES
@@ -262,7 +262,12 @@ INSERT INTO ovk_upgrade_history (`level`, `timestamp`, `operator`) VALUES
 (57, @ts_base - 365 * @ts_day, 'test-seed'),
 (58, @ts_base - 365 * @ts_day, 'test-seed'),
 (59, @ts_base - 365 * @ts_day, 'test-seed'),
-(60, @ts_base - 365 * @ts_day, 'test-seed');
+(60, @ts_base - 365 * @ts_day, 'test-seed'),
+(61, @ts_base - 365 * @ts_day, 'test-seed'),
+(62, @ts_base - 365 * @ts_day, 'test-seed'),
+(63, @ts_base - 365 * @ts_day, 'test-seed'),
+(64, @ts_base - 365 * @ts_day, 'test-seed'),
+(65, @ts_base - 365 * @ts_day, 'test-seed');
 
 -- Photos for Alice (profile id = 2, album id = 1)
 INSERT INTO photos (id, owner, virtual_id, created, edited, hash, deleted, description) VALUES
@@ -278,8 +283,8 @@ INSERT INTO videos (id, owner, virtual_id, created, edited, hash, link, deleted,
 (1, 2, 1, @ts_base - 5 * @ts_day, NULL, '00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000', NULL, 0, 'My first video', 'Welcome Video', 120, 720, 1280);
 
 -- Note for Alice
-INSERT INTO notes (id, owner, virtual_id, created, edited, name, source, cached_content, deleted) VALUES
-(1, 2, 1, @ts_base - 3 * @ts_day, NULL, 'My First Note', 'This is the content of my first note on OpenVK. Writing notes is fun!', NULL, 0);
+INSERT INTO notes (id, owner, created_by, virtual_id, created, edited, name, source, cached_content, format, deleted, is_main, view_access, edit_access, keep_revisions, anonymous) VALUES
+(1, 2, NULL, 1, @ts_base - 3 * @ts_day, NULL, 'My First Note', 'This is the content of my first note on OpenVK. Writing notes is fun!', NULL, 0, 0, 0, 0, 2, 0, 0);
 
 -- Topics in Test Group (group id = 1), owned by Bob (profile id = 3)
 INSERT INTO topics (id, `group`, owner, virtual_id, created, edited, title, closed, pinned, anonymous, flags, deleted) VALUES
@@ -418,6 +423,7 @@ ALTER TABLE likes             AUTO_INCREMENT = 100;
 ALTER TABLE photos            AUTO_INCREMENT = 100;
 ALTER TABLE videos            AUTO_INCREMENT = 100;
 ALTER TABLE notes             AUTO_INCREMENT = 100;
+ALTER TABLE note_revisions    AUTO_INCREMENT = 100;
 ALTER TABLE topics            AUTO_INCREMENT = 100;
 ALTER TABLE group_pages       AUTO_INCREMENT = 100;
 ALTER TABLE group_page_revisions AUTO_INCREMENT = 100;

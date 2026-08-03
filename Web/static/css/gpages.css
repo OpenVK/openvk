@@ -308,6 +308,16 @@
     gap: 12px;
 }
 
+.page_keep_revisions {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: #45688E;
+    margin-right: 4px;
+    white-space: nowrap;
+}
+
 .page_edit_footer_right a {
     margin-right: 0;
 }

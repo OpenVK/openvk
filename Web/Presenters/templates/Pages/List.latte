@@ -33,7 +33,7 @@
             <span class="showing_x_y_text">{tr("showing_x_y", $showingFrom, $showingTo)}</span>
         </b>
         {if isset($thisUser) && $club->canCreatePages($thisUser)}
-            <span class="pages_summary_sep">|</span> <a href="/pages-{$club->getId()}/create">{_create_new_page}</a>
+            <span class="pages_summary_sep">|</span> <a href="/notes-{$club->getId()}/create">{_create_new_page}</a>
         {/if}
     </div>
     {include "../components/paginator.latte", conf => $paginatorConf}
@@ -42,7 +42,7 @@
 <div n:if="$count === 0" class="pages_action_bar">
     {_pages_none}
     {if isset($thisUser) && $club->canCreatePages($thisUser)}
-        <span class="pages_summary_sep">|</span> <a href="/pages-{$club->getId()}/create">{_create_new_page}</a>
+        <span class="pages_summary_sep">|</span> <a href="/notes-{$club->getId()}/create">{_create_new_page}</a>
     {/if}
 </div>
 
@@ -55,7 +55,7 @@
                 <span n:if="$p->isMain()" class="pages_main_badge">{_page_is_main}</span>
             </div>
             <div class="pages_list_meta">
-                {_author}: {var $owner = $p->getOwner()}{if $owner}<a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a>{else}—{/if}<br>
+                {_author}: {var $owner = $p->getCreatedBy()}{if $owner}<a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a>{else}—{/if}<br>
                 {_page_created} {$p->getPublicationTime()}
                 {if $p->getEditTime()}
                     <br>{_page_updated} {$p->getEditTime()}{var $editor = $p->getEditor()}{if $editor}, <a href="{$editor->getURL()}">{$editor->getCanonicalName()}</a>{/if}
@@ -78,7 +78,7 @@
             {_pages_empty}
             {if isset($thisUser) && $club->canCreatePages($thisUser)}
                 <br><br>
-                <a href="/pages-{$club->getId()}/create">{_create_first_page}</a>
+                <a href="/notes-{$club->getId()}/create">{_create_first_page}</a>
             {/if}
         </div>
     </div>

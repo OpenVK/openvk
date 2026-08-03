@@ -134,7 +134,7 @@ window.OpenVKPages = (function () {
             "&source=" + encodeURIComponent(ta.value) +
             "&hash=" + encodeURIComponent(hash);
 
-        fetch("/pages/preview", {
+        fetch("/notes/preview", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: body,

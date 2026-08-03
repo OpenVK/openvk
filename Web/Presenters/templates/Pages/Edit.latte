@@ -41,6 +41,11 @@
     <div class="page_edit_footer">
         <button type="button" id="page_access_btn" class="button page_access_btn" data-access-url="{$page->getURL()}/access" data-view="{$page->getViewAccess()}" data-edit="{$page->getEditAccess()}">{_page_access}</button>
         <div class="page_edit_footer_right">
+            <label class="page_keep_revisions">
+                <input type="hidden" name="keep_revisions" value="0" />
+                <input type="checkbox" name="keep_revisions" value="1" n:attr="checked => $page->keepsRevisions()" />
+                {_note_keep_revisions}
+            </label>
             <a href="javascript:void(0)" id="page_preview_btn">{_page_preview}</a>
             <input type="submit" class="button" value="{_save_page}" />
         </div>

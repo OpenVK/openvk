@@ -1459,6 +1459,7 @@
 "page_new_tab" = "Новая страница";
 "pages_only_one" = "Единственная страница";
 "pages_none" = "Нет страниц";
+"note_keep_revisions" = "Сохранять историю правок";
 "pages_empty" = "Страниц пока нет";
 "pages_count_zero" = "Нет страниц";
 "pages_count_one" = "$1 страница";

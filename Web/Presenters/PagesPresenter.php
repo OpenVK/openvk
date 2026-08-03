@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace openvk\Web\Presenters;
 
-use openvk\Web\Models\Entities\GroupPage;
-use openvk\Web\Models\Repositories\{GroupPages, Clubs};
+use openvk\Web\Models\Entities\Note;
+use openvk\Web\Models\Repositories\{Notes, Clubs};
 
 final class PagesPresenter extends OpenVKPresenter
 {
-    private GroupPages $pages;
+    private Notes $notes;
     private Clubs $clubs;
     protected $presenterName = "pages";
 
-    public function __construct(GroupPages $pages, Clubs $clubs)
+    public function __construct(Notes $notes, Clubs $clubs)
     {
-        $this->pages = $pages;
+        $this->notes = $notes;
         $this->clubs = $clubs;
 
         parent::__construct();
@@ -38,9 +38,9 @@ final class PagesPresenter extends OpenVKPresenter
         }
     }
 
-    private function getPageOrFail(int $clubId, int $virtualId): GroupPage
+    private function getPageOrFail(int $clubId, int $virtualId): Note
     {
-        $page = $this->pages->getPageById($clubId, $virtualId);
+        $page = $this->notes->getNoteById(-$clubId, $virtualId);
         if (!$page) {
             $this->notFound();
         }
@@ -52,18 +52,18 @@ final class PagesPresenter extends OpenVKPresenter
     {
         $club = $this->getClubOrFail($clubId);
         $this->assertPagesEnabled($club);
-        $this->pages->ensureSingleMain($club);
+        $this->notes->ensureSingleMain($club);
 
         $perPage = OPENVK_DEFAULT_PER_PAGE;
         $page    = max(1, (int) ($this->queryParam("p") ?? 1));
-        $count   = $this->pages->getClubPagesCount($club);
+        $count   = $this->notes->getClubNotesCount($club);
         $pageCount = max(1, (int) ceil($count / $perPage));
         if ($page > $pageCount) {
             $page = $pageCount;
         }
 
         $this->template->club  = $club;
-        $this->template->pages = $this->pages->getClubPages($club, $page, $perPage);
+        $this->template->pages = $this->notes->getClubNotes($club, $page, $perPage);
         $this->template->count = $count;
         $this->template->page  = $page;
         $this->template->showingFrom = $count === 0 ? 0 : (($page - 1) * $perPage + 1);
@@ -113,26 +113,30 @@ final class PagesPresenter extends OpenVKPresenter
                 $this->flashFail("err", tr("error"), tr("page_title_too_long"));
             }
 
-            $existing = $this->pages->getByTitle($club, $title);
+            $existing = $this->notes->getByTitle(-$club->getId(), $title);
             if ($existing) {
                 $this->flashFail("err", tr("error"), tr("page_title_exists"));
             }
 
-            $isFirst = $this->pages->getClubPagesCount($club) === 0;
-            $viewAccess = (int) ($this->postParam("view_access") ?? GroupPage::ACCESS_EVERYONE);
-            $editAccess = (int) ($this->postParam("edit_access") ?? GroupPage::ACCESS_ADMINS);
+            $isFirst = $this->notes->getClubNotesCount($club) === 0;
+            $viewAccess = (int) ($this->postParam("view_access") ?? Note::ACCESS_EVERYONE);
+            $editAccess = (int) ($this->postParam("edit_access") ?? Note::ACCESS_ADMINS);
             if ($viewAccess < 0 || $viewAccess > 2 || $editAccess < 0 || $editAccess > 2) {
                 $this->flashFail("err", tr("error"), tr("error_segmentation"));
             }
 
-            $page = new GroupPage();
-            $page->setGroup($club->getId());
-            $page->setOwner($this->user->id);
-            $page->setTitle(ovk_proc_strtr($title, 255));
+            $keepRevisions = $this->postParam("keep_revisions") === "1" ? 1 : 0;
+
+            $page = new Note();
+            $page->setOwner(-$club->getId());
+            $page->setCreated_By($this->user->id);
+            $page->setName(ovk_proc_strtr($title, 255));
             $page->setSource($source);
+            $page->setFormat(Note::FORMAT_MARKDOWN);
             $page->setIs_Main($isFirst ? 1 : 0);
             $page->setView_Access($viewAccess);
             $page->setEdit_Access($editAccess);
+            $page->setKeep_Revisions($keepRevisions);
             $page->setRevisionEditor($this->user->id);
             $page->save();
 
@@ -189,12 +193,16 @@ final class PagesPresenter extends OpenVKPresenter
                 $this->flashFail("err", tr("error"), tr("page_title_too_long"));
             }
 
-            $existing = $this->pages->getByTitle($club, $title);
+            $existing = $this->notes->getByTitle(-$club->getId(), $title);
             if ($existing && $existing->getId() !== $page->getId()) {
                 $this->flashFail("err", tr("error"), tr("page_title_exists"));
             }
 
-            $page->setTitle(ovk_proc_strtr($title, 255));
+            if ($this->postParam("keep_revisions") !== null) {
+                $page->setKeep_Revisions($this->postParam("keep_revisions") === "1" ? 1 : 0);
+            }
+
+            $page->setName(ovk_proc_strtr($title, 255));
             $page->setSource($source);
             $page->setRevisionEditor($this->user->id);
             $page->save();
@@ -226,14 +234,14 @@ final class PagesPresenter extends OpenVKPresenter
         $page->delete();
 
         if ($wasMain) {
-            $pages = iterator_to_array($this->pages->getClubPages($club, 1, 1));
+            $pages = iterator_to_array($this->notes->getClubNotes($club, 1, 1));
             if (isset($pages[0])) {
                 $pages[0]->makeMain();
             }
         }
 
         $this->flash("succ", tr("page_deleted"), tr("page_deleted_descr"));
-        $this->redirect("/pages-" . $club->getId());
+        $this->redirect("/notes-" . $club->getId());
     }
 
     public function renderSetMain(int $clubId, int $virtualId): void
@@ -252,7 +260,7 @@ final class PagesPresenter extends OpenVKPresenter
 
         $page->makeMain();
         $this->flash("succ", tr("success_action"), tr("page_set_main_succ"));
-        $this->redirect("/pages-" . $club->getId());
+        $this->redirect("/notes-" . $club->getId());
     }
 
     public function renderAccess(int $clubId, int $virtualId): void
@@ -280,10 +288,8 @@ final class PagesPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("error_segmentation"));
         }
 
-        $page->setView_Access($viewAccess);
-        $page->setEdit_Access($editAccess);
         // Avoid creating a content revision for ACL-only change
-        \Chandler\Database\DatabaseConnection::i()->getContext()->table("group_pages")
+        \Chandler\Database\DatabaseConnection::i()->getContext()->table("notes")
             ->where("id", $page->getId())
             ->update([
                 "view_access" => $viewAccess,
@@ -304,12 +310,16 @@ final class PagesPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
         }
 
+        if (!$page->keepsRevisions()) {
+            $this->notFound();
+        }
+
         $pageNum = (int) ($this->queryParam("p") ?? 1);
         $this->template->club = $club;
         $this->template->page = $page;
         $this->template->tab  = "history";
-        $this->template->revisions = $this->pages->getRevisions($page, $pageNum);
-        $this->template->count = $this->pages->getRevisionsCount($page);
+        $this->template->revisions = $this->notes->getRevisions($page, $pageNum);
+        $this->template->count = $this->notes->getRevisionsCount($page);
         $this->template->paginatorConf = (object) [
             "count"   => $this->template->count,
             "page"    => $pageNum,
@@ -330,7 +340,11 @@ final class PagesPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
         }
 
-        $revision = $this->pages->getRevision($page, $revisionId);
+        if (!$page->keepsRevisions()) {
+            $this->notFound();
+        }
+
+        $revision = $this->notes->getRevision($page, $revisionId);
         if (!$revision) {
             $this->notFound();
         }
@@ -339,7 +353,7 @@ final class PagesPresenter extends OpenVKPresenter
         $this->template->page = $page;
         $this->template->revision = $revision;
         $this->template->tab = "history";
-        $this->template->html = GroupPage::renderMarkdown($revision->getSource(), $club);
+        $this->template->html = Note::renderMarkdown($revision->getSource(), $club);
 
         if ($_SERVER["REQUEST_METHOD"] === "POST" && $this->postParam("restore") === "1") {
             $this->assertUserLoggedIn();
@@ -350,7 +364,7 @@ final class PagesPresenter extends OpenVKPresenter
                 $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
             }
 
-            $page->setTitle($revision->getTitle());
+            $page->setName($revision->getTitle());
             $page->setSource($revision->getSource());
             $page->setRevisionEditor($this->user->id);
             $page->save();
@@ -378,7 +392,7 @@ final class PagesPresenter extends OpenVKPresenter
 
         $source = (string) ($this->postParam("source") ?? "");
         header("Content-Type: text/html; charset=utf-8");
-        exit(GroupPage::renderMarkdown($source, $club));
+        exit(Note::renderMarkdown($source, $club));
     }
 
     public function renderHelp(int $clubId): void
