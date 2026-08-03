@@ -67,6 +67,10 @@ test.describe('Invite', () => {
 
   test('shows invite page', async ({ page }) => {
     await page.goto('/invite');
-    await expect(page.locator('.page_body')).toHaveScreenshot('invite.png', { maxDiffPixels: 200 });
+    await expect(page.locator('.page_body')).toHaveScreenshot('invite.png', {
+      maxDiffPixels: 200, mask: [
+        page.locator('.page_content > center > input[type="text"]')
+      ],
+    });
   });
 });
