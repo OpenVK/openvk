@@ -592,7 +592,7 @@ class Club extends RowModel
                         "photos" => (new Photos())->getClubPhotosCount($this),
                         "videos" => (new Videos())->getClubVideosCount($this),
                         "albums" => (new Albums())->getClubAlbumsCount($this),
-                        "docs" => (new Documents())->getDocumentsCountByOwner($this->getId() * -1)
+                        "docs" => (new Documents())->getDocumentsCountByOwner($this->getId() * -1),
                     ];
                     break;
                 case 'start_date':

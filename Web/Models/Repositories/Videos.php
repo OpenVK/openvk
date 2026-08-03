@@ -61,7 +61,7 @@ class Videos
     {
         return sizeof($this->videos->where("owner", $user->getId())->where(["deleted" => 0, "unlisted" => 0]));
     }
-    
+
     public function getByClub(Club $club, int $page = 1, ?int $perPage = null): \Traversable
     {
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
