@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace openvk\Web\Models\Entities;
 
+use openvk\Web\Models\Repositories\{Photos, Topics, Videos, Documents};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{User, Manager};
@@ -584,6 +585,15 @@ class Club extends RowModel
                     break;
                 case 'real_id':
                     $res->real_id = $this->getRealId();
+                    break;
+                case 'counters':
+                    $res->counters = (object) [
+                        "topics" => (new Topics())->getClubTopicsCount($this),
+                        "photos" => (new Photos())->getClubPhotosCount($this),
+                        "videos" => (new Videos())->getClubVideosCount($this),
+                        "albums" => (new Albums())->getClubAlbumsCount($this),
+                        "docs" => (new Documents())->getDocumentsCountByOwner($this->getId() * -1),
+                    ];
                     break;
                 case 'start_date':
                     if ($this->isEvent()) {

@@ -169,6 +169,7 @@ final class Notes extends VKAPIRequestHandler
             $notes_splitted = explode(',', $note_ids);
 
             foreach ($notes_splitted as $note_id) {
+                $note_id = intval($note_id);
                 $note = (new NotesRepo())->getNoteById($user_id, $note_id);
 
                 if ($note && !$note->isDeleted()) {

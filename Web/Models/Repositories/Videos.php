@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace openvk\Web\Models\Repositories;
 
-use openvk\Web\Models\Entities\User;
-use openvk\Web\Models\Entities\Video;
+use openvk\Web\Models\Entities\{User, Club, Video};
 use Chandler\Database\DatabaseConnection;
 use Nette\Database\Table\ActiveRow;
 
@@ -61,6 +60,27 @@ class Videos
     public function getUserVideosCount(User $user): int
     {
         return sizeof($this->videos->where("owner", $user->getId())->where(["deleted" => 0, "unlisted" => 0]));
+    }
+
+    public function getByClub(Club $club, int $page = 1, ?int $perPage = null): \Traversable
+    {
+        $perPage ??= OPENVK_DEFAULT_PER_PAGE;
+        foreach ($this->videos->where("owner", $club->getId() * -1)->where(["deleted" => 0, "unlisted" => 0])->page($page, $perPage)->order("created DESC") as $video) {
+            yield new Video($video);
+        }
+    }
+
+    public function getByClubLimit(Club $club, int $offset = 0, int $limit = 10): \Traversable
+    {
+        $perPage ??= OPENVK_DEFAULT_PER_PAGE;
+        foreach ($this->videos->where("owner", $club->getId() * -1)->where(["deleted" => 0, "unlisted" => 0])->limit($limit, $offset)->order("created DESC") as $video) {
+            yield new Video($video);
+        }
+    }
+
+    public function getClubVideosCount(Club $club): int
+    {
+        return sizeof($this->videos->where("owner", $club->getId() * -1)->where(["deleted" => 0, "unlisted" => 0]));
     }
 
     public function find(string $query = "", array $params = [], array $order = ['type' => 'id', 'invert' => false]): Util\EntityStream
