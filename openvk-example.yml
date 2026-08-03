@@ -14,6 +14,9 @@ chandler:
         password: "root"
 
     security:
+        # 128-character random hex string used for CSRF tokens, JWT
+        # session signing, and captcha encryption. Generate one with:
+        #   php -r "echo bin2hex(random_bytes(64));"
         secret: ""
         csrfProtection: "permissive"
         extendedValidation: false
