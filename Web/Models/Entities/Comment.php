@@ -76,9 +76,14 @@ class Comment extends Post
         $res->id            = $this->getId();
         $res->from_id       = $this->getOwner()->getId();
         $res->date          = $this->getPublicationTime()->timestamp();
-        $res->text          = $this->getText(false);
         $res->attachments   = [];
         $res->parents_stack = [];
+
+        if (get_class($this->getTarget()) === 'openvk\Web\Models\Entities\Note') {
+            $res->message       = $this->getText(false);
+        } else {
+            $res->text          = $this->getText(false);
+        }
 
         if (!is_null($note)) {
             $res->uid       = $this->getOwner()->getId();
