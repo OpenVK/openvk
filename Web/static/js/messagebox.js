@@ -20,6 +20,7 @@ class CMessageBox {
         this.close_on_buttons = close_on_buttons
         this.unique_name = unique_name
         this.warn_on_exit = warn_on_exit
+        this._viewer = null;
 
         if(!custom_template) {
             u('body').addClass('dimmed').append(this.__getTemplate())
@@ -177,3 +178,194 @@ u(document).on('click', 'body.dimmed .dimmer', async (e) => {
         }
     }
 })
+
+// Abstract viewer
+
+class Viewer {
+    viewer_name = "abstract_viewer";
+
+    constructor() {
+        this.av_modes = ["vk", "tg", "pptx"];
+        this.mode = "vk";
+        this.itemsOrder = [];
+        this.items = {};
+        this.selectedItemId = null;
+        this.context = {};
+        this.totalItemsCount = null;
+        this._cachedDetails = {};
+        this.resetContext();
+
+        /*
+
+        Example:
+
+        type: album
+        album_id: x
+        per_page: y ?? 10
+
+        */
+
+        this.modal = null;
+    }
+
+    get count() {
+        return this.itemsOrder.length;
+    }
+
+    get currentIndex() {
+        return this.itemsOrder.indexOf(this.selectedItemId);
+    }
+
+    get currentItem() {
+        return this.items[this.currentIndex];
+    }
+
+    setContext(data) {
+        this._setMainContext(data);
+    }
+
+    initalizeContext() {}
+    selectItem(pid, item_api_res) {}
+    selectItemByApiId(id) {
+        const entry = this.items[id];
+        if (!entry) {
+            console.error("Msgboxes | " + this.viewer_name + " | Not found entry with id ", id)
+            return;
+        };
+
+        this.selectItem(id, entry);
+    }
+    _isLoadable() { return false; }
+    async _loadLoadableContext() { return; }
+
+    _setMainContext(data) {
+        this.context.type = data.type;
+        this.context.first_item_url = data.first_item_url || null;
+        this.context.perPage = data.perPage || 20;
+        this.context.offset = this._isLoadable()
+        ? (Number((new URL(location.href)).searchParams.get('p') ?? (window.router.scroll_page ?? 1)) - 1) * this.context.perPage
+        : 0;
+
+        if (data.custom_offset != null) {
+            this.context.offset = data.custom_offset;
+        }
+
+        this.context.reverse = data.reverse || false;
+        this.context.custom_context = data.custom_context || null;
+        this.context.id = data.id || null;
+    }
+
+    resetContext() {
+        this.context = {};
+        this.sides_ended = {
+            "right": false,
+            "left": false
+        };
+    }
+    _appendApiItem(item, profiles = null, groups = null) {
+        const existing = {};
+        this.itemsOrder.forEach((id) => {
+            existing[id] = true;
+        });
+
+        const pid = idForItem(item);
+        if (existing[pid]) {
+            return;
+        }
+
+        this._appendItemToList(pid, item, profiles, groups);
+        this.itemsOrder.push(pid);
+    }
+
+    // abstract method cuz every viewer has different display of its items
+    _appendItemToList(pid, item) {
+        this.items[pid] = {
+            id: pid,
+        };
+    }
+
+    createMsgbox() {}
+
+    open() {
+        if (!this.modal) {
+            this.createMsgbox();
+        }
+
+        this.modal.reveal();
+        this.modal._viewer = this;
+
+        return this.modal.getNode();
+    }
+    afterOpen() {}
+
+    close(close_type = 0) {
+        switch (close_type) {
+            case 0:
+                console.log("Msgboxes | " + this.viewer_name + " | Closing")
+                this.modal.close();
+                break;
+            case 1:
+                console.log("Msgboxes | " + this.viewer_name + " | Hiding window")
+                this.modal.hide();
+                break;
+        }
+    }
+
+    async slide(direction) {
+        if (this.count <= 1) {
+            return
+        };
+
+        let idx = this.currentIndex + direction;
+
+        if (idx < 0) {
+            if (this._isLoadable()) {
+                this.context.offset -= 20;
+                if (this.context.offset < 0) {
+                    this.context.offset = 0;
+                    // to start
+                };
+
+                await this._loadLoadableContext();
+                idx = this.itemsOrder.length - 1;
+            } else {
+                idx = this.count - 1;
+            }
+        } else if (idx >= this.count) {
+            if (this._isLoadable()) {
+                this.context.offset += 20;
+                await this._loadLoadableContext();
+                idx = 0;
+            } else {
+                idx = 0;
+            }
+        }
+
+        const nextId = this.itemsOrder[idx];
+        if (nextId) {
+            this.selectItemByApiId(nextId);
+        }
+    }
+
+    _getCurrentEntryCacheNode() {}
+    _removeCacheForEntry(entry) {
+        entry.cached = null;
+    }
+
+    _removeCacheForCurrentEntry() {
+        let entry = this.items[this.currentIndex];
+
+        if (entry) {
+            this._removeCacheForEntry(entry);
+        }
+    }
+
+    _addCachedDetailsToEntry(entry, html) {
+        entry.cached = html;
+    }
+
+    // states
+
+    _showMinimized(item) {}
+    _returnFromMinimized() {}
+}
