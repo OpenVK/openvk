@@ -474,3 +474,34 @@ function _authorize(items, profiles = null, groups = null, get_id = null, set_id
         return fin;
     }
 }
+
+function idForItem(item) {
+    if (item._PRESET_ID) {
+        return item._PRESET_ID;
+    }
+
+    return item.owner_id + '_' + item.id + (item.access_key ? "_" + item.access_key : "");
+}
+
+function idUrlFromArray(id_splitted) {
+    if (typeof id_splitted == "string") {
+        id_splitted = id_splitted.split("_")
+    }
+
+    if (id_splitted.length == 3) {
+        return id_splitted[0] + "_" + id_splitted[1] + "?key=" + id_splitted[2]
+    } else {
+        return id_splitted[0] + "_" + id_splitted[1]
+    }
+}
+
+function setClickableHeightForEls(node, height_nodes = []) {
+    let modal = node.find(".ovk-modal-player-window").nodes[0];
+    let style = window.getComputedStyle(modal);
+    let h = modal.offsetHeight + parseInt(style.marginBottom) + parseInt(style.marginTop);
+
+    height_nodes.forEach(item => {
+        item.style.height = h + "px";
+        item.style.height = h + "px";
+    })
+}
