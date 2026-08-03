@@ -183,6 +183,7 @@ final class Board extends VKAPIRequestHandler
         }
 
         $obj = (object) [
+            "count" => $topic->getCommentsCount(),
             "items" => [],
         ];
 

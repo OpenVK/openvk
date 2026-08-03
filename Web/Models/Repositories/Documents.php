@@ -95,6 +95,15 @@ class Documents
         return new EntityStream("Document", $search);
     }
 
+    public function getDocumentsCountByOwner(int $owner): int
+    {
+        return $this->documents->where([
+            "owner"    => $owner,
+            "unlisted" => 0,
+            "deleted"  => 0,
+        ])->count('*');
+    }
+
     public function getTypes(int $owner_id): array
     {
         $result = DatabaseConnection::i()->getConnection()->query("SELECT `type`, COUNT(*) AS `count` FROM `documents` WHERE `owner` = ? AND `deleted` = 0 AND `unlisted` = 0 GROUP BY `type` ORDER BY `type`", $owner_id);

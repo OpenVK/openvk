@@ -92,9 +92,23 @@ class Comment extends Post
             }
 
             if ($attachment instanceof \openvk\Web\Models\Entities\Photo) {
-                $res->attachments[] = $attachment->toVkApiStruct();
+                if (VKAPI_DECL_VER_MAJOR <= 4) {
+                    $res->attachments[] = $attachment->toVkApiStruct();
+                } else {
+                    $res->attachments[] = [
+                        'type' => 'photo',
+                        'photo' => $attachment->toVkApiStruct(),
+                    ];
+                }
             } elseif ($attachment instanceof \openvk\Web\Models\Entities\Video) {
-                $res->attachments[] = $attachment->toVkApiStruct($this->getUser());
+                if (VKAPI_DECL_VER_MAJOR <= 4) {
+                    $res->attachments[] = $attachment->toVkApiStruct($this->getUser());
+                } else {
+                    $res->attachments[] = [
+                        'type' => 'video',
+                        'video' => $attachment->toVkApiStruct($this->getUser()),
+                    ];
+                }
             }
         }
 
