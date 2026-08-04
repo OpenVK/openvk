@@ -113,8 +113,17 @@ class CMessageBox {
         this.hidden = false
     }
 
-    static toggleLoader() {
-        u('#ajloader').toggleClass('shown')
+    static toggleLoader(state = null) {
+        if (state == null) {
+            u('#ajloader').toggleClass('shown')
+            return;
+        }
+
+        if (state == true) {
+            u('#ajloader').addClass('shown')
+        } else {
+            u('#ajloader').removeClass('shown')
+        }
     }
 }
 
@@ -189,7 +198,7 @@ class Viewer {
         this.mode = "vk";
         this.itemsOrder = [];
         this.items = {};
-        this.selectedItemId = null;
+        this.currentId = null;
         this.context = {};
         this.totalItemsCount = null;
         this._cachedDetails = {};
@@ -206,6 +215,8 @@ class Viewer {
         */
 
         this.modal = null;
+        this._draggable_ctx = null;
+        this._resizeable_ctx = null;
     }
 
     get count() {
@@ -213,7 +224,7 @@ class Viewer {
     }
 
     get currentIndex() {
-        return this.itemsOrder.indexOf(this.selectedItemId);
+        return this.itemsOrder.indexOf(this.currentId);
     }
 
     get currentItem() {
@@ -232,6 +243,8 @@ class Viewer {
             console.error("Msgboxes | " + this.viewer_name + " | Not found entry with id ", id)
             return;
         };
+
+        console.log("selected item ", id, entry);
 
         this.selectItem(id, entry);
     }
@@ -366,6 +379,28 @@ class Viewer {
 
     // states
 
-    _showMinimized(item) {}
-    _returnFromMinimized() {}
+    // оно должно превращать само окно в перетаскиваемый элемент а не создавать новый элемент
+    _showMinimized(item) {
+        this.getNode().addClass("ovk-msg-minimized");
+
+        // jquery ui
+        this._draggable_ctx  = $(this.getNode().nodes[0]).draggable({cursor: 'grabbing', containment: 'window', cancel: '.miniplayer-body'});
+        this._resizeable_ctx = $(this.getNode().nodes[0]).resizable({
+            maxHeight: 2000,
+            maxWidth: 3000,
+            minHeight: 150,
+            minWidth: 200
+        });
+    }
+
+    _returnFromMinimized() {
+        this.getNode().removeClass("ovk-msg-minimized");
+
+        if (this._draggable_ctx != null) {
+            this._draggable_ctx.destroy();
+            this._resizeable_ctx.destroy();
+            this._draggable_ctx = null;
+            this._resizeable_ctx = null;
+        }
+    }
 }

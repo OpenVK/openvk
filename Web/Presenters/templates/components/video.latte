@@ -3,7 +3,7 @@
 <tbody>
     <tr>
         <td valign="top">
-            <a href="/video{$video->getPrettyId()}" id='videoOpen' data-id="{$video->getPrettyId()}">
+            <a href="/video{$video->getPrettyId()}" onclick="VideoViewer.openById({$video->getPrettyIdWithKey()}, {}, event)">
                 <div class="video-preview">
                     <img src="{$video->getThumbnailURL()}"
                     style="max-width: 170px; max-height: 127px; margin: auto;" >
@@ -15,7 +15,7 @@
                 {include infotable, x => $dat}
             {else}
         <a href="/video{$video->getPrettyId()}">
-            <b class='video_name' id='videoOpen' data-id="{$video->getPrettyId()}">
+            <b class="video_name" onclick="VideoViewer.openById({$video->getPrettyIdWithKey()}, {}, event)">
             {$video->getName()}
             </b>
         </a>

@@ -171,15 +171,15 @@ const videoViewerTemplate = `
         <div id="ovk-player-info"></div>
     </div>
 </div>`;
-const youtubeVideoTemplate = `
+const youtubeVideoTemplate = (id) => { return `
 <iframe
 width="600"
 height="340"
-src="https://www.youtube-nocookie.com/embed/"
+src="https://www.youtube-nocookie.com/embed/${id}"
 frameborder="0"
 sandbox="allow-same-origin allow-scripts allow-popups"
 allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-allowfullscreen></iframe>`;
+allowfullscreen></iframe>` };
 const miniplayerTemplate = `
 <div class='miniplayer'>
     <div class='miniplayer-head'>
@@ -203,11 +203,13 @@ class PhotoViewer extends Viewer {
     }
 
     _getTitle() {
+        if (this.count == 1) {
+            return tr("photo");
+        }
+
         switch(this.context.type) {
             default:
-                return this.count > 1
-                    ? tr("photo_x_from_y", this.currentIndex + 1, this.totalItemsCount || this.count)
-                    : tr("photo");
+                return tr("photo_x_from_y", this.currentIndex + 1, this.totalItemsCount || this.count);
         }
     }
 
@@ -275,7 +277,7 @@ class PhotoViewer extends Viewer {
         await this.loadAlbumContext(avs);
     }
 
-    async loadPostContext() {
+    async loadPostContext(preset_res = null) {
         const isComment = this.context.post_type == "comment";
         const method = isComment ? 'wall.getComment' : 'wall.getById';
         const params = isComment
@@ -283,18 +285,25 @@ class PhotoViewer extends Viewer {
         : { posts: postId };
 
         let res;
+        let items = [];
         try {
-            res = await window.OVKAPI.call(method, { ...params, extended: 0 });
+            if (preset_res != null) {
+                res = preset_res;
+            } else {
+                res = await window.OVKAPI.call(method, { ...params, extended: 0 });
+                const _items = res.items || res.response?.items || res;
+
+                const item = Array.isArray(_items) ? _items[0] : _items;
+                if (!item) return;
+
+                items = item.attachments || [];
+            }
         } catch (e) {
+            console.error(e);
             return;
         }
 
-        const items = res.items || res.response?.items || res;
-        const item = Array.isArray(items) ? items[0] : items;
-        if (!item) return;
-
-        const attachments = item.attachments || [];
-        attachments.forEach((att) => {
+        items.forEach((att) => {
             if (att.type !== 'photo') { 
                 return;
             };
@@ -319,10 +328,9 @@ class PhotoViewer extends Viewer {
         };
     }
 
-    initalizeContext(context = null) {
-        this._initalizeContext(context).then(() => {
-            this._updFrame();
-        })
+    async initalizeContext(context = null) {
+        await this._initalizeContext(context);
+        this._updFrame();
     }
 
     async _initalizeContext(context = null) {
@@ -397,8 +405,6 @@ class PhotoViewer extends Viewer {
     }
 
     selectItem(pid, item) {
-        console.log("selected item ", pid, item);
-
         this.currentId = pid;
         this._updFrame(item);
 
@@ -415,8 +421,8 @@ class PhotoViewer extends Viewer {
         return this.modal.getNode().find(".ovk-photo-details");
     }
 
-    async _loadDetails(photoId) {
-        const entry = this.items[photoId];
+    async _loadDetails(itemId) {
+        const entry = this.items[itemId];
         if (!entry) return;
 
         if (entry.cached != null) {
@@ -425,7 +431,7 @@ class PhotoViewer extends Viewer {
         }
 
         if (this.context.type == "chat") {
-            this._getCurrentEntryCacheNode().last().innerHTML = photoId;
+            this._getCurrentEntryCacheNode().last().innerHTML = itemId;
             return;
         }
 
@@ -436,7 +442,7 @@ class PhotoViewer extends Viewer {
         let res = null;
 
         try {
-            let _photo_id = idUrlFromArray(photoId);
+            let _photo_id = idUrlFromArray(itemId);
             res = await fetch('/photo' + _photo_id);
 
             if (res.status == 404 || res.status.status == 403) {
@@ -449,21 +455,16 @@ class PhotoViewer extends Viewer {
 
             this._addCachedDetailsToEntry(entry, details ? details.innerHTML : '')
         } catch (e) {
-            this._addCachedDetailsToEntry(entry, `<div>:( photo: ${photoId}</div>`)
+            this._addCachedDetailsToEntry(entry, `<div>:( photo: ${itemId}</div>`)
             console.error(entry, e);
         }
 
-        if (photoId === this.currentId) {
+        if (itemId === this.currentId) {
             this._getCurrentEntryCacheNode().last().innerHTML = entry.cached;
             this._getCurrentEntryCacheNode().find(".bsdn").nodes.forEach(bsdnInitElement);
         }
 
-        const viewEl = this.modal.getNode().find(".ovk-photo-view").nodes[0];
-        const style = window.getComputedStyle(viewEl);
-        const h = viewEl.offsetHeight + parseInt(style.marginBottom) + parseInt(style.marginTop);
-        this.modal.getNode().find(".ovk-photo-view-overlay").nodes.forEach(function(el) {
-            el.style.height = h + "px";
-        });
+        setClickableHeightForEls(this.modal.getNode(), this.modal.getNode().find(".ovk-photo-view-overlay").nodes, ".ovk-photo-view")
     }
 }
 
@@ -506,24 +507,24 @@ class VideoViewer extends Viewer {
             this.modal.close()
         })
 
-        /*msgbox.getNode().find('#__toggle_comments').on('click', async (e) => {
+        msgbox.getNode().find('#__toggle_comments').on('click', async (e) => {
             if(msgbox.getNode().find('#ovk-player-info').hasClass('shown')) {
                 msgbox.getNode().find('#__toggle_comments').html(tr('show_comments'))
             } else {
                 msgbox.getNode().find('#__toggle_comments').html(tr('close_comments'))
             }
 
+            if(msgbox.getNode().find('#ovk-player-info').html().length < 1) {
+                u('#ovk-player-info').html(`<div id='gif_loader'></div>`);
+            }
+
             let overlays = msgbox.getNode().find(".ovk-photo-view-overlay").nodes;
+            setClickableHeightForEls(msgbox.getNode(), overlays);
+
             msgbox.getNode().find('#ovk-player-info').toggleClass('shown');
 
-            if(msgbox.getNode().find('#ovk-player-info').html().length < 1) {
-                u('#ovk-player-info').html(`<div id='gif_loader'></div>`)
-
-            } else {
-                overlays[0].style.height = "100%";
-                overlays[1].style.height = "100%";
-            }
-        })*/
+            await this._loadDetails();
+        })
 
         msgbox.getNode().find('#__modal_player_minimize').on("click", (e) => {
             e.preventDefault()
@@ -535,57 +536,95 @@ class VideoViewer extends Viewer {
 
     }
 
-    // TODO переписать
-    _showMinimized(video) {
-        // оно должно превращать само окно в плере потому что иначе видос с ютуба перезапустится
-        return;
-        const tpl = u(miniplayerTemplate);
-        tpl.dataset.msg_id = this.modal.id;
-
-        miniplayer.find('.miniplayer-body').nodes[0].append(msgbox.getNode().find('.center-part > *').nodes[0])
-        miniplayer.attr('style', `left:100px;top:0px;`)
-        miniplayer.find('#__miniplayer_return').on('click', (e) => {
-            msgbox.reveal()
-            msgbox.getNode().find('.center-part').nodes[0].append(miniplayer.find('.miniplayer-body > *').nodes[0])
-            u('.miniplayer').remove()
-        })
-
-        miniplayer.find('#__miniplayer_close').on('click', (e) => {
-            msgbox.close()
-            u('.miniplayer').remove()
-        })
-
-        // jquery ui
-        $('.miniplayer').draggable({cursor: 'grabbing', containment: 'window', cancel: '.miniplayer-body'})
-        $('.miniplayer').resizable({
-            maxHeight: 2000,
-            maxWidth: 3000,
-            minHeight: 150,
-            minWidth: 200
-        })
+    selectItem(pid, item) {
+        this.currentId = pid;
+        this._updFrame(item);
     }
 
-    async _loadDetails(photoId) {
-        return;
-        const entry = this.items[photoId];
+    _updFrame(item, init_player = true) {
+        const author    = item.author
+        let player_html = '';
+
+        if(init_player) {
+            if(video_object.platform == 'youtube') {
+                const video_url = new URL(video_object.player)
+                const video_id = video_url.pathname.replace('/', '')
+                player_html = youtubeVideoTemplate(video_id);
+            } else {
+                if(!video_object.is_processed) {
+                    player_html = `<span class="video_processing_error">${tr('video_processing')}</span>`
+                } else {
+                    let author_name = author.name ? author.name : `${author.first_name} ${author.last_name}`
+                    player_html = `
+                        <div class='bsdn media' data-name="${escapeHtml(video_object.title)}" data-author="${escapeHtml(author_name)}">
+                            <video class='media' src='${video_object.player}'></video>
+                        </div>
+                    `;
+                }
+            }
+
+            msgbox.getNode().find("#playerHtml").html(player_html);
+            if(item.platform == null && item.is_processed) {
+                bsdnInitElement(msgbox.getNode().find('.bsdn').nodes[0]);
+            }
+        }
+    }
+
+    _getCurrentEntryCacheNode() {
+        return this.modal.getNode().find("#ovk-player-info");
+    }
+
+    async _loadDetails(itemId) {
+        const entry = this.items[itemId];
         if (!entry) return;
 
-        if (entry.cached != null) {
-            this._getCurrentEntryCacheNode().last().innerHTML = entry.cached;
-            return;
+        if (entry.cached == null) {
+            try {
+                let pretty_id = idUrlFromArray(entry.id);
+                const fetcher = await fetch(`/video${pretty_id}`);
+                const fetch_r = await fetcher.text();
+                const results =  u(new DOMParser().parseFromString(fetch_r, 'text/html'));
+                const details = results.find('.ovk-vid-details');
+                details.find('.media-page-wrapper-description b').remove();
+
+                this.modal.getNode().find('#ovk-player-info').html(details.html())
+
+                setClickableHeightForEls(this.modal.getNode(), []);
+
+                this._addCachedDetailsToEntry(entry, details ? details.innerHTML : '')
+            } catch(e) {
+                console.error(e);
+                makeError(String(e));
+            }
         }
 
-        const fetcher = await fetch(`/video${pretty_id}`)
-        const fetch_r = await fetcher.text()
-        const dom_parser = new DOMParser
-        const results =  u(dom_parser.parseFromString(fetch_r, 'text/html'))
-        const details = results.find('.ovk-vid-details')
-        details.find('.media-page-wrapper-description b').remove()
+        this._getCurrentEntryCacheNode().last().innerHTML = entry.cached;
+        this.modal.getNode().find('#ovk-player-info .bsdn').forEach(item => {
+            bsdnInitElement(item);
+        });
+    }
 
-        this.modal.getNode().find('#ovk-player-info').html(details.html())
-        bsdnHydrate()
+    static async openById(ids, context = {}, event = null) {
+        if (event != null) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
 
-        setClickableHeightForEls(this.modal.getNode(), []);
+        CMessageBox.toggleLoader()
+
+        try {
+            const videoViewer = new VideoViewer();
+            videoViewer.setContext({
+                "id": ids
+            });
+            await videoViewer.loadIdsOnlyContext();
+            videoViewer.open();
+            videoViewer.afterOpen(video_id);
+        } catch(e) {
+            console.error(e);
+        }
+
+        CMessageBox.toggleLoader()
     }
 }
 
@@ -600,9 +639,125 @@ class AudioViewer extends Viewer {
             this._appendApiItem(item);
         });
     }
+
+    static async openById(e, id = null, api_item = null) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        CMessageBox.toggleLoader()
+
+        const audioView = new AudioViewer();
+        if (api_item != null) {
+            id = attachment.audio.owner_id + "_" + attachment.audio.global_id
+            audioView._appendApiItem(api_item);
+        }
+
+        audioView.setContext({
+            "type": "id",
+            "id": id
+        });
+
+        if (api_item == null) {
+            await audioView.loadAudioIdsContext();
+        }
+
+        audioView.open();
+        audioView._loadDetails();
+        CMessageBox.toggleLoader()
+    }
+
+    createMsgbox() {
+        this.modal = new CMessageBox({
+            title: tr("audio"),
+            body: `<div class="generic_audio_list"></div>`,
+            buttons: [tr("close")],
+            callbacks: [() => {}]
+        })
+    }
+
+    async _loadDetails() {
+        const fd = new FormData();
+        fd.append('ajax', '1');
+        fd.append('hash', window.router.csrf);
+
+        const f = await fetch("/audio" + ids, {
+            method: "POST",
+            body: fd
+        });
+
+        try {
+            const txt = await f.text();
+            const ht = new DOMParser().parseFromString(txt, "text/html");
+            const players = ht.querySelectorAll(".audioEmbed");
+            players.forEach(item => {
+                this.modal.getNode().find(".generic_audio_list").append(item.outerHTML);
+            });
+
+            //window.player.ajReveal();
+        } catch (e) {
+            fastError(escapeHtml(tr("messages_unable_to_load_audio", ids)));
+        }
+    }
 }
 
-// Был добавлен из-за диалогов (из сообщений к посту переходить долго)
+class DocsViewer extends Viewer {
+    createMsgbox() {
+        this.modal = new CMessageBox({
+            title: '',
+            custom_template: u(`
+            <div class="ovk-photo-view-dimmer">
+                <div class="ovk-photo-view">
+                    <div class="photo_com_title">
+                        <text id="photo_com_title_photos">
+                            ${tr("document")}
+                        </text>
+                        <div>
+                            <a id="ovk-photo-close">${tr("close")}</a>
+                        </div>
+                    </div>
+                    <div class='photo_viewer_wrapper doc_viewer_wrapper'></div>
+                    <div class="ovk-photo-details"></div>
+                </div>
+            </div>`)
+        })
+        this.modal.getNode().find("#ovk-photo-close").on("click", function(e) {
+            this.close()
+        });
+    }
+
+    async openByLink(url) {
+        CMessageBox.toggleLoader(true)
+
+        try {
+            await _loadDetails(url);
+        } catch (e) {
+            console.error(e);
+        }
+
+        CMessageBox.toggleLoader(false)
+    }
+
+    async _loadDetails(url) {
+        const request = await fetch(url)
+        const body_html = await request.text()
+        const body = new DOMParser().parseFromString(body_html, "text/html")
+
+        const preview = body.querySelector('.photo-page-wrapper-photo')
+
+        if (preview == null) {
+            CMessageBox.toggleLoader(false);
+            return;
+        }
+
+        const details = body.querySelector('.ovk-photo-details')
+        u(preview.querySelector('.main_doc_block')).attr('id', 'ovk-photo-img');
+
+        this.modal.getNode().find(".doc_viewer_wrapper").html(preview.innerHTML);
+        this.modal.getNode().find(".ovk-photo-details").html(details.innerHTML);
+    }
+}
+
+// добавлен из-за диалогов (из сообщений к посту переходить долго)
 class PostViewer extends Viewer {
     async loadWallContext() {
         const wall = await window.OVKAPI.call("wall.get", {"owner_id": 0, "count": 10, "extended": 1});
@@ -621,11 +776,38 @@ class PostViewer extends Viewer {
             this._appendApiItem(item);
         })
     }
+
+    static async openById(event, id) {
+        if (event != null) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        CMessageBox.toggleLoader(true);
+
+        try {
+            const msg = new PostViewer();
+            msg.setContext({
+                type: "id",
+                id: id
+            });
+
+            await msg.loadPostsContext();
+            msg.selectItemByApiId(id);
+            msg.open();
+        } catch(e) {
+            console.error(e);
+        }
+
+        CMessageBox.toggleLoader(false);
+    }
 }
 
 async function OpenMiniature(e, photo, post, photo_id, type = "post", custom_context = null, reverse = false, custom_offset = null) {
     e.preventDefault();
     e.stopPropagation();
+
+    MessageBox.toggleLoader();
 
     const __photoViewer = new PhotoViewer();
 
@@ -657,235 +839,71 @@ function OpenAvatar(e, photo_large, avatar_album, photo_id) {
     OpenMiniature(e, photo_large, avatar_album, photo_id, "album", null, true, 0)
 }
 
-function ActuallyOpenVideo(e, video_id) {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const videoViewer = new VideoViewer();
-
-    videoViewer.open();
-    videoViewer.afterOpen(video_id);
-}
-
-async function OpenVideo(video_arr = [], init_player = true)
-{
-    CMessageBox.toggleLoader()
-    console.error("!!!");
-    CMessageBox.toggleLoader()
-    return;
-
-    const video_owner = video_arr[0]
-    const video_id    = video_arr[1]
-    const video_key   = video_arr[2]
-    let video_api     = null
-    try {
-        video_api   = await window.OVKAPI.call('video.get', {'videos': `${video_owner}_${video_id}` + (video_key ? "_" + video_key: ""), 'extended': 1})
-
-        if(!video_api.items || !video_api.items[0]) {
-            throw new Error('Not found')
-        }
-    } catch(e) {
-        fastError(e.message)
-
-        return
-    }
-
-    // TODO: video lists
-    const video_object = video_api.items[0]
-    const pretty_id    = `${video_object.owner_id}_${video_object.id}`
-    const author       = find_author(video_object.owner_id, video_api.profiles, video_api.groups)
-    let player_html = ''
-    if(init_player) {
-        if(video_object.platform == 'youtube') {
-            const video_url = new URL(video_object.player)
-            const video_id = video_url.pathname.replace('/', '')
-            player_html = `
-            <iframe
-               width="600"
-               height="340"
-               src="https://www.youtube-nocookie.com/embed/${video_id}"
-               frameborder="0"
-               sandbox="allow-same-origin allow-scripts allow-popups"
-               allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-               allowfullscreen></iframe>
-            `
-        } else {
-            if(!video_object.is_processed) {
-                player_html = `<span class='gray'>${tr('video_processing')}</span>`
-            } else {
-                const author_name = `${author.first_name} ${author.last_name}`
-                player_html = `
-                    <div class='bsdn media' data-name="${escapeHtml(video_object.title)}" data-author="${escapeHtml(author_name)}">
-                        <video class='media' src='${video_object.player}'></video>
-                    </div>
-                `
-            }
-        }
-    }
-
-    if(video_object.platform != 'youtube' && video_object.is_processed) {
-        bsdnInitElement(msgbox.getNode().find('.bsdn').nodes[0])
-    }
-
-    CMessageBox.toggleLoader()
-}
-
-u(document).on('click', '#videoOpen', (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-
-    try {
-        const target = e.target.closest('#videoOpen')
-        const vid = target.dataset.id
-        const split = vid.split('_')
-
-        OpenVideo(split)
-    } catch(ec) {
-        return
-    }
-})
-
+// Submit on "Ctrl+Enter"
 u(document).on("keydown", "#write > form", function(event) {
-    if(event.ctrlKey && event.keyCode === 13)
-        u(event.target).closest('form').find(`input[type='submit']`).nodes[0].click()
+    if(event.ctrlKey && event.keyCode === 13) {
+        u(event.target).closest('form').find(`input[type='submit']`).nodes[0].click();
+    }
 });
 
+// Submit editing on "Ctrl+Enter"
 u(document).on('keydown', '.edit_menu #write', (e) => {
-    if(e.ctrlKey && e.keyCode === 13)
+    if(e.ctrlKey && e.keyCode === 13) {
         e.target.closest('.edit_menu').querySelector('#__edit_save').click()
+    }
 })
 
-// Migrated from inline start
-function reportPhoto(photo_id) {
-    uReportMsgTxt  = tr("going_to_report_photo");
-    uReportMsgTxt += "<br/>"+tr("report_question_text");
-    uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
+function reportSomething(item_id, item_type, get_param_item_type = null) {
+    if (get_param_item_type == null) {
+        get_param_item_type = item_type;
+    }
+
+    let uReportMsgTxt = `
+        ${tr("going_to_report_" + item_type)}<br/>
+        ${tr("report_question_text")}<br/><br/>
+        <b>${tr("report_reason")}: <input type='text' id='uReportMsgInput' placeholder='${tr("reason")}' /></b>
+    `;
 
     MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
         (function() {
             res = document.querySelector("#uReportMsgInput").value;
             xhr = new XMLHttpRequest();
-            xhr.open("GET", "/report/" + photo_id + "?reason=" + res + "&type=photo", true);
+            xhr.open("GET", "/report/" + item_id + "?reason=" + res + "&type=" + get_param_item_type, true);
             xhr.onload = (function() {
             if(xhr.responseText.indexOf("reason") === -1)
                 MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
             else
                 MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
             });
-            xhr.send(null);
+                xhr.send(null);
             }),
         Function.noop
     ]);
+}
+
+// семь одинаковых серий
+function reportPhoto(photo_id) {
+    reportSomething(photo_id, "photo");
 }
 
 function reportVideo(video_id) {
-    uReportMsgTxt  = tr("going_to_report_video");
-    uReportMsgTxt += "<br/>"+tr("report_question_text");
-    uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
-
-    MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
-        (function() {
-            res = document.querySelector("#uReportMsgInput").value;
-            xhr = new XMLHttpRequest();
-            xhr.open("GET", "/report/" + video_id + "?reason=" + res + "&type=video", true);
-            xhr.onload = (function() {
-            if(xhr.responseText.indexOf("reason") === -1)
-                MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
-            else
-            MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
-            });
-            xhr.send(null);
-        }),
-        Function.noop
-    ]);
+    reportSomething(video_id, "video");
 }
 
 function reportUser(user_id) {
-    uReportMsgTxt  = tr("going_to_report_user");
-    uReportMsgTxt += "<br/>"+tr("report_question_text");
-    uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
-
-    MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
-        (function() {
-            res = document.querySelector("#uReportMsgInput").value;
-            xhr = new XMLHttpRequest();
-            xhr.open("GET", "/report/" + user_id + "?reason=" + res + "&type=user", true);
-            xhr.onload = (function() {
-                if(xhr.responseText.indexOf("reason") === -1)
-                    MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
-                else
-                    MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
-            });
-            xhr.send(null);
-        }),
-        Function.noop
-    ]);
+    reportSomething(user_id, "user");
 }
 
 function reportComment(comment_id) {
-    uReportMsgTxt  = tr("going_to_report_comment");
-    uReportMsgTxt += "<br/>"+tr("report_question_text");
-    uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
-
-    MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
-        (function() {
-            res = document.querySelector("#uReportMsgInput").value;
-            xhr = new XMLHttpRequest();
-            xhr.open("GET", "/report/" + comment_id + "?reason=" + res + "&type=comment", true);
-            xhr.onload = (function() {
-                if(xhr.responseText.indexOf("reason") === -1)
-                    MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
-                else
-                    MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
-                });
-            xhr.send(null);
-        }),
-        Function.noop
-    ]);
+    reportSomething(comment_id, "comment");
 }
 
 function reportApp(id) {
-    uReportMsgTxt  = tr('going_to_report_app');
-    uReportMsgTxt += "<br/>"+tr("report_question_text");
-    uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
-
-    MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
-        (function() {
-            res = document.querySelector("#uReportMsgInput").value;
-            xhr = new XMLHttpRequest();
-            xhr.open("GET", "/report/" + id + "?reason=" + res + "&type=app", true);
-            xhr.onload = (function() {
-            if(xhr.responseText.indexOf("reason") === -1)
-                MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
-            else
-                MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
-            });
-            xhr.send(null);
-        }),
-        Function.noop
-    ]);
+    reportSomething(id, "app");
 }
 
 function reportClub(club_id) {
-    uReportMsgTxt  = tr("going_to_report_club");
-    uReportMsgTxt += "<br/>"+tr("report_question_text");
-    uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
-
-    MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
-        (function() {
-            res = document.querySelector("#uReportMsgInput").value;
-            xhr = new XMLHttpRequest();
-            xhr.open("GET", "/report/" + club_id + "?reason=" + res + "&type=group", true);
-            xhr.onload = (function() {
-            if(xhr.responseText.indexOf("reason") === -1)
-                MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
-            else
-                MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
-            });
-            xhr.send(null);
-            }),
-        Function.noop
-    ]);
+    reportSomething(club_id, "club", "group");
 }
 
 $(document).on("click", "#_ajaxDelete", function(e) {

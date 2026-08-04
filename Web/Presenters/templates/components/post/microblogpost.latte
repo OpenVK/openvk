@@ -54,7 +54,7 @@
 
                     {if $compact}
                         <br>
-                        <a href="/wall{$post->getPrettyId()}" class="date">
+                        <a href="/wall{$post->getPrettyId()}" onclick="PostViewer.openById(event, {$post->getPrettyIdWithKey()})" class="date">
                             {$post->getPublicationTime()}
                         </a>
                     {/if}

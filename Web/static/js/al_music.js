@@ -2488,23 +2488,3 @@ u(document).on('click', '.PE_end #playlist_create, .PE_end #playlist_edit', asyn
     }
     u(e.target).removeClass('lagged')
 })
-
-async function showAudioWindow(ids) {
-	const fd = new FormData();
-	fd.append('ajax', '1');
-	fd.append('hash', window.router.csrf);
-	const f = await fetch("/audio" + ids, {
-		method: "POST",
-		body: fd
-	});
-
-	try {
-		const txt = await f.text();
-		const ht = new DOMParser().parseFromString(txt, "text/html");
-		const player = ht.querySelector(".audioEmbed");
-		const msg = MessageBox(tr("audio"), `<div class="generic_audio_list">${player.outerHTML}</div>`, [tr("close")], [() => {}])
-		window.player.ajReveal();
-	} catch (e) {
-		fastError(escapeHtml(tr("messages_unable_to_load_audio", ids)));
-	}
-}
