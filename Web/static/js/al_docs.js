@@ -303,9 +303,7 @@ u(document).on("click", ".docOpener, .docListViewItem a.viewerOpener, a.docGalle
         return
     }
 
-    const _viewer = new DocsViewer();
-    _viewer.open();
-    await _viewer.openByLink(link.nodes[0].href);
+    await DocsViewer.openById(link.nodes[0].dataset.id);
 })
 
 // ctx > "wall" and maybe "messages" in future

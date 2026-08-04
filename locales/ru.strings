@@ -2442,6 +2442,7 @@
 
 "hide_player" = "Свернуть";
 "close_player" = "Закрыть";
+"toggle_queue_video" = "Показать список";
 "show_comments" = "Показать информацию";
 "close_comments" = "Скрыть информацию";
 "to_page" = "Перейти на страницу";
