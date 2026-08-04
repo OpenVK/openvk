@@ -525,6 +525,7 @@ final class Photos extends VKAPIRequestHandler
                 return 1;
             }
 
+            $photo->isolate();
             $photo->delete();
         } else {
             $photos_list = array_unique(explode(',', $photos));
@@ -539,6 +540,7 @@ final class Photos extends VKAPIRequestHandler
                     continue;
                 }
 
+                $photo->isolate();
                 $photo->delete();
             }
         }

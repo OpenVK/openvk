@@ -8,7 +8,7 @@
     <h4 n:if="$showTitle ?? true">{_comments} ({$count})</h4>
 
     {if isset($sort) && $count > 5}
-        <a class="sort_link" n:attr="href => $sort == 'desc' ? '?sort=asc' : '?sort=desc'">
+        <a onclick="click_on_sort(event)" class="sort_link" n:attr="href => $sort == 'desc' ? '?sort=asc' : '?sort=desc'">
             {if $sort == 'desc'}
                 {_new_first}
             {else}

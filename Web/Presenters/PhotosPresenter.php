@@ -215,10 +215,13 @@ final class PhotosPresenter extends OpenVKPresenter
             }
         }
 
+        $this->template->sort = $this->queryParam("sort") ?? "asc";
+        $input_sort = $this->template->sort == "asc" ? "ASC" : "DESC";
+
         $this->template->photo    = $photo;
         $this->template->cCount   = $photo->getCommentsCount();
         $this->template->cPage    = (int) ($this->queryParam("p") ?? 1);
-        $this->template->comments = iterator_to_array($photo->getComments($this->template->cPage));
+        $this->template->comments = iterator_to_array($photo->getComments($this->template->cPage, null, $input_sort));
         $this->template->owner    = $photo->getOwner();
     }
 

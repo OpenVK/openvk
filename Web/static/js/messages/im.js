@@ -17,10 +17,123 @@ export { html, preactRender as render };
 //const tr = window.tr;
 //const u = window.u;
 
+export class InstantMessagesAndRelated {
+    constructor() {
+        this.tabs = [];
+        this.selectedTabId = null;
+
+        this.header = new YellowHeader();
+
+        this.usage_type = "current_user";
+        this.usage_id = null;
+
+        this.current = new Currentness(this);
+        this.state = new IMState(this);
+
+        this.isReady = false;
+    }
+
+    get visibleTabs() {
+        return this.tabs.filter(t => t.visible());
+    }
+
+    get is_compact_mode_enabled() {
+        return localStorage.getItem("tw.im.modern_mode") === "1";
+    }
+
+    async waitLoad() {
+        return new Promise(resolve => {
+            const check = () => {
+                if (this.isReady) {
+                    resolve();
+                } else {
+                    setTimeout(check, 100);
+                }
+            };
+            check();
+        });
+    }
+
+    async setChatByPeerId(sel_id) {
+        await this.state._checkSel(new URL(location.href), sel_id);
+    }
+}
+
+export class IMTab {
+    constructor(id, name, render_function, params) {
+        this.id = id ?? (new Date()).toString();
+        this.name = name;
+        this.render_function = render_function;
+        this.params = params;
+    }
+}
+
+class Currentness {
+    constructor(im_link) {
+        this.link = im_link;
+    }
+}
+
+class IMState {
+    constructor(im_link) {
+        this.link = im_link;
+    }
+
+    getUnreadCounter() {
+        return 0;
+    }
+    updateUnreadCounter() {
+        // todo
+    }
+
+    async _checkSel(loc, sel_id = null) {
+        const _sel = sel_id == null ? Number(loc.searchParams.get('sel')) : sel_id;
+        if (!_sel) return;
+
+        const peer = await this.conversations._resolveSel(_sel);
+
+        if (peer) {
+            const _l = this.messenger.view.getChatWith(peer);
+            await this.selectChat(_l);
+            return _l;
+        } else {
+            console.error('No peer with this id!');
+        }
+    }
+}
+
+class YellowHeader {
+    setPageTitle(title) {
+        document.title = title;
+    }
+
+    changeYellowHeader(text) {
+        u(".page_yellowheader").html(text);
+    }
+
+    changeYellowHeaderByPeer(peer) {
+        switch (peer.supposed_type) {
+            case "chat":
+                this.changeYellowHeader(tr("conversation_title_chat"));
+                break;
+            case "user":
+                if (peer.id === window.openvk.current_id) {
+                    this.changeYellowHeader(tr("saved_messages"));
+                    break;
+                }
+
+                this.changeYellowHeader(tr("conversation_title_user", escapeHtml(ovk_proc_strtr(peer.name, 50))));
+                break;
+            case "club":
+                this.changeYellowHeader(tr("conversation_title_club"));
+                break;
+        }
+    }
+}
+
 class ProfilesCache {
     constructor() {
         this.cached_profiles = [];
-        this.unread_counter = 0;
     }
 
     _addProfileCache(profile) {
@@ -63,6 +176,7 @@ export class IM {
         ];
         this.tab = '';
         this.is_switching = false;
+        this.unread_counter = 0;
     }
 
     get visibleTabs() {

@@ -131,15 +131,17 @@ const photoViewerTemplate =
                 <img src="${_loader_link}">
             </text>
             <div>
+                <a style="display:none;" id="ovk-viewer-slideshow">${tr("show_slideshow")}</a>
+                <a style="display:none;" id="ovk-viewer-minimize">${tr("minimize")}</a>
                 <a id="ovk-photo-close">${tr("close")}</a>
             </div>
         </div>
-        <div class="photo_viewer_wrapper">
+        <div class="photo_viewer_wrapper miniplayer-body">
             <div class="ovk-photo-slide-left"></div>
             <div class="ovk-photo-slide-right"></div>
             <img src="${_loader_link}" id="ovk-photo-img">
         </div>
-        <div class="ovk-photo-details">
+        <div class="ovk-photo-details miniplayer-body">
             <img src="${_loader_link}">
         </div>
     </div>
@@ -161,14 +163,14 @@ const videoViewerTemplate = `
                     <a id='__modal_player_close' class='hoverable_color'>${tr('close')}</a>
                 </div>
             </div>
-            <div class='center-part' id="playerHtml"></div>
-            <div class='bottom-part'>
+            <div class='center-part miniplayer-body' id="playerHtml"></div>
+            <div class='bottom-part miniplayer-body'>
                 <a id='__toggle_comments' class='hoverable_color'>${tr('show_comments')}</a>
                 |
                 <a href='/video' id="videoGoToLand" class='hoverable_color'>${tr('to_page')}</a>
             </div>
         </div>
-        <div id="ovk-player-info"></div>
+        <div id="ovk-player-info miniplayer-body"></div>
     </div>
 </div>`;
 const youtubeVideoTemplate = (id) => { return `
@@ -217,13 +219,13 @@ class PhotoViewer extends Viewer {
         return this.context.type == "album";
     }
 
-    async _loadLoadableContext() { 
+    async _loadLoadableContext(direction = 0) { 
         if (this.context.type == "album") {
-            this.loadAlbumContext();
+            this.loadAlbumContext(null, direction);
         }
     }
 
-    async loadAlbumContext(pre_loaded = null) {
+    async loadAlbumContext(pre_loaded = null, direction = 0) {
         if (!this.context.id) {
             console.error("not found context id: ", this.context);
             return;
@@ -278,14 +280,16 @@ class PhotoViewer extends Viewer {
     }
 
     async loadPostContext(preset_res = null) {
+        console.log(this.items)
         const isComment = this.context.post_type == "comment";
+        const postId = this.context.id;
         const method = isComment ? 'wall.getComment' : 'wall.getById';
         const params = isComment
         ? { comment_id: postId.split('_')[1], owner_id: postId.split('_')[0] }
         : { posts: postId };
 
         let res;
-        let items = [];
+        let aitems = [];
         try {
             if (preset_res != null) {
                 res = preset_res;
@@ -296,26 +300,30 @@ class PhotoViewer extends Viewer {
                 const item = Array.isArray(_items) ? _items[0] : _items;
                 if (!item) return;
 
-                items = item.attachments || [];
+                aitems = item.attachments || [];
             }
         } catch (e) {
             console.error(e);
             return;
         }
 
-        items.forEach((att) => {
+        console.log(aitems)
+        console.log(this.items);
+        aitems.forEach((att) => {
             if (att.type !== 'photo') { 
                 return;
             };
             const p = att.photo;
             const pid = idForItem(p);
+            console.log(p, pid)
             if (this.items[pid]) {
                 console.error("already found " + pid, p)
                 return;
             };
 
-            this._appendApiItem(pid, p);
+            this._appendApiItem(p);
         });
+        console.log(this.items);
     }
 
     // по логике если к сообщению прикреплено фото и видео, то при переключении если следующее видео то должно открываться окно с ним
@@ -340,13 +348,13 @@ class PhotoViewer extends Viewer {
 
         switch (context.type) {
             case "album":
-                this.loadAlbumContext();
+                await this.loadAlbumContext();
                 break;
             case "chat":
-                this.loadChatAvatarContext();
+                await this.loadChatAvatarContext();
                 break;
             case "post":
-                this.loadPostContext();
+                await this.loadPostContext();
                 break;
             case "custom":
                 if (Array.isArray(context.customContext)) {
@@ -365,6 +373,7 @@ class PhotoViewer extends Viewer {
     }
 
     afterOpen(firstPhotoId, firstPhotoUrl) {
+        console.log(this.items)
         if (this.items[firstPhotoId]) {
             this.selectItem(firstPhotoId, this.items[firstPhotoId]);
         } else {
@@ -392,6 +401,11 @@ class PhotoViewer extends Viewer {
         });
 
         this.modal.getNode().find("#ovk-photo-close, .ovk-photo-view-overlay").on("click", () => {
+            if (this.mode == "pptx") {
+                this.setMode("vk");
+                document.exitFullscreen();
+            }
+
             this.modal.close();
         });
 
@@ -402,6 +416,22 @@ class PhotoViewer extends Viewer {
         this.modal.getNode().find(".ovk-photo-slide-right").on("click", () => {
             this.slide(1);
         });
+        this.modal.getNode().find("#ovk-viewer-minimize").on("click", (e) => {
+            if (this.isMinimized()) {
+                this._returnFromMinimized();
+            } else {
+                this._showMinimized();
+            }
+        })
+        this.modal.getNode().find("#ovk-viewer-slideshow").on("click", (e) => {
+            if (this.mode != "pptx") {
+                this.setMode("pptx");
+                this.modal.getNode().last().requestFullscreen();
+            } else {
+                this.setMode("vk");
+                document.exitFullscreen();
+            }
+        })
     }
 
     selectItem(pid, item) {
@@ -412,20 +442,54 @@ class PhotoViewer extends Viewer {
     }
 
     _updFrame(item) {
-        this.modal.getNode().find("#ovk-photo-img").last().src = _loader_link;
-        this.modal.getNode().find("#ovk-photo-img").last().src = item.url;
+        if (!this.modal) {
+            return;
+        }
+
         this.modal.getNode().find("#photo_com_title_photos").last().innerHTML = this._getTitle();
+        this.modal.getNode().removeClass("viewer-deleted");
+
+        if (item != null) {
+            this.modal.getNode().find("#ovk-photo-img").last().src = _loader_link;
+            this.modal.getNode().find("#ovk-photo-img").last().src = item.url;
+            if (item.deleted == true) {
+                this.modal.getNode().addClass("viewer-deleted");
+                this.modal.getNode().find("#photo_com_title_photos").html(tr("photo_is_deleted"));
+            }
+        }
+
+        let show_roll = true; // this.count > 10 && (localStorage.getItem("tw.viewers.photo.list") || "1") === "1"
+        if (show_roll) {
+            this.modal.getNode().addClass("with-roll");
+            this.modal.getNode().find(".media-page-wrapper-description").after(`
+                <div id="photoviewer-roll"></div>    
+            `);
+            this.itemsOrder.forEach(ord => {
+                const item = this.items[ord];
+                const r = u(`
+                    <div class="roll-el" data-id="${item.id}">
+                        <img src="${item.url}">
+                    </div>
+                `);
+
+                this.modal.getNode().find("#photoviewer-roll").append(r);
+            });
+            this.modal.getNode().find("#photoviewer-roll").on("click", ".roll-el", (e) => {
+                const id = e.target.closest(".roll-el").dataset.id;
+                this.selectItemByApiId(id);
+            })
+        }
     }
 
     _getCurrentEntryCacheNode() {
         return this.modal.getNode().find(".ovk-photo-details");
     }
 
-    async _loadDetails(itemId) {
+    async _loadDetails(itemId, context = null, event = null) {
         const entry = this.items[itemId];
         if (!entry) return;
 
-        if (entry.cached != null) {
+        if (entry.cached != null && context == null) {
             this._getCurrentEntryCacheNode().last().innerHTML = entry.cached;
             return;
         }
@@ -437,26 +501,74 @@ class PhotoViewer extends Viewer {
 
         console.log("item | Not cached");
 
-        this._getCurrentEntryCacheNode().last().innerHTML = '<img src="/assets/packages/static/openvk/img/loading_mini.gif">';
+        let postfix_ = new URLSearchParams(entry.postfix || {});
+        let next = null;
+        if (context == "pagination") {
+            event.target.classList.add("lagged");
+            const p = event.target.closest(".paginator");
+            const l = p.querySelector("a.active");
+            if (!l) {
+                return;
+            }
+            next = l.nextElementSibling;
+            const his_url = new URL(next.href);
+            const his_page = his_url.searchParams.get("p");
 
-        let res = null;
+            postfix_.set("p", his_page);
+        } else {
+            this._getCurrentEntryCacheNode().last().innerHTML = '<img src="/assets/packages/static/openvk/img/loading_mini.gif">';
+        }
 
+        let details;
         try {
-            let _photo_id = idUrlFromArray(itemId);
-            res = await fetch('/photo' + _photo_id);
+            let res = await fetch(this._getDetailsUrl(itemId, postfix_));
 
-            if (res.status == 404 || res.status.status == 403) {
+            if (res.status == 404 || res.status == 403) {
                 throw Error("not found photo page");
             }
 
             const html = await res.text();
             const doc = new DOMParser().parseFromString(html, "text/html");
-            const details = doc.querySelector('.ovk-photo-details');
+            details = doc.querySelector('.ovk-photo-details');
 
-            this._addCachedDetailsToEntry(entry, details ? details.innerHTML : '')
+            details = details ? details.innerHTML : '';
         } catch (e) {
-            this._addCachedDetailsToEntry(entry, `<div>:( photo: ${itemId}</div>`)
+            details = `<div>:( photo: ${itemId}</div>`;
             console.error(entry, e);
+        }
+
+        if (context == "pagination") {
+            let appends = 0;
+
+            //if ((postfix_.get("sort") || "asc") == "desc") {
+            //    appends = 1;
+            //}
+
+            const ps5 = new DOMParser().parseFromString(details, "text/html");
+            const counts = ps5.querySelectorAll(".scroll_node").length;
+            ps5.querySelectorAll(".scroll_node").forEach(item => {
+                if (appends == 0) {
+                    this.modal.getNode().find(".scroll_container").append(item);
+                } else {
+                    this.modal.getNode().find(".scroll_container").before(item);
+                }
+            })
+
+            const his_url = new URL(next.href);
+            his_url.searchParams.set("p", Number(his_url.searchParams.get("p")) + 1)
+            if (next) {
+                next.href = his_url;
+            }
+
+            if (counts < 10) {
+                event.target.remove();
+            } else {
+                event.target.classList.remove("lagged");
+            }
+
+            this._addCachedDetailsToEntry(entry, this.modal.getNode().find(".ovk-photo-details").last().innerHTML)
+        } else {
+            this._addCachedDetailsToEntry(entry, details)
         }
 
         if (itemId === this.currentId) {
@@ -465,6 +577,16 @@ class PhotoViewer extends Viewer {
         }
 
         setClickableHeightForEls(this.modal.getNode(), this.modal.getNode().find(".ovk-photo-view-overlay").nodes, ".ovk-photo-view")
+        this._updFrame();
+    }
+
+    async deleteItem(element) {
+        const ids = element.id.split("_");
+
+        await window.OVKAPI.call("photos.delete", {
+            "owner_id": ids[0],
+            "photo_id": ids[1],
+        });
     }
 }
 
@@ -610,7 +732,7 @@ class VideoViewer extends Viewer {
             event.stopPropagation();
         }
 
-        CMessageBox.toggleLoader()
+        CMessageBox.toggleLoader(true);
 
         try {
             const videoViewer = new VideoViewer();
@@ -624,7 +746,7 @@ class VideoViewer extends Viewer {
             console.error(e);
         }
 
-        CMessageBox.toggleLoader()
+        CMessageBox.toggleLoader(false);
     }
 }
 
@@ -704,23 +826,9 @@ class DocsViewer extends Viewer {
     createMsgbox() {
         this.modal = new CMessageBox({
             title: '',
-            custom_template: u(`
-            <div class="ovk-photo-view-dimmer">
-                <div class="ovk-photo-view">
-                    <div class="photo_com_title">
-                        <text id="photo_com_title_photos">
-                            ${tr("document")}
-                        </text>
-                        <div>
-                            <a id="ovk-photo-close">${tr("close")}</a>
-                        </div>
-                    </div>
-                    <div class='photo_viewer_wrapper doc_viewer_wrapper'></div>
-                    <div class="ovk-photo-details"></div>
-                </div>
-            </div>`)
+            custom_template: u(photoViewerTemplate)
         })
-        this.modal.getNode().find("#ovk-photo-close").on("click", function(e) {
+        this.modal.getNode().find("#ovk-photo-close").on("click", (e) => {
             this.close()
         });
     }
@@ -729,7 +837,7 @@ class DocsViewer extends Viewer {
         CMessageBox.toggleLoader(true)
 
         try {
-            await _loadDetails(url);
+            await this._loadDetails(url);
         } catch (e) {
             console.error(e);
         }
@@ -752,8 +860,12 @@ class DocsViewer extends Viewer {
         const details = body.querySelector('.ovk-photo-details')
         u(preview.querySelector('.main_doc_block')).attr('id', 'ovk-photo-img');
 
-        this.modal.getNode().find(".doc_viewer_wrapper").html(preview.innerHTML);
+        this.modal.getNode().find(".photo_viewer_wrapper").addClass("doc_viewer_wrapper").html(preview.innerHTML);
         this.modal.getNode().find(".ovk-photo-details").html(details.innerHTML);
+    }
+
+    _updFrame() {
+        this.modal.getNode().find("#photo_com_title_photos").html(tr("document"));
     }
 }
 
@@ -807,9 +919,8 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post", custom_con
     e.preventDefault();
     e.stopPropagation();
 
-    MessageBox.toggleLoader();
-
     const __photoViewer = new PhotoViewer();
+    CMessageBox.toggleLoader(true);
 
     if (custom_context == null) {
         __photoViewer.setContext({
@@ -826,6 +937,8 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post", custom_con
     }
 
     __photoViewer.open();
+    CMessageBox.toggleLoader(false);
+
     __photoViewer.afterOpen(photo_id, photo);
 }
 
@@ -932,7 +1045,14 @@ $(document).on("click", "#_photoDelete, #_videoDelete, #_anotherDelete", functio
         tr('no')
     ], [
         (function() {
-            u("#tmpPhDelF").nodes[0].submit();
+            if (e.target.closest(".ovk-msg-all")) {
+                const msg = find_msgbox_by_node(e.target.closest(".ovk-msg-all"));
+                msg._viewer.setCurrentEntryDeleted(true);
+            } else {
+                u("#tmpPhDelF").nodes[0].submit();
+            }
+
+            u("#tmpPhDelF").remove();
         }),
         (function() {
             u("#tmpPhDelF").remove();
@@ -3655,6 +3775,13 @@ async function ajax_posting(e, target) {
     const parser = new DOMParser();
     const parsed_content = parser.parseFromString(form_result, 'text/html')
     const parsed_post = parsed_content.querySelector(".post");
+
+    if (!parsed_post){
+        fastError(tr("error_occured"));
+
+        return;
+    }
+
     const ids = parsed_post.dataset.id;
     const append_text = `<div class="scroll_node" data-uniqueid="${ids}">${parsed_post.outerHTML}</div>`
 
@@ -3681,25 +3808,56 @@ async function ajax_posting(e, target) {
     u("#none_tip").remove();
 
     back_textarea_to_default(target);
+    console.log(target.closest(".ovk-msg-all"));
     if (target.closest(".ovk-msg-all") != null) {
         reset_msgbox_details(target.closest(".ovk-msg-all"));
     }
 }
 
 function reset_msgbox_details(boxTarget) {
-    const msg_id = boxTarget.dataset.id;
-    let msg = null;
-    window.messagebox_stack.forEach((item) => {
-        if (item.id == msg_id) {
-            msg = item;
-            return;
-        }
-    });
+    const msg_id = boxTarget.nodes[0].dataset.id;
+    const msg = find_msgbox_by_id(msg_id);
 
     if (!msg) {
         console.error(msg);
         return;
     }
 
+    console.log("msg | reset msgbox " + msg)
+
     msg._viewer._removeCacheForCurrentEntry();
+}
+
+function click_on_sort(event) {
+    if (!event.target.closest(".ovk-msg-all")) {
+        return;
+    }
+
+    event.preventDefault();
+
+    const msg_id = event.target.closest(".ovk-msg-all").dataset.id;
+    const msg = find_msgbox_by_id(msg_id);
+
+    if (!msg) {
+        console.error(msg);
+        return;
+    }
+
+    msg._viewer._updDetailsUrlForCurrentEntry(event.target.getAttribute("href"));
+}
+
+function paginator_next_click(event) {
+    if (!event.target.closest(".ovk-msg-all")) {
+        return;
+    }
+
+    event.preventDefault();
+    const msg = find_msgbox_by_node(event.target.closest(".ovk-msg-all"));
+
+    if (!msg) {
+        console.error(msg);
+        return;
+    }
+
+    msg._viewer.loadNextDetailsPage(event);
 }
