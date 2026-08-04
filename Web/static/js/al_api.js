@@ -45,13 +45,13 @@ window.API.Types.Message = (class Message {
 });
 
 const _pageLoaded = () => {
-  return new Promise((resolve) => {
-    if (document.readyState === 'complete') {
-      resolve();
-    } else {
-      window.addEventListener('load', () => resolve());
-    }
-  });
+    return new Promise((resolve) => {
+        if (document.readyState === 'complete') {
+            resolve();
+        } else {
+            window.addEventListener('load', () => resolve());
+        }
+    });
 };
 
 window.OVKAPI = new class {
@@ -66,13 +66,13 @@ window.OVKAPI = new class {
         })
 
         const __url_params = new URLSearchParams
-      __url_params.append("v", "5.200")
+        __url_params.append("v", "5.200")
 
-      if (!window.openvk) {
-        await _pageLoaded();
-      }
+        if (!window.openvk) {
+            await _pageLoaded();
+        }
 
-      if (window.openvk.current_id != 0) {
+        if (window.openvk.current_id != 0) {
             __url_params.append("auth_mechanism", "roaming")
         }
 

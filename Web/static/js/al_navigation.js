@@ -137,8 +137,9 @@ u(`#search_box input[type='search']`).on('input', async (e) => {
     u('#searchBoxFastTips').addClass('shown')
     u('#searchBoxFastTips').html('')
     json_result.items.forEach(item => {
+        const id = idForItem(item);
         u('#searchBoxFastTips').append(`
-            <a href='${item['url']}' ${section == 'videos' ? `id='videoOpen' data-id="${item['owner_id']}_${item['id']}"` : ''}>
+            <a href='${item['url']}' ${section == 'videos' ? `onclick="VideoViewer.openById('${id}')"` : ''}>
                 <img src='${item['preview']}' class='search_tip_preview_block'>
                 <div class='search_tip_info_block'>
                     <b>${ovk_proc_strtr(item['name'].escapeHtml(), 50)}</b>

@@ -285,65 +285,27 @@ u(document).on('click', '.docMainItem #report_icon', (e) => {
 
 u(document).on("click", ".docOpener, .docListViewItem a.viewerOpener, a.docGalleryItem", async (e) => {
     e.preventDefault()
+
+    // its an action
     if(e.target.closest('.doc_volume_action')) {
         return
     }
+
     if(window.openvk.current_id == 0) {
         return
     }
 
-    const target = u(e.target)
+    const target = u(e.target);
+    // its a gif on a wall
     const link = target.closest('a')
     if(target.closest(".embeddable").length > 0) {
         target.closest(".embeddable").toggleClass("playing")
         return
     }
 
-    CMessageBox.toggleLoader()
-    const url = link.nodes[0].href
-    const request = await fetch(url)
-    const body_html = await request.text()
-    const parser  = new DOMParser
-    const body    = parser.parseFromString(body_html, "text/html")
-
-	const preview = body.querySelector('.photo-page-wrapper-photo')
-
-	if (preview == null) {
-    	CMessageBox.toggleLoader()
-		return;
-	}
-
-    const details = body.querySelector('.ovk-photo-details')
-
-    u(preview.querySelector('.main_doc_block')).attr('id', 'ovk-photo-img')
-
-    const photo_viewer = new CMessageBox({
-        title: '',
-        custom_template: u(`
-        <div class="ovk-photo-view-dimmer">
-            <div class="ovk-photo-view">
-                <div class="photo_com_title">
-                    <text id="photo_com_title_photos">
-                        ${tr("document")}
-                    </text>
-                    <div>
-                        <a id="ovk-photo-close">${tr("close")}</a>
-                    </div>
-                </div>
-                <div class='photo_viewer_wrapper doc_viewer_wrapper'>
-                    ${preview.innerHTML}
-                </div>
-                <div class="ovk-photo-details">
-                    ${details.innerHTML}
-                </div>
-            </div>
-        </div>`)
-    })
-    photo_viewer.getNode().find("#ovk-photo-close").on("click", function(e) {
-        photo_viewer.close()
-    });
-
-    CMessageBox.toggleLoader()
+    const _viewer = new DocsViewer();
+    _viewer.open();
+    await _viewer.openByLink(link.nodes[0].href);
 })
 
 // ctx > "wall" and maybe "messages" in future

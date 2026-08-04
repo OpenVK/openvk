@@ -120,7 +120,7 @@ window.tweaks = [
             console.log(ovk_video_id)
 
             u(item).closest(".attachment").nodes[0].insertAdjacentHTML('afterBegin', `
-                <a id="videoOpen" data-id="${ovk_video_id[1]}" style="display:flex;flex-direction:column;" target="_blank" href="https://youtu.be/${id}">
+                <a onclick="VideoViewer.openById('${ovk_video_id[1]}', {}, event)" style="display:flex;flex-direction:column;" target="_blank" href="https://youtu.be/${id}">
                     <b>YouTube Video:</b>
                     <img src="${thumbnail}">
                 </a>
