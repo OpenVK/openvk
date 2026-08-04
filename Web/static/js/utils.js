@@ -495,10 +495,10 @@ function idUrlFromArray(id_splitted) {
     }
 }
 
-function setClickableHeightForEls(node, height_nodes = [], view_node = ".ovk-modal-player-window") {
+function setClickableHeightForEls(node, height_nodes = [], view_node = ".ovk-modal-player-window", append_height = 0) {
     let modal = node.find(view_node).nodes[0];
     let style = window.getComputedStyle(modal);
-    let h = modal.offsetHeight + parseInt(style.marginBottom) + parseInt(style.marginTop);
+    let h = modal.offsetHeight + parseInt(style.marginBottom) + parseInt(style.marginTop) + append_height;
 
     height_nodes.forEach(item => {
         item.style.height = h + "px";
