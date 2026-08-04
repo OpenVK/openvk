@@ -153,29 +153,39 @@ const videoViewerTemplate = `
         <div class="ovk-photo-close-icon"></div>
     </div>
     <div class="ovk-modal-player-window">
-        <div id="ovk-player-part">
-            <div class='top-part'>
-                <b id="videoTitle"></b>
+        <div id="player-infos">
+            <div id="ovk-player-part">
+                <div class='top-part'>
+                    <b id="videoTitle"></b>
 
-                <div class="miniplayer-head-buttons">
-                    <div id='miniplayer_return'></div>
-                    <div id='miniplayer_close'></div>
+                    <div class="miniplayer-head-buttons">
+                        <div id='miniplayer_return'></div>
+                        <div id='miniplayer_close'></div>
+                    </div>
+
+                    <div class='top-part-buttons'>
+                        <a id='__modal_player_minimize' class='hoverable_color'>${tr('hide_player')}</a>
+                        |
+                        <a id='__modal_player_close' class='hoverable_color'>${tr('close')}</a>
+                    </div>
                 </div>
-
-                <div class='top-part-buttons'>
-                    <a id='__modal_player_minimize' class='hoverable_color'>${tr('hide_player')}</a>
-                    |
-                    <a id='__modal_player_close' class='hoverable_color'>${tr('close')}</a>
+                <div class='center-part miniplayer-body' id="playerHtml"></div>
+                <div class='bottom-part miniplayer-body'>
+                    <div>
+                        <a id='__toggle_comments' class='hoverable_color'>${tr('show_comments')}</a>
+                        |
+                        <a href='/video' id="videoGoToLand" class='hoverable_color'>${tr('to_page')}</a>
+                    </div>
+                    <div id="videoMoveArrows">
+                        <a id='toggleBar' class='hoverable_color'>${tr('toggle_queue_video')}</a>
+                        <a id="move_back" class='hoverable_color'>←</a>
+                        <a id="move_next" class='hoverable_color'>→</a>
+                    </div>
                 </div>
             </div>
-            <div class='center-part miniplayer-body' id="playerHtml"></div>
-            <div class='bottom-part miniplayer-body'>
-                <a id='__toggle_comments' class='hoverable_color'>${tr('show_comments')}</a>
-                |
-                <a href='/video' id="videoGoToLand" class='hoverable_color'>${tr('to_page')}</a>
-            </div>
+            <div id="ovk-player-info"></div>
         </div>
-        <div id="ovk-player-info"></div>
+        <div id="player-video-queue"></div>
     </div>
 </div>`;
 const youtubeVideoTemplate = (id) => { return `
@@ -451,26 +461,34 @@ class PhotoViewer extends Viewer {
             }
         }
 
-        let show_roll = true; // this.count > 10 && (localStorage.getItem("tw.viewers.photo.list") || "1") === "1"
+        let show_roll = this.count > 10 && (localStorage.getItem("tw.viewers.photo.list") || "1") === "1"
         if (show_roll) {
-            this.modal.getNode().addClass("with-roll");
-            this.modal.getNode().find(".media-page-wrapper-description").after(`
-                <div id="photoviewer-roll"></div>    
-            `);
+            if (this.modal.getNode().find("#photoviewer-roll").length == 0) {
+                this.modal.getNode().addClass("with-roll");
+                this.modal.getNode().find(".ovk-photo-view-dimmer").append(`
+                    <div id="photoviewer-roll"></div>    
+                `);
+                this.modal.getNode().find("#photoviewer-roll").on("click", ".roll-el", (e) => {
+                    const id = e.target.closest(".roll-el").dataset.id;
+                    this.selectItemByApiId(id);
+                });
+            }
+
+            this.modal.getNode().find("#photoviewer-roll .roll-el").remove();
             this.itemsOrder.forEach(ord => {
-                const item = this.items[ord];
+                const _item = this.items[ord];
                 const r = u(`
-                    <div class="roll-el" data-id="${item.id}">
-                        <img src="${item.url}">
+                    <div class="roll-el" data-id="${_item.id}">
+                        <img src="${_item.url}">
                     </div>
                 `);
+                if (item && _item.id == item.id) {
+                    r.addClass("selected")
+                }
 
                 this.modal.getNode().find("#photoviewer-roll").append(r);
+                r.nodes[0].scrollIntoView({ behavior: 'smooth', block: 'center' })
             });
-            this.modal.getNode().find("#photoviewer-roll").on("click", ".roll-el", (e) => {
-                const id = e.target.closest(".roll-el").dataset.id;
-                this.selectItemByApiId(id);
-            })
         }
     }
 
@@ -618,9 +636,7 @@ class VideoViewer extends Viewer {
         });
         const msgbox = this.modal;
 
-
-        
-        msgbox.getNode().find('#ovk-player-part #__modal_player_close, .ovk-photo-view-overlay').on('click', (e) => {
+        msgbox.getNode().find('#ovk-player-part #__modal_player_close, .ovk-photo-view-overlay, #miniplayer_close').on('click', (e) => {
             this.modal.close()
         })
 
@@ -643,14 +659,32 @@ class VideoViewer extends Viewer {
             await this._loadDetails();
         })
 
-        msgbox.getNode().find('#__modal_player_minimize').on("click", (e) => {
-            e.preventDefault()
+        msgbox.getNode().find('#__modal_player_minimize, #miniplayer_return').on("click", (e) => {
+            e.preventDefault();
             if (this.isMinimized()) {
                 this._returnFromMinimized();
             } else {
                 this._showMinimized();
             }
         })
+
+        msgbox.getNode().find("#toggleBar").on("click", (e) => {
+            e.preventDefault();
+
+            msgbox.getNode().toggleClass("queue-shown");
+        });
+
+        msgbox.getNode().find("#move_back").on("click", (e) => {
+            e.preventDefault();
+
+            this.slide(-1);
+        });
+
+        msgbox.getNode().find("#move_next").on("click", (e) => {
+            e.preventDefault();
+
+            this.slide(1);
+        });
 
         setClickableHeightForEls(this.modal.getNode(), this.modal.getNode().find(".ovk-photo-view-overlay").nodes, ".ovk-modal-player-window", -50);
     }
@@ -712,6 +746,7 @@ class VideoViewer extends Viewer {
                 bsdnInitElement(this.modal.getNode().find('.bsdn').nodes[0]);
             }
         }
+        this.modal.getNode().find("#videoTitle").html(ovk_proc_strtr(item.title, 100));
     }
 
     _getCurrentEntryCacheNode() {
@@ -849,16 +884,29 @@ class DocsViewer extends Viewer {
             title: '',
             custom_template: u(photoViewerTemplate)
         })
-        this.modal.getNode().find("#ovk-photo-close").on("click", (e) => {
+        this.modal.getNode().find("#ovk-photo-close, .ovk-photo-view-overlay").on("click", (e) => {
             this.close()
         });
     }
 
-    async openByLink(url) {
-        CMessageBox.toggleLoader(true)
+    async loadIdsContext() {
+        const docs = this.context.id;
+        const posts = await window.OVKAPI.call("docs.getById", {"docs": docs, "extended": 1});
+
+        posts.items.forEach(item => {
+            this._appendApiItem(item);
+        })
+    }
+
+    static async openById(ids) {
+        //CMessageBox.toggleLoader(true)
+
+        const _viewer = new DocsViewer();
+        _viewer.open();
 
         try {
-            await this._loadDetails(url);
+            await _viewer._loadDetails(ids);
+            _viewer._updFrame();
         } catch (e) {
             console.error(e);
         }
@@ -866,8 +914,8 @@ class DocsViewer extends Viewer {
         CMessageBox.toggleLoader(false)
     }
 
-    async _loadDetails(url) {
-        const request = await fetch(url)
+    async _loadDetails(ids) {
+        const request = await fetch("/doc" + idUrlFromArray(ids))
         const body_html = await request.text()
         const body = new DOMParser().parseFromString(body_html, "text/html")
 

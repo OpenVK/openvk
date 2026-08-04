@@ -89,16 +89,16 @@ body.dimmed > .dimmer #clickable {
 }
 
 .ovk-modal-player-window #ovk-player-part .top-part b {
-    color: #515151;
+    color: var(--cinema);
     font-size: 12px;
 }
 
 .ovk-modal-player-window #ovk-player-part .top-part .top-part-buttons, .ovk-modal-player-window #ovk-player-part .bottom-part {
-    color: #515151;
+    color: var(--cinema);
 }
 
 .ovk-modal-player-window #ovk-player-part .top-part .top-part-buttons a, .ovk-modal-player-window #ovk-player-part .bottom-part a {
-    color: #515151;
+    color: var(--cinema);
 }
 
 .ovk-modal-player-window #ovk-player-info {
@@ -138,10 +138,8 @@ body.dimmed > .dimmer #clickable {
 
 .miniplayer {
     position: fixed;
-    background: rgba(54, 54, 54, 0.95);
+    background: #363636f2;
     border-radius: 3px;
-    min-width: 299px;
-    min-height: 192px;
     z-index: 7777;
     padding: 2px 7px;
     display: flex;
@@ -165,27 +163,6 @@ body.dimmed > .dimmer #clickable {
     gap: 4px;
 }
 
-.miniplayer .miniplayer-head .miniplayer-head-buttons div {
-    width: 16px;
-    height: 16px;
-    background: url(/assets/packages/static/openvk/img/wall.png) no-repeat 1px 0;
-    background-repeat: no-repeat;
-    opacity: 0.5;
-    cursor: pointer;
-}
-
-.miniplayer .miniplayer-head .miniplayer-head-buttons div:hover {
-    opacity: 1;
-}
-
-.miniplayer .miniplayer-head .miniplayer-head-buttons #__miniplayer_return {
-    background-position: -28px 0px;
-}
-
-.miniplayer .miniplayer-head .miniplayer-head-buttons #__miniplayer_close {
-    background-position: -12px 0px;
-}
-
 .miniplayer .miniplayer-head-buttons {
     height: 20px;
 }
@@ -207,59 +184,107 @@ body.dimmed > .dimmer #clickable {
     height: 100%;
 }
 
+.ovk-photo-view-dimmer.with-roll {
+    padding-bottom: 100px;
+}
+
 #photoviewer-roll {
-    position: absolute;
+    position: fixed;
     z-index: 302;
     left: 0px;
+    bottom: 0px;
     width: 100%;
     overflow-x: auto;
+    overflow-y: hidden;
     scrollbar-width: none;
-    margin: 7px -50px 0px -50px;
-    padding: 4px 0px;
+    padding: 18px 0px 0px 0px;
     display: flex;
     flex-wrap: nowrap;
 }
 
+#photoviewer-roll::before,
+#photoviewer-roll::after {
+    position: fixed;
+    content: "";
+    display: block;
+    left: 0;
+    height: 100%;
+    width: 50px;
+    z-index: 309;
+    background: linear-gradient(90deg, #323030a5, transparent);
+}
+
+#photoviewer-roll::after {
+    right: 0;
+    left: unset;
+    background: linear-gradient(270deg, #323030a5, transparent);
+}
+
 #photoviewer-roll .roll-el {
     width: 100px;
+    height: 100px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    opacity: 0.7;
+    opacity: 0.5;
+
+    transition: opacity 249ms ease-in-out;
 }
 
 #photoviewer-roll .roll-el img {
     height: 100px;
     width: 100px;
     object-fit: contain;
+    transition: width 250ms ease-in-out, height 100ms ease-in-out;
 }
 
 #photoviewer-roll .roll-el:hover,
 #photoviewer-roll .roll-el.selected {
     opacity: 1;
-    margin-top: -2px;
 }
 
 #photoviewer-roll .roll-el:hover img,
 #photoviewer-roll .roll-el.selected img {
-    height: 112px;
+    height: 120px;
+}
+
+.ovk-photo-view-dimmer .bottom-part {
+    display: flex;
+    justify-content: space-between;
+}
+
+.ovk-photo-view-dimmer .bottom-part #videoMoveArrows a {
+    color: var(--cinema);
+    cursor: pointer;
 }
 
 /* minimized*/
 
 .ovk-msg-all.ovk-msg-minimized {
-    position: absolute;
+    position: fixed;
     display: block;
-    top: unset;
-    left: unset;
+    top: 0;
+    left: 0;
     right: unset;
     bottom: unset;
     height: 500px;
     overflow: unset;
+    min-width: 299px;
+    min-height: 192px;
 }
 
 .ovk-msg-all.ovk-msg-minimized .ovk-photo-view-overlay {
     display: none;
+}
+
+.ovk-msg-all.ovk-msg-minimized .top-part b {
+    user-select: none;
+    color: var(--common-2) !important;
+    font-size: 12px;
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .ovk-msg-all.ovk-msg-minimized .ovk-photo-view {
@@ -269,11 +294,6 @@ body.dimmed > .dimmer #clickable {
 .ovk-photo-view-dimmer.mode-pptx hr,
 .ovk-photo-view-dimmer.mode-pptx .media-page-wrapper-comments {
     display: none;
-}
-
-.ovk-msg-all.with-roll .ovk-photo-details hr {
-    height: 100px;
-    background-color: unset;
 }
 
 .ovk-photo-view-dimmer.ovk-msg-minimized .ovk-modal-player-window {
@@ -294,4 +314,69 @@ body.dimmed > .dimmer #clickable {
 
 .ovk-photo-view-dimmer.ovk-msg-minimized .ovk-modal-player-window #ovk-player-part {
     padding: 0px 5px 5px 5px;
+    background: #363636ed;
+    padding: 0px 8px 8px 8px;
+    justify-content: unset;
+}
+
+.ovk-photo-view-dimmer .miniplayer-head-buttons {
+    display: none
+}
+
+.ovk-photo-view-dimmer.ovk-msg-minimized .top-part {
+    padding: 7px 0px;
+}
+
+.ovk-photo-view-dimmer.ovk-msg-minimized .top-part-buttons {
+    display: none;
+}
+
+.ovk-photo-view-dimmer.ovk-msg-minimized .ovk-modal-player-window .center-part {
+    height: 100%;
+}
+
+.ovk-photo-view-dimmer.ovk-msg-minimized .miniplayer-head-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.ovk-photo-view-dimmer.ovk-msg-minimized .miniplayer-head-buttons div {
+    width: 16px;
+    height: 16px;
+    background: url(/assets/packages/static/openvk/img/wall.png) no-repeat 1px 0;
+    background-repeat: no-repeat;
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.ovk-photo-view-dimmer.ovk-msg-minimized .miniplayer-head-buttons div:hover {
+    opacity: 1;
+}
+
+.ovk-photo-view-dimmer.ovk-msg-minimized .miniplayer-head-buttons #miniplayer_return {
+    background-position: -28px 0px;
+}
+
+.ovk-photo-view-dimmer.ovk-msg-minimized .miniplayer-head-buttons #miniplayer_close {
+    background-position: -12px 0px;
+}
+
+/* video player */
+
+.ovk-photo-view-dimmer.queue-shown .ovk-modal-player-window {
+    display: flex;
+    width: unset;
+}
+
+.ovk-photo-view-dimmer.queue-shown #player-infos {
+    width: 823px;
+}
+
+.ovk-photo-view-dimmer.queue-shown #player-video-queue {
+    width: 200px;
+    background: var(--cinema);
+}
+
+.ovk-photo-view-dimmer.queue-shown .ovk-photo-view-overlay {
+    display: none;
 }
