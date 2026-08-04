@@ -245,7 +245,53 @@ body.dimmed > .dimmer #clickable {
     height: 112px;
 }
 
+/* minimized*/
+
+.ovk-msg-all.ovk-msg-minimized {
+    position: absolute;
+    display: block;
+    top: unset;
+    left: unset;
+    right: unset;
+    bottom: unset;
+    height: 500px;
+    overflow: unset;
+}
+
+.ovk-msg-all.ovk-msg-minimized .ovk-photo-view-overlay {
+    display: none;
+}
+
+.ovk-msg-all.ovk-msg-minimized .ovk-photo-view {
+    min-width: 200px;
+}
+
+.ovk-photo-view-dimmer.mode-pptx hr,
+.ovk-photo-view-dimmer.mode-pptx .media-page-wrapper-comments {
+    display: none;
+}
+
 .ovk-msg-all.with-roll .ovk-photo-details hr {
     height: 100px;
     background-color: unset;
+}
+
+.ovk-photo-view-dimmer.ovk-msg-minimized .ovk-modal-player-window {
+    width: 400px;
+    width: 100%;
+    margin: unset;
+}
+
+.ovk-photo-view-dimmer.ovk-msg-minimized #ovk-player-info,
+.ovk-photo-view-dimmer.ovk-msg-minimized .bottom-part {
+    display: none;
+}
+
+.ovk-photo-view-dimmer.ovk-msg-minimized #ovk-player-part iframe {
+    width: 100%;
+    height: 100%;
+}
+
+.ovk-photo-view-dimmer.ovk-msg-minimized .ovk-modal-player-window #ovk-player-part {
+    padding: 0px 5px 5px 5px;
 }

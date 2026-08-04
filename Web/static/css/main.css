@@ -2924,30 +2924,6 @@ a.poll-retract-vote {
     box-sizing: border-box;
 }
 
-/* minimized*/
-
-.ovk-msg-all.ovk-msg-minimized {
-    position: absolute;
-    top: unset;
-    left: unset;
-    right: unset;
-    bottom: unset;
-    height: 500px;
-}
-
-.ovk-msg-all.ovk-msg-minimized .ovk-photo-view-overlay {
-    display: none;
-}
-
-.ovk-msg-all.ovk-msg-minimized .ovk-photo-view {
-    min-width: 200px;
-}
-
-.ovk-photo-view-dimmer.mode-pptx hr,
-.ovk-photo-view-dimmer.mode-pptx .media-page-wrapper-comments {
-    display: none;
-}
-
 .client_app > img {
     top: 3px;
     position: relative;

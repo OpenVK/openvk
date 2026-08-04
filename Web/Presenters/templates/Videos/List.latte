@@ -40,7 +40,7 @@
 {/block}
 
 {block preview}
-    <div class="video-preview" onclick="VideoViewer.openById({$x->getPrettyId()}, {}, event)">
+    <div class="video-preview" onclick="VideoViewer.openById({$x->getPrettyIdWithKey()}, {}, event)">
         <img src="{$x->getThumbnailURL()}"
             alt="{$x->getName()}"
             style="max-width: 170px; max-height: 127px; margin: auto;" />
@@ -48,7 +48,7 @@
 {/block}
 
 {block name}
-    <span onclick="VideoViewer.openById({$x->getPrettyId()}, {}, event)" style="color:unset;">{$x->getName()}</span>
+    <span onclick="VideoViewer.openById({$x->getPrettyIdWithKey()}, {}, event)" style="color:unset;">{$x->getName()}</span>
 {/block}
 
 {block description}

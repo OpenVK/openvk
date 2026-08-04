@@ -157,6 +157,11 @@ const videoViewerTemplate = `
             <div class='top-part'>
                 <b id="videoTitle"></b>
 
+                <div class="miniplayer-head-buttons">
+                    <div id='miniplayer_return'></div>
+                    <div id='miniplayer_close'></div>
+                </div>
+
                 <div class='top-part-buttons'>
                     <a id='__modal_player_minimize' class='hoverable_color'>${tr('hide_player')}</a>
                     |
@@ -170,7 +175,7 @@ const videoViewerTemplate = `
                 <a href='/video' id="videoGoToLand" class='hoverable_color'>${tr('to_page')}</a>
             </div>
         </div>
-        <div id="ovk-player-info miniplayer-body"></div>
+        <div id="ovk-player-info"></div>
     </div>
 </div>`;
 const youtubeVideoTemplate = (id) => { return `
@@ -182,18 +187,6 @@ frameborder="0"
 sandbox="allow-same-origin allow-scripts allow-popups"
 allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
 allowfullscreen></iframe>` };
-const miniplayerTemplate = `
-<div class='miniplayer'>
-    <div class='miniplayer-head'>
-        <b id="miniplayerTitle"></b>
-        <div class='miniplayer-head-buttons'>
-            <div id='__miniplayer_return'></div>
-            <div id='__miniplayer_close'></div>
-        </div>
-    </div>
-    <div class='miniplayer-body'></div>
-</div>
-`
 
 class PhotoViewer extends Viewer {
     _getImageUrl(item) {
@@ -625,6 +618,8 @@ class VideoViewer extends Viewer {
         });
         const msgbox = this.modal;
 
+
+        
         msgbox.getNode().find('#ovk-player-part #__modal_player_close, .ovk-photo-view-overlay').on('click', (e) => {
             this.modal.close()
         })
@@ -641,7 +636,7 @@ class VideoViewer extends Viewer {
             }
 
             let overlays = msgbox.getNode().find(".ovk-photo-view-overlay").nodes;
-            setClickableHeightForEls(msgbox.getNode(), overlays);
+            setClickableHeightForEls(this.modal.getNode(), this.modal.getNode().find(".ovk-photo-view-overlay").nodes, ".ovk-modal-player-window", -50);
 
             msgbox.getNode().find('#ovk-player-info').toggleClass('shown');
 
@@ -650,44 +645,71 @@ class VideoViewer extends Viewer {
 
         msgbox.getNode().find('#__modal_player_minimize').on("click", (e) => {
             e.preventDefault()
-
-            msgbox.hide();
-
-            this._showMinimized(this.currentItem);
+            if (this.isMinimized()) {
+                this._returnFromMinimized();
+            } else {
+                this._showMinimized();
+            }
         })
 
+        setClickableHeightForEls(this.modal.getNode(), this.modal.getNode().find(".ovk-photo-view-overlay").nodes, ".ovk-modal-player-window", -50);
+    }
+
+    afterOpen(videoId) {
+        console.log("videoid")
+        if (this.items[videoId]) {
+            this.selectItem(videoId, this.items[videoId]);
+        } else {
+            if (videoId == "skip") {
+                videoId = this.itemsOrder[0];
+            } else {
+                //this._appendApiItem({
+                //    "_PRESET_ID": videoId,
+                //});
+
+                //if (this.itemsOrder.indexOf(firstPhotoId) === -1) {
+                //    this.itemsOrder.push(firstPhotoId);
+                //}
+            }
+
+            this.selectItem(videoId, this.items[videoId]);
+        }
     }
 
     selectItem(pid, item) {
         this.currentId = pid;
+        console.log(pid, item)
         this._updFrame(item);
     }
 
     _updFrame(item, init_player = true) {
-        const author    = item.author
+        console.log("_updFrame")
+        console.log(item)
+        const author = item.author
+        const author_name = author.name ? author.name : `${author.first_name} ${author.last_name}`;
         let player_html = '';
 
-        if(init_player) {
-            if(video_object.platform == 'youtube') {
-                const video_url = new URL(video_object.player)
+        if(init_player == true) {
+            if(item.platform == 'youtube') {
+                const video_url = new URL(item.player)
                 const video_id = video_url.pathname.replace('/', '')
                 player_html = youtubeVideoTemplate(video_id);
             } else {
-                if(!video_object.is_processed) {
+                if(!item.is_processed) {
                     player_html = `<span class="video_processing_error">${tr('video_processing')}</span>`
                 } else {
-                    let author_name = author.name ? author.name : `${author.first_name} ${author.last_name}`
+                    let author_name =
                     player_html = `
-                        <div class='bsdn media' data-name="${escapeHtml(video_object.title)}" data-author="${escapeHtml(author_name)}">
-                            <video class='media' src='${video_object.player}'></video>
+                        <div class='bsdn media' data-name="${escapeHtml(item.title)}" data-author="${escapeHtml(author_name)}">
+                            <video class='media' src='${item.player}'></video>
                         </div>
                     `;
                 }
             }
 
-            msgbox.getNode().find("#playerHtml").html(player_html);
+            this.modal.getNode().find("#playerHtml").html(player_html);
             if(item.platform == null && item.is_processed) {
-                bsdnInitElement(msgbox.getNode().find('.bsdn').nodes[0]);
+                bsdnInitElement(this.modal.getNode().find('.bsdn').nodes[0]);
             }
         }
     }
@@ -710,8 +732,6 @@ class VideoViewer extends Viewer {
                 details.find('.media-page-wrapper-description b').remove();
 
                 this.modal.getNode().find('#ovk-player-info').html(details.html())
-
-                setClickableHeightForEls(this.modal.getNode(), []);
 
                 this._addCachedDetailsToEntry(entry, details ? details.innerHTML : '')
             } catch(e) {
@@ -739,9 +759,10 @@ class VideoViewer extends Viewer {
             videoViewer.setContext({
                 "id": ids
             });
+            const first_id = ids;
             await videoViewer.loadIdsOnlyContext();
             videoViewer.open();
-            videoViewer.afterOpen(video_id);
+            videoViewer.afterOpen(first_id);
         } catch(e) {
             console.error(e);
         }

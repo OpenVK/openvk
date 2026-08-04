@@ -473,6 +473,7 @@ class Viewer {
         u("body").addClass("dimmed");
         u("html").attr("style", "overflow-y: hidden;")
         this.modal.getNode().removeClass("ovk-msg-minimized");
+        this.modal.getNode().attr("style", "");
 
         if (this._draggable_ctx != null) {
             this._draggable_ctx.destroy();
