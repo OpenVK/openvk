@@ -206,8 +206,8 @@
                             </a>
                             <a href="{$thisUser->getURL()}" class="link my_page" title="{_my_page} [Alt+Shift+.]" accesskey=".">{_my_page}</a>
                             <a href="/friends{$thisUser->getId()}" class="link my_friends">
-                                <span class="pc_v">{_my_friends}</span>
-                                <span class="mobile_v">{_mobile_friends}</span>
+                                <div class="pc_v">{_my_friends}</div>
+                                <div class="mobile_v">{_mobile_friends}</div>
                                 <object type="internal/link" n:if="$thisUser->getRequestsCount() > 0">
                                     <a href="/friends{$thisUser->getId()}?act=incoming" class="linkunderline">
                                        (<b>{$thisUser->getRequestsCount()}</b>)
@@ -215,47 +215,47 @@
                                 </object>
                             </a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('photos')" href="/albums{$thisUser->getId()}" class="link my_photos">
-                                <span class="pc_v">{_my_photos}</span>
-                                <span class="mobile_v">{_mobile_photos}</span>
+                                <div class="pc_v">{_my_photos}</div>
+                                <div class="mobile_v">{_mobile_photos}</div>
                             </a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('videos')" href="/videos{$thisUser->getId()}" class="link my_videos">
-                                <span class="pc_v">{_my_videos}</span>
-                                <span class="mobile_v">{_mobile_videos}</span>
+                                <div class="pc_v">{_my_videos}</div>
+                                <div class="mobile_v">{_mobile_videos}</div>
                             </a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('audios')" href="/audios{$thisUser->getId()}" class="link my_audios">
-                                <span class="pc_v">{_my_audios}</span>
-                                <span class="mobile_v">{_mobile_audios}</span>
+                                <div class="pc_v">{_my_audios}</div>
+                                <div class="mobile_v">{_mobile_audios}</div>
                             </a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('messages')" href="/im" class="link my_messages">
-                                <span class="pc_v">{_my_messages}</span>
-                                <span class="mobile_v">{_mobile_messages}</span>
+                                <div class="pc_v">{_my_messages}</div>
+                                <div class="mobile_v">{_mobile_messages}</div>
                                 <object type="internal/link" n:if="$unreadMessagesCount > 0">
                                     (<b>{$unreadMessagesCount}</b>)
                                 </object>
                             </a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('notes')" href="/notes{$thisUser->getId()}" class="link my_notes">
-                                <span class="pc_v">{_my_notes}</span>
-                                <span class="mobile_v">{_mobile_notes}</span>
+                                <div class="pc_v">{_my_notes}</div>
+                                <div class="mobile_v">{_mobile_notes}</div>
                             </a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('groups')" href="/groups{$thisUser->getId()}" class="link my_groups">
-                                <span class="pc_v">{_my_groups}</span>
-                                <span class="mobile_v">{_mobile_groups}</span>
+                                <div class="pc_v">{_my_groups}</div>
+                                <div class="mobile_v">{_mobile_groups}</div>
                             </a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('events')" href="/events{$thisUser->getId()}" class="link my_groups">{_my_events}</a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('news')" href="/feed" class="link my_feed" title="{_my_feed} [Alt+Shift+,]" accesskey=",">
-                                <span class="pc_v">{_my_feed}</span>
-                                <span class="mobile_v">{_news}</span>
+                                <div class="pc_v">{_my_feed}</div>
+                                <div class="mobile_v">{_news}</div>
                             </a>
                             <a href="/notifications" class="link my_feedback" title="{_my_feedback} [Alt+Shift+N]" accesskey="n">
-                                <span class="pc_v">{_my_feedback}</span>
-                                <span class="mobile_v">{_feedback}</span>
+                                <div class="pc_v">{_my_feedback}</div>
+                                <div class="mobile_v">{_feedback}</div>
                                 <object type="internal/link" n:if="$notificationsCount > 0">
                                     (<b>{$notificationsCount}</b>)
                                 </object>
                             </a>
                             <a href="/settings" class="link my_settings">
-                                <span class="pc_v">{_my_settings}</span>
-                                <span class="mobile_v">{_mobile_settings}</span>
+                                <div class="pc_v">{_my_settings}</div>
+                                <div class="mobile_v">{_mobile_settings}</div>
                             </a>
 
                             {if $thisUser->getLeftMenuItemStatus('docs') || $thisUser->getLeftMenuItemStatus('apps')}
