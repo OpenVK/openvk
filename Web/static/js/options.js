@@ -275,6 +275,7 @@ window.tweaks = [
     new TweakOption("im.modern_mode", function () {
         console.log("IM | Modern mode enabled!")
     }),
+    new TweakOption("viewers.photo.list", function () {}),
 ]
 
 window.openPluginSettings = () => {

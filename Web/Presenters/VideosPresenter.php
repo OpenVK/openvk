@@ -74,7 +74,11 @@ final class VideosPresenter extends OpenVKPresenter
         $this->template->video    = $video;
         $this->template->cCount   = $this->template->video->getCommentsCount();
         $this->template->cPage    = (int) ($this->queryParam("p") ?? 1);
-        $this->template->comments = iterator_to_array($this->template->video->getComments($this->template->cPage));
+
+        $this->template->sort = $this->queryParam("sort") ?? "asc";
+        $input_sort = $this->template->sort == "asc" ? "ASC" : "DESC";
+
+        $this->template->comments = iterator_to_array($this->template->video->getComments($this->template->cPage, null, $input_sort));
     }
 
     public function renderUpload(): void

@@ -129,6 +129,22 @@ class CMessageBox {
 
 window.messagebox_stack = []
 
+function find_msgbox_by_node(node) {
+    return find_msgbox_by_id(node.dataset.id);
+}
+
+function find_msgbox_by_id(msg_id) {
+    let msg = null;
+    window.messagebox_stack.forEach((item) => {
+        if (item.id == msg_id) {
+            msg = item;
+            return;
+        }
+    });
+
+    return msg;
+}
+
 function MessageBox(title, body, buttons, callbacks, return_msg = false) {
     const msg = new CMessageBox({
         title: title,
@@ -228,7 +244,7 @@ class Viewer {
     }
 
     get currentItem() {
-        return this.items[this.currentIndex];
+        return this.items[this.currentId];
     }
 
     setContext(data) {
@@ -249,7 +265,7 @@ class Viewer {
         this.selectItem(id, entry);
     }
     _isLoadable() { return false; }
-    async _loadLoadableContext() { return; }
+    async _loadLoadableContext(side) { return; }
 
     _setMainContext(data) {
         this.context.type = data.type;
@@ -286,6 +302,7 @@ class Viewer {
             return;
         }
 
+        console.log(pid, item)
         this._appendItemToList(pid, item, profiles, groups);
         this.itemsOrder.push(pid);
     }
@@ -339,7 +356,7 @@ class Viewer {
                     // to start
                 };
 
-                await this._loadLoadableContext();
+                await this._loadLoadableContext(direction);
                 idx = this.itemsOrder.length - 1;
             } else {
                 idx = this.count - 1;
@@ -347,7 +364,7 @@ class Viewer {
         } else if (idx >= this.count) {
             if (this._isLoadable()) {
                 this.context.offset += 20;
-                await this._loadLoadableContext();
+                await this._loadLoadableContext(direction);
                 idx = 0;
             } else {
                 idx = 0;
@@ -366,26 +383,85 @@ class Viewer {
     }
 
     _removeCacheForCurrentEntry() {
-        let entry = this.items[this.currentIndex];
+        let entry = this.currentItem;
+        console.log(this.items, this.currentItem, entry)
 
         if (entry) {
             this._removeCacheForEntry(entry);
         }
     }
 
+    _updDetailsUrlForCurrentEntry(url) {
+        let entry = this.currentItem;
+
+        console.log(entry, this)
+        if (entry) {
+            entry.postfix = url;
+            entry.cached = null;
+
+            this._removeDetails();
+            this._loadDetails(this.currentId);
+        } else {
+            console.error("no entry")
+        }
+    }
+    async loadNextDetailsPage(event) {
+        await this._loadDetails(this.currentId, "pagination", event);
+    }
+
+    _removeDetails() {
+        this.modal.getNode().find(".ovk-photo-details").html(`<img src="${_loader_link}">`);
+    }
+
     _addCachedDetailsToEntry(entry, html) {
         entry.cached = html;
     }
 
+    _getDetailsUrl(id, postfix) {
+        let item_ids = idUrlFromArray(id);
+        let str = new URL(location.origin + "/photo" + item_ids);
+
+        if (postfix != null) {
+            postfix.forEach((value, key) => {
+                str.searchParams.set(key, value);
+            })
+        }
+
+        return str.toString();
+    }
+
     // states
+
+    _updFrame(item) {}
+    async setCurrentEntryDeleted(state) {
+        const el = this.currentItem;
+        el.deleted = true;
+        await this.deleteItem(el);
+        this._updFrame(el);
+    }
+    async deleteItem(element) {}
+
+    setMode(mode) {
+        this.mode = mode;
+        this.av_modes.forEach(el => {
+            this.modal.getNode().removeClass("mode-"+el);
+        })
+        this.modal.getNode().addClass("mode-"+mode);
+    }
 
     // оно должно превращать само окно в перетаскиваемый элемент а не создавать новый элемент
     _showMinimized(item) {
-        this.getNode().addClass("ovk-msg-minimized");
+        this.modal.getNode().addClass("ovk-msg-minimized");
+        u("body").removeClass("dimmed");
+        u("html").attr("style", "")
 
         // jquery ui
-        this._draggable_ctx  = $(this.getNode().nodes[0]).draggable({cursor: 'grabbing', containment: 'window', cancel: '.miniplayer-body'});
-        this._resizeable_ctx = $(this.getNode().nodes[0]).resizable({
+        this._draggable_ctx  = $(this.modal.getNode().nodes[0]).draggable({
+            cursor: 'grabbing', 
+            containment: 'window', 
+            cancel: '.miniplayer-body'
+        });
+        this._resizeable_ctx = $(this.modal.getNode().nodes[0]).resizable({
             maxHeight: 2000,
             maxWidth: 3000,
             minHeight: 150,
@@ -394,7 +470,9 @@ class Viewer {
     }
 
     _returnFromMinimized() {
-        this.getNode().removeClass("ovk-msg-minimized");
+        u("body").addClass("dimmed");
+        u("html").attr("style", "overflow-y: hidden;")
+        this.modal.getNode().removeClass("ovk-msg-minimized");
 
         if (this._draggable_ctx != null) {
             this._draggable_ctx.destroy();
@@ -402,5 +480,9 @@ class Viewer {
             this._draggable_ctx = null;
             this._resizeable_ctx = null;
         }
+    }
+
+    isMinimized() {
+        return this.modal.getNode().hasClass("ovk-msg-minimized");
     }
 }

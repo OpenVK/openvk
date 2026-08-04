@@ -75,7 +75,7 @@
                         </div>
                     </a>
                     <div n:if="isset($thisUser) && $thisUser->getId() === $photo->getOwner()->getId()">
-                        <a href="/photo{$photo->getPrettyId()}/edit" class="profile_link" style="display:block;width:96%;">{_edit}</a>
+                        <a onclick="edit_photo(event)" href="/photo{$photo->getPrettyId()}/edit" class="profile_link" style="display:block;width:96%;">{_edit}</a>
                         <a id="_photoDelete" href="/photo{$photo->getPrettyId()}/delete" class="profile_link" style="display:block;width:96%;">{_delete}</a>
                     </div>
                     <a href="{$photo->getURL()}" class="profile_link" target="_blank" style="display:block;width:96%;">{_"open_original"}</a>
