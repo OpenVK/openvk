@@ -576,4 +576,9 @@ class Post extends Postable
             'name' => $this->getGeo()->name,
         ];
     }
+
+    public function getAccessKey(): ?string
+    {
+        return null;
+    }
 }

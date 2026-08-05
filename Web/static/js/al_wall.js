@@ -197,6 +197,50 @@ frameborder="0"
 sandbox="allow-same-origin allow-scripts allow-popups"
 allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
 allowfullscreen></iframe>` };
+const postViewerTemplate = `
+<div class="ovk-photo-view-dimmer ovk-post-viewer-dimmer">
+    <div class="ovk-photo-view-overlay ovk-photo-view-overlay-right">
+        <div class="ovk-photo-close-icon"></div>
+    </div>
+    <div class="ovk-photo-view ovk-post-viewer">
+        <div class="post_com_title">
+            <div class="itemAuthor">
+                <a><img class="itemAuthorAva"></a>
+                <div class="itemAuthor2">
+                    <span class="itemAuthorName">
+                        <a></a>
+                    </span>
+                    <a class="itemPostTime"></a>
+                </div>
+            </div>
+            <div style="display:flex;flex-direction:column;">
+                <div>
+                    <a style="display:none;" id="ovk-viewer-slideshow">${tr("show_slideshow")}</a>
+                    <a style="display:none;" id="ovk-viewer-minimize">${tr("minimize")}</a>
+
+                    <a id="ovk-photo-close">${tr("close")}</a>
+                </div>
+
+                <div id="post-win-arrows">
+                    <a id="move_back">←</a>
+                    <a id="move_next">→</a>
+                </div>
+            </div>
+        </div>
+        <div class="photo_viewer_wrapper miniplayer-body">
+            <div id="itemContent">
+                <img src="${_loader_link}" id="ovk-photo-img">
+
+            </div>
+        </div>
+        <div class="ovk-photo-details miniplayer-body">
+            <div id="itemContentActions"></div>
+            <div id="itemContentComments"></div>
+            <img src="${_loader_link}">
+        </div>
+    </div>
+</div>
+`
 
 class PhotoViewer extends Viewer {
     _getImageUrl(item) {
@@ -941,7 +985,9 @@ class DocsViewer extends Viewer {
 // добавлен из-за диалогов (из сообщений к посту переходить долго)
 class PostViewer extends Viewer {
     async loadWallContext() {
-        const wall = await window.OVKAPI.call("wall.get", {"owner_id": 0, "count": 10, "extended": 1});
+        const post_ids = this.context.id;
+        const id1 = post_ids.split("_");
+        const wall = await window.OVKAPI.call("wall.get", {"owner_id": id1[0], "near": id1[1], "count": 10, "extended": 1});
         this.totalItemsCount = wall.count;
 
         wall.items.forEach(item => {
@@ -958,10 +1004,98 @@ class PostViewer extends Viewer {
         })
     }
 
+    createMsgbox() {
+        this.modal = new CMessageBox({
+            title: "",
+            custom_template: u(postViewerTemplate)
+        });
+
+        this.modal.getNode().find("#ovk-photo-close, .ovk-photo-view-overlay").on("click", () => {
+            this.modal.close();
+        });
+
+        this.modal.getNode().find("#move_back").on("click", () => {
+            this.slide(-1);
+        });
+
+        this.modal.getNode().find("#move_next").on("click", () => {
+            this.slide(1);
+        });
+    }
+
+    async selectItem(pid, item) {
+        CMessageBox.toggleLoader(true);
+        if (item.html == null) {
+            const htmls = await this._downloadPage(idUrlFromArray(item.id));
+            item.html = htmls[0];
+            item.details = htmls[1];
+        }
+        CMessageBox.toggleLoader(false);
+
+        this._updFrame(item);
+        this.currentId = pid;
+        console.log(pid, item)
+    }
+
+    _updFrame(item) {
+        if (item && (this.currentId != item.id)) {
+            this.modal.getNode().find("#itemContent").html(item.html);
+            this.modal.getNode().find("#itemContentComments").html(item.details);
+            this.modal.getNode().find("#itemContentActions").html(this.modal.getNode().find("#itemContentComments .item_links").last().outerHTML);
+            this.modal.getNode().find("#itemContentComments .item_links").remove();
+            this.modal.getNode().find("#itemContentActions .item_links h4").remove();
+
+            const post = this.modal.getNode().find("#itemContent> .post");
+            const isMicroblog = post.hasClass("post_microblog");
+            let author_name;
+            let author_url;
+            let author_ava;
+            let author_otherText;
+            let dates;
+            let postUrl;
+
+            post.addClass("in-window");
+
+            if (isMicroblog) {
+                const nameBlock = post.find("tbody > tr > .post-all-contents > .post-author");
+                nameBlock.find(".postAction").remove();
+
+                author_name = nameBlock.find(".post-author-name").first().textContent;
+                author_url = nameBlock.find("a").first().getAttribute("href");
+                nameBlock.find("a").first().remove();
+                author_otherText = nameBlock.first().innerHTML;
+                dates = post.find(".post-menu .date").first().textContent;
+                postUrl = post.find(".post-menu .date").first().getAttribute("href");
+                author_ava = post.find("tbody > tr > .post-author-ava > a > img").first().src;
+            }
+
+            this.modal.getNode().find(".itemAuthorName").html(`<a></a>`);
+            this.modal.getNode().find(".itemAuthorName a").html(escapeHtml(author_name));
+            this.modal.getNode().find(".itemAuthorName a").attr("href", author_url);
+            this.modal.getNode().find(".itemAuthorName").append(author_otherText);
+            this.modal.getNode().find(".itemAuthorAva").attr("src", author_ava);
+            this.modal.getNode().find(".itemPostTime").html(escapeHtml(dates));
+            this.modal.getNode().find(".itemPostTime").attr("href", postUrl);
+            this.modal.getNode().find(".itemAuthorAva").closest("a").attr("href", author_url);
+        }
+
+        setClickableHeightForEls(this.modal.getNode(), this.modal.getNode().find(".ovk-photo-view-overlay").nodes, ".photo_viewer_wrapper", -50);
+    }
+
+    async _downloadPage(url) {
+        const res = await fetch("/wall" + url);
+        const html = await res.text();
+        const doc = new DOMParser().parseFromString(html, "text/html");
+        const post = doc.querySelector('#post_page_main');
+        const details = doc.querySelector('#post_page_meta');
+
+        return [post.innerHTML, details.innerHTML];
+    }
+
     static async openById(event, id) {
         if (event != null) {
-            e.preventDefault();
-            e.stopPropagation();
+            event.preventDefault();
+            event.stopPropagation();
         }
 
         CMessageBox.toggleLoader(true);
@@ -973,14 +1107,33 @@ class PostViewer extends Viewer {
                 id: id
             });
 
-            await msg.loadPostsContext();
-            msg.selectItemByApiId(id);
+            const id2 = idUrlFromArray(id);
+            const htmls = await msg._downloadPage(id2);
+
+            CMessageBox.toggleLoader(false);
+
+            console.log(htmls)
             msg.open();
+            msg._updFrame({
+                "html": htmls[0],
+                "details": htmls[1]
+            });
+
+            await msg.loadWallContext();
+
+            const it = msg.items[id];
+            if (it == null) {
+                makeError(tr("post_display_error_switching_unavailable"));
+                return;
+            }
+
+            it.html = htmls[0];
+            it.details = htmls[1];
+            msg.selectItemByApiId(id);
         } catch(e) {
             console.error(e);
         }
 
-        CMessageBox.toggleLoader(false);
     }
 }
 
