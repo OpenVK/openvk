@@ -2392,7 +2392,7 @@
 "archived_posts" = "Жазбалар мұрағаты";
 "archive_banner_title" = "Бұл — жазбалар мұрағаты";
 "archive_banner_desc" = "Қабырғадағы жазбаларды мұнда тарих пен естеліктер үшін сақтай аласыз. Бұл мұрағат тек сізге ғана көрінеді.";
-"archive_action" = "Мұрағат";
+"archive_action" = "Мұрағаттау";
 "unarchive_action" = "Мұрағаттан шығару";
 "post_deleted" = "Жазба жойылған";
 "archive_all_years" = "Барлық жыл";
