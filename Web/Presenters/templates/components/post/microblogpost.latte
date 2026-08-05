@@ -61,21 +61,21 @@
 
                     <span class="nobold pinned_mark">{_pinned}</span>
 
-                    <a onclick="ajax_delete(event)" n:if="$canBeDeleted && !($forceNoDeleteLink ?? false) && $compact == false" class="delete" href="/wall{$post->getPrettyId()}/delete"></a>
-                    <a n:if="!$canBeDeleted" class="report" title="{_report}" href="javascript:reportPost({$post->getId()})"></a>
+                    <a onclick="ajax_delete(event)" n:if="$canBeDeleted && !($forceNoDeleteLink ?? false) && $compact == false" class="postAction delete" href="/wall{$post->getPrettyId()}/delete"></a>
+                    <a n:if="!$canBeDeleted" class="postAction report" title="{_report}" href="javascript:reportPost({$post->getId()})"></a>
 
                     {if $canBePinned && !($forceNoPinLink ?? false) && $compact == false}
                         {if $post->isPinned()}
-                            <a onclick="ajax_pin(event)" class="pin unpin" href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}"></a>
+                            <a onclick="ajax_pin(event)" class="postAction pin unpin" href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}"></a>
                         {else}
-                            <a onclick="ajax_pin(event)" class="pin" href="/wall{$post->getPrettyId()}/pin?act=pin&hash={rawurlencode($csrfToken)}"></a>
+                            <a onclick="ajax_pin(event)" class="postAction pin" href="/wall{$post->getPrettyId()}/pin?act=pin&hash={rawurlencode($csrfToken)}"></a>
                         {/if}
                     {/if}
-                    <a n:if="$canBeArchived && !($forceNoDeleteLink ?? false) && $compact == false && !$post->isArchived()" class="archive_post" href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}" title="{_archive_action}"></a>
-                    <a n:if="$canBeArchived && !($forceNoDeleteLink ?? false) && $compact == false && $post->isArchived()" class="archive_post" href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}" title="{_unarchive_action}"></a>
+                    <a n:if="$canBeArchived && !($forceNoDeleteLink ?? false) && $compact == false && !$post->isArchived()" class="postAction archive_post" href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}" title="{_archive_action}"></a>
+                    <a n:if="$canBeArchived && !($forceNoDeleteLink ?? false) && $compact == false && $post->isArchived()" class="postAction archive_post" href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}" title="{_unarchive_action}"></a>
 
                     {if $post->canBeEditedBy($thisUser) && !($forceNoEditLink ?? false) && $compact == false}
-                        <a class="edit" id="editPost"></a>
+                        <a class="postAction edit" id="editPost"></a>
                     {/if}
                 </div>
                 <div class="post-content" id="{$post->getPrettyId()}" data-localized-nsfw-text="{_nsfw_warning}">
@@ -129,7 +129,7 @@
                 </div>
                 <div class='post-edit' n:if='!$compact'></div>
                 <div class="post-menu" n:if="$compact == false">
-                    <a href="{if $suggestion ?? false}javascript:void(0){else}/wall{$post->getPrettyId()}{/if}" class="date">{$post->getPublicationTime()}
+                    <a onclick="PostViewer.openById(event, {$post->getPrettyIdWithKey()})" href="{if $suggestion ?? false}javascript:void(0){else}/wall{$post->getPrettyId()}{/if}" class="date">{$post->getPublicationTime()}
                         <span n:if="$post->getEditTime()" class="edited editedMark">({_edited_short})</span>
                     </a>
 

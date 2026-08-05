@@ -11,11 +11,13 @@
     --text-2: #404036;
     --text-rev: white;
     --brand: #606060;
-    --cinema: #515151;
     --nobold: #868686;
 
+    /* by topics */
     --summary: #45688E;
     --error-bg:  #f781812e;
+    --cinema: #515151;
+    --post-head: #EEEEEE;
 }
 
 html {

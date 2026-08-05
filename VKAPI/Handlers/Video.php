@@ -17,7 +17,7 @@ final class Video extends VKAPIRequestHandler
 {
     public function get(int $owner_id = 0, string $videos = "", string $fields = "", int $offset = 0, int $count = 30, int $extended = 0): object
     {
-        $this->requireUser();
+        # $this->requireUser();
 
         if (!empty($videos)) {
             $vids = array_unique(explode(',', $videos));

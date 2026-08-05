@@ -380,3 +380,95 @@ body.dimmed > .dimmer #clickable {
 .ovk-photo-view-dimmer.queue-shown .ovk-photo-view-overlay {
     display: none;
 }
+
+/* Post */
+
+.ovk-post-viewer {
+    padding: 0;
+}
+
+.ovk-post-viewer .post_com_title {
+    background: var(--post-head);
+    padding: 15px 30px;
+    box-sizing: border-box;
+    height: 80px;
+
+    display: flex;
+    justify-content: space-between;
+}
+
+.ovk-post-viewer .photo_viewer_wrapper {
+    display: block;
+    width: 650px;
+}
+
+.ovk-post-viewer .ovk-photo-slide-left {
+    width: 10%;
+    left: -70px;
+    top: 40px;
+    height: 80%;
+}
+
+.ovk-post-viewer .ovk-photo-slide-right {
+    width: 10%;
+    right: -70px;
+    top: 40px;
+    height: 80%;
+}
+
+.ovk-post-viewer .itemAuthor {
+    display: flex;
+    gap: 15px;
+}
+
+.ovk-post-viewer .itemAuthor .itemAuthorAva {
+    width: 50px;
+    height: 50px;
+    border-radius: 2px;
+    object-fit: cover;
+    object-position: top;
+}
+
+.ovk-post-viewer .itemAuthor2 {
+    box-sizing: border-box;
+    padding-top: 8px;
+    font-size: 13px;
+}
+
+.ovk-post-viewer .itemAuthor2 .itemAuthorName {
+    display: block;
+}
+
+.ovk-post-viewer .itemAuthor2 .itemAuthorName a {
+    font-weight: bold;
+    color: var(--text);
+}
+
+.post.in-window {
+    border-bottom: unset;
+    padding: 0px 30px;
+}
+
+.post.post_microblog.in-window .post-author-ava,
+.post.post_microblog.in-window .post-author {
+    display: none;
+}
+
+.ovk-post-viewer .itemPostTime {
+    margin-top: 2px;
+    display: block;
+    font-size: 12px;
+    color:gray;
+}
+
+.ovk-post-viewer #itemContentComments .item_comments {
+    width: 100% !important;
+    float: unset !important;
+}
+
+.ovk-post-viewer #itemContentActions .item_links {
+    float: unset !important;
+    min-height: unset !important;
+    padding-left: unset !important;
+    width: 100% !important;
+}
