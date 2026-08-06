@@ -11,9 +11,11 @@
     --text-2: #404036;
     --text-rev: white;
     --brand: #606060;
+    --brand-bg: #efeef6;
     --nobold: #868686;
 
     /* by topics */
+    --profile-link: #CCC;
     --summary: #45688E;
     --error-bg:  #f781812e;
     --cinema: #515151;
@@ -2879,7 +2881,7 @@ a.poll-retract-vote {
 .ovk-photo-view .show-more-win {
     display: inline-block;
     width: 100%;
-    background: var(--bg-selected-mid);
+    background: var(--bg-slightly-border);
     padding: 10px 10px;
     box-sizing: border-box;
     border-top: unset;

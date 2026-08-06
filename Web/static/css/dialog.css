@@ -385,11 +385,12 @@ body.dimmed > .dimmer #clickable {
 
 .ovk-post-viewer {
     padding: 0;
+    width: 700px;
 }
 
 .ovk-post-viewer .post_com_title {
     background: var(--post-head);
-    padding: 15px 30px;
+    padding: 15px 23px;
     box-sizing: border-box;
     height: 80px;
 
@@ -399,7 +400,19 @@ body.dimmed > .dimmer #clickable {
 
 .ovk-post-viewer .photo_viewer_wrapper {
     display: block;
-    width: 650px;
+    width: 100%;
+    height: 100%;
+    padding: 10px 20px;
+    box-sizing: border-box;
+}
+
+.ovk-post-viewer .collapsed_text {
+    max-height: unset;
+}
+
+.ovk-post-viewer .collapse_button,
+.ovk-post-viewer hr {
+    display: none;
 }
 
 .ovk-post-viewer .ovk-photo-slide-left {
@@ -446,12 +459,29 @@ body.dimmed > .dimmer #clickable {
 
 .post.in-window {
     border-bottom: unset;
-    padding: 0px 30px;
+    padding: unset;
 }
 
-.post.post_microblog.in-window .post-author-ava,
-.post.post_microblog.in-window .post-author {
+.post.in-window > tbody,
+.post.in-window > tbody > tr {
+    width: 100%;
+    display: block;
+}
+
+.post.in-window > tbody .post-content .text .really_text,
+.post.in-window > tbody .post-content .text > span {
+    font-size: 1.4em;
+    font-family: Georgia;
+    padding: 0;
+}
+
+.post.in-window.common-post .post-author-ava,
+.post.in-window.common-post .post-author {
     display: none;
+}
+
+.post.in-window .post.mini-post .post-author {
+    display: block !important;
 }
 
 .ovk-post-viewer .itemPostTime {
@@ -464,6 +494,12 @@ body.dimmed > .dimmer #clickable {
 .ovk-post-viewer #itemContentComments .item_comments {
     width: 100% !important;
     float: unset !important;
+    padding: 0px 0px 1px 0px;
+}
+
+.ovk-post-viewer #itemContentActions {
+    padding: 0px 20px 10px 20px;
+    display: flex;
 }
 
 .ovk-post-viewer #itemContentActions .item_links {
@@ -471,4 +507,65 @@ body.dimmed > .dimmer #clickable {
     min-height: unset !important;
     padding-left: unset !important;
     width: 100% !important;
+
+    display: flex;
+}
+
+.ovk-post-viewer #itemContentActions .item_links .profile_link {
+    display: block;
+    width: unset;
+    border-bottom: unset;
+    padding: 2px 8px;
+    width: unset !important;
+}
+
+.ovk-post-viewer #itemContentActions .like_wrap {
+    float: unset;
+    display: inline-flex;
+    flex-direction: row-reverse;
+}
+
+.ovk-post-viewer #itemContentComments .item_comments .item_comments_head {
+    display: block;
+    background: var(--brand-bg);
+    padding: 15px 30px;
+}
+
+.ovk-post-viewer #itemContentComments .item_comments .item_comments_head h4 {
+    color: var(--brand);
+    border-bottom: unset;
+    display: inline-block;
+}
+
+.ovk-post-viewer #itemContentComments #standaloneCommentBox {
+    padding: 10px 30px;
+    border-bottom: unset;
+    background: #e5e2eb;
+    border-top: 1px solid var(--profile-link);
+}
+
+.ovk-post-viewer #itemContentComments .scroll_container {
+    padding: 0px 28px;
+}
+
+.ovk-post-viewer #itemContentComments #none_tip {
+    padding: 20px 30px;
+    display: block;
+}
+
+.ovk-post-viewer-dimmer.viewer-deleted .ovk-post-details {
+    filter: opacity(0.5);
+    pointer-events: none;
+}
+
+.ovk-post-viewer #itemContent .post-all-contents {
+    display: block;
+}
+
+body.manyMsgs .ovk-white-modal {
+    display: none;
+}
+
+body.manyMsgs .ovk-white-modal:last-of-type {
+    display: block !important;
 }

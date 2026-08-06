@@ -120,7 +120,7 @@ function pickBestPhotoUrl(sizes) {
 }
 
 const photoViewerTemplate =
-`<div class="ovk-photo-view-dimmer">
+`<div class="ovk-photo-view-dimmer ovk-white-modal">
     <div class="ovk-photo-view-overlay ovk-photo-view-overlay-left"></div>
     <div class="ovk-photo-view-overlay ovk-photo-view-overlay-right">
         <div class="ovk-photo-close-icon"></div>
@@ -141,13 +141,13 @@ const photoViewerTemplate =
             <div class="ovk-photo-slide-right"></div>
             <img src="${_loader_link}" id="ovk-photo-img">
         </div>
-        <div class="ovk-photo-details miniplayer-body">
+        <div class="ovk-photo-details ovk-modal-details miniplayer-body">
             <img src="${_loader_link}">
         </div>
     </div>
 </div>`;
 const videoViewerTemplate = `
-<div class="ovk-photo-view-dimmer">
+<div class="ovk-photo-view-dimmer ovk-white-modal">
     <div class="ovk-photo-view-overlay ovk-photo-view-overlay-left"></div>
     <div class="ovk-photo-view-overlay ovk-photo-view-overlay-right">
         <div class="ovk-photo-close-icon"></div>
@@ -183,7 +183,7 @@ const videoViewerTemplate = `
                     </div>
                 </div>
             </div>
-            <div id="ovk-player-info"></div>
+            <div id="ovk-player-info" class="ovk-modal-details"></div>
         </div>
         <div id="player-video-queue"></div>
     </div>
@@ -198,7 +198,7 @@ sandbox="allow-same-origin allow-scripts allow-popups"
 allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
 allowfullscreen></iframe>` };
 const postViewerTemplate = `
-<div class="ovk-photo-view-dimmer ovk-post-viewer-dimmer">
+<div class="ovk-photo-view-dimmer ovk-post-viewer-dimmer ovk-white-modal">
     <div class="ovk-photo-view-overlay ovk-photo-view-overlay-right">
         <div class="ovk-photo-close-icon"></div>
     </div>
@@ -213,8 +213,8 @@ const postViewerTemplate = `
                     <a class="itemPostTime"></a>
                 </div>
             </div>
-            <div style="display:flex;flex-direction:column;">
-                <div>
+            <div style="display:flex;flex-direction:column;align-items: end;gap: 8px;">
+                <div style="margin-top: 9px;">
                     <a style="display:none;" id="ovk-viewer-slideshow">${tr("show_slideshow")}</a>
                     <a style="display:none;" id="ovk-viewer-minimize">${tr("minimize")}</a>
 
@@ -233,10 +233,11 @@ const postViewerTemplate = `
 
             </div>
         </div>
-        <div class="ovk-photo-details miniplayer-body">
-            <div id="itemContentActions"></div>
+        <div class="ovk-post-details ovk-modal-details miniplayer-body">
+            <div id="itemContentActions">
+                <img src="${_loader_link}">
+            </div>
             <div id="itemContentComments"></div>
-            <img src="${_loader_link}">
         </div>
     </div>
 </div>
@@ -481,11 +482,11 @@ class PhotoViewer extends Viewer {
         })
     }
 
-    selectItem(pid, item) {
+    async selectItem(pid, item) {
         this.currentId = pid;
         this._updFrame(item);
 
-        this._loadDetails(pid);
+        await this._loadDetails(pid);
     }
 
     _updFrame(item) {
@@ -505,7 +506,7 @@ class PhotoViewer extends Viewer {
             }
         }
 
-        let show_roll = this.count > 10 && (localStorage.getItem("tw.viewers.photo.list") || "1") === "1"
+        let show_roll = this.count > 10 && (localStorage.getItem("tw.viewers.photo.list") || "0") === "1"
         if (show_roll) {
             if (this.modal.getNode().find("#photoviewer-roll").length == 0) {
                 this.modal.getNode().addClass("with-roll");
@@ -560,16 +561,9 @@ class PhotoViewer extends Viewer {
         let next = null;
         if (context == "pagination") {
             event.target.classList.add("lagged");
-            const p = event.target.closest(".paginator");
-            const l = p.querySelector("a.active");
-            if (!l) {
-                return;
-            }
-            next = l.nextElementSibling;
-            const his_url = new URL(next.href);
-            const his_page = his_url.searchParams.get("p");
-
-            postfix_.set("p", his_page);
+            const p = this._getPage(event.target);
+            next = p[1];
+            postfix_.set("p", p[0]);
         } else {
             this._getCurrentEntryCacheNode().last().innerHTML = '<img src="/assets/packages/static/openvk/img/loading_mini.gif">';
         }
@@ -593,35 +587,7 @@ class PhotoViewer extends Viewer {
         }
 
         if (context == "pagination") {
-            let appends = 0;
-
-            //if ((postfix_.get("sort") || "asc") == "desc") {
-            //    appends = 1;
-            //}
-
-            const ps5 = new DOMParser().parseFromString(details, "text/html");
-            const counts = ps5.querySelectorAll(".scroll_node").length;
-            ps5.querySelectorAll(".scroll_node").forEach(item => {
-                if (appends == 0) {
-                    this.modal.getNode().find(".scroll_container").append(item);
-                } else {
-                    this.modal.getNode().find(".scroll_container").before(item);
-                }
-            })
-
-            const his_url = new URL(next.href);
-            his_url.searchParams.set("p", Number(his_url.searchParams.get("p")) + 1)
-            if (next) {
-                next.href = his_url;
-            }
-
-            if (counts < 10) {
-                event.target.remove();
-            } else {
-                event.target.classList.remove("lagged");
-            }
-
-            this._addCachedDetailsToEntry(entry, this.modal.getNode().find(".ovk-photo-details").last().innerHTML)
+            this._appendDetailsAsPagination(next, event.target, details, entry);
         } else {
             this._addCachedDetailsToEntry(entry, details)
         }
@@ -754,7 +720,7 @@ class VideoViewer extends Viewer {
         }
     }
 
-    selectItem(pid, item) {
+    async selectItem(pid, item) {
         this.currentId = pid;
         console.log(pid, item)
         this._updFrame(item);
@@ -1007,6 +973,7 @@ class PostViewer extends Viewer {
     createMsgbox() {
         this.modal = new CMessageBox({
             title: "",
+            close_on_buttons: false,
             custom_template: u(postViewerTemplate)
         });
 
@@ -1025,10 +992,10 @@ class PostViewer extends Viewer {
 
     async selectItem(pid, item) {
         CMessageBox.toggleLoader(true);
-        if (item.html == null) {
-            const htmls = await this._downloadPage(idUrlFromArray(item.id));
+        if (item.html == null || item.cached == null) {
+            const htmls = await this._downloadPage(item.id);
             item.html = htmls[0];
-            item.details = htmls[1];
+            item.cached = htmls[1];
         }
         CMessageBox.toggleLoader(false);
 
@@ -1037,13 +1004,30 @@ class PostViewer extends Viewer {
         console.log(pid, item)
     }
 
-    _updFrame(item) {
-        if (item && (this.currentId != item.id)) {
-            this.modal.getNode().find("#itemContent").html(item.html);
-            this.modal.getNode().find("#itemContentComments").html(item.details);
+    async deleteItem(element) {
+        const ids = element.id.split("_");
+
+        await window.OVKAPI.call("wall.delete", {
+            "owner_id": ids[0],
+            "post_id": ids[1],
+        });
+    }
+
+    _updFrame(item, details_only = false) {
+        this.modal.getNode().removeClass("viewer-deleted");
+        if (item && item.deleted == true) {
+            this.modal.getNode().addClass("viewer-deleted");
+        }
+
+        if (details_only || item != null) {
+            this.modal.getNode().find("#itemContentComments").html(item.cached);
             this.modal.getNode().find("#itemContentActions").html(this.modal.getNode().find("#itemContentComments .item_links").last().outerHTML);
             this.modal.getNode().find("#itemContentComments .item_links").remove();
             this.modal.getNode().find("#itemContentActions .item_links h4").remove();
+        }
+
+        if (item && (this.currentId != item.id)) {
+            this.modal.getNode().find("#itemContent").html(item.html);
 
             const post = this.modal.getNode().find("#itemContent> .post");
             const isMicroblog = post.hasClass("post_microblog");
@@ -1053,26 +1037,42 @@ class PostViewer extends Viewer {
             let author_otherText;
             let dates;
             let postUrl;
+            let nameBlock = null;
 
             post.addClass("in-window");
 
             if (isMicroblog) {
-                const nameBlock = post.find("tbody > tr > .post-all-contents > .post-author");
+                nameBlock = post.find("tbody > tr > .post-all-contents > .post-author");
                 nameBlock.find(".postAction").remove();
 
                 author_name = nameBlock.find(".post-author-name").first().textContent;
                 author_url = nameBlock.find("a").first().getAttribute("href");
                 nameBlock.find("a").first().remove();
-                author_otherText = nameBlock.first().innerHTML;
                 dates = post.find(".post-menu .date").first().textContent;
                 postUrl = post.find(".post-menu .date").first().getAttribute("href");
                 author_ava = post.find("tbody > tr > .post-author-ava > a > img").first().src;
+                nameBlock.find(".date").first().remove();
+                author_otherText = nameBlock.first().innerHTML;
+                this.modal.getNode().find(".itemAuthorName").append(author_otherText);
+
+                this.modal.getNode().find("#itemContentActions").prepend(post.find(".like_wrap").last().outerHTML);
+                post.find(".post-menu").remove();
+            } else {
+                nameBlock = post.find("tbody > tr > td > .post-author");
+                //nameBlock.find(".postAction").remove();
+                author_name = nameBlock.find(".post-author-name").first().textContent;
+                author_url = nameBlock.find("a").first().getAttribute("href");
+                nameBlock.find("a").first().remove();
+                dates = post.find(".post-author .date").first().textContent;
+                postUrl = post.find(".post-author .date").first().getAttribute("href");
+                author_ava = post.find(".post-author-ava > a > img").first().src;
+
+                this.modal.getNode().find("#itemContentActions").prepend(post.find(".like_wrap").last().outerHTML);
             }
 
             this.modal.getNode().find(".itemAuthorName").html(`<a></a>`);
             this.modal.getNode().find(".itemAuthorName a").html(escapeHtml(author_name));
             this.modal.getNode().find(".itemAuthorName a").attr("href", author_url);
-            this.modal.getNode().find(".itemAuthorName").append(author_otherText);
             this.modal.getNode().find(".itemAuthorAva").attr("src", author_ava);
             this.modal.getNode().find(".itemPostTime").html(escapeHtml(dates));
             this.modal.getNode().find(".itemPostTime").attr("href", postUrl);
@@ -1082,14 +1082,47 @@ class PostViewer extends Viewer {
         setClickableHeightForEls(this.modal.getNode(), this.modal.getNode().find(".ovk-photo-view-overlay").nodes, ".photo_viewer_wrapper", -50);
     }
 
-    async _downloadPage(url) {
-        const res = await fetch("/wall" + url);
+    _getEntityPageName() {
+        return "wall";
+    }
+
+    async _downloadPage(url, postfix = null) {
+        let urls = this._getDetailsUrl(url, postfix);
+
+        const res = await fetch(urls);
         const html = await res.text();
         const doc = new DOMParser().parseFromString(html, "text/html");
         const post = doc.querySelector('#post_page_main');
         const details = doc.querySelector('#post_page_meta');
 
         return [post.innerHTML, details.innerHTML];
+    }
+
+    async _loadDetails(itemId, context = null, event = null) {
+        const entry = this.items[itemId];
+        let postfix_ = new URLSearchParams(entry.postfix || {});
+        let next = null;
+
+        if (context == "pagination") {
+            const p = this._getPage(event.target);
+            postfix_.set("p", p[0]);
+            next = p[1];
+        }
+
+        if (!entry) return;
+        if (!entry.cached) {
+            const htmls = await this._downloadPage(itemId, postfix_);
+
+            entry.html = htmls[0];
+            entry.cached = htmls[1];
+        }
+
+        if (context == "pagination") {
+            const htmls = await this._downloadPage(itemId, postfix_);
+            this._appendDetailsAsPagination(next, event.target, htmls[1], entry);
+        }
+
+        this._updFrame(entry, true);
     }
 
     static async openById(event, id) {
@@ -1107,16 +1140,14 @@ class PostViewer extends Viewer {
                 id: id
             });
 
-            const id2 = idUrlFromArray(id);
-            const htmls = await msg._downloadPage(id2);
+            const htmls = await msg._downloadPage(id);
 
             CMessageBox.toggleLoader(false);
 
-            console.log(htmls)
             msg.open();
             msg._updFrame({
                 "html": htmls[0],
-                "details": htmls[1]
+                "cached": htmls[1]
             });
 
             await msg.loadWallContext();
@@ -1128,7 +1159,7 @@ class PostViewer extends Viewer {
             }
 
             it.html = htmls[0];
-            it.details = htmls[1];
+            it.cached = htmls[1];
             msg.selectItemByApiId(id);
         } catch(e) {
             console.error(e);
@@ -1213,7 +1244,7 @@ function reportSomething(item_id, item_type, get_param_item_type = null) {
                 xhr.send(null);
             }),
         Function.noop
-    ]);
+    ], false, "reportingSmth");
 }
 
 // семь одинаковых серий
@@ -1247,10 +1278,15 @@ $(document).on("click", "#_ajaxDelete", function(e) {
         tr('no')
     ], [
         () => {
-            window.router.route(e.target.href)
+            if (e.target.closest(".ovk-msg-all")) {
+                const msg = find_msgbox_by_node(e.target.closest(".ovk-msg-all"));
+                msg._viewer.setCurrentEntryDeleted(true);
+            } else {
+                window.router.route(e.target.href)
+            }
         },
         Function.noop
-    ]);
+    ], false, "deletionOfSmth");
 
     e.stopPropagation()
     return e.preventDefault();
@@ -1279,7 +1315,7 @@ $(document).on("click", "#_photoDelete, #_videoDelete, #_anotherDelete", functio
         (function() {
             u("#tmpPhDelF").remove();
         }),
-    ]);
+    ], false, "deletionOfSmth");
 
     e.stopPropagation()
     return e.preventDefault();
@@ -4008,7 +4044,11 @@ async function ajax_posting(e, target) {
     const append_text = `<div class="scroll_node" data-uniqueid="${ids}">${parsed_post.outerHTML}</div>`
 
     if (u(upper_target).find(".scroll_container").length == 0 && append_type != "comment_microblog") {
-        u(target).after(`<div class="scroll_container"></div>`)
+        if (target.closest(".item_comments, .media-page-wrapper-comments") != null) {
+            u(target).closest(".item_comments, .media-page-wrapper-comments").first().insertAdjacentHTML("beforeend", `<div class="scroll_container"></div>`)
+        } else {
+            u(target).after(`<div class="scroll_container"></div>`)
+        }
     }
 
     if (append_type == "up") {

@@ -4,7 +4,7 @@
 {var $readOnly = $readOnly ?? false}
 {var $custom_id = $custom_id ?? null}
 
-<div>
+<div class="item_comments_head">
     <h4 n:if="$showTitle ?? true">{_comments} ({$count})</h4>
 
     {if isset($sort) && $count > 5}

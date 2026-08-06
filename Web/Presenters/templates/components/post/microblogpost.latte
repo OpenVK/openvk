@@ -21,7 +21,7 @@
 
 {var $bigText = mb_strlen($post->getText()) > 520 || substr_count($post->getText(), "\n") + 1 > 10}
 
-<table border="0" style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, post_microblog, !$compact ? post-divider, $post->isExplicit() ? post-nsfw, $post->isPinned() ? is-pinned, $compact ? mini-post">
+<table border="0" style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, post_microblog, !$compact ? post-divider, $post->isExplicit() ? post-nsfw, $post->isPinned() ? is-pinned, $compact ? mini-post : common-post">
     <tbody>
         <tr>
             <td class="post-author-ava" width="54" valign="top">
@@ -158,7 +158,7 @@
                     {/if}
                 </div>
                 <div n:if="!($forceNoCommentsLink ?? false) && $commentSection == true && $compact == false" class="post-menu-s">
-                    <a n:if="$commentsCount > 3" href="/wall{$post->getPrettyId()}" class="expand_button">{_view_other_comments} ({$commentsCount - 3})</a>
+                    <a n:if="$commentsCount > 3" href="/wall{$post->getPrettyId()}" class="expand_button" onclick="PostViewer.openById(event, {$post->getPrettyIdWithKey()})">{_view_other_comments} ({$commentsCount - 3})</a>
                     {foreach $comments as $comment}
                         {include "../comment.latte", comment => $comment, $compact => true}
                     {/foreach}
