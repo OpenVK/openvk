@@ -364,17 +364,23 @@ body.dimmed > .dimmer #clickable {
 /* video player */
 
 .ovk-photo-view-dimmer.queue-shown .ovk-modal-player-window {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 0fr;
+    justify-content: unset;
     width: unset;
 }
 
 .ovk-photo-view-dimmer.queue-shown #player-infos {
-    width: 823px;
+    width: 100%;
 }
 
 .ovk-photo-view-dimmer.queue-shown #player-video-queue {
-    width: 200px;
+    width: 300px;
     background: var(--cinema);
+}
+
+.ovk-photo-view-dimmer.ovk-msg-minimized.queue-shown #player-video-queue {
+    width: 120px;
 }
 
 .ovk-photo-view-dimmer.queue-shown .ovk-photo-view-overlay {

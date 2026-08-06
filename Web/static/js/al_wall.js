@@ -1582,7 +1582,7 @@ tippy.delegate('body', {
         const final_template = u(`
             <div style='margin: -6px -10px;'>
                 <div class='like_tooltip_wrapper'>
-                    <a href="/${final_type}/${id}/likes" class='like_tooltip_head'>
+                    <a onclick="LikersWindow.byTypeAndId(event, '${final_type}', '${id}')" href="/${final_type}/${id}/likes" class='like_tooltip_head'>
                         <span>${tr('liked_by_x_people', that._likesList.count)}</span>
                     </a>
 
@@ -1601,6 +1601,73 @@ tippy.delegate('body', {
         that.setContent(final_template.nodes[0].outerHTML)
     }
 })
+
+class LikersWindow {
+    constructor() {
+        this.modal = null;
+        this.type = null;
+        this.id = null;
+        this.totalCount = null;
+        this.loadedCount = 0;
+        this.offset = 0;
+        this.perPage = 25;
+    }
+
+    async _loadlikers(offset = 0) {
+        const res = await window.OVKAPI.call("likes.getList", {
+            "type": this.type == "wall" ? "post" : this.type,
+            "owner_id": this.id.split("_")[0],
+            "item_id": this.id.split("_")[1],
+            "extended": 1,
+            "offset": offset,
+            "count": this.perPage,
+        });
+
+        return res;
+    }
+
+    _appendItem(item) {
+        this.modal.getNode().find("#likersItems").append(`<img src="${item.photo_100}">`);
+    }
+
+    _appendItems(resp) {
+        this.offset += this.perPage;
+        this.loadedCount += resp.items.length;
+        this.totalCount = resp.count;
+
+        console.log(this)
+        resp.items.forEach(item => {
+            this._appendItem(item);
+        });
+
+        if (this.loadedCount >= this.totalCount) {
+            this.modal.getNode().find("#likersWindow").append(`<div class="show_more">${tr("show_more")}</div>`);
+        }
+    }
+
+    static async byTypeAndId(event, type, id) {
+        if (event) {
+            event.preventDefault();
+        }
+
+        CMessageBox.toggleLoader(true);
+
+        const win = new LikersWindow();
+        win.type = type;
+        win.id = id;
+
+        const res = await win._loadlikers();
+
+        win.modal = new CMessageBox({
+            title: "LIKERS",
+            custom_template: u(`<div id="likersWindow"><div id="likersItems"></div></div>`)
+        });
+
+        win._appendItems(res);
+
+        CMessageBox.toggleLoader(false);
+    }
+}
 
 async function showArticle(note_id) {
     u("body").addClass("dimmed");

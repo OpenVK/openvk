@@ -100,8 +100,6 @@ class CMessageBox {
         const current_item  = window.messagebox_stack.find(item => item.id == this.id)
         const index_of_item = window.messagebox_stack.indexOf(current_item)
         window.messagebox_stack = array_splice(window.messagebox_stack, index_of_item)
-        
-        delete this
     }
 
     close() {
@@ -120,7 +118,7 @@ class CMessageBox {
     reveal() {
         u('body').addClass('dimmed')
         u('html').attr('style', 'overflow-y:hidden')
-        this.getNode().attr('style', 'display: block;')
+        this.getNode().attr('style', '')
         this.hidden = false
         this._checkCount();
     }
