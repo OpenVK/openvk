@@ -45,6 +45,15 @@ class CMessageBox {
         })
 
         window.messagebox_stack.push(this)
+        this._checkCount();
+    }
+
+    _checkCount() {
+        if (window.messagebox_stack.length > 1) {
+            u("body").addClass("manyMsgs");
+        } else {
+            u("body").removeClass("manyMsgs");
+        }
     }
 
     __getTemplate() {
@@ -97,6 +106,7 @@ class CMessageBox {
 
     close() {
         this.__exitDialog()
+        this._checkCount();
     }
 
     hide() {
@@ -104,6 +114,7 @@ class CMessageBox {
         u('html').attr('style', 'overflow-y:scroll')
         this.getNode().attr('style', 'display: none;').addClass('msgbox-hidden')
         this.hidden = true
+        this._checkCount();
     }
 
     reveal() {
@@ -111,6 +122,7 @@ class CMessageBox {
         u('html').attr('style', 'overflow-y:hidden')
         this.getNode().attr('style', 'display: block;')
         this.hidden = false
+        this._checkCount();
     }
 
     static toggleLoader(state = null) {
@@ -145,12 +157,13 @@ function find_msgbox_by_id(msg_id) {
     return msg;
 }
 
-function MessageBox(title, body, buttons, callbacks, return_msg = false) {
+function MessageBox(title, body, buttons, callbacks, return_msg = false, unique_name = null) {
     const msg = new CMessageBox({
         title: title,
         body: body,
         buttons: buttons,
         callbacks: callbacks,
+        unique_name: unique_name
     })
 
     if(return_msg) {
@@ -231,6 +244,7 @@ class Viewer {
         */
 
         this.modal = null;
+        this.isSliding = false;
         this._draggable_ctx = null;
         this._resizeable_ctx = null;
     }
@@ -253,7 +267,7 @@ class Viewer {
 
     initalizeContext() {}
     selectItem(pid, item_api_res) {}
-    selectItemByApiId(id) {
+    async selectItemByApiId(id) {
         const entry = this.items[id];
         if (!entry) {
             console.error("Msgboxes | " + this.viewer_name + " | Not found entry with id ", id)
@@ -262,7 +276,7 @@ class Viewer {
 
         console.log("selected item ", id, entry);
 
-        this.selectItem(id, entry);
+        await this.selectItem(id, entry);
     }
     _isLoadable() { return false; }
     async _loadLoadableContext(side) { return; }
@@ -342,9 +356,17 @@ class Viewer {
     }
 
     async slide(direction) {
+        if (this.isSliding == true) {
+            console.log("isSliding")
+            return;
+        }
+
         if (this.count <= 1) {
+            console.error("noItems!!!!!!")
             return
         };
+
+        this.isSliding = true;
 
         let idx = this.currentIndex + direction;
 
@@ -373,8 +395,10 @@ class Viewer {
 
         const nextId = this.itemsOrder[idx];
         if (nextId) {
-            this.selectItemByApiId(nextId);
+            await this.selectItemByApiId(nextId);
         }
+
+        this.isSliding = false;
     }
 
     _getCurrentEntryCacheNode() {}
@@ -410,16 +434,20 @@ class Viewer {
     }
 
     _removeDetails() {
-        this.modal.getNode().find(".ovk-photo-details").html(`<img src="${_loader_link}">`);
+        this.modal.getNode().find(".ovk-modal-details").html(`<img src="${_loader_link}">`);
     }
 
     _addCachedDetailsToEntry(entry, html) {
         entry.cached = html;
     }
 
+    _getEntityPageName() {
+        return "photo";
+    }
+
     _getDetailsUrl(id, postfix) {
         let item_ids = idUrlFromArray(id);
-        let str = new URL(location.origin + "/photo" + item_ids);
+        let str = new URL(location.origin + "/" + this._getEntityPageName() + item_ids);
 
         if (postfix != null) {
             postfix.forEach((value, key) => {
@@ -485,5 +513,48 @@ class Viewer {
 
     isMinimized() {
         return this.modal.getNode().hasClass("ovk-msg-minimized");
+    }
+
+    // pagination
+
+    _getPage(target) {
+        const p = target.closest(".paginator");
+        const l = p.querySelector("a.active");
+        if (!l) {
+            return;
+        }
+        target.classList.add("lagged");
+        let next = l.nextElementSibling;
+        const his_url = new URL(next.href);
+        const his_page = his_url.searchParams.get("p");
+
+        return [Number(his_page), next];
+    }
+
+    _appendDetailsAsPagination(next_btn, show_more_btn, details, entry) {
+        let appends = 0;
+        const ps5 = new DOMParser().parseFromString(details, "text/html");
+        const counts = ps5.querySelectorAll(".scroll_node").length;
+        ps5.querySelectorAll(".scroll_node").forEach(item => {
+            if (appends == 0) {
+                this.modal.getNode().find(".scroll_container").append(item);
+            } else {
+                this.modal.getNode().find(".scroll_container").before(item);
+            }
+        })
+
+        const his_url = new URL(next_btn.href);
+        his_url.searchParams.set("p", Number(his_url.searchParams.get("p")) + 1)
+        if (next_btn) {
+            next_btn.href = his_url;
+        }
+
+        if (counts < 10) {
+            show_more_btn.remove();
+        } else {
+            show_more_btn.classList.remove("lagged");
+        }
+
+        this._addCachedDetailsToEntry(entry, this.modal.getNode().find(".ovk-photo-details").last().innerHTML)
     }
 }

@@ -2208,6 +2208,14 @@
         margin-top: 13px;
     }
 
+    .post.in-window > tbody > tr > td > .post-content {
+        margin-left: 0px;
+    }
+
+    .ovk-photo-view.ovk-post-viewer .photo_viewer_wrapper {
+        margin: 0;
+    }
+
     .post.post_microblog .post-all-contents > .post-author {
         margin-top: 10px;
         margin-left: -5px;

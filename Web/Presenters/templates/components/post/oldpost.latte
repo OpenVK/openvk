@@ -17,7 +17,7 @@
 
 {var $bigText = mb_strlen($post->getText()) > 520 || substr_count($post->getText(), "\n") + 1 > 10}
 
-<table border="0" style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, post_oldschool, $post->isExplicit() ? post-nsfw, $post->isPinned() ? is-pinned, $compact ? mini-post">
+<table border="0" style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, post_oldschool, $post->isExplicit() ? post-nsfw, $post->isPinned() ? is-pinned, $compact ? mini-post : common-post">
     <tbody>
         <tr>
             <td class="post-author-ava" width="54" valign="top">
@@ -63,7 +63,7 @@
                         </a>
                     {/if}
                     <br/>
-                    <a href="{if $suggestion ?? false}javascript:void(0){else}/wall{$post->getPrettyId()}{/if}" class="date">
+                    <a href="{if $suggestion ?? false}javascript:void(0){else}/wall{$post->getPrettyId()}{/if}" onclick="PostViewer.openById(event, {$post->getPrettyIdWithKey()})" class="date">
                         {$post->getPublicationTime()} <span n:if="$post->getEditTime()" class="editedMark">({_edited_short})</span><span class="pinned_mark">, {_pinned}</span>
 
                         <a n:if="!empty($platform)" class="client_app" data-app-tag="{$platform}" data-app-name="{$platformDetails['name']}" data-app-url="{$platformDetails['url']}" data-app-img="{$platformDetails['img']}">
