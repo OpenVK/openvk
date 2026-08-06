@@ -2657,11 +2657,19 @@ a.poll-retract-vote {
     position: absolute;
     height: 30px;
     width: 30px;
-    background: rgba(0, 0, 0, 1);
+    background: #000000bf;
+    opacity: 0.8;
 
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 2px;
+}
+
+.post-horizontal .upload-item:hover .play-button, 
+.compact_video:hover .play-button, 
+.docGalleryItem:hover .play-button {
+    opacity: 1;
 }
 
 .post-horizontal .upload-item .play-button .play-button-ico, .compact_video .play-button .play-button-ico, .docGalleryItem .play-button .play-button-ico {

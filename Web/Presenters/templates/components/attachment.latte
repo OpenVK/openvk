@@ -16,12 +16,16 @@
                 <video class="media" src="{$attachment->getURL()}"></video>
             </div>
         {else}
-            {var $driver = $attachment->getVideoDriver()}
-            {if !$driver}
-                <span style="color:red;">{_version_incompatibility}</span>
-            {else}
-                {$driver->getEmbed("100%")|noescape}
-            {/if}
+            <div class="compact_video" onclick="VideoViewer.openById({$attachment->getPrettyIdWithKey()}, {}, event)">
+                <div class='play-button'>
+                    <div class='play-button-ico'></div>
+                </div>
+                <div class='video-length' n:if="$attachment->getLength() != NULL">
+                    {$attachment->getFormattedLength()}
+                </div>
+
+                <img class="media media_makima" src="{$attachment->getThumbnailURL()}" loading=lazy />
+            </div>
         {/if}
 
         <div class="video-wowzer">
