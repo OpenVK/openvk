@@ -142,14 +142,14 @@
                         <a n:if="!($forceNoCommentsLink ?? false) && $commentsCount == 0" href="javascript:expand_comment_textarea({$commentTextAreaId})">{_comment}</a>
 
                         <div class="like_wrap">
-                            <a n:if="!($forceNoShareLink ?? false)" id="reposts{$post->getPrettyId()}" class="post-share-button" href="javascript:repost('{$post->getPrettyId()}', 'post')">
+                            <a n:if="!($forceNoShareLink ?? false)" id="reposts{$post->getPrettyId()}" class="post-share-button post-microblog-common-button" href="javascript:repost('{$post->getPrettyId()}', 'post')">
                                 <div class="repost-icon" style="opacity: 0.4;"></div>
                                 <span class="likeCnt" id="repostsCount{$post->getPrettyId()}">{if $repostsCount > 0}{$repostsCount}{/if}</span>
                             </a>
 
                             {if !($forceNoLike ?? false)}
                                 {var $liked = $post->hasLikeFrom($thisUser)}
-                                <a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$post->getPrettyId()}" data-type='post'>
+                                <a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button post-microblog-common-button" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$post->getPrettyId()}" data-type='post'>
                                     <div class="heart" id="{if $liked}liked{/if}"></div>
                                     <span class="likeCnt">{if $likesCount > 0}{$likesCount}{/if}</span>
                                 </a>

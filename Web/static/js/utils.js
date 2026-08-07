@@ -504,3 +504,13 @@ function setClickableHeightForEls(node, height_nodes = [], view_node = ".ovk-mod
         item.style.height = h + "px";
     });
 }
+
+function pickBestPhotoUrl(sizes) {
+    if (!sizes || !Array.isArray(sizes) || sizes.length === 0) return '';
+
+    const sorted = sizes.slice().sort(function(a, b) {
+        return (b.width || 0) - (a.width || 0);
+    });
+
+    return sorted[0].url || '';
+}
