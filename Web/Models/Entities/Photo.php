@@ -215,7 +215,7 @@ class Photo extends Media
                 "crop"   => $meta[0],
             ];
 
-            if (VKAPI_DECL_VER_MAJOR <= 5 && VKAPI_DECL_VER_MINOR < 77) {
+            if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR <= 5 && VKAPI_DECL_VER_MINOR < 77) {
                 unset($photoobj['url']);
                 $photoobj['src'] = $url;
             }
@@ -231,7 +231,7 @@ class Photo extends Media
             "crop"   => false,
         ];
 
-        if (VKAPI_DECL_VER_MAJOR <= 5 && VKAPI_DECL_VER_MINOR < 77) {
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR <= 5 && VKAPI_DECL_VER_MINOR < 77) {
             unset($photoobj['url']);
             $photoobj['src'] = $this->getURL();
         }
@@ -327,7 +327,7 @@ class Photo extends Media
             return $this->getURL();
         }
 
-        if (VKAPI_DECL_VER_MAJOR <= 5 && VKAPI_DECL_VER_MINOR < 77) {
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR <= 5 && VKAPI_DECL_VER_MINOR < 77) {
             return $size->src;
         } else {
             return $size->url;
