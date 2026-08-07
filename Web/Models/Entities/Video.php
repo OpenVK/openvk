@@ -36,8 +36,9 @@ class Video extends Media
             throw new \DomainException("$filename does not contain any video streams");
         }
 
+        $streams_durations = Shell::ffprobe("-i", $filename, "-show_entries", "format=duration", "-loglevel error")->execute($error);
         $durations = [];
-        preg_match_all('%duration=([0-9\.]++)%', $streams, $durations);
+        preg_match_all('%duration=([0-9\.]++)%', $streams_durations, $durations);
         if (sizeof($durations[1]) === 0) {
             throw new \DomainException("$filename does not contain any meaningful video streams");
         }
