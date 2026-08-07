@@ -1417,6 +1417,7 @@ final class Wall extends VKAPIRequestHandler
                 "sizes"    => !is_null($attachment->getVkApiSizes()) ? array_values($attachment->getVkApiSizes()) : null,
                 "text"     => "",
                 "has_tags" => false,
+                "tags" => (object) ["count" => 0, "items" => []],
             ],
         ];
     }
