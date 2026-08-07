@@ -7,7 +7,7 @@
 /* Main page */
 
 "home" = "Bastı bet";
-"welcome" = "Qoc keldińiz!";
+"welcome" = "Qoc keldińiz";
 "to_top" = "Joğarı";
 
 /* Login */
@@ -19,12 +19,12 @@
 "checkbox_in_registration" = "Men sayttıń <a href='/privacy'>qupıyalılıq sayasatı</a> men <a href='/terms'>paydalanıw erejelerimen</a> kelisemin";
 "checkbox_in_registration_unchecked" = "Tirkeliw ücin erejeler men qupıyalılıq sayasatımen kelisiwińiz kerek.";
 "login_failed" = "Kiriw sätsiz ayaqtaldı";
-"invalid_username_or_password" = "Logıyn nemese qupıyasöz qate. <a href='/restore'>Qupıyasözdi umıttıp qaldıńız ba?</a>";
+"invalid_username_or_password" = "Login nemese qupıyasöz qate. <a href='/restore'>Qupıyasözdi umıttıp qaldıńız ba?</a>";
 "failed_to_register" = "Tirkeliw sätsiz ayaqtaldı";
 "referral_link_invalid" = "Referaldıq silteme jaramsız.";
 "registration_disabled" = "Tirkeliw waqıtca öcirilgen.";
 "user_already_exists" = "Bul Email mekenjayı jüyede tirkelgen.";
-"access_recovery" = "Akkawntqa qatınastı qalpına keltiriw";
+"access_recovery" = "Akkauntqa qatınastı qalpına keltiriw";
 "page_access_recovery" = "Paraqcağa qatınastı qalpına keltiriw";
 "access_recovery_info" = "Qupıyasözińizdi umıtıp qaldıńız ba? Wayımdamańız, tömende derekterińizdi engizseńiz, biz sizge kiriwdi qalpına keltiriw nusqawlığın jiberemiz.";
 "access_recovery_info_2" = "Jańa qupıyasözińizdi engizińiz. Sodan keyin barlıq belsendi seanstar ayaqtalıp, kiriw tokenderi joyıladı.";
@@ -35,7 +35,7 @@
 "password_reset_error" = "Qupıyasözdi qalpına keltiriw kezinde qate orın aldı.";
 "password_reset_rate_limit_error" = "Kecirińiz, bul äreketti tım jiyi qaytalawğa bolmaydı.";
 "email_sent" = "Hat jiberildi.";
-"email_sent_desc" = "Eger bul elektrondıq poctağa akkawnt tirkelgen bolsa, oğan nusqaw hat keledi.";
+"email_sent_desc" = "Eger bul elektrondıq poctağa akkaunt tirkelgen bolsa, oğan nusqaw hat keledi.";
 "email_error" = "Hat jiberiw kezinde qate orın aldı.";
 "email_rate_limit_error" = "Bul äreketti tım jiyi orındawğa bolmaydı.";
 "email_verify_success" = "Poctańız rastaldı. Saytta köńildi waqıt ötkiziwińizge tilektespiz!";
@@ -111,14 +111,14 @@
 "politViews" = "Sayasıy közqarastar";
 "politViews_0" = "Tańdalmağan";
 "politViews_1" = "Beytarap";
-"politViews_2" = "Komiwniystik";
-"politViews_3" = "Sosıyalıystik";
+"politViews_2" = "Komunistik";
+"politViews_3" = "Sosıyalistik";
 "politViews_4" = "Ustamdı";
-"politViews_5" = "Liyberaldıq";
+"politViews_5" = "Liberaldıq";
 "politViews_6" = "Kertartpa";
 "politViews_7" = "Monarhıyalıq";
 "politViews_8" = "Äsire kertartpa";
-"politViews_9" = "Liybertariyandıq";
+"politViews_9" = "Libertarıyandıq";
 "contact_information" = "Baylanıstar";
 "email" = "Email";
 "phone" = "Uyalı telefon";
@@ -196,7 +196,7 @@
 "pinned" = "bekitildi";
 "comments_tip" = "Osı jazbağa birinci bolıp pikir jazıńız!";
 "your_comment" = "Pikirińiz";
-"auditory" = "Awdıytorıya";
+"auditory" = "Auditorıya";
 "in_wall" = "qabırğağa";
 "in_group" = "topqa";
 "shown" = "Körsetilgen";
@@ -335,7 +335,7 @@
 "groups" = "Toptar";
 "meetings" = "Kezdesiwler";
 "create_group" = "Top qurıw";
-"group_managers" = "Menedjerler";
+"group_managers" = "Menejerler";
 "group_type" = "Toptıń tiypi";
 "group_type_open" = "Bul acıq top, yağnıy oğan ärkim kire aladı.";
 "group_type_closed" = "Bul jabıq top, oğan kiriw ücin ötinim jazıwıńız qajet.";
@@ -417,7 +417,7 @@
 "error_accepting_not_suggested_post" = "Jazbanı qabıldaw mümkin bolmadı: bul usınılğan jazba emes";
 "error_accepting_declined_post" = "Jazbanı qabıldaw mümkin bolmadı: jazba burın qabıldanbağan";
 
-"statistics" = "Statıystıyka";
+"statistics" = "Statistika";
 "group_administrators_list" = "Äkimciler tizimi";
 "group_display_only_creator" = "Tek toptı qurğan kisini körsetiw";
 "group_display_all_administrators" = "Barlıq äkimcilerdi körsetiw";
@@ -478,7 +478,7 @@
 "groups_avatar" = "Jaqsı süwret birlestigińizdi tanımal etedi.";
 "formats_avatar" = "JPG, GIF nemese PNG formattağı süwretterdi jüktep salıwğa boladı.";
 "troubles_avatar" = "Süwrettiń jükteliwimen mäsele bolsa, kölemin kicireytip, jüktep körińiz.";
-"webcam_avatar" = "Kompyiwterińizge veb-kamera qosılıp tursa, lezde <a id='_takeSelfie'>süwret tüsirip körińiz »</a>";
+"webcam_avatar" = "Kompyuterińizge veb-kamera qosılıp tursa, lezde <a id='_takeSelfie'>süwret tüsirip körińiz »</a>";
 "publish_on_wall" = "Qabırğada jazba jarıyalaw";
 "take_snapshot" = "Tüsiriw";
 "your_browser_doesnt_support_webcam" = "Brawzerińizde veb-kameradan süwret tüsiriwge bolmaydı.";
@@ -510,7 +510,7 @@
 "only_images_accepted" = "\"$1\" faylı — süwret nemese beyne emes.";
 "max_filesize" = "Fayldıń eń ülken ölcemi — $1 MB";
 
-"uploading_photos_from_computer" = "Süwretterdi kompyiwterden jüktep salıw";
+"uploading_photos_from_computer" = "Süwretterdi kompyuterden jüktep salıw";
 "supported_formats" = "Qoldaw körsetiletin picimder: JPG, PNG jäne GIF.";
 "max_load_photos" = "Bir waqıtta 10 süwretke deyin jüktep salıwğa boladı.";
 
@@ -617,7 +617,7 @@
 "contacts" = "Baylanıstarım";
 "avatar" = "Bastı süwret";
 "privacy" = "Qupıyalıq";
-"interface" = "İnterfeys";
+"interface" = "Interfeys";
 "profile_picture" = "Paraqca süwreti";
 "picture" = "Süwret";
 "change_password" = "Qupıya sözdi özgertiw";
@@ -680,9 +680,9 @@
 "you_can_also" = "Sonımen qatar siz";
 "delete_your_page" = "paraqcańızdı joya alasız";
 "delete_album" = "albomdı joya alasız";
-"ui_settings_interface" = "İnterfeys";
+"ui_settings_interface" = "Interfeys";
 "ui_settings_sidebar" = "Sol jaq mäzir";
-"ui_settings_rating" = "Reytiyng";
+"ui_settings_rating" = "Reyting";
 "ui_settings_rating_show" = "Körsetiw";
 "ui_settings_rating_hide" = "Jasırıw";
 "ui_settings_nsfw_content" = "Eresekterge arnalğan materıyaldar";
@@ -730,17 +730,17 @@
 "backdrop_error_no_media" = "Süwretter bülingen nemese tolığımen jüktep salınbağan";
 "backdrop_succ" = "Paraqcanıń artqı jağınıń baptawları saqtaldı";
 "backdrop_succ_rem" = "Süwretter sätti joyıldı";
-"backdrop_succ_desc" = "Paydalanıwcılar 5 miyniwt icinde özgerister köre bastaydı.";
+"backdrop_succ_desc" = "Paydalanıwcılar 5 minut icinde özgerister köre bastaydı.";
 "browse" = "Colıw";
 
 /* Two-factor authentication */
 
-"two_factor_authentication" = "Eki faktorlı awtentıyfıykasıya";
+"two_factor_authentication" = "Eki faktorlı awtentifikasıya";
 "two_factor_authentication_disabled" = "Buzılıwdan senimdi qorğanıs qızmetin qamtamasız etedi: paraqcağa kiriw ücin 2FA qosımcasında alınğan kodtı engiziw kerek.";
-"two_factor_authentication_enabled" = "Eki faktorlı awtentıyfıykasıya qosıwlı. Paraqcańız qorğalğan.";
-"two_factor_authentication_login" = "Sizde eki faktorlı awtentıyfıykasıya qosılğan. Kiriw ücin arnayı qoldanbadağı kodtı engizińiz.";
-"two_factor_authentication_settings_1" = "TOTP arqılı eki faktorlı awtentıyfıykasıyanı internetsiz de paydalanıwğa boladı. Munı istew ücin sizge kodtı jasaw qoldanbası qajet. Mısalı Android pen iOS-ke arnalğan <b>Google Authenticator</b> nemese <b>Aegis jäne andOTP</b> - Android OJ-ne arnalğan tegin qoldanbalar. Telefonıńızda kün men waqıt durıs ornatılğanın tekserińiz.";
-"two_factor_authentication_settings_2" = "Eki faktorlı awtentıyfıykasıya qoldanbasın paydalanıp, tömendegi QR kodın skanerleńiz:";
+"two_factor_authentication_enabled" = "Eki faktorlı awtentifikasıya qosıwlı. Paraqcańız qorğalğan.";
+"two_factor_authentication_login" = "Sizde eki faktorlı awtentifikasıya qosılğan. Kiriw ücin arnayı qoldanbadağı kodtı engizińiz.";
+"two_factor_authentication_settings_1" = "TOTP arqılı eki faktorlı awtentifikasıyanı internetsiz de paydalanıwğa boladı. Munı istew ücin sizge kodtı jasaw qoldanbası qajet. Mısalı Android pen iOS-ke arnalğan <b>Google Authenticator</b> nemese <b>Aegis jäne andOTP</b> - Android OJ-ne arnalğan tegin qoldanbalar. Telefonıńızda kün men waqıt durıs ornatılğanın tekserińiz.";
+"two_factor_authentication_settings_2" = "Eki faktorlı awtentifikasıya qoldanbasın paydalanıp, tömendegi QR kodın skanerleńiz:";
 "two_factor_authentication_settings_3" = "nemese özińiz qupıya kiltti engizińiz: <b>$1</b>.";
 "two_factor_authentication_settings_4" = "Endi kirip otırğan kisi cınımen siz ekenińizdi rastaw ücin, arnayı qoldanbadan alınatın kodtı jäne paraqcanıń qupıyasözin engizińiz.";
 "connect" = "Qosıw";
@@ -750,10 +750,10 @@
 "2fa_code" = "2FA kodı";
 "incorrect_password" = "Qupıya söz durıs emes";
 "incorrect_code" = "Kod durıs emes";
-"incorrect_2fa_code" = "Eki faktorlı awtentıyfıykasıyanıń kodı durıs emes";
-"two_factor_authentication_enabled_message" = "Eki faktorlı awtentıyfıykasıya qosıwlı";
+"incorrect_2fa_code" = "Eki faktorlı awtentifikasıyanıń kodı durıs emes";
+"two_factor_authentication_enabled_message" = "Eki faktorlı awtentifikasıya qosıwlı";
 "two_factor_authentication_enabled_message_description" = "Sizdiń parağıńızdı buzıw qıyınıraq boldı. <a href='javascript:viewBackupCodes()'>Saqtıq köcirme kodtarın</a> jüktep alıwdı usınamız";
-"two_factor_authentication_disabled_message" = "Eki faktorlı awtentıyfıykasıya öciriwli";
+"two_factor_authentication_disabled_message" = "Eki faktorlı awtentifikasıya öciriwli";
 "view_backup_codes" = "Saqtıq köcirme kodtarın köriw";
 "backup_codes" = "Kiriwdi rastawğa arnalğan saqtıq köcirme kodtarı";
 "two_factor_authentication_backup_codes_1" = "Saqtıq köcirme kodtarı telefonğa kiriw mümkindigińiz bolmağan kezde, mısalı, sayahat kezinde paraqcağa kiriwge rastawğa mümkindik beredi.";
@@ -790,7 +790,7 @@
 "s_order_by_id" = "ID boyınca";
 "s_order_by_name" = "Atawı boyınca";
 "s_order_by_random" = "Kezdeysoq";
-"s_order_by_rating" = "Reytiyng boyınca";
+"s_order_by_rating" = "Reyting boyınca";
 "s_order_by_length" = "Uzaqtığı boyınca";
 "s_order_by_listens" = "Tıńdalıw sanı boyınca";
 "s_order_invert" = "Keri rettew";
@@ -827,9 +827,9 @@
 /* OAuth */
 "identifies_itself_as" = "atawı: $1";
 "located_at_url" = "(mekenjayı: $1)";
-"wants_your_token" = "sizdiń akkawntıńızğa kiriwge ruqsat suraydı";
+"wants_your_token" = "sizdiń akkauntıńızğa kiriwge ruqsat suraydı";
 "app_will_have_access_to" = "Bul qoldanba kelesi derekterdi köre aladı:";
-"oauth_scope_all" = "paraqca mälimetteri, küy (statıws), dostar tizimi, fotosıwretter, jazbalar jarıyalaw, änder, beyneler, habarlamalar, sıylıqtar, <b>elektrondıq pocta</b>, sawalnamalar, toptar, talqılawlar, joljazbalar, <b>dawıstar</b>, lüpilder men pikirler";
+"oauth_scope_all" = "paraqca mälimetteri, küy (status), dostar tizimi, fotosüwretter, jazbalar jarıyalaw, änder, beyneler, habarlamalar, sıylıqtar, <b>elektrondıq pocta</b>, sawalnamalar, toptar, talqılawlar, joljazbalar, <b>dawıstar</b>, lüpilder men pikirler";
 "oauth_grant" = "Ruqsat beriw";
 "oauth_deny" = "Bas tartıw";
 
@@ -885,8 +885,8 @@
 "select_another_file" = "Basqa fayl tańdaw";
 
 "limits" = "Cektewler";
-"select_audio" = "Kompyiwterden än tańdaw";
-"audio_requirements" = "Audio uzaqtığı $1 sek. pen $2 miyn. aralığında, ölcemi $3 MB-tan aspawı kerek.";
+"select_audio" = "Kompyuterden än tańdaw";
+"audio_requirements" = "Audio uzaqtığı $1 sek. pen $2 min. aralığında, ölcemi $3 MB-tan aspawı kerek.";
 "audio_requirements_2" = "Audio avtorlıq jäne sabaqtas quqıqtardı buzbawı tiyis.";
 "you_can_also_add_audio_using" = "Sonday-aq ändi burın jüktelgen fayldardan qosıw ücin";
 "search_audio_inst" = "izdewdi qoldanıńız";
@@ -956,11 +956,11 @@
 "playlists_club" = "Top äntizimderi";
 "change_cover" = "Muqabanı özgertiw";
 
-"minutes_count_zero" = "uzaqtığı nöl miyniwt";
-"minutes_count_one" = "uzaqtığı bir miyniwt";
-"minutes_count_few" = "uzaqtığı $1 miyniwt";
-"minutes_count_many" = "uzaqtığı $1 miyniwt";
-"minutes_count_other" = "uzaqtığı $1 miyniwt";
+"minutes_count_zero" = "uzaqtığı nöl minut";
+"minutes_count_one" = "uzaqtığı bir minut";
+"minutes_count_few" = "uzaqtığı $1 minut";
+"minutes_count_many" = "uzaqtığı $1 minut";
+"minutes_count_other" = "uzaqtığı $1 minut";
 
 "listens_count_zero" = "tıńdalmağan";
 "listens_count_one" = "bir ret tıńdaldı";
@@ -1026,7 +1026,7 @@
 "notifications_under_post" = "sizdiń $5 jazğan $3jazbańızğa$4";
 "notifications_under_video" = "sizdiń $3beyneńizge$4";
 "notifications_post" = "$1 sizdiń qabırğańızğa $2jazba$3 qoydı: $4";
-"notifications_appoint" = "$1 $2 sizdi toptıń menedjeri etip tağayındadı";
+"notifications_appoint" = "$1 $2 sizdi toptıń menejeri etip tağayındadı";
 "nt_liked_yours" = "unattı";
 "nt_shared_yours" = "bölisti";
 "nt_commented_yours" = "pikir jazdı";
@@ -1057,8 +1057,8 @@
 
 "time_at_sp" = " sağat ";
 "time_just_now" = "jańa ğana";
-"time_exactly_five_minutes_ago" = "5 miyniwt burın";
-"time_minutes_ago" = "$1 miyniwt burın";
+"time_exactly_five_minutes_ago" = "5 minut burın";
+"time_minutes_ago" = "$1 minut burın";
 "time_today" = "bügin";
 "time_yesterday" = "kece";
 
@@ -1098,7 +1098,7 @@
 "transferred_to_you" = "sizge dawıs awdardı";
 
 "transfer_trough_ton" = "TON arqılı toltırıw";
-"transfer_ton_contents" = "Teńgerimińizdi TON kriyptovalyiwtasımen toltıra alasız. Tonkeeper qoldanbası arqılı QR-kodtı skanerleńiz nemese körsetilgen derekter boyınca TON-dı qolmen jiberińiz. Birnece miyniwt icinde dawıstar cotıńızğa tüsedi.";
+"transfer_ton_contents" = "Teńgerimińizdi TON kriptovalyutasımen toltıra alasız. Tonkeeper qoldanbası arqılı QR-kodtı skanerleńiz nemese körsetilgen derekter boyınca TON-dı qolmen jiberińiz. Birnece minut icinde dawıstar cotıńızğa tüsedi.";
 "transfer_ton_address" = "<b>Ämiyan mekenjayı:</b> $1<br/><b>Habarlama mazmunı (Comment):</b> $2";
 "transfer_ton_currency_per_ton" = "$1 TON";
 
@@ -1116,17 +1116,17 @@
 "receiver_not_found" = "Qabıldawcı tabılğan joq.";
 "you_dont_have_enough_points" = "Cotıńızda dawıs jetkiliksiz.";
 
-"increase_rating" = "Reytiyngti köteriw";
+"increase_rating" = "Reytingti köteriw";
 "increase_rating_button" = "Köteriw";
 "to_whom" = "Kimge";
 "increase_by" = "Qancağa köteriw";
 "price" = "Bağası";
 "you_have_unused_votes" = "Cotıńızda $1 paydalanılmağan dawıs bar.";
 "apply_voucher" = "Vawçerdi qoldanıw";
-"failed_to_increase_rating" = "Reytiyngti köteriw mümkin bolmadı";
-"rating_increase_successful" = "Siz <b><a href=\"$1\">$2</a></b> paydalanıwcısınıń reytiyngin <b>$3</b> dawısqa sätti köterdińiz.";
-"negative_rating_value" = "Kecirińiz, özgeniń reytiyngin urlawğa bolmaydı.";
-"increased_your_rating_by" = "sizdiń reytiyngińizdi köterdi";
+"failed_to_increase_rating" = "Reytingti köteriw mümkin bolmadı";
+"rating_increase_successful" = "Siz <b><a href=\"$1\">$2</a></b> paydalanıwcısınıń reytingin <b>$3</b> dawısqa sätti köterdińiz.";
+"negative_rating_value" = "Kecirińiz, özgeniń reytingin urlawğa bolmaydı.";
+"increased_your_rating_by" = "sizdiń reytingińizdi köterdi";
 
 /* Gifts */
 
@@ -1200,7 +1200,7 @@
 "appjs_act_messages_desc" = "sizdiń atıńızdan hat oqıw jäne jazıw";
 "appjs_act_groups" = "Toptarıńız";
 "appjs_act_groups_desc" = "toptar tizimińizdi qaraw jäne basqalarğa jazılıw";
-"appjs_act_likes" = "'Unatamın' füwnksiyası";
+"appjs_act_likes" = "'Unatamın' funksıyası";
 "appjs_act_likes_desc" = "posttarğa unatıwlardı beriw jäne alıp tastaw";
 "appjs_act_request" = "Qol jetkiziw surawı";
 "appjs_act_requests" = "degen qosımca kelesilerge qol jetkiziwdi suraydı";
@@ -1210,7 +1210,7 @@
 "app_uninstalled" = "Qosımca öcirildi";
 "app_uninstalled_desc" = "Ol endi sizdiń atıńızdan äreketterdi orınday almaydı.";
 "app_err_not_found" = "Qosımca tabılmadı";
-"app_err_not_found_desc" = "Qate identiyfiykator nemese ol öcirilgen bolıwı mümkin.";
+"app_err_not_found_desc" = "Qate identifikator nemese ol öcirilgen bolıwı mümkin.";
 "app_err_forbidden_desc" = "Bul qosımca sizdiki emes.";
 "app_err_url" = "Qate mekenjay";
 "app_err_url_desc" = "Qosımca mekenjayı tekseristen ötpedi, onıń durıstığına köz jetkizińiz.";
@@ -1293,12 +1293,12 @@
 /* Invite */
 
 "invite" = "Caqırıw";
-"you_can_invite" = "Siz jelige dostarıńızdı nemese tanısqandarıńızdı osı indıyvıydıwal siltememen caqıra alasız:";
+"you_can_invite" = "Siz jelige dostarıńızdı nemese tanısqandarıńızdı osı individual siltememen caqıra alasız:";
 "you_can_invite_2" = "Osı siltemeni postıńızğa tirkeńiz. Paydalanıwcı jelige tirkelgende ol birden sizdiń dostarıńızğa qosıladı.";
 
 /* Banned */
 
-"banned_title" = "Sizdi veriyskok jazaladı";
+"banned_title" = "Sizdi veriskok jazaladı";
 "banned_header" = "Siz älewmettik jelide buğattalğansız";
 "banned_alt" = "Bul paydalanıwcı buğattalğan.";
 "banned_1" = "Kecirińiz, <b>$1</b>, biraq siz älewmettik jelide buğattalğansız.";
@@ -1313,8 +1313,8 @@
 /* Registration confirm */
 
 "ec_header" = "Tirkewdi rastaw";
-"ec_title" = "Rahmet!";
-"ec_1" = "<b>$1</b>, tirkeliwińiz ayaqtalıwğa jaqın. Birnece mıynıwttan keyin elektrondıq poctańızğa rastaw siltemesi bar hat keliwi kerek.";
+"ec_title" = "Raqmet!";
+"ec_1" = "<b>$1</b>, tirkeliwińiz ayaqtalıwğa jaqın. Birnece minuttan keyin elektrondıq poctańızğa rastaw siltemesi bar hat keliwi kerek.";
 "ec_2" = "Eger qanday da bir sebeptermen hat kelmese, spam qaltasın tekserińiz. Hattı ol jerden tappasańız, onı qayta jiberiwge boladı.";
 "ec_resend" = "Qayta jiberiw";
 
@@ -1391,7 +1391,7 @@
 /* Errors */
 
 "error_1" = "Durıs emes suraw";
-"error_2" = "Logıyn nemese qupıya söz durıs emes";
+"error_2" = "Login nemese qupıya söz durıs emes";
 "error_3" = "Ruqsat etilmegen";
 "error_4" = "Paydalanıwcı joq";
 "information_-1" = "Operasıya sätti ayaqtaldı";
@@ -1403,7 +1403,7 @@
 "error" = "Qatelik";
 "error_generic" = "Jalpı qatelik orın aldı: ";
 "error_shorturl" = "Bul mekenjay bos emes.";
-"error_segmentation" = "Segmentasiya qateligi";
+"error_segmentation" = "Segmentasıya qateligi";
 "error_upload_failed" = "Süwret jüktelmedi";
 "error_old_password" = "Burınğı qupıya söz säykes kelmeydi";
 "error_new_password" = "Jańa qupıya söz säykes kelmeydi";
@@ -1462,8 +1462,8 @@
 "failed_to_publish_post" = "Jazbanı jarıyalaw mümkin bolmadı";
 "failed_to_delete_post" = "Jazbanı joyıw mümkin bolmadı";
 
-"media_file_corrupted" = "Mediya fayl bülingen.";
-"media_file_corrupted_or_too_large" = "Mediya fayl bülingen nemese ölcemi tım ülken.";
+"media_file_corrupted" = "Media fayl bülingen.";
+"media_file_corrupted_or_too_large" = "Media fayl bülingen nemese ölcemi tım ülken.";
 
 "post_is_empty_or_too_big" = "Jazba bos nemese onıń kölemi cekten tıs ülken.";
 "post_is_too_big" = "Jazba tım ülken.";
@@ -1482,7 +1482,7 @@
 "error_when_publishing_comment_description" = "Süwret bülingen, tım ülken nemese onıń ölcemderi üylesimsiz.";
 "error_comment_empty" = "Pikirińizde tük joq nemese ol tım uzın.";
 "error_comment_too_big" = "Pikirińiz tım ülken.";
-"error_comment_file_too_big" = "Mediya faylı bülingen nemese tım ülken.";
+"error_comment_file_too_big" = "Media faylı bülingen nemese tım ülken.";
 
 "comment_is_added" = "Pikir qosıldı";
 "comment_is_added_desc" = "Sizdiń pikirińiz bette körsetiledi.";
@@ -1615,7 +1615,7 @@
 "admin_description" = "Sıypattaması";
 "admin_first_known_ip" = "Birinci IP";
 "admin_shortcode" = "Qısqa mekenjay";
-"admin_verification" = "Veriyfiykasiya";
+"admin_verification" = "Verifikasıya";
 "admin_hide_global_feed" = "Jahandıq taspadan jasırıw";
 "admin_banreason" = "Bloktıń sebebi";
 "admin_banned" = "buğattaldı";
@@ -1639,9 +1639,9 @@
 "admin_overview_summary" = "Tüyindeme";
 "admin_content" = "Paydalanıwcı kontenti";
 "admin_user_search" = "Paydalanıwcı izdew";
-"admin_user_online" = "Onlayn statıws";
+"admin_user_online" = "Onlayn status";
 "admin_user_online_default" = "Ädepki";
-"admin_user_online_incognito" = "İnkogniyto";
+"admin_user_online_incognito" = "Inkognito";
 "admin_user_online_deceased" = "Qaytıs bolğan";
 "admin_club_search" = "Top izdew";
 "admin_club_excludeglobalfeed" = "Jazbalardı jahandıq taspada körsetpew";
@@ -1656,12 +1656,12 @@
 "admin_giftsets_title" = "Paydalanıwcı tilindegi ataw tabılmasa, paydalanılatın jıynağınıń icki atawı.";
 "admin_giftsets_description" = "Paydalanıwcı tilindegi ataw tabılmasa, paydalanılatın jıynağınıń icki sıypattaması.";
 "admin_price_free" = "tegin";
-"admin_voucher_rating" = "Reytiyng";
+"admin_voucher_rating" = "Reyting";
 "admin_voucher_serial" = "Seriyalıq nömir";
 "admin_voucher_serial_desc" = "Nömir 24 belgiden turadı. Picim durıs bolmasa ya öris bos bolsa, avtomattı türde tağayındaladı.";
 "admin_voucher_coins" = "Dawıstar kölemi";
-"admin_voucher_rating_number" = "Reytiyng kölemi";
-"admin_voucher_usages_desc" = "Vawçerdi paydalana alatın akkawnttardıń sanı. -1 dep jazsańız, ceksizdik boladı.";
+"admin_voucher_rating_number" = "Reyting kölemi";
+"admin_voucher_usages_desc" = "Vawçerdi paydalana alatın akkaunttardıń sanı. -1 dep jazsańız, ceksizdik boladı.";
 "admin_voucher_status" = "Küyi";
 "admin_voucher_status_opened" = "belsendi";
 "admin_voucher_status_closed" = "bitti";
@@ -1669,11 +1669,11 @@
 "admin_settings_tuning" = "Jalpı";
 "admin_settings_appearance" = "Sırtqı körinis";
 "admin_settings_security" = "Qawipsizdik";
-"admin_settings_integrations" = "İntegrasiyalar";
+"admin_settings_integrations" = "Integrasıyalar";
 "admin_settings_system" = "Jüye";
 "admin_about" = "OpenVK tuwralı";
 "admin_about_version" = "Versiya";
-"admin_about_instance" = "İnstansıya";
+"admin_about_instance" = "Instansıya";
 "admin_commerce_disabled" = "Jüyelik äkimi kommersiyanı öcirdi";
 "admin_commerce_disabled_desc" = "Vawçer men sıylıq parametrleri saqtaladı, biraq ecqanday äser etpeydi.";
 
@@ -1687,7 +1687,7 @@
 "admin_banned_link_regexp" = "Turaqtı örnek (Regex)";
 "admin_banned_link_regexp_description" = "Ol joğarıda körsetilgen üycikten keyin awıstırıladı. Bükil üycikti buğattağıńız kelse, onı toltırmańız";
 "admin_banned_link_reason" = "Sebebi";
-"admin_banned_link_initiator" = "İndiykator";
+"admin_banned_link_initiator" = "Indikator";
 "admin_banned_link_not_specified" = "Silteme körsetilmegen";
 "admin_banned_link_not_found" = "Silteme tabılmadı";
 
@@ -1699,7 +1699,7 @@
 "admin_cover_id" = "Muqaba (süwret ID-si)";
 "admin_music" = "Muzıka";
 
-"logs" = "Juwrnal";
+"logs" = "Jurnal";
 "logs_anything" = "Kez kelgen närse";
 "logs_adding" = "Qosıldı";
 "logs_editing" = "Öńdeldi";
@@ -1782,7 +1782,7 @@
 "admin_overview_documents_one" = "Qujat";
 "admin_overview_documents_other" = "Qujat";
 "admin_overview_chandler_group_not_found" = "Jüyelik ruqsat tobı tabılmadı";
-"admin_overview_chandler_groups_missing" = "İnstanstı tolıq basqarıw ücin (Helpdesk, moderasıya, noSpam) ruqsat toptarı qajet";
+"admin_overview_chandler_groups_missing" = "Instanstı tolıq basqarıw ücin (Helpdesk, moderasıya, noSpam) ruqsat toptarı qajet";
 "admin_overview_chandler_groups_create_missing" = "Jetispeytin ruqsat toptarın jasaw";
 
 /* Paginator (deprecated) */
@@ -1794,12 +1794,12 @@
 /* About */
 
 "about_openvk" = "OpenVK tuwralı";
-"about_this_instance" = "İnstansıya tuwralı";
+"about_this_instance" = "Instansıya tuwralı";
 "rules" = "Erejeler";
 "most_popular_groups" = "Eń tanımal toptar";
 "on_this_instance_are" = "Osı instansıyada:";
 "about_links" = "Siltemeler";
-"instance_links" = "İnstansıya siltemeleri:";
+"instance_links" = "Instansıya siltemeleri:";
 "about_users_one" = "<b>1</b> paydalanıwcı";
 "about_users_other" = "<b>$1</b> paydalanıwcı";
 "about_online_users_one" = "<b>1</b> jelidegi paydalanıwcı";
@@ -1918,9 +1918,9 @@
 /* Statistics */
 
 "coverage" = "Qamtıw";
-"coverage_this_week" = "Bul grafiyk sońğı 7 kündegi qamtıwdı körsetedi.";
+"coverage_this_week" = "Bul grafik sońğı 7 kündegi qamtıwdı körsetedi.";
 "views" = "Körilimder";
-"views_this_week" = "Bul grafiyk sońğı 7 kündegi qawımdastıq jazbalarınıń körilimderin körsetedi.";
+"views_this_week" = "Bul grafik sońğı 7 kündegi qawımdastıq jazbalarınıń körilimderin körsetedi.";
 
 "full_coverage" = "Tolıq qamtıw";
 "all_views" = "Barlıq körilimder";
@@ -1934,7 +1934,7 @@
 /* Sudo */
 
 "you_entered_as" = "Mına paydalanıwcı atınan kirdińiz";
-"please_rights" = "Basqa paydalanıwcılardıń qupıyalılığın qurmetteńiz, akkawnttardı awıstırıw qabiletin asıra paydalanbańız.";
+"please_rights" = "Basqa paydalanıwcılardıń qupıyalılığın qurmetteńiz, akkaunttardı awıstırıw qabiletin asıra paydalanbańız.";
 "click_on" = "Cığıw ücin";
 "there" = "munda";
 "to_leave" = "basıńız.";
@@ -1998,7 +1998,7 @@
 
 "changes_saved_video_comment" = "Jańartılğan derekter beyne betinde körinedi";
 "cant_delete_video" = "Beyneni joyıw mümkin bolmadı";
-"cant_delete_video_comment" = "Akkawntqa kirmegensiz.";
+"cant_delete_video_comment" = "Akkauntqa kirmegensiz.";
 
 "video_is_deleted" = "Beyne joyıldı.";
 "share_video" = "Beyneni bölisiw";
@@ -2138,7 +2138,7 @@
 "private_document" = "Jeke (silteme boyınca)";
 "public_document" = "Jalpığa ortaq";
 "documents_sort_add" = "Qosılğan küni boyınca";
-"documents_sort_alphabet" = "A-Z/A-Ya";
+"documents_sort_alphabet" = "A-Z/A-YA";
 "documents_sort_size" = "Ölcemi boyınca";
 "select_doc" = "Qujat tańdaw";
 "no_documents" = "Qujattar joq";
@@ -2160,9 +2160,9 @@
 
 /* Maintenance */
 
-"global_maintenance" = "Tehniykalıq jumıstar";
+"global_maintenance" = "Tehnikalıq jumıstar";
 "section_maintenance" = "Bölim waqıtca qoljetimsiz";
-"undergoing_global_maintenance" = "Ökinicke oray, instansta tehniykalıq jumıstar jürgiziliwde. Biz aqawlardı joyıw üstindemiz. Keyinirek qayta kelip körińiz.";
+"undergoing_global_maintenance" = "Ökinicke oray, instansta tehnikalıq jumıstar jürgiziliwde. Biz aqawlardı joyıw üstindemiz. Keyinirek qayta kelip körińiz.";
 "undergoing_section_maintenance" = "Ökinicke oray, <b>$1</b> bölimi waqıtca jabıq. Biz onı qalpına keltiriw boyınca jumıs istep jatırmız. Keyinirek qayta bayqap körińiz.";
 "topics" = "Taqırıptar";
 "send" = "Jiberiw";
@@ -2186,7 +2186,7 @@
 "ifnotlike_title" = " «Mağan bul jer unamasa ce?..»";
 "tour_promo" = "Tirkelgennen keyin sizdi ne kütip turatını jaylı";
 
-"reg_text" = "<a href='/reg'>Tirkeliw</a> müldem tegin jäne eki mıynıwttan aspaydı";
+"reg_text" = "<a href='/reg'>Tirkeliw</a> müldem tegin jäne eki minuttan aspaydı";
 "ifnotlike_text" = "Siz öz beyinińizdi ärqacan joya alasız";
 
 "tour_next" = "Kelesi →";
@@ -2210,7 +2210,7 @@
 "tour_section_1_title_1" = "Neden bastasam boladı?";
 "tour_section_1_text_1" = "Jeke beyin acıw — bul sayttağı alğacqı äri eń mańızdı qadam.";
 "tour_section_1_text_2" = "Tirkeliw ücin atıńızdı, elektrondıq poctańızdı engizip, qupıyasöz oylap tapsańız jetkilikti.";
-"tour_section_1_text_3" = "<b>Esińizde bolsın:</b> Poctańız saytqa kiriw ücin logıyn retinde qoldanıladı. Tegińizdi engiziw mindetti emes. Qupıyasözdi umıtıp qalsańız, onı <a href='/restore'>qalpına keltire alasız</a>.";
+"tour_section_1_text_3" = "<b>Esińizde bolsın:</b> Poctańız saytqa kiriw ücin login retinde qoldanıladı. Tegińizdi engiziw mindetti emes. Qupıyasözdi umıtıp qalsańız, onı <a href='/restore'>qalpına keltire alasız</a>.";
 "tour_section_1_bottom_text_1" = "Tirkeliw arqılı siz <a href='/terms'>paydalanıw erejeleri</a> jäne <a href='/privacy'>qupıyalılıq sayasatımen</a> kelisesiz.";
 
 "tour_section_2_title_1" = "Jeke paraqcańız";
@@ -2238,13 +2238,13 @@
 
 "tour_section_4_title_1" = "İzdew jüyesi";
 "tour_section_4_text_1" = "«İzdew» bölimi arqılı dostarıńızdı nemese qızıqtı toptardı taba alasız.";
-"tour_section_4_text_2" = "Bul bölim waqıt öte kele jańa füwnksiyalarmen tolığıp otıradı.";
+"tour_section_4_text_2" = "Bul bölim waqıt öte kele jańa funksıyalarmen tolığıp otıradı.";
 "tour_section_4_text_3" = "Paydalanıwcılardı atı-jöni boyınca, al qawımdastıqtardı atawı boyınca izdeńiz.";
 "tour_section_4_title_2" = "Jıldam izdew";
 "tour_section_4_text_4" = "Waqıt ünemdew ücin sayttıń joğarğı jağındağı izdew jolağın qoldanıńız.";
 
 "tour_section_5_title_1" = "Beyne jükteńiz";
-"tour_section_5_text_1" = "Saytqa beyne men kliypterdi cektewsiz jüktey alasız.";
+"tour_section_5_text_1" = "Saytqa beyne men klipterdi cektewsiz jüktey alasız.";
 "tour_section_5_text_2" = "Beynelerdi kim tamacalay alatının özińiz belgileńiz.";
 "tour_section_5_bottom_text_1" = "Beyneni arnayı bölimge ötpey-aq, tikeley qabırğadağı jazbağa tirkey salıwğa boladı:";
 "tour_section_5_title_2" = "YouTube-ten importtaw";
@@ -2254,7 +2254,7 @@
 "tour_section_6_text_1" = "«Änderim» böliminde süyikti änderińizdi tıńday alasız.";
 "tour_section_6_text_2" = "Bul bölimniń de qoljetimdiligi qupıyalılıq baptawlarında retteledi.";
 "tour_section_6_text_3" = "Eń tanımal änder «Tanımal» böliminde, al sońğı jüktelgender — «Jańa» qoyındısında.";
-"tour_section_6_text_4" = "Ändi öz tizimińizge qosıw ücin plyüws belgisin basıńız nemese izdewdi qoldanıńız.";
+"tour_section_6_text_4" = "Ändi öz tizimińizge qosıw ücin plyus belgisin basıńız nemese izdewdi qoldanıńız.";
 "tour_section_6_text_5" = "Qajetti ändi taba almasańız, onı özińiz jüktey alasız.";
 "tour_section_6_bottom_text_1" = "<b>Mańızdı:</b> Audiofayldar avtorlıq quqıqtı buzbawı tiyis.";
 "tour_section_6_title_2" = "Äntizim jasańız";
@@ -2275,14 +2275,14 @@
 "tour_section_9_title_1" = "Qawımdastıq qurıńız";
 "tour_section_9_text_1" = "Saytta mıńdağan qızıqtı toptar men qawımdastıqtar bar.";
 "tour_section_9_text_2" = "Özińizge unaytın toptarğa qosılıńız, bolmasa öz qawımdastığıńızdı qurıńız.";
-"tour_section_9_text_3" = "Är topta wiykiy-better, fotoalbomdar, talqılawlar men paydalı siltemeler blogı bar.";
+"tour_section_9_text_3" = "Är topta wiki-better, fotoalbomdar, talqılawlar men paydalı siltemeler blogı bar.";
 "tour_section_9_title_2" = "Birlese basqarıw";
 "tour_section_9_text_2_1" = "Toptı avatar astındağı «Basqarıw» mäziri arqılı basqara alasız.";
 "tour_section_9_text_2_2" = "Senimdi dostarıńızdı äkimci retinde tağayındańız.";
 "tour_section_9_text_2_3" = "Qajet bolsa, äkimciler tizimin jasırıp qoyıwğa da boladı.";
 "tour_section_9_bottom_text_1" = "«Toptar» bölimin sol jaq mäzirden taba alasız.";
 "tour_section_9_bottom_text_2" = "Top ülgisi";
-"tour_section_9_bottom_text_3" = "Toptar — bul awdıytorıyamen baylanıs ornatqısı keletin uyım men qawımdastıqtar ücin taptırmas qural.";
+"tour_section_9_bottom_text_3" = "Toptar — bul auditorıyamen baylanıs ornatqısı keletin uyım men qawımdastıqtar ücin taptırmas qural.";
 
 "tour_section_10_title_1" = "Oybay!";
 "tour_section_10_text_1" = "Bul bölim tuwralı aytıp bereyin dep edik, ol äli dayın emes eken. Attap ötip, äri qaray jalğastıra bersek qaytedi?";
@@ -2291,7 +2291,7 @@
 "tour_section_11_text_1" = "Tirkelgen kezde paraqcańızğa standarttı stiyl ornatıladı.";
 "tour_section_11_text_2" = "Eger bul stiyl sizge tım eski bolıp körinse, onı özgertiwge mümkindik bar.";
 "tour_section_11_text_3" = "<b>Wayımdamańız:</b> <a href='https://openvk.org/dev'>qujattamanı</a> oqıp, öz dizaynıńızdı jasańız, bolmasa katalogtan dayın keyipti tańdasańız boladı.";
-"tour_section_11_bottom_text_1" = "Katalogtı «Baptaw» — «İnterfeys» böliminen taba alasız.";
+"tour_section_11_bottom_text_1" = "Katalogtı «Baptaw» — «Interfeys» böliminen taba alasız.";
 "tour_section_11_wordart" = "<img src='/assets/packages/static/openvk/img/tour/wordart_en.png' width='65%'>";
 
 "tour_section_12_title_1" = "Fondıq süwretter";
@@ -2310,29 +2310,99 @@
 "tour_section_12_text_4_3" = "<b>Eskertiw:</b> Eski köriniste sońğı pikirler taspada birden jüktelmewi mümkin.";
 "tour_section_12_bottom_text_1" = "Fon baptaw beti";
 "tour_section_12_bottom_text_2" = "Fondıq süwreti bar paraqcalardıń ülgisi";
-"tour_section_12_bottom_text_3" = "Osı füwnksiya arqılı paraqcańızğa erekce stiyl berińiz.";
+"tour_section_12_bottom_text_3" = "Osı funksıya arqılı paraqcańızğa erekce stiyl berińiz.";
 "tour_section_12_bottom_text_4" = "Eski qabırğa";
 "tour_section_12_bottom_text_5" = "Mikroblog";
 
 "tour_section_13_title_1" = "Promokodtar";
-"tour_section_13_text_1" = "Saytta promokodtar arqılı reytiyngińizdi köteriwge de, dawıstar alıwğa da boladı.";
-"tour_section_13_text_2" = "Munday küwpondar merekelerde nemese mańızdı oqıyğalarda beriledi. Jańalıqtardı jiberip almas ücin <a href='https://t.me/openvk'>Telegram-arnamızğa</a> jazılıńız.";
+"tour_section_13_text_1" = "Saytta promokodtar arqılı reytingińizdi köteriwge de, dawıstar alıwğa da boladı.";
+"tour_section_13_text_2" = "Munday kupondar merekelerde nemese mańızdı oqıyğalarda beriledi. Jańalıqtardı jiberip almas ücin <a href='https://t.me/openvk'>Telegram-arnamızğa</a> jazılıńız.";
 "tour_section_13_text_3" = "Kodtı engizgen soń, dawıstar avtomattı türde cotıńızğa tüsedi.";
 "tour_section_13_text_4" = "<b>Esińizde bolsın:</b> Promokodtardıń qoldanılıw merzimi cektewli.";
 "tour_section_13_bottom_text_1" = "Promokodtar ädette 24 tańbadan turadı.";
 "tour_section_13_bottom_text_2" = "Mısalı, sätti qoldanılğan kod sizge 100 dawıs sıylawı mümkin.";
 "tour_section_13_bottom_text_3" = "<b>Nazar awdarıńız:</b> Är promokodtı bir paydalanıwcı tek bir ret qoldana aladı.";
 
-"tour_section_14_title_1" = "Telefon men gadjetterge";
-"tour_section_14_text_1" = "Qazirgi waqıtta sayttıń mobıyldi veb-nusqası joq, biraq Android-qa arnalğan qoldanba bar.";
+"tour_section_14_title_1" = "Telefon men gajetterge";
+"tour_section_14_text_1" = "Qazirgi waqıtta sayttıń mobildi veb-nusqası joq, biraq Android-qa arnalğan qoldanba bar.";
 "tour_section_14_text_2" = "OpenVK Legacy — 2013 jılğı äwelgi dizaynğa negizdelgen, eski qurılğılarğa arnalğan qoldanba.";
 "tour_section_14_text_3" = "Qoldanba Android 2.1 Eclair nusqasınan bastap jumıs istey beredi, sondıqtan onı tipti ep-eski smartfondarğa da ornatıwğa boladı.";
 
 "tour_section_14_title_2" = "Qaydan jüktesem boladı?";
-"tour_section_14_text_2_1" = "Qoldanbanıń resmiy nusqaların F-Droid repoziytoriyinen taba alasız.";
+"tour_section_14_text_2_1" = "Qoldanbanıń resmiy nusqaların F-Droid repozitoriyinen taba alasız.";
 "tour_section_14_text_2_2" = "Beta-testerler ücin jańartıwlar bölek arnada cığadı.";
 "tour_section_14_text_2_3" = "<b>Eskertiw:</b> Qoldanbada qateler bolıwı mümkin. Mäsele tuwındasa, onı <a href='/app'>resmiy topqa</a> habarlańız.";
 
 "tour_section_14_bottom_text_1" = "Skrincottar";
-"tour_section_14_bottom_text_2" = "Osımen saytqa colıw ayatqaldı. Eger mobıyldi qoldanbanı ornatıw, öz tobıńızdı qurıw ne dostardı caqırıw sıyaqtı mümkindikter qızıqtırsa, <a href='/reg'>tirkelip</a>, birden bastap ketseńiz boladı!";
+"tour_section_14_bottom_text_2" = "Osımen saytqa colıw ayatqaldı. Eger mobildi qoldanbanı ornatıw, öz tobıńızdı qurıw ne dostardı caqırıw sıyaqtı mümkindikter qızıqtırsa, <a href='/reg'>tirkelip</a>, birden bastap ketseńiz boladı!";
 "tour_section_14_bottom_text_3" = "Osımen saytqa colıw ayaqtaldı. Qoc keldińiz!";
+"email_not_in_whitelist" = "Kecirińiz, äzirce bul elektrondıq pocta provayderi arqılı tirkeliwge bolmaydı.";
+"email_whitelist_desc" = "Ruqsat etilgen elektrondıq pocta provayderleri: $1";
+"read_in_rss" = "RSS piciminde oqıw";
+"show_less" = "Azıraq körsetiw";
+"marital_status_user_id" = "Qoldanıwcı ID-si";
+"oauth_app_twofactor" = "$1 qoldanbasına ötpes burın, qoldanbadan alğan eki faktorlı kodtı engizińiz.";
+"audio_edit_album" = "Oynatıw tizimi";
+"ui_settings_timezone" = "Waqıt beldewi";
+"timezone_change_success" = "Waqıt beldewi sätti saqtaldı. Bul parametr tek ağımdağı seans ücin ğana jaramdı.";
+"timezone-720" = "(GMT-12): Beyker aralı, Houlend aralı";
+"timezone-480" = "(GMT-08): Los-Anjeles, Vankuver, Tihuana";
+"timezone-420" = "(GMT-07): Denver, Edmonton, Finiks";
+"timezone-360" = "(GMT-06): Mehiko qalası, Çikago, Gvatemala";
+"timezone-300" = "(GMT-05): Nyu-York, Toronto, Gavana";
+"timezone-270" = "(GMT-04:30): Karakas, Marakaybo";
+"timezone-240" = "(GMT-04): Santyago, La-Pas, Galifaks";
+"timezone-210" = "(GMT-03:30): Sent-Jons, Korner Bruk";
+"timezone-180" = "(GMT-03): Buenos-Ayres, San-Paulu, Montevideo";
+"timezone-120" = "(GMT-02): Ońtüstik Jorjiya, Sendviç araldarı";
+"timezone-60" = "(GMT-01): Azor araldarı, Praya";
+"timezone-0" = "(GMT): London, Lissabon, Kasablanka";
+"timezone--60" = "(GMT+1): Berlin, Parij, Rim";
+"timezone--120" = "(GMT+2): Kiev, Kair, Helsinki";
+"timezone--180" = "(GMT+3): Mäskew, Istambul, Er-Riyad";
+"timezone--210" = "(GMT+3:30): Tegeran, İsfahan, Meched";
+"timezone--240" = "(GMT+4): Dubay, Baku, Tbilisi";
+"timezone--270" = "(GMT+4:30): Kabul, Kandagar";
+"timezone--300" = "(GMT+5): Almatı, Tackent, Ekaterinburg";
+"timezone--330" = "(GMT+5:30): Nyu-Deli, Mumbay, Kolombo";
+"timezone--345" = "(GMT+5:45): Katmandu, Pokhara";
+"timezone--360" = "(GMT+6): Oc, Dakka, Ombı";
+"timezone--390" = "(GMT+6:30): Yangon, Neypido";
+"timezone--420" = "(GMT+7): Bangkok, Hanoy, Jakarta";
+"timezone--480" = "(GMT+8): Beyjiń, Singapur, Gonkong";
+"timezone--510" = "(GMT+8:30): Phenyan";
+"timezone--540" = "(GMT+9): Tokio, Seul, Yakutsk";
+"timezone--570" = "(GMT+9:30): Adelaida, Darvin";
+"timezone--600" = "(GMT+10): Sidney, Melburn, Vladivostok";
+"timezone--630" = "(GMT+10:30): Lord-Hou aralı";
+"timezone--660" = "(GMT+11): Magadan, Sahalin, Numea";
+"timezone--720" = "(GMT+12): Oklend, Suva, Petropavlovsk-Kamçatskiy";
+"timezone--765" = "(GMT+12:45): Çatem araldarı";
+"timezone--780" = "(GMT+13): Nukualofa, Apiya";
+"timezone--840" = "(GMT+14): Kiritimati, Lin araldarı";
+"notif_3_14_18" = "Qabırğańızğa birew jazdı";
+"notif_0_14_18" = "Jazbańız birewge unadı";
+"notif_0_6_18" = "Pikirińiz birewge unadı";
+"notif_4_18_14" = "Sizdi birew atap ötti";
+"notif_4_5_14" = "Sizdi top atap ötti";
+"notif_2_14_18" = "Sizge birew pikir qaldırdı";
+"timezone-660" = "(GMT-11): Pago Pago, Niue, Miduey";
+"timezone-600" = "(GMT-10): Gonolulu, Papeete, Adak";
+"timezone-540" = "(GMT-09): Ankorij, Ferbenks, Juno";
+"archived_posts" = "Jazbalar murağatı";
+"archive_banner_title" = "Bul — jazbalar murağatı";
+"archive_banner_desc" = "Qabırğadağı jazbalardı munda tarıyh pen estelikter ücin saqtay alasız. Bul murağat tek sizge ğana körinedi.";
+"archive_action" = "Murağat";
+"unarchive_action" = "Murağattan cığarıw";
+"post_deleted" = "Jazba joyılğan";
+"archive_all_years" = "Barlıq jıl";
+"archive_more" = "Tağı";
+"archive_more_year" = "Tağı: $1";
+"archive_all_posts_from_year" = "$1 jılğı bükil jazbanı murağattaw";
+"restore_all_posts_from_year" = "$1 jılğı bükil jazbanı murağattan cığarıw";
+"archive_all_posts" = "Bükil jazbanı murağattaw";
+"archive_confirm_year" = "$1 jılı jarıyalanğan bükil jazbanı murağattaw kerek pe?";
+"restore_confirm_year" = "$1 jılı jarıyalanğan bükil jazbanı murağattan cığarıw kerek pe?";
+"archive_confirm_all" = "Osı qabırğadağı bükil jazbanı murağattaw kerek pe?";
+"archive_invalid_action" = "Jazbalar murağatına qatıstı qate äreket.";
+"with_alien_wall_posts" = "Bögde kisilerdiń qabırğalarında jazılğan jazbalardı körsetiw";
