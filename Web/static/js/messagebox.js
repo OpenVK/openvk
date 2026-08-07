@@ -278,6 +278,16 @@ class Viewer {
     _isLoadable() { return false; }
     async _loadLoadableContext(side) { return; }
 
+    async _resolveOffset(owner_id, item_id, type, additional_id = null, reverse = false) {
+        return await window.OVKAPI.call("utils.resolveOffset", {
+            "type": type,
+            "owner_id": owner_id,
+            "id": item_id,
+            "perPage": this.context.perPage,
+            "rev": Number(reverse)
+        });
+    }
+
     _setMainContext(data) {
         this.context.type = data.type;
         this.context.first_item_url = data.first_item_url || null;
@@ -302,7 +312,7 @@ class Viewer {
             "left": false
         };
     }
-    _appendApiItem(item, profiles = null, groups = null) {
+    _appendApiItem(item, profiles = null, groups = null, prepend = false) {
         const existing = {};
         this.itemsOrder.forEach((id) => {
             existing[id] = true;
@@ -315,7 +325,12 @@ class Viewer {
 
         console.log(pid, item)
         this._appendItemToList(pid, item, profiles, groups);
-        this.itemsOrder.push(pid);
+
+        if (prepend == false) {
+            this.itemsOrder.push(pid);
+        } else {
+            this.itemsOrder.unshift(pid);
+        }
     }
 
     // abstract method cuz every viewer has different display of its items
@@ -366,6 +381,7 @@ class Viewer {
         this.isSliding = true;
 
         let idx = this.currentIndex + direction;
+        console.log(idx)
 
         if (idx < 0) {
             if (this._isLoadable()) {
@@ -384,7 +400,6 @@ class Viewer {
             if (this._isLoadable()) {
                 this.context.offset += 20;
                 await this._loadLoadableContext(direction);
-                idx = 0;
             } else {
                 idx = 0;
             }

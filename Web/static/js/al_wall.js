@@ -160,26 +160,25 @@ class PhotoViewer extends Viewer {
             api_params["rev"] = 1;
         }
 
-        console.log(this.context, api_params)
         let res;
         try {
             if (pre_loaded == null) {
                 res = await window.OVKAPI.call('photos.get', api_params);
             } else {
-                res = custom;
+                res = pre_loaded;
             }
         } catch (e) {
             console.error(e);
             return;
         }
 
-        if (!res.items) {
+        if (!res.items || res.items.length == 0) {
             this.sides_ended["right"] = true;
             return;
         }
 
         res.items.forEach((item) => {
-            this._appendApiItem(item);
+            this._appendApiItem(item, null, null, direction < 0);
         });
         this.totalItemsCount = res.count;
 
@@ -188,7 +187,7 @@ class PhotoViewer extends Viewer {
 
     async loadChatAvatarContext() {
         const avs = await window.OVKAPI.call("messages.getChatAvatarHistory", {
-            "chat_id": this.contextId,
+            "chat_id": this.context.id,
         })
         await this.loadAlbumContext(avs);
     }
@@ -250,18 +249,21 @@ class PhotoViewer extends Viewer {
         };
     }
 
-    async initalizeContext(context = null) {
-        await this._initalizeContext(context);
+    async initalizeContext(context = null, selected_id = null) {
+        await this._initalizeContext(context, selected_id);
         this._updFrame();
     }
 
-    async _initalizeContext(context = null) {
+    async _initalizeContext(context = null, selected_id = null) {
         if (context == null) {
             context = this.context;
         }
 
         switch (context.type) {
             case "album":
+                const alb = this.context.id.split("_");
+                const ids = selected_id.split("_");
+                this.context.offset = await this._resolveOffset(ids[0], ids[1], "photos.get", alb[1], this.context.reverse);
                 await this.loadAlbumContext();
                 break;
             case "chat":
@@ -517,22 +519,7 @@ class VideoViewer extends Viewer {
         })
 
         msgbox.getNode().find('#__toggle_comments').on('click', async (e) => {
-            if(msgbox.getNode().find('#ovk-player-info').hasClass('shown')) {
-                msgbox.getNode().find('#__toggle_comments').html(tr('show_comments'))
-            } else {
-                msgbox.getNode().find('#__toggle_comments').html(tr('close_comments'))
-            }
-
-            if(msgbox.getNode().find('#ovk-player-info').html().length < 1) {
-                u('#ovk-player-info').html(`<div id='gif_loader'></div>`);
-            }
-
-            let overlays = msgbox.getNode().find(".ovk-photo-view-overlay").nodes;
-            setClickableHeightForEls(this.modal.getNode(), this.modal.getNode().find(".ovk-photo-view-overlay").nodes, ".ovk-modal-player-window", -50);
-
-            msgbox.getNode().find('#ovk-player-info').toggleClass('shown');
-
-            await this._loadDetails();
+            this._toggleComments();
         })
 
         msgbox.getNode().find('#__modal_player_minimize, #miniplayer_return').on("click", (e) => {
@@ -565,7 +552,25 @@ class VideoViewer extends Viewer {
         setClickableHeightForEls(this.modal.getNode(), this.modal.getNode().find(".ovk-photo-view-overlay").nodes, ".ovk-modal-player-window", -50);
     }
 
-    afterOpen(videoId) {
+    async _toggleComments() {
+        if(this.modal.getNode().find('#ovk-player-info').hasClass('shown')) {
+            this.modal.getNode().find('#__toggle_comments').html(tr('show_comments'))
+        } else {
+            this.modal.getNode().find('#__toggle_comments').html(tr('close_comments'))
+        }
+
+        if(this.modal.getNode().find('#ovk-player-info').html().length < 1) {
+            this.modal.getNode().find('#ovk-player-info').html(`<div id='gif_loader'></div>`);
+        }
+
+        setClickableHeightForEls(this.modal.getNode(), this.modal.getNode().find(".ovk-photo-view-overlay").nodes, ".ovk-modal-player-window", -50);
+
+        this.modal.getNode().find('#ovk-player-info').toggleClass('shown');
+
+        await this._loadDetails(this.currentId);
+    }
+
+    afterOpen(videoId, open_comments = false) {
         console.log("videoid")
         if (this.items[videoId]) {
             this.selectItem(videoId, this.items[videoId]);
@@ -583,6 +588,10 @@ class VideoViewer extends Viewer {
             }
 
             this.selectItem(videoId, this.items[videoId]);
+        }
+
+        if (open_comments === true) {
+            this._toggleComments();
         }
     }
 
@@ -629,20 +638,25 @@ class VideoViewer extends Viewer {
         return this.modal.getNode().find("#ovk-player-info");
     }
 
-    async _loadDetails(itemId) {
+    _getEntityPageName() {
+        return "video";
+    }
+
+    async _loadDetails(itemId, context = null, event = null) {
         const entry = this.items[itemId];
+        console.log(entry)
         if (!entry) return;
 
         if (entry.cached == null) {
             try {
-                let pretty_id = idUrlFromArray(entry.id);
-                const fetcher = await fetch(`/video${pretty_id}`);
+                const p = new URLSearchParams(entry.postfix ?? {});
+                const fetcher = await fetch(this._getDetailsUrl(itemId, p));
                 const fetch_r = await fetcher.text();
-                const results =  u(new DOMParser().parseFromString(fetch_r, 'text/html'));
-                const details = results.find('.ovk-vid-details');
-                details.find('.media-page-wrapper-description b').remove();
+                const results = new DOMParser().parseFromString(fetch_r, 'text/html');
+                const details = results.querySelector(".ovk-vid-details");
+                details.querySelector(".media-page-wrapper-description b").remove();
 
-                this.modal.getNode().find('#ovk-player-info').html(details.html())
+                this.modal.getNode().find('#ovk-player-info').html(details.innerHTML)
 
                 this._addCachedDetailsToEntry(entry, details ? details.innerHTML : '')
             } catch(e) {
@@ -652,12 +666,12 @@ class VideoViewer extends Viewer {
         }
 
         this._getCurrentEntryCacheNode().last().innerHTML = entry.cached;
-        this.modal.getNode().find('#ovk-player-info .bsdn').forEach(item => {
+        this.modal.getNode().find('#ovk-player-info .bsdn').nodes.forEach(item => {
             bsdnInitElement(item);
         });
     }
 
-    static async openById(ids, context = {}, event = null) {
+    static async openById(ids, context = {}, event = null, open_comments = false) {
         if (event != null) {
             event.preventDefault();
             event.stopPropagation();
@@ -673,7 +687,7 @@ class VideoViewer extends Viewer {
             const first_id = ids;
             await videoViewer.loadIdsOnlyContext();
             videoViewer.open();
-            videoViewer.afterOpen(first_id);
+            videoViewer.afterOpen(first_id, open_comments);
         } catch(e) {
             console.error(e);
         }
@@ -816,14 +830,16 @@ class DocsViewer extends Viewer {
 
 // добавлен из-за диалогов (из сообщений к посту переходить долго)
 class PostViewer extends Viewer {
-    async loadWallContext() {
+    async loadWallContext(preset_data, direction) {
         const post_ids = this.context.id;
         const id1 = post_ids.split("_");
-        const wall = await window.OVKAPI.call("wall.get", {"owner_id": id1[0], "near": id1[1], "count": 10, "extended": 1});
+        const params = {"owner_id": id1[0], "offset": this.context.offset, "count": this.context.perPage, "extended": 1};
+
+        const wall = await window.OVKAPI.call("wall.get", params);
         this.totalItemsCount = wall.count;
 
         wall.items.forEach(item => {
-            this._appendApiItem(item);
+            this._appendApiItem(item, null, null, direction < 0);
         })
     }
 
@@ -850,7 +866,6 @@ class PostViewer extends Viewer {
         this.modal.getNode().find("#move_back").on("click", () => {
             this.slide(-1);
         });
-
         this.modal.getNode().find("#move_next").on("click", () => {
             this.slide(1);
         });
@@ -877,6 +892,16 @@ class PostViewer extends Viewer {
             "owner_id": ids[0],
             "post_id": ids[1],
         });
+    }
+
+    _isLoadable() { 
+        return this.context.type == "wall";
+    }
+
+    async _loadLoadableContext(direction) { 
+        if (this.context.type == "wall") {
+            this.loadWallContext(null, direction);
+        }
     }
 
     _updFrame(item, details_only = false) {
@@ -921,10 +946,8 @@ class PostViewer extends Viewer {
                 this.modal.getNode().find(".itemAuthorName").append(author_otherText);
 
                 this.modal.getNode().find("#itemContentActions").prepend(post.find(".like_wrap").last().outerHTML);
-                post.find(".post-menu").remove();
             } else {
                 nameBlock = post.find("tbody > tr > td > .post-author");
-                //nameBlock.find(".postAction").remove();
                 author_name = nameBlock.find(".post-author-name").first().textContent;
                 author_url = nameBlock.find("a").first().getAttribute("href");
                 nameBlock.find("a").first().remove();
@@ -932,9 +955,17 @@ class PostViewer extends Viewer {
                 postUrl = post.find(".post-author .date").first().getAttribute("href");
                 author_ava = post.find(".post-author-ava > a > img").first().src;
                 nameBlock.find(".date").first().remove();
-
                 this.modal.getNode().find("#itemContentActions").prepend(post.find(".like_wrap").last().outerHTML);
+
+                post.find(".post-menu .post_tr_btn, .post-menu .like_wrap").remove();
+
+                this.modal.getNode().find(".post-menu .post_unique_btns").nodes.forEach(item => {
+                    item.classList.add("profile_link");
+                    this.modal.getNode().find("#itemContentActions .item_links").append(item);
+                })
             }
+
+            post.find(".post-menu").remove();
 
             this.modal.getNode().find(".itemAuthorName").html(`<a></a>`);
             this.modal.getNode().find(".itemAuthorName a").html(escapeHtml(author_name));
@@ -1001,8 +1032,10 @@ class PostViewer extends Viewer {
 
         try {
             const msg = new PostViewer();
+            const offset = await msg._resolveOffset(id.split("_")[0], id.split("_")[1], "wall.get");
             msg.setContext({
-                type: "id",
+                type: "wall",
+                offset: offset,
                 id: id
             });
 
@@ -1019,14 +1052,14 @@ class PostViewer extends Viewer {
             await msg.loadWallContext();
 
             const it = msg.items[id];
+
             if (it == null) {
                 makeError(tr("post_display_error_switching_unavailable"));
-                return;
+            } else {
+                msg.selectItemByApiId(id);
+                it.html = htmls[0];
+                it.cached = htmls[1];
             }
-
-            it.html = htmls[0];
-            it.cached = htmls[1];
-            msg.selectItemByApiId(id);
         } catch(e) {
             console.error(e);
         }
@@ -1049,13 +1082,18 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post", custom_con
             custom_offset: custom_offset,
             reverse: reverse,
         });
-        await __photoViewer.initalizeContext();
+        await __photoViewer.initalizeContext(null, photo_id);
     } else {
         custom_context["type"] = "custom";
-        await __photoViewer.initalizeContext(custom_context);
+        await __photoViewer.initalizeContext(custom_context, photo_id);
     }
 
     __photoViewer.open();
+
+    if (type == "chat") {
+        __photoViewer.setMode("tg");
+    }
+
     CMessageBox.toggleLoader(false);
 
     __photoViewer.afterOpen(photo_id, photo);
@@ -4082,4 +4120,9 @@ function paginator_next_click(event) {
     }
 
     msg._viewer.loadNextDetailsPage(event);
+}
+
+function comment_date_click(event) {
+    event.preventDefault();
+    event.stopPropagation();
 }
