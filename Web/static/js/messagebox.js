@@ -9,7 +9,7 @@ class CMessageBox {
         const close_on_buttons = options.close_on_buttons ?? true
         const unique_name = options.unique_name ?? null
         const warn_on_exit = options.warn_on_exit ?? false
-        const custom_template = options.custom_template ?? null
+        let custom_template = options.custom_template ?? null
         if(unique_name && window.messagebox_stack.find(item => item.unique_name == unique_name) != null) {
             return
         }
@@ -23,13 +23,12 @@ class CMessageBox {
         this._viewer = null;
 
         if(!custom_template) {
-            u('body').addClass('dimmed').append(this.__getTemplate())
-        } else {
-            custom_template.addClass('ovk-msg-all')
-            custom_template.attr('data-id', this.id)
-            u('body').addClass('dimmed').append(custom_template)
+            custom_template = msgboxFacebookTemplate(this.title, this.body);
         }
-        
+
+        custom_template.addClass("ovk-msg-all")
+        custom_template.attr('data-id', this.id)
+        u('body').addClass('dimmed').append(custom_template)
         u('html').attr('style', 'overflow-y:hidden')
 
         buttons.forEach((text, callback) => {
@@ -432,7 +431,7 @@ class Viewer {
     }
 
     _removeDetails() {
-        this.modal.getNode().find(".ovk-modal-details").html(`<img src="${_loader_link}">`);
+        this.modal.getNode().find(".ovk-modal-details").html(`<div class="modal-state-loader-switching"><img src="${_loader_link}"></div>`);
     }
 
     _addCachedDetailsToEntry(entry, html) {
@@ -555,4 +554,148 @@ class Viewer {
 
         this._addCachedDetailsToEntry(entry, this.modal.getNode().find(".ovk-photo-details").last().innerHTML)
     }
+}
+
+const photoViewerTemplate =
+`<div class="ovk-photo-view-dimmer ovk-white-modal">
+    <div class="ovk-photo-view-overlay ovk-photo-view-overlay-left"></div>
+    <div class="ovk-photo-view-overlay ovk-photo-view-overlay-right">
+        <div class="ovk-photo-close-icon"></div>
+    </div>
+    <div class="ovk-photo-view">
+        <div class="photo_com_title">
+            <text id="photo_com_title_photos">
+                <img src="${_loader_link}">
+            </text>
+            <div>
+                <a style="display:none;" id="ovk-viewer-slideshow">${tr("show_slideshow")}</a>
+                <a style="display:none;" id="ovk-viewer-minimize">${tr("minimize")}</a>
+                <a id="ovk-photo-close">${tr("close")}</a>
+            </div>
+        </div>
+        <div class="photo_viewer_wrapper miniplayer-body">
+            <div class="ovk-photo-slide-left"></div>
+            <div class="ovk-photo-slide-right"></div>
+            <img src="${_loader_link}" id="ovk-photo-img">
+        </div>
+        <div class="ovk-photo-details ovk-modal-details miniplayer-body">
+            <img src="${_loader_link}">
+        </div>
+    </div>
+</div>`;
+const videoViewerTemplate = `
+<div class="ovk-photo-view-dimmer ovk-white-modal">
+    <div class="ovk-photo-view-overlay ovk-photo-view-overlay-left"></div>
+    <div class="ovk-photo-view-overlay ovk-photo-view-overlay-right">
+        <div class="ovk-photo-close-icon"></div>
+    </div>
+    <div class="ovk-modal-player-window">
+        <div id="player-infos">
+            <div id="ovk-player-part">
+                <div class='top-part'>
+                    <b id="videoTitle"></b>
+
+                    <div class="miniplayer-head-buttons">
+                        <div id='miniplayer_return'></div>
+                        <div id='miniplayer_close'></div>
+                    </div>
+
+                    <div class='top-part-buttons'>
+                        <a id='__modal_player_minimize' class='hoverable_color'>${tr('hide_player')}</a>
+                        |
+                        <a id='__modal_player_close' class='hoverable_color'>${tr('close')}</a>
+                    </div>
+                </div>
+                <div class='center-part miniplayer-body' id="playerHtml"></div>
+                <div class='bottom-part miniplayer-body'>
+                    <div>
+                        <a id='__toggle_comments' class='hoverable_color'>${tr('show_comments')}</a>
+                        |
+                        <a href='/video' id="videoGoToLand" class='hoverable_color'>${tr('to_page')}</a>
+                    </div>
+                    <div id="videoMoveArrows">
+                        <a id='toggleBar' class='hoverable_color'>${tr('toggle_queue_video')}</a>
+                        <a id="move_back" class='hoverable_color'>←</a>
+                        <a id="move_next" class='hoverable_color'>→</a>
+                    </div>
+                </div>
+            </div>
+            <div id="ovk-player-info" class="ovk-modal-details"></div>
+        </div>
+        <div id="player-video-queue"></div>
+    </div>
+</div>`;
+const youtubeVideoTemplate = (id) => { return `
+<iframe
+width="600"
+height="340"
+src="https://www.youtube-nocookie.com/embed/${id}"
+frameborder="0"
+sandbox="allow-same-origin allow-scripts allow-popups"
+allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+allowfullscreen></iframe>` };
+const postViewerTemplate = `
+<div class="ovk-photo-view-dimmer ovk-post-viewer-dimmer ovk-white-modal">
+    <div class="ovk-photo-view-overlay ovk-photo-view-overlay-right">
+        <div class="ovk-photo-close-icon"></div>
+    </div>
+    <div class="ovk-photo-view ovk-post-viewer">
+        <div class="post_com_title">
+            <div class="itemAuthor">
+                <a><img class="itemAuthorAva"></a>
+                <div class="itemAuthor2">
+                    <span class="itemAuthorName">
+                        <a></a>
+                    </span>
+                    <a class="itemPostTime"></a>
+                </div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items: end;gap: 8px;">
+                <div style="margin-top: 9px;">
+                    <a style="display:none;" id="ovk-viewer-slideshow">${tr("show_slideshow")}</a>
+                    <a style="display:none;" id="ovk-viewer-minimize">${tr("minimize")}</a>
+
+                    <a id="ovk-photo-close">${tr("close")}</a>
+                </div>
+
+                <div id="post-win-arrows">
+                    <a id="move_back">←</a>
+                    <a id="move_next">→</a>
+                </div>
+            </div>
+        </div>
+        <div class="photo_viewer_wrapper miniplayer-body">
+            <div id="itemContent">
+                <img src="${_loader_link}" id="ovk-photo-img">
+
+            </div>
+        </div>
+        <div class="ovk-post-details miniplayer-body">
+            <div id="itemContentActions">
+                <img src="${_loader_link}">
+            </div>
+            <div id="itemContentComments" class="ovk-modal-details"></div>
+        </div>
+    </div>
+</div>
+`
+const msgboxModernTemplate = (title, body) => {
+    return u(`
+    <div class="ovk-modern-msg ovk-msg-all">
+        <div class="ovk-diag">
+            <div class="ovk-diag-head">${title}<div><a id="_close">${tr("close")}</a></div></div>
+            <div class="ovk-diag-body">${body}</div>
+        </div>
+    </div>`);
+}
+
+const msgboxFacebookTemplate = (title, body) => {
+    return u(
+    `<div class="ovk-diag-cont ovk-msg-all">
+        <div class="ovk-diag">
+            <div class="ovk-diag-head">${title}</div>
+            <div class="ovk-diag-body">${body}</div>
+            <div class="ovk-diag-action"></div>
+        </div>
+    </div>`)
 }

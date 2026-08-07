@@ -109,140 +109,6 @@ u(document).on("input", "textarea", function(e) {
     // textArea.style.height = (newHeight > originalHeight ? (newHeight + boost) : originalHeight) + "px";
 });
 
-function pickBestPhotoUrl(sizes) {
-  if (!sizes || !Array.isArray(sizes) || sizes.length === 0) return '';
-
-  const sorted = sizes.slice().sort(function(a, b) {
-    return (b.width || 0) - (a.width || 0);
-  });
-
-  return sorted[0].url || '';
-}
-
-const photoViewerTemplate =
-`<div class="ovk-photo-view-dimmer ovk-white-modal">
-    <div class="ovk-photo-view-overlay ovk-photo-view-overlay-left"></div>
-    <div class="ovk-photo-view-overlay ovk-photo-view-overlay-right">
-        <div class="ovk-photo-close-icon"></div>
-    </div>
-    <div class="ovk-photo-view">
-        <div class="photo_com_title">
-            <text id="photo_com_title_photos">
-                <img src="${_loader_link}">
-            </text>
-            <div>
-                <a style="display:none;" id="ovk-viewer-slideshow">${tr("show_slideshow")}</a>
-                <a style="display:none;" id="ovk-viewer-minimize">${tr("minimize")}</a>
-                <a id="ovk-photo-close">${tr("close")}</a>
-            </div>
-        </div>
-        <div class="photo_viewer_wrapper miniplayer-body">
-            <div class="ovk-photo-slide-left"></div>
-            <div class="ovk-photo-slide-right"></div>
-            <img src="${_loader_link}" id="ovk-photo-img">
-        </div>
-        <div class="ovk-photo-details ovk-modal-details miniplayer-body">
-            <img src="${_loader_link}">
-        </div>
-    </div>
-</div>`;
-const videoViewerTemplate = `
-<div class="ovk-photo-view-dimmer ovk-white-modal">
-    <div class="ovk-photo-view-overlay ovk-photo-view-overlay-left"></div>
-    <div class="ovk-photo-view-overlay ovk-photo-view-overlay-right">
-        <div class="ovk-photo-close-icon"></div>
-    </div>
-    <div class="ovk-modal-player-window">
-        <div id="player-infos">
-            <div id="ovk-player-part">
-                <div class='top-part'>
-                    <b id="videoTitle"></b>
-
-                    <div class="miniplayer-head-buttons">
-                        <div id='miniplayer_return'></div>
-                        <div id='miniplayer_close'></div>
-                    </div>
-
-                    <div class='top-part-buttons'>
-                        <a id='__modal_player_minimize' class='hoverable_color'>${tr('hide_player')}</a>
-                        |
-                        <a id='__modal_player_close' class='hoverable_color'>${tr('close')}</a>
-                    </div>
-                </div>
-                <div class='center-part miniplayer-body' id="playerHtml"></div>
-                <div class='bottom-part miniplayer-body'>
-                    <div>
-                        <a id='__toggle_comments' class='hoverable_color'>${tr('show_comments')}</a>
-                        |
-                        <a href='/video' id="videoGoToLand" class='hoverable_color'>${tr('to_page')}</a>
-                    </div>
-                    <div id="videoMoveArrows">
-                        <a id='toggleBar' class='hoverable_color'>${tr('toggle_queue_video')}</a>
-                        <a id="move_back" class='hoverable_color'>←</a>
-                        <a id="move_next" class='hoverable_color'>→</a>
-                    </div>
-                </div>
-            </div>
-            <div id="ovk-player-info" class="ovk-modal-details"></div>
-        </div>
-        <div id="player-video-queue"></div>
-    </div>
-</div>`;
-const youtubeVideoTemplate = (id) => { return `
-<iframe
-width="600"
-height="340"
-src="https://www.youtube-nocookie.com/embed/${id}"
-frameborder="0"
-sandbox="allow-same-origin allow-scripts allow-popups"
-allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-allowfullscreen></iframe>` };
-const postViewerTemplate = `
-<div class="ovk-photo-view-dimmer ovk-post-viewer-dimmer ovk-white-modal">
-    <div class="ovk-photo-view-overlay ovk-photo-view-overlay-right">
-        <div class="ovk-photo-close-icon"></div>
-    </div>
-    <div class="ovk-photo-view ovk-post-viewer">
-        <div class="post_com_title">
-            <div class="itemAuthor">
-                <a><img class="itemAuthorAva"></a>
-                <div class="itemAuthor2">
-                    <span class="itemAuthorName">
-                        <a></a>
-                    </span>
-                    <a class="itemPostTime"></a>
-                </div>
-            </div>
-            <div style="display:flex;flex-direction:column;align-items: end;gap: 8px;">
-                <div style="margin-top: 9px;">
-                    <a style="display:none;" id="ovk-viewer-slideshow">${tr("show_slideshow")}</a>
-                    <a style="display:none;" id="ovk-viewer-minimize">${tr("minimize")}</a>
-
-                    <a id="ovk-photo-close">${tr("close")}</a>
-                </div>
-
-                <div id="post-win-arrows">
-                    <a id="move_back">←</a>
-                    <a id="move_next">→</a>
-                </div>
-            </div>
-        </div>
-        <div class="photo_viewer_wrapper miniplayer-body">
-            <div id="itemContent">
-                <img src="${_loader_link}" id="ovk-photo-img">
-
-            </div>
-        </div>
-        <div class="ovk-post-details ovk-modal-details miniplayer-body">
-            <div id="itemContentActions">
-                <img src="${_loader_link}">
-            </div>
-            <div id="itemContentComments"></div>
-        </div>
-    </div>
-</div>
-`
-
 class PhotoViewer extends Viewer {
     _getImageUrl(item) {
         if (item._PRESET_URL) {
@@ -1051,7 +917,6 @@ class PostViewer extends Viewer {
                 dates = post.find(".post-menu .date").first().textContent;
                 postUrl = post.find(".post-menu .date").first().getAttribute("href");
                 author_ava = post.find("tbody > tr > .post-author-ava > a > img").first().src;
-                nameBlock.find(".date").first().remove();
                 author_otherText = nameBlock.first().innerHTML;
                 this.modal.getNode().find(".itemAuthorName").append(author_otherText);
 
@@ -1066,6 +931,7 @@ class PostViewer extends Viewer {
                 dates = post.find(".post-author .date").first().textContent;
                 postUrl = post.find(".post-author .date").first().getAttribute("href");
                 author_ava = post.find(".post-author-ava > a > img").first().src;
+                nameBlock.find(".date").first().remove();
 
                 this.modal.getNode().find("#itemContentActions").prepend(post.find(".like_wrap").last().outerHTML);
             }
@@ -1582,7 +1448,7 @@ tippy.delegate('body', {
         const final_template = u(`
             <div style='margin: -6px -10px;'>
                 <div class='like_tooltip_wrapper'>
-                    <a onclick="LikersWindow.byTypeAndId(event, '${final_type}', '${id}')" href="/${final_type}/${id}/likes" class='like_tooltip_head'>
+                    <a href="/${final_type}/${id}/likes" class='like_tooltip_head'>
                         <span>${tr('liked_by_x_people', that._likesList.count)}</span>
                     </a>
 
@@ -1599,6 +1465,10 @@ tippy.delegate('body', {
             `)
         })
         that.setContent(final_template.nodes[0].outerHTML)
+        that.popper.querySelector(".like_tooltip_head").addEventListener("click", (e) => {
+            that.hide();
+            LikersWindow.byTypeAndId(e, final_type, id);
+        });
     }
 })
 
@@ -1627,7 +1497,17 @@ class LikersWindow {
     }
 
     _appendItem(item) {
-        this.modal.getNode().find("#likersItems").append(`<img src="${item.photo_100}">`);
+        this.modal.getNode().find("#likers #items").append(`
+            <div>
+                <div>
+                    <a href="/id${item.id}">
+                        <img src="${item.photo_100}">
+                    </a>
+                </div>
+                <a class="itemAuthor" href="/id${item.id}">
+                    ${escapeHtml(item.first_name + " " + item.last_name)}
+                </a>
+            </div>`);
     }
 
     _appendItems(resp) {
@@ -1635,13 +1515,13 @@ class LikersWindow {
         this.loadedCount += resp.items.length;
         this.totalCount = resp.count;
 
-        console.log(this)
         resp.items.forEach(item => {
             this._appendItem(item);
         });
 
-        if (this.loadedCount >= this.totalCount) {
-            this.modal.getNode().find("#likersWindow").append(`<div class="show_more">${tr("show_more")}</div>`);
+        this.modal.getNode().find("#likers .showMore").remove();
+        if (this.loadedCount < this.totalCount && resp.items.length > 0) {
+            this.modal.getNode().find("#likers").append(`<div class="showMore">${tr("show_more")}</div>`);
         }
     }
 
@@ -1659,9 +1539,22 @@ class LikersWindow {
         const res = await win._loadlikers();
 
         win.modal = new CMessageBox({
-            title: "LIKERS",
-            custom_template: u(`<div id="likersWindow"><div id="likersItems"></div></div>`)
+            title: ".",
+            custom_template: msgboxModernTemplate(tr("liked_by_x_people", res.count), `<div id="likers"><div id="items"></div></div>`),
+            unique_name: "likeAsWin",
         });
+        win.modal.getNode().find("#_close").on("click", (e) => {
+            win.modal.close();
+        });
+        win.modal.getNode().on("click", ".showMore", async (e) => {
+            e.target.classList.add("lagged");
+
+            const res2 = await win._loadlikers(win.offset);
+            win._appendItems(res2);
+
+            e.target.classList.remove("lagged");
+        });
+        win.modal.getNode().addClass("likes-window");
 
         win._appendItems(res);
 
