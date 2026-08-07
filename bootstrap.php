@@ -274,6 +274,8 @@ function ovk_is_ssl(): bool
             $forwardedProto = $_SERVER["HTTP_X_FORWARDED_PROTO"] ?? ($_SERVER["HTTP_X_FORWARDED_PROTOCOL"] ?? ($_SERVER["HTTP_X_URL_SCHEME"] ?? ""));
             if ($forwardedProto === "https") {
                 $GLOBALS["requestIsSSL"] = true;
+            } elseif ($forwardedProto === "http") {
+                $GLOBALS["requestIsSSL"] = false;
             } elseif (($_SERVER["HTTP_X_FORWARDED_SSL"] ?? "") === "on") {
                 $GLOBALS["requestIsSSL"] = true;
             }
