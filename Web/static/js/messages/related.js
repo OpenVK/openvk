@@ -113,12 +113,13 @@ function updateChatAvatar(e, chat) {
 }
 
 function OpenChatAvatar(event, peer) {
+    console.log(peer)
     if (peer.supposed_type == "chat") {
         OpenMiniature(event, peer.avatar_max, peer.id, "skip", "chat", null, true, 0)
         return;
     }
 
-    if (peer.photo_pid == null) {
+    if (peer.data.photo_pid == null) {
         console.log("IM | Photo viewer | i think this user does not have avatar.");
         return;
     }

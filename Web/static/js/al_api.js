@@ -83,7 +83,7 @@ window.OVKAPI = new class {
         })
         const json_response = await res.json()
 
-        if(json_response.response) {
+        if(json_response.response || json_response.response == 0) {
             return json_response.response
         } else {
             if (return_exception == true) {
