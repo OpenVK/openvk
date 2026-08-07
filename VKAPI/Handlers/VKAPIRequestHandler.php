@@ -80,7 +80,7 @@ abstract class VKAPIRequestHandler
     {
         if (VKAPI_DECL_VER_MAJOR >= 5 && VKAPI_DECL_VER_MINOR < 138 && $without_count == true) {
             return $items;
-        } else if (VKAPI_DECL_VER_MAJOR >= 5) {
+        } elseif (VKAPI_DECL_VER_MAJOR >= 5) {
             return (object) [
                 'count' => $count,
                 'items' => $items,
