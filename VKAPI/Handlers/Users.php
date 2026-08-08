@@ -167,6 +167,10 @@ final class Users extends VKAPIRequestHandler
                                             $platform = 4;
                                             break;
 
+                                        case 'desktop':
+                                            $platform = 6;
+                                            break;
+
                                         case 'web':
                                         case null:
                                             $platform = 7;
