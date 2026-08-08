@@ -1,6 +1,6 @@
 #include <ru>
 
-"__locale" = "su_SU.utf8;su_SU.UTF-8;Rus";
+"__locale" = "ru_SU.utf8;ru_SU.UTF-8;Rus";
 "__WinEncoding" = "Windows-1251";
 
 /* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
