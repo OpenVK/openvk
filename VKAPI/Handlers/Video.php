@@ -80,14 +80,14 @@ final class Video extends VKAPIRequestHandler
             if ($owner_id > 0) {
                 $user = (new UsersRepo())->get($owner_id);
             } else {
-                $this->fail(1, "Not implemented");
+                $user = (new ClubsRepo())->get($owner_id * -1);
             }
 
             if (!$user || $user->isDeleted()) {
                 $this->fail(14, "Invalid user");
             }
 
-            if (!$user->getPrivacyPermission('videos.read', $this->getUser())) {
+            if ($user->getRealId() > 0 && !$user->getPrivacyPermission('videos.read', $this->getUser())) {
                 $this->fail(21, "This user chose to hide his videos.");
             }
 

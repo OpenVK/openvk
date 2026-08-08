@@ -139,8 +139,8 @@
                     {/if}
 
                     {if !($forceNoDeleteLink ?? false) && $canBeArchived}
-                        <span class="oldPostArchive post_unique_btns" n:if="!$post->isArchived()"><a href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}">{_archive_action}</a> &nbsp;|&nbsp;</span>
-                        <span class="oldPostArchive post_unique_btns" n:if="$post->isArchived()"><a href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}">{_unarchive_action}</a> &nbsp;|&nbsp;</span>
+                        <span class="oldPostArchive" n:if="!$post->isArchived()"><a href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}">{_archive_action}</a> &nbsp;|&nbsp;</span>
+                        <span class="oldPostArchive" n:if="$post->isArchived()"><a href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}">{_unarchive_action}</a> &nbsp;|&nbsp;</span>
                     {/if}
 
                     {if !($forceNoDeleteLink ?? false) && $canBeDeleted}
@@ -157,9 +157,9 @@
 
                     {if !($forceNoPinLink ?? false) && $canBePinned}
                         {if $post->isPinned()}
-                            <a onclick="ajax_pin(event)" class="m_hide post_unique_btns" href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}">{_unpin}</a>
+                            <a onclick="ajax_pin(event)" class="m_hide" href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}">{_unpin}</a>
                         {else}
-                            <a onclick="ajax_pin(event)" class="m_hide post_unique_btns" href="/wall{$post->getPrettyId()}/pin?act=pin&hash={rawurlencode($csrfToken)}">{_pin}</a>
+                            <a onclick="ajax_pin(event)" class="m_hide" href="/wall{$post->getPrettyId()}/pin?act=pin&hash={rawurlencode($csrfToken)}">{_pin}</a>
                         {/if}
                         <span class="m_hide">&nbsp;|&nbsp;</span>
                     {/if}

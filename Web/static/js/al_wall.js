@@ -535,7 +535,7 @@ class PhotoViewer extends Viewer {
 
 class VideoViewer extends Viewer {
     async loadEntityContext() {
-        const video_api = await window.OVKAPI.call('video.get', {'videos': `${video_owner}_${video_id}` + (video_key ? "_" + video_key: ""), 'extended': 1})
+        const video_api = await window.OVKAPI.call('video.get', {'owner_id': this.context.owner_id, 'extended': 1})
         this.totalItemsCount = video_api.count;
 
         video_api.items.forEach(item => {
@@ -759,6 +759,24 @@ class VideoViewer extends Viewer {
         });
     }
 
+    async initalizeContext(context = null, selected_id = null) {
+        await this._initalizeContext(context, selected_id);
+        this._updFrame();
+    }
+
+    async _initalizeContext(context = null, selected_id = null) {
+        if (context == null) {
+            context = this.context;
+        }
+
+        const type = context.type;
+        switch (type) {
+            case "uploaded_by":
+                await this.loadEntityContext();
+                break;
+        }
+    }
+
     static async openById(ids, context = {}, event = null, open_comments = false) {
         if (event != null) {
             event.preventDefault();
@@ -774,8 +792,11 @@ class VideoViewer extends Viewer {
             });
             const first_id = ids;
 
-            if (context.type == null) {
+            if (context == null || context.type == null) {
                 await videoViewer.loadIdsOnlyContext();
+            } else {
+                this.setContext(context);
+                await videoViewer.initalizeContext(null, ids);
             }
 
             videoViewer.open();
@@ -795,6 +816,7 @@ class VideoViewer extends Viewer {
 
         CMessageBox.toggleLoader(true);
 
+        console.log(context)
         try {
             const videoViewer = new VideoViewer();
             videoViewer.setContext({
@@ -826,7 +848,8 @@ class VideoViewer extends Viewer {
     }
 }
 
-// Текущий плеер написан плоховато. Это обёртка для него для диалогов
+// обёртка для основного плеера
+// не вызовет желания отправлять аудио в сообщениях... но что делать
 class AudioViewer extends Viewer {
     async loadAudioIdsContext() {
         const ids = this.context.id;
@@ -846,7 +869,7 @@ class AudioViewer extends Viewer {
 
         const audioView = new AudioViewer();
         if (api_item != null) {
-            id = attachment.audio.owner_id + "_" + attachment.audio.global_id
+            id = api_item.owner_id + "_" + api_item.global_id
             audioView._appendApiItem(api_item);
         }
 
@@ -854,13 +877,14 @@ class AudioViewer extends Viewer {
             "type": "id",
             "id": id
         });
+        this.currentId = id;
 
         if (api_item == null) {
             await audioView.loadAudioIdsContext();
         }
 
         audioView.open();
-        audioView._loadDetails();
+        await audioView._loadDetails();
         CMessageBox.toggleLoader()
     }
 
@@ -874,11 +898,12 @@ class AudioViewer extends Viewer {
     }
 
     async _loadDetails() {
+        const ids = this.context.id;
         const fd = new FormData();
         fd.append('ajax', '1');
         fd.append('hash', window.router.csrf);
 
-        const f = await fetch("/audio" + ids, {
+        const f = await fetch("/audio1_" + ids, {
             method: "POST",
             body: fd
         });
@@ -893,6 +918,7 @@ class AudioViewer extends Viewer {
 
             //window.player.ajReveal();
         } catch (e) {
+            console.error(e);
             fastError(escapeHtml(tr("messages_unable_to_load_audio", ids)));
         }
     }
@@ -1815,7 +1841,13 @@ async function showArticle(note_id) {
 
 u(document).on("click", "#editPost", async (e) => {
     const target = u(e.target)
-    const post = target.closest("table")
+    let post = null;
+    if (target.closest(".ovk-msg-all").length > 0) {
+        post = target.closest(".ovk-msg-all").find(".post");
+    } else {
+        post = target.closest("table");
+    }
+
     const content = post.find(".post-content")
     const edit_place_l = post.find('.post-edit')
     const edit_place = u(edit_place_l.first())
@@ -2422,14 +2454,14 @@ u(document).on('click', '#__videoAttachment', async (e) => {
                     <tbody>
                         <tr>
                             <td valign="top">
-                                <a href="/video${pretty_id}">
+                                <a onclick="VideoViewer.openById('${pretty_id}', {}, event)">
                                     <div class="video-preview">
                                         <img src="${video.image[0].url}" alt="${escapeHtml(video.title)}">
                                     </div>
                                 </a>
                             </td>
                             <td valign="top" style="width: 100%">
-                                <a href="/video${pretty_id}">
+                                <a onclick="VideoViewer.openById('${pretty_id}', {}, event)">
                                     <b class='video-name'>
                                         ${ovk_proc_strtr(escapeHtml(video.title), 50)}
                                     </b>
@@ -4083,8 +4115,15 @@ function ajax_delete(event = null) {
                         fastError(f.status);
                         return;
                     }
+                    let post_node = null;
 
-                    event.target.closest(".post").outerHTML = `<div class="post post-divider"><div class="post-deleted">${tr(types + "_is_deleted")}</div></div>`
+                    if (event.target.closest(".ovk-msg-all") != null) {
+                        post_node = event.target.closest(".ovk-msg-all").querySelector(".post");
+                    } else {
+                        post_node = event.target.closest(".post");
+                    }
+
+                    post_node.outerHTML = `<div class="post post-divider"><div class="post-deleted">${tr(types + "_is_deleted")}</div></div>`
                 } catch (e) {
                     console.error(e);
                     fastError(String(e));
@@ -4138,8 +4177,10 @@ function ajax_pin(event = null) {
                     const new_url = new URL(href);
                     let post_node = null;
 
-                    if (event.target.closest(".ovk-msg-all") == null) {
+                    if (event.target.closest(".ovk-msg-all") != null) {
                         post_node = event.target.closest(".ovk-msg-all").querySelector(".post");
+                    } else {
+                        post_node = event.target.closest(".post");
                     }
 
                     new_url.searchParams.set("hash", window.router.csrf);

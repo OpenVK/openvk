@@ -409,7 +409,7 @@
             </div>
             <div class="hide_on_mobiles" style="padding: 5px;">
                 {foreach $videos as $video}
-                    {include "../Videos/ProfileVideo.latte", video => $video}
+                    {include "../Videos/ProfileVideo.latte", video => $video, ref => $club->getRealId()}
                 {/foreach}
             </div>
         </div>

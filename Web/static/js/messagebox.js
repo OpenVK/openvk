@@ -300,9 +300,14 @@ class Viewer {
             this.context.offset = data.custom_offset;
         }
 
+        if (data.offset != null) {
+            this.context.offset = data.offset;
+        }
+
         this.context.reverse = data.reverse || false;
         this.context.custom_context = data.custom_context || null;
         this.context.id = data.id || null;
+        this.context.owner_id = data.owner_id || null;
     }
 
     resetContext() {

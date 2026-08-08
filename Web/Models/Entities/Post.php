@@ -409,7 +409,7 @@ class Post extends Postable
         $res = (object) [];
 
         $res->id      = $this->getVirtualId();
-        $res->to_id   = $this->getWallOwner()->getRealId();
+        $res->owner_id = $res->to_id = $this->getWallOwner()->getRealId();
         $res->from_id = $this->getOwner()->getRealId();
         $res->date    = $this->getPublicationTime()->timestamp();
         $res->text    = $this->getText(false);
@@ -425,7 +425,7 @@ class Post extends Postable
     {
         return [
             "type"  => "wall",
-            "photo" => $this->toNotifApiStruct(),
+            "wall" => $this->toNotifApiStruct(),
         ];
     }
 

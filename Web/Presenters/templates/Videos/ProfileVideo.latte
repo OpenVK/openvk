@@ -5,7 +5,7 @@
             style="max-width: 170px; max-height: 127px; margin: auto;" />
     </a>
     <div>
-        <b><a href="/video{$video->getPrettyId()}" onclick="VideoViewer.openById({$video->getPrettyIdWithKey()}, {}, event)">{ovk_proc_strtr($video->getName(), 30)}</a></b><br>
+        <b><a href="/video{$video->getPrettyId()}" onclick="VideoViewer.openById({$video->getPrettyIdWithKey()}, \{ type: 'uploaded_by', owner_id: {$ref} \}, event)">{ovk_proc_strtr($video->getName(), 30)}</a></b><br>
         <span style="font-size: 10px;">{$video->getPublicationTime()} | {_comments} ({$video->getCommentsCount()})</span>
     </div>
 </div>

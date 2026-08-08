@@ -153,10 +153,10 @@ const Attachment = ({ msg, att }) => {
           <span>—</span>
           <span class="_title">${att.audio.title}</span>
         </div>`;
-    case 'post':
+    case 'wall':
 		return html`
 			<div class="msg-attach-w msg-attach-w-post">
-				<a href="/wall${att.post.owner_id}_${att.post.id}" target="_blank">${tr("post")}</a>
+				<a onclick="${(e) => PostViewer.openById(e, idForItem(att.wall))}" target="_blank">запись на чьей то стене</a>
 			</div>
         `;
     default:
