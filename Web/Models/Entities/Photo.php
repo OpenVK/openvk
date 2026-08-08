@@ -194,7 +194,7 @@ class Photo extends Media
                     "crop"   => null,
                 ];
 
-                if (VKAPI_DECL_VER_MAJOR <= 5 && VKAPI_DECL_VER_MINOR < 77) {
+                if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR <= 5 && VKAPI_DECL_VER_MINOR < 77) {
                     unset($photoobj['url']);
                     $photoobj['src'] = $url;
                 }
