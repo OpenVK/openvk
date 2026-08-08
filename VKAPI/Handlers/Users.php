@@ -299,7 +299,7 @@ final class Users extends VKAPIRequestHandler
                                     "online_friends" => $usr->getFriendsOnlineCount(),
                                     "mutual_friends" => 0, // FIXME: not implemented
                                     "user_photos" => 0, // FIXME: not implemented
-                                    "albums" => (new Albums())->getUserAlbumsCount($usr),
+                                    "albums" => (new Albums())->getUserAlbumsCount($usr, $authuser),
                                     "followers" => $usr->getFollowersCount(),
                                     "gifts" => $usr->getGiftCount(),
                                 ];

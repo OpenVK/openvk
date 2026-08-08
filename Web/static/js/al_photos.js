@@ -195,3 +195,7 @@ u(document).on("paste", ".photo_upload_container", (e) => {
         u("#uploadButton").trigger("change")
     }
 })
+
+$(document).on("submitted", ".save_photo", (e) => {
+    $(e.target).find('input[type=submit]').attr('disabled', 'disabled').val(tr("photo_saved"));
+});

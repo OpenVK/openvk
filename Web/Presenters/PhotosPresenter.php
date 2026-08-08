@@ -35,8 +35,8 @@ final class PhotosPresenter extends OpenVKPresenter
                 $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
             }
 
-            $this->template->albums  = $this->albums->getUserAlbums($user, (int) ($this->queryParam("p") ?? 1));
-            $this->template->count   = $this->albums->getUserAlbumsCount($user);
+            $this->template->albums  = $this->albums->getUserAlbums($user, $this->user->identity, (int) ($this->queryParam("p") ?? 1));
+            $this->template->count   = $this->albums->getUserAlbumsCount($user, $this->user->identity);
             $this->template->owner   = $user;
             $this->template->canEdit = false;
             if (!is_null($this->user->identity)) {
@@ -203,6 +203,7 @@ final class PhotosPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
+        $album = null;
         if (!is_null($this->queryParam("from"))) {
             if (preg_match("%^album([0-9]++)$%", $this->queryParam("from"), $matches) === 1) {
                 $album = $this->albums->get((int) $matches[1]);
@@ -219,6 +220,8 @@ final class PhotosPresenter extends OpenVKPresenter
         $this->template->cPage    = (int) ($this->queryParam("p") ?? 1);
         $this->template->comments = iterator_to_array($photo->getComments($this->template->cPage));
         $this->template->owner    = $photo->getOwner();
+
+        $this->template->canSave = $this->user->identity && (!$album || $album->getSpecialType() != Album::SPECIAL_SAVED) && $photo->isAvailableForSaving();
     }
 
     public function renderAbsolutePhoto($id): void
@@ -449,5 +452,33 @@ final class PhotosPresenter extends OpenVKPresenter
         }
 
         $this->redirect("$_SERVER[HTTP_REFERER]");
+    }
+
+    public function renderSavePhoto(int $owner, int $photoId): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+        $this->assertNoCSRF();
+
+        $photo = $this->photos->getByOwnerAndVID($owner, $photoId);
+        if (!$photo) {
+            $this->notFound();
+        }
+        if (!$photo->canBeViewedBy($this->user->identity)) {
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+        }
+
+        $album = $this->albums->getUserSavedAlbum($this->user->identity);
+
+        $saved_photo = new Photo();
+        $saved_photo->copyFrom($photo);
+        $saved_photo->setOwner($this->user->id);
+        $saved_photo->setCreated(time());
+        $saved_photo->save();
+
+        $album->addPhoto($saved_photo);
+
+        header("HTTP/1.1 204 No Content");
+        exit("");
     }
 }
