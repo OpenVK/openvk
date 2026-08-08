@@ -548,7 +548,7 @@ final class Photos extends VKAPIRequestHandler
         return 1;
     }
 
-    # Поскольку комментарии едины, можно использовать метод "wall.deleteComment".
+    # use "wall.deleteComment".
     /*public function deleteComment(int $comment_id, int $owner_id = 0)
     {
         $this->requireUser();
