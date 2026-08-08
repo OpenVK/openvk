@@ -760,7 +760,7 @@ function _checkViewers() {
         PostViewer.openById(null, id);
     });
     _checkViewerType("photo", w, (id) => {
-        OpenMiniature(null);
+        PhotoViewer.openById(id);
     });
     _checkViewerType("video", w, (id) => {
         VideoViewer.openById(id);

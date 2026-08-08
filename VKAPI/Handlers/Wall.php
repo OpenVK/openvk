@@ -1405,6 +1405,7 @@ final class Wall extends VKAPIRequestHandler
         return $posts;
     }
 
+    // из зачем это было выносить именно таким образом v__v
     private function getApiPhoto($attachment)
     {
         return [
@@ -1417,6 +1418,7 @@ final class Wall extends VKAPIRequestHandler
                 "sizes"    => !is_null($attachment->getVkApiSizes()) ? array_values($attachment->getVkApiSizes()) : null,
                 "text"     => "",
                 "has_tags" => false,
+                "access_key" => $attachment->getAccessKey(),
             ],
         ];
     }
