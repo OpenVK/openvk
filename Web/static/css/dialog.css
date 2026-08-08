@@ -12,11 +12,11 @@ body.dimmed > .dimmer #clickable {
     height: 100%;
 }
 
-body.manyMsgs .ovk-white-modal {
+body.manyMsgs .ovk-msg-all {
     display: none;
 }
 
-body.manyMsgs .ovk-white-modal:last-of-type {
+body.manyMsgs .ovk-msg-all:last-of-type {
     display: block !important;
 }
 

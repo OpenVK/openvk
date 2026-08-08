@@ -155,7 +155,7 @@ final class Messages extends VKAPIRequestHandler
             return;
         }
 
-        $parsed = parseAttachments($attachments, ['photo', 'video', 'audio', 'doc', 'poll']);
+        $parsed = parseAttachments($attachments, ['photo', 'video', 'audio', 'doc', 'poll', 'wall']);
         $result = [];
 
         foreach ($parsed as $attachment) {
