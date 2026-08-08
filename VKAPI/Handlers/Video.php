@@ -141,7 +141,7 @@ final class Video extends VKAPIRequestHandler
         }
     }
 
-    public function edit(int $owner_id, int $video_id, string $name = null, string $desc = null, int $no_comments = 0, int $repeat = 0)
+    public function edit(int $owner_id, int $video_id, ?string $name = null, ?string $desc = null, int $no_comments = 0, int $repeat = 0)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -158,7 +158,7 @@ final class Video extends VKAPIRequestHandler
             $changes += 1;
         }
 
-        if (!$desc) {
+        if ($desc != null) {
             $video->setDescription($desc);
             $changes += 1;
         }

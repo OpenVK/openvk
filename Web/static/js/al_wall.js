@@ -118,13 +118,18 @@ class PhotoViewer extends Viewer {
         return item.src_xbig || item.photo_2560 || pickBestPhotoUrl(item.sizes);
     }
 
-    _getTitle() {
-        if (this.count == 1) {
-            return tr("photo");
-        }
+    _getEntityPageName() {
+        return "photo";
+    }
 
+    _getTitle() {
         switch(this.context.type) {
+            case null:
+                return "";
             default:
+                if (this.count == 1) {
+                    return tr("photo");
+                }
                 return tr("photo_x_from_y", this.currentIndex + 1, this.totalItemsCount || this.count);
         }
     }
@@ -267,6 +272,9 @@ class PhotoViewer extends Viewer {
                 this.context.offset = await this._resolveOffset(ids[0], ids[1], "photos.get", alb[1], this.context.reverse);
                 await this.loadAlbumContext();
                 break;
+            case "all_photos": // для аято
+                await this.loadAllPhotosContext();
+                break;
             case "chat":
                 await this.loadChatAvatarContext();
                 break;
@@ -323,7 +331,7 @@ class PhotoViewer extends Viewer {
                 document.exitFullscreen();
             }
 
-            this.modal.close();
+            this.close();
         });
 
         this.modal.getNode().find(".ovk-photo-slide-left").on("click", () => {
@@ -354,6 +362,8 @@ class PhotoViewer extends Viewer {
     async selectItem(pid, item) {
         this.currentId = pid;
         this._updFrame(item);
+
+        this._pushW(this.currentId);
 
         await this._loadDetails(pid);
     }
@@ -419,7 +429,7 @@ class PhotoViewer extends Viewer {
             return;
         }
 
-        if (this.context.type == "chat" || (this.context.not_load_comments || false) == true) {
+        if (this.context.type == "chat" || this.context.type == null || (this.context.not_load_comments || false) == true) {
             this._getCurrentEntryCacheNode().last().innerHTML = itemId;
             return;
         }
@@ -517,7 +527,7 @@ class VideoViewer extends Viewer {
         const msgbox = this.modal;
 
         msgbox.getNode().find('#ovk-player-part #__modal_player_close, .ovk-photo-view-overlay, #miniplayer_close').on('click', (e) => {
-            this.modal.close()
+            this.close()
         })
 
         msgbox.getNode().find('#__toggle_comments').on('click', async (e) => {
@@ -599,6 +609,8 @@ class VideoViewer extends Viewer {
 
     async selectItem(pid, item) {
         this.currentId = pid;
+        this._pushW(this.currentId);
+
         console.log(pid, item)
         this._updFrame(item);
     }
@@ -611,8 +623,15 @@ class VideoViewer extends Viewer {
             this.modal.getNode().addClass("viewer-deleted");
         }
 
-        const author = item.author
-        const author_name = author.name ? author.name : `${author.first_name} ${author.last_name}`;
+        let author_name = 'someone';
+
+        try {
+            let author = item.author
+            author_name = author.name ? author.name : `${author.first_name} ${author.last_name}`;
+        } catch(e) {
+            console.error(e);
+        }
+
         let player_html = '';
 
         if(init_player == true) {
@@ -653,27 +672,42 @@ class VideoViewer extends Viewer {
         const entry = this.items[itemId];
         if (!entry) return;
 
+        let details = null;
+        let postfix_ = new URLSearchParams(entry.postfix || {});
+        let next = null;
+
+        if (context == "pagination") {
+            event.target.classList.add("lagged");
+            const p = this._getPage(event.target);
+            postfix_.set("p", p[0]);
+            next = p[1];
+        }
+
         this.modal.getNode().removeClass("viewer-deleted");
         if (entry && entry.deleted == 1) {
             this.modal.getNode().addClass("viewer-deleted");
         }
 
-        if (entry.cached == null) {
+        if (entry.cached == null || context == "pagination") {
             try {
-                const p = new URLSearchParams(entry.postfix ?? {});
-                const fetcher = await fetch(this._getDetailsUrl(itemId, p));
+                const fetcher = await fetch(this._getDetailsUrl(itemId, postfix_));
                 const fetch_r = await fetcher.text();
                 const results = new DOMParser().parseFromString(fetch_r, 'text/html');
-                const details = results.querySelector(".ovk-vid-details");
-                details.querySelector(".media-page-wrapper-description b").remove();
+                const _details = results.querySelector(".ovk-vid-details");
+                _details.querySelector(".media-page-wrapper-description b").remove();
 
-                this.modal.getNode().find('#ovk-player-info').html(details.innerHTML)
-
-                this._addCachedDetailsToEntry(entry, details ? details.innerHTML : '')
+                details = _details ? _details.innerHTML : '';
             } catch(e) {
                 console.error(e);
                 makeError(String(e));
             }
+        }
+
+        if (context == "pagination") {
+            this._appendDetailsAsPagination(next, event.target, details, entry);
+        } else {
+            this.modal.getNode().find('#ovk-player-info').html(details);
+            this._addCachedDetailsToEntry(entry, details)
         }
 
         this._getCurrentEntryCacheNode().last().innerHTML = entry.cached;
@@ -696,7 +730,11 @@ class VideoViewer extends Viewer {
                 "id": ids
             });
             const first_id = ids;
-            await videoViewer.loadIdsOnlyContext();
+
+            if (context.type == null) {
+                await videoViewer.loadIdsOnlyContext();
+            }
+
             videoViewer.open();
             videoViewer.afterOpen(first_id, open_comments);
         } catch(e) {
@@ -881,7 +919,7 @@ class PostViewer extends Viewer {
         });
 
         this.modal.getNode().find("#ovk-photo-close, .ovk-photo-view-overlay").on("click", () => {
-            this.modal.close();
+            this.close();
         });
 
         this.modal.getNode().find("#move_back").on("click", () => {
@@ -903,6 +941,8 @@ class PostViewer extends Viewer {
 
         this._updFrame(item);
         this.currentId = pid;
+        this._pushW(this.currentId);
+
         console.log(pid, item)
     }
 
@@ -1090,8 +1130,10 @@ class PostViewer extends Viewer {
 }
 
 async function OpenMiniature(e, photo, post, photo_id, type = "post", custom_context = null, reverse = false, custom_offset = null) {
-    e.preventDefault();
-    e.stopPropagation();
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
 
     const __photoViewer = new PhotoViewer();
     CMessageBox.toggleLoader(true);
@@ -1112,7 +1154,7 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post", custom_con
 
     __photoViewer.open();
 
-    if (type == "chat") {
+    if (type == "chat" || type == null) {
         __photoViewer.setMode("tg");
     }
 
@@ -1134,15 +1176,55 @@ function OpenAvatar(e, photo_large, avatar_album, photo_id) {
 async function edit_video(event) {
     event.preventDefault();
 
-    const href = event.target.getAttribute("href");
-    const id = href.replace("/photo", "").replace("/edit", "");
-    const ids = hr.split("_");
-    await window.OVKAPI.call("photos.edit", {
-        "owner_id": ids[0],
-        "photo_id": ids[1],
-        "caption": val
-    });
+    CMessageBox.toggleLoader(true);
 
+    const href = event.target.getAttribute("href");
+    const id = href.replace("/video", "").replace("/edit", "");
+    const ids = id.split("_");
+
+    const data = await window.OVKAPI.call("video.get", {
+        'videos': id
+    });
+    const item = data.items[0];
+    const original_name = item.title;
+    const original_description = item.description;
+
+    CMessageBox.toggleLoader(false);
+
+    const msg = new CMessageBox({
+        close_on_buttons: false,
+        title: tr("change_video"),
+        body: `
+            <div>${tr("name")}</div>
+            <div>
+                <input id="_name" type="text" value="${escapeHtml(original_name)}">
+            </div>
+            <div>${tr("description")}</div>
+            <div>
+                <textarea id="_desc">${escapeHtml(original_description)}</textarea>
+            </div>
+        `,
+        buttons: [tr("save"), tr("cancel")],
+        callbacks: [async () => {
+            const name = msg.getNode().find("#_name").last().value;
+            const desc = msg.getNode().find("#_desc").last().value;
+
+            CMessageBox.toggleLoader(true);
+            msg.getNode().find("button").addClass("lagged")
+
+            await window.OVKAPI.call("video.edit", {
+                "owner_id": ids[0],
+                "video_id": ids[1],
+                "name": name,
+                "desc": desc
+            });
+            msg.close();
+
+            CMessageBox.toggleLoader(false);
+        }, () => {
+            msg.close();
+        }]
+    });
 }
 
 // Submit on "Ctrl+Enter"
@@ -3977,12 +4059,19 @@ function ajax_pin(event = null) {
                     }
 
                     const new_url = new URL(href);
+                    let post_node = null;
+
+                    if (event.target.closest(".ovk-msg-all") == null) {
+                        post_node = event.target.closest(".ovk-msg-all").querySelector(".post");
+                    }
+
                     new_url.searchParams.set("hash", window.router.csrf);
                     if (action === "pin") {
                         new_url.searchParams.set("act", "unpin");
                         event.target.classList.add("unpin");
                         u(".post.is-pinned").removeClass("is-pinned");
-                        event.target.closest(".post").classList.add("is-pinned");
+
+                        post_node.classList.add("is-pinned");
 
                         if (event.target.innerHTML != "") {
                             event.target.innerHTML = tr("unpin");
@@ -3990,7 +4079,7 @@ function ajax_pin(event = null) {
                     } else {
                         new_url.searchParams.set("act", "pin");
                         event.target.classList.remove("unpin");
-                        event.target.closest(".post").classList.remove("is-pinned");
+                        post_node.classList.remove("is-pinned");
 
                         if (event.target.innerHTML != "") {
                             event.target.innerHTML = tr("pin");
