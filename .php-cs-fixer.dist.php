@@ -3,6 +3,7 @@
 $finder = (new PhpCsFixer\Finder())
     ->in(__DIR__)
     ->name('openvkctl')
+    ->exclude(['tmp'])
 ;
 
 return (new PhpCsFixer\Config())

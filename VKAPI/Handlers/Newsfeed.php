@@ -25,7 +25,7 @@ final class Newsfeed extends VKAPIRequestHandler
     {
         $this->requireUser();
 
-        if ($forGodSakePleaseDoNotReportAboutMyOnlineActivity == 0) {
+        if ($forGodSakePleaseDoNotReportAboutMyOnlineActivity == 0 || VKAPI_DECL_VER_MAJOR <= 5 && VKAPI_DECL_VER_MINOR <= 63) {
             $this->getUser()->updOnline($this->getPlatform());
         }
 

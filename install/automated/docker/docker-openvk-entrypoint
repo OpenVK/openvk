@@ -1,10 +1,14 @@
 #!/bin/sh
 set -e
 
-./openvkctl upgrade --no-interaction --quick
+cd /opt/openvk
+
 
 # first arg is `-f` or `--some-option`
 if [ "${1#-}" != "$1" ]; then
+    # Run the database schema upgrade only when starting the main web server.
+    # Explicit commands (e.g. vendor/bin/phpstan analyse) are executed as-is.
+    ./openvkctl upgrade --no-interaction --quick
     set -- apache2-foreground "$@"
 fi
 

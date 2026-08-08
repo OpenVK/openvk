@@ -370,7 +370,7 @@
                 </div>
             </div>
             <div class="section_empty" n:if="$albumsCount == 0">
-                <a href="/albums{$club->getId()}" class="photo">{_upload_button}</a>
+                <a href="/albums{$club->getId() * -1}" class="photo">{_upload_button}</a>
             </div>
             <div style="padding: 5px;">
                 <div class="ovk-album" style="display: inline-block;" n:foreach="$albums as $album">
