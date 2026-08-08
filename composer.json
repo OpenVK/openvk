@@ -5,15 +5,9 @@
         "lint": "php-cs-fixer fix --dry-run --diff --verbose",
         "analyse": "phpstan analyse --memory-limit 1G"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/OpenVK/chandler"
-        }
-    ],
     "require": {
         "php": "~8.2",
-        "openvk/chandler": "dev-restructurisation",
+        "openvk/chandler": "dev-master",
         "whichbrowser/parser": "dev-master",
         "james-heinrich/getid3": "^1.9@dev",
         "rybakit/msgpack": "dev-master",

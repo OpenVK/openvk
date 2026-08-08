@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d1fdbec717845748da28b9be782308eb",
+    "content-hash": "8e33e80bfba7801e89a9226815dcd21a",
     "packages": [
         {
             "name": "al/emoji-detector",
@@ -644,21 +644,21 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "7.15.2",
+            "version": "7.15.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "744101956d78b7c1384d0cbf379db13e859167bf"
+                "reference": "ae311b8f045ea93ce7b1c9cdb7cec06c53f944bc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/744101956d78b7c1384d0cbf379db13e859167bf",
-                "reference": "744101956d78b7c1384d0cbf379db13e859167bf",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/ae311b8f045ea93ce7b1c9cdb7cec06c53f944bc",
+                "reference": "ae311b8f045ea93ce7b1c9cdb7cec06c53f944bc",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "guzzlehttp/promises": "^2.5.1",
+                "guzzlehttp/promises": "^2.5.2",
                 "guzzlehttp/psr7": "^2.13",
                 "php": "^7.2.5 || ^8.0",
                 "psr/http-client": "^1.0",
@@ -752,7 +752,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/guzzle/issues",
-                "source": "https://github.com/guzzle/guzzle/tree/7.15.2"
+                "source": "https://github.com/guzzle/guzzle/tree/7.15.3"
             },
             "funding": [
                 {
@@ -768,20 +768,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-07-26T23:23:20+00:00"
+            "time": "2026-08-05T19:48:21+00:00"
         },
         {
             "name": "guzzlehttp/promises",
-            "version": "2.5.1",
+            "version": "2.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/promises.git",
-                "reference": "9ad1e4fc607446a055b95870c7f668e93b5cff29"
+                "reference": "2823687acff28b2dbe67b2508a6b300e2c3fa4ce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/promises/zipball/9ad1e4fc607446a055b95870c7f668e93b5cff29",
-                "reference": "9ad1e4fc607446a055b95870c7f668e93b5cff29",
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/2823687acff28b2dbe67b2508a6b300e2c3fa4ce",
+                "reference": "2823687acff28b2dbe67b2508a6b300e2c3fa4ce",
                 "shasum": ""
             },
             "require": {
@@ -836,7 +836,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/promises/issues",
-                "source": "https://github.com/guzzle/promises/tree/2.5.1"
+                "source": "https://github.com/guzzle/promises/tree/2.5.2"
             },
             "funding": [
                 {
@@ -852,7 +852,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-07-08T15:48:39+00:00"
+            "time": "2026-08-05T19:30:54+00:00"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -1967,16 +1967,16 @@
         },
         {
             "name": "openvk/chandler",
-            "version": "dev-restructurisation",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenVK/chandler.git",
-                "reference": "abd8fae5fa0277f598d669fe3b892639a5594d1e"
+                "reference": "9dbcb890ab26138dddb4a16eea7c0d7f72d17662"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenVK/chandler/zipball/abd8fae5fa0277f598d669fe3b892639a5594d1e",
-                "reference": "abd8fae5fa0277f598d669fe3b892639a5594d1e",
+                "url": "https://api.github.com/repos/OpenVK/chandler/zipball/9dbcb890ab26138dddb4a16eea7c0d7f72d17662",
+                "reference": "9dbcb890ab26138dddb4a16eea7c0d7f72d17662",
                 "shasum": ""
             },
             "require": {
@@ -1998,14 +1998,9 @@
             "suggest": {
                 "ext-yaml": "for faster yaml parsing"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
-                "psr-4": {
-                    "Chandler\\": "chandler/"
-                },
-                "classmap": [
-                    "chandler/Bootstrap.php"
-                ],
                 "files": [
                     "chandler/procedural/yaml.php",
                     "chandler/procedural/panic.php",
@@ -2013,21 +2008,20 @@
                     "chandler/procedural/mimes.php",
                     "chandler/procedural/escape_url.php",
                     "chandler/procedural/captcha.php"
-                ]
-            },
-            "scripts": {
-                "fix": [
-                    "php-cs-fixer fix"
                 ],
-                "lint": [
-                    "php-cs-fixer fix --dry-run --diff --verbose"
+                "psr-4": {
+                    "Chandler\\": "chandler/"
+                },
+                "classmap": [
+                    "chandler/Bootstrap.php"
                 ]
             },
+            "notification-url": "https://packagist.org/downloads/",
             "support": {
-                "source": "https://github.com/OpenVK/chandler/tree/restructurisation",
-                "issues": "https://github.com/OpenVK/chandler/issues"
+                "issues": "https://github.com/OpenVK/chandler/issues",
+                "source": "https://github.com/OpenVK/chandler/tree/master"
             },
-            "time": "2026-08-03T11:12:28+00:00"
+            "time": "2026-08-08T13:41:57+00:00"
         },
         {
             "name": "php81_bc/strftime",
@@ -2716,16 +2710,16 @@
         },
         {
             "name": "symfony/console",
-            "version": "v7.4.15",
+            "version": "v7.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "088ec6fe0ef6819cbc301174093b6bfa4ad26930"
+                "reference": "f4c69c9aed03abf933b294257d618bdd9b30a06d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/088ec6fe0ef6819cbc301174093b6bfa4ad26930",
-                "reference": "088ec6fe0ef6819cbc301174093b6bfa4ad26930",
+                "url": "https://api.github.com/repos/symfony/console/zipball/f4c69c9aed03abf933b294257d618bdd9b30a06d",
+                "reference": "f4c69c9aed03abf933b294257d618bdd9b30a06d",
                 "shasum": ""
             },
             "require": {
@@ -2790,7 +2784,7 @@
                 "terminal"
             ],
             "support": {
-                "source": "https://github.com/symfony/console/tree/v7.4.15"
+                "source": "https://github.com/symfony/console/tree/v7.4.16"
             },
             "funding": [
                 {
@@ -2810,7 +2804,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-07-27T13:51:00+00:00"
+            "time": "2026-07-31T12:37:14+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",
@@ -4785,11 +4779,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.2.7",
+            "version": "2.2.8",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/692db47b9dddb0487934e5236e77d48594aef921",
-                "reference": "692db47b9dddb0487934e5236e77d48594aef921",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/e285254e60f33c21902efef4a926ca0987c06804",
+                "reference": "e285254e60f33c21902efef4a926ca0987c06804",
                 "shasum": ""
             },
             "require": {
@@ -4845,7 +4839,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-07-29T17:39:32+00:00"
+            "time": "2026-08-04T22:21:45+00:00"
         },
         {
             "name": "psr/event-dispatcher",
