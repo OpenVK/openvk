@@ -221,15 +221,15 @@ body.manyMsgs .ovk-white-modal:last-of-type {
     padding: 10px 0px;
 }
 
-.ovk-photo-view .paginator {
+.ovk-white-modal .paginator {
     width: 100%;
 }
 
-.ovk-photo-view .paginator a {
+.ovk-white-modal .paginator a {
     display: none;
 }
 
-.ovk-photo-view .show-more-win {
+.ovk-white-modal .show-more-win {
     display: inline-block;
     width: 100%;
     background: var(--bg-slightly-border);
@@ -280,10 +280,20 @@ body.manyMsgs .ovk-white-modal:last-of-type {
     box-sizing: border-box;
 }
 
+.ovk-video-view-dimmer.queue-shown .ovk-modal-player-window .media-page-wrapper-details {
+    flex-direction: column-reverse;
+}
+
 .ovk-modal-player-window .media-page-wrapper-details {
     padding: 15px 26px;
     box-sizing: border-box;
     gap: 30px;
+}
+
+.modal-state-loader-switching {
+    text-align: center;
+    display: block;
+    padding: 0px 20px;
 }
 
 /* Modal player */

@@ -1,4 +1,8 @@
 window.router = new class {
+    constructor() {
+        this.isLoadedFirstly = false;
+    }
+
     get csrf() {
         return u("meta[name=csrf]").attr("value")
     }
@@ -518,5 +522,14 @@ window.addEventListener('popstate', (e) => {
 })
 
 window.addEventListener('DOMContentLoaded', () => {
-    window.router.applyTweaks()
+    window.router.applyTweaks();
+
+    if (window.router.isLoadedFirstly == false) {
+        console.log("applying ?w=");
+
+        _checkViewers();
+
+        CMessageBox.toggleLoader(false);
+        window.router.isLoadedFirstly = true;
+    }
 })

@@ -365,6 +365,30 @@ class Viewer {
                 this.modal.hide();
                 break;
         }
+
+        this._removeW();
+    }
+
+    _pushW(id) {
+        if (window.messagebox_stack.length > 2) {
+            console.error("i think there is a common \"w\".");
+            return;
+        }
+
+        const url = new URL(location.href);
+        url.searchParams.set("w", this._getEntityPageName() + id);
+        console.log(url)
+        history.replaceState({}, '', url.toString());
+    }
+
+    _removeW() {
+        if (window.messagebox_stack.length > 1) {
+            return;
+        }
+
+        const url = new URL(location.href);
+        url.searchParams.delete("w");
+        history.replaceState({}, '', url.toString());
     }
 
     async slide(direction) {
@@ -567,7 +591,7 @@ class Viewer {
             show_more_btn.classList.remove("lagged");
         }
 
-        this._addCachedDetailsToEntry(entry, this.modal.getNode().find(".ovk-photo-details").last().innerHTML)
+        this._addCachedDetailsToEntry(entry, this.modal.getNode().find(".ovk-modal-details").last().innerHTML)
     }
 }
 
@@ -711,4 +735,34 @@ const msgboxFacebookTemplate = (title, body) => {
             <div class="ovk-diag-action"></div>
         </div>
     </div>`)
+}
+
+function _checkViewerType(type, w, callback) {
+    const ws = w.split(",");
+    const r = ws[0];
+
+    if (r.includes(type)) {
+        const ids = r.replace(type, "");
+        callback(ids);
+    }
+}
+
+function _checkViewers() {
+    const url = new URL(location.href);
+    const w = url.searchParams.get("w");
+    // такого вида: wall0_0
+
+    if (!w || w.length == 0) {
+        return;
+    }
+
+    _checkViewerType("wall", w, (id) => {
+        PostViewer.openById(null, id);
+    });
+    _checkViewerType("photo", w, (id) => {
+        OpenMiniature(null);
+    });
+    _checkViewerType("video", w, (id) => {
+        VideoViewer.openById(id);
+    });
 }

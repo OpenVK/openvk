@@ -46,7 +46,7 @@ class Playlist extends MediaCollection
         return $this->getRecord()->length;
     }
 
-    public function fetchClassic(int $offset = 0, ?int $limit = null): \Traversable
+    public function fetchClassic(int $offset = 0, ?int $limit = null, bool $rev = false): \Traversable
     {
         $related = $this->getRecord()->related("$this->relTableName.collection")
             ->limit($limit ?? OPENVK_DEFAULT_PER_PAGE, $offset)
