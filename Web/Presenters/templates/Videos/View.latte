@@ -88,7 +88,7 @@
 
                     <div>
                         <div n:if="isset($thisUser) && $video->canBeModifiedBy($thisUser)">
-                            <a href="/video{$video->getPrettyId()}/edit" class="profile_link" style="display:block;width:96%;">
+                            <a onclick="edit_video(event)" href="/video{$video->getPrettyId()}/edit" class="profile_link" style="display:block;width:96%;">
                                 {_edit}
                             </a>
                             <a id='_videoDelete' href="/video{$video->getPrettyId()}/remove" class="profile_link" style="display:block;width:96%;">

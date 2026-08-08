@@ -140,7 +140,7 @@ class PhotoViewer extends Viewer {
     }
 
     async loadAlbumContext(pre_loaded = null, direction = 0) {
-        if (!this.context.id) {
+        if (!pre_loaded && !this.context.id) {
             console.error("not found context id: ", this.context);
             return;
         }
@@ -242,6 +242,7 @@ class PhotoViewer extends Viewer {
     // по логике если к сообщению прикреплено фото и видео, то при переключении если следующее видео то должно открываться окно с ним
     // но у них разные модалки так что хз пока как это делать
     _appendItemToList(pid, item, profiles = null, groups = null) {
+        console.log(item, this._getImageUrl(item))
         this.items[pid] = {
             url: this._getImageUrl(item),
             type: 'photo',
@@ -418,7 +419,7 @@ class PhotoViewer extends Viewer {
             return;
         }
 
-        if (this.context.type == "chat") {
+        if (this.context.type == "chat" || (this.context.not_load_comments || false) == true) {
             this._getCurrentEntryCacheNode().last().innerHTML = itemId;
             return;
         }
@@ -502,6 +503,7 @@ class VideoViewer extends Viewer {
 
     _appendItemToList(pid, item, profiles, groups) {
         item["type"] = "video";
+        item["id"] = pid;
         const author = find_author(item.owner_id, profiles, groups)
         item["author"] = author;
         this.items[pid] = item;
@@ -604,6 +606,11 @@ class VideoViewer extends Viewer {
     _updFrame(item, init_player = true) {
         console.log("_updFrame")
         console.log(item)
+        this.modal.getNode().removeClass("viewer-deleted");
+        if (item && item.deleted == true) {
+            this.modal.getNode().addClass("viewer-deleted");
+        }
+
         const author = item.author
         const author_name = author.name ? author.name : `${author.first_name} ${author.last_name}`;
         let player_html = '';
@@ -644,8 +651,12 @@ class VideoViewer extends Viewer {
 
     async _loadDetails(itemId, context = null, event = null) {
         const entry = this.items[itemId];
-        console.log(entry)
         if (!entry) return;
+
+        this.modal.getNode().removeClass("viewer-deleted");
+        if (entry && entry.deleted == 1) {
+            this.modal.getNode().addClass("viewer-deleted");
+        }
 
         if (entry.cached == null) {
             try {
@@ -693,6 +704,16 @@ class VideoViewer extends Viewer {
         }
 
         CMessageBox.toggleLoader(false);
+    }
+
+    async deleteItem(element) {
+        console.log(element)
+        const ids = element.id.split("_");
+
+        await window.OVKAPI.call("video.delete", {
+            "owner_id": ids[0],
+            "video_id": ids[1],
+        });
     }
 }
 
@@ -1032,12 +1053,13 @@ class PostViewer extends Viewer {
 
         try {
             const msg = new PostViewer();
-            const offset = await msg._resolveOffset(id.split("_")[0], id.split("_")[1], "wall.get");
             msg.setContext({
                 type: "wall",
-                offset: offset,
+                offset: 0,
                 id: id
             });
+            const offset = await msg._resolveOffset(id.split("_")[0], id.split("_")[1], "wall.get");
+            msg.context.offset = offset;
 
             const htmls = await msg._downloadPage(id);
 
@@ -1107,6 +1129,20 @@ function OpenAvatar(e, photo_large, avatar_album, photo_id) {
     }
 
     OpenMiniature(e, photo_large, avatar_album, photo_id, "album", null, true, 0)
+}
+
+async function edit_video(event) {
+    event.preventDefault();
+
+    const href = event.target.getAttribute("href");
+    const id = href.replace("/photo", "").replace("/edit", "");
+    const ids = hr.split("_");
+    await window.OVKAPI.call("photos.edit", {
+        "owner_id": ids[0],
+        "photo_id": ids[1],
+        "caption": val
+    });
+
 }
 
 // Submit on "Ctrl+Enter"
@@ -1197,6 +1233,7 @@ $(document).on("click", "#_ajaxDelete", function(e) {
 });
 
 $(document).on("click", "#_photoDelete, #_videoDelete, #_anotherDelete", function(e) {
+    // мне интересно зачем было писать именно так
     var formHtml = "<form id='tmpPhDelF' action='" + u(this).attr("href") + "' >";
     formHtml    += "<input type='hidden' name='hash' value='" + u("meta[name=csrf]").attr("value") + "' />";
     formHtml    += "</form>";
@@ -1502,11 +1539,14 @@ tippy.delegate('body', {
                 <a title="${escapeHtml(item.first_name + " " + item.last_name)}" href='/id${item.id}'><img class="object_fit_ava" src='${item.photo_50}' alt='.'></a>
             `)
         })
-        that.setContent(final_template.nodes[0].outerHTML)
-        that.popper.querySelector(".like_tooltip_head").addEventListener("click", (e) => {
-            that.hide();
-            LikersWindow.byTypeAndId(e, final_type, id);
-        });
+        that.setContent(final_template.nodes[0].outerHTML);
+        if (that.state.isEventsEnabled == null) {
+            that.popper.querySelector(".like_tooltip_head").addEventListener("click", (e) => {
+                that.hide();
+                LikersWindow.byTypeAndId(e, final_type, id);
+            });
+            that.state.isEventsEnabled = true;
+        }
     }
 })
 
@@ -1575,6 +1615,7 @@ class LikersWindow {
         win.id = id;
 
         const res = await win._loadlikers();
+        console.log(win, res);
 
         win.modal = new CMessageBox({
             title: ".",

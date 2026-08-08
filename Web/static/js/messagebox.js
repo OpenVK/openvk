@@ -283,7 +283,7 @@ class Viewer {
             "type": type,
             "owner_id": owner_id,
             "id": item_id,
-            "perPage": this.context.perPage,
+            "perPage": this.context.perPage ?? 10,
             "rev": Number(reverse)
         });
     }
@@ -599,7 +599,7 @@ const photoViewerTemplate =
     </div>
 </div>`;
 const videoViewerTemplate = `
-<div class="ovk-photo-view-dimmer ovk-white-modal">
+<div class="ovk-photo-view-dimmer ovk-video-view-dimmer ovk-white-modal">
     <div class="ovk-photo-view-overlay ovk-photo-view-overlay-left"></div>
     <div class="ovk-photo-view-overlay ovk-photo-view-overlay-right">
         <div class="ovk-photo-close-icon"></div>
@@ -625,8 +625,6 @@ const videoViewerTemplate = `
                 <div class='bottom-part miniplayer-body'>
                     <div>
                         <a id='__toggle_comments' class='hoverable_color'>${tr('show_comments')}</a>
-                        |
-                        <a href='/video' id="videoGoToLand" class='hoverable_color'>${tr('to_page')}</a>
                     </div>
                     <div id="videoMoveArrows">
                         <a id='toggleBar' class='hoverable_color'>${tr('toggle_queue_video')}</a>

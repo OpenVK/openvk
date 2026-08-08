@@ -720,15 +720,24 @@ export class MessengerViewModel {
 
 	// attachment
 
-    showPhoto(e, msg, attachment) {
+    async showPhoto(e, msg, attachment) {
         if (typeof PhotoViewer === 'undefined') return;
 
         const photos = [];
+
+        msg.attachments.forEach(att => {
+            if (att.photo) {
+                photos.push(att.photo);
+            }
+        });
+
         const ids = idForItem(attachment.photo);
         const viewer = new PhotoViewer();
 
+        CMessageBox.toggleLoader(true);
+
         const first = photos.find(function (p) {
-            return (p.owner_id + '_' + p.id) === (attachment.photo.owner_id + '_' + attachment.photo.id);
+            return idForItem(p) === ids;
         });
 
         if (!first) {
@@ -736,12 +745,18 @@ export class MessengerViewModel {
             return;
         };
 
-        viewer.loadPostContext(msg.attachments);
+        viewer.context.not_load_comments = true;
+        await viewer.loadAlbumContext({
+            count: photos.length,
+            items: photos
+        });
         viewer.open();
+        viewer.setMode("tg");
+        viewer.afterOpen(idForItem(first));
+
+        CMessageBox.toggleLoader(false);
 
         console.log("IM | Messenger | Opening photo ", first, attachment, msg, photos)
-
-        viewer.afterOpen(idForItem(first));
     }
 
 	showVideo(e, msg, attachment) {
@@ -753,6 +768,7 @@ export class MessengerViewModel {
 
 	async showAudio(e, msg, attachment) {
 		console.log("Opening audio ", attachment.audio);
+
         AudioViewer.openById(e, null, attachment.audio);
     }
 

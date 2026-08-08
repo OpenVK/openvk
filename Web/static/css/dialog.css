@@ -280,6 +280,12 @@ body.manyMsgs .ovk-white-modal:last-of-type {
     box-sizing: border-box;
 }
 
+.ovk-modal-player-window .media-page-wrapper-details {
+    padding: 15px 26px;
+    box-sizing: border-box;
+    gap: 30px;
+}
+
 /* Modal player */
 
 .ovk-modal-player-window {
@@ -790,6 +796,12 @@ body.manyMsgs .ovk-white-modal:last-of-type {
 
 .ovk-post-viewer #itemContent .post-all-contents {
     display: block;
+}
+
+.ovk-video-view-dimmer.viewer-deleted #playerHtml,
+.ovk-video-view-dimmer.viewer-deleted #ovk-player-info {
+    pointer-events: none;
+    filter: opacity(0.7);
 }
 
 /* Likers */

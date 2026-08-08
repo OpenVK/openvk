@@ -141,6 +141,58 @@ final class Video extends VKAPIRequestHandler
         }
     }
 
+    public function edit(int $owner_id, int $video_id, string $name = null, string $desc = null, int $no_comments = 0, int $repeat = 0)
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $video = (new VideosRepo())->getByOwnerAndVIDUnsafe($owner_id, $video_id);
+        $changes = 0;
+
+        if (!$video || $video->isDeleted() || !$video->canBeModifiedBy($this->getUser())) {
+            $this->fail(14, "Access denied");
+        }
+
+        if ($name != null) {
+            $video->setName($name);
+            $changes += 1;
+        }
+
+        if (!$desc) {
+            $video->setDescription($desc);
+            $changes += 1;
+        }
+
+        if ($changes > 0) {
+            $video->save();
+        }
+
+        return [
+            "success" => 1
+        ];
+    }
+
+    public function delete(int $owner_id, int $video_id, int $target_id = null)
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        if ($target_id != null) {
+            $this->fail(-40, "Videos cannot be collected at this moment.");
+        }
+
+        $video = (new VideosRepo())->getByOwnerAndVIDUnsafe($owner_id, $video_id);
+
+        if (!$video || $video->isDeleted() || !$video->canBeModifiedBy($this->getUser())) {
+            $this->fail(14, "Access denied");
+        }
+
+        # $video->isolate();
+        $video->delete();
+
+        return 1;
+    }
+
     public function search(string $q = '', int $sort = 0, int $offset = 0, int $count = 10, bool $extended = false, string $fields = ''): object
     {
         $this->requireUser();
