@@ -6,7 +6,7 @@ DB_USER="${DB_USER:-openvk}"
 DB_PASSWORD="${DB_PASSWORD:-openvk}"
 DB_NAME="${DB_NAME:-db}"
 
-cd /opt/chandler/extensions/available/openvk
+cd /opt/openvk
 
 # Wait for MariaDB
 echo "Waiting for MariaDB..."

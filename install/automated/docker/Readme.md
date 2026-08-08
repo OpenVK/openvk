@@ -30,7 +30,7 @@ docker build -t ghcr.io/openvk/openvk/openvk:latest ../../.. -f openvk.Dockerfil
 ## Run
 If you have Docker Desktop installed, then you should have `docker compose` installed automatically. If not, refer to [Docker Compose](https://docs.docker.com/compose/install/) for installation instructions.
 
-Example configurations are located in this directory for convenience. Before start, copy `openvk.example.yml` to `openvk.yml`, then `chandler.example.yml` to `chandler.yml` and edit them to your liking.
+Example configuration is located in this directory. Before start, copy `openvk.example.yml` to `openvk.yml` and edit it to your liking. All settings (chandler framework + openvk app) are in a single file.
 
 Start is simple as `docker compose up -d`. You can also use `docker compose up` to see logs.
 

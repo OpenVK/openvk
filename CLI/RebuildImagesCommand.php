@@ -6,17 +6,17 @@ namespace openvk\CLI;
 
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Repositories\Photos;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Nette\Utils\ImageException;
 
+#[AsCommand(name: 'build-images')]
 class RebuildImagesCommand extends Command
 {
     private $images;
-
-    protected static $defaultName = "build-images";
 
     public function __construct()
     {

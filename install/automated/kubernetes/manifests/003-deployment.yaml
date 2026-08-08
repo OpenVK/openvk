@@ -34,21 +34,21 @@ items:
 
             while :
             do
-                chown -R 33:33 /opt/chandler/extensions/available/openvk/storage
-                chown -R 33:33 /opt/chandler/extensions/available/openvk/tmp/api-storage/audios
-                chown -R 33:33 /opt/chandler/extensions/available/openvk/tmp/api-storage/photos
-                chown -R 33:33 /opt/chandler/extensions/available/openvk/tmp/api-storage/videos
+                chown -R 33:33 /opt/openvk/storage
+                chown -R 33:33 /opt/openvk/tmp/api-storage/audios
+                chown -R 33:33 /opt/openvk/tmp/api-storage/photos
+                chown -R 33:33 /opt/openvk/tmp/api-storage/videos
 
                 sleep 600
             done
           volumeMounts:
-          - mountPath: /opt/chandler/extensions/available/openvk/storage
+          - mountPath: /opt/openvk/storage
             name: openvk-storage
-          - mountPath: /opt/chandler/extensions/available/openvk/tmp/api-storage/audios
+          - mountPath: /opt/openvk/tmp/api-storage/audios
             name: openvk-storage-audios
-          - mountPath: /opt/chandler/extensions/available/openvk/tmp/api-storage/photos
+          - mountPath: /opt/openvk/tmp/api-storage/photos
             name: openvk-storage-photos
-          - mountPath: /opt/chandler/extensions/available/openvk/tmp/api-storage/videos
+          - mountPath: /opt/openvk/tmp/api-storage/videos
             name: openvk-storage-videos
         - env: []
           image: ghcr.io/openvk/openvk/openvk:latest
@@ -63,19 +63,16 @@ items:
               cpu: 100m
               memory: 512Mi
           volumeMounts:
-          - mountPath: /opt/chandler/extensions/available/openvk/openvk.yml
+          - mountPath: /opt/openvk/openvk.yml
             name: openvk-config
             subPath: openvk.yml
-          - mountPath: /opt/chandler/chandler.yml
-            name: openvk-config
-            subPath: chandler.yml
-          - mountPath: /opt/chandler/extensions/available/openvk/storage
+          - mountPath: /opt/openvk/storage
             name: openvk-storage
-          - mountPath: /opt/chandler/extensions/available/openvk/tmp/api-storage/audios
+          - mountPath: /opt/openvk/tmp/api-storage/audios
             name: openvk-storage-audios
-          - mountPath: /opt/chandler/extensions/available/openvk/tmp/api-storage/photos
+          - mountPath: /opt/openvk/tmp/api-storage/photos
             name: openvk-storage-photos
-          - mountPath: /opt/chandler/extensions/available/openvk/tmp/api-storage/videos
+          - mountPath: /opt/openvk/tmp/api-storage/videos
             name: openvk-storage-videos
         dnsPolicy: ClusterFirst
         restartPolicy: Always
