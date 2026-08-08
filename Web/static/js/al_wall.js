@@ -190,6 +190,16 @@ class PhotoViewer extends Viewer {
         console.log(this.items, this.itemsOrder)
     }
 
+    async loadPhotosById() {
+        const avs = await window.OVKAPI.call("photos.get", {
+            "photo_ids": this.context.id,
+            "photo_sizes": 1,
+            "owner_id": 0,
+            "album_id": 0,
+        });
+        await this.loadAlbumContext(avs);
+    }
+
     async loadChatAvatarContext() {
         const avs = await window.OVKAPI.call("messages.getChatAvatarHistory", {
             "chat_id": this.context.id,
@@ -272,8 +282,11 @@ class PhotoViewer extends Viewer {
                 this.context.offset = await this._resolveOffset(ids[0], ids[1], "photos.get", alb[1], this.context.reverse);
                 await this.loadAlbumContext();
                 break;
-            case "all_photos": // для аято
+            case "all_photos":
                 await this.loadAllPhotosContext();
+                break;
+            case "ids":
+                await this.loadPhotosById(this.context.id);
                 break;
             case "chat":
                 await this.loadChatAvatarContext();
@@ -363,7 +376,9 @@ class PhotoViewer extends Viewer {
         this.currentId = pid;
         this._updFrame(item);
 
-        this._pushW(this.currentId);
+        if (this.currentId && this.context.type != "chat" && this.context.type != null) {
+            this._pushW(this.currentId);
+        }
 
         await this._loadDetails(pid);
     }
@@ -487,6 +502,34 @@ class PhotoViewer extends Viewer {
             "owner_id": ids[0],
             "photo_id": ids[1],
         });
+    }
+
+    static async openById(ids, event = null) {
+        if (event != null) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        CMessageBox.toggleLoader(true);
+
+        try {
+            const viewer = new PhotoViewer();
+            viewer.setContext({
+                type: "ids",
+                id: ids,
+            });
+            await viewer.initalizeContext(null, ids);
+
+            viewer.open();
+
+            CMessageBox.toggleLoader(false);
+
+            viewer.afterOpen(ids, null);
+        } catch(e) {
+            console.error(e);
+        }
+
+        CMessageBox.toggleLoader(false);
     }
 }
 
@@ -714,6 +757,34 @@ class VideoViewer extends Viewer {
         this.modal.getNode().find('#ovk-player-info .bsdn').nodes.forEach(item => {
             bsdnInitElement(item);
         });
+    }
+
+    static async openById(ids, context = {}, event = null, open_comments = false) {
+        if (event != null) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        CMessageBox.toggleLoader(true);
+
+        try {
+            const videoViewer = new VideoViewer();
+            videoViewer.setContext({
+                "id": ids
+            });
+            const first_id = ids;
+
+            if (context.type == null) {
+                await videoViewer.loadIdsOnlyContext();
+            }
+
+            videoViewer.open();
+            videoViewer.afterOpen(first_id, open_comments);
+        } catch(e) {
+            console.error(e);
+        }
+
+        CMessageBox.toggleLoader(false);
     }
 
     static async openById(ids, context = {}, event = null, open_comments = false) {
@@ -1212,12 +1283,18 @@ async function edit_video(event) {
             CMessageBox.toggleLoader(true);
             msg.getNode().find("button").addClass("lagged")
 
-            await window.OVKAPI.call("video.edit", {
-                "owner_id": ids[0],
-                "video_id": ids[1],
-                "name": name,
-                "desc": desc
-            });
+            try {
+                await window.OVKAPI.call("video.edit", {
+                    "owner_id": ids[0],
+                    "video_id": ids[1],
+                    "name": name,
+                    "desc": desc
+                });
+            } catch(e) {
+                console.error(e);
+                fastError(e);
+            }
+
             msg.close();
 
             CMessageBox.toggleLoader(false);
