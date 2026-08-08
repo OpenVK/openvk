@@ -126,6 +126,19 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
+                            <span class="nobold">{_materials}: </span>
+                        </td>
+                        <td>
+                            <select name="pages">
+                                <option value="0" n:attr="selected => $club->getPagesType() == 0">{_materials_disabled}</option>
+                                <option value="1" n:attr="selected => $club->getPagesType() == 1">{_materials_open}</option>
+                                <option value="2" n:attr="selected => $club->getPagesType() == 2">{_materials_limited}</option>
+                            </select>
+                            <div class="nobold" style="margin-top: 4px;">{_materials_hint}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
                             <span class="nobold">{_group_administrators_list}: </span>
                         </td>
                         <td>

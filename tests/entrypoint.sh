@@ -18,10 +18,25 @@ echo "MariaDB ready."
 # Run schema migrations (creates all tables + admin user)
 ./openvkctl upgrade --no-interaction --quick
 
-# Import deterministic test seed data
+# Import deterministic test seed data (ignore duplicates on container recreate)
 echo "Importing seed data..."
-mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" --ssl=0 --default-character-set=utf8mb4 < tests/seed-data.sql
-echo "Seed data imported."
+if mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" --ssl=0 --default-character-set=utf8mb4 < tests/seed-data.sql; then
+    echo "Seed data imported."
+else
+    echo "Seed data import skipped (database already seeded)."
+fi
+
+# Seed drops UUID triggers first and recreates them at the end. If import
+# fails mid-way (e.g. duplicate keys on recreate), login breaks without them.
+echo "Ensuring Chandler UUID triggers exist..."
+mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" --ssl=0 --default-character-set=utf8mb4 <<'SQL'
+DROP TRIGGER IF EXISTS bfiu_users;
+DROP TRIGGER IF EXISTS bfiu_groups;
+DROP TRIGGER IF EXISTS bfiu_tokens;
+CREATE TRIGGER bfiu_users  BEFORE INSERT ON ChandlerUsers  FOR EACH ROW SET new.id = uuid();
+CREATE TRIGGER bfiu_groups BEFORE INSERT ON ChandlerGroups FOR EACH ROW SET new.id = uuid();
+CREATE TRIGGER bfiu_tokens BEFORE INSERT ON ChandlerTokens FOR EACH ROW SET new.token = uuid();
+SQL
 
 # Start Apache
 exec apache2-foreground
