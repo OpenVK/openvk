@@ -265,6 +265,7 @@
         {elseif $isPrivacy}
 
         <form action="/settings?act=privacy" method="POST" enctype="multipart/form-data">
+            <b class="title_insignificant">{_privacy_title_info}</b>
             <table class="flexible_table fullsize_selects" cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
                 <tr>
                     <td width="120" valign="top">
@@ -290,6 +291,20 @@
                         </select>
                     </td>
                 </tr>
+                <tr>
+                    <td width="120" valign="top">
+                        <span class="nobold">{_profile_type}</span>
+                    </td>
+                    <td>
+                        <select name="profile_type", style="width: 164px;">
+                            <option value="0" {if $user->getProfileType() == 0}selected{/if}>{_profile_type_open}</option>
+                            <option value="1" {if $user->getProfileType() == 1}selected{/if}>{_profile_type_closed}</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            <b class="title_insignificant">{_privacy_title_content}</b>
+            <table class="flexible_table fullsize_selects" cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
                 <tr>
                     <td width="120" valign="top">
                         <span class="nobold">{_privacy_setting_see_groups}</span>
@@ -368,6 +383,9 @@
                         </select>
                     </td>
                 </tr>
+            </table>
+            <b class="title_insignificant">{_privacy_title_messages}</b>
+            <table class="flexible_table fullsize_selects" cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
                 <tr>
                     <td width="120" valign="top">
                         <span class="nobold">{_privacy_setting_add_to_friends}</span>
@@ -376,6 +394,17 @@
                         <select name="friends.add" style="width: 164px;">
                             <option value="3" {if $user->getPrivacySetting('friends.add') == 2}selected{/if}>{_privacy_value_anybody}</option>
                             <option value="0" {if $user->getPrivacySetting('friends.add') == 0}selected{/if}>{_privacy_value_nobody}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="120" valign="top">
+                        <span class="nobold">{_privacy_setting_see_likes}</span>
+                    </td>
+                    <td>
+                        <select name="likes.read", style="width: 164px;">
+                            <option value="2" {if $user->getPrivacySetting('likes.read') == 2}selected{/if}>{_privacy_value_anybody_dative}</option>
+                            <option value="0" {if $user->getPrivacySetting('likes.read') == 0}selected{/if}>{_privacy_value_only_me_dative}</option>
                         </select>
                     </td>
                 </tr>
@@ -401,34 +430,24 @@
                             <option value="1" {if $user->getPrivacySetting('messages.write') == 1}selected{/if}>{_privacy_value_friends}</option>
                             <option value="0" {if $user->getPrivacySetting('messages.write') == 0}selected{/if}>{_privacy_value_nobody}</option>
                         </select>
+                        <p class="nobold-2">{_privacy_setting_write_messages_tip}</p>
                     </td>
                 </tr>
                 <tr>
                     <td width="120" valign="top">
-                        <span class="nobold">{_privacy_setting_see_likes}</span>
+                        <span class="nobold">{_privacy_setting_add_in_chats}</span>
                     </td>
                     <td>
-                        <select name="likes.read", style="width: 164px;">
-                            <option value="2" {if $user->getPrivacySetting('likes.read') == 2}selected{/if}>{_privacy_value_anybody_dative}</option>
-                            <option value="0" {if $user->getPrivacySetting('likes.read') == 0}selected{/if}>{_privacy_value_only_me_dative}</option>
+                        <select name="messages.add_to_chats", style="width: 164px;">
+                            <option value="1" {if $user->getPrivacySetting('messages.add_to_chats') == 1}selected{/if}>{_privacy_value_friends}</option>
+                            <option value="0" {if $user->getPrivacySetting('messages.add_to_chats') == 0}selected{/if}>{_privacy_value_nobody}</option>
                         </select>
                     </td>
                 </tr>
+            </table>
+            <table class="flexible_table fullsize_selects" cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
                 <tr>
-                    <td width="120" valign="top">
-                        <span class="nobold">{_profile_type}</span>
-                    </td>
-                    <td>
-                        <select name="profile_type", style="width: 164px;">
-                            <option value="0" {if $user->getProfileType() == 0}selected{/if}>{_profile_type_open}</option>
-                            <option value="1" {if $user->getProfileType() == 1}selected{/if}>{_profile_type_closed}</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-
-                    </td>
+                    <td width="120" valign="top"></td>
                     <td>
                         <input type="hidden" name="hash" value="{$csrfToken}" />
                         <input type="submit" value="{_save}" class="button fullsize_button" />
