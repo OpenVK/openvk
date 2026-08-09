@@ -1,147 +1,514 @@
-# <img align="right" src="/Web/static/img/logo_shadow.png" alt="openvk" title="openvk" width="15%">OpenVK
+# OpenVK
 
-_[Русский](README_RU.md)_
+<p align="center">
+  <strong>An open-source social network inspired by the classic VKontakte experience.</strong>
+</p>
 
-**OpenVK** is an attempt to create a simple CMS that ~~cosplays~~ imitates old VKontakte. Code provided here is not stable yet. 
+<p align="center">
+  <a href="https://github.com/OpenVK/openvk">GitHub</a> •
+  <a href="https://github.com/OpenVK/openvk/wiki/Instances">Instances</a> •
+  <a href="https://github.com/OpenVK/openvk/issues">Issues</a> •
+  <a href="https://github.com/OpenVK/openvk/discussions">Discussions</a> •
+  <a href="https://openvk.org/support?act=new">Support</a>
+</p>
 
-> [!WARNING]
-> **OpenVK it is fan project, not affiliated in any way with VKontakte and it's company VK LLC. Below is the same message in Russian.** \
-> **OpenVK является любительской разработкой и никак не связан с ВКонтакте и компанией ООО "ВК".**
+<p align="center">
+  <a href="README_RU.md">🇷🇺 Русский</a>
+</p>
 
-To be honest, we don't know whether if it even works. However, this version is maintained and we will be happy to accept your bugreports [in our bug tracker](https://github.com/openvk/openvk/projects/1). You should also be able to submit them using [ticketing system](https://openvk.org/support?act=new) (you will need an OpenVK account for this).
-
-## When's the release?
-
-We will release OpenVK as soon as it's ready. As for now, you can:
-* `git clone` this repo's master branch (use `git pull` to update)
-* Grab a prebuilt OpenVK distro from [GitHub artifacts](https://nightly.link/openvk/archive/workflows/nightly/master/OpenVK%20Archive.zip)
-
-## Instances
-
-A list of instances can be found in [our wiki of this repository](https://github.com/openvk/openvk/wiki/Instances).
-
-## Can I create my own OpenVK instance?
-
-Yes! And you are very welcome to.
-
-However, OVK requires extensions, that may not always be available on web hostings (namely, sodium and yaml. these extensions are available on most of ISPManager hostings). That's why it is recommended to host your instances on VPS/VDS or dedicated servers.
-
-If you want, you can add your instance to the list above so that people can register there.
-
-### System requirements
-
-Here is our minimum hardware recommendation:
-
-* **CPU:** Any dual-core 1GHz+ CPU or more powerful
-* **RAM:** At least 2GB RAM (we recommend 6GB or 8GB for OpenVK with Redis)
-* **Minimum database space:** 10GB
-
-### Looking for Docker or Kubernetes deployment?
-See `install/automated/docker/README.md` and `install/automated/kubernetes/README.md` for Docker and Kubernetes deployment instructions.
-
-### Installation procedure
-
-1. Install PHP 8.2 or later, web-server, Composer, and NPM.
-
-2. Install MySQL-compatible database.
-
-* We recommend using MariaDB or Percona Server, but any MySQL-compatible server should work too.
-* Server should be compatible with at least MySQL 5.6, MySQL 8.0+ is recommended.
-* Support for MySQL 4.1+ is WIP, replace `utf8mb4` and `utf8mb4_unicode_520_ci` with `utf8` and `utf8_unicode_ci` in SQLs.
-
-3. Clone OpenVK:
-
-```bash
-git clone https://github.com/openvk/openvk /opt/openvk
-```
-
-4. Install dependencies:
-
-```bash
-cd /opt/openvk && composer install
-cd Web/static/js && npm install
-```
-
-5. Configure your database: you need 2 databases — one for the main data, another for events.
-
-6. Copy `openvk-example.yml` to `openvk.yml` and edit to your liking.  
-
-7. Run database migrations:
-
-```bash
-cd /opt/openvk && ./openvkctl upgrade
-```
-
-8. Point your web server to `openvk/htdocs`.
-
-* Example config for **nginx** is available [here](https://github.com/OpenVK/chandler/blob/master/install/nginx.conf). Make sure that root is set to `/opt/openvk/htdocs` (or wherever you installed OpenVK).
-
-Once you are done, you can login in a default system administrator account on the site itself (no registration required):
-
-* **Login**: `admin@localhost.localdomain6`
-* **Password**: `admin`
-  * It is recommended to change the password of the default account or disable it.
-
-<!-- 💡 Confused? Full installation walkthrough is available [here](https://openvk.github.io/docs/openvk_engine/centos8_installation/) (CentOS 8 [and](https://almalinux.org/) [family](https://yum.oracle.com/oracle-linux-isos.html)). Needs to be actualised -->
+---
 
 > [!WARNING]
-> OpenVK installation procedure has been changed after [code restructurisation](https://github.com/OpenVK/openvk/pull/1718/). Now you don't need to install Chandler separately and install OpenVK as its extension.
+> **OpenVK is an independent fan project and is not affiliated with, endorsed by, or connected to VKontakte or VK LLC.**
 >
-> If you are migrating from the old structure, make a backup of your Chandler+OpenVK installation, do a git pull, and consult the migration script: `php bin/upgrade-structure.php --help`. (When running the upgrade, it is recommended to use `--extract` flag, to move openvk dir out of Chandler's folder).
+> **OpenVK является любительской разработкой и никак не связан с ВКонтакте и компанией ООО «ВК».**
+
+> [!NOTE]
+> OpenVK is actively developed and may contain bugs, incomplete features, or breaking changes. Contributions, bug reports, and feedback are welcome.
+
+## ✨ What is OpenVK?
+
+**OpenVK** is an open-source CMS and social-network platform inspired by the classic VKontakte experience.
+
+The project aims to preserve the look, feel, and spirit of the old VK experience while providing a modern, community-driven, and self-hostable platform.
+
+OpenVK can be deployed on your own infrastructure, allowing you to run your own independent instance and customize it to your needs.
+
+### Highlights
+
+* 👤 User accounts and profiles
+* 💬 Social interactions and messaging
+* 🔔 Real-time notifications with Redis
+* 🌍 Multi-language localization
+* 🏠 Fully self-hosted instances
+* 🐳 Docker deployment
+* ☸️ Kubernetes deployment
+* 🗄️ MySQL-compatible databases
+* 🔧 Community-driven development
+* 🌐 Public instance support
+
+---
+
+## 🚀 Quick Start
+
+Want to try OpenVK?
+
+### Download the latest source
+
+```bash
+git clone https://github.com/OpenVK/openvk.git
+cd openvk
+```
+
+Update an existing installation:
+
+```bash
+git pull
+```
+
+### Download a prebuilt build
+
+You can download the latest nightly OpenVK distribution from the project's build artifacts.
+
+**Nightly builds:**
+https://nightly.link/openvk/archive/workflows/nightly/master/OpenVK%20Archive.zip
+
+> [!WARNING]
+> Nightly builds may contain experimental changes and are not guaranteed to be production-ready.
+
+---
+
+## 🌐 Public Instances
+
+Don't want to host OpenVK yourself?
+
+Visit the community-maintained instance list:
+
+**OpenVK Instances:**
+https://github.com/OpenVK/openvk/wiki/Instances
+
+If you operate an OpenVK instance, you're welcome to add it to the list so other users can discover it.
+
+---
+
+# 🖥️ Self-Hosting
+
+One of OpenVK's main goals is to make running your own instance possible.
+
+You can deploy OpenVK on a VPS, VDS, dedicated server, or other suitable Linux/Unix environment.
+
+> [!IMPORTANT]
+> Shared hosting may not provide all required PHP extensions. For the best experience, we recommend using a **VPS, VDS, or dedicated server**.
+
+## System Requirements
+
+| Component        |           Minimum |              Recommended |
+| ---------------- | ----------------: | -----------------------: |
+| CPU              | Dual-core, 1 GHz+ |                 2+ cores |
+| RAM              |              2 GB |        6–8 GB with Redis |
+| Database storage |             10 GB |  More depending on usage |
+| PHP              |              8.2+ | Latest supported version |
+| Database         |  MySQL-compatible |     MySQL 8.0+ / MariaDB |
+| Node.js          |          Required | Latest supported version |
+| Composer         |          Required | Latest supported version |
+
+### Required PHP Extensions
+
+OpenVK currently requires PHP extensions including:
+
+* `sodium`
+* `yaml`
+
+Availability may vary between hosting providers.
+
+---
+
+# 🐳 Docker & Kubernetes
+
+Prefer containerized deployment?
+
+OpenVK includes deployment instructions for:
+
+* 🐳 Docker
+* ☸️ Kubernetes
+
+See:
+
+```text
+install/automated/docker/README.md
+install/automated/kubernetes/README.md
+```
+
+These guides contain the deployment-specific configuration and instructions.
+
+---
+
+# ⚙️ Installation
+
+## 1. Install prerequisites
+
+Install the following:
+
+* PHP 8.2+
+* Composer
+* Node.js and npm
+* A compatible web server
+* A MySQL-compatible database
+
+We recommend **MariaDB** or **Percona Server**, although other compatible MySQL servers should work.
+
+The database should support at least **MySQL 5.6**.
+
+> [!TIP]
+> **MySQL 8.0+ is recommended** for new installations.
+
+### Legacy database compatibility
+
+MySQL 4.1+ support is still a work in progress.
+
+If you need to use an older database version, you may need to replace:
+
+```text
+utf8mb4
+utf8mb4_unicode_520_ci
+```
+
+with:
+
+```text
+utf8
+utf8_unicode_ci
+```
+
+in the relevant SQL files.
+
+---
+
+## 2. Clone OpenVK
+
+```bash
+git clone https://github.com/OpenVK/openvk.git /opt/openvk
+cd /opt/openvk
+```
+
+---
+
+## 3. Install dependencies
+
+Install PHP dependencies:
+
+```bash
+composer install
+```
+
+Install JavaScript dependencies:
+
+```bash
+cd Web/static/js
+npm install
+```
+
+---
+
+## 4. Configure the database
+
+OpenVK requires **two databases**:
+
+1. Main application database
+2. Event database
+
+Configure both databases according to your deployment requirements.
+
+---
+
+## 5. Configure OpenVK
+
+Copy the example configuration:
+
+```bash
+cd /opt/openvk
+cp openvk-example.yml openvk.yml
+```
+
+Then edit:
+
+```text
+openvk.yml
+```
+
+Configure your:
+
+* Database credentials
+* Domain
+* Application settings
+* Event database
+* Notification settings
+* Other instance-specific options
+
+---
+
+## 6. Run database migrations
+
+Run:
+
+```bash
+cd /opt/openvk
+./openvkctl upgrade
+```
+
+---
+
+## 7. Configure your web server
+
+Set your web server's document root to:
+
+```text
+/opt/openvk/htdocs
+```
+
+An example nginx configuration is available in the OpenVK/Chandler repository:
+
+https://github.com/OpenVK/chandler/blob/master/install/nginx.conf
+
+> [!IMPORTANT]
+> Make sure your web server points to **OpenVK's `htdocs` directory**, not the project root.
+
+---
+
+# 🔐 Default Administrator Account
+
+A default administrator account is available immediately after installation.
+
+```text
+Login:    admin@localhost.localdomain6
+Password: admin
+```
+
+> [!CAUTION]
+> **Change the default administrator password or disable the default account immediately after installation.**
 >
-> After the migration, do not forget to change webserver's DocumentRoot from Chandler's `htdocs` to OpenVK's `htdocs`.
+> Never leave the default administrator credentials enabled on a publicly accessible production instance.
 
-### Auto-install script
+---
 
-You can also use auto-install script for FreeBSD 15:
+# 🔄 Migrating from the Old Structure
 
-```shell
+OpenVK's installation architecture changed following the restructuring introduced in:
+
+https://github.com/OpenVK/openvk/pull/1718
+
+You no longer need to install Chandler separately and configure OpenVK as its extension.
+
+### Migrating an existing installation
+
+If you're migrating from the previous Chandler + OpenVK structure:
+
+1. **Back up your entire installation.**
+2. Pull the latest OpenVK changes.
+3. Review the migration utility:
+
+```bash
+php bin/upgrade-structure.php --help
+```
+
+4. Run the migration using the recommended `--extract` option when appropriate.
+5. Update your web server configuration.
+6. Change the web server's `DocumentRoot` from Chandler's `htdocs` to OpenVK's `htdocs`.
+
+> [!WARNING]
+> Always create a complete backup before performing a structural migration.
+
+---
+
+# 📦 Automatic Installation
+
+An automated installation script is available for **FreeBSD 15**.
+
+```bash
 pkg install wget
+
 wget https://github.com/OpenVK/openvk/raw/refs/heads/master/install/automated/freebsd-15/install
+
 chmod +x install
 ./install
 ```
 
-### Real-time notifs
+---
 
-You can install Redis to take advantage of real-time notifications (if you enabled Event DB in config). 
+# 🔔 Real-Time Notifications
 
-1. Install Redis from your beloved package manager in your OS
-2. Set `notificationsBroker` under `credentials` to `true`
+OpenVK can use **Redis** to provide real-time notifications when the Event DB is enabled.
 
-It should work out of box. If not, tweak Redis and OpenVK config settings
+## Enable Redis
+
+### 1. Install Redis
+
+Install Redis using your operating system's package manager.
+
+### 2. Enable the notification broker
+
+In `openvk.yml`, enable:
+
+```yaml
+notificationsBroker: true
+```
+
+### 3. Start Redis
+
+Start your Redis service and restart OpenVK.
+
+In most configurations, Redis should work without additional changes.
+
+If you experience problems, check:
+
+* Redis configuration
+* OpenVK configuration
+* Event DB configuration
+* Redis connectivity and permissions
+
+---
+
+## Kafka
 
 > [!WARNING]
-> Kafka in OpenVK was been deprecated since [this commit](https://github.com/OpenVK/openvk/commit/e99cdd1b08002dbfbd1aaef2cbc52ccbe34026c6) and no longer used in OpenVK codebase. If you see any mention of Kafka in source code, config or documentation, you should know that this will not work at all. 
+> **Kafka is deprecated and is no longer supported by OpenVK.**
 
-### If my website uses OpenVK, should I release its sources?
+Kafka support was removed from the project.
 
-It depends. You can keep the sources to yourself if you do not plan to distribute your website binaries. If your website software must be distributed, it can stay non-OSS provided the OpenVK is not used as a primary application and is not modified. If you modified OpenVK for your needs or your work is based on it and you are planning to redistribute this, then you should license it under terms of any LGPL-compatible license (like OSL, GPL, LGPL etc).
+If you encounter Kafka references in older documentation, configuration files, or source code, they should not be considered supported functionality.
 
-## Localization
+Reference commit:
 
-Want to translate our project to your native language? You can try either:
+https://github.com/OpenVK/openvk/commit/e99cdd1b08002dbfbd1aaef2cbc52ccbe34026c6
 
-* [Weblate](https://hosted.weblate.org/engage/openvk/) (simple way)
-* Send Pull Request to us (hard way)
+---
 
-Localization is located in "locales" repository. List of languages is maintained in list.yml file, and the languages itself are in iOS String format.
+# 🌍 Localization
 
-## Where can I get assistance?
+OpenVK supports multiple languages and welcomes new translations.
 
-You may reach out to us via:
+Want to translate OpenVK into your language?
 
-* [Bug Tracker](https://github.com/OpenVK/openvk/issues)
-* [GitHub Discussions](https://github.com/openvk/openvk/discussions)
-* [Ticketing System](https://openvk.org/support?act=new)
-* [Discord Server](https://discord.gg/8TDpTeRw5k)
-* Telegram Chat: Go to [our channel](https://t.me/openvkenglish) and open discussion in our channel menu.
-* Matrix Chat: #openvk:matrix.org
+### Recommended: Weblate
 
-**Attention**: bug tracker, board, Telegram, Discord and Matrix chat are public places, ticketing system is being served by volunteers. If you need to report something that should not be immediately disclosed to general public (for instance, a vulnerability), please contact us directly via this email: **contact [at] openvk [dot] org**
+https://hosted.weblate.org/engage/openvk/
 
-<a href="https://codeberg.org/OpenVK/openvk">
-    <img alt="Get it on Codeberg" src="https://codeberg.org/Codeberg/GetItOnCodeberg/media/branch/main/get-it-on-blue-on-white.png" height="60">
-</a>
+### Pull Requests
 
-[![Translation status](https://hosted.weblate.org/widget/openvk/openvk/svg-badge.svg)](https://hosted.weblate.org/engage/openvk/)
+You can also contribute translations directly through pull requests.
+
+Localization is maintained in the `locales` repository.
+
+Languages are listed in:
+
+```text
+list.yml
+```
+
+Translations use the **iOS Strings** format.
+
+---
+
+# 📜 Licensing & Source Distribution
+
+If you use OpenVK as part of your own website or software, your obligations may depend on how OpenVK is used, modified, and distributed.
+
+In general:
+
+* You may keep your website's source code private if you do not distribute the website's binaries.
+* Distributed software may remain closed-source when OpenVK is not the primary application and has not been modified.
+* Modified OpenVK code or derivative work that is redistributed should be licensed under an **LGPL-compatible license**, such as OSL, GPL, or LGPL.
+
+> [!IMPORTANT]
+> This section is only a high-level summary and should not be treated as legal advice. Always consult the project's actual license files and applicable licensing terms before distributing modified versions of OpenVK.
+
+---
+
+# 🤝 Contributing
+
+OpenVK is a community-driven open-source project, and contributions are always welcome.
+
+There are many ways to contribute:
+
+* 🐛 Report bugs
+* 🔧 Fix existing issues
+* ✨ Add features
+* 📚 Improve documentation
+* 🌍 Add translations
+* 🧪 Test new releases
+* 💡 Suggest improvements
+
+Before contributing, check the repository's existing issues, discussions, and contribution guidelines.
+
+Every contribution — whether it's a small documentation fix or a major feature — helps the project grow.
+
+---
+
+# 💬 Community & Support
+
+Need help, want to report a problem, or simply want to talk about OpenVK?
+
+### 🐛 Bug Reports
+
+https://github.com/OpenVK/openvk/issues
+
+### 💡 Discussions
+
+https://github.com/OpenVK/openvk/discussions
+
+### 🎫 Support Tickets
+
+https://openvk.org/support?act=new
+
+An OpenVK account is required to submit a ticket.
+
+### 💬 Discord
+
+https://discord.gg/8TDpTeRw5k
+
+### ✈️ Telegram
+
+https://t.me/openvkenglish
+
+### 🌐 Matrix
+
+```text
+#openvk:matrix.org
+```
+
+> [!IMPORTANT]
+> GitHub Issues, Discussions, Telegram, Discord, and Matrix are public communication channels.
+>
+> The ticketing system is operated by volunteers.
+>
+> **Do not publicly disclose security vulnerabilities or other sensitive information.**
+>
+> For responsible disclosure of vulnerabilities, contact:
+>
+> **contact [at] openvk [dot] org**
+
+---
+
+# ⭐ Support OpenVK
+
+If you like OpenVK, there are several ways you can help:
+
+* ⭐ Star the repository
+* 🐛 Report bugs
+* 💡 Share ideas
+* 🔧 Submit pull requests
+* 🌍 Help translate the project
+* 📖 Improve the documentation
+* 🏠 Run and maintain an instance
+
+Your contributions help keep the project alive and make OpenVK better for everyone.
+
+---
+
+<p align="center">
+  <strong>OpenVK — bringing back the classic social-network experience.</strong>
+</p>
+
+<p align="center">
+  Made with ❤️ by the OpenVK community.
+</p>
