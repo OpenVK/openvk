@@ -1,4 +1,5 @@
 {
+    "name": "openvk/openvk",
     "scripts": {
         "fix": "php-cs-fixer fix",
         "lint": "php-cs-fixer fix --dry-run --diff --verbose",
@@ -6,6 +7,7 @@
     },
     "require": {
         "php": "~8.2",
+        "openvk/chandler": "dev-master",
         "whichbrowser/parser": "dev-master",
         "james-heinrich/getid3": "^1.9@dev",
         "rybakit/msgpack": "dev-master",
@@ -20,14 +22,20 @@
         "bhaktaraz/php-rss-generator": "dev-master",
         "ext-openssl": "*",
         "ext-simplexml": "*",
-        "symfony/console": "5.4.x-dev",
+        "symfony/console": "^6.4 || ^7.0",
         "wapmorgan/morphos": "dev-master",
         "ext-sodium": "*",
         "php81_bc/strftime": "^0.0.2",
         "ext-iconv": "*",
         "predis/predis": "^3.4"
     },
-    "minimum-stability": "beta",
+    "autoload": {
+        "psr-4": {
+            "openvk\\": ""
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.68",
         "phpstan/phpstan": "^2.1",

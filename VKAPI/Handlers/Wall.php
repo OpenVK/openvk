@@ -1419,6 +1419,7 @@ final class Wall extends VKAPIRequestHandler
                 "text"     => "",
                 "has_tags" => false,
                 "access_key" => $attachment->getAccessKey(),
+                "tags" => (object) ["count" => 0, "items" => []],
             ],
         ];
     }
