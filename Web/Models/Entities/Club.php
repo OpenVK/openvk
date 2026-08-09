@@ -530,6 +530,11 @@ class Club extends RowModel
         return $this->getId() * -1;
     }
 
+    public function isEveryoneCanUploadVideos(): bool
+    {
+        return (bool) $this->getRecord()->everyone_can_upload_videos;
+    }
+
     public function isEveryoneCanUploadAudios(): bool
     {
         return (bool) $this->getRecord()->everyone_can_upload_audios;

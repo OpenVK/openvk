@@ -612,6 +612,7 @@ class User extends RowModel
                 "messages.write",
                 "audios.read",
                 "likes.read",
+                "messages.add_to_chats",
             ],
         ])->get($id);
     }
@@ -1352,6 +1353,7 @@ class User extends RowModel
                 "messages.write",
                 "audios.read",
                 "likes.read",
+                "messages.add_to_chats",
             ],
         ])->set($id, $status)->toInteger());
     }

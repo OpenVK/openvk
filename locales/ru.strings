@@ -756,8 +756,14 @@
 "privacy_setting_add_to_friends" = "Кто может называть меня другом";
 "privacy_setting_write_wall" = "Кто может писать у меня на стене";
 "privacy_setting_write_messages" = "Кто может писать мне сообщения";
+"privacy_setting_write_messages_tip" = "Учтите: вам могут не ответить из-за этой настройки.";
+"privacy_setting_add_in_chats" = "Кто может добавлять меня в чаты";
 "privacy_setting_view_audio" = "Кому видно мои аудиозаписи";
 "privacy_setting_see_likes" = "Кому видны мои лайки";
+"privacy_title_info" = "Информация в профиле";
+"privacy_title_content" = "Контент в профиле";
+"privacy_title_wall" = "Лента";
+"privacy_title_messages" = "Коммуникация";
 "privacy_value_anybody" = "Все желающие";
 "privacy_value_anybody_dative" = "Всем желающим";
 "privacy_value_users" = "Пользователям OpenVK";
@@ -1400,6 +1406,7 @@
 
 "messages_unavailable" = "К сожалению, сообщения временно недоступны или не поддерживаются на этом сервере";
 
+"messages" = "Сообщения";
 "all_messages" = "Все сообщения";
 "search_messages" = "Найти сообщения...";
 "search_messages_tab" = "Поиск";
@@ -1582,8 +1589,11 @@
 "topics_many" = "$1 тема";
 "topics_other" = "$1 тем";
 "created" = "Создано";
+"club_edit_section_media" = "Медиа";
 "everyone_can_create_topics" = "Все могут создавать темы";
 "everyone_can_upload_audios" = "Все могут загружать аудиозаписи";
+"everyone_can_upload_videos" = "Все могут загружать видео";
+"enable_group_messages" = "Все могут писать в сообщения группы";
 "display_list_of_topics_above_wall" = "Отображать список тем над стеной";
 "topic_changes_saved_comment" = "Обновлённый заголовок и настройки появятся на странице с темой.";
 "failed_to_create_topic" = "Не удалось создать тему";

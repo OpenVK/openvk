@@ -53,6 +53,11 @@ nobold span {
     color: gray;
 }
 
+.nobold-2 {
+    color: var(--nobold);
+    font-size: 10px;
+}
+
 .hidden {
     display: none;
 }
@@ -4645,4 +4650,9 @@ hr {
 
 .tippy-box[data-theme~="emoji"] .tippy-content {
     padding: 0px 0px !important;
+}
+
+.title_insignificant {
+    display: block;
+    padding: 8px 132px;
 }

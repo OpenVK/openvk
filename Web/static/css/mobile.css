@@ -2655,6 +2655,12 @@
         color: unset;
     }
 
+    .title_insignificant {
+        padding: 5px 0px;
+        margin: 0px 0px 7px 0px;
+        font-size: 16px;
+    }
+
     body.ajax_request_made #ajloader,
     #ajloader.shown {
         display: flex;

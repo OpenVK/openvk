@@ -117,11 +117,24 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
+                            <span class="nobold">{_club_edit_section_media}: </span>
+                        </td>
+                        <td>
+                            <label style="display:block;"><input type="checkbox" name="upload_audios" value="1" n:attr="checked => $club->isEveryoneCanUploadAudios()" /> {_everyone_can_upload_audios}</label>
+                            <label style="display:block;"><input type="checkbox" name="upload_videos" value="1" n:attr="checked => $club->isEveryoneCanUploadVideos()" /> {_everyone_can_upload_videos}</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
                             <span class="nobold">{_discussions}: </span>
                         </td>
                         <td>
                             <input type="checkbox" name="everyone_can_create_topics" value="1" n:attr="checked => $club->isEveryoneCanCreateTopics()" /> {_everyone_can_create_topics}<br>
                             <input type="checkbox" name="display_topics_above_wall" value="1" n:attr="checked => $club->isDisplayTopicsAboveWallEnabled()" /> {_display_list_of_topics_above_wall}
+                            <label style="display:block;">
+                                <input type="checkbox" name="is_messages_enabled" value="1" n:attr="checked => $club->isMessagesEnabled()" />
+                                {_enable_group_messages}
+                            </label>
                         </td>
                     </tr>
                     <tr>
@@ -133,27 +146,6 @@
                             <input type="radio" name="administrators_list_display" value="0" n:attr="checked => $club->getAdministratorsListDisplay() == 0, disabled => $areAllAdminsHidden" /> {_group_display_only_creator}<br>
                             <input type="radio" name="administrators_list_display" value="1" n:attr="checked => $club->getAdministratorsListDisplay() == 1, disabled => $areAllAdminsHidden" /> {_group_display_all_administrators}<br>
                             <input type="radio" name="administrators_list_display" value="2" n:attr="checked => $club->getAdministratorsListDisplay() == 2" /> {_group_dont_display_administrators_list}<br>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td width="120" valign="top">
-                            <span class="nobold">{_audios}: </span>
-                        </td>
-                        <td>
-                            <label><input type="checkbox" name="upload_audios" value="1" n:attr="checked => $club->isEveryoneCanUploadAudios()" /> {_everyone_can_upload_audios}</label>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td width="120" valign="top">
-                            <span class="nobold">{_messages}: </span>
-                        </td>
-                        <td>
-                            <label>
-                                <input type="checkbox" name="is_messages_enabled" value="1" n:attr="checked => $club->isMessagesEnabled()" />
-                                {_enable_group_messages}
-                            </label>
                         </td>
                     </tr>
 
