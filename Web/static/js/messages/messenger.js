@@ -782,33 +782,3 @@ export class MessengerViewModel {
         this._render(null);
     }
 }
-
-export class LongPollConnection {
-    async create(group_id = null) {
-        this.lp = await window.OVKAPI.call('messages.getLongPollServer', {});
-        console.log("LP | Created connection to the current user");
-    }
-
-    getFirstCounter() {
-        return this.lp.unread_count;
-    }
-
-    listen() {
-        console.log("LP | New cycle of listening");
-        console.log(this.lp);
-        let xhr = new XMLHttpRequest();
-        const mode = 2 + 8 + 32 + 64 + 128;
-        const connection_string = this.lp.server + '?key=' + this.lp.key + '&ts=' + this.lp.ts + '&pts=' + this.lp.pts + '&mode=' + mode;
-        xhr.open('GET', connection_string, true);
-        xhr.onload = () => {
-            let data = JSON.parse(xhr.responseText);
-            if (data?.updates?.length > 0)
-                data.updates.forEach((event) => {
-                    window.im.event_handler.handle(event);
-                });
-                this.lp.ts = data.ts;
-                this.listen();
-            };
-            xhr.send();
-        }
-}
