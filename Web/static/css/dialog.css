@@ -320,6 +320,7 @@ body.manyMsgs .ovk-msg-all:last-of-type {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    padding: 0px 29px;
 }
 
 .ovk-modal-player-window #ovk-player-part .top-part b {
@@ -333,6 +334,7 @@ body.manyMsgs .ovk-msg-all:last-of-type {
 
 .ovk-modal-player-window #ovk-player-part .top-part .top-part-buttons a, .ovk-modal-player-window #ovk-player-part .bottom-part a {
     color: var(--cinema);
+    font-size: 10px;
 }
 
 .ovk-modal-player-window #ovk-player-info {
@@ -485,6 +487,8 @@ body.manyMsgs .ovk-msg-all:last-of-type {
 .ovk-photo-view-dimmer .bottom-part {
     display: flex;
     justify-content: space-between;
+    padding: 0px 26px;
+    font-size: 10px;
 }
 
 .ovk-photo-view-dimmer .bottom-part #videoMoveArrows a {
@@ -504,7 +508,6 @@ body.manyMsgs .ovk-msg-all:last-of-type {
     height: 500px;
     overflow: unset;
     min-width: 299px;
-    min-height: 192px;
 }
 
 .ovk-msg-all.ovk-msg-minimized .ovk-photo-view-overlay {
@@ -608,9 +611,54 @@ body.manyMsgs .ovk-msg-all:last-of-type {
     width: 100%;
 }
 
+.ovk-photo-view-dimmer #player-video-queue {
+    display: none;
+}
+
 .ovk-photo-view-dimmer.queue-shown #player-video-queue {
-    width: 300px;
-    background: var(--cinema);
+    display: block;
+    background: #00000092;
+    width: 270px;
+    box-sizing: border-box;
+}
+
+.ovk-photo-view-dimmer.queue-shown #player-video-queue #player-video-name-of {
+    height: 47px;
+}
+
+.ovk-photo-view-dimmer.queue-shown #player-video-queue #player-video-items {
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 100%;
+}
+
+.ovk-photo-view-dimmer.queue-shown #player-video-queue .video-item {
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: 0fr 1fr;
+    gap: 15px;
+    padding: 7px 15px;
+    color: var(--text-rev);
+    box-sizing: border-box;
+}
+
+.ovk-photo-view-dimmer.queue-shown #player-video-queue .video-item.selected {
+    background: var(--brand);
+}
+
+.ovk-photo-view-dimmer.queue-shown #player-video-queue .video-item:hover {
+    background: var(--bg-slightly-2);
+}
+
+.ovk-photo-view-dimmer.queue-shown #player-video-queue .video-item .thumbnail {
+    width: 85px;
+    height: 60px;
+    object-fit: contain;
+}
+
+.ovk-photo-view-dimmer.queue-shown #player-video-queue .video-item .videodata {
+    padding: 7px 0px;
+    box-sizing: border-box;
 }
 
 .ovk-photo-view-dimmer.ovk-msg-minimized.queue-shown #player-video-queue {
@@ -620,6 +668,7 @@ body.manyMsgs .ovk-msg-all:last-of-type {
 .ovk-photo-view-dimmer.queue-shown .ovk-photo-view-overlay {
     display: none;
 }
+
 
 /* Post */
 
@@ -636,6 +685,10 @@ body.manyMsgs .ovk-msg-all:last-of-type {
 
     display: flex;
     justify-content: space-between;
+}
+
+.ovk-post-viewer .post_com_title #post-win-arrows {
+    user-select: none;
 }
 
 .ovk-post-viewer .photo_viewer_wrapper {
@@ -703,7 +756,8 @@ body.manyMsgs .ovk-msg-all:last-of-type {
 }
 
 .post.in-window > tbody,
-.post.in-window > tbody > tr {
+.post.in-window > tbody > tr,
+.post.in-window > tbody > tr > td {
     width: 100%;
     display: block;
 }

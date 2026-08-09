@@ -560,6 +560,27 @@ class VideoViewer extends Viewer {
         const author = find_author(item.owner_id, profiles, groups)
         item["author"] = author;
         this.items[pid] = item;
+
+        if (this.modal != null) {
+            this._appendItemToQueue(item);
+        }
+    }
+
+    _queueItemTemplate(item) {
+        return u(`
+            <div class="video-item" data-id="${item.id}">
+                <div>
+                    <img class="thumbnail" src="${item.image[0].url}">
+                </div>
+                <div class="videodata noOverflow">
+                    <b>${escapeHtml(item.title)}</b>
+                </div>
+            </div>    
+        `);
+    }
+
+    _appendItemToQueue(item) {
+        this.modal.getNode().find("#player-video-queue #player-video-items").append(this._queueItemTemplate(item));
     }
 
     createMsgbox() {
@@ -604,10 +625,26 @@ class VideoViewer extends Viewer {
             this.slide(1);
         });
 
-        setClickableHeightForEls(this.modal.getNode(), this.modal.getNode().find(".ovk-photo-view-overlay").nodes, ".ovk-modal-player-window", -50);
+        msgbox.getNode().find("#player-video-queue").on("click", ".video-item", (e) => {
+            e.preventDefault();
+
+            const id = e.target.closest(".video-item").dataset.id;
+            this.selectItemByApiId(id);
+        });
+
+        this.itemsByOrder.forEach(el => {
+            this._appendItemToQueue(el);
+        });
+
+        setClickableHeightForEls(this.modal.getNode(), this.modal.getNode().find(".ovk-photo-view-overlay").nodes, ".ovk-modal-player-window", -150);
     }
 
     async _toggleComments() {
+        if (this.isSliding == true) {
+            return;
+        }
+
+        this.isSliding = true;
         if(this.modal.getNode().find('#ovk-player-info').hasClass('shown')) {
             this.modal.getNode().find('#__toggle_comments').html(tr('show_comments'))
         } else {
@@ -618,11 +655,12 @@ class VideoViewer extends Viewer {
             this.modal.getNode().find('#ovk-player-info').html(`<div id='gif_loader'></div>`);
         }
 
-        setClickableHeightForEls(this.modal.getNode(), this.modal.getNode().find(".ovk-photo-view-overlay").nodes, ".ovk-modal-player-window", -50);
+        // setClickableHeightForEls(this.modal.getNode(), this.modal.getNode().find(".ovk-photo-view-overlay").nodes, ".ovk-modal-player-window", -50);
 
         this.modal.getNode().find('#ovk-player-info').toggleClass('shown');
 
         await this._loadDetails(this.currentId);
+        this.isSliding = false;
     }
 
     afterOpen(videoId, open_comments = false) {
@@ -651,11 +689,24 @@ class VideoViewer extends Viewer {
     }
 
     async selectItem(pid, item) {
+        const is_same = this.currentId == pid;
         this.currentId = pid;
         this._pushW(this.currentId);
 
+        if (!is_same) {
+            this._updFrame(item);
+        }
+
         console.log(pid, item)
-        this._updFrame(item);
+
+        if(this.modal.getNode().find('#ovk-player-info').hasClass('shown')) {
+            await this._loadDetails(pid);
+        }
+        this.modal.getNode().find(`#player-video-queue .video-item`).removeClass("selected");
+        const f = this.modal.getNode().find(`#player-video-queue .video-item[data-id="${pid}"]`);
+        if (f.length > 0) {
+            f.addClass("selected");
+        }
     }
 
     _updFrame(item, init_player = true) {
@@ -684,9 +735,8 @@ class VideoViewer extends Viewer {
                 player_html = youtubeVideoTemplate(video_id);
             } else {
                 if(!item.is_processed) {
-                    player_html = `<span class="video_processing_error">${tr('video_processing')}</span>`
+                    player_html = `<span class="gray video_processing_error">${tr('video_processing')}</span>`
                 } else {
-                    let author_name =
                     player_html = `
                         <div class='bsdn media' data-name="${escapeHtml(item.title)}" data-author="${escapeHtml(author_name)}">
                             <video class='media' src='${item.player}'></video>
@@ -744,6 +794,10 @@ class VideoViewer extends Viewer {
                 console.error(e);
                 makeError(String(e));
             }
+        } else {
+            if (entry.cached != null) {
+                details = entry.cached;
+            }
         }
 
         if (context == "pagination") {
@@ -761,7 +815,12 @@ class VideoViewer extends Viewer {
 
     async initalizeContext(context = null, selected_id = null) {
         await this._initalizeContext(context, selected_id);
-        this._updFrame();
+
+        try {
+            this._updFrame();
+        } catch(e) {
+            console.error(e);
+        }
     }
 
     async _initalizeContext(context = null, selected_id = null) {
@@ -772,6 +831,8 @@ class VideoViewer extends Viewer {
         const type = context.type;
         switch (type) {
             case "uploaded_by":
+                const offset = await this._resolveOffset(this.context.owner_id, selected_id.split("_")[1], "video.get");
+                this.context.offset = offset;
                 await this.loadEntityContext();
                 break;
         }
@@ -787,15 +848,15 @@ class VideoViewer extends Viewer {
 
         try {
             const videoViewer = new VideoViewer();
-            videoViewer.setContext({
-                "id": ids
-            });
             const first_id = ids;
 
             if (context == null || context.type == null) {
+                videoViewer.setContext({
+                    "id": ids
+                });
                 await videoViewer.loadIdsOnlyContext();
             } else {
-                this.setContext(context);
+                videoViewer.setContext(context);
                 await videoViewer.initalizeContext(null, ids);
             }
 
@@ -808,33 +869,11 @@ class VideoViewer extends Viewer {
         CMessageBox.toggleLoader(false);
     }
 
-    static async openById(ids, context = {}, event = null, open_comments = false) {
-        if (event != null) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
-
-        CMessageBox.toggleLoader(true);
-
-        console.log(context)
-        try {
-            const videoViewer = new VideoViewer();
-            videoViewer.setContext({
-                "id": ids
-            });
-            const first_id = ids;
-
-            if (context.type == null) {
-                await videoViewer.loadIdsOnlyContext();
-            }
-
-            videoViewer.open();
-            videoViewer.afterOpen(first_id, open_comments);
-        } catch(e) {
-            console.error(e);
-        }
-
-        CMessageBox.toggleLoader(false);
+    static async openByIdFromWall(ids, owner_id, event, open_comments = false) {
+        await VideoViewer.openById(ids, {
+            "type": "uploaded_by",
+            "owner_id": owner_id 
+        }, event, open_comments);
     }
 
     async deleteItem(element) {
@@ -1768,7 +1807,7 @@ class LikersWindow {
                     </a>
                 </div>
                 <a class="itemAuthor" href="/id${item.id}">
-                    ${escapeHtml(item.first_name + " " + item.last_name)}
+                    ${escapeHtml(ovk_proc_strtr(item.first_name + " " + item.last_name, 50))}
                 </a>
             </div>`);
     }

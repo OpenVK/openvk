@@ -161,9 +161,23 @@ final class Utils extends VKAPIRequestHandler
 
                 $exactOffset = DatabaseConnection::i()->getContext()
                     ->table("videos")
-                    ->where("owner", $owner_id)
-                    ->where("virtual_id < ?", $id)
-                    ->count("*");
+                    ->where(["deleted" => 0, "unlisted" => 0]);
+
+                if ($owner_id > 0) {
+                    $exactOffset = $exactOffset->where([
+                        "owner" => $owner_id,
+                        "context_id" => null,
+                        "virtual_id < ?" => $id
+                    ]);
+                } else {
+                    $exactOffset = $exactOffset->where([
+                        "context_id" => $owner_id,
+                        "context_unlisted" => 0,
+                        "context_vid < ?" => $id
+                    ]);
+                }
+
+                $exactOffset = $exactOffset->count("*");
 
                 break;
             default:

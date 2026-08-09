@@ -258,6 +258,16 @@ class Viewer {
         return this.items[this.currentId];
     }
 
+    get itemsByOrder() {
+        const items = [];
+
+        this.itemsOrder.forEach(item => {
+            items.push(this.items[item]);
+        })
+
+        return items;
+    }
+
     setContext(data) {
         this._setMainContext(data);
     }
@@ -280,7 +290,7 @@ class Viewer {
 
     async _resolveOffset(owner_id, item_id, type, additional_id = null, reverse = false) {
         return await window.OVKAPI.call("utils.resolveOffset", {
-            "type": type,
+            "method": type,
             "owner_id": owner_id,
             "id": item_id,
             "perPage": this.context.perPage ?? 10,
@@ -531,8 +541,8 @@ class Viewer {
             cancel: '.miniplayer-body'
         });
         this._resizeable_ctx = $(this.modal.getNode().nodes[0]).resizable({
-            maxHeight: 2000,
-            maxWidth: 3000,
+            maxHeight: 700,
+            maxWidth: 1000,
             minHeight: 150,
             minWidth: 200
         });
@@ -629,7 +639,6 @@ const photoViewerTemplate =
 </div>`;
 const videoViewerTemplate = `
 <div class="ovk-photo-view-dimmer ovk-video-view-dimmer ovk-white-modal">
-    <div class="ovk-photo-view-overlay ovk-photo-view-overlay-left"></div>
     <div class="ovk-photo-view-overlay ovk-photo-view-overlay-right">
         <div class="ovk-photo-close-icon"></div>
     </div>
@@ -664,7 +673,10 @@ const videoViewerTemplate = `
             </div>
             <div id="ovk-player-info" class="ovk-modal-details"></div>
         </div>
-        <div id="player-video-queue"></div>
+        <div id="player-video-queue">
+            <div id="player-video-name-of"></div>
+            <div id="player-video-items"></div>
+        </div>
     </div>
 </div>`;
 const youtubeVideoTemplate = (id) => { return `
