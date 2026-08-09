@@ -1,6 +1,6 @@
 import { ChatGeneralForm } from './messages.js';
 import { EventHandler } from './events.js';
-import { Messenger, LongPollConnection } from './messenger.js';
+import { Messenger } from './messenger.js';
 import { Conversations } from './conversations.js';
 import { SearchTab } from './search.js';
 
@@ -27,18 +27,12 @@ export class InstantMessagesAndRelated {
         this.usage_type = "current_user";
         this.usage_id = null;
 
-        this.current = new Currentness(this);
+        //this.current = new Currentness(this);
+        this.cached_profiles = new ProfilesCache();
+        this.event_handler = new EventHandler();
         this.state = new IMState(this);
 
         this.isReady = false;
-    }
-
-    get visibleTabs() {
-        return this.tabs.filter(t => t.visible());
-    }
-
-    get is_compact_mode_enabled() {
-        return localStorage.getItem("tw.im.modern_mode") === "1";
     }
 
     async waitLoad() {
@@ -57,26 +51,124 @@ export class InstantMessagesAndRelated {
     async setChatByPeerId(sel_id) {
         await this.state._checkSel(new URL(location.href), sel_id);
     }
-}
 
-export class IMTab {
-    constructor(id, name, render_function, params) {
-        this.id = id ?? (new Date()).toString();
-        this.name = name;
-        this.render_function = render_function;
-        this.params = params;
+    async init() {
+        if (window.OVKAPI == null) {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+
+        await this.state._loadCurrent();
+
+        /*
+        this.lp = new LongPollConnection();
+        await this.lp.create();
+        this.lp.listen();
+
+        this.updateCounter(this.lp.getFirstCounter());
+        */
+        this.isReady = true;
+    }
+
+    async insertIn(container) {
+        this.addLoadSkeleton(container);
+
+        await this.waitLoad();
+
+        const node = u(`<div id="im_container"></div>`)
+        if (this.state.is_compact_mode_enabled == true) {
+            node.addClass("compact");
+        }
+
+        container.insertAdjacentHTML("beforeend", node.last().outerHTML);
+
+        this.root = container.querySelector("#im_container");
+
+        //const found = await this._checkSel(new URL(location.href), sel_id);
+        //if (!found) {
+        //    this.selectTab('conversations');
+       	//}
+        const tab = Conversations.openTab(this.root);
+        this.selectTab(this.addTab(tab));
+        tab.render();
+    }
+
+    selectTab(tab) {
+        this.selectedTabId = tab.id;
+    }
+
+    addTab(tab) {
+        this.tabs.push(tab);
+
+        return this.tabs.indexOf(tab);
+    }
+
+    addLoadSkeleton(container) {
+        container.innerHTML = "LOADING!!!!!";
     }
 }
 
-class Currentness {
-    constructor(im_link) {
-        this.link = im_link;
+class IMVariants {
+    constructor() {
+        this.items = [];
+    }
+
+    setByIndex(id) {
+        window.im = this.items[id];
+    }
+
+    add(item) {
+        return this.items.push(item);
+    }
+}
+
+export class IMTab {
+    constructor() {
+        this.render_class = null;
+        this.options = {};
+    }
+
+    getName() {
+        return this.render_class.getTabName();
+    }
+
+    async render() {
+        await this.render_class.render();
+        this.render_class.is_rendered_firstly = true;
+    }
+}
+
+export class IMPage {
+    constructor() {
+        this.container = null;
+        this.id = null;
+        this.is_rendered_firstly = false;
+    }
+
+    getTabName() { return "..." }
+    async render(options = {}) {}
+    static openTab(main_container, options = {}) {
+        const new_class = new this();
+        new_class.id = String(options.id ?? (new Date()).getTime());
+        main_container.insertAdjacentHTML("beforeend", `<div class="im_page" data-id="${new_class.id}"></div>`);
+        new_class.container = main_container.querySelector(`.im_page[data-id="${new_class.id}"]`);
+
+        const tab = new IMTab();
+        tab.render_class = new_class;
+        tab.options = options;
+
+        return tab;
     }
 }
 
 class IMState {
     constructor(im_link) {
         this.link = im_link;
+        this.items = [];
+        this.item_index = 0;
+    }
+
+    get is_compact_mode_enabled() {
+        return localStorage.getItem("tw.im.modern_mode") === "1";
     }
 
     getUnreadCounter() {
@@ -84,6 +176,16 @@ class IMState {
     }
     updateUnreadCounter() {
         // todo
+    }
+
+    async _loadCurrent() {
+        let _v = await window.OVKAPI.call('users.get', {
+            'user_ids': window.openvk.current_id,
+            'fields': ChatGeneralForm.base_fields,
+        });
+        this.items.push(new ChatGeneralForm(_v[0]));
+        this.item_index = 0;
+        this.link.cached_profiles._addProfileCache(this.item_index);
     }
 
     async _checkSel(loc, sel_id = null) {
@@ -99,6 +201,23 @@ class IMState {
         } else {
             console.error('No peer with this id!');
         }
+    }
+
+    _pushState(url) {
+        history.pushState({ 'from_messenger': 1 }, null, url);
+    }
+
+    _resolveState(e) {
+        const _url = new URL(location.href);
+        if (_url.searchParams.get('sel')) {
+            this._checkSel(_url);
+        } else {
+            this.selectTab('conversations');
+        }
+    }
+
+    setSwitching(val) {
+        this.is_switching = val;
     }
 }
 
@@ -163,6 +282,47 @@ class ProfilesCache {
     _findCachedProfileByIdEvenIfNotCached(id) {
         return this._findCachedProfileById(id);
     }
+}
+
+export class LongPollConnection {
+    constructor() {
+        this.stopped = false;
+    }
+
+    async create(group_id = null) {
+        this.lp = await window.OVKAPI.call('messages.getLongPollServer', {});
+        console.log("LP | Created connection to the current user");
+    }
+
+    stop() {
+        this.stopped = true;
+    }
+
+    getFirstCounter() {
+        return this.lp.unread_count;
+    }
+
+    listen() {
+        console.log("LP | New cycle of listening");
+        console.log(this.lp);
+        let xhr = new XMLHttpRequest();
+        const mode = 2 + 8 + 32 + 64 + 128;
+        const connection_string = this.lp.server + '?key=' + this.lp.key + '&ts=' + this.lp.ts + '&pts=' + this.lp.pts + '&mode=' + mode;
+        xhr.open('GET', connection_string, true);
+        xhr.onload = () => {
+            let data = JSON.parse(xhr.responseText);
+            if (data?.updates?.length > 0)
+                data.updates.forEach((event) => {
+                    window.im.event_handler.handle(event);
+                });
+                this.lp.ts = data.ts;
+
+                if (this.stopped == false) {
+                    this.listen();
+                }
+            };
+            xhr.send();
+        }
 }
 
 export class IM {
@@ -255,27 +415,8 @@ export class IM {
         });
     }
 
-    async initImPage(container, sel_id = null) {
-        this.addLoadSkeleton(container);
-        await this.waitLoad();
-
-        container.insertAdjacentHTML("beforeend", `
-            <div id="im_container" class="${this.is_compact_mode_enabled ? 'compact' : ''}"></div>
-        `);
-        this.root = container.querySelector("#im_container");
-        this._initTabs();
-        const found = await this._checkSel(new URL(location.href), sel_id);
-        if (!found) {
-            this.selectTab('conversations');
-       	}
-    }
-
     async setChatByPeerId(sel_id) {
         await this._checkSel(new URL(location.href), sel_id);
-    }
-
-    addLoadSkeleton(container) {
-        container.innerHTML = "";
     }
 
     setPageTitle(title) {
@@ -370,16 +511,6 @@ export class IM {
 		this.setSwitching(false);
         this.setPageTitle(escapeHtml(ovk_proc_strtr(conv.peer.full_name, 100)));
 	}
-
-    async _loadCurrent() {
-        let _v = await window.OVKAPI.call('users.get', {
-            'user_ids': window.openvk.current_id,
-            'fields': ChatGeneralForm.base_fields,
-        });
-        this._currents = [new ChatGeneralForm(_v[0])];
-        this._current_id = 0;
-        this.cached_profiles._addProfileCache(this.current);
-    }
 
     get current() {
         return this._currents[this._current_id];
@@ -554,23 +685,6 @@ export class IM {
         }
     }
 
-    _pushState(url) {
-        history.pushState({ 'from_messenger': 1 }, null, url);
-    }
-
-    _resolveState(e) {
-        const _url = new URL(location.href);
-        if (_url.searchParams.get('sel')) {
-            this._checkSel(_url);
-        } else {
-            this.selectTab('conversations');
-        }
-    }
-
-    setSwitching(val) {
-        this.is_switching = val;
-    }
-
     // counter
 
     updateCounter(new_number) {
@@ -733,7 +847,9 @@ class FriendsTab {
 
 (async () => {
     if (window.im == null) {
-        window.im = new IM();
+        window.im_variants = new IMVariants();
+        window.im_variants.add(new InstantMessagesAndRelated());
+        window.im_variants.setByIndex(0);
     }
 
     await window.im.init();

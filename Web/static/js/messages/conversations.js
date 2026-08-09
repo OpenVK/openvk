@@ -1,6 +1,6 @@
 import { ChatMessage, ChatGeneralForm } from './messages.js';
 import { ConversationListView } from "./components/convos.js"
-import { html, render } from './im.js';
+import { html, render, IMPage } from './im.js';
 
 export class ConversationsViewModel {
     constructor() {
@@ -25,8 +25,8 @@ export class ConversationsViewModel {
     }
 }
 
-export class Conversations {
-    constructor() {
+export class Conversations extends IMPage {
+    _constructor() {
         this.total_convs = 0;
         this.CONVERSATIONS_PER_PAGE = 100;
         this.q = null;
@@ -156,18 +156,14 @@ export class Conversations {
         return this.loaded_convs_count < this.total_convs;
     }
 
-    hasAppeared(container) {
-        return container.querySelector('.crp-list') != null;
-    }
-
-    appear(container) {
-        container.classList.remove('hidden');
-        if (this.hasAppeared(container)) {
-            this._render(container);
+    render(options = {}) {
+        this.container.classList.remove('hidden');
+        if (this.is_rendered_firstly == true) {
+            this._render(this.container);
             return;
         }
 
-        this._render(container);
+        this._render(this.container);
         document.documentElement.scroll({ top: 0 });
     }
 
