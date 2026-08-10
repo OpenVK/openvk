@@ -1,13 +1,49 @@
+chandler:
+    debug: true
+    websiteUrl: null
+    rootApp: "openvk"
+
+    preferences:
+        logs:
+            enabled: true
+            entitiesNamespace: "openvk\\Web\\Models\\Entities\\"
+
+    database:
+        dsn: "mysql:host=localhost;dbname=openvk"
+        user: "root"
+        password: "root"
+
+    security:
+        # 128-character random hex string used for CSRF tokens, JWT
+        # session signing, and captcha encryption. Generate one with:
+        #   php -r "echo bin2hex(random_bytes(64));"
+        secret: ""
+        csrfProtection: "permissive"
+        extendedValidation: false
+        sessionDuration: 14
+
+    captcha:
+        enable: true
+
+    email:
+        host: "mail.example.com"
+        port: 465
+        user: "user"
+        pass: "word"
+        addr: "noreply@example.com"
+        ssl: true
+
+    redisUrl: "tcp://10.0.0.1:6379"
+
 openvk:
     debug: true
     appearance:
         name: "OpenVK"
         motd: "Yet another OpenVK instance"
-    
+
     mirrors: # list all existing and previous domains without www. Won't work with different port
         - "ovk.localhost"
         - "ovk.local"
-
 
     preferences:
         defaultLanguage: "ru"
@@ -147,7 +183,7 @@ openvk:
         news:
             show: false
             groupId: 1
-    
+
     telemetry:
         plausible:
             enable: false
@@ -162,7 +198,7 @@ openvk:
             enable: false
             container: ""
             site: ""
-    
+
     credentials:
         smsc:
             enable: false

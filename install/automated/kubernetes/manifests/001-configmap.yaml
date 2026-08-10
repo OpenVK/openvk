@@ -1,6 +1,24 @@
 apiVersion: v1
 data:
   openvk.yml: |
+    chandler:
+      debug: true
+      rootApp: "openvk"
+
+      database:
+          dsn: "mysql:host=mariadb-primary-svc;dbname=db"
+          user: "openvk"
+          password: "openvk"
+
+      security:
+          secret: "081906e04f2921e48751fbc5df44dbbcd7f6ecba065ade3d8ea28034cb8d6db24da10965845b5f3376847674e3bce61b5c0e439d12eef3c00d30f3b953657cac"
+          csrfProtection: "permissive"
+          extendedValidation: false
+          sessionDuration: 14
+
+      captcha:
+          enable: true
+
     openvk:
       debug: true
       appearance:
@@ -150,31 +168,6 @@ data:
               stream:
                   maxlen: 1000
                   prefix: "ovk_notifs"
-  chandler.yml: |
-    chandler:
-      debug: true
-      websiteUrl: openvk.local
-      rootApp:    "openvk"
-      
-      preferences:
-          appendExtension: "xhtml"
-          adminUrl: "/chandlerd"
-          exposeChandler: true
-      
-      extensions:
-          path: null
-          allEnabled: false
-      
-      database:
-          dsn: "mysql:host=mariadb-primary-svc;dbname=db"
-          user: "openvk"
-          password: "openvk"
-      
-      security:
-          secret: "081906e04f2921e48751fbc5df44dbbcd7f6ecba065ade3d8ea28034cb8d6db24da10965845b5f3376847674e3bce61b5c0e439d12eef3c00d30f3b953657cac"
-          csrfProtection: "permissive"
-          extendedValidation: false
-          sessionDuration: 14
 kind: ConfigMap
 metadata:
   name: openvk-config

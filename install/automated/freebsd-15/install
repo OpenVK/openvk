@@ -45,70 +45,41 @@ endif
 pkg install -y git nginx php83 node24 npm-node24 mariadb118-server php83-composer mod_php83 php83-gd php83-mbstring php83-iconv php83-sodium php83-calendar php83-curl php83-brotli php83-zip php83-ctype php83-dom php83-fileinfo php83-pdo_mysql php83-sqlite3 php83-pdo_sqlite php83-sockets php83-tokenizer php83-opcache php83-posix php83-pecl-yaml php83-phar php83-filter php83-zlib php83-session php83-simplexml php83-pecl-imagick php83-xml
 rehash # upd exports
 
-# Install chandler
-mkdir /opt
-cd /opt
-git clone https://github.com/openvk/chandler.git
-
-cd chandler
-yes | composer install
-chown -R www: .
-chmod -R 777 .
-
-# Install CommitCaptcha
-cd ./extensions/available
-git clone https://github.com/openvk/commitcaptcha.git
-
-cd commitcaptcha
-yes | composer install
-chown -R www: .
-chmod -R 777 .
-
-ln -s /opt/chandler/extensions/available/commitcaptcha /opt/chandler/extensions/enabled/commitcaptcha
-
 # Install OpenVK
-cd /opt/chandler/extensions/available
+cd /opt
 git clone https://github.com/openvk/openvk
 cd openvk
 yes | composer install
 # js static
 cd Web/static/js
 npm i
-ln -s /opt/chandler/extensions/available/openvk /opt/chandler/extensions/enabled/openvk
 
-cp /opt/chandler/extensions/available/openvk/install/automated/common/chandler.yml /opt/chandler/chandler.yml
-cp /opt/chandler/extensions/available/openvk/install/automated/common/openvk.template.yml /opt/chandler/extensions/available/openvk/openvk.yml
+cd /opt
+cp openvk/install/automated/common/openvk.template.yml openvk/openvk.yml
 
-cd ../../../
-chown -R www: .
-chmod -R 777 .
+chown -R www: /opt/openvk
+chmod -R 777 /opt/openvk
 
 # Setup databases
 sysrc mysql_enable="yes"
 service mysql-server start
 
-cd /opt/chandler
-mysql < /opt/chandler/extensions/available/openvk/install/automated/common/mk_db.sql
-mysql -p'justMonika' openvk < install/init-db.sql
-mysql -p'justMonika' openvk < /opt/chandler/extensions/available/openvk/install/init-static-db.sql
-mysql -p'justMonika' openvk-eventdb < /opt/chandler/extensions/available/openvk/install/init-event-db.sql
+cd /opt/openvk
+mysql < install/automated/common/mk_db.sql
+mysql -p'justMonika' openvk < vendor/openvk/chandler/install/init-db.sql
+mysql -p'justMonika' openvk < install/init-static-db.sql
+mysql -p'justMonika' openvk-eventdb < install/init-event-db.sql
 
-cd /opt/chandler/extensions/available/openvk/install/sqls
+cd install/sqls
 foreach migration (*.sql)
     mysql -p'justMonika' openvk < $migration
 end
-
-# Change database settings
-#echo "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'justMonika'; FLUSH PRIVILEGES;" | mysql -p'justMonika';
-
-#sed -i'' -e 's:/var/run/mysql/mysql.sock:/tmp/mysql.sock:' /opt/chandler/chandler.yml
-#sed -i'' -e 's:/var/run/mysql/mysql.sock:/tmp/mysql.sock:' /opt/chandler/extensions/available/openvk/openvk.yml
 
 # NGINX
 sysrc php_fpm_enable="YES"
 service php_fpm start
 
-cp /opt/chandler/extensions/available/openvk/install/automated/common/nginx.conf /usr/local/etc/nginx/nginx.conf
+cp /opt/openvk/install/automated/common/nginx.conf /usr/local/etc/nginx/nginx.conf
 
 sysrc nginx_enable="YES"
 service nginx start
