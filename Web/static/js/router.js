@@ -168,7 +168,7 @@ window.router = new class {
         this.applyTweaks();
 
         if (window.im) {
-            window.im._toggleScrollMode(false);
+            window.im.state._toggleScrollMode(false);
         }
 
         /*window.document.dispatchEvent(new Event("DOMContentLoaded", {
@@ -509,8 +509,8 @@ window.addEventListener('popstate', (e) => {
         if (window.im && e.state.from_messenger) {
             u('.page_content').html('');
 
-            window.im.initImPage(document.querySelector('.page_content'));
-            window.im._resolveState(e);
+            window.im.insertIn(document.querySelector('.page_content'));
+            window.im.state._resolveState(e);
             return;
         }
 

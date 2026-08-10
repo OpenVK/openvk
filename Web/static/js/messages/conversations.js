@@ -1,14 +1,10 @@
 import { ChatMessage, ChatGeneralForm } from './messages.js';
 import { ConversationListView } from "./components/convos.js"
-import { html, render, IMPage } from './im.js';
+import { IMTab, IMPage } from './pages/page.js';
+import { html, render } from './components/render.js';
 
-export class ConversationsViewModel {
-    constructor() {
-        this._counter = 0;
-    }
-
+export class ConversationsPage extends IMPage {
     _update() {
-        this._counter++;
         const container = document.querySelector('div[data-window="conversations"]');
         if (container && !container.classList.contains('hidden')) {
             window.im.conversations._render(container);
@@ -23,14 +19,57 @@ export class ConversationsViewModel {
     _chatCreationModal() {
         window.im.selectTab("friends", "chat_creation");
     }
+
+    async render(options = {}) {
+        this.container.classList.remove('hidden');
+
+        if (this.is_rendered_firstly == true) {
+            this._render(this.container);
+            return;
+        }
+
+        this._render(this.container);
+        document.documentElement.scroll({ top: 0 });
+    }
+
+    _render(container) {
+        const convs = window.im.conversations.convs;
+
+        render(html`
+        <${ConversationListView}
+            conversations=${convs}
+            hasMore=${this.has_more_items}
+            onLoadMore=${() => window.im.conversations.loadNext()}
+            onCreateChat=${() => window.im.conversations._chatCreationModal()}
+            onSearch=${(e) => window.im.conversations._onMessagesSearch(e)}
+        />
+        `, container);
+    }
+
 }
 
-export class Conversations extends IMPage {
-    _constructor() {
+export class Conversations {
+    constructor() {
         this.total_convs = 0;
         this.CONVERSATIONS_PER_PAGE = 100;
         this.q = null;
         this.peer_id_search = null;
+    }
+
+    get convs() {
+        return (this.all_convs || []).slice(0).sort((a, b) => {
+            return Number(b.last_updated) - Number(a.last_updated);
+        });
+    }
+
+    get has_more_items() {
+        if (!this.total_convs) return true;
+        return this.loaded_convs_count < this.total_convs;
+    }
+
+    get loaded_convs_count() {
+        if (!this.all_convs) return 0;
+        return this.all_convs.length;
     }
 
     async _resolveSel(sel) {
@@ -52,7 +91,7 @@ export class Conversations extends IMPage {
 
         let _n = await ChatGeneralForm.resolveById(sel);
         if (!_n) {
-        return null;
+            return null;
         }
 
         return new ChatGeneralForm(_n);
@@ -91,11 +130,6 @@ export class Conversations extends IMPage {
         return lists;
     }
 
-    get loaded_convs_count() {
-        if (!this.all_convs) return 0;
-        return this.all_convs.length;
-    }
-
     _appendConvs(convs) {
         if (!this.all_convs) {
             this.all_convs = [];
@@ -106,14 +140,10 @@ export class Conversations extends IMPage {
         });
     }
 
-    async _loadNext() {
+    async loadNext() {
         let convs = await this.getConversations(this.loaded_convs_count);
+        console.log(convs)
         this._appendConvs(convs);
-    }
-
-    async init() {
-        this.view = new ConversationsViewModel();
-        await this._loadNext();
     }
 
     swapConvs(conv_1, conv_2) {}
@@ -143,42 +173,6 @@ export class Conversations extends IMPage {
         const c = new Conversation({ 'peer': b });
         this.all_convs.push(c);
         return c;
-    }
-
-    get convs() {
-        return (this.all_convs || []).slice(0).sort((a, b) => {
-        return Number(b.last_updated) - Number(a.last_updated);
-        });
-    }
-
-    get has_more_items() {
-        if (!this.total_convs) return true;
-        return this.loaded_convs_count < this.total_convs;
-    }
-
-    render(options = {}) {
-        this.container.classList.remove('hidden');
-        if (this.is_rendered_firstly == true) {
-            this._render(this.container);
-            return;
-        }
-
-        this._render(this.container);
-        document.documentElement.scroll({ top: 0 });
-    }
-
-    _render(container) {
-        const convs = this.convs;
-
-        render(html`
-        <${ConversationListView}
-            conversations=${convs}
-            hasMore=${this.has_more_items}
-            onLoadMore=${() => this.view.loadNext()}
-            onCreateChat=${() => this.view._chatCreationModal()}
-            onSearch=${(e) => this._onMessagesSearch(e)}
-        />
-        `, container);
     }
 
     hide(container) {
@@ -258,7 +252,6 @@ export class Conversation {
     }
 
     async setTyping(user_ids = [], variant = "writing") {
-        console.log("ryihjiyhyt", user_ids)
         const REMOVE_TYPING_TIMEOUT = 5000;
 
         for (const item of user_ids) {

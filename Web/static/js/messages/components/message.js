@@ -1,5 +1,5 @@
-import { html, render } from '../im.js';
 import { WriteBar } from './convos.js';
+import { html, render } from './render.js';
 
 function isSelected(msg) {
   const view = window.im?.messenger?.view;

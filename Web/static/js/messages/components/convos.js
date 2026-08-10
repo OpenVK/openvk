@@ -1,4 +1,4 @@
-import { html, render } from '../im.js';
+import { html, render } from './render.js';
 
 export const PeerTab = ({ conv, active }) => {
   return html`
@@ -186,12 +186,12 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
         <input type="button" class="button" value="${tr('create_chat')}" onClick=${onCreateChat} />
     </div>
     <div class="crp-list">
-      ${conversations.map((conv) => html`<${ConversationItem} conv=${conv} />`)}
-      ${hasMore && html`
+        ${conversations.map((conv) => html`<${ConversationItem} conv=${conv} />`)}
+        ${hasMore && html`
         <div onClick=${onLoadMore} id="show_more" class="crp-load-more">
-          ${tr('show_next')}
+            ${tr('show_next')}
         </div>
-      `}
+        `}
     </div>
   `;
 };

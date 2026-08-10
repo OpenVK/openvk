@@ -1,18 +1,14 @@
 import { ChatGeneralForm } from './messages.js';
 import { EventHandler } from './events.js';
 import { Messenger } from './messenger.js';
-import { Conversations } from './conversations.js';
+import { Conversations, ConversationsPage } from './conversations.js';
 import { SearchTab } from './search.js';
+import { IMTab, IMPage } from './pages/page.js';
 
 import { TabBar } from './components/convos.js';
 import { FriendsPage } from './components/extra.js';
 
-import htm from '../node_modules/htm/dist/htm.mjs';
-import { h, render as preactRender } from '../node_modules/preact/dist/preact.mjs';
-
-const html = htm.bind(h);
-
-export { html, preactRender as render };
+import { html, render as preactRender } from './components/render.js';
 
 //const tr = window.tr;
 //const u = window.u;
@@ -33,12 +29,13 @@ export class InstantMessagesAndRelated {
         this.state = new IMState(this);
 
         this.isReady = false;
+        this.conversations = new Conversations();
     }
 
     async waitLoad() {
         return new Promise(resolve => {
             const check = () => {
-                if (this.isReady) {
+                if (this.isReady == true) {
                     resolve();
                 } else {
                     setTimeout(check, 100);
@@ -53,12 +50,15 @@ export class InstantMessagesAndRelated {
     }
 
     async init() {
+        console.log("IM | Init");
+
         if (window.OVKAPI == null) {
             await new Promise((resolve) => setTimeout(resolve, 1000));
         }
 
         await this.state._loadCurrent();
-
+        console.log(this.conversations, this.conversations.loadNext)
+        await this.conversations.loadNext();
         /*
         this.lp = new LongPollConnection();
         await this.lp.create();
@@ -67,12 +67,14 @@ export class InstantMessagesAndRelated {
         this.updateCounter(this.lp.getFirstCounter());
         */
         this.isReady = true;
+        console.log("IM | Inited");
     }
 
     async insertIn(container) {
         this.addLoadSkeleton(container);
-
         await this.waitLoad();
+
+        console.log("IM | Insert in ", container);
 
         const node = u(`<div id="im_container"></div>`)
         if (this.state.is_compact_mode_enabled == true) {
@@ -87,9 +89,9 @@ export class InstantMessagesAndRelated {
         //if (!found) {
         //    this.selectTab('conversations');
        	//}
-        const tab = Conversations.openTab(this.root);
+        const tab = ConversationsPage.openTab(this.root);
         this.selectTab(this.addTab(tab));
-        tab.render();
+        await tab.render();
     }
 
     selectTab(tab) {
@@ -118,45 +120,6 @@ class IMVariants {
 
     add(item) {
         return this.items.push(item);
-    }
-}
-
-export class IMTab {
-    constructor() {
-        this.render_class = null;
-        this.options = {};
-    }
-
-    getName() {
-        return this.render_class.getTabName();
-    }
-
-    async render() {
-        await this.render_class.render();
-        this.render_class.is_rendered_firstly = true;
-    }
-}
-
-export class IMPage {
-    constructor() {
-        this.container = null;
-        this.id = null;
-        this.is_rendered_firstly = false;
-    }
-
-    getTabName() { return "..." }
-    async render(options = {}) {}
-    static openTab(main_container, options = {}) {
-        const new_class = new this();
-        new_class.id = String(options.id ?? (new Date()).getTime());
-        main_container.insertAdjacentHTML("beforeend", `<div class="im_page" data-id="${new_class.id}"></div>`);
-        new_class.container = main_container.querySelector(`.im_page[data-id="${new_class.id}"]`);
-
-        const tab = new IMTab();
-        tab.render_class = new_class;
-        tab.options = options;
-
-        return tab;
     }
 }
 
@@ -219,6 +182,29 @@ class IMState {
     setSwitching(val) {
         this.is_switching = val;
     }
+
+    _toggleScrollMode(enable = true) {
+        /*if (window.isMobile && window.isMobile()) {
+            return;
+        }*/
+
+        if (window.im.is_compact_mode_enabled == true) {
+            return;
+        }
+
+        if (enable) {
+            if (!u('body').hasClass('no-scroll')) {
+                window._prevScroll = scrollY;
+            }
+
+            u('body').addClass('no-scroll');
+        } else {
+            scrollTo(0, window._prevScroll);
+            window._prevScroll = null;
+            u('body').removeClass('no-scroll');
+        }
+    }
+
 }
 
 class YellowHeader {
@@ -347,10 +333,6 @@ export class IM {
         return this.tabDefs.map(t => t.id);
     }
 
-    get is_compact_mode_enabled() {
-        return localStorage.getItem("tw.im.modern_mode") === "1";
-    }
-
     async _checkSel(loc, sel_id = null) {
         const _sel = sel_id == null ? Number(loc.searchParams.get('sel')) : sel_id;
         if (!_sel) return;
@@ -421,29 +403,6 @@ export class IM {
 
     setPageTitle(title) {
         document.title = title;
-    }
-
-    changeYellowHeader(text) {
-        u(".page_yellowheader").html(text);
-    }
-
-    changeYellowHeaderByPeer(peer) {
-        switch (peer.supposed_type) {
-            case "chat":
-                this.changeYellowHeader(tr("conversation_title_chat"));
-                break;
-            case "user":
-                if (peer.id === window.openvk.current_id) {
-                    this.changeYellowHeader(tr("saved_messages"));
-                    break;
-                }
-
-                this.changeYellowHeader(tr("conversation_title_user", escapeHtml(ovk_proc_strtr(peer.name, 50))));
-                break;
-            case "club":
-                this.changeYellowHeader(tr("conversation_title_club"));
-                break;
-        }
     }
 
     closeChat(conv) {
@@ -647,28 +606,6 @@ export class IM {
 
     _getTabWindow(tab_name) {
         return this.root.querySelector(`div[data-window="${tab_name}"]`);
-    }
-
-    _toggleScrollMode(enable = true) {
-        /*if (window.isMobile && window.isMobile()) {
-            return;
-        }*/
-
-        if (window.im.is_compact_mode_enabled == true) {
-            return;
-        }
-
-        if (enable) {
-            if (!u('body').hasClass('no-scroll')) {
-                window._prevScroll = scrollY;
-            }
-
-            u('body').addClass('no-scroll');
-        } else {
-            scrollTo(0, window._prevScroll);
-            window._prevScroll = null;
-            u('body').removeClass('no-scroll');
-        }
     }
 
     // Is messages page is open and messenger tab selected
