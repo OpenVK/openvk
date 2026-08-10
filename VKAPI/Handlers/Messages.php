@@ -334,7 +334,7 @@ final class Messages extends VKAPIRequestHandler
 
             $mainObj = [
                 "unread" => $lastMessage->isUnread() ? 1 : 0,
-                "message" => (object) $msgObj
+                "message" => (object) $msgObj,
             ];
 
             $list[] = (object) $mainObj;
