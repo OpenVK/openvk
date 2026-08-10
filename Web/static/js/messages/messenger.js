@@ -2,7 +2,7 @@ import { ChatMessage, ChatGeneralForm } from './messages.js';
 import { Conversation } from './conversations.js';
 import { MessageListView } from "./components/message.js"
 import { ErrorConversation, WriteBar, ActionsBar, PeerWindow, InputArea, PeerTabsView } from "./components/convos.js"
-import { html, render } from './im.js';
+import { html, render } from './components/render.js';
 
 export class Messenger {
     async init() {

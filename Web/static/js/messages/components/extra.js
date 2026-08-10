@@ -1,4 +1,4 @@
-import { html, render } from '../im.js';
+import { html, render } from './render.js';
 
 export const FriendsPage = ({ friends, count, referrer, onFriendClick, onCreateChat, isSelected, onLoadMore }) => {
     return html`
