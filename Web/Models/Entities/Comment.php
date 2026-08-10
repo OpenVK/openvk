@@ -106,14 +106,7 @@ class Comment extends Post
                     ];
                 }
             } elseif ($attachment instanceof \openvk\Web\Models\Entities\Video) {
-                # if (VKAPI_DECL_VER_MAJOR <= 4) {
                 $res->attachments[] = $attachment->toVkApiStruct($user);
-                /* } else {
-                    $res->attachments[] = [
-                        'type' => 'video',
-                        'video' => $attachment->toVkApiStruct($user),
-                    ];
-                }*/
             }
         }
 
