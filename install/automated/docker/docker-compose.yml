@@ -8,19 +8,13 @@ services:
     ports:
       - 8080:80
     volumes:
-      - openvk-storage:/opt/chandler/extensions/available/openvk/storage
-      - openvk-audios:/opt/chandler/extensions/available/openvk/tmp/api-storage/audios
-      - openvk-photos:/opt/chandler/extensions/available/openvk/tmp/api-storage/photos
-      - openvk-videos:/opt/chandler/extensions/available/openvk/tmp/api-storage/videos
+      - openvk-storage:/opt/openvk/storage
+      - openvk-audios:/opt/openvk/tmp/api-storage/audios
+      - openvk-photos:/opt/openvk/tmp/api-storage/photos
+      - openvk-videos:/opt/openvk/tmp/api-storage/videos
       - type: bind
         source: ./openvk.yml
-        target: /opt/chandler/extensions/available/openvk/openvk.yml
-        read_only: true
-        bind:
-          create_host_path: false
-      - type: bind
-        source: ./chandler.yml
-        target: /opt/chandler/chandler.yml
+        target: /opt/openvk/openvk.yml
         read_only: true
         bind:
           create_host_path: false
@@ -41,10 +35,10 @@ services:
     entrypoint: /bin/sh
     command: -c "/bin/acl_handler.sh"
     volumes:
-      - openvk-storage:/opt/chandler/extensions/available/openvk/storage
-      - openvk-audios:/opt/chandler/extensions/available/openvk/tmp/api-storage/audios
-      - openvk-photos:/opt/chandler/extensions/available/openvk/tmp/api-storage/photos
-      - openvk-videos:/opt/chandler/extensions/available/openvk/tmp/api-storage/videos
+      - openvk-storage:/opt/openvk/storage
+      - openvk-audios:/opt/openvk/tmp/api-storage/audios
+      - openvk-photos:/opt/openvk/tmp/api-storage/photos
+      - openvk-videos:/opt/openvk/tmp/api-storage/videos
       - type: bind
         source: ./acl_handler.sh
         target: /bin/acl_handler.sh

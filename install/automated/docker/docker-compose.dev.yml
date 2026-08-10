@@ -7,7 +7,7 @@ services:
       watch:
         - path: ../../..
           action: sync
-          target: /opt/chandler/extensions/available/openvk
+          target: /opt/openvk
           ignore:
             - vendor/
         - path: ../../../composer.json

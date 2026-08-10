@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace openvk\CLI;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(name: 'cleanup-pending-uploads')]
 class CleanupPendingUploadsCommand extends Command
 {
-    protected static $defaultName = "cleanup-pending-uploads";
-
     public function __construct()
     {
         parent::__construct();

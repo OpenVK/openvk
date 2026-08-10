@@ -6,6 +6,7 @@ namespace openvk\CLI;
 
 use Nette\Database\Connection;
 use Chandler\Database\DatabaseConnection;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -14,10 +15,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand(name: 'upgrade')]
 class UpgradeCommand extends Command
 {
-    protected static $defaultName = "upgrade";
-
     private Connection $db;
     private ?Connection $eventDb;
 
@@ -163,13 +163,13 @@ class UpgradeCommand extends Command
 
     protected function installChandler(InputInterface $input, SymfonyStyle $io, bool $drop = false): int
     {
-        $chandlerLocation = $input->getArgument("chandler") ?? (__DIR__ . "/../../../../");
-        $chandlerConfigLocation = "$chandlerLocation/chandler.yml";
+        $chandlerLocation = $input->getArgument("chandler") ?? realpath(__DIR__ . "/../vendor/openvk/chandler");
+        $installFile = "$chandlerLocation/install/init-db.sql";
 
-        if (!file_exists($chandlerConfigLocation)) {
-            $err = ["Could not find chandler location. Perhaps your config is too unique?"];
-            if (!$input->getOption("chandler")) {
-                $err[] = "Specify absolute path to your chandler installation using the --chandler option.";
+        if (!file_exists($installFile)) {
+            $err = ["Could not find chandler installation at '$chandlerLocation'."];
+            if (!$input->getArgument("chandler")) {
+                $err[] = "Specify absolute path to your chandler installation using the chandler argument.";
             }
 
             $io->getErrorStyle()->error($err);
@@ -188,9 +188,9 @@ class UpgradeCommand extends Command
             $io->newLine();
         }
 
-        $installFile = file_get_contents("$chandlerLocation/install/init-db.sql");
+        $sql = file_get_contents($installFile);
 
-        return $this->executeSqlScript(22, $installFile, $io);
+        return $this->executeSqlScript(22, $sql, $io);
     }
 
     protected function initSchema(SymfonyStyle $io): int
