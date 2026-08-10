@@ -631,6 +631,7 @@ final class UserPresenter extends OpenVKPresenter
                     "messages.write",
                     "audios.read",
                     "likes.read",
+                    "messages.add_to_chats",
                 ];
                 foreach ($settings as $setting) {
                     $input = $this->postParam(str_replace(".", "_", $setting));

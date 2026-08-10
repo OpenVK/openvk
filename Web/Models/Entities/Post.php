@@ -13,6 +13,7 @@ class Post extends Postable
 {
     use Traits\TRichText;
     protected $tableName = "posts";
+    protected $shortName = "wall";
     protected $upperNodeReferenceColumnName = "wall";
 
     private function setLikeRecursively(bool $liked, User $user, int $depth): void
@@ -408,7 +409,7 @@ class Post extends Postable
         $res = (object) [];
 
         $res->id      = $this->getVirtualId();
-        $res->to_id   = $this->getWallOwner()->getRealId();
+        $res->owner_id = $res->to_id = $this->getWallOwner()->getRealId();
         $res->from_id = $this->getOwner()->getRealId();
         $res->date    = $this->getPublicationTime()->timestamp();
         $res->text    = $this->getText(false);
@@ -418,6 +419,14 @@ class Post extends Postable
         $res->copy_post_id  = null; # todo
 
         return $res;
+    }
+
+    public function toApiAttachment(): array
+    {
+        return [
+            "type"  => "wall",
+            "wall" => $this->toNotifApiStruct(),
+        ];
     }
 
     public function canBeEditedBy(?User $user = null): bool
@@ -566,5 +575,10 @@ class Post extends Postable
             'coordinates' => $this->getLat() . ',' . $this->getLon(),
             'name' => $this->getGeo()->name,
         ];
+    }
+
+    public function getAccessKey(): ?string
+    {
+        return null;
     }
 }

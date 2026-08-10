@@ -18,6 +18,7 @@ use openvk\Web\Models\Repositories\Audios;
 class Audio extends Media
 {
     protected $tableName     = "audios";
+    protected $shortName     = "audio";
     protected $fileExtension = "mpd";
 
     # Taken from winamp :D
@@ -414,6 +415,7 @@ class Audio extends Media
         $obj->genre_id   = $obj->genre = self::vkGenres[$this->getGenre() ?? ""] ?? 18; # return Other if no match
         $obj->genre_str  = $this->getGenre();
         $obj->owner_id   = $this->getOwner()->getRealId();
+        $obj->global_id  = $this->getId();
 
         if (!is_null($this->getLyrics())) {
             $obj->lyrics_id = $this->getId();
@@ -443,6 +445,15 @@ class Audio extends Media
 
         return $obj;
     }
+
+    public function toApiAttachment(User $user): object
+    {
+        return (object) [
+            "type"  => "audio",
+            "audio" => $this->toVkApiStruct($user),
+        ];
+    }
+
 
     public function setAlbum(Playlist $album): void
     {

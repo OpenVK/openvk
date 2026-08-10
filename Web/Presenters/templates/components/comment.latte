@@ -48,7 +48,7 @@
                         {if !$timeOnly}
                             {if $comment->canBeDeletedBy($thisUser)}
                                 <span>|</span>
-                                <a href="/comment{$comment->getId()}/delete" id="_ajaxDelete">{_delete}</a>
+                                <a href="/comment{$comment->getId()}/delete" onclick="ajax_delete(event)">{_delete}</a>
                             {/if}
                             {if $comment->canBeEditedBy($thisUser)}
                                 <span>|</span>
@@ -75,7 +75,6 @@
                         <span n:if="$compact ?? false">
 
                         |&nbsp;<a
-                            href="#_comment{$comment->getId()}"
                             class="date"
                         >{$comment->getPublicationTime()}</a>
 

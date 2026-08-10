@@ -1,13 +1,18 @@
 {extends "../@listView.latte"}
 {var $iterator = iterator_to_array($topics)}
 {var $page     = $paginatorConf->page}
+{var $canModify = $club->canBeModifiedBy($thisUser)}
 
 {block title}{_discussions} {$club->getCanonicalName()}{/block}
 
 {block header}
     <a href="{$club->getURL()}">{$club->getCanonicalName()}</a> » {_discussions}
-    
-    <div n:if="$club->isEveryoneCanCreateTopics() || $club->canBeModifiedBy($thisUser)" style="float: right;">
+
+    <div n:if="$club->isEveryoneCanCreateTopics() || $canModify" style="float: right;">
+        {if $canModify}
+            <a onclick="createChatTopic({$club->getId()})">{_create_topic_as_chat}</a><span> | </span>
+        {/if}
+
         <a href="/board{$club->getId()}/create">{_create_topic}</a>
     </div>
 {/block}
@@ -17,14 +22,14 @@
         <input name="query" class="header_search_input" placeholder="{_header_search}" value="{$_GET['query'] ?? ''}" style="width: 86%" />
         <input type="submit" class="button" value="{_search_button}" style="width: 7.5%" />
     </form>
-    
+
     <p style="margin-left: 15px;">
         <b>{tr("results", $count)}</b>
     </p>
 {/block}
 
 {block actions}
-    
+
 {/block}
 
 {* BEGIN ELEMENTS DESCRIPTION *}
@@ -43,7 +48,7 @@
 {/block}
 
 {block description}
-    <div style="float: left;">
+    <div style="float: left;" n:if="!$x->isChatAttached()">
         {tr("messages", $x->getCommentsCount())}
     </div>
     {var $lastComment = $x->getLastComment()}

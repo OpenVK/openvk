@@ -17,7 +17,7 @@
 
 {var $bigText = mb_strlen($post->getText()) > 520 || substr_count($post->getText(), "\n") + 1 > 10}
 
-<table border="0" style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, post_oldschool, $post->isExplicit() ? post-nsfw">
+<table border="0" style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, post_oldschool, $post->isExplicit() ? post-nsfw, $post->isPinned() ? is-pinned, $compact ? mini-post : common-post">
     <tbody>
         <tr>
             <td class="post-author-ava" width="54" valign="top">
@@ -63,8 +63,8 @@
                         </a>
                     {/if}
                     <br/>
-                    <a href="{if $suggestion ?? false}javascript:void(0){else}/wall{$post->getPrettyId()}{/if}" class="date">
-                        {$post->getPublicationTime()} <span n:if="$post->getEditTime()" class="editedMark">({_edited_short})</span>{if $post->isPinned()}, {_pinned}{/if}
+                    <a href="{if $suggestion ?? false}javascript:void(0){else}/wall{$post->getPrettyId()}{/if}" onclick="PostViewer.openById(event, {$post->getPrettyIdWithKey()})" class="date">
+                        {$post->getPublicationTime()} <span n:if="$post->getEditTime()" class="editedMark">({_edited_short})</span><span class="pinned_mark">, {_pinned}</span>
 
                         <a n:if="!empty($platform)" class="client_app" data-app-tag="{$platform}" data-app-name="{$platformDetails['name']}" data-app-url="{$platformDetails['url']}" data-app-img="{$platformDetails['img']}">
                             <img src="/assets/packages/static/openvk/img/app_icons_mini/{$post->getPlatform(true)}.svg">
@@ -134,7 +134,7 @@
                     {/if}
 
                     {if !($forceNoEditLink ?? false) && isset($thisUser) && $post->canBeEditedBy($thisUser)}
-                        <a class="m_hide" id="editPost"
+                        <a class="m_hide post_unique_btns" id="editPost"
                            data-id="{$post->getPrettyId()}">{_edit}</a> <span class="m_hide">&nbsp;|&nbsp;</span>
                     {/if}
 
@@ -144,7 +144,7 @@
                     {/if}
 
                     {if !($forceNoDeleteLink ?? false) && $canBeDeleted}
-                        <span class="oldPostDelete m_hide"><a href="/wall{$post->getPrettyId()}/delete">{_delete}</a> &nbsp;|&nbsp;</span>
+                        <span class="oldPostDelete"><a onclick="ajax_delete(event)" href="/wall{$post->getPrettyId()}/delete">{_delete}</a> &nbsp;|&nbsp;</span>
                     {/if}
 
                     {if $feedIgnoreButton ?? false && !$canBeDeleted}
@@ -157,14 +157,14 @@
 
                     {if !($forceNoPinLink ?? false) && $canBePinned}
                         {if $post->isPinned()}
-                            <a class="m_hide" href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}">{_unpin}</a>
+                            <a onclick="ajax_pin(event)" class="m_hide" href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}">{_unpin}</a>
                         {else}
-                            <a class="m_hide" href="/wall{$post->getPrettyId()}/pin?act=pin&hash={rawurlencode($csrfToken)}">{_pin}</a>
+                            <a onclick="ajax_pin(event)" class="m_hide" href="/wall{$post->getPrettyId()}/pin?act=pin&hash={rawurlencode($csrfToken)}">{_pin}</a>
                         {/if}
                         <span class="m_hide">&nbsp;|&nbsp;</span>
                     {/if}
 
-                    <a n:if="!($forceNoCommentsLink ?? false)" href="/wall{$post->getPrettyId()}#comments">
+                    <a n:if="!($forceNoCommentsLink ?? false)" class="post_tr_btn" href="/wall{$post->getPrettyId()}#comments">
                         {_comments}
                         {if $commentsCount > 0}
                             (<b>{$commentsCount}</b>)
@@ -175,7 +175,7 @@
                         &nbsp;|&nbsp;
                     {/if}
 
-                    <a n:if="!($forceNoShareLink ?? false)" id="reposts{$post->getPrettyId()}" class="post-share-button" {ifset $thisUser} href="javascript:repost('{$post->getPrettyId()}', 'post')"{/ifset}>
+                    <a n:if="!($forceNoShareLink ?? false)" id="reposts{$post->getPrettyId()}" class="post-share-button post_unique_btns" {ifset $thisUser} href="javascript:repost('{$post->getPrettyId()}', 'post')"{/ifset}>
                         {_share}
                         {if $repostsCount > 0}
                             (<b id="repostsCount{$post->getPrettyId()}">{$repostsCount}</b>)
@@ -185,7 +185,7 @@
                     <div n:if="!($forceNoLike ?? false)" class="like_wrap">
                         {ifset $thisUser}
                             {var $liked = $post->hasLikeFrom($thisUser)}
-                            <a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$post->getPrettyId()}" data-type='post'>
+                            <a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button post-microblog-common-button" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$post->getPrettyId()}" data-type='post'>
                                 <div class="heart" id="{if $liked}liked{/if}"></div>
                                 <span class="likeCnt">{if $likesCount > 0}{$likesCount}{/if}</span>
                             </a>

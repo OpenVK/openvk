@@ -31,7 +31,23 @@ class Photos
         return self::$cache[$id] ??= $this->toPhoto($this->photos->get($id));
     }
 
-    public function getByOwnerAndVID(int $owner, int $vId): ?Photo
+    public function getByIds(array $ids = []): array
+    {
+        $photos = $this->photos->select('*')->where('id IN (?)', $ids);
+        $payload = [];
+
+        foreach ($photos as $photo) {
+            if ($photo->deleted == 1) {
+                continue;
+            }
+
+            $payload[] = $this->toPhoto($photo);
+        }
+
+        return $payload;
+    }
+
+    public function getByOwnerAndVIDUnsafe(int $owner, int $vId): ?Photo
     {
         $photo = $this->photos->where([
             "owner"      => $owner,
@@ -39,7 +55,28 @@ class Photos
             "system"     => 0,
             "private"    => 0,
         ])->fetch();
+
         return $this->toPhoto($photo);
+    }
+
+    public function getByOwnerAndVID(int $owner, int $vId, ?string $access_key = null): ?Photo
+    {
+        $photo = $this->photos->where([
+            "owner"      => $owner,
+            "virtual_id" => $vId,
+            "system"     => 0,
+        ])->fetch();
+
+        if (is_null($photo)) {
+            return null;
+        }
+
+        $n_photo = new Photo($photo);
+        if (!$n_photo->checkAccessKey($access_key)) {
+            return null;
+        }
+
+        return $n_photo;
     }
 
     public function getEveryUserPhoto(User $user, int $offset = 0, int $limit = 10): \Traversable

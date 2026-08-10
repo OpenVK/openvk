@@ -126,11 +126,13 @@ final class DocumentsPresenter extends OpenVKPresenter
             $owner = $group->getRealId();
         }
 
+        $document = null;
         $upload = $_FILES["blob"];
         $name = $this->postParam("name");
         $tags = $this->postParam("tags");
         $folder = $this->postParam("folder");
         $owner_hidden = ($this->postParam("owner_hidden") ?? "off") === "on";
+        $is_from_messenger = $this->postParam("is_from_messenger") == "1";
 
         try {
             $document = new Document();
@@ -146,6 +148,9 @@ final class DocumentsPresenter extends OpenVKPresenter
                 "size"     => $upload["size"],
                 "preview_owner" => $this->user->id,
             ]);
+            if ($is_from_messenger) {
+                $document->setAsFromMessage();
+            }
 
             $document->save();
         } catch (\TypeError $e) {
@@ -161,8 +166,15 @@ final class DocumentsPresenter extends OpenVKPresenter
         if (!$isAjax) {
             $this->redirect("/docs" . (isset($group) ? $group->getRealId() : ""));
         } else {
+            if ($this->postParam("return_template") === "1") {
+                $this->template->_template = "Documents/components/doc.latte";
+                $this->template->doc = $document;
+                return;
+            }
+
             $this->returnJson([
                 "success"  => true,
+                "id"       => $document->getPrettyId(),
                 "redirect" => "/docs" . (isset($group) ? $group->getRealId() : ""),
             ]);
         }

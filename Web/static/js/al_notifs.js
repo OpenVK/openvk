@@ -30,8 +30,8 @@ function incrementNotificationsCounter() {
 }
 
 async function setupNotificationListener() {
-    console.info("Setting up notifications listener...");
-    
+    console.info("Notifications | Setting up notifications listener...");
+
     const POLL_INTERVAL = 10000;
     const CHECK_MORE_INTERVAL = 250;
     const ERROR_RETRY_INTERVAL = 60000;
@@ -40,38 +40,80 @@ async function setupNotificationListener() {
     while(true) {
         try {
             const notif = await API.Notifications.fetch();
-            
+
             if (notif) {
                 if (!isFirstRequest) {
                     playNotifSound();
-                    console.info("New notification", notif);
+                    console.info("Notifications | New notification", notif);
                     NewNotification(notif.title, notif.body, notif.ava, Function.noop, (notif.priority || 1) * 6000);
                     incrementNotificationsCounter();
                 } else {
-                    console.info("First request: skipping alert (syncing cursor)");
+                    console.info("Notifications | First request: skipping alert (syncing cursor)");
                 }
             }
-            
+
             await new Promise(resolve => setTimeout(resolve, CHECK_MORE_INTERVAL));
         } catch(rejection) {
             if (rejection.message === "Nothing to report" || rejection.code === 1983) {
                 if (isFirstRequest) {
-                    console.info("Cursor synced. Real-time notifications enabled.");
-                    isFirstRequest = false; 
+                    console.info("Notifications | Cursor synced. Real-time notifications enabled.");
+                    isFirstRequest = false;
                 } else {
-                    console.info("No new notifications found, sleeping for " + POLL_INTERVAL/1000 + "s...")
+                    console.info("Notifications | No new notifications found, sleeping for " + POLL_INTERVAL/1000 + "s...")
                 }
                 await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL));
             } else if (rejection.message === "Disabled" || rejection.code === 1999) {
-                console.error("Real-time notifications are disabled. Aborting RPC polling until next page load", rejection);
+                console.error("Notifications | Real-time notifications are disabled. Aborting RPC polling until next page load", rejection);
                 break;
             } else {
-                console.error("Poll error, we'll try again in a minute...", rejection);
+                console.error("Notifications | Poll error, we'll try again in a minute...", rejection);
                 await new Promise(resolve => setTimeout(resolve, ERROR_RETRY_INTERVAL));
             }
         }
     }
 };
+
+async function triggerMessageNotification(conv, msg, timestamp) {
+    try {
+        const fields = typeof ChatGeneralForm !== 'undefined' ? ChatGeneralForm.base_fields : 'photo_50';
+
+        const peer = conv.peer;
+        const sender = msg.sender;
+        const title = peer.full_name;
+        const ava = peer.avatar_any || peer.photo_max || '';
+
+        if (peer.id === window.openvk.current_id || sender.id === window.openvk.current_id) {
+            console.log("IM | There is no sense to display this message");
+            return;
+        }
+
+        const notif = {
+            title: escapeHtml(title),
+            body: "<b>" + escapeHtml(sender.full_name) + ":</b> " + (ovk_proc_strtr(msg.conv_summary, 95)),
+            ava: ava,
+            priority: 1,
+        };
+
+        if (typeof NewNotification === 'function') {
+            playNotifSound();
+            NewNotification(
+                notif.title,
+                notif.body,
+                notif.ava,
+                () => {
+                  window.im.initImPage(document.querySelector('.page_content'), peer.id);
+                },
+                (notif.priority || 1) * 6000
+            );
+            window.im.updateCounter(window.im.getCounter() + 1);
+        } else {
+            console.log("Msg notifs | Got a new message but NewNotification not found:", notif);
+        }
+
+    } catch (error) {
+        console.error("Msg notifs | Error occurred while forming notification:", error);
+    }
+}
 
 (async function() {
     await setupNotificationListener();

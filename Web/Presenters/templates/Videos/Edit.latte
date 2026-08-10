@@ -2,9 +2,9 @@
 {block title}{_change_video}{/block}
 
 {block header}
-    <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a>
+    <a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a>
     »
-    <a href="/videos{$thisUser->getId()}">{_videos}</a>
+    <a href="/videos{$owner->getId()}">{_videos}</a>
     »
     <a href="/video{$video->getPrettyId()}">{_video}</a>
     »
