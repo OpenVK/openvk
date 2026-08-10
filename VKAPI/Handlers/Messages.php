@@ -293,6 +293,133 @@ final class Messages extends VKAPIRequestHandler
         }
     }
 
+    public function getDialogs(int $offset = 0, int $count = 20, string $filter = "all", int $extended = 1, string $fields = ""): object
+    {
+        $this->requireUser();
+
+        if (VKAPI_DECL_VER_MAJOR >= 5 && VKAPI_DECL_VER_MINOR >= 80) {
+            $this->fail(23, "This method was deprecated in real VK since 5.80. Please either use message.getConversation or lower your reported API version.");
+        }
+
+        $convos = (new MSGRepo())->getCorrespondencies($this->getUser(), -1, $count, $offset);
+        $convosCount = (new MSGRepo())->getCorrespondenciesCount($this->getUser());
+        $list   = [];
+
+        # $users = [];
+        foreach ($convos as $convo) {
+            $correspondents = $convo->getCorrespondents();
+            if ($correspondents[0]->getId() == $this->getUser()->getId()) {
+                $peer = $correspondents[1];
+            } else {
+                $peer = $correspondents[0];
+            }
+
+            $lastMessage = $convo->getPreviewMessage();
+            $author = $lastMessage->getSender()->getId();
+
+            $msgObj = [];
+
+            $msgObj['id'] = $lastMessage->getId();
+            $msgObj['date'] = $lastMessage->getSendTime()->timestamp();
+            $msgObj['out'] = (int) ($author == $this->getUser()->getId());
+            $msgObj['from_id'] = $author == $this->getUser()->getId() ? $this->getUser()->getId() : $peer->getId();
+            $msgObj['user_id'] = $peer->getId();
+            $msgObj['peer_id'] = $peer->getId();
+            $msgObj['read_state'] = (int) !$lastMessage->isUnread();
+            $msgObj['title'] = "";
+            $msgObj['body'] = $lastMessage->getText(false);
+            $msgObj['attachments'] = [];
+            $msgObj['fwd_messages'] = [];
+            $msgObj['emoji'] = true;
+
+            $mainObj = [
+                "unread" => $lastMessage->isUnread() ? 1 : 0,
+                "message" => (object) $msgObj
+            ];
+
+            $list[] = (object) $mainObj;
+
+            /*
+
+            $listConvo = new APIConvo();
+            $listConvo->peer = [
+                "id"       => $peer->getId(),
+                "type"     => "user",
+                "local_id" => $peer->getId(),
+            ];
+
+            if ($peer->getPrivacyPermission('messages.write', $this->getUser())) {
+                $listConvo->can_write = [
+                    "allowed" => true,
+                ];
+            } else {
+                $listConvo->can_write = [
+                    "allowed" => false,
+                    "reason" => 901,
+                ];
+            }
+            $listConvo->chat_settings = (object) [
+                "title" => "",
+                "active_ids" => [],
+            ];
+
+            $lastMessagePreview = null;
+            if (!is_null($lastMessage)) {
+                $listConvo->last_message_id = $lastMessage->getId();
+                if ($lastMessage->isUnread()) {
+                    $listConvo->unread_count = 1;
+                }
+
+                $listConvo->in_read = $convo->getLastReadedMessage($peer->getId())?->getId() ?? 0;
+                $listConvo->out_read = $convo->getLastReadedMessage($this->getUser()->getId())?->getId() ?? 0;
+
+
+                $author = $lastMessage->getSender()->getId();
+
+                $lastMessagePreview             = new APIMsg();
+                $lastMessagePreview->id         = $lastMessage->getId();
+                $lastMessagePreview->from_id    = $author == $this->getUser()->getId() ? $this->getUser()->getId() : $peer->getId();
+                if (VKAPI_DECL_VER_MAJOR >= 5 && VKAPI_DECL_VER_MINOR >= 80) {
+                    $lastMessagePreview->peer_id = $peer->getId();
+                } else {
+                    $lastMessagePreview->user_id = $peer->getId();
+                    $lastMessagePreview->read_state = (int) !$lastMessage->isUnread();
+                }
+                $lastMessagePreview->date       = $lastMessage->getSendTime()->timestamp();
+                $lastMessagePreview->out        = (int) ($author == $this->getUser()->getId());
+                $lastMessagePreview->body       = $lastMessage->getText(false);
+                $lastMessagePreview->text       = $lastMessage->getText(false);
+                $lastMessagePreview->emoji      = true;
+
+                if ($extended == 1) {
+                    $users[] = $peer->getId();
+                }
+            }
+
+            $list[] = [
+                "conversation" => $listConvo,
+                "last_message" => $lastMessagePreview,
+            ];
+            */
+        }
+
+        # if ($extended == 0) {
+        return (object) [
+            "count" => $convosCount,
+            "unread_dialogs" => 3,
+            "items" => $list,
+        ];
+        /*} else {
+            $users[] = $this->getUser()->getId();
+            $users = array_unique($users);
+
+            return (object) [
+                "count"    => $convosCount,
+                "items"    => $list,
+            ];
+        }*/
+    }
+
     public function getConversationsById(string $peer_ids, int $extended = 0, string $fields = "")
     {
         $this->requireUser();
