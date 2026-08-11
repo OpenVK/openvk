@@ -2382,11 +2382,30 @@ u(document).on('click', `#upload_container #uploadMusic`, async (e) => {
         fd.append('ajax', 1)
         fd.append('hash', window.router.csrf)
         
-        const result = await fetch(current_upload_page, {
+        /* const result = await fetch(current_upload_page, {
             method: 'POST',
             body: fd,
         })
-        const result_text = await result.json()
+        const result_text = await result.json() */
+
+        elem_u.find("#percentage").nodes[0].style.visibility = "visible";
+        const xhr = new XMLHttpRequest();
+        const result = await new Promise((resolve) => {
+            xhr.upload.addEventListener("progress", (event) => {
+                if (event.lengthComputable) {
+                    elem_u.find(".progress-bar").nodes[0].style.width = event.loaded / event.total * 100 + "%"
+                    console.log("upload progress:", event.loaded / event.total)
+                }
+            })
+            xhr.addEventListener("loadend", () => {
+                resolve(xhr);
+            });
+            xhr.open("POST", current_upload_page, true)
+            xhr.send(fd)
+        })
+        
+        const result_text = JSON.parse(result.response)
+
         if(result_text.success) {
             end_redir = result_text.redirect_link
         } else {
@@ -2397,7 +2416,7 @@ u(document).on('click', `#upload_container #uploadMusic`, async (e) => {
     }
 
     if(!end_redir) {
-        u('#lastStepButtons').removeClass('lagged')
+        u('#lastStepButtons').removeClass('lagged').find('.upload_container_name').removeClass('uploading')
         window.__audio_upload_page.showFirstPage()
         return
     }
