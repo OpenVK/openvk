@@ -657,7 +657,8 @@ final class Wall extends VKAPIRequestHandler
         }
 
         $flags = 0;
-        if ($from_group == 1 && $wallOwner instanceof Club && $wallOwner->canBeModifiedBy($this->getUser())) {
+        if (($from_group == 1 || $wallOwner instanceof Club && $wallOwner->getWallType() != 1)
+            && $wallOwner instanceof Club && $wallOwner->canBeModifiedBy($this->getUser())) {
             $flags |= 0b10000000;
         }
         if ($signed == 1) {
@@ -814,7 +815,7 @@ final class Wall extends VKAPIRequestHandler
 
             $nPost->setWall($club->getRealId());
             $flags = 0;
-            if ($as_group === 1 || $signed === 1) {
+            if ($as_group === 1 || $club->getWallType() != 1) {
                 $flags |= 0b10000000;
             }
 
@@ -1222,11 +1223,12 @@ final class Wall extends VKAPIRequestHandler
 
         $wallOwner = ($owner_id > 0 ? (new UsersRepo())->get($owner_id) : (new ClubsRepo())->get($owner_id * -1));
         $flags = 0;
-        if ($from_group == 1 && $wallOwner instanceof Club && $wallOwner->canBeModifiedBy($this->getUser())) {
+        if ($from_group == 1 && $wallOwner instanceof Club && $wallOwner->canBeModifiedBy($this->getUser())
+            && ($wallOwner->getWallType() != 1 && $post->isPostedOnBehalfOfGroup())) {
             $flags |= 0b10000000;
         }
-        if ($post->isSigned() && $from_group == 1) {
-            $flags |= 0b01000000;
+        if ($post->isPostedOnBehalfOfGroup() && $signed == 1) {
+            $flags = 0b11000000;
         }
 
         $post->setFlags($flags);

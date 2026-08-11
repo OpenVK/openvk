@@ -350,7 +350,8 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         $flags = 0;
-        if ($this->postParam("as_group") === "on" && $wallOwner instanceof Club && $wallOwner->canBeModifiedBy($this->user->identity)) {
+        if (($this->postParam("as_group") === "on" || $wallOwner instanceof Club && $wallOwner->getWallType() != 1) &&
+             $wallOwner instanceof Club && $wallOwner->canBeModifiedBy($this->user->identity)) {
             $flags |= 0b10000000;
 
             if ($this->postParam("force_sign") === "on") {
@@ -597,13 +598,14 @@ final class WallPresenter extends OpenVKPresenter
                     $this->notFound();
                 }
 
-                if ($this->postParam("asGroup") == 1) {
+                if ($this->postParam("asGroup") == 1 || $club->getWallType() != 1) {
                     $flags |= 0b10000000;
+
+                    if ($this->postParam("signed") == 1) {
+                        $flags |= 0b01000000;
+                    }
                 }
 
-                if ($this->postParam("asGroup") == 1 && $this->postParam("signed") == 1) {
-                    $flags |= 0b01000000;
-                }
 
                 $nPost->setWall($groupId * -1);
             }
@@ -802,7 +804,7 @@ final class WallPresenter extends OpenVKPresenter
 
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {
             header("HTTP/1.1 405 Method Not Allowed");
-            exit("Ты дебил, это точка апи.");
+            exit("Ты дебил, это точка апи."); // сам дебил урод сука
         }
 
         $id = $this->postParam("id");
