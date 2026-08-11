@@ -1811,6 +1811,17 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
     display: block;
 }
 
+.post-deleted {
+    opacity: 1;
+    animation-name: post-deleted;
+    animation-duration: 5s;
+}
+
+@keyframes post-deleted {
+  from {opacity: 1;}
+  to {opacity: 0;}
+}
+
 .like_wrap {
     color: #2F5879;
     font-size: 10px;
