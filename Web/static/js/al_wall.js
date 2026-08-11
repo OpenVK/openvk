@@ -668,7 +668,7 @@ $(document).on("click", "#_wallDelete", function(e) {
                     postElement.slideToggle(300)
                 }, 4000)
             } else {
-                showSystemMsg('err', '<b>' + response.flash.title + '</b><br>' + response.flash.message)
+                makeError(response.flash.message)
             }
         },
         Function.noop

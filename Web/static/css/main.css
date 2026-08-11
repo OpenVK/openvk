@@ -312,21 +312,23 @@ h1 {
     display: flex;
     flex-direction: column;
     z-index: 1025;
+    left: 0px;
+    top: 0px;
 }
 
 .upLeftErrors .upLeftError {
-    padding: 2px 2px 2px 2px;
     display: inline-block;
     border-radius: 0px 0px 5px 0px;
-    font-size: 15px;
+    border-radius: 0 0 6px;
+    padding: 7px 10px;
 }
 
 .upLeftErrors .upLeftError.upLeftErrorRed {
-    background: #ff7474;
+    background: rgb(255, 180, 163);
 }
 
 .upLeftErrors .upLeftError.upLeftErrorGreen {
-    background: #74ff92;
+    background: rgb(194, 216, 224);
 }
 
 .page_body {
@@ -1689,23 +1691,6 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
 #sudo-banner p {
     margin: 0;
     font-size: 15px;
-}
-
-.system_msg {
-    position: absolute;
-    z-index: 5000;
-    left: 0px;
-    top: 0px;
-    border-radius: 0 0 6px;
-    padding: 7px 10px;
-}
-
-.system_msg.err {
-    background-color: rgb(255, 180, 163);
-}
-
-.system_msg.info {
-    background-color: rgb(194, 216, 224);
 }
 
 #test-label {
