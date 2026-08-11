@@ -1435,10 +1435,11 @@
 "message_deletion" = "Удаление $1 сообщений";
 "message_deletion_confirm" = "Удалить эти сообщения? Это действие нельзя будет отменить.";
 
-"conversations_count_title_one" = "Мои Сообщения";
-"conversations_count_title_few" = "Мои Сообщения";
+"conversations_count_title_one" = "$1 переписка";
+"conversations_count_title_few" = "$1 переписки";
 "conversations_count_title_many" = "$1 переписок";
 "conversations_count_title_other" = "$1 переписок";
+"zero_conversations_error" = "У вас нет переписок.";
 
 "conversation_title_user" = "Переписка с $1";
 "conversation_title_club" = "Переписка с сообществом";

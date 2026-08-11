@@ -14,7 +14,11 @@ export class IMTab {
     }
 
     visible() {
-        return true;
+        if (this.render_class.isVisibleWhenHidden()) {
+            return true;
+        }
+
+        return this.isActive();
     }
 
     getId() {
@@ -49,7 +53,8 @@ export class IMPage {
         //document.documentElement.scroll({ top: 0 });
     }
 
-    getTabName() { return this.constructor.getPageId() }
+    isVisibleWhenHidden() { return false; }
+    getTabName() { return tr("messenger_tab_" + this.constructor.getPageId()) }
     async render(options = {}) {}
     afterOpen() {}
     static openTab(main_container, options = {}) {

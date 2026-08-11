@@ -289,13 +289,18 @@ class Viewer {
     async _loadLoadableContext(side) { return; }
 
     async _resolveOffset(owner_id, item_id, type, additional_id = null, reverse = false) {
-        return await window.OVKAPI.call("utils.resolveOffset", {
+        const params = {
             "method": type,
             "owner_id": owner_id,
             "id": item_id,
             "perPage": this.context.perPage ?? 10,
             "rev": Number(reverse)
-        });
+        };
+        if (additional_id != null) {
+            params["id2"] = additional_id;
+        }
+
+        return await window.OVKAPI.call("utils.resolveOffset", params);
     }
 
     _setMainContext(data) {

@@ -8,16 +8,29 @@ export class ConversationsPage extends IMPage {
         return "conversations";
     }
 
-    _update() {
-        const container = document.querySelector('div[data-window="conversations"]');
-        if (container && !container.classList.contains('hidden')) {
-            window.im.conversations.render(container);
-        }
+    isVisibleWhenHidden() {
+        return true;
     }
 
-    async loadNext() {
-        await window.im.conversations._loadNext();
+    _update() {
+        this.wRender();
+    }
+
+    async loadNext(e) {
+        toggleUnclickability(e.target, true);
+
+        await window.im.conversations.loadNext();
         this._update();
+        toggleUnclickability(e.target, false);
+    }
+
+    // search
+
+    async _onMessagesSearch(e) {
+        this.q = String(e.target.value);
+
+        e.target.value = "";
+        window.im.selectTab("search");
     }
 
     _chatCreationModal() {
@@ -30,8 +43,8 @@ export class ConversationsPage extends IMPage {
         render(html`
         <${ConversationListView}
             conversations=${convs}
-            hasMore=${this.has_more_items}
-            onLoadMore=${() => this.loadNext()}
+            hasMore=${window.im.conversations.has_more_items}
+            onLoadMore=${(e) => this.loadNext(e)}
             onCreateChat=${() => this._chatCreationModal()}
             onSearch=${(e) => this._onMessagesSearch(e)}
         />
@@ -48,6 +61,7 @@ export class Conversations {
     }
 
     get convs() {
+        // сортировка по дате последнего сообщения
         return (this.all_convs || []).slice(0).sort((a, b) => {
             return Number(b.last_updated) - Number(a.last_updated);
         });
@@ -164,19 +178,6 @@ export class Conversations {
         const c = new Conversation({ 'peer': b });
         this.all_convs.push(c);
         return c;
-    }
-
-    hide(container) {
-        container.classList.add('hidden');
-    }
-
-    // search
-
-    async _onMessagesSearch(e) {
-        this.q = String(e.target.value);
-
-        e.target.value = "";
-        window.im.selectTab("search");
     }
 }
 
