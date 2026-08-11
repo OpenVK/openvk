@@ -2381,12 +2381,6 @@ u(document).on('click', `#upload_container #uploadMusic`, async (e) => {
         fd.append('blob', file.file)
         fd.append('ajax', 1)
         fd.append('hash', window.router.csrf)
-        
-        /* const result = await fetch(current_upload_page, {
-            method: 'POST',
-            body: fd,
-        })
-        const result_text = await result.json() */
 
         elem_u.find("#percentage").nodes[0].style.visibility = "visible";
         const xhr = new XMLHttpRequest();
