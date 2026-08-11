@@ -1,28 +1,12 @@
-/**
- * Each chunk gets a unique ID so ChatGeneralForm can track which chunk
- * is the "current" one without relying on array indices (which shift
- * when chunks are inserted).
- */
 let _chunk_uid_counter = 0;
 
-/**
- * Represents one page of messages fetched from the API.
- *
- * ┌──────────────────────────────────────────────────────────────────┐
- * │  Chunk orientation (do_reverse = true)                          │
- * │                                                                  │
- * │  The VK API `messages.getHistory` returns messages in            │
- * │  reverse-chronological order (newest first).                     │
- * │                                                                  │
- * │  Internal .messages array:  [newest ... oldest]                  │
- * │                                                                  │
- * │  first_message → .messages[last]  = oldest in chunk              │
- * │  latest_message → .messages[0]    = newest in chunk              │
- * │                                                                  │
- * │  getMessages() reverses the array so the renderer receives       │
- * │  messages in chronological order (oldest first).                 │
- * └──────────────────────────────────────────────────────────────────┘
- */
+export class Draft {
+    constructor() {
+        this.text = "";
+        this.attachments_html = "";
+    }
+}
+
 export class MessagesChunk {
   constructor(items, do_reverse = false, count = 10, msg_offset = null) {
     this.uid = _chunk_uid_counter++;

@@ -152,7 +152,7 @@ export const ConversationItem = ({ conv }) => {
 
     const d = last_msg != null && has_activity == false;
     return html`
-        <div class="${cls1.join(' ')}" onClick=${() => window.im?.selectChat(conv)}>
+        <div class="${cls1.join(' ')}" onClick=${() => window.im?.messenger.selectConversation(conv)}>
         <div class="crp-entry--image">
             <img src=${conv.peer.conversation_avatar_any} loading="lazy" />
         </div>
@@ -186,7 +186,7 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
         <input type="button" class="button" value="${tr('create_chat')}" onClick=${onCreateChat} />
     </div>
     <div class="crp-list">
-        ${conversations.map((conv) => html`<${ConversationItem} conv=${conv} />`)}
+        ${conversations.length > 0 ? conversations.map((conv) => html`<${ConversationItem} conv=${conv} />`) : html`<${ConversationsListError} />`}
         ${hasMore && html`
         <div onClick=${onLoadMore} id="show_more" class="crp-load-more">
             ${tr('show_next')}
@@ -219,7 +219,7 @@ export const TabBar = ({ tabs, activeTab, onTabSelect }) => {
                     <span class="tab-divider">|</span>
                 ` : '' }
                 ${showSettingsButton ? html`
-                    <a onclick=${() => { window.im.openTabByName("settings") }}>${tr('settings')}</a>
+                    <a onclick=${() => { window.im.openTabByName("settings") }}>нас3</a>
                     <span class="tab-divider">|</span> 
                 ` : ""}
                 <a onclick=${() => { window.im.openTabByName("friends")} }>${tr('to_friendslist')}</a>
@@ -290,6 +290,14 @@ export const PeerWindow = ({ peer, togglePeerInfo }) => {
         <div class="chat-media"></div>
     </div>
     `;
+}
+
+export const ConversationsListError = ({ }) => {
+    return html`
+        <div class="conversations_error_page">
+            <span>${tr("zero_conversations_error")}</span>
+        </div>
+    `
 }
 
 export const ErrorConversation = ({ }) => {

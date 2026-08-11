@@ -2,16 +2,13 @@ import { ChatMessage, ChatGeneralForm } from '../components/messages.js';
 import { Conversation } from './conversations.js';
 import { MessageListView } from "../components/message.js"
 import { ErrorConversation, WriteBar, ActionsBar, PeerWindow, InputArea, PeerTabsView } from "../components/common.js"
+import { IMTab, IMPage } from './page.js';
 import { html, render } from '../components/render.js';
 
 export class Messenger {
     async init() {
         this.insert_type = 'page';
         this.view = new MessengerViewModel();
-    }
-
-    hasAppeared(container) {
-        return container.querySelector('.messenger-app') != null;
     }
 
     appear(container = null) {
@@ -28,12 +25,8 @@ export class Messenger {
         this.view.appEl = container;
     }
 
-  hide(container) {
-    container.classList.add('hidden');
-  }
-
-  static MESSAGE_CHUNK_LENGTH = 1000;
-  static MESSAGE_SEND_INTERVAL = 5000;
+    static MESSAGE_CHUNK_LENGTH = 1000;
+    static MESSAGE_SEND_INTERVAL = 5000;
 
   async sendToCurrentCorresponder() {
     const view = this.view;
@@ -87,7 +80,7 @@ export class Messenger {
   }
 }
 
-export class MessengerViewModel {
+export class MessengerPage extends IMPage {
 	constructor() {
         this.MAX_SELECTED_MESSAGES = 100;
 

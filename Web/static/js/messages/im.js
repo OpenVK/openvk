@@ -31,6 +31,7 @@ export class InstantMessagesAndRelated {
 
         this.isReady = false;
         this.conversations = new Conversations();
+        this.messenger = new Messenger();
     }
 
     async waitLoad() {
@@ -117,7 +118,7 @@ export class InstantMessagesAndRelated {
         />
         `, wrap);
 
-        this.header.changeYellowHeader(tr("conversations_count_title", Number(window.im.conversations.total_convs)));
+        this.header.changeByConvNumber(Number(window.im.conversations.total_convs));
     }
 
     selectTab(tab) {
@@ -316,7 +317,13 @@ class SettingsPage extends IMPage {
     }
 
     render(container) {
-        container.insertAdjacentHTML("beforeend", `tabs test`)
+        container.insertAdjacentHTML("beforeend", `
+            <span>Im frontend</span>
+            <div>
+                <label><input type="checkbox">включить компактный режим</label>
+                <label><input type="checkbox">включить дебаг кнопки</label>
+            </div>
+        `)
     }
 }
 
@@ -327,6 +334,14 @@ class YellowHeader {
 
     changeYellowHeader(text) {
         u(".page_yellowheader").html(text);
+    }
+
+    changeByConvNumber(conv_number) {
+        if (conv_number > 7) {
+            return tr("conversations_count_title", conv_number);
+        }
+
+        return tr("messages");
     }
 
     changeYellowHeaderByPeer(peer) {

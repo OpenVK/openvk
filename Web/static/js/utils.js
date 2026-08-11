@@ -514,3 +514,17 @@ function pickBestPhotoUrl(sizes) {
 
     return sorted[0].url || '';
 }
+
+function toggleUnclickability(node, state = null) {
+    if (state == null) {
+        node.classList.toggle("lagged");
+        return;
+    }
+
+    if (state == false) {
+        node.classList.remove("lagged");
+        return;
+    } else {
+        node.classList.add("lagged");
+    }
+}
