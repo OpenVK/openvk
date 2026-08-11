@@ -314,6 +314,24 @@ function saveTimezoneSettings() {
     xhr.send('timezone=' + tz);
 }
 
+function showSystemMsg(message, type)
+{
+    let msgElement = u('body').find('.system_msg')
+    
+    if (msgElement.length == 0) {
+        u("body").append(`<div class="system_msg ${type}">${message}</div>`)
+        msgElement = u('body').find('.system_msg')
+    } else {
+        msgElement.nodes[0].hidden = false
+        msgElement.nodes[0].className = `system_msg ${type}`
+        msgElement.nodes[0].textContent = message
+    }
+
+    setTimeout(() => {
+        msgElement.nodes[0].hidden = true;
+    }, 7500)
+}
+
 let lastScrollTop = 0;
 $(document).on("scroll", () => {
     const currentScrollTop = $(document).scrollTop();
