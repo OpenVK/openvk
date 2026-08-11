@@ -635,14 +635,16 @@ final class WallPresenter extends OpenVKPresenter
         }
         $user = $this->user->id;
 
+        $isAjax = $this->queryParam("ajax") == '1';
+
         $wallOwner = ($wall > 0 ? (new Users())->get($wall) : (new Clubs())->get($wall * -1));
 
         if ($wallOwner === null) {
-            $this->flashFail("err", tr("failed_to_delete_post"), tr("error_4"));
+            $this->flashFail("err", tr("failed_to_delete_post"), tr("error_4"), null, $isAjax);
         }
 
         if ($wallOwner->isBanned()) {
-            $this->flashFail("err", tr("error"), tr("forbidden"));
+            $this->flashFail("err", tr("error"), tr("forbidden"), null, $isAjax);
         }
 
         if ($wall < 0) {
@@ -653,7 +655,7 @@ final class WallPresenter extends OpenVKPresenter
 
         if (!is_null($user)) {
             if ($post->getTargetWall() < 0 && !$post->getWallOwner()->canBeModifiedBy($this->user->identity) && $post->getWallOwner()->getWallType() != 1 && $post->getSuggestionType() == 0) {
-                $this->flashFail("err", tr("failed_to_delete_post"), tr("error_deleting_suggested"));
+                $this->flashFail("err", tr("failed_to_delete_post"), tr("error_deleting_suggested"), null, $isAjax);
             }
 
             if ($post->getOwnerPost() == $user || $post->getTargetWall() == $user || $canBeDeletedByOtherUser) {
@@ -661,10 +663,14 @@ final class WallPresenter extends OpenVKPresenter
                 $post->delete();
             }
         } else {
-            $this->flashFail("err", tr("failed_to_delete_post"), tr("login_required_error_comment"));
+            $this->flashFail("err", tr("failed_to_delete_post"), tr("login_required_error_comment"), null, $isAjax);
         }
 
-        $this->redirect($wall < 0 ? "/club" . ($wall * -1) : "/id" . $wall);
+        if ($isAjax) {
+            $this->returnJson(["success" => true]);
+        } else {
+            $this->redirect($wall < 0 ? "/club" . ($wall * -1) : "/id" . $wall);
+        }
     }
 
     public function renderArchive(int $wall, int $post_id): void
