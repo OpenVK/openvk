@@ -1,13 +1,17 @@
-import { ChatMessage, ChatGeneralForm } from './messages.js';
-import { ConversationListView } from "./components/convos.js"
-import { IMTab, IMPage } from './pages/page.js';
-import { html, render } from './components/render.js';
+import { ChatMessage, ChatGeneralForm } from '../components/messages.js';
+import { ConversationListView } from "../components/common.js"
+import { IMTab, IMPage } from './page.js';
+import { html, render } from '../components/render.js';
 
 export class ConversationsPage extends IMPage {
+    static getPageId() {
+        return "conversations";
+    }
+
     _update() {
         const container = document.querySelector('div[data-window="conversations"]');
         if (container && !container.classList.contains('hidden')) {
-            window.im.conversations._render(container);
+            window.im.conversations.render(container);
         }
     }
 
@@ -20,32 +24,19 @@ export class ConversationsPage extends IMPage {
         window.im.selectTab("friends", "chat_creation");
     }
 
-    async render(options = {}) {
-        this.container.classList.remove('hidden');
-
-        if (this.is_rendered_firstly == true) {
-            this._render(this.container);
-            return;
-        }
-
-        this._render(this.container);
-        document.documentElement.scroll({ top: 0 });
-    }
-
-    _render(container) {
+    render(container) {
         const convs = window.im.conversations.convs;
 
         render(html`
         <${ConversationListView}
             conversations=${convs}
             hasMore=${this.has_more_items}
-            onLoadMore=${() => window.im.conversations.loadNext()}
-            onCreateChat=${() => window.im.conversations._chatCreationModal()}
-            onSearch=${(e) => window.im.conversations._onMessagesSearch(e)}
+            onLoadMore=${() => this.loadNext()}
+            onCreateChat=${() => this._chatCreationModal()}
+            onSearch=${(e) => this._onMessagesSearch(e)}
         />
         `, container);
     }
-
 }
 
 export class Conversations {

@@ -1,4 +1,4 @@
-import { WriteBar } from './convos.js';
+import { WriteBar } from './common.js';
 import { html, render } from './render.js';
 
 function isSelected(msg) {
