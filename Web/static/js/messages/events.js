@@ -1,4 +1,4 @@
-import { ChatMessage, ChatGeneralForm } from './messages.js';
+import { ChatMessage, ChatGeneralForm } from './components/messages.js';
 
 export class EventHandler {
     constructor() {

@@ -75,15 +75,18 @@ body.no-footer .page_footer {
     display: inline-block;
 }
 
-.messenger-app--tab-conversations {
-    margin: 0px -6px -10px -11px;
+#im_container.at_page {
+    margin: -10px -6px -10px -11px;
     width: 629px;
 }
 
-#tabs-wr {
+.messenger-app--global-tabs {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin-left: unset;
+    width: unset;
+    padding: 10px 10px 0px 10px;
 }
 
 #show_more.crp-load-more {

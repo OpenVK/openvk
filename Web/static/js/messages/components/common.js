@@ -198,26 +198,32 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
 
 export const TabBar = ({ tabs, activeTab, onTabSelect }) => {
     const showSpecActions = activeTab != "friends";
+    const showContactButton = activeTab == "messenger";
+    const showSettingsButton = true;
 
     return html`
-        <div id="tabs-wr" class="messenger-app--global-tabs tabs">
-        <div class="inner-tabs">
-            ${tabs.map((tab) => html`
-            <a data-tab="${tab.id}"
-                id="${tab.id === activeTab ? 'activetabs' : ''}"
-                class="tab"
-                onClick=${() => onTabSelect(tab.id)}>
-                ${tab.label ? (typeof tab.label == 'string' ? tab.label : tab.label()) : ""}
-            </a>
-            `)}
-        </div>
-        <div class="${showSpecActions == false ? 'hidden' : '' }" id="spec-actions">
-            ${activeTab == "messenger" ? html`
-                <a onclick=${() => { window.im.messenger.view.togglePeerInfo() }}>${tr('about_peer')}</a>
-                <span class="tab-divider">|</span>
-            ` : '' }
-            <a onclick=${() => { window.im.selectTab("friends")} }>${tr('to_friendslist')}</a>
-        </div>
+        <div class="messenger-app--global-tabs tabs">
+            <div class="inner-tabs">
+                ${tabs.map((tab) => html`
+                <a data-tab="${tab.getId()}"
+                    id="${tab.isActive() ? 'activetabs' : ''}"
+                    class="tab"
+                    onClick=${() => onTabSelect(tab)}>
+                    ${tab.getName()}
+                </a>
+                `)}
+            </div>
+            <div class="${showSpecActions == false ? 'hidden' : '' }" id="spec-actions">
+                ${showContactButton ? html`
+                    <a onclick=${() => { window.im.messenger.view.togglePeerInfo() }}>${tr('about_peer')}</a>
+                    <span class="tab-divider">|</span>
+                ` : '' }
+                ${showSettingsButton ? html`
+                    <a onclick=${() => { window.im.openTabByName("settings") }}>${tr('settings')}</a>
+                    <span class="tab-divider">|</span> 
+                ` : ""}
+                <a onclick=${() => { window.im.openTabByName("friends")} }>${tr('to_friendslist')}</a>
+            </div>
         </div>
     `;
 };

@@ -1,6 +1,6 @@
-import { ChatGeneralForm, ChatMessage } from './messages.js';
-import { MessageBubble } from './components/message.js';
-import { html, render } from './components/render.js';
+import { ChatGeneralForm, ChatMessage } from '../components/messages.js';
+import { MessageBubble } from '../components/message.js';
+import { html, render } from '../components/render.js';
 
 export const SearchPage = ({ }) => {
     const query = window.im.conversations.q;
