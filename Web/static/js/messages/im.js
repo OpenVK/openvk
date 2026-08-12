@@ -1,12 +1,12 @@
 import { ChatGeneralForm } from './components/messages.js';
 import { EventHandler } from './events.js';
-import { Messenger } from './pages/messenger.js';
+import { Messenger, MessengerPage } from './pages/messenger.js';
 import { Conversations, ConversationsPage } from './pages/conversations.js';
-import { SearchTab } from './pages/search.js';
+import { Friends, FriendsPage } from './pages/friends.js';
+import { SearchPage } from './pages/search.js';
 import { IMTab, IMPage } from './pages/page.js';
 
 import { TabBar } from './components/common.js';
-import { FriendsPage } from './components/extra.js';
 
 import { html, render as preactRender } from './components/render.js';
 
@@ -32,6 +32,7 @@ export class InstantMessagesAndRelated {
         this.isReady = false;
         this.conversations = new Conversations();
         this.messenger = new Messenger();
+        this.friends = new Friends();
     }
 
     async waitLoad() {
@@ -45,10 +46,6 @@ export class InstantMessagesAndRelated {
             };
             check();
         });
-    }
-
-    async setChatByPeerId(sel_id) {
-        await this.state._checkSel(new URL(location.href), sel_id);
     }
 
     async init() {
@@ -94,6 +91,7 @@ export class InstantMessagesAndRelated {
 
         this.openTabByName("conversations");
         this.state.removeLoadSkeleton(container);
+        this.state._changeHeight(this.root);
     }
 
     updateTabs() {
@@ -133,6 +131,13 @@ export class InstantMessagesAndRelated {
             item.classList.add("hidden");
         });
         try {
+            this.tabs.forEach(item => {
+                if (item.shouldClose()) {
+                    item.close();
+                }
+            });
+
+            console.log("selectTab", tab);
             const _tab = this.tabs[tab];
             this.root.querySelector(`#im_page_containers .im_page[data-id="${_tab.getId()}"]`).classList.remove("hidden");
         } catch(e) {
@@ -142,7 +147,7 @@ export class InstantMessagesAndRelated {
         this.updateTabs();
     }
 
-    async openTabByName(tab, check_existing = true) {
+    async openTabByName(tab, check_existing = true, options = {}) {
         let got_tab = null;
         let got_class = null;
         let already_here = null;
@@ -155,6 +160,17 @@ export class InstantMessagesAndRelated {
                 break;
             case "conversations":
                 got_class = ConversationsPage;
+                break;
+            case "messenger":
+                got_class = MessengerPage;
+                break;
+            case "friends":
+                got_class = FriendsPage;
+                break;
+            case "contact":
+                break;
+            case "search":
+                got_class = SearchPage;
                 break;
         }
 
@@ -170,7 +186,7 @@ export class InstantMessagesAndRelated {
         if (already_here != null) {
             this.selectTab(this.tabs.indexOf(already_here));
         } else {
-            got_tab = got_class.openTab(this.root);
+            got_tab = got_class.openTab(this.root, options);
             if (got_tab != null) {
                 this.selectTab(this.addTab(got_tab));
                 await got_tab.render();
@@ -254,6 +270,10 @@ class IMState {
         }
     }
 
+    async setChatByPeerId(sel_id) {
+        await this._checkSel(new URL(location.href), sel_id);
+    }
+
     _pushState(url) {
         history.pushState({ 'from_messenger': 1 }, null, url);
     }
@@ -291,6 +311,12 @@ class IMState {
             window._prevScroll = null;
             u('body').removeClass('no-scroll');
         }
+    }
+
+    _changeHeight(container) {
+        let maybe_distance = 100;
+        let tabs_height = container.querySelector('#im_page_tabs').clientHeight;
+        container.style.height = window.outerHeight - tabs_height - maybe_distance + 'px';
     }
 
     addLoadSkeleton(container) {
@@ -492,7 +518,7 @@ export class IMDeprecated {
         }
 
         if (!this.search) {
-            this.search = new SearchTab();
+            this.search = new SearchPage();
         }
 
         this.lp = new LongPollConnection();
