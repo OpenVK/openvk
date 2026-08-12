@@ -761,7 +761,7 @@ window.player = new class {
         }
 
         if (u('.bigPlayer #album_info').length > 0) {
-            if (_c.hasPlaylist() && u('.playlistInfo').length == 0) {
+            if (_c != null && _c.hasPlaylist() && u('.playlistInfo').length == 0) {
                 u('.bigPlayer').addClass('album_shown')
                 u('.bigPlayer #album_info img').attr('src', _c.getPlaylistCover())
                 u('.bigPlayer #album_info #album_embed_name').html(escapeHtml(ovk_proc_strtr(_c.getPlaylistName(), 60)))
