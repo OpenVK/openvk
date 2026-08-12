@@ -1,52 +1,22 @@
 import { ChatGeneralForm, ChatMessage } from '../components/messages.js';
 import { MessageBubble } from '../components/message.js';
 import { html, render } from '../components/render.js';
+import { IMTab, IMPage } from './page.js';
+import { SearchPageTemplate } from "../components/extra.js";
 
-export const SearchPage = ({ }) => {
-    const query = window.im.conversations.q;
-    const count = window.im.search.total_count;
-    const items = window.im.search.items;
-    const loaded_count = items.length;
-
-    return html`
-        <div id="search-page-im">
-            <div class="search-up">
-                <input class="search_input" onChange=${(e) => { window.im.conversations._onMessagesSearch(e) }} type="text" default="${tr('search_messages')}" value="${query}" />
-            </div>
-            <div class="search-summary">
-                <b>${tr("messages_search_count", count)}</b>
-            </div>
-            <div>
-                ${items.map((msg) => {
-                    return html`<${MessageBubble} msg=${msg} />`
-                })}
-            </div>
-            ${loaded_count < count && html`
-            <div onClick=${(e) => { window.im.search.moveOffset() }} class="show_more crp-load-more">
-                ${tr('show_next')}
-            </div>`}
-        </div>
-  `;
-};
-
-export class SearchTab {
+export class SearchPage extends IMPage {
     constructor() {
+        super();
+
         this.has_appeared = false;
         this.items = null;
         this.total_count = null;
     }
 
-    appear(container) {
-        console.log("IM | Search | Tab appear");
+    static getPageId() { return "search";}
+    shouldCloseOnExit() { return true; }
 
-        this.items = null;
-        this.container = container;
-        this.params = {};
-
-        this._render();
-    }
-
-    async _render() {
+    async beforeRender() {
         if (this.items == null) {
             this.params = this._getParams(window.im.conversations.q, null);
             const items = await this.search(this.params);
@@ -57,8 +27,10 @@ export class SearchTab {
 
             this.total_count = items.count;
         }
+    }
 
-        render(html`<${SearchPage} />`, this.container);
+    async render(container) {
+        render(html`<${SearchPageTemplate} q=${this.options.q} c=${this} />`, container);
     }
 
     _getParams(q, peer_id = null, offset = 0, perPage = 25, date = null) {
@@ -96,7 +68,7 @@ export class SearchTab {
     }
 
     async moveOffset(e) {
-        e.target.classList.add("lagged");
+        toggleUnclickability(e.target, true);
 
         let new_offset = this.params.offset + this.params.count;
         this.params.offset = new_offset;
@@ -105,7 +77,7 @@ export class SearchTab {
             this.items.push(item);
         });
 
-        e.target.classList.add("remove");
+        toggleUnclickability(e.target, false);
 
         this._render();
     }

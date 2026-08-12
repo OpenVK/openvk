@@ -51,6 +51,25 @@ final class Friends extends VKAPIRequestHandler
         ];
     }
 
+    public function search(string $q, int $user_id = 0, string $fields = "", int $offset = 0, int $count = 100): object
+    {
+        $this->requireUser();
+
+        if ($user_id == 0) {
+            $user_id = $this->getUser()->getId();
+        }
+
+        $users = new UsersRepo();
+
+        $totalCount = 0;
+        $response = [];
+
+        return (object) [
+            "count" => $totalCount,
+            "items" => $response,
+        ];
+    }
+
     public function getLists(): object
     {
         $this->requireUser();

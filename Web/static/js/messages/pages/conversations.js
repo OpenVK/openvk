@@ -27,14 +27,18 @@ export class ConversationsPage extends IMPage {
     // search
 
     async _onMessagesSearch(e) {
-        this.q = String(e.target.value);
+        const q = String(e.target.value);
 
         e.target.value = "";
-        window.im.selectTab("search");
+        window.im.openTabByName("search", true, {
+            "q": q
+        });
     }
 
     _chatCreationModal() {
-        window.im.selectTab("friends", "chat_creation");
+        window.im.openTabByName("friends", true, {
+            referrer: "chat_creation"
+        });
     }
 
     render(container) {

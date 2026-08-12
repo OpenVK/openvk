@@ -1,24 +1,24 @@
 import { html, render } from './render.js';
 
 export const PeerTab = ({ conv, active }) => {
-  return html`
-    <div class="messages--peers-tab${active ? ' selected' : ''}">
-      <a onClick=${() => window.im?.selectChat(conv)}>${conv.peer.conversations_name}</a>
-      <span class="messages--peers-tab-close" onClick=${() => window.im?.closeChat(conv)}>×</span>
-    </div>
-  `;
+    return html`
+        <div class="messages--peers-tab${active ? ' selected' : ''}">
+            <a onClick=${() => window.im?.selectChat(conv)}>${conv.peer.conversations_name}</a>
+            <span class="messages--peers-tab-close" onClick=${() => window.im?.closeChat(conv)}>×</span>
+        </div>
+    `;
 };
 
 export const PeerTabsView = ({ had_more_one_tab, tabs, currentChat }) => {
-  if (tabs.length < 2 && !window.im.messenger.view.had_more_one_tab) { return html`` }
+    //if (tabs.length < 2 && had_more_one_tab) { return html`` }
 
-  return html`
-    <div class="messages--peers-tabs">
-      ${tabs.map((tab, idx) => html`
-        <${PeerTab} conv=${tab} active=${idx === currentChat} />
-      `)}
-    </div>
-  `;
+    return html`
+        <div class="messages--peers-tabs">
+            ${tabs.map((tab, idx) => html`
+                <${PeerTab} conv=${tab} active=${idx === currentChat} />
+            `)}
+        </div>
+    `;
 };
 
 export const ActionsBar = ({ selectedMessages, count, onDelete, onUnselect, onReply }) => {
@@ -48,35 +48,35 @@ export const ActionsBar = ({ selectedMessages, count, onDelete, onUnselect, onRe
 };
 
 export const AttachmentMenu = () => {
-  return html`
-    <div>
-      <a class="menu_toggler">${tr('attach')}</a>
-      <div id="wallAttachmentMenu" class="up_direction hidden">
-        <a class="header menu_toggler">${tr('attach')}</a>
-        <div class="_wrap">
-            <a id="__photoAttachment">
-                <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
-                ${tr('photo')}
-            </a>
-            <a id="__videoAttachment">
-                <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
-                ${tr('video')}
-            </a>
-            <a id="__audioAttachment">
-                <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/audio-ac3.png" />
-                ${tr('audio')}
-            </a>
-            <a id="__documentAttachment">
-                <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-octet-stream.png" />
-                ${tr('document')}
-            </a>
-            <a onClick=${(e) => typeof initGraffiti !== 'undefined' && initGraffiti(e)}>
-                <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/draw-brush.png" />
-                ${tr('graffiti')}
-            </a>
+    return html`
+        <div>
+            <a class="menu_toggler">${tr('attach')}</a>
+            <div id="wallAttachmentMenu" class="up_direction hidden">
+                <a class="header menu_toggler">${tr('attach')}</a>
+                <div class="_wrap">
+                    <a id="__photoAttachment">
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
+                        ${tr('photo')}
+                    </a>
+                    <a id="__videoAttachment">
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
+                        ${tr('video')}
+                    </a>
+                    <a id="__audioAttachment">
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/audio-ac3.png" />
+                        ${tr('audio')}
+                    </a>
+                    <a id="__documentAttachment">
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-octet-stream.png" />
+                        ${tr('document')}
+                    </a>
+                    <a onClick=${(e) => typeof initGraffiti !== 'undefined' && initGraffiti(e)}>
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/draw-brush.png" />
+                        ${tr('graffiti')}
+                    </a>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
   `;
 };
 
@@ -102,42 +102,42 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
 
     return html`
     <div class="messenger-app-end${(replyTo || editMsg) ? ' m-selected' : ''}">
-      ${ replyTo && html`
-        <div class="input-reply input-m">
-          <span onclick=${() => { clickOnReply(replyTo) }} aria-label="link" class="input-type">${escapeHtml(tr("reply_to", replyTo.sender.full_name))}</span>
-          <span class="input-close" onClick=${onRemoveReply}>×</span>
-        </div>
-      `}
-       ${ editMsg && html`
-        <div class="input-edit input-m">
-          <span onclick=${() => { clickOnReply(editMsg) }} aria-label="link" class="input-type">edit of message</span>
-          <span class="input-close" onClick=${(e) => { window.im.messenger.view.cancelEdit() }}>×</span>
-        </div>
-      `}
-      <div class="post-buttons">
-        <div class="model_content_textarea messenger-app--input has_emoji_picker expanded-textarea" id="write">
-          <img class="ava" src=${window.im.current.avatar_any} alt=${window.im.current.full_name} />
-          <div class="messenger-app--input---messagebox">
-            <div class="textareas has_emoji_picker">
-                <textarea
-                class="small-textarea"
-                placeholder=${tr('enter_message')}
-                value=${currentDraft}
-                onInput=${onInput}
-                onKeyDown=${onKeyPress}></textarea>
-                <div class="emoji_picker_entrypoint"></div>
+        ${ replyTo && html`
+            <div class="input-reply input-m">
+                <span onclick=${() => { clickOnReply(replyTo) }} aria-label="link" class="input-type">${escapeHtml(tr("reply_to", replyTo.sender.full_name))}</span>
+                <span class="input-close" onClick=${onRemoveReply}>×</span>
             </div>
-            <div class="post-horizontal"></div>
-            <div class="post-vertical"></div>
-            <div class="input--messagebox-buttons">
-              <button class="button" onClick=${onSend}>${ !is_editing ? tr('send') : tr('edit_action_lr')}</button>
-              <${AttachmentMenu} />
+        `}
+        ${ editMsg && html`
+            <div class="input-edit input-m">
+                <span onclick=${() => { clickOnReply(editMsg) }} aria-label="link" class="input-type">edit of message</span>
+                <span class="input-close" onClick=${(e) => { window.im.messenger.view.cancelEdit() }}>×</span>
             </div>
-          </div>
-          <img class="ava" src="${window.im?.corresponder?.avatar_any || ''}"
-               alt="${window.im?.corresponder?.full_name || ''}" />
+        `}
+        <div class="post-buttons">
+            <div class="model_content_textarea messenger-app--input has_emoji_picker expanded-textarea" id="write">
+                <img class="ava" src=${window.im.current.avatar_any} alt=${window.im.current.full_name} />
+                <div class="messenger-app--input---messagebox">
+                    <div class="textareas has_emoji_picker">
+                        <textarea
+                        class="small-textarea"
+                        placeholder=${tr('enter_message')}
+                        value=${currentDraft}
+                        onInput=${onInput}
+                        onKeyDown=${onKeyPress}></textarea>
+                        <div class="emoji_picker_entrypoint"></div>
+                    </div>
+                    <div class="post-horizontal"></div>
+                    <div class="post-vertical"></div>
+                    <div class="input--messagebox-buttons">
+                        <button class="button" onClick=${onSend}>${ !is_editing ? tr('send') : tr('edit_action_lr')}</button>
+                        <${AttachmentMenu} />
+                    </div>
+                </div>
+                <img class="ava" src="${window.im?.corresponder?.avatar_any || ''}"
+                    alt="${window.im?.corresponder?.full_name || ''}" />
+            </div>
         </div>
-      </div>
     </div>
   `;
 };

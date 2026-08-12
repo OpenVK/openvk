@@ -21,6 +21,14 @@ export class IMTab {
         return this.isActive();
     }
 
+    shouldClose() {
+        return this.render_class.shouldCloseOnExit();
+    }
+
+    close() {
+        window.im.tabs = window.im.tabs.filter(tab => tab != this);
+    }
+
     getId() {
         return this.render_class.id;
     }
@@ -31,35 +39,39 @@ export class IMTab {
 }
 
 export class IMPage {
-    static getPageId() {
-        return "default";
-    }
-
     constructor() {
         this.container = null;
         this.id = null;
         this.is_rendered_firstly = false;
+        this.options = {};
     }
 
     async wRender(options = {}) {
         this.container.classList.remove("hidden");
 
         if (this.is_rendered_firstly == true) {
-            this.render(this.container);
+            await this.render(this.container);
             return;
         }
 
-        this.render(this.container);
+        await this.beforeRender(this.container);
+        await this.render(this.container);
         //document.documentElement.scroll({ top: 0 });
     }
-
+    async update(options = {}) {
+        await this.wRender(options);
+    }
     isVisibleWhenHidden() { return false; }
+    shouldCloseOnExit() { return false; }
+    static getPageId() { return "default"; }
     getTabName() { return tr("messenger_tab_" + this.constructor.getPageId()) }
-    async render(options = {}) {}
+    async beforeRender(container) {}
+    async render(container) {}
     afterOpen() {}
     static openTab(main_container, options = {}) {
         const new_class = new this();
         new_class.id = String(options.id ?? (new Date()).getTime());
+        new_class.options = options;
         main_container.querySelector("#im_page_containers").insertAdjacentHTML("beforeend", `<div class="im_page" data-id="${new_class.id}"></div>`);
         new_class.container = main_container.querySelector(`.im_page[data-id="${new_class.id}"]`);
 

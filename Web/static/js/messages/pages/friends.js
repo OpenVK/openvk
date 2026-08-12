@@ -1,34 +1,21 @@
-class FriendsTab {
-    constructor() {
-        this.friends = [];
-        this.total_count = null;
-        this.has_inited = false;
-        this.last_offset = 0;
-        this.has_appeared = false;
+import { IMTab, IMPage } from './page.js';
+import { FriendsPageTemplate } from '../components/extra.js';
+import { html, render } from '../components/render.js';
+import { ChatGeneralForm } from '../components/messages.js';
 
-        this.referrer = null;
+export class FriendsPage extends IMPage {
+    constructor() {
+        super();
+
+        this.has_inited = false;
         this.selected_friends = [];
     }
 
-    async loadFriends(offset = 0, count = 10) {
-        let res = await window.OVKAPI.call('friends.get', {
-            offset: offset,
-            count: 100,
-            fields: ChatGeneralForm.base_fields,
-        });
-
-        this.last_offset = offset;
-        if (this.total_count == null) {
-            this.total_count = res.count;
-        }
-
-        res.items.forEach(item => {
-            this.friends.push(new ChatGeneralForm(item));
-        })
-    }
+    static getPageId() { return "friends"; }
+    shouldCloseOnExit() { return true; }
 
     onFriendClick(e, peer) {
-        if (this.referrer == "chat_creation") {
+        if (this.options.referrer == "chat_creation") {
             const id = peer.id;
             const t = e.target;
             const f = t.closest(".friends-list-item");
@@ -61,14 +48,14 @@ class FriendsTab {
     }
 
     onCreateChat(e) {
-        e.target.classList.add("lagged");
+        toggleUnclickability(e.target, true);
 
         const ids = this.selected_friends;
 
         // пустые беседы нужны!!
         if (ids.length < 0) {
             fastError(tr("error_chat_not_enough_friends"));
-            e.target.classList.remove("lagged");
+            toggleUnclickability(e.target, false);
             return;
         }
 
@@ -84,7 +71,7 @@ class FriendsTab {
                     'title': title,
                     'user_ids': ids,
                 }).then((resp) => {
-                    e.target.classList.remove("lagged");
+                    toggleUnclickability(e.target, false);
                     msg.close();
 
                     window.im.setChatByPeerId(resp + 2000000000);
@@ -93,46 +80,60 @@ class FriendsTab {
                 });
             }, () => {msg.close()}]
         })
-
     }
 
-    async loadNext() {
-        await this.loadFriends(this.last_offset + 10);
+    async beforeRender(container) {
+        if (window.im.friends.inited == false) {
+            await window.im.friends.loadFriends();
+            window.im.friends.inited = true;
+        }
     }
 
-    _appear(container) {
-        this._render(container);
-    }
+    render(container) {
+        const ref = this.options.referrer;
+        this.selected_friends = []; // nulling
 
-    _render(container) {
-        const ref = this.referrer;
-
-        preactRender(html`
-        <${FriendsPage}
-            friends=${this.friends}
-            count=${this.total_count}
+        render(html`
+        <${FriendsPageTemplate}
+            friends=${window.im.friends.items}
+            count=${window.im.friends.total_count}
             referrer=${ref}
             onFriendClick=${(e, peer) => this.onFriendClick(e, peer)}
             onCreateChat=${(e) => this.onCreateChat(e)}
             isSelected=${(peer) => this.isSelected(peer)}
-            onLoadMore=${() => this.loadNext()}
+            onLoadMore=${() => window.im.friends.loadNext()}
         />
         `, container);
     }
+}
 
-    appear(container, referrer = null) {
-        this.referrer = referrer;
-        this.selected_friends = []; // nulling
+export class Friends {
+    constructor() {
+        this.items = [];
+        this.inited = false;
+        this.total_count = null;
+        this.last_offset = 0;
+        this.perPage = 100;
+    }
 
-        container.classList.remove('hidden');
+    async loadFriends(offset = 0) {
+        const res = await window.OVKAPI.call('friends.get', {
+            offset: offset,
+            count: this.perPage,
+            fields: ChatGeneralForm.base_fields,
+        });
 
-        if (this.has_inited == false) {
-            this.loadFriends().then(() => {
-                this.has_inited = true;
-                this._appear(container)
-            })
-        } else {
-            this._appear(container)
+        this.last_offset = offset;
+        if (this.total_count == null) {
+            this.total_count = res.count;
         }
+
+        res.items.forEach(item => {
+            this.items.push(new ChatGeneralForm(item));
+        })
+    }
+
+    async loadNext() {
+        await this.loadFriends(this.last_offset + this.perPage);
     }
 }
