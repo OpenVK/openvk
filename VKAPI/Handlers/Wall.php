@@ -1236,16 +1236,19 @@ final class Wall extends VKAPIRequestHandler
         }
 
         $wallOwner = ($owner_id > 0 ? (new UsersRepo())->get($owner_id) : (new ClubsRepo())->get($owner_id * -1));
-        $flags = 0;
+        $flags = $post->getFlags();
+
         if ($from_group == 1 && $wallOwner instanceof Club && $wallOwner->canBeModifiedBy($this->getUser())
             && ($wallOwner->getWallType() != 1 && $post->isPostedOnBehalfOfGroup())) {
-            $flags |= 0b10000000;
+            $flags = 0b10000000;
         }
+
         if ($post->isPostedOnBehalfOfGroup() && $signed == 1) {
             $flags = 0b11000000;
         }
 
         $post->setFlags($flags);
+
         $post->save(true);
 
         if ($attachments == 'remove' || sizeof($final_attachments) > 0) {
