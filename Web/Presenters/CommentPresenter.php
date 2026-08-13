@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace openvk\Web\Presenters;
 
-use openvk\Web\Models\Entities\{Comment, Notifications\MentionNotification, Photo, Video, User, Topic, Post};
+use openvk\Web\Models\Entities\{Comment, Notifications\MentionNotification, Notifications\ReplyCommentNotification, Photo, Video, User, Topic, Post};
 use openvk\Web\Models\Entities\Notifications\CommentNotification;
 use openvk\Web\Models\Repositories\{Comments, Clubs, Videos, Photos, Audios};
 use Nette\InvalidStateException as ISE;
@@ -164,11 +164,17 @@ final class CommentPresenter extends OpenVKPresenter
             $excludeMentions[] = $owner->getId();
         }
 
+        $replyToUser = $comment->getReplyToComment()?->getOwner();
+
         $mentions = iterator_to_array($comment->resolveMentions($excludeMentions));
         foreach ($mentions as $mentionee) {
-            if ($mentionee instanceof User) {
+            if ($mentionee instanceof User && $mentionee !== $replyToUser) {
                 (new MentionNotification($mentionee, $comment->getOwner(), $entity, strip_tags($comment->getText())))->emit();
             }
+        }
+
+        if ($replyToUser instanceof User && $replyToUser != $this->user) {
+            (new ReplyCommentNotification($replyToUser, $comment, $entity, $this->user))->emit();
         }
 
         $this->flashFail("succ", tr("comment_is_added"), tr("comment_is_added_desc"));

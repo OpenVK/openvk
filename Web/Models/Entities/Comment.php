@@ -154,7 +154,7 @@ class Comment extends Post
         return false;
     }
 
-    public function toNotifApiStruct()
+    public function toNotifApiStruct(bool $without_parent = false)
     {
         $res = (object) [];
 
@@ -162,7 +162,19 @@ class Comment extends Post
         $res->owner_id = $this->getOwner()->getId();
         $res->date     = $this->getPublicationTime()->timestamp();
         $res->text     = $this->getText(false);
-        $res->post     = null; # todo
+        if (!$without_parent) {
+            switch (get_class($this->getTarget())) {
+                case 'openvk\Web\Models\Entities\Post':
+                    $res->post     = $this->getTarget()->toNotifApiStruct();
+                    break;
+                case 'openvk\Web\Models\Entities\Photo':
+                    $res->photo    = $this->getTarget()->toNotifApiStruct();
+                    break;
+                case 'openvk\Web\Models\Entities\Video':
+                    $res->video    = $this->getTarget()->toNotifApiStruct();
+                    break;
+            }
+        }
 
         return $res;
     }
@@ -210,6 +222,6 @@ class Comment extends Post
 
     public function getReplyToComment(): ?Comment
     {
-        return (new Comments())->get($this->getRecord()->reply_to);
+        return $this->getReplyToId() !== null ? (new Comments())->get($this->getReplyToId()) : null;
     }
 }
