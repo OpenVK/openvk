@@ -108,7 +108,7 @@ final class VKAPIPresenter extends OpenVKPresenter
     public function renderPhotoUpload(string $signature): void
     {
         $secret            = CHANDLER_ROOT_CONF["security"]["secret"];
-        $queryString       = rawurldecode($_SERVER["QUERY_STRING"]);
+        $queryString       = explode("&", rawurldecode($_SERVER["QUERY_STRING"]))[0];
         $computedSignature = hash_hmac("sha3-224", $queryString, $secret);
         if (!(strlen($signature) == 56 && sodium_memcmp($signature, $computedSignature) == 0)) {
             header("HTTP/1.1 422 Unprocessable Entity");
