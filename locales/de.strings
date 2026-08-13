@@ -27,7 +27,7 @@
 "edit_page" = "Seite bearbeiten";
 "edit_group" = "Gruppe bearbeiten";
 "change_status" = "Status ändern";
-"name" = "Name";
+"name" = "Vorname";
 "surname" = "Nachname";
 "gender" = "Geschlecht";
 "male" = "männlich";
@@ -116,25 +116,25 @@
 "comments" = "Kommentare";
 "shown" = "Angezeigt";
 "x_out_of" = "$1 von";
-"wall_zero" = "Keine Posts";
-"wall_one" = "$1 Post";
-"wall_other" = "$1 Posts";
-"feed" = "Nachrichten";
-"publish_post" = "Post hinzufügen";
+"wall_zero" = "Keine Beiträge";
+"wall_one" = "$1 Beitrag";
+"wall_other" = "$1 Beitrag";
+"feed" = "News";
+"publish_post" = "Beitrag hinzufügen";
 
-"all_news" = "Alle Nachrichten";
-"posts_per_page" = "Anzahl an Posts per Seite";
+"all_news" = "Alle News";
+"posts_per_page" = "Anzahl an Beiträgen per Seite";
 
 "attachment" = "Anhang";
 "post_as_group" = "Als Gruppe posten";
 "add_signature" = "Signatur hinzufügen";
 
-"nsfw_warning" = "Dieser Post enthält möglicherweise NSFW-Inhalte";
+"nsfw_warning" = "Dieser Post enthält möglicherweise nicht-jugendfreie Inhalte";
 "report" = "Melden";
 "attach_photo" = "Foto anhängen";
 "no_posts_abstract" = "Niemand hat etwas geschrieben...Hier zumindestens nicht.";
 "attach_no_longer_available" = "Dieser Anhang ist nicht mehr verfügbar.";
-"open_post" = "Post öffnen";
+"open_post" = "Beitrag öffnen";
 "version_incompatibility" = "Der Anhang konnte nicht angezeigt werden. Wahrscheinlich ist die Datenbank inkompatibel mit der aktuellen Version von OpenVK.";
 
 /* Friends */
@@ -263,7 +263,7 @@
 "my_notes" = "Meine Notizen";
 "my_groups" = "Meine Gruppen";
 "my_feed" = "Mein Feed";
-"my_feedback" = "Mein Feedback";
+"my_feedback" = "Meine Mitteilungen";
 "my_settings" = "Meine Einstellungen";
 "bug_tracker" = "Bugtracker";
 
@@ -372,7 +372,7 @@
 "info_name" = "Titel";
 "info_description" = "Beschreibung";
 "info_uploaded_by" = "Hochgeladen von";
-"info_upload_date" = "Hochgeladen am:";
+"info_upload_date" = "Hochgeladen am";
 
 "videos_zero" = "Keine Videos";
 "videos_one" = "$1 Video";
@@ -380,7 +380,7 @@
 
 /* Notifications */
 
-"feedback" = "Feedback";
+"feedback" = "Mitteilungen";
 "unread" = "Ungelesen";
 "archive" = "Archiv";
 
@@ -455,7 +455,7 @@
 "coins_other" = "$1 Stimmen";
 
 "comment" = "Kommentar";
-"sender" = "Sender";
+"sender" = "Absender";
 
 /* Errors */
 
@@ -503,7 +503,7 @@
 "invalid_username_or_password" = "Der von Ihnen eingegebene Benutzername oder das Passwort ist falsch. <a href=\"/restore\">Kennen Sie Ihr Passwort nicht?</a>";
 "failed_to_register" = "Registrierung fehlgeschlagen";
 "to_top" = "Nach oben";
-"checkbox_in_registration" = "Ich stimme der <a href=\"/privacy\">Datenschutzpolitik</a> und der <a href=\"/terms\">Seitenpolitik</a> zu.";
+"checkbox_in_registration" = "Ich stimme der <a href=\"/privacy\">Datenschutzerklärung</a> und den <a href=\"/terms\">Nutzungsbedingungen</a> zu";
 "access_recovery_info" = "Haben Sie Ihr Passwort vergessen? Kein Problem, geben Sie Ihre Daten ein und wir senden Ihnen eine E-Mail mit Anweisungen, wie Sie Ihr Konto wiederherstellen können.";
 
 "bday_reminder" = "Erinnerung";
@@ -537,8 +537,8 @@
 "users" = "Benutzer";
 "other_fields" = "Andere fields";
 "pronouns" = "Pronomen";
-"neutral" = "non-binary";
-"desc_none" = "Keine beschreibung";
+"neutral" = "nicht-binär";
+"desc_none" = "Keine Beschreibung";
 "send" = "Senden";
 "years_zero" = "0 Jahre alt";
 "years_one" = "1 Jahr alt";
@@ -552,7 +552,7 @@
 "relationship_6_prefix" = "mit";
 "relationship_7_prefix" = "mit";
 "referral_link_invalid" = "Der Referral-Link ist ungültig.";
-"additional_information" = "Zusätzlich Informationen";
+"additional_information" = "Zusätzliche Informationen";
 "additional" = "Zusätzlich";
 "additional_field_place" = "Ort";
 "additional_field_place_contacts" = "In \"Kontakte\"";
@@ -579,8 +579,8 @@
 "additional_fields_description" = "Dort kannst du zusätzliche Informationen über dich hinzufügen, zum Beispiel Links zu anderen Profilen oder deine Interessen. Es können maximal $1 solcher Felder hinzugefügt werden.";
 "additional_field_name" = "Name";
 "additional_field_text" = "Text";
-"add_to_friends_m" = "als Freund hinzufügen";
-"add_to_friends_f" = "als Freundin hinzufügen";
+"add_to_friends_m" = "als Freund hinzufügen.";
+"add_to_friends_f" = "als Freundin hinzufügen.";
 "register_to_access_page_m" = "Registriere dich, um seine Seite zu sehen.";
 "register_to_access_page_f" = "Registriere dich, um ihre Seite zu sehen.";
 "post_writes_g" = "veröffentlicht";
@@ -590,3 +590,109 @@
 "post_deact_silent_m" = "hat sein Profil kommentarlos gelöscht.";
 "post_deact_silent_f" = "hat ihr Profil kommentarlos gelöscht.";
 "post_on_your_wall" = "an deiner Pinnwand";
+"auditory" = "Publikum";
+"in_wall" = "Auf meine Pinnwand";
+"view_other_comments" = "Andere Kommentare anschauen";
+"no_comments" = "Keine Kommentare";
+"my_news" = "Meine News";
+"show_ignored_sources" = "Ignorierte Quellen anzeigen";
+"with_alien_wall_posts" = "Beiträge auf den Pinnwänden anderer Benutzer anzeigen";
+"auto_scroll" = "Autoscroll";
+"ajax_routing" = "AJAX-Seitenübergänge";
+"comment_as_group" = "Als Gruppe kommentieren";
+"add_source" = "Quelle hinzufügen";
+"set_source" = "Quelle übernehmen";
+"source" = "Quelle";
+"set_source_tip" = "Wenn Sie Inhalte anderer Autoren verwenden, ist es wichtig, die Quellenangabe zum Original zu machen.<br>Das können Sie direkt unten tun.";
+"contains_nsfw" = "Enthält nicht-jugendfreie Inhalte";
+"attach" = "Anhängen";
+"detach" = "Loslösen";
+"attach_video" = "Video anhängen";
+"attach_geotag" = "Geo-Tag anhängen";
+"draw_graffiti" = "Graffiti zeichnen";
+"graffiti" = "Graffiti";
+"reply" = "Antworten";
+"post_is_ad" = "Dieser Beitrag ist gesponsert.";
+"edited_short" = "bearbeitet";
+"feed_settings" = "News Einstellungen";
+"ignored_sources" = "Ignorierte Quellen";
+"ignore_user" = "Benutzer ignorieren";
+"unignore_user" = "Benutzer nicht mehr ignorieren";
+"ignore_club" = "Gruppe ignorieren";
+"unignore_club" = "Gruppe nicht mehr ignorieren";
+"no_ignores_count" = "Keine ignorierte Quellen.";
+"stop_ignore" = "Nicht mehr ignorieren";
+"all_posts" = "Alle Beiträge";
+"users_posts" = "Beiträge von $1";
+"clubs_posts" = "Beiträge der Gruppe";
+"others_posts" = "Beiträge anderer Benutzer";
+"read_in_rss" = "Im RSS-Feed lesen";
+"show_more" = "Mehr anzeigen";
+"show_less" = "Weniger anzeigen";
+"has_repost" = "Enthält einen Repost";
+"likers_list" = "„Gefällt mir“-Angaben";
+"liked_verb" = "Gefällt von";
+"liked_by_x_people_one" = "Gefällt von $1 Benutzer";
+"liked_by_x_people_few" = "Gefällt $1 Benutzern";
+"liked_by_x_people_many" = "Gefällt $1 Benutzern";
+"liked_by_x_people_other" = "Gefällt $1 Benutzern";
+"liked_by_x_people_zero" = "Keine \"Gefällt mir\"-Angaben";
+"geo_place" = "Ort";
+"geotag" = "Standort";
+"nearest_posts" = "Nächstgelegene Beiträge";
+"Latitude" = "Breitengrad";
+"longitude" = "Längengrad";
+"name_of_the_place" = "Ortsname";
+"no_nearest_posts" = "Keine Beiträge in der Nähe";
+"s_documents" = "Dokumente";
+"s_by_documents" = "nach Dokumenten";
+"nospam_document" = "Dokumente";
+"my_documents" = "Dokumente";
+"my_documents_objectively" = "Meine Dokumente";
+"documents_of_group" = "Dokumente der Gruppe";
+"search_by_documents" = "Suche nach Dokumenten..";
+"documents" = "Dokumente";
+"documents_all" = "Alle Dokumente";
+"documents_one" = "$1 Dokument";
+"documents_few" = "$1 Dokumente";
+"documents_many" = "$1 Dokumente";
+"documents_other" = "$1 Dokumente";
+"documents_zero" = "$1 Dokumente";
+"you_have_x_documents_one" = "Sie haben $1 Dokument";
+"you_have_x_documents_few" = "Sie haben $1 Dokumente";
+"you_have_x_documents_many" = "Sie haben $1 Dokumente";
+"you_have_x_documents_other" = "Sie haben $1 Dokumente";
+"you_have_x_documents_zero" = "Sie haben $1 Dokumente";
+"group_has_x_documents_one" = "Diese Gruppe hat §1 Dokument";
+"group_has_x_documents_few" = "Diese Gruppe hat §1 Dokumente";
+"group_has_x_documents_many" = "Diese Gruppe hat §1 Dokumente";
+"group_has_x_documents_other" = "Diese Gruppe hat §1 Dokumente";
+"group_has_x_documents_zero" = "Diese Gruppe hat §1 Dokumente";
+"x_documents_in_tab_one" = "In diesem Tab befinden sich $1 Dokument";
+"x_documents_in_tab_few" = "In diesem Tab befinden sich $1 Dokumente";
+"x_documents_in_tab_many" = "In diesem Tab befinden sich $1 Dokumente";
+"x_documents_in_tab_other" = "In diesem Tab befinden sich $1 Dokumente";
+"x_documents_in_tab_zero" = "In diesem Tab befinden sich $1 Dokumente";
+"there_is_no_documents_alright" = "Hier sind keine Dokumente.";
+"documents_sort_add" = "Nach Datum";
+"documents_sort_alphabet" = "A-Z";
+"documents_sort_size" = "Nach Größe";
+"no_documents" = "Keine Dokumente gefunden";
+"go_to_my_documents" = "Zu meinen Dokumenten wechseln";
+"my_audios" = "Meine Audiodateien";
+"search_for_audios" = "Suche nach Musik";
+"search_for_audios_playlists" = "Suche nach Playlisten";
+"privacy_setting_view_audio" = "Wer darf meine Musik sehen";
+"max_attached_audios" = "Maximal sind 10 Audiodateien";
+"audios" = "Audiodateien";
+"audio" = "Audiodatei";
+"upload_audio" = "Audiodatei hochladen";
+"upload_audio_to_group" = "Audiodatei in eine Gruppe hochladen";
+"audio_name" = "Name";
+"select_audio" = "Audiodatei von Ihrem Computer auswählen";
+"audio_requirements" = "Die Audiodatei muss zwischen $1 Sekunden und $2 Minuten lang sein, darf höchstens $3 MB groß sein und muss einen Audiostrom enthalten.";
+"audio_requirements_2" = "Die Audiodatei darf keine Urheberrechte und verwandten Schutzrechte verletzen.";
+"you_can_also_add_audio_using" = "Du kannst auch Audiodateien aus bereits heruntergeladenen Dateien hinzufügen über";
+"audio_embed_not_found" = "Audiodatei nicht gefunden";
+"audio_embed_deleted" = "Audiodatei wurde gelöscht";
+"audio_embed_withdrawn" = "Die Audiodatei wurde auf Aufforderung des Urheberrechtsinhabers entfernt";

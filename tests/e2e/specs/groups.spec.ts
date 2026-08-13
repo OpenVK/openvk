@@ -1,5 +1,5 @@
 import { test, expect } from '../fixtures.js';
-import { loginAsAlice } from '../helpers.js';
+import { loginAsAlice, loginAsCharlie } from '../helpers.js';
 
 test.describe('Groups', () => {
   test.beforeEach(async ({ page }) => {
@@ -29,5 +29,21 @@ test.describe('Groups', () => {
   test('shows edit group form', async ({ page }) => {
     await page.goto('/club1/edit');
     await expect(page.locator('.page_body')).toHaveScreenshot('club1-edit.png', { maxDiffPixels: 200 });
+  });
+});
+
+test.describe('Group wall permissions', () => {
+  test('visitor cannot archive their post on a group wall', async ({ page }) => {
+    await loginAsCharlie(page);
+    await page.goto('/club1');
+
+    const postText = 'A visitor post on the group wall';
+    const form = page.locator('form[action="/wall-1/makePost"]');
+    await form.locator('textarea[name="text"]').fill(postText);
+    await form.locator('input[type="submit"]').click();
+
+    const post = page.locator('.post').filter({ hasText: postText });
+    await expect(post).toBeVisible();
+    await expect(post.locator('.archive_post, .oldPostArchive')).toHaveCount(0);
   });
 });

@@ -22,15 +22,14 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
-      - name: Build and start Docker container
+      - name: Build Docker image
         working-directory: install/automated/docker
         run: |
           docker build -t openvk ../../.. -f openvk.Dockerfile
 
-      - name: Run Docker container with PHPStan
+      - name: Run PHPStan in Docker container
         working-directory: install/automated/docker
         run: |
           docker container run --rm \
-            -v ./chandler.example.yml:/opt/chandler/chandler.yml \
-            -v ./openvk.example.yml:/opt/chandler/extensions/available/openvk/openvk.yml \
+            -v ./openvk.example.yml:/opt/openvk/openvk.yml \
             openvk vendor/bin/phpstan analyse --memory-limit 1G

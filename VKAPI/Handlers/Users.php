@@ -231,6 +231,13 @@ final class Users extends VKAPIRequestHandler
                                     'title' => $usr->getCity(),
                                 ];
                                 break;
+                            case "home_town":
+                                if (!$canView) {
+                                    break;
+                                }
+
+                                $response[$i]->home_town = $usr->getHometown();
+                                break;
                             case "interests":
                                 if (!$canView) {
                                     break;

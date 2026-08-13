@@ -24,7 +24,7 @@ A list of instances can be found in [our wiki of this repository](https://github
 
 Yes! And you are very welcome to.
 
-However, OVK makes use of Chandler Application Server. This software requires extensions, that may not be provided by your hosting provider (namely, sodium and yaml. these extensions are available on most of ISPManager hostings).
+However, OVK requires extensions, that may not always be available on web hostings (namely, sodium and yaml. these extensions are available on most of ISPManager hostings). That's why it is recommended to host your instances on VPS/VDS or dedicated servers.
 
 If you want, you can add your instance to the list above so that people can register there.
 
@@ -36,9 +36,12 @@ Here is our minimum hardware recommendation:
 * **RAM:** At least 2GB RAM (we recommend 6GB or 8GB for OpenVK with Redis)
 * **Minimum database space:** 10GB
 
+### Looking for Docker or Kubernetes deployment?
+See `install/automated/docker/README.md` and `install/automated/kubernetes/README.md` for Docker and Kubernetes deployment instructions.
+
 ### Installation procedure
 
-1. Install PHP 8.2 or later, web-server, Composer, Node.js, NPM and [Chandler](https://github.com/openvk/chandler)
+1. Install PHP 8.2 or later, web-server, Composer, and NPM.
 
 2. Install MySQL-compatible database.
 
@@ -46,35 +49,47 @@ Here is our minimum hardware recommendation:
 * Server should be compatible with at least MySQL 5.6, MySQL 8.0+ is recommended.
 * Support for MySQL 4.1+ is WIP, replace `utf8mb4` and `utf8mb4_unicode_520_ci` with `utf8` and `utf8_unicode_ci` in SQLs.
 
-3. Install [commitcaptcha](https://github.com/openvk/commitcaptcha) and OpenVK as Chandler extensions like this:
+3. Clone OpenVK:
 
 ```bash
-git clone https://github.com/openvk/openvk /path/to/chandler/extensions/available/openvk
-git clone https://github.com/openvk/commitcaptcha /path/to/chandler/extensions/available/commitcaptcha
+git clone https://github.com/openvk/openvk /opt/openvk
 ```
 
-4. And enable them:
+4. Install dependencies:
 
 ```bash
-ln -s /path/to/chandler/extensions/available/commitcaptcha /path/to/chandler/extensions/enabled/
-ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions/enabled/
+cd /opt/openvk && composer install
+cd Web/static/js && npm install
 ```
 
-5. You need to set up 2 databases: one for main data (it is be configured in `chandler.yml`), and another one for events (it is configured in `openvk.yml`)
-6. Copy `openvk-example.yml` to `openvk.yml` and change options to your liking
-7. Run `composer install` in OpenVK directory
-8. Run `composer install` in commitcaptcha directory
-9. Move to `Web/static/js` and execute `npm install`
-10. Set `openvk` as your root app in `chandler.yml`
-11. Run database migrations by executing `./openvkctl upgrade`
+5. Configure your database: you need 2 databases — one for the main data, another for events.
 
-Once you are done, you can login as a system administrator on the network itself (no registration required):
+6. Copy `openvk-example.yml` to `openvk.yml` and edit to your liking.  
+
+7. Run database migrations:
+
+```bash
+cd /opt/openvk && ./openvkctl upgrade
+```
+
+8. Point your web server to `openvk/htdocs`.
+
+* Example config for **nginx** is available [here](https://github.com/OpenVK/chandler/blob/master/install/nginx.conf). Make sure that root is set to `/opt/openvk/htdocs` (or wherever you installed OpenVK).
+
+Once you are done, you can login in a default system administrator account on the site itself (no registration required):
 
 * **Login**: `admin@localhost.localdomain6`
 * **Password**: `admin`
-  * It is recommended to change the password of the built-in account or disable it.
+  * It is recommended to change the password of the default account or disable it.
 
-💡 Confused? Full installation walkthrough is available [here](https://docs.openvk.org/openvk_engine/centos8_installation/) (CentOS 8 [and](https://almalinux.org/) [family](https://yum.oracle.com/oracle-linux-isos.html)).
+<!-- 💡 Confused? Full installation walkthrough is available [here](https://openvk.github.io/docs/openvk_engine/centos8_installation/) (CentOS 8 [and](https://almalinux.org/) [family](https://yum.oracle.com/oracle-linux-isos.html)). Needs to be actualised -->
+
+> [!WARNING]
+> OpenVK installation procedure has been changed after [code restructurisation](https://github.com/OpenVK/openvk/pull/1718/). Now you don't need to install Chandler separately and install OpenVK as its extension.
+>
+> If you are migrating from the old structure, make a backup of your Chandler+OpenVK installation, do a git pull, and consult the migration script: `php bin/upgrade-structure.php --help`. (When running the upgrade, it is recommended to use `--extract` flag, to move openvk dir out of Chandler's folder).
+>
+> After the migration, do not forget to change webserver's DocumentRoot from Chandler's `htdocs` to OpenVK's `htdocs`.
 
 ### Auto-install script
 
@@ -98,9 +113,6 @@ It should work out of box. If not, tweak Redis and OpenVK config settings
 
 > [!WARNING]
 > Kafka in OpenVK was been deprecated since [this commit](https://github.com/OpenVK/openvk/commit/e99cdd1b08002dbfbd1aaef2cbc52ccbe34026c6) and no longer used in OpenVK codebase. If you see any mention of Kafka in source code, config or documentation, you should know that this will not work at all. 
-
-### Looking for Docker or Kubernetes deployment?
-See `install/automated/docker/README.md` and `install/automated/kubernetes/README.md` for Docker and Kubernetes deployment instructions.
 
 ### If my website uses OpenVK, should I release its sources?
 

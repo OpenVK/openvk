@@ -10,15 +10,16 @@ use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use openvk\Web\Util\Validator;
 use Random\RandomException;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand(name: 'generate-users')]
 class GenerateUsersCommand extends Command
 {
-    protected static $defaultName = "generate-users";
     protected function configure(): void
     {
         $this->setDescription("Generate test user accounts for development")

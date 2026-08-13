@@ -1,3 +1,21 @@
+chandler:
+    debug: false
+    rootApp: "openvk"
+
+    database:
+        dsn: "mysql:host=mariadb-primary;dbname=db"
+        user: "openvk"
+        password: "openvk"
+
+    security:
+        secret: "test-secret-do-not-use-in-production-c83ee21f4088070bc2b69a324eae2c060bdfb7ad64de77e10eacc8882b280928afc2b524b8b7aaedc00cdfba144"
+        csrfProtection: "permissive"
+        extendedValidation: false
+        sessionDuration: 14
+
+    captcha:
+        enable: false
+
 openvk:
     debug: false
     appearance:

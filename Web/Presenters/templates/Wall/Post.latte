@@ -49,8 +49,10 @@
             <a href="" id="act_tab_a">{_post}</a>
         </div>
     </div>
-    {include "../components/post.latte", post => $post, forceNoCommentsLink => TRUE, forceNoDeleteLink => TRUE}
-    <hr/>
+    <div id="post_page_main">
+        {include "../components/post.latte", post => $post, forceNoCommentsLink => TRUE, forceNoDeleteLink => TRUE}
+        <hr/>
+    </div>
     <div id="post_page_meta">
     <div class="item_comments" style="float: left; min-height: 100px; width: 68%;">
         {include "../components/comments.latte",
@@ -69,7 +71,7 @@
                 {var $canReport = true}
             {/if}
         {/if}
-        
+
         <a n:if="$canDelete ?? false" id="_ajaxDelete" class="profile_link" style="display:block;width:96%;" href="/wall{$post->getPrettyId()}/delete">{_delete}</a>
         <a
             n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL) AND $post->getEditTime()"

@@ -337,7 +337,11 @@ final class VKAPIPresenter extends OpenVKPresenter
         }
 
         if (!is_null($identity) && ($identity->isBanned() || $identity->isDeleted())) {
-            $this->fail(18, "User account is deactivated", $object, $method);
+            $this->fail(18, "User was deleted or banned", $object, $method);
+        }
+
+        if (!is_null($identity) && !$identity->isActivated() && OPENVK_ROOT_CONF['openvk']['preferences']['security']['requireEmail'] === true) {
+            $this->fail(7, "Access denied", $object, $method);
         }
 
         return [$identity, $platform];
@@ -361,6 +365,11 @@ final class VKAPIPresenter extends OpenVKPresenter
 
         $handler = new $handlerClass($identity, $platform);
         if (!is_callable([$handler, $method])) {
+            throw new APIErrorException("Unknown method passed.", 3);
+        }
+
+        // Way to bypass restrictions in App Stores. Check code comment for isMusicAvailable func
+        if (!is_null($identity) && !$this->isMusicAvailable($identity->getId()) && $object == "Audio") {
             throw new APIErrorException("Unknown method passed.", 3);
         }
 
@@ -525,6 +534,10 @@ final class VKAPIPresenter extends OpenVKPresenter
 
         $uId  = $chUser->related("profiles.user")->fetch()->id;
         $user = (new Users())->get($uId);
+
+        if (!$user->isActivated() && OPENVK_ROOT_CONF['openvk']['preferences']['security']['requireEmail'] === true) {
+            $this->fail(7, "Access denied", "internal", "acquireToken");
+        }
 
         $platform     = $this->requestParam("client_name");
         $platform   ??= $this->resolveAppIdToString($this->requestParam("client_id"));
@@ -703,5 +716,17 @@ final class VKAPIPresenter extends OpenVKPresenter
             default:
                 return "unknown";
         }
+    }
+
+    /*
+     * This is the way to get around some App Store copyright rules
+     * for (maybe) official and third party apps, something
+     * Durov's team maybe did when their app was gone from App Store
+     * in 2014. Now it's deleted via EU sanctions, but that's
+     * another story to tell.
+     */
+    private function isMusicAvailable(int $id): bool
+    {
+        return (bool) !in_array($id, OPENVK_ROOT_CONF["openvk"]["preferences"]["music"]["notAvailableFor"] ?? []);
     }
 }

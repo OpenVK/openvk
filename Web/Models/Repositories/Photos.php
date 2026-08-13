@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace openvk\Web\Models\Repositories;
 
-use openvk\Web\Models\Entities\{Photo, User};
+use openvk\Web\Models\Entities\{Photo, User, Club};
 use Chandler\Database\DatabaseConnection;
 use Nette\Database\Table\ActiveRow;
 
@@ -62,6 +62,17 @@ class Photos
     {
         return $this->photos->where([
             "owner"    => $user->getId(),
+            "deleted"  => 0,
+            "system"   => 0,
+            "private"  => 0,
+            "anonymous" => 0,
+        ])->count("*");
+    }
+
+    public function getClubPhotosCount(Club $club)
+    {
+        return $this->photos->where([
+            "owner"    => $club->getId() * -1,
             "deleted"  => 0,
             "system"   => 0,
             "private"  => 0,

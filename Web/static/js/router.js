@@ -247,13 +247,25 @@ window.router = new class {
         u('body').addClass('ajax_request_made')
 
         const parser = new DOMParser
+        // Use GET (not a custom "AJAX" method): some browsers mishandle cookies on
+        // non-standard methods, and a cookieless hit + flash() would wipe CHANDLERSESS.
         const next_page_request = await fetch(next_page_url, {
-            method: 'AJAX',
+            method: 'GET',
+            credentials: 'same-origin',
             referrer: old_url,
             headers: {
                 'X-OpenVK-Ajax-Query': '1',
             }
         })
+
+        // Auth loss / login redirect: fall back to full navigation so we do not
+        // splice a guest login page into a still-"logged in" shell (header stays).
+        if(next_page_request.status === 401 || (next_page_request.redirected && /\/login(?:\?|$)/.test(new URL(next_page_request.url).pathname))) {
+            u('body').removeClass('ajax_request_made')
+            location.assign(next_page_request.redirected ? next_page_request.url : next_page_url)
+            return
+        }
+
         const next_page_text = await next_page_request.text()
         const parsed_content = parser.parseFromString(next_page_text, 'text/html')
         if(next_page_request.redirected) {
@@ -414,6 +426,7 @@ u(document).on('submit', 'form', async (e) => {
     const form_data = serializeForm(form, e.submitter)
     const request_object = {
         method: method,
+        credentials: 'same-origin',
         headers: {
             'X-OpenVK-Ajax-Query': '1',
         }
@@ -424,6 +437,11 @@ u(document).on('submit', 'form', async (e) => {
     }
 
     const form_res = await fetch(url_object, request_object)
+    if(form_res.status === 401 || (form_res.redirected && /\/login(?:\?|$)/.test(new URL(form_res.url).pathname))) {
+        u('#ajloader').removeClass('shown')
+        location.assign(form_res.redirected ? form_res.url : url_object)
+        return
+    }
     const form_result = await form_res.text()
     switch(form_res.status) {
         case 500:

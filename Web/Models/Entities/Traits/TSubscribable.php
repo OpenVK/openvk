@@ -25,13 +25,14 @@ trait TSubscribable
         }
     }*/
 
-    public function toggleSubscription(User $user): bool
+    public function toggleSubscription(User $user, int $flag = 0): bool
     {
         $ctx  = DatabaseConnection::i()->getContext();
         $data = [
             "follower" => $user->getId(),
             "model"    => static::class,
             "target"   => $this->getId(),
+            "flags"    => $flag,
         ];
         $sub  = $ctx->table("subscriptions")->where($data);
         if (!($sub->fetch())) {
