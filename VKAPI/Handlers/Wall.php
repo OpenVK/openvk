@@ -1237,7 +1237,7 @@ final class Wall extends VKAPIRequestHandler
 
         $wallOwner = ($owner_id > 0 ? (new UsersRepo())->get($owner_id) : (new ClubsRepo())->get($owner_id * -1));
         $flags = $post->getFlags();
-        
+
         if ($from_group == 1 && $wallOwner instanceof Club && $wallOwner->canBeModifiedBy($this->getUser())
             && ($wallOwner->getWallType() != 1 && $post->isPostedOnBehalfOfGroup())) {
             $flags = 0b10000000;
