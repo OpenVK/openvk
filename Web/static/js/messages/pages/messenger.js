@@ -11,9 +11,6 @@ export class Messenger {
     static MESSAGE_SEND_INTERVAL = 5000;
 
     constructor() {
-        this.appEl = null;
-        this.messagesListBlock = null;
-
         this.is_showing_profile = false;
         this.is_loading = false;
         this.had_more_one_tab = false;
@@ -38,9 +35,20 @@ export class Messenger {
         this.editMsg = null;
     }
 
-    selectConversation(convo) {
+    async selectConversation(convo) {
         this.setChat(convo);
-        window.im.openTabByName("messenger");
+        const tab = await window.im.openTabByName("messenger");
+        await tab.render();
+    }
+
+    async selectConversationByPeerId(id) {
+        const convo = await window.im.conversations._findConvFromApi(id);
+
+        if (!convo) {
+            console.error("can't find convo with id", id);
+        }
+
+        await this.selectConversation(convo);
     }
 
     setChat(convo, pushstate = true) {
@@ -58,9 +66,9 @@ export class Messenger {
         this.unselectAll();
 
         if (oldId != newId) {
-            this._clearAttachments();
-            this.removeReply();
-            this.cancelEdit();
+            //this._clearAttachments();
+            //this.removeReply();
+            //this.cancelEdit();
         }
 
         if (this.opened_tabs.length > 1) {
@@ -253,6 +261,7 @@ export class MessengerPage extends IMPage {
         this.replyTo = null;
         this.editMsg = null;
     }
+    isDisablesScroll() { return window.im.state.is_compact_mode_enabled == false; }
 
     _triggerUpdate() {
         window.im.conversations.update();
@@ -265,6 +274,8 @@ export class MessengerPage extends IMPage {
 
 	//async render(container, special_mode = null, messages = null) {
 	async render(container, options = {}) {
+        const orig_messenger = window.im.messenger;
+
         let messages = null;
         let special_mode = "";
 		const root = container;
@@ -289,9 +300,9 @@ export class MessengerPage extends IMPage {
         const is_rendering_contact_window = (window.im.tab == "contact" && special_mode === null);
         console.log(special_mode, is_rendering_contact_window)
         render(html`
-        <div id="chat-page" class="${is_rendering_contact_window == true ? 'peer-shown' : ''}">
+        <div id="chat-page">
             <div class="chat-window">
-            <${PeerTabsView} hadTab=${true} tabs=${this.opened_tabs} currentChat=${this.currentChatId} />
+            <${PeerTabsView} hadTab=${true} tabs=${orig_messenger.opened_tabs} currentChat=${orig_messenger.currentChatId} />
             <${ActionsBar}
                 selectedMessages=${this.selected_messages_objs}
                 count=${this.selected_messages.length}
@@ -317,11 +328,6 @@ export class MessengerPage extends IMPage {
                 />
             </div>
             </div>
-            ${is_rendering_contact_window == true && html`
-            <div class="peer-window">
-                <${PeerWindow} peer=${display_peer} togglePeerInfo=${this.togglePeerInfo} />
-            </div>
-            `}
         </div>
         `, root);
 	}
@@ -645,52 +651,6 @@ export class MessengerPage extends IMPage {
 		this.removeReply();
 	}
 
-    _clearAttachments() {
-        try {
-            this.appEl.querySelector(".post-horizontal").innerHTML = "";
-            this.appEl.querySelector(".post-vertical").innerHTML = "";
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-	_saveDraft(to_chat) {
-		if (!to_chat) return;
-		this.drafts[to_chat.peer.id] = this.currentDraft;
-		this.scrolls[to_chat.peer.id] = document.documentElement.scrollTop;
-        this._eraseCurrentDraft();
-
-        console.log(this.scrolls);
-        console.log('Saved draft for ', to_chat, ", scroll: ", this.scrolls[to_chat.peer.id]);
-	}
-
-	_eraseDraftFor(chat) {
-		this.drafts[chat.peer.id] = undefined;
-		u('.messenger-app--input---messagebox .post-horizontal').html('');
-		u('.messenger-app--input---messagebox .post-vertical').html('');
-	}
-
-	_eraseCurrentDraft() {
-        this.currentDraft = '';
-		u('.messenger-app--input---messagebox textarea').attr("style", "height: 50px;");
-	}
-
-	_loadDraft(for_chat) {
-		if (!for_chat) return;
-		const _draft = this.drafts[for_chat.peer.id];
-		if (_draft && _draft !== '') {
-            this.currentDraft = _draft;
-        }
-  		const _scroll = this.scrolls[for_chat.peer.id];
-  		if (_scroll) {
- 			this._scrollTo(_scroll);
-  		} else {
- 			this._scrollToEnd();
-        }
-
-        console.log("Loaded draft for ", for_chat, ", scroll: ", _scroll)
-	}
-
     _scrollTo(scroll_progress) {
         console.log("scrolling page to: ", scroll_progress)
 		document.documentElement.scroll({ top: scroll_progress });
@@ -742,6 +702,52 @@ export class MessengerPage extends IMPage {
         } else {
             console.warn('IM | scrollToMessage: message #' + msgId + ' not found in DOM');
         }
+    }
+
+    _clearAttachments() {
+        try {
+            this.container.querySelector(".post-horizontal").innerHTML = "";
+            this.container.querySelector(".post-vertical").innerHTML = "";
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    _saveDraft(to_chat) {
+        if (!to_chat) return;
+        //this.drafts[to_chat.peer.id] = this.currentDraft;
+        //this.scrolls[to_chat.peer.id] = document.documentElement.scrollTop;
+        this._eraseCurrentDraft();
+
+        //console.log(this.scrolls);
+        //console.log('Saved draft for ', to_chat, ", scroll: ", this.scrolls[to_chat.peer.id]);
+    }
+
+    _eraseDraftFor(chat) {
+        //this.drafts[chat.peer.id] = undefined;
+        //u('.messenger-app--input---messagebox .post-horizontal').html('');
+        //u('.messenger-app--input---messagebox .post-vertical').html('');
+    }
+
+    _eraseCurrentDraft() {
+        //this.currentDraft = '';
+        //u('.messenger-app--input---messagebox textarea').attr("style", "height: 50px;");
+    }
+
+    _loadDraft(for_chat) {
+        //if (!for_chat) return;
+        //const _draft = this.drafts[for_chat.peer.id];
+        //if (_draft && _draft !== '') {
+        //    this.currentDraft = _draft;
+        //}
+        //const _scroll = this.scrolls[for_chat.peer.id];
+        //if (_scroll) {
+        //	this._scrollTo(_scroll);
+        //} else {
+        //	this._scrollToEnd();
+        //}
+
+        //console.log("Loaded draft for ", for_chat, ", scroll: ", _scroll)
     }
 
 	// attachment
@@ -797,14 +803,19 @@ export class MessengerPage extends IMPage {
 
         AudioViewer.openById(e, null, attachment.audio);
     }
+}
 
-    // other links from peer window
+export class ContactPage extends IMPage {
+    shouldCloseOnExit() { return true; }
+    static getPageId() { return "contact"; }
 
-    async setSpecialMode(mode = null) {
-        await this._renderSpecialMode(null, mode);
-    }
+	async render(container) {
+        const currentCorresponder = window.im.state.getCurrentConvo();
+        let peer = null;
+        if (this.options.peer == null) {
+            peer = currentCorresponder;
+        }
 
-    async resetSpecialMode() {
-        this._render(null);
-    }
+        render(html`<${PeerWindow} fromConvo=${currentCorresponder} convo=${peer} />`, container);
+	}
 }

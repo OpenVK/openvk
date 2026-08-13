@@ -1,5 +1,3 @@
-let _chunk_uid_counter = 0;
-
 export class Draft {
     constructor() {
         this.text = "";
@@ -7,27 +5,47 @@ export class Draft {
     }
 }
 
-export class MessagesChunk {
-  constructor(items, do_reverse = false, count = 10, msg_offset = null) {
-    this.uid = _chunk_uid_counter++;
-    this.messages = [];
-    this.do_reverse = do_reverse;
-    this.count = count;
-    this.msg_offset = msg_offset;
-    this.latest_message_index = 0;
-    items.forEach((item) => {
-      this.messages.push(item);
-    });
-  }
-
-  /** Oldest message in this chunk (when do_reverse=true). */
-  get first_message() {
-    if (this.do_reverse) {
-      return this.messages[this.messages.length - 1];
-    } else {
-      return this.messages[0];
+// rememba:
+// top is down, down is top, bc messages are inverted.
+export class Chunks {
+    constructor() {
+        this.items = [];
+        this.startedFrom = null; // null = not started from last chunk
+        this.currentChunkId = null;
     }
-  }
+}
+
+export class MessagesChunk {
+    constructor() {
+        this.uid = null;
+    }
+
+    // это сообщение, отсносительно прокрутки вверх - самое старое!
+    getFirstMessage() {
+
+    }
+}
+
+export class DeprecatedMessagesChunk {
+    constructor(items, do_reverse = false, count = 10, msg_offset = null) {
+        this.uid = 0;
+        this.messages = [];
+        this.do_reverse = do_reverse;
+        this.count = count;
+        this.msg_offset = msg_offset;
+        this.latest_message_index = 0;
+        items.forEach((item) => {
+            this.messages.push(item);
+        });
+    }
+
+    get first_message() {
+        if (this.do_reverse) {
+            return this.messages[this.messages.length - 1];
+        } else {
+            return this.messages[0];
+        }
+    }
 
   /** Newest message in this chunk (when do_reverse=true). */
   get latest_message() {

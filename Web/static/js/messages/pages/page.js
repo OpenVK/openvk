@@ -25,12 +25,20 @@ export class IMTab {
         return this.render_class.shouldCloseOnExit();
     }
 
+    isDisablesScroll() {
+        return this.render_class.isDisablesScroll();
+    }
+
     close() {
         window.im.tabs = window.im.tabs.filter(tab => tab != this);
     }
 
     getId() {
         return this.render_class.id;
+    }
+
+    getPageId() {
+        return this.render_class.constructor.getPageId();
     }
 
     isActive() {
@@ -58,11 +66,10 @@ export class IMPage {
         await this.render(this.container);
         //document.documentElement.scroll({ top: 0 });
     }
-    async update(options = {}) {
-        await this.wRender(options);
-    }
+    async update(options = {}) { await this.wRender(options); }
     isVisibleWhenHidden() { return false; }
     shouldCloseOnExit() { return false; }
+    isDisablesScroll() { return false; }
     static getPageId() { return "default"; }
     getTabName() { return tr("messenger_tab_" + this.constructor.getPageId()) }
     async beforeRender(container) {}
@@ -83,4 +90,9 @@ export class IMPage {
 
         return tab;
     }
+    addLoadSkeleton(container) { 
+        container.insertAdjacentHTML("beforeend", `<span id="load_skeleton">LOADING!!!!!</span>`);
+    }
+    removeLoadSkeleton(container) { container.querySelector("#load_skeleton").remove(); }
+
 }

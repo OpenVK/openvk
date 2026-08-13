@@ -40,7 +40,7 @@ export class FriendsPage extends IMPage {
             return;
         }
 
-        window.im.setChatByPeerId(peer.id);
+        window.im.messenger.selectConversationByPeerId(peer.id);
     }
 
     isSelected(peer) {

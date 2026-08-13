@@ -1,6 +1,6 @@
 import { ChatGeneralForm } from './components/messages.js';
 import { EventHandler } from './events.js';
-import { Messenger, MessengerPage } from './pages/messenger.js';
+import { Messenger, MessengerPage, ContactPage } from './pages/messenger.js';
 import { Conversations, ConversationsPage } from './pages/conversations.js';
 import { Friends, FriendsPage } from './pages/friends.js';
 import { SearchPage } from './pages/search.js';
@@ -126,19 +126,25 @@ export class InstantMessagesAndRelated {
 
         console.log("IM | Selected tab " + tab);
 
+        this.state._toggleScrollMode(false);
+
         this.selectedTabId = tab;
         this.root.querySelectorAll("#im_page_containers .im_page").forEach(item => {
             item.classList.add("hidden");
         });
         try {
+            const _tab = this.tabs[tab];
+            console.log("selectTab", tab);
             this.tabs.forEach(item => {
-                if (item.shouldClose()) {
+                if (_tab != item && item.shouldClose()) {
                     item.close();
                 }
             });
 
-            console.log("selectTab", tab);
-            const _tab = this.tabs[tab];
+            if (_tab.isDisablesScroll()) {
+                this.state._toggleScrollMode(true);
+            }
+
             this.root.querySelector(`#im_page_containers .im_page[data-id="${_tab.getId()}"]`).classList.remove("hidden");
         } catch(e) {
             console.error(e);
@@ -151,6 +157,7 @@ export class InstantMessagesAndRelated {
         let got_tab = null;
         let got_class = null;
         let already_here = null;
+
         switch(tab) {
             default:
                 console.error("no tab with name: ", tab);
@@ -168,6 +175,7 @@ export class InstantMessagesAndRelated {
                 got_class = FriendsPage;
                 break;
             case "contact":
+                got_class = ContactPage;
                 break;
             case "search":
                 got_class = SearchPage;
@@ -185,13 +193,20 @@ export class InstantMessagesAndRelated {
 
         if (already_here != null) {
             this.selectTab(this.tabs.indexOf(already_here));
+
+            return already_here;
         } else {
             got_tab = got_class.openTab(this.root, options);
             if (got_tab != null) {
+                got_tab.render_class.addLoadSkeleton(this.root);
                 this.selectTab(this.addTab(got_tab));
                 await got_tab.render();
+                got_tab.render_class.removeLoadSkeleton(this.root);
             }
+
+            return got_tab;
         }
+
     }
 
     addTab(tab) {
@@ -234,9 +249,7 @@ class IMState {
         this.item_index = 0;
     }
 
-    get is_compact_mode_enabled() {
-        return localStorage.getItem("tw.im.modern_mode") === "1";
-    }
+    get is_compact_mode_enabled() { return localStorage.getItem("tw.im.modern_mode") === "1"; }
 
     getUnreadCounter() {
         return 0;
@@ -252,7 +265,15 @@ class IMState {
         });
         this.items.push(new ChatGeneralForm(_v[0]));
         this.item_index = 0;
-        this.link.cached_profiles._addProfileCache(this.item_index);
+        this.link.cached_profiles._addProfileCache(this.getOperator());
+    }
+
+    getOperator() {
+        return this.items[this.item_index];
+    }
+
+    getCurrentConvo() {
+        return this.link.messenger.getCurrentChat();
     }
 
     async _checkSel(loc, sel_id = null) {
@@ -314,7 +335,7 @@ class IMState {
     }
 
     _changeHeight(container) {
-        let maybe_distance = 100;
+        let maybe_distance = 145;
         let tabs_height = container.querySelector('#im_page_tabs').clientHeight;
         container.style.height = window.outerHeight - tabs_height - maybe_distance + 'px';
     }
@@ -343,13 +364,27 @@ class SettingsPage extends IMPage {
     }
 
     render(container) {
+        const show_mail = location.hostname == "openvk.org" || true;
         container.insertAdjacentHTML("beforeend", `
-            <span>Im frontend</span>
-            <div>
-                <label><input type="checkbox">включить компактный режим</label>
-                <label><input type="checkbox">включить дебаг кнопки</label>
+            <div style="padding: 10px 10px;">
+                <span>IM frontend</span>
+                <div>
+                    <label style="display:block;"><input id="_compactMode" type="checkbox">compact mode</label>
+                    <label style="display:block;"><input id="_debugButtons" type="checkbox">debug buttons</label>
+                    <label style="display:block;"><input id="_photoViewerBar" type="checkbox">photo viewer bar</label>
+                    ${show_mail ? `<p><a onclick="window.im.messenger.selectConversationByPeerId(1381)">Сообщить об ошибке</a></p>` : ""}
+                </div>
             </div>
-        `)
+        `);
+        container.querySelector("#_compactMode").addEventListener("change", (e) => {
+            localStorage.setItem("tw.im.modern_mode", Number(e.target.checked));
+        });
+        container.querySelector("#_debugButtons").addEventListener("change", (e) => {
+            localStorage.setItem("tw.im.debug", Number(e.target.checked));
+        });
+        container.querySelector("#_photoViewerBar").addEventListener("change", (e) => {
+            localStorage.setItem("tw.viewers.photo.list", Number(e.target.checked));
+        })
     }
 }
 
