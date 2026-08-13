@@ -86,7 +86,7 @@ final class Audio extends VKAPIRequestHandler
         return $audio;
     }
 
-    public function getById(string $audios, ?string $hash = null, int $need_user = 0): object
+    public function getById(string $audios, ?string $hash = null, int $need_user = 0): object|array
     {
         $this->requireUser();
 
@@ -94,12 +94,7 @@ final class Audio extends VKAPIRequestHandler
         if (sizeof($audioIds) === 1) {
             $audio = $this->audioFromAnyId($audioIds[0]);
 
-            return (object) [
-                "count" => 1,
-                "items" => [
-                    $this->toSafeAudioStruct($audio, $hash, (bool) $need_user),
-                ],
-            ];
+            return $this->generateItems(1, [$this->toSafeAudioStruct($audio, $hash, (bool) $need_user)], true);
         } elseif (sizeof($audioIds) > 6000) {
             $this->fail(1980, "Can't get more than 6000 audios at once");
         }
@@ -109,10 +104,7 @@ final class Audio extends VKAPIRequestHandler
             $audios[] = $this->getById($id, $hash)->items[0];
         }
 
-        return (object) [
-            "count" => sizeof($audios),
-            "items" => $audios,
-        ];
+        return $this->generateItems(sizeof($audios), $audios, true);
     }
 
     public function isLagtrain(string $audio_id): int

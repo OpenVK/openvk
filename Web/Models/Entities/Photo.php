@@ -186,12 +186,21 @@ class Photo extends Media
         $sizes = MessagePack::unpack($sizes);
         foreach ($sizes as $id => $meta) {
             if (isset($meta[3]) && !$meta[3]) {
-                $res[$id] = (object) [
-                    "url"    => ovk_scheme(true) . $_SERVER["HTTP_HOST"] . "/photos/thumbnails/" . $this->getId() . "_$id.jpeg",
+                $url = ovk_scheme(true) . $_SERVER["HTTP_HOST"] . "/photos/thumbnails/" . $this->getId() . "_$id.jpeg";
+                $photoobj = [
+                    "url"    => $url,
                     "width"  => null,
                     "height" => null,
                     "crop"   => null,
                 ];
+
+                if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR <= 5 && VKAPI_DECL_VER_MINOR < 77) {
+                    unset($photoobj['url']);
+                    $photoobj['src'] = $url;
+                }
+
+                $res[$id] = (object) $photoobj;
+
                 continue;
             }
 
@@ -199,21 +208,35 @@ class Photo extends Media
             $url  = str_replace(".$this->fileExtension", "_cropped/$id.", $url);
             $url .= ($meta[1] <= 300 || $meta[2] <= 300) ? "gif" : "jpeg";
 
-            $res[$id] = (object) [
+            $photoobj = [
                 "url"    => $url,
                 "width"  => $meta[1],
                 "height" => $meta[2],
                 "crop"   => $meta[0],
             ];
+
+            if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR <= 5 && VKAPI_DECL_VER_MINOR < 77) {
+                unset($photoobj['url']);
+                $photoobj['src'] = $url;
+            }
+
+            $res[$id] = (object) $photoobj;
         }
 
         [$x, $y] = $this->getDimensions();
-        $res["UPLOADED_MAXRES"] = (object) [
+        $photoobj = [
             "url"    => $this->getURL(),
             "width"  => $x,
             "height" => $y,
             "crop"   => false,
         ];
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR <= 5 && VKAPI_DECL_VER_MINOR < 77) {
+            unset($photoobj['url']);
+            $photoobj['src'] = $this->getURL();
+        }
+
+        $res["UPLOADED_MAXRES"] = (object) $photoobj;
 
         return $res;
     }
@@ -304,7 +327,11 @@ class Photo extends Media
             return $this->getURL();
         }
 
-        return $size->url;
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR <= 5 && VKAPI_DECL_VER_MINOR < 77) {
+            return $size->src;
+        } else {
+            return $size->url;
+        }
     }
 
     public function getDimensions(): array

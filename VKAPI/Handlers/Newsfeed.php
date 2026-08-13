@@ -25,7 +25,7 @@ final class Newsfeed extends VKAPIRequestHandler
     {
         $this->requireUser();
 
-        if ($forGodSakePleaseDoNotReportAboutMyOnlineActivity == 0) {
+        if ($forGodSakePleaseDoNotReportAboutMyOnlineActivity == 0 || VKAPI_DECL_VER_MAJOR <= 5 && VKAPI_DECL_VER_MINOR <= 63) {
             $this->getUser()->updOnline($this->getPlatform());
         }
 
@@ -48,6 +48,7 @@ final class Newsfeed extends VKAPIRequestHandler
                     ->where("wall IN (?)", $ids)
                     ->where("deleted", 0)
                     ->where("suggested", 0)
+                    ->where("archived", 0)
                     ->where("created <= ?", $cursorTime)
                     ->where("created < ? OR id < ?", $cursorTime, $cursorId)
                     ->where("? <= created", empty($start_time) ? 0 : $start_time)
@@ -86,7 +87,7 @@ final class Newsfeed extends VKAPIRequestHandler
         [$cursorTime, $cursorId] = $this->parseCursor($start_from);
 
         $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) LEFT JOIN `profiles` ON LEAST(`posts`.`wall`, 0) = 0 AND `profiles`.`id` = ABS(`posts`.`wall`)";
-        $queryBase .= " WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND (`profiles`.`profile_type` = 0 OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
+        $queryBase .= " WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND (`profiles`.`profile_type` = 0 OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0 AND `posts`.`archived` = 0";
 
         if ($with_alien_wall_posts == 0) {
             $queryBase .= " AND ((`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`))";
@@ -178,6 +179,7 @@ final class Newsfeed extends VKAPIRequestHandler
             ->where("content LIKE ?", "%{$q}%")
             ->where("deleted", 0)
             ->where("suggested", 0)
+            ->where("archived", 0)
             ->where("created <= ?", $cursorTime)
             ->where("created < ? OR id < ?", $cursorTime, $cursorId)
             ->where("? <= created", $start_time)

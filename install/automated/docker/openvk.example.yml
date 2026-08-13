@@ -1,3 +1,34 @@
+chandler:
+    debug: true
+    rootApp: "openvk"
+    
+    preferences:
+        logs:
+            enabled: true
+            entitiesNamespace: "openvk\\Web\\Models\\Entities\\"
+    
+    database:
+        dsn: "mysql:host=mariadb-primary;dbname=db"
+        user: "openvk"
+        password: "openvk"
+    
+    security:
+        secret: "e7oltodd7kx2ifgxcfractxp8pq4ffd1ktkxrjpv80hsqe4t6josth9znuznhpvedd32bo0msj4l6ycjx2fj8f77hnpfcejsxjgfbs2k0lpqpb9dkf0txkwtmh4j3tvs"
+        csrfProtection: "permissive"
+        extendedValidation: false
+        sessionDuration: 14
+
+    captcha:
+        enable: true
+
+    email:
+        host: "mail.example.com"
+        port: 465
+        user: "user"
+        pass: "word"
+        addr: "noreply@example.com"
+        ssl: true
+
 openvk:
     debug: true
     appearance:
