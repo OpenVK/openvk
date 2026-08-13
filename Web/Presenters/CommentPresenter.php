@@ -118,6 +118,11 @@ final class CommentPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_comment_empty"));
         }
 
+        $replyTo = null;
+        if (!empty($this->postParam('reply_to_comment')) && (new Comments())->isCommentInPostable($entity, intval($this->postParam('reply_to_comment')))) {
+            $replyTo = intval($this->postParam('reply_to_comment'));
+        }
+
         try {
             $comment = new Comment();
             $comment->setOwner($this->user->id);
@@ -125,6 +130,7 @@ final class CommentPresenter extends OpenVKPresenter
             $comment->setTarget($entity->getId());
             $comment->setContent($this->postParam("text"));
             $comment->setCreated(time());
+            $comment->setReply_To($replyTo);
             $comment->setFlags($flags);
             $comment->save();
         } catch (\LengthException $ex) {

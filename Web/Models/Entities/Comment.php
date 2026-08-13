@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace openvk\Web\Models\Entities;
 
-use openvk\Web\Models\Repositories\Clubs;
+use openvk\Web\Models\Repositories\{Clubs, Comments};
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{Note};
 
@@ -78,6 +78,10 @@ class Comment extends Post
         $res->date          = $this->getPublicationTime()->timestamp();
         $res->attachments   = [];
         $res->parents_stack = [];
+
+        if ($this->getReplyToId() !== null) {
+            $res->reply_to_comment = $this->getReplyToId();
+        }
 
         if (get_class($this->getTarget()) === 'openvk\Web\Models\Entities\Note') {
             $res->message       = $this->getText(false);
@@ -197,5 +201,15 @@ class Comment extends Post
         }
 
         return $target_name . $target->getPrettyId();
+    }
+
+    public function getReplyToId(): ?int
+    {
+        return $this->getRecord()->reply_to;
+    }
+
+    public function getReplyToComment(): ?Comment
+    {
+        return (new Comments())->get($this->getRecord()->reply_to);
     }
 }

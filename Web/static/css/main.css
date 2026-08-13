@@ -1719,7 +1719,7 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
     padding: 6px 0px;
 }
 
-.post-source #remove_source_button, #small_remove_button {
+.post-source #remove_source_button, .post-replyto #remove_reply_button, #small_remove_button {
     display: inline-block;
     background-repeat: no-repeat;
     background: url('/assets/packages/static/openvk/img/arrows.png?v=2');
@@ -1733,7 +1733,7 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
     cursor: pointer;
 }
 
-.post-source #remove_source_button:hover, #small_remove_button:hover {
+.post-source #remove_source_button:hover, .post-replyto #remove_reply_button:hover, #small_remove_button:hover {
     opacity: 0.8;
 }
 

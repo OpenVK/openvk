@@ -286,6 +286,8 @@
 "graffiti" = "Graffiti";
 
 "reply" = "Reply";
+"in_reply" = "in reply";
+"reply_to_comment" = "Reply to comment";
 "post_is_ad" = "This post is sponsored.";
 
 "edited_short" = "edited";
