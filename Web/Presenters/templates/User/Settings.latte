@@ -318,6 +318,19 @@
                 </tr>
                 <tr>
                     <td width="120" valign="top">
+                        <span class="nobold">{_privacy_setting_see_saved_photos}</span>
+                    </td>
+                    <td>
+                        <select name="photos.read_saved" style="width: 164px;">
+                            <option value="3" {if $user->getPrivacySetting('photos.read_saved') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
+                            <option value="2" {if $user->getPrivacySetting('photos.read_saved') == 2}selected{/if}>{_privacy_value_users}</option>
+                            <option value="1" {if $user->getPrivacySetting('photos.read_saved') == 1}selected{/if}>{_privacy_value_friends_dative}</option>
+                            <option value="0" {if $user->getPrivacySetting('photos.read_saved') == 0}selected{/if}>{_privacy_value_only_me_dative}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="120" valign="top">
                         <span class="nobold">{_privacy_setting_see_videos}</span>
                     </td>
                     <td>
