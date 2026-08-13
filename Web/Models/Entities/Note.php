@@ -382,7 +382,7 @@ class Note extends Postable
         }
 
         // members
-        return $club->getSubscriptionStatus($user) === Club::SUBSCRIBED
+        return $club->getSubscriptionStatus($user)
             || $club->canBeModifiedBy($user);
     }
 
