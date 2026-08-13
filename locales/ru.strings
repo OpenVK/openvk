@@ -1070,6 +1070,7 @@
 "nt_liked_yours" = "понравился ваш";
 "nt_shared_yours" = "поделился(-ась) вашим";
 "nt_commented_yours" = "оставил(а) комментарий под";
+"nt_replied_yours" = "ответил(а) на ваш комментарий под";
 "nt_written_on_your_wall" = "написал(а) на вашей стене";
 "nt_accepted_your_post" = "опубликовало вашу предложенную";
 "nt_in_club" = "В сообществе";

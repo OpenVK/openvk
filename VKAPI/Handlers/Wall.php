@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace openvk\VKAPI\Handlers;
 
 use openvk\Web\Models\Entities\User;
-use openvk\Web\Models\Entities\Notifications\{PostAcceptedNotification, WallPostNotification, NewSuggestedPostsNotification, RepostNotification, CommentNotification};
+use openvk\Web\Models\Entities\Notifications\{PostAcceptedNotification, WallPostNotification, ReplyCommentNotification, NewSuggestedPostsNotification, RepostNotification, CommentNotification};
 use openvk\Web\Models\Repositories\Users as UsersRepo;
 use openvk\Web\Models\Entities\Club;
 use openvk\Web\Models\Repositories\Clubs as ClubsRepo;
@@ -1125,6 +1125,11 @@ final class Wall extends VKAPIRequestHandler
             if (($owner = $post->getOwner()) instanceof User) {
                 (new CommentNotification($owner, $comment, $post, $this->user))->emit();
             }
+        }
+
+        $replyToUser = $comment->getReplyToComment()?->getOwner();
+        if ($replyToUser instanceof User && $replyToUser != $this->user) {
+            (new ReplyCommentNotification($replyToUser, $comment, $post, $this->user))->emit();
         }
 
         return (object) [
