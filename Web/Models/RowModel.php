@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace openvk\Web\Models;
 
+use Chandler\Database\DBEntity;
+
 /*
  * NOTICE: Please use \Chandler\Database\DBEntity directly.
  */
-class_alias('\Chandler\Database\DBEntity', 'openvk\Web\Models\RowModel');
+abstract class RowModel extends DBEntity {}

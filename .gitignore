@@ -1,6 +1,5 @@
 vendor
 openvk.yml
-chandler.yml
 update.pid
 update.pid.old
 Web/static/js/node_modules
@@ -14,6 +13,7 @@ themepacks/*
 !themepacks/midnight
 storage/*
 !storage/.gitkeep
+logs/
 
 data/knowledgebase/*
 

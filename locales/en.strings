@@ -229,6 +229,22 @@
 "wall_zero" = "no posts";
 "wall_one" = "$1 post";
 "wall_other" = "$1 posts";
+"archived_posts" = "Post archive";
+"archive_banner_title" = "This is the post archive";
+"archive_banner_desc" = "Save posts from the wall here for history and memories. Only you can see the post archive.";
+"archive_action" = "Archive";
+"unarchive_action" = "Restore";
+"post_deleted" = "Post deleted";
+"archive_all_years" = "All years";
+"archive_more" = "More";
+"archive_more_year" = "More: $1";
+"archive_all_posts_from_year" = "Archive all posts from $1";
+"restore_all_posts_from_year" = "Restore all posts from $1";
+"archive_all_posts" = "Archive every post";
+"archive_confirm_year" = "Archive every post published in $1?";
+"restore_confirm_year" = "Restore every post published in $1?";
+"archive_confirm_all" = "Archive every post on this wall?";
+"archive_invalid_action" = "Invalid post archive action.";
 "publish_post" = "Add post";
 "view_other_comments" = "View other comments";
 
@@ -552,7 +568,7 @@
 "groups_avatar" = "Good photo can make your group more recognizable.";
 "formats_avatar" = "You can upload an image in JPG, GIF or PNG format.";
 "troubles_avatar" = "If you're having trouble uploading, try selecting a smaller photo.";
-"webcam_avatar" = "If your computer has a webcam, you can <a id='_takeSelfie'>take a snapshot »</a>";
+"webcam_avatar" = "If your computer has a webcam, you can <a id='_takeSelfie'>take a snapshot</a>.";
 "publish_on_wall" = "Make post on wall";
 "take_snapshot" = "Take snapshot";
 "your_browser_doesnt_support_webcam" = "Your browser does not support webcam video capture.";
@@ -834,7 +850,7 @@
 "backdrop_short" = "Backdrop";
 "backdrop" = "Page Backdrop";
 "backdrop_desc" = "You can set two pictures as the backdrop for your profile or group. They will be displayed on the left and right edges of the page, adding personality to your profile.";
-"backdrop_warn" = "The images will be arranged as shown in the layout above. Their height will be automatically increased to occupy 100% of the screen height, with a blur in the middle. You cannot replace the background of the main OpenVK interface or add audio. The backdrop will be visible only on wide displays.";
+"backdrop_warn" = "The images will be arranged as shown in the layout above. Their height will be automatically increased to occupy 100％ of the screen height, with a blur in the middle. You cannot replace the background of the main OpenVK interface or add audio. The backdrop will be visible only on wide displays.";
 "backdrop_about_adding" = "You can upload only one picture, although depending on the design, the end result may look imperfect. You can also change only one picture: if you already have two images set up and you want to change one, upload only one, and the other won't be removed. To remove both images, press the button below; you can't remove pictures individually.";
 "backdrop_save" = "Save Backdrop Picture(s)";
 "backdrop_remove" = "Remove All Backdrop Pictures";
@@ -1152,6 +1168,7 @@
 "event_reminder_text" = "Event $1 will take place soon.";
 "event_reminder_text_multiple" = "Events $1 will take place soon.";
 "points" = "Votes";
+"balance" = "Votes balance";
 "points_count" = "votes";
 "on_your_account" = "on your account";
 "top_up_your_account" = "Get more";
@@ -1571,7 +1588,7 @@
 "suspicious_registration_attempt_comment" = "You tried to register from a suspicious location.";
 
 "rate_limit_error" = "Hey, slow down!";
-"rate_limit_error_comment" = "Daniel Myslivets dispises you. In $1, you cannot send requests as often. Exception code: $2.";
+"rate_limit_error_comment" = "Daniel Myslivets despises you. In $1, you cannot send requests as often. Exception code: $2.";
 
 "not_enough_permissions" = "Not enough permissions";
 "not_enough_permissions_comment" = "You do not have sufficient permissions to perform this action.";

@@ -8,7 +8,7 @@ services:
       args:
         INSTALL_TEST_DEPS: "true"
     user: www-data
-    entrypoint: ["/opt/chandler/extensions/available/openvk/tests/entrypoint.sh"]
+    entrypoint: ["/opt/openvk/tests/entrypoint.sh"]
     depends_on:
       mariadb-primary:
         condition: service_healthy
@@ -17,10 +17,9 @@ services:
       redis:
         condition: service_started
     volumes:
-      - ./openvk.test.yml:/opt/chandler/extensions/available/openvk/openvk.yml:ro
-      - ./chandler.test.yml:/opt/chandler/chandler.yml:ro
-      - ./entrypoint.sh:/opt/chandler/extensions/available/openvk/tests/entrypoint.sh:ro
-      - ./seed-data.sql:/opt/chandler/extensions/available/openvk/tests/seed-data.sql:ro
+      - ./openvk.test.yml:/opt/openvk/openvk.yml:ro
+      - ./entrypoint.sh:/opt/openvk/tests/entrypoint.sh:ro
+      - ./seed-data.sql:/opt/openvk/tests/seed-data.sql:ro
     environment:
       DB_HOST: mariadb-primary
       DB_USER: openvk
