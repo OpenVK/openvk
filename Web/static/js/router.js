@@ -279,6 +279,11 @@ window.router = new class {
 
         try {
             this.__appendPage(parsed_content)
+            const hash = window.location.hash
+            if (hash) {
+                window.location.hash = ''
+                window.location.hash = hash
+            }
             await this.__integratePage()
         } catch(e) {
             console.error(e)

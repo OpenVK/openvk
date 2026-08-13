@@ -870,7 +870,7 @@ final class Wall extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
-        $comments = (new CommentsRepo())->getCommentsByTarget($post, $offset + 1, $count, $sort == "desc" ? "DESC" : "ASC");
+        $comments = (new CommentsRepo())->getCommentsByTarget($post, $offset, $count, $sort == "desc" ? "DESC" : "ASC");
 
         $items = [];
         $profiles = [];
@@ -922,6 +922,10 @@ final class Wall extends VKAPIRequestHandler
                     "groups_can_post"   => false,
                 ],
             ];
+
+            if ($comment->getReplyToId() !== null) {
+                $item['reply_to_comment'] = $comment->getReplyToId();
+            }
 
             if ($comment->isFromPostAuthor($post)) {
                 $item['is_from_post_author'] = true;
@@ -1059,7 +1063,7 @@ final class Wall extends VKAPIRequestHandler
         return $response;
     }
 
-    public function createComment(int $owner_id, int $post_id, string $message = "", int $from_group = 0, string $attachments = "")
+    public function createComment(int $owner_id, int $post_id, string $message = "", int $from_group = 0, string $attachments = "", int $reply_to_comment = null)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -1095,6 +1099,10 @@ final class Wall extends VKAPIRequestHandler
             $flags |= 0b10000000;
         }
 
+        if ($reply_to_comment !== null && !(new CommentsRepo())->isCommentInPostable($post, $reply_to_comment)) {
+            $this->fail(100, "Parameter 'reply_to_comment' is wrong.");
+        }
+
         try {
             $comment = new Comment();
             $comment->setOwner($this->user->getId());
@@ -1102,6 +1110,7 @@ final class Wall extends VKAPIRequestHandler
             $comment->setTarget($post->getId());
             $comment->setContent($message);
             $comment->setCreated(time());
+            $comment->setReply_To($reply_to_comment);
             $comment->setFlags($flags);
             $comment->save();
         } catch (\LengthException $ex) {

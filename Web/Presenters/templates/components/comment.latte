@@ -45,6 +45,7 @@
                         <a href="{if $correctLink}{$comment->getTargetURL()}{/if}#_comment{$comment->getId()}" class="date">{$comment->getPublicationTime()}
                             <span n:if="$comment->getEditTime()" class="edited editedMark">({_edited_short})</span>
                         </a>
+                        <a n:if="$comment->getReplyToId() !== null" href="{$comment->getTargetURL()}#_comment{$comment->getReplyToId()}">{_in_reply}</a>
                         {if !$timeOnly}
                             {if $comment->canBeDeletedBy($thisUser)}
                                 <span>|</span>

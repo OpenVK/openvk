@@ -454,7 +454,7 @@ final class VKAPIPresenter extends OpenVKPresenter
         }
 
         $size = strlen($result);
-        header("Content-Length: $size");
+        #header("Content-Length: $size");
 
         exit($result);
     }
