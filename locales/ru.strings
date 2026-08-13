@@ -1488,9 +1488,16 @@
 "page_access_title" = "Доступ к этой странице";
 "page_who_can_view" = "Кто может просматривать эту страницу?";
 "page_who_can_edit" = "Кто может редактировать эту страницу?";
+"page_who_can_comment" = "Кто может комментировать эту страницу?";
 "page_access_everyone" = "Все пользователи";
 "page_access_members" = "Только участники сообщества";
 "page_access_admins" = "Только руководители группы";
+"page_access_friends" = "Только друзья";
+"page_access_owner" = "Только автор";
+"note_format" = "Формат";
+"note_format_markdown" = "Markdown";
+"note_format_html" = "HTML";
+"page_photo_prompt" = "ID фото (photoOWNER_VID):";
 "page_access_saved" = "Настройки доступа сохранены.";
 "page_access_denied" = "Недостаточно прав для просмотра этой страницы.";
 "page_no_revisions" = "История правок пуста.";

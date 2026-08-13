@@ -266,7 +266,8 @@ INSERT INTO ovk_upgrade_history (`level`, `timestamp`, `operator`) VALUES
 (61, @ts_base - 365 * @ts_day, 'test-seed'),
 (62, @ts_base - 365 * @ts_day, 'test-seed'),
 (63, @ts_base - 365 * @ts_day, 'test-seed'),
-(65, @ts_base - 365 * @ts_day, 'test-seed');
+(65, @ts_base - 365 * @ts_day, 'test-seed'),
+(66, @ts_base - 365 * @ts_day, 'test-seed');
 
 -- Photos for Alice (profile id = 2, album id = 1)
 INSERT INTO photos (id, owner, virtual_id, created, edited, hash, deleted, description) VALUES

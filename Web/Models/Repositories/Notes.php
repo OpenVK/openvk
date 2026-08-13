@@ -152,4 +152,18 @@ class Notes
             "note" => $note->getId(),
         ])->fetch());
     }
+
+    public function pruneRevisions(Note $note, int $keep = 50): void
+    {
+        $keepIds = [];
+        foreach ($this->revisions()->where("note", $note->getId())->order("created DESC")->limit($keep) as $row) {
+            $keepIds[] = (int) $row->id;
+        }
+
+        if (sizeof($keepIds) === 0) {
+            return;
+        }
+
+        $this->revisions()->where("note", $note->getId())->where("id NOT", $keepIds)->delete();
+    }
 }

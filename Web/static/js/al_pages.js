@@ -1,8 +1,28 @@
 window.OpenVKPages = (function () {
     var bound = false;
+    var previewLoading = false;
 
     function getTextarea() {
         return document.getElementById("page_source");
+    }
+
+    function previewLabel(editing) {
+        return editing ? tr("page_tab_edit") : tr("page_preview");
+    }
+
+    function setPreviewButtons(editing) {
+        var btn = document.getElementById("page_preview_btn");
+        if (btn) {
+            btn.textContent = previewLabel(editing);
+        }
+        var icon = document.querySelector("#page_toolbar a[data-action='preview']");
+        if (icon) {
+            icon.classList.toggle("wysiwyg_active", editing);
+        }
+    }
+
+    function getTitleInput() {
+        return document.querySelector("#page_edit_form input[name='title'], #noteFactory input[name='name'], #page_edit_form input[name='name']");
     }
 
     function shrinkSource(force) {
@@ -25,7 +45,6 @@ window.OpenVKPages = (function () {
             return;
         }
 
-        // Always re-bind for AJAX navigations (node is new each time).
         if (ta.value.length > 0) {
             shrinkSource(true);
             return;
@@ -81,6 +100,25 @@ window.OpenVKPages = (function () {
         shrinkSource(true);
     }
 
+    function insertPhoto() {
+        var raw = window.prompt(tr("page_photo_prompt"), "photo");
+        if (raw === null) {
+            return;
+        }
+        raw = raw.trim().replace(/^\/+/, "");
+        if (!raw) {
+            return;
+        }
+        if (/^-?\d+_\d+$/.test(raw)) {
+            raw = "photo" + raw;
+        }
+        if (/^photo-?\d+_\d+$/i.test(raw)) {
+            insertMarkdown("![|](/" + raw + ")");
+            return;
+        }
+        insertMarkdown("![|](" + raw + ")");
+    }
+
     function wrapAlign(align) {
         var ta = getTextarea();
         if (!ta) {
@@ -114,41 +152,124 @@ window.OpenVKPages = (function () {
         shrinkSource(true);
     }
 
-    function togglePreview() {
+    function currentFormat(preview) {
+        var checked = document.querySelector("input[name='format']:checked");
+        if (checked) {
+            return checked.value;
+        }
+        var hidden = document.querySelector("input[name='format']");
+        if (hidden && hidden.type === "hidden") {
+            return hidden.value;
+        }
+        return (preview && preview.getAttribute("data-format")) || "1";
+    }
+
+    function currentSource(format) {
+        if (format === "0" && window._editor) {
+            return window._editor.getValue();
+        }
         var ta = getTextarea();
+        return ta ? ta.value : "";
+    }
+
+    function showEditorSurfaces() {
         var preview = document.getElementById("page_preview");
-        if (!ta || !preview) {
+        var format = currentFormat(preview);
+        var ta = getTextarea();
+        var md = document.getElementById("note_md_editor");
+        var html = document.getElementById("note_html_editor");
+        var monaco = document.getElementById("editor");
+        if (format === "0") {
+            if (html) {
+                html.style.display = "block";
+            }
+            if (monaco) {
+                monaco.style.display = "block";
+            }
+            if (md) {
+                md.style.display = "none";
+            }
+        } else {
+            if (md) {
+                md.style.display = "block";
+            }
+            if (ta) {
+                ta.style.display = "block";
+            }
+            if (html) {
+                html.style.display = "none";
+            }
+        }
+    }
+
+    function hideEditorSurfaces() {
+        var ta = getTextarea();
+        var monaco = document.getElementById("editor");
+        var html = document.getElementById("note_html_editor");
+        if (ta) {
+            ta.style.display = "none";
+        }
+        if (monaco) {
+            monaco.style.display = "none";
+        }
+        if (html) {
+            html.style.display = "none";
+        }
+    }
+
+    function exitPreview(preview) {
+        preview.style.display = "none";
+        preview.dataset.previewing = "0";
+        showEditorSurfaces();
+        setPreviewButtons(false);
+    }
+
+    function togglePreview() {
+        var preview = document.getElementById("page_preview");
+        if (!preview || previewLoading) {
             return;
         }
 
-        if (preview.style.display && preview.style.display !== "none") {
-            preview.style.display = "none";
-            ta.style.display = "block";
+        if (preview.dataset.previewing === "1") {
+            exitPreview(preview);
             return;
         }
 
-        var club = preview.getAttribute("data-club");
+        var format = currentFormat(preview);
+        var source = currentSource(format);
+        var club = preview.getAttribute("data-club") || "";
         var csrf = document.querySelector('meta[name="csrf"]');
         var hash = csrf ? csrf.getAttribute("value") : "";
-        var body = "club=" + encodeURIComponent(club) +
-            "&source=" + encodeURIComponent(ta.value) +
+        var body = "source=" + encodeURIComponent(source) +
+            "&html=" + encodeURIComponent(source) +
+            "&format=" + encodeURIComponent(format) +
+            "&club=" + encodeURIComponent(club) +
             "&hash=" + encodeURIComponent(hash);
 
+        previewLoading = true;
         fetch("/notes/preview", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: body,
             credentials: "same-origin"
         }).then(function (r) {
-            return r.text();
-        }).then(function (html) {
-            preview.innerHTML = html;
+            return r.text().then(function (html) {
+                return { ok: r.ok, html: html };
+            });
+        }).then(function (res) {
+            if (!res.ok) {
+                exitPreview(preview);
+                return;
+            }
+            preview.innerHTML = res.html;
             preview.style.display = "block";
-            ta.style.display = "none";
+            preview.dataset.previewing = "1";
+            hideEditorSurfaces();
+            setPreviewButtons(true);
         }).catch(function () {
-            preview.innerHTML = "<p>Preview error</p>";
-            preview.style.display = "block";
-            ta.style.display = "none";
+            exitPreview(preview);
+        }).then(function () {
+            previewLoading = false;
         });
     }
 
@@ -159,7 +280,7 @@ window.OpenVKPages = (function () {
             label + "</label>";
     }
 
-    function buildAccessBody(viewVal, editVal) {
+    function buildAccessBody(viewVal, editVal, commentVal) {
         return "<div class=\"page_access_section\">" +
             "<b>" + tr("page_who_can_view") + "</b>" +
             accessRadio("mb_view_access", 0, viewVal, tr("page_access_everyone")) +
@@ -171,6 +292,12 @@ window.OpenVKPages = (function () {
             accessRadio("mb_edit_access", 0, editVal, tr("page_access_everyone")) +
             accessRadio("mb_edit_access", 1, editVal, tr("page_access_members")) +
             accessRadio("mb_edit_access", 2, editVal, tr("page_access_admins")) +
+            "</div>" +
+            "<div class=\"page_access_section\" style=\"margin-top:12px;\">" +
+            "<b>" + tr("page_who_can_comment") + "</b>" +
+            accessRadio("mb_comment_access", 0, commentVal, tr("page_access_everyone")) +
+            accessRadio("mb_comment_access", 1, commentVal, tr("page_access_members")) +
+            accessRadio("mb_comment_access", 2, commentVal, tr("page_access_admins")) +
             "</div>";
     }
 
@@ -187,14 +314,18 @@ window.OpenVKPages = (function () {
 
         var viewHidden = document.getElementById("page_view_access");
         var editHidden = document.getElementById("page_edit_access");
+        var commentHidden = document.getElementById("page_comment_access");
         var isCreate = !!(viewHidden && editHidden);
         var viewVal = isCreate ? viewHidden.value : (btn.getAttribute("data-view") || "0");
         var editVal = isCreate ? editHidden.value : (btn.getAttribute("data-edit") || "2");
+        var commentVal = isCreate
+            ? (commentHidden ? commentHidden.value : "0")
+            : (btn.getAttribute("data-comment") || "0");
         var accessUrl = btn.getAttribute("data-access-url");
 
         var msg = new CMessageBox({
             title: tr("page_access_title"),
-            body: buildAccessBody(viewVal, editVal),
+            body: buildAccessBody(viewVal, editVal, commentVal),
             buttons: [tr("save_changes"), tr("cancel")],
             close_on_buttons: false,
             unique_name: "page_access_dialog",
@@ -202,13 +333,17 @@ window.OpenVKPages = (function () {
                 function () {
                     var view = readAccessChoice("mb_view_access");
                     var edit = readAccessChoice("mb_edit_access");
-                    if (view === null || edit === null) {
+                    var comment = readAccessChoice("mb_comment_access");
+                    if (view === null || edit === null || comment === null) {
                         return;
                     }
 
                     if (isCreate) {
                         viewHidden.value = view;
                         editHidden.value = edit;
+                        if (commentHidden) {
+                            commentHidden.value = comment;
+                        }
                         msg.close();
                         return;
                     }
@@ -235,6 +370,7 @@ window.OpenVKPages = (function () {
                     addField("hash", csrf ? csrf.getAttribute("value") : "");
                     addField("view_access", view);
                     addField("edit_access", edit);
+                    addField("comment_access", comment);
                     document.body.appendChild(form);
                     form.submit();
                 },
@@ -250,8 +386,37 @@ window.OpenVKPages = (function () {
         }
     }
 
+    function bindTitleValidation(form) {
+        if (!form || form.dataset.titleValidateBound === "1") {
+            return;
+        }
+        form.dataset.titleValidateBound = "1";
+        form.addEventListener("submit", function (e) {
+            var formatEl = document.querySelector("input[name='format']:checked") || document.querySelector("input[name='format']");
+            if (formatEl && formatEl.value === "0" && window._editor) {
+                var html = document.querySelector("textarea[name='html']");
+                if (html) {
+                    html.value = window._editor.getValue();
+                }
+            }
+
+            var title = getTitleInput();
+            if (!title) {
+                return;
+            }
+            title.value = title.value.trim();
+            if (title.value === "") {
+                e.preventDefault();
+                title.focus();
+                window.alert(tr("page_no_title"));
+            }
+        });
+    }
+
     function init() {
         setupSourceArea();
+        bindTitleValidation(document.getElementById("page_edit_form"));
+        bindTitleValidation(document.getElementById("noteFactory"));
 
         if (bound) {
             return;
@@ -282,6 +447,10 @@ window.OpenVKPages = (function () {
                 e.preventDefault();
                 if (toolbarLink.getAttribute("data-action") === "preview") {
                     togglePreview();
+                    return;
+                }
+                if (toolbarLink.getAttribute("data-action") === "photo") {
+                    insertPhoto();
                     return;
                 }
                 if (toolbarLink.getAttribute("data-action") === "table") {

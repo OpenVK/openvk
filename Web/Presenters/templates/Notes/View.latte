@@ -87,6 +87,7 @@
             page => $cPage,
             model => "notes",
             parent => $note,
-            showTitle => false}
+            showTitle => false,
+            readOnly => !(isset($thisUser) && $note->canBeCommentedBy($thisUser))}
     </div>
 {/block}

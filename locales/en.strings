@@ -1567,9 +1567,16 @@
 "page_access_title" = "Access to this page";
 "page_who_can_view" = "Who can view this page?";
 "page_who_can_edit" = "Who can edit this page?";
+"page_who_can_comment" = "Who can comment on this page?";
 "page_access_everyone" = "All users";
 "page_access_members" = "Community members only";
 "page_access_admins" = "Community managers only";
+"page_access_friends" = "Friends only";
+"page_access_owner" = "Only the author";
+"note_format" = "Format";
+"note_format_markdown" = "Markdown";
+"note_format_html" = "HTML";
+"page_photo_prompt" = "Photo ID (photoOWNER_VID):";
 "page_access_saved" = "Access settings saved.";
 "page_access_denied" = "You do not have permission to view this page.";
 "page_no_revisions" = "No revisions yet.";

@@ -7,7 +7,7 @@
     outline: none;
     box-sizing: border-box;
     border: 1px solid #c6d4dc;
-    padding: 8px;
+    padding: 12px;
     font-family: Tahoma, Verdana, Arial, sans-serif;
     font-size: 11px;
     resize: vertical;
@@ -266,8 +266,22 @@
 }
 
 .page_edit_form {
-    margin-top: 14px;
+    margin-top: 0;
     margin-bottom: 10px;
+    margin-left: -10px;
+    margin-right: -10px;
+}
+
+.note_format_row {
+    padding: 8px 12px;
+    border: 1px solid #c6d4dc;
+    border-bottom: 0;
+    background: #f7f7f7;
+    font-size: 11px;
+}
+
+.note_format_row label {
+    margin-left: 10px;
 }
 
 .page_edit_form .wysiwyg_bbpanel,

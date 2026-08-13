@@ -12,25 +12,64 @@
 {/block}
 
 {block content}
-    <form id="noteFactory" method="POST">
-        <input type="text" name="name" placeholder="{_name_note}" style="width:603px;box-sizing:border-box;" value="{$note->getName()}" />
-        <br/><br/>
-        {include "xhtmlToolbar.latte"}
-        <textarea name="html" style="display:none;"></textarea>
-        <div id="editor" style="width:603px;height:300px;border:1px solid grey;box-sizing:border-box;"></div>
-
-        <p><i>{_something_is_supported_from_xhtml|noescape}</i></p>
-
+    {var $isMarkdown = $note->isMarkdown()}
+    <form id="noteFactory" class="page_edit_form" method="POST">
         <input type="hidden" name="hash" value="{$csrfToken}" />
-        <button class="button">{_save}</button>
-        &nbsp;
-        <a href="/note{$note->getOwner()->getId()}_{$note->getVirtualId()}" class="button">{_cancel}</a>
+        <input type="hidden" name="format" value="{$note->getFormat()}" />
+        <input type="text" name="name" class="page_title_input" placeholder="{_name_note}" maxlength="255" value="{$note->getName()}" />
+
+        <div n:if="$isMarkdown">
+            <div class="wysiwyg_bbpanel" id="page_toolbar">
+                <a href="javascript:void(0)" class="wysiwyg_icbold" data-md="**|**" title="Bold"></a>
+                <a href="javascript:void(0)" class="wysiwyg_ici" data-md="*|*" title="Italic"></a>
+                <a href="javascript:void(0)" class="wysiwyg_iclist" data-md="- " title="List"></a>
+                <a href="javascript:void(0)" class="wysiwyg_ich1" data-md="# |" title="H1"></a>
+                <a href="javascript:void(0)" class="wysiwyg_ich2" data-md="## |" title="H2"></a>
+                <a href="javascript:void(0)" class="wysiwyg_ich3" data-md="### |" title="H3"></a>
+                <a href="javascript:void(0)" class="wysiwyg_icquote" data-md="> |" title="Quote"></a>
+                <a href="javascript:void(0)" class="wysiwyg_iclink" data-md="[|](url)" title="Link"></a>
+                <a href="javascript:void(0)" class="wysiwyg_icphoto" data-action="photo" title="Image"></a>
+                <a href="javascript:void(0)" class="wysiwyg_ictable" data-action="table" title="{_markup_help_table}"></a>
+                <a href="javascript:void(0)" class="wysiwyg_icsource" data-action="preview" title="Preview"></a>
+            </div>
+            <textarea name="source" id="page_source" class="wysiwyg_inpt page_source_area">{$note->getSource()}</textarea>
+        </div>
+
+        <div n:if="!$isMarkdown">
+            {include "xhtmlToolbar.latte"}
+            <textarea name="html" style="display:none;"></textarea>
+            <div id="editor" style="width:100%;height:300px;border:1px solid grey;box-sizing:border-box;"></div>
+            <p><i>{_something_is_supported_from_xhtml|noescape}</i></p>
+        </div>
+
+        <div id="page_preview" class="page_preview_area" style="display:none;" data-format="{$note->getFormat()}"></div>
+
+        <div class="page_edit_footer">
+            <label class="nobold">
+                {_page_who_can_comment}
+                <select name="comment_access">
+                    <option value="0" n:attr="selected => $note->getCommentAccess() === 0">{_page_access_everyone}</option>
+                    <option value="1" n:attr="selected => $note->getCommentAccess() === 1">{_page_access_friends}</option>
+                    <option value="2" n:attr="selected => $note->getCommentAccess() === 2">{_page_access_owner}</option>
+                </select>
+            </label>
+            <div class="page_edit_footer_right">
+                <a href="javascript:void(0)" id="page_preview_btn">{_page_preview}</a>
+                <input type="submit" class="button" value="{_save}" />
+                <a href="/note{$note->getOwner()->getId()}_{$note->getVirtualId()}" class="button">{_cancel}</a>
+            </div>
+        </div>
     </form>
 
-    {script "js/node_modules/monaco-editor/min/vs/loader.js"}
-    {script "js/node_modules/requirejs/bin/r.js"}
-    {script "js/al_notes.js"}
+    {if !$isMarkdown}
+        {script "js/node_modules/monaco-editor/min/vs/loader.js"}
+        {script "js/node_modules/requirejs/bin/r.js"}
+        {script "js/al_notes.js"}
+    {/if}
+    {script "js/al_pages.js"}
     <script>
+        window.OpenVKPages && window.OpenVKPages.init();
+        {if !$isMarkdown}
         require.config({
             paths: {
                 'vs': '/assets/packages/static/openvk/js/node_modules/monaco-editor/min/vs'
@@ -43,9 +82,11 @@
                 language: "html"
             });
         });
-
         document.querySelector("#noteFactory").addEventListener("submit", function() {
-            document.querySelector("textarea[name=html]").value = window._editor.getValue();
+            if (window._editor) {
+                document.querySelector("textarea[name=html]").value = window._editor.getValue();
+            }
         });
+        {/if}
     </script>
 {/block}

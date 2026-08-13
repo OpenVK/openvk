@@ -135,6 +135,9 @@
                                 <option value="2" n:attr="selected => $club->getPagesType() == 2">{_materials_limited}</option>
                             </select>
                             <div class="nobold" style="margin-top: 4px;">{_materials_hint}</div>
+                            <div n:if="$club->isPagesEnabled()" style="margin-top: 4px;">
+                                <a href="/notes-{$club->getId()}">{_edit_group_pages}</a>
+                            </div>
                         </td>
                     </tr>
                     <tr>

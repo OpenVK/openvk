@@ -10,7 +10,7 @@ use HTMLPurifier_Filter;
 use Parsedown;
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\RowModel;
-use openvk\Web\Models\Repositories\{Users, Clubs, Notes};
+use openvk\Web\Models\Repositories\{Users, Clubs, Notes, Photos};
 
 class SecurityFilter extends HTMLPurifier_Filter
 {
@@ -101,7 +101,7 @@ class Note extends Postable
             return (int) $record->format;
         }
 
-        return (int) ($this->changes["format"] ?? ($this->isClubNote() ? self::FORMAT_MARKDOWN : self::FORMAT_HTML));
+        return (int) ($this->changes["format"] ?? self::FORMAT_MARKDOWN);
     }
 
     public function isMarkdown(): bool
@@ -137,6 +137,16 @@ class Note extends Postable
         }
 
         return (int) ($this->changes["edit_access"] ?? self::ACCESS_ADMINS);
+    }
+
+    public function getCommentAccess(): int
+    {
+        $record = $this->getRecord();
+        if ($record && isset($record->comment_access)) {
+            return (int) $record->comment_access;
+        }
+
+        return (int) ($this->changes["comment_access"] ?? self::ACCESS_EVERYONE);
     }
 
     public function keepsRevisions(): bool
@@ -275,6 +285,7 @@ class Note extends Postable
         );
 
         $html = (new Parsedown())->text($processed ?? $source);
+        $html = self::resolvePhotoEmbeds($html);
 
         $html = preg_replace_callback(
             '/<(t[dh])(\s[^>]*)?\sstyle="text-align:\s*(left|center|right);?"([^>]*)>/i',
@@ -321,6 +332,27 @@ class Note extends Postable
 
         $html = (new HTMLPurifier($config))->purify($html);
         return preg_replace('/<table\b(?![^>]*\bclass=)/i', '<table class="wiki_md_table"', $html) ?? $html;
+    }
+
+    private static function resolvePhotoEmbeds(string $html): string
+    {
+        $replaced = preg_replace_callback(
+            '/<img([^>]*?)src="(?:https?:\/\/[^"]+)?(\/)?photo(-?\d+)_(\d+)"([^>]*)>/i',
+            static function (array $m): string {
+                $photo = (new Photos())->getByOwnerAndVID((int) $m[3], (int) $m[4]);
+                if (!$photo || $photo->isDeleted()) {
+                    return $m[0];
+                }
+
+                $src = htmlspecialchars($photo->getURLBySizeId("normal"), ENT_QUOTES);
+                $href = htmlspecialchars($photo->getPageURL(), ENT_QUOTES);
+
+                return '<a href="' . $href . '"><img' . $m[1] . 'src="' . $src . '"' . $m[5] . '></a>';
+            },
+            $html
+        );
+
+        return $replaced ?? $html;
     }
 
     public function getText(): string
@@ -372,18 +404,31 @@ class Note extends Postable
             return false;
         }
 
-        $club = $this->getClub();
-        if (!$club) {
+        if ($this->isClubNote()) {
+            $club = $this->getClub();
+            if (!$club) {
+                return false;
+            }
+
+            if ($level === self::ACCESS_ADMINS) {
+                return $club->canBeModifiedBy($user);
+            }
+
+            return $club->getSubscriptionStatus($user)
+                || $club->canBeModifiedBy($user);
+        }
+
+        $owner = $this->getOwner();
+        if (!($owner instanceof User)) {
             return false;
         }
 
         if ($level === self::ACCESS_ADMINS) {
-            return $club->canBeModifiedBy($user);
+            return $this->canBeModifiedBy($user);
         }
 
-        // members
-        return $club->getSubscriptionStatus($user)
-            || $club->canBeModifiedBy($user);
+        return $owner->getId() === $user->getId()
+            || $owner->getSubscriptionStatus($user) === User::SUBSCRIPTION_MUTUAL;
     }
 
     public function canBeViewedBy(?User $user = null): bool
@@ -425,6 +470,15 @@ class Note extends Postable
         }
 
         return $this->canBeModifiedBy($user);
+    }
+
+    public function canBeCommentedBy(?User $user = null): bool
+    {
+        if (!$user || !$this->canBeViewedBy($user)) {
+            return false;
+        }
+
+        return $this->checkAccessLevel($this->getCommentAccess(), $user);
     }
 
     public function setRevisionEditor(int $userId): void
@@ -489,7 +543,10 @@ class Note extends Postable
 
         if ($isNew) {
             if (!isset($this->changes["format"])) {
-                $this->changes["format"] = $this->isClubNote() ? self::FORMAT_MARKDOWN : self::FORMAT_HTML;
+                $this->changes["format"] = self::FORMAT_MARKDOWN;
+            }
+            if (!isset($this->changes["comment_access"])) {
+                $this->changes["comment_access"] = self::ACCESS_EVERYONE;
             }
             if ($this->isClubNote()) {
                 if (!isset($this->changes["view_access"])) {
@@ -526,6 +583,7 @@ class Note extends Postable
                 "source"  => $revSource,
                 "created" => time(),
             ]);
+            (new Notes())->pruneRevisions($this, 50);
         }
     }
 
