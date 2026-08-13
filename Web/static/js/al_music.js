@@ -1059,14 +1059,24 @@ u(document).on('click', '.audioEntry .playerButton > .playIcon', async (e) => {
             })
         })
     } else if(!window.player.hasTrackWithId(id) && window.player.isAtAudiosPage()) {
-        window.player.__renewContext()
-        await window.player.loadContext(window.__current_page_audio_context.page ?? 1)
-        if(!isNaN(parseInt(location.hash.replace('#', '')))) {
-            const adp = parseInt(location.hash.replace('#', ''))
-            await window.player.loadContext(adp)
-        } else if((new URL(location.href)).searchParams.p) {
-            const adp = (new URL(location.href)).searchParams.p
-            await window.player.loadContext(adp)
+        // Track isn't in the loaded pages yet (e.g. jumped ahead/behind more than one
+        // page's worth of tracks). Walk outward from the already-loaded page range instead
+        // of resetting the whole context, since __renewContext()/pause() would stop the
+        // currently playing track for no reason and reloading page 1 won't necessarily
+        // contain the clicked track at all.
+        const pc = window.player.context
+        let highPage = pc.playedPages.length > 0 ? Math.max(...pc.playedPages) : 0
+        let lowPage = pc.playedPages.length > 0 ? Math.min(...pc.playedPages) : 1
+
+        while(!window.player.hasTrackWithId(id) && (highPage < pc.pagesCount || lowPage > 1)) {
+            if(highPage < pc.pagesCount) {
+                highPage++
+                await window.player.loadContext(highPage, true)
+            }
+            if(!window.player.hasTrackWithId(id) && lowPage > 1) {
+                lowPage--
+                await window.player.loadContext(lowPage, false)
+            }
         }
     }
 
