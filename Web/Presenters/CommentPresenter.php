@@ -174,7 +174,7 @@ final class CommentPresenter extends OpenVKPresenter
         }
 
         if ($replyToUser instanceof User && $replyToUser != $this->user) {
-            (new ReplyCommentNotification($replyToUser, $comment, $entity, $this->user))->emit();
+            (new ReplyCommentNotification($replyToUser, $comment, $entity, $this->user->identity))->emit();
         }
 
         $this->flashFail("succ", tr("comment_is_added"), tr("comment_is_added_desc"));
