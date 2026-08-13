@@ -66,7 +66,7 @@ class Comments
             "model"   => get_class($target),
             "target"  => $target->getId(),
             "deleted" => false,
-            "id"      => $id
+            "id"      => $id,
         ])->count("*") > 0 ? true : false;
     }
 
