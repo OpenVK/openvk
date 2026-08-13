@@ -1,4 +1,8 @@
-body.no-scroll .messenger-app--tab-messenger {
+:root {
+    --messenger-width: 628px;
+}
+
+body.no-scroll #chat-page {
     overflow-y: hidden;
     overflow-x: hidden;
     min-height: 100vh;
@@ -641,7 +645,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 
 .messenger-app,
 .messenger-app--input {
-    width: 628px;
+    width: var(--messenger-width);
 }
 
 .messenger-app--input {
@@ -670,7 +674,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 
 .messenger-app--input---messagebox textarea {
     width: 100%;
-    min-height: 50px;
+    min-height: 53px;
     max-height: 200px;
     resize: none;
     padding: 3px 6px;
@@ -828,7 +832,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     background: var(--common-2);
     display: inline-flex !important;
     box-sizing: border-box;
-    width: 628px;
+    width: var(--messenger-width);
 }
 
 .peer-window .back-side {
@@ -1039,10 +1043,10 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 .messenger-app--tab-friends .friends-list-b {
     border-top: 1px solid var(--bg-slightly-border);
     padding: 0px 44px 0px 44px;
-    position: absolute;
-    height: 35px;
-    width: 100%;
+    position: fixed;
     bottom: 0px;
+    height: 35px;
+    width: var(--messenger-width);
     box-sizing: border-box;
     display: flex;
     align-items: center;
@@ -1080,7 +1084,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 /* Search */
 
 #search-page-im {
-    width: 628px;
+    width: var(--messenger-width);
 }
 
 .search-up {

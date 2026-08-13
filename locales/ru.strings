@@ -1422,6 +1422,7 @@
 "messenger_tab_messenger" = "Сообщения";
 "messenger_tab_friends" = "Друзья";
 "messenger_tab_contact" = "Контакт";
+"messenger_tab_settings" = "Нас3";
 "message_is_deleted" = "Сообщение удалено";
 
 "to_friendslist" = "К списку друзей";
@@ -1481,7 +1482,7 @@
 
 "create_chat" = "Новая беседа";
 "create_chat_f" = "Создать беседу";
-"create_chat_tip_1" = "Выберите друзей, которых хотели бы видеть в своей беседе.";
+"create_chat_tip_1" = "Выберите друзей, которых вы хотели бы видеть в своей беседе.";
 "create_chat_tip_2" = "Когда всё будет готово, нажмите кнопку внизу.";
 
 "error_user_forbid_invites" = "Пользователь запретил добавлять себя в беседы.";

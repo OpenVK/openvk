@@ -1,9 +1,10 @@
 import { html, render } from './render.js';
 
 export const PeerTab = ({ conv, active }) => {
+    console.log(conv)
     return html`
         <div class="messages--peers-tab${active ? ' selected' : ''}">
-            <a onClick=${() => window.im?.selectChat(conv)}>${conv.peer.conversations_name}</a>
+            <a onClick=${() => window.im?.messenger.selectConversation(conv)}>${conv.peer.conversations_name}</a>
             <span class="messages--peers-tab-close" onClick=${() => window.im?.closeChat(conv)}>×</span>
         </div>
     `;
@@ -12,6 +13,7 @@ export const PeerTab = ({ conv, active }) => {
 export const PeerTabsView = ({ had_more_one_tab, tabs, currentChat }) => {
     //if (tabs.length < 2 && had_more_one_tab) { return html`` }
 
+    console.log(currentChat)
     return html`
         <div class="messages--peers-tabs">
             ${tabs.map((tab, idx) => html`
@@ -99,6 +101,8 @@ export const WriteBar = ({ convo }) => {
 
 export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress, currentDraft, onInput, togglePeerInfo, clickOnReply }) => {
     const is_editing = editMsg != null;
+    const current_user = window.im.state.getOperator();
+    const corresponder = window.im.state.getCurrentConvo();
 
     return html`
     <div class="messenger-app-end${(replyTo || editMsg) ? ' m-selected' : ''}">
@@ -116,7 +120,7 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
         `}
         <div class="post-buttons">
             <div class="model_content_textarea messenger-app--input has_emoji_picker expanded-textarea" id="write">
-                <img class="ava" src=${window.im.current.avatar_any} alt=${window.im.current.full_name} />
+                <img class="ava" src=${current_user.avatar_any} alt=${current_user.full_name} />
                 <div class="messenger-app--input---messagebox">
                     <div class="textareas has_emoji_picker">
                         <textarea
@@ -134,8 +138,8 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
                         <${AttachmentMenu} />
                     </div>
                 </div>
-                <img class="ava" src="${window.im?.corresponder?.avatar_any || ''}"
-                    alt="${window.im?.corresponder?.full_name || ''}" />
+                <img class="ava" src="${corresponder.peer.avatar_any || ''}"
+                    alt="${corresponder.peer.full_name || ''}" />
             </div>
         </div>
     </div>
@@ -197,9 +201,11 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
 };
 
 export const TabBar = ({ tabs, activeTab, onTabSelect }) => {
-    const showSpecActions = activeTab != "friends";
-    const showContactButton = activeTab == "messenger";
-    const showSettingsButton = true;
+    console.log(activeTab.getPageId())
+    const showContactButton = activeTab.getPageId() == "messenger";
+    const showFriendsButton = activeTab.getPageId() != "friends";
+    const showSettingsButton = activeTab.getPageId() == "conversations";
+    const showSpecActions = showSettingsButton || showContactButton || showFriendsButton;
 
     return html`
         <div class="messenger-app--global-tabs tabs">
@@ -215,28 +221,30 @@ export const TabBar = ({ tabs, activeTab, onTabSelect }) => {
             </div>
             <div class="${showSpecActions == false ? 'hidden' : '' }" id="spec-actions">
                 ${showContactButton ? html`
-                    <a onclick=${() => { window.im.messenger.view.togglePeerInfo() }}>${tr('about_peer')}</a>
+                    <a onclick=${() => { window.im.openTabByName("contact") }}>${tr('about_peer')}</a>
                     <span class="tab-divider">|</span>
                 ` : '' }
                 ${showSettingsButton ? html`
-                    <a onclick=${() => { window.im.openTabByName("settings") }}>нас3</a>
+                    <a onclick=${() => { window.im.openTabByName("settings") }}>${tr("messenger_tab_settings")}</a>
                     <span class="tab-divider">|</span> 
                 ` : ""}
-                <a onclick=${() => { window.im.openTabByName("friends")} }>${tr('to_friendslist')}</a>
+                ${showFriendsButton ? html`<a onclick=${() => { window.im.openTabByName("friends")} }>${tr('to_friendslist')}</a>` : ""}
             </div>
         </div>
     `;
 };
 
-export const PeerWindow = ({ peer, togglePeerInfo }) => {
+export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
+    const peer = convo.peer;
     const supposed_type = peer.supposed_type;
     const isOnline = peer.online == 1;
     const avatar = peer.avatar_big || peer.data.photo_50 || '';
     const has_avatar = true;
-    const is_from_chat = window.im.corresponder.supposed_type == "chat" && peer.supposed_type != "chat";
+    const is_from_chat = fromConvo.supposed_type == "chat" && peer.supposed_type != "chat";
 
     return html`
-    <div class="back-side"><a onClick=${() => { window.im.messenger.view.togglePeerInfo() }}>${tr('back')}</a></div>
+    <div class="peer-window">
+    <div class="back-side"><a onClick=${() => { window.im.openTabByName("messenger") }}>${tr('back')}</a></div>
     <div class="peer-side">
         <div class="peer-info">
             <div class="peer-avatar sliding-thing-wrapper">
@@ -288,6 +296,7 @@ export const PeerWindow = ({ peer, togglePeerInfo }) => {
         </div>
         <div class="chat-members"></div>
         <div class="chat-media"></div>
+    </div>
     </div>
     `;
 }
