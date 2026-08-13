@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="13"
+   height="12"
+   viewBox="0 0 3.4395834 3.175"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   sodipodi:docname="desktop.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="true"
+     inkscape:document-units="cm"
+     showgrid="false"
+     units="px"
+     height="41.5748px"
+     inkscape:zoom="64"
+     inkscape:cx="6.4453125"
+     inkscape:cy="6.3984375"
+     inkscape:window-width="1339"
+     inkscape:window-height="1041"
+     inkscape:window-x="245"
+     inkscape:window-y="15"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1"
+     inkscape:showpageshadow="2"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:lockguides="false" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="layout"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="display:inline"
+     transform="matrix(1.2580938,0,0,1.2580938,-0.33746785,-0.25945221)">
+    <path
+       style="display:inline;fill:#b4c3d1;fill-opacity:1;stroke:#b3c3d1;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 0.67597893,0.44468243 V 1.9899313 H 1.3657875 l 0.0026,0.5011208 h 0.5374349 l -0.00462,-0.5011208 0.6932577,-9.2e-6 V 0.44468243 c -0.639456,0.004804 -1.2789642,1.9572e-4 -1.91848117,0 z"
+       id="path968"
+       sodipodi:nodetypes="ccccccccc" />
+    <path
+       style="display:inline;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.148069;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 0.91851675,0.76322298 V 1.5978365 H 2.3519223 V 0.76322298 Z"
+       id="path10486"
+       inkscape:label="path10486" />
+  </g>
+</svg>
