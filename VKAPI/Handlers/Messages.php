@@ -293,6 +293,59 @@ final class Messages extends VKAPIRequestHandler
         }
     }
 
+    public function getDialogs(int $offset = 0, int $count = 20, string $filter = "all", int $extended = 1, string $fields = ""): object
+    {
+        $this->requireUser();
+
+        if (VKAPI_DECL_VER_MAJOR >= 5 && VKAPI_DECL_VER_MINOR >= 80) {
+            $this->fail(23, "This method was deprecated in real VK since 5.80. Please either use message.getConversation or lower your reported API version.");
+        }
+
+        $convos = (new MSGRepo())->getCorrespondencies($this->getUser(), -1, $count, $offset);
+        $convosCount = (new MSGRepo())->getCorrespondenciesCount($this->getUser());
+        $list   = [];
+
+        foreach ($convos as $convo) {
+            $correspondents = $convo->getCorrespondents();
+            if ($correspondents[0]->getId() == $this->getUser()->getId()) {
+                $peer = $correspondents[1];
+            } else {
+                $peer = $correspondents[0];
+            }
+
+            $lastMessage = $convo->getPreviewMessage();
+            $author = $lastMessage->getSender()->getId();
+
+            $msgObj = [];
+
+            $msgObj['id'] = $lastMessage->getId();
+            $msgObj['date'] = $lastMessage->getSendTime()->timestamp();
+            $msgObj['out'] = (int) ($author == $this->getUser()->getId());
+            $msgObj['from_id'] = $author == $this->getUser()->getId() ? $this->getUser()->getId() : $peer->getId();
+            $msgObj['user_id'] = $peer->getId();
+            $msgObj['peer_id'] = $peer->getId();
+            $msgObj['read_state'] = (int) !$lastMessage->isUnread();
+            $msgObj['title'] = "";
+            $msgObj['body'] = $lastMessage->getText(false);
+            $msgObj['attachments'] = [];
+            $msgObj['fwd_messages'] = [];
+            $msgObj['emoji'] = true;
+
+            $mainObj = [
+                "unread" => $lastMessage->isUnread() ? 1 : 0,
+                "message" => (object) $msgObj,
+            ];
+
+            $list[] = (object) $mainObj;
+        }
+
+        return (object) [
+            "count" => $convosCount,
+            "unread_dialogs" => 3,
+            "items" => $list,
+        ];
+    }
+
     public function getConversationsById(string $peer_ids, int $extended = 0, string $fields = "")
     {
         $this->requireUser();
