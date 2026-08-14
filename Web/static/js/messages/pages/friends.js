@@ -120,7 +120,7 @@ export class Friends {
         const res = await window.OVKAPI.call('friends.get', {
             offset: offset,
             count: this.perPage,
-            fields: ChatGeneralForm.base_fields,
+            fields: ChatGeneralForm.BASE_FIELDS,
         });
 
         this.last_offset = offset;

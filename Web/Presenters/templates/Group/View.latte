@@ -222,55 +222,65 @@
         </a>
     </div>
     <div n:ifset="$thisUser" id="profile_links">
-        {if $club->canBeModifiedBy($thisUser)}
-            {if $club->isMessagesEnabled()}
-                <a href="/im?as={$club->getRealId()}" class="profile_link">{_view_group_messages}</a>
-            {/if}
-            <a href="/club{$club->getId()}/edit" id="profile_link">{_edit_group}</a>
-            <a href="/club{$club->getId()}/stats" rel="nofollow" id="profile_link">{_statistics}</a>
-        {else}
-            {if $club->isMessagesEnabled()}
-                <a id="_message_send" data-eid="{$club->getRealId()}" href="/im?sel={$club->getRealId()}" class="profile_link">{_send_message}</a>
-            {/if}
-        {/if}
-        {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
-            <a href="/admin/clubs/id{$club->getId()}" id="profile_link">{_manage_group_action}</a>
-            <a href="/admin/logs?obj_id={$club->getId()}&obj_type=Club" class="profile_link">Последние действия</a>
-        {/if}
-        {if $club->getSubscriptionStatus($thisUser) == false}
-            <form action="/setSub/club" method="post">
-                <input type="hidden" name="act" value="add" />
-                <input type="hidden" name="id"  value="{$club->getId()}" />
-                <input type="hidden" name="hash" value="{$csrfToken}" />
-                {if $club->isEvent() && !$club->isEventOver()}
-                    <input type="submit" id="profile_link" value="{_ill_come_to_meeting}" />
-                {elseif $club->isEvent() && $club->isEventOver()}
-                    <input type="submit" id="profile_link" value="{_add_to_list_event}" />
-                {else}
-                    <input type="submit" id="profile_link" value="{_join_community}" />
-                {/if}
-            </form>
-            {if $club->isEvent() && !$club->isEventOver()}
+        <div class="profile_links_important" id="profile_links_common">
+            {if $club->getSubscriptionStatus($thisUser) == false}
                 <form action="/setSub/club" method="post">
                     <input type="hidden" name="act" value="add" />
-                    <input type="hidden" name="flag" value="1" />
                     <input type="hidden" name="id"  value="{$club->getId()}" />
                     <input type="hidden" name="hash" value="{$csrfToken}" />
-                    <input type="submit" id="profile_link" value="{_i_might_come_to_meeting}" />
+                    {if $club->isEvent() && !$club->isEventOver()}
+                        <input type="submit" class="brand_link brand_link_pitched subscribe_button" id="profile_link" value="{_ill_come_to_meeting}" />
+                    {elseif $club->isEvent() && $club->isEventOver()}
+                        <input type="submit" class="brand_link brand_link_pitched subscribe_button" id="profile_link" value="{_add_to_list_event}" />
+                    {else}
+                        <input type="submit" class="brand_link subscribe_button" id="profile_link" value="{_join_community}" />
+                    {/if}
+                </form>
+                {if $club->isEvent() && !$club->isEventOver()}
+                    <form action="/setSub/club" method="post">
+                        <input type="hidden" name="act" value="add" />
+                        <input type="hidden" name="flag" value="1" />
+                        <input type="hidden" name="id"  value="{$club->getId()}" />
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <input type="submit" class="brand_link subscribe_button" id="profile_link" value="{_i_might_come_to_meeting}" />
+                    </form>
+                {/if}
+            {else}
+                <form action="/setSub/club" method="post">
+                    <input type="hidden" name="act" value="rem" />
+                    <input type="hidden" name="id"  value="{$club->getId()}" />
+                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                    {if $club->isEvent()}
+                        <input type="submit" class="brand_link brand_link_pitched subscribe_button" id="profile_link" value="{_ill_not_come_to_meeting}" />
+                    {else}
+                        <input type="submit" class="brand_link brand_link_pitched subscribe_button" id="profile_link" value="{_leave_community}" />
+                    {/if}
                 </form>
             {/if}
-        {else}
-            <form action="/setSub/club" method="post">
-                <input type="hidden" name="act" value="rem" />
-                <input type="hidden" name="id"  value="{$club->getId()}" />
-                <input type="hidden" name="hash" value="{$csrfToken}" />
-                {if $club->isEvent()}
-                    <input type="submit" id="profile_link" value="{_ill_not_come_to_meeting}" />
-                {else}
-                    <input type="submit" id="profile_link" value="{_leave_community}" />
+
+            {if $canBeModified}
+                {if $club->isMessagesEnabled()}
+                    <a href="/im?as={$club->getRealId()}" class="profile_link brand_link_pitched">{_view_group_messages}</a>
                 {/if}
-            </form>
+            {else}
+                {if $club->isMessagesEnabled()}
+                    <a  onclick="showUserDialog(event, {$club->getRealId()})" href="/im?sel={$club->getRealId()}" class="brand_link brand_link_pitched profile_link">{_send_message}</a>
+                {/if}
+            {/if}
+        </div>
+
+        {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+            <div class="profile_links_important" id="profile_links_admin">
+                    <a href="/admin/clubs/id{$club->getId()}" id="profile_link">{_manage_group_action}</a>
+                    <a href="/admin/logs?obj_id={$club->getId()}&obj_type=Club" class="profile_link">Последние действия</a>
+            </div>
         {/if}
+
+        {if $canBeModified}
+            <a href="/club{$club->getId()}/edit" id="profile_link">{_edit_group}</a>
+            <a href="/club{$club->getId()}/stats" rel="nofollow" id="profile_link">{_statistics}</a>
+        {/if}
+
         {var $canReport = $thisUser->getId() != $club->getOwner()->getId()}
         {if $canReport}
         <a class="profile_link" style="display:block;" href="javascript:reportClub({$club->getId()})">{_report}</a>

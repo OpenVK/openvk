@@ -11,6 +11,7 @@
     --text-2: #404036;
     --text-rev: white;
     --brand: #606060;
+    --brand-l-1: #787878;
     --brand-bg: #efeef6;
     --nobold: #868686;
 
@@ -504,6 +505,48 @@ h1 {
     text-align: left;
     cursor: pointer;
     font-family: tahoma, verdana, arial, sans-serif;
+}
+
+.profile_links_important {
+    padding: 10px 10px;
+}
+
+.profile_links_important > a,
+.profile_links_important > #profile_link,
+.profile_links_important > .profile_link,
+.profile_links_important input[type="submit"] {
+    width: 100%;
+    text-align: center;
+    padding: 5px 0px;
+}
+
+#profile_links_common {
+    background: var(--brand-bg);
+    margin-bottom: 5px;
+}
+
+#profile_links_admin {
+    background: radial-gradient(transparent, var(--error-bg));
+}
+
+#profile_links_common .brand_link {
+    width: 100%;
+    text-align: center;
+    background: var(--brand);
+    color: var(--text-rev);
+    padding: 7px 0px;
+}
+
+#profile_links_common .brand_link.brand_link_pitched {
+    background: var(--brand-l-1);
+}
+
+#profile_links_common .brand_link:hover {
+    background: var(--brand);
+}
+
+#profile_links_common .brand_link:active {
+    transform: translateY(1px);
 }
 
 .profile_link_form {

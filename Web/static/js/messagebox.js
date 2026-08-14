@@ -390,24 +390,29 @@ class Viewer {
     }
 
     _pushW(id) {
-        if (window.messagebox_stack.length > 2) {
+        if (window.messagebox_stack.length > 1) {
             console.error("i think there is a common \"w\".");
             return;
         }
 
         const url = new URL(location.href);
+        const _ct = this._encodeContext();
         url.searchParams.set("w", this._getEntityPageName() + id);
-        console.log(url)
+        if (false && _ct && _ct.length > 0) {
+            url.searchParams.set("z", _ct);
+        }
+
         history.replaceState({}, '', url.toString());
     }
 
     _removeW() {
-        if (window.messagebox_stack.length > 1) {
+        if (window.messagebox_stack.length > 0) {
             return;
         }
 
         const url = new URL(location.href);
         url.searchParams.delete("w");
+        url.searchParams.delete("z");
         history.replaceState({}, '', url.toString());
     }
 
@@ -512,6 +517,14 @@ class Viewer {
         }
 
         return str.toString();
+    }
+
+    _encodeContext() {
+        return JSON.stringify(this.context);
+    }
+
+    _decodeContext(ctx) {
+        return JSON.decode(ctx);
     }
 
     // states
@@ -772,6 +785,11 @@ function _checkViewerType(type, w, callback) {
 function _checkViewers() {
     const url = new URL(location.href);
     const w = url.searchParams.get("w");
+    let decoded = null;
+    if (url.searchParams.get("z") != null) {
+        decoded = JSON.decode(url.searchParams.get("w"));
+    }
+
     // такого вида: wall0_0
 
     if (!w || w.length == 0) {

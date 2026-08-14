@@ -14,7 +14,7 @@ import { html, render as preactRender } from './components/render.js';
 //const u = window.u;
 
 export class InstantMessagesAndRelated {
-    constructor() {
+    constructor(group_id = null) {
         this.tabs = [];
         this.selectedTabId = null;
 
@@ -27,7 +27,7 @@ export class InstantMessagesAndRelated {
         //this.current = new Currentness(this);
         this.cached_profiles = new ProfilesCache();
         this.event_handler = new EventHandler();
-        this.state = new IMState(this);
+        this.state = new IMState(this, group_id);
 
         this.isReady = false;
         this.conversations = new Conversations();
@@ -243,10 +243,11 @@ class IMVariants {
 }
 
 class IMState {
-    constructor(im_link) {
+    constructor(im_link, group_id = null) {
         this.link = im_link;
         this.items = [];
         this.item_index = 0;
+        this.group_id = group_id;
     }
 
     get is_compact_mode_enabled() { return localStorage.getItem("tw.im.modern_mode") === "1"; }
@@ -259,13 +260,22 @@ class IMState {
     }
 
     async _loadCurrent() {
-        let _v = await window.OVKAPI.call('users.get', {
-            'user_ids': window.openvk.current_id,
-            'fields': ChatGeneralForm.base_fields,
-        });
-        this.items.push(new ChatGeneralForm(_v[0]));
-        this.item_index = 0;
+        if (group_id == null) {
+            let _v = await window.OVKAPI.call('users.get', {
+                'user_ids': window.openvk.current_id,
+                'fields': ChatGeneralForm.BASE_FIELDS,
+            });
+            this.items.push(new ChatGeneralForm(_v[0]));
+        } else {
+            let _v = await window.OVKAPI.call('groups.getById', {
+                'group_ids': Math.abs(window.openvk.current_id),
+                'fields': ChatGeneralForm.BASE_FIELDS,
+            });
+            this.items.push(new ChatGeneralForm(_v[0]));
+        }
+
         this.link.cached_profiles._addProfileCache(this.getOperator());
+        this.item_index = 0;
     }
 
     getOperator() {
@@ -779,6 +789,8 @@ export class IMDeprecated {
 }
 
 (async () => {
+    const n_url = new URL(location.href);
+    console.log()
     if (window.im == null) {
         window.im_variants = new IMVariants();
         window.im_variants.add(new InstantMessagesAndRelated());
@@ -786,4 +798,8 @@ export class IMDeprecated {
     }
 
     await window.im.init();
+    if (n_url.searchParams.get("as") != null) {
+        window.im_variants.add(new InstantMessagesAndRelated(Number(n_url.searchParams.get("as"))));
+        window.im_variants.setByIndex(0);
+    }
 })()

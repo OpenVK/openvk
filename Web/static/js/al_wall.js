@@ -279,7 +279,14 @@ class PhotoViewer extends Viewer {
             case "album":
                 const alb = this.context.id.split("_");
                 const ids = selected_id.split("_");
-                this.context.offset = await this._resolveOffset(ids[0], ids[1], "photos.get", alb[1], this.context.reverse);
+
+                try {
+                    if (alb[1] != "profile") {
+                        this.context.offset = await this._resolveOffset(ids[0], ids[1], "photos.get", alb[1], this.context.reverse);
+                    }
+                } catch(e) {
+                    fastError(String(e));
+                }
                 await this.loadAlbumContext();
                 break;
             case "all_photos":
@@ -1274,6 +1281,7 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post", custom_con
     const __photoViewer = new PhotoViewer();
     CMessageBox.toggleLoader(true);
 
+    console.log(post);
     if (custom_context == null) {
         __photoViewer.setContext({
             type: type,

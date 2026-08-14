@@ -107,12 +107,13 @@ export class Conversations {
     }
 
     async getConversations(offset = 0) {
-        let convs = await window.OVKAPI.call('messages.getConversations', {
+        const params = {
             extended: 1,
             count: this.CONVERSATIONS_PER_PAGE,
             offset: offset,
-            fields: ChatGeneralForm.base_fields,
-        });
+            fields: ChatGeneralForm.BASE_FIELDS,
+        };
+        let convs = await window.OVKAPI.call('messages.getConversations', params);
 
         const lists = [];
 

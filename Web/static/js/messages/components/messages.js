@@ -20,7 +20,7 @@ export class MessagesChunk {
         this.uid = null;
     }
 
-    // это сообщение, отсносительно прокрутки вверх - самое старое!
+    // это сообщение, которое отсносительно прокрутки вверх самое старое!
     getFirstMessage() {
 
     }
@@ -60,7 +60,7 @@ export class DeprecatedMessagesChunk {
     const params = {
       'count': ChatGeneralForm.MESSAGES_PER_PAGE,
       'extended': 1,
-      'fields': ChatGeneralForm.base_fields,
+      'fields': ChatGeneralForm.BASE_FIELDS,
     };
 
     Object.assign(params, data);
@@ -121,35 +121,16 @@ export class DayChunk extends MessagesChunk {
 }
 
 export class ChatGeneralForm {
-    static chat_number = 2000000000;
+    static CHAT_RUBICON = 2000000000;
     static MESSAGES_PER_PAGE = 20;
-    static base_fields = 'photo_100,photo_200,photo_max,last_seen,photo_id,status,sex,can_write_private_message,can_invite,followers_count';
+    static BASE_FIELDS = 'photo_100,photo_200,photo_max,last_seen,photo_id,status,sex,can_write_private_message,can_invite,followers_count';
+    static SAVED_MESSAGES_AVATAR = "/assets/packages/static/openvk/img/im/saved_messages.png";
+    static CHAT_NO_AVATAR = "/assets/packages/static/openvk/img/im/chat_meaningless.jpg";
 
     constructor(item) {
         this.data = item || {};
-        this.message_chunks = [];
+        this._chunks = new Chunks();
         this.pinned_message_chunks = [];
-
-        /**
-        * UID of the chunk the user is currently scrolled to / anchored at.
-        * Set after the first load. Changes when the user scrolls into a
-        * newly loaded chunk (see _messagesLoad_UpFromCurrentChunk and
-        * _messagesLoad_DownFromCurrentChunk).
-        */
-        this._currentChunkUid = null;
-
-        /**
-        * True when the API confirmed there are no older messages
-        * (scrolling UP is exhausted).
-        */
-        this._end_reached = false;
-
-        /**
-        * True when the API confirmed there are no newer messages
-        * (scrolling DOWN is exhausted — we are at the very end of the
-        * conversation).
-        */
-        this._beginning_reached = false;
 
         this._messages_inited = false;
         this._members = null;
@@ -165,8 +146,8 @@ export class ChatGeneralForm {
             case 'club':
                 return this.data.id * -1;
             case 'chat':
-                if (this.data.id < this.chat_number) {
-                    return this.data.id + this.chat_number;
+                if (this.data.id < this.CHAT_RUBICON) {
+                    return this.data.id + this.CHAT_RUBICON;
                 } else {
                     return this.data.id;
                 }
@@ -197,6 +178,10 @@ export class ChatGeneralForm {
 
     isAdmin() {
         return this.data.admin_id === window.openvk.current_id;
+    }
+
+    can(thing, relatively_current_group = null) { // unified function
+
     }
 
     canUsersBeAddedBy(group = null) {
@@ -258,14 +243,14 @@ export class ChatGeneralForm {
 
     get conversation_avatar_any() {
         if (this.id === window.openvk.current_id) {
-            return "/assets/packages/static/openvk/img/im/saved_messages.png";
+            return ChatGeneralForm.SAVED_MESSAGES_AVATAR;
         }
 
         return this.avatar_any;
     }
 
     get avatar_any() {
-        return this.data.photo_100 ?? '/assets/packages/static/openvk/img/im/chat_meaningless.jpg';
+        return this.data.photo_100 ?? ChatGeneralForm.CHAT_NO_AVATAR;
     }
 
     get avatar_big() {
@@ -398,6 +383,7 @@ export class ChatGeneralForm {
     * so that the flattened result is oldest-to-newest overall.
     */
     get messages() {
+        return [];
         const fnl = [];
         if (this._cached_all_messages != undefined) {
             return this._cached_all_messages;
@@ -413,6 +399,7 @@ export class ChatGeneralForm {
     }
 
     get divided_messages() {
+        return [];
         const dayChunks = [];
         const dateMap = new Map();
 
@@ -457,8 +444,8 @@ export class ChatGeneralForm {
             return window.im._current;
         }
 
-        if (id > this.chat_number) {
-            const __ = await window.OVKAPI.call('messages.getConversationsById', { 'peer_ids': id, 'fields': ChatGeneralForm.base_fields });
+        if (id > this.CHAT_RUBICON) {
+            const __ = await window.OVKAPI.call('messages.getConversationsById', { 'peer_ids': id, 'fields': ChatGeneralForm.BASE_FIELDS });
 
             if (!__ || __.items.length == 0) {
                 return null;
@@ -466,10 +453,13 @@ export class ChatGeneralForm {
             return __.items[0].conversation.peer;
         } else {
             if (id > 0) {
-                const __ = await window.OVKAPI.call('users.get', { 'user_ids': id, 'fields': ChatGeneralForm.base_fields });
+                const __ = await window.OVKAPI.call('users.get', { 'user_ids': id, 'fields': ChatGeneralForm.BASE_FIELDS });
+                if (__[0].first_name == "DELETED" && __[0].deactivated == "deleted") {
+                    return null;
+                }
                 return __[0];
             } else {
-                const __ = await window.OVKAPI.call('groups.getById', { 'group_ids': Math.abs(id), 'fields': ChatGeneralForm.base_fields });
+                const __ = await window.OVKAPI.call('groups.getById', { 'group_ids': Math.abs(id), 'fields': ChatGeneralForm.BASE_FIELDS });
                 if (__[0].type == 'undefined') {
                     return null;
                 }
@@ -936,7 +926,7 @@ export class ChatGeneralForm {
         const group_id = null;
 
         const params = {
-            "chat_id": this.id - ChatGeneralForm.chat_number,
+            "chat_id": this.id - ChatGeneralForm.CHAT_RUBICON,
             "group_id": group_id
         }
         const v = await window.OVKAPI.call("photos.getChatUploadServer", params);
@@ -954,7 +944,7 @@ export class ChatGeneralForm {
         const v1 = await window.OVKAPI.call("messages.setChatPhoto", {
             "file": photo,
             "hash": hash,
-            "chat_id": this.id - ChatGeneralForm.chat_number,
+            "chat_id": this.id - ChatGeneralForm.CHAT_RUBICON,
         });
 
         return v1;
