@@ -97,7 +97,7 @@
                 <div n:if="$mainPage->canBeViewedBy($thisUser ?? null)">
                     <b><a href="{$mainPage->getURL()}">{$mainPage->getTitle()}</a></b>
                     <div style="margin-top: 6px;">
-                        {$mainPage->getText()|noescape}
+                        {$mainPage->getText($thisUser ?? null)|noescape}
                     </div>
                 </div>
                 <div n:else class="section_empty">

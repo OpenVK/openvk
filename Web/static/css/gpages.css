@@ -311,9 +311,10 @@
     align-items: center;
     width: 100%;
     max-width: 100%;
+    box-sizing: border-box;
     margin-top: 14px;
     margin-bottom: 6px;
-    padding-top: 2px;
+    padding: 2px 10px 6px;
 }
 
 .page_edit_footer_right {

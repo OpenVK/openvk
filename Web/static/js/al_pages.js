@@ -101,22 +101,123 @@ window.OpenVKPages = (function () {
     }
 
     function insertPhoto() {
-        var raw = window.prompt(tr("page_photo_prompt"), "photo");
-        if (raw === null) {
+        if (typeof CMessageBox === "undefined" || !window.OVKAPI || !window.OVKAPI.call) {
+            insertMarkdown("![|](url)");
             return;
         }
-        raw = raw.trim().replace(/^\/+/, "");
-        if (!raw) {
-            return;
+
+        var preview = document.getElementById("page_preview");
+        var club = Number((preview && preview.getAttribute("data-club")) || 0);
+        var albumOwner = club ? -Math.abs(club) : window.openvk.current_id;
+        var photosPerPage = 23;
+
+        var msg = new CMessageBox({
+            title: tr("select_photo"),
+            body:
+                "<div class='attachment_selector'>" +
+                    "<div class='topGrayBlock display_flex_row'>" +
+                        "<select id='albumSelect'>" +
+                            "<option value='0'>" + tr("all_photos") + "</option>" +
+                        "</select>" +
+                    "</div>" +
+                    "<div id='attachment_insert'>" +
+                        "<div id='attachment_insert_count'><h4>" + tr("is_x_photos", 0) + "</h4></div>" +
+                        "<div class='photosList album-flex'></div>" +
+                    "</div>" +
+                "</div>",
+            buttons: [tr("close")],
+            callbacks: [Function.noop],
+            unique_name: "page_photo_picker"
+        });
+
+        msg.getNode().attr("style", "width: 630px;");
+        msg.getNode().find(".ovk-diag-body").attr("style", "height:335px;padding:0px;");
+
+        async function receivePhotos(page, album) {
+            album = album || 0;
+            u("#gif_loader").remove();
+            u("#attachment_insert").append("<div id='gif_loader'></div>");
+            var insertPlace = u("#attachment_insert .photosList");
+            var photos;
+
+            try {
+                if (album == 0) {
+                    photos = await window.OVKAPI.call("photos.getAll", {
+                        owner_id: window.openvk.current_id,
+                        photo_sizes: 1,
+                        count: photosPerPage,
+                        offset: page * photosPerPage
+                    });
+                } else {
+                    photos = await window.OVKAPI.call("photos.get", {
+                        owner_id: albumOwner,
+                        album_id: album,
+                        photo_sizes: 1,
+                        count: photosPerPage,
+                        offset: page * photosPerPage
+                    });
+                }
+            } catch (e) {
+                u("#attachment_insert_count h4").html(tr("is_x_photos", -1));
+                u("#gif_loader").remove();
+                insertPlace.html("Invalid album");
+                return;
+            }
+
+            u("#attachment_insert_count h4").html(tr("is_x_photos", photos.count));
+            u("#gif_loader").remove();
+            var pagesCount = Math.ceil(Number(photos.count) / photosPerPage);
+            (photos.items || []).forEach(function (photo) {
+                var ownerId = Number(photo.owner_id);
+                var photoId = Number(photo.id);
+                if (!Number.isFinite(ownerId) || !Number.isFinite(photoId)) {
+                    return;
+                }
+
+                insertPlace.append(
+                    "<a class='album-photo' data-attachmentdata='" + ownerId + "_" + photoId + "' href='/photo" + ownerId + "_" + photoId + "'>" +
+                        "<img class='album-photo--image' src='" + escapeHtml(photo.photo_130 || "") + "' alt=''>" +
+                    "</a>"
+                );
+            });
+
+            if (page < pagesCount - 1) {
+                insertPlace.append(
+                    "<div id='show_more' data-pagesCount='" + pagesCount + "' data-page='" + (page + 1) + "'>" +
+                        "<span>" + tr("show_more") + "</span>" +
+                    "</div>"
+                );
+            }
         }
-        if (/^-?\d+_\d+$/.test(raw)) {
-            raw = "photo" + raw;
-        }
-        if (/^photo-?\d+_\d+$/i.test(raw)) {
-            insertMarkdown("![|](/" + raw + ")");
-            return;
-        }
-        insertMarkdown("![|](" + raw + ")");
+
+        u(".ovk-diag-body .attachment_selector").on("change", ".topGrayBlock #albumSelect", function (ev) {
+            u("#attachment_insert .photosList").html("");
+            receivePhotos(0, ev.target.value);
+        });
+
+        u(".ovk-diag-body .attachment_selector").on("click", "#show_more", async function (ev) {
+            var target = u(ev.target).closest("#show_more");
+            target.addClass("lagged");
+            await receivePhotos(Number(target.nodes[0].dataset.page), u(".topGrayBlock #albumSelect").nodes[0].value);
+            target.remove();
+        });
+
+        u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", function (ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            var id = u(ev.target).closest(".album-photo").nodes[0].dataset.attachmentdata;
+            insertMarkdown("![|](/photo" + id + ")");
+            msg.close();
+        });
+
+        receivePhotos(0);
+        window.OVKAPI.call("photos.getAlbums", { owner_id: albumOwner }).then(function (albums) {
+            (albums.items || []).forEach(function (item) {
+                u(".ovk-diag-body #albumSelect").append(
+                    "<option value='" + item.id + "'>" + ovk_proc_strtr(escapeHtml(item.title), 20) + "</option>"
+                );
+            });
+        }).catch(Function.noop);
     }
 
     function wrapAlign(align) {
@@ -408,7 +509,7 @@ window.OpenVKPages = (function () {
             if (title.value === "") {
                 e.preventDefault();
                 title.focus();
-                window.alert(tr("page_no_title"));
+                fastError(tr("page_no_title"));
             }
         });
     }

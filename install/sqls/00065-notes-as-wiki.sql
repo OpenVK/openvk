@@ -8,7 +8,8 @@ ALTER TABLE `notes`
   ADD COLUMN `is_main` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `deleted`,
   ADD COLUMN `view_access` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `is_main`,
   ADD COLUMN `edit_access` TINYINT(1) UNSIGNED NOT NULL DEFAULT 2 AFTER `view_access`,
-  ADD COLUMN `keep_revisions` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `edit_access`;
+  ADD COLUMN `comment_access` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `edit_access`,
+  ADD COLUMN `keep_revisions` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `comment_access`;
 
 ALTER TABLE `notes`
   ADD KEY `owner_deleted_main` (`owner`, `deleted`, `is_main`);

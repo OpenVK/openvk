@@ -23,7 +23,9 @@ class SecurityFilter extends HTMLPurifier_Filter
                 $src = $originalSrc;
 
                 if (OPENVK_ROOT_CONF["openvk"]["preferences"]["notes"]["disableHotlinking"] ?? true) {
-                    if (!str_contains($src, "/image.php?url=")) {
+                    $path = parse_url($src, PHP_URL_PATH) ?? $src;
+                    $isPhotoId = (bool) preg_match('#(?:^|/)photo-?\d+_\d+$#i', $path);
+                    if (!$isPhotoId && !str_contains($src, "/image.php?url=")) {
                         $src = '/image.php?url=' . base64_encode($originalSrc);
                     }
                 }
@@ -259,7 +261,7 @@ class Note extends Postable
         return (new HTMLPurifier($config))->purify($source);
     }
 
-    public static function renderMarkdown(string $source, ?Club $club = null, ?User $userOwner = null): string
+    public static function renderMarkdown(string $source, ?Club $club = null, ?User $userOwner = null, ?User $viewer = null): string
     {
         $notes = new Notes();
         $ownerId = $club ? -$club->getId() : ($userOwner ? $userOwner->getId() : 0);
@@ -285,7 +287,6 @@ class Note extends Postable
         );
 
         $html = (new Parsedown())->text($processed ?? $source);
-        $html = self::resolvePhotoEmbeds($html);
 
         $html = preg_replace_callback(
             '/<(t[dh])(\s[^>]*)?\sstyle="text-align:\s*(left|center|right);?"([^>]*)>/i',
@@ -331,23 +332,25 @@ class Note extends Postable
         $config->set("Filter.Custom", [new SecurityFilter()]);
 
         $html = (new HTMLPurifier($config))->purify($html);
-        return preg_replace('/<table\b(?![^>]*\bclass=)/i', '<table class="wiki_md_table"', $html) ?? $html;
+        $html = preg_replace('/<table\b(?![^>]*\bclass=)/i', '<table class="wiki_md_table"', $html) ?? $html;
+
+        return self::resolvePhotoEmbeds($html, $viewer);
     }
 
-    private static function resolvePhotoEmbeds(string $html): string
+    private static function resolvePhotoEmbeds(string $html, ?User $viewer = null): string
     {
         $replaced = preg_replace_callback(
-            '/<img([^>]*?)src="(?:https?:\/\/[^"]+)?(\/)?photo(-?\d+)_(\d+)"([^>]*)>/i',
-            static function (array $m): string {
-                $photo = (new Photos())->getByOwnerAndVID((int) $m[3], (int) $m[4]);
-                if (!$photo || $photo->isDeleted()) {
+            '/<img([^>]*?)src="(?:(?:https?:)?\/\/[^\/"]+)?\/?photo(-?\d+)_(\d+)"([^>]*)>/i',
+            static function (array $m) use ($viewer): string {
+                $photo = (new Photos())->getByOwnerAndVID((int) $m[2], (int) $m[3]);
+                if (!$photo || $photo->isDeleted() || !$photo->canBeViewedBy($viewer)) {
                     return $m[0];
                 }
 
                 $src = htmlspecialchars($photo->getURLBySizeId("normal"), ENT_QUOTES);
                 $href = htmlspecialchars($photo->getPageURL(), ENT_QUOTES);
 
-                return '<a href="' . $href . '"><img' . $m[1] . 'src="' . $src . '"' . $m[5] . '></a>';
+                return '<a href="' . $href . '"><img' . $m[1] . 'src="' . $src . '"' . $m[4] . '></a>';
             },
             $html
         );
@@ -355,14 +358,19 @@ class Note extends Postable
         return $replaced ?? $html;
     }
 
-    public function getText(): string
+    public function getText(User|int|null $viewer = null): string
     {
+        if (is_int($viewer)) {
+            $viewer = null;
+        }
+
         if ($this->isMarkdown()) {
             if (is_null($this->getRecord())) {
                 return self::renderMarkdown(
                     $this->getSource(),
                     $this->getClub(),
-                    $this->isClubNote() ? null : ($this->getCreatedBy() ?? null)
+                    $this->isClubNote() ? null : ($this->getCreatedBy() ?? null),
+                    $viewer
                 );
             }
 
@@ -377,7 +385,7 @@ class Note extends Postable
                 parent::save(false);
             }
 
-            return $cached;
+            return self::resolvePhotoEmbeds($cached, $viewer);
         }
 
         if (is_null($this->getRecord())) {

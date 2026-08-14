@@ -1497,7 +1497,6 @@
 "note_format" = "Формат";
 "note_format_markdown" = "Markdown";
 "note_format_html" = "HTML";
-"page_photo_prompt" = "ID фото (photoOWNER_VID):";
 "page_access_saved" = "Настройки доступа сохранены.";
 "page_access_denied" = "Недостаточно прав для просмотра этой страницы.";
 "page_no_revisions" = "История правок пуста.";

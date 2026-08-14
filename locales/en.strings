@@ -1576,7 +1576,6 @@
 "note_format" = "Format";
 "note_format_markdown" = "Markdown";
 "note_format_html" = "HTML";
-"page_photo_prompt" = "Photo ID (photoOWNER_VID):";
 "page_access_saved" = "Access settings saved.";
 "page_access_denied" = "You do not have permission to view this page.";
 "page_no_revisions" = "No revisions yet.";

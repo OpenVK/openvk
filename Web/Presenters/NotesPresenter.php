@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace openvk\Web\Presenters;
 
 use Chandler\Database\DatabaseConnection;
-use openvk\Web\Models\Entities\{Note, User};
+use openvk\Web\Models\Entities\{Club, Note, User};
 use openvk\Web\Models\Repositories\{Users, Notes, Clubs};
 
 final class NotesPresenter extends OpenVKPresenter
@@ -66,9 +66,9 @@ final class NotesPresenter extends OpenVKPresenter
         return trim((string) ($this->postParam("name") ?? ""));
     }
 
-    private function postedSource(): string
+    private function postedSource(bool $allowHtmlFormat = true): string
     {
-        if ($this->postedFormat() === Note::FORMAT_HTML) {
+        if ($allowHtmlFormat && $this->postedFormat() === Note::FORMAT_HTML) {
             $html = $this->postParam("html");
             if ($html !== null) {
                 return (string) $html;
@@ -78,6 +78,10 @@ final class NotesPresenter extends OpenVKPresenter
         $source = $this->postParam("source");
         if ($source !== null) {
             return (string) $source;
+        }
+
+        if (!$allowHtmlFormat) {
+            return "";
         }
 
         return (string) ($this->postParam("html") ?? "");
@@ -264,28 +268,32 @@ final class NotesPresenter extends OpenVKPresenter
         $source = $this->postedSource();
         $format = $this->postedFormat();
         $clubId = (int) ($this->postParam("club") ?? 0);
+        $viewer = $this->user->identity instanceof User ? $this->user->identity : null;
 
         header("Content-Type: text/html; charset=utf-8");
 
         if ($clubId > 0) {
             $club = $this->clubs->get($clubId);
-            if (!$club || !$club->isPagesEnabled()) {
+            if (!$club || $club->isBanned() || !$club->isPagesEnabled()) {
                 header("HTTP/1.1 404 Not Found");
                 exit;
             }
+            if (!$this->canPreviewClubWiki($club)) {
+                header("HTTP/1.1 403 Forbidden");
+                exit;
+            }
 
-            exit(Note::renderMarkdown($source, $club));
+            exit(Note::renderMarkdown($source, $club, null, $viewer));
         }
 
         if ($format === Note::FORMAT_HTML) {
             $note = new Note();
             $note->setFormat(Note::FORMAT_HTML);
             $note->setSource($source);
-            exit($note->getText());
+            exit($note->getText($viewer));
         }
 
-        $user = $this->user->identity instanceof User ? $this->user->identity : null;
-        exit(Note::renderMarkdown($source, null, $user));
+        exit(Note::renderMarkdown($source, null, $viewer, $viewer));
     }
 
     public function renderSetMain(int $clubId, int $virtualId): void
@@ -412,7 +420,8 @@ final class NotesPresenter extends OpenVKPresenter
         $this->template->page = $page;
         $this->template->revision = $revision;
         $this->template->tab = "history";
-        $this->template->html = Note::renderMarkdown($revision->getSource(), $club);
+        $viewer = $this->user->identity instanceof User ? $this->user->identity : null;
+        $this->template->html = Note::renderMarkdown($revision->getSource(), $club, null, $viewer);
 
         if ($_SERVER["REQUEST_METHOD"] === "POST" && $this->postParam("restore") === "1") {
             $this->assertUserLoggedIn();
@@ -443,6 +452,18 @@ final class NotesPresenter extends OpenVKPresenter
         $this->assertPagesEnabled($club);
         $this->template->_template = "Notes/ClubHelp.latte";
         $this->template->club = $club;
+    }
+
+    private function canPreviewClubWiki(Club $club): bool
+    {
+        $user = $this->user->identity;
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        return $club->canCreatePages($user)
+            || $club->canManagePages($user)
+            || $club->getSubscriptionStatus($user);
     }
 
     private function assignComments(Note $note): void
@@ -510,7 +531,7 @@ final class NotesPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
         $this->assertNoCSRF();
         $title  = $this->postedName();
-        $source = $this->postedSource();
+        $source = $this->postedSource(false);
 
         if ($title === "") {
             $this->flashFail("err", tr("error"), tr("page_no_title"));
@@ -591,7 +612,7 @@ final class NotesPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
         $this->assertNoCSRF();
         $title  = $this->postedName();
-        $source = $this->postedSource();
+        $source = $this->postedSource(false);
 
         if ($title === "") {
             $this->flashFail("err", tr("error"), tr("page_no_title"));
