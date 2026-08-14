@@ -7,52 +7,118 @@
 {/block}
 
 {block content}
-    <form id="noteFactory" method="POST">
-        <input type="text" name="name" placeholder="{_name_note}" style="width:603px;" />
-        <br/><br/>
-        <textarea name="html" style="display:none;"></textarea>
-        <div id="editor" style="width:600px;height:300px;border:1px solid grey"></div>
-        
-        <p><i>{_something_is_supported_from_xhtml|noescape}</i></p>
-        
+    <form id="noteFactory" class="page_edit_form" method="POST">
         <input type="hidden" name="hash" value="{$csrfToken}" />
-        <button class="button">{_save}</button>
-        <a href="javascript:openPreviewWindow()" style="float: right;">{_note_preview}</a>
+        <input type="text" name="name" class="page_title_input" placeholder="{_name_note}" maxlength="255" />
+
+        <div class="note_format_row">
+            <span class="nobold">{_note_format}:</span>
+            <label><input type="radio" name="format" value="1" checked /> {_note_format_markdown}</label>
+            <label><input type="radio" name="format" value="0" /> {_note_format_html}</label>
+        </div>
+
+        <div id="note_md_editor">
+            <div class="wysiwyg_bbpanel" id="page_toolbar">
+                <a href="javascript:void(0)" class="wysiwyg_icbold" data-md="**|**" title="Bold"></a>
+                <a href="javascript:void(0)" class="wysiwyg_ici" data-md="*|*" title="Italic"></a>
+                <a href="javascript:void(0)" class="wysiwyg_iclist" data-md="- " title="List"></a>
+                <a href="javascript:void(0)" class="wysiwyg_ich1" data-md="# |" title="H1"></a>
+                <a href="javascript:void(0)" class="wysiwyg_ich2" data-md="## |" title="H2"></a>
+                <a href="javascript:void(0)" class="wysiwyg_ich3" data-md="### |" title="H3"></a>
+                <a href="javascript:void(0)" class="wysiwyg_icquote" data-md="> |" title="Quote"></a>
+                <a href="javascript:void(0)" class="wysiwyg_iclink" data-md="[|](url)" title="Link"></a>
+                <a href="javascript:void(0)" class="wysiwyg_icphoto" data-action="photo" title="Image"></a>
+                <a href="javascript:void(0)" class="wysiwyg_ictable" data-action="table" title="{_markup_help_table}"></a>
+                <a href="javascript:void(0)" class="wysiwyg_icsource" data-action="preview" title="Preview"></a>
+            </div>
+            <textarea name="source" id="page_source" class="wysiwyg_inpt page_source_area" placeholder="{_page_source_placeholder}"></textarea>
+        </div>
+
+        <div id="note_html_editor" style="display:none;">
+            {include "xhtmlToolbar.latte"}
+            <textarea name="html" style="display:none;"></textarea>
+            <div id="editor" style="width:100%;height:300px;border:1px solid grey;box-sizing:border-box;"></div>
+            <p><i>{_something_is_supported_from_xhtml|noescape}</i></p>
+        </div>
+
+        <div id="page_preview" class="page_preview_area" style="display:none;" data-format="1"></div>
+
+        <div class="page_edit_footer">
+            <label class="nobold">
+                {_page_who_can_comment}
+                <select name="comment_access">
+                    <option value="0">{_page_access_everyone}</option>
+                    <option value="1">{_page_access_friends}</option>
+                    <option value="2">{_page_access_owner}</option>
+                </select>
+            </label>
+            <div class="page_edit_footer_right">
+                <a href="javascript:void(0)" id="page_preview_btn">{_page_preview}</a>
+                <input type="submit" class="button" value="{_save}" />
+            </div>
+        </div>
     </form>
-    
+
     {script "js/node_modules/monaco-editor/min/vs/loader.js"}
     {script "js/node_modules/requirejs/bin/r.js"}
+    {script "js/al_notes.js"}
+    {script "js/al_pages.js"}
     <script>
-        require.config({
-            paths: {
-                'vs': '/assets/packages/static/openvk/js/node_modules/monaco-editor/min/vs' 
+        window.OpenVKPages && window.OpenVKPages.init();
+        (function () {
+            var md = document.getElementById("note_md_editor");
+            var html = document.getElementById("note_html_editor");
+            var preview = document.getElementById("page_preview");
+            var radios = document.querySelectorAll("input[name=format]");
+            var monacoReady = false;
+
+            function currentFormat() {
+                var checked = document.querySelector("input[name=format]:checked");
+                return checked ? checked.value : "1";
             }
-        });
-        require(['vs/editor/editor.main'], function() {
-            window._editor = monaco.editor.create(document.getElementById('editor'), {
-                value: "",
-                lineNumbers: "off",
-                language: "html"
+
+            function ensureMonaco() {
+                if (monacoReady || typeof require === "undefined") {
+                    return;
+                }
+                monacoReady = true;
+                require.config({
+                    paths: { vs: "/assets/packages/static/openvk/js/node_modules/monaco-editor/min/vs" }
+                });
+                require(["vs/editor/editor.main"], function () {
+                    window._editor = monaco.editor.create(document.getElementById("editor"), {
+                        value: "",
+                        lineNumbers: "off",
+                        language: "html"
+                    });
+                });
+            }
+
+            function syncEditors() {
+                var format = currentFormat();
+                if (preview) {
+                    preview.setAttribute("data-format", format);
+                }
+                if (format === "0") {
+                    md.style.display = "none";
+                    html.style.display = "block";
+                    ensureMonaco();
+                } else {
+                    md.style.display = "block";
+                    html.style.display = "none";
+                }
+            }
+
+            radios.forEach(function (radio) {
+                radio.addEventListener("change", syncEditors);
             });
-        });
-        
-        document.querySelector("#noteFactory").addEventListener("submit", function() {
-            document.querySelector("textarea").value = window._editor.getValue();
-        });
+            syncEditors();
 
-        window._preview = undefined;
-        function openPreviewWindow() {
-            if(typeof window._preview != "undefined") {
-                window._preview.close();
-                window._preview = undefined;
-            }
-
-            window._preview = window.open("about:blank", "_blank", { popup: true });
-            window._preview.document.write(`<style>form { display: none; }</style><form action="${ location.origin }/notes/prerender" method="POST" enctype="multipart/form-data"><input name="title" /><input name="html" /><input name="hash" /></form>`);
-            window._preview.document.querySelector("input[name=title]").value = document.querySelector("input[name=name]").value;
-            window._preview.document.querySelector("input[name=html]").value = window._editor.getValue();
-            window._preview.document.querySelector("input[name=hash]").value = document.querySelector("meta[name=csrf]").attributes.value.value;
-            window._preview.document.querySelector("form").submit();
-        }
+            document.querySelector("#noteFactory").addEventListener("submit", function () {
+                if (currentFormat() === "0" && window._editor) {
+                    document.querySelector("textarea[name=html]").value = window._editor.getValue();
+                }
+            });
+        })();
     </script>
 {/block}

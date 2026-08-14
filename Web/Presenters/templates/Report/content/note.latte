@@ -12,7 +12,7 @@
         </div>
     </div>
     <div style="margin-left: 6px; width: 535px;">
-        {$note->getText()|noescape}
+        {$note->getText($thisUser ?? null)|noescape}
     </div>
 </article>
 {/block}

@@ -9,7 +9,7 @@ use openvk\Web\Models\Repositories\Users as UsersRepo;
 use openvk\Web\Models\Repositories\Comments as CommentsRepo;
 use openvk\Web\Models\Repositories\Photos as PhotosRepo;
 use openvk\Web\Models\Repositories\Videos as VideosRepo;
-use openvk\Web\Models\Entities\{Note, Comment};
+use openvk\Web\Models\Entities\{Note, Comment, User};
 
 final class Notes extends VKAPIRequestHandler
 {
@@ -45,24 +45,9 @@ final class Notes extends VKAPIRequestHandler
         }
 
         $note = (new NotesRepo())->getNoteById($owner_id, $note_id);
+        $this->assertNoteAccessible($note);
 
-        if (!$note) {
-            $this->fail(15, "Access denied");
-        }
-
-        if ($note->isDeleted()) {
-            $this->fail(15, "Access denied");
-        }
-
-        if ($note->getOwner()->isDeleted()) {
-            $this->fail(15, "Access denied");
-        }
-
-        if (!$note->canBeViewedBy($this->getUser())) {
-            $this->fail(15, "Access denied");
-        }
-
-        if (!$note->getOwner()->getPrivacyPermission('notes.read', $this->getUser())) {
+        if (!$note->canBeCommentedBy($this->getUser())) {
             $this->fail(15, "Access denied");
         }
 
@@ -186,26 +171,7 @@ final class Notes extends VKAPIRequestHandler
         $this->requireUser();
 
         $note = (new NotesRepo())->getNoteById($owner_id, $note_id);
-
-        if (!$note) {
-            $this->fail(15, "Access denied");
-        }
-
-        if ($note->isDeleted()) {
-            $this->fail(15, "Access denied");
-        }
-
-        if (!$note->getOwner() || $note->getOwner()->isDeleted()) {
-            $this->fail(15, "Access denied");
-        }
-
-        if (!$note->getOwner()->getPrivacyPermission('notes.read', $this->getUser())) {
-            $this->fail(15, "Access denied");
-        }
-
-        if (!$note->canBeViewedBy($this->getUser())) {
-            $this->fail(15, "Access denied");
-        }
+        $this->assertNoteAccessible($note);
 
         return $note->toVkApiStruct();
     }
@@ -215,26 +181,7 @@ final class Notes extends VKAPIRequestHandler
         $this->requireUser();
 
         $note = (new NotesRepo())->getNoteById($owner_id, $note_id);
-
-        if (!$note) {
-            $this->fail(15, "Access denied");
-        }
-
-        if ($note->isDeleted()) {
-            $this->fail(15, "Access denied");
-        }
-
-        if (!$note->getOwner()) {
-            $this->fail(15, "Access denied");
-        }
-
-        if (!$note->getOwner()->getPrivacyPermission('notes.read', $this->getUser())) {
-            $this->fail(15, "Access denied");
-        }
-
-        if (!$note->canBeViewedBy($this->getUser())) {
-            $this->fail(15, "Access denied");
-        }
+        $this->assertNoteAccessible($note);
 
         $arr = (object) [
             "count" => $note->getCommentsCount(),
@@ -246,5 +193,31 @@ final class Notes extends VKAPIRequestHandler
         }
 
         return $arr;
+    }
+
+    private function assertNoteAccessible(?Note $note): void
+    {
+        if (!$note || $note->isDeleted()) {
+            $this->fail(15, "Access denied");
+        }
+
+        $owner = $note->getOwner();
+        if (!$owner) {
+            $this->fail(15, "Access denied");
+        }
+
+        if ($owner instanceof User) {
+            if ($owner->isDeleted()) {
+                $this->fail(15, "Access denied");
+            }
+
+            if (!$owner->getPrivacyPermission("notes.read", $this->getUser())) {
+                $this->fail(15, "Access denied");
+            }
+        }
+
+        if (!$note->canBeViewedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
     }
 }
