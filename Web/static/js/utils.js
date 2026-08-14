@@ -523,7 +523,6 @@ function toggleUnclickability(node, state = null) {
 
     if (state == false) {
         node.classList.remove("lagged");
-        return;
     } else {
         node.classList.add("lagged");
     }

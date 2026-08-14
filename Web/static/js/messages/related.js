@@ -1,4 +1,6 @@
-async function showUserDialog(userId) {
+async function showUserDialog(event, userId) {
+    event.preventDefault();
+
     const conv = await window.im.conversations._findConvFromApi(userId);
 
     const html = `
@@ -33,52 +35,52 @@ async function showUserDialog(userId) {
                     </div>
                 </div>
             </div>
+            <div>
+                <input type="button" class="button" id="_send_msg" value="${tr("send")}">
+            </div>
         </div>`;
 
     const msg = new CMessageBox({
-        title: tr("send_message"),
-        body: html,
-        buttons: [tr('close'), tr("send")],
+        title: "send_message",
+        body: "",
+        custom_template: msgboxModernTemplate(tr("send_message"), html),
         close_on_buttons: false,
-        callbacks: [() => { msg.close(); }, async () => {
-            const btn = msg.getNode().find(".ovk-diag-action button").last();
-            btn.classList.add("lagged");
-            const targetUserId = parseInt(conv.peer.id);
-            if (!targetUserId) {
-                btn.classList.remove("lagged");
-                return;
-            }
-
-            const text = msg.getNode().find("#_text").last().value;
-            const atts = collect_attachments(msg.getNode().find("#write"));
-            if (!text && atts.length == 0) {
-                btn.classList.remove("lagged");
-                return;
-            };
-
-            try {
-                await window.OVKAPI.call('messages.send', {
-                    peer_id: targetUserId,
-                    message: text,
-                    attachment: atts.join(","),
-                });
-                msg.close();
-                NewNotification(tr("message_sent_excl"), "");
-            } catch (err) {
-                fastError(tr('error_sending_message'));
-                btn.classList.remove("lagged");
-            }
-        }],
     });
-    msg.getNode().attr("style", "z-index: 200;")
-    msg.getNode().find(".ovk-diag-body").attr("style", "height: 300px;")
+    msg.getNode().attr("style", "z-index: 200;");
+    msg.getNode().find(".ovk-diag-body").attr("style", "height: 300px;");
+    msg.getNode().find(".ovk-diag-head #_close").on("click", (e) => {
+        msg.close();
+    });
+    msg.getNode().find("#_send_msg").on("click", async (e) => {
+        const btn = e.target;
+        toggleUnclickability(btn, true);
+        const targetUserId = parseInt(conv.peer.id);
+        if (!targetUserId) {
+            toggleUnclickability(btn, false);
+            return;
+        }
+
+        const text = msg.getNode().find("#_text").last().value;
+        const atts = collect_attachments(msg.getNode().find("#write"));
+        if (!text && atts.length == 0) {
+            toggleUnclickability(btn, false);
+            return;
+        };
+
+        try {
+            await window.OVKAPI.call('messages.send', {
+                peer_id: targetUserId,
+                message: text,
+                attachment: atts.join(","),
+            });
+            msg.close();
+            NewNotification(tr("message_sent_excl"), "");
+        } catch (err) {
+            fastError(tr('error_sending_message'));
+            toggleUnclickability(btn, false);
+        }
+    });
 }
-
-u(document).on("click", "#_message_send", async (e) => {
-    e.preventDefault();
-
-    await showUserDialog(Number(e.target.dataset.eid));
-})
 
 function updateChatTitle(e, chat) {
     if (!chat) {

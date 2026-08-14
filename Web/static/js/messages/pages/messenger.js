@@ -42,10 +42,17 @@ export class Messenger {
     }
 
     async selectConversationByPeerId(id) {
-        const convo = await window.im.conversations._findConvFromApi(id);
+        let convo = null;
+        try {
+            convo = await window.im.conversations._findConvFromApi(id);
 
-        if (!convo) {
+            if (!convo) {
             console.error("can't find convo with id", id);
+                throw new Error("Not found conversation with id ", id);
+            }
+        } catch(e) {
+            fastError(String(e));
+            return;
         }
 
         await this.selectConversation(convo);
