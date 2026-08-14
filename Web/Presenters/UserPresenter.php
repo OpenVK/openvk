@@ -16,7 +16,7 @@ use Chandler\Security\Authenticator;
 use lfkeitel\phptotp\{Base32, Totp};
 use chillerlan\QRCode\{QRCode, QROptions};
 use Nette\Database\UniqueConstraintViolationException;
-use \EasyRdf\{Graph, RdfNamespace};
+use EasyRdf\{Graph, RdfNamespace};
 
 final class UserPresenter extends OpenVKPresenter
 {
@@ -95,7 +95,7 @@ final class UserPresenter extends OpenVKPresenter
 
         if ($user->getPronouns() == 0) {
             $gender = "male";
-        } else if ($user->getPronouns() == 1) {
+        } elseif ($user->getPronouns() == 1) {
             $gender = "female";
         } else {
             $gender = "non-binary";
@@ -119,8 +119,8 @@ final class UserPresenter extends OpenVKPresenter
         $rdfxml = $graph->serialise('rdfxml');
         // костыли
         $rdfxml = str_replace(
-            '<ya:created>'.$regDate.'</ya:created>',
-            '<ya:created dc:date="'.htmlspecialchars($regDate).'"/>',
+            '<ya:created>' . $regDate . '</ya:created>',
+            '<ya:created dc:date="' . htmlspecialchars($regDate) . '"/>',
             $rdfxml
         );
         header('Content-Type: application/rdf+xml');
