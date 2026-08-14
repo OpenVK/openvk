@@ -5,6 +5,11 @@
         "lint": "php-cs-fixer fix --dry-run --diff --verbose",
         "analyse": "phpstan analyse --memory-limit 1G"
     },
+    "config": {
+        "platform": {
+            "php": "8.2.0"
+        }
+    },
     "require": {
         "php": "~8.2",
         "openvk/chandler": "dev-master",
