@@ -761,7 +761,7 @@ window.player = new class {
         }
 
         if (u('.bigPlayer #album_info').length > 0) {
-            if (_c.hasPlaylist() && u('.playlistInfo').length == 0) {
+            if (_c != null && _c.hasPlaylist() && u('.playlistInfo').length == 0) {
                 u('.bigPlayer').addClass('album_shown')
                 u('.bigPlayer #album_info img').attr('src', _c.getPlaylistCover())
                 u('.bigPlayer #album_info #album_embed_name').html(escapeHtml(ovk_proc_strtr(_c.getPlaylistName(), 60)))
@@ -1059,14 +1059,24 @@ u(document).on('click', '.audioEntry .playerButton > .playIcon', async (e) => {
             })
         })
     } else if(!window.player.hasTrackWithId(id) && window.player.isAtAudiosPage()) {
-        window.player.__renewContext()
-        await window.player.loadContext(window.__current_page_audio_context.page ?? 1)
-        if(!isNaN(parseInt(location.hash.replace('#', '')))) {
-            const adp = parseInt(location.hash.replace('#', ''))
-            await window.player.loadContext(adp)
-        } else if((new URL(location.href)).searchParams.p) {
-            const adp = (new URL(location.href)).searchParams.p
-            await window.player.loadContext(adp)
+        // Track isn't in the loaded pages yet (e.g. jumped ahead/behind more than one
+        // page's worth of tracks). Walk outward from the already-loaded page range instead
+        // of resetting the whole context, since __renewContext()/pause() would stop the
+        // currently playing track for no reason and reloading page 1 won't necessarily
+        // contain the clicked track at all.
+        const pc = window.player.context
+        let highPage = pc.playedPages.length > 0 ? Math.max(...pc.playedPages) : 0
+        let lowPage = pc.playedPages.length > 0 ? Math.min(...pc.playedPages) : 1
+
+        while(!window.player.hasTrackWithId(id) && (highPage < pc.pagesCount || lowPage > 1)) {
+            if(highPage < pc.pagesCount) {
+                highPage++
+                await window.player.loadContext(highPage, true)
+            }
+            if(!window.player.hasTrackWithId(id) && lowPage > 1) {
+                lowPage--
+                await window.player.loadContext(lowPage, false)
+            }
         }
     }
 
@@ -2381,12 +2391,25 @@ u(document).on('click', `#upload_container #uploadMusic`, async (e) => {
         fd.append('blob', file.file)
         fd.append('ajax', 1)
         fd.append('hash', window.router.csrf)
-        
-        const result = await fetch(current_upload_page, {
-            method: 'POST',
-            body: fd,
+
+        elem_u.find("#percentage").nodes[0].style.visibility = "visible";
+        const xhr = new XMLHttpRequest();
+        const result = await new Promise((resolve) => {
+            xhr.upload.addEventListener("progress", (event) => {
+                if (event.lengthComputable) {
+                    elem_u.find(".progress-bar").nodes[0].style.width = event.loaded / event.total * 100 + "%"
+                    console.log("upload progress:", event.loaded / event.total)
+                }
+            })
+            xhr.addEventListener("loadend", () => {
+                resolve(xhr);
+            });
+            xhr.open("POST", current_upload_page, true)
+            xhr.send(fd)
         })
-        const result_text = await result.json()
+        
+        const result_text = JSON.parse(result.response)
+
         if(result_text.success) {
             end_redir = result_text.redirect_link
         } else {
@@ -2397,7 +2420,7 @@ u(document).on('click', `#upload_container #uploadMusic`, async (e) => {
     }
 
     if(!end_redir) {
-        u('#lastStepButtons').removeClass('lagged')
+        u('#lastStepButtons').removeClass('lagged').find('.upload_container_name').removeClass('uploading')
         window.__audio_upload_page.showFirstPage()
         return
     }

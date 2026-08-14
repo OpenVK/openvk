@@ -286,6 +286,8 @@
 "graffiti" = "Graffiti";
 
 "reply" = "Reply";
+"in_reply" = "in reply";
+"reply_to_comment" = "Reply to comment";
 "post_is_ad" = "This post is sponsored.";
 
 "edited_short" = "edited";
@@ -1115,6 +1117,7 @@
 "nt_liked_yours" = "liked your";
 "nt_shared_yours" = "shared your";
 "nt_commented_yours" = "commented";
+"nt_replied_yours" = "replied to your comment";
 "nt_written_on_your_wall" = "wrote on your wall";
 "nt_accepted_your_post" = "accepted your suggested";
 "nt_in_club" = "In group";

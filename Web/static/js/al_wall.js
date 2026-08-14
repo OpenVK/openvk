@@ -632,6 +632,7 @@ function reportClub(club_id) {
     ]);
 }
 
+/* on a post page */
 $(document).on("click", "#_ajaxDelete", function(e) {
     MessageBox(tr('warning'), tr('question_confirm'), [
         tr('yes'),
@@ -639,6 +640,36 @@ $(document).on("click", "#_ajaxDelete", function(e) {
     ], [
         () => {
             window.router.route(e.target.href)
+        },
+        Function.noop
+    ]);
+    
+    e.stopPropagation()
+    return e.preventDefault();
+});
+
+/* on a wall */
+$(document).on("click", "#_wallDelete", function(e) {
+    MessageBox(tr('warning'), tr('question_confirm'), [
+        tr('yes'),
+        tr('no')
+    ], [
+        async () => {
+            const post = e.target.attributes['data'].value
+            const href = e.target.href + "?ajax=1"
+            const req = await fetch(href, {
+                method: "POST"
+            })
+            const response = await req.json()
+            if (response.success == true) {
+                let postElement = $(".content").find(`[data-uniqueid='${post}']`)
+                postElement[0].innerHTML = `<div class="post post-divider post-deleted">${tr('post_deleted')}</div>`
+                setTimeout(() => {
+                    postElement.slideToggle(300)
+                }, 4000)
+            } else {
+                makeError(response.flash.message)
+            }
         },
         Function.noop
     ]);

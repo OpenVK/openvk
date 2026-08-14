@@ -230,6 +230,24 @@ class Notification
                 $info["type"] = "new_posts_in_club";
                 break;
                 # В вк при передаче подарков приходит сообщение, а не уведомление, так что unstandart
+            case 8:
+                switch ($this->encodeType($this->getModel(0)->getTarget())) {
+                    case 14:
+                        $info["type"] = "reply_comment";
+                        break;
+                    case 13:
+                        $info["type"] = "reply_comment_photo";
+                        break;
+                    case 19:
+                        $info["type"] = "reply_comment_video";
+                        break;
+                    default:
+                        $info["type"] = "reply_comment_unknown";
+                        break;
+                }
+                $info["parent"] = $this->getModel(0)->getReplyToComment()->toNotifApiStruct();
+                $info["feedback"] = $this->getModel(0)->toNotifApiStruct(true);
+                break;
             case 9601:
                 $info["type"]   = "sent_gift";
                 $info["parent"] = $this->getModel(1)->toVkApiStruct($this->getModel(1));

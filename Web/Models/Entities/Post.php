@@ -135,6 +135,10 @@ class Post extends Postable
         return (bool) $this->getRecord()->ad;
     }
 
+    public function getFlags(): int
+    {
+        return $this->getRecord()->flags;
+    }
     public function isPostedOnBehalfOfGroup(): bool
     {
         return ($this->getRecord()->flags & 0b10000000) > 0;

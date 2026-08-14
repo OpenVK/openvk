@@ -19,6 +19,7 @@
             </div>
             <div class="post-has-geo"></div>
             <div class="post-source"></div>
+            <div class="post-replyto"></div>
 
             <div n:if="$postOpts ?? true" class="post-opts">
                 {var $anonEnabled = \OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']}
@@ -37,7 +38,7 @@
                             }
                         </script>
                         
-                        <label>
+                        <label n:if="$club->getWallType() == 1">
                             <input type="checkbox" name="as_group" onchange="onWallAsGroupClick(this)" checked /> {_post_as_group}
                         </label>
                         <label id="forceSignOpt" style="display: block;">
@@ -66,6 +67,7 @@
             <input type="hidden" name="poll" value="none" autocomplete="off" />
             <input type="hidden" id="source" name="source" value="none" autocomplete="off" />
             <input type="hidden" name="geo" value="" autocomplete="off" />
+            <input type="hidden" name="reply_to_comment" value="" autocomplete="off" />
             <input type="hidden" name="type" value="1" autocomplete="off" />
             <input type="hidden" name="hash" value="{$csrfToken}" />
             <br/>
