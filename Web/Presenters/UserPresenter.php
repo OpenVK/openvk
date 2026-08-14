@@ -16,6 +16,7 @@ use Chandler\Security\Authenticator;
 use lfkeitel\phptotp\{Base32, Totp};
 use chillerlan\QRCode\{QRCode, QROptions};
 use Nette\Database\UniqueConstraintViolationException;
+use \EasyRdf\{Graph, RdfNamespace};
 
 final class UserPresenter extends OpenVKPresenter
 {
@@ -79,6 +80,52 @@ final class UserPresenter extends OpenVKPresenter
                 $this->template->blacklist_status = $user->isBlacklistedBy($this->user->identity);
             }
         }
+    }
+
+    public function renderFOAF(): void
+    {
+        if ($this->queryParam("id")) {
+            $user = $this->users->get(intval($this->queryParam("id")));
+        }
+
+        if (!$user || $user->isDeleted()) {
+            $this->notFound();
+            exit();
+        }
+
+        if ($user->getPronouns() == 0) {
+            $gender = "male";
+        } else if ($user->getPronouns() == 1) {
+            $gender = "female";
+        } else {
+            $gender = "non-binary";
+        }
+
+        $regDate = $user->getRegistrationTime()->format("Y-m-d\TH:i:sP", true);
+
+        RdfNamespace::set('ya', 'http://blogs.yandex.ru/schema/foaf/');
+
+        $graph = new Graph();
+        $person = $graph->resource('https://xmlns.com/foaf/spec/', 'foaf:Person');
+        $person->addResource('ya', "http://blogs.yandex.ru/schema/foaf/");
+        $person->set('foaf:name', $user->getCanonicalName());
+        $person->set('foaf:gender', $gender);
+        $person->set('ya:created', $regDate);
+        if ($user->canBeViewedBy($this->user->identity)) {
+            $person->set('ya:subscribersCount', $user->getRequestsCount());
+            $person->set('ya:subscribedToCount', $user->getSubscriptionsCount());
+        }
+
+        $rdfxml = $graph->serialise('rdfxml');
+        // костыли
+        $rdfxml = str_replace(
+            '<ya:created>'.$regDate.'</ya:created>',
+            '<ya:created dc:date="'.htmlspecialchars($regDate).'"/>',
+            $rdfxml
+        );
+        header('Content-Type: application/rdf+xml');
+        echo $rdfxml;
+        exit();
     }
 
     public function renderFriends(int $id): void
