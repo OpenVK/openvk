@@ -38,7 +38,13 @@ export class Messenger {
     async selectConversation(convo) {
         this.setChat(convo);
         const tab = await window.im.openTabByName("messenger");
+
         await tab.render();
+        
+        if (!convo.peer._isMessagesInited()) {
+            const c = await convo.peer.getMessages();
+            convo.peer._chunks._appendChunk(c);
+        }
     }
 
     async selectConversationByPeerId(id) {
@@ -566,8 +572,15 @@ export class MessengerPage extends IMPage {
         this.is_switching = false;
     }
 
-	onScrollDownButtonClick() {
-		this._scrollToEnd();
+		onScrollDownButtonClick() {
+        // "Return to the newest" — reset the active chunk to the actual
+        // (newest) chunk, then scroll to the bottom.
+        const corresponder = window.im.corresponder;
+        if (corresponder && typeof corresponder.scrollToNewest === "function") {
+            corresponder.scrollToNewest();
+        } else {
+            this._scrollToEnd();
+        }
 	}
 
 	async onMessagesScroll(e) {
