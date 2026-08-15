@@ -779,15 +779,20 @@ final class Messages extends VKAPIRequestHandler
 
         $rawIds = preg_split("%, ?%", $user_id);
         $targetUserIds = array_filter(array_map('intval', $rawIds));
+        $users = (new USRRepo)->getByIds($targetUserIds);
         $currentUser = $this->getUser();
 
-        foreach ($targetUserIds as $id) {
-            if ($id === $currentUser->getId()) {
+        foreach ($users as $usr) {
+            if (!$user || $usr->getRealId() === $currentUser->getId()) {
                 continue;
             }
 
             if (!$currentUser->isFriendsWith($id)) {
                 $this->fail(15, "Access denied: user with ID " . $id . " is not your friend");
+            }
+
+            if (!$usr->getPrivacyPermission("messages.add_to_chats", $currentUser)) {
+                $this->fail(15, "Access denied: user with ID " . $usr->getRealId() . " is not your friend");
             }
         }
 

@@ -1,8 +1,10 @@
 import { html, render } from './render.js';
 import { ChatGeneralForm } from './messages.js';
 
-export const FriendsPageTemplate = ({ friends, count, referrer, onFriendClick, onCreateChat, isSelected, onLoadMore, onTitleChangeClick }) => {
-    const isChatCreation = referrer == "chat_creation" || referrer == "chat_creation_topic";
+export const FriendsPageTemplate = ({ friends, count, referrer, onFriendClick, onSubmit, isSelected, onLoadMore, onTitleChangeClick }) => {
+    const isChatCreation = referrer == "chat_creation";
+    const isAdd = referrer == "add_new";
+
     return html`
         <div class="messenger-app--tab-friends">
             ${isChatCreation && html`
@@ -23,7 +25,14 @@ export const FriendsPageTemplate = ({ friends, count, referrer, onFriendClick, o
                     </div>
                 </div>
                 <div class="friends-list-b">
-                    <input onClick=${(e) => { onCreateChat(e) }} class="button" type="button" value="${tr('create_chat_f')}" />
+                    <input onClick=${(e) => { onSubmit(e) }} class="button" type="button" value="${tr('create_chat_f')}" />
+                </div>
+            </div>
+            `}
+            ${isAdd && html`
+            <div class="friends-list-top">
+                <div class="friends-list-b">
+                    <input onClick=${(e) => { onSubmit(e) }} class="button" type="button" value="${tr('chat_add_members')}" />
                 </div>
             </div>
             `}
@@ -32,7 +41,7 @@ export const FriendsPageTemplate = ({ friends, count, referrer, onFriendClick, o
                     <input placeholder="${tr('search_sinister_noun')}" class="search_input" type="text" />
                 </div>
             </div>
-            <div class="friends-list ${isChatCreation ? 'friends-list-m' : ''}">
+            <div class="friends-list ${isChatCreation || isAdd ? 'friends-list-m' : ''}">
                 ${friends.map((f) => html`
                 <div class="friends-list-item ${isSelected(f) ? 'friends-selected' : ''}" onClick=${(e) => { onFriendClick(e, f) }}>
                     <div class="inf">
@@ -43,7 +52,7 @@ export const FriendsPageTemplate = ({ friends, count, referrer, onFriendClick, o
                             <span class="friends-list-online">${f.online_status_str}</span>
                         </div>
                     </div>
-                    ${isChatCreation && html`
+                    ${isChatCreation || isAdd && html`
                         <div><input type="checkbox" /></div>
                     `}
                 </div>

@@ -139,6 +139,7 @@ export class InstantMessagesAndRelated {
 
     selectTab(tab) {
         if (typeof tab != "number") {
+            console.log(tab);
             tab = this.tabs.indexOf(tab);
         }
 
@@ -216,8 +217,10 @@ export class InstantMessagesAndRelated {
             return already_here;
         } else {
             got_tab = got_class.openTab(this.root, options);
+            console.log(got_tab)
             if (got_tab != null) {
                 got_tab.render_class.addLoadSkeleton(this.root);
+                console.log(got_tab.render_class)
                 this.selectTab(this.addTab(got_tab));
                 await got_tab.render();
                 got_tab.render_class.removeLoadSkeleton(this.root);
@@ -401,7 +404,7 @@ class IMState {
     _changeHeight(container) {
         let maybe_distance = 145;
         let tabs_height = container.querySelector('#im_page_tabs').clientHeight;
-        container.style.height = window.outerHeight - tabs_height - maybe_distance + 'px';
+        container.style.minHeight = window.outerHeight - tabs_height - maybe_distance + 'px';
     }
 
     addLoadSkeleton(container) {
@@ -409,7 +412,11 @@ class IMState {
     }
 
     removeLoadSkeleton(container) {
-        container.querySelector("#load_skeleton").remove();
+        try {
+            container.querySelector("#load_skeleton").remove();
+        } catch(e) {
+            u("#im_container #load_skeleton").remove();
+        }
     }
 }
 
