@@ -1,7 +1,7 @@
 async function showUserDialog(event, userId) {
     event.preventDefault();
 
-    const conv = await window.im.conversations._findConvFromApi(userId);
+    const conv = await window.im_variants.getCurrentUser().conversations._findConvFromApi(userId);
 
     const html = `
         <div class="messenger-layer" id="user-send-dialog">
@@ -173,7 +173,7 @@ function createChatTopic(group_id) {
     });
 
     if (window.im) {
-        window.im.conversations.convs.forEach(item => {
+        window.im_variants.getCurrentUser().conversations.convs.forEach(item => {
             if (item.peer && item.peer.supposed_type == "chat") {
                 msg.getNode().find("#chat_sel").append(`
                     <option value="${item.peer.id}">${escapeHtml(item.peer.full_name)}</option>
@@ -183,8 +183,46 @@ function createChatTopic(group_id) {
     }
 }
 
+async function imSwitchCurrent() {
+    CMessageBox.toggleLoader(true);
+
+    const container = document.querySelector('.page_content');
+    const c = window.im_variants.getCurrentUser().state.getOperator();
+    const groups = await loadEditableGroups();
+
+    CMessageBox.toggleLoader(false);
+
+    const msg = new CMessageBox({
+        custom_template: msgboxModernTemplate(tr("messenger_switch_current"), `мне лень верстать дальше<div id="_switch_list"></div>`),
+        title: "-",
+        body: "-"
+    });
+
+    function makeItem(item) {
+        console.log(item)
+
+        msg.getNode().find("#_switch_list").append(`<div data-id="${item.id}" class="sel">${escapeHtml(item.full_name)}</div>`);
+    }
+
+    msg.getNode().find(".ovk-diag").attr("style", "width: 300px;");
+
+    makeItem(c);
+    groups.items.forEach(item => {
+        makeItem(window.im._toCGF(item));
+    });
+    msg.getNode().find("#_close").on("click", (e) => { msg.close(); })
+    msg.getNode().find("#_switch_list").on("click", ".sel", async (e) => {
+        const eid = Number(e.target.closest(".sel").dataset.id);
+        const new_im = window.im_variants.getForX(eid);
+        msg.close();
+
+        await window.im_class.insertIn(container, eid > 0 ? null : eid);
+        console.log(new_im, eid)
+    })
+}
+
 async function openChatTopic(event, prettyId) {
-    event.target.classList.add("lagged");
+    toggleUnclickability(event.target, true);
 
     const group_id = prettyId.split("_")[0];
     const topic_id = prettyId.split("_")[1];
@@ -198,4 +236,6 @@ async function openChatTopic(event, prettyId) {
     } catch (e) {
         fastError(e)
     }
+
+    toggleUnclickability(event.target, false);
 }

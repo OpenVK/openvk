@@ -182,29 +182,30 @@ export const ConversationItem = ({ conv }) => {
 };
 
 export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCreateChat, onSearch }) => {
-  return html`
-    <div id="conversations-top-buttons">
-        <div id="conversations-search-bar">
-            <input class="search_input" type="text" placeholder="${tr('search_messages')}" onChange=${onSearch} />
+    const is_group = window.im.state.is_group;
+
+    return html`
+        <div id="conversations-top-buttons">
+            <div id="conversations-search-bar">
+                <input class="search_input" type="text" placeholder="${tr('search_messages')}" onChange=${onSearch} />
+            </div>
+            ${ !is_group ? html`<input type="button" class="button" value="${tr('create_chat')}" onClick=${onCreateChat} />` : "" }
         </div>
-        <input type="button" class="button" value="${tr('create_chat')}" onClick=${onCreateChat} />
-    </div>
-    <div class="crp-list">
-        ${conversations.length > 0 ? conversations.map((conv) => html`<${ConversationItem} conv=${conv} />`) : html`<${ConversationsListError} />`}
-        ${hasMore && html`
-        <div onClick=${onLoadMore} id="show_more" class="crp-load-more">
-            ${tr('show_next')}
+        <div class="crp-list">
+            ${conversations.length > 0 ? conversations.map((conv) => html`<${ConversationItem} conv=${conv} />`) : html`<${ConversationsListError} is_group=${is_group} />`}
+            ${hasMore && html`
+            <div onClick=${onLoadMore} id="show_more" class="crp-load-more">
+                ${tr('show_next')}
+            </div>
+            `}
         </div>
-        `}
-    </div>
-  `;
+    `;
 };
 
 export const TabBar = ({ tabs, activeTab, onTabSelect }) => {
-    console.log(activeTab.getPageId())
     const showContactButton = activeTab.getPageId() == "messenger";
-    const showFriendsButton = activeTab.getPageId() != "friends";
-    const showSettingsButton = activeTab.getPageId() == "conversations";
+    const showFriendsButton = !window.im.state.is_group && activeTab.getPageId() != "friends";
+    const showSettingsButton = !window.im.state.is_group && activeTab.getPageId() == "conversations";
     const showSpecActions = showSettingsButton || showContactButton || showFriendsButton;
 
     return html`
@@ -301,10 +302,10 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
     `;
 }
 
-export const ConversationsListError = ({ }) => {
+export const ConversationsListError = ({ is_group }) => {
     return html`
         <div class="conversations_error_page">
-            <span>${tr("zero_conversations_error")}</span>
+            <span>${is_group ? tr("zero_conversations_error_club") : tr("zero_conversations_error")}</span>
         </div>
     `
 }

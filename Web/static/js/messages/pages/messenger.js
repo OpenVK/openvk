@@ -83,7 +83,9 @@ export class Messenger {
         }
 
         if (pushstate) {
-            window.im.state._pushState('/im?sel=' + convo.peer.id);
+            const url = new URL(location.href);
+            url.searchParams.set("sel", convo.peer.id);
+            window.im.state._pushState(url.toString());
         }
     }
 

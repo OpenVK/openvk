@@ -2950,12 +2950,13 @@ async function repost(id, repost_type = 'post') {
                         ${tr("in_group")}
                     </label>
 
+                    <select name="selected_repost_club" style='display:none;'></select>
+
                     <label>
                         <input type="radio" name="repost_type" value="chat">
                         ${tr("in_chat")}
                     </label>
 
-                    <select name="selected_repost_club" style='display:none;'></select>
                     <select name="selected_repost_chat" style='display:none;'></select>
                 </div>
 
@@ -3112,15 +3113,13 @@ async function repost(id, repost_type = 'post') {
         u('.ovk-diag-body #__photoAttachment, .ovk-diag-body #__videoAttachment, .ovk-diag-body #__audioAttachment, .ovk-diag-body #__documentAttachment').attr('data-club', club_id)
     })
 
-    if(!window.openvk.writeableClubs) {
-        window.openvk.writeableClubs = await window.OVKAPI.call('groups.get', {'filter': 'admin', 'count': 100})
-    }
+    await loadEditableGroups();
 
     window.openvk.writeableClubs.items.forEach(club => {
         u(`select[name='selected_repost_club']`).append(`<option value='${club.id}'>${ovk_proc_strtr(escapeHtml(club.name), 100)}</option>`)
     })
 
-	window.im.conversations.convs.forEach(conv => {
+	window.im_variants.getCurrentUser().conversations.convs.forEach(conv => {
 		const peer = conv.peer;
         u(`select[name='selected_repost_chat']`).append(`<option value='${peer.id}'>${ovk_proc_strtr(escapeHtml(peer.name), 100)}</option>`)
 	})
@@ -4420,4 +4419,12 @@ function paginator_next_click(event) {
 function comment_date_click(event) {
     event.preventDefault();
     event.stopPropagation();
+}
+
+async function loadEditableGroups() {
+    if(!window.openvk.writeableClubs) {
+        window.openvk.writeableClubs = await window.OVKAPI.call('groups.get', {'filter': 'admin', 'count': 100})
+    }
+
+    return window.openvk.writeableClubs;
 }

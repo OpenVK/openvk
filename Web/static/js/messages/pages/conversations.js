@@ -4,17 +4,11 @@ import { IMTab, IMPage } from './page.js';
 import { html, render } from '../components/render.js';
 
 export class ConversationsPage extends IMPage {
-    static getPageId() {
-        return "conversations";
-    }
+    static getPageId() { return "conversations"; }
+    isVisibleWhenHidden() { return true; }
+    updateHeader(header) { header.changeByConvNumber(Number(window.im.conversations.total_convs)); }
 
-    isVisibleWhenHidden() {
-        return true;
-    }
-
-    _update() {
-        this.wRender();
-    }
+    _update() { this.wRender(); }
 
     async loadNext(e) {
         toggleUnclickability(e.target, true);
@@ -72,7 +66,7 @@ export class Conversations {
     }
 
     get has_more_items() {
-        if (!this.total_convs) return true;
+        if (!this.total_convs) return false;
         return this.loaded_convs_count < this.total_convs;
     }
 
@@ -113,6 +107,11 @@ export class Conversations {
             offset: offset,
             fields: ChatGeneralForm.BASE_FIELDS,
         };
+
+        if (window.im.state.group_id) {
+            params.group_id = Math.abs(window.im.state.group_id);
+        }
+
         let convs = await window.OVKAPI.call('messages.getConversations', params);
 
         const lists = [];

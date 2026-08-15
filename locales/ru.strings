@@ -1408,6 +1408,7 @@
 "messages_unavailable" = "К сожалению, сообщения временно недоступны или не поддерживаются на этом сервере";
 
 "messages" = "Сообщения";
+"group_messages" = "Сообщения группы";
 "all_messages" = "Все сообщения";
 "search_messages" = "Найти сообщения...";
 "search_messages_tab" = "Поиск";
@@ -1424,6 +1425,7 @@
 "messenger_tab_friends" = "Друзья";
 "messenger_tab_contact" = "Контакт";
 "messenger_tab_settings" = "Нас3";
+"messenger_switch_current" = "Переключиться";
 "message_is_deleted" = "Сообщение удалено";
 
 "to_friendslist" = "К списку друзей";
@@ -1444,6 +1446,7 @@
 "conversations_count_title_many" = "$1 переписок";
 "conversations_count_title_other" = "$1 переписок";
 "zero_conversations_error" = "У вас нет переписок.";
+"zero_conversations_error_club" = "В группу ещё никто не писал.";
 
 "conversation_title_user" = "Переписка с $1";
 "conversation_title_club" = "Переписка с сообществом";
@@ -1484,11 +1487,11 @@
 "create_chat" = "Новая беседа";
 "create_chat_f" = "Создать беседу";
 "create_chat_tip_1" = "Выберите друзей, которых вы хотели бы видеть в своей беседе.";
-"create_chat_tip_2" = "Когда всё будет готово, нажмите кнопку внизу.";
+"create_chat_tip_2" = "Когда всё будет готово, нажмите:";
 
 "error_user_forbid_invites" = "Пользователь запретил добавлять себя в беседы.";
 "error_chat_not_enough_friends" = "В беседе должно быть как минимум два других пользователя";
-"name_your_chat" = "Введите название беседы (или оставьте его пустым (пока что нет всё равно введи)";
+"name_your_chat" = "Введите название беседы";
 "chat" = "Беседа";
 "go_to_dialog" = "В диалог";
 "message_sent_excl" = "Сообщение отправлено!";
@@ -1511,8 +1514,11 @@
 "topic_going_in_chat" = "Обсуждение идёт в чате:";
 "chat_join" = "Присоединиться";
 
+"members_count_zero" = "Нет участников";
 "members_count_one" = "$1 участник";
-"members_count_one" = "$1 участник";
+"members_count_few" = "$1 участника";
+"members_count_many" = "$1 участников";
+"members_count_other" = "$1 участников";
 
 /* System messages */
 

@@ -508,8 +508,9 @@ window.addEventListener('popstate', (e) => {
     if (e.state != null) {
         if (window.im && e.state.from_messenger) {
             u('.page_content').html('');
+            const n_url = new URL(location.href);
 
-            window.im.insertIn(document.querySelector('.page_content'));
+            window.im_class.insertIn(document.querySelector('.page_content'), n_url.searchParams.get("as"));
             window.im.state._resolveState(e);
             return;
         }

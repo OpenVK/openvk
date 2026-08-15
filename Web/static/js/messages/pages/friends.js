@@ -9,11 +9,14 @@ export class FriendsPage extends IMPage {
 
         this.has_inited = false;
         this.selected_friends = [];
+        this.name = "";
+        this._set_name = false;
     }
 
     static getPageId() { return "friends"; }
     shouldCloseOnExit() { return true; }
-
+    isSelected(peer) { return this.selected_friends.indexOf(peer) != -1; }
+    _updTitleStr(name) { this.getNode().find("#_name").html(ovk_proc_strtr(escapeHtml(name), 100)); }
     onFriendClick(e, peer) {
         if (this.options.referrer == "chat_creation") {
             const id = peer.id;
@@ -21,36 +24,69 @@ export class FriendsPage extends IMPage {
             const f = t.closest(".friends-list-item");
 
             if (peer.canBeInvitedBy() == false) {
-                makeError(tr("error_user_forbid_invites"), 'Red', 10000, 'forbid_invites' + peer.id);
+                fastError(tr("error_user_forbid_invites"));
                 f.querySelector('input').checked = false;
                 return;
             }
 
-            if (this.selected_friends.indexOf(id) == -1) {
-                this.selected_friends.push(id);
+            if (this.selected_friends.indexOf(peer) == -1) {
+                this.selected_friends.push(peer);
                 f.classList.add("friends-selected");
                 f.querySelector('input').checked = true;
             } else {
-                this.selected_friends = this.selected_friends.filter(item => item !== id);
+                this.selected_friends = this.selected_friends.filter(item => item !== peer);
                 f.classList.remove("friends-selected");
                 f.querySelector('input').checked = false;
             }
 
-            console.log(e, this.selected_friends)
+            if (this._set_name == false) {
+                let n = [];
+                this.selected_friends.forEach(peer => {
+                    n.push(peer.name);
+                });
+
+                if (n.length > 0) {
+                    this._updTitleStr(n.slice(0, 4).join(", "));
+                } else {
+                    this._updTitleStr("...");
+                }
+            }
+
+            this.getNode().find("#_m_count").html(tr("members_count", this.selected_friends.length + 1));
+
             return;
         }
 
         window.im.messenger.selectConversationByPeerId(peer.id);
     }
 
-    isSelected(peer) {
-        return this.selected_friends.indexOf(peer.id) != -1;
+    onTitleChangeClick(e) {
+        const msg = new CMessageBox({
+            title: tr("name_your_chat"),
+            body: `<div><input id="chatInputTitle" type="text"></div>`,
+            close_on_buttons: false,
+            buttons: [tr('ok'), tr('cancel')],
+            callbacks: [() => {
+                this.name = document.querySelector("#chatInputTitle").value;
+                this._set_name = true;
+                this._updTitleStr(this.name);
+                msg.close();
+            }, () => {msg.close()}]
+        });
     }
 
     onCreateChat(e) {
         toggleUnclickability(e.target, true);
 
-        const ids = this.selected_friends;
+        let title = "empty name todo";
+        if (this._set_name == true) {
+            title = this.name;
+        }
+
+        const ids = [];
+        this.selected_friends.forEach(peer => {
+            ids.push(peer.id);
+        })
 
         // пустые беседы нужны!!
         if (ids.length < 0) {
@@ -59,27 +95,15 @@ export class FriendsPage extends IMPage {
             return;
         }
 
-        const msg = new CMessageBox({
-            title: tr("create_chat"),
-            body: `<div><span>${tr('name_your_chat')}</span><input id="chatInputTitle" type="text"></div>`,
-            close_on_buttons: false,
-            buttons: [tr('create'), tr('cancel')],
-            callbacks: [() => {
-                let title = '';
-                title = document.querySelector("#chatInputTitle").value;
-                window.OVKAPI.call('messages.createChat', {
-                    'title': title,
-                    'user_ids': ids,
-                }).then((resp) => {
-                    toggleUnclickability(e.target, false);
-                    msg.close();
-
-                    window.im.setChatByPeerId(resp + 2000000000);
-                }).catch(err => {
-                    fastError(String(err));
-                });
-            }, () => {msg.close()}]
-        })
+        window.OVKAPI.call('messages.createChat', {
+            'title': title,
+            'user_ids': ids,
+        }).then((resp) => {
+            toggleUnclickability(e.target, false);
+            window.im.messenger.selectConversationByPeerId(resp + 2000000000);
+        }).catch(err => {
+            fastError(String(err));
+        });
     }
 
     async beforeRender(container) {
@@ -102,6 +126,7 @@ export class FriendsPage extends IMPage {
             onCreateChat=${(e) => this.onCreateChat(e)}
             isSelected=${(peer) => this.isSelected(peer)}
             onLoadMore=${() => window.im.friends.loadNext()}
+            onTitleChangeClick=${(e) => { this.onTitleChangeClick(e) }}
         />
         `, container);
     }

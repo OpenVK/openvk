@@ -101,11 +101,11 @@ async function triggerMessageNotification(conv, msg, timestamp) {
                 notif.body,
                 notif.ava,
                 () => {
-                  window.im.initImPage(document.querySelector('.page_content'), peer.id);
+                    window.im_class.insertIn(document.querySelector('.page_content'), peer.id);
                 },
                 (notif.priority || 1) * 6000
             );
-            window.im.updateCounter(window.im.getCounter() + 1);
+            window.im_variants.getCurrentUser().updateCounter(window.im.getCounter() + 1);
         } else {
             console.log("Msg notifs | Got a new message but NewNotification not found:", notif);
         }

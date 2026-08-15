@@ -951,6 +951,17 @@ final class Messages extends VKAPIRequestHandler
         return $payload;
     }
 
+    public function getDialogs(int $offset = 0, int $count = 20, string $filter = "all", int $extended = 1, string $fields = "")
+    {
+        $this->requireUser();
+
+        if (VKAPI_DECL_VER_MAJOR >= 5 && VKAPI_DECL_VER_MINOR >= 80) {
+            $this->fail(23, "This method was deprecated in real VK since 5.80. Please either use message.getConversation or lower your reported API version.");
+        }
+
+        return $this->getConversations($offset, $count, $filter, $extended, $fields);
+    }
+
     public function getConversationMembers(int $peer_id = 0, int $extended = 0, int $group_id = 0): array
     {
         $this->requireUser();
