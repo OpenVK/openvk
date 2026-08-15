@@ -185,7 +185,15 @@ export const DayChunkView = ({ chunk }) => {
 
 export const MessageListView = ({ messages, convo }) => {
     return html`
-    <div id="messenger-app--down-button" style="display:none" onClick=${() => window.im.messenger.view._scrollToEnd()}>DOWN</div>
+    <div id="messenger-app--down-button" style="display:none" onClick=${() => {
+        const _v = window.im.messenger.view;
+        const corresponder = window.im.corresponder;
+        if (corresponder && typeof corresponder.scrollToNewest === "function") {
+            corresponder.scrollToNewest();
+        } else {
+            _v._scrollToEnd();
+        }
+    }}>DOWN</div>
     <div class="messenger-app--messages">
       <div class="messenger-app--messages-array">
          ${messages.map((chunk) => html`<${DayChunkView} chunk=${chunk} />`)}
