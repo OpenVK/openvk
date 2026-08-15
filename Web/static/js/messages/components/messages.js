@@ -181,7 +181,7 @@ export class ChatGeneralForm {
     }
 
     can(thing, relatively_current_group = null) { // unified function
-
+        return true;
     }
 
     canUsersBeAddedBy(group = null) {

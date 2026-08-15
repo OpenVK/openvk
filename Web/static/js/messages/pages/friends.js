@@ -18,7 +18,7 @@ export class FriendsPage extends IMPage {
     isSelected(peer) { return this.selected_friends.indexOf(peer) != -1; }
     _updTitleStr(name) { this.getNode().find("#_name").html(ovk_proc_strtr(escapeHtml(name), 100)); }
     onFriendClick(e, peer) {
-        if (this.options.referrer == "chat_creation") {
+        if (this.options.referrer == "chat_creation" || this.options.referrer == "add_new") {
             const id = peer.id;
             const t = e.target;
             const f = t.closest(".friends-list-item");
@@ -57,6 +57,10 @@ export class FriendsPage extends IMPage {
             return;
         }
 
+        if (this.options.referrer == "add_new") {
+            const convo_id = this.options.convo_id;
+        }
+
         window.im.messenger.selectConversationByPeerId(peer.id);
     }
 
@@ -87,6 +91,16 @@ export class FriendsPage extends IMPage {
         this.selected_friends.forEach(peer => {
             ids.push(peer.id);
         })
+
+        if (this.options.referrer == "add_new") {
+            window.OVKAPI.call("messages.addChatUser", {
+                "peer_id": this.options.convo_id,
+                "user_id": ids.join(",")
+            });
+            window.im.messenger.selectConversationByPeerId(this.options.convo_id);
+            toggleUnclickability(e.target, false);
+            return;
+        }
 
         // пустые беседы нужны!!
         if (ids.length < 0) {
@@ -123,7 +137,7 @@ export class FriendsPage extends IMPage {
             count=${window.im.friends.total_count}
             referrer=${ref}
             onFriendClick=${(e, peer) => this.onFriendClick(e, peer)}
-            onCreateChat=${(e) => this.onCreateChat(e)}
+            onSubmit=${(e) => this.onCreateChat(e)}
             isSelected=${(peer) => this.isSelected(peer)}
             onLoadMore=${() => window.im.friends.loadNext()}
             onTitleChangeClick=${(e) => { this.onTitleChangeClick(e) }}

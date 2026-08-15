@@ -203,9 +203,17 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
 };
 
 export const TabBar = ({ tabs, activeTab, onTabSelect }) => {
-    const showContactButton = activeTab.getPageId() == "messenger";
-    const showFriendsButton = !window.im.state.is_group && activeTab.getPageId() != "friends";
-    const showSettingsButton = !window.im.state.is_group && activeTab.getPageId() == "conversations";
+    let activeTabName = "";
+
+    try {
+        activeTabName = activeTab.getPageId();
+    } catch(e) {
+        console.error(e);
+    }
+
+    const showContactButton = activeTabName == "messenger";
+    const showFriendsButton = !window.im.state.is_group && activeTabName != "friends";
+    const showSettingsButton = !window.im.state.is_group && activeTabName == "conversations";
     const showSpecActions = showSettingsButton || showContactButton || showFriendsButton;
 
     return html`
@@ -274,6 +282,12 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
             ` : "" }
             ${ peer.canUpdateAvatar() ? html`
                 <a onClick=${(e) => { updateChatAvatar(e, peer) }}>Обновить аватар беседы</a>
+            ` : "" }
+            ${ peer.can("invite_new") ? html`
+                <a onClick=${(e) => { window.im.openTabByName("friends", true, {
+                    "referrer": "add_new",
+                    "convo_id": peer.id
+                }) }}>Добавить участников</a>
             ` : "" }
             ${ peer.canLeaveChat() ? html`
                 <a>Выйти</a>
