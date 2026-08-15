@@ -49,15 +49,20 @@ export class InstantMessagesAndRelated {
     }
 
     async init() {
-        console.log("IM | Init");
+        console.log("IM | Init", this.state);
 
         if (window.OVKAPI == null) {
             await new Promise((resolve) => setTimeout(resolve, 1000));
         }
 
         await this.state._loadCurrent();
-        console.log(this.conversations, this.conversations.loadNext)
-        await this.conversations.loadNext();
+
+        try {
+            await this.conversations.loadNext();
+        } catch(e) {
+            fastError(String(e));
+        }
+
         /*
         this.lp = new LongPollConnection();
         await this.lp.create();
@@ -69,33 +74,48 @@ export class InstantMessagesAndRelated {
         console.log("IM | Inited");
     }
 
-    async insertIn(container) {
-        this.state.addLoadSkeleton(container);
-        await this.waitLoad();
+
+    static async insertIn(container, as = null) {
+        let self = window.im;
+
+        if (as != null) {
+            console.log("IM | ?as= detected", as);
+            self = window.im_variants.getForGroup(Number(as));
+            window.im_variants.set(self);
+            if (!self.is_ready) { await self.init(); }
+            console.log(self)
+        }
+
+        self.state.addLoadSkeleton(container);
+        await self.waitLoad();
 
         console.log("IM | Insert in ", container);
 
         const node = u(`<div class="at_page" id="im_container"><div id="im_page_tabs"></div><div id="im_page_containers"></div></div>`)
-        if (this.state.is_compact_mode_enabled == true) {
+        if (self.state.is_compact_mode_enabled == true) {
             node.addClass("compact");
         }
 
         container.insertAdjacentHTML("beforeend", node.last().outerHTML);
 
-        this.root = container.querySelector("#im_container");
+        self.root = container.querySelector("#im_container");
 
         //const found = await this._checkSel(new URL(location.href), sel_id);
         //if (!found) {
         //    this.selectTab('conversations');
        	//}
 
-        this.openTabByName("conversations");
-        this.state.removeLoadSkeleton(container);
-        this.state._changeHeight(this.root);
+        self.openTabByName("conversations");
+        self.state.removeLoadSkeleton(container);
+        self.state._changeHeight(self.root);
     }
 
     updateTabs() {
         this._renderTabBar();
+    }
+
+    _toCGF(obj) {
+        return new ChatGeneralForm(obj);
     }
 
     _renderTabBar() {
@@ -115,8 +135,6 @@ export class InstantMessagesAndRelated {
             onTabSelect=${(id) => this.selectTab(id)}
         />
         `, wrap);
-
-        this.header.changeByConvNumber(Number(window.im.conversations.total_convs));
     }
 
     selectTab(tab) {
@@ -145,6 +163,7 @@ export class InstantMessagesAndRelated {
                 this.state._toggleScrollMode(true);
             }
 
+            _tab.updateHeader(this.header);
             this.root.querySelector(`#im_page_containers .im_page[data-id="${_tab.getId()}"]`).classList.remove("hidden");
         } catch(e) {
             console.error(e);
@@ -231,15 +250,47 @@ export class InstantMessagesAndRelated {
 class IMVariants {
     constructor() {
         this.items = [];
+        this.currentIndex = 0;
     }
 
     setByIndex(id) {
+        this.currentIndex = id;
         window.im = this.items[id];
     }
 
-    add(item) {
-        return this.items.push(item);
+    set(im_obj) {
+        const id = this.items.indexOf(im_obj);
+        this.setByIndex(id);
     }
+
+    getCurrent() { return this.items[this.currentIndex]; }
+    getCurrentUser() { return this.items[0]; }
+    getForX(id) {
+        if (id > 0) {
+            return this.getCurrentUser();
+        } else {
+            return this.getForGroup(id);
+        }
+    }
+
+    getForGroup(group_id) {
+        let found = null;
+        this.items.forEach(item => {
+            if (item.state.group_id == group_id) {
+                found = item;
+            }
+        });
+
+        if (found == null) {
+            found = new InstantMessagesAndRelated(group_id);
+            found.usage_type = "group";
+            this.add(found);
+        }
+
+        return found;
+    }
+
+    add(item) { return this.items.push(item); }
 }
 
 class IMState {
@@ -251,6 +302,9 @@ class IMState {
     }
 
     get is_compact_mode_enabled() { return localStorage.getItem("tw.im.modern_mode") === "1"; }
+    get is_opened() { return location.pathname == "/im"; }
+    get is_active() { return this.tab == 'messenger' && this.is_opened == true; }
+    get is_group() { return this.group_id != null }
 
     getUnreadCounter() {
         return 0;
@@ -260,7 +314,7 @@ class IMState {
     }
 
     async _loadCurrent() {
-        if (group_id == null) {
+        if (this.group_id == null) {
             let _v = await window.OVKAPI.call('users.get', {
                 'user_ids': window.openvk.current_id,
                 'fields': ChatGeneralForm.BASE_FIELDS,
@@ -268,7 +322,7 @@ class IMState {
             this.items.push(new ChatGeneralForm(_v[0]));
         } else {
             let _v = await window.OVKAPI.call('groups.getById', {
-                'group_ids': Math.abs(window.openvk.current_id),
+                'group_ids': Math.abs(this.group_id),
                 'fields': ChatGeneralForm.BASE_FIELDS,
             });
             this.items.push(new ChatGeneralForm(_v[0]));
@@ -357,15 +411,6 @@ class IMState {
     removeLoadSkeleton(container) {
         container.querySelector("#load_skeleton").remove();
     }
-
-    get is_opened() {
-        return location.pathname == "/im";
-    }
-
-    // Is messages page is open and messenger tab selected
-    get is_active() {
-        return this.tab == 'messenger' && this.is_opened == true;
-    }
 }
 
 class SettingsPage extends IMPage {
@@ -403,19 +448,35 @@ class YellowHeader {
         document.title = title;
     }
 
-    changeYellowHeader(text) {
+    changeYellowHeader(text, append_switch_button = true) {
         u(".page_yellowheader").html(text);
+
+        try {
+            append_switch_button = window.im.getSelectedTab().getPageId() == "conversations";
+        } catch(e) {}
+
+        if (append_switch_button == true) {
+            u(".page_yellowheader").append(`
+            <div style="float: right;">
+                <span><b><a onclick="imSwitchCurrent(event)">${tr("messenger_switch_current")}</a></b></span>
+            </div>`);
+        }
     }
 
     changeByConvNumber(conv_number) {
         if (conv_number > 7) {
-            return tr("conversations_count_title", conv_number);
+            return this.changeYellowHeader(tr("conversations_count_title", conv_number));
         }
 
-        return tr("messages");
+        return this.changeYellowHeader(tr("messages"));
     }
 
     changeYellowHeaderByPeer(peer) {
+        if (window.im.state.is_group) {
+            this.changeYellowHeader(tr("group_messages"));
+            return;
+        }
+
         switch (peer.supposed_type) {
             case "chat":
                 this.changeYellowHeader(tr("conversation_title_chat"));
@@ -789,8 +850,8 @@ export class IMDeprecated {
 }
 
 (async () => {
-    const n_url = new URL(location.href);
-    console.log()
+    window.im_class = InstantMessagesAndRelated;
+
     if (window.im == null) {
         window.im_variants = new IMVariants();
         window.im_variants.add(new InstantMessagesAndRelated());
@@ -798,8 +859,4 @@ export class IMDeprecated {
     }
 
     await window.im.init();
-    if (n_url.searchParams.get("as") != null) {
-        window.im_variants.add(new InstantMessagesAndRelated(Number(n_url.searchParams.get("as"))));
-        window.im_variants.setByIndex(0);
-    }
 })()

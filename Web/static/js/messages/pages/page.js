@@ -8,6 +8,10 @@ export class IMTab {
         return this.render_class.getTabName();
     }
 
+    updateHeader(header) {
+        return this.render_class.updateHeader(header);
+    }
+
     async render() {
         await this.render_class.wRender();
         this.render_class.is_rendered_firstly = true;
@@ -66,7 +70,9 @@ export class IMPage {
         await this.render(this.container);
         //document.documentElement.scroll({ top: 0 });
     }
+    getNode() { return u(this.container) }
     async update(options = {}) { await this.wRender(options); }
+    updateHeader(header) { header.changeByConvNumber(0); }
     isVisibleWhenHidden() { return false; }
     shouldCloseOnExit() { return false; }
     isDisablesScroll() { return false; }

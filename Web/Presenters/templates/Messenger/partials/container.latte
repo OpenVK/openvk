@@ -1,13 +1,14 @@
 <script>
     function loadPage() {
-        window.im.insertIn(document.querySelector('.page_content'));
+        const n_url = new URL(location.href);
+        window.im_class.insertIn(document.querySelector('.page_content'), n_url.searchParams.get("as"));
     }
 
     document.addEventListener("DOMContentLoaded", (e) => {
         loadPage();
     });
 
-    if (window.im != null) {
+    if (window.im_class != null) {
         loadPage();
     }
 </script>
