@@ -18,12 +18,344 @@ export class Chunks {
 export class MessagesChunk {
     constructor() {
         this.uid = null;
+        this._cached_all_messages = undefined;
+    }
+
+    async getMessages_NewerThan(message_id) {
+        const rev = true;
+        const messages = new MessagesChunk([], rev);
+        messages.latest_message_index = message_id;
+
+        const params = {
+            'start_message_id': message_id,
+            'offset': -(ChatGeneralForm.MESSAGES_PER_PAGE),
+            'peer_id': this.id,
+        };
+
+        await messages.fetch(params);
+
+        return messages;
+    }
+
+    _findMessageById(id) {
+        let f = null;
+        this.messages.forEach((e) => {
+            if (f != null) return;
+            if (e.id == id) f = e;
+        });
+
+        return f;
+    }
+
+    async _messagesLoad_UpFromLastChunk() {
+      console.log("End is reached: ", this._isEndReached());
+
+        if (this._isEndReached()) return;
+
+        const current = this._findCurrentChunk();
+
+        // No current chunk yet → just return (shouldn't happen after init)
+        if (!current) return;
+
+        const sorted = this.chunks;
+
+        // If there's already an older chunk loaded, just switch to it
+        if (current.index < sorted.length - 1) {
+            console.log(sorted)
+            const olderChunk = sorted[current.index + 1];
+            console.log(olderChunk)
+            this._setCurrentChunkByUid(olderChunk.uid);
+            window.im.messenger.view._triggerUpdate();
+
+            // Scroll to keep position (the older chunk is above in the DOM)
+            setTimeout(() => {
+                const block = window.im.messenger.view.messagesListBlock;
+                if (block) {
+                    // Find the first message element of the newly active chunk
+                    const firstMsg = olderChunk.getMessages()[0];
+                    if (firstMsg && firstMsg.id) {
+                        const el = block.querySelector(`[data-msg-id="${firstMsg.id}"]`);
+                        if (el) el.scrollIntoView({ block: 'start' });
+                    }
+                }
+            }, 1);
+            return;
+        }
+
+        // ── No older chunk exists → fetch one ──
+        const cur = current.chunk;
+        const oldestMsgInCurrent = cur.first_message;
+        if (!oldestMsgInCurrent) return;
+
+        const msgs = await this.getMessages(oldestMsgInCurrent.id, 0);
+
+        const prev_scroll = window.im.messenger.view.messagesListBlock
+        ? window.im.messenger.view.messagesListBlock.scrollTop
+        : 0;
+        const prev_height = window.im.messenger.view.messagesListBlock
+        ? window.im.messenger.view.messagesListBlock.scrollHeight
+        : 0;
+
+        if (!this._end_reached && msgs.messages.length > 0) {
+            this._appendMessagesChunk(msgs, true, cur);
+            this._setCurrentChunkByUid(msgs.uid);
+            window.im.messenger.view._triggerUpdate();
+        }
+
+        console.log("isEnd: ", msgs.isEnd(), " count: ", msgs.messages.length);
+
+        this._end_reached = msgs.isEnd();
+
+        if (!this._end_reached) {
+            setTimeout(() => {
+                const block = window.im.messenger.view.messagesListBlock;
+                if (block) {
+                    const new_scroll = prev_scroll + (block.scrollHeight - prev_height);
+                    window.im.messenger.view._scrollTo(new_scroll);
+                }
+            }, 1);
+        }
+    }
+
+    async _messagesLoad_DownFromCurrentChunk() {
+        if (this._isBeginningReached()) return;
+
+        const current = this._findCurrentChunk();
+        if (!current) return;
+
+        const sorted = this.chunks;
+
+            // If there's already a newer chunk loaded, just switch to it
+            if (current.index > 0) {
+                const newerChunk = sorted[current.index - 1];
+                this._setCurrentChunkByUid(newerChunk.uid);
+                window.im.messenger.view._triggerUpdate();
+
+                // Scroll to keep the viewport stable
+                setTimeout(() => {
+                    const block = window.im.messenger.view.messagesListBlock;
+                    if (block) {
+                        const lastMsg = newerChunk.getMessages()[newerChunk.getMessages().length - 1];
+                        if (lastMsg && lastMsg.id) {
+                            const el = block.querySelector(`[data-msg-id="${lastMsg.id}"]`);
+                            if (el) el.scrollIntoView({ block: 'end' });
+                        }
+                    }
+                }, 1);
+                return;
+            }
+
+            // ── No newer chunk exists → fetch one ──
+            const newestMsgInCurrent = current.chunk.latest_message;
+            if (!newestMsgInCurrent) return;
+
+            // Fetch messages newer than the newest message in the current chunk
+            let msgs = [];
+
+            try {
+                msgs = await this.getMessages_NewerThan(newestMsgInCurrent.id);
+            } catch (e) {
+                console.error(e);
+            }
+
+            this._beginning_reached = msgs.isEnd();
+
+            if (!this._beginning_reached) {
+                this._appendMessagesChunk(msgs, false);
+                this._setCurrentChunkByUid(msgs.uid);
+                window.im.messenger.view._triggerUpdate();
+
+                // If we were at the bottom-ish area, scroll to the bottom
+                setTimeout(() => {
+                    window.im.messenger.view._scrollToEnd();
+                }, 1);
+            }
+    }
+
+    _chunks_HasMoreNewerChunkRelativelyToCurrentChat() {
+        const current = this._findCurrentChunk();
+        if (!current) return false;
+        // If current is not at index 0, there is at least one newer chunk
+        return current.index > 0;
+    }
+
+    _chunks_HasMoreOlderChunkRelativelyToCurrentChat() {
+        const current = this._findCurrentChunk();
+        if (!current) return false;
+        // If current is not at the last index, there is at least one older chunk
+        return current.index < this.chunks.length - 1;
+    }
+
+    async _findMessageByIdFromApi(id) {
+        return this._findMessageById(id);
+    }
+
+    _pushNewMessage(msg, conv = null, check_chunk = true) {
+        console.log(msg)
+        const newest = this._getNewestChunk(check_chunk);
+
+        if (!newest && conv != null) {
+            conv.updateLastMessage(msg);
+            return;
+        }
+
+        newest._pushMessage(msg);
+        this._removeCache();
+        window.im.messenger.view._triggerUpdate();
+    }
+
+    _getNewestChunk(check_chunk = true) {
+        const sorted = this.chunks;
+        if (sorted.length === 0 && check_chunk == true) {
+            const c = new MessagesChunk([]);
+            this.message_chunks.push(c);
+            return c;
+        }
+        return sorted[0];
+    }
+
+    _getMostActualChunk() {
+        return this.message_chunks[0];
+    }
+
+    _getLatestChunk(create_empty = true) {
+        if (create_empty && this.chunks[this.chunks.length - 1] == undefined) {
+        console.log('IM | Adding empty chunk');
+        const c = new MessagesChunk([]);
+            this.message_chunks.push(c);
+        }
+
+        return this.chunks[this.chunks.length - 1];
+    }
+
+    _isEndReached() {
+        return this._end_reached ?? false;
+    }
+
+    _isBeginningReached() {
+        return this._beginning_reached ?? false;
+    }
+
+    _findCurrentChunk() {
+        if (this._currentChunkUid == null) return null;
+        const sorted = this.chunks;
+        for (let i = 0; i < sorted.length; i++) {
+            if (sorted[i].uid === this._currentChunkUid) {
+                return { chunk: sorted[i], index: i };
+            }
+        }
+        return null;
+    }
+
+    _setCurrentChunkByUid(uid) {
+        this._currentChunkUid = uid;
+    }
+
+    _appendMessagesChunk(messages, before = false, compare_with = null) {
+        this._messages_inited = true;
+
+        // если сообщений в чате очень мало, то будет дублирование.
+        // грубое решение проблемы
+        if (compare_with != null) {
+            const ids = [];
+            compare_with.messages.forEach(msg => {
+                ids.push(msg.id);
+            })
+
+            messages.messages = messages.messages.filter((item) => { return !ids.includes(item.id) });
+        }
+
+        console.log(compare_with, messages)
+        if (!before) {
+            this.message_chunks.unshift(messages);
+        } else {
+            this.message_chunks.push(messages);
+        }
+
+        // First ever chunk → make it the current chunk
+        if (this._currentChunkUid == null) {
+            this._currentChunkUid = messages.uid;
+        }
+    }
+
+    _isMessagesInited() {
+        return this._messages_inited;
     }
 
     // это сообщение, которое отсносительно прокрутки вверх самое старое!
     getFirstMessage() {
 
     }
+
+    _removeCache() {
+        this._cached_all_messages = undefined;
+    }
+
+    get chunks() {
+        return this.message_chunks.slice(0).sort((a, b) => {
+            const aTime = a.first_message?.sent || 0;
+            const bTime = b.first_message?.sent || 0;
+            return bTime - aTime;
+        });
+    }
+
+    getMessages() {
+        const fnl = [];
+        if (this._cached_all_messages != undefined) {
+            return this._cached_all_messages;
+        }
+
+        const sorted = this.chunks; // newest-first
+        for (let i = sorted.length - 1; i >= 0; i--) {
+            sorted[i].getMessages().forEach((msg) => fnl.push(msg));
+        }
+
+        this._cached_all_messages = fnl;
+        return fnl;
+    }
+
+    async loadChunkByMessageId(messageId) {
+        const msgs = await this.getMessages(messageId, 0);
+        this._appendMessagesChunk(msgs, false);
+        this._setCurrentChunkByUid(msgs.uid);
+        this._removeCache();
+        window.im.messenger.view._triggerUpdate();
+    }
+
+    getDayDividedMessages() {
+        const dayChunks = [];
+        const dateMap = new Map();
+
+        const sorted = this.chunks;
+        for (let i = sorted.length - 1; i >= 0; i--) {
+            const chunk = sorted[i];
+            chunk.getMessages().forEach((msg) => {
+                if (!msg.sent) return;
+                if (msg.is_deleted_formally) return;
+                const dateKey = msg.sort_date;
+
+                if (!dateMap.has(dateKey)) {
+                    const dayChunk = new DayChunk([]);
+                    dayChunk.setDay(dateKey);
+                    dayChunks.push(dayChunk);
+                    dateMap.set(dateKey, dayChunk);
+                }
+
+                dateMap.get(dateKey)._pushMessage(msg);
+            });
+        }
+
+        dayChunks.sort((a, b) => a.date.localeCompare(b.date));
+
+        return dayChunks;
+    }
+
+    // pinned
+
+    async pinnedMessages_load() {
+        this.pinned_message_chunks;
+    }
+
 }
 
 export class DeprecatedMessagesChunk {
@@ -47,7 +379,6 @@ export class DeprecatedMessagesChunk {
         }
     }
 
-  /** Newest message in this chunk (when do_reverse=true). */
   get latest_message() {
     if (!this.do_reverse) {
       return this.messages[this.messages.length - 1];
@@ -357,84 +688,16 @@ export class ChatGeneralForm {
         return tr("im_was_online_yesterday_" + this.gender, "00:00", "11.11.11").toLowerCase();
     }
 
-    // ── chunk management ─────────────────────────────────────────────
-
-    /**
-    * Returns all chunks sorted newest-first.
-    *
-    * Sorting key: first_message (the *oldest* message when do_reverse=true)
-    * descending, so the chunk whose oldest message is the most recent comes
-    * first.
-    *
-    * Sorted order:  [newest_chunk, ..., oldest_chunk]
-    * Indices:       [0            , ..., N-1          ]
-    */
-    get chunks() {
-        return this.message_chunks.slice(0).sort((a, b) => {
-            const aTime = a.first_message?.sent || 0;
-            const bTime = b.first_message?.sent || 0;
-            return bTime - aTime;
-        });
-    }
-
-    /**
-    * Returns ALL messages from ALL chunks in chronological order.
-    * Iterates chunks from oldest to newest (reversed sorted order)
-    * so that the flattened result is oldest-to-newest overall.
-    */
     get messages() {
-        return [];
-        const fnl = [];
-        if (this._cached_all_messages != undefined) {
-            return this._cached_all_messages;
-        }
-
-        const sorted = this.chunks; // newest-first
-        for (let i = sorted.length - 1; i >= 0; i--) {
-            sorted[i].getMessages().forEach((msg) => fnl.push(msg));
-        }
-
-        this._cached_all_messages = fnl;
-        return fnl;
+        return this._chunks.getMessages();
     }
 
     get divided_messages() {
-        return [];
-        const dayChunks = [];
-        const dateMap = new Map();
-
-        // Iterate chunks from oldest to newest so messages are pushed
-        // into each DayChunk in correct chronological order.
-        const sorted = this.chunks; // newest-first
-        for (let i = sorted.length - 1; i >= 0; i--) {
-            const chunk = sorted[i];
-            chunk.getMessages().forEach((msg) => {
-                if (!msg.sent) return;
-                if (msg.is_deleted_formally) return;
-                const dateKey = msg.sort_date;
-
-                if (!dateMap.has(dateKey)) {
-                    const dayChunk = new DayChunk([]);
-                    dayChunk.setDay(dateKey);
-                    dayChunks.push(dayChunk);
-                    dateMap.set(dateKey, dayChunk);
-                }
-
-                dateMap.get(dateKey)._pushMessage(msg);
-            });
-        }
-
-        dayChunks.sort((a, b) => a.date.localeCompare(b.date));
-
-        return dayChunks;
+        return this._chunks.getDayDividedMessages();
     }
 
     get is_muted() {
         return false;
-    }
-
-    _removeCache() {
-        this._cached_all_messages = undefined;
     }
 
     // ── initial loading ──────────────────────────────────────────────
@@ -474,14 +737,6 @@ export class ChatGeneralForm {
         return new ChatGeneralForm(c);
     }
 
-    /**
-    * Fetch one page of messages from the API.
-    *
-    * @param {number|null} message_id  - start_message_id passed to VK API.
-    *        When null the API returns the most recent messages.
-    * @param {number} offset           - offset relative to start_message_id.
-    *        Negative values go further back in history.
-    */
     async getMessages(message_id, offset = 0) {
         const rev = true;
         const messages = new MessagesChunk([], rev);
@@ -497,44 +752,6 @@ export class ChatGeneralForm {
 
         return messages;
     }
-
-    /**
-    * Fetch messages *newer* than the given message_id.
-    * Uses a trick: offset=-count to get `count` messages *after*
-    * start_message_id (the VK API offset works in reverse when
-    * start_message_id is set — negative offset goes toward newer).
-    */
-    async getMessages_NewerThan(message_id) {
-        const rev = true;
-        const messages = new MessagesChunk([], rev);
-        messages.latest_message_index = message_id;
-
-        const params = {
-        'start_message_id': message_id,
-        'offset': -(ChatGeneralForm.MESSAGES_PER_PAGE),
-        'peer_id': this.id,
-        };
-
-        await messages.fetch(params);
-
-        return messages;
-    }
-
-    /**
-    * Fetch a chunk that includes the given message_id and insert it
-    * into message_chunks. The new chunk becomes the current one.
-    *
-    * @param {number} messageId
-    */
-    async loadChunkByMessageId(messageId) {
-        const msgs = await this.getMessages(messageId, 0);
-        this._appendMessagesChunk(msgs, false);
-        this._setCurrentChunkByUid(msgs.uid);
-        this._removeCache();
-        window.im.messenger.view._triggerUpdate();
-    }
-
-    // ── sending ──────────────────────────────────────────────────────
 
     async sendMessage(msg, reply_to = null, attachments = null, wait_until_send = null) {
         this._pushNewMessage(msg);
@@ -577,335 +794,6 @@ export class ChatGeneralForm {
             console.error('IM | Did not sent message to ' + this.id, ': ', e);
             window.im.messenger.view._triggerUpdate();
         }
-    }
-
-    _findMessageById(id) {
-        let f = null;
-        this.messages.forEach((e) => {
-            if (f != null) return;
-            if (e.id == id) f = e;
-        });
-
-        return f;
-    }
-
-    async _findMessageByIdFromApi(id) {
-        return this._findMessageById(id);
-    }
-
-    /**
-    * Push a newly-arrived message into the *newest* chunk
-    * (the one at index 0 in the sorted chunks array).
-    */
-    _pushNewMessage(msg, conv = null, check_chunk = true) {
-        console.log(msg)
-        const newest = this._getNewestChunk(check_chunk);
-
-        if (!newest && conv != null) {
-            conv.updateLastMessage(msg);
-            return;
-        }
-
-        newest._pushMessage(msg);
-        this._removeCache();
-        window.im.messenger.view._triggerUpdate();
-    }
-
-    /**
-    * Returns the newest chunk (index 0 of the sorted array).
-    * Creates an empty one if none exist.
-    */
-    _getNewestChunk(check_chunk = true) {
-        const sorted = this.chunks;
-        if (sorted.length === 0 && check_chunk == true) {
-            const c = new MessagesChunk([]);
-            this.message_chunks.push(c);
-            return c;
-        }
-        return sorted[0];
-    }
-
-    /**
-    * Returns the first (newest) chunk in the sorted array,
-    * creating an empty one if needed.
-    * Despite the misleading name, this gives us the NEWEST chunk.
-    */
-    _getMostActualChunk() {
-        return this.message_chunks[0];
-    }
-
-    /**
-    * Returns the LAST chunk in the sorted array — i.e. the OLDEST one.
-    *
-    * Despite the name "_getLatestChunk", it returns the oldest chunk
-    * because `this.chunks` is sorted newest-first.
-    *
-    * Creates an empty chunk if none exist (when create_empty = true).
-    */
-    _getLatestChunk(create_empty = true) {
-        if (create_empty && this.chunks[this.chunks.length - 1] == undefined) {
-        console.log('IM | Adding empty chunk');
-        const c = new MessagesChunk([]);
-            this.message_chunks.push(c);
-        }
-
-        return this.chunks[this.chunks.length - 1];
-    }
-
-    // ── scrolling boundaries ─────────────────────────────────────────
-
-    _isEndReached() {
-        return this._end_reached ?? false;
-    }
-
-    _isBeginningReached() {
-        return this._beginning_reached ?? false;
-    }
-
-    /**
-    * Find the "current" chunk in the sorted chunks array.
-    * The current chunk is the one the user is anchored to.
-    *
-    * Returns { chunk, index } or null if no current chunk is set.
-    */
-    _findCurrentChunk() {
-        if (this._currentChunkUid == null) return null;
-        const sorted = this.chunks;
-        for (let i = 0; i < sorted.length; i++) {
-            if (sorted[i].uid === this._currentChunkUid) {
-                return { chunk: sorted[i], index: i };
-            }
-        }
-        return null;
-    }
-
-    /**
-    * Mark a chunk as the "current" one by its UID.
-    */
-    _setCurrentChunkByUid(uid) {
-        this._currentChunkUid = uid;
-    }
-
-    // ── appending chunks ─────────────────────────────────────────────
-
-    /**
-    * Append a newly loaded chunk to the raw message_chunks array.
-    * Before appending, sets it as the _currentChunk if none is set yet.
-    */
-    _appendMessagesChunk(messages, before = false, compare_with = null) {
-        this._messages_inited = true;
-
-        // если сообщений в чате очень мало, то будет дублирование.
-        // грубое решение проблемы
-        if (compare_with != null) {
-            const ids = [];
-            compare_with.messages.forEach(msg => {
-                ids.push(msg.id);
-            })
-
-            messages.messages = messages.messages.filter((item) => { return !ids.includes(item.id) });
-        }
-
-        console.log(compare_with, messages)
-        if (!before) {
-            this.message_chunks.unshift(messages);
-        } else {
-            this.message_chunks.push(messages);
-        }
-
-        // First ever chunk → make it the current chunk
-        if (this._currentChunkUid == null) {
-            this._currentChunkUid = messages.uid;
-        }
-    }
-
-    _isMessagesInited() {
-        return this._messages_inited;
-    }
-
-    // ── scrolling UP (older messages) ─────────────────────────────────
-
-    /**
-    * Load older messages relative to the current chunk.
-    *
-    * Chunk layout (sorted newest-first):
-    *
-    *   [ newest_chunk, ..., current_chunk, ..., oldest_chunk ]
-    *     ↑ index 0                       ↑ index N-1
-    *
-    * When scrolling UP (looking for older messages):
-    * 1. Find the current chunk in the sorted array.
-    * 2. If there is already a chunk *after* it (at a higher index = older),
-    *    just mark that one as the new current — no fetch needed.
-    * 3. Otherwise, fetch one page of messages older than the current
-    *    chunk's oldest message and insert the new chunk. The new chunk
-    *    becomes the current one.
-    *
-    * Scrolling stops (isEnd) when the API returns fewer messages than
-    * requested — there are no older messages left.
-    */
-    async _messagesLoad_UpFromLastChunk() {
-      console.log("End is reached: ", this._isEndReached());
-
-        if (this._isEndReached()) return;
-
-        const current = this._findCurrentChunk();
-
-        // No current chunk yet → just return (shouldn't happen after init)
-        if (!current) return;
-
-        const sorted = this.chunks;
-
-        // If there's already an older chunk loaded, just switch to it
-        if (current.index < sorted.length - 1) {
-            console.log(sorted)
-            const olderChunk = sorted[current.index + 1];
-            console.log(olderChunk)
-            this._setCurrentChunkByUid(olderChunk.uid);
-            window.im.messenger.view._triggerUpdate();
-
-            // Scroll to keep position (the older chunk is above in the DOM)
-            setTimeout(() => {
-                const block = window.im.messenger.view.messagesListBlock;
-                if (block) {
-                    // Find the first message element of the newly active chunk
-                    const firstMsg = olderChunk.getMessages()[0];
-                    if (firstMsg && firstMsg.id) {
-                        const el = block.querySelector(`[data-msg-id="${firstMsg.id}"]`);
-                        if (el) el.scrollIntoView({ block: 'start' });
-                    }
-                }
-            }, 1);
-            return;
-        }
-
-        // ── No older chunk exists → fetch one ──
-        const cur = current.chunk;
-        const oldestMsgInCurrent = cur.first_message;
-        if (!oldestMsgInCurrent) return;
-
-        const msgs = await this.getMessages(oldestMsgInCurrent.id, 0);
-
-        const prev_scroll = window.im.messenger.view.messagesListBlock
-        ? window.im.messenger.view.messagesListBlock.scrollTop
-        : 0;
-        const prev_height = window.im.messenger.view.messagesListBlock
-        ? window.im.messenger.view.messagesListBlock.scrollHeight
-        : 0;
-
-        if (!this._end_reached && msgs.messages.length > 0) {
-            this._appendMessagesChunk(msgs, true, cur);
-            this._setCurrentChunkByUid(msgs.uid);
-            window.im.messenger.view._triggerUpdate();
-        }
-
-        console.log("isEnd: ", msgs.isEnd(), " count: ", msgs.messages.length);
-
-        this._end_reached = msgs.isEnd();
-
-        if (!this._end_reached) {
-            setTimeout(() => {
-                const block = window.im.messenger.view.messagesListBlock;
-                if (block) {
-                    const new_scroll = prev_scroll + (block.scrollHeight - prev_height);
-                    window.im.messenger.view._scrollTo(new_scroll);
-                }
-            }, 1);
-        }
-}
-
-    // ── scrolling DOWN (newer messages) ───────────────────────────────
-
-    /**
-    * Load newer messages relative to the current chunk.
-    *
-    * When scrolling DOWN (looking for newer messages):
-    * 1. Find the current chunk in the sorted array.
-    * 2. If there is already a chunk *before* it (at a lower index = newer),
-    *    just switch to it — no fetch needed.
-    * 3. Otherwise, fetch one page of messages newer than the current
-    *    chunk's newest message. The new chunk becomes the current one.
-    *
-    * Scrolling stops (isBeginning) when the API returns fewer messages
-    * than requested — there are no newer messages left.
-    */
-    async _messagesLoad_DownFromCurrentChunk() {
-        if (this._isBeginningReached()) return;
-
-        const current = this._findCurrentChunk();
-        if (!current) return;
-
-        const sorted = this.chunks;
-
-            // If there's already a newer chunk loaded, just switch to it
-            if (current.index > 0) {
-                const newerChunk = sorted[current.index - 1];
-                this._setCurrentChunkByUid(newerChunk.uid);
-                window.im.messenger.view._triggerUpdate();
-
-                // Scroll to keep the viewport stable
-                setTimeout(() => {
-                    const block = window.im.messenger.view.messagesListBlock;
-                    if (block) {
-                        const lastMsg = newerChunk.getMessages()[newerChunk.getMessages().length - 1];
-                        if (lastMsg && lastMsg.id) {
-                            const el = block.querySelector(`[data-msg-id="${lastMsg.id}"]`);
-                            if (el) el.scrollIntoView({ block: 'end' });
-                        }
-                    }
-                }, 1);
-                return;
-            }
-
-            // ── No newer chunk exists → fetch one ──
-            const newestMsgInCurrent = current.chunk.latest_message;
-            if (!newestMsgInCurrent) return;
-
-            // Fetch messages newer than the newest message in the current chunk
-            let msgs = [];
-
-            try {
-                msgs = await this.getMessages_NewerThan(newestMsgInCurrent.id);
-            } catch (e) {
-                console.error(e);
-            }
-
-            this._beginning_reached = msgs.isEnd();
-
-            if (!this._beginning_reached) {
-                this._appendMessagesChunk(msgs, false);
-                this._setCurrentChunkByUid(msgs.uid);
-                window.im.messenger.view._triggerUpdate();
-
-                // If we were at the bottom-ish area, scroll to the bottom
-                setTimeout(() => {
-                    window.im.messenger.view._scrollToEnd();
-                }, 1);
-            }
-    }
-
-    // ── guards used by the scroll handler ─────────────────────────────
-
-    /**
-    * Returns true when there are already newer chunks loaded
-    * (relative to the current chunk).
-    */
-    _chunks_HasMoreNewerChunkRelativelyToCurrentChat() {
-        const current = this._findCurrentChunk();
-        if (!current) return false;
-        // If current is not at index 0, there is at least one newer chunk
-        return current.index > 0;
-    }
-
-    /**
-    * Returns true when there are already older chunks loaded
-    * (relative to the current chunk).
-    */
-    _chunks_HasMoreOlderChunkRelativelyToCurrentChat() {
-        const current = this._findCurrentChunk();
-        if (!current) return false;
-        // If current is not at the last index, there is at least one older chunk
-        return current.index < this.chunks.length - 1;
     }
 
     // update
@@ -951,12 +839,6 @@ export class ChatGeneralForm {
     }
 
     /* etc */
-
-    // pinned
-
-    async pinnedMessages_load() {
-        this.pinned_message_chunks;
-    }
 
     // members
 
