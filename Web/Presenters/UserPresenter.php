@@ -40,6 +40,8 @@ final class UserPresenter extends OpenVKPresenter
                 $this->template->_template = "User/deactivated.latte";
 
                 $this->template->user = $user;
+            } elseif (!is_null($user) && $user->isDeleted()) {
+                $this->template->_template = "User/deleted.latte";
             } elseif (!is_null($user) && $this->user->identity && $this->user->identity->isBlacklistedBy($user)) {
                 $this->template->_template = "User/blacklisted.latte";
 
@@ -55,8 +57,6 @@ final class UserPresenter extends OpenVKPresenter
                 $this->template->_template = "User/private.latte";
 
                 $this->template->user = $user;
-            } else {
-                $this->template->_template = "User/deleted.latte";
             }
         } else {
             $this->template->avatarAlbum = (new Albums())->getUserAvatarAlbum($user);
