@@ -74,7 +74,7 @@ export class IMPage {
     async update(options = {}) { await this.wRender(options); }
     updateHeader(header) { header.changeByConvNumber(0); }
     isVisibleWhenHidden() { return false; }
-    shouldCloseOnExit() { return false; }
+    shouldCloseOnExit() { return this.container == null; }
     isDisablesScroll() { return false; }
     static getPageId() { return "default"; }
     getTabName() { return tr("messenger_tab_" + this.constructor.getPageId()) }

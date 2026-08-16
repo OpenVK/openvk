@@ -321,9 +321,13 @@ $(document).on("scroll", () => {
     const currentScrollTop = $(document).scrollTop();
     const navigation = $(".navigation");
 
-    if (window.im && window.im.is_active && !window.im.is_compact_mode_enabled) {
-        window.im.messenger.view.onMessagesScroll();
-        return;
+    try {
+        if (window.im && window.im.is_active) {
+            window.im.getTab("messenger").onMessagesScroll();
+            return;
+        }
+    } catch(e) {
+        console.error(e);
     }
 
     if (window.isMobile && isMobile()) {

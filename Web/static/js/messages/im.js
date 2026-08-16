@@ -70,7 +70,9 @@ export class InstantMessagesAndRelated {
 
         this.updateCounter(this.lp.getFirstCounter());
         */
+
         this.isReady = true;
+        await this.state._checkSel(new URL(location.href));
         console.log("IM | Inited");
     }
 
@@ -248,6 +250,10 @@ export class InstantMessagesAndRelated {
     getTabs() {
         return this.tabs.map(t => t.id);
     }
+
+    getTab(id) {
+        return this.tabs.find(t => t.getPageId() == id);
+    }
 }
 
 class IMVariants {
@@ -347,11 +353,11 @@ class IMState {
         const _sel = sel_id == null ? Number(loc.searchParams.get('sel')) : sel_id;
         if (!_sel) return;
 
-        const peer = await this.conversations._resolveSel(_sel);
+        const peer = await this.link.conversations._resolveSel(_sel);
 
         if (peer) {
-            const _l = this.messenger.view.getChatWith(peer);
-            await this.selectChat(_l);
+            const _l = this.link.messenger.getChatWith(peer);
+            await this.link.messenger.selectChat(_l);
             return _l;
         } else {
             console.error('No peer with this id!');
@@ -371,7 +377,7 @@ class IMState {
         if (_url.searchParams.get('sel')) {
             this._checkSel(_url);
         } else {
-            this.selectTab('conversations');
+            this.link.openTabByName('conversations');
         }
     }
 
@@ -421,12 +427,10 @@ class IMState {
 }
 
 class SettingsPage extends IMPage {
-    static getPageId() {
-        return "settings";
-    }
+    static getPageId() { return "settings"; }
 
     render(container) {
-        const show_mail = location.hostname == "openvk.org" || true;
+        const show_mail = location.hostname == "openvk.org";
         container.insertAdjacentHTML("beforeend", `
             <div style="padding: 10px 10px;">
                 <span>IM frontend</span>
@@ -578,6 +582,15 @@ export class LongPollConnection {
         }
 }
 
+export class FastChats {
+    getPinnedPeers() { return []; }
+    pinPeer(convo) {}
+    unpinPeer(convo) {}
+    shouldBeShown() { return !window.im.state.is_opened }
+    toggleShowness(state = false) {}
+    toggleBar(state = false, convo = null) {}
+}
+
 export class IMDeprecated {
     constructor() {
         this.tabDefs = [
@@ -671,9 +684,6 @@ export class IMDeprecated {
             const _id = this.messenger.view.opened_tabs.indexOf(conv);
             this.selectChat(this.messenger.view.opened_tabs[Math.max(0, _id - 1)]);
         }
-
-        this.messenger.view.closeChat(conv);
-        this.messenger.view._render();
     }
 
 	async selectChat(conv) {
@@ -816,12 +826,12 @@ export class IMDeprecated {
                 break;
 
                 case 'messenger':
-                if (!window.im.corresponder) {
+                if (!window.im.state.getCurrentConvo()) {
                     this.selectTab('conversations');
                     return;
                 }
 
-                this.changeYellowHeaderByPeer(window.im.corresponder);
+                this.changeYellowHeaderByPeer(window.im.state.getCurrentConvo());
 
                 this.conversations.hide(this._getTabWindow('conversations'));
                 this.messenger.appear(this._getTabWindow('messenger'));

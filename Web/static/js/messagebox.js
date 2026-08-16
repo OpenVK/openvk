@@ -272,6 +272,18 @@ class Viewer {
         this._setMainContext(data);
     }
 
+    loadCustomContext(res) {
+        if (!res.items || res.items.length == 0) {
+            this.sides_ended["right"] = true;
+            return;
+        }
+
+        res.items.forEach((item) => {
+            this._appendApiItem(item, null, null, direction < 0);
+        });
+        this.totalItemsCount = res.count;
+    }
+
     initalizeContext() {}
     selectItem(pid, item_api_res) {}
     async selectItemByApiId(id) {

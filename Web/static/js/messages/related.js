@@ -193,7 +193,9 @@ async function imSwitchCurrent() {
     CMessageBox.toggleLoader(false);
 
     const msg = new CMessageBox({
-        custom_template: msgboxModernTemplate(tr("messenger_switch_current"), `мне лень верстать дальше<div id="_switch_list"></div>`),
+        custom_template: msgboxModernTemplate("...", `
+        <div id="_switch_list" class="entity_vertical_list mini m_mini scroll_container"></div>
+        `),
         title: "-",
         body: "-"
     });
@@ -201,7 +203,17 @@ async function imSwitchCurrent() {
     function makeItem(item) {
         console.log(item)
 
-        msg.getNode().find("#_switch_list").append(`<div data-id="${item.id}" class="sel">${escapeHtml(item.full_name)}</div>`);
+        msg.getNode().find("#_switch_list").append(`
+        <div data-id="${item.id}" class="entity_vertical_list_item scroll_node">
+            <div class="first_column">
+                <a href="${item.page_url}" class="avatar"><img src="${item.avatar_any}"></a>
+                <div class="info">
+                    <b class="noOverflow">
+                        <a href="${item.page_url}">${escapeHtml(item.full_name)}</a>
+                    </b>
+                </div>
+            </div>
+        </div>`);
     }
 
     msg.getNode().find(".ovk-diag").attr("style", "width: 300px;");
@@ -211,8 +223,10 @@ async function imSwitchCurrent() {
         makeItem(window.im._toCGF(item));
     });
     msg.getNode().find("#_close").on("click", (e) => { msg.close(); })
-    msg.getNode().find("#_switch_list").on("click", ".sel", async (e) => {
-        const eid = Number(e.target.closest(".sel").dataset.id);
+    msg.getNode().find("#_switch_list").on("click", ".entity_vertical_list_item", async (e) => {
+        e.preventDefault();
+
+        const eid = Number(e.target.closest(".entity_vertical_list_item").dataset.id);
         const new_im = window.im_variants.getForX(eid);
         msg.close();
 

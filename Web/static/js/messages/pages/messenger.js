@@ -27,24 +27,32 @@ export class Messenger {
         this.currentChatId = null;
         this.selected_messages = [];
 
-        this.messagesTrigger = 0;
-
         this.toggled_peer_obj = null;
 
         this.replyTo = null;
         this.editMsg = null;
     }
 
-    async selectConversation(convo) {
+    async selectConversation(convo, scroll_down = false) {
+        if (convo == null) {
+            throw new Error();
+        }
+
         this.setChat(convo);
         const tab = await window.im.openTabByName("messenger");
 
         await tab.render();
-        
+
         if (!convo.peer._isMessagesInited()) {
             const c = await convo.peer.getMessages();
             convo.peer._chunks._appendChunk(c);
+
+            if (scroll_down == true) {
+                window.im.getTab("messenger").render_class._scrollToEnd();
+            }
         }
+
+        await tab.render();
     }
 
     async selectConversationByPeerId(id) {
@@ -65,8 +73,9 @@ export class Messenger {
     }
 
     setChat(convo, pushstate = true) {
-        console.log(convo)
         const oldId = Number(this.currentChatId);
+
+        //convo.draft = new Draft();
 
         if (!this.hasChat(convo)) {
             this.addChat(convo);
@@ -138,12 +147,28 @@ export class Messenger {
         return this.opened_tabs[this.currentChatId] || null;
     }
 
-    closeChat(conv) {
+    closeChat(conv, page) {
         const idx = this.opened_tabs.indexOf(conv);
         if (idx !== -1) { this.opened_tabs.splice(idx, 1) };
 
         if (typeof window.im !== 'undefined' && window.im.updateTabs) {
             window.im.updateTabs();
+        }
+
+        try {
+            if (this.opened_tabs[idx - 1] != null) {
+                this.selectConversation(this.opened_tabs[idx - 1]);
+            } else if(this.opened_tabs[idx + 1] != null) {
+                this.selectConversation(this.opened_tabs[idx + 1]);
+            } else {
+                window.im.openTabByName("conversations");
+            }
+        } catch(e) {
+            console.error(e);
+        }
+
+        if (page) {
+            page.update();
         }
     }
 
@@ -153,7 +178,7 @@ export class Messenger {
         const reply_to = view.replyTo;
         let reply_param = null;
         let attachments_list = null;
-        const corresponder = window.im.corresponder;
+        const corresponder = window.im.state.getCurrentConvo();
 
         const attachments = collect_attachments(u('.messenger-app--input---messagebox'));
         if (attachments.length > 0) {
@@ -235,16 +260,76 @@ export class Messenger {
     get selected_messages_count() {
         return this.selected_messages.length;
     }
+
+    async showAttachment(event, msg, attachment) {
+        event.preventDefault();
+
+        const idinarray = msg.attachments.indexOf(attachment);
+        const type = attachment.type;
+
+        console.log(ids, msg, attachment);
+
+        CMessageBox.toggleLoader(true);
+
+        const queue_items = [];
+
+        msg.attachments.forEach(att => {
+            if (att[type]) {
+                queue_items.push(att[type]);
+            }
+        });
+        let viewer = null;
+        const ids = idForItem(attachment[type]);
+        const first = queue_items.find(function (p) {
+            return idForItem(p) === ids;
+        });
+
+        if (!first) {
+            console.log("IM | Messenger | Opening photo | Not found ", attachment, " image in", photos)
+            return;
+        };
+
+        switch (type) {
+            case "photo":
+                if (typeof PhotoViewer === 'undefined') return;
+
+                viewer = new PhotoViewer();
+                viewer.context.not_load_comments = true;
+                await viewer.loadAlbumContext({
+                    count: queue_items.length,
+                    items: queue_items
+                });
+                viewer.open();
+                viewer.setMode("tg");
+                viewer.afterOpen(idForItem(first));
+
+                break;
+            case "video":
+                viewer = new VideoViewer();
+                viewer.context.not_load_comments = true;
+                await viewer.loadCustomContext({
+                    count: queue_items.length,
+                    items: queue_items
+                });
+                viewer.open();
+                viewer.afterOpen(idForItem(first));
+
+                break;
+            case "audio":
+                AudioViewer.openById(e, null, attachment.audio);
+                break;
+            default:
+                console.error("I can't open it: ", attachment, msg, e);
+        }
+
+        CMessageBox.toggleLoader(false);
+    }
 }
 
 export class MessengerPage extends IMPage {
-    static getPageId() {
-        return "messenger";
-    }
-
-    isVisibleWhenHidden() {
-        return true;
-    }
+    static getPageId() { return "messenger"; }
+    isVisibleWhenHidden() { return true; }
+    shouldCloseOnExit() { return window.im.messenger.opened_tabs.length == 0; }
 
     constructor() {
         super();
@@ -269,8 +354,6 @@ export class MessengerPage extends IMPage {
         this.current_chat = null;
         this.selected_messages = [];
 
-        this.messagesTrigger = 0;
-
         this.toggled_peer_obj = null;
 
         this.replyTo = null;
@@ -280,10 +363,6 @@ export class MessengerPage extends IMPage {
 
     _triggerUpdate() {
         window.im.conversations.update();
-        this.update();
-    }
-
-    _triggerUpdateSlightly() {
         this.update();
     }
 
@@ -317,7 +396,7 @@ export class MessengerPage extends IMPage {
         render(html`
         <div id="chat-page">
             <div class="chat-window">
-            <${PeerTabsView} hadTab=${true} tabs=${orig_messenger.opened_tabs} currentChat=${orig_messenger.currentChatId} />
+            <${PeerTabsView} hadTab=${true} tabs=${orig_messenger.opened_tabs} currentChat=${orig_messenger.currentChatId} page=${this} />
             <${ActionsBar}
                 selectedMessages=${this.selected_messages_objs}
                 count=${this.selected_messages.length}
@@ -327,14 +406,14 @@ export class MessengerPage extends IMPage {
             />
             <div class="messenger-app">
                 <${MessageListView}
-                specialMode=${special_mode}
                 convo=${currentConv}
-                messages=${messages} />
+                messages=${messages} 
+                page=${this} />
                 <${InputArea}
                 editMsg=${this.editMsg}
                 replyTo=${this.replyTo}
                 onRemoveReply=${() => this.removeReply()}
-                onSend=${() => this.sendMessage()}
+                onSend=${() => this.onSendMessage()}
                 onKeyPress=${(e) => this.onTextareaKeyPress(e)}
                 currentDraft=${this.currentDraft}
                 onInput=${(e) => { this.currentDraft = e.target.value; }}
@@ -402,7 +481,7 @@ export class MessengerPage extends IMPage {
 
         await window.OVKAPI.call("messages.setActivity", {
             "type": "typing",
-            "peer_id": window.im.corresponder.id,
+            "peer_id": window.im.state.getCurrentConvo().id,
             "group_id": group_id
         });
 	}
@@ -434,13 +513,6 @@ export class MessengerPage extends IMPage {
 		this.unselect();
 		this.replyTo = m;
 		this._render();
-	}
-
-	onAuthorNameClick(msg, e) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		window.im.messenger.view.togglePeerInfo(msg.sender);
 	}
 
     onEditButtonClick(e, msg) {
@@ -559,7 +631,7 @@ export class MessengerPage extends IMPage {
         } else {
             this.toggled_peer_obj = sender;
 
-            const _c = window.im.corresponder;
+            const _c = window.im.state.getCurrentConvo();
             if (_c.supposed_type == "chat" && !_c._hasLoadedMembers()) {
                 await _c.m_load(0);
             }
@@ -572,10 +644,17 @@ export class MessengerPage extends IMPage {
         this.is_switching = false;
     }
 
-		onScrollDownButtonClick() {
+    onAuthorNameClick(msg, e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        this.togglePeerInfo(msg.sender);
+    }
+
+	onScrollDownButtonClick() {
         // "Return to the newest" — reset the active chunk to the actual
         // (newest) chunk, then scroll to the bottom.
-        const corresponder = window.im.corresponder;
+        const corresponder = window.im.state.getCurrentConvo();
         if (corresponder && typeof corresponder.scrollToNewest === "function") {
             corresponder.scrollToNewest();
         } else {
@@ -583,7 +662,7 @@ export class MessengerPage extends IMPage {
         }
 	}
 
-	async onMessagesScroll(e) {
+	async onMessagesScroll(e = null) {
 		if (this.is_loading) return;
 		this.is_loading = true;
 
@@ -592,27 +671,27 @@ export class MessengerPage extends IMPage {
         if (_scroll < 21) {
             console.log("IM | Loading older chunk from API");
             // ── Scrolled near the top → load older messages (scroll UP) ──
-            await window.im.corresponder._messagesLoad_UpFromLastChunk();
+            // await window.im.state.getCurrentConvo()._messagesLoad_UpFromLastChunk();
         } else {
             const scrollBottom = document.documentElement.scrollHeight - _scroll - document.documentElement.clientHeight;
 
             if (scrollBottom < 10) {
                 // ── Scrolled near the bottom → load newer messages (scroll DOWN) ──
-                if (window.im.corresponder._chunks_HasMoreNewerChunkRelativelyToCurrentChat()) {
-                // There's already a newer chunk available without fetching
+                if (window.im.state.getCurrentConvo()._chunks_HasMoreNewerChunkRelativelyToCurrentChat()) {
+                    // There's already a newer chunk available without fetching
                     console.log('IM | Switching to a newer chunk');
-                    await window.im.corresponder._messagesLoad_DownFromCurrentChunk();
+                    // await window.im.state.getCurrentConvo()._messagesLoad_DownFromCurrentChunk();
                 } else {
                     // No newer chunk loaded yet — fetch from API
                     console.log('IM | Loading newer chunk from API');
-                    await window.im.corresponder._messagesLoad_DownFromCurrentChunk();
+                    //  await window.im.state.getCurrentConvo()._messagesLoad_DownFromCurrentChunk();
                 }
             }
 
             if (scrollBottom > 600) {
-                document.querySelector('.messenger-app--tab-messenger').classList.add('messenger-app--overscrolled');
+                this.getNode().addClass("overscrolled");
             } else {
-                document.querySelector('.messenger-app--tab-messenger').classList.remove('messenger-app--overscrolled');
+                this.getNode().removeClass("overscrolled");
             }
         }
 
@@ -645,7 +724,7 @@ export class MessengerPage extends IMPage {
 	}
 
     // onSendMessageButtonClick
-	async sendMessage() {
+	async onSendMessage() {
 		const _tmp_atts = collect_attachments(u('.messenger-app--input---messagebox'));
 
 		if (this.currentDraft === '' && _tmp_atts.length == 0) return false;
@@ -674,12 +753,14 @@ export class MessengerPage extends IMPage {
 	}
 
     _scrollTo(scroll_progress) {
-        console.log("scrolling page to: ", scroll_progress)
+        console.log("scrolling page to: ", scroll_progress);
+
 		document.documentElement.scroll({ top: scroll_progress });
 	}
 
     _scrollToEnd() {
         console.log("scrolled page to the end");
+
 		this._scrollTo(document.documentElement.scrollHeight);
 	}
 
@@ -772,58 +853,8 @@ export class MessengerPage extends IMPage {
         //console.log("Loaded draft for ", for_chat, ", scroll: ", _scroll)
     }
 
-	// attachment
-
-    async showPhoto(e, msg, attachment) {
-        if (typeof PhotoViewer === 'undefined') return;
-
-        const photos = [];
-
-        msg.attachments.forEach(att => {
-            if (att.photo) {
-                photos.push(att.photo);
-            }
-        });
-
-        const ids = idForItem(attachment.photo);
-        const viewer = new PhotoViewer();
-
-        CMessageBox.toggleLoader(true);
-
-        const first = photos.find(function (p) {
-            return idForItem(p) === ids;
-        });
-
-        if (!first) {
-            console.log("IM | Messenger | Opening photo | Not found ", attachment, " image in", photos)
-            return;
-        };
-
-        viewer.context.not_load_comments = true;
-        await viewer.loadAlbumContext({
-            count: photos.length,
-            items: photos
-        });
-        viewer.open();
-        viewer.setMode("tg");
-        viewer.afterOpen(idForItem(first));
-
-        CMessageBox.toggleLoader(false);
-
-        console.log("IM | Messenger | Opening photo ", first, attachment, msg, photos)
-    }
-
-	showVideo(e, msg, attachment) {
-		e.preventDefault();
-		e.stopPropagation();
-
-        VideoViewer.openById(idForItem(attachment.video));
-	}
-
-	async showAudio(e, msg, attachment) {
-		console.log("Opening audio ", attachment.audio);
-
-        AudioViewer.openById(e, null, attachment.audio);
+    applyDraftFromConv() {
+        
     }
 }
 

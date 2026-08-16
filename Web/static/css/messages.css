@@ -644,7 +644,11 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     margin: 0px -8px -10px -10px;
 }
 
-.messenger-app--tab-messenger.messenger-app--overscrolled #messenger-app--down-button {
+#chat-page #messenger-app--down-button {
+    display: none;
+}
+
+#chat-page.overscrolled #messenger-app--down-button {
     display: block;
 }
 
