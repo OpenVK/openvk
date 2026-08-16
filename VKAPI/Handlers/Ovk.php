@@ -27,6 +27,16 @@ final class Ovk extends VKAPIRequestHandler
         return "крылышки";
     }
 
+    public function nuggets(): string
+    {
+        return "котлетки";
+    }
+
+    public function getMirrors(): array
+    {
+        return OPENVK_ROOT_CONF["openvk"]["mirrors"] ?? [];
+    }
+
     public function aboutInstance(string $fields = "statistics,administrators,popular_groups,links", string $admin_fields = "", string $group_fields = ""): object
     {
         $fields = explode(',', $fields);
