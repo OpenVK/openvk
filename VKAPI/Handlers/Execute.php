@@ -189,7 +189,7 @@ final class Execute extends VKAPIRequestHandler
 
         return $response;
     }
-    
+
     public function getFullProfileNewWithGifts(int $user_id = 1, int $photo_count = 25, int $gift_count = 25): object
     {
         // вк 3.11 для костыльных групп
