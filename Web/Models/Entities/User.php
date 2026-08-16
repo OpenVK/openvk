@@ -617,6 +617,10 @@ class User extends RowModel
 
     public function getPrivacyPermission(string $permission, ?User $user = null): bool
     {
+        if ($this->isDeleted() || $this->isBanned()) {
+            return false;
+        }
+
         $permStatus = $this->getPrivacySetting($permission);
         if (!$user) {
             return $permStatus === User::PRIVACY_EVERYONE;
@@ -1586,6 +1590,10 @@ class User extends RowModel
 
             if ($user->isAdmin() && !(OPENVK_ROOT_CONF['openvk']['preferences']['blacklists']['applyToAdmins'] ?? true)) {
                 return true;
+            }
+
+            if ($this->isDeleted() || $this->isBanned()) {
+                return false;
             }
 
             if ($blacklist_check && ($this->isBlacklistedBy($user) || $user->isBlacklistedBy($this))) {
