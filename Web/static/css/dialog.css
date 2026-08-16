@@ -557,6 +557,10 @@ body.manyMsgs .ovk-msg-all:last-of-type {
     justify-content: unset;
 }
 
+.ovk-photo-view-dimmer.ovk-msg-minimized .ovk-modal-player-window #ovk-player-part .top-part {
+    padding: 5px 3px;
+}
+
 .ovk-photo-view-dimmer .miniplayer-head-buttons {
     display: none
 }

@@ -192,6 +192,7 @@ export class Conversation {
         this.peer = conversation_item.peer;
         this.activity_updated = new Date();
         this.current_activity = {};
+        this.draft = null;
     }
 
     hasActivity() {

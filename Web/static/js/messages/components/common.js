@@ -1,23 +1,22 @@
 import { html, render } from './render.js';
 
-export const PeerTab = ({ conv, active }) => {
-    console.log(conv)
+export const PeerTab = ({ conv, active, page }) => {
     return html`
         <div class="messages--peers-tab${active ? ' selected' : ''}">
             <a onClick=${() => window.im?.messenger.selectConversation(conv)}>${conv.peer.conversations_name}</a>
-            <span class="messages--peers-tab-close" onClick=${() => window.im?.closeChat(conv)}>×</span>
+            <span class="messages--peers-tab-close" onClick=${() => window.im?.messenger.closeChat(conv, page)}>×</span>
         </div>
     `;
 };
 
-export const PeerTabsView = ({ had_more_one_tab, tabs, currentChat }) => {
+export const PeerTabsView = ({ had_more_one_tab, tabs, currentChat, page }) => {
     //if (tabs.length < 2 && had_more_one_tab) { return html`` }
 
     console.log(currentChat)
     return html`
         <div class="messages--peers-tabs">
             ${tabs.map((tab, idx) => html`
-                <${PeerTab} conv=${tab} active=${idx === currentChat} />
+                <${PeerTab} conv=${tab} active=${idx === currentChat} page=${page} />
             `)}
         </div>
     `;
@@ -156,7 +155,7 @@ export const ConversationItem = ({ conv }) => {
 
     const d = last_msg != null && has_activity == false;
     return html`
-        <div class="${cls1.join(' ')}" onClick=${() => window.im?.messenger.selectConversation(conv)}>
+        <div class="${cls1.join(' ')}" onClick=${() => window.im?.messenger.selectConversation(conv, true)}>
         <div class="crp-entry--image">
             <img src=${conv.peer.conversation_avatar_any} loading="lazy" />
         </div>

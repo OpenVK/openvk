@@ -324,9 +324,13 @@ $(document).on("scroll", () => {
         return;
     }
 
-    if (window.im && window.im.is_active && !window.im.is_compact_mode_enabled) {
-        window.im.messenger.view.onMessagesScroll();
-        return;
+    try {
+        if (window.im && window.im.is_active && !window.im.is_compact_mode_enabled) {
+            window.im.getTab("messenger").onMessagesScroll();
+            return;
+        }
+    } catch(e) {
+        console.error(e);
     }
 
     if (navigation.find("#fastLogin").length > 0) return;
