@@ -38,6 +38,7 @@ class Photos
             "virtual_id" => $vId,
             "system"     => 0,
             "private"    => 0,
+            "deleted"    => 0,
         ])->fetch();
         return $this->toPhoto($photo);
     }
