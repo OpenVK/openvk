@@ -148,7 +148,7 @@ final class Execute extends VKAPIRequestHandler
                     "date" => time(),
                     "post_type" => "post",
                     "text" => "хуй",
-                    "attachments" => [] 
+                    "attachments" => []
                 ]*/
             ],
             "profiles" => [
@@ -348,7 +348,7 @@ final class Execute extends VKAPIRequestHandler
                     $response->bdate = $birthday->format('%d.%m.%Y');
                     break;
             }
-            
+
             $city = $user->getCity();
             if ($city) {
                 $response->city = (object) ["title" => $city];
@@ -363,34 +363,54 @@ final class Execute extends VKAPIRequestHandler
             //$response->relatives_profiles = [];
 
             $books = $user->getFavoriteBooks();
-            if ($books) $response->books = $books;
+            if ($books) {
+                $response->books = $books;
+            }
 
             $games = $user->getFavoriteGames();
-            if ($games) $response->games = $games;
+            if ($games) {
+                $response->games = $games;
+            }
 
             $music = $user->getFavoriteMusic();
-            if ($music) $response->music = $music;
+            if ($music) {
+                $response->music = $music;
+            }
 
             $quotes = $user->getFavoriteQuote();
-            if ($quotes) $response->quotes = $quotes;
+            if ($quotes) {
+                $response->quotes = $quotes;
+            }
 
             $interests = $user->getInterests();
-            if ($interests) $response->interests = $interests;
+            if ($interests) {
+                $response->interests = $interests;
+            }
 
             $movies = $user->getFavoriteFilms();
-            if ($movies) $response->movies = $movies;
+            if ($movies) {
+                $response->movies = $movies;
+            }
 
             $tv = $user->getFavoriteShows();
-            if ($tv) $response->tv = $tv;
+            if ($tv) {
+                $response->tv = $tv;
+            }
 
             $about = $user->getDescription();
-            if ($about) $response->about = $about;
+            if ($about) {
+                $response->about = $about;
+            }
 
             $home_town = $user->getHometown();
-            if ($home_town) $response->home_town = $home_town;
+            if ($home_town) {
+                $response->home_town = $home_town;
+            }
 
             $site = $user->getWebsite();
-            if ($site) $response->site = $site;
+            if ($site) {
+                $response->site = $site;
+            }
 
             // $response->activities = "";
 
@@ -405,10 +425,12 @@ final class Execute extends VKAPIRequestHandler
             ];
 
             $pol_views = $user->getPoliticalViews();
-            if ($pol_views) $response->personal->political = $pol_views;
+            if ($pol_views) {
+                $response->personal->political = $pol_views;
+            }
 
             $gifts = new GiftsRepo();
-            
+
             $user_gifts = array_slice(iterator_to_array($user->getGifts(1, $gift_count)), 0, $gift_count);
 
             foreach ($user_gifts as $gift) {
@@ -431,7 +453,7 @@ final class Execute extends VKAPIRequestHandler
             if ($user->getGiftCount() > 0) {
                 $response->gifts = [
                     "count" => $user->getGiftCount(),
-                    "items" => $gift_item
+                    "items" => $gift_item,
                 ];
             }
         }
@@ -455,14 +477,14 @@ final class Execute extends VKAPIRequestHandler
         $response->photos = [];
 
         if ($user->getPrivacyPermission('photos.read', $this->getUser()) && $response->counters->photos > 0) {
-            $response->photos["count"] = $response->counters->photos; 
+            $response->photos["count"] = $response->counters->photos;
 
             $evphoto = $photos->getEveryUserPhoto($user, 0, $photo_count);
 
             foreach ($evphoto as $photo) {
                 if (!$photo || $photo->isDeleted()) {
                     continue;
-                } 
+                }
                 $response->photos["items"][] = $photo->toVkApiStruct(true, false);
             }
         }
