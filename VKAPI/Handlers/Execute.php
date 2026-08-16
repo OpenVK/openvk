@@ -126,7 +126,7 @@ final class Execute extends VKAPIRequestHandler
         // $posts = new PostsRepo();
 
         $user = $users->get($owner_id);
-        
+
         if ($user == null) {
             return (object) [
                 "count" => 0,
@@ -151,7 +151,6 @@ final class Execute extends VKAPIRequestHandler
                     "attachments" => [] 
                 ]*/
             ],
-            
             "profiles" => [
                 /*[
                     "id" => 1,
@@ -165,7 +164,7 @@ final class Execute extends VKAPIRequestHandler
             "groups" => [
                 /*
                 [
-                    "id" => 1, 
+                    "id" => 1,
                     "name" => "",
                     "photo_50" => "",
                     "photo_100" => ""
@@ -173,13 +172,13 @@ final class Execute extends VKAPIRequestHandler
                 */
             ],
 
-            "fixed" => null, // $posts->getPinnedPost($user->getId())->isPinned(), 
+            "fixed" => null, // $posts->getPinnedPost($user->getId())->isPinned(),
 
             "status" => (object) [],
             // "postponed_count" => 0,
             // "suggested_count" => 0
         ];
-        
+
         if ($user->getStatus() != null) {
             $response->status->text = $user->getStatus();
         }
@@ -187,7 +186,7 @@ final class Execute extends VKAPIRequestHandler
         if ($audioStatus) {
             $response->status->audio = $audioStatus->toVkApiStruct();
         }
-        
+
         return $response;
     }
     
@@ -236,7 +235,7 @@ final class Execute extends VKAPIRequestHandler
                 "can_access_closed" => (int) $canView,
             ];
         }
-        
+
         if ($this->getUser()->getId() != $user->getId()) {
             $response->is_favorite = 0; // stub
         }
@@ -254,11 +253,11 @@ final class Execute extends VKAPIRequestHandler
                 break;
         }
         $response->can_send_friend_request = (int) !((bool) $response->friend_status);
-        
+
         if ($user->getShortCode() != null) {
             $response->screen_name = $user->getShortCode();
         }
-        
+
         $response->first_name_dat = $user->getMorphedName("dative", false, false);
         $response->first_name_gen = $user->getMorphedName("genitive", false, false);
         $response->first_name_ins = $user->getMorphedName("ablative", false, false);
@@ -267,9 +266,9 @@ final class Execute extends VKAPIRequestHandler
         $response->last_name_gen = $user->getMorphedName("genitive", false, true);
         $response->last_name_ins = $user->getMorphedName("ablative", false, true);
         $response->last_name_acc = $user->getMorphedName("accusative", false, true);
-        
+
         $response->verified = (int) $user->isVerified();
-        
+
         $response->sex = $user->isFemale() ? 1 : ($user->isNeutral() ? 0 : 2); // no experience
 
         $response->has_photo = is_null($user->getAvatarPhoto()) ? 0 : 1;
@@ -428,7 +427,7 @@ final class Execute extends VKAPIRequestHandler
                     ],
                 ];
             }
-            
+
             if ($user->getGiftCount() > 0) {
                 $response->gifts = [
                     "count" => $user->getGiftCount(),
@@ -436,7 +435,7 @@ final class Execute extends VKAPIRequestHandler
                 ];
             }
         }
-        
+
         $photos = new Photos();
         $response->counters = (object) [
             "friends" => $user->getFriendsCount(),
