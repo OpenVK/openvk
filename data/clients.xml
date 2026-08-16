@@ -9,5 +9,5 @@
     <Client tag="openvk_ios" name="OpenVK for iOS" url="https://github.com/openvk/mobile-ios" img="/assets/packages/static/openvk/img/app_icons/ios.png" />
     <Client tag="renaissance" name="через Агент Mail.ru (Renaissance)" url="https://mrim.su" img="/assets/packages/static/openvk/img/app_icons/renaissance_agent.png" />
     <Client tag="Kate Mobile" name="Kate Mobile (Community Mod)" url="http://katemobile.ru" img="/assets/packages/static/openvk/img/app_icons/kate.png" />
-    <Client tag="matcha" name="Matcha" url="https://github.com/DeliriousVoid/Matcha" img="/assets/packages/static/openvk/img/app_icons/matcha.png" />
+    <Client tag="Matcha" name="Matcha" url="https://github.com/DeliriousVoid/Matcha" img="/assets/packages/static/openvk/img/app_icons/matcha.png" />
 </Clients>
