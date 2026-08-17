@@ -29,7 +29,7 @@
 "access_recovery_info" = "Құпиясөзіңізді ұмытып қалдыңыз ба? Уайымдамаңыз, төменде деректеріңізді енгізсеңіз, біз сізге кіруді қалпына келтіру нұсқаулығын жібереміз.";
 "access_recovery_info_2" = "Жаңа құпиясөзіңізді енгізіңіз. Содан кейін барлық белсенді сеанстар аяқталып, кіру токендері жойылады.";
 "reset_password" = "Құпиясөзді өзгерту";
-"2fa_code_2" = "2FA коды";
+"2fa_code_2" = "Екі факторлы растау коды";
 "password_successfully_reset" = "Құпиясөзіңіз сәтті өзгертілді.";
 "password_reset_email_sent" = "Егер бұл пошта тіркелген болса, оған нұсқау хат келеді.";
 "password_reset_error" = "Құпиясөзді қалпына келтіру кезінде қате орын алды.";
@@ -40,8 +40,8 @@
 "email_rate_limit_error" = "Бұл әрекетті тым жиі орындауға болмайды.";
 "email_verify_success" = "Поштаңыз расталды. Сайтта көңілді уақыт өткізуіңізге тілектеспіз!";
 "registration_disabled_info" = "Әзірше жаңа тіркелгі құруға болмайды. Егер досыңыз осы сайтта тіркелген болса, одан шақыру сілтемесін сұрап көріңіз.";
-"registration_closed" = "Тіркелу жабық";
-"invites_you_to" = "<strong>$1</strong> сізді $2 желісіне шақырады.";
+"registration_closed" = "Тіркелу жабық.";
+"invites_you_to" = "<strong>$1</strong> сізді $2 желісіне шақырады";
 "register_meta_desc" = "$1 желісіне тіркеліңіз!";
 "register_referer_meta_title" = "$1 сізді $2 желісіне шақырады!";
 "register_referer_meta_desc" = "$1 және басқа да пайдаланушылармен $2 желісінде қосылыңыз!";
@@ -73,8 +73,8 @@
 "additional_information" = "Қосымша ақпарат";
 "nickname" = "Лақап ат";
 "online" = "Желіде";
-"was_online" = "Желіде болған кезі: ";
-"was_online_m" = "Желіде болған кезі: ";
+"was_online" = "желіде болған кезі:";
+"was_online_m" = "желіде болған кезі:";
 /* For male and female */
 
 "years_zero" = "0 жаста";
@@ -94,18 +94,18 @@
 "relationship_0" = "таңдалмаған";
 "relationship_1" = "Бойдақ";
 "relationship_1_fem" = "Тұрмыс құрмаған";
-"relationship_2" = "Мына кісімен";
-"relationship_2_prefix" = "кездесіп жүр:";
-"relationship_3" = "Мына кісіге";
-"relationship_3_prefix" = "атастырылған:";
-"relationship_4" = "Мына кісіге";
-"relationship_4_prefix" = "үйленген:";
-"relationship_5" = "Мына кісімен";
-"relationship_5_prefix" = "азаматтық некеде:";
-"relationship_6" = "Мына кісіге";
-"relationship_6_prefix" = "ғашық:";
-"relationship_7" = "Мына кісімен";
-"relationship_7_prefix" = "қарым-қатынасы күрделі:";
+"relationship_2" = "Кездесіп жүр";
+"relationship_2_prefix" = ",";
+"relationship_3" = "Атастырылған";
+"relationship_3_prefix" = ",";
+"relationship_4" = "Үйленген";
+"relationship_4_prefix" = ",";
+"relationship_5" = "Азаматтық некеде";
+"relationship_5_prefix" = ",";
+"relationship_6" = "Ғашық";
+"relationship_6_prefix" = ",";
+"relationship_7" = "Қарым-қатынасы күрделі";
+"relationship_7_prefix" = ",";
 "relationship_8" = "Белсенді іздеуде";
 
 "politViews" = "Саяси көзқарастар";
@@ -129,10 +129,10 @@
 "personal_information" = "Жеке ақпарат";
 "interests" = "Мүдделер";
 "additional" = "Қосымша";
-"additional_fields_description" = "Бұл жерге өзіңіз туралы қосымша мәлімет қосуға болады. Мысалы, әлеуметтік желілердегі парақшаларыңызға сілтеме немесе қызығушылықтарыңызды жазсаңыз болады. Ең көбі $1 өріс қосуға рұқсат.";
+"additional_fields_description" = "Мұнда өзіңіз жайлы қосымша мәлімет қоса аласыз. Мысалы, басқа әлжелілердегі парақшаңызға сілтемелер, не қызығушылықтарыңызды теріп жазсаңыз болады. Ең көбі $1 өріс қосуға рұқсат.";
 "additional_field_name" = "Атауы";
 "additional_field_text" = "Мәтіні";
-"additional_field_place" = "Қай бөлімге қосу";
+"additional_field_place" = "Бөлім";
 "additional_field_place_contacts" = "Байланыс";
 "additional_field_place_interests" = "Мүдделер";
 
@@ -151,7 +151,7 @@
 
 "information_about" = "Өзі туралы";
 "updated_at" = "Жаңартылған күні: $1";
-"user_banned" = "Өкінішке орай біз <b>$1</b> атты кісінің парақшасын бұғаттауға мәжбүр болдық.";
+"user_banned" = "Өкінішке қарай, біз <b>$1</b> атты кісінің парақшасын бұғаттауға мәжбүр болдық.";
 "user_banned_comment" = "Модератордың пікірі:";
 
 "closed_page" = "Жабық парақша";
@@ -337,8 +337,8 @@
 "create_group" = "Топ құру";
 "group_managers" = "Менеджерлер";
 "group_type" = "Топтың типі";
-"group_type_open" = "Бұл ашық топ, яғни оған әркім кіре алады.";
-"group_type_closed" = "Бұл жабық топ, оған кіру үшін өтінім жазуыңыз қажет.";
+"group_type_open" = "Бұл ашық топ. Оған әркім қосыла алады.";
+"group_type_closed" = "Бұл жабық топ. Оған қосылу үшін, өтінім жазуыңыз қажет.";
 "creator" = "Құрған";
 "administrators" = "Әкімшілер";
 "add_to_left_menu" = "Сол жақ мәзірге қосу";
@@ -507,7 +507,7 @@
 "too_many_attachments" = "Тіркемелер тым көп.";
 
 "drag_files_here" = "Файлдарды осында сүйреңіз";
-"only_images_accepted" = "\"$1\" файлы — сурет немесе бейне емес.";
+"only_images_accepted" = "\"$1\" файлы сурет емес.";
 "max_filesize" = "Файлдың ең үлкен өлшемі — $1 МБ";
 
 "uploading_photos_from_computer" = "Суреттерді компьютерден жүктеп салу";
@@ -529,7 +529,7 @@
 "is_x_photos_other" = "Барлығы $1 сурет.";
 
 "all_photos" = "Барлық сурет";
-"error_uploading_photo" = "Суретті жүктеп салу сәтсіз аяқталды. Қате туралы хабарлама: ";
+"error_uploading_photo" = "Суретті жүктеп салу сәтсіз аяқталды";
 "too_many_photos" = "Суреттер тым көп.";
 
 "photo_x_from_y" = "$2 ішіндегі $1 сурет";
@@ -717,8 +717,8 @@
 "profile_deactivated_info" = "Бұл парақша жойылған.<br/>Ақпарат қолжетімсіз.";
 "share_with_friends" = "Достармен бөлісу";
 "end_all_sessions" = "Барлық сессияларды аяқтау";
-"end_all_sessions_description" = "Барлық құрылғыда $1 желісінен шыққыңыз келсе, төмендегі түймені басыңыз";
-"end_all_sessions_done" = "Барлық сеанстар, соның ішінде ұялы қосымшалар аяқталды";
+"end_all_sessions_description" = "Барлық құрылғыда $1 желісінен шыққыңыз келсе, төмендегі түймені басыңыз.";
+"end_all_sessions_done" = "Барлық сеанстар, соның ішінде ұялы қосымшалар аяқталды.";
 "backdrop_short" = "Артқы жағы";
 "backdrop" = "Парақшаның артқы жағы";
 "backdrop_desc" = "Парақша немесе топтың артқы жағына екі сурет қоюға болады. Олар беттің сол және оң жақ шетінде көрсетіледі. Сөйтіп парақшаңызды дара ете аласыз.";
@@ -893,8 +893,8 @@
 
 "audio_embed_not_found" = "Ән табылмады";
 "audio_embed_deleted" = "Ән жойылған";
-"audio_embed_withdrawn" = "Ән құқық иеленушінің талабымен өшірілген.";
-"audio_embed_forbidden" = "Құпиялылық баптаулары бұл әнді қосуға рұқсат бермейді.";
+"audio_embed_withdrawn" = "Ән құқық иесі талабымен жойылған";
+"audio_embed_forbidden" = "Пайдаланушының құпиялылық баптауларына байланысты бұл әнді ендіруге болмайды.";
 "audio_embed_processing" = "Аудио әлі өңделіп жатыр.";
 "audio_embed_processing_bait" = "Бәрібір тыңдау";
 
@@ -1109,7 +1109,7 @@
 "failed_to_tranfer_points" = "Дауыстарды аудару мүмкін болмады";
 "points_transfer_successful" = "Сіз <b>$1</b> дауысты <b><a href=\"$2\">$3</a></b> атты кісіге сәтті аудардыңыз.";
 
-"not_all_information_has_been_entered" = "Барлық мәліметтер толтырылмаған";
+"not_all_information_has_been_entered" = "Барлық мәліметтер толтырылмаған.";
 "negative_transfer_value" = "Кешіріңіз, өзге пайдаланушыдан дауыс тартып алуға болмайды.";
 "negative_tranfer_value" = "Кешіріңіз, өзге пайдаланушыдан дауыс тартып алуға болмайды.";
 "message_is_too_long" = "Хабарлама тым ұзын.";
@@ -2406,3 +2406,38 @@
 "archive_confirm_all" = "Осы қабырғадағы бүкіл жазбаны мұрағаттау керек пе?";
 "archive_invalid_action" = "Жазбалар мұрағатына қатысты қате әрекет.";
 "with_alien_wall_posts" = "Бөгде кісілердің қабырғаларында жазылған жазбаларды көрсету";
+"in_reply" = "жауап";
+"reply_to_comment" = "Пікірге жауап";
+"add_to_list_event" = "Тізімге қосу";
+"ill_come_to_meeting" = "Қатысамын";
+"i_might_come_to_meeting" = "Қатысуым мүмкін";
+"ill_not_come_to_meeting" = "Қатыспаймын";
+"event_comers" = "Қатысатындар";
+"event_potential_comers" = "Қатысуы мүмкін";
+"create_event" = "Іс-шара жасау";
+"event_type" = "Іс-шара түрі";
+"event_type_open" = "Бұл ашық іс-шара. Оған әркім қатыса алады.";
+"event_type_closed" = "Бұл жабық іс-шара. Оған қатысу үшін, шақыру жіберуге өтініш беруіңіз керек.";
+"event_host" = "Ұйымдастырушы";
+"location" = "Мекенжай";
+"event_start_date" = "Басталу уақыты";
+"event_finish_date" = "Аяқталу уақыты";
+"event_enable_finish_date" = "Аяқталу уақытын көрсету";
+"events_list_zero" = "Сіз ешбір іс-шараның мүшесі емессіз";
+"events_list_one" = "Сіз $1 іс-шараның мүшесісіз";
+"events_list_other" = "Сіз $1 іс-шараның мүшесісіз";
+"search_by_events" = "Іс-шаралардан іздеу";
+"my_events" = "Іс-шараларым";
+"menu_logout_confirm" = "Шынымен шыққыңыз келе ме?";
+"language_add_strings" = "Аударма бойынша көмектесу";
+"search_for_events" = "Іс-шара іздеу";
+"nt_comment_nominative" = "пікіріңізді";
+"nt_replied_yours" = "пікіріңізге жауап берді";
+"event_reminder_text" = "$1 іс-шарасы жақында өтеді.";
+"event_reminder_text_multiple" = "$1 іс-шарасы жақында өтеді.";
+"balance" = "Дауыс теңгерімі";
+"message_user_typing" = "$1 хат жазып жатыр...";
+"error_no_event_name" = "Іс-шараның атауын және/немесе басталу уақытын енгізбедіңіз.";
+"admin_tab_sessions" = "Сессиялар";
+"s_events" = "Іс-шаралар";
+"s_by_events" = "іс-шаралар бойынша";
