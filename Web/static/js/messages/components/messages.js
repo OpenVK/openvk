@@ -315,6 +315,7 @@ export class Chunks {
                 if (!dateMap.has(dateKey)) {
                     const dayChunk = new DayChunk([], false);
                     dayChunk.setDay(dateKey);
+                    dayChunk.idate = msg.getConvDay(true);
                     dayChunks.push(dayChunk);
                     dateMap.set(dateKey, dayChunk);
                 }
@@ -322,9 +323,9 @@ export class Chunks {
             });
         }
 
-        dayChunks.sort((a, b) => a.date.localeCompare(b.date));
+        dayChunks.sort((a, b) => a.idate.localeCompare(b.idate));
         this._cachedDays = dayChunks;
-        return dayChunks;
+        return dayChunks.reverse();
     }
 
     /** Oldest message across all loaded chunks (scroll-up search start). */
@@ -796,7 +797,10 @@ export class ChatGeneralForm {
         const today = new Date();
         const sameMonth = date.getMonth() === today.getMonth();
         const timeStr = date.toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit' });
-        const dayStr = date.toLocaleDateString(navigator.language, { hour: '2-digit', minute: '2-digit' });
+        const dayStr = date.toLocaleDateString(navigator.language, {
+            month: '2-digit',
+            day: '2-digit'
+        });
 
         if (sameMonth && date.getDate() === today.getDate()) {
             return tr("im_was_online_today_" + this.gender, timeStr).toLowerCase();
@@ -1198,9 +1202,9 @@ export class ChatMessage {
         return this.conv_day;
     }
 
-    get conv_day() {
+    getConvDay(always_with_year = false) {
         const date = this.sent;
-        if (date.getFullYear() == new Date().getFullYear()) {
+        if (always_with_year == false && date.getFullYear() == new Date().getFullYear()) {
             return date.toLocaleDateString(navigator.language)
         } else {
             return date.toLocaleDateString(navigator.language, {
@@ -1208,6 +1212,10 @@ export class ChatMessage {
                 day: '2-digit'
             })
         }
+    }
+
+    get conv_day() {
+        return this.getConvDay();
     }
 
     get conv_summary() {

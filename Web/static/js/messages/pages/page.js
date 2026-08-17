@@ -96,9 +96,9 @@ export class IMPage {
 
         return tab;
     }
-    addLoadSkeleton(container) { 
+    addLoadSkeleton(container, remove_before = false) {
+        if (remove_before == true) { container.innerHTML = ""; }
         container.insertAdjacentHTML("beforeend", `<span id="load_skeleton">LOADING!!!!!</span>`);
     }
     removeLoadSkeleton(container) { container.querySelector("#load_skeleton").remove(); }
-
 }

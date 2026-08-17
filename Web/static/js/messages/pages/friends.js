@@ -10,7 +10,9 @@ export class FriendsPage extends IMPage {
         this.has_inited = false;
         this.selected_friends = [];
         this.name = "";
+        this.friends_class = window.im.friends;
         this._set_name = false;
+        this._q = null;
     }
 
     static getPageId() { return "friends"; }
@@ -124,10 +126,33 @@ export class FriendsPage extends IMPage {
         toggleUnclickability(e.target, false);
     }
 
+    onSearch(e) {
+        const q = e.target.value;
+
+        setTimeout(async () => {
+            if (q == null || q == "" || q.length == 0) {
+                this.friends_class = window.im.friends;
+                this.update();
+                return;
+            } else {
+                this.friends_class = new LarpFriends();
+            }
+
+            this.container.classList.add("lagged");
+            if (e.target.value == q) {
+                this.friends_class.query = q;
+                await this.friends_class.loadFriends();
+                this.friends_class.inited = true;
+                this.update();
+            }
+            this.container.classList.remove("lagged");
+        }, 200)
+    }
+
     async beforeRender(container) {
-        if (window.im.friends.inited == false) {
-            await window.im.friends.loadFriends();
-            window.im.friends.inited = true;
+        if (this.friends_class.inited == false) {
+            await this.friends_class.loadFriends();
+            this.friends_class.inited = true;
         }
     }
 
@@ -137,14 +162,15 @@ export class FriendsPage extends IMPage {
 
         render(html`
         <${FriendsPageTemplate}
-            friends=${window.im.friends.items}
-            count=${window.im.friends.total_count}
+            friends=${this.friends_class.items}
+            count=${this.friends_class.total_count}
             referrer=${ref}
             onFriendClick=${(e, peer) => this.onFriendClick(e, peer)}
             onSubmit=${(e) => this.onCreateChat(e)}
             isSelected=${(peer) => this.isSelected(peer)}
-            onLoadMore=${() => window.im.friends.loadNext()}
+            onLoadMore=${() => this.friends_class.loadNext()}
             onTitleChangeClick=${(e) => { this.onTitleChangeClick(e) }}
+            onSearch=${(e) => { this.onSearch(e) }}
         />
         `, container);
     }
@@ -157,6 +183,7 @@ export class Friends {
         this.total_count = null;
         this.last_offset = 0;
         this.perPage = 100;
+        this.query = null;
     }
 
     async loadFriends(offset = 0) {
@@ -178,5 +205,27 @@ export class Friends {
 
     async loadNext() {
         await this.loadFriends(this.last_offset + this.perPage);
+    }
+}
+
+class LarpFriends extends Friends {
+    async loadFriends(offset = 0) {
+        let res = null;
+
+        res = await window.OVKAPI.call('friends.search', {
+            q: this.query,
+            offset: offset,
+            count: this.perPage,
+            fields: ChatGeneralForm.BASE_FIELDS,
+        });
+
+        this.last_offset = offset;
+        if (this._total_count == null) {
+            this._total_count = res.count;
+        }
+
+        res.items.forEach(item => {
+            this.items.push(new ChatGeneralForm(item));
+        })
     }
 }

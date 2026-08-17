@@ -152,6 +152,9 @@ export const ConversationItem = ({ conv }) => {
     if (last_msg && (last_msg.data.from_id != conv.peer.id || conv.peer.is_saved_messages == true)) {
         cls1.push("crp-entry-replied-same");
     }
+    if (!conv.is_read) {
+        cls1.push("unread");
+    }
 
     const d = last_msg != null && has_activity == false;
     return html`
@@ -175,6 +178,7 @@ export const ConversationItem = ({ conv }) => {
                     ${(conv.getActivityMsg()[0] || "").toLowerCase()}
                 </div>
             `}
+            <div class="unread-msgs-count">${conv.unread_count}+</div>
         </div>
         </div>
     `;

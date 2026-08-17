@@ -307,6 +307,14 @@ export class Conversation {
         return this.last_message.sent;
     }
 
+    get is_read() {
+        return this.unread_count == 0;
+    }
+
+    get unread_count() {
+        return 0;
+    }
+
     get id() {
         return this.peer.id;
     }
