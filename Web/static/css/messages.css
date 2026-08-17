@@ -134,7 +134,7 @@ body.no-footer .page_footer {
 }
 
 .crp-entry.unread {
-    background: #c6a99833;
+    background: var(--unread);
 }
 
 .crp-entry.crp-entry-replied-same .crp-entry--message---av {
@@ -180,11 +180,27 @@ body.no-footer .page_footer {
     font-weight: 900;
 }
 
-.crp-entry--message.unread {
+.crp-entry .unread {
     padding: 3px;
     width: 395px;
     background: #e6e6e6;
     border-radius: 3px;
+}
+
+.crp-entry .unread-msgs-count {
+    display: none;
+    position: absolute;
+    right: 10px;
+    margin-top: -13px;
+    padding: 5px 5px;
+    font-weight: bold;
+    background: var(--brand-l-1);
+    color: var(--text-rev);
+    border-radius: 2px;
+}
+
+.crp-entry.unread .unread-msgs-count {
+    display: block;
 }
 
 .messenger-app--messages---message.unread {

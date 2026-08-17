@@ -449,10 +449,10 @@ class SettingsPage extends IMPage {
             </div>
         `);
         container.querySelector("input").addEventListener("change", (e) => {
-            localStorage.setItem(e.target.attributes.get("id"), Number(e.target.checked));
+            localStorage.setItem("tw." + e.target.id, Number(e.target.checked));
         });
         container.querySelectorAll("input").forEach((item) => {
-            item.checked = localStorage.getItem(e.target.attributes.get("id")) || false;
+            item.checked = localStorage.getItem("tw." + item.id) || false;
         });
     }
 }

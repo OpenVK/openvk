@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace openvk\VKAPI\Handlers;
 
 use openvk\Web\Models\Repositories\Users as UsersRepo;
+use Chandler\Database\DatabaseConnection;
 
 final class Friends extends VKAPIRequestHandler
 {
@@ -61,8 +62,40 @@ final class Friends extends VKAPIRequestHandler
 
         $users = new UsersRepo();
 
-        $totalCount = 0;
-        $response = [];
+        $user = $users->get($user_id);
+
+        if (!$user || $user->isDeleted()) {
+            $this->fail(100, "Invalid user");
+        }
+
+        if (!$user->getPrivacyPermission("friends.read", $this->getUser())) {
+            $this->fail(15, "Access denied: this user chose to hide his friends.");
+        }
+
+        $q = mb_strtolower($q ?? "", "UTF-8");
+
+        $query   = "SELECT id FROM\n" . file_get_contents(__DIR__ . "/../../Web/Models/sql/get-friends-search.tsql");
+        $countQ  = "SELECT COUNT(*) AS cnt FROM\n" . file_get_contents(__DIR__ . "/../../Web/Models/sql/get-friends-search.tsql");
+
+        $db   = DatabaseConnection::i()->getConnection();
+        $like = "%$q%";
+
+        $totalCount = (int) $db->query($countQ, $user_id, $user_id, $like)->fetch()->cnt;
+
+        $query .= "\n LIMIT " . $count . " OFFSET " . $offset;
+
+        $matchingFriends = [];
+        $rels = $db->query($query, $user_id, $user_id, $like);
+        foreach ($rels as $rel) {
+            $matchingFriends[] = (int) $rel->id;
+        }
+
+        $response = $matchingFriends;
+
+        if (!empty($fields) && sizeof($matchingFriends) > 0) {
+            $usersApi = new Users($this->getUser());
+            $response = $usersApi->get(implode(',', $matchingFriends), $fields);
+        }
 
         return (object) [
             "count" => $totalCount,

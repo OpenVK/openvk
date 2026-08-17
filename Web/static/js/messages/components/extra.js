@@ -1,10 +1,11 @@
 import { html, render } from './render.js';
 import { ChatGeneralForm } from './messages.js';
 
-export const FriendsPageTemplate = ({ friends, count, referrer, onFriendClick, onSubmit, isSelected, onLoadMore, onTitleChangeClick }) => {
+export const FriendsPageTemplate = ({ friends, count, referrer, onFriendClick, onSubmit, isSelected, onLoadMore, onTitleChangeClick, onSearch }) => {
     const isChatCreation = referrer == "chat_creation";
     const isAdd = referrer == "add_new";
 
+    console.log(friends)
     return html`
         <div class="messenger-app--tab-friends">
             ${isChatCreation && html`
@@ -38,7 +39,7 @@ export const FriendsPageTemplate = ({ friends, count, referrer, onFriendClick, o
             `}
             <div class="friends-list-top">
                 <div class="inf">
-                    <input placeholder="${tr('search_sinister_noun')}" class="search_input" type="text" />
+                    <input onChange=${(e) => { onSearch(e) }} placeholder="${tr('search_sinister_noun')}" class="search_input" type="text" />
                 </div>
             </div>
             <div class="friends-list ${isChatCreation || isAdd ? 'friends-list-m' : ''}">
