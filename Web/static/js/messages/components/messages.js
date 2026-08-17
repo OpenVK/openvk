@@ -25,8 +25,14 @@ export class Draft {
         if (this.attachments_html[1] != null) {
             page.container.querySelector(".post-vertical").innerHTML = this.attachments_html[1];
         }
+        this.loadScroll(page);
+    }
+
+    loadScroll(page) {
         if (this.scroll != null) {
             page._scrollTo(this.scroll);
+        } else {
+            page._scrollToEnd();
         }
     }
 }
@@ -405,7 +411,7 @@ export class Chunks {
 
         actual._pushMessage(msg);
         this._invalidateCache();
-        window.im.messenger.view._triggerUpdate();
+        window.im.messenger.update();
     }
 
     // ── scroll direction handling ────────────────────────────────
@@ -441,7 +447,7 @@ export class Chunks {
         this._appendChunk(msgs, { overlapWith: active });
         this._atOldest = this._atOldest || msgs.isEnd;
         this._setActiveChunk(msgs);
-        window.im.messenger.view._triggerUpdate();
+        window.im.messenger.update();
     }
 
     /**
@@ -479,7 +485,7 @@ export class Chunks {
 
         this._appendChunk(msgs, { overlapWith: active });
         this._setActiveChunk(msgs);
-        window.im.messenger.view._triggerUpdate();
+        window.im.messenger.update();
         window.im.messenger.view._scrollToEnd();
     }
 
@@ -501,7 +507,7 @@ export class Chunks {
     /** Jump back to the newest side (the "return to newest" / DOWN button). */
     scrollToNewest() {
         this._setActiveChunk(this._getActualChunk(false));
-        window.im.messenger.view._triggerUpdate();
+        window.im.messenger.update();
         window.im.messenger.view._scrollToEnd();
     }
 
@@ -542,6 +548,7 @@ export class DayChunk {
         this.messages = [];
         this.do_reverse = do_reverse;
         this.date = null;
+        this.idate = null;
         items.forEach((item) => this.messages.push(item));
     }
 
@@ -785,18 +792,21 @@ export class ChatGeneralForm {
         }
 
         const time = this.data.last_seen.time;
-        const date = new Date(time);
+        const date = new Date(time * 1000);
         const today = new Date();
+        const sameMonth = date.getMonth() === today.getMonth();
+        const timeStr = date.toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit' });
+        const dayStr = date.toLocaleDateString(navigator.language, { hour: '2-digit', minute: '2-digit' });
 
-        if (date.getDate() === today.getDate()) {
-            return tr("im_was_online_today_" + this.gender, "00:00").toLowerCase();
+        if (sameMonth && date.getDate() === today.getDate()) {
+            return tr("im_was_online_today_" + this.gender, timeStr).toLowerCase();
         }
 
-        if (date.getDate() === today.getDate() - 1) {
-            return tr("im_was_online_yesterday_" + this.gender, "00:00").toLowerCase();
+        if (sameMonth && date.getDate() === today.getDate() - 1) {
+            return tr("im_was_online_yesterday_" + this.gender, timeStr).toLowerCase();
         }
 
-        return tr("im_was_online_yesterday_" + this.gender, "00:00", "11.11.11").toLowerCase();
+        return tr("im_was_online_other_" + this.gender, timeStr, dayStr).toLowerCase();
     }
 
     get messages() {
@@ -910,7 +920,7 @@ export class ChatGeneralForm {
 
     async loadChunkByMessageId(messageId) {
         const chunk = await this._chunks.loadChunkByMessageId(messageId);
-        window.im.messenger.view._triggerUpdate();
+        window.im.messenger.update();
         return chunk;
     }
 
@@ -928,14 +938,20 @@ export class ChatGeneralForm {
     set _end_reached(v) { this._chunks._atOldest = !!v; }
     get _end_reached() { return this._chunks._atOldest; }
 
-    async sendMessage(msg, reply_to = null, attachments = null, wait_until_send = null) {
+    async sendMessage(msg, reply_to = null, attachments = null, wait_until_send = null, push_callback = null) {
         this._pushNewMessage(msg);
-        window.im.messenger.view._scrollToEnd();
+        if (push_callback) {
+            push_callback();
+        }
         const datas = {
             'peer_id': this.id,
             'message': msg.text_raw,
             'attachment': msg.str_attachments,
         };
+
+        if (window.im.usage_type == "group") {
+            datas["group_id"] = window.im.state.getOperator().id;
+        }
 
         if (reply_to != null) {
             datas['reply_to'] = reply_to.id;
@@ -967,7 +983,7 @@ export class ChatGeneralForm {
             msg.data.error_text = d;
             msg.data.resend_params = datas;
             console.error('IM | Did not sent message to ' + this.id, ': ', e);
-            window.im.messenger.view._triggerUpdate();
+            window.im.messenger.update();
         }
     }
 
@@ -1375,7 +1391,7 @@ export class ChatMessage {
     async tryToResend() {
         let r = String(this.data.error_text);
         this.data.error_text = null;
-        window.im.messenger.view._triggerUpdate();
+        window.im.messenger.update();
 
         try {
             const resp = await window.OVKAPI.call('messages.send', this.data.resend_params);
@@ -1388,7 +1404,7 @@ export class ChatMessage {
             console.error('IM | STILL can not send message to ' + this.id, ': ', e);
         }
 
-        window.im.messenger.view._triggerUpdate();
+        window.im.messenger.update();
     }
 
     async edit(text, attachments = []) {
@@ -1410,7 +1426,7 @@ export class ChatMessage {
         this.data.text = text;
         this.data.edited = true;
 
-        window.im.messenger.view._triggerUpdate();
+        window.im.messenger.update();
 
         console.log("successfuly edited ", this, resp)
     }

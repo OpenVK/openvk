@@ -286,15 +286,9 @@ body.no-footer .page_footer {
 }
 
 /* toggle */
-.messenger-app--tab-messenger .peer-window,
-.messenger-app--tab-messenger.peer-shown .chat-window {
-    display: none;
-}
 
-.messenger-app--tab-messenger .chat-window,
-.messenger-app--tab-messenger.peer-shown .peer-window {
-    display: inline-block;
-    width: 100%;
+.chat-window.saved-msgs .ava2 {
+    opacity: 0;
 }
 
 .peer-window {
@@ -360,7 +354,7 @@ body.no-footer .page_footer {
 
 .messenger-app--messages .messenger-app--messages-array {
     margin-top: auto;
-    padding-top: 80px;
+    padding-top: 500px;
     padding-bottom: 60px;
     z-index: 0;
 }
@@ -563,7 +557,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 
 .messenger-app--messages---message ._content .attachments .msg-attach-j {
     display: inline-block;
-    height: 80px;
+    height: 83px;
     max-width: 150px;
     margin-right: 5px;
 }
@@ -608,7 +602,13 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     font-weight: bold;
 }
 
-.messenger-app--messages---message .msg-attach-w-audio ._icon {
+.messenger-app--messages---message .msg-attach-w-post a {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.messenger-app--messages---message ._icon {
     width: 16px;
     height: 15px;
     background: black;

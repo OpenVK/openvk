@@ -104,10 +104,14 @@ body.manyMsgs .ovk-msg-all:last-of-type {
 .ovk-photo-view-dimmer.mode-tg .ovk-photo-view {
     background: unset;
     box-shadow: unset;
+    display: flex;
+    flex-direction: column-reverse;
 }
 
 .ovk-photo-view-dimmer.mode-tg .ovk-photo-view .photo_com_title {
     color: white;
+    padding-bottom: 0px;
+    padding-top: 15px;
 }
 
 .ovk-photo-view-dimmer.mode-tg .ovk-photo-view #ovk-photo-close {
@@ -845,7 +849,7 @@ body.manyMsgs .ovk-msg-all:last-of-type {
 .ovk-post-viewer #itemContentComments #standaloneCommentBox {
     padding: 10px 30px;
     border-bottom: unset;
-    background: #e5e2eb;
+    background: #ededef;
     border-top: 1px solid var(--profile-link);
 }
 

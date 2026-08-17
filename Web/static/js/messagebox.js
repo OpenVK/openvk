@@ -272,7 +272,7 @@ class Viewer {
         this._setMainContext(data);
     }
 
-    loadCustomContext(res) {
+    loadCustomContext(res, direction = 1) {
         if (!res.items || res.items.length == 0) {
             this.sides_ended["right"] = true;
             return;

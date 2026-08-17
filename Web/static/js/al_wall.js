@@ -452,7 +452,9 @@ class PhotoViewer extends Viewer {
         }
 
         if (this.context.type == "chat" || this.context.type == null || (this.context.not_load_comments || false) == true) {
-            this._getCurrentEntryCacheNode().last().innerHTML = itemId;
+            if (window.im && window.im.state.is_debug) {
+                this._getCurrentEntryCacheNode().last().innerHTML = itemId;
+            }
             return;
         }
 
@@ -1098,9 +1100,7 @@ class PostViewer extends Viewer {
         });
     }
 
-    _isLoadable() { 
-        return this.context.type == "wall";
-    }
+    _isLoadable() {  return this.context.type == "wall"; }
 
     async _loadLoadableContext(direction) { 
         if (this.context.type == "wall") {
@@ -1183,9 +1183,7 @@ class PostViewer extends Viewer {
         setClickableHeightForEls(this.modal.getNode(), this.modal.getNode().find(".ovk-photo-view-overlay").nodes, ".photo_viewer_wrapper", -50);
     }
 
-    _getEntityPageName() {
-        return "wall";
-    }
+    _getEntityPageName() { return "wall"; }
 
     async _downloadPage(url, postfix = null) {
         let urls = this._getDetailsUrl(url, postfix);
@@ -1211,7 +1209,7 @@ class PostViewer extends Viewer {
         }
 
         if (!entry) return;
-        if (!entry.cached) {
+        if (!entry.cached && context != "pagination") {
             const htmls = await this._downloadPage(itemId, postfix_);
 
             entry.html = htmls[0];
@@ -1268,7 +1266,6 @@ class PostViewer extends Viewer {
         } catch(e) {
             console.error(e);
         }
-
     }
 }
 
@@ -3072,7 +3069,7 @@ async function repost(id, repost_type = 'post') {
                     }
 
 					if (type == "chat") {
-                    	NewNotification(tr('information_-1'), tr('shared_succ'), null, () => {window.im.initImPage(document.querySelector(".page_content"), params.peer_id)});
+                    	NewNotification(tr('information_-1'), tr('shared_succ'), null, () => {window.router.route(`/im?sel=`+ params.peer_id)});
 					} else {
                     	NewNotification(tr('information_-1'), tr('shared_succ'), null, () => {window.router.route(`/wall${res.pretty_id}`)});
 					}
@@ -3085,16 +3082,16 @@ async function repost(id, repost_type = 'post') {
         ]
     });
 
-    u('.ovk-diag-body').attr('style', 'padding: 18px;')
-    u('.ovk-diag-body').on('change', `input[name='repost_type']`, (e) => {
+    msg.getNode().attr('style', 'padding: 18px;')
+    msg.getNode().on('change', `input[name='repost_type']`, (e) => {
         const value = e.target.value
         u(`select[name='selected_repost_club']`).attr('style', 'display:none')
         u(`select[name='selected_repost_chat']`).attr('style', 'display:none')
 		u('#repost_signs').attr('style', 'display:none');
+        u('.ovk-diag-body #__photoAttachment, .ovk-diag-body #__videoAttachment, .ovk-diag-body #__audioAttachment, .ovk-diag-body #__documentAttachment').attr('data-club', 0)
 
         switch(value) {
             case 'wall':
-                u('.ovk-diag-body #__photoAttachment, .ovk-diag-body #__videoAttachment, .ovk-diag-body #__audioAttachment, .ovk-diag-body #__documentAttachment').attr('data-club', 0)
                 break
             case 'group':
                 u('#repost_signs').attr('style', 'display:flex')
@@ -3108,21 +3105,45 @@ async function repost(id, repost_type = 'post') {
         }
     })
 
-    u('.ovk-diag-body').on('change', `select[name='selected_repost_club']`, (e) => {
+    msg.getNode().on('change', `select[name='selected_repost_club']`, (e) => {
         const club_id = e.target.value
         u('.ovk-diag-body #__photoAttachment, .ovk-diag-body #__videoAttachment, .ovk-diag-body #__audioAttachment, .ovk-diag-body #__documentAttachment').attr('data-club', club_id)
+    });
+
+    msg.getNode().on('change', `select[name='selected_repost_chat']`, async (e) => {
+        const chat_id = e.target.value;
+        if (chat_id == "loadmore") {
+            toggleUnclickability(e.target, true);
+
+            await window.im_variants.getCurrentUser().conversations.loadNext();
+
+            toggleUnclickability(e.target, false);
+
+            loadConvVariants();
+        }
     })
 
     await loadEditableGroups();
+
+    function loadConvVariants() {
+        u(`select[name='selected_repost_chat']`).html("");
+        u(`select[name='selected_repost_chat']`).append(`<option value='${window.openvk.current_id}'>${tr("saved_messages")}</option>`)
+        window.im_variants.getCurrentUser().conversations.convs.forEach(conv => {
+            const peer = conv.peer;
+            if (peer.id == window.openvk.current_id) { return; }
+            u(`select[name='selected_repost_chat']`).append(`<option value='${peer.id}'>${ovk_proc_strtr(escapeHtml(peer.name), 100)}</option>`)
+        });
+
+        if (window.im_variants.getCurrentUser().conversations.convs.length < window.im_variants.getCurrentUser().conversations.total_convs) {
+            u(`select[name='selected_repost_chat']`).append(`<option value='loadmore'>${tr("show_next")}</option>`)
+        }
+    }
 
     window.openvk.writeableClubs.items.forEach(club => {
         u(`select[name='selected_repost_club']`).append(`<option value='${club.id}'>${ovk_proc_strtr(escapeHtml(club.name), 100)}</option>`)
     })
 
-	window.im_variants.getCurrentUser().conversations.convs.forEach(conv => {
-		const peer = conv.peer;
-        u(`select[name='selected_repost_chat']`).append(`<option value='${peer.id}'>${ovk_proc_strtr(escapeHtml(peer.name), 100)}</option>`)
-	})
+    loadConvVariants();
 
     if(window.openvk.writeableClubs.items.length < 1) {
         u(`input[name='repost_type'][value='group']`).attr('disabled', 'disabled')

@@ -116,11 +116,12 @@ export class FriendsPage extends IMPage {
             'title': title,
             'user_ids': ids,
         }).then((resp) => {
-            toggleUnclickability(e.target, false);
             window.im.messenger.selectConversationByPeerId(resp + 2000000000);
         }).catch(err => {
             fastError(String(err));
         });
+
+        toggleUnclickability(e.target, false);
     }
 
     async beforeRender(container) {

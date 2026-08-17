@@ -38,6 +38,10 @@ export class ConversationsPage extends IMPage {
     render(container) {
         const convs = window.im.conversations.convs;
 
+        const url = new URL(location.href);
+        url.searchParams.delete("sel");
+        window.im.state._pushState(url.toString());
+
         render(html`
         <${ConversationListView}
             conversations=${convs}
@@ -57,6 +61,9 @@ export class Conversations {
         this.q = null;
         this.peer_id_search = null;
     }
+
+    getWindow() { return window.im.getTab("conversations").render_class; }
+    update() { return this.getWindow().update(); }
 
     get convs() {
         // сортировка по дате последнего сообщения
@@ -266,7 +273,7 @@ export class Conversation {
         }
 
         console.log("this.current_activity", this.current_activity);
-        window.im.messenger.view._triggerUpdate();
+        window.im.messenger.update();
 
         this.activity_updated = new Date();
         const old = new Date(this.activity_updated);
@@ -276,7 +283,7 @@ export class Conversation {
             if (this.activity_updated.getTime() == old.getTime()) {
                 console.info("IM | Conversations | Wiped activity for ", this, "!")
                 this.current_activity = {};
-                window.im.messenger.view._triggerUpdate();
+                window.im.messenger.update();
             }
         }, REMOVE_TYPING_TIMEOUT);
     }
