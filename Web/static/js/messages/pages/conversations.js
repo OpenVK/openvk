@@ -195,6 +195,9 @@ export class Conversation {
         this.draft = null;
     }
 
+    setDraft(draft) { this.draft = draft }
+    clearDraft() { this.draft = null }
+
     hasActivity() {
         return this.getActivityMsg()[1].length > 0;
     }

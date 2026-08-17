@@ -1,7 +1,33 @@
 export class Draft {
     constructor() {
-        this.text = "";
-        this.attachments_html = "";
+        this.text = null;
+        this.attachments_html = [];
+        this.scroll = null;
+    }
+
+    static fromPage(page) {
+        const d = new Draft();
+        d.text = page.getCurrentText();
+        d.attachments_html = page.getCurrentAttachments();
+        d.scroll = page.getScroll();
+
+        return d;
+    }
+
+    loadToPage(page) {
+        console.log("applying ", this, " to ", page);
+        if (this.text != null) {
+            page.container.querySelector(".messenger-app--input---messagebox textarea").value = this.text;
+        }
+        if (this.attachments_html[0] != null) {
+            page.container.querySelector(".post-horizontal").innerHTML = this.attachments_html[0];
+        }
+        if (this.attachments_html[1] != null) {
+            page.container.querySelector(".post-vertical").innerHTML = this.attachments_html[1];
+        }
+        if (this.scroll != null) {
+            page._scrollTo(this.scroll);
+        }
     }
 }
 

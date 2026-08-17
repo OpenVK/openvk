@@ -118,13 +118,13 @@ const Attachment = ({ msg, att }) => {
     switch (att.type) {
         case 'photo':
             return html`
-            <a onclick=${(e) => {window.im.messenger.showAttachment(e, msg, attachment)}} class="msg-attach-j msg-attach-j-photo" href=${att.photo.link}>
+            <a onclick=${(e) => {window.im.messenger.showAttachment(e, msg, att)}} class="msg-attach-j msg-attach-j-photo" href=${att.photo.link}>
                 <img src=${att.photo.photo_604 ?? att.photo.photo_130} alt="..." />
             </a>`;
         case 'video':
             return html`
                 <div class="msg-attach-j msg-attach-j-video">
-                    <a onclick=${(e) => {window.im.messenger.showAttachment(e, msg, attachment)}} class="compact_video" href=${'/video' + att.video.owner_id + '_' + att.video.id}>
+                    <a onclick=${(e) => {window.im.messenger.showAttachment(e, msg, att)}} class="compact_video" href=${'/video' + att.video.owner_id + '_' + att.video.id}>
                         <div class='play-button'><div class='play-button-ico'></div></div>
                         <img src=${att.video.image[0].url} alt="..." />
                         ${att.video.length ? `<span class="length">${fmtTime(att.video.length)}</span>` : ""}
@@ -147,16 +147,19 @@ const Attachment = ({ msg, att }) => {
                 </div>`;
         case 'audio':
             return html`
-                <div onclick=${(e) => { window.im.messenger.showAttachment(e, msg, attachment) }} class="msg-attach-w msg-attach-w-audio">
+                <div onclick=${(e) => { window.im.messenger.showAttachment(e, msg, att) }} class="msg-attach-w msg-attach-w-audio">
                     <span class="_icon"></span>
                     <span class="_artist">${att.audio.artist}</span>
                     <span>—</span>
                     <span class="_title">${att.audio.title}</span>
                 </div>`;
         case 'wall':
+            console.log(att);
             return html`
                 <div class="msg-attach-w msg-attach-w-post">
-                    <a onclick="${(e) => { PostViewer.openById(e, idForItem(att.wall)) }}" target="_blank">запись на чьей то стене</a>
+                    <a onclick="${(e) => { PostViewer.openById(e, idForItem(att.wall)) }}" target="_blank">
+                        ${tr("post")}
+                    </a>
                 </div>
             `;
         default:

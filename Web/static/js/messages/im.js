@@ -72,7 +72,6 @@ export class InstantMessagesAndRelated {
         */
 
         this.isReady = true;
-        await this.state._checkSel(new URL(location.href));
         console.log("IM | Inited");
     }
 
@@ -107,9 +106,9 @@ export class InstantMessagesAndRelated {
         //    this.selectTab('conversations');
        	//}
 
-        self.openTabByName("conversations");
-        self.state.removeLoadSkeleton(container);
+        await self.state._checkSel(new URL(location.href));
         self.state._changeHeight(self.root);
+        self.state.removeLoadSkeleton(container);
     }
 
     updateTabs() {
@@ -350,17 +349,19 @@ class IMState {
     }
 
     async _checkSel(loc, sel_id = null) {
+        this.link.openTabByName("conversations");
+
         const _sel = sel_id == null ? Number(loc.searchParams.get('sel')) : sel_id;
-        if (!_sel) return;
 
-        const peer = await this.link.conversations._resolveSel(_sel);
-
-        if (peer) {
-            const _l = this.link.messenger.getChatWith(peer);
-            await this.link.messenger.selectChat(_l);
-            return _l;
-        } else {
-            console.error('No peer with this id!');
+        if (_sel) {
+            const peer = await this.link.conversations._resolveSel(_sel);
+            if (peer) {
+                const _l = this.link.messenger.getChatWith(peer);
+                await this.link.messenger.setChat(_l);
+                return _l;
+            } else {
+                console.error('No peer with this id!', sel_id);
+            }
         }
     }
 
@@ -609,11 +610,11 @@ export class IMDeprecated {
         const _sel = sel_id == null ? Number(loc.searchParams.get('sel')) : sel_id;
         if (!_sel) return;
 
-        const peer = await this.conversations._resolveSel(_sel);
+        const peer = await this.link.conversations._resolveSel(_sel);
 
         if (peer) {
-            const _l = this.messenger.view.getChatWith(peer);
-            await this.selectChat(_l);
+            const _l = this.link.messenger.getChatWith(peer);
+            await this.link.selectChat(_l);
             return _l;
         } else {
             console.error('No peer with this id!');

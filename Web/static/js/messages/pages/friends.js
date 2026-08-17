@@ -71,7 +71,10 @@ export class FriendsPage extends IMPage {
             close_on_buttons: false,
             buttons: [tr('ok'), tr('cancel')],
             callbacks: [() => {
-                this.name = document.querySelector("#chatInputTitle").value;
+                const name = document.querySelector("#chatInputTitle").value;
+                if (!name || name.length == 0) { return; }
+
+                this.name = name;
                 this._set_name = true;
                 this._updTitleStr(this.name);
                 msg.close();

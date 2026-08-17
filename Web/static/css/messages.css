@@ -439,7 +439,7 @@ body.no-footer .page_footer {
 .messenger-app--messages .messenger-app--messages-day-time {
     display: flex;
     justify-content: center;
-    margin: 5px 0px;
+    margin: 10px 0px;
 }
 
 body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-day-time {
@@ -1060,7 +1060,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 .messenger-app--tab-friends .friends-list-top .chat_prev {
     display: grid;
     grid-template-columns: 0fr 1fr;
-    gap: 15px;
+    gap: 20px;
 }
 
 .messenger-app--tab-friends .friends-list-top .chat_prev #_name:hover {
@@ -1068,9 +1068,13 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 }
 
 .messenger-app--tab-friends .friends-list-top .chat_prev .avtr {
-    width: 50px;
-    height: 50px;
     background: var(--bg-slightly-border);
+}
+
+.messenger-app--tab-friends .friends-list-top .chat_prev .avtr,
+.messenger-app--tab-friends .friends-list-top .chat_prev .avtr img {
+    width: 60px;
+    height: 60px;
 }
 
 /* Send dialog */

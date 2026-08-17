@@ -14,7 +14,7 @@ export const FriendsPageTemplate = ({ friends, count, referrer, onFriendClick, o
                         <div class="avtr">
                             <img src="${ChatGeneralForm.CHAT_NO_AVATAR}" />
                         </div>
-                        <div style="padding: 10px 0px 0px 0px;">
+                        <div style="display: flex;flex-direction: column;justify-content: center;">
                             <b id="_name" onClick=${(e) => { onTitleChangeClick(e) }}>...</b>
                             <p id="_m_count">${tr("members_count", 1)}</p>
                         </div>
@@ -52,9 +52,9 @@ export const FriendsPageTemplate = ({ friends, count, referrer, onFriendClick, o
                             <span class="friends-list-online">${f.online_status_str}</span>
                         </div>
                     </div>
-                    ${isChatCreation || isAdd && html`
+                    ${isChatCreation || isAdd ? html`
                         <div><input type="checkbox" /></div>
-                    `}
+                    ` : ""}
                 </div>
                 `)}
             </div>
