@@ -26,7 +26,7 @@ export class IMTab {
     }
 
     shouldClose() {
-        return this.render_class.shouldCloseOnExit();
+        return this.render_class.shouldCloseOnExit() || this.render_class.container == null;
     }
 
     isDisablesScroll() {

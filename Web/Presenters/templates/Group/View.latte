@@ -258,13 +258,9 @@
                 </form>
             {/if}
 
-            {if $canBeModified}
+            {if !$canBeModified}
                 {if $club->isMessagesEnabled()}
-                    <a href="/im?as={$club->getRealId()}" class="profile_link brand_link_pitched">{_view_group_messages}</a>
-                {/if}
-            {else}
-                {if $club->isMessagesEnabled()}
-                    <a  onclick="showUserDialog(event, {$club->getRealId()})" href="/im?sel={$club->getRealId()}" class="brand_link brand_link_pitched profile_link">{_send_message}</a>
+                    <a onclick="showUserDialog(event, {$club->getRealId()})" href="/im?sel={$club->getRealId()}" class="brand_link brand_link_pitched profile_link">{_send_message}</a>
                 {/if}
             {/if}
         </div>
@@ -279,6 +275,10 @@
         {if $canBeModified}
             <a href="/club{$club->getId()}/edit" id="profile_link">{_edit_group}</a>
             <a href="/club{$club->getId()}/stats" rel="nofollow" id="profile_link">{_statistics}</a>
+
+            {if $club->isMessagesEnabled()}
+                <a href="/im?as={$club->getRealId()}" class="profile_link brand_link_pitched">{_view_group_messages}</a>
+            {/if}
         {/if}
 
         {var $canReport = $thisUser->getId() != $club->getOwner()->getId()}

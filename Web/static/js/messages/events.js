@@ -38,7 +38,7 @@ export class EventHandler {
 
             if (found != null) {
                 found.setDeleted(false);
-                window.im.messenger.view._triggerUpdate();
+                window.im.messenger.update();
             }
         }
     }
@@ -63,7 +63,7 @@ export class EventHandler {
                     found.hydrateFromEvent(_msg);
 
                     if (window.im.is_active) {
-                        window.im.messenger.view._triggerUpdate();
+                        window.im.messenger.update();
                         window.im.messenger.view._scrollToEnd();
                     }
                 }
@@ -96,7 +96,7 @@ export class EventHandler {
         await found.setAttachmentsFromLP(attachments);
         found.data.edited = true;
 
-        window.im.messenger.view._triggerUpdate();
+        window.im.messenger.update();
     }
 
     async ChatUpdateEvent(event) {

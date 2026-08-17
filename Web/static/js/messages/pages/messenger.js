@@ -8,7 +8,7 @@ import { html, render } from '../components/render.js';
 export class Messenger {
     static MAX_SELECTED_MESSAGES = 100;
     static MESSAGE_CHUNK_LENGTH = 1000;
-    static MESSAGE_SEND_INTERVAL = 5000;
+    static MESSAGE_SEND_INTERVAL = 1000;
 
     constructor() {
         this.is_showing_profile = false;
@@ -37,6 +37,10 @@ export class Messenger {
         return window.im.getTab("messenger").render_class;
     }
 
+    update() {
+        return this.getWindow()._triggerUpdate();
+    }
+
     async selectConversation(convo, scroll_down = false) {
         const oldId = Number(this.currentChatId);
         if (convo == null) {
@@ -49,10 +53,14 @@ export class Messenger {
         await tab.render();
 
         if (!convo.peer._isMessagesInited()) {
-            const c = await convo.peer.getMessages();
-            convo.peer._chunks._appendChunk(c);
+            try {
+                const c = await convo.peer.getMessages();
+                convo.peer._chunks._appendChunk(c);
+            } catch(e) { // может быть и broker failure. Хз зачем.
+                console.error(e);
+            }
 
-            if (scroll_down == true) {
+            if (false) {
                 this.getWindow()._scrollToEnd();
             }
         }
@@ -193,8 +201,8 @@ export class Messenger {
     }
 
     async sendToCurrentCorresponder() {
-        const view = this.view;
-        const text = view.currentDraft;
+        const view = this.getWindow();
+        const text = view.getCurrentText();
         const reply_to = view.replyTo;
         let reply_param = null;
         let attachments_list = null;
@@ -211,14 +219,16 @@ export class Messenger {
 
         if (text.length <= Messenger.MESSAGE_CHUNK_LENGTH + 20) {
             const msg = new ChatMessage({
-                'from_id': window.im.current.id,
+                'from_id': window.im.state.getOperator().id,
                 'peer_id': corresponder.id,
                 'date': Math.round((new Date()).getTime() / 1000),
             });
             if (attachments_list) msg.has_not_loaded_attachments = true;
             msg._guessSender();
             msg.setText(text);
-            return await corresponder.sendMessage(msg, reply_param, attachments_list);
+            return await corresponder.peer.sendMessage(msg, reply_param, attachments_list, null, () => {
+                view._scrollToEnd();
+            });
         }
 
         // ── Split long message into chunks ──
@@ -231,7 +241,7 @@ export class Messenger {
         for (let i = 0; i < total; i++) {
             const isLast = i === total - 1;
             const msg = new ChatMessage({
-                'from_id': window.im.current.id,
+                'from_id': window.im.state.getOperator(),
                 'peer_id': corresponder.id,
                 'date': Math.round((new Date()).getTime() / 1000),
             });
@@ -239,7 +249,9 @@ export class Messenger {
             msg._guessSender();
             msg.setText(chunks[i]);
 
-            corresponder.sendMessage(msg, isLast ? reply_param : null, isLast ? attachments_list : null, isLast ? null : Messenger.MESSAGE_SEND_INTERVAL);
+            corresponder.peer.sendMessage(msg, isLast ? reply_param : null, isLast ? attachments_list : null, isLast ? null : Messenger.MESSAGE_SEND_INTERVAL, () => {
+                view._scrollToEnd();
+            });
         }
     }
 
@@ -287,8 +299,6 @@ export class Messenger {
         const idinarray = msg.attachments.indexOf(attachment);
         const type = attachment.type;
 
-        console.log(ids, msg, attachment);
-
         CMessageBox.toggleLoader(true);
 
         const queue_items = [];
@@ -303,6 +313,7 @@ export class Messenger {
         const first = queue_items.find(function (p) {
             return idForItem(p) === ids;
         });
+        console.log(ids, msg, attachment);
 
         if (!first) {
             console.log("IM | Messenger | Opening photo | Not found ", attachment, " image in", photos)
@@ -336,7 +347,7 @@ export class Messenger {
 
                 break;
             case "audio":
-                AudioViewer.openById(e, null, attachment.audio);
+                AudioViewer.openById(event, null, attachment.audio);
                 break;
             default:
                 console.error("I can't open it: ", attachment, msg, e);
@@ -361,6 +372,35 @@ export class Messenger {
             console.error(e);
         }
     }
+
+    // onSendMessageButtonClick
+	async onSendMessage() {
+		const _tmp_atts = collect_attachments(u('.messenger-app--input---messagebox'));
+        const win = this.getWindow();
+
+        console.log(win.getCurrentText(), _tmp_atts);
+		if (win.getCurrentText() === '' && _tmp_atts.length == 0) return false;
+        if (win.getCurrentText().length > 55000) {
+            fastError("> 55000")
+            return;
+        }
+
+        if (this.editMsg != null) {
+            this.editMsg.edit(win.getCurrentText(), _tmp_atts);
+
+            this.cancelEdit();
+            return;
+        }
+
+		win._scrollToEnd();
+
+		this.sendToCurrentCorresponder();
+
+        window.im.state.getCurrentConvo().clearDraft();
+        this._clearAttachments();
+		this.removeReply();
+        win.setCurrentText("");
+	}
 
     cancelEdit(render = true) {
         this.editMsg = null;
@@ -445,7 +485,7 @@ export class MessengerPage extends IMPage {
         console.log(special_mode, is_rendering_contact_window)
         render(html`
         <div id="chat-page">
-            <div class="chat-window">
+            <div class="chat-window ${peer.id == window.openvk.current_id ? "saved-msgs" : ""}">
             <${PeerTabsView} hadTab=${true} tabs=${orig_messenger.opened_tabs} currentChat=${orig_messenger.currentChatId} page=${this} />
             <${ActionsBar}
                 selectedMessages=${this.selected_messages_objs}
@@ -463,7 +503,7 @@ export class MessengerPage extends IMPage {
                 editMsg=${this.editMsg}
                 replyTo=${this.replyTo}
                 onRemoveReply=${() => this.removeReply()}
-                onSend=${() => this.onSendMessage()}
+                onSend=${() => window.im.messenger.onSendMessage()}
                 onKeyPress=${(e) => this.onTextareaKeyPress(e)}
                 currentDraft=${this.currentDraft}
                 onInput=${(e) => { this.currentDraft = e.target.value; }}
@@ -514,7 +554,7 @@ export class MessengerPage extends IMPage {
 			if (!e.metaKey && !e.shiftKey) {
 				e.preventDefault();
 				ta.blur();
-				this.sendMessage();
+				window.im.messenger.onSendMessage();
 				ta.focus();
 				return false;
 			}
@@ -567,7 +607,7 @@ export class MessengerPage extends IMPage {
 
     onEditButtonClick(e, msg) {
         this.editMsg = msg;
-        this.prevDraft = String(this.currentDraft);
+        this.prevDraft = String(this.getCurrentText());
         this.prevAtts_1 = this.appEl.querySelector(".post-horizontal").outerHTML;
         this.prevAtts_2 = this.appEl.querySelector(".post-vertical").outerHTML;
         this.currentDraft = "";
@@ -751,35 +791,6 @@ export class MessengerPage extends IMPage {
 		});
 	}
 
-    // onSendMessageButtonClick
-	async onSendMessage() {
-		const _tmp_atts = collect_attachments(u('.messenger-app--input---messagebox'));
-
-		if (this.currentDraft === '' && _tmp_atts.length == 0) return false;
-
-        if (this.currentDraft.length > 55000) {
-            fastError("> 55000")
-            return;
-        }
-
-        if (this.editMsg != null) {
-            this.editMsg.edit(this.currentDraft, _tmp_atts);
-
-            this.cancelEdit();
-            return;
-        }
-
-		this._scrollToEnd();
-
-		window.im.messenger.sendToCurrentCorresponder().then(() => {
-			this._scrollToEnd();
-		});
-
-		this._eraseDraftFor({ peer: window.im.current });
-		this._eraseCurrentDraft();
-		this.removeReply();
-	}
-
     getScroll() { return document.documentElement.scrollTop; }
     _scrollTo(scroll_progress) {
         console.log("scrolling page to: ", scroll_progress);
@@ -836,6 +847,7 @@ export class MessengerPage extends IMPage {
     }
 
     getCurrentText() { return this.container.querySelector(".messenger-app--input---messagebox textarea").value; }
+    setCurrentText(text) { console.log("setCurrentText"); this.container.querySelector(".messenger-app--input---messagebox textarea").value = text; }
     getCurrentAttachments() { return [this.container.querySelector(".post-horizontal").innerHTML, this.container.querySelector(".post-vertical").innerHTML]; }
 
     _saveDraft(to_chat) {

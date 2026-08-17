@@ -137,7 +137,7 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
                         <${AttachmentMenu} />
                     </div>
                 </div>
-                <img class="ava" src="${corresponder.peer.avatar_any || ''}"
+                <img class="ava ava2" src="${corresponder.peer.avatar_any || ''}"
                     alt="${corresponder.peer.full_name || ''}" />
             </div>
         </div>

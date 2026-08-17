@@ -134,7 +134,7 @@ const Attachment = ({ msg, att }) => {
             const ids = att.doc.owner_id + '_' + att.doc.id;
             return html`
                 <div class="msg-attach-w msg-attach-w-doc">
-                    <a href=${'/doc' + ids + (att.doc.access_key ? "?key="+att.doc.access_key : "")} class="attachment_note attachment_doc">
+                    <a data-id="${ids + (att.doc.access_key ? "_"+att.doc.access_key : "")}" href=${'/doc' + ids + (att.doc.access_key ? "?key="+att.doc.access_key : "")} class="attachment_note attachment_doc">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"></polygon><polygon points="5 0 5 3 8 3 5 0"></polygon></svg>
                         <div class="docOpener attachment_note_content">
                             <span class="attachment_note_name">
@@ -154,11 +154,15 @@ const Attachment = ({ msg, att }) => {
                     <span class="_title">${att.audio.title}</span>
                 </div>`;
         case 'wall':
-            console.log(att);
+            const isNoText = att.wall.text == null || att.wall.text.length == 0;
+            const date = new Date(att.wall.date * 1000).toLocaleDateString(navigator.language, { hour: '2-digit', minute: '2-digit' });
             return html`
                 <div class="msg-attach-w msg-attach-w-post">
-                    <a onclick="${(e) => { PostViewer.openById(e, idForItem(att.wall)) }}" target="_blank">
-                        ${tr("post")}
+                    <a onclick="${(e) => { PostViewer.openById(e, idForItem(att.wall)) }}">
+                        <div class="_icon"></div>
+                        <span>
+                            <b>${tr("post")}</b> ${isNoText ? tr("post_attachment_text", date).toLowerCase() : escapeHtml(ovk_proc_strtrt(att.wall.text, 25))}
+                        </span>
                     </a>
                 </div>
             `;

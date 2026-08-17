@@ -161,8 +161,13 @@ export class InstantMessagesAndRelated {
                 }
             });
 
-            if (_tab.isDisablesScroll()) {
-                this.state._toggleScrollMode(true);
+            if (_tab.isDisablesScroll()) { this.state._toggleScrollMode(true); }
+            if (_tab.getPageId() == "messenger") {
+                const current_chat = this.messenger.getCurrentChat();
+                if (current_chat != null && current_chat.draft) {
+                    console.log("IM | Scroll from tab");
+                    current_chat.draft.loadScroll(window.im.getTab("messenger").render_class);
+                }
             }
 
             _tab.updateHeader(this.header);
@@ -310,6 +315,7 @@ class IMState {
     }
 
     get is_compact_mode_enabled() { return localStorage.getItem("tw.im.modern_mode") === "1"; }
+    get is_debug() { return localStorage.getItem("tw.im.debug") === "1"; }
     get is_opened() { return location.pathname == "/im"; }
     get is_active() { return this.tab == 'messenger' && this.is_opened == true; }
     get is_group() { return this.group_id != null }
@@ -357,7 +363,7 @@ class IMState {
             const peer = await this.link.conversations._resolveSel(_sel);
             if (peer) {
                 const _l = this.link.messenger.getChatWith(peer);
-                await this.link.messenger.setChat(_l);
+                await this.link.messenger.selectConversation(_l);
                 return _l;
             } else {
                 console.error('No peer with this id!', sel_id);
@@ -434,24 +440,20 @@ class SettingsPage extends IMPage {
         const show_mail = location.hostname == "openvk.org";
         container.insertAdjacentHTML("beforeend", `
             <div style="padding: 10px 10px;">
-                <span>IM frontend</span>
                 <div>
-                    <label style="display:block;"><input id="_compactMode" type="checkbox">compact mode</label>
-                    <label style="display:block;"><input id="_debugButtons" type="checkbox">debug buttons</label>
-                    <label style="display:block;"><input id="_photoViewerBar" type="checkbox">photo viewer bar</label>
+                    <label style="display:block;"><input id="im.modern_mode" type="checkbox">Compact mode</label>
+                    <label style="display:block;"><input id="im.debug" type="checkbox">Debug buttons</label>
+                    <label style="display:block;"><input id="viewers.photo.list" type="checkbox">Photo viewer enchantements</label>
                     ${show_mail ? `<p><a onclick="window.im.messenger.selectConversationByPeerId(1381)">Сообщить об ошибке</a></p>` : ""}
                 </div>
             </div>
         `);
-        container.querySelector("#_compactMode").addEventListener("change", (e) => {
-            localStorage.setItem("tw.im.modern_mode", Number(e.target.checked));
+        container.querySelector("input").addEventListener("change", (e) => {
+            localStorage.setItem(e.target.attributes.get("id"), Number(e.target.checked));
         });
-        container.querySelector("#_debugButtons").addEventListener("change", (e) => {
-            localStorage.setItem("tw.im.debug", Number(e.target.checked));
+        container.querySelectorAll("input").forEach((item) => {
+            item.checked = localStorage.getItem(e.target.attributes.get("id")) || false;
         });
-        container.querySelector("#_photoViewerBar").addEventListener("change", (e) => {
-            localStorage.setItem("tw.viewers.photo.list", Number(e.target.checked));
-        })
     }
 }
 
@@ -778,14 +780,15 @@ export class IMDeprecated {
         }
 
        	if (tab_name != "messenger") {
-            const current_chat = this.messenger.view.getCurrentChat();
-            if (current_chat != null) {
-                this.messenger.view._saveDraft(current_chat);
-            }
-
             this._toggleScrollMode(false);
        	} else {
             this._toggleScrollMode(true);
+
+            const current_chat = window.im.messenger.getCurrentChat();
+            if (current_chat != null) {
+                console.log("IM | Scroll from tab")
+                current_chat.draft.loadScroll(window.im.getTab("messenger").render_class);
+            }
        	}
 
         this.tab = tab_name;

@@ -675,7 +675,7 @@
 "my_feedback" = "Мои Ответы";
 "my_settings" = "Мои Настройки";
 "bookmarks" = "Закладки";
-"bookmarks_tab" = "Избранное";
+"bookmarks_tab" = "Оценённые записи";
 "bug_tracker" = "Баг-трекер";
 
 "menu_settings" = "Настройки";
@@ -1462,6 +1462,7 @@
 "preview_attachment_doc" = "Документ";
 "preview_attachment_audio" = "Аудио";
 "preview_attachment_wall" = "Репост";
+"post_attachment_text" = "От $1";
 
 "saved_messages" = "Избранное";
 "im_friends_list" = "Список друзей";
