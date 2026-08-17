@@ -1,4 +1,4 @@
-import { ChatMessage, ChatGeneralForm } from '../components/messages.js';
+import { ChatMessage, ChatGeneralForm, Draft } from '../components/messages.js';
 import { Conversation } from './conversations.js';
 import { MessageListView } from "../components/message.js"
 import { ErrorConversation, WriteBar, ActionsBar, PeerWindow, InputArea, PeerTabsView } from "../components/common.js"
@@ -33,7 +33,12 @@ export class Messenger {
         this.editMsg = null;
     }
 
+    getWindow() {
+        return window.im.getTab("messenger").render_class;
+    }
+
     async selectConversation(convo, scroll_down = false) {
+        const oldId = Number(this.currentChatId);
         if (convo == null) {
             throw new Error();
         }
@@ -48,11 +53,29 @@ export class Messenger {
             convo.peer._chunks._appendChunk(c);
 
             if (scroll_down == true) {
-                window.im.getTab("messenger").render_class._scrollToEnd();
+                this.getWindow()._scrollToEnd();
             }
         }
 
         await tab.render();
+        const newId = Number(this.currentChatId);
+
+        if (oldId != newId) {
+            try {
+                this._clearAttachments();
+                this.removeReply();
+                this.cancelEdit();
+
+                let draft = this.getCurrentChat().draft;
+                if (!draft) {
+                    draft = new Draft();
+                }
+
+                draft.loadToPage(this.getWindow());
+            } catch(e) {
+                console.error(e);
+            }
+        }
     }
 
     async selectConversationByPeerId(id) {
@@ -75,23 +98,20 @@ export class Messenger {
     setChat(convo, pushstate = true) {
         const oldId = Number(this.currentChatId);
 
-        //convo.draft = new Draft();
+        try {
+            this.getCurrentChat().setDraft(Draft.fromPage(this.getWindow()));
+        } catch(e) {
+            console.error(e);
+        }
 
         if (!this.hasChat(convo)) {
             this.addChat(convo);
         }
 
+        this.unselectAll();
         this.selectChat(convo);
 
         const newId = Number(this.currentChatId);
-
-        this.unselectAll();
-
-        if (oldId != newId) {
-            //this._clearAttachments();
-            //this.removeReply();
-            //this.cancelEdit();
-        }
 
         if (this.opened_tabs.length > 1) {
             this.had_more_one_tab = true;
@@ -324,6 +344,37 @@ export class Messenger {
 
         CMessageBox.toggleLoader(false);
     }
+
+    removeReply(render = true) {
+        this.replyTo = null;
+
+        if (render == true) {
+            this.getWindow().update();
+        }
+    }
+
+    _clearAttachments() {
+        try {
+            this.getWindow().container.querySelector(".post-horizontal").innerHTML = "";
+            this.getWindow().container.querySelector(".post-vertical").innerHTML = "";
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    cancelEdit(render = true) {
+        this.editMsg = null;
+        this._clearAttachments();
+
+        if (this.prevDraft != null) {
+            this.currentDraft = String(this.prevDraft);
+            this.prevDraft = null;
+        }
+
+        if (render == true) {
+            this.getWindow().update();
+        }
+    }
 }
 
 export class MessengerPage extends IMPage {
@@ -360,7 +411,6 @@ export class MessengerPage extends IMPage {
         this.editMsg = null;
     }
     isDisablesScroll() { return window.im.state.is_compact_mode_enabled == false; }
-
     _triggerUpdate() {
         window.im.conversations.update();
         this.update();
@@ -534,20 +584,6 @@ export class MessengerPage extends IMPage {
 		this._render();
     }
 
-    cancelEdit(render = true) {
-        this.editMsg = null;
-        this._clearAttachments();
-
-        if (this.prevDraft != null) {
-            this.currentDraft = String(this.prevDraft);
-            this.prevDraft = null;
-        }
-
-        if (render == true) {
-            this._render();
-        }
-    }
-
     onPinButtonClick(e, msg) {
         const isPinned = msg.isPinned();
         const cmsg = new CMessageBox({
@@ -579,14 +615,6 @@ export class MessengerPage extends IMPage {
                 }
             }, () => {}]
         })
-    }
-
-	removeReply(render = true) {
-		this.replyTo = null;
-
-        if (render == true) {
-            this._render();
-        }
     }
 
     toggleMessageSelection(msg, e) {
@@ -752,9 +780,9 @@ export class MessengerPage extends IMPage {
 		this.removeReply();
 	}
 
+    getScroll() { return document.documentElement.scrollTop; }
     _scrollTo(scroll_progress) {
         console.log("scrolling page to: ", scroll_progress);
-
 		document.documentElement.scroll({ top: scroll_progress });
 	}
 
@@ -807,14 +835,8 @@ export class MessengerPage extends IMPage {
         }
     }
 
-    _clearAttachments() {
-        try {
-            this.container.querySelector(".post-horizontal").innerHTML = "";
-            this.container.querySelector(".post-vertical").innerHTML = "";
-        } catch (e) {
-            console.error(e);
-        }
-    }
+    getCurrentText() { return this.container.querySelector(".messenger-app--input---messagebox textarea").value; }
+    getCurrentAttachments() { return [this.container.querySelector(".post-horizontal").innerHTML, this.container.querySelector(".post-vertical").innerHTML]; }
 
     _saveDraft(to_chat) {
         if (!to_chat) return;
