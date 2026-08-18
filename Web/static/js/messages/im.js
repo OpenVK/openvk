@@ -397,10 +397,6 @@ class IMState {
             return;
         }*/
 
-        if (window.im.is_compact_mode_enabled == true) {
-            return;
-        }
-
         if (enable) {
             if (!u('body').hasClass('no-scroll')) {
                 window._prevScroll = scrollY;
@@ -437,11 +433,13 @@ class SettingsPage extends IMPage {
     static getPageId() { return "settings"; }
 
     render(container) {
+        this.getNode().addClass("page-other");
+
         const show_mail = location.hostname == "openvk.org";
         container.insertAdjacentHTML("beforeend", `
             <div style="padding: 10px 10px;">
                 <div>
-                    <label style="display:block;"><input id="im.modern_mode" type="checkbox">Compact mode</label>
+                    <label style="display:block;"><input id="im.modern_mode" type="checkbox">Compact mode (beta)</label>
                     <label style="display:block;"><input id="im.debug" type="checkbox">Debug buttons</label>
                     <label style="display:block;"><input id="viewers.photo.list" type="checkbox">Photo viewer enchantements</label>
                     ${show_mail ? `<p><a onclick="window.im.messenger.selectConversationByPeerId(1381)">Сообщить об ошибке</a></p>` : ""}

@@ -30,6 +30,7 @@ export class SearchPage extends IMPage {
     }
 
     async render(container) {
+        this.getNode().addClass("page-other");
         render(html`<${SearchPageTemplate} q=${this.options.q} c=${this} />`, container);
     }
 

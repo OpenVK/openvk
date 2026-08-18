@@ -159,6 +159,7 @@ export class FriendsPage extends IMPage {
     render(container) {
         const ref = this.options.referrer;
         this.selected_friends = []; // nulling
+        this.getNode().addClass("page-other");
 
         render(html`
         <${FriendsPageTemplate}
