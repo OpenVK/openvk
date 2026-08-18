@@ -450,7 +450,7 @@ export class MessengerPage extends IMPage {
         this.replyTo = null;
         this.editMsg = null;
     }
-    isDisablesScroll() { return window.im.state.is_compact_mode_enabled == false; }
+    isDisablesScroll() { return true; }
     _triggerUpdate() {
         window.im.conversations.update();
         this.update();
@@ -459,6 +459,7 @@ export class MessengerPage extends IMPage {
 	//async render(container, special_mode = null, messages = null) {
 	async render(container, options = {}) {
         const orig_messenger = window.im.messenger;
+        this.getNode().addClass("page-other");
 
         let messages = null;
         let special_mode = "";
@@ -897,6 +898,8 @@ export class ContactPage extends IMPage {
     static getPageId() { return "contact"; }
 
 	async render(container) {
+        this.getNode().addClass("page-other");
+
         const currentCorresponder = window.im.state.getCurrentConvo();
         let peer = null;
         if (this.options.peer == null) {

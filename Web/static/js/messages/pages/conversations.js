@@ -36,6 +36,7 @@ export class ConversationsPage extends IMPage {
     }
 
     render(container) {
+        this.getNode().addClass("page-conversations");
         const convs = window.im.conversations.convs;
 
         const url = new URL(location.href);

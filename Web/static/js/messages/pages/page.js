@@ -75,7 +75,7 @@ export class IMPage {
     updateHeader(header) { header.changeByConvNumber(0); }
     isVisibleWhenHidden() { return false; }
     shouldCloseOnExit() { return this.container == null; }
-    isDisablesScroll() { return false; }
+    isDisablesScroll() { return window.im.state.is_compact_mode_enabled == true; }
     static getPageId() { return "default"; }
     getTabName() { return tr("messenger_tab_" + this.constructor.getPageId()) }
     async beforeRender(container) {}

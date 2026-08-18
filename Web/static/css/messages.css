@@ -1143,8 +1143,37 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 
 /* compact mode */
 
+#im_container.compact .im_page.page-other {
+    display: block;
+}
+
+#im_container.compact .messenger-app--global-tabs .inner-tabs {
+    display: none;
+}
+
+#im_container.compact .im_page.page-conversations {
+    position: fixed;
+    top: 87px;
+    overflow-y: auto;
+    height: 100%;
+    width: 260px;
+    display: block !important;
+}
+
+#im_container.compact .im_page.page-other {
+    /*position: absolute;*/
+    margin-top: 89px;
+    right: 0;
+    width: 370px;
+    margin-left: 260px;
+}
+
 #im_container.compact {
     position: relative;
+}
+
+#im_container.compact .messages--peers-tabs {
+    display: none;
 }
 
 #im_container.compact .messenger-app--tab-messenger {
@@ -1159,15 +1188,26 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     width: 392px;
 }
 
+#im_container.compact .crp-list {
+    max-height: 80%;
+}
+
+#im_container.compact .messenger-app--input .ava {
+    display: none;
+}
+
+#im_container.compact .messenger-app--input .messenger-app--input---messagebox {
+    width: 100%;
+}
+
 #im_container.compact .messenger-app--tab-messenger .messenger-app--messages .messenger-app--messages-array {
     overflow-x: hidden;
     overflow-y: auto;
     height: 467px;
 }
 
-#im_container.compact .messenger-app-end {
-    position: sticky;
-    bottom: -2px;
+#im_container.compact .messenger-app--tab-messenger .crp-list {
+    height: 100%;
 }
 
 #im_container.compact .messenger-app--tab-conversations {
@@ -1178,7 +1218,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 }
 
 #im_container.compact .messenger-app, #im_container.compact .messenger-app--input {
-    width: 400px;
+    width: 368px;
 }
 
 #im_container.compact .messenger-app--messages---message >  .messenger-app--messages---message--wrap {

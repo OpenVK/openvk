@@ -566,8 +566,14 @@ class VideoViewer extends Viewer {
     _appendItemToList(pid, item, profiles, groups) {
         item["type"] = "video";
         item["id"] = pid;
-        const author = find_author(item.owner_id, profiles, groups)
-        item["author"] = author;
+
+        try {
+            const author = find_author(item.owner_id, profiles, groups)
+            item["author"] = author;
+        } catch(e) {
+            console.error(e);
+        }
+
         this.items[pid] = item;
 
         if (this.modal != null) {
@@ -737,7 +743,7 @@ class VideoViewer extends Viewer {
 
         let player_html = '';
 
-        if(init_player == true) {
+        if(init_player == true && item) {
             if(item.platform == 'youtube') {
                 const video_url = new URL(item.player)
                 const video_id = video_url.pathname.replace('/', '')
@@ -759,7 +765,9 @@ class VideoViewer extends Viewer {
                 bsdnInitElement(this.modal.getNode().find('.bsdn').nodes[0]);
             }
         }
-        this.modal.getNode().find("#videoTitle").html(ovk_proc_strtr(item.title, 100));
+        if (item) {
+            this.modal.getNode().find("#videoTitle").html(ovk_proc_strtr(item.title, 100));
+        }
     }
 
     _getCurrentEntryCacheNode() {
@@ -913,7 +921,7 @@ class AudioViewer extends Viewer {
         e.preventDefault();
         e.stopPropagation();
 
-        CMessageBox.toggleLoader()
+        CMessageBox.toggleLoader(true)
 
         const audioView = new AudioViewer();
         if (api_item != null) {
@@ -933,7 +941,7 @@ class AudioViewer extends Viewer {
 
         audioView.open();
         await audioView._loadDetails();
-        CMessageBox.toggleLoader()
+        CMessageBox.toggleLoader(false)
     }
 
     createMsgbox() {
@@ -951,7 +959,7 @@ class AudioViewer extends Viewer {
         fd.append('ajax', '1');
         fd.append('hash', window.router.csrf);
 
-        const f = await fetch("/audio1_" + ids, {
+        const f = await fetch("/audio" + ids, {
             method: "POST",
             body: fd
         });
