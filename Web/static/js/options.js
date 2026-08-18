@@ -181,6 +181,68 @@ window.tweaks = [
         `)
         u("#appFrame").closest("center").addClass("app_block")
     }),
+    new TweakOption("apps.add_fullscreen", function () {
+        const height = u(".page_yellowheader").nodes[0].getBoundingClientRect().height
+        const margin = getComputedStyle(u(".page_yellowheader").nodes[0]).paddingRight
+        this.customCSS(`
+            html.app_fullscreen {
+                overflow-y: hidden !important;
+            }
+            html.app_fullscreen a.app_fullscreen {
+                margin-right: calc(${margin} * 2);
+            }
+            html.app_fullscreen body.dimmed .dimmer {
+                z-index: 1023;
+            }
+            html.app_fullscreen #ajax_audio_player {
+                z-index: 1020;
+            }
+            .page_yellowheader.app_fullscreen {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                z-index: 1021;
+            }
+            #appFrame.app_fullscreen {
+                position: fixed;
+                top: ${height}px;
+                left: 0;
+                width: 100%;
+                height: calc(100% - ${height}px);
+                z-index: 1021;
+            }
+            a.app_fullscreen {
+                float: right;
+                margin-left: 4px;
+            }
+        `)
+        const button = document.createElement("a")
+        u(button)
+            .text("[🗗]")
+            .addClass("app_fullscreen")
+            .on("click", (e) => {
+                if (u("html").hasClass("app_fullscreen")) {
+                    u("html").removeClass("app_fullscreen")
+                    u(".page_yellowheader").removeClass("app_fullscreen")
+                    u("#appFrame").removeClass("app_fullscreen")
+                } else {
+                    u("html").addClass("app_fullscreen")
+                    u(".page_yellowheader").addClass("app_fullscreen")
+                    u("#appFrame").addClass("app_fullscreen")
+                }
+                if (e.ctrlKey) {
+                    u("#appFrame").nodes[0].src = u("#appFrame").nodes[0].src
+                }
+            })
+        u("#appFrame").closest(".page_body").find(".page_yellowheader").prepend(button)
+    }),
+    new TweakOption("apps.fullscreen_allow_notifications", function () {
+        this.customCSS(`html.app_fullscreen .notifications_global_wrap {z-index: 1022;}`)
+    }),
+    new TweakOption("apps.fullscreen_allow_ajax_player", function () {
+        this.customCSS(`html.app_fullscreen #ajax_audio_player {z-index: 1025;}`)
+    }),
     new TweakOption("wall.hide_edit_mark", function () {
         this.customCSS(`.editedMark {display: none;}`)
     }),
