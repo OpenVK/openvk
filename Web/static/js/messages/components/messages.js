@@ -32,6 +32,7 @@ export class Draft {
         if (this.scroll != null) {
             page._scrollTo(this.scroll);
         } else {
+            console.log(this);
             page._scrollToEnd();
         }
     }
@@ -315,7 +316,7 @@ export class Chunks {
                 if (!dateMap.has(dateKey)) {
                     const dayChunk = new DayChunk([], false);
                     dayChunk.setDay(dateKey);
-                    dayChunk.idate = msg.getConvDay(true);
+                    dayChunk.idate = msg.sent.toLocaleDateString();
                     dayChunks.push(dayChunk);
                     dateMap.set(dateKey, dayChunk);
                 }
@@ -323,9 +324,18 @@ export class Chunks {
             });
         }
 
-        dayChunks.sort((a, b) => a.idate.localeCompare(b.idate));
+        dayChunks.sort((a, b) => {
+            const [monthA, dayA, yearA] = a.idate.split('/').map(Number);
+            const [monthB, dayB, yearB] = b.idate.split('/').map(Number);
+
+            if (monthA !== monthB) return monthA - monthB;
+
+            if (dayA !== dayB) return dayA - dayB;
+
+            return yearA - yearB;
+        });
         this._cachedDays = dayChunks;
-        return dayChunks.reverse();
+        return dayChunks;
     }
 
     /** Oldest message across all loaded chunks (scroll-up search start). */
@@ -1205,7 +1215,7 @@ export class ChatMessage {
     getConvDay(always_with_year = false) {
         const date = this.sent;
         if (always_with_year == false && date.getFullYear() == new Date().getFullYear()) {
-            return date.toLocaleDateString(navigator.language)
+            return date.toLocaleDateString(navigator.language);
         } else {
             return date.toLocaleDateString(navigator.language, {
                 month: '2-digit',

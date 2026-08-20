@@ -223,7 +223,6 @@ export class InstantMessagesAndRelated {
             return already_here;
         } else {
             got_tab = got_class.openTab(this.root, options);
-            console.log(got_tab)
             if (got_tab != null) {
                 got_tab.render_class.addLoadSkeleton(this.root);
                 console.log(got_tab.render_class)
@@ -450,7 +449,7 @@ class SettingsPage extends IMPage {
             localStorage.setItem("tw." + e.target.id, Number(e.target.checked));
         });
         container.querySelectorAll("input").forEach((item) => {
-            item.checked = localStorage.getItem("tw." + item.id) || false;
+            item.checked = localStorage.getItem("tw." + item.id) == "1" || false;
         });
     }
 }

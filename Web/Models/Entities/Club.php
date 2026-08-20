@@ -8,6 +8,7 @@ use openvk\Web\Models\Repositories\{Photos, Topics, Videos, Documents};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{User, Manager, Chat};
+use openvk\Web\Models\Entities\Relationships\Blacklist;
 use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Managers, Posts};
 use Nette\Database\Table\{ActiveRow, GroupedSelection};
 use Chandler\Database\DatabaseConnection as DB;
@@ -184,6 +185,20 @@ class Club extends RowModel
     public function isMessagesEnabled(): bool
     {
         return (bool) $this->getRecord()->is_messages_enabled;
+    }
+
+    public function canWriteMessage(?User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        $blacklist = $this->getBlacklist();
+        if ($blacklist->isBanned($user)) {
+            return false;
+        }
+
+        return $this->isMessagesEnabled();
     }
 
     public function getLinkedChats(): array
@@ -524,6 +539,11 @@ class Club extends RowModel
     public function getAlert(): ?string
     {
         return $this->getRecord()->alert;
+    }
+
+    public function getBlacklist(): Blacklist
+    {
+        return new Blacklist($this);
     }
 
     public function getRealId(): int

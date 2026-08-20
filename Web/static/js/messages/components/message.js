@@ -2,7 +2,7 @@ import { WriteBar } from './common.js';
 import { html, render } from './render.js';
 
 function isSelected(msg) {
-    const view = window.im?.messenger?.view;
+    const view = window.im?.messenger;
 
     return view ? view.isMessageSelected(msg) : false;
 }
@@ -32,16 +32,13 @@ export const MessageBubble = ({ msg, index, chunk, page }) => {
     return html`
     <div class="${cls}"
         data-msg-id=${msg.id}
-        onMouseDown=${(e) => window.im?.messenger?.view?.onMessageClick(msg, e)}>
+        onMouseDown=${(e) => window.im?.messenger?.view.onMessageClick(msg, e)}>
         <div class="messenger-app--messages---message--wrap">
             <div class="inlines click-territory">
                 <div class="checkmark"></div>
                 ${msg.is_error && html`
                     <div class="error-checkmark" onClick=${(e) => { msg.tryToResend() }} title="${msg.data.error_text}"></div>
                 `}
-                <div class="message-id">
-                    <span>${msg.id}</span>
-                </div>
             </div>
             <div class="actions-2">
                 ${msg.canEdit() && html`
@@ -49,6 +46,9 @@ export const MessageBubble = ({ msg, index, chunk, page }) => {
                 `}
                 ${msg.canPin() && html`
                     <div onClick=${(e) => { window.im.messenger.view.onPinButtonClick(e, msg) }} class="pin-icon"></div>
+                `}
+                ${window.im.state.is_debug && html`
+                    <div onClick=${(e) => { window.im.messenger.view.onDebugButtonClick(e, msg) }} class="debug-icon"></div>
                 `}
             </div>
             <div class="inlines _avatar">
@@ -58,6 +58,11 @@ export const MessageBubble = ({ msg, index, chunk, page }) => {
             <a class="_sender" onClick=${(e) => { window.im?.messenger?.view?.onAuthorNameClick(msg, e) }}>
                 <strong>${msg.sender.name}</strong>
             </a>
+            <div class="time">
+                ${msg.id != null && html`
+                <span>${msg.readable_date}</span>
+                `}
+            </div>
             ${msg.is_reply == true && html`
                 <div class="reply-msg" onClick="${() => { window.im.messenger.view.scrollToMessage(msg.data.reply_message.id, true) }}">
                     <a class="reply-author">${msg.has_sender ? msg.sender.full_name : "..."}</a>
@@ -75,11 +80,6 @@ export const MessageBubble = ({ msg, index, chunk, page }) => {
                 <img src=${_loader_link} />
             `}
             </div>
-        </div>
-        <div class="time">
-            ${msg.id != null && html`
-            <span>${msg.readable_date}</span>
-            `}
         </div>
     </div>
   `;

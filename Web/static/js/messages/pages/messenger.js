@@ -37,6 +37,8 @@ export class Messenger {
         return window.im.getTab("messenger").render_class;
     }
 
+    get view() { return this.getWindow(); }
+
     update() {
         return this.getWindow()._triggerUpdate();
     }
@@ -199,6 +201,20 @@ export class Messenger {
             page.update();
         }
     }
+
+    async setWriting() {
+        this._typingStarted = 0;
+
+        const group_id = null;
+
+        console.log('IM | setWriting called');
+
+        await window.OVKAPI.call("messages.setActivity", {
+            "type": "typing",
+            "peer_id": window.im.state.getCurrentConvo().id,
+            "group_id": group_id
+        });
+	}
 
     async sendToCurrentCorresponder() {
         const view = this.getWindow();
@@ -415,6 +431,10 @@ export class Messenger {
             this.getWindow().update();
         }
     }
+
+    isEditing() {
+        return this.editMsg != null;
+    }
 }
 
 export class MessengerPage extends IMPage {
@@ -489,10 +509,10 @@ export class MessengerPage extends IMPage {
             <div class="chat-window ${peer.id == window.openvk.current_id ? "saved-msgs" : ""}">
             <${PeerTabsView} hadTab=${true} tabs=${orig_messenger.opened_tabs} currentChat=${orig_messenger.currentChatId} page=${this} />
             <${ActionsBar}
-                selectedMessages=${this.selected_messages_objs}
-                count=${this.selected_messages.length}
+                selectedMessages=${window.im.messenger.selected_messages_objs}
+                count=${window.im.messenger.selected_messages_count}
                 onDelete=${() => this.callDeletion()}
-                onUnselect=${() => this.unselect()}
+                onUnselect=${() => window.im.messenger.unselect()}
                 onReply=${() => this.onReplyButtonClick()}
             />
             <div class="messenger-app">
@@ -501,12 +521,12 @@ export class MessengerPage extends IMPage {
                 messages=${messages} 
                 page=${this} />
                 <${InputArea}
-                editMsg=${this.editMsg}
-                replyTo=${this.replyTo}
-                onRemoveReply=${() => this.removeReply()}
+                editMsg=${window.im.messenger.editMsg}
+                replyTo=${window.im.messenger.replyTo}
+                onRemoveReply=${() => window.im.messenger.removeReply()}
                 onSend=${() => window.im.messenger.onSendMessage()}
                 onKeyPress=${(e) => this.onTextareaKeyPress(e)}
-                currentDraft=${this.currentDraft}
+                currentDraft=${window.im.messenger.currentDraft}
                 onInput=${(e) => { this.currentDraft = e.target.value; }}
                 togglePeerInfo=${(e) => { this.togglePeerInfo() }}
                 clickOnReply=${(msg, e) => { this.clickOnReply(msg, e) }}
@@ -517,28 +537,6 @@ export class MessengerPage extends IMPage {
         `, root);
 	}
 
-    async _renderSpecialMode(container, special_mode) {
-        console.log("IM | Rendering special mode " + special_mode);
-
-        let messages = [];
-        const currentConv = this.getCurrentChat();
-        const peer = currentConv ? currentConv.peer : null;
-        const display_peer = this.toggled_peer_obj ? this.toggled_peer_obj : peer;
-
-        switch (special_mode) {
-            default:
-                break;
-            case "pinned":
-                messages = display_peer ? display_peer.divided_messages : [];
-                break;
-            case "photos":
-                break;
-        }
-        console.log(display_peer, special_mode, messages)
-
-        this._render(container, special_mode, messages);
-    }
-
 	onTextareaKeyPress(e) {
 		const ta = e.target;
 
@@ -546,7 +544,7 @@ export class MessengerPage extends IMPage {
 			const now = Date.now();
 			if (!this._typingStarted) this._typingStarted = now;
 			if (now - this._typingStarted > 6000) { // 2s
-				this.setWriting();
+				window.im.messenger.setWriting();
 			}
 		}
 
@@ -563,34 +561,20 @@ export class MessengerPage extends IMPage {
 		return true;
 	}
 
-    async setWriting() {
-        this._typingStarted = 0;
+    onMessageClick(msg, e) {
+        if (e.buttons !== 1 && e.type == 'mousemove') return;
+        if (window.im.messenger.replyTo != null) return;
 
-        const group_id = null;
+        if (window.im.messenger.selected_messages_count == 0 && !e.target.closest(".click-territory")) {
+            return;
+        }
 
-        console.log('IM | setWriting called');
-
-        await window.OVKAPI.call("messages.setActivity", {
-            "type": "typing",
-            "peer_id": window.im.state.getCurrentConvo().id,
-            "group_id": group_id
-        });
-	}
-
-	onMessageClick(msg, e) {
-		if (e.buttons !== 1 && e.type == 'mousemove') return;
-		if (this.replyTo != null) return;
-
-		if (this.selected_messages_count == 0 && !e.target.closest(".click-territory")) {
-			return;
-		}
-
-		const target = e.target;
-		if (!target.matches('.text, .time span') || this.selected_messages.length > 0) {
-			e.preventDefault();
-			this.toggleMessageSelection(msg, e);
-		}
-	}
+        const target = e.target;
+        if (!target.matches('.text, .time span') || window.im.messenger.selected_messages.length > 0) {
+            e.preventDefault();
+            this.toggleMessageSelection(msg, e);
+        }
+    }
 
 	clickOnReply(msg) {
         console.log(msg)
@@ -601,28 +585,22 @@ export class MessengerPage extends IMPage {
 		const ids = this.selected_messages;
 		const current_chat = this.getCurrentChat();
 		const m = current_chat.peer._findMessageById(ids[0]);
-		this.unselect();
+		window.im.messenger.unselect();
 		this.replyTo = m;
-		this._render();
+		this.update();
 	}
 
     onEditButtonClick(e, msg) {
-        this.editMsg = msg;
-        this.prevDraft = String(this.getCurrentText());
-        this.prevAtts_1 = this.appEl.querySelector(".post-horizontal").outerHTML;
-        this.prevAtts_2 = this.appEl.querySelector(".post-vertical").outerHTML;
-        this.currentDraft = "";
-
+        window.im.messenger.editMsg = msg;
         if (msg.text.length > 0) {
-            this.currentDraft = msg.text;
+            window.im.messenger.currentDraft = msg.text;
         }
 
-        console.log(msg.attachments)
         if (msg.attachments.length > 0) {
-            unpack_attachments_into_node(u(this.appEl.querySelector("#write")), msg.attachments);
+            unpack_attachments_into_node(u(this.container.querySelector("#write")), msg.attachments);
         }
 
-		this._render();
+		this.update();
     }
 
     onPinButtonClick(e, msg) {
@@ -641,6 +619,18 @@ export class MessengerPage extends IMPage {
                 this._triggerUpdate();
             }, () => {}]
         })
+    }
+
+    onDebugButtonClick(e, msg) {
+        const cmsg = new CMessageBox({
+            title: "...",
+            body: `<textarea></textarea>`,
+            buttons: [tr("close")],
+            callbacks: [() => {}],
+        });
+        const p = Object.assign({}, msg.data);
+        p.sender = null;
+        cmsg.getNode().find("textarea").last().value = JSON.stringify(p, "", 4);
     }
 
     _triggerCancelEditingDialog(callback = null) {
@@ -673,44 +663,45 @@ export class MessengerPage extends IMPage {
             }
         }
 
-        if (this.editMsg != null) {
+        if (window.im.messenger.isEditing()) {
             this._triggerCancelEditingDialog();
             return;
         }
 
-        if (!this.isMessageSelected(msg)) {
-            this.selectMessage(msg);
+        if (!window.im.messenger.isMessageSelected(msg)) {
+            window.im.messenger.selectMessage(msg);
         } else {
-            this.unselectMessage(msg);
+            window.im.messenger.unselectMessage(msg);
         }
+        this.update();
     }
 
     async togglePeerInfo(sender = null) {
-        if (this.is_switching == true) {
+        if (window.im.messenger.is_switching == true) {
             return;
         }
 
-        this.is_switching = true;
+        window.im.messenger.is_switching = true;
 
-        console.log('toggle peer info ', window.im.tab)
-
-        if (window.im.tab == 'contact') {
+        if (false) {
             window.im.selectTab('messenger');
-            this.toggled_peer_obj = null;
+            window.im.messenger.toggled_peer_obj = null;
         } else {
-            this.toggled_peer_obj = sender;
-
             const _c = window.im.state.getCurrentConvo();
             if (_c.supposed_type == "chat" && !_c._hasLoadedMembers()) {
                 await _c.m_load(0);
             }
 
            	if (typeof window.im !== 'undefined' && window.im.selectTab) {
-                window.im.selectTab('contact');
+                window.im.openTabByName('contact', false, {
+                    peer: {
+                        "peer": sender
+                    }
+                });
             }
         }
 
-        this.is_switching = false;
+        window.im.messenger.is_switching = false;
     }
 
     onAuthorNameClick(msg, e) {
