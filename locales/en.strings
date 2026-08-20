@@ -1339,6 +1339,7 @@
 "app_err_note_desc" = "Make sure the link is correct and the note belongs to you.";
 "app_delete_modal_desc" = "Are you sure you want to delete the app? This action cannot be undone.";
 "app_delete_succ" = "The app has been deleted";
+"app_start_fullscreen" = "Start app in fullscreen mode automatically";
 
 "learn_more" = "Learn more";
 
