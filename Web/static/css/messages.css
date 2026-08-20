@@ -276,8 +276,14 @@ body.no-footer .page_footer {
 }
 
 .messenger-app--messages---message .time {
+    top: 0px;
+    opacity: 0;
+    transition: 200ms opacity ease-in-out;
+    font-size: 10px;
     color: var(--text-2);
     display: inline;
+    height: 10px;
+    margin-left: 5px;
 }
 
 .crp-entry--message---text {
@@ -285,16 +291,6 @@ body.no-footer .page_footer {
     display: inline-flex;
     gap: 5px;
     align-items: center;
-}
-
-.messenger-app--messages---message .time {
-    position: absolute;
-    top: 0px;
-    display: block;
-    opacity: 0;
-    transition: 200ms opacity ease-in-out;
-    align-items: center;
-    right: 77px;
 }
 
 .messenger-app--messages---message .time span {
@@ -393,11 +389,6 @@ body.no-footer .page_footer {
     opacity: 0.9;
 }
 
-.messenger-app--messages---message .actions-2 {
-    left: unset !important;
-    right: 20px;
-}
-
 .messenger-app--messages---message.msg-selected .actions-2 {
     display: none;
 }
@@ -407,11 +398,18 @@ body.no-footer .page_footer {
     margin: 0px 0px 0px 25px;
 }
 
+.messenger-app--messages---message.same-author .time {
+    margin-left: unset;
+    position: absolute;
+    left: 58px;
+}
+
 .messenger-app--messages---message--wrap .checkmark {
     width: 20px;
     height: 20px;
     margin: 10px 0px 0px 25px;
-    background: crimson;
+    background: url(../img/msg.png);
+    background-position: -53px -28px;
 }
 
 .messenger-app--messages---message--wrap .click-territory,
@@ -426,7 +424,11 @@ body.no-footer .page_footer {
 
 .messenger-app--messages---message .actions-2 {
     display: inline-flex;
+    justify-content: end;
     gap: 2px;
+    left: unset !important;
+    right: 20px;
+    margin-right: 30px;
 }
 
 .messenger-app--messages---message > .messenger-app--messages---message--wrap .inlines {
@@ -434,16 +436,24 @@ body.no-footer .page_footer {
 }
 
 .messenger-app--messages---message .actions-2 > div {
-    width: 20px;
-    height: 20px;
+    width: 15px;
+    height: 15px;
+    background: url(../img/msg.png);
 }
 
 .messenger-app--messages---message .actions-2 .edit-icon {
-    background: plum;
+    background-position: -85px 0px;
+    background-size: 50px 35px;
 }
 
 .messenger-app--messages---message .actions-2 .pin-icon {
-    background: slateblue;
+    background-position: -20px 0px;
+    background-size: 50px 35px;
+}
+
+.messenger-app--messages---message .actions-2 .debug-icon {
+    background-position: 0px 0px;
+    background-size: 50px 35px;
 }
 
 .messenger-app--messages .messenger-app--messages-day-time {

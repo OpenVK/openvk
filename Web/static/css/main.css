@@ -1138,7 +1138,8 @@ h4 {
 .model_content_textarea.has_emoji_picker.expanded-textarea .emoji_picker_entrypoint {
     width: 20px;
     height: 20px;
-    background: yellow;
+    background: url(../img/msg.png);
+    background-position: -177px -4px;
     position: absolute;
     right: 5px;
     top: 5px;

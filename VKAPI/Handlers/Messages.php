@@ -119,6 +119,20 @@ final class Messages extends VKAPIRequestHandler
                     }
                 }
             }
+
+            // Forbid users to write to groups that banned them
+
+            if ($senderId > 0) {
+                $senderObj = $uRepo->get($senderId);
+
+                if ($senderObj) {
+                    if (method_exists($peer, 'canWriteMessage')) {
+                        if (!$peer->canWriteMessage($senderObj)) {
+                            $this->fail(946, "This group blacklisted your account");
+                        }
+                    }
+                }
+            }
         }
     }
 

@@ -259,7 +259,7 @@
             {/if}
 
             {if !$canBeModified}
-                {if $club->isMessagesEnabled()}
+                {if $club->canWriteMessage($this->getUser())}
                     <a onclick="showUserDialog(event, {$club->getRealId()})" href="/im?sel={$club->getRealId()}" class="brand_link brand_link_pitched profile_link">{_send_message}</a>
                 {/if}
             {/if}
