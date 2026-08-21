@@ -20,6 +20,7 @@ export const MessageBubble = ({ msg, index, chunk, page }) => {
         msg.data.deleted ? 'msg-deleted' : '',
         msg.is_error ? 'msg-error' : '',
         msg.is_got_edited ? 'msg-edited' : '',
+        msg.is_reply ? 'msg-reply' : '',
     ].filter(Boolean).join(' ');
 
     if (msg.is_action) {
@@ -55,30 +56,31 @@ export const MessageBubble = ({ msg, index, chunk, page }) => {
                 <img class="ava" src=${msg.sender.avatar_any} alt=${msg.sender.full_name} />
             </div>
             <div class="inlines _content">
-            <a class="_sender" onClick=${(e) => { window.im?.messenger?.view?.onAuthorNameClick(msg, e) }}>
-                <strong>${msg.sender.name}</strong>
-            </a>
-            <div class="time">
-                ${msg.id != null && html`
-                <span>${msg.readable_date}</span>
+                ${msg.is_reply == true && html`
+                    <div class="reply-msg" onClick="${() => { window.im.messenger.view.scrollToMessage(msg.data.reply_message.id, true) }}">
+                        <span>${tr("reply_to_msg")}</span>
+                        <a class="reply-author">${msg.has_sender ? msg.sender.full_name : "..."}</a>
+                        <span dangerouslySetInnerHTML=${{ __html: msg.data.reply_message.conv_summary }} />
+                    </div>
                 `}
-            </div>
-            ${msg.is_reply == true && html`
-                <div class="reply-msg" onClick="${() => { window.im.messenger.view.scrollToMessage(msg.data.reply_message.id, true) }}">
-                    <a class="reply-author">${msg.has_sender ? msg.sender.full_name : "..."}</a>
-                    <span dangerouslySetInnerHTML=${{ __html: msg.data.reply_message.conv_summary }} />
+                <a class="_sender" onClick=${(e) => { window.im?.messenger?.view?.onAuthorNameClick(msg, e) }}>
+                    <strong>${msg.sender.name}</strong>
+                </a>
+                <div class="time">
+                    ${msg.id != null && html`
+                    <span>${msg.readable_date}</span>
+                    `}
                 </div>
-            `}
-            <p dangerouslySetInnerHTML=${{ __html: msg.text }} class="text" />
-            <p class="msg-edit-mark">(${tr('edit_action_past').toLowerCase()})</p>
-            ${msg.attachments && msg.attachments.length > 0 && html`
-                <div class="attachments">
-                ${msg.attachments.map((att) => html`<${Attachment} msg=${msg} att=${att} />`)}
-                </div>
-            `}
-            ${msg.has_not_loaded_attachments == true && html`
-                <img src=${_loader_link} />
-            `}
+                <p dangerouslySetInnerHTML=${{ __html: msg.text }} class="text" />
+                <p class="msg-edit-mark">(${tr('edit_action_past').toLowerCase()})</p>
+                ${msg.attachments && msg.attachments.length > 0 && html`
+                    <div class="attachments">
+                    ${msg.attachments.map((att) => html`<${Attachment} msg=${msg} att=${att} />`)}
+                    </div>
+                `}
+                ${msg.has_not_loaded_attachments == true && html`
+                    <img src=${_loader_link} />
+                `}
             </div>
         </div>
     </div>

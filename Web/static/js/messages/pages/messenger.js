@@ -40,10 +40,14 @@ export class Messenger {
     get view() { return this.getWindow(); }
 
     update() {
-        return this.getWindow()._triggerUpdate();
+        try {
+            return this.getWindow()._triggerUpdate();
+        } catch(e) {
+            console.error(e);
+        }
     }
 
-    async selectConversation(convo, scroll_down = false) {
+    async selectConversation(convo, scrollToEnd = false, newDraft = true) {
         const oldId = Number(this.currentChatId);
         if (convo == null) {
             throw new Error();
@@ -62,7 +66,7 @@ export class Messenger {
                 console.error(e);
             }
 
-            if (false) {
+            if (scrollToEnd == true) {
                 this.getWindow()._scrollToEnd();
             }
         }
@@ -77,11 +81,14 @@ export class Messenger {
                 this.cancelEdit();
 
                 let draft = this.getCurrentChat().draft;
-                if (!draft) {
+                if (!draft && newDraft == true) {
                     draft = new Draft();
                 }
 
-                draft.loadToPage(this.getWindow());
+                if (draft) {
+                    draft.loadToPage(this.getWindow());
+                }
+                this.update();
             } catch(e) {
                 console.error(e);
             }
@@ -219,19 +226,14 @@ export class Messenger {
     async sendToCurrentCorresponder() {
         const view = this.getWindow();
         const text = view.getCurrentText();
-        const reply_to = view.replyTo;
+        const reply_to = this.replyTo;
         let reply_param = null;
         let attachments_list = null;
         const corresponder = window.im.state.getCurrentConvo();
 
         const attachments = collect_attachments(u('.messenger-app--input---messagebox'));
-        if (attachments.length > 0) {
-            attachments_list = attachments;
-        }
-
-        if (reply_to) {
-            reply_param = reply_to;
-        }
+        if (attachments.length > 0) { attachments_list = attachments; }
+        if (reply_to) { reply_param = reply_to; }
 
         if (text.length <= Messenger.MESSAGE_CHUNK_LENGTH + 20) {
             const msg = new ChatMessage({
@@ -271,22 +273,24 @@ export class Messenger {
         }
     }
 
+    async viewMedia(media_type = "pinned") {}
+
     /* Selectness */
 
     selectMessage(msg) {
         this.selected_messages.push(msg.id);
-        //this._render();
+        this.update();
     }
 
     unselectAll() {
         this.selected_messages = [];
-        //this._render();
+        this.update();
     }
 
     unselectMessage(msg) {
         const idx = this.selected_messages.indexOf(msg.id);
         if (idx !== -1) this.selected_messages.splice(idx, 1);
-        //this._render();
+        this.update();
     }
 
     isMessageSelected(msg) {
@@ -454,13 +458,6 @@ export class MessengerPage extends IMPage {
         this.had_more_one_tab = false;
         this.is_switching = false;
 
-        this.currentDraft = '';
-        this.prevDraft = null;
-        this.prevAtts_1 = null;
-        this.prevAtts_2 = null;
-        this.drafts = {};
-        this.scrolls = {};
-
         this.opened_tabs = [];
         this.current_chat = null;
         this.selected_messages = [];
@@ -512,7 +509,7 @@ export class MessengerPage extends IMPage {
                 selectedMessages=${window.im.messenger.selected_messages_objs}
                 count=${window.im.messenger.selected_messages_count}
                 onDelete=${() => this.callDeletion()}
-                onUnselect=${() => window.im.messenger.unselect()}
+                onUnselect=${() => window.im.messenger.unselectAll()}
                 onReply=${() => this.onReplyButtonClick()}
             />
             <div class="messenger-app">
@@ -582,11 +579,12 @@ export class MessengerPage extends IMPage {
 	}
 
 	onReplyButtonClick() {
-		const ids = this.selected_messages;
-		const current_chat = this.getCurrentChat();
+		const ids = window.im.messenger.selected_messages;
+		const current_chat = window.im.messenger.getCurrentChat();
 		const m = current_chat.peer._findMessageById(ids[0]);
-		window.im.messenger.unselect();
-		this.replyTo = m;
+		window.im.messenger.unselectAll();
+		window.im.messenger.replyTo = m;
+
 		this.update();
 	}
 
@@ -606,8 +604,8 @@ export class MessengerPage extends IMPage {
     onPinButtonClick(e, msg) {
         const isPinned = msg.isPinned();
         const cmsg = new CMessageBox({
-            title: "dfdsfdsf",
-            body: isPinned == true ? "открепить?" : "закрепить собщение?",
+            title: tr("confirm"),
+            body: isPinned == true ? tr("unpin_button_click") : tr("pin_button_click"),
             buttons: [tr("yes"), tr("no")],
             callbacks: [async () => {
                 if (isPinned == true) {
@@ -635,8 +633,8 @@ export class MessengerPage extends IMPage {
 
     _triggerCancelEditingDialog(callback = null) {
         const cmsg = new CMessageBox({
-            title: "",
-            body: "вы хотите прервать редактирования все изменения потеряются(",
+            title: tr("confirm"),
+            body: tr("cancel_edit_confirmation"),
             buttons: [tr("yes"), tr("no")],
             callbacks: [() => {
                 this.cancelEdit();
@@ -652,8 +650,8 @@ export class MessengerPage extends IMPage {
         if (msg.id == null) {
             if (e.target.closest(".error-checkmark") == null) {
                 const c = new CMessageBox({
-                    title: "удалииии",
-                    body: "удалить сообщение которое даже не постаралось отправиться а так подло тебя подвело и ты мискликнул???",
+                    title: tr("confirm"),
+                    body: tr("cancel_sending_confirmation"),
                     buttons: [tr("yes"), tr("no")],
                     callbacks: [() => {
                         msg.setDeleted();
@@ -688,8 +686,9 @@ export class MessengerPage extends IMPage {
             window.im.messenger.toggled_peer_obj = null;
         } else {
             const _c = window.im.state.getCurrentConvo();
-            if (_c.supposed_type == "chat" && !_c._hasLoadedMembers()) {
-                await _c.m_load(0);
+            if (_c.peer.supposed_type == "chat" && !_c.peer._hasLoadedMembers()) {
+                console.log("_setMembers");
+                await _c.peer._setMembers();
             }
 
            	if (typeof window.im !== 'undefined' && window.im.selectTab) {
@@ -778,7 +777,7 @@ export class MessengerPage extends IMPage {
 					"peer_id": current_chat.peer.id
 				})
 				this._triggerUpdate();
-				this.unselect();
+				this.unselectAll();
 			}, () => { }],
 		});
 	}
@@ -841,47 +840,6 @@ export class MessengerPage extends IMPage {
     getCurrentText() { return this.container.querySelector(".messenger-app--input---messagebox textarea").value; }
     setCurrentText(text) { console.log("setCurrentText"); this.container.querySelector(".messenger-app--input---messagebox textarea").value = text; }
     getCurrentAttachments() { return [this.container.querySelector(".post-horizontal").innerHTML, this.container.querySelector(".post-vertical").innerHTML]; }
-
-    _saveDraft(to_chat) {
-        if (!to_chat) return;
-        //this.drafts[to_chat.peer.id] = this.currentDraft;
-        //this.scrolls[to_chat.peer.id] = document.documentElement.scrollTop;
-        this._eraseCurrentDraft();
-
-        //console.log(this.scrolls);
-        //console.log('Saved draft for ', to_chat, ", scroll: ", this.scrolls[to_chat.peer.id]);
-    }
-
-    _eraseDraftFor(chat) {
-        //this.drafts[chat.peer.id] = undefined;
-        //u('.messenger-app--input---messagebox .post-horizontal').html('');
-        //u('.messenger-app--input---messagebox .post-vertical').html('');
-    }
-
-    _eraseCurrentDraft() {
-        //this.currentDraft = '';
-        //u('.messenger-app--input---messagebox textarea').attr("style", "height: 50px;");
-    }
-
-    _loadDraft(for_chat) {
-        //if (!for_chat) return;
-        //const _draft = this.drafts[for_chat.peer.id];
-        //if (_draft && _draft !== '') {
-        //    this.currentDraft = _draft;
-        //}
-        //const _scroll = this.scrolls[for_chat.peer.id];
-        //if (_scroll) {
-        //	this._scrollTo(_scroll);
-        //} else {
-        //	this._scrollToEnd();
-        //}
-
-        //console.log("Loaded draft for ", for_chat, ", scroll: ", _scroll)
-    }
-
-    applyDraftFromConv() {
-        
-    }
 }
 
 export class ContactPage extends IMPage {

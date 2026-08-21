@@ -439,7 +439,7 @@ function unpack_attachments_into_node(textarea_node, attachments) {
             __appendToTextarea({
                 'type': type,
                 'alignment': 'vertical',
-                'html': tr("preview_attachment_" + type) + " " + ovk_proc_strtr(obj.title ?? obj.id, 100 * 2 - 9 + 4),
+                'html': tr("preview_attachment_" + type) + " " + escapeHtml(ovk_proc_strtr(obj.title ?? obj.id, 100 * 2 - 9 + 4)),
                 'id': aid,
             }, textarea_node)
         }

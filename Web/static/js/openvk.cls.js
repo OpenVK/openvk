@@ -325,7 +325,7 @@ $(document).on("scroll", () => {
     }
 
     try {
-        if (window.im && window.im.is_active && !window.im.is_compact_mode_enabled) {
+        if (window.im && window.im.state.is_active && !window.im.state.is_compact_mode_enabled) {
             window.im.getTab("messenger").onMessagesScroll();
             return;
         }

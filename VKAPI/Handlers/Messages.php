@@ -1309,7 +1309,7 @@ final class Messages extends VKAPIRequestHandler
         $chatsRepo = new ChatRepo();
         $chat = $chatsRepo->getByChatId($chat_id);
 
-        if (!$chat->isMember($this->getUser())) {
+        if (!$chat || !$chat->isMember($this->getUser())) {
             $this->fail(14, "Chat not found");
         }
 

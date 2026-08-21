@@ -77,7 +77,7 @@ export const SearchPageTemplate = ({ q, c }) => {
     return html`
         <div id="search-page-im">
             <div class="search-up">
-                <input class="search_input" onChange=${(e) => { window.im.conversations._onMessagesSearch(e) }} type="text" default="${tr('search_messages')}" value="${query}" />
+                <input class="search_input" onChange=${(e) => { window.im.conversations.getWindow()._onMessagesSearch(e, true) }} type="text" default="${tr('search_messages')}" value="${query}" />
             </div>
             <div class="search-summary">
                 <b>${tr("messages_search_count", count)}</b>

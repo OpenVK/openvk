@@ -7,7 +7,6 @@ export class ConversationsPage extends IMPage {
     static getPageId() { return "conversations"; }
     isVisibleWhenHidden() { return true; }
     updateHeader(header) { header.changeByConvNumber(Number(window.im.conversations.total_convs)); }
-
     _update() { this.wRender(); }
 
     async loadNext(e) {
@@ -20,13 +19,19 @@ export class ConversationsPage extends IMPage {
 
     // search
 
-    async _onMessagesSearch(e) {
+    async _onMessagesSearch(e, from_tab = false) {
         const q = String(e.target.value);
 
         e.target.value = "";
-        window.im.openTabByName("search", true, {
-            "q": q
-        });
+
+        if (from_tab == false) {
+            window.im.openTabByName("search", true, {
+                "q": q
+            });
+        } else {
+            const tab = window.im.getTab("search");
+            await tab.render_class.update();
+        }
     }
 
     _chatCreationModal() {

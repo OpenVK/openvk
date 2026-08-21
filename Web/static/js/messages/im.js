@@ -63,13 +63,11 @@ export class InstantMessagesAndRelated {
             fastError(String(e));
         }
 
-        /*
         this.lp = new LongPollConnection();
         await this.lp.create();
         this.lp.listen();
 
-        this.updateCounter(this.lp.getFirstCounter());
-        */
+        //this.updateCounter(this.lp.getFirstCounter());
 
         this.isReady = true;
         console.log("IM | Inited");
@@ -241,22 +239,11 @@ export class InstantMessagesAndRelated {
 
         return this.tabs.indexOf(tab);
     }
-
-    getVisibleTabs() {
-        return this.tabs.filter(t => t.visible());
-    }
-
-    getSelectedTab(tab) {
-        return this.tabs[this.selectedTabId];
-    }
-
-    getTabs() {
-        return this.tabs.map(t => t.id);
-    }
-
-    getTab(id) {
-        return this.tabs.find(t => t.getPageId() == id);
-    }
+    getVisibleTabs() { return this.tabs.filter(t => t.visible()); }
+    getSelectedTab(tab) { return this.tabs[this.selectedTabId]; }
+    getSelectedTabId() { return this.getSelectedTab().getPageId() }
+    getTabs() { return this.tabs.map(t => t.id); }
+    getTab(id) { return this.tabs.find(t => t.getPageId() == id);}
 }
 
 class IMVariants {
@@ -316,7 +303,7 @@ class IMState {
     get is_compact_mode_enabled() { return localStorage.getItem("tw.im.modern_mode") === "1"; }
     get is_debug() { return localStorage.getItem("tw.im.debug") === "1"; }
     get is_opened() { return location.pathname == "/im"; }
-    get is_active() { return this.tab == 'messenger' && this.is_opened == true; }
+    get is_active() { return window.im.getSelectedTabId() == "messenger" && this.is_opened == true; }
     get is_group() { return this.group_id != null }
 
     getUnreadCounter() {
@@ -324,6 +311,20 @@ class IMState {
     }
     updateUnreadCounter() {
         // todo
+    }
+
+    _updateCounter(new_number) {
+        this.unread_counter = new_number;
+
+        u(".im_counter b").html(new_number);
+
+        if (this.unread_counter < 1) {
+            u(".im_counter").removeClass("shown");
+            u(".im_counter").addClass("zero_counter");
+        } else {
+            u(".im_counter").addClass("shown");
+            u(".im_counter").removeClass("zero_counter");
+        }
     }
 
     async _loadCurrent() {
@@ -589,282 +590,6 @@ export class FastChats {
     shouldBeShown() { return !window.im.state.is_opened }
     toggleShowness(state = false) {}
     toggleBar(state = false, convo = null) {}
-}
-
-export class IMDeprecated {
-    constructor() {
-        this.tabDefs = [
-        { id: 'conversations', label: tr('messenger_tab_conversations'), visible: () => true },
-        { id: 'messenger', label: tr('messenger_tab_messenger'), visible: () => (this.messenger?.view?.getTabsCount() ?? 0) > 0 },
-        { id: 'search', label: tr('search_messages_tab'), visible: () => this.tab == "search" },
-        { id: 'friends', label: () => { return (window.im.friends.referrer == 'chat_creation' ? tr('create_chat') : tr('im_friends_list')) }, visible: () => this.tab == "friends" },
-        { id: 'contact', label: tr('contact_info'), visible: () => this.tab == "contact" },
-        ];
-        this.tab = '';
-        this.is_switching = false;
-        this.unread_counter = 0;
-    }
-
-    async _checkSel(loc, sel_id = null) {
-        const _sel = sel_id == null ? Number(loc.searchParams.get('sel')) : sel_id;
-        if (!_sel) return;
-
-        const peer = await this.link.conversations._resolveSel(_sel);
-
-        if (peer) {
-            const _l = this.link.messenger.getChatWith(peer);
-            await this.link.selectChat(_l);
-            return _l;
-        } else {
-            console.error('No peer with this id!');
-        }
-    }
-
-    async init() {
-        if (window.OVKAPI == null) {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-
-        this.cached_profiles = new ProfilesCache();
-        this.event_handler = new EventHandler();
-        await this._loadCurrent();
-
-        if (!this.conversations) {
-            this.conversations = new Conversations();
-            await this.conversations.init();
-        }
-
-        if (!this.messenger) {
-            this.messenger = new Messenger();
-            await this.messenger.init();
-        }
-
-        if (!this.friends) {
-            this.friends = new FriendsTab();
-        }
-
-        if (!this.search) {
-            this.search = new SearchPage();
-        }
-
-        this.lp = new LongPollConnection();
-        await this.lp.create();
-        this.lp.listen();
-
-        this.updateCounter(this.lp.getFirstCounter());
-
-        this.isReady = true;
-    }
-
-    async waitLoad() {
-        return new Promise(resolve => {
-            const check = () => {
-                if (this.isReady) {
-                    resolve();
-                } else {
-                    setTimeout(check, 100);
-                }
-            };
-            check();
-        });
-    }
-
-    async setChatByPeerId(sel_id) {
-        await this._checkSel(new URL(location.href), sel_id);
-    }
-
-    setPageTitle(title) {
-        document.title = title;
-    }
-
-    closeChat(conv) {
-        if (this.messenger.view.getTabsCount() - 1 == 0) {
-            this.selectTab('conversations');
-        } else {
-            const _id = this.messenger.view.opened_tabs.indexOf(conv);
-            this.selectChat(this.messenger.view.opened_tabs[Math.max(0, _id - 1)]);
-        }
-    }
-
-	async selectChat(conv) {
-	    if (this.is_switching == true) {
-	      return;
-	    }
-
-        if (!conv || !conv.peer) {
-            console.error("Cannot load conversation ", conv);
-            return;
-        }
-
-        const cur_conv = this.messenger.view.getCurrentChat();
-        console.log(cur_conv, conv)
-        if (cur_conv && conv.peer.id == cur_conv.peer.id) {
-            console.info('Already loaded conversation ', conv);
-
-       	    this.messenger.view.setChat(conv, false);
-       	    this.selectTab('messenger');
-            return;
-        }
-
-	    this.setSwitching(true);
-
-	    this.messenger.view.preselectChat(conv);
-
-	    const _url = new URL(location.href);
-	    // `start_from_id` allows jumping to a specific message in the conversation.
-	    // When provided, the initial chunk is anchored to that message, letting the
-	    // user scroll up (older) and down (newer) from there.
-	    // Falls back to `start_from` for backward compatibility, then null (latest).
-	    const _start_from_id = _url.searchParams.get('start_from');
-
-	    this.messenger.view._saveDraft(this.messenger.view.getCurrentChat());
-	    if (!conv.peer._isMessagesInited()) {
-	        const messages = await conv.peer.getMessages(_start_from_id);
-            conv.peer._appendMessagesChunk(messages);
-
-            // т.к. последние на данный момент сообщения уже загружены
-            if (_start_from_id == null) {
-                conv.peer._beginning_reached = true;
-            }
-	    }
-
-	    this.messenger.view.setChat(conv, false);
-	    this.selectTab('messenger');
-	    this.messenger.view._loadDraft(conv);
-	    this.messenger.view._scrollToEnd();
-
-        u(".messenger-app--input---messagebox textarea").last().focus();
-
-	    this.changeYellowHeaderByPeer(conv.peer);
-		this.setSwitching(false);
-        this.setPageTitle(escapeHtml(ovk_proc_strtr(conv.peer.full_name, 100)));
-	}
-
-    get current() {
-        return this._currents[this._current_id];
-    }
-
-    get corresponder() {
-        try {
-            return this.messenger.view.getCurrentChat().peer;
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-    // counter
-
-    updateCounter(new_number) {
-        this.unread_counter = new_number;
-
-        u(".im_counter b").html(new_number);
-
-        if (this.unread_counter < 1) {
-            u(".im_counter").removeClass("shown");
-            u(".im_counter").addClass("zero_counter");
-        } else {
-            u(".im_counter").addClass("shown");
-            u(".im_counter").removeClass("zero_counter");
-        }
-    }
-
-    getCounter() {
-        return this.unread_counter;
-    }
-    selectTab(tab_name, referrer = null) {
-        if (this.tabs.indexOf(tab_name) == -1) {
-            throw new Error('invalid tab');
-        }
-
-       	if (tab_name != "messenger") {
-            this._toggleScrollMode(false);
-       	} else {
-            this._toggleScrollMode(true);
-
-            const current_chat = window.im.messenger.getCurrentChat();
-            if (current_chat != null) {
-                console.log("IM | Scroll from tab")
-                current_chat.draft.loadScroll(window.im.getTab("messenger").render_class);
-            }
-       	}
-
-        this.tab = tab_name;
-        this._renderTabBar();
-
-        if (tab_name != "contact") {
-            if (window.im.is_compact_mode_enabled && (tab_name == "conversations" || tab_name == "messenger")) {
-                return;
-            }
-
-            u(".messenger-app--tab-messenger").removeClass("peer-shown");
-            this.tabDefs.forEach((def) => {
-                const win = this._getTabWindow(def.id);
-                if (!win) return;
-
-                if (def.id === tab_name) {
-                    win.classList.remove('hidden');
-                } else {
-                    win.classList.add('hidden');
-                }
-            });
-        } else {
-            u(".messenger-app--tab-messenger").addClass("peer-shown");
-        }
-
-        switch (tab_name) {
-            case 'conversations':
-
-                if (!window.im.is_compact_mode_enabled) {
-                    this.messenger.hide(this._getTabWindow('messenger'));
-                    this.conversations.appear(this._getTabWindow('conversations'));
-                } else {
-                    this.messenger.appear(this._getTabWindow('messenger'));
-                    this.conversations.appear(this._getTabWindow('conversations'));
-                }
-
-                this._pushState('/im');
-                this.setPageTitle(tr("messenger_tab_conversations"));
-                break;
-
-                case 'messenger':
-                if (!window.im.state.getCurrentConvo()) {
-                    this.selectTab('conversations');
-                    return;
-                }
-
-                this.changeYellowHeaderByPeer(window.im.state.getCurrentConvo());
-
-                this.conversations.hide(this._getTabWindow('conversations'));
-                this.messenger.appear(this._getTabWindow('messenger'));
-
-                try {
-                    window.im._pushState('/im?sel=' + window.im.messenger.view.getCurrentChat().peer.id);
-                } catch (e) {
-                    console.error(e);
-                }
-
-                break;
-
-            case 'search':
-
-                this.search.appear(this._getTabWindow('search'));
-                break;
-
-            case 'friends':
-                this.friends.appear(this._getTabWindow('friends'), referrer);
-                break;
-
-            case 'contact':
-                this.messenger.view._render();
-
-                if (typeof window.im !== 'undefined' && window.im.updateTabs) {
-               	    window.im.updateTabs();
-                }
-
-                break;
-    }
-  }
-
 }
 
 (async () => {
