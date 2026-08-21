@@ -31,7 +31,7 @@ export class EventHandler {
 
         // message is deleted
         if (flags == 128) {
-            const conv = await window.im.conversations._findConvFromApi(peerId);
+            const conv = await window.im.conversations._findConv(peerId);
             console.log(conv);
             const found = conv.peer._findMessageById(msgId);
             console.log(found);
@@ -48,7 +48,7 @@ export class EventHandler {
         console.log(_msg)
         const _crs = await window.im.conversations._findConvFromApi(_msg.peer_id);
 
-        if (!window.im.is_active && !_crs.peer.is_muted && _msg.shouldBeNotified()) {
+        if (!window.im.state.is_active && !_crs.peer.is_muted && _msg.shouldBeNotified()) {
             triggerMessageNotification(_crs, _msg);
         }
 
@@ -62,7 +62,7 @@ export class EventHandler {
                 } else {
                     found.hydrateFromEvent(_msg);
 
-                    if (window.im.is_active) {
+                    if (window.im.state.is_active) {
                         window.im.messenger.update();
                         window.im.messenger.view._scrollToEnd();
                     }

@@ -2,9 +2,12 @@ import { html, render } from './render.js';
 
 export const PeerTab = ({ conv, active, page }) => {
     return html`
-        <div class="messages--peers-tab${active ? ' selected' : ''}">
+        <div class="messages--peers-tab${active ? ' selected' : ''} ${ !conv.is_read ? 'unread' : ''}">
             <a onClick=${() => window.im?.messenger.selectConversation(conv)}>${conv.peer.conversations_name}</a>
-            <span class="messages--peers-tab-close" onClick=${() => window.im?.messenger.closeChat(conv, page)}>×</span>
+            <span class="messages--peers-tab-counter">+${conv.unread_count}</span>
+            <span class="messages--peers-tab-close" onClick=${() => window.im?.messenger.closeChat(conv, page)}>
+                <div class="cross ${active ? "white" : ""}"></div>
+            </span>
         </div>
     `;
 };
@@ -108,13 +111,13 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
         ${ replyTo && html`
             <div class="input-reply input-m">
                 <span onclick=${() => { clickOnReply(replyTo) }} aria-label="link" class="input-type">${escapeHtml(tr("reply_to", replyTo.sender.full_name))}</span>
-                <span class="input-close" onClick=${onRemoveReply}>×</span>
+                <span class="input-close" onClick=${onRemoveReply}><div class="cross"></div></span>
             </div>
         `}
         ${ editMsg && html`
             <div class="input-edit input-m">
-                <span onclick=${() => { clickOnReply(editMsg) }} aria-label="link" class="input-type">edit of message</span>
-                <span class="input-close" onClick=${(e) => { window.im.messenger.view.cancelEdit() }}>×</span>
+                <span onclick=${() => { clickOnReply(editMsg) }} aria-label="link" class="input-type">${tr("edit_of_message")}</span>
+                <span class="input-close" onClick=${(e) => { window.im.messenger.cancelEdit() }}><div class="cross"></div></span>
             </div>
         `}
         <div class="post-buttons">
@@ -137,8 +140,8 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
                         <${AttachmentMenu} />
                     </div>
                 </div>
-                <img class="ava ava2" src="${corresponder.peer.avatar_any || ''}"
-                    alt="${corresponder.peer.full_name || ''}" />
+                <img class="ava ava2" src="${replyTo ? replyTo.sender.avatar_any : corresponder.peer.avatar_any || ''}"
+                    alt="${replyTo ? replyTo.sender.full_name : corresponder.peer.full_name || ''}" />
             </div>
         </div>
     </div>
@@ -275,45 +278,68 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                 </div>
 
                 <div class="peer-actions-1">
-                    <a class="button" onClick=${() => { window.im.setChatByPeerId(peer.id) }}>${tr('write_message')}</a>
+                    <a class="button" onClick=${() => { window.im.messenger.selectConversation(peer) }}>${tr('write_message')}</a>
                 </div>
             </div>
         </div>
-        <div class="chat-actions-common">
-            ${ peer.canUpdateTitle() ? html`
-                <a onClick=${(e) => { updateChatTitle(e, peer) }}>Обновить название</a>
-            ` : "" }
-            ${ peer.canUpdateAvatar() ? html`
-                <a onClick=${(e) => { updateChatAvatar(e, peer) }}>Обновить аватар беседы</a>
-            ` : "" }
-            ${ peer.can("invite_new") ? html`
-                <a onClick=${(e) => { window.im.openTabByName("friends", true, {
-                    "referrer": "add_new",
-                    "convo_id": peer.id
-                }) }}>Добавить участников</a>
-            ` : "" }
-            ${ peer.canLeaveChat() ? html`
-                <a>Выйти</a>
-            ` : "" }
-            <a>Настройки</a>
-            <a onClick=${(e) => { peer.showAsJson() }}>ПОКАЖИ JSON</a>
-            <a>Поиск по сообщениям</a>
-            ${ peer.canViewInviteLinks() && html`<a>Пригласительные ссылки</a>` }
+        <div class="chat-btns">
+            <div class="chat-tab-1 chat-actions-common">
+                ${ peer.supposed_type == "chat" && (peer.can("update_title") || peer.can("update_avatar")) ? html`
+                <b>${ tr("chat_actions") }</b>
+                <div class="chat-tab-column">
+                    ${ peer.can("update_title") ? html`
+                        <a onClick=${(e) => { updateChatTitle(e, peer) }}>${tr("change_chat_title")}</a>
+                    ` : "" }
+                    ${ peer.can("update_avatar") ? html`
+                        <a onClick=${(e) => { updateChatAvatar(e, peer) }}>${tr("change_chat_avatar")}</a>
+                    ` : "" }
+                </div>       
+                ` : ""}
+
+                <b>${ tr("actions") }</b>
+                <div class="chat-tab-column">
+                    ${ peer.can("view_invite_links") && html`<a>${tr("convo_invite_links")}</a>` }
+                    <a>${tr("convo_search_messages")}</a>
+                    ${ window.im.state.is_debug ? html`
+                        <a onClick=${(e) => { peer.showAsJson() }}>JSON</a>
+                    ` : ""}
+                    ${is_from_chat === true && html`
+                    <div class="chat-actions-usr chat-actions-common">
+                        <a><b>${tr("convo_action_kick")}</b></a>
+                    </div>
+                    `}
+                </div>
+                <b> ${tr("chat_media")} </b>
+                <div class="chat-tab-column chat-actions-2 chat-actions-common chat-actions-media">
+                    <a onClick=${(e) => { window.im.messenger.viewMedia("pinned") }}><b>${tr("chat_pinned")}</b></a>
+                    <a onClick=${(e) => { window.im.messenger.viewMedia("photos") }}><b>${tr("chat_media_photo")}</b> <span>100</span></a>
+                    <a onClick=${(e) => { window.im.messenger.viewMedia("videos") }}><b>${tr("chat_media_video")}</b> <span>100</span></a>
+                    <a onClick=${(e) => { window.im.messenger.viewMedia("audios") }}><b>${tr("chat_media_audio")}</b> <span>100</span></a>
+                    <a onClick=${(e) => { window.im.messenger.viewMedia("documents") }}><b>${tr("chat_media_doc")}</b> <span>100</span></a>
+                </div>
+            </div>
+            ${ peer.supposed_type == "chat" ? html`
+                <div class="chat-tab-2">
+                    <div>
+                        <div>
+                            <b>${tr("participants")}</b> ()
+                        </div>
+                        <div>
+                            ${ peer.can("leave_chat") ? html`
+                                <a>${tr("leave_chat")}</a>
+                            ` : "" }
+                            ${ peer.can("invite_new") ? html`
+                                <a onClick=${(e) => { window.im.openTabByName("friends", true, {
+                                    "referrer": "add_new",
+                                    "convo_id": peer.id
+                                }) }}>${tr("chat_add_members_ext")}</a>
+                            ` : "" }
+                        </div>
+                    </div>
+                    <div class="chat-members"></div>
+                </div>
+            ` : ""}
         </div>
-        ${is_from_chat === true && html`
-        <div class="chat-actions-usr chat-actions-common">
-            <a><b>Кикнуть</b></a>
-        </div>
-        `}
-        <div class="chat-actions-2 chat-actions-common">
-            <a onClick=${(e) => { window.im.messenger.view.setSpecialMode("pinned") }}><b>Закреплённое</b></a>
-            <a onClick=${(e) => { window.im.messenger.view.setSpecialMode("photos") }}><b>Фото</b> (100)</a>
-            <a onClick=${(e) => { window.im.messenger.view.setSpecialMode("videos") }}><b>Видео</b> (100)</a>
-            <a onClick=${(e) => { window.im.messenger.view.setSpecialMode("audios") }}><b>Аудио</b> (100)</a>
-            <a onClick=${(e) => { window.im.messenger.view.setSpecialMode("documents") }}><b>Документы</b> (100)</a>
-        </div>
-        <div class="chat-members"></div>
-        <div class="chat-media"></div>
     </div>
     </div>
     `;

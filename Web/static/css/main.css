@@ -1136,10 +1136,10 @@ h4 {
 }
 
 .model_content_textarea.has_emoji_picker.expanded-textarea .emoji_picker_entrypoint {
-    width: 20px;
-    height: 20px;
-    background: url(../img/msg.png);
-    background-position: -177px -4px;
+    width: 23px;
+    height: 23px;
+    background: url(../img/msg.png?v=2);
+    background-position: 154px 0px;
     position: absolute;
     right: 5px;
     top: 5px;
@@ -1585,21 +1585,26 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
     padding: 6px 0px;
 }
 
-.post-source #remove_source_button, #small_remove_button {
+.post-source #remove_source_button, #small_remove_button, .cross {
     display: inline-block;
     background-repeat: no-repeat;
-    background: url('/assets/packages/static/openvk/img/arrows.png?v=2');
-
+    background: url('/assets/packages/static/openvk/img/arrows.png?v=3');
     margin-bottom: -2px;
     background-position: -18px 0px;
     height: 11px;
     width: 11px;
     opacity: 0.6;
     transition-duration: 0.3s;
+    transition-property: opacity;
     cursor: pointer;
 }
 
-.post-source #remove_source_button:hover, #small_remove_button:hover {
+.cross.white {
+    background-position: -30px 0px;
+    opacity: 0.5;
+}
+
+.post-source #remove_source_button:hover, #small_remove_button:hover, .cross:hover {
     opacity: 0.8;
 }
 

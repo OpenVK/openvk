@@ -322,8 +322,8 @@ $(document).on("scroll", () => {
     const navigation = $(".navigation");
 
     try {
-        if (window.im && window.im.is_active) {
-            window.im.getTab("messenger").onMessagesScroll();
+        if (window.im && window.im.state.is_active) {
+            window.im.messenger.view.onMessagesScroll();
             return;
         }
     } catch(e) {

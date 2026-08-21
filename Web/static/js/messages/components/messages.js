@@ -3,6 +3,7 @@ export class Draft {
         this.text = null;
         this.attachments_html = [];
         this.scroll = null;
+        this.editMsg = null;
     }
 
     static fromPage(page) {
@@ -10,6 +11,7 @@ export class Draft {
         d.text = page.getCurrentText();
         d.attachments_html = page.getCurrentAttachments();
         d.scroll = page.getScroll();
+        d.editMsg = window.im.messenger.editMsg;
 
         return d;
     }
@@ -17,6 +19,7 @@ export class Draft {
     loadToPage(page) {
         console.log("applying ", this, " to ", page);
         if (this.text != null) {
+            window.im.messenger.currentDraft = this.text;
             page.container.querySelector(".messenger-app--input---messagebox textarea").value = this.text;
         }
         if (this.attachments_html[0] != null) {
@@ -25,6 +28,13 @@ export class Draft {
         if (this.attachments_html[1] != null) {
             page.container.querySelector(".post-vertical").innerHTML = this.attachments_html[1];
         }
+        if (this.editMsg) {
+            console.log("this.editMsg", this.editMsg);
+            window.im.messenger.editMsg = this.editMsg;
+        } else {
+            window.im.messenger.editMsg = null;
+        }
+
         this.loadScroll(page);
     }
 
@@ -35,6 +45,29 @@ export class Draft {
             console.log(this);
             page._scrollToEnd();
         }
+    }
+}
+
+class ChatMembers {
+    constructor(peer_id) {
+        this.items = [];
+        this.total_count = 0;
+        this.peer_id = peer_id;
+        this.offset = 0;
+        this.perPage = 10;
+    }
+
+    async load(offset = 0) {
+        const v = await window.OVKAPI.call("messages.getConversationMembers", {
+            "peer_id": this.peer_id,
+            "extended": 1,
+            "offset": offset,
+        });
+        this.total_count = v.count;
+        v.items.forEach(item => {
+            this.items.push(item);
+        });
+        this.offset += this.perPage;
     }
 }
 
@@ -641,6 +674,17 @@ export class ChatGeneralForm {
     }
 
     can(thing, relatively_current_group = null) { // unified function
+        switch(thing) {
+            case "update_title":
+            case "invite_new":
+            case "update_avatar":
+                return this.isAdmin() && this.supposed_type == "chat";
+            case "leave_chat":
+                return this.supposed_type == "chat";
+            case "view_invite_links":
+                return this.supposed_type == "chat" && false;
+        }
+
         return true;
     }
 
@@ -811,6 +855,10 @@ export class ChatGeneralForm {
             month: '2-digit',
             day: '2-digit'
         });
+
+        if (Math.floor(date.getTime() / 1000) > (Math.floor(date.getTime() / 1000) - 5 * 60)) {
+            return tr("online")
+        }
 
         if (sameMonth && date.getDate() === today.getDate()) {
             return tr("im_was_online_today_" + this.gender, timeStr).toLowerCase();
@@ -1051,14 +1099,9 @@ export class ChatGeneralForm {
         return this._members != null;
     }
 
-    async m_load(offset = 0) {
-        const v = await window.OVKAPI.call("messages.getConversationMembers", {
-            "peer_id": this.id,
-            "extended": 1,
-        });
-
-        this._total_members_count = v.count;
-        console.log(v)
+    async _setMembers(offset = 0) {
+        this._members = new ChatMembers(this.id);
+        await this._members.load(offset);
     }
 }
 

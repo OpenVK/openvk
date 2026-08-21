@@ -228,6 +228,11 @@ body.no-footer .page_footer {
 .messenger-app--messages---message.msg-edited .msg-edit-mark {
     display: inline;
     color: #8c8c8c9c;
+    font-size: 10px;
+}
+
+.messenger-app--messages---message.msg-reply {
+    padding-top: 15px;
 }
 
 .messenger-app #messenger-app--down-button {
@@ -279,10 +284,10 @@ body.no-footer .page_footer {
     top: 0px;
     opacity: 0;
     transition: 200ms opacity ease-in-out;
-    font-size: 10px;
+    font-size: 9px;
     color: var(--text-2);
     display: inline;
-    height: 10px;
+    height: 9px;
     margin-left: 5px;
 }
 
@@ -311,6 +316,7 @@ body.no-footer .page_footer {
 .messages--actions {
     display: none;
     position: fixed;
+    top: 65px;
     z-index: 4;
     width: 627px;
     height: 50px;
@@ -408,8 +414,8 @@ body.no-footer .page_footer {
     width: 20px;
     height: 20px;
     margin: 10px 0px 0px 25px;
-    background: url(../img/msg.png);
-    background-position: -53px -28px;
+    background: url(../img/msg.png?v=2);
+    background-position: -62px -32px;
 }
 
 .messenger-app--messages---message--wrap .click-territory,
@@ -438,22 +444,26 @@ body.no-footer .page_footer {
 .messenger-app--messages---message .actions-2 > div {
     width: 15px;
     height: 15px;
-    background: url(../img/msg.png);
+    background: url(../img/msg.png?v=2);
 }
 
 .messenger-app--messages---message .actions-2 .edit-icon {
-    background-position: -85px 0px;
-    background-size: 50px 35px;
+    background-position: -41px 0px;
+    background-size: 80px 37px;
 }
 
 .messenger-app--messages---message .actions-2 .pin-icon {
     background-position: -20px 0px;
-    background-size: 50px 35px;
+    background-size: 80px 37px;
+}
+
+.messenger-app--messages---message .actions-2 .pin-icon.unpin-icon {
+    background-position: -20px -20px;
 }
 
 .messenger-app--messages---message .actions-2 .debug-icon {
-    background-position: 0px 0px;
-    background-size: 50px 35px;
+    background-position: -1px 0px;
+    background-size: 80px 37px;
 }
 
 .messenger-app--messages .messenger-app--messages-day-time {
@@ -472,6 +482,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     color: var(--nobold);
     padding: 5px 5px;
     user-select: none;
+    font-size: 10px;
 }
 
 .messenger-app--messages---message > .messenger-app--messages---message--wrap {
@@ -484,22 +495,20 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 }
 
 .messenger-app--messages---message ._content .reply-msg {
-    padding: 4px 8px 4px 8px;
-    border-left: 1px solid var(--nobold);
     font-size: 10px;
-    margin: 3px 0px 3px 1px;
+    margin: -14px 0px 0px 0px;
     display: flex;
-    flex-direction: column;
+    gap: 5px;
     cursor: pointer;
+}
+
+.messenger-app--messages---message ._content .reply-msg:hover {
+    text-decoration: underline;
 }
 
 .messenger-app--messages---message.animated {
     animation-duration: 5s;
     animation-name: post-target;
-}
-
-.messenger-app--messages---message ._content .reply-msg:hover {
-    background: var(--bg-selected-mid);
 }
 
 .messenger-app--messages---message ._content .reply-msg .reply-author {
@@ -756,6 +765,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     display: grid;
     grid-template-columns: 1fr 0fr;
     gap: 23px;
+    border-top: 1px solid var(--brand);
 }
 
 .messenger-app-end.m-selected .input-m {
@@ -805,6 +815,18 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     color: var(--text);
     border-radius: 1px;
     user-select: none;
+}
+
+.messages--peers-tabs .messages--peers-tab .messages--peers-tab-counter {
+    display: none;
+}
+
+.messages--peers-tabs .messages--peers-tab.unread .messages--peers-tab-counter {
+    display: block;
+    background: var(--brand-l-1);
+    color: var(--text-rev);
+    padding: 0px 2px;
+    font-weight: bold;
 }
 
 .messages--peers-tabs .messages--peers-tab:hover {
@@ -1002,6 +1024,29 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     position: absolute;
     content: "";
     display: inline-block;
+}
+
+.peer-window .chat-btns {
+    margin: 0px -16px 0px -16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.peer-window .chat-btns .chat-tab-column a,
+.peer-window .chat-btns .chat-tab-column b {
+    display: flex;
+    user-select: none;
+}
+
+.peer-window .chat-actions-media a {
+    display: flex;
+    justify-content: space-between;
+}
+
+.peer-window .chat-actions-media a span {
+    background: var(--bg-slightly-border);
+    font-weight: bold;
+    padding: 1px 2px;
 }
 
 /* Friends */

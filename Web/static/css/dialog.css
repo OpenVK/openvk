@@ -111,7 +111,10 @@ body.manyMsgs .ovk-msg-all:last-of-type {
 .ovk-photo-view-dimmer.mode-tg .ovk-photo-view .photo_com_title {
     color: white;
     padding-bottom: 0px;
-    padding-top: 15px;
+    padding-top: 0px;
+    position: fixed;
+    left: 50px;
+    bottom: 20px;
 }
 
 .ovk-photo-view-dimmer.mode-tg .ovk-photo-view #ovk-photo-close {

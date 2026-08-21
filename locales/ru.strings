@@ -136,7 +136,7 @@
 "personal_information" = "Личная информация";
 "interests" = "Интересы";
 "additional" = "Дополнительно";
-"additional_fields_description" = "Здесь вы можете добавить дополнительную информацию о себе: ссылки на ваши социальные сети, либо же ваши интересы. Максимум можно добавить до $1 таких полей.";
+"additional_fields_description" = "Здесь вы можете указать дополнительную информацию о себе: другие интересы, ссылки на другие социальные сети. Максимум можно добавить до $1 таких полей.";
 "additional_field_name" = "Название";
 "additional_field_text" = "Текст";
 "additional_field_place" = "Отображение";
@@ -1425,6 +1425,7 @@
 "messenger_tab_friends" = "Друзья";
 "messenger_tab_contact" = "Контакт";
 "messenger_tab_settings" = "Настройки";
+"messenger_tab_search" = "Поиск сообщений";
 "messenger_switch_current" = "Переключиться";
 "message_is_deleted" = "Сообщение удалено";
 
@@ -1456,6 +1457,7 @@
 "write_message" = "Написать сообщение";
 
 "reply_to" = "Ответ на сообщение $1";
+"reply_to_msg" = "В ответ на";
 
 "preview_attachment_photo" = "Фотография";
 "preview_attachment_video" = "Видео";
@@ -1487,8 +1489,24 @@
 
 "create_chat" = "Новая беседа";
 "create_chat_f" = "Создать беседу";
+"chat_add_members" = "Добавить";
+"chat_add_members_ext" = "Добавить участников";
 "create_chat_tip_1" = "Выберите друзей, которых вы хотели бы видеть в своей беседе.";
 "create_chat_tip_2" = "Когда всё будет готово, нажмите:";
+"chat_actions" = "Чат";
+"change_chat_title" = "Обновить название";
+"change_chat_avatar" = "Обновить аватар";
+"leave_chat" = "Покинуть чат";
+"convo_search_messages" = "Поиск по сообщениям";
+"convo_invite_links" = "Пригласительные ссылки";
+
+"convo_action_kick" = "Кикнуть";
+"chat_media" = "Медиа";
+"chat_pinned" = "Закреплённые сообщения";
+"chat_media_photo" = "Фото";
+"chat_media_video" = "Видео";
+"chat_media_audio" = "Аудио";
+"chat_media_doc" = "Документы";
 
 "error_user_forbid_invites" = "Пользователь запретил добавлять себя в беседы.";
 "error_chat_not_enough_friends" = "В беседе должно быть как минимум два других пользователя";
@@ -1520,6 +1538,12 @@
 "members_count_few" = "$1 участника";
 "members_count_many" = "$1 участников";
 "members_count_other" = "$1 участников";
+
+"pin_button_click" = "Закрепить сообщение?";
+"unpin_button_click" = "Закрепить сообщение?";
+"cancel_edit_confirmation" = "Отменить редактирование? Все изменения потеряются.";
+"cancel_sending_confirmation" = "Удалить и не отправлять это сообщение?";
+"edit_of_message" = "Редактирование сообщения";
 
 /* System messages */
 
