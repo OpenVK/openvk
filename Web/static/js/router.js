@@ -169,6 +169,7 @@ window.router = new class {
 
         if (window.im) {
             window.im.state._toggleScrollMode(false);
+            await window.im.state._resolvePosition();
         }
 
         /*window.document.dispatchEvent(new Event("DOMContentLoaded", {
@@ -506,13 +507,8 @@ window.addEventListener('popstate', (e) => {
     }*/
 
     if (e.state != null) {
-        if (window.im && e.state.from_messenger) {
-            u('.page_content').html('');
-            const n_url = new URL(location.href);
-
-            window.im_class.insertIn(document.querySelector('.page_content'), n_url.searchParams.get("as"));
-            window.im.state._resolveState(e);
-            return;
+        if (window.im) {
+            window.im.state._resolvePosition(location.href, e.state.from_messenger);
         }
 
         window.router.route({
@@ -524,6 +520,10 @@ window.addEventListener('popstate', (e) => {
 
 window.addEventListener('DOMContentLoaded', () => {
     window.router.applyTweaks();
+
+    if (window.im && !window.im.fastChats.isInserted) {
+        window.im.state._resolvePosition();
+    }
 
     if (window.router.isLoadedFirstly == false) {
         console.log("applying ?w=");

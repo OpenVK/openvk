@@ -66,6 +66,7 @@ export class Conversations {
         this.CONVERSATIONS_PER_PAGE = 100;
         this.q = null;
         this.peer_id_search = null;
+        this.all_convs = [];
     }
 
     getWindow() { return window.im.getTab("conversations").render_class; }

@@ -675,7 +675,8 @@
 "my_feedback" = "Мои Ответы";
 "my_settings" = "Мои Настройки";
 "bookmarks" = "Закладки";
-"bookmarks_tab" = "Оценённые записи";
+"bookmarks_tab" = "Понравившиеся записи";
+"own_posts_tab" = "Написанные мной записи";
 "bug_tracker" = "Баг-трекер";
 
 "menu_settings" = "Настройки";

@@ -94,3 +94,31 @@ export const SearchPageTemplate = ({ q, c }) => {
         </div>
   `;
 };
+
+export const FastChatsBar = ({ pinnedItems, convos }) => {
+    console.log(convos)
+    return html`
+        <div>
+            <div class="fastchat_items">
+                ${pinnedItems.map((item) => {
+                    console.log(item)
+                    return html`
+                    <div class="fastchat_item">
+
+                    </div>`
+                })}
+            </div>
+            <div class="fastchat_entrypoint">
+                <span>${convos.total_count}</span>
+            </div>
+        </div>
+    `;
+}
+
+export const FastChatsWindow = () => {
+    return html`
+        <div id="fastchat_item">
+            <b></b>
+        </div>
+    `;
+}

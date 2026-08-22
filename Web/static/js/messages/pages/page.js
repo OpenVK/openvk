@@ -68,6 +68,7 @@ export class IMPage {
 
         await this.beforeRender(this.container);
         await this.render(this.container);
+        await this.afterFirstRender(this.container);
         //document.documentElement.scroll({ top: 0 });
     }
     getNode() { return u(this.container) }
@@ -80,13 +81,18 @@ export class IMPage {
     getTabName() { return tr("messenger_tab_" + this.constructor.getPageId()) }
     async beforeRender(container) {}
     async render(container) {}
+    async afterFirstRender(container) {}
     afterOpen() {}
+    changeContainer(main_container) {
+        main_container.querySelector("#im_page_containers").insertAdjacentHTML("beforeend", `<div class="im_page" data-id="${this.id}"></div>`);
+        this.container = main_container.querySelector(`.im_page[data-id="${this.id}"]`);
+    }
     static openTab(main_container, options = {}) {
         const new_class = new this();
         new_class.id = String(options.id ?? (new Date()).getTime());
         new_class.options = options;
-        main_container.querySelector("#im_page_containers").insertAdjacentHTML("beforeend", `<div class="im_page" data-id="${new_class.id}"></div>`);
-        new_class.container = main_container.querySelector(`.im_page[data-id="${new_class.id}"]`);
+
+        new_class.changeContainer(main_container);
 
         const tab = new IMTab();
         tab.render_class = new_class;
