@@ -1,4 +1,5 @@
 import { ChatGeneralForm } from './components/messages.js';
+import { FastChatsBar, FastChatsWindow } from './components/extra.js';
 import { EventHandler } from './events.js';
 import { Messenger, MessengerPage, ContactPage } from './pages/messenger.js';
 import { Conversations, ConversationsPage } from './pages/conversations.js';
@@ -33,6 +34,8 @@ export class InstantMessagesAndRelated {
         this.conversations = new Conversations();
         this.messenger = new Messenger();
         this.friends = new Friends();
+
+        this.fastChats = new FastChats();
     }
 
     async waitLoad() {
@@ -74,7 +77,7 @@ export class InstantMessagesAndRelated {
     }
 
 
-    static async insertIn(container, as = null) {
+    static async insertIn(container, as = null, fastchat = false, rewrite_tabs = true) {
         let self = window.im;
 
         if (as != null) {
@@ -86,18 +89,29 @@ export class InstantMessagesAndRelated {
         }
 
         self.state.addLoadSkeleton(container);
+        self.state.isFastchat = fastchat;
         await self.waitLoad();
 
         console.log("IM | Insert in ", container);
 
-        const node = u(`<div class="at_page" id="im_container"><div id="im_page_tabs"></div><div id="im_page_containers"></div></div>`)
-        if (self.state.is_compact_mode_enabled == true) {
-            node.addClass("compact");
-        }
+        const node = u(`<div id="im_container"><div id="im_page_tabs"></div><div id="im_page_containers"></div></div>`)
+        if (!fastchat) { node.addClass("at_page"); }
+        if (!fastchat && self.state.is_compact_mode_enabled == true) { node.addClass("compact"); }
 
         container.insertAdjacentHTML("beforeend", node.last().outerHTML);
 
         self.root = container.querySelector("#im_container");
+
+        if (rewrite_tabs == true) {
+            console.log("rewrite_tabs", rewrite_tabs);
+            self.tabs.forEach(item => {
+                if (window.im.state.is_debug) {
+                    console.log(item, self.root);
+                }
+                item.render_class.changeContainer(self.root);
+                item.render();
+            })
+        }
 
         //const found = await this._checkSel(new URL(location.href), sel_id);
         //if (!found) {
@@ -160,15 +174,15 @@ export class InstantMessagesAndRelated {
             });
 
             if (_tab.isDisablesScroll()) { this.state._toggleScrollMode(true); }
-            if (_tab.getPageId() == "messenger") {
-                const current_chat = this.messenger.getCurrentChat();
-                if (current_chat != null && current_chat.draft) {
-                    console.log("IM | Scroll from tab");
-                    current_chat.draft.loadScroll(window.im.getTab("messenger").render_class);
-                }
-            }
 
             _tab.updateHeader(this.header);
+            const b = this.root.querySelector(`#im_page_containers .im_page[data-id="${_tab.getId()}"]`);
+            if (!b) {
+                this.root.querySelector("#im_page_containers").insertAdjacentHTML("beforeend", `
+                    <div class="im_page" data-id="${_tab.getId()}"></div>
+                `);
+            }
+
             this.root.querySelector(`#im_page_containers .im_page[data-id="${_tab.getId()}"]`).classList.remove("hidden");
         } catch(e) {
             console.error(e);
@@ -220,13 +234,21 @@ export class InstantMessagesAndRelated {
 
             return already_here;
         } else {
-            got_tab = got_class.openTab(this.root, options);
-            if (got_tab != null) {
-                got_tab.render_class.addLoadSkeleton(this.root);
-                console.log(got_tab.render_class)
-                this.selectTab(this.addTab(got_tab));
-                await got_tab.render();
-                got_tab.render_class.removeLoadSkeleton(this.root);
+            if (window.im.state.is_debug) {
+                console.log(this.root);
+            }
+
+            try {
+                got_tab = got_class.openTab(this.root, options);
+                if (got_tab != null) {
+                    got_tab.render_class.addLoadSkeleton(this.root);
+                    console.log(got_tab.render_class)
+                    this.selectTab(this.addTab(got_tab));
+                    await got_tab.render();
+                    got_tab.render_class.removeLoadSkeleton(this.root);
+                }
+            } catch(e) {
+                console.error(e);
             }
 
             return got_tab;
@@ -298,16 +320,26 @@ class IMState {
         this.items = [];
         this.item_index = 0;
         this.group_id = group_id;
+        this.isFastchat = false;
     }
 
     get is_compact_mode_enabled() { return localStorage.getItem("tw.im.modern_mode") === "1"; }
     get is_debug() { return localStorage.getItem("tw.im.debug") === "1"; }
     get is_opened() { return location.pathname == "/im"; }
-    get is_active() { return window.im.getSelectedTabId() == "messenger" && this.is_opened == true; }
+    get is_active() { 
+        try {
+            return window.im.getSelectedTabId() == "messenger" && this.is_opened == true;
+        } catch(e) { return false; }
+    }
     get is_group() { return this.group_id != null }
 
     getUnreadCounter() {
-        return 0;
+        let counter = 0;
+        window.im.conversations.all_convs.forEach(item => {
+            if (!item.is_read) { counter += 1; }
+        });
+
+        return counter;
     }
     updateUnreadCounter() {
         // todo
@@ -355,7 +387,11 @@ class IMState {
     }
 
     async _checkSel(loc, sel_id = null) {
-        this.link.openTabByName("conversations");
+        try {
+            await this.link.openTabByName("conversations");
+        } catch(e) {
+            console.error(e);
+        }
 
         const _sel = sel_id == null ? Number(loc.searchParams.get('sel')) : sel_id;
 
@@ -376,15 +412,20 @@ class IMState {
     }
 
     _pushState(url) {
+        if (this.isFastchat == true) {
+            console.info("this.isFastchat: ", this.isFastchat, " url: ", url)
+            return;
+        }
+
         history.pushState({ 'from_messenger': 1 }, null, url);
     }
 
-    _resolveState(e) {
+    async _resolveState() {
         const _url = new URL(location.href);
-        if (_url.searchParams.get('sel')) {
+        if (this.isFastchat == false && _url.searchParams.get('sel')) {
             this._checkSel(_url);
         } else {
-            this.link.openTabByName('conversations');
+            await this.link.openTabByName('conversations');
         }
     }
 
@@ -396,6 +437,11 @@ class IMState {
         /*if (window.isMobile && window.isMobile()) {
             return;
         }*/
+
+        if (this.isFastchat) {
+            u('body').removeClass('no-scroll');
+            return;
+        }
 
         if (enable) {
             if (!u('body').hasClass('no-scroll')) {
@@ -414,6 +460,37 @@ class IMState {
         let maybe_distance = 145;
         let tabs_height = container.querySelector('#im_page_tabs').clientHeight;
         container.style.minHeight = window.outerHeight - tabs_height - maybe_distance + 'px';
+    }
+
+    async _resolvePosition(url = null, from_msg = false) {
+        console.log("IM | _resolvePosition");
+
+        if (!url) {
+            url = location.href
+        }
+
+        const n_url = new URL(url);
+        let should_fullsize = n_url.pathname == "/im";
+        if (from_msg) {
+            should_fullsize = true;
+        }
+
+        if (should_fullsize) {
+            console.log("IM | position is in page");
+
+            u('.page_content').html('');
+            window.im_class.insertIn(document.querySelector('.page_content'), n_url.searchParams.get("as"));
+
+            await this._resolveState();
+            this.link.fastChats.hide();
+        } else {
+            console.log("IM | position is in fastchats");
+            if (!this.link.fastChats.isInserted) {
+                this.link.fastChats.insertSelf();
+            }
+
+            this.link.fastChats.show();
+        }
     }
 
     addLoadSkeleton(container) {
@@ -461,6 +538,11 @@ class YellowHeader {
     }
 
     changeYellowHeader(text, append_switch_button = true) {
+        if (window.im.state.isFastchat == true) {
+            // TODO
+            return;
+        }
+
         u(".page_yellowheader").html(text);
 
         try {
@@ -584,12 +666,52 @@ export class LongPollConnection {
 }
 
 export class FastChats {
+    constructor() {
+        this.isInserted = false;
+    }
     getPinnedPeers() { return []; }
     pinPeer(convo) {}
     unpinPeer(convo) {}
     shouldBeShown() { return !window.im.state.is_opened }
     toggleShowness(state = false) {}
     toggleBar(state = false, convo = null) {}
+    insertSelf() {
+        u("body").append(`
+        <div id="fastchats_related">
+            <div id="fastchats_chat">
+                <div id="wrap"></div>    
+            </div>
+            <div id="fastchats"></div>
+        </div>`);
+
+        this.update();
+
+        u("body #fastchats_related #fastchats .fastchat_entrypoint").on("click", (e) => {
+            this.toggleChatBar();
+        });
+        window.im_class.insertIn(document.querySelector('#fastchats_related #fastchats_chat #wrap'), null, true);
+    }
+    update() {
+        preactRender(html`<${FastChatsBar} pinnedItems=${this.getPinnedPeers()} convos=${window.im.conversations} />`, document.querySelector("#fastchats"));
+    }
+
+    show() {
+        u("body #fastchats_related").addClass("shown");
+    }
+
+    hide() {
+        u("body #fastchats_related").removeClass("shown");
+    }
+
+    toggleChatBar() { 
+        if(u("body #fastchats_related #fastchats_chat").hasClass("shown")) {
+            this.hideChatBar();
+        } else {
+            this.showChatBar();
+        }
+    };
+    showChatBar() { u("body #fastchats_related #fastchats_chat").addClass("shown"); }
+    hideChatBar() { u("body #fastchats_related #fastchats_chat").removeClass("shown"); }
 }
 
 (async () => {

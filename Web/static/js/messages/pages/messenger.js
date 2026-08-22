@@ -37,6 +37,14 @@ export class Messenger {
         return window.im.getTab("messenger").render_class;
     }
 
+    afterFirstRender() {
+        const current_chat = this.getCurrentChat();
+        if (current_chat != null && current_chat.draft) {
+            console.log("IM | Scroll from tab");
+            current_chat.draft.loadScroll(window.im.getTab("messenger").render_class);
+        }
+    }
+
     get view() { return this.getWindow(); }
 
     update() {

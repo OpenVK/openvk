@@ -856,7 +856,7 @@ export class ChatGeneralForm {
             day: '2-digit'
         });
 
-        if (Math.floor(date.getTime() / 1000) > (Math.floor(date.getTime() / 1000) - 5 * 60)) {
+        if ((Math.floor(today.getTime() / 1000) - Math.floor(date.getTime() / 1000)) <= 300) {
             return tr("online")
         }
 
