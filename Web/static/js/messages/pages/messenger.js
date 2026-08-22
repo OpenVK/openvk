@@ -1,7 +1,7 @@
 import { ChatMessage, ChatGeneralForm, Draft } from '../components/messages.js';
 import { Conversation } from './conversations.js';
 import { MessageListView } from "../components/message.js"
-import { ErrorConversation, WriteBar, ActionsBar, PeerWindow, InputArea, PeerTabsView } from "../components/common.js"
+import { ErrorConversation, WriteBar, ActionsBar, PeerWindow, InputArea, PeerTabsView, TopicConversationChat } from "../components/common.js"
 import { IMTab, IMPage } from './page.js';
 import { html, render } from '../components/render.js';
 
@@ -864,5 +864,16 @@ export class ContactPage extends IMPage {
         }
 
         render(html`<${PeerWindow} fromConvo=${currentCorresponder} convo=${peer} />`, container);
+    }
+}
+
+export class ChatTopicPreviewPage extends IMPage {
+    shouldCloseOnExit() { return true; }
+    static getPageId() { return "chat_preview_topic"; }
+
+    async render(container) {
+        const chat = this.options.topic;
+
+        render(html`<${TopicConversationChat} chat_id=${chat} />`, container);
     }
 }

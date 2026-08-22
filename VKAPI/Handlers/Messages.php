@@ -755,9 +755,9 @@ final class Messages extends VKAPIRequestHandler
             $this->fail(100, "One of the parameters is missing: title");
         }
 
-        if (empty($user_ids)) {
+        /*if (empty($user_ids)) {
             $this->fail(100, "One of the parameters is missing: user_ids");
-        }
+        }*/
 
         $rawIds = preg_split("%, ?%", $user_ids);
         $targetUserIds = array_filter(array_map('intval', $rawIds));
@@ -1355,7 +1355,10 @@ final class Messages extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
-        $this->fail(4040404, "Not implemented");
+        $res = $chat->join([$this->getUser()]);
+        if (!$res) {
+            $this->fail(4040404, "Not implemented");
+        }
 
         return $chat->getId();
     }

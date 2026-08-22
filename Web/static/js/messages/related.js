@@ -136,22 +136,21 @@ function createChatTopic(group_id) {
         body: `
         <div>
             <p>${tr("create_topic_as_chat_desc")}</p>
-            <p>${tr("create_topic_as_chat_desc_2")}:</p>
             <div>
-                <select id="chat_sel"></select>
+                <input id="name" type="text">
             </div>
         </div>`,
         buttons: [tr("create"), tr("cancel")],
         callbacks: [async () => {
-            const val = msg.getNode().find("#chat_sel").last().value;
-
+            const title = msg.getNode().find("#name").last().value;
+            if (!title || title.length == 0) { return; }
             msg.close();
 
             CMessageBox.toggleLoader();
 
             let res = await window.OVKAPI.call("board.addChatTopic", {
                 "group_id": group_id,
-                "chat_id": val
+                "title": title,
             }, true);
 
             if (res.error_msg != null) {
@@ -171,16 +170,6 @@ function createChatTopic(group_id) {
             msg.close();
         }]
     });
-
-    if (window.im) {
-        window.im_variants.getCurrentUser().conversations.convs.forEach(item => {
-            if (item.peer && item.peer.supposed_type == "chat") {
-                msg.getNode().find("#chat_sel").append(`
-                    <option value="${item.peer.id}">${escapeHtml(item.peer.full_name)}</option>
-                `);
-            }
-        })
-    }
 }
 
 async function imSwitchCurrent() {

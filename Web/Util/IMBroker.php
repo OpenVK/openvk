@@ -15,7 +15,7 @@ class IMBroker
     private bool $enabled;
     private string $serverUrl;
 
-    private function __construct()
+    function __construct()
     {
         $conf = OPENVK_ROOT_CONF["openvk"]["credentials"]["im"] ?? [];
         $redisConf = OPENVK_ROOT_CONF["openvk"]["credentials"]["redis"] ?? ['addr' => '127.0.0.1', 'port' => 6379];

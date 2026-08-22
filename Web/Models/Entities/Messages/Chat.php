@@ -10,6 +10,7 @@ use openvk\Web\Models\Entities\{User, Photo};
 use openvk\Web\Models\Repositories\Photos;
 use PhpCsFixer\ConfigurationException\RequiredFixerConfigurationException;
 use Chandler\Database\DatabaseConnection;
+use openvk\Web\Util\IMBroker;
 
 class Chat extends RowModel
 {
@@ -194,6 +195,21 @@ class Chat extends RowModel
     // Membership
     //
 
+    public function join(array $users): bool
+    {
+        $broker = new IMBroker();
+        $joined = false;
+
+        foreach ($users as $user) {
+            #$response = $broker->invokeMethod($user->getRealId(), "messages.createChat", [
+            #    "title"    => $title,
+            #    "user_ids" => "",
+            #]);
+        }
+
+        return $joined;
+    }
+
     public function isMember(?User $user): bool
     {
         return true;
@@ -254,20 +270,6 @@ class Chat extends RowModel
         }
 
         return !$this->isKicked($user);
-    }
-
-    public function canAttachToTopic(?User $user): bool
-    {
-        if (!$user) {
-            return false;
-        }
-
-        $topicsWith = DatabaseConnection::i()->getContext()->table("topics")->where(["deleted" => 0, "chat_id" => $this->getId()])->count();
-        if ($topicsWith > 0) {
-            return false;
-        }
-
-        return $this->isCreator($user);
     }
 
     //

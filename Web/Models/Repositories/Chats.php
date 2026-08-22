@@ -7,6 +7,7 @@ namespace openvk\Web\Models\Repositories;
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Entities\Messages\Chat;
 use Nette\Database\Table\ActiveRow;
+use openvk\Web\Util\IMBroker;
 
 class Chats
 {
@@ -58,6 +59,19 @@ class Chats
         
         self::$cache[$chat->getId()] = $chat;
         self::$cacheByChatId[$chat->getChatId()] = $chat;
+
+        return $chat;
+    }
+
+    public function createWithOriginal($user, string $title = ""): Chat
+    {
+        $broker = new IMBroker();
+        $response = $broker->invokeMethod($user->getRealId(), "messages.createChat", [
+            "title"    => $title,
+            "user_ids" => "",
+        ]);
+        $response = (int) $response;
+        $chat = $this->create($response, $title);
 
         return $chat;
     }

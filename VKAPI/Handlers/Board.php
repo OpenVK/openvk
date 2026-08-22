@@ -64,7 +64,7 @@ final class Board extends VKAPIRequestHandler
         return $topic->getVirtualId();
     }
 
-    public function addChatTopic(int $group_id, int $chat_id)
+    public function addChatTopic(int $group_id, string $title)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -78,14 +78,8 @@ final class Board extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
-        $chatsRepo = new ChatRepo();
-        $chatObj = $chatsRepo->getByChatId($chat_id);
-        if (!$chatObj) {
-            $this->fail(15, "Chat not found");
-        }
-        if (!$chatObj->canAttachToTopic($this->getUser())) {
-            $this->fail(14, "Can't attach this chat");
-        }
+        $chRepo = new ChatRepo();
+        $chatObj = $chRepo->createWithOriginal($this->getUser(), $title);
 
         $flags = 0;
         $flags |= 0b10000000;
