@@ -163,29 +163,29 @@ export class Messenger {
         this.currentChatId = id;
     }
 
-	hasChat(conv) {
-		return this.opened_tabs.indexOf(conv) !== -1;
-	}
+    hasChat(conv) {
+        return this.opened_tabs.indexOf(conv) !== -1;
+    }
 
     getTabsCount() {
         return this.opened_tabs.length;
     }
 
-	getChatWith(chat_general_form) {
-		let is = null;
-		window.im.conversations.convs.forEach((item) => {
-			if (item.peer.id == chat_general_form.id) {
-				is = item;
-				return;
-			}
-		});
+    getChatWith(chat_general_form) {
+        let is = null;
+        window.im.conversations.convs.forEach((item) => {
+            if (item.peer.id == chat_general_form.id) {
+                is = item;
+                return;
+            }
+        });
 
-		if (!is) {
-			return new Conversation({ 'peer': chat_general_form });
-		}
+        if (!is) {
+            return new Conversation({ 'peer': chat_general_form });
+        }
 
-		return is;
-	}
+        return is;
+    }
 
     getCurrentChat() {
         if (this.currentChatId === null || this.currentChatId === undefined) return null;
@@ -229,7 +229,7 @@ export class Messenger {
             "peer_id": window.im.state.getCurrentConvo().id,
             "group_id": group_id
         });
-	}
+    }
 
     async sendToCurrentCorresponder() {
         const view = this.getWindow();
@@ -402,12 +402,12 @@ export class Messenger {
     }
 
     // onSendMessageButtonClick
-	async onSendMessage() {
-		const _tmp_atts = collect_attachments(u('.messenger-app--input---messagebox'));
+    async onSendMessage() {
+        const _tmp_atts = collect_attachments(u('.messenger-app--input---messagebox'));
         const win = this.getWindow();
 
         console.log(win.getCurrentText(), _tmp_atts);
-		if (win.getCurrentText() === '' && _tmp_atts.length == 0) return false;
+        if (win.getCurrentText() === '' && _tmp_atts.length == 0) return false;
         if (win.getCurrentText().length > 55000) {
             fastError("> 55000")
             return;
@@ -420,15 +420,15 @@ export class Messenger {
             return;
         }
 
-		win._scrollToEnd();
+        win._scrollToEnd();
 
-		this.sendToCurrentCorresponder();
+        this.sendToCurrentCorresponder();
 
         window.im.state.getCurrentConvo().clearDraft();
         this._clearAttachments();
-		this.removeReply();
+        this.removeReply();
         win.setCurrentText("");
-	}
+    }
 
     cancelEdit(render = true) {
         this.editMsg = null;
@@ -481,15 +481,15 @@ export class MessengerPage extends IMPage {
         this.update();
     }
 
-	//async render(container, special_mode = null, messages = null) {
-	async render(container, options = {}) {
+    //async render(container, special_mode = null, messages = null) {
+    async render(container, options = {}) {
         const orig_messenger = window.im.messenger;
         this.getNode().addClass("page-other");
 
         let messages = null;
         let special_mode = "";
-		const root = container;
-		if (!root) {
+        const root = container;
+        if (!root) {
             console.error("no root")
             return;
         };
@@ -540,31 +540,31 @@ export class MessengerPage extends IMPage {
             </div>
         </div>
         `, root);
-	}
+    }
 
-	onTextareaKeyPress(e) {
-		const ta = e.target;
+    onTextareaKeyPress(e) {
+        const ta = e.target;
 
         if (e.which !== 13) {
-			const now = Date.now();
-			if (!this._typingStarted) this._typingStarted = now;
-			if (now - this._typingStarted > 6000) { // 2s
-				window.im.messenger.setWriting();
-			}
-		}
+            const now = Date.now();
+            if (!this._typingStarted) this._typingStarted = now;
+            if (now - this._typingStarted > 6000) { // 2s
+                window.im.messenger.setWriting();
+            }
+        }
 
-		if (e.which === 13) {
-			this._typingStarted = 0;
-			if (!e.metaKey && !e.shiftKey) {
-				e.preventDefault();
-				ta.blur();
-				window.im.messenger.onSendMessage();
-				ta.focus();
-				return false;
-			}
-		}
-		return true;
-	}
+        if (e.which === 13) {
+            this._typingStarted = 0;
+            if (!e.metaKey && !e.shiftKey) {
+                e.preventDefault();
+                ta.blur();
+                window.im.messenger.onSendMessage();
+                ta.focus();
+                return false;
+            }
+        }
+        return true;
+    }
 
     onMessageClick(msg, e) {
         if (e.buttons !== 1 && e.type == 'mousemove') return;
@@ -581,20 +581,20 @@ export class MessengerPage extends IMPage {
         }
     }
 
-	clickOnReply(msg) {
+    clickOnReply(msg) {
         console.log(msg)
         this.scrollToMessage(msg, true);
-	}
+    }
 
-	onReplyButtonClick() {
-		const ids = window.im.messenger.selected_messages;
-		const current_chat = window.im.messenger.getCurrentChat();
-		const m = current_chat.peer._findMessageById(ids[0]);
-		window.im.messenger.unselectAll();
-		window.im.messenger.replyTo = m;
+    onReplyButtonClick() {
+        const ids = window.im.messenger.selected_messages;
+        const current_chat = window.im.messenger.getCurrentChat();
+        const m = current_chat.peer._findMessageById(ids[0]);
+        window.im.messenger.unselectAll();
+        window.im.messenger.replyTo = m;
 
-		this.update();
-	}
+        this.update();
+    }
 
     onEditButtonClick(e, msg) {
         window.im.messenger.editMsg = msg;
@@ -606,7 +606,7 @@ export class MessengerPage extends IMPage {
             unpack_attachments_into_node(u(this.container.querySelector("#write")), msg.attachments);
         }
 
-		this.update();
+        this.update();
     }
 
     onPinButtonClick(e, msg) {
@@ -699,7 +699,7 @@ export class MessengerPage extends IMPage {
                 await _c.peer._setMembers();
             }
 
-           	if (typeof window.im !== 'undefined' && window.im.selectTab) {
+            if (typeof window.im !== 'undefined' && window.im.selectTab) {
                 window.im.openTabByName('contact', false, {
                     peer: {
                         "peer": sender
@@ -718,7 +718,7 @@ export class MessengerPage extends IMPage {
         this.togglePeerInfo(msg.sender);
     }
 
-	onScrollDownButtonClick() {
+    onScrollDownButtonClick() {
         // "Return to the newest" — reset the active chunk to the actual
         // (newest) chunk, then scroll to the bottom.
         const corresponder = window.im.state.getCurrentConvo();
@@ -727,13 +727,13 @@ export class MessengerPage extends IMPage {
         } else {
             this._scrollToEnd();
         }
-	}
+    }
 
-	async onMessagesScroll(e = null) {
-		if (this.is_loading) return;
-		this.is_loading = true;
+    async onMessagesScroll(e = null) {
+        if (this.is_loading) return;
+        this.is_loading = true;
 
-		const _scroll = document.documentElement.scrollTop;
+        const _scroll = document.documentElement.scrollTop;
 
         if (_scroll < 21) {
             console.log("IM | Loading older chunk from API");
@@ -763,44 +763,44 @@ export class MessengerPage extends IMPage {
         }
 
         this.is_loading = false;
-	}
+    }
 
-	callDeletion() {
-		const ids = this.selected_messages;
+    callDeletion() {
+        const ids = window.im.messenger.selected_messages;
 
-		const current_chat = this.getCurrentChat();
-		const box = new CMessageBox({
-			title: tr("message_deletion", ids.length),
-			body: tr("message_deletion_confirm"),
-			buttons: [tr('yes'), tr('no')],
-			callbacks: [async () => {
-				let ids2 = [];
-				ids.forEach((item) => {
-					let m = current_chat.peer._findMessageById(item);
-					ids2.push(item);
-					m.setDeleted(true);
-				});
-				await window.OVKAPI.call("messages.delete", {
-					"message_ids": ids2.join(","),
-					"peer_id": current_chat.peer.id
-				})
-				this._triggerUpdate();
-				this.unselectAll();
-			}, () => { }],
-		});
-	}
+        const current_chat = window.im.messenger.getCurrentChat();
+        const box = new CMessageBox({
+            title: tr("message_deletion", ids.length),
+            body: tr("message_deletion_confirm"),
+            buttons: [tr('yes'), tr('no')],
+            callbacks: [async () => {
+                let ids2 = [];
+                ids.forEach((item) => {
+                    let m = current_chat.peer._findMessageById(item);
+                    ids2.push(item);
+                    m.setDeleted(true);
+                });
+                await window.OVKAPI.call("messages.delete", {
+                    "message_ids": ids2.join(","),
+                    "peer_id": current_chat.peer.id
+                })
+                this._triggerUpdate();
+                window.im.messenger.unselectAll();
+            }, () => { }],
+        });
+    }
 
     getScroll() { return document.documentElement.scrollTop; }
     _scrollTo(scroll_progress) {
         console.log("scrolling page to: ", scroll_progress);
-		document.documentElement.scroll({ top: scroll_progress });
-	}
+        document.documentElement.scroll({ top: scroll_progress });
+    }
 
     _scrollToEnd() {
         console.log("scrolled page to the end");
 
-		this._scrollTo(document.documentElement.scrollHeight);
-	}
+        this._scrollTo(document.documentElement.scrollHeight);
+    }
 
     scrollToMessage(msg, load_chunk_where_it_can_be = false) {
         const msgId = typeof msg === 'object' ? msg.id : msg;
@@ -854,7 +854,7 @@ export class ContactPage extends IMPage {
     shouldCloseOnExit() { return true; }
     static getPageId() { return "contact"; }
 
-	async render(container) {
+    async render(container) {
         this.getNode().addClass("page-other");
 
         const currentCorresponder = window.im.state.getCurrentConvo();
@@ -864,5 +864,5 @@ export class ContactPage extends IMPage {
         }
 
         render(html`<${PeerWindow} fromConvo=${currentCorresponder} convo=${peer} />`, container);
-	}
+    }
 }

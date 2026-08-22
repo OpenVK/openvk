@@ -105,11 +105,16 @@ export class InstantMessagesAndRelated {
         if (rewrite_tabs == true) {
             console.log("rewrite_tabs", rewrite_tabs);
             self.tabs.forEach(item => {
-                if (window.im.state.is_debug) {
-                    console.log(item, self.root);
+                try {
+                    if (window.im.state.is_debug) {
+                        console.log(item, self.root);
+                    }
+                    item.render_class.changeContainer(self.root);
+                    item.render();
+                } catch(e) {
+                    console.error(e);
                 }
-                item.render_class.changeContainer(self.root);
-                item.render();
+
             })
         }
 
@@ -686,9 +691,6 @@ export class FastChats {
 
         this.update();
 
-        u("body #fastchats_related #fastchats .fastchat_entrypoint").on("click", (e) => {
-            this.toggleChatBar();
-        });
         window.im_class.insertIn(document.querySelector('#fastchats_related #fastchats_chat #wrap'), null, true);
     }
     update() {

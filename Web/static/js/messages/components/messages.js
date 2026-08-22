@@ -1171,6 +1171,21 @@ export class ChatMessage {
         return this.data.from_id != null;
     }
 
+    get is_gift() {
+        try {
+            let is = false;
+            this.data.attachments.forEach(item => {
+                if (item.type == "gift") {
+                    is = true;
+                }
+            })
+
+            return is;
+        } catch(e) {
+            return false;
+        }
+    }
+
     get text_raw() {
         return this.data.text;
     }
@@ -1180,6 +1195,15 @@ export class ChatMessage {
     }
 
     get text() {
+        if (this.is_gift) {
+            const msg = this.data.attachments[0].gift.message;
+            if (msg == "") {
+                return ("(" + tr("message_no_text") + ")").toLowerCase();
+            }
+
+            return msg;
+        }
+
         let text = escapeHtml(this.data.text)
 
         return nl2br(text);

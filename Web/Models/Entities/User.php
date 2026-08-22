@@ -9,7 +9,8 @@ use openvk\Web\Util\IMBroker;
 use openvk\Web\Themes\{Themepack, Themepacks};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
-use openvk\Web\Models\Entities\{Photo, Message, Correspondence, Gift, Audio};
+use openvk\Web\Models\Entities\{Photo, Gift, Audio};
+use openvk\Web\Models\Entities\Messages\{Message, Correspondence};
 use openvk\Web\Models\Repositories\{Applications, Bans, Comments, Notes, Posts, Users, Clubs, Albums, Gifts, Notifications, Videos, Photos};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use Nette\Database\Table\ActiveRow;
@@ -968,7 +969,7 @@ class User extends RowModel
 
     public function getGifts(int $page = 1, ?int $perPage = null): \Traversable
     {
-        $gifts = $this->getRecord()->related("gift_user_relations.receiver")->order("sent DESC")->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
+        $gifts = $this->getRecord()->related("gift_user_relations.receiver")->where("deleted", 0)->order("sent DESC")->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
         foreach ($gifts as $rel) {
             yield (object) [
                 "id"      => $rel->id,
@@ -1201,9 +1202,9 @@ class User extends RowModel
         return !is_null($this->getPendingPhoneVerification());
     }
 
-    public function gift(User $sender, Gift $gift, ?string $comment = null, bool $anonymous = false): void
+    public function gift(User $sender, Gift $gift, ?string $comment = null, bool $anonymous = false): ActiveRow
     {
-        DatabaseConnection::i()->getContext()->table("gift_user_relations")->insert([
+        return DatabaseConnection::i()->getContext()->table("gift_user_relations")->insert([
             "sender"    => $sender->getId(),
             "receiver"  => $this->getId(),
             "gift"      => $gift->getId(),

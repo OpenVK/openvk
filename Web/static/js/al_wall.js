@@ -4457,3 +4457,17 @@ async function loadEditableGroups() {
 
     return window.openvk.writeableClubs;
 }
+
+function delete_gift(e, gift_id) {
+    const cmsg = new CMessageBox({
+        title: tr("confirm"),
+        body: tr("question_confirm"),
+        buttons: [tr("yes"), tr("no")],
+        callbacks: [async () => {
+            e.target.closest(".gift").remove();
+            await window.OVKAPI.call("gifts.delete", {
+                gift_id: gift_id
+            });
+        }, () => {}]
+    })
+}

@@ -66,6 +66,11 @@ export const MessageBubble = ({ msg, index, chunk, page }) => {
                 <a class="_sender" onClick=${(e) => { window.im?.messenger?.view?.onAuthorNameClick(msg, e) }}>
                     <strong>${msg.sender.name}</strong>
                 </a>
+                <div class="msg-postfix">
+                ${msg.is_gift ? html`
+                    ${tr("msg_sent_gift_" + msg.sender.gender).toLowerCase()}:
+                ` : ""}
+                </div>
                 <div class="time">
                     ${msg.id != null && html`
                     <span>${msg.readable_date}</span>
@@ -166,6 +171,12 @@ const Attachment = ({ msg, att }) => {
                             <b>${tr("post")}</b> ${isNoText ? tr("post_attachment_text", date).toLowerCase() : escapeHtml(ovk_proc_strtrt(att.wall.text, 25))}
                         </span>
                     </a>
+                </div>
+            `;
+        case "gift":
+            return html`
+                <div class="msg-attach-w msg-attach-w-gift">
+                    <img src="${att.gift.gift.thumb_256}" />
                 </div>
             `;
         default:

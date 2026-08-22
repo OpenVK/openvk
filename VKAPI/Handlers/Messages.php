@@ -8,7 +8,8 @@ use Nette\InvalidStateException;
 use Nette\Utils\ImageException;
 use openvk\Web\Util\IMBroker;
 use openvk\Web\Models\Repositories\{Topics as TopicsRepo, Users as USRRepo, Clubs as ClubRepo, Messages as MSGRepo, Chats as ChatRepo};
-use openvk\Web\Models\Entities\{Photo, Correspondence, Message, Club as ClubEnt, Chat};
+use openvk\Web\Models\Entities\{Photo, Message, Club as ClubEnt};
+use openvk\Web\Models\Entities\Messages\Chat;
 use openvk\VKAPI\Handlers\{Users as APIUsers, Groups as APIClubs};
 use openvk\VKAPI\Utils\Uploader;
 
@@ -163,21 +164,30 @@ final class Messages extends VKAPIRequestHandler
         }
     }
 
-    protected function replaceAttachments(&$attachments)
+    protected function replaceAttachments(&$attachments, array $allowedAdditional = [])
     {
         if (empty($attachments)) {
             $attachments = [];
             return;
         }
 
-        $parsed = parseAttachments($attachments, ['photo', 'video', 'audio', 'doc', 'poll', 'wall']);
+        $parsed = parseAttachments($attachments, array_merge(['photo', 'video', 'audio', 'doc', 'poll', 'wall'], $allowedAdditional));
         $result = [];
 
         foreach ($parsed as $attachment) {
-            if (!$attachment->canBeViewedBy($this->getUser())) {
+            if (!$attachment) {
                 $result[] = [
                     "type"    => "unknown",
                     "unknown" => []
+                ];
+
+                continue;
+            }
+
+            if (!$attachment->canBeViewedBy($this->getUser())) {
+                $result[] = [
+                    "type"    => $attachment->shortName,
+                    $attachment->shortName => []
                 ];
 
                 continue;
@@ -323,7 +333,7 @@ final class Messages extends VKAPIRequestHandler
         if (!empty($result->items)) {
             foreach ($result->items as &$item) {
                 if (isset($item['attachments'])) {
-                    $this->replaceAttachments($item['attachments']);
+                    $this->replaceAttachments($item['attachments'], ["gift"]);
                 }
             }
         }
@@ -559,7 +569,7 @@ final class Messages extends VKAPIRequestHandler
         if (!empty($data['items'])) {
             foreach ($data['items'] as &$item) {
                 if (isset($item['attachments'])) {
-                    $this->replaceAttachments($item['attachments']);
+                    $this->replaceAttachments($item['attachments'], ["gift"]);
                 }
             }
         }
@@ -638,7 +648,7 @@ final class Messages extends VKAPIRequestHandler
         if (!empty($data['items'])) {
             foreach ($data['items'] as &$item) {
                 if (isset($item['attachments'])) {
-                    $this->replaceAttachments($item['attachments']);
+                    $this->replaceAttachments($item['attachments'], ["gift"]);
                 }
             }
         }
@@ -719,7 +729,7 @@ final class Messages extends VKAPIRequestHandler
         if (!empty($data['items'])) {
             foreach ($data['items'] as &$item) {
                 if (isset($item['attachments'])) {
-                    $this->replaceAttachments($item['attachments']);
+                    $this->replaceAttachments($item['attachments'], ["gift"]);
                 }
             }
         }
@@ -958,7 +968,7 @@ final class Messages extends VKAPIRequestHandler
             }
 
             if (isset($item['last_message']['attachments'])) {
-                $this->replaceAttachments($item['last_message']['attachments']);
+                $this->replaceAttachments($item['last_message']['attachments'], ["gift"]);
             }
         }
         unset($item);
@@ -1192,7 +1202,7 @@ final class Messages extends VKAPIRequestHandler
         if (!empty($data['items'])) {
             foreach ($data['items'] as &$message) {
                 if (!empty($message['attachments'])) {
-                    $this->replaceAttachments($message['attachments']);
+                    $this->replaceAttachments($message['attachments'], ["gift"]);
                 }
             }
         }

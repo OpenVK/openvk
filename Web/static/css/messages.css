@@ -51,6 +51,7 @@ body.no-scroll .messages--peers-tabs {
     gap: 5px;
     background: #F6F6F6;
     border-bottom: 1px solid var(--bg-slightly-border);
+    box-shadow: 1px 1px 2px 0px var(--bg-slightly-border);
 }
 
 body.no-scroll .page_header {
@@ -572,7 +573,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 .messenger-app--messages---message ._content {
     width: 400px;
     line-height: 13.2pt;
-    padding-left: 10px;
+    padding-left: 15px;
 }
 
 .messenger-app--messages---message ._content span,
@@ -643,6 +644,15 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     gap: 4px;
 }
 
+.messenger-app--messages---message .msg-attach-w-gift img {
+    width: 200px;
+}
+
+.messenger-app--messages---message .msg-postfix {
+    display: inline;
+    margin-left: 5px;
+}
+
 .messenger-app--messages---message ._icon {
     width: 16px;
     height: 15px;
@@ -711,7 +721,6 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 
 .messenger-app--input---messagebox {
     box-sizing: border-box;
-    padding: 0 10px;
     width: calc(100% - 128px);
     float: right;
 }

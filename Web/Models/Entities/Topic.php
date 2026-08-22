@@ -7,7 +7,7 @@ namespace openvk\Web\Models\Entities;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\Repositories\Chats;
-use openvk\Web\Models\Entities\Chat;
+use openvk\Web\Models\Entities\Messages\Chat;
 use openvk\Web\Util\DateTime;
 
 class Topic extends Postable

@@ -108,7 +108,7 @@ export const FastChatsBar = ({ pinnedItems, convos }) => {
                     </div>`
                 })}
             </div>
-            <div class="fastchat_entrypoint">
+            <div onClick=${() => {window.im.fastChats.toggleChatBar()}} class="fastchat_entrypoint">
                 <span>${convos.total_count}</span>
             </div>
         </div>

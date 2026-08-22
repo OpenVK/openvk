@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace openvk\Web\Models\Entities;
+namespace openvk\Web\Models\Entities\Messages;
 
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;

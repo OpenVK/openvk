@@ -1422,7 +1422,7 @@
 "message_user_typing" = "$1 набирает сообщение...";
 
 "messenger_tab_conversations" = "Диалоги";
-"messenger_tab_messenger" = "Сообщения";
+"messenger_tab_messenger" = "Просмотр диалогов";
 "messenger_tab_friends" = "Друзья";
 "messenger_tab_contact" = "Контакт";
 "messenger_tab_settings" = "Настройки";
@@ -1465,7 +1465,13 @@
 "preview_attachment_doc" = "Документ";
 "preview_attachment_audio" = "Аудио";
 "preview_attachment_wall" = "Репост";
+"preview_attachment_gift" = "Подарок";
+"message_no_text" = "Без текста";
 "post_attachment_text" = "От $1";
+
+"msg_sent_gift_male" = "Отправил подарок";
+"msg_sent_gift_female" = "Отправила подарок";
+"msg_sent_gift_neutral" = "Отправили подарок";
 
 "saved_messages" = "Избранное";
 "im_friends_list" = "Список друзей";

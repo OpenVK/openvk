@@ -4,3 +4,4 @@ SET time_zone = "+00:00";
 ALTER TABLE `chats` ADD COLUMN `photos_history` text DEFAULT NULL AFTER `photo_id`;
 ALTER TABLE `topics` ADD `chat_id` BIGINT UNSIGNED DEFAULT NULL AFTER `flags`;
 ALTER TABLE `chats` ADD `edited` BIGINT UNSIGNED NULL DEFAULT NULL AFTER `description`;
+ALTER TABLE `gift_user_relations` ADD `deleted` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `sent`;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace openvk\Web\Models\Entities;
+namespace openvk\Web\Models\Entities\Messages;
 
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Repositories\Clubs;
@@ -13,12 +13,21 @@ use openvk\Web\Util\DateTime;
 
 /**
  * Message entity.
+ * @deprecated Use IM API instead.
  */
-class Message extends RowModel
+class Message
 {
-    use Traits\TRichText;
-    use Traits\TAttachmentHost;
-    protected $tableName = "messages";
+    private $data;
+
+    public function __construct()
+    {
+        $this->data = new \stdClass();
+    }
+
+    private function getRecord(): \stdClass
+    {
+        return $this->data;
+    }
 
     /**
      * Get message ID.
@@ -28,6 +37,24 @@ class Message extends RowModel
     public function getId(): ?int
     {
         return $this->getRecord()->id;
+    }
+    /**
+     * Get message text.
+     *
+     * @returns string
+     */
+    public function getText(bool $richText = false): string
+    {
+        return $this->getRecord()->content;
+    }
+    /**
+     * Sets message text.
+     *
+     * @returns void
+     */
+    public function setContent(string $text): void
+    {
+        $this->data->content = $text;
     }
     /**
      * Get origin of the message.
