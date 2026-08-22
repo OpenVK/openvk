@@ -99,6 +99,15 @@ class Topic extends Postable
         return $this->getOwner(false)->getId() === $user->getId() || $this->getClub()->canBeModifiedBy($user);
     }
 
+    public function getURL(): string
+    {
+        if ($this->isChatAttached()) {
+            return "/im?joinByTopic=" . $this->getPrettyId();
+        }
+
+        return "/topic" . $this->getPrettyId();
+    }
+
     public function getLastComment(): ?Comment
     {
         if ($this->isChatAttached()) {

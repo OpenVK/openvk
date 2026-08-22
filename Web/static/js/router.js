@@ -522,7 +522,7 @@ window.addEventListener('DOMContentLoaded', () => {
     window.router.applyTweaks();
 
     if (window.im && !window.im.fastChats.isInserted) {
-        window.im.state._resolvePosition();
+        window.im.state._resolvePosition(null, null, true);
     }
 
     if (window.router.isLoadedFirstly == false) {

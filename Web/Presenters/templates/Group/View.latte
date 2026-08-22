@@ -437,7 +437,7 @@
             </div>
             <div class="hide_on_mobiles">
                 <div n:foreach="$topics as $topic" class="topic-list-item">
-                    <b><a href="/topic{$topic->getPrettyId()}">{$topic->getTitle()}</a></b><br>
+                    <b><a href="{$topic->getURL()}">{$topic->getTitle()}</a></b><br>
                     <span class="nobold">{tr("updated_at", $topic->getUpdateTime())}</span>
                 </div>
                 <div class="section_empty" n:if="$topicsCount == 0">

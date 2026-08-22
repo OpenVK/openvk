@@ -1427,6 +1427,7 @@
 "messenger_tab_contact" = "Контакт";
 "messenger_tab_settings" = "Настройки";
 "messenger_tab_search" = "Поиск сообщений";
+"messenger_tab_chat_preview_topic" = "Присоединиться к обсуждению";
 "messenger_switch_current" = "Переключиться";
 "message_is_deleted" = "Сообщение удалено";
 
@@ -1534,9 +1535,7 @@
 "messages_search_count_other" = "Найдено $1 сообщений";
 
 "create_topic_as_chat" = "Создать тему из чата";
-"create_topic_as_chat_desc" = "Вы можете прикрепить чат к своей группе в виде темы. Чат не должен быть привязан к другой теме и вы должны иметь права администратора в нём.";
-"create_topic_as_chat_desc_2" = "Выберите чат из списка";
-"chat_topic_already_attached_error" = "Чат уже куда-то привязан.";
+"create_topic_as_chat_desc" = "Вы можете создать тему, к которой будет прикреплён новосозданный чат. Введите название для неё:";
 "topic_going_in_chat" = "Обсуждение идёт в чате:";
 "chat_join" = "Присоединиться";
 

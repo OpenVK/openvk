@@ -360,3 +360,21 @@ export const ErrorConversation = ({ }) => {
         </div>
     `
 }
+
+export const TopicConversationChat = ({ chat_id }) => {
+    return html`
+    <div id="chat-topic" style="margin-top: 140px;">
+        <span class="t1">${tr("topic_going_in_chat")}</span>
+        <div class="chat-topic-preview">
+            <img src="{$chat->getPhotoURL("miniscule")}" alt="chat" />
+            <div>
+                <b style="display: block;">{$chat->getTitle()}</b>
+                <span>сколько-то участников</span>
+            </div>
+        </div>
+        <div class="t3">
+            <input value="${tr("chat_join")}" class="button" type="button" onClick=${(event) => openChatTopic(event, chat_id)} />
+        </div>
+    </div>
+    `;
+}

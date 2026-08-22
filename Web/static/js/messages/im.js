@@ -1,7 +1,7 @@
 import { ChatGeneralForm } from './components/messages.js';
 import { FastChatsBar, FastChatsWindow } from './components/extra.js';
 import { EventHandler } from './events.js';
-import { Messenger, MessengerPage, ContactPage } from './pages/messenger.js';
+import { Messenger, MessengerPage, ContactPage, ChatTopicPreviewPage } from './pages/messenger.js';
 import { Conversations, ConversationsPage } from './pages/conversations.js';
 import { Friends, FriendsPage } from './pages/friends.js';
 import { SearchPage } from './pages/search.js';
@@ -76,7 +76,6 @@ export class InstantMessagesAndRelated {
         console.log("IM | Inited");
     }
 
-
     static async insertIn(container, as = null, fastchat = false, rewrite_tabs = true) {
         let self = window.im;
 
@@ -100,6 +99,7 @@ export class InstantMessagesAndRelated {
 
         container.insertAdjacentHTML("beforeend", node.last().outerHTML);
 
+        const oldRoot = self.root ? self.root.dataset.id : null;
         self.root = container.querySelector("#im_container");
 
         if (rewrite_tabs == true) {
@@ -108,6 +108,9 @@ export class InstantMessagesAndRelated {
                 try {
                     if (window.im.state.is_debug) {
                         console.log(item, self.root);
+                    }
+                    if (self.root.dataset.id == oldRoot) {
+                        return;
                     }
                     item.render_class.changeContainer(self.root);
                     item.render();
@@ -222,6 +225,9 @@ export class InstantMessagesAndRelated {
                 break;
             case "search":
                 got_class = SearchPage;
+                break;
+            case "chat_preview_topic":
+                got_class = ChatTopicPreviewPage;
                 break;
         }
 
@@ -399,6 +405,13 @@ class IMState {
         }
 
         const _sel = sel_id == null ? Number(loc.searchParams.get('sel')) : sel_id;
+        const joinByTopic = loc ? loc.searchParams.get("joinByTopic") : null;
+
+        if (joinByTopic != null) {
+            this.link.openTabByName("chat_preview_topic", true, {
+                "topic": joinByTopic
+            });
+        }
 
         if (_sel) {
             const peer = await this.link.conversations._resolveSel(_sel);
@@ -467,7 +480,7 @@ class IMState {
         container.style.minHeight = window.outerHeight - tabs_height - maybe_distance + 'px';
     }
 
-    async _resolvePosition(url = null, from_msg = false) {
+    async _resolvePosition(url = null, from_msg = false, firstLoad = false) {
         console.log("IM | _resolvePosition");
 
         if (!url) {
@@ -476,15 +489,16 @@ class IMState {
 
         const n_url = new URL(url);
         let should_fullsize = n_url.pathname == "/im";
-        if (from_msg) {
-            should_fullsize = true;
-        }
+        if (from_msg) { should_fullsize = true; }
 
         if (should_fullsize) {
             console.log("IM | position is in page");
 
             u('.page_content').html('');
-            window.im_class.insertIn(document.querySelector('.page_content'), n_url.searchParams.get("as"));
+
+            if (!firstLoad) {
+                window.im_class.insertIn(document.querySelector('.page_content'), n_url.searchParams.get("as"));
+            }
 
             await this._resolveState();
             this.link.fastChats.hide();

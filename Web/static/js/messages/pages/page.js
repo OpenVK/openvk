@@ -106,5 +106,9 @@ export class IMPage {
         if (remove_before == true) { container.innerHTML = ""; }
         container.insertAdjacentHTML("beforeend", `<span id="load_skeleton">LOADING!!!!!</span>`);
     }
-    removeLoadSkeleton(container) { container.querySelector("#load_skeleton").remove(); }
+    removeLoadSkeleton(container) { 
+        try { 
+            container.querySelector("#load_skeleton").remove(); 
+        } catch(e) { console.error(e); }
+    }
 }
