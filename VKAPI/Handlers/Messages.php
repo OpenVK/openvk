@@ -1305,6 +1305,16 @@ final class Messages extends VKAPIRequestHandler
         ];
     }
 
+    public function allowMessagesFromGroup(int $group_id)
+    {
+        return 1;
+    }
+
+    public function denyMessagesFromGroup(int $group_id)
+    {
+        return 1;
+    }
+
     // ----------------------------------
     //              Custom
     // ----------------------------------

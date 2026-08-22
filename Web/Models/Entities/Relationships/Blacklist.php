@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace openvk\Web\Models\Entities;
+namespace openvk\Web\Models\Entities\Relationships;
 
 use openvk\Web\Models\Repositories\Users;
+use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\RowModel;
 use Chandler\Database\DatabaseConnection;
 
@@ -40,7 +41,7 @@ class Blacklist
         return false;
     }
 
-    public function ban(User $user, ?string $reason = null, ?int $until = null): void
+    public function ban(RowModel $user, ?string $reason = null, ?int $until = null): void
     {
         $this->unban($user);
 
@@ -53,7 +54,7 @@ class Blacklist
         ]);
     }
 
-    public function unban(User $user): void
+    public function unban(RowModel $user): void
     {
         $this->context->table("blacklist_relations")->where([
             "author" => $this->entity->getRealId(),
