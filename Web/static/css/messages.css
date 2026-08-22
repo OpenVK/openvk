@@ -1160,21 +1160,40 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 /* Send dialog */
 
 #user-send-dialog {
-    display: grid;
-    grid-template-columns: 0fr 1fr;
-    gap: 15px;
+    height: 100%;
+    min-height: 260px;
+    padding: 10px 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 #user-send-dialog .user-send-left img {
-    width: 88px;
+    width: 100px;
+}
+
+#user-send-dialog .user-send-centre {
+    display: grid;
+    grid-template-columns: 0fr 1fr;
+    gap: 35px;
 }
 
 #user-send-dialog #write {
     margin-top: 10px;
 }
 
+#user-send-dialog .user-send-left {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+}
+
 #user-send-dialog .udlg-name {
-    font-size: 14px;
+    font-size: 13px;
+    margin-top: 11px;
+    font-weight: normal;
 }
 
 #user-send-dialog .udlg-actions .attachment-icons div {

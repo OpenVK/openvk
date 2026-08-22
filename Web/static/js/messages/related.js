@@ -5,38 +5,44 @@ async function showUserDialog(event, userId) {
 
     const html = `
         <div class="messenger-layer" id="user-send-dialog">
-            <div class="user-send-left">
-                <img class="udlg-avatar" src="${conv.peer.avatar_any}" alt="" />
-                <a class="udlg-goto" style="text-align: right;">${tr('go_to_dialog').toLowerCase()} &rarr;</a>
-            </div>
-            <div class="udlg-send-right">
-                <div>
-                    <div class="udlg-info">
-                        <div class="udlg-name">${conv.peer.full_name}</div>
-                        <div class="udlg-online nobold">${conv.peer.online_status_str}</div>
-                    </div>
+            <div class="user-send-centre">
+                <div class="user-send-left">
+                    <img class="udlg-avatar" src="${conv.peer.avatar_any}" alt="" />
+                    <div class="udlg-online nobold">${conv.peer.online_status_str}</div>
                 </div>
-
-                <div id="write" class="has_emoji_picker model_content_textarea">
-                    <div class="textareas">
-                        <textarea min-height: 190px; id="_text" class="udlg-textarea expanded-textarea small-textarea" placeholder="${tr('enter_message')}"></textarea>
-                        <div class="emoji_picker_entrypoint"></div>
+                <div class="udlg-send-right">
+                    <div>
+                        <div class="udlg-info">
+                            <div class="udlg-name">${conv.peer.full_name}</div>
+                        </div>
                     </div>
 
-                    <div class="post-horizontal"></div>
-                    <div class="post-vertical"></div>
-                    <div class="udlg-actions">
-                        <div class="attachment-icons">
-                            <div id="__photoAttachment"></div>
-                            <div id="__videoAttachment"></div>
-                            <div id="__audioAttachment"></div>
-                            <div id="__documentAttachment"></div>
+                    <div id="write" class="has_emoji_picker model_content_textarea">
+                        <div class="textareas">
+                            <textarea min-height: 190px; id="_text" class="udlg-textarea expanded-textarea small-textarea" placeholder="${tr('enter_message')}"></textarea>
+                            <div class="emoji_picker_entrypoint"></div>
+                        </div>
+
+                        <div class="post-horizontal"></div>
+                        <div class="post-vertical"></div>
+                        <div class="udlg-actions">
+                            <div class="attachment-icons">
+                                <div id="__photoAttachment"></div>
+                                <div id="__videoAttachment"></div>
+                                <div id="__audioAttachment"></div>
+                                <div id="__documentAttachment"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div>
-                <input type="button" class="button" id="_send_msg" value="${tr("send")}">
+            <div style="display: flex;justify-content: space-between;">
+                <a class="udlg-goto">${tr('go_to_dialog').toLowerCase()} &rarr;</a>
+
+                <div>
+                    <input type="button" class="button" id="_close" value="${tr("close")}">
+                    <input type="button" class="button" id="_send_msg" value="${tr("send")}">
+                </div>
             </div>
         </div>`;
 
@@ -47,7 +53,8 @@ async function showUserDialog(event, userId) {
         close_on_buttons: false,
     });
     msg.getNode().attr("style", "z-index: 200;");
-    msg.getNode().find(".ovk-diag-body").attr("style", "height: 300px;");
+    msg.getNode().find(".ovk-diag").attr("style", "width: 500px;");
+    msg.getNode().find(".ovk-diag-body").attr("style", "min-height: 300px;");
     msg.getNode().find(".ovk-diag-head #_close").on("click", (e) => {
         msg.close();
     });
@@ -80,6 +87,9 @@ async function showUserDialog(event, userId) {
             toggleUnclickability(btn, false);
         }
     });
+    msg.getNode().find("#_close").on("click", (e) => {
+        msg.close();
+    })
 }
 
 function updateChatTitle(e, chat) {
