@@ -6,12 +6,22 @@ namespace openvk\Web\Models\Entities\Notifications;
 
 use openvk\Web\Models\Entities\User;
 
-final class CoinsTransferNotification extends Notification
+final class CoinsTransferNotification extends HybridNotification
 {
     protected $actionCode = 9602;
 
     public function __construct(User $receiver, User $sender, int $value, string $message)
     {
         parent::__construct($receiver, $receiver, $sender, time(), $value . " " . $message);
+    }
+
+    public function getSendParams(): array
+    {
+        return [];
+    }
+
+    public function getSendMethod(): string
+    {
+        return "messages.send";
     }
 }

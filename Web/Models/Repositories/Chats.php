@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace openvk\Web\Models\Repositories;
 
 use Chandler\Database\DatabaseConnection;
-use openvk\Web\Models\Entities\Chat;
+use openvk\Web\Models\Entities\Messages\Chat;
 use Nette\Database\Table\ActiveRow;
 
 class Chats

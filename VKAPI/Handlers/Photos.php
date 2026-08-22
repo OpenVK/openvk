@@ -13,7 +13,7 @@ use openvk\Web\Models\Repositories\Videos as VideosRepo;
 use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\Repositories\Users as UsersRepo;
 use openvk\Web\Models\Repositories\Comments as CommentsRepo;
-use openvk\Web\Models\Entities\Chat;
+use openvk\Web\Models\Entities\Messages\Chat;
 use openvk\VKAPI\Utils\Uploader;
 
 final class Photos extends VKAPIRequestHandler

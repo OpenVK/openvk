@@ -321,6 +321,10 @@ function parseAttachments($attachments, array $allow_types = ['photo', 'video', 
             'repo' => 'openvk\Web\Models\Repositories\Posts',
             'method' => 'getPostById'
         ],
+        'gift' => [
+            'repo' => 'openvk\Web\Models\Repositories\Gifts',
+            'method' => 'getSentGiftById'
+        ],
     ];
 
     foreach ($exploded_attachments as $attachment_string) {
@@ -361,7 +365,7 @@ function parseAttachments($attachments, array $allow_types = ['photo', 'video', 
                     $attachment_model = (new $repository_class())->{$repositories[$attachment_type]['method']}($attachment_owner, $attachment_id);
                     $output_attachments[] = $attachment_model;
                 }
-            } catch (\Throwable) {
+            } catch (\Throwable $e) {
                 continue;
             }
         }

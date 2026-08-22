@@ -102,13 +102,13 @@ final class Gifts extends VKAPIRequestHandler
             ];
         }
 
-        $user->gift($this->getUser(), $gift, $message);
+        $data = $user->gift($this->getUser(), $gift, $message);
         $gift->used();
 
         $this->getUser()->setCoins($coinsLeft);
         $this->getUser()->save();
 
-        $notification = new GiftNotification($user, $this->getUser(), $gift, $message);
+        $notification = new GiftNotification($user, $this->getUser(), $gift, $data->id);
         $notification->emit();
 
         return (object)
@@ -117,6 +117,26 @@ final class Gifts extends VKAPIRequestHandler
             "user_ids"        => $user_ids,
             "withdraw_votes"  => $price,
         ];
+    }
+
+    public function delete(int $gift_id)
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        if (!OPENVK_ROOT_CONF['openvk']['preferences']['commerce']) {
+            $this->fail(-105, "Commerce is disabled on this instance");
+        }
+
+        $gift = (new GiftsRepo())->getSentGiftById($this->getUser()->getRealId(), $gift_id);
+
+        if (!$gift) {
+            $this->fail(15, "Invalid gift");
+        }
+
+        $gift->delete();
+
+        return 1;
     }
 
     public function getCategories(bool $extended = false, int $page = 1)
