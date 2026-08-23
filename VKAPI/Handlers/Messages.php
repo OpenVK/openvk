@@ -245,7 +245,9 @@ final class Messages extends VKAPIRequestHandler
                 $chatEntity = $loadedChats[$localChatId];
                 if ($chatEntity != null) {
                     bdump($chat);
-                    $entry = $chatEntity->toVkApiStruct($this->getUser(), $chat);
+
+                    $chatParam = is_array($chat) ? $chat : [$chat];
+                    $entry = $chatEntity->toVkApiStruct($this->getUser(), $chatParam);
 
                     $extendedChats[] = $entry;
                 } else {
