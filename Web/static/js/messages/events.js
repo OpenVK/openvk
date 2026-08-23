@@ -1,14 +1,15 @@
 import { ChatMessage, ChatGeneralForm } from './components/messages.js';
 
 export class EventHandler {
-    constructor() {
+    constructor(im) {
+        this.im = im;
         this.codes = {
-            1: this.ReplaceFlags,
+            1: "ReplaceFlags",
             2: null,
-            4: this.NewMessageEvent,
-            5: this.EditMessageEvent,
-            51: this.ChatUpdateEvent,
-            61: this.TypingEvent,
+            4: "NewMessageEvent",
+            5: "EditMessageEvent",
+            51: "ChatUpdateEvent",
+            61: "TypingEvent",
         };
     }
 
@@ -17,10 +18,11 @@ export class EventHandler {
 
         const method = this.codes[event[0]];
         console.log("lp event: ", event)
+        console.log(this.im);
         if (!method) {
-            console.info('неизвестный ивент,  ', event[0]);
+            console.info('unknown event,  ', event[0]);
         } else {
-            await method(event);
+            await this[method](event);
         }
     }
 
@@ -31,24 +33,23 @@ export class EventHandler {
 
         // message is deleted
         if (flags == 128) {
-            const conv = await window.im.conversations._findConv(peerId);
+            const conv = await this.im.conversations._findConv(peerId);
             console.log(conv);
             const found = conv.peer._findMessageById(msgId);
             console.log(found);
 
             if (found != null) {
                 found.setDeleted(false);
-                window.im.messenger.update();
+                this.im.messenger.update();
             }
         }
     }
 
     async NewMessageEvent(event) {
-        const _msg = await ChatMessage.fromEvent(event);
-        console.log(_msg)
-        const _crs = await window.im.conversations._findConvFromApi(_msg.peer_id);
+        const _msg = await ChatMessage.fromEvent(event, this.im);
+        const _crs = await this.im.conversations._findConvFromApi(_msg.peer_id);
 
-        if (!window.im.state.is_active && !_crs.peer.is_muted && _msg.shouldBeNotified()) {
+        if (!this.im.state.is_active && !_crs.peer.is_muted && _msg.shouldBeNotified()) {
             triggerMessageNotification(_crs, _msg);
         }
 
@@ -62,9 +63,11 @@ export class EventHandler {
                 } else {
                     found.hydrateFromEvent(_msg);
 
-                    if (window.im.state.is_active) {
-                        window.im.messenger.update();
-                        window.im.messenger.view._scrollToEnd();
+                    if (this.im.state.is_active) {
+                        this.im.messenger.update();
+                        if (this.im.messenger.view.isAtEnd()) {
+                            this.im.messenger.view._scrollToEnd();
+                        }
                     }
                 }
             } catch (e) {
@@ -82,7 +85,7 @@ export class EventHandler {
         const attachments = event[6];
         const idk = event[7];
 
-        const _crs = await window.im.conversations._findConvFromApi(peerId);
+        const _crs = await this.im.conversations._findConvFromApi(peerId);
         if (!_crs) {
             return;
         }
@@ -96,7 +99,7 @@ export class EventHandler {
         await found.setAttachmentsFromLP(attachments);
         found.data.edited = true;
 
-        window.im.messenger.update();
+        this.im.messenger.update();
     }
 
     async ChatUpdateEvent(event) {
@@ -116,7 +119,7 @@ export class EventHandler {
             userIds = String(_userIds).split(",");
         }
 
-        const conv = await window.im.conversations._findConvFromApi(_peerId);
+        const conv = await this.im.conversations._findConvFromApi(_peerId);
 
         if (conv != null) {
             await conv.setTyping(userIds);

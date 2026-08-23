@@ -844,6 +844,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 
 .messages--peers-tabs .messages--peers-tab.selected {
     background: var(--brand);
+    font-weight: bold;
 }
 
 .messages--peers-tabs .messages--peers-tab.selected a {

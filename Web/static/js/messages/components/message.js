@@ -23,6 +23,7 @@ export const MessageBubble = ({ msg, index, chunk, page }) => {
         msg.is_reply ? 'msg-reply' : '',
     ].filter(Boolean).join(' ');
 
+    const has_postfix = msg.is_gift;
     if (msg.is_action) {
         const act = msg.data.action.type;
         const typ = SystemMessages[act] ?? SystemMessages["unknown"];
@@ -66,11 +67,11 @@ export const MessageBubble = ({ msg, index, chunk, page }) => {
                 <a class="_sender" onClick=${(e) => { window.im?.messenger?.view?.onAuthorNameClick(msg, e) }}>
                     <strong>${msg.sender.name}</strong>
                 </a>
-                <div class="msg-postfix">
+                ${has_postfix ? html`<div class="msg-postfix">
                 ${msg.is_gift ? html`
                     ${tr("msg_sent_gift_" + msg.sender.gender).toLowerCase()}:
                 ` : ""}
-                </div>
+                </div>` : ""}
                 <div class="time">
                     ${msg.id != null && html`
                     <span>${msg.readable_date}</span>

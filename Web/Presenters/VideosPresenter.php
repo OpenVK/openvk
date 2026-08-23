@@ -116,6 +116,14 @@ final class VideosPresenter extends OpenVKPresenter
                 }
 
                 if ($is_from_messenger) {
+                    $clubId = $this->postParam("club");
+                    if ($clubId != null) {
+                        $club = (new Clubs)->get((int) $clubId);
+                        if ($club && $club->canBeModifiedBy($this->user->identity)) {
+                            $video->setContext($club, true);
+                        }
+                    }
+
                     $video->setAsFromMessage();
                 }
 
@@ -139,10 +147,6 @@ final class VideosPresenter extends OpenVKPresenter
 
                 if ((int) ($this->postParam("unlisted") ?? '0') == 1) {
                     $video->setUnlisted(true);
-                }
-
-                if ($is_from_messenger) {
-                    $photo->setAsFromMessage();
                 }
 
                 $video->save();

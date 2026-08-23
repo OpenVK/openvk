@@ -606,6 +606,8 @@ class Club extends RowModel
         $res->is_admin    = $user ? (int) $this->canBeModifiedBy($user) : 0;
         $res->deactivated = null;
         $res->can_access_closed = 1;
+        $res->is_messages_blocked = 0;
+        $res->can_message = 0;
 
         if (!is_array($fields)) {
             $fields = explode(',', $fields);

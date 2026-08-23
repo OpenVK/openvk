@@ -61,10 +61,16 @@ export class Messenger {
             throw new Error();
         }
 
+        if (window.im.state.is_debug) {
+            console.log(convo);
+        }
+
         this.setChat(convo);
         const tab = await window.im.openTabByName("messenger");
 
-        await tab.render();
+        try {
+            await tab.render();
+        } catch(e) { console.error(e); }
 
         if (!convo.peer._isMessagesInited()) {
             try {
@@ -79,7 +85,10 @@ export class Messenger {
             }
         }
 
-        await tab.render();
+        try {
+            await tab.render();
+            tab.showTab();
+        } catch(e) { console.error(e); }
         const newId = Number(this.currentChatId);
 
         if (oldId != newId) {
@@ -97,6 +106,7 @@ export class Messenger {
                     draft.loadToPage(this.getWindow());
                 }
                 this.update();
+                this.getWindow().updUrl();
             } catch(e) {
                 console.error(e);
             }
@@ -141,15 +151,10 @@ export class Messenger {
         if (this.opened_tabs.length > 1) {
             this.had_more_one_tab = true;
         }
-
-        if (pushstate) {
-            const url = new URL(location.href);
-            url.searchParams.set("sel", convo.peer.id);
-            window.im.state._pushState(url.toString());
-        }
     }
 
     addChat(conv) {
+        // console.trace()
         this.opened_tabs.push(conv);
     }
 
@@ -164,6 +169,7 @@ export class Messenger {
     }
 
     hasChat(conv) {
+        console.log(this.opened_tabs, conv)
         return this.opened_tabs.indexOf(conv) !== -1;
     }
 
@@ -220,15 +226,18 @@ export class Messenger {
     async setWriting() {
         this._typingStarted = 0;
 
-        const group_id = null;
+        const params = {
+            "type": "typing",
+            "peer_id": window.im.state.getCurrentConvo().id,
+        };
+        const gid = window.im.state.getId();
+        if (gid < 0) {
+            params["group_id"] = Math.abs(gid);
+        }
 
         console.log('IM | setWriting called');
 
-        await window.OVKAPI.call("messages.setActivity", {
-            "type": "typing",
-            "peer_id": window.im.state.getCurrentConvo().id,
-            "group_id": group_id
-        });
+        await window.OVKAPI.call("messages.setActivity", params);
     }
 
     async sendToCurrentCorresponder() {
@@ -341,7 +350,6 @@ export class Messenger {
         const first = queue_items.find(function (p) {
             return idForItem(p) === ids;
         });
-        console.log(ids, msg, attachment);
 
         if (!first) {
             console.log("IM | Messenger | Opening photo | Not found ", attachment, " image in", photos)
@@ -371,7 +379,9 @@ export class Messenger {
                     items: queue_items
                 });
                 viewer.open();
-                viewer.afterOpen(idForItem(first));
+                // JUST ACCEPT IT
+                //viewer.afterOpen(idForItem(first));
+                viewer.afterOpen(first.id);
 
                 break;
             case "audio":
@@ -406,7 +416,6 @@ export class Messenger {
         const _tmp_atts = collect_attachments(u('.messenger-app--input---messagebox'));
         const win = this.getWindow();
 
-        console.log(win.getCurrentText(), _tmp_atts);
         if (win.getCurrentText() === '' && _tmp_atts.length == 0) return false;
         if (win.getCurrentText().length > 55000) {
             fastError("> 55000")
@@ -475,10 +484,26 @@ export class MessengerPage extends IMPage {
         this.replyTo = null;
         this.editMsg = null;
     }
+    showHook() {
+        try {
+            const v = window.im.messenger.getCurrentChat();
+            if (v.peer && v.peer.draft) {
+                v.peer.draft.loadScroll(window.im.getTab("messenger").render_class);
+            } else {
+                this._scrollToEnd();
+            }
+        } catch(e) {console.error(e);}
+    }
     isDisablesScroll() { return true; }
     _triggerUpdate() {
         window.im.conversations.update();
         this.update();
+    }
+    updUrl() {
+        const url = new URL(location.href);
+        url.searchParams.delete("joinByTopic");
+        url.searchParams.set("sel", String(window.im.messenger.getCurrentChat().peer.id));
+        window.im.state._pushState(url.toString());
     }
 
     //async render(container, special_mode = null, messages = null) {
@@ -508,7 +533,6 @@ export class MessengerPage extends IMPage {
         }
 
         const is_rendering_contact_window = (window.im.tab == "contact" && special_mode === null);
-        console.log(special_mode, is_rendering_contact_window)
         render(html`
         <div id="chat-page">
             <div class="chat-window ${peer.id == window.openvk.current_id ? "saved-msgs" : ""}">
@@ -520,7 +544,7 @@ export class MessengerPage extends IMPage {
                 onUnselect=${() => window.im.messenger.unselectAll()}
                 onReply=${() => this.onReplyButtonClick()}
             />
-            <div class="messenger-app">
+            <div class="messenger-app messenger-layer">
                 <${MessageListView}
                 convo=${currentConv}
                 messages=${messages} 
@@ -582,7 +606,6 @@ export class MessengerPage extends IMPage {
     }
 
     clickOnReply(msg) {
-        console.log(msg)
         this.scrollToMessage(msg, true);
     }
 
@@ -695,7 +718,6 @@ export class MessengerPage extends IMPage {
         } else {
             const _c = window.im.state.getCurrentConvo();
             if (_c.peer.supposed_type == "chat" && !_c.peer._hasLoadedMembers()) {
-                console.log("_setMembers");
                 await _c.peer._setMembers();
             }
 
@@ -767,7 +789,7 @@ export class MessengerPage extends IMPage {
 
     callDeletion() {
         const ids = window.im.messenger.selected_messages;
-
+        const gid = window.im.state.getId()
         const current_chat = window.im.messenger.getCurrentChat();
         const box = new CMessageBox({
             title: tr("message_deletion", ids.length),
@@ -780,16 +802,22 @@ export class MessengerPage extends IMPage {
                     ids2.push(item);
                     m.setDeleted(true);
                 });
-                await window.OVKAPI.call("messages.delete", {
+
+                const params = {
                     "message_ids": ids2.join(","),
                     "peer_id": current_chat.peer.id
-                })
+                };
+                if (gid < 0) {
+                    params["group_id"] = Math.abs(gid);
+                }
+                await window.OVKAPI.call("messages.delete", params)
                 this._triggerUpdate();
                 window.im.messenger.unselectAll();
             }, () => { }],
         });
     }
 
+    isAtEnd() { return false; }
     getScroll() { return document.documentElement.scrollTop; }
     _scrollTo(scroll_progress) {
         console.log("scrolling page to: ", scroll_progress);
@@ -861,6 +889,8 @@ export class ContactPage extends IMPage {
         let peer = null;
         if (this.options.peer == null) {
             peer = currentCorresponder;
+        } else {
+            peer = this.options.peer;
         }
 
         render(html`<${PeerWindow} fromConvo=${currentCorresponder} convo=${peer} />`, container);

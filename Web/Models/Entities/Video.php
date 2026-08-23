@@ -18,7 +18,7 @@ class Video extends Media
     public const TYPE_UNKNOWN = -1;
 
     protected $tableName     = "videos";
-    protected $shortName     = "video";
+    public $shortName        = "video";
     protected $fileExtension = "mp4";
     protected $containsContextColumns = true;
 
@@ -156,7 +156,7 @@ class Video extends Media
             "type" => "video",
             "video" => [
                 "can_comment" => 1,
-                "can_like" => 1,  // we don't h-have wikes in videos
+                "can_like" => 1,  // we h-have wikes in videos
                 "can_repost" => 1,
                 "can_subscribe" => 1,
                 "can_add_to_faves" => 0,

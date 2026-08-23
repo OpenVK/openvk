@@ -379,6 +379,8 @@ class PhotoViewer extends Viewer {
         })
     }
 
+    shouldPushW() { return this.mode != "tg"; }
+
     async selectItem(pid, item) {
         this.currentId = pid;
         this._updFrame(item);
@@ -2127,10 +2129,10 @@ u(document).on("click", "#editPost", async (e) => {
 
 async function __uploadToTextarea(file, textareaNode, is_from_messenger = false) {
     if (textareaNode.closest(".messenger-layer").length > 0) {
-      is_from_messenger = true;
+        is_from_messenger = true;
     }
 
-    console.log("Upload | Photo upload, ", textareaNode.closest(".messenger-app"), is_from_messenger)
+    console.log("Upload | Photo upload, ", textareaNode.closest(".messenger-layer"), is_from_messenger)
 
     const MAX_FILESIZE = window.openvk.max_filesize_mb * 1024 * 1024
     let filetype = 'photo'
@@ -2160,7 +2162,12 @@ async function __uploadToTextarea(file, textareaNode, is_from_messenger = false)
     form_data.append("hash", u("meta[name=csrf]").attr("value"))
 
     if (is_from_messenger == true) {
-      form_data.append("is_from_messenger", "1")
+        form_data.append("is_from_messenger", "1");
+        const u = window.im_variants.getCompromise();
+
+        if (u.state.getOperator().supposed_type == "club") {
+            form_data.append("club", Math.abs(u.state.getOperator().id));
+        }
     }
 
     if(filetype == 'photo') {
@@ -2588,9 +2595,9 @@ u(document).on('click', '#__videoAttachment', async (e) => {
         }
     })
 
-    u(".ovk-diag-body .attachment_selector").on('click', '#__fast_video_upload', (ev) => {
-        ev.preventDefault()
-        showFastVideoUpload(form)
+    u(".ovk-diag-body .attachment_selector").on('click', '#__fast_video_upload', (evayalubilatebya) => {
+        evayalubilatebya.preventDefault()
+        showFastVideoUpload(form, e)
     })
 
     __recieveVideos(0)
@@ -2720,7 +2727,10 @@ u(document).on('click', '#__notesAttachment', async (e) => {
     __recieveNotes(0)
 })
 
-function showFastVideoUpload(node) {
+function showFastVideoUpload(node, event) {
+    const is_from_messenger = event.target.closest(".messenger-layer") != null;
+    const tmpIm = window.im_variants.getCompromise();
+
     let current_tab = 'file'
     const msg = new CMessageBox({
         title: tr('upload_video'),
@@ -2773,6 +2783,13 @@ function showFastVideoUpload(node) {
                     form_data.append('unlisted', 1)
                     form_data.append("hash", u("meta[name=csrf]").attr("value"))
 
+                    if (is_from_messenger) {
+                        form_data.append("is_from_messenger", "1");
+                        if (tmpIm.state.getOperator().supposed_type == "club") {
+                            form_data.append("club", Math.abs(tmpIm.state.getOperator().id));
+                        }
+                    }
+
                     window.messagebox_stack[1].getNode().find('.ovk-diag-action button').nodes[1].classList.add('lagged')
                     const fetcher = await fetch(`/videos/upload`, {
                         method: 'POST',
@@ -2796,6 +2813,13 @@ function showFastVideoUpload(node) {
                     form_data.append('link', video_link)
                     form_data.append('unlisted', 1)
                     form_data.append("hash", u("meta[name=csrf]").attr("value"))
+
+                    if (is_from_messenger) {
+                        form_data.append("is_from_messenger", "1");
+                        if (tmpIm.state.getOperator().supposed_type == "club") {
+                            form_data.append("club", Math.abs(tmpIm.state.getOperator().id));
+                        }
+                    }
 
                     window.messagebox_stack[1].getNode().find('.ovk-diag-action button').nodes[1].classList.add('lagged')
                     const fetcher_yt = await fetch(`/videos/upload`, {

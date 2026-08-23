@@ -25,6 +25,11 @@ export class IMTab {
         return this.isActive();
     }
 
+    showTab(root) {
+        this.render_class.container.classList.remove("hidden");
+        this.render_class.showHook();
+    }
+
     shouldClose() {
         return this.render_class.shouldCloseOnExit() || this.render_class.container == null;
     }
@@ -58,9 +63,8 @@ export class IMPage {
         this.options = {};
     }
 
-    async wRender(options = {}) {
-        this.container.classList.remove("hidden");
-
+    async wRender(options = {}, is_update = false) {
+        // this.container.classList.remove("hidden");
         if (this.is_rendered_firstly == true) {
             await this.render(this.container);
             return;
@@ -72,7 +76,8 @@ export class IMPage {
         //document.documentElement.scroll({ top: 0 });
     }
     getNode() { return u(this.container) }
-    async update(options = {}) { await this.wRender(options); }
+    async update(options = {}) { await this.wRender(options, true); }
+    updUrl() {}
     updateHeader(header) { header.changeByConvNumber(0); }
     isVisibleWhenHidden() { return false; }
     shouldCloseOnExit() { return this.container == null; }
@@ -111,4 +116,5 @@ export class IMPage {
             container.querySelector("#load_skeleton").remove(); 
         } catch(e) { console.error(e); }
     }
+    showHook() {}
 }

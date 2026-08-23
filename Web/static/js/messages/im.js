@@ -27,7 +27,7 @@ export class InstantMessagesAndRelated {
 
         //this.current = new Currentness(this);
         this.cached_profiles = new ProfilesCache();
-        this.event_handler = new EventHandler();
+        this.event_handler = new EventHandler(this);
         this.state = new IMState(this, group_id);
 
         this.isReady = false;
@@ -66,8 +66,8 @@ export class InstantMessagesAndRelated {
             fastError(String(e));
         }
 
-        this.lp = new LongPollConnection();
-        await this.lp.create();
+        this.lp = new LongPollConnection(this);
+        await this.lp.create(Math.abs(this.state.group_id));
         this.lp.listen();
 
         //this.updateCounter(this.lp.getFirstCounter());
@@ -77,14 +77,21 @@ export class InstantMessagesAndRelated {
     }
 
     static async insertIn(container, as = null, fastchat = false, rewrite_tabs = true) {
-        let self = window.im;
+        let self = window.im_variants.getCurrentUser();
+        const b = new URL(location.href)
 
         if (as != null) {
             console.log("IM | ?as= detected", as);
             self = window.im_variants.getForGroup(Number(as));
             window.im_variants.set(self);
             if (!self.is_ready) { await self.init(); }
-            console.log(self)
+
+            b.searchParams.set("as", String(as))
+        } else {
+            window.im_variants.set(self);
+            if (!self.is_ready) { await self.init(); }
+
+            b.searchParams.delete("as")
         }
 
         self.state.addLoadSkeleton(container);
@@ -103,7 +110,6 @@ export class InstantMessagesAndRelated {
         self.root = container.querySelector("#im_container");
 
         if (rewrite_tabs == true) {
-            console.log("rewrite_tabs", rewrite_tabs);
             self.tabs.forEach(item => {
                 try {
                     if (window.im.state.is_debug) {
@@ -117,7 +123,6 @@ export class InstantMessagesAndRelated {
                 } catch(e) {
                     console.error(e);
                 }
-
             })
         }
 
@@ -126,7 +131,12 @@ export class InstantMessagesAndRelated {
         //    this.selectTab('conversations');
        	//}
 
-        await self.state._checkSel(new URL(location.href));
+        try {
+            await self.state._checkSel(b);
+        } catch(e) {
+            console.error(e);
+        }
+
         self.state._changeHeight(self.root);
         self.state.removeLoadSkeleton(container);
     }
@@ -160,7 +170,6 @@ export class InstantMessagesAndRelated {
 
     selectTab(tab) {
         if (typeof tab != "number") {
-            console.log(tab);
             tab = this.tabs.indexOf(tab);
         }
 
@@ -170,13 +179,14 @@ export class InstantMessagesAndRelated {
 
         this.selectedTabId = tab;
         this.root.querySelectorAll("#im_page_containers .im_page").forEach(item => {
+            console.log("IM | Hide tab", item);
             item.classList.add("hidden");
         });
         try {
             const _tab = this.tabs[tab];
-            console.log("selectTab", tab);
             this.tabs.forEach(item => {
                 if (_tab != item && item.shouldClose()) {
+                    console.log("IM | Closed tab", item);
                     item.close();
                 }
             });
@@ -184,14 +194,18 @@ export class InstantMessagesAndRelated {
             if (_tab.isDisablesScroll()) { this.state._toggleScrollMode(true); }
 
             _tab.updateHeader(this.header);
+            _tab.render_class.updUrl();
+
             const b = this.root.querySelector(`#im_page_containers .im_page[data-id="${_tab.getId()}"]`);
             if (!b) {
+                console.log("IM | Tab not found, inserting again", _tab);
                 this.root.querySelector("#im_page_containers").insertAdjacentHTML("beforeend", `
                     <div class="im_page" data-id="${_tab.getId()}"></div>
                 `);
             }
 
-            this.root.querySelector(`#im_page_containers .im_page[data-id="${_tab.getId()}"]`).classList.remove("hidden");
+            console.log("IM | Show tab", _tab);
+            _tab.showTab(this.root);
         } catch(e) {
             console.error(e);
         }
@@ -233,8 +247,8 @@ export class InstantMessagesAndRelated {
 
         if (check_existing == true && got_class) {
             this.tabs.forEach(item => {
-                console.log(item, got_class.getPageId())
-                if (item.render_class.constructor.getPageId() == got_class.getPageId()) {
+                console.log(item.getPageId(), got_class.getPageId())
+                if (item.getPageId() == got_class.getPageId()) {
                     already_here = item;
                 }
             })
@@ -308,6 +322,7 @@ class IMVariants {
     getForGroup(group_id) {
         let found = null;
         this.items.forEach(item => {
+            console.log(item.state, group_id)
             if (item.state.group_id == group_id) {
                 found = item;
             }
@@ -322,6 +337,14 @@ class IMVariants {
         return found;
     }
 
+    getCompromise() {
+        if (window.im.state.is_active) {
+            return window.im;
+        } else {
+            return this.getCurrentUser();
+        }
+    }
+
     add(item) { return this.items.push(item); }
 }
 
@@ -334,6 +357,9 @@ class IMState {
         this.isFastchat = false;
     }
 
+    getId() {
+        return this.getOperator().id;
+    }
     get is_compact_mode_enabled() { return localStorage.getItem("tw.im.modern_mode") === "1"; }
     get is_debug() { return localStorage.getItem("tw.im.debug") === "1"; }
     get is_opened() { return location.pathname == "/im"; }
@@ -346,7 +372,7 @@ class IMState {
 
     getUnreadCounter() {
         let counter = 0;
-        window.im.conversations.all_convs.forEach(item => {
+        this.link.conversations.all_convs.forEach(item => {
             if (!item.is_read) { counter += 1; }
         });
 
@@ -406,6 +432,7 @@ class IMState {
 
         const _sel = sel_id == null ? Number(loc.searchParams.get('sel')) : sel_id;
         const joinByTopic = loc ? loc.searchParams.get("joinByTopic") : null;
+        const as = loc ? loc.searchParams.get("as") : null;
 
         if (joinByTopic != null) {
             this.link.openTabByName("chat_preview_topic", true, {
@@ -422,6 +449,11 @@ class IMState {
             } else {
                 console.error('No peer with this id!', sel_id);
             }
+        }
+
+        const u = new URL(location.href);
+        if (u.searchParams.get("as") != as) {
+            this._pushState(loc.toString());
         }
     }
 
@@ -522,6 +554,14 @@ class IMState {
         } catch(e) {
             u("#im_container #load_skeleton").remove();
         }
+    }
+
+    isCommon() {
+        return window.im_variants.items.indexOf(this.link) == window.im_variants.currentIndex;
+    }
+
+    isCurrentUser() {
+        return this.link.usage_type == "current_user";
     }
 }
 
@@ -644,12 +684,17 @@ class ProfilesCache {
 }
 
 export class LongPollConnection {
-    constructor() {
+    constructor(im) {
         this.stopped = false;
+        this.link = im;
     }
 
     async create(group_id = null) {
-        this.lp = await window.OVKAPI.call('messages.getLongPollServer', {});
+        const params = {};
+        if (group_id) {
+            params.group_id = group_id;
+        }
+        this.lp = await window.OVKAPI.call('messages.getLongPollServer', params);
         console.log("LP | Created connection to the current user");
     }
 
@@ -657,13 +702,20 @@ export class LongPollConnection {
         this.stopped = true;
     }
 
+    get is_stopped() {
+        return this.stopped == true || (!this.link.state.isCommon() && !this.link.state.isCurrentUser());
+    }
+
     getFirstCounter() {
         return this.lp.unread_count;
     }
 
     listen() {
+        if (this.is_stopped) {
+            console.log("LP | stop is set, not listening.");
+        };
+
         console.log("LP | New cycle of listening");
-        console.log(this.lp);
         let xhr = new XMLHttpRequest();
         const mode = 2 + 8 + 32 + 64 + 128;
         const connection_string = this.lp.server + '?key=' + this.lp.key + '&ts=' + this.lp.ts + '&pts=' + this.lp.pts + '&mode=' + mode;
@@ -672,7 +724,7 @@ export class LongPollConnection {
             let data = JSON.parse(xhr.responseText);
             if (data?.updates?.length > 0)
                 data.updates.forEach((event) => {
-                    window.im.event_handler.handle(event);
+                    this.link.event_handler.handle(event);
                 });
                 this.lp.ts = data.ts;
 
