@@ -41,14 +41,7 @@ final class Newsfeed extends VKAPIRequestHandler
         }, iterator_to_array($subs));
         $ids[] = $this->getUser()->getId();
 
-        $posts = DatabaseConnection::i()
-                    ->getContext()
-                    ->table("posts")
-                    ->select("id, created")
-                    ->where("wall IN (?)", $ids)
-                    ->where("deleted", 0)
-                    ->where("suggested", 0)
-                    ->where("archived", 0)
+        $posts = (new PostsRepo())->getFeedSelection($ids)
                     ->where("created <= ?", $cursorTime)
                     ->where("created < ? OR id < ?", $cursorTime, $cursorId)
                     ->where("? <= created", empty($start_time) ? 0 : $start_time)
@@ -86,28 +79,14 @@ final class Newsfeed extends VKAPIRequestHandler
 
         [$cursorTime, $cursorId] = $this->parseCursor($start_from);
 
-        $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) LEFT JOIN `profiles` ON LEAST(`posts`.`wall`, 0) = 0 AND `profiles`.`id` = ABS(`posts`.`wall`)";
-        $queryBase .= " WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND (`profiles`.`profile_type` = 0 OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0 AND `posts`.`archived` = 0";
-
-        if ($with_alien_wall_posts == 0) {
-            $queryBase .= " AND ((`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`))";
-        }
-
-        if ($this->getUser()->getNsfwTolerance() === User::NSFW_INTOLERANT) {
-            $queryBase .= " AND `nsfw` = 0";
-        }
-
-        if ($return_banned == 0) {
-            $ignored_sources_ids = $this->getUser()->getIgnoredSources(0, OPENVK_ROOT_CONF['openvk']['preferences']['newsfeed']['ignoredSourcesLimit'] ?? 50, true);
-
-            if (sizeof($ignored_sources_ids) > 0) {
-                $imploded_ids = implode("', '", $ignored_sources_ids);
-                $queryBase .= " AND `posts`.`wall` NOT IN ('$imploded_ids')";
-            }
-        }
-
         $start_time = empty($start_time) ? 0 : $start_time;
         $end_time = empty($end_time) ? PHP_INT_MAX : $end_time;
+
+        $queryBase = (new PostsRepo())->getGlobalFeedQuery(
+            user: $this->getUser(),
+            with_alien_wall_posts: $with_alien_wall_posts === 1,
+            return_banned: $return_banned === 1
+        );
 
         $cursorFilter = " AND (`posts`.`created` < {$cursorTime} OR (`posts`.`created` = {$cursorTime} AND `posts`.`id` < {$cursorId}))";
 
@@ -173,13 +152,7 @@ final class Newsfeed extends VKAPIRequestHandler
 
         $postsRepo = new PostsRepo();
 
-        $queryBase = DatabaseConnection::i()->getContext()
-            ->table("posts")
-            ->select("id, created")
-            ->where("content LIKE ?", "%{$q}%")
-            ->where("deleted", 0)
-            ->where("suggested", 0)
-            ->where("archived", 0)
+        $queryBase = $postsRepo->getSearchSelection($q)->select("id, created")
             ->where("created <= ?", $cursorTime)
             ->where("created < ? OR id < ?", $cursorTime, $cursorId)
             ->where("? <= created", $start_time)

@@ -183,6 +183,16 @@ class Post extends Postable
         }
     }
 
+    public function getCreated(): int
+    {
+        return $this->getRecord()->created;
+    }
+
+    public function isPlanned(): bool
+    {
+        return $this->getRecord()->created > time();
+    }
+
     public function getOwnerPost(): int
     {
         return $this->getOwner(false)->getId();
@@ -305,6 +315,10 @@ class Post extends Postable
     public function canBePinnedBy(User $user = null): bool
     {
         if (!$user) {
+            return false;
+        }
+
+        if ($this->isPlanned()) {
             return false;
         }
 

@@ -28,6 +28,106 @@ class Posts
         return is_null($ar) ? null : new Post($ar);
     }
 
+    private function getBaseSelection(): Selection
+    {
+        return (clone $this->posts)->where([
+            "deleted"   => false,
+            "suggested" => 0,
+            "archived"  => false,
+        ])->where("created <= ?", time());
+    }
+
+    private function getWallSelection(int $user): Selection
+    {
+        return $this->getBaseSelection()->where([
+            "wall"      => $user,
+        ]);
+    }
+
+    private function getOwnersWallSelection(int $user): Selection
+    {
+        $sel = $this->getWallSelection($user);
+        if ($user > 0) {
+            $sel->where("owner", $user);
+        } else {
+            $sel->where("flags !=", 0);
+        }
+
+        return $sel;
+    }
+
+    private function getOthersWallSelection(int $user): Selection
+    {
+        $sel = $this->getWallSelection($user);
+        if ($user > 0) {
+            $sel->where("owner !=", $user);
+        } else {
+            $sel->where("flags", 0);
+        }
+
+        return $sel;
+    }
+
+    private function getArchivedWallSelection(int $user, ?int $year = null): Selection
+    {
+        $sel = (clone $this->posts)->where([
+            "wall"      => $user,
+            "deleted"   => false,
+            "suggested" => 0,
+            "archived"  => true,
+        ]);
+
+        return $this->applyYearFilter($sel, $year);
+    }
+
+    private function getPlannedWallSelection(int $user): Selection
+    {
+        return (clone $this->posts)->where([
+            "wall"      => $user,
+            "deleted"   => false,
+            "archived"  => false,
+        ])->order("created ASC")->where("created > ?", time());
+    }
+
+    public function getFeedSelection(array $user_ids): Selection
+    {
+        return $this->getBaseSelection()->where("wall IN (?)", $user_ids);
+    }
+
+    public function getSearchSelection(string $query): Selection
+    {
+        return $this->getBaseSelection()->where("content LIKE ?", "%{$query}%");
+    }
+
+    public function getGlobalFeedQuery(
+        User $user,
+        bool $with_alien_wall_posts = false,
+        bool $return_banned = false
+    ): string {
+        $time = time();
+
+        $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) LEFT JOIN `profiles` ON LEAST(`posts`.`wall`, 0) = 0 AND `profiles`.`id` = ABS(`posts`.`wall`)";
+        $queryBase .= " WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND ((`profiles`.`profile_type` = 0 AND `profiles`.`hide_global_feed` = 0) OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0 AND `posts`.`archived` = 0 and `posts`.`created` <= $time";
+
+        if (!$with_alien_wall_posts) {
+            $queryBase .= " AND ((`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`))";
+        }
+
+        if ($user->getNsfwTolerance() === User::NSFW_INTOLERANT) {
+            $queryBase .= " AND `nsfw` = 0";
+        }
+
+        if (!$return_banned) {
+            $ignored_sources_ids = $user->getIgnoredSources(0, OPENVK_ROOT_CONF['openvk']['preferences']['newsfeed']['ignoredSourcesLimit'] ?? 50, true);
+
+            if (sizeof($ignored_sources_ids) > 0) {
+                $imploded_ids = implode("', '", $ignored_sources_ids);
+                $queryBase .= " AND `posts`.`wall` NOT IN ('$imploded_ids')";
+            }
+        }
+        return $queryBase;
+    }
+
     public function get(int $id): ?Post
     {
         return self::$cache[$id] ??= $this->toPost($this->posts->get($id));
@@ -43,6 +143,18 @@ class Posts
         ])->fetch();
 
         return $this->toPost($post);
+    }
+
+    private function listPosts(Selection $sel, int $perPage, int $offset, ?string $order = "created DESC"): \Traversable
+    {
+        if (!is_null($order)) {
+            $sel = $sel->order($order);
+        }
+
+        $sel = $sel->limit($perPage, $offset);
+        foreach ($sel as $post) {
+            yield new Post($post);
+        }
     }
 
     public function getPostsFromUsersWall(int $user, int $page = 1, ?int $perPage = null, ?int $offset = null): \Traversable
@@ -65,17 +177,7 @@ class Posts
             $offset--;
         }
 
-        $sel = $this->posts->where([
-            "wall"      => $user,
-            "pinned"    => false,
-            "deleted"   => false,
-            "suggested" => 0,
-            "archived"  => false,
-        ])->order("created DESC")->limit($perPage, $offset);
-
-        foreach ($sel as $post) {
-            yield new Post($post);
-        }
+        yield from $this->listPosts($this->getWallSelection($user)->where(["pinned" => false]), $perPage, $offset);
     }
 
     public function getOwnersPostsFromWall(int $user, int $page = 1, ?int $perPage = null, ?int $offset = null): \Traversable
@@ -83,24 +185,7 @@ class Posts
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
         $offset ??= $perPage * ($page - 1);
 
-        $sel = $this->posts->where([
-            "wall"      => $user,
-            "deleted"   => false,
-            "suggested" => 0,
-            "archived"  => false,
-        ]);
-
-        if ($user > 0) {
-            $sel->where("owner", $user);
-        } else {
-            $sel->where("flags !=", 0);
-        }
-
-        $sel->order("created DESC")->limit($perPage, $offset);
-
-        foreach ($sel as $post) {
-            yield new Post($post);
-        }
+        yield from $this->listPosts($this->getOwnersWallSelection($user), $perPage, $offset);
     }
 
     public function getOthersPostsFromWall(int $user, int $page = 1, ?int $perPage = null, ?int $offset = null): \Traversable
@@ -108,21 +193,20 @@ class Posts
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
         $offset ??= $perPage * ($page - 1);
 
-        $sel = $this->posts->where([
-            "wall"      => $user,
-            "deleted"   => false,
-            "suggested" => 0,
-            "archived"  => false,
-        ]);
+        yield from $this->listPosts($this->getOthersWallSelection($user), $perPage, $offset);
+    }
 
-        if ($user > 0) {
-            $sel->where("owner !=", $user);
-        } else {
-            $sel->where("flags", 0);
-        }
+    public function getPlannedPostsFromWall(int $user, int $page = 1, ?int $perPage = null, ?int $offset = null): \Traversable
+    {
+        $perPage ??= OPENVK_DEFAULT_PER_PAGE;
+        $offset ??= $perPage * ($page - 1);
 
-        $sel->order("created DESC")->limit($perPage, $offset);
+        yield from $this->listPosts($this->getPlannedWallSelection($user), $perPage, $offset, null);
+    }
 
+    public function getAllPlannedPostsFromWall(int $user): \Traversable
+    {
+        $sel = $this->getPlannedWallSelection($user);
         foreach ($sel as $post) {
             yield new Post($post);
         }
@@ -131,12 +215,9 @@ class Posts
     public function getPostsByHashtag(string $hashtag, int $page = 1, ?int $perPage = null): \Traversable
     {
         $hashtag = "#$hashtag";
-        $sel = $this->posts
-                    ->where("MATCH (content) AGAINST (? IN BOOLEAN MODE)", "+$hashtag")
-                    ->where("deleted", 0)
-                    ->where("archived", 0)
+        $sel = $this->getBaseSelection()
                     ->order("created DESC")
-                    ->where("suggested", 0)
+                    ->where("MATCH (content) AGAINST (? IN BOOLEAN MODE)", "+$hashtag")
                     ->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
 
         foreach ($sel as $post) {
@@ -147,21 +228,21 @@ class Posts
     public function getPostCountByHashtag(string $hashtag): int
     {
         $hashtag = "#$hashtag";
-        $sel = $this->posts
-                    ->where("content LIKE ?", "%$hashtag%")
-                    ->where("deleted", 0)
-                    ->where("archived", 0)
-                    ->where("suggested", 0);
+        $sel = $this->getBaseSelection()->where("MATCH (content) AGAINST (? IN BOOLEAN MODE)", "+$hashtag");
 
         return sizeof($sel);
     }
 
-    public function getPostById(int $wall, int $post, bool $forceSuggestion = false): ?Post
+    public function getPostById(int $wall, int $post, bool $forceSuggestion = false, bool $showPlanned = false): ?Post
     {
         $post = $this->posts->where(['wall' => $wall, 'virtual_id' => $post]);
 
         if (!$forceSuggestion) {
             $post->where("suggested", 0);
+        }
+
+        if (!$showPlanned) {
+            $post->where("created <= ?", time());
         }
 
         $post = $post->fetch();
@@ -176,8 +257,7 @@ class Posts
 
     public function find(string $query = "", array $params = [], array $order = ['type' => 'id', 'invert' => false]): Util\EntityStream
     {
-        $query = "%$query%";
-        $result = $this->posts->where("content LIKE ?", $query)->where("deleted", 0)->where("suggested", 0)->where("archived", 0);
+        $result = $this->getSearchSelection($query);
         $order_str = 'id';
 
         switch ($order['type']) {
@@ -245,25 +325,22 @@ class Posts
 
     public function getPostCountOnUserWall(int $user): int
     {
-        return sizeof($this->posts->where(["wall" => $user, "deleted" => 0, "suggested" => 0, "archived" => 0]));
+        return sizeof($this->getWallSelection($user));
     }
 
     public function getOwnersCountOnUserWall(int $user): int
     {
-        if ($user > 0) {
-            return sizeof($this->posts->where(["wall" => $user, "deleted" => 0, "archived" => 0, "owner" => $user]));
-        } else {
-            return sizeof($this->posts->where(["wall" => $user, "deleted" => 0, "archived" => 0, "suggested" => 0])->where("flags !=", 0));
-        }
+        return sizeof($this->getOwnersWallSelection($user));
     }
 
     public function getOthersCountOnUserWall(int $user): int
     {
-        if ($user > 0) {
-            return sizeof($this->posts->where(["wall" => $user, "deleted" => 0, "archived" => 0])->where("owner !=", $user));
-        } else {
-            return sizeof($this->posts->where(["wall" => $user, "deleted" => 0, "archived" => 0, "suggested" => 0])->where("flags", 0));
-        }
+        return sizeof($this->getOthersWallSelection($user));
+    }
+
+    public function getPlannedCountOnUserWall(int $user): int
+    {
+        return sizeof($this->getPlannedWallSelection($user));
     }
 
     private function applyYearFilter(Selection $selection, ?int $year): Selection
@@ -282,7 +359,7 @@ class Posts
             "wall"      => $user,
             "deleted"   => false,
             "suggested" => 0,
-        ]);
+        ])->where("created <= ?", time());
 
         foreach ($posts as $post) {
             $years[(int) date("Y", $post->created)] = true;
@@ -299,13 +376,7 @@ class Posts
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
         $offset ??= $perPage * ($page - 1);
 
-        $sel = (clone $this->posts)->where([
-            "wall"      => $user,
-            "deleted"   => false,
-            "suggested" => 0,
-            "archived"  => true,
-        ]);
-        $this->applyYearFilter($sel, $year)->order("created DESC")->limit($perPage, $offset);
+        $sel = $this->getArchivedWallSelection($user, $year)->order("created DESC")->limit($perPage, $offset);
 
         foreach ($sel as $post) {
             yield new Post($post);
@@ -314,9 +385,7 @@ class Posts
 
     public function getArchivedCountOnUserWall(int $user, ?int $year = null): int
     {
-        $posts = (clone $this->posts)->where(["wall" => $user, "deleted" => 0, "archived" => 1, "suggested" => 0]);
-
-        return sizeof($this->applyYearFilter($posts, $year));
+        return sizeof($this->getArchivedWallSelection($user, $year));
     }
 
     public function setArchivedOnWall(int $user, bool $archived, ?int $year = null): int
@@ -325,7 +394,7 @@ class Posts
             "wall"      => $user,
             "deleted"   => false,
             "suggested" => 0,
-        ]);
+        ])->where("created <= ?", time());
         $this->applyYearFilter($posts, $year);
 
         $changes = ["archived" => $archived];

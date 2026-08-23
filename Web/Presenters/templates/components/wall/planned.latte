@@ -1,0 +1,7 @@
+{if sizeof($posts) > 0}
+    <div class='scroll_node' n:foreach='$posts as $post' data-uniqueid="{$post->getPrettyId()}">
+        {include "../../components/post.latte", post => $post}
+    </div>
+{else}
+    {_no_posts_abstract}
+{/if}

@@ -1937,4 +1937,10 @@ class User extends RowModel
         $this->stateChanges("events_refresh_time", time());
         $this->save();
     }
+
+    public function canPlanPosts(?User $user): bool
+    {
+        return $this->getId() == $user?->getId();
+    }
+
 }

@@ -2106,6 +2106,7 @@ h4.gift_cat_header {
     gap: 5px;
     padding: 2px 6px;
     cursor: pointer;
+    white-space: nowrap;
 }
 
 #wallAttachmentMenu>a>img {
@@ -4287,10 +4288,59 @@ hr {
     font-size: 15px;
 }
 
-.map_svg_icon {
+.post-attachment-icon {
     display: inline-block;
     margin-bottom: -2px;
     fill: #7d7d7d;
+}
+
+.post-planned {
+    margin: 6px 0;
+}
+
+.post-planned-title {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 4px;
+}
+
+.post-planned-time {
+    margin-left: 16px;
+    max-width: 129px;
+}
+
+.wall_show_planned {
+    border: none;
+    font: inherit;
+    margin-top: 8px;
+    width: 100%;
+    padding: 8px;
+    cursor: pointer;
+    background: #F0F0F0;
+    color: #626262;
+}
+.wall_show_planned:disabled {
+    cursor: not-allowed;
+    opacity: .5;
+}
+.wall_show_planned:after {
+    content: '';
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 5px 5px 0 5px;
+    border-color: #777777 transparent transparent transparent;
+    position: relative;
+    top: -1px;
+    margin-left: 6px;
+}
+
+.wall_show_planned-opened:after {
+    border-width: 0 5px 5px 5px;
+    border-color: transparent transparent #777777 transparent;
 }
 
 /* Documents */

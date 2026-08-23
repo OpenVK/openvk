@@ -4,7 +4,7 @@
 {block header}
     <a href="{$oObj->getURL()}">{$oObj->getCanonicalName()}</a>
     »
-    {_wall} 
+    {_wall}
     <div style="float:right;">
         <span>
             <b>{tr("wall", $count)}</b>
@@ -43,7 +43,7 @@
                     <input type="submit" value="{_header_search}" class="button" />
                 </form>
             </div>
-            
+
             <div n:if="$type == 'archive'" class="content_subtitle archive_banner">
                 <div class="archive_banner_text">
                     <b class="archive_banner_title">{_archive_banner_title}</b>
@@ -109,7 +109,7 @@
                     </div>
                 </details>
             </div>
-            
+
             <div class="content scroll_container">
                 {if sizeof($posts) > 0}
                     <div class="scroll_node archive_post_node"
@@ -117,7 +117,7 @@
                          data-uniqueid="{$post->getPrettyId()}"
                          n:attr="data-archive-year => $type == 'archive' ? $post->getPublicationTime()->format('%Y') : NULL">
                         <a name="postGarter={$post->getId()}"></a>
-                        
+
                         {include "../components/post.latte", post => $post, commentSection => true}
                     </div>
                     {include "../components/paginator.latte", conf => $paginatorConf}
