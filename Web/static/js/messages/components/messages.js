@@ -1155,7 +1155,7 @@ export class ChatMessage {
         this.data.sender = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(this.data.from_id);
     }
 
-    get is_messages_blocked() {
+    get is_club_messages_blocked() {
         return this.data.is_messages_blocked == 1;
     }
 
@@ -1560,5 +1560,15 @@ export class ChatMessage {
         }
 
         return true;
+    }
+
+    async toggleClubMessages(event, state = true) {
+        // true - enable, false - forbid
+        const currentId = window.im.state.getId();
+        if (currentId < 0) {
+
+        } else {
+            //await window.OVKAPI.call();
+        }
     }
 }

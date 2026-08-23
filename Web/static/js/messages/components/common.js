@@ -308,13 +308,13 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                         <a><b>${tr("convo_action_kick")}</b></a>
                     </div>
                     `}
-                    ${ (peer.supposed_type == "club" && peer.is_messages_blocked) ? html`
-                        <div class="chat-actions-usr chat-actions-common" onClick="${(e) => {window.im.messenger.toggleClubMessages(e, false)}}">
+                    ${ (peer.supposed_type == "club" && peer.is_club_messages_blocked) ? html`
+                        <div class="chat-actions-usr chat-actions-common" onClick="${(e) => {peer.toggleClubMessages(e, true)}}">
                             <a><b>${tr("group_allow_messages")}</b></a>
                         </div>
                     ` : ""}
-                    ${ (peer.supposed_type == "club" && !peer.is_messages_blocked) ? html`
-                        <div class="chat-actions-usr chat-actions-common" onClick="${(e) => {window.im.messenger.toggleClubMessages(e, false)}}">
+                    ${ (peer.supposed_type == "club" && !peer.is_club_messages_blocked) ? html`
+                        <div class="chat-actions-usr chat-actions-common" onClick="${(e) => {peer.toggleClubMessages(e, false)}}">
                             <a><b>${tr("group_deny_messages")}</b></a>
                         </div>
                     ` : ""}
