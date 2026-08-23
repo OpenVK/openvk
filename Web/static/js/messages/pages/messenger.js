@@ -440,10 +440,12 @@ export class Messenger {
     }
 
     cancelEdit(render = true) {
-        this.editMsg = null;
+        window.im.messenger.editMsg = null;
+        const win = this.getWindow();
         this._clearAttachments();
 
         if (this.prevDraft != null) {
+            win.setCurrentText(this.prevDraft);
             this.currentDraft = String(this.prevDraft);
             this.prevDraft = null;
         }
@@ -622,6 +624,7 @@ export class MessengerPage extends IMPage {
     onEditButtonClick(e, msg) {
         window.im.messenger.editMsg = msg;
         if (msg.text.length > 0) {
+            window.im.messenger.prevDraft = String(window.im.messenger.currentDraft || "");
             window.im.messenger.currentDraft = msg.text;
         }
 

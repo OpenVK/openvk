@@ -821,7 +821,7 @@ export class ChatGeneralForm {
     }
 
     get is_saved_messages() {
-        return this.id === window.openvk.current_id;
+        return this.id === window.im.state.getId();
     }
 
     get gender() {
@@ -1097,6 +1097,47 @@ export class ChatGeneralForm {
 
     /* etc */
 
+    get is_club_messages_blocked() {
+        if (window.im.state.getId() < 0) {
+            return this.data.is_me_blocked == 1;
+        }
+        return this.data.is_messages_blocked == 1;
+    }
+
+    async toggleClubMessages(event, action = true) {
+        let state = action == "enable";
+        // true - enable, false - forbid
+        let r = null;
+        const currentId = window.im.state.getId();
+        const params = {};
+        event.target.classList.add("lagged");
+        if (currentId < 0) {
+            params["group_id"] = Math.abs(currentId);
+            params["owner_id"] = Math.abs(this.id);
+            if (state) {
+                r = await window.OVKAPI.call("groups.unban", params);
+                this.data.is_me_blocked = 0;
+            } else {
+                r = await window.OVKAPI.call("groups.ban", params);
+                this.data.is_me_blocked = 1;
+            }
+        } else {
+            params["group_id"] = Math.abs(this.id);
+            if (state) {
+                r = await window.OVKAPI.call("messages.allowMessagesFromGroup", params);
+                this.data.is_messages_blocked = 0;
+            } else {
+                r = await window.OVKAPI.call("messages.denyMessagesFromGroup", params);
+                this.data.is_messages_blocked = 1;
+            }
+        }
+
+        event.target.classList.remove("lagged");
+
+        window.im.getTab("contact").render_class.update();
+        window.im.messenger.update();
+    }
+
     // members
 
     _hasLoadedMembers() {
@@ -1153,10 +1194,6 @@ export class ChatMessage {
 
     _guessSender() {
         this.data.sender = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(this.data.from_id);
-    }
-
-    get is_club_messages_blocked() {
-        return this.data.is_messages_blocked == 1;
     }
 
     get sent() {
@@ -1560,15 +1597,5 @@ export class ChatMessage {
         }
 
         return true;
-    }
-
-    async toggleClubMessages(event, state = true) {
-        // true - enable, false - forbid
-        const currentId = window.im.state.getId();
-        if (currentId < 0) {
-
-        } else {
-            //await window.OVKAPI.call();
-        }
     }
 }

@@ -12,6 +12,7 @@ use openvk\Web\Models\Entities\{Photo, Message, Club as ClubEnt};
 use openvk\Web\Models\Entities\Messages\Chat;
 use openvk\VKAPI\Handlers\{Users as APIUsers, Groups as APIClubs};
 use openvk\VKAPI\Utils\Uploader;
+use openvk\Web\Models\Entities\Relationships\Blacklist;
 
 final class Messages extends VKAPIRequestHandler
 {
@@ -753,6 +754,8 @@ final class Messages extends VKAPIRequestHandler
         $this->willExecuteWriteAction();
         $this->ensureBrokerActive();
 
+        $this->fail(-5, "Method is disabled");
+
         if (empty($title)) {
             $this->fail(100, "One of the parameters is missing: title");
         }
@@ -1309,11 +1312,37 @@ final class Messages extends VKAPIRequestHandler
 
     public function allowMessagesFromGroup(int $group_id)
     {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $club = (new ClubRepo())->get($group_id);
+        $user = $this->getUser();
+
+        if (!$club || !$club->canBeViewedBy($user)) {
+            $this->fail(15, "Access denied");
+        }
+
+        $blacklist = new Blacklist($user);
+        $blacklist->unban($club);
+
         return 1;
     }
 
     public function denyMessagesFromGroup(int $group_id)
     {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $club = (new ClubRepo())->get($group_id);
+        $user = $this->getUser();
+
+        if (!$club || !$club->canBeViewedBy($user)) {
+            $this->fail(15, "Access denied");
+        }
+
+        $blacklist = new Blacklist($user);
+        $blacklist->ban($club);
+
         return 1;
     }
 

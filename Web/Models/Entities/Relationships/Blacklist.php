@@ -25,8 +25,12 @@ class Blacklist
         return $this->entity;
     }
 
-    public function isBanned(User $entity2): bool
+    public function isBanned(?RowModel $entity2): bool
     {
+        if (!$entity2) {
+            return false;
+        }
+
         $relations = $this->context->table("blacklist_relations")->where([
             "author" => $this->entity->getRealId(),
             "target" => $entity2->getRealId(),

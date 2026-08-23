@@ -167,6 +167,8 @@ window.router = new class {
 
         this.applyTweaks();
 
+        document.body.classList.remove('no_footer');
+
         if (window.im) {
             window.im.state._toggleScrollMode(false);
             await window.im.state._resolvePosition();

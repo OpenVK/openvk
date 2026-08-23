@@ -152,7 +152,7 @@ export const ConversationItem = ({ conv }) => {
     const last_msg = conv.last_message;
     const has_activity = conv.hasActivity();
     const cls1 = ["crp-entry"];
-    if (last_msg && (last_msg.data.from_id != conv.peer.id || conv.peer.is_saved_messages == true)) {
+    if (last_msg && (last_msg.data.from_id == conv.peer.id || conv.peer.is_saved_messages == true)) {
         cls1.push("crp-entry-replied-same");
     }
     if (!conv.is_read) {
@@ -195,7 +195,7 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
             <div id="conversations-search-bar">
                 <input class="search_input" type="text" placeholder="${tr('search_messages')}" onChange=${onSearch} />
             </div>
-            ${ !is_group ? html`<input type="button" class="button" value="${tr('create_chat')}" onClick=${onCreateChat} />` : "" }
+            ${ !is_group ? html`<input style="display: none;" type="button" class="button" value="${tr('create_chat')}" onClick=${onCreateChat} />` : "" }
         </div>
         <div class="crp-list">
             ${conversations.length > 0 ? conversations.map((conv) => html`<${ConversationItem} conv=${conv} />`) : html`<${ConversationsListError} is_group=${is_group} />`}
@@ -219,7 +219,7 @@ export const TabBar = ({ tabs, activeTab, onTabSelect }) => {
 
     const showContactButton = activeTabName == "messenger";
     const showFriendsButton = !window.im.state.is_group && activeTabName != "friends";
-    const showSettingsButton = !window.im.state.is_group && activeTabName == "conversations";
+    const showSettingsButton = window.im.state.is_compact_mode_enabled || !window.im.state.is_group && activeTabName == "conversations";
     const showSpecActions = showSettingsButton || showContactButton || showFriendsButton;
 
     return html`
@@ -256,6 +256,7 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
     const avatar = peer.avatar_big || peer.data.photo_50 || '';
     const has_avatar = true;
     const is_from_chat = fromConvo.supposed_type == "chat" && peer.supposed_type != "chat";
+    const is_club_related = peer.supposed_type == "club" || window.im.state.getOperator().supposed_type == "club";
 
     return html`
     <div class="peer-window">
@@ -308,24 +309,24 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                         <a><b>${tr("convo_action_kick")}</b></a>
                     </div>
                     `}
-                    ${ (peer.supposed_type == "club" && peer.is_club_messages_blocked) ? html`
-                        <div class="chat-actions-usr chat-actions-common" onClick="${(e) => {peer.toggleClubMessages(e, true)}}">
-                            <a><b>${tr("group_allow_messages")}</b></a>
+                    ${ (is_club_related && peer.is_club_messages_blocked) ? html`
+                        <div class="chat-actions-usr chat-actions-common" onClick="${async (e) => {await peer.toggleClubMessages(e, "enable")}}">
+                            <a>${tr("group_allow_messages")}</a>
                         </div>
                     ` : ""}
-                    ${ (peer.supposed_type == "club" && !peer.is_club_messages_blocked) ? html`
-                        <div class="chat-actions-usr chat-actions-common" onClick="${(e) => {peer.toggleClubMessages(e, false)}}">
-                            <a><b>${tr("group_deny_messages")}</b></a>
+                    ${ (is_club_related && !peer.is_club_messages_blocked) ? html`
+                        <div class="chat-actions-usr chat-actions-common" onClick="${async (e) => {await peer.toggleClubMessages(e, "disable")}}">
+                            <a>${tr("group_deny_messages")}</a>
                         </div>
                     ` : ""}
                 </div>
                 <b> ${tr("chat_media")} </b>
                 <div class="chat-tab-column chat-actions-2 chat-actions-common chat-actions-media">
-                    <a onClick=${(e) => { window.im.messenger.viewMedia("pinned") }}><b>${tr("chat_pinned")}</b></a>
-                    <a onClick=${(e) => { window.im.messenger.viewMedia("photos") }}><b>${tr("chat_media_photo")}</b> <span>100</span></a>
-                    <a onClick=${(e) => { window.im.messenger.viewMedia("videos") }}><b>${tr("chat_media_video")}</b> <span>100</span></a>
-                    <a onClick=${(e) => { window.im.messenger.viewMedia("audios") }}><b>${tr("chat_media_audio")}</b> <span>100</span></a>
-                    <a onClick=${(e) => { window.im.messenger.viewMedia("documents") }}><b>${tr("chat_media_doc")}</b> <span>100</span></a>
+                    <a onClick=${(e) => { window.im.messenger.viewMedia("pinned") }}>${tr("chat_pinned")}</a>
+                    <a style="display:none;" onClick=${(e) => { window.im.messenger.viewMedia("photos") }}>${tr("chat_media_photo")} <span>100</span></a>
+                    <a style="display:none;" onClick=${(e) => { window.im.messenger.viewMedia("videos") }}>${tr("chat_media_video")} <span>100</span></a>
+                    <a style="display:none;" onClick=${(e) => { window.im.messenger.viewMedia("audios") }}>${tr("chat_media_audio")} <span>100</span></a>
+                    <a style="display:none;" onClick=${(e) => { window.im.messenger.viewMedia("documents") }}>${tr("chat_media_doc")} <span>100</span></a>
                 </div>
             </div>
             ${ peer.supposed_type == "chat" ? html`

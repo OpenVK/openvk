@@ -539,6 +539,7 @@ class IMState {
             if (!firstLoad) {
                 window.im_class.insertIn(document.querySelector('.page_content'), n_url.searchParams.get("as"));
             }
+            u('body').addClass("no_footer");
 
             await this._resolveState();
             this.link.fastChats.hide();

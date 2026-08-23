@@ -269,6 +269,10 @@ h1 {
     white-space: nowrap;
 }
 
+body.no_footer .navigation_footer {
+    display: none;
+}
+
 .navigation_footer {
     padding: 0;
 }
