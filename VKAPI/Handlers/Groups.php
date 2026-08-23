@@ -325,13 +325,13 @@ final class Groups extends VKAPIRequestHandler
         }
     }
 
-    public function ban(int $group_id, int $user_id, string $reason = null, int $until = 0)
+    public function ban(int $group_id, int $owner_id, int $reason = 0, int $end_date = 0, string $comment = "", bool $comment_visible = true)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
 
         $club = (new ClubsRepo())->get($group_id);
-        $user = (new UsersRepo())->get($user_id);
+        $user = (new UsersRepo())->get($owner_id);
 
         if (!$club || !$club->canBeViewedBy($this->getUser())) {
             $this->fail(15, "Access denied");
@@ -350,18 +350,18 @@ final class Groups extends VKAPIRequestHandler
         }
 
         $blacklist = new Blacklist($club);
-        $blacklist->ban($user, $reason ?? null, $until > 0 ? $until : null);
+        $blacklist->ban($user, $comment ?? null, $end_date > 0 ? $end_date : null);
 
         return 1;
     }
 
-    public function unban(int $group_id, int $user_id)
+    public function unban(int $group_id, int $owner_id)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
 
         $club = (new ClubsRepo())->get($group_id);
-        $user = (new UsersRepo())->get($user_id);
+        $user = (new UsersRepo())->get($owner_id);
 
         if (!$club || !$club->canBeViewedBy($this->getUser())) {
             $this->fail(15, "Access denied");

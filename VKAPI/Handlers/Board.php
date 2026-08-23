@@ -69,6 +69,8 @@ final class Board extends VKAPIRequestHandler
         $this->requireUser();
         $this->willExecuteWriteAction();
 
+        $this->fail(-5, "Method is disabled");
+
         if ($chat_id > 2000000000) {
             $chat_id = $chat_id - 2000000000;
         }

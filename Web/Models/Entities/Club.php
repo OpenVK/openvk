@@ -595,6 +595,9 @@ class Club extends RowModel
 
     public function toVkApiStruct(?User $user = null, string $fields = ''): object
     {
+        $blacklist = new Blacklist($this);
+        $blacklist2 = $user ? new Blacklist($user) : null;
+
         $res = (object) [];
 
         $res->id          = $this->getId();
@@ -606,8 +609,9 @@ class Club extends RowModel
         $res->is_admin    = $user ? (int) $this->canBeModifiedBy($user) : 0;
         $res->deactivated = null;
         $res->can_access_closed = 1;
-        $res->is_messages_blocked = 0;
-        $res->can_message = 0;
+        $res->is_me_blocked = $user ? (int) $blacklist->isBanned($user) : 0;
+        $res->is_messages_blocked = $user ? (int) $blacklist2->isBanned($this) : 0;
+        $res->can_message = $res->is_messages_blocked == 0 && $res->is_messages_blocked == 0;
 
         if (!is_array($fields)) {
             $fields = explode(',', $fields);

@@ -1897,7 +1897,7 @@ class User extends RowModel
 
         foreach ($sources as $source) {
             $entity_id = (int) $source->target ;
-            $entity = (new Users())->get($entity_id);
+            $entity = get_entity_by_id($entity_id);
             if (!$entity) {
                 continue;
             }
