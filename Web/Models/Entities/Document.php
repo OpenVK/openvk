@@ -13,7 +13,7 @@ use Chandler\Database\DatabaseConnection;
 class Document extends Media
 {
     protected $tableName     = "documents";
-    protected $shortName     = "doc";
+    public $shortName        = "doc";
     protected $fileExtension = "gif";
     protected $containsContextColumns = true;
     private $tmp_format = null;

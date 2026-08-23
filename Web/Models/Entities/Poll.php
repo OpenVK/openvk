@@ -17,7 +17,7 @@ use openvk\Web\Models\Exceptions\InvalidOptionException;
 class Poll extends Attachable
 {
     protected $tableName = "polls";
-    protected $shortName = "poll";
+    public $shortName    = "poll";
 
     private $choicesToPersist = [];
 

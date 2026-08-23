@@ -200,8 +200,6 @@ async function imSwitchCurrent() {
     });
 
     function makeItem(item) {
-        console.log(item)
-
         msg.getNode().find("#_switch_list").append(`
         <div data-id="${item.id}" class="entity_vertical_list_item scroll_node">
             <div class="first_column">
@@ -226,11 +224,9 @@ async function imSwitchCurrent() {
         e.preventDefault();
 
         const eid = Number(e.target.closest(".entity_vertical_list_item").dataset.id);
-        const new_im = window.im_variants.getForX(eid);
         msg.close();
 
         await window.im_class.insertIn(container, eid > 0 ? null : eid);
-        console.log(new_im, eid)
     })
 }
 

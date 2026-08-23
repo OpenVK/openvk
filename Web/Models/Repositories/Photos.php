@@ -49,11 +49,22 @@ class Photos
 
     public function getByOwnerAndVIDUnsafe(int $owner, int $vId): ?Photo
     {
-        $photo = $this->photos->where([
-            "owner"      => $owner,
-            "virtual_id" => $vId,
+        $photo = null;
+
+        if ($owner > 0) {
+            $photo = $this->photos->where([
+                "owner"      => $owner,
+                "virtual_id" => $vId,
+            ]);
+        } else {
+            $photo = $this->photos->where([
+                "context_id"  => $owner,
+                "context_vid" => $vId,
+            ]);
+        }
+
+        $photo = $photo->where([
             "system"     => 0,
-            "private"    => 0,
         ])->fetch();
 
         return $this->toPhoto($photo);
@@ -61,22 +72,17 @@ class Photos
 
     public function getByOwnerAndVID(int $owner, int $vId, ?string $access_key = null): ?Photo
     {
-        $photo = $this->photos->where([
-            "owner"      => $owner,
-            "virtual_id" => $vId,
-            "system"     => 0,
-        ])->fetch();
+        $photo = $this->getByOwnerAndVIDUnsafe($owner, $vId);
 
         if (is_null($photo)) {
             return null;
         }
 
-        $n_photo = new Photo($photo);
-        if (!$n_photo->checkAccessKey($access_key)) {
+        if (!$photo->checkAccessKey($access_key)) {
             return null;
         }
 
-        return $n_photo;
+        return $photo;
     }
 
     public function getEveryUserPhoto(User $user, int $offset = 0, int $limit = 10): \Traversable

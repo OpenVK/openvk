@@ -40,13 +40,16 @@ export class ConversationsPage extends IMPage {
         });
     }
 
+    updUrl() {
+        const url = new URL(location.href);
+        url.searchParams.delete("sel");
+        url.searchParams.delete("joinByTopic");
+        window.im.state._pushState(url.toString());
+    }
+
     render(container) {
         this.getNode().addClass("page-conversations");
         const convs = window.im.conversations.convs;
-
-        const url = new URL(location.href);
-        url.searchParams.delete("sel");
-        window.im.state._pushState(url.toString());
 
         render(html`
         <${ConversationListView}
@@ -165,7 +168,6 @@ export class Conversations {
 
     async loadNext() {
         let convs = await this.getConversations(this.loaded_convs_count);
-        console.log(convs)
         this._appendConvs(convs);
     }
 
@@ -175,7 +177,7 @@ export class Conversations {
         console.log("Trying to find convo with id", id)
         const _l = this.all_convs.filter((itm) => itm.peer.id == id);
         if (_l[0] == undefined) {
-            throw Error('Not found chat');
+            throw Error('Not found chat, id: ' + String(id));
         }
         return _l[0];
     }
@@ -223,7 +225,6 @@ export class Conversation {
             const a = Object.entries(this.current_activity ?? {});
 
             a.forEach(item => {
-                console.log(item[1])
                 if (item[1].conv) {
                     names.push(item[1].conv.peer.name);
                 }
@@ -245,8 +246,6 @@ export class Conversation {
                     s = tr("messenger_typing_other", names.length)
                     break
             }
-
-            console.log(s, names)
         } else {
             const v = Object.values(this.current_activity);
 
@@ -269,24 +268,20 @@ export class Conversation {
         const REMOVE_TYPING_TIMEOUT = 5000;
 
         for (const item of user_ids) {
-            console.log(item)
             const val = {
                 "variant": variant,
                 "conv": await window.im.conversations._findConvFromApi(Number(item))
             };
 
-            console.log(val);
             this.current_activity[item] = val;
         }
 
-        console.log("this.current_activity", this.current_activity);
         window.im.messenger.update();
 
         this.activity_updated = new Date();
         const old = new Date(this.activity_updated);
 
         setTimeout(() => {
-            console.log(this.activity_updated.getTime(), old.getTime())
             if (this.activity_updated.getTime() == old.getTime()) {
                 console.info("IM | Conversations | Wiped activity for ", this, "!")
                 this.current_activity = {};

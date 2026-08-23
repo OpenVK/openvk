@@ -16,7 +16,7 @@ use Nette\Utils\Image;
 class Photo extends Media
 {
     protected $tableName     = "photos";
-    protected $shortName     = "photo";
+    public $shortName        = "photo";
     protected $fileExtension = "jpeg";
     protected $containsContextColumns = true;
 

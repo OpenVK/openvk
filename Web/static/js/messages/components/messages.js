@@ -142,6 +142,11 @@ export class MessageChunk {
             'fields': ChatGeneralForm.BASE_FIELDS,
         };
 
+        const operator = window.im.state.getOperator();
+        if (operator && operator.supposed_type == "club") {
+            params["group_id"] = Math.abs(operator.id);
+        }
+
         Object.assign(params, data);
         // No anchor = start from the very newest; drop the param.
         const anchored = params.start_message_id != null;
@@ -156,7 +161,7 @@ export class MessageChunk {
             messages.profiles,
             messages.groups,
             (item) => item.from_id,
-                        (item, author) => { item.sender = new ChatGeneralForm(author); },
+            (item, author) => { item.sender = new ChatGeneralForm(author); },
             (item, arr) => { arr.push(new ChatMessage(item)); }
         );
 
@@ -332,7 +337,6 @@ export class Chunks {
 
     /** Messages grouped into DayChunk views, chronological. */
     getDayDividedMessages() {
-        console.log("getDayDividedMessages");
         if (this._cachedDays != undefined) return this._cachedDays;
 
         const dayChunks = [];
@@ -616,7 +620,7 @@ export class DayChunk {
 export class ChatGeneralForm {
     static CHAT_RUBICON = 2000000000;
     static MESSAGES_PER_PAGE = 20;
-    static BASE_FIELDS = 'photo_100,photo_200,photo_max,last_seen,photo_id,status,sex,can_write_private_message,can_invite,followers_count';
+    static BASE_FIELDS = 'photo_100,photo_200,photo_max,last_seen,photo_id,status,sex,can_write_private_message,can_invite,followers_count,is_messages_blocked';
     static SAVED_MESSAGES_AVATAR = "/assets/packages/static/openvk/img/im/saved_messages.png";
     static CHAT_NO_AVATAR = "/assets/packages/static/openvk/img/im/chat_meaningless.jpg";
 
@@ -1012,7 +1016,7 @@ export class ChatGeneralForm {
         };
 
         if (window.im.usage_type == "group") {
-            datas["group_id"] = window.im.state.getOperator().id;
+            datas["group_id"] = Math.abs(window.im.state.getOperator().id);
         }
 
         if (reply_to != null) {
@@ -1149,6 +1153,10 @@ export class ChatMessage {
 
     _guessSender() {
         this.data.sender = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(this.data.from_id);
+    }
+
+    get is_messages_blocked() {
+        return this.data.is_messages_blocked == 1;
     }
 
     get sent() {
@@ -1315,7 +1323,6 @@ export class ChatMessage {
                 case "photo":
                     f += `<img class="conv_prev_img" src="${c.photo.photo_75}">`;
 
-                    console.log(this.data.text)
                     if (this.data.text.length == 0) {
                         f += get_attachment_text(this.data.attachments[0]);
                     }
@@ -1334,7 +1341,7 @@ export class ChatMessage {
         return f;
     }
 
-    static async fromEvent(event) {
+    static async fromEvent(event, im = null) {
         const [, id, flags, peer, ts, subject, text, attachments, randomId] = event;
         let new_attachments = null;
         let reply_message = null;
@@ -1375,7 +1382,7 @@ export class ChatMessage {
         msg._guessSender();
 
         // temp fix
-        if (msg.peer_id == window.openvk.current_id) {
+        if (im && msg.peer_id == im.state.getOperator().id) {
             console.error("IM | WRONG PEER FROM EVENT!!!!!! USING ATTACHMENTS.FROM")
             msg.data.peer_id = Number(attachments.from);
         }
@@ -1429,7 +1436,7 @@ export class ChatMessage {
         }
 
         // return this.data.can_edit;
-        return this.data.from_id === window.openvk.current_id;
+        return this.data.from_id === window.im.state.getId();
     }
 
     canPin(club = null) {
@@ -1495,13 +1502,19 @@ export class ChatMessage {
     async edit(text, attachments = []) {
         let resp = null;
         try {
-            resp = await window.OVKAPI.call("messages.edit", {
+            const params = {
                 "peer_id": this.peer_id,
                 "message_id": this.id,
                 "message": text,
                 "keep_forward_messages": 1,
                 "attachment": attachments.join(",")
-            });
+            };
+            const g = window.im.state.getId();
+            if (g < 0) {
+                params["group_id"] = Math.abs(g);
+            }
+
+            resp = await window.OVKAPI.call("messages.edit", params);
         } catch (e) {
             fastError(String(e));
             console.error(e);
@@ -1522,11 +1535,16 @@ export class ChatMessage {
             method = "unpin";
         }
 
+        const g = window.im.state.getId();
         try {
-            let resp = await window.OVKAPI.call("messages." + method, {
+            const params = {
                 "peer_id": this.peer_id,
                 "message_id": this.id,
-            });
+            };
+            if (g < 0) {
+                params["group_id"] = Math.abs(g);
+            }
+            let resp = await window.OVKAPI.call("messages." + method, params);
         } catch (e) {
             fastError(String(e));
             console.error(e);

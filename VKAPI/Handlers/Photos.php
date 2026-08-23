@@ -425,7 +425,11 @@ final class Photos extends VKAPIRequestHandler
         if (empty($photo_ids)) {
 
             if ($album_id == "profile") {
-                $album = (new Albums())->getUserAvatarAlbum((new UsersRepo())->get($owner_id));
+                if ($owner_id > 0) {
+                    $album = (new Albums())->getUserAvatarAlbum((new UsersRepo())->get($owner_id));
+                } else {
+                    $album = (new Albums())->getClubAvatarAlbum((new Clubs())->get(abs($owner_id)));
+                }
             } else {
                 $album = (new Albums())->getAlbumByOwnerAndId($owner_id, intval($album_id));
             }

@@ -401,9 +401,14 @@ class Viewer {
         this._removeW();
     }
 
+    shouldPushW() { return true; }
     _pushW(id) {
         if (window.messagebox_stack.length > 1) {
-            console.error("i think there is a common \"w\".");
+            console.error("viewers | i think there is a common \"w\".");
+            return;
+        }
+        if (!this.shouldPushW()) {
+            console.error("viewers | sorry but not pushing ?w.");
             return;
         }
 

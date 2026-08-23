@@ -1515,6 +1515,8 @@
 "chat_media_video" = "Видео";
 "chat_media_audio" = "Аудио";
 "chat_media_doc" = "Документы";
+"group_deny_messages" = "Запретить сообщения";
+"group_allow_messages" = "Разрешить сообщения";
 
 "error_user_forbid_invites" = "Пользователь запретил добавлять себя в беседы.";
 "error_chat_not_enough_friends" = "В беседе должно быть как минимум два других пользователя";

@@ -521,7 +521,7 @@ window.addEventListener('popstate', (e) => {
 window.addEventListener('DOMContentLoaded', () => {
     window.router.applyTweaks();
 
-    if (window.im && !window.im.fastChats.isInserted) {
+    if (window.im && window.im.state.isFastchat && !window.im.fastChats.isInserted) {
         window.im.state._resolvePosition(null, null, true);
     }
 
