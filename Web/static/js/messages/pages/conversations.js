@@ -118,6 +118,7 @@ export class Conversations {
     }
 
     async getConversations(offset = 0) {
+        console.trace();
         const params = {
             extended: 1,
             count: this.CONVERSATIONS_PER_PAGE,

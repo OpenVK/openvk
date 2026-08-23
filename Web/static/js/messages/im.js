@@ -31,6 +31,7 @@ export class InstantMessagesAndRelated {
         this.state = new IMState(this, group_id);
 
         this.isReady = false;
+        this.is_initing = false;
         this.conversations = new Conversations();
         this.messenger = new Messenger();
         this.friends = new Friends();
@@ -52,6 +53,12 @@ export class InstantMessagesAndRelated {
     }
 
     async init() {
+        if (this.is_initing == true) {
+            return;
+        }
+
+        this.is_initing = true;
+        console.trace();
         console.log("IM | Init", this.state);
 
         if (window.OVKAPI == null) {
@@ -73,6 +80,7 @@ export class InstantMessagesAndRelated {
         //this.updateCounter(this.lp.getFirstCounter());
 
         this.isReady = true;
+        this.is_initing = false;
         console.log("IM | Inited");
     }
 

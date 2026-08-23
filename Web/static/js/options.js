@@ -249,6 +249,13 @@ window.tweaks = [
         addScrollHook(wall_compact)
         wall_compact()
     }),
+    new TweakOption("wall.disable_globalfeed", function () {
+        this.customCSS(`
+            .feed_switcher #ki {
+                display: none;
+            }
+        `);
+    }),
     new TweakOption("wall.words_censor", function () {
         this.customCSS(`
             .hidden_because_of_word {
