@@ -458,6 +458,10 @@ export class Messenger {
     isEditing() {
         return this.editMsg != null;
     }
+
+    async goToMessage(msg) {
+        console.log(msg)
+    }
 }
 
 export class MessengerPage extends IMPage {

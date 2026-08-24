@@ -1,5 +1,6 @@
 import { html, render } from './render.js';
 import { ChatGeneralForm } from './messages.js';
+import { MessageBubble } from './message.js';
 
 export const FriendsPageTemplate = ({ friends, count, referrer, onFriendClick, onSubmit, isSelected, onLoadMore, onTitleChangeClick, onSearch }) => {
     const isChatCreation = referrer == "chat_creation";
@@ -68,7 +69,7 @@ export const FriendsPageTemplate = ({ friends, count, referrer, onFriendClick, o
   `;
 };
 
-export const SearchPageTemplate = ({ q, c }) => {
+export const SearchPageTemplate = ({ q, c, onSearch }) => {
     const query = q;
     const count = c.total_count;
     const items = c.items;
@@ -77,14 +78,14 @@ export const SearchPageTemplate = ({ q, c }) => {
     return html`
         <div id="search-page-im">
             <div class="search-up">
-                <input class="search_input" onChange=${(e) => { window.im.conversations.getWindow()._onMessagesSearch(e, true) }} type="text" default="${tr('search_messages')}" value="${query}" />
+                <input class="search_input" onChange=${(e) => { onSearch(e, true) }} type="text" default="${tr('search_messages')}" value="${query}" />
             </div>
             <div class="search-summary">
                 <b>${tr("messages_search_count", count)}</b>
             </div>
             <div>
                 ${items.map((msg) => {
-                    return html`<${MessageBubble} msg=${msg} />`
+                    return html`<${MessageBubble} msg=${msg} fromSearch=1 />`
                 })}
             </div>
             ${loaded_count < count && html`

@@ -21,17 +21,12 @@ export class ConversationsPage extends IMPage {
 
     async _onMessagesSearch(e, from_tab = false) {
         const q = String(e.target.value);
-
         e.target.value = "";
 
-        if (from_tab == false) {
-            window.im.openTabByName("search", true, {
-                "q": q
-            });
-        } else {
-            const tab = window.im.getTab("search");
-            await tab.render_class.update();
-        }
+        console.log(q)
+        window.im.openTabByName("search", true, {
+            "q": q
+        });
     }
 
     _chatCreationModal() {
@@ -118,7 +113,6 @@ export class Conversations {
     }
 
     async getConversations(offset = 0) {
-        console.trace();
         const params = {
             extended: 1,
             count: this.CONVERSATIONS_PER_PAGE,
