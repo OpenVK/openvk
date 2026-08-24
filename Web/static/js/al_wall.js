@@ -453,7 +453,7 @@ class PhotoViewer extends Viewer {
             return;
         }
 
-        if (this.context.type == "chat" || this.context.type == null || (this.context.not_load_comments || false) == true) {
+        if (this.context.type == "chat" || this.mode == "tg" || this.context.type == null || (this.context.not_load_comments || false) == true) {
             if (window.im && window.im.state.is_debug) {
                 this._getCurrentEntryCacheNode().last().innerHTML = itemId;
             }
