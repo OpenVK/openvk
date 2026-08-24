@@ -190,6 +190,10 @@ window.router = new class {
         }
     }
 
+    isAjaxDisabled() {
+        return localStorage.getItem('ux.disable_ajax_routing') == "1";
+    }
+
     checkUrl(url) {
         if(window.openvk.disable_ajax == 1) {
             return false

@@ -1,5 +1,6 @@
 :root {
     --messenger-width: 628px;
+    --messenger-fastchat-width: 290px;
 }
 
 body.no-scroll #chat-page {
@@ -1414,7 +1415,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     position: fixed;
     bottom: 0px;
     right: 20px;
-
+    z-index: 199;
 }
 
 #fastchats_related, #fastchats_related #fastchats_chat {
@@ -1427,8 +1428,8 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 
 #fastchats_related #fastchats .fastchat_entrypoint {
     width: 45px;
-    height: 35px;
-    background: var(--bg-selected-mid);
+    height: 40px;
+    background: #ddd6e4;
 }
 
 #fastchats_related #fastchats {
@@ -1451,12 +1452,156 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 }
 
 #fastchats_related #fastchats_chat {
-    padding-right: 45px;
+    padding-right: 50px;
+    transition: opacity 200ms ease-in;
+}
+
+.fading_state1 {
+    opacity: 1;
+}
+
+.fading_state2 {
+    opacity: 0;
 }
 
 #fastchats_related #fastchats_chat #wrap {
-    width: 290px;
+    width: var(--messenger-fastchat-width);
     height: 340px;
     background: var(--bg-page);
     overflow-y: auto;
+    border: 1px solid var(--brand);
+    box-shadow: 0px 2px 2px 0px #00000078;
+    scrollbar-width: thin;
+}
+
+#fastchats_related #fastchats_chat #fastchat_head {
+    height: 40px;
+    background: var(--brand);
+    border-radius: 3px 3px 0px 0px;
+    padding: 14px 13px;
+    box-sizing: border-box;
+    user-select: none;
+    display: flex;
+    justify-content: space-between;
+}
+
+#fastchats_related #fastchats_chat #fastchat_head .f_act {
+    width: 15px;
+    height: 15px;
+    display: block;
+    background: black;
+    padding: 0;
+}
+
+#fastchats_related #fastchats_chat #fastchat_head b {
+    color: var(--text-rev);
+}
+
+#fastchats_related #fastchats_chat #im_page_tabs,
+#fastchats_related #fastchats_chat #conversations-top-buttons,
+#fastchats_related #fastchats_chat .messages--peers-tabs,
+#fastchats_related #fastchats_chat .post-buttons .ava,
+#fastchats_related #fastchats_chat .crp-entry--message {
+    display: none;
+}
+
+#fastchats_related #fastchats_chat .crp-entry--image img {
+    width: 35px;
+    height: 35px;
+    object-fit: cover;
+    object-position: top;
+}
+
+#fastchats_related #fastchats_chat .crp-entry--image {
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+#fastchats_related #fastchats_chat .messenger-app--input {
+    display: block;
+    padding: 10px 20px;
+    width: var(--messenger-fastchat-width);
+}
+
+#fastchats_related #fastchats_chat .messenger-app--input .messenger-app--input---messagebox {
+    width: 100%;
+}
+
+#fastchats_related #fastchats_chat .messages--actions {
+    position: absolute;
+    top: 41px;
+    width: var(--messenger-fastchat-width);
+    padding: 4px 4px;
+    height: unset;
+}
+
+#fastchats_related #fastchats_chat .messages--actions.shown {
+    display: block;
+}
+
+#fastchats_related #fastchats_chat .messages--actions > div {
+    display: inline-block;
+}
+
+#fastchats_related #fastchats_chat .messages--actions .message-tab {
+    padding: 1px 3px;
+    font-size: 11px;
+}
+
+#fastchats_related #fastchats_chat .messenger-app--messages---message > .messenger-app--messages---message--wrap {
+    padding: 0px 15px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#fastchats_related #fastchats_chat .messenger-app--messages---message ._content {
+    padding-left: 7px;
+    width: 100%;
+}
+
+#fastchats_related #fastchats_chat .messenger-app--messages---message .actions-2 {
+    right: 0px;
+    margin-right: 15px;
+}
+
+#fastchats_related #fastchats_chat .messenger-app--messages---message .time {
+    user-select: none;
+}
+
+#fastchats_related #fastchats_chat .messenger-app--messages---message.same-author .time {
+    left: 13px;
+}
+
+#fastchats_related #fastchats_chat .messenger-app--messages---message--wrap .checkmark {
+    margin: 10px 0px 0px 0px;
+}
+
+#fastchats_related #fastchats_chat .peer-window {
+    width: var(--messenger-fastchat-width);
+    flex-direction: column;
+    padding: 0px 13px;
+}
+
+#fastchats_related #fastchats_chat .peer-window .back-side {
+    margin-right: 0px;
+    margin-left: -13px;
+    width: var(--messenger-fastchat-width);
+}
+
+#fastchats_related #fastchats_chat .peer-window .back-side a {
+    padding: 13px 12px;
+}
+
+#fastchats_related #fastchats_chat .peer-window .peer-side {
+    width: 100%;
+}
+
+#fastchats_related #fastchats_chat .peer-window .chat-btns {
+    margin: 0;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: unset;
+}
+
+#fastchats_related #fastchats_chat .messenger-app--messages---message--wrap .click-territory {
+    width: 16px;
 }

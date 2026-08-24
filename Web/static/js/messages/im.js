@@ -522,13 +522,16 @@ class IMState {
 
     async _resolvePosition(url = null, from_msg = false, firstLoad = false) {
         console.log("IM | _resolvePosition");
+        if (window.openvk.current_id == 0) {
+            return;
+        }
 
         if (!url) {
             url = location.href
         }
 
-        const n_url = new URL(url);
-        let should_fullsize = n_url.pathname == "/im";
+        const n_url = url ? new URL(url) : null;
+        let should_fullsize = n_url ? n_url.pathname == "/im" : false;
         if (from_msg) { should_fullsize = true; }
 
         if (should_fullsize) {
@@ -607,7 +610,7 @@ class YellowHeader {
 
     changeYellowHeader(text, append_switch_button = true) {
         if (window.im.state.isFastchat == true) {
-            // TODO
+            u("body #fastchats_chat #fastchat_head b").html(text);
             return;
         }
 
@@ -763,12 +766,21 @@ export class FastChats {
         u("body").append(`
         <div id="fastchats_related">
             <div id="fastchats_chat">
-                <div id="wrap"></div>    
+                <div id="fastchat_head">
+                    <b></b>
+
+                    <div style="display: flex;gap: 5px;">
+                        <span id="fastchat_reveal" class="f_act"></span>
+                        <span id="fastchat_close" class="f_act"></span>
+                    </div>
+                </div>
+                <div id="wrap"></div>
             </div>
             <div id="fastchats"></div>
         </div>`);
 
         this.update();
+        this.isInserted = true;
 
         window.im_class.insertIn(document.querySelector('#fastchats_related #fastchats_chat #wrap'), null, true);
     }
@@ -784,6 +796,11 @@ export class FastChats {
         u("body #fastchats_related").removeClass("shown");
     }
 
+    onEntryPointClick() {
+        this.toggleChatBar();
+        window.im.openTabByName("conversations");
+    }
+
     toggleChatBar() { 
         if(u("body #fastchats_related #fastchats_chat").hasClass("shown")) {
             this.hideChatBar();
@@ -791,11 +808,29 @@ export class FastChats {
             this.showChatBar();
         }
     };
-    showChatBar() { u("body #fastchats_related #fastchats_chat").addClass("shown"); }
-    hideChatBar() { u("body #fastchats_related #fastchats_chat").removeClass("shown"); }
+    showChatBar() {
+        u("body #fastchats_related #fastchats_chat").attr("style", "display:block;");
+        u("body #fastchats_related #fastchats_chat").addClass("fading_state1");
+        setTimeout(() => {
+            u("body #fastchats_related #fastchats_chat").removeClass("fading_state1");
+            u("body #fastchats_related #fastchats_chat").addClass("shown");
+        }, 200);
+    }
+    hideChatBar() {
+        u("body #fastchats_related #fastchats_chat").addClass("fading_state2");
+        setTimeout(() => {
+            u("body #fastchats_related #fastchats_chat").removeClass("fading_state2");
+            u("body #fastchats_related #fastchats_chat").removeClass("shown");
+        u("body #fastchats_related #fastchats_chat").attr("style", "");
+        }, 200);
+    }
 }
 
 (async () => {
+    if (window.openvk.current_id == 0) {
+        return;
+    }
+
     window.im_class = InstantMessagesAndRelated;
 
     if (window.im == null) {
@@ -805,4 +840,8 @@ export class FastChats {
     }
 
     await window.im.init();
+
+    if (!window.im.state.is_opened && window.router && !window.router.isAjaxDisabled()) {
+        window.im.state._resolvePosition(null);
+    }
 })()

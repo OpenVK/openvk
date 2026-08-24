@@ -827,14 +827,26 @@ export class MessengerPage extends IMPage {
     isAtEnd() { return false; }
     getScroll() { return document.documentElement.scrollTop; }
     _scrollTo(scroll_progress) {
+        if (scroll_progress == "end") {
+            if (window.im.state.isFastchat) {
+                scroll_progress = document.querySelector("#fastchats_related #fastchats_chat #wrap").scrollHeight;
+            } else {
+                scroll_progress = document.documentElement.scrollHeight;
+            }
+        }
+
         console.log("scrolling page to: ", scroll_progress);
-        document.documentElement.scroll({ top: scroll_progress });
+        if (window.im.state.isFastchat) {
+            document.querySelector("#fastchats_related #fastchats_chat #wrap").scroll({ top: scroll_progress });
+        } else {
+            document.documentElement.scroll({ top: scroll_progress });
+        }
     }
 
     _scrollToEnd() {
         console.log("scrolled page to the end");
 
-        this._scrollTo(document.documentElement.scrollHeight);
+        this._scrollTo("end");
     }
 
     scrollToMessage(msg, load_chunk_where_it_can_be = false) {
