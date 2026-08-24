@@ -108,7 +108,6 @@ final class Messages extends VKAPIRequestHandler
             if (method_exists($peer, 'isBanned') && $peer->isBanned()) {
                 $this->fail(18, "Recipient is banned");
             }
-            // TODO: Add deleted field to group
             if (method_exists($peer, 'isDeleted') && $peer->isDeleted()) {
                 $this->fail(18, "Recipient was deleted");
             }
@@ -118,6 +117,12 @@ final class Messages extends VKAPIRequestHandler
                 if (method_exists($peer, 'getPrivacyPermission')) {
                     if (!$peer->getPrivacyPermission('messages.write', $this->getUser())) {
                         $this->fail(945, "This chat is disabled because of privacy settings");
+                    }
+
+                    $relation = $peer->getSubscriptionStatus($this->getUser());
+
+                    if (($relation == 0 || $relation == 1) && \openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->getUser(), "messages.notfriends")) {
+                        $this->failTooOften("Limit exceed");
                     }
                 }
             }

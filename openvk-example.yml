@@ -94,6 +94,7 @@ openvk:
                         friends.outgoing_sub: 25
                         wall.post: 5000
                         gifts.send: 30
+                        messages.notfriends: 10
         blacklists:
             limit: 100
             applyToAdmins: true
