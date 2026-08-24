@@ -663,21 +663,25 @@ class ProfilesCache {
         this.cached_profiles = [];
     }
 
-    _addProfileCache(profile) {
+    _addProfileCache(profile, remove_current = true) {
         const similar = this._findCachedProfileById(profile.id);
         if (similar) {
+            if (remove_current == false) {
+                return;
+            }
+
             this.cached_profiles[this.cached_profiles.indexOf(similar)] = profile;
         } else {
             this.cached_profiles.push(profile);
         }
     }
 
-    _moveToProfileCache(profiles, groups) {
+    _moveToProfileCache(profiles, groups, remove_current = true) {
         profiles.forEach((profile) => {
-            this._addProfileCache(new ChatGeneralForm(profile));
+            this._addProfileCache(new ChatGeneralForm(profile), remove_current);
         });
         groups.forEach((group) => {
-            this._addProfileCache(new ChatGeneralForm(group));
+            this._addProfileCache(new ChatGeneralForm(group), remove_current);
         });
     }
 

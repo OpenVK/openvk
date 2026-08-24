@@ -11,7 +11,8 @@ function hideHead(msg, index, chunk) {
     return index > 0 && chunk.messages[index - 1].doHideHead(msg);
 }
 
-export const MessageBubble = ({ msg, index, chunk, page }) => {
+export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
+    const isSearchTpl = fromSearch == "1";
     const cls = [
         'messenger-app--messages---message',
         'messenger-layer',
@@ -21,6 +22,7 @@ export const MessageBubble = ({ msg, index, chunk, page }) => {
         msg.is_error ? 'msg-error' : '',
         msg.is_got_edited ? 'msg-edited' : '',
         msg.is_reply ? 'msg-reply' : '',
+        isSearchTpl ? 'msg-searched': 'msg-hoverable',
     ].filter(Boolean).join(' ');
 
     const has_postfix = msg.is_gift;
@@ -34,7 +36,12 @@ export const MessageBubble = ({ msg, index, chunk, page }) => {
     return html`
     <div class="${cls}"
         data-msg-id=${msg.id}
-        onMouseDown=${(e) => window.im?.messenger?.view.onMessageClick(msg, e)}>
+        onMouseDown=${(e) => { 
+            !isSearchTpl ? window.im?.messenger?.view.onMessageClick(msg, e) : null
+        }}
+        onClick=${(e) => {
+            isSearchTpl ? window.im.messenger.goToMessage(msg) : null
+        }}>
         <div class="messenger-app--messages---message--wrap">
             <div class="inlines click-territory">
                 <div class="checkmark"></div>
@@ -74,7 +81,7 @@ export const MessageBubble = ({ msg, index, chunk, page }) => {
                 </div>` : ""}
                 <div class="time">
                     ${msg.id != null && html`
-                    <span>${msg.readable_date}</span>
+                    <span>${isSearchTpl ? msg.conv_date + " " + msg.readable_date : msg.readable_date}</span>
                     `}
                 </div>
                 <p dangerouslySetInnerHTML=${{ __html: msg.text }} class="text" />

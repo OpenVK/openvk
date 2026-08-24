@@ -300,7 +300,12 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                 <b>${ tr("actions") }</b>
                 <div class="chat-tab-column">
                     ${ peer.can("view_invite_links") && html`<a>${tr("convo_invite_links")}</a>` }
-                    <a>${tr("convo_search_messages")}</a>
+                    <a onClick=${(e) => {
+                        window.im.openTabByName("search", true, {
+                            "q": "",
+                            "peer_id": peer.id
+                        })
+                    }}>${tr("convo_search_messages")}</a>
                     ${ window.im.state.is_debug ? html`
                         <a onClick=${(e) => { peer.showAsJson() }}>JSON</a>
                     ` : ""}

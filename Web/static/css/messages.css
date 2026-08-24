@@ -260,6 +260,7 @@ body.no-footer .page_footer {
     border-radius: 3px;
     margin-top: 20%;
     margin-left: 10%;
+    max-height: 50px;
 }
 
 .crp-entry--message---av,
@@ -391,13 +392,44 @@ body.no-footer .page_footer {
     position: relative;
 }
 
-.messenger-app--messages---message:hover .click-territory,
-.messenger-app--messages---message:hover .actions-2 {
+.messenger-app--messages---message.msg-searched {
+    cursor: pointer;
+    border-bottom: 1px solid var(--bg-slightly-border);
+    padding: 10px 0px 10px 0px;
+    margin-top: 0px;
+}
+
+.messenger-app--messages---message.msg-searched:hover {
+    background: var(--common-2);
+}
+
+.messenger-app--messages---message.msg-searched .click-territory,
+.messenger-app--messages---message.msg-searched .actions-2 {
+    display: none;
+}
+
+.messenger-app--messages---message.msg-hoverable:hover .click-territory,
+.messenger-app--messages---message.msg-hoverable:hover .actions-2 {
     opacity: 0.7;
 }
 
-.messenger-app--messages---message:hover .time {
+.messenger-app--messages---message:hover .time,
+.messenger-app--messages---message.msg-searched .time {
     opacity: 1;
+}
+
+.messenger-app--messages---message.msg-searched .click-territory {
+    display: none;
+}
+
+.messenger-app--messages---message.msg-searched > .messenger-app--messages---message--wrap {
+    padding: 0px 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.messenger-app--messages---message.msg-searched ._content {
+    padding-left: 19px;
 }
 
 .messenger-app--messages---message.msg-selected .click-territory {
