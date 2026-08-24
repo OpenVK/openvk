@@ -1209,7 +1209,13 @@ export class ChatMessage {
     }
 
     get peer_object() {
-        return window.im.conversations._findConv(this.data.peer_id).peer;
+        try {
+            return window.im.conversations._findConv(this.data.peer_id).peer;
+        } catch(e) {
+            console.error(e);
+
+            return window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(this.data.peer_id);
+        }
     }
 
     get has_sender() {

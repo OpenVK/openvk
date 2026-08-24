@@ -1927,6 +1927,14 @@ class User extends RowModel
             $counters = unpack("S" . $count_of_keys, base64_decode($ev_str, true));
         }
 
+        if ($counters == false) {
+            $counters = [];
+
+            for ($i = 0; $i < $count_of_keys; $i++) {
+                $counters[] = 0;
+            }
+        }
+
         return [
             'counters' => array_combine(array_keys($list), $counters),
             'refresh_time' => $this->getRecord()->events_refresh_time,
