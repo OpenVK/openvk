@@ -207,7 +207,7 @@ final class Messages extends VKAPIRequestHandler
 
     /**
      * Обогащает сырые ID пользователей и групп полноценными объектами для VK API.
-     * * @param array|object $payload Ссылка на данные от IM сервиса
+     * @param array $payload Ссылка на данные от IM сервиса
      * @param string $fields Дополнительные поля для USRRepo
      */
     private function hydrateExtendedData(array &$payload, string $fields = "photo_200,online", array $loadedChats = []): void
@@ -236,6 +236,7 @@ final class Messages extends VKAPIRequestHandler
 
         $extendedChats = [];
         if (!empty($payload['chats'])) {
+            $chatsRepo = new ChatRepo();
             foreach ($payload['chats'] as $chat) {
                 $isArr = is_array($chat);
                 $idVal = $isArr ? ($chat['id'] ?? 0) : (int) $chat;
@@ -247,11 +248,8 @@ final class Messages extends VKAPIRequestHandler
                     continue;
                 }
 
-                #$chatEntity = (new ChatRepo())->getByChatId($localChatId);
-                $chatEntity = $loadedChats[$localChatId];
+                $chatEntity = $loadedChats[$localChatId] ?? $chatsRepo->getByChatId($localChatId);
                 if ($chatEntity != null) {
-                    bdump($chat);
-
                     $chatParam = is_array($chat) ? $chat : [$chat];
                     $entry = $chatEntity->toVkApiStruct($this->getUser(), $chatParam);
 
@@ -277,23 +275,51 @@ final class Messages extends VKAPIRequestHandler
     //             Longpoll
     // ----------------------------------
 
-    public function getLongPollHistory(int $ts = -1, int $pts = -1, int $preview_length = 0, int $events_limit = 1000, int $msgs_limit = 1000, int $group_id = 0): object
-    {
+    public function getLongPollHistory(
+        int $ts = -1,
+        int $pts = -1,
+        int $preview_length = 0,
+        int $events_limit = 1000,
+        int $msgs_limit = 1000,
+        int $group_id = 0,
+        int $lp_version = 2,
+        string $fields = "photo_200,online",
+        int $onlines = 0
+    ): object {
         $this->requireUser();
 
         $params = [
-            "ts"           => (string) $ts,
             "events_limit" => (string) $events_limit,
             "msgs_limit"   => (string) $msgs_limit,
-            "version"      => "2",
+            "version"      => (string) $lp_version,
         ];
 
+        if ($ts > 0) {
+            $params["ts"] = (string) $ts;
+        }
+        if ($pts > 0) {
+            $params["pts"] = (string) $pts;
+        }
+        if ($preview_length > 0) {
+            $params["preview_length"] = (string) $preview_length;
+        }
+        if (!empty($fields)) {
+            $params["fields"] = $fields;
+        }
+
         $data = $this->invoke("messages.getLongPollHistory", $params, $group_id);
-        $result = (object) $data;
 
-        $this->hydrateExtendedData($result);
+        if (!empty($data['messages']['items'])) {
+            foreach ($data['messages']['items'] as &$msg) {
+                if (isset($msg['attachments'])) {
+                    $this->replaceAttachments($msg['attachments'], ["gift"]);
+                }
+            }
+        }
 
-        return $result;
+        $this->hydrateExtendedData($data, $fields);
+
+        return (object) $data;
     }
 
     public function getLongPollServer(int $need_pts = 1, int $version = 2, ?int $group_id = null): array
@@ -325,7 +351,7 @@ final class Messages extends VKAPIRequestHandler
     //             Messages
     // ----------------------------------
 
-    public function getById(string $message_ids, int $preview_length = 0, int $extended = 0): object
+    public function getById(string $message_ids, int $preview_length = 0, int $extended = 0, string $fields = "photo_200,online"): object
     {
         $this->requireUser();
 
@@ -333,13 +359,13 @@ final class Messages extends VKAPIRequestHandler
             "message_ids"    => $message_ids,
             "extended"       => (string) $extended,
             "preview_length" => (string) $preview_length,
+            "fields"         => $fields,
         ];
 
         $data = $this->invoke("messages.getById", $params);
-        $result = (object) $data;
 
-        if (!empty($result->items)) {
-            foreach ($result->items as &$item) {
+        if (!empty($data['items'])) {
+            foreach ($data['items'] as &$item) {
                 if (isset($item['attachments'])) {
                     $this->replaceAttachments($item['attachments'], ["gift"]);
                 }
@@ -347,10 +373,10 @@ final class Messages extends VKAPIRequestHandler
         }
 
         if ($extended == 1) {
-            $this->hydrateExtendedData($result);
+            $this->hydrateExtendedData($data, $fields);
         }
 
-        return $result;
+        return (object) $data;
     }
 
     public function send(
@@ -365,11 +391,35 @@ final class Messages extends VKAPIRequestHandler
         int $unnoticed = 0,
         string $attachment = "",
         int $random_id = 0,
-        int $reply_to = 0
+        int $reply_to = 0,
+        string $forward_messages = "",
+        string $forward = ""
     ) {
         $this->requireUser();
         $this->willExecuteWriteAction();
         $this->ensureBrokerActive();
+
+        if (empty($forward_messages)) {
+            $forward_messages = (string) ($_POST['forward_messages'] ?? $_GET['forward_messages'] ?? $_POST['fwd_messages'] ?? $_GET['fwd_messages'] ?? '');
+        }
+
+        if (empty($forward)) {
+            $forward = (string) ($_POST['forward'] ?? $_GET['forward'] ?? '');
+        }
+
+        if (!empty($forward) && empty($forward_messages)) {
+            $decoded = json_decode($forward, true);
+            if (is_array($decoded)) {
+                if (!empty($decoded['conversation_message_ids']) && is_array($decoded['conversation_message_ids'])) {
+                    $forward_messages = implode(',', $decoded['conversation_message_ids']);
+                } elseif (!empty($decoded['message_ids']) && is_array($decoded['message_ids'])) {
+                    $forward_messages = implode(',', $decoded['message_ids']);
+                }
+                if (!empty($decoded['is_reply']) && empty($reply_to)) {
+                    $reply_to = (int) ($decoded['conversation_message_ids'][0] ?? $decoded['message_ids'][0] ?? 0);
+                }
+            }
+        }
 
         if (!empty($user_ids)) {
             $ids = preg_split("%, ?%", $user_ids);
@@ -379,7 +429,7 @@ final class Messages extends VKAPIRequestHandler
 
             $rIds = [];
             foreach ($ids as $id) {
-                $rIds[] = $this->send(-1, (int) $id, "", -1, $group_id, "", $message, $sticker_id, 1, $attachment, rand(1, 2147483647));
+                $rIds[] = $this->send(-1, (int) $id, "", -1, $group_id, "", $message, $sticker_id, 1, $attachment, rand(1, 2147483647), $reply_to, $forward_messages, $forward);
             }
             return $rIds;
         }
@@ -405,7 +455,7 @@ final class Messages extends VKAPIRequestHandler
             }
         }
 
-        if (empty($message) && sizeof($attachment_secure) == 0) {
+        if (empty($message) && sizeof($attachment_secure) == 0 && empty($forward_messages) && $reply_to <= 0) {
             $this->fail(100, "Message text is empty or invalid");
         }
 
@@ -425,6 +475,10 @@ final class Messages extends VKAPIRequestHandler
 
         if ($reply_to > 0) {
             $params["reply_to"] = (string) $reply_to;
+        }
+
+        if (!empty($forward_messages)) {
+            $params["forward_messages"] = $forward_messages;
         }
 
         return (int) $this->invoke("messages.send", $params, $group_id);
@@ -797,13 +851,21 @@ final class Messages extends VKAPIRequestHandler
         return (int) $chatId;
     }
 
-    public function addChatUser(int $peer_id = 0, string $user_id = "0", int $group_id = 0): int
+    public function addChatUser(int $peer_id = 0, string $user_id = "", int $group_id = 0, int $chat_id = 0): int
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
         $this->ensureBrokerActive();
 
-        if ($peer_id === 0 || $user_id === 0) {
+        if (empty($user_id)) {
+            $user_id = (string) ($_POST['user_id'] ?? $_GET['user_id'] ?? '');
+        }
+
+        if ($peer_id === 0 && $chat_id > 0) {
+            $peer_id = 2000000000 + $chat_id;
+        }
+
+        if ($peer_id === 0 || empty($user_id)) {
             $this->fail(100, "One of the parameters is missing: peer_id or user_id");
         }
 
@@ -811,28 +873,28 @@ final class Messages extends VKAPIRequestHandler
             $this->fail(15, "Access denied: cannot add user to direct message");
         }
 
-        $rawIds = preg_split("%, ?%", $user_id);
+        $rawIds = preg_split("%, ?%", (string) $user_id);
         $targetUserIds = array_filter(array_map('intval', $rawIds));
         $users = (new USRRepo)->getByIds($targetUserIds);
         $currentUser = $this->getUser();
 
         foreach ($users as $usr) {
-            if (!$user || $usr->getRealId() === $currentUser->getId()) {
+            if (!$usr || $usr->getRealId() === $currentUser->getId()) {
                 continue;
             }
 
-            if (!$currentUser->isFriendsWith($id)) {
-                $this->fail(15, "Access denied: user with ID " . $id . " is not your friend");
+            if (!$currentUser->isFriendsWith($usr->getRealId())) {
+                $this->fail(15, "Access denied: user with ID " . $usr->getRealId() . " is not your friend");
             }
 
             if (!$usr->getPrivacyPermission("messages.add_to_chats", $currentUser)) {
-                $this->fail(15, "Access denied: user with ID " . $usr->getRealId() . " is not your friend");
+                $this->fail(15, "Access denied: user with ID " . $usr->getRealId() . " disabled adding to chats");
             }
         }
 
         $params = [
-            "peer_id" => $peer_id,
-            "user_id" => $user_id,
+            "peer_id" => (string) $peer_id,
+            "user_id" => (string) $user_id,
         ];
 
         $this->invoke("messages.addChatUser", $params, $group_id);
@@ -875,7 +937,7 @@ final class Messages extends VKAPIRequestHandler
         int $count = 20,
         string $filter = "all",
         int $extended = 0,
-        string $fields = "photo200,online",
+        string $fields = "photo_200,online",
         int $group_id = 0
     ): array {
         $this->requireUser();
@@ -918,14 +980,7 @@ final class Messages extends VKAPIRequestHandler
             $chatsRepo = new ChatRepo();
             foreach ($chatIds as $cId) {
                 $chatObj = $chatsRepo->getByChatId($cId);
-
-                if ($chatObj) {
-                    $loadedChats[$cId] = $chatObj;
-                    error_log("Chat $cId found. Title in DB is: '" . $chatObj->getTitle() . "'");
-                } else {
-                    $loadedChats[$cId] = null;
-                    error_log("Chat $cId NOT FOUND in DB!");
-                }
+                $loadedChats[$cId] = $chatObj ?: null;
             }
         }
 
@@ -1309,8 +1364,20 @@ final class Messages extends VKAPIRequestHandler
             $this->fail(129, "Invalid image file");
         }
 
+        $messageId = 0;
+        if ($this->broker->isEnabled()) {
+            try {
+                $imRes = $this->invoke("messages.setChatPhoto", [
+                    "peer_id" => (string) (2000000000 + $chat_id),
+                ]);
+                $messageId = (int) ($imRes['message_id'] ?? 0);
+            } catch (\Throwable $e) {
+                // If IM call fails, photo was still updated in DB
+            }
+        }
+
         return (object) [
-            "message_id" => 0,
+            "message_id" => $messageId,
             "chat"       => $chat->toVkApiStruct($this->getUser()),
         ];
     }
