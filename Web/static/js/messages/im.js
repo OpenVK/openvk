@@ -77,7 +77,7 @@ export class InstantMessagesAndRelated {
         await this.lp.create(Math.abs(this.state.group_id));
         this.lp.listen();
 
-        //this.updateCounter(this.lp.getFirstCounter());
+        this.state._updateCounter(this.lp.getFirstCounter());
 
         this.isReady = true;
         this.is_initing = false;
@@ -114,22 +114,8 @@ export class InstantMessagesAndRelated {
 
         container.insertAdjacentHTML("beforeend", node.last().outerHTML);
 
-        const oldRoot = self.root ? self.root : null;
-        self.root = container.querySelector("#im_container");
-
         if (rewrite_tabs == true) {
-            self.tabs.forEach(item => {
-                try {
-                    if (self.root == oldRoot) {
-                        return;
-                    }
-                    console.log(self.root, oldRoot)
-                    item.render_class.changeContainer(self.root);
-                    item.render();
-                } catch(e) {
-                    console.error(e);
-                }
-            })
+            self.rewriteTabs(container);
         }
 
         //const found = await this._checkSel(new URL(location.href), sel_id);
@@ -145,6 +131,24 @@ export class InstantMessagesAndRelated {
 
         self.state._changeHeight(self.root);
         self.state.removeLoadSkeleton(container);
+    }
+
+    rewriteTabs(container) {
+        const oldRoot = this.root ? this.root : null;
+        this.root = container.querySelector("#im_container");
+
+        this.tabs.forEach(item => {
+            try {
+                if (this.root == oldRoot) {
+                    return;
+                }
+                console.log(this.root, oldRoot)
+                item.render_class.changeContainer(this.root);
+                item.render();
+            } catch(e) {
+                console.error(e);
+            }
+        })
     }
 
     updateTabs() {
@@ -253,7 +257,6 @@ export class InstantMessagesAndRelated {
 
         if (check_existing == true && got_class) {
             this.tabs.forEach(item => {
-                console.log(item.getPageId(), got_class.getPageId())
                 if (item.getPageId() == got_class.getPageId()) {
                     already_here = item;
                 }
@@ -265,10 +268,6 @@ export class InstantMessagesAndRelated {
 
             return already_here;
         } else {
-            if (window.im.state.is_debug) {
-                console.log(this.root);
-            }
-
             try {
                 got_tab = got_class.openTab(this.root, options);
                 if (got_tab != null) {
@@ -292,7 +291,10 @@ export class InstantMessagesAndRelated {
 
         return this.tabs.indexOf(tab);
     }
-    getVisibleTabs() { return this.tabs.filter(t => t.visible()); }
+    getVisibleTabs() {
+        const vals = this.tabs.filter(t => t.visible() && t.getPageId() != "conversations");
+        return [this.getTab("conversations"), ...vals];
+    }
     getSelectedTab(tab) { return this.tabs[this.selectedTabId]; }
     getSelectedTabId() { return this.getSelectedTab().getPageId() }
     getTabs() { return this.tabs.map(t => t.id); }
@@ -383,9 +385,6 @@ class IMState {
         });
 
         return counter;
-    }
-    updateUnreadCounter() {
-        // todo
     }
 
     _updateCounter(new_number) {
@@ -500,7 +499,12 @@ class IMState {
 
         if (this.isFastchat || !this.is_opened) {
             u('body').removeClass('no-scroll');
-            u('body #fastchats_related #fastchats_chat #wrap').last().scroll({ top: 0 });
+
+            try {
+                u('body #fastchats_related #fastchats_chat #wrap').last().scroll({ top: 0 });
+            } catch(e) {
+                console.error(e);
+            }
             return;
         }
 
@@ -554,10 +558,14 @@ class IMState {
 
             await this._resolveState();
             this.link.fastChats.hide();
+            this.isFastchat = false;
         } else {
             console.log("IM | position is in fastchats");
             if (!this.link.fastChats.isInserted) {
                 await this.link.fastChats.insertSelf();
+            } else {
+                this.link.fastChats.updateSelf();
+                this.isFastchat = true;
             }
 
             this.link.fastChats.show();
@@ -832,6 +840,9 @@ export class FastChats {
         this.isInserted = true;
 
         window.im_class.insertIn(document.querySelector('#fastchats_related #fastchats_chat #wrap'), null, true);
+    }
+    async updateSelf() {
+        window.im.rewriteTabs(document.querySelector('#fastchats_related #fastchats_chat #wrap'));
     }
     async update() {
         const peers = await this.getPinnedPeers();

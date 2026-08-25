@@ -23,6 +23,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
         msg.is_got_edited ? 'msg-edited' : '',
         msg.is_reply ? 'msg-reply' : '',
         isSearchTpl ? 'msg-searched': 'msg-hoverable',
+        msg.is_read ? 'msg-read': 'unread',
     ].filter(Boolean).join(' ');
 
     const has_postfix = msg.is_gift;

@@ -141,6 +141,7 @@ body.no-footer .page_footer {
     cursor: pointer;
     margin-left: 1px;
     border-bottom: 1px solid #d6d6d6;
+    position: relative;
 }
 
 .crp-entry.unread {
@@ -201,11 +202,12 @@ body.no-footer .page_footer {
 .crp-entry .unread-msgs-count {
     display: none;
     position: absolute;
+    top: 42px;
     right: 10px;
     margin-top: -13px;
     padding: 5px 5px;
     font-weight: bold;
-    background: var(--brand-l-1);
+    background: var(--unread-mark);
     color: var(--text-rev);
     border-radius: 2px;
 }
@@ -526,6 +528,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     padding: 5px 5px;
     user-select: none;
     font-size: 10px;
+    cursor: pointer;
 }
 
 .messenger-app--messages---message > .messenger-app--messages---message--wrap {
@@ -874,7 +877,6 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 
 .messages--peers-tabs .messages--peers-tab.unread .messages--peers-tab-counter {
     display: block;
-    background: var(--brand-l-1);
     color: var(--text-rev);
     padding: 0px 2px;
     font-weight: bold;
@@ -1491,6 +1493,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     border: 1px solid var(--brand);
     box-shadow: 0px 2px 2px 0px #00000078;
     scrollbar-width: thin;
+    position: relative;
 }
 
 #fastchats_related #fastchats_chat #fastchat_head {
@@ -1713,8 +1716,8 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 
 #fastchats_related #fastchats .fastchat_items .fastchat_item .fastchat_unread {
     position: absolute;
-    background: #e5460a;
-    padding: 1px 4px;
+    background: var(--unread-mark);
+    padding: 1px 2px;
     display: block;
     font-weight: bold;
     color: var(--text-rev);

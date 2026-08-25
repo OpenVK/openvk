@@ -181,7 +181,7 @@ export const ConversationItem = ({ conv }) => {
                     ${(conv.getActivityMsg()[0] || "").toLowerCase()}
                 </div>
             `}
-            <div class="unread-msgs-count">${conv.unread_count}+</div>
+            <div class="unread-msgs-count">+${conv.unread_count}</div>
         </div>
         </div>
     `;

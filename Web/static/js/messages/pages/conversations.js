@@ -317,7 +317,11 @@ export class Conversation {
     }
 
     get unread_count() {
-        return 0;
+        if (this.peer && this.peer._chunks && this.peer._chunks._isMessagesInited()) {
+            return this.peer._chunks.getUnreadCount();
+        }
+
+        return this._conversation.unread_count || 0;
     }
 
     get id() {

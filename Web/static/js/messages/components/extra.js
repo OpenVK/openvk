@@ -104,7 +104,7 @@ export const FastChatsBar = ({ pinnedItems, convos }) => {
                     const peer = item.peer;
                     return html`
                     <div title="${escapeHtml(peer.full_name)}" onClick=${(e) => { window.im.fastChats.selectConversation(e, item) }} class="fastchat_item ${!item.is_read ? "unread" : ""}">
-                        <div class="fastchat_unread">${item.unread_count}</div>
+                        <div class="fastchat_unread">+${item.unread_count}</div>
                         <div class="fastchat_close"></div>
                         <img src="${peer.avatar_any}" />
                     </div>`
