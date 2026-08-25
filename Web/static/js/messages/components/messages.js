@@ -382,6 +382,18 @@ export class Chunks {
         return sorted.length ? sorted[sorted.length - 1].first_message : null;
     }
 
+    getUnreadCount() {
+        let count = 0;
+
+        this.getMessages().forEach(item => {
+            if (!item.is_read) {
+                count += 1;
+            }
+        })
+
+        return count;
+    }
+
     // ── lookup / jumps ───────────────────────────────────────────
 
     /**
@@ -1154,6 +1166,19 @@ export class ChatGeneralForm {
         this._members = new ChatMembers(this.id);
         await this._members.load(offset);
     }
+
+    async read() {
+        //const c = this._chunks._getMostActualChunk();
+        //const last_msg_id = c.latest_message.id;
+        const params = {
+            "peer_id": this.id,
+            //"start_message_id": last_msg_id,
+        };
+        if (window.im.state.getPageId() < 0) {
+            params["group_id"] = Math.abs(window.im.state.getPageId());
+        }
+        await window.OVKAPI.call("messages.markAsRead", params)
+    }
 }
 
 // ── ChatMessage ────────────────────────────────────────────────────
@@ -1609,5 +1634,13 @@ export class ChatMessage {
         }
 
         return true;
+    }
+
+    get is_read() {
+        try {
+            return this.data.read_state == 1;
+        } catch(e) {
+            return false;
+        }
     }
 }
