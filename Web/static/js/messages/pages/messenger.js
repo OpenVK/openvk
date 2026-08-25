@@ -111,6 +111,10 @@ export class Messenger {
                 console.error(e);
             }
         }
+
+        if (window.im.state.isFastchat) {
+            window.im.fastChats.update();
+        }
     }
 
     async selectConversationByPeerId(id) {
@@ -155,6 +159,10 @@ export class Messenger {
 
     addChat(conv) {
         // console.trace()
+        if (window.im.state.isFastchat) {
+            window.im.fastChats.pinPeer(conv);
+        }
+
         this.opened_tabs.push(conv);
     }
 
@@ -462,6 +470,10 @@ export class Messenger {
     async goToMessage(msg) {
         console.log(msg)
     }
+
+    showDaySwitcher(date) {
+
+    }
 }
 
 export class MessengerPage extends IMPage {
@@ -616,13 +628,21 @@ export class MessengerPage extends IMPage {
     }
 
     onReplyButtonClick() {
-        const ids = window.im.messenger.selected_messages;
-        const current_chat = window.im.messenger.getCurrentChat();
-        const m = current_chat.peer._findMessageById(ids[0]);
-        window.im.messenger.unselectAll();
-        window.im.messenger.replyTo = m;
+        const f = () => {
+            const ids = window.im.messenger.selected_messages;
+            const current_chat = window.im.messenger.getCurrentChat();
+            const m = current_chat.peer._findMessageById(ids[0]);
+            window.im.messenger.unselectAll();
+            window.im.messenger.replyTo = m;
 
-        this.update();
+            this.update();
+        };
+
+        if (window.im.messenger.editMsg != null) {
+            this._triggerCancelEditingDialog(() => {f()});
+        } else {
+            f();
+        }
     }
 
     onEditButtonClick(e, msg) {

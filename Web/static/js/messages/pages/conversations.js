@@ -177,14 +177,22 @@ export class Conversations {
         return _l[0];
     }
 
-    async _findConvFromApi(id) {
+    async _findConvFromApi(id, check_cached = false) {
         try {
             return this._findConv(id);
         } catch (e) {
             console.error(e);
         }
 
-        const b = await ChatGeneralForm.resolveByIdAndReturnClass(id);
+        let b = null;
+        if (check_cached) {
+            b = window.im.cached_profiles._findCachedProfileById(id);
+        }
+
+        if (!b) {
+            b = await ChatGeneralForm.resolveByIdAndReturnClass(id);
+        }
+
         if (!b) {
             throw Error('Not found chat '+ id);
         }

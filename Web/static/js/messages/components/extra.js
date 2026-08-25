@@ -97,20 +97,21 @@ export const SearchPageTemplate = ({ q, c, onSearch }) => {
 };
 
 export const FastChatsBar = ({ pinnedItems, convos }) => {
-    console.log(convos)
     return html`
         <div>
             <div class="fastchat_items">
                 ${pinnedItems.map((item) => {
-                    console.log(item)
+                    const peer = item.peer;
                     return html`
-                    <div class="fastchat_item">
-
+                    <div title="${escapeHtml(peer.full_name)}" onClick=${(e) => { window.im.fastChats.selectConversation(e, item) }} class="fastchat_item ${!item.is_read ? "unread" : ""}">
+                        <div class="fastchat_unread">${item.unread_count}</div>
+                        <div class="fastchat_close"></div>
+                        <img src="${peer.avatar_any}" />
                     </div>`
                 })}
             </div>
             <div onClick=${() => {window.im.fastChats.onEntryPointClick()}} class="fastchat_entrypoint">
-                <span>${convos.total_count}</span>
+                <span>${convos.total_convs}</span>
             </div>
         </div>
     `;
