@@ -106,7 +106,7 @@ export class InstantMessagesAndRelated {
         self.state.isFastchat = fastchat;
         await self.waitLoad();
 
-        console.log("IM | Insert in ", container);
+        console.log("IM | Insert in ", container, " fastchat: ", fastchat);
 
         const node = u(`<div id="im_container"><div id="im_page_tabs"></div><div id="im_page_containers"></div></div>`)
         if (!fastchat) { node.addClass("at_page"); }
@@ -114,18 +114,16 @@ export class InstantMessagesAndRelated {
 
         container.insertAdjacentHTML("beforeend", node.last().outerHTML);
 
-        const oldRoot = self.root ? self.root.dataset.id : null;
+        const oldRoot = self.root ? self.root : null;
         self.root = container.querySelector("#im_container");
 
         if (rewrite_tabs == true) {
             self.tabs.forEach(item => {
                 try {
-                    if (window.im.state.is_debug) {
-                        console.log(item, self.root);
-                    }
-                    if (self.root.dataset.id == oldRoot) {
+                    if (self.root == oldRoot) {
                         return;
                     }
+                    console.log(self.root, oldRoot)
                     item.render_class.changeContainer(self.root);
                     item.render();
                 } catch(e) {
@@ -432,6 +430,10 @@ class IMState {
     }
 
     async _checkSel(loc, sel_id = null) {
+        if (!this.is_opened) {
+            return;
+        }
+
         try {
             await this.link.openTabByName("conversations");
         } catch(e) {
@@ -496,8 +498,9 @@ class IMState {
             return;
         }*/
 
-        if (this.isFastchat) {
+        if (this.isFastchat || !this.is_opened) {
             u('body').removeClass('no-scroll');
+            u('body #fastchats_related #fastchats_chat #wrap').last().scroll({ top: 0 });
             return;
         }
 
@@ -509,12 +512,17 @@ class IMState {
             u('body').addClass('no-scroll');
         } else {
             scrollTo(0, window._prevScroll);
+
             window._prevScroll = null;
             u('body').removeClass('no-scroll');
         }
     }
 
     _changeHeight(container) {
+        if (this.isFastchat) {
+            return;
+        }
+
         let maybe_distance = 145;
         let tabs_height = container.querySelector('#im_page_tabs').clientHeight;
         container.style.minHeight = window.outerHeight - tabs_height - maybe_distance + 'px';
@@ -549,10 +557,14 @@ class IMState {
         } else {
             console.log("IM | position is in fastchats");
             if (!this.link.fastChats.isInserted) {
-                this.link.fastChats.insertSelf();
+                await this.link.fastChats.insertSelf();
             }
 
             this.link.fastChats.show();
+
+            if (this.link.fastChats.isShown()) {
+                this.link.fastChats.hideChatBar();
+            }
         }
     }
 
@@ -753,16 +765,53 @@ export class LongPollConnection {
 }
 
 export class FastChats {
+    static PINNED_LIMIT = 50;
+
     constructor() {
         this.isInserted = false;
     }
-    getPinnedPeers() { return []; }
-    pinPeer(convo) {}
-    unpinPeer(convo) {}
+    getPinnedPeersIds() {
+        if (localStorage.getItem("im.fastchat.tabs") == null) {
+            localStorage.setItem("im.fastchat.tabs", "[]");
+        }
+
+        const d = localStorage.getItem("im.fastchat.tabs");
+        try {
+            return JSON.parse(d);
+        } catch(e) {
+            console.error(e);
+            return [];
+        }
+    }
+    async getPinnedPeers() {
+        const ids = this.getPinnedPeersIds();
+        const peers = [];
+
+        ids.forEach(async id => {
+            peers.push(await window.im.conversations._findConvFromApi(id));
+        });
+        return peers;
+    }
+    pinPeer(convo) {
+        const peers = this.getPinnedPeersIds();
+        const uid = typeof convo == "number" ? convo : convo.id;
+
+        if (peers.indexOf(uid) !== -1) {
+            return;
+        }
+
+        peers.push(uid);
+
+        localStorage.setItem("im.fastchat.tabs", JSON.stringify(peers));
+    }
+    unpinPeer(convo) {
+        let peers = this.getPinnedPeersIds();
+        const uid = typeof convo == "number" ? convo : convo.id;
+        peers = peers.filter(item => { return item != uid });
+        localStorage.setItem("im.fastchat.tabs", JSON.stringify(peers));
+    }
     shouldBeShown() { return !window.im.state.is_opened }
-    toggleShowness(state = false) {}
-    toggleBar(state = false, convo = null) {}
-    insertSelf() {
+    async insertSelf() {
         u("body").append(`
         <div id="fastchats_related">
             <div id="fastchats_chat">
@@ -770,8 +819,8 @@ export class FastChats {
                     <b></b>
 
                     <div style="display: flex;gap: 5px;">
-                        <span id="fastchat_reveal" class="f_act"></span>
-                        <span id="fastchat_close" class="f_act"></span>
+                        <span id="fastchat_reveal" class="f_act" onclick="window.im.fastChats.reveal()"></span>
+                        <span id="fastchat_close" class="f_act" onclick="window.im.fastChats.close()"></span>
                     </div>
                 </div>
                 <div id="wrap"></div>
@@ -779,29 +828,55 @@ export class FastChats {
             <div id="fastchats"></div>
         </div>`);
 
-        this.update();
+        await this.update();
         this.isInserted = true;
 
         window.im_class.insertIn(document.querySelector('#fastchats_related #fastchats_chat #wrap'), null, true);
     }
-    update() {
-        preactRender(html`<${FastChatsBar} pinnedItems=${this.getPinnedPeers()} convos=${window.im.conversations} />`, document.querySelector("#fastchats"));
+    async update() {
+        const peers = await this.getPinnedPeers();
+        preactRender(html`<${FastChatsBar} pinnedItems=${peers} convos=${window.im.conversations} />`, document.querySelector("#fastchats"));
     }
-
     show() {
         u("body #fastchats_related").addClass("shown");
+        this.update();
     }
-
     hide() {
         u("body #fastchats_related").removeClass("shown");
     }
-
     onEntryPointClick() {
         this.toggleChatBar();
         window.im.openTabByName("conversations");
     }
 
+    selectConversation(e, convo) {
+        if (e.target.matches(".fastchat_close")) {
+            this.unpinPeer(convo);
+            window.im.messenger.closeChat(convo);
+
+            this.update();
+            return;
+        }
+
+        try {
+            if (convo.id == window.im.messenger.getCurrentChat().id && u("body #fastchats_related #fastchats_chat").hasClass("shown")) {
+                this.hideChatBar();
+                return;
+            }
+        } catch(e) {
+            console.error(e);
+        }
+
+        this.showChatBar();
+        window.im.messenger.selectConversation(convo, true);
+    }
+
     toggleChatBar() { 
+        if (window.im.getSelectedTabId() == "messenger") {
+            window.im.openTabByName("conversations");
+            return;
+        }
+
         if(u("body #fastchats_related #fastchats_chat").hasClass("shown")) {
             this.hideChatBar();
         } else {
@@ -823,6 +898,23 @@ export class FastChats {
             u("body #fastchats_related #fastchats_chat").removeClass("shown");
         u("body #fastchats_related #fastchats_chat").attr("style", "");
         }, 200);
+    }
+    isShown() { return u("body #fastchats_related #fastchats_chat").hasClass("shown") }
+    close() { this.hideChatBar(); }
+    reveal() {
+        if (window.im.getSelectedTabId() == "conversations") {
+            window.router.route({
+                "url": "/im"
+            });
+        }
+        if (window.im.getSelectedTabId() == "messenger") {
+            const chat = window.im.messenger.getCurrentChat();
+            window.router.route({
+                "url": "/im?sel=" + (chat ? chat.peer.id : "")
+            });
+        }
+
+        this.hideChatBar();
     }
 }
 

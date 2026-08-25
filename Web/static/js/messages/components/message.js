@@ -192,10 +192,10 @@ const Attachment = ({ msg, att }) => {
     }
 };
 
-export const DayDivider = ({ date }) => {
+export const DayDivider = ({ date, day }) => {
   return html`
-    <div class="messenger-app--messages-day-time">
-      <b>${date}</b>
+    <div class="messenger-app--messages-day-time" onClick=${window.im.messenger.showDaySwitcher(day)}>
+        <b>${date}</b>
     </div>
   `;
 };
@@ -203,7 +203,7 @@ export const DayDivider = ({ date }) => {
 export const DayChunkView = ({ chunk, page }) => {
     return html`
     <div class="messenger-app--messages-day">
-        <${DayDivider} date=${chunk.readable_date} />
+        <${DayDivider} day=${chunk.day} date=${chunk.readable_date} />
         ${chunk.messages.map((msg, idx) => html`
             <${MessageBubble} msg=${msg} index=${idx} chunk=${chunk} page=${page} />
         `)}

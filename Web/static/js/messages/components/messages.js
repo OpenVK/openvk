@@ -354,6 +354,7 @@ export class Chunks {
                     const dayChunk = new DayChunk([], false);
                     dayChunk.setDay(dateKey);
                     dayChunk.idate = msg.sent.toLocaleDateString();
+                    dayChunk.msg_date = msg.sent;
                     dayChunks.push(dayChunk);
                     dateMap.set(dateKey, dayChunk);
                 }
@@ -596,6 +597,7 @@ export class DayChunk {
         this.messages = [];
         this.do_reverse = do_reverse;
         this.date = null;
+        this.msg_date = null;
         this.idate = null;
         items.forEach((item) => this.messages.push(item));
     }
@@ -606,6 +608,10 @@ export class DayChunk {
 
     get readable_date() {
         return this.date;
+    }
+
+    get day() {
+        return this.msg_date;
     }
 
     getMessages() {
