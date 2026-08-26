@@ -153,7 +153,7 @@ class Posts
 
         $sel = $sel->limit($perPage, $offset);
         foreach ($sel as $post) {
-            yield new Post($post);
+            yield $post->id => new Post($post);
         }
     }
 
@@ -168,7 +168,7 @@ class Posts
                 if ($page === 1) {
                     $perPage--;
 
-                    yield $pinPost;
+                    yield $pinPost->getId() => $pinPost;
                 } else {
                     $offset--;
                 }
