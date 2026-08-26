@@ -386,7 +386,7 @@ export class Chunks {
         let count = 0;
 
         this.getMessages().forEach(item => {
-            if (!item.is_read) {
+            if (!item.is_read && item.data.from_id != window.im.state.getId()) {
                 count += 1;
             }
         })
@@ -1236,6 +1236,10 @@ export class ChatMessage {
     doHideHead(another_msg) {
         let _time_eq = another_msg.data.date - this.data.date;
         return this.data.from_id == another_msg.data.from_id && _time_eq < ChatMessage.AUTHOR_NAME_HIDE_TIMEOUT && this.is_action == false;
+    }
+
+    isMine() {
+        return this.data.from_id === window.im.state.getId();
     }
 
     constructor(item = {}) {

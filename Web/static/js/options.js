@@ -280,6 +280,7 @@ window.tweaks = [
         hide_posts()
     }),
     new TweakOption("im.modern_mode", function () {}),
+    new TweakOption("im.remove_warning", function () {}),
     new TweakOption("im.debug", function () {}),
     new TweakOption("viewers.photo.list", function () {}),
 ]

@@ -88,6 +88,14 @@ export class InstantMessagesAndRelated {
         let self = window.im_variants.getCurrentUser();
         const b = new URL(location.href)
 
+        if (localStorage.getItem("tw.im.remove_warning") !== "1") {
+            if (fastchat) {
+                return;
+            }
+
+            await self._showAgreement();
+        }
+
         if (as != null) {
             console.log("IM | ?as= detected", as);
             self = window.im_variants.getForGroup(Number(as));
@@ -131,6 +139,34 @@ export class InstantMessagesAndRelated {
 
         self.state._changeHeight(self.root);
         self.state.removeLoadSkeleton(container);
+    }
+
+    _showAgreement() {
+        return new Promise((resolve, reject) => {
+            const msg = new CMessageBox({
+                title: tr('confirmation'),
+                body: `
+                    <p>${tr("messages_agreement_1")}</p>
+                    <ul>
+                        <li>${tr("messages_agreement_2")}</li>
+                        <li>${tr("messages_agreement_3")}</li>
+                        <li>${tr("messages_agreement_4")}</li>
+                        <li>${tr("messages_agreement_5")}</li>
+                    </ul>
+                `,
+                close_on_buttons: false,
+                unique_name: 'agreement',
+                buttons: [tr('cancel'), tr('i_agree')],
+                callbacks: [() => {
+                    msg.close()
+                    resolve(false)
+                }, () => {
+                    localStorage.setItem("tw.im.remove_warning", "1");
+                    msg.close();
+                    resolve(true);
+                }]
+            })
+        })
     }
 
     rewriteTabs(container) {
@@ -534,6 +570,7 @@ class IMState {
 
     async _resolvePosition(url = null, from_msg = false, firstLoad = false) {
         console.log("IM | _resolvePosition");
+
         if (window.openvk.current_id == 0) {
             return;
         }
@@ -820,6 +857,10 @@ export class FastChats {
     }
     shouldBeShown() { return !window.im.state.is_opened }
     async insertSelf() {
+        if (localStorage.getItem("tw.im.remove_warning") !== "1") {
+            return;
+        }
+
         u("body").append(`
         <div id="fastchats_related">
             <div id="fastchats_chat">

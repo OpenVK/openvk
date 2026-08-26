@@ -92,6 +92,7 @@ final class Messages extends VKAPIRequestHandler
     {
         $uRepo = new USRRepo();
         $cRepo = new ClubRepo();
+        $senderObj = null;
         $peer = null;
 
         if ($peerId > 0 && $peerId < 2000000000) {
@@ -112,23 +113,9 @@ final class Messages extends VKAPIRequestHandler
                 $this->fail(18, "Recipient was deleted");
             }
 
-            $senderId = $this->resolveSender($groupId);
-            if ($peerId > 0 && $peerId < 2000000000 && $senderId !== $peerId) {
-                if (method_exists($peer, 'getPrivacyPermission')) {
-                    if (!$peer->getPrivacyPermission('messages.write', $this->getUser())) {
-                        $this->fail(945, "This chat is disabled because of privacy settings");
-                    }
-
-                    $relation = $peer->getSubscriptionStatus($this->getUser());
-
-                    if (($relation == 0 || $relation == 1) && \openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->getUser(), "messages.notfriends")) {
-                        $this->failTooOften("Limit exceed");
-                    }
-                }
-            }
-
             // Forbid users to write to groups that banned them
 
+            $senderId = $this->resolveSender($groupId);
             if ($senderId > 0) {
                 $senderObj = $uRepo->get($senderId);
 
@@ -137,6 +124,28 @@ final class Messages extends VKAPIRequestHandler
                         if (!$peer->canWriteMessage($senderObj)) {
                             $this->fail(946, "This group blacklisted your account");
                         }
+                    }
+                }
+            } else {
+                $senderObj = $cRepo->get(abs($senderId));
+            }
+
+            if ($peerId > 0 && $peerId < 2000000000 && $senderId !== $peerId) {
+                if (method_exists($peer, 'getPrivacyPermission')) {
+                    if (!$peer->getPrivacyPermission('messages.write', $senderObj)) {
+                        $existence = $this->invoke("im.checkPeerExist", [
+                            "peer_id" => $peerId
+                        ]);
+
+                        if (!$existence["exists"]) {
+                            $this->fail(945, "This chat is disabled because of privacy settings");
+                        }
+                    }
+
+                    $relation = $peer->getSubscriptionStatus($this->getUser());
+
+                    if (($relation == 0 || $relation == 1) && \openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->getUser(), "messages.notfriends")) {
+                        $this->failTooOften("Limit exceed");
                     }
                 }
             }
@@ -219,9 +228,9 @@ final class Messages extends VKAPIRequestHandler
 
         if (!empty($otherMemberIds)) {
             $usersRepo = new USRRepo();
+            $users = $usersRepo->getByIds(array_slice($otherMemberIds, 0, 4));
             $names = [];
-            foreach (array_slice($otherMemberIds, 0, 4) as $mId) {
-                $u = $usersRepo->get((int)$mId);
+            foreach ($users as $u) {
                 if ($u) {
                     $fn = $u->getFirstName();
                     if (!empty($fn)) {

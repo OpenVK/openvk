@@ -329,7 +329,11 @@ export class Conversation {
             return this.peer._chunks.getUnreadCount();
         }
 
-        return this._conversation.unread_count || 0;
+        try {
+            return this._conversation.unread_count || 0;
+        } catch(e) {
+            return 0;
+        }
     }
 
     get id() {
