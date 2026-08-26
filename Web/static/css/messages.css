@@ -165,6 +165,14 @@ body.no-footer .page_footer {
     margin-right: 15px;
 }
 
+.crp-entry--image {
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 3px;
+}
+
 .crp-entry--info {
     width: 130px;
     margin-top: 2%;
@@ -176,11 +184,66 @@ body.no-footer .page_footer {
     border-radius: 3px;
 }
 
-.crp-entry--image>img {
+.crp-entry--image>img,
+.crp-entry--image>table.chat_table_avatar {
     object-fit: contain;
     height: 50px;
     width: 50px;
     border-radius: 3px;
+}
+
+table.chat_table_avatar {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    table-layout: fixed;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #e4e8ec;
+}
+
+table.chat_table_avatar tr {
+    padding: 0;
+    margin: 0;
+    height: 50%;
+}
+
+table.chat_table_avatar td {
+    width: 50%;
+    height: 50%;
+    padding: 0;
+    margin: 0;
+    border: none;
+    line-height: 0;
+    font-size: 0;
+    overflow: hidden;
+    vertical-align: top;
+    position: relative;
+}
+
+table.chat_table_avatar .chat_table_avatar_cell {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+table.chat_table_avatar td img,
+table.chat_table_avatar .chat_table_avatar_cell img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 0;
 }
 
 .crp-entry--info span {
@@ -318,7 +381,8 @@ body.no-footer .page_footer {
 
 /* toggle */
 
-.chat-window.saved-msgs .ava2 {
+.chat-window.saved-msgs .ava2,
+.chat-window.saved-msgs table.chat_table_avatar.ava2 {
     opacity: 0;
 }
 
@@ -569,7 +633,8 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     line-height: 13px;
 }
 
-.messenger-app--input>.ava {
+.messenger-app--input>.ava,
+.messenger-app--input>table.chat_table_avatar.ava {
     width: 52px;
     height: 52px;
     object-fit: cover;
@@ -1706,7 +1771,8 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     box-shadow: 0px 0px 0px 1px #00000033;
 }
 
-#fastchats_related #fastchats .fastchat_items .fastchat_item img {
+#fastchats_related #fastchats .fastchat_items .fastchat_item img,
+#fastchats_related #fastchats .fastchat_items .fastchat_item table.chat_table_avatar {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -1745,3 +1811,29 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 #fastchats_related #fastchats .fastchat_items .fastchat_item:hover .fastchat_close {
     opacity: 1;
 }
+
+#load_skeleton,
+.im_page_loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 0;
+    width: 100%;
+    min-height: 80px;
+    box-sizing: border-box;
+}
+
+#load_skeleton img,
+.im_page_loader img {
+    display: block;
+    margin: 0 auto;
+}
+
+.chat_messages_loader {
+    min-height: 250px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+

@@ -309,17 +309,16 @@ class Chat extends RowModel
     {
         $photo = $this->getPhoto();
 
-        bdump($a_data);
         $payload = [];
         $payload["type"] = "chat";
 
         if ($a_data != null) {
-            $payload["admin_id"] = $a_data["admin_id"];
+            $payload["admin_id"] = $a_data["admin_id"] ?? 0;
             $payload["left"] = $a_data["left"] ?? 0;
             $payload["kicked"] = $a_data["kicked"] ?? 0;
         }
 
-        $payload["title"] = $this->getTitle();
+        $payload["title"] = (!empty($a_data["title"]) && empty($this->getTitle())) ? $a_data["title"] : $this->getTitle();
         $payload["description"] = $this->getDescription();
         $payload["id"] = $this->getChatGlobalId();
         $payload["local_id"] = $this->getChatId();
@@ -333,7 +332,11 @@ class Chat extends RowModel
             $payload["avatar_max"] = $payload["photo_200"] = $payload["photo_100"] = $payload["photo_50"] = "/assets/packages/static/openvk/img/im/chat_meaningless.jpg";
         }
 
-        $payload["users"] = [];
+        $members = $a_data["members"] ?? $a_data["users"] ?? [];
+        $payload["users"] = $members;
+        if (!empty($members)) {
+            $payload["members"] = $members;
+        }
         $payload["push_settings"] = [
             "sound" => 1,
             "disabled_until" => null

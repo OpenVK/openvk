@@ -141,6 +141,14 @@ export class Conversations {
         convs.items.forEach((item) => {
             const id = item.conversation.peer.id;
             item.peer = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(id);
+            if (item.peer) {
+                if (item.conversation?.chat_settings?.members) {
+                    item.peer.data.members = item.conversation.chat_settings.members;
+                }
+                if (!item.peer.data.title && item.conversation?.chat_settings?.title) {
+                    item.peer.data.title = item.conversation.chat_settings.title;
+                }
+            }
             lists.push(new Conversation(item));
         });
 

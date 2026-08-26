@@ -577,7 +577,7 @@ class IMState {
     }
 
     addLoadSkeleton(container) {
-        container.insertAdjacentHTML("beforeend", `<span id="load_skeleton">LOADING!!!!!</span>`);
+        container.insertAdjacentHTML("beforeend", `<div id="load_skeleton" class="im_page_loader"><img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="..." /></div>`);
     }
 
     removeLoadSkeleton(container) {

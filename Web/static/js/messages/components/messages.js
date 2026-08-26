@@ -767,6 +767,53 @@ export class ChatGeneralForm {
         return this.supposed_type == "chat";
     }
 
+    get has_custom_avatar() {
+        if (this.supposed_type !== 'chat') return true;
+        if (this.data.photo_id) return true;
+        const p = this.data.photo_100 || this.data.photo_50 || this.data.photo_200 || this.data.avatar_max;
+        if (!p) return false;
+        if (typeof p === 'string' && (p.includes('chat_meaningless') || p.includes('camera_'))) return false;
+        return true;
+    }
+
+    get members_ids() {
+        if (this.data.members && Array.isArray(this.data.members)) {
+            return this.data.members;
+        }
+        if (this.data.users && Array.isArray(this.data.users)) {
+            return this.data.users.map(u => typeof u === 'object' ? (u.id || u.member_id) : u);
+        }
+        if (this.data.chat_settings?.members && Array.isArray(this.data.chat_settings.members)) {
+            return this.data.chat_settings.members;
+        }
+        if (this.data.chat_settings?.active_ids && Array.isArray(this.data.chat_settings.active_ids)) {
+            return this.data.chat_settings.active_ids;
+        }
+        if (this._members && this._members.items && Array.isArray(this._members.items)) {
+            return this._members.items.map(m => m.member_id || m.id || m);
+        }
+        return [];
+    }
+
+    get mosaic_avatars() {
+        const memberIds = this.members_ids;
+        if (!memberIds || memberIds.length === 0) {
+            return [];
+        }
+
+        const avatars = [];
+        for (const mId of memberIds) {
+            if (avatars.length >= 4) break;
+            const prof = window.im?.cached_profiles?._findCachedProfileById(mId);
+            if (prof && prof.avatar_any) {
+                avatars.push(prof.avatar_any);
+            } else {
+                avatars.push('/assets/packages/static/openvk/img/camera_100.png');
+            }
+        }
+        return avatars;
+    }
+
     get conversation_avatar_any() {
         if (this.id === window.openvk.current_id) {
             return ChatGeneralForm.SAVED_MESSAGES_AVATAR;
@@ -798,12 +845,12 @@ export class ChatGeneralForm {
     get full_name() {
         switch (this.supposed_type) {
             case 'user':
-                return window.escapeHtml(this.data.first_name + ' ' + this.data.last_name);
+                return ((this.data.first_name || '') + ' ' + (this.data.last_name || '')).trim();
             case 'club':
-                return window.escapeHtml(this.data.name);
+                return this.data.name || '';
             case 'chat':
-                return window.escapeHtml(this.data.title ?? tr("chat"));
-            }
+                return this.data.title || tr("chat");
+        }
     }
 
     get conversations_name() {
@@ -817,11 +864,11 @@ export class ChatGeneralForm {
     get name() {
         switch (this.supposed_type) {
             case 'user':
-                return window.escapeHtml(this.data.first_name);
+                return this.data.first_name || '';
             case 'club':
-                return window.escapeHtml(this.data.name);
+                return this.data.name || '';
             case 'chat':
-                return window.escapeHtml(this.data.title);
+                return this.data.title || tr("chat");
         }
     }
 

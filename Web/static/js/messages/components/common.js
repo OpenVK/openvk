@@ -1,4 +1,45 @@
 import { html, render } from './render.js';
+import { ChatGeneralForm } from './messages.js';
+
+export const PeerAvatar = ({ peer, className = "", loading = "lazy" }) => {
+    if (!peer) {
+        return html`<img class="${className}" src="/assets/packages/static/openvk/img/im/chat_meaningless.jpg" loading="${loading}" />`;
+    }
+
+    if (peer.id === window.openvk?.current_id) {
+        return html`<img class="${className}" src=${ChatGeneralForm.SAVED_MESSAGES_AVATAR} loading="${loading}" />`;
+    }
+
+    if (peer.supposed_type === 'chat' && !peer.has_custom_avatar) {
+        const avatars = peer.mosaic_avatars || [];
+        const cell0 = avatars[0] || null;
+        const cell1 = avatars[1] || null;
+        const cell2 = avatars[2] || null;
+        const cell3 = avatars[3] || null;
+
+        if (!cell0 && !cell1 && !cell2 && !cell3) {
+            return html`<img class="${className}" src="/assets/packages/static/openvk/img/im/chat_meaningless.jpg" loading="${loading}" />`;
+        }
+
+        return html`
+            <table class="chat_table_avatar ${className}" cellspacing="0" cellpadding="0">
+                <tbody>
+                    <tr>
+                        <td>${cell0 ? html`<div class="chat_table_avatar_cell"><img src="${cell0}" loading="${loading}" /></div>` : ''}</td>
+                        <td>${cell1 ? html`<div class="chat_table_avatar_cell"><img src="${cell1}" loading="${loading}" /></div>` : ''}</td>
+                    </tr>
+                    <tr>
+                        <td>${cell2 ? html`<div class="chat_table_avatar_cell"><img src="${cell2}" loading="${loading}" /></div>` : ''}</td>
+                        <td>${cell3 ? html`<div class="chat_table_avatar_cell"><img src="${cell3}" loading="${loading}" /></div>` : ''}</td>
+                    </tr>
+                </tbody>
+            </table>
+        `;
+    }
+
+    const src = peer.conversation_avatar_any || peer.avatar_any;
+    return html`<img class="${className}" src=${src} loading="${loading}" />`;
+};
 
 export const PeerTab = ({ conv, active, page }) => {
     return html`
@@ -110,7 +151,7 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
     <div class="messenger-app-end${(replyTo || editMsg) ? ' m-selected' : ''}">
         ${ replyTo && html`
             <div class="input-reply input-m">
-                <span onclick=${() => { clickOnReply(replyTo) }} aria-label="link" class="input-type">${escapeHtml(tr("reply_to", replyTo.sender.full_name))}</span>
+                <span onclick=${() => { clickOnReply(replyTo) }} aria-label="link" class="input-type">${tr("reply_to", replyTo.sender.full_name)}</span>
                 <span class="input-close" onClick=${onRemoveReply}><div class="cross"></div></span>
             </div>
         `}
@@ -140,8 +181,10 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
                         <${AttachmentMenu} />
                     </div>
                 </div>
-                <img class="ava ava2" src="${replyTo ? replyTo.sender.avatar_any : corresponder.peer.avatar_any || ''}"
-                    alt="${replyTo ? replyTo.sender.full_name : corresponder.peer.full_name || ''}" />
+                <${PeerAvatar}
+                    peer=${replyTo ? replyTo.sender : corresponder.peer}
+                    className="ava ava2"
+                    loading="eager" />
             </div>
         </div>
     </div>
@@ -163,7 +206,7 @@ export const ConversationItem = ({ conv }) => {
     return html`
         <div class="${cls1.join(' ')}" onClick=${() => window.im?.messenger.selectConversation(conv, true)}>
         <div class="crp-entry--image">
-            <img src=${conv.peer.conversation_avatar_any} loading="lazy" />
+            <${PeerAvatar} peer=${conv.peer} />
         </div>
         <div class="crp-entry--info">
             <a>${ovk_proc_strtr(conv.peer.conversations_full_name, 30)}</a><br/>
@@ -264,14 +307,14 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
     <div class="peer-side">
         <div class="peer-info">
             <div class="peer-avatar sliding-thing-wrapper">
-                <img src=${avatar} alt=${tr('avatar')} />
+                <${PeerAvatar} peer=${peer} />
                 <a onClick=${(event) => { OpenChatAvatar(event, peer) }} class="avatar-opener sliding-thing">
                     <div class="lupa"></div>
                 </a>
             </div>
             <div class="peer-name">
                 <div class="peer-name-1">
-                    <a class="peer-link" href=${peer.page_url}>${escapeHtml(peer.full_name)}</a>
+                    <a class="peer-link" href=${peer.page_url}>${peer.full_name}</a>
 
                     <div class="peer-status">
                         <span dangerouslySetInnerHTML=${{ __html: peer.online_status_str }} />

@@ -109,12 +109,14 @@ export class IMPage {
     }
     addLoadSkeleton(container, remove_before = false) {
         if (remove_before == true) { container.innerHTML = ""; }
-        container.insertAdjacentHTML("beforeend", `<span id="load_skeleton">LOADING!!!!!</span>`);
+        container.insertAdjacentHTML("beforeend", `<div id="load_skeleton" class="im_page_loader"><img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="..." /></div>`);
     }
     removeLoadSkeleton(container) { 
         try { 
             container.querySelector("#load_skeleton").remove(); 
-        } catch(e) { console.error(e); }
+        } catch(e) { 
+            u("#im_container #load_skeleton").remove();
+        }
     }
     showHook() {}
 }
