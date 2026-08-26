@@ -104,14 +104,23 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
 export const SystemMessages = {
     "chat_create": (msg, page) => {
         const sender = msg.sender;
-        const chat_title = msg.data.action.text;
+        const chat_title = (msg.data?.action?.text || msg.action?.text || "").trim();
+        let text = "";
+        if (chat_title && chat_title !== "undefined") {
+            text = tr("event_chat_creation_" + sender.gender, chat_title);
+        } else {
+            text = tr("event_chat_creation_no_title_" + sender.gender);
+            if (text === "event_chat_creation_no_title_" + sender.gender) {
+                text = sender.gender === "female" ? "Создала беседу" : (sender.gender === "neutral" ? "Создали беседу" : "Создал беседу");
+            }
+        }
         return html`
             <div class="messenger-special-message">
                 <div>
                     <a class="_sender" onClick=${(e) => { page.onAuthorNameClick(msg, e) }}>
                         <strong>${sender.full_name} </strong>
                     </a>
-                    <span class="text">${tr("event_chat_creation_" + sender.gender, chat_title).toLowerCase()}</span>
+                    <span class="text">${text.toLowerCase()}</span>
                     <span class="date-mini">${msg.readable_date}</span>
                 </div>
             </div>
@@ -213,6 +222,9 @@ export const DayChunkView = ({ chunk, page }) => {
 };
 
 export const MessageListView = ({ messages, convo, page }) => {
+    const isMessagesInited = convo?.peer?._isMessagesInited ? convo.peer._isMessagesInited() : true;
+    const isLoading = !isMessagesInited;
+
     return html`
     <div id="messenger-app--down-button" onClick=${() => {
         const _v = window.im.messenger.view;
@@ -225,11 +237,17 @@ export const MessageListView = ({ messages, convo, page }) => {
     }}>DOWN</div>
     <div class="messenger-app--messages">
       <div class="messenger-app--messages-array">
-         ${messages.map((chunk) => html`<${DayChunkView} chunk=${chunk} page=${page} />`)}
+         ${isLoading ? html`
+             <div class="im_page_loader chat_messages_loader">
+                 <img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="..." />
+             </div>
+         ` : html`
+             ${messages.map((chunk) => html`<${DayChunkView} chunk=${chunk} page=${page} />`)}
 
-         <div>
-            <${WriteBar} convo=${convo} />
-         </div>
+             <div>
+                <${WriteBar} convo=${convo} />
+             </div>
+         `}
       </div>
     </div>
   `;

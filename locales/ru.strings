@@ -1558,6 +1558,9 @@
 "event_chat_creation_male" = "Создал беседу «$1»";
 "event_chat_creation_female" = "Создала беседу «$1»";
 "event_chat_creation_neutral" = "Создали беседу «$1»";
+"event_chat_creation_no_title_male" = "Создал беседу";
+"event_chat_creation_no_title_female" = "Создала беседу";
+"event_chat_creation_no_title_neutral" = "Создали беседу";
 
 /* Stickers */
 

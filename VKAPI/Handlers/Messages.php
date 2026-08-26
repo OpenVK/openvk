@@ -205,8 +205,41 @@ final class Messages extends VKAPIRequestHandler
         $attachments = $result;
     }
 
+    private function resolveChatTitle(string $customTitle, array $memberIds, int $currentUserId, int $chatId): string
+    {
+        $customTitle = trim($customTitle);
+        if (!empty($customTitle) && !str_starts_with($customTitle, "Беседа №")) {
+            return $customTitle;
+        }
+
+        $otherMemberIds = array_values(array_filter($memberIds, fn($id) => (int)$id !== (int)$currentUserId));
+        if (empty($otherMemberIds)) {
+            $otherMemberIds = $memberIds;
+        }
+
+        if (!empty($otherMemberIds)) {
+            $usersRepo = new USRRepo();
+            $names = [];
+            foreach (array_slice($otherMemberIds, 0, 4) as $mId) {
+                $u = $usersRepo->get((int)$mId);
+                if ($u) {
+                    $fn = $u->getFirstName();
+                    if (!empty($fn)) {
+                        $names[] = $fn;
+                    }
+                }
+            }
+            if (!empty($names)) {
+                return implode(', ', $names);
+            }
+        }
+
+        return !empty($customTitle) ? $customTitle : ("Беседа №" . $chatId);
+    }
+
     /**
-     * Обогащает сырые ID пользователей и групп полноценными объектами для VK API.
+     * Преобразует расширенные данные (profiles, groups, chats) в полные структуры VK API
+     *
      * @param array $payload Ссылка на данные от IM сервиса
      * @param string $fields Дополнительные поля для USRRepo
      */
@@ -237,6 +270,8 @@ final class Messages extends VKAPIRequestHandler
         $extendedChats = [];
         if (!empty($payload['chats'])) {
             $chatsRepo = new ChatRepo();
+            $currentUserId = $this->getUser() ? $this->getUser()->getId() : 0;
+
             foreach ($payload['chats'] as $chat) {
                 $isArr = is_array($chat);
                 $idVal = $isArr ? ($chat['id'] ?? 0) : (int) $chat;
@@ -249,21 +284,34 @@ final class Messages extends VKAPIRequestHandler
                 }
 
                 $chatEntity = $loadedChats[$localChatId] ?? $chatsRepo->getByChatId($localChatId);
-                if ($chatEntity != null) {
-                    $chatParam = is_array($chat) ? $chat : [$chat];
-                    $entry = $chatEntity->toVkApiStruct($this->getUser(), $chatParam);
+                $chatParam = is_array($chat) ? $chat : ['id' => $chat];
 
+                $memberIds = $chatParam['members'] ?? [];
+                $customTitle = $chatEntity ? $chatEntity->getTitle() : '';
+                $resolvedTitle = $this->resolveChatTitle($customTitle, $memberIds, $currentUserId, $localChatId);
+
+                if ($chatEntity != null) {
+                    $chatParam['title'] = $resolvedTitle;
+                    $entry = $chatEntity->toVkApiStruct($this->getUser(), $chatParam);
+                    $entry['title'] = $resolvedTitle;
+                    if (!empty($memberIds)) {
+                        $entry['members'] = $memberIds;
+                        $entry['users'] = $memberIds;
+                    }
                     $extendedChats[] = $entry;
                 } else {
-                    $extendedChats[] = array_merge([
+                    $extendedChats[] = [
                         'id'          => $globalChatId,
                         'type'        => 'chat',
-                        'title'       => "ошибочная беседа",
+                        'title'       => $resolvedTitle,
                         'description' => "...",
                         'admin_id'    => 0,
                         'left'        => 0,
-                        'kicked'      => 0
-                    ], ["photo_50" => null]);
+                        'kicked'      => 0,
+                        'photo_50'    => null,
+                        'members'     => $memberIds,
+                        'users'       => $memberIds,
+                    ];
                 }
             }
         }
@@ -813,11 +861,11 @@ final class Messages extends VKAPIRequestHandler
         $this->willExecuteWriteAction();
         $this->ensureBrokerActive();
 
-        $this->fail(-5, "Method is disabled");
+        //$this->fail(-5, "Method is disabled");
 
-        if (empty($title)) {
+        /*if (empty($title)) {
             $this->fail(100, "One of the parameters is missing: title");
-        }
+        }*/
 
         /*if (empty($user_ids)) {
             $this->fail(100, "One of the parameters is missing: user_ids");
@@ -825,15 +873,17 @@ final class Messages extends VKAPIRequestHandler
 
         $rawIds = preg_split("%, ?%", $user_ids);
         $targetUserIds = array_filter(array_map('intval', $rawIds));
+        $users = (new USRRepo)->getByIds($targetUserIds);
         $currentUser = $this->getUser();
 
-        foreach ($targetUserIds as $id) {
-            if ($id === $currentUser->getId()) {
+        foreach ($users as $usr) {
+            $usrid = $usr->getId();
+            if ($usrid === $currentUser->getId()) {
                 continue;
             }
 
-            if (!$currentUser->isFriendsWith($id)) {
-                $this->fail(15, "Access denied: user with ID " . $id . " is not your friend");
+            if (!$currentUser->isFriendsWith($usr)) {
+                $this->fail(15, "Access denied: user with ID " . $usrid . " is not your friend");
             }
         }
 
@@ -1008,16 +1058,18 @@ final class Messages extends VKAPIRequestHandler
 
                 $conversation['chat_settings']['acl'] = array_merge($defaultAcl, $conversation['chat_settings']['acl'] ?? []);
 
-                $title = "Беседа №" . $chatId;
+                $memberIds = $conversation['chat_settings']['members'] ?? [];
+                $customTitle = $chatEntity ? $chatEntity->getTitle() : '';
+                $title = $this->resolveChatTitle($customTitle, $memberIds, $currentUserId, $chatId);
+
                 $photos = [
                     "photo_50"  => null,
                     "photo_100" => null,
                     "photo_200" => null,
                 ];
 
-                if ($chatEntity) {
+                if ($chatEntity && $chatEntity->hasPhoto()) {
                     try {
-                        $title = $chatEntity->getTitle() ?: $title;
                         $photos = [
                             "photo_50"  => $chatEntity->getPhotoURL("miniscule"),
                             "photo_100" => $chatEntity->getPhotoURL("tiny"),
@@ -1104,6 +1156,95 @@ final class Messages extends VKAPIRequestHandler
         ];
 
         $response = $this->invoke("messages.getConversationsById", $params, $group_id);
+
+        $chatIds = [];
+        if (!empty($response['items'])) {
+            foreach ($response['items'] as $item) {
+                $peer = $item['conversation']['peer'] ?? null;
+                if ($peer && $peer['type'] === 'chat') {
+                    $chatIds[] = (int) ($peer['id'] - 2000000000);
+                }
+            }
+        }
+
+        if ($extended && !empty($response['chats'])) {
+            foreach ($response['chats'] as $chat) {
+                $chatId = is_array($chat) ? ($chat['id'] ?? 0) : (int) $chat;
+                if ($chatId > 2000000000) {
+                    $chatIds[] = (int) ($chatId - 2000000000);
+                }
+            }
+        }
+
+        $chatIds = array_unique(array_filter($chatIds));
+        $loadedChats = [];
+
+        if (!empty($chatIds)) {
+            $chatsRepo = new ChatRepo();
+            foreach ($chatIds as $cId) {
+                $chatObj = $chatsRepo->getByChatId($cId);
+                $loadedChats[$cId] = $chatObj ?: null;
+            }
+        }
+
+        $currentUserId = $this->getUser()->getId();
+        if (!empty($response['items'])) {
+            foreach ($response['items'] as &$item) {
+                $conversation = &$item['conversation'];
+                $peer = $conversation['peer'] ?? null;
+
+                if ($peer && $peer['type'] === 'chat') {
+                    $chatId = (int) ($peer['id'] - 2000000000);
+                    $chatEntity = $loadedChats[$chatId] ?? null;
+
+                    $adminId = (int) ($conversation['chat_settings']['admin_id'] ?? 0);
+                    $isAdmin = ($adminId === $currentUserId && $currentUserId > 0);
+
+                    $defaultAcl = [
+                        "can_invite"             => true,
+                        "can_change_info"        => $isAdmin,
+                        "can_change_pin"         => $isAdmin,
+                        "can_promote_users"      => $isAdmin,
+                        "can_see_invite_link"    => $isAdmin,
+                        "can_change_invite_link" => $isAdmin,
+                        "can_moderate"           => $isAdmin,
+                        "can_copy_chat"          => $isAdmin,
+                    ];
+
+                    $conversation['chat_settings']['acl'] = array_merge($defaultAcl, $conversation['chat_settings']['acl'] ?? []);
+
+                    $memberIds = $conversation['chat_settings']['members'] ?? [];
+                    $customTitle = $chatEntity ? $chatEntity->getTitle() : '';
+                    $title = $this->resolveChatTitle($customTitle, $memberIds, $currentUserId, $chatId);
+
+                    $photos = [
+                        "photo_50"  => null,
+                        "photo_100" => null,
+                        "photo_200" => null,
+                    ];
+
+                    if ($chatEntity && $chatEntity->hasPhoto()) {
+                        try {
+                            $photos = [
+                                "photo_50"  => $chatEntity->getPhotoURL("miniscule"),
+                                "photo_100" => $chatEntity->getPhotoURL("tiny"),
+                                "photo_200" => $chatEntity->getPhotoURL("normal"),
+                            ];
+                        } catch (\Throwable $e) {
+                        }
+                    }
+
+                    $conversation['chat_settings']['id'] = $peer['id'];
+                    $conversation['chat_settings']['title'] = $title;
+                    $conversation['chat_settings']['photo'] = $photos;
+                }
+            }
+            unset($item);
+        }
+
+        if ($extended) {
+            $this->hydrateExtendedData($response, "photo_200,online", $loadedChats);
+        }
 
         return [
             "count"    => (int)($response['count'] ?? 0),

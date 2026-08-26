@@ -1,6 +1,7 @@
 import { html, render } from './render.js';
 import { ChatGeneralForm } from './messages.js';
 import { MessageBubble } from './message.js';
+import { PeerAvatar } from './common.js';
 
 export const FriendsPageTemplate = ({ friends, count, referrer, onFriendClick, onSubmit, isSelected, onLoadMore, onTitleChangeClick, onSearch }) => {
     const isChatCreation = referrer == "chat_creation";
@@ -103,10 +104,10 @@ export const FastChatsBar = ({ pinnedItems, convos }) => {
                 ${pinnedItems.map((item) => {
                     const peer = item.peer;
                     return html`
-                    <div title="${escapeHtml(peer.full_name)}" onClick=${(e) => { window.im.fastChats.selectConversation(e, item) }} class="fastchat_item ${!item.is_read ? "unread" : ""}">
+                    <div title="${peer.full_name}" onClick=${(e) => { window.im.fastChats.selectConversation(e, item) }} class="fastchat_item ${!item.is_read ? "unread" : ""}">
                         <div class="fastchat_unread">+${item.unread_count}</div>
                         <div class="fastchat_close"></div>
-                        <img src="${peer.avatar_any}" />
+                        <${PeerAvatar} peer=${peer} />
                     </div>`
                 })}
             </div>

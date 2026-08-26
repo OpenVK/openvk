@@ -87,10 +87,7 @@ export class FriendsPage extends IMPage {
     onCreateChat(e) {
         toggleUnclickability(e.target, true);
 
-        let title = "empty name todo";
-        if (this._set_name == true) {
-            title = this.name;
-        }
+        let title = this._set_name ? this.name : "";
 
         const ids = [];
         this.selected_friends.forEach(peer => {
