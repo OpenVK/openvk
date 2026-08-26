@@ -10,6 +10,7 @@ use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\Entities\Photo;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Util\DateTime;
+use openvk\Web\Util\IMBroker;
 
 /**
  * Message entity.
@@ -19,13 +20,17 @@ class Message
 {
     private $data;
 
-    public function __construct()
+    public function __construct($data = null)
     {
-        $this->data = new \stdClass();
+        $this->data = $data ? $data : new \stdClass();
     }
 
-    private function getRecord(): \stdClass
+    private function getRecord()
     {
+        if (is_array($this->data)) {
+            return (object) $this->data;
+        }
+
         return $this->data;
     }
 
@@ -45,8 +50,29 @@ class Message
      */
     public function getText(bool $richText = false): string
     {
-        return $this->getRecord()->content;
+        return $this->getRecord()->content ?? $this->getRecord()->text;
     }
+
+    public function getAttachmentsString()
+    {
+        return $this->getRecord()->attachments;
+    }
+
+    public function getSenderId()
+    {
+        return $this->getRecord()->from_id;
+    }
+
+    public function getPeerId()
+    {
+        return $this->getRecord()->peer_id;
+    }
+
+    public function getOwner() 
+    {
+        return get_entity_by_id($this->getSenderId());
+    }
+
     /**
      * Sets message text.
      *
@@ -150,6 +176,25 @@ class Message
     public function isUnread(): bool
     {
         return (bool) $this->getRecord()->unread;
+    }
+
+    public static function fromGlobalId(int $global_id, int $from_id = 0): ?Message
+    {
+        $broker = IMBroker::i();
+        $response = $broker->invokeMethod($from_id, "messages.getById", [
+            "message_ids" => $global_id,
+        ]);
+
+        if ($response == false) {
+            return null;
+        }
+
+        $data = json_decode($response, true);
+        if ($data == null || $data["response"] == null) {
+            return null;
+        }
+
+        return new Message($data["response"]["items"][0]);
     }
 
     /**

@@ -57,6 +57,17 @@ export class InstantMessagesAndRelated {
             return;
         }
 
+        // иначе будут лишние запросы
+        try {
+            if (window.openvk.current_id == 0 || window.openvk.disable_ajax == 1 || Number(localStorage.getItem('ux.disable_ajax_routing') ?? 0) == 1 || Number(localStorage.getItem('tw.im.disable_messenger') ?? 0) == 1) {
+                if (location.pathname != "/im") {
+                    return;
+                }
+            }
+        } catch(e) {
+            console.error(e);
+        }
+
         this.is_initing = true;
         console.trace();
         console.log("IM | Init", this.state);
@@ -571,7 +582,7 @@ class IMState {
     async _resolvePosition(url = null, from_msg = false, firstLoad = false) {
         console.log("IM | _resolvePosition");
 
-        if (window.openvk.current_id == 0) {
+        if (window.openvk.current_id == 0 || window.openvk.disable_ajax == 1) {
             return;
         }
 

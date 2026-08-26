@@ -1,0 +1,21 @@
+{block content}
+    {if !$message}
+        {include "../components/error.latte", description => tr("reported_message_display_error")}
+    {else}
+        <p>
+            <b>{tr("reported_message_contains_2")}</b>:
+            {$message->getText()}
+        </p>
+        <p>
+            <b>{tr("reported_message_contains_1")}</b>:
+            {$message->getAttachmentsString()}
+        </p>
+        <p>
+            <p>{tr("reported_message_contains_3", $message->getSenderId(), $message->getPeerId())}</p>
+        </p>
+
+        <div>
+            <input type="button" class="button" value="{_resolve_message_context}">
+        </div>
+    {/if}
+{/block}

@@ -563,6 +563,11 @@ table.chat_table_avatar .chat_table_avatar_cell img {
     background-size: 80px 37px;
 }
 
+.messenger-app--messages---message .actions-2 .report-icon {
+    background-position: -1px 0px;
+    background-size: 80px 37px;
+}
+
 .messenger-app--messages .messenger-app--messages-day-time {
     display: flex;
     justify-content: center;
