@@ -113,7 +113,7 @@ export class MessageChunk {
     /** The [first, last] message-id interval covered by this chunk (map key / search). */
     get id_range() {
         const first = this.first_message?.id;
-        const last  = this.latest_message?.id;
+        const last = this.latest_message?.id;
         if (first == null || last == null) return null;
         return { first, last };
     }
@@ -527,7 +527,7 @@ export class Chunks {
         // Middle of the conversation → do not reveal newer chunks on scroll-down.
         if (active !== actual) return;
 
-                const newest = active.latest_message;
+        const newest = active.latest_message;
         if (!newest) return;
 
         let msgs;
@@ -666,7 +666,7 @@ export class ChatGeneralForm {
                 } else {
                     return this.data.id;
                 }
-            }
+        }
     }
 
     get supposed_type() {
@@ -696,7 +696,7 @@ export class ChatGeneralForm {
     }
 
     can(thing, relatively_current_group = null) { // unified function
-        switch(thing) {
+        switch (thing) {
             case "update_title":
             case "invite_new":
             case "update_avatar":
@@ -750,8 +750,7 @@ export class ChatGeneralForm {
         return this.isAdmin();
     }
 
-    canViewInviteLinks(as_group = null)
-    {
+    canViewInviteLinks(as_group = null) {
         if (as_group != null) {
             return false;
         }
@@ -1214,18 +1213,42 @@ export class ChatGeneralForm {
         await this._members.load(offset);
     }
 
-    async read() {
-        //const c = this._chunks._getMostActualChunk();
-        //const last_msg_id = c.latest_message.id;
+    get in_read() {
+        return this._in_read || (this.data ? this.data.in_read : 0) || 0;
+    }
+    set in_read(val) {
+        this._in_read = Math.max(this._in_read || 0, val || 0);
+    }
+
+    get out_read() {
+        return this._out_read || (this.data ? this.data.out_read : 0) || 0;
+    }
+    set out_read(val) {
+        this._out_read = Math.max(this._out_read || 0, val || 0);
+    }
+
+    async read(startMessageId = 0) {
+
         const params = {
             "peer_id": this.id,
-            //"start_message_id": last_msg_id,
         };
-        if (window.im.state.getPageId() < 0) {
-            params["group_id"] = Math.abs(window.im.state.getPageId());
+        if (startMessageId > 0) {
+            params["start_message_id"] = startMessageId;
+        } else {
+            try {
+                const latestChunk = this._getLatestChunk(false);
+                if (latestChunk && latestChunk.latest_message && latestChunk.latest_message.id) {
+                    params["start_message_id"] = latestChunk.latest_message.id;
+                }
+            } catch (e) { }
         }
-        await window.OVKAPI.call("messages.markAsRead", params)
+        if (window.im.state.getId() < 0) {
+            params["group_id"] = Math.abs(window.im.state.getId());
+        }
+
+        await window.OVKAPI.call("messages.markAsRead", params);
     }
+
 }
 
 // ── ChatMessage ────────────────────────────────────────────────────
@@ -1297,7 +1320,7 @@ export class ChatMessage {
     get peer_object() {
         try {
             return window.im.conversations._findConv(this.data.peer_id).peer;
-        } catch(e) {
+        } catch (e) {
             console.error(e);
 
             return window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(this.data.peer_id);
@@ -1318,7 +1341,7 @@ export class ChatMessage {
             })
 
             return is;
-        } catch(e) {
+        } catch (e) {
             return false;
         }
     }
@@ -1693,8 +1716,21 @@ export class ChatMessage {
 
     get is_read() {
         try {
-            return this.data.read_state == 1;
-        } catch(e) {
+            if (this.data && this.data.read_state == 1) return true;
+            const peer = this.peer_object;
+            if (peer) {
+                const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
+                const msgId = (this.data && (this.data.local_id || this.data.id)) || this.id || 0;
+                const fromId = this.data ? this.data.from_id : 0;
+                if (fromId != currentUserId && peer.in_read && msgId <= peer.in_read) {
+                    return true;
+                }
+                if (fromId == currentUserId && peer.out_read && msgId <= peer.out_read) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (e) {
             return false;
         }
     }

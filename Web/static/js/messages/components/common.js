@@ -238,7 +238,8 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
             <div id="conversations-search-bar">
                 <input class="search_input" type="text" placeholder="${tr('search_messages')}" onChange=${onSearch} />
             </div>
-            ${ !is_group ? html`<input style="display: none;" type="button" class="button" value="${tr('create_chat')}" onClick=${onCreateChat} />` : "" }
+            ${ !is_group ? html`<input type="button" class="button" value="${tr('create_chat')}" onClick=${onCreateChat} />` : "" }
+
         </div>
         <div class="crp-list">
             ${conversations.length > 0 ? conversations.map((conv) => html`<${ConversationItem} conv=${conv} />`) : html`<${ConversationsListError} is_group=${is_group} />`}

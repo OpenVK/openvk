@@ -50,7 +50,7 @@ export class Messenger {
     update() {
         try {
             return this.getWindow()._triggerUpdate();
-        } catch(e) {
+        } catch (e) {
             console.error(e);
         }
     }
@@ -70,13 +70,13 @@ export class Messenger {
 
         try {
             await tab.render();
-        } catch(e) { console.error(e); }
+        } catch (e) { console.error(e); }
 
         if (!convo.peer._isMessagesInited()) {
             try {
                 const c = await convo.peer.getMessages();
                 convo.peer._chunks._appendChunk(c);
-            } catch(e) { // может быть и broker failure. Хз зачем.
+            } catch (e) { // может быть и broker failure. Хз зачем.
                 console.error(e);
             }
 
@@ -88,7 +88,7 @@ export class Messenger {
         try {
             await tab.render();
             tab.showTab();
-        } catch(e) { console.error(e); }
+        } catch (e) { console.error(e); }
         const newId = Number(this.currentChatId);
 
         if (oldId != newId) {
@@ -107,7 +107,7 @@ export class Messenger {
                 }
                 this.update();
                 this.getWindow().updUrl();
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
         }
@@ -115,7 +115,12 @@ export class Messenger {
         if (window.im.state.isFastchat) {
             window.im.fastChats.update();
         }
+
+        if (convo && convo.peer) {
+            convo.peer.read();
+        }
     }
+
 
     async selectConversationByPeerId(id) {
         let convo = null;
@@ -123,10 +128,10 @@ export class Messenger {
             convo = await window.im.conversations._findConvFromApi(id);
 
             if (!convo) {
-            console.error("can't find convo with id", id);
+                console.error("can't find convo with id", id);
                 throw new Error("Not found conversation with id ", id);
             }
-        } catch(e) {
+        } catch (e) {
             fastError(String(e));
             return;
         }
@@ -139,7 +144,7 @@ export class Messenger {
 
         try {
             this.getCurrentChat().setDraft(Draft.fromPage(this.getWindow()));
-        } catch(e) {
+        } catch (e) {
             console.error(e);
         }
 
@@ -217,12 +222,12 @@ export class Messenger {
         try {
             if (this.opened_tabs[idx - 1] != null) {
                 this.selectConversation(this.opened_tabs[idx - 1]);
-            } else if(this.opened_tabs[idx + 1] != null) {
+            } else if (this.opened_tabs[idx + 1] != null) {
                 this.selectConversation(this.opened_tabs[idx + 1]);
             } else {
                 window.im.openTabByName("conversations");
             }
-        } catch(e) {
+        } catch (e) {
             console.error(e);
         }
 
@@ -298,7 +303,7 @@ export class Messenger {
         }
     }
 
-    async viewMedia(media_type = "pinned") {}
+    async viewMedia(media_type = "pinned") { }
 
     /* Selectness */
 
@@ -510,7 +515,7 @@ export class MessengerPage extends IMPage {
             } else {
                 this._scrollToEnd();
             }
-        } catch(e) {console.error(e);}
+        } catch (e) { console.error(e); }
     }
     isDisablesScroll() { return true; }
     _triggerUpdate() {
@@ -639,7 +644,7 @@ export class MessengerPage extends IMPage {
         };
 
         if (window.im.messenger.editMsg != null) {
-            this._triggerCancelEditingDialog(() => {f()});
+            this._triggerCancelEditingDialog(() => { f() });
         } else {
             f();
         }
@@ -673,7 +678,7 @@ export class MessengerPage extends IMPage {
                 }
 
                 this._triggerUpdate();
-            }, () => {}]
+            }, () => { }]
         })
     }
 
@@ -682,7 +687,7 @@ export class MessengerPage extends IMPage {
             title: "...",
             body: `<textarea></textarea>`,
             buttons: [tr("close")],
-            callbacks: [() => {}],
+            callbacks: [() => { }],
         });
         const p = Object.assign({}, msg.data);
         p.sender = null;
@@ -738,7 +743,7 @@ export class MessengerPage extends IMPage {
                 if (callback) {
                     callback();
                 }
-            }, () => {}]
+            }, () => { }]
         })
     }
 
@@ -831,7 +836,10 @@ export class MessengerPage extends IMPage {
 
             if (scrollBottom < 10) {
                 // ── Scrolled near the bottom → load newer messages (scroll DOWN) ──
-                if (window.im.state.getCurrentConvo()._chunks_HasMoreNewerChunkRelativelyToCurrentChat()) {
+                const curConvo = window.im.state.getCurrentConvo();
+                const curPeer = curConvo ? curConvo.peer : null;
+                if (curPeer && typeof curPeer._chunks_HasMoreNewerChunkRelativelyToCurrentChat === 'function' && curPeer._chunks_HasMoreNewerChunkRelativelyToCurrentChat()) {
+
                     // There's already a newer chunk available without fetching
                     console.log('IM | Switching to a newer chunk');
                     // await window.im.state.getCurrentConvo()._messagesLoad_DownFromCurrentChunk();
