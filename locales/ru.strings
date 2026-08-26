@@ -1359,6 +1359,7 @@
 "going_to_report_doc" = "Вы собираетесь пожаловаться на этот документ.";
 "going_to_report_post" = "Вы собираетесь пожаловаться на данную запись.";
 "going_to_report_comment" = "Вы собираетесь пожаловаться на данный комментарий.";
+"going_to_report_message" = "Вы собираетесь пожаловаться на сообщение. Опишите причину жалобы:";
 
 "comment" = "Комментарий";
 "sender" = "Отправитель";
@@ -1375,6 +1376,16 @@
 "agent_profile_created_2" = "Теперь пользователи видят Ваши псевдоним и аватарку вместо стандартных аватарки и номера.";
 "agent_profile_edited" = "Профиль отредактирован";
 "agent_profile" = "Карточка агента";
+
+"reported_message_display_error" = "Сообщение не может быть отображено, поскольку не найдено.";
+"reported_message_contains_1" = "Прикрепления сообщения";
+"reported_message_contains_2" = "Текст сообщения";
+"reported_message_contains_3" = "Автор сообщения — id $1, написано в диалоге с id $2.";
+"resolve_message_context" = "Выяснить контекст";
+
+"confirm_report_submission" = "Это действие будет сложно отменить.";
+"confirm_report_submission_2" = "Какой будет причина удаления?";
+"confirm_report_submission_3" = "А причина бана пользователя?";
 
 /* Invite */
 

@@ -1285,6 +1285,10 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post", custom_con
         e.stopPropagation();
     }
 
+    if (CMessageBox.isToggling()) {
+        return;
+    }
+
     const __photoViewer = new PhotoViewer();
     CMessageBox.toggleLoader(true);
 
@@ -1397,59 +1401,6 @@ u(document).on('keydown', '.edit_menu #write', (e) => {
         e.target.closest('.edit_menu').querySelector('#__edit_save').click()
     }
 })
-
-function reportSomething(item_id, item_type, get_param_item_type = null) {
-    if (get_param_item_type == null) {
-        get_param_item_type = item_type;
-    }
-
-    let uReportMsgTxt = `
-        ${tr("going_to_report_" + item_type)}<br/>
-        ${tr("report_question_text")}<br/><br/>
-        <b>${tr("report_reason")}: <input type='text' id='uReportMsgInput' placeholder='${tr("reason")}' /></b>
-    `;
-
-    MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
-        (function() {
-            res = document.querySelector("#uReportMsgInput").value;
-            xhr = new XMLHttpRequest();
-            xhr.open("GET", "/report/" + item_id + "?reason=" + res + "&type=" + get_param_item_type, true);
-            xhr.onload = (function() {
-            if(xhr.responseText.indexOf("reason") === -1)
-                MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
-            else
-                MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
-            });
-                xhr.send(null);
-            }),
-        Function.noop
-    ], false, "reportingSmth");
-}
-
-// семь одинаковых серий
-function reportPhoto(photo_id) {
-    reportSomething(photo_id, "photo");
-}
-
-function reportVideo(video_id) {
-    reportSomething(video_id, "video");
-}
-
-function reportUser(user_id) {
-    reportSomething(user_id, "user");
-}
-
-function reportComment(comment_id) {
-    reportSomething(comment_id, "comment");
-}
-
-function reportApp(id) {
-    reportSomething(id, "app");
-}
-
-function reportClub(club_id) {
-    reportSomething(club_id, "club", "group");
-}
 
 $(document).on("click", "#_ajaxDelete", function(e) {
     MessageBox(tr('warning'), tr('question_confirm'), [

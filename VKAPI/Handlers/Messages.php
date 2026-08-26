@@ -7,8 +7,8 @@ namespace openvk\VKAPI\Handlers;
 use Nette\InvalidStateException;
 use Nette\Utils\ImageException;
 use openvk\Web\Util\IMBroker;
-use openvk\Web\Models\Repositories\{Topics as TopicsRepo, Users as USRRepo, Clubs as ClubRepo, Messages as MSGRepo, Chats as ChatRepo};
-use openvk\Web\Models\Entities\{Photo, Message, Club as ClubEnt};
+use openvk\Web\Models\Repositories\{Reports, Topics as TopicsRepo, Users as USRRepo, Clubs as ClubRepo, Messages as MSGRepo, Chats as ChatRepo};
+use openvk\Web\Models\Entities\{Report, Photo, Message, Club as ClubEnt};
 use openvk\Web\Models\Entities\Messages\Chat;
 use openvk\VKAPI\Handlers\{Users as APIUsers, Groups as APIClubs};
 use openvk\VKAPI\Utils\Uploader;
@@ -1645,5 +1645,51 @@ final class Messages extends VKAPIRequestHandler
         $this->requireUser();
 
         return $this->invoke("im.getMe", [], $group_id);
+    }
+
+    public function report(int $peer_id, int $message_id, ?int $group_id = null, string $type = "spam", string $comment = "")
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $my_id = ($group_id ? $this->getUser()->getRealId() : $group_id);
+        if ($peer_id == $my_id) {
+            $this->fail(12, "Can't report yourself.");
+        }
+
+        $params = [
+            "peer_id" => $peer_id,
+            "conversation_message_ids" => $message_id,
+        ];
+
+        if ($group_id) {
+            $params["group_id"] = $group_id;
+        }
+
+        $res = $this->invoke("messages.getByConversationMessageId", $params);
+        $global_id = null;
+
+        if ($res["items"] && sizeof($res["items"]) < 1) {
+            $this->fail(15, "Access denied");
+        }
+
+        $global_id = $res["items"][0]["global_id"];
+        if (sizeof(iterator_to_array((new Reports())->getDuplicates("message", $global_id, null, $this->getUser()->getId()))) > 0) {
+            return 1;
+        }
+
+        if ($my_id == $res["items"][0]["from_id"]) {
+            $this->fail(12, "Can't report yourself.");
+        }
+
+        $report = new Report();
+        $report->setUser_id($this->getUser()->getId());
+        $report->setTarget_id($global_id);
+        $report->setType("message");
+        $report->setReason($comment);
+        $report->setCreated(time());
+        $report->save();
+
+        return 1;
     }
 }

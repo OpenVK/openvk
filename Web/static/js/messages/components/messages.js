@@ -1233,15 +1233,6 @@ export class ChatGeneralForm {
 export class ChatMessage {
     static AUTHOR_NAME_HIDE_TIMEOUT = 600; // 60 * 10
 
-    doHideHead(another_msg) {
-        let _time_eq = another_msg.data.date - this.data.date;
-        return this.data.from_id == another_msg.data.from_id && _time_eq < ChatMessage.AUTHOR_NAME_HIDE_TIMEOUT && this.is_action == false;
-    }
-
-    isMine() {
-        return this.data.from_id === window.im.state.getId();
-    }
-
     constructor(item = {}) {
         this.data = item;
         this.has_not_loaded_attachments = false;
@@ -1276,6 +1267,19 @@ export class ChatMessage {
 
     _guessSender() {
         this.data.sender = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(this.data.from_id);
+    }
+
+    doHideHead(another_msg) {
+        let _time_eq = another_msg.data.date - this.data.date;
+        return this.data.from_id == another_msg.data.from_id && _time_eq < ChatMessage.AUTHOR_NAME_HIDE_TIMEOUT && this.is_action == false;
+    }
+
+    isMine() {
+        return this.data.from_id === window.im.state.getId();
+    }
+
+    isReportable() {
+        return !this.isMine();
     }
 
     get sent() {

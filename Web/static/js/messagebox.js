@@ -122,6 +122,10 @@ class CMessageBox {
         this._checkCount();
     }
 
+    static isToggling() {
+        return u('#ajloader').hasClass('shown');
+    }
+
     static toggleLoader(state = null) {
         if (state == null) {
             u('#ajloader').toggleClass('shown')

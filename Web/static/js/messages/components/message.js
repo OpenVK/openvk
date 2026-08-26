@@ -60,8 +60,8 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                 ${window.im.state.is_debug && html`
                     <div onClick=${(e) => { window.im.messenger.view.onDebugButtonClick(e, msg) }} class="debug-icon"></div>
                 `}
-                ${!msg.isMine() && html`
-                    <div onClick=${(e) => { window.im.messenger.view.onReportButtonClick(e, msg) }} class="debug-icon"></div>
+                ${msg.isReportable() && html`
+                    <div onClick=${(e) => { window.im.messenger.view.onReportButtonClick(e, msg) }} class="report-icon"></div>
                 `}
             </div>
             <div class="inlines _avatar">

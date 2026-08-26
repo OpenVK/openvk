@@ -28,7 +28,7 @@ final class ReportPresenter extends OpenVKPresenter
             $this->assertNoCSRF();
         }
 
-        $act = in_array($this->queryParam("act"), ["post", "photo", "video", "group", "comment", "note", "app", "user", "audio", "doc"]) ? $this->queryParam("act") : null;
+        $act = in_array($this->queryParam("act"), ["post", "photo", "video", "group", "comment", "note", "app", "user", "audio", "doc", "message"]) ? $this->queryParam("act") : null;
 
         if (!$this->queryParam("orig")) {
             $this->template->reports = $this->reports->getReports(0, (int) ($this->queryParam("p") ?? 1), $act, $_SERVER["REQUEST_METHOD"] !== "POST");
@@ -137,19 +137,22 @@ final class ReportPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
+        $reason = $this->postParam("reason") ?? "**content-" . $report->getContentType() . "-" . $report->getContentId() . "**";
+        $reasonOwner = $this->postParam("reason_owner") ?? ("Suspicious activity");
+
         if ($this->postParam("ban")) {
-            $report->deleteContent();
-            $report->banUser($this->user->identity->getId());
+            $report->banUser($this->user->identity->getId(), $reasonOwner);
+            $report->deleteContent($reason);
 
-            $this->flash("suc", tr("death"), tr("user_successfully_banned"));
+            $this->flash("succ", tr("death"), tr("user_successfully_banned"));
         } elseif ($this->postParam("delete")) {
-            $report->deleteContent();
+            $report->deleteContent($reason);
 
-            $this->flash("suc", tr("nehay"), tr("content_is_deleted"));
+            $this->flash("succ", tr("nehay"), tr("content_is_deleted"));
         } elseif ($this->postParam("ignore")) {
             $report->delete();
 
-            $this->flash("suc", tr("nehay"), tr("report_is_ignored"));
+            $this->flash("succ", tr("nehay"), tr("report_is_ignored"));
         } elseif ($this->postParam("banClubOwner") || $this->postParam("banClub")) {
             if ($report->getContentType() !== "group") {
                 $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
@@ -161,14 +164,14 @@ final class ReportPresenter extends OpenVKPresenter
             }
 
             if ($this->postParam("banClubOwner")) {
-                $club->getOwner()->ban("**content-" . $report->getContentType() . "-" . $report->getContentId() . "**", false, $club->getOwner()->getNewBanTime(), $this->user->identity->getId());
+                $club->getOwner()->ban($reasonOwner, false, $club->getOwner()->getNewBanTime(), $this->user->identity->getId());
             } else {
-                $club->ban("**content-" . $report->getContentType() . "-" . $report->getContentId() . "**");
+                $club->ban($reason);
             }
 
             $report->delete();
 
-            $this->flash("suc", tr("death"), ($this->postParam("banClubOwner") ? tr("group_owner_is_banned") : tr("group_is_banned")));
+            $this->flash("succ", tr("death"), ($this->postParam("banClubOwner") ? tr("group_owner_is_banned") : tr("group_is_banned")));
         }
 
         $this->redirect("/scumfeed");

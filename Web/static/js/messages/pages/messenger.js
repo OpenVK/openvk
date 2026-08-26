@@ -690,11 +690,40 @@ export class MessengerPage extends IMPage {
     }
 
     onReportButtonClick(e, msg) {
+        let is_sending = false;
         const cmsg = new CMessageBox({
             title: tr("report_question"),
-            body: `<textarea></textarea>`,
-            buttons: [tr("close")],
-            callbacks: [() => {}],
+            close_on_buttons: false,
+            body: `
+            <p>${tr("going_to_report_message")}</p>
+            <textarea id='uReportMsgInput' placeholder='${tr("reason")}'></textarea>
+            `,
+            buttons: [tr("confirm_m"), tr("close")],
+            callbacks: [async () => {
+                if (is_sending) {
+                    return;
+                }
+
+                is_sending = true;
+                const text = cmsg.getNode().find("#uReportMsgInput").last().value;
+
+                const res = await window.OVKAPI.call("messages.report", {
+                    "comment": text,
+                    "peer_id": msg.data.peer_id,
+                    "message_id": msg.data.id,
+                    "group_id": window.im.state.getId() > 0 ? null : Math.abs(window.im.state.getId()),
+                }, true);
+
+                if (!res.error_msg) {
+                    MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
+
+                    cmsg.close();
+                } else {
+                    fastError(res.error_msg);
+                }
+            }, () => {
+                cmsg.close();
+            }],
         });
     }
 
