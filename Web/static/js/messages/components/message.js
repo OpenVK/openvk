@@ -60,6 +60,9 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                 ${window.im.state.is_debug && html`
                     <div onClick=${(e) => { window.im.messenger.view.onDebugButtonClick(e, msg) }} class="debug-icon"></div>
                 `}
+                ${!msg.isMine() && html`
+                    <div onClick=${(e) => { window.im.messenger.view.onReportButtonClick(e, msg) }} class="debug-icon"></div>
+                `}
             </div>
             <div class="inlines _avatar">
                 <img class="ava" src=${msg.sender.avatar_any} alt=${msg.sender.full_name} />
@@ -173,7 +176,7 @@ const Attachment = ({ msg, att }) => {
         case 'audio':
             return html`
                 <div onclick=${(e) => { window.im.messenger.showAttachment(e, msg, att) }} class="msg-attach-w msg-attach-w-audio">
-                    <span class="_icon"></span>
+                    <div class="_icon"></div>
                     <span class="_artist">${att.audio.artist}</span>
                     <span>—</span>
                     <span class="_title">${att.audio.title}</span>

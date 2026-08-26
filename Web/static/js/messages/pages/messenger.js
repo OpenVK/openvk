@@ -689,6 +689,15 @@ export class MessengerPage extends IMPage {
         cmsg.getNode().find("textarea").last().value = JSON.stringify(p, "", 4);
     }
 
+    onReportButtonClick(e, msg) {
+        const cmsg = new CMessageBox({
+            title: tr("report_question"),
+            body: `<textarea></textarea>`,
+            buttons: [tr("close")],
+            callbacks: [() => {}],
+        });
+    }
+
     _triggerCancelEditingDialog(callback = null) {
         const cmsg = new CMessageBox({
             title: tr("confirm"),

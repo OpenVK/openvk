@@ -758,7 +758,7 @@
 "privacy_setting_add_to_friends" = "Кто может называть меня другом";
 "privacy_setting_write_wall" = "Кто может писать у меня на стене";
 "privacy_setting_write_messages" = "Кто может писать мне сообщения";
-"privacy_setting_write_messages_tip" = "Учтите: вам могут не ответить из-за этой настройки.";
+"privacy_setting_write_messages_tip" = "Вам смогут ответить, если вы напишете первыми.";
 "privacy_setting_add_in_chats" = "Кто может добавлять меня в чаты";
 "privacy_setting_view_audio" = "Кому видно мои аудиозаписи";
 "privacy_setting_see_likes" = "Кому видны мои лайки";
@@ -1553,6 +1553,12 @@
 "cancel_sending_confirmation" = "Удалить и не отправлять это сообщение?";
 "edit_of_message" = "Редактирование сообщения";
 
+"messages_agreement_1" = "Используя секцию сообщений, вы соглашаетесь с тем, что:";
+"messages_agreement_2" = "Вы согласны с <a href="/terms">правилами</a> и <a href="/privacy">политикой конфиденциальности</a> сайта.";
+"messages_agreement_3" = "Загруженные в беседе медиафайлы могут быть доступны по ссылке даже после удаления.";
+"messages_agreement_4" = "В случае жалобы на сообщение модератор может посмотреть диалог, в котором его отправили, для выяснения контекста.";
+"messages_agreement_5" = "Нужно держать аккаунт в безопасности.";
+
 /* System messages */
 
 "event_chat_creation_male" = "Создал беседу «$1»";
@@ -2105,10 +2111,12 @@
 "question_confirm" = "Это действие нельзя отменить. Вы действительно уверены в том что хотите сделать?";
 "confirm_m" = "Подтвердить";
 "action_successfully" = "Операция успешна";
+"confirmation" = "Подтверждение";
 "exit_noun" = "Выход";
 "exit_confirmation" = "Уверены, что хотите выйти?";
 "apply" = "Применить";
 "back" = "Назад";
+"i_agree" = "Согласен(-на)";
 
 /* User alerts */
 

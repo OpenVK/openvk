@@ -265,7 +265,7 @@ table.chat_table_avatar .chat_table_avatar_cell img {
 .crp-entry .unread-msgs-count {
     display: none;
     position: absolute;
-    top: 42px;
+    top: 37px;
     right: 10px;
     margin-top: -13px;
     padding: 5px 5px;
@@ -281,20 +281,8 @@ table.chat_table_avatar .chat_table_avatar_cell img {
 
 .messenger-app--messages---message.unread {
     background-color: #ededed;
-    padding-bottom: 1.2rem;
+    /*padding-bottom: 1.2rem;*/
     margin-bottom: 0;
-}
-
-.messenger-app--messages---message.unread:first-of-type {
-    border-top-left-radius: 3px;
-    border-top-right-radius: 3px;
-    padding-bottom: 5px;
-    margin-bottom: 1.2rem;
-}
-
-.messenger-app--messages---message.unread:last-of-type {
-    padding-bottom: 5px;
-    margin-bottom: 1.2rem;
 }
 
 .messenger-app--messages---message .msg-edit-mark {
@@ -327,7 +315,7 @@ table.chat_table_avatar .chat_table_avatar_cell img {
     border-radius: 3px;
     margin-top: 20%;
     margin-left: 10%;
-    max-height: 50px;
+    max-height: 37px;
 }
 
 .crp-entry--message---av,
@@ -432,7 +420,7 @@ table.chat_table_avatar .chat_table_avatar_cell img {
     display: flex;
     flex-direction: column;
     height: 70%;
-    padding-bottom: 45px;
+    padding-bottom: 35px;
     min-height: 100vh;
     margin-top: auto;
 }
@@ -728,19 +716,23 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     width: 100%;
 }
 
+.messenger-app--messages---message .msg-attach-w-doc .attachment_doc svg {
+    display: inline-block;
+}
+
 .messenger-app--messages---message .msg-attach-w-doc .attachment_doc .attachment_note_content {
-    height: 16px;
+    height: unset;
     margin-left: 2px;
+    display: inline-block;
 }
 
 .messenger-app--messages---message .msg-attach-w-doc .attachment_doc {
     padding: 2px 0px;
+    display: block;
 }
 
 .messenger-app--messages---message .msg-attach-w-audio {
-    display: flex;
     gap: 4px;
-    align-items: center;
     cursor: pointer;
 }
 
@@ -764,9 +756,11 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 }
 
 .messenger-app--messages---message ._icon {
-    width: 16px;
+    width: 15px;
     height: 15px;
     background: black;
+    display: inline-block;
+    vertical-align: middle;
     margin-right: 3px;
 }
 
@@ -900,6 +894,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 
 .messenger-app .messenger-app-status {
     padding: 10px 60px;
+    box-sizing: border-box;
 }
 
 .messenger-app .messenger-app-status .write-bar {
@@ -943,6 +938,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 .messages--peers-tabs .messages--peers-tab.unread .messages--peers-tab-counter {
     display: block;
     color: var(--text-rev);
+    background: var(--unread-mark);
     padding: 0px 2px;
     font-weight: bold;
 }
