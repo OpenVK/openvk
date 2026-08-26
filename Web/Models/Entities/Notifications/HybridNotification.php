@@ -37,6 +37,9 @@ abstract class HybridNotification extends Notification
     }
 
     abstract public function getSendParams(): array;
-    abstract public function getSendMethod(): string;
-
+    
+    public function getSendMethod(): string
+    {
+        return "im.sendAction";
+    }
 }
