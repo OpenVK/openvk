@@ -427,26 +427,39 @@ class IMState {
 
     getUnreadCounter() {
         let counter = 0;
-        this.link.conversations.all_convs.forEach(item => {
-            if (!item.is_read) { counter += 1; }
-        });
-
+        if (this.link && this.link.conversations && this.link.conversations.all_convs) {
+            this.link.conversations.all_convs.forEach(item => {
+                if (item.unread_count && item.unread_count > 0) {
+                    counter += item.unread_count;
+                } else if (!item.is_read) {
+                    counter += 1;
+                }
+            });
+        }
         return counter;
     }
+
 
     _updateCounter(new_number) {
         this.unread_counter = new_number;
 
-        u(".im_counter b").html(new_number);
+        const bElements = document.querySelectorAll(".im_counter b");
+        bElements.forEach(el => {
+            el.innerHTML = String(new_number);
+        });
 
-        if (this.unread_counter < 1) {
-            u(".im_counter").removeClass("shown");
-            u(".im_counter").addClass("zero_counter");
-        } else {
-            u(".im_counter").addClass("shown");
-            u(".im_counter").removeClass("zero_counter");
-        }
+        const cntElements = document.querySelectorAll(".im_counter");
+        cntElements.forEach(el => {
+            if (this.unread_counter < 1) {
+                el.classList.remove("shown");
+                el.classList.add("zero_counter");
+            } else {
+                el.classList.add("shown");
+                el.classList.remove("zero_counter");
+            }
+        });
     }
+
 
     async _loadCurrent() {
         if (this.group_id == null) {

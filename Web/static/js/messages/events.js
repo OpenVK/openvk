@@ -5,9 +5,12 @@ export class EventHandler {
         this.im = im;
         this.codes = {
             1: "ReplaceFlags",
-            2: null,
+            2: "SetFlags",
+            3: "ResetFlags",
             4: "NewMessageEvent",
             5: "EditMessageEvent",
+            6: "ReadIncomeBeforeEvent",
+            7: "ReadOutcomeBeforeEvent",
             51: "ChatUpdateEvent",
             61: "TypingEvent",
         };
@@ -45,6 +48,154 @@ export class EventHandler {
         }
     }
 
+    updateGlobalUnreadCounter() {
+        try {
+            if (this.im && this.im.state && typeof this.im.state._updateCounter === 'function') {
+                const count = this.im.state.getUnreadCounter();
+                this.im.state._updateCounter(count);
+            }
+        } catch (e) {
+            console.error("Error updating global unread counter:", e);
+        }
+    }
+
+    async SetFlags(event) {
+        const msgId = event[1];
+        const flags = event[2];
+        const peerId = event[3];
+
+        if (flags & 1) { // FlagUnread
+            const _crs = await this.im.conversations._findConvFromApi(peerId);
+            if (_crs && _crs.peer) {
+                const found = _crs.peer._findMessageById(msgId);
+                if (found && found.data) {
+                    found.data.read_state = 0;
+                    if (this.im.messenger) this.im.messenger.update();
+                }
+            }
+            this.updateGlobalUnreadCounter();
+        }
+    }
+
+    async ResetFlags(event) {
+        const msgId = event[1];
+        const flags = event[2];
+        const peerId = event[3];
+
+        if (flags & 1) { // FlagUnread
+            const _crs = await this.im.conversations._findConvFromApi(peerId);
+            if (_crs && _crs.peer) {
+                const found = _crs.peer._findMessageById(msgId);
+                if (found && found.data) {
+                    found.data.read_state = 1;
+                    if (this.im.messenger) this.im.messenger.update();
+                }
+            }
+            this.updateGlobalUnreadCounter();
+        }
+    }
+
+    async ReadIncomeBeforeEvent(event) {
+        const peerId = event[1];
+        const localId = event[2];
+
+        const _crs = await this.im.conversations._findConvFromApi(peerId);
+        if (!_crs) return;
+
+        if (_crs.peer) {
+            _crs.peer.in_read = localId;
+        }
+        if (_crs._conversation) {
+            _crs._conversation.in_read = localId;
+        }
+
+        const getPeerMsgs = (peer) => {
+            if (!peer) return [];
+            if (peer._chunks && typeof peer._chunks.getMessages === 'function') {
+                return peer._chunks.getMessages();
+            }
+            if (typeof peer.getLoadedMessages === 'function') {
+                return peer.getLoadedMessages();
+            }
+            return [];
+        };
+
+        const currentUserId = window.openvk ? window.openvk.current_id : this.im.state.getId();
+        getPeerMsgs(_crs.peer).forEach(msg => {
+            const msgId = (msg.data && (msg.data.local_id || msg.data.id)) || msg.id || 0;
+            const fromId = msg.data ? msg.data.from_id : (msg.from_id || 0);
+            if (msgId <= localId && fromId != currentUserId) {
+                if (msg.data) msg.data.read_state = 1;
+            }
+        });
+
+        if (_crs) {
+            let newUnread = 0;
+            if (_crs.peer && _crs.peer._chunks && typeof _crs.peer._chunks._isMessagesInited === 'function' && _crs.peer._chunks._isMessagesInited()) {
+                newUnread = _crs.peer._chunks.getUnreadCount();
+            }
+            if (_crs._conversation) {
+                _crs._conversation.unread_count = newUnread;
+            }
+            _crs.unread_count = newUnread;
+        }
+
+
+        this.updateGlobalUnreadCounter();
+
+        if (this.im.messenger) {
+            this.im.messenger.update();
+        }
+        if (this.im.conversations) {
+            this.im.conversations.update();
+        }
+        if (this.im.fastChats) {
+            this.im.fastChats.update();
+        }
+    }
+
+
+    async ReadOutcomeBeforeEvent(event) {
+        const peerId = event[1];
+        const localId = event[2];
+
+        const _crs = await this.im.conversations._findConvFromApi(peerId);
+        if (!_crs) return;
+
+        if (_crs.peer) {
+            _crs.peer.out_read = localId;
+        }
+        if (_crs._conversation) {
+            _crs._conversation.out_read = localId;
+        }
+
+        const getPeerMsgs = (peer) => {
+            if (!peer) return [];
+            if (peer._chunks && typeof peer._chunks.getMessages === 'function') {
+                return peer._chunks.getMessages();
+            }
+            if (typeof peer.getLoadedMessages === 'function') {
+                return peer.getLoadedMessages();
+            }
+            return [];
+        };
+
+        const currentUserId = window.openvk ? window.openvk.current_id : this.im.state.getId();
+        getPeerMsgs(_crs.peer).forEach(msg => {
+            const msgId = (msg.data && (msg.data.local_id || msg.data.id)) || msg.id || 0;
+            const fromId = msg.data ? msg.data.from_id : (msg.from_id || 0);
+            if (msgId <= localId && fromId == currentUserId) {
+                if (msg.data) msg.data.read_state = 1;
+            }
+        });
+
+        if (this.im.messenger) {
+            this.im.messenger.update();
+        }
+    }
+
+
+
     async NewMessageEvent(event) {
         const _msg = await ChatMessage.fromEvent(event, this.im);
         const _crs = await this.im.conversations._findConvFromApi(_msg.peer_id);
@@ -70,6 +221,15 @@ export class EventHandler {
                         }
                     }
                 }
+
+                if (this.im.state.is_active && this.im.messenger) {
+                    const activeChat = this.im.messenger.getCurrentChat();
+                    if (activeChat && activeChat.peer && activeChat.peer.id == _msg.peer_id) {
+                        _crs.peer.read();
+                    }
+                }
+
+                this.updateGlobalUnreadCounter();
             } catch (e) {
                 console.error(e);
             }
@@ -106,7 +266,15 @@ export class EventHandler {
         const _type = event[1];
         const peer_id = event[2];
 
+        const _crs = await this.im.conversations._findConvFromApi(peer_id, true);
+        if (this.im.conversations) {
+            this.im.conversations.update();
+        }
+        if (this.im.messenger) {
+            this.im.messenger.update();
+        }
     }
+
 
     async TypingEvent(event) {
         const _peerId = event[1];
