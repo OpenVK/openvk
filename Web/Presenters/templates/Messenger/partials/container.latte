@@ -1,6 +1,17 @@
 <script>
     function loadPage() {
         const n_url = new URL(location.href);
+
+        if (window.im_class == null) {
+            const o_url = new URL(location.href);
+            return setTimeout(() => {
+                console.log("IM | Init delay")
+                if (o_url.href == n_url.href) {
+                    this.loadPage();
+                }
+            }, 1000);
+        }
+
         window.im_class.insertIn(document.querySelector('.page_content'), n_url.searchParams.get("as"));
     }
 

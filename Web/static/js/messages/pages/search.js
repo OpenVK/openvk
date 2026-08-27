@@ -1,7 +1,11 @@
-import { ChatGeneralForm, ChatMessage } from '../components/messages.js';
-import { html, render } from '../components/render.js';
-import { IMTab, IMPage } from './page.js';
-import { SearchPageTemplate } from "../components/extra.js";
+//import { ChatGeneralForm, ChatMessage } from '../components/messages.js';
+const { ChatGeneralForm, ChatMessage } = await es6import_Im(import.meta.url, '../components/messages.js');
+//import { html, render } from '../components/render.js';
+const { html, render } = await es6import_Im(import.meta.url, '../components/render.js');
+//import { IMTab, IMPage } from './page.js';
+const { IMTab, IMPage } = await es6import_Im(import.meta.url, './page.js');
+//import { SearchPageTemplate } from "../components/extra.js";
+const { SearchPageTemplate } = await es6import_Im(import.meta.url, "../components/extra.js");
 
 export class SearchPage extends IMPage {
     constructor() {

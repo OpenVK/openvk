@@ -1,4 +1,5 @@
-import { ChatMessage, ChatGeneralForm } from './components/messages.js';
+//import { ChatMessage, ChatGeneralForm } from './components/messages.js';
+const { ChatGeneralForm, ChatMessage } = await es6import_Im(import.meta.url, './components/messages.js');
 
 export class EventHandler {
     constructor(im) {

@@ -57,9 +57,6 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                 ${msg.canPin() && html`
                     <div onClick=${(e) => { window.im.messenger.view.onPinButtonClick(e, msg) }} class="pin-icon"></div>
                 `}
-                ${window.im.state.is_debug && html`
-                    <div onClick=${(e) => { window.im.messenger.view.onDebugButtonClick(e, msg) }} class="debug-icon"></div>
-                `}
                 ${msg.isReportable() && html`
                     <div onClick=${(e) => { window.im.messenger.view.onReportButtonClick(e, msg) }} class="report-icon"></div>
                 `}
@@ -83,7 +80,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                     ${tr("msg_sent_gift_" + msg.sender.gender).toLowerCase()}:
                 ` : ""}
                 </div>` : ""}
-                <div class="time">
+                <div class="time" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>
                     ${msg.id != null && html`
                     <span>${isSearchTpl ? msg.conv_date + " " + msg.readable_date : msg.readable_date}</span>
                     `}
@@ -114,7 +111,7 @@ export const SystemMessages = {
         } else {
             text = tr("event_chat_creation_no_title_" + sender.gender);
             if (text === "event_chat_creation_no_title_" + sender.gender) {
-                text = sender.gender === "female" ? "Создала беседу" : (sender.gender === "neutral" ? "Создали беседу" : "Создал беседу");
+                text = tr("event_chat_creation_" + sender.gender);
             }
         }
         return html`
@@ -124,7 +121,31 @@ export const SystemMessages = {
                         <strong>${sender.full_name} </strong>
                     </a>
                     <span class="text">${text.toLowerCase()}</span>
-                    <span class="date-mini">${msg.readable_date}</span>
+                    <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.readable_date}</span>
+                </div>
+            </div>
+        `;
+    },
+    "rating_up": (msg, page) => {
+        const sender = msg.sender;
+        return html`
+            <div class="messenger-special-message centred">
+                <div>
+                    <b>${tr("event_chat_user_up_your_rating_"+sender.gender, sender.full_name, msg.data.action.member_id)}</b>
+                    <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.readable_date}</span>
+                    <p>«${escapeHtml(msg.data.action.text)}»</p>
+                </div>
+            </div>
+        `;
+    },
+    "coins_transfer": (msg, page) => {
+        const sender = msg.sender;
+        return html`
+            <div class="messenger-special-message centred">
+                <div>
+                    <b>${tr("event_chat_user_added_voices_"+sender.gender, sender.full_name, msg.data.action.member_id)}</b>
+                    <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.readable_date}</span>
+                    <p>«${escapeHtml(msg.data.action.text)}»</p>
                 </div>
             </div>
         `;

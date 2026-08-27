@@ -430,10 +430,15 @@ table.chat_table_avatar .chat_table_avatar_cell img {
     justify-content: center;
 }
 
+.messenger-app--messages .messenger-special-message.centred {
+    text-align: center;
+}
+
 .messenger-app--messages .messenger-special-message .date-mini {
     display: inline-block;
     margin-left: 10px;
     color: var(--nobold);
+    font-size: 10px;
 }
 
 .messenger-app--messages .messenger-app--messages-array {
