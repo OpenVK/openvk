@@ -100,7 +100,8 @@ class Report extends RowModel
             case "message":
                 if ($extended == true) {
                     try {
-                        return Message::fromGlobalId($this->getContentId(), OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["adminAccount"]);
+                        #return Message::fromGlobalId($this->getContentId(), 0);
+                        return Message::fromGlobalId($this->getContentId());
                     } catch (\Throwable $e) {
                         bdump($e);
                         return null;
@@ -140,12 +141,7 @@ class Report extends RowModel
 
         if (!in_array($this->getContentType(), ["message", "user"])) {
             $pubTime = $this->getContentObject()->getPublicationTime();
-            if (method_exists($this->getContentObject(), "getName")) {
-                $name = $this->getContentObject()->getName();
-                $placeholder = "$pubTime ($name)";
-            } else {
-                $placeholder = "$pubTime";
-            }
+            $postId = method_exists($this->getContentObject(), "getPrettyId") ? $this->getContentObject()->getPrettyId() : $this->getContentObject()->getId();
             $reasonPlaceholder = "";
             if ($reason != "") {
                 $reasonPlaceholder = " по причине " . $reason;
@@ -153,9 +149,9 @@ class Report extends RowModel
 
             if ($this->getAuthor() instanceof Club) {
                 $name = $this->getAuthor()->getName();
-                $this->getAuthor()->getOwner()->adminNotify("Ваш контент, который опубликовали $placeholder в созданной вами группе \"$name\" был удалён модераторами инстанса$reasonPlaceholder. За повторные или серьёзные нарушения группу могут заблокировать.");
+                $this->getAuthor()->getOwner()->adminNotify("Ваш контент с id $postId, который был опубликован $pubTime в созданной вами группе \"$name\" был удалён модераторами инстанса$reasonPlaceholder. За повторные или серьёзные нарушения группу могут заблокировать.");
             } else {
-                $this->getAuthor()->adminNotify("Ваш контент, который вы опубликовали $placeholder был удалён модераторами инстанса$reasonPlaceholder. За повторные или серьёзные нарушения вас могут заблокировать.");
+                $this->getAuthor()->adminNotify("Ваш контент с id $postId, который был опубликован $pubTime был удалён модераторами инстанса$reasonPlaceholder. За повторные или серьёзные нарушения вас могут заблокировать.");
             }
             $this->getContentObject()->delete($this->getContentType() !== "app");
         }

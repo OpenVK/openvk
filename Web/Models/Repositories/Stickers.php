@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace openvk\Web\Models\Repositories;
 
 use Chandler\Database\DatabaseConnection;
-use openvk\Web\Models\Entities\{Sticker, StickerPack, User};
+use openvk\Web\Models\Entities\User;
+use openvk\Web\Models\Entities\Messages\{Sticker, StickerPack};
 use Nette\Database\Table\ActiveRow;
 
 class Stickers

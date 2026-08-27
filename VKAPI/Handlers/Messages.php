@@ -131,7 +131,7 @@ final class Messages extends VKAPIRequestHandler
             }
 
             if ($peerId > 0 && $peerId < 2000000000 && $senderId !== $peerId) {
-                if (method_exists($peer, 'getPrivacyPermission')) {
+                if ($senderId > 0 && method_exists($peer, 'getPrivacyPermission')) {
                     if (!$peer->getPrivacyPermission('messages.write', $senderObj)) {
                         $existence = $this->invoke("im.checkPeerExist", [
                             "peer_id" => $peerId
@@ -152,10 +152,15 @@ final class Messages extends VKAPIRequestHandler
         }
     }
 
-    protected function invoke(string $method, array $params = [], int $group_id = 0)
+    protected function invoke(string $method, array $params = [], int $group_id = 0, ?int $replaced_owner = null)
     {
         $this->ensureBrokerActive();
+
         $sender_id = $this->resolveSender($group_id);
+
+        if ($replaced_owner != null) {
+            $sender_id = $replaced_owner;
+        }
 
         try {
             $response = $this->broker->invokeMethod($sender_id, $method, $params);
@@ -1392,6 +1397,7 @@ final class Messages extends VKAPIRequestHandler
         int $user_id = 0,
         int $peer_id = 0,
         int $chat_id = 0,
+        int $report_id = 0,
         int $start_message_id = 0,
         int $rev = 0,
         int $extended = 0,
@@ -1400,7 +1406,26 @@ final class Messages extends VKAPIRequestHandler
     ): array {
         $this->requireUser();
 
-        $resolvedPeerId = $this->resolvePeer($user_id, $peer_id, $chat_id);
+        $report = null;
+        $resolvedPeerId = null;
+        $data = null;
+
+        if ($report_id != 0) {
+            $canAccessHelpdesk = $this->getUser()->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0);
+            if (!$canAccessHelpdesk) {
+                $this->fail(15, "Access denied");
+            }
+
+            $report = (new Reports)->get($report_id);
+
+            if (!$report || $report->isDeleted()) {
+                $this->fail(-50, "Report does not exist anymore");
+            }
+
+            $resolvedPeerId = $report->getContentObject(true)->getPeerId();
+        } else {
+            $resolvedPeerId = $this->resolvePeer($user_id, $peer_id, $chat_id);
+        }
 
         $params = [
             "offset"           => (string) $offset,
@@ -1412,7 +1437,11 @@ final class Messages extends VKAPIRequestHandler
             "fields"           => $fields,
         ];
 
-        $data = $this->invoke("messages.getHistory", $params, $group_id);
+        if ($report != null) {
+            $data = $this->invoke("messages.getHistory", $params, $group_id, $report->authorId());
+        } else {
+            $data = $this->invoke("messages.getHistory", $params, $group_id);
+        }
 
         if (!empty($data['items'])) {
             foreach ($data['items'] as &$message) {
