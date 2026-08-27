@@ -197,6 +197,11 @@ class Message
         return new Message($data["response"]["items"][0]);
     }
 
+    public function delete()
+    {
+
+    }
+
     /**
      * Simplify to array
      *

@@ -99,3 +99,9 @@ function confirm_ban(event, ignore = false, ban_owner = false) {
         }],
     })
 }
+
+async function reportShowMessageContext(event, global_id, peer_id, author_id) {
+    event.target.remove();
+
+    //const im = await window.im_class.insertIn(document.querySelector("#msg_context_place"), null, false, false, global_id);
+}

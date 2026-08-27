@@ -52,17 +52,23 @@ export class InstantMessagesAndRelated {
         });
     }
 
-    async init() {
+    async init(do_init = true, ignore_initless = false) {
         if (this.is_initing == true) {
             return;
         }
 
         // иначе будут лишние запросы
         try {
-            if (window.openvk.current_id == 0 || window.openvk.disable_ajax == 1 || Number(localStorage.getItem('ux.disable_ajax_routing') ?? 0) == 1 || Number(localStorage.getItem('tw.im.disable_messenger') ?? 0) == 1) {
-                if (location.pathname != "/im") {
-                    return;
+            if (!ignore_initless) {
+                if (window.openvk.current_id == 0 || window.openvk.disable_ajax == 1 || Number(localStorage.getItem('ux.disable_ajax_routing') ?? 0) == 1 || Number(localStorage.getItem('tw.im.disable_messenger') ?? 0) == 1) {
+                    if (location.pathname != "/im") {
+                        this.isReady = true;
+                        return;
+                    }
                 }
+            }
+            if (!do_init) {
+                return;
             }
         } catch(e) {
             console.error(e);
@@ -95,7 +101,7 @@ export class InstantMessagesAndRelated {
         console.log("IM | Inited");
     }
 
-    static async insertIn(container, as = null, fastchat = false, rewrite_tabs = true) {
+    static async insertIn(container, as = null, fastchat = false, rewrite_tabs = true, report_id = null) {
         let self = window.im_variants.getCurrentUser();
         const b = new URL(location.href)
 
@@ -115,10 +121,15 @@ export class InstantMessagesAndRelated {
 
             b.searchParams.set("as", String(as))
         } else {
-            window.im_variants.set(self);
-            if (!self.is_ready) { await self.init(); }
-
-            b.searchParams.delete("as")
+            if (report_id != null) {
+                self = new InstantMessagesAndRelated();
+                self.root = container;
+                if (!self.is_ready) { await self.init(true, false); }
+            } else {
+                window.im_variants.set(self);
+                if (!self.is_ready) { await self.init(); }
+                b.searchParams.delete("as")
+            }
         }
 
         self.state.addLoadSkeleton(container);
@@ -144,12 +155,13 @@ export class InstantMessagesAndRelated {
 
         try {
             await self.state._checkSel(b);
+            self.state._changeHeight(self.root);
+            self.state.removeLoadSkeleton(container);
         } catch(e) {
             console.error(e);
         }
 
-        self.state._changeHeight(self.root);
-        self.state.removeLoadSkeleton(container);
+        return self;
     }
 
     _showAgreement() {
@@ -167,7 +179,7 @@ export class InstantMessagesAndRelated {
                 `,
                 close_on_buttons: false,
                 unique_name: 'agreement',
-                buttons: [tr('cancel'), tr('i_agree')],
+                buttons: [tr('cancel'), tr('ok')],
                 callbacks: [() => {
                     msg.close()
                     resolve(false)
