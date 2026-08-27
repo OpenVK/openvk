@@ -527,3 +527,9 @@ function toggleUnclickability(node, state = null) {
         node.classList.add("lagged");
     }
 }
+
+async function es6import_Im(meta_url, url) {
+    const baseUrl = new URL('.', meta_url);
+    const fullUrl = new URL(url, baseUrl).href;
+    return await import(String(fullUrl));
+}

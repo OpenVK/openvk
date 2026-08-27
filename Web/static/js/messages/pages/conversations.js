@@ -1,7 +1,11 @@
-import { ChatMessage, ChatGeneralForm } from '../components/messages.js';
-import { ConversationListView } from "../components/common.js"
-import { IMTab, IMPage } from './page.js';
-import { html, render } from '../components/render.js';
+//import { ChatMessage, ChatGeneralForm } from '../components/messages.js';
+const { ChatMessage, ChatGeneralForm } = await es6import_Im(import.meta.url, "../components/messages.js");
+//import { ConversationListView } from "../components/common.js"
+const { ConversationListView } = await es6import_Im(import.meta.url, "../components/common.js");
+//import { IMTab, IMPage } from './page.js';
+const { IMTab, IMPage } = await es6import_Im(import.meta.url, "./page.js");
+//import { html, render } from '../components/render.js';
+const { html, render } = await es6import_Im(import.meta.url, "../components/render.js");
 
 export class ConversationsPage extends IMPage {
     static getPageId() { return "conversations"; }

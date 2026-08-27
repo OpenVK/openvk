@@ -1,16 +1,25 @@
-import { ChatGeneralForm } from './components/messages.js';
-import { FastChatsBar, FastChatsWindow } from './components/extra.js';
-import { EventHandler } from './events.js';
-import { Messenger, MessengerPage, ContactPage, ChatTopicPreviewPage } from './pages/messenger.js';
-import { Conversations, ConversationsPage } from './pages/conversations.js';
-import { Friends, FriendsPage } from './pages/friends.js';
-import { SearchPage } from './pages/search.js';
-import { IMTab, IMPage } from './pages/page.js';
+//import { ChatGeneralForm } from './components/messages.js';
+const { ChatGeneralForm } = await es6import_Im(import.meta.url, './components/messages.js');
+//import { FastChatsBar, FastChatsWindow } from './components/extra.js';
+const { FastChatsBar, FastChatsWindow } = await es6import_Im(import.meta.url, './components/extra.js');
+//import { EventHandler } from './events.js';
+const { EventHandler } = await es6import_Im(import.meta.url, './events.js');
+//import { Messenger, MessengerPage, ContactPage, ChatTopicPreviewPage } from './pages/messenger.js';
+const { Messenger, MessengerPage, ContactPage, ChatTopicPreviewPage } = await es6import_Im(import.meta.url, './pages/messenger.js');
+//import { Conversations, ConversationsPage } from './pages/conversations.js';
+const { Conversations, ConversationsPage } = await es6import_Im(import.meta.url, './pages/conversations.js');
+//import { Friends, FriendsPage } from './pages/friends.js';
+const { Friends, FriendsPage } = await es6import_Im(import.meta.url, './pages/friends.js');
+//import { SearchPage } from './pages/search.js';
+const { SearchPage } = await es6import_Im(import.meta.url, './pages/search.js');
+//import { IMTab, IMPage } from './pages/page.js';
+const { IMTab, IMPage } = await es6import_Im(import.meta.url, './pages/page.js');
+//import { TabBar } from './components/common.js';
+const { TabBar } = await es6import_Im(import.meta.url, './components/common.js');
+//import { html, render as preactRender } from './components/render.js';
+const { html, render } = await es6import_Im(import.meta.url, './components/render.js');
 
-import { TabBar } from './components/common.js';
-
-import { html, render as preactRender } from './components/render.js';
-
+const preactRender = render;
 //const tr = window.tr;
 //const u = window.u;
 
@@ -121,15 +130,10 @@ export class InstantMessagesAndRelated {
 
             b.searchParams.set("as", String(as))
         } else {
-            if (report_id != null) {
-                self = new InstantMessagesAndRelated();
-                self.root = container;
-                if (!self.is_ready) { await self.init(true, false); }
-            } else {
-                window.im_variants.set(self);
-                if (!self.is_ready) { await self.init(); }
-                b.searchParams.delete("as")
-            }
+            window.im_variants.set(self);
+            if (!self.is_ready) { await self.init(); }
+
+            b.searchParams.delete("as")
         }
 
         self.state.addLoadSkeleton(container);
@@ -355,7 +359,14 @@ export class InstantMessagesAndRelated {
         return [this.getTab("conversations"), ...vals];
     }
     getSelectedTab(tab) { return this.tabs[this.selectedTabId]; }
-    getSelectedTabId() { return this.getSelectedTab().getPageId() }
+    getSelectedTabId() { 
+        try {
+            return this.getSelectedTab().getPageId()
+        } catch(e) {
+            console.error(e);
+            return null;
+        }
+    }
     getTabs() { return this.tabs.map(t => t.id); }
     getTab(id) { return this.tabs.find(t => t.getPageId() == id);}
 }
@@ -441,16 +452,11 @@ class IMState {
         let counter = 0;
         if (this.link && this.link.conversations && this.link.conversations.all_convs) {
             this.link.conversations.all_convs.forEach(item => {
-                if (item.unread_count && item.unread_count > 0) {
-                    counter += item.unread_count;
-                } else if (!item.is_read) {
-                    counter += 1;
-                }
+                counter += 1;
             });
         }
         return counter;
     }
-
 
     _updateCounter(new_number) {
         this.unread_counter = new_number;
@@ -959,8 +965,9 @@ export class FastChats {
         window.im.messenger.selectConversation(convo, true);
     }
 
-    toggleChatBar() { 
-        if (window.im.getSelectedTabId() == "messenger") {
+    toggleChatBar() {
+        const tab_id = window.im.getSelectedTabId();
+        if (tab_id == "messenger" || tab_id == null) {
             window.im.openTabByName("conversations");
             return;
         }

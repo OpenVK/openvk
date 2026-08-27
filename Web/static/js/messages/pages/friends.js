@@ -1,7 +1,11 @@
-import { IMTab, IMPage } from './page.js';
-import { FriendsPageTemplate } from '../components/extra.js';
-import { html, render } from '../components/render.js';
-import { ChatGeneralForm } from '../components/messages.js';
+//import { IMTab, IMPage } from './page.js';
+const { IMTab, IMPage } = await es6import_Im(import.meta.url, './page.js');
+//import { FriendsPageTemplate } from '../components/extra.js';
+const { FriendsPageTemplate } = await es6import_Im(import.meta.url, '../components/extra.js');
+//import { html, render } from '../components/render.js';
+const { html, render } = await es6import_Im(import.meta.url, '../components/render.js');
+// import { ChatGeneralForm } from '../components/messages.js';
+const { ChatGeneralForm } = await es6import_Im(import.meta.url, "../components/messages.js");
 
 export class FriendsPage extends IMPage {
     constructor() {

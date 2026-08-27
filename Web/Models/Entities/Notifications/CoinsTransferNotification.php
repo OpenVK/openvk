@@ -17,11 +17,13 @@ final class CoinsTransferNotification extends HybridNotification
 
     public function getSendParams(): array
     {
-        return [];
-    }
+        $p1 = explode(" ", $this->data, 2);
 
-    public function getSendMethod(): string
-    {
-        return "messages.send";
+        return [
+            "action_type" => "coins_transfer",
+            "action_mid"  => $p1[0],
+            "action_text" => $p1[1],
+            "message"     => "sent you " . $p1[0] . " voices",
+        ];
     }
 }

@@ -1578,6 +1578,15 @@
 "event_chat_creation_no_title_male" = "Создал беседу";
 "event_chat_creation_no_title_female" = "Создала беседу";
 "event_chat_creation_no_title_neutral" = "Создали беседу";
+"event_chat_create_impersonal" = "Новый чат";
+"event_chat_user_up_your_rating_male" = "$1 повысил ваш рейтинг на $2 единицы.";
+"event_chat_user_up_your_rating_female" = "$1 повысила ваш рейтинг на $2 единицы.";
+"event_chat_user_up_your_rating_neutral" = "$1 повысили ваш рейтинг на $2 единицы.";
+"event_chat_rating_up_impersonal" = "Вам повысили рейтинг";
+"event_chat_user_added_voices_male" = "$1 передал вам $2 голосов.";
+"event_chat_user_added_voices_female" = "$1 передала вам $2 голосов.";
+"event_chat_user_added_voices_neutral" = "$1 передали вам $2 голосов.";
+"event_coins_transfer_impersonal" = "Вам внесли голоса";
 
 /* Stickers */
 

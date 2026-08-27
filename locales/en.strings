@@ -1037,6 +1037,7 @@
 "playlists_club" = "Group's playlists";
 "change_cover" = "Change cover";
 "playlist_cover" = "Playlist cover";
+"add_audio_verb" = "Append audios";
 
 "minutes_count_zero" = "Lasts no minutes";
 "minutes_count_one" = "Lasts one minute";

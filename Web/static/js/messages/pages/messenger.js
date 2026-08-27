@@ -1,9 +1,15 @@
-import { ChatMessage, ChatGeneralForm, Draft } from '../components/messages.js';
-import { Conversation } from './conversations.js';
-import { MessageListView } from "../components/message.js"
-import { ErrorConversation, WriteBar, ActionsBar, PeerWindow, InputArea, PeerTabsView, TopicConversationChat } from "../components/common.js"
-import { IMTab, IMPage } from './page.js';
-import { html, render } from '../components/render.js';
+//import { ChatMessage, ChatGeneralForm, Draft } from '../components/messages.js';
+const { ChatMessage, ChatGeneralForm, Draft } = await es6import_Im(import.meta.url, "../components/messages.js");
+//import { Conversation } from './conversations.js';
+const { Conversation } = await es6import_Im(import.meta.url, "./conversations.js");
+//import { MessageListView } from "../components/message.js"
+const { MessageListView } = await es6import_Im(import.meta.url, "../components/message.js");
+//import { ErrorConversation, WriteBar, ActionsBar, PeerWindow, InputArea, PeerTabsView, TopicConversationChat } from "../components/common.js"
+const { ErrorConversation, WriteBar, ActionsBar, PeerWindow, InputArea, PeerTabsView, TopicConversationChat } = await es6import_Im(import.meta.url, "../components/common.js");
+//import { IMTab, IMPage } from './page.js';
+const { IMTab, IMPage } = await es6import_Im(import.meta.url, "./page.js");
+//import { html, render } from '../components/render.js';
+const { html, render } = await es6import_Im(import.meta.url, "../components/render.js");
 
 export class Messenger {
     static MAX_SELECTED_MESSAGES = 100;
@@ -120,7 +126,6 @@ export class Messenger {
             convo.peer.read();
         }
     }
-
 
     async selectConversationByPeerId(id) {
         let convo = null;
@@ -682,16 +687,18 @@ export class MessengerPage extends IMPage {
         })
     }
 
-    onDebugButtonClick(e, msg) {
-        const cmsg = new CMessageBox({
-            title: "...",
-            body: `<textarea></textarea>`,
-            buttons: [tr("close")],
-            callbacks: [() => { }],
-        });
-        const p = Object.assign({}, msg.data);
-        p.sender = null;
-        cmsg.getNode().find("textarea").last().value = JSON.stringify(p, "", 4);
+    onTimeClick(event, msg) {
+        if (window.im.state.is_debug) {
+            const cmsg = new CMessageBox({
+                title: "...",
+                body: `<textarea></textarea>`,
+                buttons: [tr("close")],
+                callbacks: [() => { }],
+            });
+            const p = Object.assign({}, msg.data);
+            p.sender = null;
+            cmsg.getNode().find("textarea").last().value = JSON.stringify(p, "", 4);
+        }
     }
 
     onReportButtonClick(e, msg) {

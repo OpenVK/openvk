@@ -1228,7 +1228,6 @@ export class ChatGeneralForm {
     }
 
     async read(startMessageId = 0) {
-
         const params = {
             "peer_id": this.id,
         };
@@ -1486,6 +1485,10 @@ export class ChatMessage {
             }
 
             f += " ";
+        }
+
+        if (this.data.action != null) {
+            return tr("event_" + this.data.action.type + "_impersonal");
         }
 
         f += ovk_proc_strtr(escapeHtml(this.data.text), 100);
