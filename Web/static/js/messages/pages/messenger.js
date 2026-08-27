@@ -123,7 +123,7 @@ export class Messenger {
         }
 
         if (convo && convo.peer) {
-            convo.peer.read();
+            //convo.peer.read();
         }
     }
 
@@ -555,9 +555,9 @@ export class MessengerPage extends IMPage {
 
         const peer = currentConv ? currentConv.peer : null;
         const display_peer = this.toggled_peer_obj ? this.toggled_peer_obj : peer;
-
+        const sp = currentConv.getScrollPosition();
         if (!messages) {
-            messages = peer ? peer.divided_messages : [];
+            messages = sp.getDayDividedMessages();
         }
 
         const is_rendering_contact_window = (window.im.tab == "contact" && special_mode === null);
@@ -575,7 +575,7 @@ export class MessengerPage extends IMPage {
             <div class="messenger-app messenger-layer">
                 <${MessageListView}
                 convo=${currentConv}
-                messages=${messages} 
+                dayDividedChunks=${messages} 
                 page=${this} />
                 <${InputArea}
                 editMsg=${window.im.messenger.editMsg}
@@ -833,10 +833,12 @@ export class MessengerPage extends IMPage {
         this.is_loading = true;
 
         const _scroll = document.documentElement.scrollTop;
+        const currentConvo = window.im.messenger.getCurrentChat();
 
         if (_scroll < 21) {
             console.log("IM | Loading older chunk from API");
-            // ── Scrolled near the top → load older messages (scroll UP) ──
+            await currentConvo.getScrollPosition().loadOlder();
+            currentConvo.getScrollPosition().result();
             // await window.im.state.getCurrentConvo()._messagesLoad_UpFromLastChunk();
         } else {
             const scrollBottom = document.documentElement.scrollHeight - _scroll - document.documentElement.clientHeight;
@@ -847,7 +849,6 @@ export class MessengerPage extends IMPage {
                 const curPeer = curConvo ? curConvo.peer : null;
                 if (curPeer && typeof curPeer._chunks_HasMoreNewerChunkRelativelyToCurrentChat === 'function' && curPeer._chunks_HasMoreNewerChunkRelativelyToCurrentChat()) {
 
-                    // There's already a newer chunk available without fetching
                     console.log('IM | Switching to a newer chunk');
                     // await window.im.state.getCurrentConvo()._messagesLoad_DownFromCurrentChunk();
                 } else {

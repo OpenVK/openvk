@@ -5,6 +5,7 @@ const { ConversationListView } = await es6import_Im(import.meta.url, "../compone
 //import { IMTab, IMPage } from './page.js';
 const { IMTab, IMPage } = await es6import_Im(import.meta.url, "./page.js");
 //import { html, render } from '../components/render.js';
+const { ScrollPosition } = await es6import_Im(import.meta.url, "../components/partition.js");
 const { html, render } = await es6import_Im(import.meta.url, "../components/render.js");
 
 export class ConversationsPage extends IMPage {
@@ -224,6 +225,16 @@ export class Conversation {
         this.activity_updated = new Date();
         this.current_activity = {};
         this.draft = null;
+        this._endScrollPosition = ScrollPosition.fromEnd(this.peer);
+        this._scroll = null;
+    }
+
+    getEndScrollPosition() { return this._endScrollPosition; }
+    getScrollPosition() {
+        if (this._scroll) {
+            return this._scroll;
+        }
+        return this.getEndScrollPosition();
     }
 
     setDraft(draft) { this.draft = draft }

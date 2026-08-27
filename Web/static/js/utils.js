@@ -531,5 +531,10 @@ function toggleUnclickability(node, state = null) {
 async function es6import_Im(meta_url, url) {
     const baseUrl = new URL('.', meta_url);
     const fullUrl = new URL(url, baseUrl).href;
-    return await import(String(fullUrl));
+
+    try {
+        return await import(String(fullUrl));
+    } catch(e) {
+        console.error(e);
+    }
 }

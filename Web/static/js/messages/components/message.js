@@ -245,32 +245,20 @@ export const DayChunkView = ({ chunk, page }) => {
     `;
 };
 
-export const MessageListView = ({ messages, convo, page }) => {
+export const MessageListView = ({ dayDividedChunks, convo, page }) => {
     const isMessagesInited = convo?.peer?._isMessagesInited ? convo.peer._isMessagesInited() : true;
     const isLoading = !isMessagesInited;
-
     return html`
-    <div id="messenger-app--down-button" onClick=${() => {
-        const _v = window.im.messenger.view;
-        const corresponder = window.im.state.getCurrentConvo();
-        if (corresponder && typeof corresponder.scrollToNewest === "function") {
-            corresponder.scrollToNewest();
-        } else {
-            _v._scrollToEnd();
-        }
-    }}>DOWN</div>
     <div class="messenger-app--messages">
       <div class="messenger-app--messages-array">
          ${isLoading ? html`
-             <div class="im_page_loader chat_messages_loader">
-                 <img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="..." />
-             </div>
+             <div id="gif_loader"></div>
          ` : html`
-             ${messages.map((chunk) => html`<${DayChunkView} chunk=${chunk} page=${page} />`)}
+            ${dayDividedChunks.map((chunk) => html`<${DayChunkView} chunk=${chunk} page=${page} />`)}
 
-             <div>
+            <div>
                 <${WriteBar} convo=${convo} />
-             </div>
+            </div>
          `}
       </div>
     </div>
