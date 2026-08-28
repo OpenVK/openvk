@@ -78,11 +78,10 @@ export class Messenger {
             await tab.render();
         } catch (e) { console.error(e); }
 
-        if (!convo.peer._isMessagesInited()) {
+        if (!convo.peer.isMessagesInited()) {
             try {
-                const c = await convo.peer.getMessages();
-                convo.peer._chunks._appendChunk(c);
-            } catch (e) { // может быть и broker failure. Хз зачем.
+                const c = await convo.getEndScrollPosition().loadOlder();
+            } catch (e) { // может быть и broker failure.
                 console.error(e);
             }
 
@@ -351,14 +350,14 @@ export class Messenger {
     async showAttachment(event, msg, attachment) {
         event.preventDefault();
 
-        const idinarray = msg.attachments.indexOf(attachment);
+        const idinarray = msg.getAttachments().indexOf(attachment);
         const type = attachment.type;
 
         CMessageBox.toggleLoader(true);
 
         const queue_items = [];
 
-        msg.attachments.forEach(att => {
+        msg.getAttachments().forEach(att => {
             if (att[type]) {
                 queue_items.push(att[type]);
             }
@@ -657,13 +656,13 @@ export class MessengerPage extends IMPage {
 
     onEditButtonClick(e, msg) {
         window.im.messenger.editMsg = msg;
-        if (msg.text.length > 0) {
+        if (msg.getText().length > 0) {
             window.im.messenger.prevDraft = String(window.im.messenger.currentDraft || "");
-            window.im.messenger.currentDraft = msg.text;
+            window.im.messenger.currentDraft = msg.getText();
         }
 
-        if (msg.attachments.length > 0) {
-            unpack_attachments_into_node(u(this.container.querySelector("#write")), msg.attachments);
+        if (msg.getAttachments().length > 0) {
+            unpack_attachments_into_node(u(this.container.querySelector("#write")), msg.getAttachments());
         }
 
         this.update();
@@ -794,9 +793,7 @@ export class MessengerPage extends IMPage {
             window.im.messenger.toggled_peer_obj = null;
         } else {
             const _c = window.im.state.getCurrentConvo();
-            if (_c.peer.supposed_type == "chat" && !_c.peer._hasLoadedMembers()) {
-                await _c.peer._setMembers();
-            }
+            await _c.peer.checkMembers();
 
             if (typeof window.im !== 'undefined' && window.im.selectTab) {
                 window.im.openTabByName('contact', false, {
@@ -820,12 +817,12 @@ export class MessengerPage extends IMPage {
     onScrollDownButtonClick() {
         // "Return to the newest" — reset the active chunk to the actual
         // (newest) chunk, then scroll to the bottom.
-        const corresponder = window.im.state.getCurrentConvo();
+        /*const corresponder = window.im.state.getCurrentConvo();
         if (corresponder && typeof corresponder.scrollToNewest === "function") {
             corresponder.scrollToNewest();
         } else {
             this._scrollToEnd();
-        }
+        }*/
     }
 
     async onMessagesScroll(e = null) {
@@ -839,7 +836,6 @@ export class MessengerPage extends IMPage {
             console.log("IM | Loading older chunk from API");
             await currentConvo.getScrollPosition().loadOlder();
             currentConvo.getScrollPosition().result();
-            // await window.im.state.getCurrentConvo()._messagesLoad_UpFromLastChunk();
         } else {
             const scrollBottom = document.documentElement.scrollHeight - _scroll - document.documentElement.clientHeight;
 
@@ -847,7 +843,7 @@ export class MessengerPage extends IMPage {
                 // ── Scrolled near the bottom → load newer messages (scroll DOWN) ──
                 const curConvo = window.im.state.getCurrentConvo();
                 const curPeer = curConvo ? curConvo.peer : null;
-                if (curPeer && typeof curPeer._chunks_HasMoreNewerChunkRelativelyToCurrentChat === 'function' && curPeer._chunks_HasMoreNewerChunkRelativelyToCurrentChat()) {
+                if (curPeer) {
 
                     console.log('IM | Switching to a newer chunk');
                     // await window.im.state.getCurrentConvo()._messagesLoad_DownFromCurrentChunk();
@@ -947,9 +943,9 @@ export class MessengerPage extends IMPage {
         }
 
         if (load_chunk_where_it_can_be) {
-            const chat = this.getCurrentChat();
+            /*const chat = this.getCurrentChat();
             if (chat && chat.peer) {
-                chat.peer.loadChunkByMessageId(msgId).then(() => {
+                chat.peer._chunks.loadChunkByMessageId(msgId).then(() => {
                     const el2 = this.messagesListBlock
                         ? this.messagesListBlock.querySelector(`[data-msg-id="${msgId}"]`)
                         : document.querySelector(`[data-msg-id="${msgId}"]`);
@@ -960,7 +956,7 @@ export class MessengerPage extends IMPage {
                         console.log('IM | Scrolled to message #' + msgId + ' after loading chunk');
                     }
                 });
-            }
+            }*/
         } else {
             console.warn('IM | scrollToMessage: message #' + msgId + ' not found in DOM');
         }

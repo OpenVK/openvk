@@ -7,8 +7,8 @@ async function showUserDialog(event, userId) {
         <div class="messenger-layer" id="user-send-dialog">
             <div class="user-send-centre">
                 <div class="user-send-left">
-                    <img class="udlg-avatar" src="${conv.peer.avatar_any}" alt="" />
-                    <div class="udlg-online nobold">${conv.peer.online_status_str}</div>
+                    <img class="udlg-avatar" src="${conv.peer.getAvatar()}" alt="" />
+                    <div class="udlg-online nobold">${conv.peer.getOnlineStatusString()}</div>
                 </div>
                 <div class="udlg-send-right">
                     <div>
@@ -127,7 +127,7 @@ function updateChatAvatar(e, chat) {
 function OpenChatAvatar(event, peer) {
     console.log(peer)
     if (peer.supposed_type == "chat") {
-        OpenMiniature(event, peer.avatar_max, peer.id, "skip", "chat", null, true, 0)
+        OpenMiniature(event, peer.getAvatar("max"), peer.id, "skip", "chat", null, true, 0)
         return;
     }
 
@@ -136,7 +136,7 @@ function OpenChatAvatar(event, peer) {
         return;
     }
 
-    OpenAvatar(event, peer.avatar_max, peer.id + '_profile', peer.data.photo_pid);
+    OpenAvatar(event, peer.getAvatar("max"), peer.id + '_profile', peer.data.photo_pid);
 }
 
 function createChatTopic(group_id) {
@@ -203,10 +203,10 @@ async function imSwitchCurrent() {
         msg.getNode().find("#_switch_list").append(`
         <div data-id="${item.id}" class="entity_vertical_list_item scroll_node">
             <div class="first_column">
-                <a href="${item.page_url}" class="avatar"><img src="${item.avatar_any}"></a>
+                <a href="${item.getPageUrl()}" class="avatar"><img src="${item.getAvatar()}"></a>
                 <div class="info">
                     <b class="noOverflow">
-                        <a href="${item.page_url}">${escapeHtml(item.full_name)}</a>
+                        <a href="${item.getPageUrl()}">${escapeHtml(item.full_name)}</a>
                     </b>
                 </div>
             </div>

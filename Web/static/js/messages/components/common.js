@@ -1,17 +1,21 @@
 import { html, render } from './render.js';
 import { ChatGeneralForm } from './messages.js';
 
-export const PeerAvatar = ({ peer, className = "", loading = "lazy" }) => {
+export const PeerAvatar = ({ peer, className = "", loading = "lazy", saved_messages_ava = true }) => {
     if (!peer) {
         return html`<img class="${className}" src="/assets/packages/static/openvk/img/im/chat_meaningless.jpg" loading="${loading}" />`;
     }
 
     if (peer.id === window.openvk?.current_id) {
+        if (!saved_messages_ava) {
+            return html`<div style="display:block;width:52px;height:52px;"></div>`;
+        }
+
         return html`<img class="${className}" src=${ChatGeneralForm.SAVED_MESSAGES_AVATAR} loading="${loading}" />`;
     }
 
     if (peer.supposed_type === 'chat' && !peer.has_custom_avatar) {
-        const avatars = peer.mosaic_avatars || [];
+        const avatars = peer.getMosaicAvatars() || [];
         const cell0 = avatars[0] || null;
         const cell1 = avatars[1] || null;
         const cell2 = avatars[2] || null;
@@ -37,14 +41,14 @@ export const PeerAvatar = ({ peer, className = "", loading = "lazy" }) => {
         `;
     }
 
-    const src = peer.conversation_avatar_any || peer.avatar_any;
+    const src = peer.getAvatar("mid", true);
     return html`<img class="${className}" src=${src} loading="${loading}" />`;
 };
 
 export const PeerTab = ({ conv, active, page }) => {
     return html`
-        <div class="messages--peers-tab${active ? ' selected' : ''} ${ !conv.is_read ? 'unread' : ''}">
-            <a onClick=${() => window.im?.messenger.selectConversation(conv)}>${conv.peer.conversations_name}</a>
+        <div class="messages--peers-tab${active ? ' selected' : ''} ${ !conv.isRead() ? 'unread' : ''}">
+            <a onClick=${() => window.im?.messenger.selectConversation(conv)}>${conv.peer.getName(true, true)}</a>
             <span class="messages--peers-tab-counter">+${conv.unread_count}</span>
             <span class="messages--peers-tab-close" onClick=${() => window.im?.messenger.closeChat(conv, page)}>
                 <div class="cross ${active ? "white" : ""}"></div>
@@ -71,7 +75,7 @@ export const ActionsBar = ({ selectedMessages, count, onDelete, onUnselect, onRe
     let canDeleteThemAll = true;
 
     selectedMessages.forEach(msg => {
-        if (msg.can_delete() == false) {
+        if (msg.can("delete") == false) {
             canDeleteThemAll = false;
         }
     })
@@ -163,7 +167,7 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
         `}
         <div class="post-buttons">
             <div class="model_content_textarea messenger-app--input has_emoji_picker expanded-textarea" id="write">
-                <img class="ava" src=${current_user.avatar_any} alt=${current_user.full_name} />
+                <img class="ava" src=${current_user.getAvatar("mid", false)} alt=${current_user.full_name} />
                 <div class="messenger-app--input---messagebox">
                     <div class="textareas has_emoji_picker">
                         <textarea
@@ -184,7 +188,8 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
                 <${PeerAvatar}
                     peer=${replyTo ? replyTo.sender : corresponder.peer}
                     className="ava ava2"
-                    loading="eager" />
+                    loading="eager"
+                    saved_messages_ava=${false} />
             </div>
         </div>
     </div>
@@ -195,10 +200,10 @@ export const ConversationItem = ({ conv }) => {
     const last_msg = conv.last_message;
     const has_activity = conv.hasActivity();
     const cls1 = ["crp-entry"];
-    if (last_msg && (last_msg.data.from_id == conv.peer.id || conv.peer.is_saved_messages == true)) {
+    if (last_msg && (last_msg.data.from_id == conv.peer.id || conv.peer.isSavedMessages() == true)) {
         cls1.push("crp-entry-replied-same");
     }
-    if (!conv.is_read) {
+    if (!conv.isRead()) {
         cls1.push("unread");
     }
 
@@ -209,15 +214,15 @@ export const ConversationItem = ({ conv }) => {
             <${PeerAvatar} peer=${conv.peer} />
         </div>
         <div class="crp-entry--info">
-            <a>${ovk_proc_strtr(conv.peer.conversations_full_name, 30)}</a><br/>
-            ${last_msg && html`<span>${last_msg.conv_date}</span>`}
+            <a>${ovk_proc_strtr(conv.peer.getName(true), 30)}</a><br/>
+            ${last_msg && html`<span>${last_msg.getDate(2)}</span>`}
         </div>
         <div class="crp-entry--message">
             ${d && html`
             <div class="crp-entry--message---av">
-                <img src="${last_msg.sender.avatar_any}" />
+                <img src="${last_msg.sender.getAvatar("mid", true)}" />
             </div>
-            <div class="crp-entry--message---text" dangerouslySetInnerHTML=${{ __html: last_msg.conv_summary_with_attachments }} />`}
+            <div class="crp-entry--message---text" dangerouslySetInnerHTML=${{ __html: last_msg.getText(false, true, true) }} />`}
             ${has_activity == true && html`
                 <div class="crp-entry--message---av"></div>
                 <div class="crp-entry--message---text">
@@ -297,7 +302,7 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
     const peer = convo.peer;
     const supposed_type = peer.supposed_type;
     const isOnline = peer.online == 1;
-    const avatar = peer.avatar_big || peer.data.photo_50 || '';
+    const avatar = peer.getAvatar("big");
     const has_avatar = true;
     const is_from_chat = fromConvo.supposed_type == "chat" && peer.supposed_type != "chat";
     const is_club_related = peer.supposed_type == "club" || window.im.state.getOperator().supposed_type == "club";
@@ -315,10 +320,10 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
             </div>
             <div class="peer-name">
                 <div class="peer-name-1">
-                    <a class="peer-link" href=${peer.page_url}>${peer.full_name}</a>
+                    <a class="peer-link" href=${peer.getPageUrl()}>${peer.full_name}</a>
 
                     <div class="peer-status">
-                        <span dangerouslySetInnerHTML=${{ __html: peer.online_status_str }} />
+                        <span dangerouslySetInnerHTML=${{ __html: peer.getOnlineStatusString() }} />
                     </div>
                 </div>
 
@@ -351,20 +356,20 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                         })
                     }}>${tr("convo_search_messages")}</a>
                     ${ window.im.state.is_debug ? html`
-                        <a onClick=${(e) => { peer.showAsJson() }}>JSON</a>
+                        <a onClick=${(e) => {  fastError(`<textarea>${JSON.stringify(peer.data, null, 4)}</textarea>`); }}>JSON</a>
                     ` : ""}
                     ${is_from_chat === true && html`
                     <div class="chat-actions-usr chat-actions-common">
                         <a><b>${tr("convo_action_kick")}</b></a>
                     </div>
                     `}
-                    ${ (is_club_related && peer.is_club_messages_blocked) ? html`
-                        <div class="chat-actions-usr chat-actions-common" onClick="${async (e) => {await peer.toggleClubMessages(e, "enable")}}">
+                    ${ (is_club_related && peer.isClubMessagesBlocked()) ? html`
+                        <div class="chat-actions-usr chat-actions-common" onClick="${async (e) => {await peer.toggleClubMessagesBlockness(e, "enable")}}">
                             <a>${tr("group_allow_messages")}</a>
                         </div>
                     ` : ""}
-                    ${ (is_club_related && !peer.is_club_messages_blocked) ? html`
-                        <div class="chat-actions-usr chat-actions-common" onClick="${async (e) => {await peer.toggleClubMessages(e, "disable")}}">
+                    ${ (is_club_related && !peer.isClubMessagesBlocked()) ? html`
+                        <div class="chat-actions-usr chat-actions-common" onClick="${async (e) => {await peer.toggleClubMessagesBlockness(e, "disable")}}">
                             <a>${tr("group_deny_messages")}</a>
                         </div>
                     ` : ""}

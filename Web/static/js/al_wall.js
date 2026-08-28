@@ -3114,7 +3114,7 @@ async function repost(id, repost_type = 'post') {
         window.im_variants.getCurrentUser().conversations.convs.forEach(conv => {
             const peer = conv.peer;
             if (peer.id == window.openvk.current_id) { return; }
-            u(`select[name='selected_repost_chat']`).append(`<option value='${peer.id}'>${ovk_proc_strtr(escapeHtml(peer.name), 100)}</option>`)
+            u(`select[name='selected_repost_chat']`).append(`<option value='${peer.id}'>${ovk_proc_strtr(escapeHtml(peer.getName()), 100)}</option>`)
         });
 
         if (window.im_variants.getCurrentUser().conversations.convs.length < window.im_variants.getCurrentUser().conversations.total_convs) {

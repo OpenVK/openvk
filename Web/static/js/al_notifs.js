@@ -80,7 +80,7 @@ async function triggerMessageNotification(conv, msg, timestamp) {
         const peer = conv.peer;
         const sender = msg.sender;
         const title = peer.full_name;
-        const ava = peer.avatar_any || peer.photo_max || '';
+        const ava = peer.getAvatar();
 
         if (peer.id === window.openvk.current_id || sender.id === window.openvk.current_id) {
             console.log("IM | There is no sense to display this message");
@@ -89,7 +89,7 @@ async function triggerMessageNotification(conv, msg, timestamp) {
 
         const notif = {
             title: escapeHtml(title),
-            body: "<b>" + escapeHtml(sender.full_name) + ":</b> " + (ovk_proc_strtr(msg.conv_summary, 95)),
+            body: "<b>" + escapeHtml(sender.full_name) + ":</b> " + (ovk_proc_strtr(msg.getText(false, true), 95)),
             ava: ava,
             priority: 1,
         };

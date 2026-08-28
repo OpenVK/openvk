@@ -91,7 +91,7 @@ export class ChatGeneralForm {
 
     constructor(item) {
         this.data = item || {};
-        this._chunks = new Chunks(this.id);
+        this._chunks = new Chunks(this);
         this.pinned_message_chunks = [];
 
         this._messages_inited = false;
@@ -122,28 +122,17 @@ export class ChatGeneralForm {
         return 'chat';
     }
 
-    get can_write() {
-        return (this.data.can_write_private_message ?? this.data.can_write ?? 1) === 1;
-    }
-
-    showAsJson() {
-        fastError(`<textarea>${JSON.stringify(this.data, null, 4)}</textarea>`);
-    }
-
-    canBeInvitedBy(group = null) {
-        if (group != null) {
+    isAdmin() {
+        if (this.supposed_type != "chat") {
             return false;
         }
-
-        return (this.data.can_invite ?? 1) === 1;
-    }
-
-    isAdmin() {
         return this.data.admin_id === window.openvk.current_id;
     }
 
     can(thing, relatively_current_group = null) { // unified function
         switch (thing) {
+            case "write":
+                return (this.data.can_write_private_message ?? this.data.can_write ?? 1) === 1;
             case "update_title":
             case "invite_new":
             case "update_avatar":
@@ -152,71 +141,19 @@ export class ChatGeneralForm {
                 return this.supposed_type == "chat";
             case "view_invite_links":
                 return this.supposed_type == "chat" && false;
+            case "pin":
+                return this.supposed_type == "chat" ? this.isAdmin() : false;
+            case "invite":
+                return (this.data.can_invite ?? 1) === 1;
         }
 
         return true;
     }
 
-    canUsersBeAddedBy(group = null) {
-        if (group != null) {
-            return false;
-        }
-
-        return this.isAdmin();
-    }
-
-    canPinMessages(group = null) {
-        if (group != null) {
-            return false;
-        }
-
-        return this.isAdmin();
-    }
-
-    canUpdateAvatar(as_group = null) {
-        if (as_group != null) {
-            return false;
-        }
-
-        if (this.supposed_type != "chat") {
-            return false;
-        }
-
-        return this.isAdmin();
-    }
-
-    canUpdateTitle(as_group = null) {
-        if (as_group != null) {
-            return false;
-        }
-
-        if (this.supposed_type != "chat") {
-            return false;
-        }
-
-        return this.isAdmin();
-    }
-
-    canViewInviteLinks(as_group = null) {
-        if (as_group != null) {
-            return false;
-        }
-
-        if (this.supposed_type != "chat") {
-            return false;
-        }
-
-        return this.isAdmin();
-    }
-
-    canLeaveChat() {
-        return this.supposed_type == "chat";
-    }
-
     get has_custom_avatar() {
         if (this.supposed_type !== 'chat') return true;
         if (this.data.photo_id) return true;
-        const p = this.data.photo_100 || this.data.photo_50 || this.data.photo_200 || this.data.avatar_max;
+        const p = this.getAvatar();
         if (!p) return false;
         if (typeof p === 'string' && (p.includes('chat_meaningless') || p.includes('camera_'))) return false;
         return true;
@@ -241,7 +178,7 @@ export class ChatGeneralForm {
         return [];
     }
 
-    get mosaic_avatars() {
+    getMosaicAvatars() {
         const memberIds = this.members_ids;
         if (!memberIds || memberIds.length === 0) {
             return [];
@@ -251,8 +188,8 @@ export class ChatGeneralForm {
         for (const mId of memberIds) {
             if (avatars.length >= 4) break;
             const prof = window.im?.cached_profiles?._findCachedProfileById(mId);
-            if (prof && prof.avatar_any) {
-                avatars.push(prof.avatar_any);
+            if (prof && prof.getAvatar()) {
+                avatars.push(prof.getAvatar());
             } else {
                 avatars.push('/assets/packages/static/openvk/img/camera_100.png');
             }
@@ -260,37 +197,42 @@ export class ChatGeneralForm {
         return avatars;
     }
 
-    get conversation_avatar_any() {
-        if (this.id === window.openvk.current_id) {
+    getAvatar(size = "mid", count_self = false) {
+        if (this.isSavedMessages() && count_self) {
             return ChatGeneralForm.SAVED_MESSAGES_AVATAR;
         }
 
-        return this.avatar_any;
+        let ava = null;
+        switch(size) {
+            case "mid":
+                ava = this.data.photo_100;
+                break;
+            case "big":
+                ava = this.data.photo_200;
+                break;
+            case "max":
+                ava = this.data.photo_max;
+                break;
+        }
+
+        if (!ava && this.supposed_type == "chat") {
+            return ChatGeneralForm.CHAT_NO_AVATAR;
+        }
+
+        return ava ?? '/assets/packages/static/openvk/img/camera_100.png';
     }
 
-    get avatar_any() {
-        return this.data.photo_100 ?? ChatGeneralForm.CHAT_NO_AVATAR;
-    }
-
-    get avatar_big() {
-        return this.data.photo_200;
-    }
-
-    get avatar_max() {
-        return this.data.photo_max;
-    }
-
-    get conversations_full_name() {
-        if (this.id === window.openvk.current_id) {
+    getName(count_self = false, short = false) {
+        if (count_self && this.isSavedMessages()) {
             return tr("saved_messages");
         }
 
-        return this.full_name;
-    }
-
-    get full_name() {
         switch (this.supposed_type) {
             case 'user':
+                if (short) {
+                    return this.data.first_name;
+                }
+
                 return ((this.data.first_name || '') + ' ' + (this.data.last_name || '')).trim();
             case 'club':
                 return this.data.name || '';
@@ -299,26 +241,7 @@ export class ChatGeneralForm {
         }
     }
 
-    get conversations_name() {
-        if (this.id === window.openvk.current_id) {
-            return tr("saved_messages");
-        }
-
-        return this.name;
-    }
-
-    get name() {
-        switch (this.supposed_type) {
-            case 'user':
-                return this.data.first_name || '';
-            case 'club':
-                return this.data.name || '';
-            case 'chat':
-                return this.data.title || tr("chat");
-        }
-    }
-
-    get page_url() {
+    getPageUrl() {
         switch (this.supposed_type) {
             case 'user':
                 return '/id' + this.data.id;
@@ -327,16 +250,15 @@ export class ChatGeneralForm {
         }
     }
 
-    get chat_url() {
+    getChatUrl() {
         return '/im?sel=' + this.id;
     }
 
-    get is_saved_messages() {
+    isSavedMessages() {
         return this.id === window.im.state.getId();
     }
 
-    get gender() {
-        console.log(this.data.sex)
+    getGender() {
         if (this.data.sex == 1) {
             return 'female'
         }
@@ -348,7 +270,7 @@ export class ChatGeneralForm {
         return 'neutral';
     }
 
-    get online_status_str() {
+    getOnlineStatusString() {
         if (this.supposed_type == "chat") {
             return Number(this._total_members_count) + " members"
         }
@@ -358,7 +280,7 @@ export class ChatGeneralForm {
         }
 
         if (!this.data.last_seen) {
-            return tr("im_was_online_unkown_" + this.gender).toLowerCase();
+            return tr("im_was_online_unkown_" + this.getGender()).toLowerCase();
         }
 
         const time = this.data.last_seen.time;
@@ -376,25 +298,17 @@ export class ChatGeneralForm {
         }
 
         if (sameMonth && date.getDate() === today.getDate()) {
-            return tr("im_was_online_today_" + this.gender, timeStr).toLowerCase();
+            return tr("im_was_online_today_" + this.getGender(), timeStr).toLowerCase();
         }
 
         if (sameMonth && date.getDate() === today.getDate() - 1) {
-            return tr("im_was_online_yesterday_" + this.gender, timeStr).toLowerCase();
+            return tr("im_was_online_yesterday_" + this.getGender(), timeStr).toLowerCase();
         }
 
-        return tr("im_was_online_other_" + this.gender, timeStr, dayStr).toLowerCase();
+        return tr("im_was_online_other_" + this.getGender(), timeStr, dayStr).toLowerCase();
     }
 
-    get messages() {
-        return this._chunks.getMessages();
-    }
-
-    get divided_messages() {
-        return this._chunks.getDayDividedMessages();
-    }
-
-    get is_muted() {
+    isMuted() {
         return false;
     }
 
@@ -435,95 +349,19 @@ export class ChatGeneralForm {
         return new ChatGeneralForm(c);
     }
 
-    async getMessages(message_id, offset = 0) {
-        const chunk = new MessageChunk([], true, ChatGeneralForm.MESSAGES_PER_PAGE);
-        chunk._start_message_id = message_id ?? null;
-        chunk._direction = 'center';
+    isMessagesInited() { return this._chunks.isMessagesInited(); }
 
-        const params = {
-            'offset': offset,
-            'peer_id': this.id,
-        };
-        if (message_id != null) params['start_message_id'] = message_id;
-
-        await chunk.fetch(params);
-
-        return chunk;
-    }
-
-    // ── delegation to this._chunks ───────────────────────────────
-
-    _appendMessagesChunk(messages, before = false, compare_with = null) {
-        const options = compare_with ? { overlapWith: compare_with } : {};
-        this._chunks._appendChunk(messages, options);
-    }
-
-    _isMessagesInited() {
-        return this._chunks._isMessagesInited();
-    }
-
-    _pushNewMessage(msg, conv = null, check_chunk = true) {
-        this._chunks._pushNewMessage(msg, conv, check_chunk);
-    }
-
-    _findMessageById(id) {
-        return this._chunks._findMessageById(id);
-    }
-
-    async _findMessageByIdFromApi(id) {
-        const found = this._findMessageById(id);
-        return found;
-    }
-
-    _getLatestChunk(create_empty = true) {
-        return this._chunks._getLatestChunk(create_empty);
-    }
-
-    _messagesLoad_UpFromLastChunk() {
-        return this._chunks._messagesLoad_UpFromLastChunk();
-    }
-
-    _messagesLoad_DownFromCurrentChunk() {
-        return this._chunks._messagesLoad_DownFromCurrentChunk();
-    }
-
-    _chunks_HasMoreNewerChunkRelativelyToCurrentChat() {
-        return this._chunks._chunks_HasMoreNewerChunkRelativelyToCurrentChat();
-    }
-
-    _chunks_HasMoreOlderChunkRelativelyToCurrentChat() {
-        return this._chunks._chunks_HasMoreOlderChunkRelativelyToCurrentChat();
-    }
-
-    async loadChunkByMessageId(messageId) {
-        const chunk = await this._chunks.loadChunkByMessageId(messageId);
-        window.im.messenger.update();
-        return chunk;
-    }
-
-    getFirstMessage() {
-        return this._chunks.getFirstMessage();
-    }
-
-    scrollToNewest() {
-        return this._chunks.scrollToNewest();
-    }
-
-    // boundary flags set by im.js on init
-    set _beginning_reached(v) { this._chunks._atNewest = !!v; }
-    get _beginning_reached() { return this._chunks._atNewest; }
-    set _end_reached(v) { this._chunks._atOldest = !!v; }
-    get _end_reached() { return this._chunks._atOldest; }
+    // переход к действиям
 
     async sendMessage(msg, reply_to = null, attachments = null, wait_until_send = null, push_callback = null) {
-        this._pushNewMessage(msg);
+        this.pushNewMessage(msg);
         if (push_callback) {
             push_callback();
         }
         const datas = {
             'peer_id': this.id,
-            'message': msg.text_raw,
-            'attachment': msg.str_attachments,
+            'message': msg.getText(true),
+            'attachment': msg.getStringAttachments(),
         };
 
         if (window.im.usage_type == "group") {
@@ -571,7 +409,7 @@ export class ChatGeneralForm {
             return;
         }
 
-        alert("ты хочешь поменять название на " + title + " но эта функция ещё не сделана .")
+        alert("ты хочешь поменять title на: "+ title)
     }
 
     async updateAvatar(blob) {
@@ -606,16 +444,16 @@ export class ChatGeneralForm {
         return v1;
     }
 
-    /* etc */
+    // blockness
 
-    get is_club_messages_blocked() {
+    isClubMessagesBlocked() {
         if (window.im.state.getId() < 0) {
             return this.data.is_me_blocked == 1;
         }
         return this.data.is_messages_blocked == 1;
     }
 
-    async toggleClubMessages(event, action = true) {
+    async toggleClubMessagesBlockness(event, action = true) {
         let state = action == "enable";
         // true - enable, false - forbid
         let r = null;
@@ -649,16 +487,16 @@ export class ChatGeneralForm {
         window.im.messenger.update();
     }
 
-    // members
+    async checkMembers(offset = 0) {
+        if (this._members != null) {
+            return true;
+        }
 
-    _hasLoadedMembers() {
-        return this._members != null;
-    }
-
-    async _setMembers(offset = 0) {
         this._members = new ChatMembers(this.id);
         await this._members.load(offset);
     }
+
+    // Readness
 
     get in_read() {
         return this._in_read || (this.data ? this.data.in_read : 0) || 0;
@@ -682,7 +520,7 @@ export class ChatGeneralForm {
             params["start_message_id"] = startMessageId;
         } else {
             try {
-                const latestChunk = this._getLatestChunk(false);
+                const latestChunk = this._chunks.getLatestChunk();
                 if (latestChunk && latestChunk.latest_message && latestChunk.latest_message.id) {
                     params["start_message_id"] = latestChunk.latest_message.id;
                 }
@@ -694,13 +532,12 @@ export class ChatGeneralForm {
 
         await window.OVKAPI.call("messages.markAsRead", params);
     }
-
 }
 
-// ── ChatMessage ────────────────────────────────────────────────────
+// ChatMessage
 
 export class ChatMessage {
-    static AUTHOR_NAME_HIDE_TIMEOUT = 600; // 60 * 10
+    static AUTHOR_NAME_HIDE_TIMEOUT = 600; // 60 * 10 = 10 minutes
 
     constructor(item = {}) {
         this.data = item;
@@ -734,27 +571,14 @@ export class ChatMessage {
         }
     }
 
-    _guessSender() {
-        this.data.sender = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(this.data.from_id);
-    }
-
+    _guessSender() { this.data.sender = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(this.data.from_id); }
     doHideHead(another_msg) {
         let _time_eq = another_msg.data.date - this.data.date;
-        return this.data.from_id == another_msg.data.from_id && _time_eq < ChatMessage.AUTHOR_NAME_HIDE_TIMEOUT && this.is_action == false;
+        return this.data.from_id == another_msg.data.from_id && _time_eq < ChatMessage.AUTHOR_NAME_HIDE_TIMEOUT && this.isAction() == false;
     }
-
-    isMine() {
-        return this.data.from_id === window.im.state.getId();
-    }
-
-    isReportable() {
-        return !this.isMine();
-    }
-
-    get sent() {
-        return new Date(this.data.date * 1000);
-    }
-
+    isMine() { return this.data.from_id === window.im.state.getId(); }
+    getSentTime() { return new Date(this.data.date * 1000); }
+    hasSender() { return this.data.from_id != null; }
     get sender() {
         if (!this.data.sender) {
             this._guessSender();
@@ -762,8 +586,7 @@ export class ChatMessage {
 
         return this.data.sender;
     }
-
-    get peer_object() {
+    get peer() {
         try {
             return window.im.conversations._findConv(this.data.peer_id).peer;
         } catch (e) {
@@ -772,121 +595,201 @@ export class ChatMessage {
             return window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(this.data.peer_id);
         }
     }
+    getText(raw = false, conversation = false, with_attachments = false) {
+        let txt = "";
+        if (raw) {
+            txt = this.data.text;
+        } else {
+            txt = escapeHtml(this.data.text);
+        }
 
-    get has_sender() {
-        return this.data.from_id != null;
+        if (conversation) {
+            txt = "";
+            if (with_attachments) {
+                if (this.data.attachments && this.data.attachments.length > 0) {
+                    const c = this.data.attachments[0];
+
+                    switch (c.type) {
+                        case "photo":
+                            txt += `<img class="conv_prev_img" src="${c.photo.photo_75}">`;
+
+                            if (this.data.text.length == 0) {
+                                f += get_attachment_text(this.data.attachments[0]);
+                            }
+
+                            break;
+                        default:
+                            txt += get_attachment_text(this.data.attachments[0]);
+                            break;
+                    }
+
+                    txt += " ";
+                }
+
+                if (this.data.action != null) {
+                    txt = tr("event_" + this.data.action.type + "_impersonal");
+                }
+
+                txt += ovk_proc_strtr(escapeHtml(this.data.text), 100);
+            } else {
+                if (this.data.attachments && this.data.attachments.length > 0) {
+                    txt = get_attachment_text(this.data.attachments[0]);
+                }
+
+                txt += escapeHtml(this.data.text);
+
+                return txt;
+            }
+        } else {
+            if (this.isSpecial("gift")) {
+                const msg = this.data.attachments[0].gift.message;
+                if (msg == "") {
+                    txt = ("(" + tr("message_no_text") + ")").toLowerCase();
+                }
+
+                txt = msg;
+            }
+        }
+
+        return nl2br(txt);
     }
 
-    get is_gift() {
-        try {
-            let is = false;
-            this.data.attachments.forEach(item => {
-                if (item.type == "gift") {
-                    is = true;
-                }
-            })
+    get reply() { return this.data.reply_message; }
+    get global_id() { return this.data.global_id; }
+    get id() { return this.data.id; }
+    isAction() { return this.data.action != null; }
+    isReply() { return this.data.reply_message != null; }
+    isError() { return this.data.error_text != null; }
+    isEdited() { return this.data.edited == 1 || this.data.edited == true; }
+    isPinned() { return this.data.is_pinned == 1; }
 
-            return is;
-        } catch (e) {
+    isDeleted(mode = 1) {
+        // 0 - deleted by me via action, will not disappear but will leave placeholder text
+        const is_deleted_by_me = this.data.deleted_by_me == 1;
+        const is_deleted = this.data.deleted == 1;
+
+        switch (mode) {
+            default:
+            case 0:
+                return is_deleted && !is_deleted_by_me;
+            case 1:
+                return is_deleted;
+        }
+    }
+
+    isSpecial(like) {
+        if (like == null) {
+            return this.isAction();
+        }
+        if (like == "sticker") {
+            return this.data.is_sticker == 1;
+        }
+        if (like == "gift") {
+            try {
+                let is = false;
+                this.data.attachments.forEach(item => {
+                    if (item.type == "gift") {
+                        is = true;
+                    }
+                })
+
+                return is;
+            } catch (e) {
+                return false;
+            }
+        }
+    }
+
+    can(action, group) {
+        switch (action) {
+            case "pin":
+                const peer = this.peer;
+                if (peer.supposed_type == "chat") {
+                    return peer.can("pin");
+                }
+
+                return peer.can("write");
+            case "delete":
+                return this.data.from_id == window.im.state.getId();
+            case "edit":
+                if (this.data.can_edit != null) {
+                    return this.data.can_edit === 1;
+                }
+
+                if (group != null) {
+                    return false;
+                }
+
+                if (this.isAction() == true || this.isSpecial("sticker") == true) {
+                    return false;
+                }
+
+                // return this.data.can_edit;
+                return this.data.from_id === window.im.state.getId();
+            case "report":
+                return !this.isMine();
+        }
+    }
+
+    setDeleted(by_me = false) {
+        this.data.deleted = 1;
+        if (by_me) {
+            this.data.deleted_by_me = 1;
+        }
+        this.data.text = tr('message_is_deleted');
+        this.data.attachments = [];
+    }
+
+    setText(text) {
+        this.data.text = text;
+    }
+    shouldBeNotified() {
+        if (this.data.from_id === window.im.state.getId()) {
             return false;
         }
+
+        return !this.peer.isMuted();
     }
-
-    get text_raw() {
-        return this.data.text;
-    }
-
-    get text_escaped() {
-        return escapeHtml(this.data.text);
-    }
-
-    get text() {
-        if (this.is_gift) {
-            const msg = this.data.attachments[0].gift.message;
-            if (msg == "") {
-                return ("(" + tr("message_no_text") + ")").toLowerCase();
-            }
-
-            return msg;
-        }
-
-        let text = escapeHtml(this.data.text)
-
-        return nl2br(text);
-    }
-
-    get reply() {
-        return this.data.reply_message;
-    }
-
-    get global_id() {
-        return this.data.global_id;
-    }
-
-    get id() {
-        return this.data.id;
-    }
-
-    get is_action() {
-        return this.data.action != null;
-    }
-
-    get is_reply() {
-        return this.data.reply_message != null;
-    }
-
-    get is_error() {
-        return this.data.error_text != null;
-    }
-
-    get peer_id() {
-        return this.data.peer_id;
-    }
-
-    get from_id() {
-        return this.data.from_id;
-    }
-
-    get attachments() {
+    get peer_id() { return this.data.peer_id; }
+    get from_id() { return this.data.from_id; }
+    getAttachments() {
         const _at = this.data.attachments;
         if (!_at) return [];
         return _at;
     }
-
-    get str_attachments() {
+    getStringAttachments() {
         const _at = this.attachments;
         if (_at.length == 0) return '';
     }
+    getDate(mode = 0) {
+        const conv_day = this.getConvDay();
+        switch (mode) {
+            case 0:
+                return this.getSentTime().toLocaleTimeString(navigator.language, {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                });
+            case 1:
+                return month_day_string(this.getSentTime());
+            case 2:
+                const date = this.getSentTime();
+                let is_today = date.toDateString() == new Date().toDateString();
 
-    get readable_date() {
-        return this.sent.toLocaleTimeString(navigator.language, {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-        });
-    }
+                const diffMs = Date.now() - date;
+                const diffHours = diffMs / (1000 * 60 * 60);
+                const isLessThan6Hours = diffHours >= 0 && diffHours < 6;
 
-    get sort_date() {
-        return month_day_string(this.sent);
-    }
+                if (isLessThan6Hours) {
+                    return this.getDate(0);
+                }
 
-    get conv_date() {
-        const date = this.sent;
-        let is_today = date.toDateString() == new Date().toDateString();
-
-        const diffMs = Date.now() - date;
-        const diffHours = diffMs / (1000 * 60 * 60);
-        const isLessThan6Hours = diffHours >= 0 && diffHours < 6;
-
-        if (isLessThan6Hours) {
-            return this.readable_date;
+                return conv_day;
         }
-
-        return this.conv_day;
     }
 
     getConvDay(always_with_year = false) {
-        const date = this.sent;
+        const date = this.getSentTime();
         if (always_with_year == false && date.getFullYear() == new Date().getFullYear()) {
             return date.toLocaleDateString(navigator.language);
         } else {
@@ -895,52 +798,6 @@ export class ChatMessage {
                 day: '2-digit'
             })
         }
-    }
-
-    get conv_day() {
-        return this.getConvDay();
-    }
-
-    get conv_summary() {
-        let f = "";
-        if (this.data.attachments && this.data.attachments.length > 0) {
-            f = get_attachment_text(this.data.attachments[0]);
-        }
-
-        f += escapeHtml(this.data.text);
-
-        return f;
-    }
-
-    get conv_summary_with_attachments() {
-        let f = "";
-        if (this.data.attachments && this.data.attachments.length > 0) {
-            const c = this.data.attachments[0];
-
-            switch (c.type) {
-                case "photo":
-                    f += `<img class="conv_prev_img" src="${c.photo.photo_75}">`;
-
-                    if (this.data.text.length == 0) {
-                        f += get_attachment_text(this.data.attachments[0]);
-                    }
-
-                    break;
-                default:
-                    f += get_attachment_text(this.data.attachments[0]);
-                    break;
-            }
-
-            f += " ";
-        }
-
-        if (this.data.action != null) {
-            return tr("event_" + this.data.action.type + "_impersonal");
-        }
-
-        f += ovk_proc_strtr(escapeHtml(this.data.text), 100);
-
-        return f;
     }
 
     static async fromEvent(event, im = null) {
@@ -957,7 +814,7 @@ export class ChatMessage {
             const peer_obj = await window.im.conversations._findConvFromApi(peer);
             const reply_id = attachments['reply_to'];
 
-            const __msg = await peer_obj.peer._findMessageByIdFromApi(reply_id);
+            const __msg = await peer_obj.peer._chunks.findMessageByIdFromApi(reply_id);
             if (__msg != null) {
                 reply_message = __msg;
             } else {
@@ -991,86 +848,6 @@ export class ChatMessage {
 
         return msg;
     }
-
-    get is_deleted_formally() {
-        return this.is_deleted && !this.is_deleted_by_me;
-    }
-
-    get is_deleted_by_me() {
-        return this.data.deleted_by_me == 1;
-    }
-
-    get is_deleted() {
-        return this.data.deleted == 1;
-    }
-
-    get is_sticker() {
-        return this.data.is_sticker == 1;
-    }
-
-    get is_got_edited() {
-        return this.data.edited == 1 || this.data.edited == true;
-    }
-
-    isPinned() {
-        return this.data.is_pinned == 1;
-    }
-
-    setPinned(val) {
-        this.data.is_pinned = val;
-    }
-
-    canEdit(group = null) {
-        if (this.data.can_edit != null) {
-            return this.data.can_edit === 1;
-        }
-
-        if (group != null) {
-            return false;
-        }
-
-        if (this.is_action == true) {
-            return false;
-        }
-
-        if (this.is_sticker == true) {
-            return false;
-        }
-
-        // return this.data.can_edit;
-        return this.data.from_id === window.im.state.getId();
-    }
-
-    canPin(club = null) {
-        const peer = this.peer_object;
-        if (peer.supposed_type == "chat") {
-            return peer.canPinMessages();
-        }
-
-        return peer.can_write;
-    }
-
-    can_delete(club = null) {
-        if (this.data.from_id == window.openvk.current_id) {
-            return true;
-        }
-
-        return false;
-    }
-
-    setDeleted(by_me = false) {
-        this.data.deleted = 1;
-        if (by_me) {
-            this.data.deleted_by_me = 1;
-        }
-        this.data.text = tr('message_is_deleted');
-        this.data.attachments = [];
-    }
-
-    setText(text) {
-        this.data.text = text;
-    }
-
     async setAttachmentsFromLP(data) {
         let new_attachments = null;
         if (data['attach1']) {
@@ -1081,7 +858,7 @@ export class ChatMessage {
         this.data.attachments = new_attachments;
     }
 
-    // if message has exclamation mark
+    // if message has the exclamation mark
     async tryToResend() {
         let r = String(this.data.error_text);
         this.data.error_text = null;
@@ -1153,21 +930,13 @@ export class ChatMessage {
             return;
         }
 
-        this.setPinned(Boolean(action));
+        this.data.is_pinned = Boolean(action);
     }
 
-    shouldBeNotified() {
-        if (this.data.from_id === window.openvk.current_id) {
-            return false;
-        }
-
-        return true;
-    }
-
-    get is_read() {
+    isRead() {
         try {
             if (this.data && this.data.read_state == 1) return true;
-            const peer = this.peer_object;
+            const peer = this.peer;
             if (peer) {
                 const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
                 const msgId = (this.data && (this.data.local_id || this.data.id)) || this.id || 0;

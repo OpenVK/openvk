@@ -29,7 +29,7 @@ export class FriendsPage extends IMPage {
             const t = e.target;
             const f = t.closest(".friends-list-item");
 
-            if (peer.canBeInvitedBy() == false) {
+            if (peer.can("invite") == false) {
                 fastError(tr("error_user_forbid_invites"));
                 f.querySelector('input').checked = false;
                 return;
@@ -48,7 +48,7 @@ export class FriendsPage extends IMPage {
             if (this._set_name == false) {
                 let n = [];
                 this.selected_friends.forEach(peer => {
-                    n.push(peer.name);
+                    n.push(peer.getName(false, false));
                 });
 
                 if (n.length > 0) {

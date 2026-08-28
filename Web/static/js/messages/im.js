@@ -751,7 +751,7 @@ class YellowHeader {
                     break;
                 }
 
-                this.changeYellowHeader(tr("conversation_title_user", escapeHtml(ovk_proc_strtr(peer.name, 50))));
+                this.changeYellowHeader(tr("conversation_title_user", escapeHtml(ovk_proc_strtr(peer.getName(), 50))));
                 break;
             case "club":
                 this.changeYellowHeader(tr("conversation_title_club"));
