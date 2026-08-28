@@ -564,7 +564,6 @@ export class ScrollPosition {
             console.log(first_message)
 
             const msgs = await this.peer._chunks._fetchChunkAround(first_message.id, { older: true });
-            console.log(msgs.messages, msgs.messages.length)
             if (!msgs.messages.length) {
                 this.reachedOldestPosition = true;
                 return;

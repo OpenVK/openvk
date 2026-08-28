@@ -64,7 +64,7 @@ final class TopicsPresenter extends OpenVKPresenter
         }
 
         $this->template->topic    = $topic;
-        $this->template->chat     = $topic->getChat();
+        $this->template->chat     = $topic->getChat($this->user->identity);
         $this->template->club     = $topic->getClub();
         $this->template->count    = $topic->getCommentsCount();
         $this->template->page     = (int) ($this->queryParam("p") ?? 1);

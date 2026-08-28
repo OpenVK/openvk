@@ -15,7 +15,37 @@ use openvk\Web\Util\IMBroker;
 class Chat extends RowModel
 {
     protected $tableName = "chats";
-    public $hydratedData = [];
+    protected $hydratedData = null;
+
+    public function hasData(): bool
+    {
+        return $this->hydratedData != null;
+    }
+
+    public function loadData(User $user): void
+    {
+        $broker = IMBroker::i();
+        $response = $broker->invokeMethod($user->getId(), "messages.getConversationsById", [
+            "peer_ids" => $this->getChatGlobalId(),
+            "extended" => 1,
+        ]);
+
+        if ($response == false) {
+            return;
+        }
+
+        $data = json_decode($response, true);
+        if ($data == null || $data["response"] == null) {
+            return;
+        }
+
+        $this->hydratedData = $data["response"]["items"][0]["conversation"];
+    }
+
+    public function setData(array $data)
+    {
+        $this->hydratedData = $data;
+    }
 
     //
     // Meta
@@ -299,6 +329,15 @@ class Chat extends RowModel
     public function removeInvitationLink(): bool
     {
         return true;
+    }
+
+    public function getMembersCount(): int
+    {
+        if (!$this->hydratedData) {
+            return 0;
+        }
+
+        return sizeof($this->hydratedData["chat_settings"]["members"]);
     }
 
     //
