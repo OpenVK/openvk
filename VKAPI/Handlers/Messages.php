@@ -1156,6 +1156,7 @@ final class Messages extends VKAPIRequestHandler
         $this->ensureBrokerActive();
 
         // это костыль, я не знаю почему peer_ids не передаётся в метод.
+        // я думаю потому что не задан тип
         if (empty($peer_ids)) {
             $peer_ids = $_GET['peer_ids'] ?? $_POST['peer_ids'] ?? '';
         }

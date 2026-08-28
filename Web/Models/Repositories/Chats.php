@@ -6,6 +6,7 @@ namespace openvk\Web\Models\Repositories;
 
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Entities\Messages\Chat;
+use openvk\Web\Models\Entities\User;
 use Nette\Database\Table\ActiveRow;
 use openvk\Web\Util\IMBroker;
 
@@ -28,9 +29,16 @@ class Chats
         return is_null($ar) ? null : new Chat($ar);
     }
 
-    public function get(int $id): ?Chat
+    public function get(int $id, bool $hydrate_data = false, ?User $userRelatively = null): ?Chat
     {
-        return self::$cache[$id] ??= $this->toChat($this->chats->get($id));
+        $chat = !self::$cache[$id] ? $this->toChat($this->chats->get($id)) : self::$cache[$id];
+        self::$cache[$id] = $chat;
+
+        if ($hydrate_data && !$chat->hasData() && $userRelatively) {
+            $chat->loadData($userRelatively);
+        }
+
+        return $chat;
     }
 
     public function getByChatId(int $chatId): ?Chat

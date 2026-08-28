@@ -51,6 +51,13 @@
     <div style="float: left;" n:if="!$x->isChatAttached()">
         {tr("messages", $x->getCommentsCount())}
     </div>
+    <div style="float: left;" n:if="$x->isChatAttached()">
+        {tr("chat")}
+        {if $x->canBeModifiedBy($thisUser)}
+        |
+        <a href="/topic{$x->getPrettyId()}/edit">{_edit}</a>
+        {/if}
+    </div>
     {var $lastComment = $x->getLastComment()}
     <div n:if="$lastComment" class="avatar-list-item" style="float: right;">
         <div class="avatar">

@@ -43,7 +43,7 @@
             <img src="{$chat->getPhotoURL("miniscule")}" alt="chat">
             <div>
                 <b>{$chat->getTitle()}</b>
-                <span>сколько-то участников</span>
+                <p>{tr("participants", $chat->getMembersCount())}</p>
             </div>
         </div>
         <div class="t3">
