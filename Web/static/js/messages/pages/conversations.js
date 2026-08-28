@@ -179,8 +179,6 @@ export class Conversations {
         this._appendConvs(convs);
     }
 
-    swapConvs(conv_1, conv_2) {}
-
     _findConv(id) {
         console.log("Trying to find convo with id", id)
         const _l = this.all_convs.filter((itm) => itm.peer.id == id);
@@ -226,7 +224,7 @@ export class Conversation {
         this.current_activity = {};
         this.draft = null;
         this._endScrollPosition = ScrollPosition.fromEnd(this.peer);
-        this._scroll = null;
+        this._scroll = ScrollPosition.fromStart(this.peer);
     }
 
     getEndScrollPosition() { return this._endScrollPosition; }
@@ -236,14 +234,9 @@ export class Conversation {
         }
         return this.getEndScrollPosition();
     }
-
     setDraft(draft) { this.draft = draft }
     clearDraft() { this.draft = null }
-
-    hasActivity() {
-        return this.getActivityMsg()[1].length > 0;
-    }
-
+    hasActivity() { return this.getActivityMsg()[1].length > 0; }
     getActivityMsg() {
         let s = "";
         let names = [];
@@ -252,7 +245,7 @@ export class Conversation {
 
             a.forEach(item => {
                 if (item[1].conv) {
-                    names.push(item[1].conv.peer.name);
+                    names.push(item[1].conv.peer.getName());
                 }
             })
 
@@ -285,11 +278,6 @@ export class Conversation {
 
         return [s, names];
     }
-
-    updateLastMessage(msg) {
-        this._last_message = msg;
-    }
-
     async setTyping(user_ids = [], variant = "writing") {
         const REMOVE_TYPING_TIMEOUT = 5000;
 
@@ -315,32 +303,22 @@ export class Conversation {
             }
         }, REMOVE_TYPING_TIMEOUT);
     }
-
+    updateLastMessage(msg) { this._last_message = msg; }
+    get id() { return this.peer.id; }
     get last_message() {
         try {
             if (this.peer) {
-                return this.peer._getLatestChunk(false).latest_message;
+                return this.peer._chunks.getLatestMessage();
             }
         } catch (e) {}
 
         return this._last_message;
     }
-
-    get conversation() {
-        return this._conversation;
-    }
-
-    get last_updated() {
-        if (!this.last_message) return null;
-        return this.last_message.sent;
-    }
-
-    get is_read() {
-        return this.unread_count == 0;
-    }
-
+    get conversation() { return this._conversation; }
+    get last_updated() { if (!this.last_message) { return null; } else { return this.last_message.getSentTime(); } }
+    isRead() { return this.unread_count == 0; }
     get unread_count() {
-        if (this.peer && this.peer._chunks && this.peer._chunks._isMessagesInited()) {
+        if (this.peer && this.peer._chunks && this.peer._chunks.isMessagesInited()) {
             return this.peer._chunks.getUnreadCount();
         }
 
@@ -350,8 +328,6 @@ export class Conversation {
             return 0;
         }
     }
-
-    get id() {
-        return this.peer.id;
-    }
+    pushMessage(msg, conv = null, check_chunk = true) { this.peer._chunks.pushNewMessage(msg, conv, check_chunk); }
+    findMessageById(id) { return this.peer._chunks._findMessageById(id); }
 }

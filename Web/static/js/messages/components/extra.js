@@ -48,11 +48,11 @@ export const FriendsPageTemplate = ({ friends, count, referrer, onFriendClick, o
                 ${friends.map((f) => html`
                 <div class="friends-list-item ${isSelected(f) ? 'friends-selected' : ''}" onClick=${(e) => { onFriendClick(e, f) }}>
                     <div class="inf">
-                        <img src="${f.avatar_any}" class="friends-list-ava" />
+                        <img src="${f.getAvatar()}" class="friends-list-ava" />
 
                         <div>
-                            <a class="friends-list-name">${f.full_name}</a>
-                            <span class="friends-list-online">${f.online_status_str}</span>
+                            <a class="friends-list-name">${f.getName()}</a>
+                            <span class="friends-list-online">${f.getOnlineStatusString()}</span>
                         </div>
                     </div>
                     ${isChatCreation || isAdd ? html`
@@ -104,7 +104,7 @@ export const FastChatsBar = ({ pinnedItems, convos }) => {
                 ${pinnedItems.map((item) => {
                     const peer = item.peer;
                     return html`
-                    <div title="${peer.full_name}" onClick=${(e) => { window.im.fastChats.selectConversation(e, item) }} class="fastchat_item ${!item.is_read ? "unread" : ""}">
+                    <div title="${peer.full_name}" onClick=${(e) => { window.im.fastChats.selectConversation(e, item) }} class="fastchat_item ${!item.isRead() ? "unread" : ""}">
                         <div class="fastchat_unread">+${item.unread_count}</div>
                         <div class="fastchat_close"></div>
                         <${PeerAvatar} peer=${peer} />

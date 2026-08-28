@@ -18,16 +18,16 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
         'messenger-layer',
         isSelected(msg) ? 'msg-selected' : '',
         hideHead(msg, index, chunk) ? 'same-author' : '',
-        msg.data.deleted ? 'msg-deleted' : '',
-        msg.is_error ? 'msg-error' : '',
-        msg.is_got_edited ? 'msg-edited' : '',
-        msg.is_reply ? 'msg-reply' : '',
+        msg.isDeleted(0) ? 'msg-deleted' : '',
+        msg.isError() ? 'msg-error' : '',
+        msg.isEdited() ? 'msg-edited' : '',
+        msg.isReply() ? 'msg-reply' : '',
         isSearchTpl ? 'msg-searched': 'msg-hoverable',
-        msg.is_read ? 'msg-read': 'unread',
+        msg.isRead() ? 'msg-read': 'unread',
     ].filter(Boolean).join(' ');
 
-    const has_postfix = msg.is_gift;
-    if (msg.is_action) {
+    const has_postfix = msg.isSpecial("gift");
+    if (msg.isSpecial()) {
         const act = msg.data.action.type;
         const typ = SystemMessages[act] ?? SystemMessages["unknown"];
 
@@ -46,50 +46,50 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
         <div class="messenger-app--messages---message--wrap">
             <div class="inlines click-territory">
                 <div class="checkmark"></div>
-                ${msg.is_error && html`
+                ${msg.isError() && html`
                     <div class="error-checkmark" onClick=${(e) => { msg.tryToResend() }} title="${msg.data.error_text}"></div>
                 `}
             </div>
             <div class="actions-2">
-                ${msg.canEdit() && html`
+                ${msg.can("edit") && html`
                     <div onClick=${(e) => { window.im.messenger.view.onEditButtonClick(e, msg) }} class="edit-icon"></div>
                 `}
-                ${msg.canPin() && html`
+                ${msg.can("pin") && html`
                     <div onClick=${(e) => { window.im.messenger.view.onPinButtonClick(e, msg) }} class="pin-icon"></div>
                 `}
-                ${msg.isReportable() && html`
+                ${msg.can("report") && html`
                     <div onClick=${(e) => { window.im.messenger.view.onReportButtonClick(e, msg) }} class="report-icon"></div>
                 `}
             </div>
             <div class="inlines _avatar">
-                <img class="ava" src=${msg.sender.avatar_any} alt=${msg.sender.full_name} />
+                <img class="ava" src=${msg.sender.getAvatar()} alt=${msg.sender.getName()} />
             </div>
             <div class="inlines _content">
-                ${msg.is_reply == true && html`
+                ${msg.isReply() == true && html`
                     <div class="reply-msg" onClick="${() => { window.im.messenger.view.scrollToMessage(msg.data.reply_message.id, true) }}">
                         <span>${tr("reply_to_msg")}</span>
-                        <a class="reply-author">${msg.has_sender ? msg.sender.full_name : "..."}</a>
-                        <span dangerouslySetInnerHTML=${{ __html: msg.data.reply_message.conv_summary }} />
+                        <a class="reply-author">${msg.hasSender() ? msg.sender.getName() : "..."}</a>
+                        <span dangerouslySetInnerHTML=${{ __html: msg.data.reply_message.getText(false, true) }} />
                     </div>
                 `}
                 <a class="_sender" onClick=${(e) => { window.im?.messenger?.view?.onAuthorNameClick(msg, e) }}>
                     <strong>${msg.sender.name}</strong>
                 </a>
                 ${has_postfix ? html`<div class="msg-postfix">
-                ${msg.is_gift ? html`
-                    ${tr("msg_sent_gift_" + msg.sender.gender).toLowerCase()}:
+                ${msg.isSpecial("gift") ? html`
+                    ${tr("msg_sent_gift_" + msg.sender.getGender()).toLowerCase()}:
                 ` : ""}
                 </div>` : ""}
                 <div class="time" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>
                     ${msg.id != null && html`
-                    <span>${isSearchTpl ? msg.conv_date + " " + msg.readable_date : msg.readable_date}</span>
+                    <span>${isSearchTpl ? msg.getDate(2) + " " + msg.getDate(0) : msg.getDate(0)}</span>
                     `}
                 </div>
-                <p dangerouslySetInnerHTML=${{ __html: msg.text }} class="text" />
+                <p dangerouslySetInnerHTML=${{ __html: msg.getText(false) }} class="text" />
                 <p class="msg-edit-mark">(${tr('edit_action_past').toLowerCase()})</p>
-                ${msg.attachments && msg.attachments.length > 0 && html`
+                ${msg.getAttachments() && msg.getAttachments().length > 0 && html`
                     <div class="attachments">
-                    ${msg.attachments.map((att) => html`<${Attachment} msg=${msg} att=${att} />`)}
+                    ${msg.getAttachments().map((att) => html`<${Attachment} msg=${msg} att=${att} />`)}
                     </div>
                 `}
                 ${msg.has_not_loaded_attachments == true && html`
@@ -107,11 +107,11 @@ export const SystemMessages = {
         const chat_title = (msg.data?.action?.text || msg.action?.text || "").trim();
         let text = "";
         if (chat_title && chat_title !== "undefined") {
-            text = tr("event_chat_creation_" + sender.gender, chat_title);
+            text = tr("event_chat_creation_" + sender.getGender(), chat_title);
         } else {
-            text = tr("event_chat_creation_no_title_" + sender.gender);
-            if (text === "event_chat_creation_no_title_" + sender.gender) {
-                text = tr("event_chat_creation_" + sender.gender);
+            text = tr("event_chat_creation_no_title_" + sender.getGender());
+            if (text === "event_chat_creation_no_title_" + sender.getGender()) {
+                text = tr("event_chat_creation_" + sender.getGender());
             }
         }
         return html`
@@ -121,7 +121,7 @@ export const SystemMessages = {
                         <strong>${sender.full_name} </strong>
                     </a>
                     <span class="text">${text.toLowerCase()}</span>
-                    <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.readable_date}</span>
+                    <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
                 </div>
             </div>
         `;
@@ -131,8 +131,8 @@ export const SystemMessages = {
         return html`
             <div class="messenger-special-message centred">
                 <div>
-                    <b>${tr("event_chat_user_up_your_rating_"+sender.gender, sender.full_name, msg.data.action.member_id)}</b>
-                    <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.readable_date}</span>
+                    <b>${tr("event_chat_user_up_your_rating_"+sender.getGender(), sender.full_name, msg.data.action.member_id)}</b>
+                    <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
                     <p>«${escapeHtml(msg.data.action.text)}»</p>
                 </div>
             </div>
@@ -143,8 +143,8 @@ export const SystemMessages = {
         return html`
             <div class="messenger-special-message centred">
                 <div>
-                    <b>${tr("event_chat_user_added_voices_"+sender.gender, sender.full_name, msg.data.action.member_id)}</b>
-                    <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.readable_date}</span>
+                    <b>${tr("event_chat_user_added_voices_"+sender.getGender(), sender.full_name, msg.data.action.member_id)}</b>
+                    <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
                     <p>«${escapeHtml(msg.data.action.text)}»</p>
                 </div>
             </div>
@@ -155,7 +155,7 @@ export const SystemMessages = {
             <div class="messenger-special-message">
                 <div class="messenger-app--messages---message--wrap">
                     <div class="_content">
-                        <span class="text">${msg.text}</span>
+                        <span class="text">${msg.getText()}</span>
                     </div>
                 </div>
             </div>
@@ -246,7 +246,7 @@ export const DayChunkView = ({ chunk, page }) => {
 };
 
 export const MessageListView = ({ dayDividedChunks, convo, page }) => {
-    const isMessagesInited = convo?.peer?._isMessagesInited ? convo.peer._isMessagesInited() : true;
+    const isMessagesInited = convo?.peer?.isMessagesInited ? convo.peer.isMessagesInited() : true;
     const isLoading = !isMessagesInited;
     return html`
     <div class="messenger-app--messages">

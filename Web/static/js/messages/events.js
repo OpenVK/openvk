@@ -132,7 +132,7 @@ export class EventHandler {
 
         if (_crs) {
             let newUnread = 0;
-            if (_crs.peer && _crs.peer._chunks && typeof _crs.peer._chunks._isMessagesInited === 'function' && _crs.peer._chunks._isMessagesInited()) {
+            if (_crs.peer && _crs.peer._chunks && typeof _crs.peer._chunks.isMessagesInited === 'function' && _crs.peer._chunks.isMessagesInited()) {
                 newUnread = _crs.peer._chunks.getUnreadCount();
             }
             if (_crs._conversation) {
@@ -201,17 +201,17 @@ export class EventHandler {
         const _msg = await ChatMessage.fromEvent(event, this.im);
         const _crs = await this.im.conversations._findConvFromApi(_msg.peer_id);
 
-        if (!this.im.state.is_active && !_crs.peer.is_muted && _msg.shouldBeNotified()) {
+        if (!this.im.state.is_active && !_crs.peer.isMuted() && _msg.shouldBeNotified()) {
             triggerMessageNotification(_crs, _msg);
         }
 
         setTimeout(() => {
             try {
-                const found = _crs.peer._findMessageById(_msg.id);
+                const found = _crs.findMessageById(_msg.id);
 
                 console.log(_crs, found)
                 if (found == null) {
-                    _crs.peer._pushNewMessage(_msg);
+                    _crs.pushMessage(_msg);
                 } else {
                     found.hydrateFromEvent(_msg);
 

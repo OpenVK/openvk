@@ -154,6 +154,7 @@ async function loadEmojiData() {
 }
 
 async function getStickerpacks() {
+    throw new Error("not implemented");
     return await window.OVKAPI.call('stickers.get', {});
 }
 
