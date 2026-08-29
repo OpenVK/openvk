@@ -1557,6 +1557,14 @@ final class Messages extends VKAPIRequestHandler
         return $this->invoke("im.getMe", [], $group_id);
     }
 
+    // $date - MM/DD/YYYY
+    public function getNearestMessageForDate(string $date, int $peer_id)
+    {
+        $this->requireUser();
+
+        return;
+    }
+
     public function report(int $peer_id, int $message_id, ?int $group_id = null, string $type = "spam", string $comment = "")
     {
         $this->requireUser();

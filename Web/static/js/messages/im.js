@@ -686,10 +686,10 @@ class SettingsPage extends IMPage {
         container.insertAdjacentHTML("beforeend", `
             <div style="padding: 10px 10px;">
                 <div>
-                    <label style="display:block;"><input id="im.modern_mode" type="checkbox">Compact mode (beta)</label>
-                    <label style="display:block;"><input id="im.debug" type="checkbox">Debug buttons</label>
-                    <label style="display:block;"><input id="viewers.photo.list" type="checkbox">Photo viewer enchantements</label>
-                    ${show_mail ? `<p><a onclick="window.im.messenger.selectConversationByPeerId(1381)">Сообщить об ошибке</a></p>` : ""}
+                    <label style="display:none;"><input id="im.modern_mode" type="checkbox">${tr("im_option_compact_mode")} (beta)</label>
+                    <label style="display:block;"><input id="im.debug" type="checkbox">${tr("im_option_debug")}</label>
+                    <label style="display:block;"><input id="viewers.photo.list" type="checkbox">${tr("im_option_photo_viewer")} (Beta)</label>
+                    ${show_mail ? `<p><a onclick="window.im.messenger.selectConversationByPeerId(1381)">${tr("report_bug")}</a></p>` : ""}
                 </div>
             </div>
         `);

@@ -160,13 +160,18 @@ export const WriteBar = ({ convo }) => {
     `;
 }
 
-export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress, currentDraft, onInput, togglePeerInfo, clickOnReply }) => {
+export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress, currentDraft, onInput, togglePeerInfo, clickOnReply, convo }) => {
     const is_editing = editMsg != null;
     const current_user = window.im.state.getOperator();
     const corresponder = window.im.state.getCurrentConvo();
+    const cls = [
+        "messenger-app-end",
+        (replyTo || editMsg) ? 'm-selected' : '',
+        convo.hasScrollPosition() && (!editMsg && !replyTo) ? "m-mountain m-mountain-fatal" : "",
+    ]
 
     return html`
-    <div class="messenger-app-end${(replyTo || editMsg) ? ' m-selected' : ''}">
+    <div class="${cls.join(" ")}">
         ${ replyTo && html`
             <div class="input-reply input-m">
                 <span onclick=${() => { clickOnReply(replyTo) }} aria-label="link" class="input-type">${tr("reply_to", replyTo.sender.getName())}</span>
@@ -179,6 +184,9 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
                 <span class="input-close" onClick=${(e) => { window.im.messenger.cancelEdit() }}><div class="cross"></div></span>
             </div>
         `}
+        <div class="messenger-mountain" onClick=${(e) => {window.im.messenger.view.scrollToEndOfChat(e, convo)}}>
+            ${tr("viewing_old_messages")}
+        </div>
         <div class="post-buttons">
             <div class="model_content_textarea messenger-app--input has_emoji_picker expanded-textarea" id="write">
                 <img class="ava" src=${current_user.getAvatar("mid", false)} alt=${current_user.getName()} />

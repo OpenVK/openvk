@@ -227,13 +227,9 @@ export class Conversation {
         this._scroll = null;
     }
 
+    hasScrollPosition() { return this._scroll != null; }
     getEndScrollPosition() { return this._endScrollPosition; }
-    getScrollPosition() {
-        if (this._scroll) {
-            return this._scroll;
-        }
-        return this.getEndScrollPosition();
-    }
+    getScrollPosition() { return this.hasScrollPosition() ? this._scroll : this.getEndScrollPosition(); }
     setDraft(draft) { this.draft = draft }
     clearDraft() { this.draft = null }
     hasActivity() { return this.getActivityMsg()[1].length > 0; }

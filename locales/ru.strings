@@ -1129,6 +1129,7 @@
 
 "day_template" = "$1 $2";
 "day_template_with_year" = "$1 $2 $3 г.";
+"month_year_template" = "$1 $2 г.";
 "month_gen_1" = "Января";
 "month_gen_2" = "Февраля";
 "month_gen_3" = "Марта";
@@ -1141,6 +1142,19 @@
 "month_gen_10" = "Октября";
 "month_gen_11" = "Ноября";
 "month_gen_12" = "Декабря";
+
+"month_1" = "Январь";
+"month_2" = "Февраль";
+"month_3" = "Март";
+"month_4" = "Апрель";
+"month_5" = "Май";
+"month_6" = "Июнь";
+"month_7" = "Июль";
+"month_8" = "Август";
+"month_9" = "Сентябрь";
+"month_10" = "Октябрь";
+"month_11" = "Ноябрь";
+"month_12" = "Декабрь";
 
 "news" = "Новости";
 "news_more" = "Подробнее »";
@@ -1471,6 +1485,8 @@
 
 "reply_to" = "Ответ на сообщение $1";
 "reply_to_msg" = "В ответ на";
+"written_in_chat" = "В переписке";
+"viewing_old_messages" = "Вернуться к новым сообщениям";
 
 "preview_attachment_photo" = "Фотография";
 "preview_attachment_video" = "Видео";
@@ -1576,6 +1592,10 @@
 "messages_agreement_5" = "Нужно держать аккаунт в безопасности.";
 
 "day_selection" = "Выбор дня";
+"report_bug" = "Сообщить об ошибке";
+"im_option_compact_mode" = "Широкоэкранный режим";
+"im_option_debug" = "Функции отладки";
+"im_option_photo_viewer" = "Лента в просмотрщике фото";
 
 /* System messages */
 

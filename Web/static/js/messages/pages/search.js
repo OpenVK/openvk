@@ -83,7 +83,7 @@ export class SearchPage extends IMPage {
                 return item.from_id;
             },
             (item, author) => {
-                item.sender = new ChatGeneralForm(author);
+                item.sender = author;
             },
             (item, arr) => {
                 arr.push(new ChatMessage(item));
