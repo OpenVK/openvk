@@ -86,7 +86,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                     <span>${isSearchTpl ? msg.getDate(2) + " " + msg.getDate(0) : msg.getDate(0)}</span>
                     `}
                 </div>
-                <p dangerouslySetInnerHTML=${{ __html: msg.getText(false) }} class="text" />
+                <p dangerouslySetInnerHTML=${{ __html: msg.getText(false) }} class="normalText text" />
                 <p class="msg-edit-mark">(${tr('edit_action_past').toLowerCase()})</p>
                 ${msg.getAttachments() && msg.getAttachments().length > 0 && html`
                     <div class="attachments">

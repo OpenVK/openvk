@@ -363,7 +363,7 @@ class Chat extends RowModel
         if (!empty($otherMemberIds)) {
             $usersRepo = new Users();
             $names = [tr("chat_title_self")];
-            foreach (array_slice($otherMemberIds, 0, 10) as $id) {
+            foreach (array_slice(array_unique($otherMemberIds), 0, 10) as $id) {
                 $u = $usersRepo->get($id);
                 if ($u) {
                     $fn = $u->getFirstName();

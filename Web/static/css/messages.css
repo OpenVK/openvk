@@ -210,6 +210,7 @@ body.no-footer .page_footer {
 
 .chat_table_avatar .chat_table_avatar_cell {
     display: inline-block;
+    image-rendering: pixelated;
     object-fit: cover;
     object-position: center top;
     margin: 0;
@@ -674,7 +675,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     display: inline-block;
 }
 
-.messenger-app--messages---message ._content .text span {
+.messenger-app--messages---message ._content .text .normalText {
     width: 100%;
     height: fit-content;
     overflow: hidden;

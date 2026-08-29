@@ -358,14 +358,14 @@ export class ChatGeneralForm {
     // переход к действиям
 
     async sendMessage(msg, reply_to = null, attachments = null, wait_until_send = null, push_callback = null) {
-        this.pushNewMessage(msg);
+        this._chunks.pushNewMessage(msg);
         if (push_callback) {
             push_callback();
         }
         const datas = {
             'peer_id': this.id,
             'message': msg.getText(true),
-            'attachment': msg.getStringAttachments(),
+            //'attachment': msg.getStringAttachments(), не помню что это
         };
 
         if (window.im.usage_type == "group") {
@@ -618,7 +618,7 @@ export class ChatMessage {
                             txt += `<img class="conv_prev_img" src="${c.photo.photo_75}">`;
 
                             if (this.data.text.length == 0) {
-                                f += get_attachment_text(this.data.attachments[0]);
+                                txt += get_attachment_text(this.data.attachments[0]);
                             }
 
                             break;
@@ -631,7 +631,7 @@ export class ChatMessage {
                 }
 
                 if (this.data.action != null) {
-                    txt = tr("event_" + this.data.action.type + "_impersonal");
+                    txt = " " + tr("event_" + this.data.action.type + "_impersonal");
                 }
 
                 txt += ovk_proc_strtr(escapeHtml(this.data.text), 100);
@@ -655,7 +655,11 @@ export class ChatMessage {
             }
         }
 
-        return nl2br(txt);
+        if (raw) {
+            return txt;
+        }
+
+        return encode_emojis(nl2br(txt));
     }
 
     get reply() { return this.data.reply_message; }
@@ -762,7 +766,7 @@ export class ChatMessage {
         return _at;
     }
     getStringAttachments() {
-        const _at = this.attachments;
+        const _at = this.data.attachments;
         if (_at.length == 0) return '';
     }
     getDate(mode = 0) {

@@ -538,3 +538,22 @@ async function es6import_Im(meta_url, url) {
         console.error(e);
     }
 }
+
+function encode_emoji(emoji) {
+    let hexString = '';
+    for (let i = 0; i < emoji.length; i++) {
+        const code = emoji.charCodeAt(i);
+        hexString += code.toString(16).padStart(4, '0').toUpperCase();
+    }
+    
+    return hexString;
+}
+
+function encode_emojis(text) {
+    const emojiRegex = /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu;
+
+    return text.replace(emojiRegex, (emoji) => {
+        const es = encode_emoji(emoji);
+        return `<span class="emoji-picker-item emoji emoji_${es}">${emoji}</span>`;
+    });
+}

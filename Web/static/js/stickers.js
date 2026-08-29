@@ -80,7 +80,7 @@ function renderEmojiGrid(with_stickers = false) {
         const block = val.find(`.emoji-picker-group .group-title-item[data-group="recent"]`)
 
         recent.forEach((smile) => {
-            block.find(".emoji-picker-group-items").append(`<span class="emoji-picker-item" onclick="appendEmoji(event)" data-emoji="${smile}">${smile}</span>`)
+            block.find(".emoji-picker-group-items").append(`<span class="emoji-picker-item emoji emoji_${encode_emoji(smile)}" onclick="appendEmoji(event)" data-emoji="${smile}">${smile}</span>`)
         });
     }
 
@@ -110,7 +110,7 @@ function renderEmojiGrid(with_stickers = false) {
                 return;
             }
 
-            block.find(".emoji-picker-group-items").append(`<span title="${escapeHtml(item.name)}" class="emoji-picker-item" onclick="appendEmoji(event)" data-emoji="${item.emoji}">${item.emoji}</span>`);
+            block.find(".emoji-picker-group-items").append(`<span title="${escapeHtml(item.name)}" class="emoji-picker-item emoji emoji_${encode_emoji(item.emoji)}" onclick="appendEmoji(event)" data-emoji="${item.emoji}">${item.emoji}</span>`);
             i += 1;
         });
     });
