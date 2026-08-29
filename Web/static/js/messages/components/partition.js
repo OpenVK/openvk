@@ -131,9 +131,7 @@ export class Chunks {
     _invalidateCache() { this._cachedMessages = undefined; this._cachedDays = undefined; }
     isMessagesInited() { return this._messagesInited; }
     getLatestChunk() { return this.chunks[this._latest_chunk_id]; }
-    getLatestMessage() {
-        return this.getLatestChunk() // todo;
-    }
+    getLatestMessage() { return this.getLatestChunk().latest_message; }
     appendChunk(chunk, options = {}) {
         const key = this._getChunkKey(chunk);
         if (key != null && this._map.has(key)) {
@@ -165,12 +163,13 @@ export class Chunks {
         return found;
     }
 
-    /*
     get sorted() {
         return this.chunks.slice(0).sort(
             (a, b) => (b.latest_message?.id ?? -Infinity) - (a.latest_message?.id ?? -Infinity)
         );
     }
+
+    /*
 
     getDayDividedMessages() {
         if (this._cachedDays != undefined) return this._cachedDays;

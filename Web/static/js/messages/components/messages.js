@@ -279,6 +279,10 @@ export class ChatGeneralForm {
             return tr("followers", this.data.followers_count);
         }
 
+        if (this.data.members_count) {
+            return tr("members_count", this.data.members_count);
+        }
+
         if (!this.data.last_seen) {
             return tr("im_was_online_unkown_" + this.getGender()).toLowerCase();
         }

@@ -1533,6 +1533,11 @@
 "error_chat_not_enough_friends" = "В беседе должно быть как минимум два других пользователя";
 "name_your_chat" = "Введите название беседы";
 "chat" = "Беседа";
+"chat_title_construction_single" = "Чат с вами";
+"chat_title_construction_dialogish" = "Чат с вами и $1";
+"chat_title_construction" = "$1 и $2";
+"chat_title_construction_many" = "$1 и другие";
+"chat_title_self" = "Вы";
 "go_to_dialog" = "В диалог";
 "message_sent_excl" = "Сообщение отправлено!";
 

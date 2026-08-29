@@ -7,7 +7,7 @@ namespace openvk\Web\Models\Entities\Messages;
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{User, Photo};
-use openvk\Web\Models\Repositories\Photos;
+use openvk\Web\Models\Repositories\{Users, Photos};
 use PhpCsFixer\ConfigurationException\RequiredFixerConfigurationException;
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Util\IMBroker;
@@ -63,7 +63,7 @@ class Chat extends RowModel
 
     public function getTitle(): string
     {
-        return $this->getRecord()->title ?? "";
+        return $this->getRecord()->title;
     }
 
     public function getDescription(): string
@@ -337,27 +337,80 @@ class Chat extends RowModel
             return 0;
         }
 
-        return sizeof($this->hydratedData["chat_settings"]["members"]);
+        return sizeof($this->hydratedData["members"]);
     }
 
     //
     // Serialization
     //
 
-    public function toVkApiStruct(?User $user, ?array $a_data = null, ?array $acl = null): array
+    private function resolveChatTitle(int $currentUserId): string
+    {
+        $customTitle = trim($this->getTitle());
+        $customTitle = null;
+        $memberIds = $this->hydratedData["members"];
+
+        if ($customTitle != null && !empty($customTitle) && !str_starts_with($customTitle, "Chat ")) {
+            return $customTitle;
+        }
+
+        if ($memberIds == null) {
+            return "Invalid chat";
+        }
+
+        $otherMemberIds = array_values(array_filter($memberIds, fn($id) => (int)$id !== (int)$currentUserId));
+
+        if (!empty($otherMemberIds)) {
+            $usersRepo = new Users();
+            $names = [tr("chat_title_self")];
+            foreach (array_slice($otherMemberIds, 0, 10) as $id) {
+                $u = $usersRepo->get($id);
+                if ($u) {
+                    $fn = $u->getFirstName();
+                    if (!empty($fn)) {
+                        $names[] = $fn;
+                    }
+                }
+            }
+
+            switch (sizeof($names)) {
+                case 0:
+                    return "0_o";
+                case 1:
+                    return tr("chat_title_construction_single");
+                case 2:
+                    return tr("chat_title_construction_dialogish", $names[1]);
+                default:
+                    $lastName = end($names);
+                    if (sizeof($names) == 3) {
+                        return tr("chat_title_construction", implode(', ', array_slice($names, 0, -1)), $lastName);
+                    }
+
+                    if (sizeof($names) > 3) {
+                        return tr("chat_title_construction_many", implode(', ', array_slice($names, 0, 3)));
+                    }
+            }
+        }
+
+        return !empty($customTitle) ? $customTitle : ("Chat " . $this->getChatId());
+    }
+
+    public function toVkApiStruct(?User $user): array
     {
         $photo = $this->getPhoto();
+        $server_url = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
+        $isAdmin = ($this->hydratedData["admin_id"] === $user->getRealId() && $user->getRealId() > 0);
 
         $payload = [];
         $payload["type"] = "chat";
 
-        if ($a_data != null) {
-            $payload["admin_id"] = $a_data["admin_id"] ?? 0;
-            $payload["left"] = $a_data["left"] ?? 0;
-            $payload["kicked"] = $a_data["kicked"] ?? 0;
+        if ($this->hasData()) {
+            $payload["admin_id"] = $this->hydratedData["admin_id"] ?? 0;
+            $payload["left"] = $this->hydratedData["left"] ?? 0;
+            $payload["kicked"] = $this->hydratedData["kicked"] ?? 0;
         }
 
-        $payload["title"] = (!empty($a_data["title"]) && empty($this->getTitle())) ? $a_data["title"] : $this->getTitle();
+        $payload["title"] = $this->resolveChatTitle($user->getId());
         $payload["description"] = $this->getDescription();
         $payload["id"] = $this->getChatGlobalId();
         $payload["local_id"] = $this->getChatId();
@@ -368,18 +421,32 @@ class Chat extends RowModel
             $payload["photo_200"] = $photo->getURLBySizeId("normal");
             $payload["avatar_max"] = $photo->getURLBySizeId("larger");
         } else {
-            $payload["avatar_max"] = $payload["photo_200"] = $payload["photo_100"] = $payload["photo_50"] = "/assets/packages/static/openvk/img/im/chat_meaningless.jpg";
+            $payload["avatar_max"] = $payload["photo_200"] = $payload["photo_100"] = $payload["photo_50"] = $server_url . "/assets/packages/static/openvk/img/im/chat_meaningless.jpg";
         }
 
-        $members = $a_data["members"] ?? $a_data["users"] ?? [];
+        $members = $this->hydratedData["members"] ?? $this->hydratedData["users"] ?? [];
         $payload["users"] = $members;
         if (!empty($members)) {
             $payload["members"] = $members;
+            $payload["members_count"] = sizeof($members);
         }
         $payload["push_settings"] = [
             "sound" => 1,
             "disabled_until" => null
         ];
+
+        $defaultAcl = [
+            "can_invite"             => true,
+            "can_change_info"        => $isAdmin,
+            "can_change_pin"         => $isAdmin,
+            "can_promote_users"      => $isAdmin,
+            "can_see_invite_link"    => $isAdmin,
+            "can_change_invite_link" => $isAdmin,
+            "can_moderate"           => $isAdmin,
+            "can_copy_chat"          => $isAdmin,
+        ];
+
+        $this->hydratedData['acl'] = array_merge($defaultAcl, $conversation['chat_settings']['acl'] ?? []);
 
         return $payload;
     }
