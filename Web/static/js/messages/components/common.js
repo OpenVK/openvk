@@ -6,7 +6,7 @@ export const PeerAvatar = ({ peer, className = "", loading = "lazy", saved_messa
         return html`<img class="${className}" src="/assets/packages/static/openvk/img/im/chat_meaningless.jpg" loading="${loading}" />`;
     }
 
-    if (peer.id === window.openvk?.current_id) {
+    if (peer.id === window.im.state.getId()) {
         if (!saved_messages_ava) {
             return html`<div style="display:block;width:52px;height:52px;"></div>`;
         }
@@ -21,23 +21,37 @@ export const PeerAvatar = ({ peer, className = "", loading = "lazy", saved_messa
         const cell2 = avatars[2] || null;
         const cell3 = avatars[3] || null;
 
-        if (!cell0 && !cell1 && !cell2 && !cell3) {
+        if (avatars.length == 1 || (!cell0 && !cell1 && !cell2 && !cell3)) {
             return html`<img class="${className}" src="/assets/packages/static/openvk/img/im/chat_meaningless.jpg" loading="${loading}" />`;
         }
 
+        if (avatars.length == 2) {
+            // "object-position: left;" для парных аватарочек ^_^
+            return html`
+            <div class="chat_table_avatar chat_table_avatar_double ${className}">
+                ${cell0 ? html`<img style="object-position: left;" class="chat_table_avatar_cell" src="${cell0}" loading="${loading}" />` : ''}
+                ${cell1 ? html`<img style="object-position: right;" class="chat_table_avatar_cell" src="${cell1}" loading="${loading}" />` : ''}
+            </div>`;
+        }
+
+        if (avatars.length == 3) {
+            return html`
+            <div class="chat_table_avatar chat_table_avatar_third ${className}">
+                ${cell0 ? html`<img style="width: 50%;" class="chat_table_avatar_cell" src="${cell0}" loading="${loading}" />` : ''}
+                <div style="width: 50%;display:inline-block;">
+                ${cell1 ? html`<img style="height: 50%;" class="chat_table_avatar_cell" src="${cell1}" loading="${loading}" />` : ''}
+                ${cell2 ? html`<img style="height: 50%;" class="chat_table_avatar_cell" src="${cell1}" loading="${loading}" />` : ''}
+                </div>
+            </div>`;
+        }
+
         return html`
-            <table class="chat_table_avatar ${className}" cellspacing="0" cellpadding="0">
-                <tbody>
-                    <tr>
-                        <td>${cell0 ? html`<div class="chat_table_avatar_cell"><img src="${cell0}" loading="${loading}" /></div>` : ''}</td>
-                        <td>${cell1 ? html`<div class="chat_table_avatar_cell"><img src="${cell1}" loading="${loading}" /></div>` : ''}</td>
-                    </tr>
-                    <tr>
-                        <td>${cell2 ? html`<div class="chat_table_avatar_cell"><img src="${cell2}" loading="${loading}" /></div>` : ''}</td>
-                        <td>${cell3 ? html`<div class="chat_table_avatar_cell"><img src="${cell3}" loading="${loading}" /></div>` : ''}</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="chat_table_avatar chat_table_avatar_more3 ${className}">
+                ${cell0 ? html`<img style="height:50%;width: 50%;" class="chat_table_avatar_cell" src="${cell0}" loading="${loading}" />` : ''}
+                ${cell1 ? html`<img style="height:50%;width: 50%;" class="chat_table_avatar_cell" src="${cell1}" loading="${loading}" />` : ''}
+                ${cell2 ? html`<img style="height:50%;width: 50%;" class="chat_table_avatar_cell" src="${cell2}" loading="${loading}" />` : ''}
+                ${cell3 ? html`<img style="height:50%;width: 50%;" class="chat_table_avatar_cell" src="${cell3}" loading="${loading}" />` : ''}
+            </div>;
         `;
     }
 
@@ -198,29 +212,33 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
 
 export const ConversationItem = ({ conv }) => {
     const last_msg = conv.last_message;
+    const peer = conv.peer;
     const has_activity = conv.hasActivity();
     const cls1 = ["crp-entry"];
-    if (last_msg && (last_msg.data.from_id == conv.peer.id || conv.peer.isSavedMessages() == true)) {
+    if (last_msg && (last_msg.data.from_id == peer.id || peer.isSavedMessages() == true)) {
         cls1.push("crp-entry-replied-same");
     }
     if (!conv.isRead()) {
         cls1.push("unread");
     }
 
+    // здесь появился соблазн добавить && peer.data.members_count > 3 чтобы число участников показывалось только если в беседе много людей
+    // с одной стороны по названию или аватарке и так понятно, что это беседа, но название и аватарка могут быть изменены
     const d = last_msg != null && has_activity == false;
     return html`
         <div class="${cls1.join(' ')}" onClick=${() => window.im?.messenger.selectConversation(conv, true)}>
         <div class="crp-entry--image">
-            <${PeerAvatar} peer=${conv.peer} />
+            <${PeerAvatar} peer=${peer} />
         </div>
         <div class="crp-entry--info">
-            <a>${ovk_proc_strtr(conv.peer.getName(true), 30)}</a><br/>
+            <a>${ovk_proc_strtr(peer.getName(true), 30)}</a>
+            ${peer.supposed_type == "chat" && peer.data.members_count ? html`<span>${tr("members_count", peer.data.members_count)}</span>` : ""}
             ${last_msg && html`<span>${last_msg.getDate(2)}</span>`}
         </div>
         <div class="crp-entry--message">
             ${d && html`
             <div class="crp-entry--message---av">
-                <img src="${last_msg.sender.getAvatar("mid", true)}" />
+                <img src="${last_msg.sender.getAvatar("mid", false)}" />
             </div>
             <div class="crp-entry--message---text" dangerouslySetInnerHTML=${{ __html: last_msg.getText(false, true, true) }} />`}
             ${has_activity == true && html`

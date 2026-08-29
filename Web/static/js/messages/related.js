@@ -13,7 +13,7 @@ async function showUserDialog(event, userId) {
                 <div class="udlg-send-right">
                     <div>
                         <div class="udlg-info">
-                            <div class="udlg-name">${conv.peer.full_name}</div>
+                            <div class="udlg-name">${conv.peer.getName()}</div>
                         </div>
                     </div>
 
@@ -206,7 +206,7 @@ async function imSwitchCurrent() {
                 <a href="${item.getPageUrl()}" class="avatar"><img src="${item.getAvatar()}"></a>
                 <div class="info">
                     <b class="noOverflow">
-                        <a href="${item.getPageUrl()}">${escapeHtml(item.full_name)}</a>
+                        <a href="${item.getPageUrl()}">${escapeHtml(item.getName())}</a>
                     </b>
                 </div>
             </div>

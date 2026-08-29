@@ -175,7 +175,9 @@ body.no-footer .page_footer {
 
 .crp-entry--info {
     width: 130px;
-    margin-top: 2%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .crp-entry--message{
@@ -185,14 +187,16 @@ body.no-footer .page_footer {
 }
 
 .crp-entry--image>img,
-.crp-entry--image>table.chat_table_avatar {
+.crp-entry--image>.chat_table_avatar {
     object-fit: contain;
     height: 50px;
     width: 50px;
     border-radius: 3px;
 }
 
-table.chat_table_avatar {
+.crp-entry--image>.chat_table_avatar { position: relative; }
+
+.chat_table_avatar {
     width: 100%;
     height: 100%;
     border-collapse: collapse;
@@ -204,46 +208,27 @@ table.chat_table_avatar {
     background: #e4e8ec;
 }
 
-table.chat_table_avatar tr {
-    padding: 0;
-    margin: 0;
-    height: 50%;
-}
-
-table.chat_table_avatar td {
-    width: 50%;
-    height: 50%;
-    padding: 0;
-    margin: 0;
-    border: none;
-    line-height: 0;
-    font-size: 0;
-    overflow: hidden;
-    vertical-align: top;
-    position: relative;
-}
-
-table.chat_table_avatar .chat_table_avatar_cell {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-}
-
-table.chat_table_avatar td img,
-table.chat_table_avatar .chat_table_avatar_cell img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: block;
-    width: 100%;
-    height: 100%;
+.chat_table_avatar .chat_table_avatar_cell {
+    display: inline-block;
     object-fit: cover;
     object-position: center top;
     margin: 0;
     padding: 0;
     border: none;
     border-radius: 0;
+    line-height: 0;
+    font-size: 0;
+    overflow: hidden;
+    vertical-align: top;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.chat_table_avatar.chat_table_avatar_double .chat_table_avatar_cell {
+    width: 50%;
+    height: 100%;
 }
 
 .crp-entry--info span {

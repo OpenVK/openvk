@@ -307,10 +307,13 @@ export class Conversation {
     get id() { return this.peer.id; }
     get last_message() {
         try {
-            if (this.peer) {
-                return this.peer._chunks.getLatestMessage();
+            const msg = this.peer._chunks.getLatestMessage();
+            if (msg) {
+                return msg;
             }
-        } catch (e) {}
+        } catch (e) {
+            console.error(e);
+        }
 
         return this._last_message;
     }
