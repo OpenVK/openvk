@@ -39,7 +39,7 @@ export class EventHandler {
         if (flags == 128) {
             const conv = await this.im.conversations._findConv(peerId);
             console.log(conv);
-            const found = conv.peer._findMessageById(msgId);
+            const found = conv.peer._chunks._findMessageById(msgId);
             console.log(found);
 
             if (found != null) {
@@ -68,7 +68,7 @@ export class EventHandler {
         if (flags & 1) { // FlagUnread
             const _crs = await this.im.conversations._findConvFromApi(peerId);
             if (_crs && _crs.peer) {
-                const found = _crs.peer._findMessageById(msgId);
+                const found = _crs.peer._chunks._findMessageById(msgId);
                 if (found && found.data) {
                     found.data.read_state = 0;
                     if (this.im.messenger) this.im.messenger.update();
@@ -86,7 +86,7 @@ export class EventHandler {
         if (flags & 1) { // FlagUnread
             const _crs = await this.im.conversations._findConvFromApi(peerId);
             if (_crs && _crs.peer) {
-                const found = _crs.peer._findMessageById(msgId);
+                const found = _crs.peer._chunks._findMessageById(msgId);
                 if (found && found.data) {
                     found.data.read_state = 1;
                     if (this.im.messenger) this.im.messenger.update();
@@ -251,7 +251,7 @@ export class EventHandler {
             return;
         }
 
-        const found = _crs.peer._findMessageById(msgId);
+        const found = _crs.peer._chunks._findMessageById(msgId);
         if (!found) {
             return;
         }

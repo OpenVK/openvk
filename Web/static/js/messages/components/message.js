@@ -73,7 +73,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                     </div>
                 `}
                 <a class="_sender" onClick=${(e) => { window.im?.messenger?.view?.onAuthorNameClick(msg, e) }}>
-                    <strong>${msg.sender.name}</strong>
+                    <strong>${msg.sender.getName(false, true)}</strong>
                 </a>
                 ${has_postfix ? html`<div class="msg-postfix">
                 ${msg.isSpecial("gift") ? html`
@@ -118,7 +118,7 @@ export const SystemMessages = {
             <div class="messenger-special-message">
                 <div>
                     <a class="_sender" onClick=${(e) => { page.onAuthorNameClick(msg, e) }}>
-                        <strong>${sender.full_name} </strong>
+                        <strong>${sender.getName()} </strong>
                     </a>
                     <span class="text">${text.toLowerCase()}</span>
                     <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
@@ -131,7 +131,7 @@ export const SystemMessages = {
         return html`
             <div class="messenger-special-message centred">
                 <div>
-                    <b>${tr("event_chat_user_up_your_rating_"+sender.getGender(), sender.full_name, msg.data.action.member_id)}</b>
+                    <b>${tr("event_chat_user_up_your_rating_"+sender.getGender(), sender.getName(), msg.data.action.member_id)}</b>
                     <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
                     <p>«${escapeHtml(msg.data.action.text)}»</p>
                 </div>
@@ -143,7 +143,7 @@ export const SystemMessages = {
         return html`
             <div class="messenger-special-message centred">
                 <div>
-                    <b>${tr("event_chat_user_added_voices_"+sender.getGender(), sender.full_name, msg.data.action.member_id)}</b>
+                    <b>${tr("event_chat_user_added_voices_"+sender.getGender(), sender.getName(), msg.data.action.member_id)}</b>
                     <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
                     <p>«${escapeHtml(msg.data.action.text)}»</p>
                 </div>
@@ -226,9 +226,9 @@ const Attachment = ({ msg, att }) => {
     }
 };
 
-export const DayDivider = ({ date, day }) => {
+export const DayDivider = ({ date, day, idate }) => {
   return html`
-    <div class="messenger-app--messages-day-time" onClick=${window.im.messenger.showDaySwitcher(day)}>
+    <div class="messenger-app--messages-day-time" onClick=${(e) => {window.im.messenger.showDaySwitcher(idate)}}>
         <b>${date}</b>
     </div>
   `;
@@ -237,7 +237,7 @@ export const DayDivider = ({ date, day }) => {
 export const DayChunkView = ({ chunk, page }) => {
     return html`
     <div class="messenger-app--messages-day">
-        <${DayDivider} day=${chunk.day} date=${chunk.readable_date} />
+        <${DayDivider} day=${chunk.day} date=${chunk.readable_date} idate=${chunk.idate} />
         ${chunk.messages.map((msg, idx) => html`
             <${MessageBubble} msg=${msg} index=${idx} chunk=${chunk} page=${page} />
         `)}

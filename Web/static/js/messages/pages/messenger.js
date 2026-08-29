@@ -81,6 +81,7 @@ export class Messenger {
         if (!convo.peer.isMessagesInited()) {
             try {
                 const c = await convo.getEndScrollPosition().loadOlder();
+                convo.getEndScrollPosition().result();
             } catch (e) { // может быть и broker failure.
                 console.error(e);
             }
@@ -336,7 +337,7 @@ export class Messenger {
         const chat = this.getCurrentChat();
         this.selected_messages.forEach(item => {
             if (chat != null) {
-                objs.push(chat.peer._findMessageById(item));
+                objs.push(chat.peer._chunks._findMessageById(item));
             }
         })
 
@@ -481,7 +482,7 @@ export class Messenger {
     }
 
     showDaySwitcher(date) {
-
+        const m = new DaySwitcher(date);
     }
 }
 
@@ -559,10 +560,11 @@ export class MessengerPage extends IMPage {
             messages = sp.getDayDividedMessages();
         }
 
+        console.log(messages)
         const is_rendering_contact_window = (window.im.tab == "contact" && special_mode === null);
         render(html`
         <div id="chat-page">
-            <div class="chat-window ${peer.id == window.openvk.current_id ? "saved-msgs" : ""}">
+            <div class="chat-window ${peer.id == window.im.state.getId() ? "saved-msgs" : ""}">
             <${PeerTabsView} hadTab=${true} tabs=${orig_messenger.opened_tabs} currentChat=${orig_messenger.currentChatId} page=${this} />
             <${ActionsBar}
                 selectedMessages=${window.im.messenger.selected_messages_objs}
@@ -640,7 +642,7 @@ export class MessengerPage extends IMPage {
         const f = () => {
             const ids = window.im.messenger.selected_messages;
             const current_chat = window.im.messenger.getCurrentChat();
-            const m = current_chat.peer._findMessageById(ids[0]);
+            const m = current_chat.peer._chunks._findMessageById(ids[0]);
             window.im.messenger.unselectAll();
             window.im.messenger.replyTo = m;
 
@@ -844,12 +846,9 @@ export class MessengerPage extends IMPage {
                 const curConvo = window.im.state.getCurrentConvo();
                 const curPeer = curConvo ? curConvo.peer : null;
                 if (curPeer) {
-
-                    console.log('IM | Switching to a newer chunk');
                     // await window.im.state.getCurrentConvo()._messagesLoad_DownFromCurrentChunk();
                 } else {
                     // No newer chunk loaded yet — fetch from API
-                    console.log('IM | Loading newer chunk from API');
                     //  await window.im.state.getCurrentConvo()._messagesLoad_DownFromCurrentChunk();
                 }
             }
@@ -875,7 +874,7 @@ export class MessengerPage extends IMPage {
             callbacks: [async () => {
                 let ids2 = [];
                 ids.forEach((item) => {
-                    let m = current_chat.peer._findMessageById(item);
+                    let m = current_chat.peer._chunks._findMessageById(item);
                     ids2.push(item);
                     m.setDeleted(true);
                 });
