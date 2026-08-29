@@ -5,6 +5,11 @@
         "lint": "php-cs-fixer fix --dry-run --diff --verbose",
         "analyse": "phpstan analyse --memory-limit 1G"
     },
+    "config": {
+        "platform": {
+            "php": "8.2.0"
+        }
+    },
     "require": {
         "php": "~8.2",
         "openvk/chandler": "dev-master",
@@ -27,7 +32,8 @@
         "ext-sodium": "*",
         "php81_bc/strftime": "^0.0.2",
         "ext-iconv": "*",
-        "predis/predis": "^3.4"
+        "predis/predis": "^3.4",
+        "easyrdf/easyrdf": "^1.1"
     },
     "autoload": {
         "psr-4": {

@@ -133,7 +133,13 @@ abstract class Postable extends Attachable
 
     public function getComments(int $page, ?int $perPage = null, string $sort = "ASC"): \Traversable
     {
-        return (new Comments())->getCommentsByTarget($this, $page, $perPage, $sort);
+        $perPage ??= OPENVK_DEFAULT_PER_PAGE;
+        return (new Comments())->getCommentsByTarget($this, ($page - 1) * $perPage, $perPage, $sort);
+    }
+
+    public function getCommentsViaOffset(int $offset, ?int $perPage = null, string $sort = "ASC"): \Traversable
+    {
+        return (new Comments())->getCommentsByTarget($this, $offset, $perPage, $sort);
     }
 
     public function getCommentsCount(): int

@@ -65,6 +65,8 @@ class Photos
 
         $photo = $photo->where([
             "system"     => 0,
+            "private"    => 0,
+            "deleted"    => 0,
         ])->fetch();
 
         return $this->toPhoto($photo);

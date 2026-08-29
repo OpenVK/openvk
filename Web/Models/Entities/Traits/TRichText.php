@@ -19,16 +19,14 @@ trait TRichText
         $emojis   = \Emoji\detect_emoji($text);
         $replaced = []; # OVK-113
         foreach ($emojis as $emoji) {
-            $point = explode("-", strtolower($emoji["hex_str"]))[0];
+            $point = strtoupper(bin2hex(mb_convert_encoding($emoji["emoji"], 'UTF-16BE', 'UTF-8')));
             if (in_array($point, $replaced)) {
                 continue;
             } else {
                 $replaced[] = $point;
             }
 
-            $image  = "https://abs.twimg.com/emoji/v2/72x72/$point.png";
-            $image  = "<img src='$image' alt='$emoji[emoji]' ";
-            $image .= "style='max-height:12px; padding-left: 2pt; padding-right: 2pt; vertical-align: bottom;' />";
+            $image = "<div class='emoji emoji_$point'>$emoji[emoji]</div>";
 
             $text = str_replace($emoji["emoji"], $image, $text);
         }

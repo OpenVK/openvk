@@ -49,6 +49,27 @@ final class WallPresenter extends OpenVKPresenter
         }
     }
 
+    private function getWithAlienWallPostsPreference(): int
+    {
+        if (isset($_GET["with_alien_wall_posts"])) {
+            $value = (int) $_GET["with_alien_wall_posts"];
+            $this->setWithAlienWallPostsCookie($value);
+
+            return $value;
+        }
+
+        $cookieValue = $_COOKIE["with_alien_wall_posts"] ?? "1";
+
+        return ($cookieValue === "1" || $cookieValue === "true") ? 1 : 0;
+    }
+
+    private function setWithAlienWallPostsCookie(int $value): void
+    {
+        $cookieValue = $value === 1 ? "1" : "0";
+        setcookie("with_alien_wall_posts", $cookieValue, time() + 60 * 60 * 24 * 365, "/", "", false, false);
+        $_COOKIE["with_alien_wall_posts"] = $cookieValue;
+    }
+
     public function renderWall(int $user, bool $embedded = false): void
     {
         $owner = ($user < 0 ? (new Clubs()) : (new Users()))->get(abs($user));
@@ -209,7 +230,7 @@ final class WallPresenter extends OpenVKPresenter
         $ids[] = $this->user->id;
 
         $perPage = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);
-        $withAlienWallPosts = (int) ($_GET["with_alien_wall_posts"] ?? 0);
+        $withAlienWallPosts = $this->getWithAlienWallPostsPreference();
 
         $posts   = DatabaseConnection::i()
                    ->getContext()
@@ -245,7 +266,7 @@ final class WallPresenter extends OpenVKPresenter
         $page  = (int) ($_GET["p"] ?? 1);
         $pPage = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);
 
-        $withAlienWallPosts = (int) ($_GET["with_alien_wall_posts"] ?? 0);
+        $withAlienWallPosts = $this->getWithAlienWallPostsPreference();
 
         $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) LEFT JOIN `profiles` ON LEAST(`posts`.`wall`, 0) = 0 AND `profiles`.`id` = ABS(`posts`.`wall`)";
         $queryBase .= " WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND ((`profiles`.`profile_type` = 0 AND `profiles`.`hide_global_feed` = 0) OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0 AND `posts`.`archived` = 0";
@@ -351,7 +372,8 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         $flags = 0;
-        if ($this->postParam("as_group") === "on" && $wallOwner instanceof Club && $wallOwner->canBeModifiedBy($this->user->identity)) {
+        if (($this->postParam("as_group") === "on" || $wallOwner instanceof Club && $wallOwner->getWallType() != 1) &&
+             $wallOwner instanceof Club && $wallOwner->canBeModifiedBy($this->user->identity)) {
             $flags |= 0b10000000;
 
             if ($this->postParam("force_sign") === "on") {
@@ -606,13 +628,14 @@ final class WallPresenter extends OpenVKPresenter
                     $this->notFound();
                 }
 
-                if ($this->postParam("asGroup") == 1) {
+                if ($this->postParam("asGroup") == 1 || $club->getWallType() != 1) {
                     $flags |= 0b10000000;
+
+                    if ($this->postParam("signed") == 1) {
+                        $flags |= 0b01000000;
+                    }
                 }
 
-                if ($this->postParam("asGroup") == 1 && $this->postParam("signed") == 1) {
-                    $flags |= 0b01000000;
-                }
 
                 $nPost->setWall($groupId * -1);
             }
@@ -645,6 +668,8 @@ final class WallPresenter extends OpenVKPresenter
         }
         $user = $this->user->id;
 
+        $isAjax = $this->queryParam("ajax") == '1';
+
         $wallOwner = ($wall > 0 ? (new Users())->get($wall) : (new Clubs())->get($wall * -1));
 
         if ($wallOwner === null) {
@@ -652,7 +677,11 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         if ($wallOwner->isBanned()) {
-            $this->flashFail("err", tr("error"), tr("forbidden"), 0, $isAjax);
+            $this->flashFail("err", tr("failed_to_delete_post"), tr("error_4"), null, $isAjax);
+        }
+
+        if ($wallOwner->isBanned()) {
+            $this->flashFail("err", tr("error"), tr("forbidden"), null, $isAjax);
         }
 
         if ($wall < 0) {
@@ -678,7 +707,11 @@ final class WallPresenter extends OpenVKPresenter
             $this->flashFail("succ", tr("success"), "...", 0, $isAjax);
         }
 
-        $this->redirect($wall < 0 ? "/club" . ($wall * -1) : "/id" . $wall);
+        if ($isAjax) {
+            $this->returnJson(["success" => true]);
+        } else {
+            $this->redirect($wall < 0 ? "/club" . ($wall * -1) : "/id" . $wall);
+        }
     }
 
     public function renderArchive(int $wall, int $post_id): void
@@ -811,7 +844,7 @@ final class WallPresenter extends OpenVKPresenter
 
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {
             header("HTTP/1.1 405 Method Not Allowed");
-            exit("Ты дебил, это точка апи.");
+            exit("Ты дебил, это точка апи."); // сам дебил урод сука
         }
 
         $id = $this->postParam("id");
