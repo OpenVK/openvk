@@ -2,12 +2,12 @@
 const { ChatMessage, ChatGeneralForm, Draft } = await es6import_Im(import.meta.url, "../components/messages.js");
 //import { Conversation } from './conversations.js';
 const { Conversation } = await es6import_Im(import.meta.url, "./conversations.js");
-//import { MessageListView } from "../components/message.js"
 const { MessageListView } = await es6import_Im(import.meta.url, "../components/message.js");
 //import { ErrorConversation, WriteBar, ActionsBar, PeerWindow, InputArea, PeerTabsView, TopicConversationChat } from "../components/common.js"
 const { ErrorConversation, WriteBar, ActionsBar, PeerWindow, InputArea, PeerTabsView, TopicConversationChat } = await es6import_Im(import.meta.url, "../components/common.js");
 //import { IMTab, IMPage } from './page.js';
 const { IMTab, IMPage } = await es6import_Im(import.meta.url, "./page.js");
+const { ScrollPosition } = await es6import_Im(import.meta.url, "../components/partition.js");
 //import { html, render } from '../components/render.js';
 const { html, render } = await es6import_Im(import.meta.url, "../components/render.js");
 
@@ -462,11 +462,10 @@ export class Messenger {
         const win = this.getWindow();
         this._clearAttachments();
 
-        if (this.prevDraft != null) {
-            win.setCurrentText(this.prevDraft);
-            this.currentDraft = String(this.prevDraft);
-            this.prevDraft = null;
-        }
+        console.log(this.prevDraft)
+        win.setCurrentText(this.prevDraft ? this.prevDraft : "");
+        this.currentDraft = String(this.prevDraft || "");
+        this.prevDraft = null;
 
         if (render == true) {
             this.getWindow().update();
@@ -478,11 +477,15 @@ export class Messenger {
     }
 
     async goToMessage(msg) {
-        console.log(msg)
+        try {
+            await (await window.im.openTabByName("messenger")).render();
+        } catch (e) { console.error(e); }
+
+        this.view.goToMessage(msg);
     }
 
     showDaySwitcher(date) {
-        const m = new DaySwitcher(date);
+        const m = new DaySwitcher(date, this.getCurrentChat().peer.id);
     }
 }
 
@@ -536,6 +539,11 @@ export class MessengerPage extends IMPage {
 
     //async render(container, special_mode = null, messages = null) {
     async render(container, options = {}) {
+        try {
+            window.im.messenger.currentDraft = this.getNode().find("#write .small-textarea").last().value;
+        } catch(e) {
+            console.error(e);
+        }
         const orig_messenger = window.im.messenger;
         this.getNode().addClass("page-other");
 
@@ -579,6 +587,7 @@ export class MessengerPage extends IMPage {
                 dayDividedChunks=${messages} 
                 page=${this} />
                 <${InputArea}
+                convo=${currentConv}
                 editMsg=${window.im.messenger.editMsg}
                 replyTo=${window.im.messenger.replyTo}
                 onRemoveReply=${() => window.im.messenger.removeReply()}
@@ -593,6 +602,12 @@ export class MessengerPage extends IMPage {
             </div>
         </div>
         `, root);
+        this._updPadding();
+    }
+
+    _updPadding() {
+        const h = u(this.container).find(".messenger-app-end").last().clientHeight - 45;
+        u(this.container).find(".messenger-app--messages .messenger-app--messages-array").attr("style", "padding-bottom:" + h + "px;");
     }
 
     onTextareaKeyPress(e) {
@@ -616,6 +631,7 @@ export class MessengerPage extends IMPage {
                 return false;
             }
         }
+        this._updPadding();
         return true;
     }
 
@@ -634,8 +650,44 @@ export class MessengerPage extends IMPage {
         }
     }
 
-    clickOnReply(msg) {
-        this.scrollToMessage(msg, true);
+    async goToMessage(msg) {
+        const id = msg.id;
+        let conv = null;
+        try {
+            conv = window.im.conversations._findConv(msg.peer_id);
+        } catch (e) {
+            console.error(e);
+        }
+        if (!conv) return;
+
+        const chunks = conv.peer._chunks;
+
+        let found = false;
+        for (const chunk of chunks.chunks) {
+            if (chunk && chunk.id_range && chunk.hasMessageId(id)) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            const newChunk = await chunks.fetchRelatively(id);
+            chunks.appendChunk(newChunk, false);
+        }
+
+        const sp = new ScrollPosition(conv.peer);
+        sp.relyMessageId = id;
+        sp.direction = "any";
+        conv._scroll = sp;
+
+        console.log("IM | New scroll position: ", sp);
+
+        await window.im.messenger.selectConversation(conv);
+        this.scrollToMessage(msg);
+    }
+
+    clickOnReply(msg, e) {
+        this.goToMessage(msg);
     }
 
     onReplyButtonClick() {
@@ -659,8 +711,9 @@ export class MessengerPage extends IMPage {
     onEditButtonClick(e, msg) {
         window.im.messenger.editMsg = msg;
         if (msg.getText().length > 0) {
-            window.im.messenger.prevDraft = String(window.im.messenger.currentDraft || "");
+            window.im.messenger.prevDraft = String(this.container.querySelector("#write .small-textarea").value || "");
             window.im.messenger.currentDraft = msg.getText();
+            this.getNode().find("#write .small-textarea").last().value = msg.getText();
         }
 
         if (msg.getAttachments().length > 0) {
@@ -827,36 +880,48 @@ export class MessengerPage extends IMPage {
         }*/
     }
 
+    getScrollTop() {
+        if (window.im.state.isFastchat) {
+            return this.container.scrollTop;
+        }
+
+        return document.documentElement.scrollTop;
+    }
+    getScrollHeight() {
+        if (window.im.state.isFastchat) {
+            return this.container.scrollHeight;
+        }
+
+        return document.documentElement.scrollHeight
+    }
     async onMessagesScroll(e = null) {
         if (this.is_loading) return;
         this.is_loading = true;
 
-        const _scroll = document.documentElement.scrollTop;
+        const oldHeight = this.getScrollHeight();
+        const _scroll = this.getScrollTop();
         const currentConvo = window.im.messenger.getCurrentChat();
 
         if (_scroll < 21) {
             console.log("IM | Loading older chunk from API");
             await currentConvo.getScrollPosition().loadOlder();
             currentConvo.getScrollPosition().result();
-        } else {
-            const scrollBottom = document.documentElement.scrollHeight - _scroll - document.documentElement.clientHeight;
 
-            if (scrollBottom < 10) {
-                // ── Scrolled near the bottom → load newer messages (scroll DOWN) ──
-                const curConvo = window.im.state.getCurrentConvo();
-                const curPeer = curConvo ? curConvo.peer : null;
-                if (curPeer) {
-                    // await window.im.state.getCurrentConvo()._messagesLoad_DownFromCurrentChunk();
-                } else {
-                    // No newer chunk loaded yet — fetch from API
-                    //  await window.im.state.getCurrentConvo()._messagesLoad_DownFromCurrentChunk();
-                }
+            if (this.getScrollTop() < 21) {
+                this._scrollTo(this.getScrollHeight() - oldHeight + _scroll);
+            }
+        } else {
+            const scrollBottom = Math.max(0, this.getScrollHeight() - _scroll);
+            if (scrollBottom < 20) {
+                console.log("IM | Loading newer chunk from API");
+                await currentConvo.getScrollPosition().loadNewer();
+                currentConvo.getScrollPosition().result();
             }
 
-            if (scrollBottom > 600) {
-                this.getNode().addClass("overscrolled");
+            if (scrollBottom > 4000) {
+                this.getNode().find(".messenger-app-end").addClass("m-mountain");
             } else {
-                this.getNode().removeClass("overscrolled");
+                this.getNode().find(".messenger-app-end").removeClass("m-mountain");
             }
         }
 
@@ -913,9 +978,18 @@ export class MessengerPage extends IMPage {
     }
 
     _scrollToEnd() {
-        console.log("scrolled page to the end");
+        console.log("IM | scrolling page to the end");
 
         this._scrollTo("end");
+    }
+
+    async scrollToEndOfChat(event, convo) {
+        if (convo.hasScrollPosition()) {
+            convo._scroll = null;
+            await this.update();
+        }
+
+        this._scrollToEnd();
     }
 
     scrollToMessage(msg, load_chunk_where_it_can_be = false) {
@@ -939,25 +1013,8 @@ export class MessengerPage extends IMPage {
             console.log('IM | Scrolled to message #' + msgId);
 
             return;
-        }
-
-        if (load_chunk_where_it_can_be) {
-            /*const chat = this.getCurrentChat();
-            if (chat && chat.peer) {
-                chat.peer._chunks.loadChunkByMessageId(msgId).then(() => {
-                    const el2 = this.messagesListBlock
-                        ? this.messagesListBlock.querySelector(`[data-msg-id="${msgId}"]`)
-                        : document.querySelector(`[data-msg-id="${msgId}"]`);
-                    if (el2) {
-                        scrollTo({ top: el2.offsetTop - 200 });
-                        el2.classList.add("animated");
-                        setTimeout(() => el2.classList.remove("animated"), 5000);
-                        console.log('IM | Scrolled to message #' + msgId + ' after loading chunk');
-                    }
-                });
-            }*/
         } else {
-            console.warn('IM | scrollToMessage: message #' + msgId + ' not found in DOM');
+            console.log('IM | Message #' + msgId + " is not available.");
         }
     }
 

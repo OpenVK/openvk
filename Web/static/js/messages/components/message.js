@@ -27,7 +27,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
     ].filter(Boolean).join(' ');
 
     const has_postfix = msg.isSpecial("gift");
-    if (msg.isSpecial()) {
+    if (msg.isSpecial() && !isSearchTpl) {
         const act = msg.data.action.type;
         const typ = SystemMessages[act] ?? SystemMessages["unknown"];
 
@@ -66,7 +66,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
             </div>
             <div class="inlines _content">
                 ${msg.isReply() == true && html`
-                    <div class="reply-msg" onClick="${() => { window.im.messenger.view.scrollToMessage(msg.data.reply_message.id, true) }}">
+                    <div class="reply-msg" onClick="${() => { !isSearchTpl ? window.im.messenger.view.scrollToMessage(msg.data.reply_message.id, true) : null }}">
                         <span>${tr("reply_to_msg")}</span>
                         <a class="reply-author">${msg.hasSender() ? msg.sender.getName() : "..."}</a>
                         <span dangerouslySetInnerHTML=${{ __html: msg.data.reply_message.getText(false, true) }} />
@@ -75,7 +75,8 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                 <a class="_sender" onClick=${(e) => { window.im?.messenger?.view?.onAuthorNameClick(msg, e) }}>
                     <strong>${msg.sender.getName(false, true)}</strong>
                 </a>
-                ${has_postfix ? html`<div class="msg-postfix">
+                ${has_postfix ? html`
+                <div class="msg-postfix">
                 ${msg.isSpecial("gift") ? html`
                     ${tr("msg_sent_gift_" + msg.sender.getGender()).toLowerCase()}:
                 ` : ""}
@@ -228,8 +229,8 @@ const Attachment = ({ msg, att }) => {
 
 export const DayDivider = ({ date, day, idate }) => {
   return html`
-    <div class="messenger-app--messages-day-time" onClick=${(e) => {window.im.messenger.showDaySwitcher(idate)}}>
-        <b>${date}</b>
+    <div class="messenger-app--messages-day-time">
+        <b onClick=${(e) => {window.im.messenger.showDaySwitcher(idate)}}>${date}</b>
     </div>
   `;
 };
@@ -248,6 +249,7 @@ export const DayChunkView = ({ chunk, page }) => {
 export const MessageListView = ({ dayDividedChunks, convo, page }) => {
     const isMessagesInited = convo?.peer?.isMessagesInited ? convo.peer.isMessagesInited() : true;
     const isLoading = !isMessagesInited;
+
     return html`
     <div class="messenger-app--messages">
       <div class="messenger-app--messages-array">
@@ -255,7 +257,6 @@ export const MessageListView = ({ dayDividedChunks, convo, page }) => {
              <div id="gif_loader"></div>
          ` : html`
             ${dayDividedChunks.map((chunk) => html`<${DayChunkView} chunk=${chunk} page=${page} />`)}
-
             <div>
                 <${WriteBar} convo=${convo} />
             </div>

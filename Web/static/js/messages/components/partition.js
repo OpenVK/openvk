@@ -131,26 +131,28 @@ export class Chunks {
     isMessagesInited() { return this._messagesInited; }
     getLatestChunk() { return this.chunks[this._latest_chunk_id]; }
     getLatestMessage() { return this.getLatestChunk().latest_message; }
-    appendChunk(chunk, options = {}) {
+    appendChunk(chunk, replace_actual = true) {
         let key = this._getChunkKey(chunk);
         let idx = 0;
         if (key != null && this._map.has(key)) {
+            console.log("IM | Chunk reuse")
             return this._map.get(key); // already loaded → reuse
         }
 
-        if (this.chunks[0].id == "start" && this._messagesInited == false) {
+        if (this._messagesInited == false && replace_actual == true) {
             this.chunks[0] = chunk;
             key = this._getChunkKey(chunk);
         } else {
             this.chunks.push(chunk);
-            idx = this.chunks.length;
+            idx = this.chunks.length - 1;
+            console.log("IM | Chunk ", idx)
         }
 
         if (key != null) this._map.set(key, idx);
 
         this._messagesInited = true;
         this._invalidateCache();
-        return Math.max(0, idx - 1);
+        return idx;
     }
     getMessages() {
         if (this._cachedMessages != undefined) return this._cachedMessages;
@@ -211,17 +213,15 @@ export class Chunks {
     }
 
     async fetchRelatively(messageId, options = {}) {
-        const chunk = new MessageChunk([], true, getChatMessageClass().MESSAGES_PER_PAGE);
+        const perPage = 20;
+        const chunk = new MessageChunk([], true, perPage);
         chunk._direction = options.older ? 'older' : (options.newer ? 'newer' : 'center');
 
         const params = {
             'peer_id': this._peer.id,
         };
-        if (messageId != null) {
-            params['start_message_id'] = messageId;
-        } else {
-            params['offset'] = options.newer ? getChatMessageClass().MESSAGES_PER_PAGE * -1 : 0;
-        }
+        params['start_message_id'] = messageId;
+        params['offset'] = options.newer ? -perPage-1  : "";
 
         await chunk.fetch(params);
 
@@ -311,6 +311,7 @@ export class ScrollPosition {
     static fromEnd(peer) {
         const n = new ScrollPosition(peer);
         n.direction = "end";
+        n.reachedNewestPosition = true;
 
         return n;
     }
@@ -329,6 +330,7 @@ export class ScrollPosition {
     }
 
     returnChronologicalDivision() {
+        console.log("IM | returnChronologicalDivision");
         const chunks = this.peer._chunks.chunks;
         const map = this.peer._chunks._map;
 
@@ -345,13 +347,15 @@ export class ScrollPosition {
             }
         }
 
-        const visible = new Set([anchorIndex]);
+        const visible = new Set([]);
         this.olderIndexes.forEach((i) => visible.add(i));
+        visible.add(anchorIndex);
         this.newerIndexes.forEach((i) => visible.add(i));
 
         const ordered = [];
         visible.forEach((i) => {
             const chunk = chunks[i];
+            console.log(this.peer._chunks.chunks)
             if (chunk && chunk.id_range) ordered.push(chunk);
         });
 
@@ -363,7 +367,6 @@ export class ScrollPosition {
     }
 
     getDayDividedMessages() {
-        console.log("this._cachedDays", this._cachedDays)
         if (this._cachedDays != undefined) return this._cachedDays;
 
         const chr = this.returnChronologicalDivision();
@@ -449,6 +452,7 @@ export class ScrollPosition {
 
     async loadNewer() {
         if (this.reachedNewestPosition == true || this.direction == "end") {
+            console.log("IM | reachedNewestPosition");
             return;
         }
 
