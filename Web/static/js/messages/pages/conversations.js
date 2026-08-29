@@ -180,7 +180,7 @@ export class Conversations {
     }
 
     _findConv(id) {
-        console.log("Trying to find convo with id", id)
+        //console.log("Trying to find convo with id", id)
         const _l = this.all_convs.filter((itm) => itm.peer.id == id);
         if (_l[0] == undefined) {
             throw Error('Not found chat, id: ' + String(id));
@@ -224,7 +224,7 @@ export class Conversation {
         this.current_activity = {};
         this.draft = null;
         this._endScrollPosition = ScrollPosition.fromEnd(this.peer);
-        this._scroll = ScrollPosition.fromStart(this.peer);
+        this._scroll = null;
     }
 
     getEndScrollPosition() { return this._endScrollPosition; }

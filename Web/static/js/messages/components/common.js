@@ -169,7 +169,7 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
     <div class="messenger-app-end${(replyTo || editMsg) ? ' m-selected' : ''}">
         ${ replyTo && html`
             <div class="input-reply input-m">
-                <span onclick=${() => { clickOnReply(replyTo) }} aria-label="link" class="input-type">${tr("reply_to", replyTo.sender.full_name)}</span>
+                <span onclick=${() => { clickOnReply(replyTo) }} aria-label="link" class="input-type">${tr("reply_to", replyTo.sender.getName())}</span>
                 <span class="input-close" onClick=${onRemoveReply}><div class="cross"></div></span>
             </div>
         `}
@@ -181,7 +181,7 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
         `}
         <div class="post-buttons">
             <div class="model_content_textarea messenger-app--input has_emoji_picker expanded-textarea" id="write">
-                <img class="ava" src=${current_user.getAvatar("mid", false)} alt=${current_user.full_name} />
+                <img class="ava" src=${current_user.getAvatar("mid", false)} alt=${current_user.getName()} />
                 <div class="messenger-app--input---messagebox">
                     <div class="textareas has_emoji_picker">
                         <textarea
@@ -331,14 +331,14 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
     <div class="peer-side">
         <div class="peer-info">
             <div class="peer-avatar sliding-thing-wrapper">
-                <${PeerAvatar} peer=${peer} />
+                <${PeerAvatar} saved_messages_ava=${false} peer=${peer} />
                 <a onClick=${(event) => { OpenChatAvatar(event, peer) }} class="avatar-opener sliding-thing">
                     <div class="lupa"></div>
                 </a>
             </div>
             <div class="peer-name">
                 <div class="peer-name-1">
-                    <a class="peer-link" href=${peer.getPageUrl()}>${peer.full_name}</a>
+                    <a class="peer-link" href=${peer.getPageUrl()}>${peer.getName()}</a>
 
                     <div class="peer-status">
                         <span dangerouslySetInnerHTML=${{ __html: peer.getOnlineStatusString() }} />

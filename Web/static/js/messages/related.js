@@ -248,3 +248,17 @@ async function openChatTopic(event, prettyId) {
 
     toggleUnclickability(event.target, false);
 }
+
+class DaySwitcher {
+    constructor(start_date) {
+        this.start_date = start_date;
+        const datas = start_date.split("/");
+        this.msg = new CMessageBox({
+            title: tr("day_selection"),
+            body: ``,
+            buttons: [tr("close")],
+            callbacks: [() => {}],
+        });
+        console.log(datas)
+    }
+}

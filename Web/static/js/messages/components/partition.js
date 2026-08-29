@@ -14,11 +14,11 @@ import { getChatMessageClass, getChatGeneralForm } from './messages.js';
 // В случае, если чел перейдёт по ссылке реплая, задастся уже обычный scrollPositon, который будет вычислять чанки относительно того, с которым было сообщение
 
 export class MessageChunk {
-    constructor(items = [], do_reverse = true, count = 20) {
+    constructor(items = [], do_reverse = true, count = null, id = null) {
         this.messages = [];
         this.do_reverse = do_reverse;
-        this.count = count;
-        // Anchor used when this chunk was fetched from the API.
+        this.count = count || 20;
+        this.id = id;
 
         items.forEach((item) => this.messages.push(item));
     }
@@ -75,6 +75,8 @@ export class MessageChunk {
         const anchored = params.start_message_id != null;
         if (!anchored) delete params.start_message_id;
 
+        console.log("IM | messages.getHistory ",params);
+
         const messages = await window.OVKAPI.call('messages.getHistory', params);
 
         window.im.cached_profiles._moveToProfileCache(messages.profiles, messages.groups);
@@ -116,13 +118,10 @@ export class Chunks {
     constructor(peer) {
         this.chunks = [];
         this._map = new Map();
-
-        this._cachedMessages = undefined;
-        this._cachedDays = undefined;
         this._messagesInited = false;
         this._peer = peer;
         this._latest_chunk_id = 0;
-        this.chunks.push(new MessageChunk([], true));
+        this.chunks.push(new MessageChunk([], true, 20, "start"));
     }
     _getChunkKey(chunk) {
         const range = chunk?.id_range;
@@ -133,18 +132,25 @@ export class Chunks {
     getLatestChunk() { return this.chunks[this._latest_chunk_id]; }
     getLatestMessage() { return this.getLatestChunk().latest_message; }
     appendChunk(chunk, options = {}) {
-        const key = this._getChunkKey(chunk);
+        let key = this._getChunkKey(chunk);
+        let idx = 0;
         if (key != null && this._map.has(key)) {
             return this._map.get(key); // already loaded → reuse
         }
 
-        const idx = this.chunks.length;
-        this.chunks.push(chunk);
+        if (this.chunks[0].id == "start" && this._messagesInited == false) {
+            this.chunks[0] = chunk;
+            key = this._getChunkKey(chunk);
+        } else {
+            this.chunks.push(chunk);
+            idx = this.chunks.length;
+        }
+
         if (key != null) this._map.set(key, idx);
 
         this._messagesInited = true;
         this._invalidateCache();
-        return idx;
+        return Math.max(0, idx - 1);
     }
     getMessages() {
         if (this._cachedMessages != undefined) return this._cachedMessages;
@@ -169,48 +175,6 @@ export class Chunks {
         );
     }
 
-    /*
-
-    getDayDividedMessages() {
-        if (this._cachedDays != undefined) return this._cachedDays;
-
-        const dayChunks = [];
-        const dateMap = new Map();
-
-        const sorted = this.sorted;
-        console.log(sorted)
-        for (let i = sorted.length - 1; i >= 0; i--) {
-            sorted[i].getMessages().forEach((msg) => {
-                if (!msg.getSentTime()) return;
-                if (msg.isDeleted(0)) return;
-
-                const dateKey = msg.getDate(1);
-                if (!dateMap.has(dateKey)) {
-                    const dayChunk = new DayChunk([], false);
-                    dayChunk.setDay(dateKey);
-                    dayChunk.idate = msg.getSentTime().toLocaleDateString();
-                    dayChunk.msg_date = msg.getSentTime();
-                    dayChunks.push(dayChunk);
-                    dateMap.set(dateKey, dayChunk);
-                }
-                dateMap.get(dateKey).pushMessage(msg);
-            });
-        }
-
-        dayChunks.sort((a, b) => {
-            const [monthA, dayA, yearA] = a.idate.split('/').map(Number);
-            const [monthB, dayB, yearB] = b.idate.split('/').map(Number);
-
-            if (monthA !== monthB) return monthA - monthB;
-
-            if (dayA !== dayB) return dayA - dayB;
-
-            return yearA - yearB;
-        });
-        this._cachedDays = dayChunks;
-        return dayChunks;
-    }*/
-
     getNewestMessage() {
         const sorted = this.sorted; // newest-first → last is oldest
         return sorted.length ? sorted[sorted.length - 1].first_message : null;
@@ -234,17 +198,7 @@ export class Chunks {
 
     // ── lookup / jumps ───────────────────────────────────────────
 
-    /*getChunkIndexByMessageId(id) {
-        const sorted = this.sorted;
-        for (let i = 0; i < sorted.length; i++) {
-            if (sorted[i].hasMessageId(id)) {
-                return this.chunks.indexOf(sorted[i]);
-            }
-        }
-        return -1;
-    }*/
-
-    /*_findMessageById(id) {
+    _findMessageById(id) {
         let found = null;
         this.chunks.forEach((chunk) => {
             if (found) return;
@@ -254,7 +208,7 @@ export class Chunks {
             });
         });
         return found;
-    }*/
+    }
 
     async fetchRelatively(messageId, options = {}) {
         const chunk = new MessageChunk([], true, getChatMessageClass().MESSAGES_PER_PAGE);
@@ -306,7 +260,6 @@ export class Chunks {
     }
 }
 
-// Day grouping wrapper produced by Chunks.getDayDividedMessages().
 export class DayChunk {
     constructor(items = [], do_reverse = false) {
         this.messages = [];
@@ -342,10 +295,18 @@ export class ScrollPosition {
     constructor(peer) {
         this.peer = peer;
         this.direction = "any";
-        this.rootMessage = null;
+        this.relyMessageId = null;
         this.reachedOldestPosition = false;
         this.reachedNewestPosition = false;
+        this.olderIndexes = [];
+        this.newerIndexes = [];
+        this.olderOffset = 0;
+        this.newerOffset = 0;
+        this._cachedMessages = undefined;
+        this._cachedDays = undefined;
     }
+
+    _invalidateCache() { this._cachedMessages = undefined; this._cachedDays = undefined; }
 
     static fromEnd(peer) {
         const n = new ScrollPosition(peer);
@@ -356,18 +317,90 @@ export class ScrollPosition {
 
     static fromStart(peer) {
         const n = new ScrollPosition(peer);
-        n.rootMessage = 0;
+        n.relyMessageId = 0;
         return n;
     }
 
     getMessages() {
+        const chr = this.returnChronologicalDivision();
+        const fnl = [];
+        chr.forEach((chunk) => chunk.getMessages().forEach((msg) => fnl.push(msg)));
+        return fnl;
+    }
 
+    returnChronologicalDivision() {
+        const chunks = this.peer._chunks.chunks;
+        const map = this.peer._chunks._map;
+
+        let anchorIndex = 0;
+        if (this.direction != "end" && this.relyMessageId != null) {
+            for (const [range, idx] of map.entries()) {
+                const sep = range.split(":");
+                const first = parseInt(sep[0], 10);
+                const last = parseInt(sep[1], 10);
+                if (this.relyMessageId >= first && this.relyMessageId <= last) {
+                    anchorIndex = idx;
+                    break;
+                }
+            }
+        }
+
+        const visible = new Set([anchorIndex]);
+        this.olderIndexes.forEach((i) => visible.add(i));
+        this.newerIndexes.forEach((i) => visible.add(i));
+
+        const ordered = [];
+        visible.forEach((i) => {
+            const chunk = chunks[i];
+            if (chunk && chunk.id_range) ordered.push(chunk);
+        });
+
+        ordered.sort(
+            (a, b) => (a.first_message?.id ?? -Infinity) - (b.first_message?.id ?? -Infinity)
+        );
+
+        return ordered;
     }
 
     getDayDividedMessages() {
-        if (this.direction == "end") {
-            return this.peer._chunks.getDayDividedMessages();
+        console.log("this._cachedDays", this._cachedDays)
+        if (this._cachedDays != undefined) return this._cachedDays;
+
+        const chr = this.returnChronologicalDivision();
+
+        const dayChunks = [];
+        const dateMap = new Map();
+
+        for (let i = 0; i < chr.length; i++) {
+            
+            chr[i].getMessages().forEach((msg) => {
+                if (!msg.getSentTime()) return;
+                if (msg.isDeleted(0)) return;
+
+                const dateKey = msg.getDate(1);
+                if (!dateMap.has(dateKey)) {
+                    const dayChunk = new DayChunk([], false);
+                    dayChunk.setDay(dateKey);
+                    dayChunk.idate = msg.getSentTime().toLocaleDateString();
+                    dayChunk.msg_date = msg.getSentTime();
+                    dayChunks.push(dayChunk);
+                    dateMap.set(dateKey, dayChunk);
+                }
+                dateMap.get(dateKey).pushMessage(msg);
+            });
         }
+
+        dayChunks.sort((a, b) => {
+            const [monthA, dayA, yearA] = a.idate.split('/').map(Number);
+            const [monthB, dayB, yearB] = b.idate.split('/').map(Number);
+
+            if (monthA !== monthB) return monthA - monthB;
+            if (dayA !== dayB) return dayA - dayB;
+            return yearA - yearB;
+        });
+
+        this._cachedDays = dayChunks;
+        return dayChunks;
     }
 
     async loadOlder() {
@@ -376,28 +409,69 @@ export class ScrollPosition {
             return;
         }
 
+        let msgs = null;
+
         if (this.direction == "end") {
             const first_message = this.peer._chunks.getNewestMessage();
-            let msgs = null;
 
             if (first_message) {
                 msgs = await this.peer._chunks.fetchRelatively(first_message.id, { older: true });
             } else {
                 msgs = await this.peer._chunks.fetchRelatively(null, { older: true });
             }
+        } else {
+            const chr = this.returnChronologicalDivision();
+            const oldestChunk = chr[0];
 
-            if (!msgs.messages.length) {
-                this.reachedOldestPosition = true;
-                return;
-            }
+            if (!oldestChunk) return;
 
-            if (msgs.messages.length < 20) {
-                this.peer._chunks.appendChunk(msgs);
-                this.reachedOldestPosition = true;
-                return;
-            }
+            msgs = await this.peer._chunks.fetchRelatively(oldestChunk.first_message.id, { older: true });
+        }
 
-            this.peer._chunks.appendChunk(msgs);
+        console.log(msgs)
+        if (!msgs || !msgs.messages.length) {
+            this.reachedOldestPosition = true;
+            return;
+        }
+
+        const idx = this.peer._chunks.appendChunk(msgs);
+        console.log("IM | new chunk id: ", idx, this.olderIndexes);
+
+        if (this.olderIndexes.indexOf(idx) == -1) {
+            this.olderIndexes.push(idx);
+        }
+
+        this._invalidateCache();
+        if (msgs.messages.length < 20) {
+            this.reachedOldestPosition = true;
+        }
+    }
+
+    async loadNewer() {
+        if (this.reachedNewestPosition == true || this.direction == "end") {
+            return;
+        }
+
+        const chr = this.returnChronologicalDivision();
+        const newestChunk = chr[chr.length - 1];
+
+        if (!newestChunk) return;
+
+        const msgs = await this.peer._chunks.fetchRelatively(newestChunk.latest_message.id, { newer: true });
+
+        if (!msgs || !msgs.messages.length) {
+            this.reachedNewestPosition = true;
+            return;
+        }
+
+        const idx = this.peer._chunks.appendChunk(msgs);
+        if (this.newerIndexes.indexOf(idx) == -1) {
+            this.newerIndexes.push(idx);
+        }
+
+        this._invalidateCache();
+        if (msgs.messages.length < 20) {
+            this.reachedNewestPosition = true;
         }
     }
 
