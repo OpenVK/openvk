@@ -327,6 +327,9 @@ export class Conversation {
             return 0;
         }
     }
+    set unread_count(val) {
+        this._conversation.unread_count = val;
+    }
     pushMessage(msg, conv = null, check_chunk = true) { this.peer._chunks.pushNewMessage(msg, conv, check_chunk); }
     findMessageById(id) { return this.peer._chunks._findMessageById(id); }
 }

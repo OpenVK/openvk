@@ -122,12 +122,13 @@ export class Chunks {
         this._peer = peer;
         this._latest_chunk_id = 0;
         this.chunks.push(new MessageChunk([], true, 20, "start"));
+        this.invalidateCache = false;
     }
     _getChunkKey(chunk) {
         const range = chunk?.id_range;
         return range ? `${range.first}:${range.last}` : null;
     }
-    _invalidateCache() { this._cachedMessages = undefined; this._cachedDays = undefined; }
+    _invalidateCache() { this.invalidateCache = true; }
     isMessagesInited() { return this._messagesInited; }
     getLatestChunk() { return this.chunks[this._latest_chunk_id]; }
     getLatestMessage() { return this.getLatestChunk().latest_message; }
@@ -240,6 +241,7 @@ export class Chunks {
             return;
         }*/
 
+        console.log(actual, msg);
         actual.pushMessage(msg);
         this._invalidateCache();
         window.im.messenger.update();
@@ -367,7 +369,7 @@ export class ScrollPosition {
     }
 
     getDayDividedMessages() {
-        if (this._cachedDays != undefined) return this._cachedDays;
+        if (this.peer._chunks.invalidateCache == false && this._cachedDays != undefined) return this._cachedDays;
 
         const chr = this.returnChronologicalDivision();
 
@@ -375,7 +377,7 @@ export class ScrollPosition {
         const dateMap = new Map();
 
         for (let i = 0; i < chr.length; i++) {
-            
+        
             chr[i].getMessages().forEach((msg) => {
                 if (!msg.getSentTime()) return;
                 if (msg.isDeleted(0)) return;
@@ -403,6 +405,7 @@ export class ScrollPosition {
         });
 
         this._cachedDays = dayChunks;
+        this.peer._chunks.invalidateCache = false;
         return dayChunks;
     }
 

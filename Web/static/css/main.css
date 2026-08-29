@@ -4686,16 +4686,17 @@ hr {
 .emoji-picker .emoji-picker-group .group-title {
     font-size: 12px;
     margin-bottom: 4px;
+    padding: 5px 0px 5px 8px;
 }
 
-.emoji-picker .emoji-picker-group .group-title:first-of-type {
+.emoji-picker .emoji-picker-group:first-of-type .group-title {
     padding-top: unset;
 }
 
 .emoji-picker .emoji-picker-group-items .emoji-picker-item {
     cursor: pointer;
-    width: 19px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
 }
 
 .tippy-box[data-theme~="emoji"] {
