@@ -1172,8 +1172,16 @@ final class Messages extends VKAPIRequestHandler
                 $chatId = (int) ($peer['id'] - 2000000000);
                 $chatEntity = $loadedChats[$chatId] ?? null;
 
+                if (!$chatEntity) {
+                    $chatsRepo = new ChatRepo();
+                    $chatEntity = $chatsRepo->create($chatId, "Chat " . $chatId);
+                    $loadedChats[$chatId] = $chatEntity;
+                }
+
                 if ($chatEntity) {
-                    $chatEntity->setData($conversation["chat_settings"]);
+                    if (!empty($conversation["chat_settings"])) {
+                        $chatEntity->setData($conversation["chat_settings"]);
+                    }
                     $conversation['chat_settings'] = $chatEntity->toChatSettingsStruct($this->getUser());
                 }
             }
@@ -1285,7 +1293,16 @@ final class Messages extends VKAPIRequestHandler
                 $chatSettings = $conv['chat_settings'] ?? [];
                 $members = $chatSettings['members'] ?? $chatSettings['users'] ?? [];
 
+                if (!$chatEntity) {
+                    $chatsRepo = new ChatRepo();
+                    $chatEntity = $chatsRepo->create($localChatId, "Chat " . $localChatId);
+                    $loadedChats[$localChatId] = $chatEntity;
+                }
+
                 if ($chatEntity) {
+                    if (!empty($chatSettings)) {
+                        $chatEntity->setData($chatSettings);
+                    }
                     $chatStruct = $chatEntity->toChatSettingsStruct($this->getUser());
                     $msgObj['title'] = $chatStruct['title'] ?? ("Chat " . $localChatId);
                     $msgObj['admin_id'] = $chatStruct['admin_id'] ?? 0;
@@ -1439,8 +1456,14 @@ final class Messages extends VKAPIRequestHandler
                     $chatId = (int) ($peer['id'] - 2000000000);
                     $chatEntity = $loadedChats[$chatId] ?? null;
 
+                    if (!$chatEntity) {
+                        $chatsRepo = new ChatRepo();
+                        $chatEntity = $chatsRepo->create($chatId, "Chat " . $chatId);
+                        $loadedChats[$chatId] = $chatEntity;
+                    }
+
                     if ($chatEntity) {
-                        if (!$chatEntity->hasData()) {
+                        if (!empty($conversation['chat_settings'])) {
                             $chatEntity->setData($conversation['chat_settings']);
                         }
                         $conversation['chat_settings'] = $chatEntity->toChatSettingsStruct($this->getUser());

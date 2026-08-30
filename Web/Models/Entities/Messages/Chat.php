@@ -361,7 +361,7 @@ class Chat extends RowModel
         $memberIds = $this->hydratedData["members"] ?? $this->hydratedData["users"] ?? null;
 
         if ($memberIds == null) {
-            return "Invalid chat";
+            return !empty($customTitle) ? $customTitle : ("Chat " . $this->getChatId());
         }
 
         $otherMemberIds = array_values(array_filter($memberIds, fn($id) => (int)$id !== (int)$currentUserId));
@@ -405,7 +405,9 @@ class Chat extends RowModel
     {
         $photo = $this->getPhoto();
         $server_url = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
-        $isAdmin = ($this->hydratedData["admin_id"] === $user->getRealId() && $user->getRealId() > 0);
+        $userRealId = $user ? $user->getRealId() : 0;
+        $userId = $user ? $user->getId() : 0;
+        $isAdmin = (($this->hydratedData["admin_id"] ?? null) === $userRealId && $userRealId > 0);
 
         $payload = [];
         $payload["type"] = "chat";
@@ -420,7 +422,7 @@ class Chat extends RowModel
             }
         }
 
-        $payload["title"] = $this->resolveChatTitle($user->getId());
+        $payload["title"] = $this->resolveChatTitle($userId);
         $payload["description"] = $this->getDescription();
         $payload["id"] = $this->getChatId();
         $payload["local_id"] = $this->getChatId();
@@ -456,7 +458,7 @@ class Chat extends RowModel
             "can_copy_chat"          => $isAdmin,
         ];
 
-        $this->hydratedData['acl'] = array_merge($defaultAcl, $conversation['chat_settings']['acl'] ?? []);
+        $this->hydratedData['acl'] = array_merge($defaultAcl, $this->hydratedData['acl'] ?? []);
 
         return $payload;
     }

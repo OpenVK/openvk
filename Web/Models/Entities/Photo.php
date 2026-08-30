@@ -324,22 +324,18 @@ class Photo extends Media
             return $this->getURL();
         }
 
-        $size = $sizes[$size];
-        if (!$size) {
+        $sizeObj = $sizes[$size] ?? null;
+        if (!$sizeObj) {
             return $this->getURL();
         }
 
+        $url = $sizeObj->url ?? $sizeObj->src ?? $this->getURL();
+
         if ($this->getAccessKey() != null) {
-            return $size->url . "?key=" . $this->getAccessKey();
+            return $url . "?key=" . $this->getAccessKey();
         }
 
-        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR <= 5 && VKAPI_DECL_VER_MINOR < 77) {
-            return $size->src;
-        } else {
-            return $size->url;
-        }
-
-        return $size->url;
+        return $url;
     }
 
     public function getDimensions(): array
