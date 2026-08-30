@@ -16,7 +16,7 @@
 
 {block header}
     {$name}
-    <span style="float: right; font-weight: bold;"><a onClick="reportApp({$id})" n:if="$canReport ?? false">[{_report}]</a> <a onClick="showAppSettings({rawurlencode($csrfToken)}, {!$canReport})">[{_menu_settings}]</a> <a class="app_fullscreen">[🗗]</a></span>
+    <span style="float: right; font-weight: bold; padding: 0;"><a onClick="reportApp({$id})" n:if="$canReport ?? false">[{_report}]</a> <a onClick="showAppSettings({rawurlencode($csrfToken)}, {!$canReport})">[{_menu_settings}]</a> <a class="app_fullscreen">[🗗]</a></span>
 {/block}
 
 {block content}
@@ -47,42 +47,10 @@
     </script>
     
     <script n:syntax="double">
-        u("head").append(u(`
-            <style>
-                html.app_fullscreen {
-                    overflow-y: hidden !important;
-                }
-                .page_yellowheader.app_fullscreen span {
-                    margin-right: calc(${getComputedStyle(u(".page_yellowheader").nodes[0]).paddingRight} * 2);
-                }
-                body.dimmed .dimmer {
-                    z-index: 1023;
-                }
-                #ajax_audio_player {
-                    z-index: 1020;
-                }
-                .page_yellowheader.app_fullscreen {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    z-index: 1021;
-                }
-                #appFrame.app_fullscreen {
-                    position: fixed;
-                    top: ${u(".page_yellowheader").nodes[0].getBoundingClientRect().height}px;
-                    left: 0;
-                    width: 100%;
-                    height: calc(100% - ${u(".page_yellowheader").nodes[0].getBoundingClientRect().height}px);
-                    z-index: 1021;
-                }
-            </style>
-        `))
-
         function goFullscreen() {
             u("html").addClass("app_fullscreen")
-            u(".page_yellowheader").addClass("app_fullscreen")
-            u("#appFrame").addClass("app_fullscreen")
+            u("#appFrame").parent().addClass("app_fullscreen")
+            u("#appFrame").parent().prepend(u(".page_yellowheader"))
         }
 
         if (window.fsApps.includes(window.appId)) { goFullscreen() }
@@ -90,8 +58,8 @@
         u("a.app_fullscreen").on("click", (e) => {
             if (u("html").hasClass("app_fullscreen")) {
                 u("html").removeClass("app_fullscreen")
-                u(".page_yellowheader").removeClass("app_fullscreen")
-                u("#appFrame").removeClass("app_fullscreen")
+                u("#appFrame").parent().removeClass("app_fullscreen")
+                u("#appFrame").parent().children(".page_yellowheader").remove() 
             } else {
                 goFullscreen()
             }
