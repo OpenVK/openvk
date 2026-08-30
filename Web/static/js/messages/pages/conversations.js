@@ -109,7 +109,7 @@ export class Conversations {
         try {
             this.convs.forEach((item) => {
                 if (item.peer.id === sel) {
-                _ = item;
+                    _ = item;
                 }
             });
         } catch (e) {
@@ -157,6 +157,19 @@ export class Conversations {
         convs.items.forEach((item) => {
             const id = item.conversation.peer.id;
             item.peer = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(id);
+            if (!item.peer) {
+                const isChat = id >= ChatGeneralForm.CHAT_RUBICON || item.conversation?.peer?.type === 'chat';
+                const localId = isChat && id >= ChatGeneralForm.CHAT_RUBICON ? id - ChatGeneralForm.CHAT_RUBICON : id;
+                const fallbackData = {
+                    id: isChat ? localId : id,
+                    type: isChat ? 'chat' : (id < 0 ? 'club' : 'user')
+                };
+                if (item.conversation?.chat_settings) {
+                    Object.assign(fallbackData, item.conversation.chat_settings);
+                }
+                item.peer = new ChatGeneralForm(fallbackData);
+                window.im.cached_profiles._addProfileCache(item.peer);
+            }
             if (item.peer) {
                 if (item.conversation?.chat_settings?.members) {
                     item.peer.data.members = item.conversation.chat_settings.members;
@@ -192,7 +205,7 @@ export class Conversations {
 
     _findConv(id) {
         //console.log("Trying to find convo with id", id)
-        const _l = this.all_convs.filter((itm) => itm.peer.id == id);
+        const _l = this.all_convs.filter((itm) => itm.peer && itm.peer.id == id);
         if (_l[0] == undefined) {
             throw Error('Not found chat, id: ' + String(id));
         }
@@ -208,7 +221,7 @@ export class Conversations {
 
         let b = null;
         if (check_cached) {
-            b = window.im.cached_profiles._findCachedProfileById(id);
+            b = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(id);
         }
 
         if (!b) {
@@ -216,7 +229,7 @@ export class Conversations {
         }
 
         if (!b) {
-            throw Error('Not found chat '+ id);
+            throw Error('Not found chat ' + id);
         }
 
         console.log("Not found chat with id ", id, ", returning a new one.")
@@ -243,15 +256,15 @@ export class Conversation {
     getScrollPosition() { return this.hasScrollPosition() ? this._scroll : this.getEndScrollPosition(); }
     setDraft(draft) { this.draft = draft }
     clearDraft() { this.draft = null }
-    hasActivity() { return this.getActivityMsg()[1].length > 0; }
+    hasActivity() { return this.peer ? this.getActivityMsg()[1].length > 0 : false; }
     getActivityMsg() {
         let s = "";
         let names = [];
-        if (this.peer.supposed_type == "chat") {
+        if (this.peer && this.peer.supposed_type == "chat") {
             const a = Object.entries(this.current_activity ?? {});
 
             a.forEach(item => {
-                if (item[1].conv) {
+                if (item[1].conv && item[1].conv.peer) {
                     names.push(item[1].conv.peer.getName());
                 }
             })
@@ -272,11 +285,10 @@ export class Conversation {
                     s = tr("messenger_typing_other", names.length)
                     break
             }
-
             if (names.length > 0) { 
                 s = s + "...";
             }
-        } else {
+        } else if (this.peer) {
             const v = Object.values(this.current_activity);
 
             if (v.length > 0) {
@@ -318,12 +330,14 @@ export class Conversation {
         }, REMOVE_TYPING_TIMEOUT);
     }
     updateLastMessage(msg) { this._last_message = msg; }
-    get id() { return this.peer.id; }
+    get id() { return this.peer ? this.peer.id : (this._conversation?.peer?.id || 0); }
     get last_message() {
         try {
-            const msg = this.peer._chunks.getLatestMessage();
-            if (msg) {
-                return msg;
+            if (this.peer && this.peer._chunks) {
+                const msg = this.peer._chunks.getLatestMessage();
+                if (msg) {
+                    return msg;
+                }
             }
         } catch (e) {
             console.error(e);
@@ -341,13 +355,15 @@ export class Conversation {
 
         try {
             return this._conversation.unread_count || 0;
-        } catch(e) {
+        } catch (e) {
             return 0;
         }
     }
     set unread_count(val) {
-        this._conversation.unread_count = val;
+        if (this._conversation) {
+            this._conversation.unread_count = val;
+        }
     }
-    pushMessage(msg, conv = null, check_chunk = true) { this.peer._chunks.pushNewMessage(msg, conv, check_chunk); }
-    findMessageById(id) { return this.peer._chunks._findMessageById(id); }
+    pushMessage(msg, conv = null, check_chunk = true) { if (this.peer && this.peer._chunks) this.peer._chunks.pushNewMessage(msg, conv, check_chunk); }
+    findMessageById(id) { return (this.peer && this.peer._chunks) ? this.peer._chunks._findMessageById(id) : null; }
 }

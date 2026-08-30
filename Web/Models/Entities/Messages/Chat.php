@@ -347,12 +347,18 @@ class Chat extends RowModel
     private function resolveChatTitle(int $currentUserId): string
     {
         $customTitle = trim($this->getTitle());
-        $customTitle = null;
-        $memberIds = $this->hydratedData["members"];
-
-        if ($customTitle != null && !empty($customTitle) && !str_starts_with($customTitle, "Chat ")) {
+        if (!empty($customTitle) && !str_starts_with($customTitle, "Chat ")) {
             return $customTitle;
         }
+
+        if (!empty($this->hydratedData["title"])) {
+            $hydratedTitle = trim($this->hydratedData["title"]);
+            if (!empty($hydratedTitle) && !str_starts_with($hydratedTitle, "Chat ")) {
+                return $hydratedTitle;
+            }
+        }
+
+        $memberIds = $this->hydratedData["members"] ?? $this->hydratedData["users"] ?? null;
 
         if ($memberIds == null) {
             return "Invalid chat";
@@ -405,14 +411,18 @@ class Chat extends RowModel
         $payload["type"] = "chat";
 
         if ($this->hasData()) {
-            $payload["admin_id"] = $this->hydratedData["admin_id"] ?? 0;
-            $payload["left"] = $this->hydratedData["left"] ?? 0;
-            $payload["kicked"] = $this->hydratedData["kicked"] ?? 0;
+            $payload["admin_id"] = (int) ($this->hydratedData["admin_id"] ?? 0);
+            if (!empty($this->hydratedData["left"])) {
+                $payload["left"] = 1;
+            }
+            if (!empty($this->hydratedData["kicked"])) {
+                $payload["kicked"] = 1;
+            }
         }
 
         $payload["title"] = $this->resolveChatTitle($user->getId());
         $payload["description"] = $this->getDescription();
-        $payload["id"] = $this->getChatGlobalId();
+        $payload["id"] = $this->getChatId();
         $payload["local_id"] = $this->getChatId();
 
         if ($photo != null) {
@@ -424,7 +434,7 @@ class Chat extends RowModel
             $payload["avatar_max"] = $payload["photo_200"] = $payload["photo_100"] = $payload["photo_50"] = $server_url . "/assets/packages/static/openvk/img/im/chat_meaningless.jpg";
         }
 
-        $members = $this->hydratedData["members"] ?? $this->hydratedData["users"] ?? [];
+        $members = array_map("intval", $this->hydratedData["members"] ?? $this->hydratedData["users"] ?? []);
         $payload["users"] = $members;
         if (!empty($members)) {
             $payload["members"] = $members;
@@ -432,7 +442,7 @@ class Chat extends RowModel
         }
         $payload["push_settings"] = [
             "sound" => 1,
-            "disabled_until" => null
+            "disabled_until" => 0,
         ];
 
         $defaultAcl = [
@@ -449,5 +459,48 @@ class Chat extends RowModel
         $this->hydratedData['acl'] = array_merge($defaultAcl, $conversation['chat_settings']['acl'] ?? []);
 
         return $payload;
+    }
+
+    public function toChatSettingsStruct(?User $user): array
+    {
+        $struct = $this->toVkApiStruct($user);
+
+        $photo = $this->getPhoto();
+        $photoObj = null;
+        if ($photo != null) {
+            $photoObj = [
+                "photo_50"  => $photo->getURLBySizeId("miniscule"),
+                "photo_100" => $photo->getURLBySizeId("tiny"),
+                "photo_200" => $photo->getURLBySizeId("normal"),
+            ];
+        }
+
+        $members = array_map("intval", $this->hydratedData["members"] ?? $this->hydratedData["users"] ?? []);
+        $state = "in";
+        if (!empty($this->hydratedData["left"])) {
+            $state = "left";
+        } elseif (!empty($this->hydratedData["kicked"])) {
+            $state = "kicked";
+        }
+
+        $chatSettings = [
+            "title"         => $struct["title"] ?? ("Chat " . $this->getChatId()),
+            "members_count" => count($members),
+            "state"         => $state,
+            "admin_id"      => (int) ($this->hydratedData["admin_id"] ?? 0),
+            "active_ids"    => array_slice($members, 0, 10),
+            "members"       => $members,
+            "users"         => $members,
+            "photo_50"      => $struct["photo_50"] ?? "",
+            "photo_100"     => $struct["photo_100"] ?? "",
+            "photo_200"     => $struct["photo_200"] ?? "",
+            "avatar_max"    => $struct["avatar_max"] ?? "",
+        ];
+
+        if ($photoObj !== null) {
+            $chatSettings["photo"] = $photoObj;
+        }
+
+        return $chatSettings;
     }
 }
