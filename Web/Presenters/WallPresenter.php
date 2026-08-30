@@ -227,6 +227,15 @@ final class WallPresenter extends OpenVKPresenter
         $ids   = array_map(function ($rel) {
             return $rel->target * ($rel->model === "openvk\Web\Models\Entities\User" ? 1 : -1);
         }, iterator_to_array($subs));
+
+        $ignored_sources_ids = $this->user->identity->getIgnoredSources(
+            0,
+            OPENVK_ROOT_CONF['openvk']['preferences']['newsfeed']['ignoredSourcesLimit'] ?? 50,
+            true
+        );
+
+        $ids = array_diff($ids, $ignored_sources_ids);
+
         $ids[] = $this->user->id;
 
         $perPage = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);

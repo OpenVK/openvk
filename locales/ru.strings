@@ -11,7 +11,7 @@
 
 /* Login */
 
-"log_in" = "Вход";
+"log_in" = "Войти";
 "password" = "Пароль";
 "registration" = "Регистрация";
 "forgot_password" = "Забыли пароль?";
