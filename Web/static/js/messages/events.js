@@ -209,17 +209,16 @@ export class EventHandler {
             try {
                 const found = _crs.findMessageById(_msg.id);
 
-                console.log(_crs, found)
                 if (found == null) {
                     _crs.pushMessage(_msg);
                 } else {
                     found.hydrateFromEvent(_msg);
+                }
 
-                    if (this.im.state.is_active) {
-                        this.im.messenger.update();
-                        if (this.im.messenger.view.isAtEnd()) {
-                            this.im.messenger.view._scrollToEnd();
-                        }
+                if (this.im.state.is_active) {
+                    this.im.messenger.update();
+                    if (this.im.messenger.view.isAtEnd()) {
+                        this.im.messenger.view._scrollToEnd();
                     }
                 }
 

@@ -36,8 +36,19 @@ export class MessageChunk {
     /** The [first, last] message-id interval covered by this chunk (map key / search). */
     get id_range() {
         const first = this.first_message?.id;
-        const last = this.latest_message?.id;
-        if (first == null || last == null) return null;
+        let last = this.latest_message?.id;
+        if (first == null || last == null) {
+            if (last == null && this.latest_message.data.is_sending) {
+                for (let i = this.messages.length-1;i > -1; i--) {
+                    if (this.messages[i] && this.messages[i].id) {
+                        last = this.messages[i].id + 1;
+                        break;
+                    }
+                }
+            } else {
+                return null;
+            }
+        }
         return { first, last };
     }
 
@@ -339,6 +350,7 @@ export class ScrollPosition {
         let anchorIndex = 0;
         if (this.direction != "end" && this.relyMessageId != null) {
             for (const [range, idx] of map.entries()) {
+                console.log(range, idx);
                 const sep = range.split(":");
                 const first = parseInt(sep[0], 10);
                 const last = parseInt(sep[1], 10);
@@ -354,16 +366,24 @@ export class ScrollPosition {
         visible.add(anchorIndex);
         this.newerIndexes.forEach((i) => visible.add(i));
 
+        //console.log(this.relyMessageId, anchorIndex)
+        //console.log("IM | visible: ", visible, this.olderIndexes, this.newerIndexes, anchorIndex);
+
         const ordered = [];
         visible.forEach((i) => {
             const chunk = chunks[i];
-            console.log(this.peer._chunks.chunks)
-            if (chunk && chunk.id_range) ordered.push(chunk);
+            if (chunk && chunk.id_range) {
+                ordered.push(chunk);
+            }
         });
+
+        console.log("IM | this peer visible chunks: ", ordered)
 
         ordered.sort(
             (a, b) => (a.first_message?.id ?? -Infinity) - (b.first_message?.id ?? -Infinity)
         );
+
+        console.log("IM | ordered: ", ordered)
 
         return ordered;
     }
@@ -373,12 +393,14 @@ export class ScrollPosition {
 
         const chr = this.returnChronologicalDivision();
 
+        console.log(chr)
         const dayChunks = [];
         const dateMap = new Map();
 
         for (let i = 0; i < chr.length; i++) {
-        
+
             chr[i].getMessages().forEach((msg) => {
+                console.log(msg.getSentTime())
                 if (!msg.getSentTime()) return;
                 if (msg.isDeleted(0)) return;
 

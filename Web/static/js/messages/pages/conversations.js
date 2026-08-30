@@ -11,8 +11,17 @@ const { html, render } = await es6import_Im(import.meta.url, "../components/rend
 export class ConversationsPage extends IMPage {
     static getPageId() { return "conversations"; }
     isVisibleWhenHidden() { return true; }
+    getTabName() { 
+        if (this.isForward()) {
+            return tr("messenger_tab_conversations_forward") 
+        }
+
+        return tr("messenger_tab_conversations") 
+    }
+    shouldCloseOnExit() { return this.container == null || this.isForward(); }
     updateHeader(header) { header.changeByConvNumber(Number(window.im.conversations.total_convs)); }
     _update() { this.wRender(); }
+    isForward() { return this.options.forward != null }
 
     async loadNext(e) {
         toggleUnclickability(e.target, true);
@@ -58,6 +67,8 @@ export class ConversationsPage extends IMPage {
             onLoadMore=${(e) => this.loadNext(e)}
             onCreateChat=${() => this._chatCreationModal()}
             onSearch=${(e) => this._onMessagesSearch(e)}
+            isForward=${this.isForward()}
+            page=${this}
         />
         `, container);
     }
@@ -261,6 +272,10 @@ export class Conversation {
                     s = tr("messenger_typing_other", names.length)
                     break
             }
+
+            if (names.length > 0) { 
+                s = s + "...";
+            }
         } else {
             const v = Object.values(this.current_activity);
 
@@ -269,6 +284,7 @@ export class Conversation {
                 if (v[0].variant == "writing") {
                     s = tr("messenger_typing_between_two")
                 }
+                s = s + "...";
             }
         }
 
@@ -276,6 +292,8 @@ export class Conversation {
     }
     async setTyping(user_ids = [], variant = "writing") {
         const REMOVE_TYPING_TIMEOUT = 5000;
+
+        console.log("IM | Conversations | ", this, " is writing")
 
         for (const item of user_ids) {
             const val = {

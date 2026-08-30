@@ -452,7 +452,9 @@ class IMState {
         let counter = 0;
         if (this.link && this.link.conversations && this.link.conversations.all_convs) {
             this.link.conversations.all_convs.forEach(item => {
-                counter += 1;
+                if (!item.isRead()) {
+                    counter += 1;
+                }
             });
         }
         return counter;
@@ -689,7 +691,7 @@ class SettingsPage extends IMPage {
                     <label style="display:none;"><input id="im.modern_mode" type="checkbox">${tr("im_option_compact_mode")} (beta)</label>
                     <label style="display:block;"><input id="im.debug" type="checkbox">${tr("im_option_debug")}</label>
                     <label style="display:block;"><input id="viewers.photo.list" type="checkbox">${tr("im_option_photo_viewer")} (Beta)</label>
-                    ${show_mail ? `<p><a onclick="window.im.messenger.selectConversationByPeerId(1381)">${tr("report_bug")}</a></p>` : ""}
+                    ${show_mail ? `<p><a onclick="window.im.messenger.selectConversationByPeerId(window.openvk.dev_id)">${tr("report_bug")}</a></p>` : ""}
                 </div>
             </div>
         `);

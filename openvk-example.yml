@@ -108,6 +108,8 @@ openvk:
         support:
             supportName: "Agent"
             adminAccount: 1 # Change this ok
+            supportAccount: 1
+            devAccount: 1381
             fastAnswers:
                 - "This is a list of quick answers to common questions for support. Post your responses here and agents can send it quickly with just 3 clicks"
                 - "There can be as many answers as you want, but it is best to have a maximum of 10.\n\nYou can also remove all answers from the list to disable this feature"
@@ -229,4 +231,3 @@ openvk:
             enable: false
             server_url: "http://127.0.0.1:8080" # Internal URL, can be localhost.
             lp_server_addr: "openvk.org" # Fill this if its on a different subdomain or left empty
-

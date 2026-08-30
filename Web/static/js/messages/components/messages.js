@@ -7,6 +7,7 @@ export class Draft {
         this.attachments_html = [];
         this.scroll = null;
         this.editMsg = null;
+        this.forwarded_msg = null;
     }
 
     static fromPage(page) {
@@ -15,6 +16,7 @@ export class Draft {
         d.attachments_html = page.getCurrentAttachments();
         d.scroll = page.getScroll();
         d.editMsg = window.im.messenger.editMsg;
+        d.forwarded_msg = window.im.messenger.forwarded_msg;
 
         return d;
     }
@@ -36,6 +38,9 @@ export class Draft {
             window.im.messenger.editMsg = this.editMsg;
         } else {
             window.im.messenger.editMsg = null;
+        }
+        if (this.forwarded_msg) {
+            window.im.messenger.setForwarded(this.forwarded_msg);
         }
 
         this.loadScroll(page);
@@ -221,7 +226,7 @@ export class ChatGeneralForm {
 
         return ava ?? '/assets/packages/static/openvk/img/camera_100.png';
     }
-
+    hasAvatar() { return this.data.photo_200 != null }
     getName(count_self = false, short = false) {
         if (count_self && this.isSavedMessages()) {
             return tr("saved_messages");
@@ -357,7 +362,7 @@ export class ChatGeneralForm {
 
     // переход к действиям
 
-    async sendMessage(msg, reply_to = null, attachments = null, wait_until_send = null, push_callback = null) {
+    async sendMessage(msg, reply_to = null, attachments = null, wait_until_send = null, push_callback = null, forward_msgs = null) {
         this._chunks.pushNewMessage(msg);
         if (push_callback) {
             push_callback();
@@ -380,6 +385,20 @@ export class ChatGeneralForm {
             datas['attachment'] = attachments.join(',');
         }
 
+        if (forward_msgs != null && forward_msgs.length && forward_msgs.length > 0) {
+            const fwd = [];
+            let peer_id = null;
+            forward_msgs.forEach(item => {
+                fwd.push(item.id);
+                peer_id = item.peer_id;
+            });
+
+            datas['forward'] = JSON.stringify({
+                "peer_id": peer_id,
+                "conversation_message_ids": fwd
+            });
+        }
+
         if (wait_until_send != null) {
             await new Promise(function (r) { setTimeout(r, wait_until_send); });
         }
@@ -392,6 +411,7 @@ export class ChatGeneralForm {
         try {
             const resp = await window.OVKAPI.call('messages.send', datas);
             msg.data.id = resp;
+            msg.data.is_sending = false;
             console.info('IM | Sent message to ' + this.id);
         } catch (e) {
             let d = String(e);
@@ -401,6 +421,7 @@ export class ChatGeneralForm {
 
             msg.data.error_text = d;
             msg.data.resend_params = datas;
+            msg.data.is_sending = false;
             console.error('IM | Did not sent message to ' + this.id, ': ', e);
             window.im.messenger.update();
         }
@@ -719,6 +740,8 @@ export class ChatMessage {
                 return peer.can("write");
             case "delete":
                 return this.data.from_id == window.im.state.getId();
+            case "forward":
+                return true;
             case "edit":
                 if (this.data.can_edit != null) {
                     return this.data.can_edit === 1;

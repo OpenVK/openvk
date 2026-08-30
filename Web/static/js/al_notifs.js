@@ -75,11 +75,9 @@ async function setupNotificationListener() {
 
 async function triggerMessageNotification(conv, msg, timestamp) {
     try {
-        const fields = typeof ChatGeneralForm !== 'undefined' ? ChatGeneralForm.base_fields : 'photo_50';
-
         const peer = conv.peer;
         const sender = msg.sender;
-        const title = peer.full_name;
+        const title = peer.getName();
         const ava = peer.getAvatar();
 
         if (peer.id === window.openvk.current_id || sender.id === window.openvk.current_id) {
@@ -89,7 +87,7 @@ async function triggerMessageNotification(conv, msg, timestamp) {
 
         const notif = {
             title: escapeHtml(title),
-            body: "<b>" + escapeHtml(sender.full_name) + ":</b> " + (ovk_proc_strtr(msg.getText(false, true), 95)),
+            body: "<b>" + escapeHtml(sender.getName()) + ":</b> " + (ovk_proc_strtr(msg.getText(false, true), 95)),
             ava: ava,
             priority: 1,
         };
@@ -105,7 +103,6 @@ async function triggerMessageNotification(conv, msg, timestamp) {
                 },
                 (notif.priority || 1) * 6000
             );
-            window.im_variants.getCurrentUser().updateCounter(window.im.getCounter() + 1);
         } else {
             console.log("Msg notifs | Got a new message but NewNotification not found:", notif);
         }
