@@ -406,7 +406,6 @@ body.no-footer .page_footer {
     display: flex;
     flex-direction: column;
     height: 70%;
-    padding-bottom: 35px;
     min-height: 100vh;
     margin-top: auto;
 }
@@ -430,7 +429,7 @@ body.no-footer .page_footer {
 .messenger-app--messages .messenger-app--messages-array {
     margin-top: auto;
     padding-top: 500px;
-    padding-bottom: 60px;
+    /*padding-bottom: 60px;*/
     z-index: 0;
 }
 
@@ -922,17 +921,6 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     color: var(--nobold);
 }
 
-.messenger-app .messenger-app-status.shown .write-bar::before {
-    content: '';
-    background: black;
-    display: inline-block;
-    width: 15px;
-    height: 15px;
-    position: absolute;
-    left: 87px;
-    margin-top: -1px;
-}
-
 .messages--peers-tabs {
     display: flex;
     flex-wrap: wrap;
@@ -1073,6 +1061,10 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     height: 100%;
     object-fit: cover;
     image-rendering: -webkit-optimize-contrast;
+}
+
+.peer-window .peer-side .peer-info .peer-avatar.no-avatar .avatar-opener {
+    display: none;
 }
 
 .peer-window .peer-side .peer-info .peer-name {

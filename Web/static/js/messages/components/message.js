@@ -22,7 +22,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
         msg.isError() ? 'msg-error' : '',
         msg.isEdited() ? 'msg-edited' : '',
         msg.isReply() ? 'msg-reply' : '',
-        isSearchTpl ? 'msg-searched': 'msg-hoverable',
+        (isSearchTpl) ? 'msg-searched': (msg.isError() ? "msg-error-hoverable" : 'msg-hoverable'),
         msg.isRead() ? 'msg-read': 'unread',
     ].filter(Boolean).join(' ');
 
@@ -46,9 +46,6 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
         <div class="messenger-app--messages---message--wrap">
             <div class="inlines click-territory">
                 <div class="checkmark"></div>
-                ${msg.isError() && html`
-                    <div class="error-checkmark" onClick=${(e) => { msg.tryToResend() }} title="${msg.data.error_text}"></div>
-                `}
             </div>
             <div class="actions-2">
                 ${msg.can("edit") && html`

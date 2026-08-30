@@ -1,7 +1,7 @@
 import { html, render } from './render.js';
 import { ChatGeneralForm } from './messages.js';
 
-export const PeerAvatar = ({ peer, className = "", loading = "lazy", saved_messages_ava = true }) => {
+export const PeerAvatar = ({ peer, className = "", loading = "lazy", saved_messages_ava = true, orig_ava = true }) => {
     if (!peer) {
         return html`<img class="${className}" src="/assets/packages/static/openvk/img/im/chat_meaningless.jpg" loading="${loading}" />`;
     }
@@ -55,7 +55,7 @@ export const PeerAvatar = ({ peer, className = "", loading = "lazy", saved_messa
         `;
     }
 
-    const src = peer.getAvatar("mid", true);
+    const src = peer.getAvatar("mid", orig_ava == false);
     return html`<img class="${className}" src=${src} loading="${loading}" />`;
 };
 
@@ -84,13 +84,17 @@ export const PeerTabsView = ({ had_more_one_tab, tabs, currentChat, page }) => {
     `;
 };
 
-export const ActionsBar = ({ selectedMessages, count, onDelete, onUnselect, onReply }) => {
+export const ActionsBar = ({ selectedMessages, count, onDelete, onUnselect, onReply, onForwardClick }) => {
     if (count === 0) return null;
     let canDeleteThemAll = true;
+    let canForward = count < 500;
 
     selectedMessages.forEach(msg => {
         if (msg.can("delete") == false) {
             canDeleteThemAll = false;
+        }
+        if (msg.can("forward") == false) {
+            canForward = false;
         }
     })
 
@@ -100,10 +104,14 @@ export const ActionsBar = ({ selectedMessages, count, onDelete, onUnselect, onRe
                 <div class="message-tab-counter message-tab"><a onClick=${onUnselect}>${tr("selected_messages", count)}</a></div>
             </div>
             <div>
-                ${canDeleteThemAll == true && html`
-                <div class="message-tab"><a onClick=${onDelete}>${tr("delete_message")}</a></div>`}
+                ${canForward == true && html`
+                <div class="message-tab"><a onClick=${onForwardClick}>${tr("forward_messages")}</a></div>
+                `}
                 ${count === 1 && html`
                     <div class="message-tab"><a onClick=${onReply}>${tr("reply_to_message")}</a></div>
+                `}
+                ${canDeleteThemAll == true && html`
+                <div class="message-tab"><a onClick=${onDelete}>${tr("delete_message")}</a></div>
                 `}
             </div>
         </div>
@@ -147,6 +155,7 @@ export const WriteBar = ({ convo }) => {
     let cls = ["messenger-app-status"];
     const a = convo.getActivityMsg();
 
+    console.log(convo)
     if (a[1].length > 0) {
         cls.push("shown");
     }
@@ -160,16 +169,18 @@ export const WriteBar = ({ convo }) => {
     `;
 }
 
-export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress, currentDraft, onInput, togglePeerInfo, clickOnReply, convo }) => {
+export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress, currentDraft, onInput, togglePeerInfo, clickOnReply, convo, forwarded_msg, onRemoveForward }) => {
     const is_editing = editMsg != null;
     const current_user = window.im.state.getOperator();
     const corresponder = window.im.state.getCurrentConvo();
+    const isForwarded = forwarded_msg && forwarded_msg.length && forwarded_msg.length > 0;
     const cls = [
         "messenger-app-end",
-        (replyTo || editMsg) ? 'm-selected' : '',
+        (replyTo || editMsg || isForwarded) ? 'm-selected' : '',
         convo.hasScrollPosition() && (!editMsg && !replyTo) ? "m-mountain m-mountain-fatal" : "",
     ]
 
+    console.log(forwarded_msg, onRemoveForward, isForwarded)
     return html`
     <div class="${cls.join(" ")}">
         ${ replyTo && html`
@@ -184,6 +195,12 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
                 <span class="input-close" onClick=${(e) => { window.im.messenger.cancelEdit() }}><div class="cross"></div></span>
             </div>
         `}
+        ${ isForwarded ? html`
+            <div class="input-forward input-m">
+                <span aria-label="link" class="input-type">${tr("forwarded_messages_noun", forwarded_msg.length)}</span>
+                <span class="input-close" onClick=${onRemoveForward}><div class="cross"></div></span>
+            </div>`
+        : ""}
         <div class="messenger-mountain" onClick=${(e) => {window.im.messenger.view.scrollToEndOfChat(e, convo)}}>
             ${tr("viewing_old_messages")}
         </div>
@@ -218,7 +235,7 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
   `;
 };
 
-export const ConversationItem = ({ conv }) => {
+export const ConversationItem = ({ conv, isForward = false, page = null }) => {
     const last_msg = conv.last_message;
     const peer = conv.peer;
     const has_activity = conv.hasActivity();
@@ -234,7 +251,7 @@ export const ConversationItem = ({ conv }) => {
     // с одной стороны по названию или аватарке и так понятно, что это беседа, но название и аватарка могут быть изменены
     const d = last_msg != null && has_activity == false;
     return html`
-        <div class="${cls1.join(' ')}" onClick=${() => window.im?.messenger.selectConversation(conv, true)}>
+        <div class="${cls1.join(' ')}" onClick=${() => window.im?.messenger.onConversationsClick(conv, isForward, page)}>
         <div class="crp-entry--image">
             <${PeerAvatar} peer=${peer} />
         </div>
@@ -261,19 +278,23 @@ export const ConversationItem = ({ conv }) => {
     `;
 };
 
-export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCreateChat, onSearch }) => {
+export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCreateChat, onSearch, isForward, page }) => {
     const is_group = window.im.state.is_group;
 
     return html`
         <div id="conversations-top-buttons">
+            ${!isForward ? html`
             <div id="conversations-search-bar">
                 <input class="search_input" type="text" placeholder="${tr('search_messages')}" onChange=${onSearch} />
             </div>
             ${ !is_group ? html`<input type="button" class="button" value="${tr('create_chat')}" onClick=${onCreateChat} />` : "" }
-
+            ` : html`
+            <b>${tr("forward_messages_msg")}</b>
+            <a>${tr("cancel")}</a>
+            `}
         </div>
         <div class="crp-list">
-            ${conversations.length > 0 ? conversations.map((conv) => html`<${ConversationItem} conv=${conv} />`) : html`<${ConversationsListError} is_group=${is_group} />`}
+            ${conversations.length > 0 ? conversations.map((conv) => html`<${ConversationItem} conv=${conv} isForward=${isForward} page=${page} />`) : html`<${ConversationsListError} is_group=${is_group} />`}
             ${hasMore && html`
             <div onClick=${onLoadMore} id="show_more" class="crp-load-more">
                 ${tr('show_next')}
@@ -338,7 +359,7 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
     <div class="back-side"><a onClick=${() => { window.im.openTabByName("messenger") }}>${tr('back')}</a></div>
     <div class="peer-side">
         <div class="peer-info">
-            <div class="peer-avatar sliding-thing-wrapper">
+            <div class="peer-avatar sliding-thing-wrapper ${!hasAvatar ? "no-avatar" : ""}">
                 <${PeerAvatar} saved_messages_ava=${false} peer=${peer} />
                 <a onClick=${(event) => { OpenChatAvatar(event, peer) }} class="avatar-opener sliding-thing">
                     <div class="lupa"></div>

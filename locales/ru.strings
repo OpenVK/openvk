@@ -1450,6 +1450,7 @@
 "message_user_typing" = "$1 набирает сообщение...";
 
 "messenger_tab_conversations" = "Диалоги";
+"messenger_tab_conversations_forward" = "Переслать";
 "messenger_tab_messenger" = "Просмотр диалогов";
 "messenger_tab_friends" = "Друзья";
 "messenger_tab_contact" = "Контакт";
@@ -1464,6 +1465,12 @@
 "selected_messages" = "Выбрано $1 сообщений";
 "delete_message" = "Удалить";
 "reply_to_message" = "Ответить";
+"forward_messages" = "Переслать";
+"forwarded_messages_noun" = "Пересланные сообщения ($1)";
+"forward_messages_msg" = "Переслать сообщения в...";
+"error_sending_msg" = "Случилась ошибка при отправке";
+"msg_resend" = "Попробовать снова";
+"msg_error_send_to_dev" = "Написать разработчику";
 
 "message_deletion_one" = "Удаление сообщения";
 "message_deletion_few" = "Удаление $1 сообщений";
