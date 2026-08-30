@@ -16,7 +16,7 @@
 
 {block header}
     {$name}
-    <a style="float: right;" onClick="reportApp({$id})" n:if="$canReport ?? false">{_report}</a>
+    <span style="float: right; font-weight: bold; padding: 0;"><a onClick="reportApp({$id})" n:if="$canReport ?? false">[{_report}]</a> <a onClick="showAppSettings({rawurlencode($csrfToken)}, {!$canReport})">[{_menu_settings}]</a> <a class="app_fullscreen">[🗗]</a></span>
 {/block}
 
 {block content}
@@ -43,6 +43,53 @@
         window.appTitle  = {$name};
         window.appPerms  = {$perms};
         window.appOrigin = {$origin};
+        window.fsApps    = JSON.parse(localStorage.getItem("fullscreen_apps") || "[]");
+    </script>
+    
+    <script n:syntax="double">
+        function goFullscreen() {
+            u("html").addClass("app_fullscreen")
+            u("#appFrame").parent().addClass("app_fullscreen")
+            u("#appFrame").parent().prepend(u(".page_yellowheader"))
+        }
+
+        if (window.fsApps.includes(window.appId)) { goFullscreen() }
+
+        u("a.app_fullscreen").on("click", (e) => {
+            if (u("html").hasClass("app_fullscreen")) {
+                u("html").removeClass("app_fullscreen")
+                u("#appFrame").parent().removeClass("app_fullscreen")
+                u("#appFrame").parent().children(".page_yellowheader").remove() 
+            } else {
+                goFullscreen()
+            }
+            if (e.ctrlKey) {
+                u("#appFrame").nodes[0].src = u("#appFrame").nodes[0].src
+            }
+        })
+
+        function showAppSettings(hash, isDev) {
+            MessageBox(
+                tr("menu_settings"),
+                `
+                    <center>
+                        <label><input id="startFullscreen" name="startFullscreen" type="checkbox" ${window.fsApps.includes(window.appId) ? "checked" : ""}>${tr("app_start_fullscreen")}</label>
+                        <hr>
+                        ${isDev ? `<a href="/editapp?app=${window.appId}">${tr("app_edit")}</a><br> ` : ""}
+                        <a href="/apps/uninstall?hash=${hash}&app=${window.appId}">${tr("app_uninstall")}</a>
+                    </center>
+                `,
+                [tr("cancel"), tr("save")],
+                [() => {}, () => {
+                    if (u("#startFullscreen").is(":checked")) {
+                        if (!window.fsApps.includes(window.appId)) { window.fsApps.push(window.appId) }
+                    } else {
+                        if (window.fsApps.includes(window.appId)) { window.fsApps.splice(window.fsApps.indexOf(window.appId), 1) }
+                    }
+                    localStorage.setItem("fullscreen_apps", JSON.stringify(window.fsApps));
+                }]
+            )
+        }
     </script>
 
     {script "js/al_games.js"}
