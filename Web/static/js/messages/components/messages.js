@@ -122,6 +122,9 @@ export class ChatGeneralForm {
     }
 
     get supposed_type() {
+        if (this.data.type === 'chat') return 'chat';
+        if (this.data.type === 'user') return 'user';
+        if (this.data.type === 'club' || this.data.type === 'group') return 'club';
         if (this.data.first_name) return 'user';
         if (this.data.name) return 'club';
         return 'chat';
@@ -208,7 +211,7 @@ export class ChatGeneralForm {
         }
 
         let ava = null;
-        switch(size) {
+        switch (size) {
             case "mid":
                 ava = this.data.photo_100;
                 break;
@@ -434,7 +437,7 @@ export class ChatGeneralForm {
             return;
         }
 
-        alert("ты хочешь поменять title на: "+ title)
+        alert("ты хочешь поменять title на: " + title)
     }
 
     async updateAvatar(blob) {
@@ -684,8 +687,9 @@ export class ChatMessage {
     }
 
     get reply() { return this.data.reply_message; }
-    get global_id() { return this.data.global_id; }
+    get global_id() { return this.data.global_id || this.data.id; }
     get id() { return this.data.id; }
+    get conversation_message_id() { return this.data.conversation_message_id || this.data.id; }
     isAction() { return this.data.action != null; }
     isReply() { return this.data.reply_message != null; }
     isError() { return this.data.error_text != null; }

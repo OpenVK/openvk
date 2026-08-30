@@ -266,15 +266,10 @@ final class Messages extends VKAPIRequestHandler
 
                 $chatEntity = $loadedChats[$localChatId] ?? $chatsRepo->getByChatId($localChatId);
                 if (!$chatEntity) {
-                    $extendedChats[] = [
-                        "type"     => "chat",
-                        "local_id" => $localChatId,
-                        "id"       => $globalChatId
-                    ];
-                    continue;
+                    $chatEntity = $chatsRepo->create($localChatId, "Chat " . $localChatId);
                 }
 
-                if (!$chatEntity->hasData()) {
+                if (!$chatEntity->hasData() && is_array($chat)) {
                     $chatEntity->setData($chat);
                 }
 
@@ -364,6 +359,50 @@ final class Messages extends VKAPIRequestHandler
     // ----------------------------------
     //             Messages
     // ----------------------------------
+
+    public function get(
+        int $out = 0,
+        int $offset = 0,
+        int $count = 20,
+        int $time_offset = 0,
+        int $filters = 0,
+        int $preview_length = 0,
+        int $last_message_id = 0,
+        int $extended = 0,
+        string $fields = "photo_200,online",
+        int $group_id = 0
+    ): array {
+        $this->requireUser();
+
+        $params = [
+            "out"             => (string) $out,
+            "offset"          => (string) $offset,
+            "count"           => (string) min(abs($count), 200),
+            "time_offset"     => (string) $time_offset,
+            "filters"         => (string) $filters,
+            "preview_length"  => (string) $preview_length,
+            "last_message_id" => (string) $last_message_id,
+            "extended"        => (string) $extended,
+            "fields"          => $fields,
+        ];
+
+        $payload = $this->invoke("messages.get", $params, $group_id);
+
+        if (!empty($payload['items'])) {
+            foreach ($payload['items'] as &$message) {
+                if (!empty($message['attachments'])) {
+                    $this->replaceAttachments($message['attachments'], ["gift"]);
+                }
+            }
+            unset($message);
+        }
+
+        if ($extended == 1) {
+            $this->hydrateExtendedData($payload, $fields);
+        }
+
+        return $payload;
+    }
 
     public function getById(string $message_ids, int $preview_length = 0, int $extended = 0, string $fields = "photo_200,online"): object
     {
@@ -867,6 +906,131 @@ final class Messages extends VKAPIRequestHandler
         return (int) $chatId;
     }
 
+    public function getChat(
+        int $chat_id = 0,
+        string $chat_ids = "",
+        string $fields = "",
+        string $name_case = "nom",
+        int $group_id = 0
+    ) {
+        $this->requireUser();
+
+        if ($chat_id <= 0 && empty($chat_ids)) {
+            $chat_id = (int) ($_GET['chat_id'] ?? $_POST['chat_id'] ?? 0);
+            $chat_ids = (string) ($_GET['chat_ids'] ?? $_POST['chat_ids'] ?? '');
+        }
+
+        $rawIds = [];
+        if ($chat_id > 0) {
+            $rawIds[] = $chat_id > 2000000000 ? $chat_id - 2000000000 : $chat_id;
+        }
+
+        if (!empty($chat_ids)) {
+            $split = preg_split("%, ?%", $chat_ids);
+            foreach ($split as $id) {
+                $val = (int) $id;
+                if ($val > 0) {
+                    $rawIds[] = $val > 2000000000 ? $val - 2000000000 : $val;
+                }
+            }
+        }
+
+        $rawIds = array_values(array_unique(array_filter($rawIds)));
+        if (empty($rawIds)) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: chat_id or chat_ids is required");
+        }
+
+        $peerIds = array_map(fn($id) => (string) (2000000000 + $id), $rawIds);
+
+        $imResponse = $this->invoke("messages.getConversationsById", [
+            "peer_ids" => implode(',', $peerIds),
+            "extended" => "1",
+        ], $group_id);
+
+        $chatsRepo = new ChatRepo();
+        $resultChats = [];
+
+        $itemsMap = [];
+        if (!empty($imResponse['items'])) {
+            foreach ($imResponse['items'] as $item) {
+                $peer = $item['conversation']['peer'] ?? null;
+                if ($peer && $peer['type'] === 'chat') {
+                    $localId = (int) ($peer['id'] - 2000000000);
+                    $itemsMap[$localId] = $item['conversation'];
+                }
+            }
+        }
+
+        $userProfilesMap = [];
+        if (!empty($fields) && !empty($imResponse['profiles'])) {
+            $uIDs = [];
+            foreach ($imResponse['profiles'] as $p) {
+                $idVal = is_array($p) ? ($p['id'] ?? 0) : (int) $p;
+                if ($idVal > 0) {
+                    $uIDs[] = $idVal;
+                }
+            }
+            if (!empty($uIDs)) {
+                $apiUsers = (new APIUsers())->get(implode(',', array_unique($uIDs)), $fields);
+                foreach ($apiUsers as $uStruct) {
+                    $uID = is_array($uStruct) ? ($uStruct['id'] ?? 0) : (is_object($uStruct) ? ($uStruct->id ?? 0) : 0);
+                    if ($uID > 0) {
+                        $userProfilesMap[$uID] = $uStruct;
+                    }
+                }
+            }
+        }
+
+        foreach ($rawIds as $localChatId) {
+            $chatEntity = $chatsRepo->getByChatId($localChatId);
+
+            if (!$chatEntity) {
+                $chatEntity = $chatsRepo->create($localChatId, "Chat " . $localChatId);
+            }
+
+            if (isset($itemsMap[$localChatId])) {
+                $chatEntity->setData($itemsMap[$localChatId]['chat_settings'] ?? []);
+            }
+
+            $chatStruct = $chatEntity->toVkApiStruct($this->getUser());
+            $chatStruct['id'] = $localChatId;
+
+            if (isset($itemsMap[$localChatId]['chat_settings'])) {
+                $settings = $itemsMap[$localChatId]['chat_settings'];
+                if (isset($settings['admin_id'])) {
+                    $chatStruct['admin_id'] = (int) $settings['admin_id'];
+                }
+                if (!empty($settings['state']) && $settings['state'] === 'kicked') {
+                    $chatStruct['kicked'] = 1;
+                }
+                if (!empty($settings['state']) && $settings['state'] === 'left') {
+                    $chatStruct['left'] = 1;
+                }
+            }
+
+            if (!empty($fields) && !empty($chatStruct['users'])) {
+                $hydratedUsers = [];
+                foreach ($chatStruct['users'] as $uId) {
+                    $uIdInt = (int) $uId;
+                    if (isset($userProfilesMap[$uIdInt])) {
+                        $hydratedUsers[] = $userProfilesMap[$uIdInt];
+                    } else {
+                        $hydratedUsers[] = $uIdInt;
+                    }
+                }
+                $chatStruct['users'] = $hydratedUsers;
+            }
+
+            $resultChats[] = $chatStruct;
+        }
+
+        if ($chat_id > 0 && empty($chat_ids)) {
+            return (object) ($resultChats[0] ?? []);
+        }
+
+        return $resultChats;
+    }
+
     public function addChatUser(int $peer_id = 0, string $user_id = "", int $group_id = 0, int $chat_id = 0): int
     {
         $this->requireUser();
@@ -1010,7 +1174,7 @@ final class Messages extends VKAPIRequestHandler
 
                 if ($chatEntity) {
                     $chatEntity->setData($conversation["chat_settings"]);
-                    $conversation['chat_settings'] = $chatEntity->toVkApiStruct($this->getUser());
+                    $conversation['chat_settings'] = $chatEntity->toChatSettingsStruct($this->getUser());
                 }
             }
 
@@ -1027,15 +1191,162 @@ final class Messages extends VKAPIRequestHandler
         return $payload;
     }
 
-    public function getDialogs(int $offset = 0, int $count = 20, string $filter = "all", int $extended = 1, string $fields = "")
+    public function getDialogs(
+        int $offset = 0,
+        int $count = 20,
+        int $preview_length = 0,
+        int $unread = 0,
+        int $extended = 0,
+        string $fields = "photo_200,online",
+        int $group_id = 0
+    ): array {
+        $this->requireUser();
+
+        $filter = $unread ? "unread" : "all";
+        $params = [
+            "offset"   => (string) $offset,
+            "count"    => (string) min(abs($count), 200),
+            "filter"   => $filter,
+            "extended" => (string) $extended,
+        ];
+
+        $payload = $this->invoke("messages.getConversations", $params, $group_id);
+
+        if (empty($payload['items'])) {
+            return [
+                "count" => 0,
+                "items" => [],
+            ];
+        }
+
+        $chatIds = [];
+        foreach ($payload['items'] as $item) {
+            $peer = $item['conversation']['peer'] ?? null;
+            if ($peer && $peer['type'] === 'chat') {
+                $chatIds[] = (int) ($peer['id'] - 2000000000);
+            }
+        }
+
+        $chatIds = array_unique(array_filter($chatIds));
+        $loadedChats = [];
+        if (!empty($chatIds)) {
+            $chatsRepo = new ChatRepo();
+            foreach ($chatIds as $cId) {
+                $chatObj = $chatsRepo->getByChatId($cId);
+                $loadedChats[$cId] = $chatObj ?: null;
+            }
+        }
+
+        $flatMessages = [];
+        $currentUserId = $this->getUser()->getId();
+
+        foreach ($payload['items'] as $item) {
+            $conv = $item['conversation'] ?? [];
+            $peer = $conv['peer'] ?? [];
+            $peerId = (int) ($peer['id'] ?? 0);
+            $peerType = $peer['type'] ?? 'user';
+            $lastMsg = $item['last_message'] ?? [];
+
+            if (empty($lastMsg)) {
+                continue;
+            }
+
+            $msgObj = [
+                "id"         => (int) ($lastMsg['id'] ?? 0),
+                "date"       => (int) ($lastMsg['date'] ?? 0),
+                "out"        => (int) ($lastMsg['out'] ?? 0),
+                "read_state" => (int) ($lastMsg['read_state'] ?? 0),
+                "title"      => (string) ($lastMsg['title'] ?? ""),
+                "body"       => (string) ($lastMsg['text'] ?? ""),
+                "emoji"      => 1,
+                "deleted"    => 0,
+            ];
+
+            if ($preview_length > 0 && mb_strlen($msgObj['body']) > $preview_length) {
+                $msgObj['body'] = mb_substr($msgObj['body'], 0, $preview_length) . '...';
+            }
+
+            if (!empty($lastMsg['attachments'])) {
+                $msgObj['attachments'] = $lastMsg['attachments'];
+                $this->replaceAttachments($msgObj['attachments'], ["gift"]);
+            }
+
+            if (!empty($lastMsg['fwd_messages'])) {
+                $msgObj['fwd_messages'] = $lastMsg['fwd_messages'];
+            }
+
+            if ($peerType === 'chat') {
+                $localChatId = $peerId > 2000000000 ? ($peerId - 2000000000) : $peerId;
+                $chatEntity = $loadedChats[$localChatId] ?? null;
+
+                $msgObj['user_id'] = (int) ($lastMsg['from_id'] ?? $currentUserId);
+                $msgObj['chat_id'] = $localChatId;
+
+                $chatSettings = $conv['chat_settings'] ?? [];
+                $members = $chatSettings['members'] ?? $chatSettings['users'] ?? [];
+
+                if ($chatEntity) {
+                    $chatStruct = $chatEntity->toChatSettingsStruct($this->getUser());
+                    $msgObj['title'] = $chatStruct['title'] ?? ("Chat " . $localChatId);
+                    $msgObj['admin_id'] = $chatStruct['admin_id'] ?? 0;
+                    $msgObj['users_count'] = $chatStruct['members_count'] ?? count($members);
+                    $msgObj['chat_active'] = $chatStruct['active_ids'] ?? array_slice($members, 0, 10);
+                    $msgObj['photo_50'] = $chatStruct['photo_50'] ?? "";
+                    $msgObj['photo_100'] = $chatStruct['photo_100'] ?? "";
+                    $msgObj['photo_200'] = $chatStruct['photo_200'] ?? "";
+                } else {
+                    $msgObj['title'] = $chatSettings['title'] ?? ("Chat " . $localChatId);
+                    $msgObj['admin_id'] = (int) ($chatSettings['admin_id'] ?? 0);
+                    $msgObj['users_count'] = count($members);
+                    $msgObj['chat_active'] = array_slice($members, 0, 10);
+                }
+            } else {
+                $msgObj['user_id'] = $peerId;
+            }
+
+            $flatMessages[] = $msgObj;
+        }
+
+        $result = [
+            "count" => (int) ($payload['count'] ?? count($flatMessages)),
+            "items" => $flatMessages,
+        ];
+
+        if (isset($payload['unread_count'])) {
+            $result["unread_dialogs"] = (int) $payload['unread_count'];
+        }
+
+        if ($extended == 1) {
+            $payload['items'] = $flatMessages;
+            $this->hydrateExtendedData($payload, $fields, $loadedChats);
+            if (!empty($payload['profiles'])) {
+                $result['profiles'] = $payload['profiles'];
+            }
+            if (!empty($payload['groups'])) {
+                $result['groups'] = $payload['groups'];
+            }
+        }
+
+        return $result;
+    }
+
+    // Legacy alias: messages.searchDialogs (deprecated since 5.80, replaced by messages.searchConversations)
+    public function searchDialogs(string $q = '', int $extended = 0, int $group_id = 0): array
+    {
+        return $this->searchConversations($q, $extended, $group_id);
+    }
+
+    // Legacy alias: messages.getChatUsers (deprecated since 5.80, replaced by messages.getConversationMembers)
+    public function getChatUsers(int $chat_id = 0, string $fields = "", string $name_case = "nom"): array
     {
         $this->requireUser();
 
-        if (VKAPI_DECL_VER_MAJOR >= 5 && VKAPI_DECL_VER_MINOR >= 80) {
-            $this->fail(23, "This method was deprecated in real VK since 5.80. Please either use message.getConversation or lower your reported API version.");
+        if ($chat_id <= 0) {
+            $this->fail(100, "One of the parameters is missing: chat_id");
         }
 
-        return $this->getConversations($offset, $count, $filter, $extended, $fields);
+        $peer_id = 2000000000 + $chat_id;
+        return $this->getConversationMembers($peer_id);
     }
 
     public function getConversationMembers(int $peer_id = 0, int $extended = 0, int $group_id = 0): array
@@ -1128,9 +1439,11 @@ final class Messages extends VKAPIRequestHandler
                     $chatId = (int) ($peer['id'] - 2000000000);
                     $chatEntity = $loadedChats[$chatId] ?? null;
 
-                    if (!$chatEntity->hasData()) {
-                        $chatEntity->setData($conversation['chat_settings']);
-                        $conversation['chat_settings'] = $chatEntity->toVkApiStruct($this->getUser());
+                    if ($chatEntity) {
+                        if (!$chatEntity->hasData()) {
+                            $chatEntity->setData($conversation['chat_settings']);
+                        }
+                        $conversation['chat_settings'] = $chatEntity->toChatSettingsStruct($this->getUser());
                     }
                 }
             }
@@ -1266,6 +1579,30 @@ final class Messages extends VKAPIRequestHandler
         $this->invoke("messages.markAsAnsweredConversation", $params, $group_id);
 
         return 1;
+    }
+
+    public function deleteConversation(int $peer_id = 0, int $user_id = 0, int $group_id = 0): int
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        $this->ensureBrokerActive();
+
+        $resolvedPeerId = $this->resolvePeer($user_id, $peer_id);
+        if (is_null($resolvedPeerId) || $resolvedPeerId === 0) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: peer_id or user_id");
+        }
+
+        $params = [
+            "peer_id" => (string) $resolvedPeerId,
+        ];
+
+        return (int) $this->invoke("messages.deleteConversation", $params, $group_id);
+    }
+
+    // Legacy alias: messages.deleteDialog (deprecated since 5.80, replaced by messages.deleteConversation)
+    public function deleteDialog(int $user_id = 0, int $peer_id = 0, int $offset = 0, int $count = 0, int $group_id = 0): int
+    {
+        return $this->deleteConversation($peer_id, $user_id, $group_id);
     }
 
     // ----------------------------------
@@ -1442,6 +1779,89 @@ final class Messages extends VKAPIRequestHandler
         ];
     }
 
+    public function editChat(int $chat_id = 0, string $title = ""): int
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        if ($chat_id <= 0) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: chat_id is required");
+        }
+
+        $title = trim($title);
+        if (empty($title)) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: title is required");
+        }
+
+        if ($chat_id > 2000000000) {
+            $chat_id = $chat_id - 2000000000;
+        }
+
+        $chatsRepo = new ChatRepo();
+        $chat = $chatsRepo->getByChatId($chat_id);
+
+        if (!$chat || !$chat->isMember($this->getUser())) {
+            $this->fail(14, "Chat not found");
+        }
+
+        $chat->setTitle($title);
+        $chat->save();
+
+        if ($this->broker->isEnabled()) {
+            $this->invoke("messages.editChat", [
+                "peer_id" => (string) (2000000000 + $chat_id),
+                "title"   => $title,
+            ]);
+        }
+
+        return 1;
+    }
+
+    public function deleteChatPhoto(int $chat_id = 0): object
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        if ($chat_id <= 0) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: chat_id is required");
+        }
+
+        if ($chat_id > 2000000000) {
+            $chat_id = $chat_id - 2000000000;
+        }
+
+        $chatsRepo = new ChatRepo();
+        $chat = $chatsRepo->getByChatId($chat_id);
+
+        if (!$chat || !$chat->isMember($this->getUser())) {
+            $this->fail(14, "Chat not found");
+        }
+
+        if (!$chat->canChangePhoto($this->getUser())) {
+            $this->fail(15, "Access denied.");
+        }
+
+        $chat->deleteCurrentPhoto();
+        $chat->save();
+
+        $messageId = 0;
+        if ($this->broker->isEnabled()) {
+            try {
+                $imRes = $this->invoke("messages.deleteChatPhoto", [
+                    "peer_id" => (string) (2000000000 + $chat_id),
+                ]);
+                $messageId = (int) ($imRes['message_id'] ?? 0);
+            } catch (\Throwable $e) {
+                // If IM call fails, photo was still deleted in DB
+            }
+        }
+
+        return (object) [
+            "message_id" => $messageId,
+            "chat"       => $chat->toVkApiStruct($this->getUser()),
+        ];
+    }
+
     public function allowMessagesFromGroup(int $group_id)
     {
         $this->requireUser();
@@ -1476,6 +1896,36 @@ final class Messages extends VKAPIRequestHandler
         $blacklist->ban($club);
 
         return 1;
+    }
+
+    public function isMessagesFromGroupAllowed(int $group_id = 0, int $user_id = 0): object
+    {
+        $this->requireUser();
+
+        if ($group_id <= 0) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: group_id is required");
+        }
+
+        if ($user_id <= 0) {
+            $user_id = $this->getUser()->getId();
+        }
+
+        $club = (new ClubRepo())->get($group_id);
+        if (!$club || !$club->canBeViewedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        $targetUser = (new USRRepo())->get($user_id);
+        if (!$targetUser || $targetUser->isDeleted()) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: user not found");
+        }
+
+        $blacklist = new Blacklist($targetUser);
+        $isAllowed = !$blacklist->isBanned($club);
+
+        return (object) [
+            "is_allowed" => $isAllowed ? 1 : 0,
+        ];
     }
 
     // ----------------------------------
@@ -1591,7 +2041,7 @@ final class Messages extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
-        $global_id = $res["items"][0]["global_id"];
+        $global_id = (int) ($res["items"][0]["id"] ?? $res["items"][0]["global_id"]);
         if (sizeof(iterator_to_array((new Reports())->getDuplicates("message", $global_id, null, $this->getUser()->getId()))) > 0) {
             return 1;
         }
