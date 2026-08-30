@@ -324,15 +324,14 @@ class Photo extends Media
             return $this->getURL();
         }
 
-        $size = $sizes[$size];
-        if (!$size) {
+        $sizeObj = $sizes[$size] ?? null;
+        if (!$sizeObj) {
             return $this->getURL();
         }
 
         $url = (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR <= 5 && VKAPI_DECL_VER_MINOR < 77)
-            ? $size->src
-            : $size->url;
-        
+            ? ($sizeObj->src ?? $sizeObj->url ?? $this->getURL())
+            : ($sizeObj->url ?? $sizeObj->src ?? $this->getURL());
         if ($this->getAccessKey() != null) {
             return $url . "?key=" . $this->getAccessKey();
         }
