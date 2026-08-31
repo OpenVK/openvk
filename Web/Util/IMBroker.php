@@ -99,7 +99,14 @@ class IMBroker
             return false;
         }
         return $this->invokeWithKey($userId, function (string $key, string $serverUrl) use ($method, $queryParams) {
-            $params = array_merge(['key' => $key], $queryParams);
+            $version = (defined("VKAPI_DECL_VER_MAJOR") && defined("VKAPI_DECL_VER_MINOR"))
+                ? implode('.', [VKAPI_DECL_VER_MAJOR, VKAPI_DECL_VER_MINOR])
+                : "5.100";
+
+            $params = array_merge([
+                'key' => $key,
+                'v'   => $version,
+            ], $queryParams);
 
             $baseUrl = rtrim($serverUrl, '/');
 
