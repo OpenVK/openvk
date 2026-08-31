@@ -446,7 +446,7 @@ export class Messenger {
             this.getWindow().update();
         }
     }
-    removeForward(render = true) { 
+    removeForward(render = true) {
         this.forwarded_msg = null;
         if (render == true) {
             this.getWindow().update();
@@ -590,7 +590,7 @@ export class MessengerPage extends IMPage {
         const orig_messenger = messenger || window.im.messenger;
         try {
             orig_messenger.currentDraft = this.getNode().find("#write .small-textarea").last().value;
-        } catch(e) {
+        } catch (e) {
             console.error(e);
         }
         this.getNode().addClass("page-other");
@@ -657,7 +657,7 @@ export class MessengerPage extends IMPage {
     }
 
     _updPadding() {
-        const h = u(this.container).find(".messenger-app-end").last().clientHeight - 25;
+        const h = u(this.container).find(".messenger-app-end").last().clientHeight //- 15;
         u(this.container).find(".messenger-app--messages .messenger-app--messages-array").attr("style", "padding-bottom:" + h + "px;");
     }
 
@@ -697,7 +697,7 @@ export class MessengerPage extends IMPage {
                 }, async () => {
                     await window.im.messenger.selectConversationByPeerId(window.openvk.dev_id);
                     window.im.messenger.view.setCurrentText(msg.data.error_text);
-                }, () => {}]
+                }, () => { }]
             });
             return;
         }
@@ -759,7 +759,7 @@ export class MessengerPage extends IMPage {
     }
 
     onReplyButtonClick() {
-        if (window.im.messenger.isForwarded()) {return;}
+        if (window.im.messenger.isForwarded()) { return; }
 
         const f = () => {
             const ids = window.im.messenger.selected_messages;
@@ -791,7 +791,7 @@ export class MessengerPage extends IMPage {
     }
 
     onEditButtonClick(e, msg) {
-        if (window.im.messenger.isForwarded()) {return;}
+        if (window.im.messenger.isForwarded()) { return; }
 
         window.im.messenger.editMsg = msg;
         if (msg.getText().length > 0) {
@@ -808,7 +808,7 @@ export class MessengerPage extends IMPage {
     }
 
     onPinButtonClick(e, msg) {
-        if (window.im.messenger.isForwarded()) {return;}
+        if (window.im.messenger.isForwarded()) { return; }
         const isPinned = msg.isPinned();
         const cmsg = new CMessageBox({
             title: tr("confirm"),
@@ -827,7 +827,7 @@ export class MessengerPage extends IMPage {
     }
 
     onTimeClick(event, msg) {
-        if (window.im.messenger.isForwarded()) {return;}
+        if (window.im.messenger.isForwarded()) { return; }
         if (window.im.state.is_debug) {
             const cmsg = new CMessageBox({
                 title: "...",
@@ -842,7 +842,7 @@ export class MessengerPage extends IMPage {
     }
 
     onReportButtonClick(e, msg) {
-        if (window.im.messenger.isForwarded()) {return;}
+        if (window.im.messenger.isForwarded()) { return; }
         let is_sending = false;
         const cmsg = new CMessageBox({
             title: tr("report_question"),
@@ -896,7 +896,7 @@ export class MessengerPage extends IMPage {
     }
 
     toggleMessageSelection(msg, e) {
-        if (window.im.messenger.isForwarded()) {return;}
+        if (window.im.messenger.isForwarded()) { return; }
         if (msg.id == null) {
             if (e.target.closest(".error-checkmark") == null) {
                 const c = new CMessageBox({
@@ -1046,9 +1046,9 @@ export class MessengerPage extends IMPage {
         });
     }
 
-    isAtEnd() { 
+    isAtEnd() {
         const scrollBottom = Math.max(0, this.getScrollHeight() - this.getScrollTop());
-        return scrollBottom < 750; 
+        return scrollBottom < 750;
     }
     getScroll() { return document.documentElement.scrollTop; }
     _scrollTo(scroll_progress) {

@@ -93,9 +93,49 @@ body:has(#im_container.at_page) .page_yellowheader {
     display: none !important;
 }
 
+body:has(#im_container.at_page) .page_content {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
 #im_container.at_page {
-    margin: -9px -6px -10px -10px;
+    grid-row: 1;
+    grid-column: 1;
+    margin: 0px -6px -10px -10px;
     width: 629px;
+    min-height: calc(100vh - 43px);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+#im_container.at_page:has(.im_page:not(.hidden)) {
+    z-index: 1;
+}
+
+#im_container.at_page #im_page_tabs {
+    flex-shrink: 0;
+}
+
+#im_container.at_page #im_page_containers {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+#im_container.at_page .im_page:not(.hidden) {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.im_page.page-conversations {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 .messenger-app--tabbar-wrap {
@@ -182,6 +222,7 @@ body:has(#im_container.at_page) .page_yellowheader {
     padding: 11px 11px 11px 10px;
     margin: 0px 0px 0px 0px;
     box-sizing: border-box;
+    flex-shrink: 0;
 }
 
 #conversations-top-buttons #conversations-search-bar {
@@ -192,7 +233,8 @@ body:has(#im_container.at_page) .page_yellowheader {
     display: flex;
     flex-direction: column;
     border-top: 1px solid #d6d6d6;
-    max-height: 70%;
+    flex: 1 1 auto;
+    min-height: 0;
     overflow-y: auto;
 }
 
@@ -213,6 +255,8 @@ body:has(#im_container.at_page) .page_yellowheader {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-shrink: 0;
+    margin-top: auto;
 }
 
 .crp-bottom--count {
@@ -465,7 +509,7 @@ body:has(#im_container.at_page) .page_yellowheader {
 .messages--actions {
     display: none;
     position: fixed;
-    top: 65px;
+    top: 73px;
     z-index: 4;
     width: 627px;
     height: 50px;
@@ -525,7 +569,7 @@ body:has(#im_container.at_page) .page_yellowheader {
 
 .messenger-app--messages .messenger-app--messages-array {
     margin-top: auto;
-    padding-top: 500px;
+    /*padding-top: 500px; */
     /*padding-bottom: 60px;*/
     z-index: 0;
 }
@@ -1331,7 +1375,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 }
 
 .messenger-app--tab-friends .friends-list .friends-list-online {
-    color: var(--bg-slightly-border);
+    color: #afafaf;
     margin-left: 3px;
 }
 
