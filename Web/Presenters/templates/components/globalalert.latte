@@ -12,7 +12,7 @@
         let alertDismissed = false;
         for (let i = 0; i < cookie.length; i++) {
             let c = cookie[i].trim();
-            
+
             if (c == "alertDismissed=" + alertContent) {
                 alertDismissed = true;
                 break;
@@ -25,9 +25,9 @@
 
     function dismissGlobalAlert() {
         let expires = (new Date(Date.now() + 40000000000)).toUTCString();
-        
+
         document.cookie = "alertDismissed=" + alertContent + ";expires=" + expires + ";SameSite=Strict";
         u(".global-alert").nodes[0].style.display = "none";
     }
-    
+
 </script>
