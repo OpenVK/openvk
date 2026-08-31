@@ -71,6 +71,26 @@ function ovk_proc_strtr(string $string, int $length = 0): string
     return $newString . ($string !== $newString ? "…" : ""); #if cut hasn't happened, don't append "..."
 }
 
+function ovk_truncate_words(string $text, int $length): string
+{
+    if ($length <= 0 || mb_strlen($text) <= $length) {
+        return $text;
+    }
+
+    $sub = mb_substr($text, 0, $length);
+    $nextChar = mb_substr($text, $length, 1);
+
+    if (preg_match('/\s/u', $nextChar)) {
+        return rtrim($sub) . "…";
+    }
+
+    if (preg_match('/^(.*)\s+[^\s]*$/su', $sub, $matches)) {
+        return rtrim($matches[1]) . "…";
+    }
+
+    return $sub . "…";
+}
+
 function knuth_shuffle(iterable $arr, int $seed): array
 {
     $data   = is_array($arr) ? $arr : iterator_to_array($arr);
