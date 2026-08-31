@@ -69,7 +69,11 @@ final class Wall extends VKAPIRequestHandler
                 $cnt       = $posts->getOthersCountOnUserWall($owner_id);
                 break;
             case "postponed":
-                $this->fail(42, "Postponed posts are not implemented.");
+                if (!$wallOnwer->canPlanPosts($this->getUser())) {
+                    $this->fail(15, "Access denied");
+                }
+                $iteratorv = $posts->getPlannedPostsFromWall($owner_id, 1, $count, $offset);
+                $cnt       = $posts->getPlannedCountOnUserWall($owner_id);
                 break;
             case "suggests":
                 if ($owner_id < 0) {
@@ -336,7 +340,7 @@ final class Wall extends VKAPIRequestHandler
 
         foreach ($psts as $pst) {
             $id   = explode("_", $pst);
-            $post = (new PostsRepo())->getPostById(intval($id[0]), intval($id[1]), true);
+            $post = (new PostsRepo())->getPostById(intval($id[0]), intval($id[1]), true, true);
 
             if ($post && !$post->isDeleted()) {
                 if (!$post->canBeViewedBy($user)) {
@@ -344,6 +348,10 @@ final class Wall extends VKAPIRequestHandler
                 }
 
                 if ($post->getSuggestionType() != 0 && !$post->canBeEditedBy($this->getUser())) {
+                    continue;
+                }
+
+                if ($post->isPlanned() && !$post->getOwner()->canPlanPosts($this->getUser())) {
                     continue;
                 }
 
@@ -571,7 +579,8 @@ final class Wall extends VKAPIRequestHandler
         int $explicit = 0,
         float $lat = null,
         float $long = null,
-        string $place_name = ''
+        string $place_name = '',
+        int $publish_date = 0
     ): object {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -597,14 +606,24 @@ final class Wall extends VKAPIRequestHandler
         }
 
         if ($post_id > 0) {
-            if ($owner_id > 0) {
-                $this->fail(62, "Suggested posts available only at groups");
-            }
-
-            $post = (new PostsRepo())->getPostById($owner_id, $post_id, true);
+            $post = (new PostsRepo())->getPostById($owner_id, $post_id, true, true);
 
             if (!$post || $post->isDeleted()) {
                 $this->fail(32, "Invald post");
+            }
+
+            if ($post->isPlanned()) {
+                if (!$wallOwner->canPlanPosts($this->getUser())) {
+                    $this->fail(16, "Access denied");
+                }
+
+                $post->setCreated(time());
+                $post->save();
+                return (object) ["post_id" => $post->getVirtualId()];
+            }
+
+            if ($owner_id > 0) {
+                $this->fail(62, "Suggested posts available only at groups");
             }
 
             if ($post->getSuggestionType() == 0) {
@@ -679,11 +698,27 @@ final class Wall extends VKAPIRequestHandler
             $this->fail(100, "Required parameter 'message' missing.");
         }
 
+        $time = time();
+        $planned = false;
+
+        if ($publish_date > 0) {
+            if (!$wallOwner->canPlanPosts($this->getUser())) {
+                $this->fail(7, "Access to planning posts denied");
+            }
+
+            if ($publish_date < time()) {
+                $this->fail(102, "publish_date must be in future");
+            }
+
+            $time = $publish_date;
+            $planned = true;
+        }
+
         try {
             $post = new Post();
             $post->setOwner($this->getUser()->getId());
             $post->setWall($owner_id);
-            $post->setCreated(time());
+            $post->setCreated($time);
             $post->setContent($message);
             $post->setFlags($flags);
             $post->setApi_Source_Name($this->getPlatform());
@@ -755,7 +790,7 @@ final class Wall extends VKAPIRequestHandler
             $post->attach($attachment);
         }
 
-        if ($owner_id > 0 && $owner_id !== $this->getUser()->getId()) {
+        if ($owner_id > 0 && $owner_id !== $this->getUser()->getId() && !$planned) {
             (new WallPostNotification($wallOwner, $post, $this->getUser()))->emit();
         }
 
@@ -1161,7 +1196,7 @@ final class Wall extends VKAPIRequestHandler
         $this->requireUser();
         $this->willExecuteWriteAction();
 
-        $post = (new PostsRepo())->getPostById($owner_id, $post_id, true);
+        $post = (new PostsRepo())->getPostById($owner_id, $post_id, true, true);
         if (!$post || $post->isDeleted()) {
             $this->fail(15, "Not found");
         }
@@ -1187,7 +1222,7 @@ final class Wall extends VKAPIRequestHandler
         }
     }
 
-    public function edit(int $owner_id, int $post_id, string $message = "", string $attachments = "", string $copyright = null, int $explicit = -1, int $from_group = 0, int $signed = 0)
+    public function edit(int $owner_id, int $post_id, string $message = "", string $attachments = "", string $copyright = null, int $explicit = -1, int $from_group = 0, int $signed = 0, int $publish_date = 0)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -1205,7 +1240,7 @@ final class Wall extends VKAPIRequestHandler
             $this->fail(-66, "Post will be empty, don't saving.");
         }
 
-        $post = (new PostsRepo())->getPostById($owner_id, $post_id, true);
+        $post = (new PostsRepo())->getPostById($owner_id, $post_id, true, true);
 
         if (!$post || $post->isDeleted()) {
             $this->fail(102, "Invalid post");
@@ -1248,6 +1283,23 @@ final class Wall extends VKAPIRequestHandler
         }
 
         $post->setFlags($flags);
+
+        if ($publish_date > 0 && $publish_date != $post->getCreated()) {
+
+            if (!$wallOwner?->canPlanPosts($this->getUser())) {
+                $this->fail(7, "Access to planning posts denied");
+            }
+
+            if ($post->getCreated() < time()) {
+                $this->fail(102, "Post is already published");
+            }
+
+            if ($publish_date < time()) {
+                $this->fail(102, "Publish date must be in future");
+            }
+
+            $post->setCreated($publish_date);
+        }
 
         $post->save(true);
 

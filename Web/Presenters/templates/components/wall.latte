@@ -10,9 +10,14 @@
     <div class="insertThere" id="wall_block_posts"></div>
     <div id="underHeader">
         <div n:if="$canPost" class="content_subtitle">
-            {include "../components/textArea.latte", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true, docs => true}
+            {include "../components/textArea.latte", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true, docs => true, planned => $canPostPlanned}
         </div>
-        
+        {if $plannedCount > 0}
+            <button class="wall_show_planned" data-count="{$plannedCount}" data-owner-id="{$owner}">
+                {tr('planned_count', $plannedCount)}
+            </button>
+            <div class="content wall_planned" data-loaded="0" style="display:none"></div>
+        {/if}
         <div class="content scroll_container">
             {if sizeof($posts) > 0}
                 <div class='scroll_node' n:foreach='$posts as $post' data-uniqueid="{$post->getPrettyId()}">

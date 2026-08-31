@@ -7,7 +7,16 @@ namespace openvk\Web\Presenters;
 use openvk\Web\Models\Exceptions\TooMuchOptionsException;
 use openvk\Web\Models\Entities\{Poll, Post, Photo, Video, Club, User};
 use openvk\Web\Models\Entities\Notifications\{MentionNotification, RepostNotification, WallPostNotification, PostAcceptedNotification, NewSuggestedPostsNotification};
-use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums, Notes, Videos, Comments, Photos, Audios};
+use openvk\Web\Models\Repositories\{Posts,
+    Posts as PostsRepo,
+    Users,
+    Clubs,
+    Albums,
+    Notes,
+    Videos,
+    Comments,
+    Photos,
+    Audios};
 use Chandler\Database\DatabaseConnection;
 use Nette\InvalidStateException as ISE;
 use Bhaktaraz\RSSGenerator\Item;
@@ -72,14 +81,7 @@ final class WallPresenter extends OpenVKPresenter
 
     public function renderWall(int $user, bool $embedded = false): void
     {
-        $owner = ($user < 0 ? (new Clubs()) : (new Users()))->get(abs($user));
-        if (!$owner || $owner->isBanned() || !$owner->canBeViewedBy($this->user->identity)) {
-            $this->flashFail("err", tr("error"), tr("forbidden"));
-        }
-
-        if ($user > 0 && $owner->isDeleted()) {
-            $this->flashFail("err", tr("error"), tr("forbidden"));
-        }
+        $owner = $this->getWallOwnerById($user);
 
         if (is_null($this->user->identity)) {
             $canPost = false;
@@ -162,8 +164,29 @@ final class WallPresenter extends OpenVKPresenter
             "atTop"   => false,
         ];
 
+        $this->template->canPostPlanned = false;
+        $this->template->plannedCount = 0;
+
+        if ($owner->canPlanPosts($this->user->identity)) {
+            $this->template->canPostPlanned = true;
+            $this->template->plannedCount = $this->posts->getPlannedCountOnUserWall($user);
+        }
 
         $this->logPostsViewed($this->template->posts, $user);
+    }
+
+    public function renderWallPlanned(int $user): void
+    {
+        $owner = $this->getWallOwnerById($user);
+
+        $posts = [];
+        if ($owner->canPlanPosts($this->user->identity)) {
+            $iterator = $this->posts->getAllPlannedPostsFromWall($user);
+            $posts = iterator_to_array($iterator);
+        }
+
+        $this->template->posts = $posts;
+        $this->template->_template = "components/wall/planned.latte";
     }
 
     public function renderWallEmbedded(int $user): void
@@ -241,15 +264,7 @@ final class WallPresenter extends OpenVKPresenter
         $perPage = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);
         $withAlienWallPosts = $this->getWithAlienWallPostsPreference();
 
-        $posts   = DatabaseConnection::i()
-                   ->getContext()
-                   ->table("posts")
-                   ->select("id")
-                   ->where("wall IN (?)", $ids)
-                   ->where("deleted", 0)
-                   ->where("suggested", 0)
-                   ->where("archived", 0)
-                   ->order("created DESC");
+        $posts = $this->posts->getFeedSelection($ids)->order("created DESC")->select("id");
 
         if ($withAlienWallPosts === 0) {
             $posts->where("(`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`)");
@@ -277,26 +292,11 @@ final class WallPresenter extends OpenVKPresenter
 
         $withAlienWallPosts = $this->getWithAlienWallPostsPreference();
 
-        $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) LEFT JOIN `profiles` ON LEAST(`posts`.`wall`, 0) = 0 AND `profiles`.`id` = ABS(`posts`.`wall`)";
-        $queryBase .= " WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND ((`profiles`.`profile_type` = 0 AND `profiles`.`hide_global_feed` = 0) OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0 AND `posts`.`archived` = 0";
-
-        if ($withAlienWallPosts === 0) {
-            $queryBase .= " AND ((`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`))";
-        }
-
-        if ($this->user->identity->getNsfwTolerance() === User::NSFW_INTOLERANT) {
-            $queryBase .= " AND `nsfw` = 0";
-        }
-
-        if (((int) $this->queryParam('return_banned')) == 0) {
-            $ignored_sources_ids = $this->user->identity->getIgnoredSources(0, OPENVK_ROOT_CONF['openvk']['preferences']['newsfeed']['ignoredSourcesLimit'] ?? 50, true);
-
-            if (sizeof($ignored_sources_ids) > 0) {
-                $imploded_ids = implode("', '", $ignored_sources_ids);
-
-                $queryBase .= " AND `posts`.`wall` NOT IN ('$imploded_ids')";
-            }
-        }
+        $queryBase = (new PostsRepo())->getGlobalFeedQuery(
+            user: $this->user->identity,
+            with_alien_wall_posts: (int) $withAlienWallPosts === 1,
+            return_banned: ((int) $this->queryParam('return_banned')) === 1
+        );
 
         $posts = DatabaseConnection::i()->getConnection()->query("SELECT `posts`.`id` " . $queryBase . " ORDER BY `created` DESC LIMIT " . $pPage . " OFFSET " . ($page - 1) * $pPage);
         $count = DatabaseConnection::i()->getConnection()->query("SELECT COUNT(*) " . $queryBase)->fetch()->{"COUNT(*)"};
@@ -430,6 +430,25 @@ final class WallPresenter extends OpenVKPresenter
             }
         }
 
+        $created_at = time();
+        $planned = false;
+
+        if (!is_null($this->postParam("publish_date"))) {
+            if (!$wallOwner->canPlanPosts($this->user->identity)) {
+                $this->flashFail("err", tr("error"), tr("forbidden"));
+            }
+
+            $time = (int) $this->postParam("publish_date");
+            $now = time();
+
+            if ($time < $now) {
+                $this->flashFail("err", tr("error"), tr("planned_time_is_in_past"));
+            }
+
+            $created_at = $time;
+            $planned = true;
+        }
+
         if (empty($this->postParam("text")) && sizeof($horizontal_attachments) < 1 && sizeof($vertical_attachments) < 1 && !$poll) {
             $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_empty_or_too_big"));
         }
@@ -438,12 +457,12 @@ final class WallPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("limit_exceed_exception"));
         }
 
-        $should_be_suggested = $wall < 0 && !$wallOwner->canBeModifiedBy($this->user->identity) && $wallOwner->getWallType() == 2;
+        $should_be_suggested = $wall < 0 && !$wallOwner->canBeModifiedBy($this->user->identity) && $wallOwner->getWallType() == 2 && !$planned;
         try {
             $post = new Post();
             $post->setOwner($this->user->id);
             $post->setWall($wall);
-            $post->setCreated(time());
+            $post->setCreated($created_at);
             $post->setContent($this->postParam("text"));
             $post->setAnonymous($anon);
             $post->setFlags($flags);
@@ -490,7 +509,7 @@ final class WallPresenter extends OpenVKPresenter
             $post->attach($poll);
         }
 
-        if ($wall > 0 && $wall !== $this->user->identity->getId()) {
+        if ($wall > 0 && $wall !== $this->user->identity->getId() && !$planned) {
             $disturber = $this->user->identity;
             if ($anon) {
                 $disturber = $post->getOwner();
@@ -504,7 +523,7 @@ final class WallPresenter extends OpenVKPresenter
             $excludeMentions[] = $wall;
         }
 
-        if (!$should_be_suggested) {
+        if (!$should_be_suggested && !$planned) {
             $mentions = iterator_to_array($post->resolveMentions($excludeMentions));
 
             foreach ($mentions as $mentionee) {
@@ -533,6 +552,10 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         if ($post->isArchived() && !$post->canBeArchivedBy($this->user->identity)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
+        if ($post->isPlanned()) {
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
@@ -661,7 +684,7 @@ final class WallPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
 
-        $post = $this->posts->getPostById($wall, $post_id, true);
+        $post = $this->posts->getPostById($wall, $post_id, true, true);
         if (!$post) {
             $this->notFound();
         }
@@ -968,5 +991,20 @@ final class WallPresenter extends OpenVKPresenter
         $this->template->count    = $count;
         $this->template->page     = $page;
         $this->template->perPage  = OPENVK_DEFAULT_PER_PAGE;
+    }
+
+    /* @return User|Club */
+    private function getWallOwnerById(int $id)
+    {
+        $owner = ($id < 0 ? (new Clubs()) : (new Users()))->get(abs($id));
+
+        if (!$owner || $owner->isBanned() || !$owner->canBeViewedBy($this->user->identity)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
+        if ($id > 0 && $owner->isDeleted()) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+        return $owner;
     }
 }

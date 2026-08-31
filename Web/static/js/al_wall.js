@@ -662,8 +662,13 @@ $(document).on("click", "#_wallDelete", function(e) {
             })
             const response = await req.json()
             if (response.success == true) {
-                let postElement = $(".content").find(`[data-uniqueid='${post}']`)
+                const postElement = $(".content").find(`[data-uniqueid='${post}']`)
+                const postIsPlanned = $(postElement).find('.post').hasClass('post-is-planned')
                 postElement[0].innerHTML = `<div class="post post-divider post-deleted">${tr('post_deleted')}</div>`
+
+                if (postIsPlanned) {
+                    __decreasePlannedPostsCount();
+                }
                 setTimeout(() => {
                     postElement.slideToggle(300)
                 }, 4000)
@@ -1045,7 +1050,8 @@ u(document).on("click", "#editPost", async (e) => {
                                 <input type="checkbox" name="as_group" ${api_post.from_id < 0 ? 'checked' : ''} /> ${tr('post_as_group')}
                             </label>` : ''}
                         </div>
-
+                        <div class="post-planned"></div>
+                        
                         <input type="hidden" id="source" name="source" value="none" />
 
                         <div class='edit_menu_buttons'>
@@ -1110,6 +1116,10 @@ u(document).on("click", "#editPost", async (e) => {
             `)
         }
 
+        if (api_post.date > new Date().getTime() / 1000) {
+            __attachPlannedEditor(edit_place.find('.post-planned').nodes[0], api_post.date);
+        }
+
         // horizontal attachments
         api_post.attachments.forEach(att => {
             const type = att.type
@@ -1158,6 +1168,7 @@ u(document).on("click", "#editPost", async (e) => {
             const nsfw_mark = edit_place.find(`.edit_menu input[name='nsfw']`)
             const as_group = edit_place.find(`.edit_menu input[name='as_group']`)
             const copyright = edit_place.find(`.edit_menu input[name='source']`)
+            const planned = edit_place.find(`.edit_menu input[name='planned_time']`)
             const collected_attachments = collect_attachments(edit_place.find('.post-buttons')).join(',')
             const params = {}
             
@@ -1180,6 +1191,10 @@ u(document).on("click", "#editPost", async (e) => {
 
             if(copyright.nodes[0].value != 'none') {
                 params['copyright'] = copyright.nodes[0].value
+            }
+
+            if (planned.nodes.length) {
+                params['publish_date'] = new Date(planned.nodes[0].value).getTime() / 1000;
             }
 
             u(ev.target).addClass('lagged')
@@ -2735,7 +2750,7 @@ async function changeStatus() {
     document.status_popup_form.submit.disabled = false;
 }
 
-const tplMapIcon = `<svg class="map_svg_icon" width="13" height="12" viewBox="0 0 3.4395833 3.175">
+const tplMapIcon = `<svg class="post-attachment-icon" width="13" height="12" viewBox="0 0 3.4395833 3.175">
 <g><path d="M 1.7197917 0.0025838216 C 1.1850116 0.0049444593 0.72280427 0.4971031 0.71520182 1.0190592 C 0.70756921 1.5430869 1.7223755 3.1739665 1.7223755 3.1739665 C 1.7223755 3.1739665 2.7249195 1.5439189 2.7243815 0.99632161 C 2.7238745 0.48024825 2.2492929 0.00024648357 1.7197917 0.0025838216 z M 1.7197917 0.52606608 A 0.48526123 0.48526123 0 0 1 2.2050334 1.0113078 A 0.48526123 0.48526123 0 0 1 1.7197917 1.4965495 A 0.48526123 0.48526123 0 0 1 1.23455 1.0113078 A 0.48526123 0.48526123 0 0 1 1.7197917 0.52606608 z " /></g>
 </svg>`
 
@@ -3143,3 +3158,121 @@ $(document).on("click", ".archive_post", function(e) {
         }
     });
 });
+
+
+// Begin planned posts
+const CLOCK_ICON = `<svg class="post-attachment-icon" width="16" height="16" viewBox="0 0 24 24">
+    <g stroke="none" stroke-width="1" fill-rule="evenodd">
+        <path d="M12,4 C7.6,4 4,7.6 4,12 C4,16.4 7.6,20 12,20 C16.4,20 20,16.4 20,12 C20,7.6 16.4,4 12,4 Z M16,13 L11,13 L11,8 L13,8 L13,11 L16,11 L16,13 Z" fill-rule="nonzero"></path>
+    </g>
+</svg>
+`;
+
+function __decreasePlannedPostsCount() {
+    const button = $('.wall_show_planned');
+    const container = $('.wall_planned');
+
+    const count = parseInt(button.data('count')) - 1;
+    $(button).data('count', count);
+    if (count <= 0) {
+        $(button).hide();
+        $(container).hide();
+        return;
+    }
+
+    __updatePlannedPostsButtonText();
+}
+
+function __updatePlannedPostsButtonText() {
+    const button = $('.wall_show_planned');
+    if (!$(button).hasClass('wall_show_planned-opened')) {
+        $(button).html(tr('planned_count', $(button).data('count')));
+    } else {
+        $(button).html(tr('planned_hide'));
+    }
+}
+
+function __attachPlannedEditor(rootEl, ts = null) {
+    $(rootEl).html(`<div class="post-planned">
+        <div class="post-planned-title">${CLOCK_ICON}${tr('planned_time')}<div id="small_remove_button"></div></div>
+        <input type="datetime-local" name="planned_time" class="post-planned-time"/>
+        <input type="hidden" name="publish_date" class="post-planned-time-ts"/>
+    </div>`);
+
+    const MINUTE_TS = 60000;
+    const HOUR_TS = 3600000;
+
+    const nowDate = new Date();
+
+    const plannedDateTs = (ts ? ts * 1000 : nowDate.getTime() + HOUR_TS) - (MINUTE_TS * nowDate.getTimezoneOffset());
+    const plannedDate = new Date(plannedDateTs);
+
+    const dateInput = $(rootEl).find('.post-planned-time');
+
+    $(dateInput).attr('min', nowDate.toISOString().slice(0, 16));
+    $(dateInput).val(plannedDate.toISOString().slice(0, 16));
+    $(dateInput).trigger('change');
+}
+
+$(document).on('change', '.post-planned-time', (e) => $(e.target).closest('.post-planned').find('.post-planned-time-ts').val(Math.floor(new Date(e.target.value).getTime() / 1000)));
+
+$(document).on("click", ".wall_show_planned", async (e) => {
+    e.preventDefault();
+
+    const ownerId = $(e.target).data('ownerId');
+    const container = $('.wall_planned');
+    
+    if (!$(container).data('loaded')) {
+        $(e.target).attr('disabled', 'disabled');
+        try {
+            const data = await fetch(`/wall/planned/${ownerId}`).then(r => r.text());
+            $(container).hide().data('loaded', '1').html(data).slideDown();
+            $(e.target).addClass('wall_show_planned-opened');
+            __updatePlannedPostsButtonText();
+        } catch (e) {
+            e?.message && fastError(e.message);
+        } finally {
+            $(e.target).removeAttr('disabled');
+        }
+    } else {
+        $(container).slideToggle();
+        $(e.target).toggleClass('wall_show_planned-opened');
+        __updatePlannedPostsButtonText();
+    }
+});
+
+$(document).on("click", ".wall_planned_post_now", async(e) => {
+    $(e.target).addClass('lagged');
+    
+    const id = $(e.target).data('id').split('_');
+    const params = {
+        owner_id: id[0],
+        post_id: id[1],
+    }
+
+    const postsContainer =  $(e.target).closest('.wall_block').find('.content:not(.wall_planned)');
+
+    await window.OVKAPI.call('wall.post', params).then(() => {
+        $(e.target).closest('.post').parent().remove();
+        __decreasePlannedPostsCount();
+
+        fetch(`/iapi/getPostTemplate/${id[0]}_${id[1]}?type=post&from_page=another`, {
+            'method': 'POST'
+        }).then(r => r.text()).then(postHtml => {
+            $(postsContainer).prepend(postHtml);
+        });
+    }).catch(e =>  makeError(e.message)).finally(() => {
+        $(e.target).removeClass('lagged')
+    });
+});
+
+$(document).on("click", "#__plannedAttachment", async(e) => {
+    const form = $(e.target).closest('#write')
+    const planned = form.find('.post-planned');
+    __attachPlannedEditor(planned);
+});
+
+$(document).on('click', '.post-planned #small_remove_button', (e) => {
+    $(e.target).closest('.post-planned').html('');
+})
+// End planned posts

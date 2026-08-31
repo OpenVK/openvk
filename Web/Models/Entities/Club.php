@@ -655,4 +655,10 @@ class Club extends RowModel
     {
         return !is_null($this->getRecord()->finish_date) ? new DateTime($this->getRecord()->finish_date) : null;
     }
+
+    public function canPlanPosts(?User $user): bool
+    {
+        return $user && $this->canBeModifiedBy($user);
+    }
+
 }

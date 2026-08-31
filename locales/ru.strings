@@ -314,6 +314,17 @@
 "change_geo_name" = "Изменить название точки";
 "change_geo_name_new" = "Новое название";
 
+"planned" = "Таймер";
+"planned_time" = "Время публикации";
+"planned_count_zero" = "Показать $1 отложенных записей";
+"planned_count_one" = "Показать $1 отложенную запись";
+"planned_count_few" = "Показать $1 отложенных записи";
+"planned_count_many" = "Показать $1 отложенных записей";
+"planned_count_other" = "Показать $1 отложенных записей";
+"planned_hide" = "Скрыть отложенные записи";
+"planned_post_now" = "Опубликовать сейчас";
+"planned_time_is_in_past" = "Время публикации должно быть больше текущего";
+
 /* Friends */
 
 "friends" = "Друзья";

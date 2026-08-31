@@ -9,6 +9,8 @@
 {var $canBeDeleted = $post->canBeDeletedBy($thisUser)}
 {var $canBeArchived = $post->canBeArchivedBy($thisUser ?? NULL)}
 {var $wallOwner = $post->getWallOwner()}
+{var $isPlanned = $post->isPlanned()}
+
 {if $post->isDeactivationMessage() && $post->getText()}
     {var $deac = "post_deact"}
 {else}
@@ -21,7 +23,7 @@
 
 {var $bigText = mb_strlen($post->getText()) > 520 || substr_count($post->getText(), "\n") + 1 > 10}
 
-<table border="0" style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, post_microblog, !$compact ? post-divider, $post->isExplicit() ? post-nsfw">
+<table border="0" style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, post_microblog, !$compact ? post-divider, $post->isExplicit() ? post-nsfw, $post->isPlanned() ? post-is-planned">
     <tbody>
         <tr>
             <td class="post-author-ava" width="54" valign="top">
@@ -65,15 +67,15 @@
                     <a n:if="$canBeDeleted && !($forceNoDeleteLink ?? false) && $compact == false" class="delete" id="_wallDelete" data="{$post->getPrettyId()}" href="/wall{$post->getPrettyId()}/delete"></a>
                     <a n:if="!$canBeDeleted" class="report" title="{_report}" href="javascript:reportPost({$post->getId()})"></a>
 
-                    {if $canBePinned && !($forceNoPinLink ?? false) && $compact == false}
+                    {if $canBePinned && !$isPlanned && !($forceNoPinLink ?? false) && $compact == false}
                         {if $post->isPinned()}
                             <a class="pin" href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}"></a>
                         {else}
                             <a class="pin" href="/wall{$post->getPrettyId()}/pin?act=pin&hash={rawurlencode($csrfToken)}"></a>
                         {/if}
                     {/if}
-                    <a n:if="$canBeArchived && !($forceNoDeleteLink ?? false) && $compact == false && !$post->isArchived()" class="archive_post" href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}" title="{_archive_action}"></a>
-                    <a n:if="$canBeArchived && !($forceNoDeleteLink ?? false) && $compact == false && $post->isArchived()" class="archive_post" href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}" title="{_unarchive_action}"></a>
+                    <a n:if="$canBeArchived && !$isPlanned && !($forceNoDeleteLink ?? false) && $compact == false && !$post->isArchived()" class="archive_post" href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}" title="{_archive_action}"></a>
+                    <a n:if="$canBeArchived && !$isPlanned && !($forceNoDeleteLink ?? false) && $compact == false && $post->isArchived()" class="archive_post" href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}" title="{_unarchive_action}"></a>
 
                     {if $post->canBeEditedBy($thisUser) && !($forceNoEditLink ?? false) && $compact == false}
                         <a class="edit" id="editPost"></a>
@@ -105,7 +107,7 @@
                     </div>
                     <div n:if="$post->getGeo()" class="post-geo">
                         <a onclick="javascript:openGeo({$post->getGeo()}, {$post->getTargetWall()}, {$post->getVirtualId()})">
-                            <svg class="map_svg_icon" width="13" height="12" viewBox="0 0 3.4395833 3.175">
+                            <svg class="post-attachment-icon" width="13" height="12" viewBox="0 0 3.4395833 3.175">
                                 <g><path d="M 1.7197917 0.0025838216 C 1.1850116 0.0049444593 0.72280427 0.4971031 0.71520182 1.0190592 C 0.70756921 1.5430869 1.7223755 3.1739665 1.7223755 3.1739665 C 1.7223755 3.1739665 2.7249195 1.5439189 2.7243815 0.99632161 C 2.7238745 0.48024825 2.2492929 0.00024648357 1.7197917 0.0025838216 z M 1.7197917 0.52606608 A 0.48526123 0.48526123 0 0 1 2.2050334 1.0113078 A 0.48526123 0.48526123 0 0 1 1.7197917 1.4965495 A 0.48526123 0.48526123 0 0 1 1.23455 1.0113078 A 0.48526123 0.48526123 0 0 1 1.7197917 0.52606608 z " /></g>
                             </svg>
                             {$post->getGeo()->name ?? tr("admin_open")}
@@ -141,6 +143,7 @@
                         &nbsp;
 
                         <a n:if="!($forceNoCommentsLink ?? false) && $commentsCount == 0" href="javascript:expand_comment_textarea({$commentTextAreaId})">{_comment}</a>
+                        <a n:if="$isPlanned" class="wall_planned_post_now" data-id="{$post->getPrettyId()}">&nbsp;{_planned_post_now}</a>
 
                         <div class="like_wrap">
                             <a n:if="!($forceNoShareLink ?? false)" id="reposts{$post->getPrettyId()}" class="post-share-button" href="javascript:repost('{$post->getPrettyId()}', 'post')">

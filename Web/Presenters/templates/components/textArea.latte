@@ -20,6 +20,7 @@
             <div class="post-has-geo"></div>
             <div class="post-source"></div>
             <div class="post-replyto"></div>
+            <div class="post-planned"></div>
 
             <div n:if="$postOpts ?? true" class="post-opts">
                 {var $anonEnabled = \OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']}
@@ -116,6 +117,10 @@
                     <a n:if="$hasSource ?? false" id='__sourceAttacher'>
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/insert-link.png" />
                         {_source}
+                    </a>
+                    <a n:if="$planned ?? false" id="__plannedAttachment">
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/apps/clock.png" />
+                        {_planned}
                     </a>
                 </div>
             </div>
