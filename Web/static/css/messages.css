@@ -135,6 +135,17 @@ body.no-footer .page_footer {
     text-align: center;
 }
 
+.crp-bottom {
+    position: fixed;
+    bottom: 0;
+    width: var(--messenger-width);
+    background: var(--common-2);
+    padding: 10px 11px;
+    box-sizing: border-box;
+    border-top: 1px solid var(--bg-slightly-border);
+    user-select: none;
+}
+
 .crp-entry {
     display: flex;
     padding: 8px 10px;
@@ -271,14 +282,16 @@ body.no-footer .page_footer {
     margin-bottom: 0;
 }
 
-.messenger-app--messages---message .msg-edit-mark {
+.messenger-app--messages---message .msg-modificators { display: inline; }
+.messenger-app--messages---message .msg-modificators p {
     display: none;
-}
-
-.messenger-app--messages---message.msg-edited .msg-edit-mark {
-    display: inline;
     color: #8c8c8c9c;
     font-size: 10px;
+}
+
+.messenger-app--messages---message.msg-edited .msg-modificators .modificator-edited,
+.messenger-app--messages---message.msg-pinned .msg-modificators .modificator-pinned {
+    display: inline;
 }
 
 .messenger-app--messages---message.msg-reply {
@@ -544,7 +557,7 @@ body.no-footer .page_footer {
     background-size: 80px 37px;
 }
 
-.messenger-app--messages---message .actions-2 .pin-icon.unpin-icon {
+.messenger-app--messages---message.msg-pinned .actions-2 .pin-icon {
     background-position: -20px -20px;
 }
 

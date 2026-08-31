@@ -58,7 +58,18 @@ export class ConversationsPage extends IMPage {
 
     render(container) {
         this.getNode().addClass("page-conversations");
-        const convs = window.im.conversations.convs;
+        let orig_convs = window.im.conversations.convs;
+        let convs = [];
+
+        if (window.im.conversations.isShowingUnread) {
+            orig_convs.forEach(item => {
+                if (!item.isRead()) {
+                    convs.push(item);
+                }
+            });
+        } else {
+            convs = orig_convs;
+        }
 
         render(html`
         <${ConversationListView}
@@ -69,6 +80,7 @@ export class ConversationsPage extends IMPage {
             onSearch=${(e) => this._onMessagesSearch(e)}
             isForward=${this.isForward()}
             page=${this}
+            unreadMode=${window.im.conversations.isShowingUnread}
         />
         `, container);
     }
@@ -81,6 +93,7 @@ export class Conversations {
         this.q = null;
         this.peer_id_search = null;
         this.all_convs = [];
+        this.isShowingUnread = false;
     }
 
     getWindow() { return window.im.getTab("conversations").render_class; }
@@ -237,6 +250,19 @@ export class Conversations {
         this.all_convs.push(c);
         return c;
     }
+
+    toggleMode(mode) {
+        switch (mode) {
+            case "unread":
+                this.isShowingUnread = true;
+                this.update();
+                break;
+            case "all":
+                this.isShowingUnread = false;
+                this.update();
+                break;
+        }
+    }
 }
 
 export class Conversation {
@@ -366,4 +392,15 @@ export class Conversation {
     }
     pushMessage(msg, conv = null, check_chunk = true) { if (this.peer && this.peer._chunks) this.peer._chunks.pushNewMessage(msg, conv, check_chunk); }
     findMessageById(id) { return (this.peer && this.peer._chunks) ? this.peer._chunks._findMessageById(id) : null; }
+
+    hasPinned() {
+        return this.getPinnedMessageId() != null;
+    }
+    getPinnedMessageId() {
+        try {
+            return this._conversation.current_pinned_message.id;
+        } catch(e) {
+            return null;
+        }
+    }
 }

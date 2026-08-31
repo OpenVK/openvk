@@ -107,7 +107,7 @@ export const FastChatsBar = ({ pinnedItems, convos }) => {
                     <div title="${peer.getName()}" onClick=${(e) => { window.im.fastChats.selectConversation(e, item) }} class="fastchat_item ${!item.isRead() ? "unread" : ""}">
                         <div class="fastchat_unread">+${item.unread_count}</div>
                         <div class="fastchat_close"></div>
-                        <${PeerAvatar} peer=${peer} />
+                        <${PeerAvatar} peer=${peer} orig_ava=${false} />
                     </div>`
                 })}
             </div>

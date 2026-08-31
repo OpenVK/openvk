@@ -1472,6 +1472,9 @@
 "msg_resend" = "Попробовать снова";
 "msg_error_send_to_dev" = "Написать разработчику";
 
+"conversations_show_unread" = "Показать непрочитанные";
+"conversations_show_all" = "Показать все переписки";
+
 "message_deletion_one" = "Удаление сообщения";
 "message_deletion_few" = "Удаление $1 сообщений";
 "message_deletion_many" = "Удаление $1 сообщений";
@@ -1484,6 +1487,7 @@
 "conversations_count_title_many" = "$1 переписок";
 "conversations_count_title_other" = "$1 переписок";
 "zero_conversations_error" = "У вас нет переписок.";
+"zero_unread_conversations_error" = "Все переписки прочитаны.";
 "zero_conversations_error_club" = "В группу ещё никто не писал.";
 
 "conversation_title_user" = "Переписка с $1";
@@ -1548,6 +1552,7 @@
 "convo_action_kick" = "Кикнуть";
 "chat_media" = "Медиа";
 "chat_pinned" = "Закреплённые сообщения";
+"chat_view_pinned_single" = "Перейти к закреплённому";
 "chat_media_photo" = "Фото";
 "chat_media_video" = "Видео";
 "chat_media_audio" = "Аудио";
@@ -1589,8 +1594,8 @@
 "members_count_many" = "$1 участников";
 "members_count_other" = "$1 участников";
 
-"pin_button_click" = "Закрепить сообщение?";
-"unpin_button_click" = "Закрепить сообщение?";
+"pin_button_click" = "Закрепить сообщение? Можно закрепить лишь одно сообщение.";
+"unpin_button_click" = "Открепить сообщение?";
 "cancel_edit_confirmation" = "Отменить редактирование? Все изменения потеряются.";
 "cancel_sending_confirmation" = "Удалить и не отправлять это сообщение?";
 "edit_of_message" = "Редактирование сообщения";
@@ -2161,6 +2166,7 @@
 "edit_action" = "Изменить";
 "edit_action_lr" = "Отредактировать";
 "edit_action_past" = "Отредактировано";
+"pinned_action_past" = "Закреплено";
 "transfer" = "Передать";
 "close" = "Закрыть";
 "success" = "Успех";

@@ -1,17 +1,19 @@
 import { html, render } from './render.js';
 import { ChatGeneralForm } from './messages.js';
 
-export const PeerAvatar = ({ peer, className = "", loading = "lazy", saved_messages_ava = true, orig_ava = true }) => {
+export const PeerAvatar = ({ peer, className = "", loading = "lazy", saved_messages_ava = true, orig_ava = true, size = "mid" }) => {
     if (!peer) {
         return html`<img class="${className}" src="/assets/packages/static/openvk/img/im/chat_meaningless.jpg" loading="${loading}" />`;
     }
 
     if (peer.id === window.im.state.getId()) {
-        if (!saved_messages_ava) {
+        if (!saved_messages_ava && !orig_ava) {
             return html`<div style="display:block;width:52px;height:52px;"></div>`;
         }
 
-        return html`<img class="${className}" src=${ChatGeneralForm.SAVED_MESSAGES_AVATAR} loading="${loading}" />`;
+        if (!orig_ava) {
+            return html`<img class="${className}" src=${ChatGeneralForm.SAVED_MESSAGES_AVATAR} loading="${loading}" />`;
+        }
     }
 
     if (peer.supposed_type === 'chat' && !peer.has_custom_avatar) {
@@ -55,7 +57,7 @@ export const PeerAvatar = ({ peer, className = "", loading = "lazy", saved_messa
         `;
     }
 
-    const src = peer.getAvatar("mid", orig_ava == false);
+    const src = peer.getAvatar(size, orig_ava == false);
     return html`<img class="${className}" src=${src} loading="${loading}" />`;
 };
 
@@ -180,7 +182,6 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
         convo.hasScrollPosition() && (!editMsg && !replyTo) ? "m-mountain m-mountain-fatal" : "",
     ]
 
-    console.log(forwarded_msg, onRemoveForward, isForwarded)
     return html`
     <div class="${cls.join(" ")}">
         ${ replyTo && html`
@@ -228,7 +229,8 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
                     peer=${replyTo ? replyTo.sender : corresponder.peer}
                     className="ava ava2"
                     loading="eager"
-                    saved_messages_ava=${false} />
+                    saved_messages_ava=${false}
+                    orig_ava=${false} />
             </div>
         </div>
     </div>
@@ -253,7 +255,7 @@ export const ConversationItem = ({ conv, isForward = false, page = null }) => {
     return html`
         <div class="${cls1.join(' ')}" onClick=${() => window.im?.messenger.onConversationsClick(conv, isForward, page)}>
         <div class="crp-entry--image">
-            <${PeerAvatar} peer=${peer} />
+            <${PeerAvatar} peer=${peer} orig_ava=${false} />
         </div>
         <div class="crp-entry--info">
             <a>${ovk_proc_strtr(peer.getName(true), 30)}</a>
@@ -278,7 +280,7 @@ export const ConversationItem = ({ conv, isForward = false, page = null }) => {
     `;
 };
 
-export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCreateChat, onSearch, isForward, page }) => {
+export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCreateChat, onSearch, isForward, page, unreadMode }) => {
     const is_group = window.im.state.is_group;
 
     return html`
@@ -294,12 +296,21 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
             `}
         </div>
         <div class="crp-list">
-            ${conversations.length > 0 ? conversations.map((conv) => html`<${ConversationItem} conv=${conv} isForward=${isForward} page=${page} />`) : html`<${ConversationsListError} is_group=${is_group} />`}
+            ${conversations.length > 0 ? conversations.map((conv) => html`<${ConversationItem} conv=${conv} isForward=${isForward} page=${page} />`) : html`<${ConversationsListError} unreadMode=${unreadMode} is_group=${is_group} />`}
             ${hasMore && html`
             <div onClick=${onLoadMore} id="show_more" class="crp-load-more">
                 ${tr('show_next')}
             </div>
             `}
+        </div>
+        <div class="crp-bottom">
+            ${!unreadMode ? html`
+                <a onClick=${() => { window.im.conversations.toggleMode("unread") }}>${tr("conversations_show_unread")}</a> |<span> </span>
+            ` : html`
+                <a onClick=${() => {window.im.conversations.toggleMode("all")}}>${tr("conversations_show_all")}</a> |<span> </span>
+            `}
+            <a onclick=${() => { window.im.openTabByName("settings") }}>${tr("messenger_tab_settings")}</a> |<span> </span>
+            <a onClick=${(event) => { imSwitchCurrent(event) }}>${tr("messenger_switch_current")}</a>
         </div>
     `;
 };
@@ -315,7 +326,7 @@ export const TabBar = ({ tabs, activeTab, onTabSelect }) => {
 
     const showContactButton = activeTabName == "messenger";
     const showFriendsButton = !window.im.state.is_group && activeTabName != "friends";
-    const showSettingsButton = window.im.state.is_compact_mode_enabled || !window.im.state.is_group && activeTabName == "conversations";
+    const showSettingsButton = false;
     const showSpecActions = showSettingsButton || showContactButton || showFriendsButton;
 
     return html`
@@ -350,7 +361,6 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
     const supposed_type = peer.supposed_type;
     const isOnline = peer.online == 1;
     const avatar = peer.getAvatar("big");
-    const has_avatar = true;
     const is_from_chat = fromConvo.supposed_type == "chat" && peer.supposed_type != "chat";
     const is_club_related = peer.supposed_type == "club" || window.im.state.getOperator().supposed_type == "club";
 
@@ -359,8 +369,8 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
     <div class="back-side"><a onClick=${() => { window.im.openTabByName("messenger") }}>${tr('back')}</a></div>
     <div class="peer-side">
         <div class="peer-info">
-            <div class="peer-avatar sliding-thing-wrapper ${!hasAvatar ? "no-avatar" : ""}">
-                <${PeerAvatar} saved_messages_ava=${false} peer=${peer} />
+            <div class="peer-avatar sliding-thing-wrapper ${!peer.hasAvatar() ? "no-avatar" : ""}">
+                <${PeerAvatar} saved_messages_ava=${false} peer=${peer} orig_ava=${true} size="big" />
                 <a onClick=${(event) => { OpenChatAvatar(event, peer) }} class="avatar-opener sliding-thing">
                     <div class="lupa"></div>
                 </a>
@@ -420,10 +430,12 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                             <a>${tr("group_deny_messages")}</a>
                         </div>
                     ` : ""}
+                    ${ convo.hasPinned() ? html`
+                        <a onClick=${(e) => { window.im.messenger.viewPinned(e, convo) }}>${tr("chat_view_pinned_single")}</a>
+                    ` : ""}
                 </div>
-                <b> ${tr("chat_media")} </b>
+                <b style="display:none;"> ${tr("chat_media")} </b>
                 <div class="chat-tab-column chat-actions-2 chat-actions-common chat-actions-media">
-                    <a onClick=${(e) => { window.im.messenger.viewMedia("pinned") }}>${tr("chat_pinned")}</a>
                     <a style="display:none;" onClick=${(e) => { window.im.messenger.viewMedia("photos") }}>${tr("chat_media_photo")} <span>100</span></a>
                     <a style="display:none;" onClick=${(e) => { window.im.messenger.viewMedia("videos") }}>${tr("chat_media_video")} <span>100</span></a>
                     <a style="display:none;" onClick=${(e) => { window.im.messenger.viewMedia("audios") }}>${tr("chat_media_audio")} <span>100</span></a>
@@ -457,10 +469,14 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
     `;
 }
 
-export const ConversationsListError = ({ is_group }) => {
+export const ConversationsListError = ({ unreadMode, is_group }) => {
+    let text = tr("zero_conversations_error");
+    if (unreadMode) { text = tr("zero_unread_conversations_error"); }
+    if (is_group) { text = tr("zero_conversations_error_club"); }
+
     return html`
         <div class="conversations_error_page">
-            <span>${is_group ? tr("zero_conversations_error_club") : tr("zero_conversations_error")}</span>
+            <span>${text}</span>
         </div>
     `
 }
