@@ -225,8 +225,9 @@ final class Messages extends VKAPIRequestHandler
      * @param array $payload Ссылка на данные от IM сервиса
      * @param string $fields Дополнительные поля для USRRepo
      */
-    private function hydrateExtendedData(array &$payload, string $fields = "photo_200,online", array $loadedChats = []): void
+    private function hydrateExtendedData(array &$payload, string $fields = "photo_200,online", ?array $loadedChats = []): void
     {
+        $loadedChats = $loadedChats ?? [];
         if (!empty($payload['profiles'])) {
             $userIDs = array_map(fn($u) => is_array($u) ? ($u['id'] ?? 0) : (int) $u, $payload['profiles']);
             $userIDs = array_unique(array_filter($userIDs));
@@ -387,18 +388,204 @@ final class Messages extends VKAPIRequestHandler
         ];
 
         $payload = $this->invoke("messages.get", $params, $group_id);
+        $loadedChats = [];
 
         if (!empty($payload['items'])) {
-            foreach ($payload['items'] as &$message) {
-                if (!empty($message['attachments'])) {
-                    $this->replaceAttachments($message['attachments'], ["gift"]);
+            $chatIds = [];
+            foreach ($payload['items'] as $m) {
+                $cId = (int) ($m['chat_id'] ?? 0);
+                if ($cId === 0 && !empty($m['peer_id']) && $m['peer_id'] > 2000000000) {
+                    $cId = $m['peer_id'] - 2000000000;
+                }
+                if ($cId > 0) {
+                    $chatIds[] = $cId;
                 }
             }
-            unset($message);
+            $chatIds = array_unique(array_filter($chatIds));
+            if (!empty($chatIds)) {
+                $chatsRepo = new ChatRepo();
+                foreach ($chatIds as $cId) {
+                    $chatObj = $chatsRepo->getByChatId($cId);
+                    if ($chatObj) {
+                        $loadedChats[$cId] = $chatObj;
+                    }
+                }
+            }
+
+            $currentUserId = $this->getUser()->getId();
+            $formattedItems = [];
+
+            foreach ($payload['items'] as $message) {
+                $msgOut = (int) ($message['out'] ?? 0);
+                $fromId = (int) ($message['from_id'] ?? $message['user_id'] ?? 0);
+                $peerId = (int) ($message['peer_id'] ?? 0);
+                $chatId = (int) ($message['chat_id'] ?? 0);
+
+                if ($chatId === 0 && $peerId > 2000000000) {
+                    $chatId = $peerId - 2000000000;
+                }
+
+                $userId = (int) ($message['user_id'] ?? 0);
+                if ($userId === 0) {
+                    if ($chatId > 0) {
+                        $userId = $fromId ?: $currentUserId;
+                    } else {
+                        $userId = ($msgOut === 1) ? ($peerId ?: $fromId) : ($fromId ?: $peerId);
+                    }
+                }
+
+                $text = (string) ($message['body'] ?? $message['text'] ?? "");
+                $hasEmoji = (int) ($message['emoji'] ?? 0);
+                if (!$hasEmoji && !empty($text)) {
+                    $hasEmoji = (preg_match('/[\x{1F300}-\x{1F9FF}\x{2600}-\x{26FF}\x{2700}-\x{27BF}]/u', $text)) ? 1 : 0;
+                }
+
+                $msgObj = [
+                    "id"          => (int) ($message['id'] ?? 0),
+                    "date"        => (int) ($message['date'] ?? 0),
+                    "out"         => $msgOut,
+                    "user_id"     => $userId,
+                    "read_state"  => (int) ($message['read_state'] ?? 0),
+                    "title"       => (string) ($message['title'] ?? ""),
+                    "body"        => $text,
+                    "attachments" => $message['attachments'] ?? [],
+                    "fwd_messages"=> $message['fwd_messages'] ?? [],
+                    "emoji"       => $hasEmoji,
+                    "deleted"     => 0,
+                ];
+
+                if (!empty($message['important'])) {
+                    $msgObj['important'] = true;
+                }
+
+                if (!empty($msgObj['attachments'])) {
+                    $this->replaceAttachments($msgObj['attachments'], ["gift"]);
+                } else {
+                    $msgObj['attachments'] = [];
+                }
+
+                if (!empty($msgObj['fwd_messages'])) {
+                    foreach ($msgObj['fwd_messages'] as &$fwd) {
+                        if (!empty($fwd['attachments'])) {
+                            $this->replaceAttachments($fwd['attachments'], ["gift"]);
+                        } else {
+                            $fwd['attachments'] = [];
+                        }
+                    }
+                    unset($fwd);
+                }
+
+                if ($chatId > 0) {
+                    $msgObj['chat_id'] = $chatId;
+                    $chatEntity = $loadedChats[$chatId] ?? null;
+
+                    $rawActive = !empty($message['chat_active']) ? (array)$message['chat_active'] : [];
+                    $rawCount = (int) ($message['users_count'] ?? count($rawActive));
+                    $rawAdmin = (int) ($message['admin_id'] ?? 0);
+                    $rawTitle = (string) ($message['title'] ?? "");
+
+                    if ($chatEntity) {
+                        $chatStruct = $chatEntity->toChatSettingsStruct($this->getUser());
+                        $msgObj['title'] = !empty($rawTitle) ? $rawTitle : ($chatStruct['title'] ?? ("Chat " . $chatId));
+                        $msgObj['admin_id'] = $rawAdmin ?: (int) ($chatStruct['admin_id'] ?? 0);
+                        $msgObj['users_count'] = $rawCount ?: (int) ($chatStruct['members_count'] ?? 0);
+                        $msgObj['chat_active'] = !empty($rawActive) ? $rawActive : ($chatStruct['active_ids'] ?? []);
+                        $msgObj['photo_50'] = $chatStruct['photo_50'] ?? "";
+                        $msgObj['photo_100'] = $chatStruct['photo_100'] ?? "";
+                        $msgObj['photo_200'] = $chatStruct['photo_200'] ?? "";
+
+                        $chatEntity->setData([
+                            "title"      => $msgObj['title'],
+                            "admin_id"   => $msgObj['admin_id'],
+                            "members"    => $msgObj['chat_active'],
+                            "users"      => $msgObj['chat_active'],
+                            "photo_50"   => $msgObj['photo_50'],
+                            "photo_100"  => $msgObj['photo_100'],
+                            "photo_200"  => $msgObj['photo_200'],
+                        ]);
+                    } else {
+                        $msgObj['title'] = !empty($rawTitle) ? $rawTitle : ("Chat " . $chatId);
+                        $msgObj['admin_id'] = $rawAdmin;
+                        $msgObj['users_count'] = $rawCount;
+                        $msgObj['chat_active'] = $rawActive;
+                    }
+                }
+
+                if ($preview_length > 0) {
+                    $msgObj['body'] = ovk_truncate_words($msgObj['body'], $preview_length);
+                }
+
+                $formattedItems[] = $msgObj;
+            }
+
+            $payload['items'] = $formattedItems;
         }
 
         if ($extended == 1) {
-            $this->hydrateExtendedData($payload, $fields);
+            $userIDs = [];
+            $groupIDs = [];
+            $chatIDs = [];
+
+            if (!empty($payload['items'])) {
+                foreach ($payload['items'] as $item) {
+                    if (!empty($item['user_id'])) {
+                        if ($item['user_id'] > 0 && $item['user_id'] < 2000000000) {
+                            $userIDs[] = (int) $item['user_id'];
+                        } elseif ($item['user_id'] < 0) {
+                            $groupIDs[] = abs((int) $item['user_id']);
+                        }
+                    }
+                    if (!empty($item['from_id'])) {
+                        if ($item['from_id'] > 0 && $item['from_id'] < 2000000000) {
+                            $userIDs[] = (int) $item['from_id'];
+                        } elseif ($item['from_id'] < 0) {
+                            $groupIDs[] = abs((int) $item['from_id']);
+                        }
+                    }
+                    if (!empty($item['admin_id']) && $item['admin_id'] > 0) {
+                        $userIDs[] = (int) $item['admin_id'];
+                    }
+                    if (!empty($item['chat_active'])) {
+                        foreach ($item['chat_active'] as $uid) {
+                            if ($uid > 0) {
+                                $userIDs[] = (int) $uid;
+                            }
+                        }
+                    }
+                    if (!empty($item['chat_id'])) {
+                        $chatIDs[] = (int) $item['chat_id'];
+                    }
+                    if (!empty($item['fwd_messages'])) {
+                        foreach ($item['fwd_messages'] as $fwd) {
+                            if (!empty($fwd['user_id']) && $fwd['user_id'] > 0 && $fwd['user_id'] < 2000000000) {
+                                $userIDs[] = (int) $fwd['user_id'];
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!empty($payload['profiles'])) {
+                foreach ($payload['profiles'] as $p) {
+                    $userIDs[] = is_array($p) ? ($p['id'] ?? 0) : (int) $p;
+                }
+            }
+            if (!empty($payload['groups'])) {
+                foreach ($payload['groups'] as $g) {
+                    $groupIDs[] = abs(is_array($g) ? ($g['id'] ?? 0) : (int) $g);
+                }
+            }
+            if (!empty($payload['chats'])) {
+                foreach ($payload['chats'] as $c) {
+                    $chatIDs[] = is_array($c) ? ($c['id'] ?? 0) : (int) $c;
+                }
+            }
+
+            $payload['profiles'] = array_values(array_unique(array_filter($userIDs)));
+            $payload['groups'] = array_values(array_unique(array_filter($groupIDs)));
+            $payload['chats'] = array_values(array_unique(array_filter($chatIDs)));
+
+            $this->hydrateExtendedData($payload, $fields, $loadedChats);
         }
 
         return $payload;
@@ -1270,8 +1457,8 @@ final class Messages extends VKAPIRequestHandler
                 "deleted"    => 0,
             ];
 
-            if ($preview_length > 0 && mb_strlen($msgObj['body']) > $preview_length) {
-                $msgObj['body'] = mb_substr($msgObj['body'], 0, $preview_length) . '...';
+            if ($preview_length > 0) {
+                $msgObj['body'] = ovk_truncate_words($msgObj['body'], $preview_length);
             }
 
             if (!empty($lastMsg['attachments'])) {
