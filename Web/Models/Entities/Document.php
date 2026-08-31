@@ -224,7 +224,7 @@ class Document extends Media
         $new_document->updateHash($this_document_array["hash"]);
         $new_document->setOwner_hidden(1);
         $new_document->setCopy_of($this->getId());
-        $new_document->setName($this->getId());
+        $new_document->setName($this->getName());
         $new_document->setOriginal_name($this->getOriginalName());
         $new_document->setAccess_key(bin2hex(random_bytes(9)));
         $new_document->setFormat($this_document_array["format"]);
