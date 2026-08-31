@@ -14,11 +14,11 @@
     <meta property="og:title" content="{_post}: {$post->getOwner()->getCanonicalName()} — {$instance_name}" />
     <meta property="og:url" content="{$baseUrl}/wall{$post->getPrettyId()}" />
     <meta n:if="!empty($postDesc)" property="og:description" content="{$postDesc}" />
-    <meta n:if="!is_null($ogImageUrl)" property="og:image" content="{$ogImageUrl}" />
+    <meta n:if="!is_null($ogImageUrl)" property="og:image" content="{$post->isExplicit() && !array_key_exists('showNSFW', $_GET) ? $baseUrl . '/assets/packages/static/openvk/img/nsfw_banner.png' : $ogImageUrl}" />
     <meta property="og:type" content="article" />
     <meta name="twitter:title" content="{_post} — {$instance_name}" />
     <meta n:if="!empty($postDesc)" name="twitter:description" content="{$postDesc}" />
-    <meta n:if="!is_null($ogImageUrl)" name="twitter:image" content="{$ogImageUrl}" />
+    <meta n:if="!is_null($ogImageUrl)" name="twitter:image" content="{$post->isExplicit() && !array_key_exists('showNSFW', $_GET) ? $baseUrl . '/assets/packages/static/openvk/img/nsfw_banner.png' : $ogImageUrl}" />
     <meta n:if="!is_null($ogImageUrl)" n:attr="name => 'twitter:card'" content="summary_large_image" />
 {/block}
 
@@ -35,6 +35,7 @@
 {/block}
 
 {block content}
+    {$query}
     <div class="tabs">
         <div class="tab">
             <a href="/wall{$post->getTargetWall()}">{_all_posts}</a>
