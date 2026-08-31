@@ -393,7 +393,7 @@ final class Users extends VKAPIRequestHandler
                                 $response[$i]->can_write_private_message = 1;
                                 break;
                             case "can_invite":
-                                $response[$i]->can_invite = 1;
+                                $response[$i]->can_invite = (int) $usr->getPrivacyPermission("messages.add_to_chats", $this->getUser());
                                 break;
                         }
                     }

@@ -101,7 +101,7 @@ class Report extends RowModel
                 if ($extended == true) {
                     try {
                         #return Message::fromGlobalId($this->getContentId(), 0);
-                        return Message::fromGlobalId($this->getContentId());
+                        return Message::fromGlobalId($this->getContentId(), $this->authorId());
                     } catch (\Throwable $e) {
                         bdump($e);
                         return null;

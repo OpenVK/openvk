@@ -57,10 +57,10 @@ export class Draft {
 }
 
 class ChatMembers {
-    constructor(peer_id) {
+    constructor(link) {
         this.items = [];
         this.total_count = 0;
-        this.peer_id = peer_id;
+        this.peer_id = link.id;
         this.offset = 0;
         this.perPage = 10;
     }
@@ -69,7 +69,6 @@ class ChatMembers {
         const v = await window.OVKAPI.call("messages.getConversationMembers", {
             "peer_id": this.peer_id,
             "extended": 1,
-            "offset": offset,
         });
         this.total_count = v.count;
         v.items.forEach(item => {
@@ -100,8 +99,7 @@ export class ChatGeneralForm {
         this.pinned_message_chunks = [];
 
         this._messages_inited = false;
-        this._members = null;
-        this._total_members_count = 0;
+        this.members = null;
     }
 
     // ── identity ─────────────────────────────────────────────────────
@@ -156,6 +154,10 @@ export class ChatGeneralForm {
         }
 
         return true;
+    }
+
+    isILeft() {
+        return false;
     }
 
     get has_custom_avatar() {
@@ -279,10 +281,6 @@ export class ChatGeneralForm {
     }
 
     getOnlineStatusString() {
-        if (this.supposed_type == "chat") {
-            return Number(this._total_members_count) + " members"
-        }
-
         if (this.data.followers_count) {
             return tr("followers", this.data.followers_count);
         }
@@ -516,12 +514,12 @@ export class ChatGeneralForm {
     }
 
     async checkMembers(offset = 0) {
-        if (this._members != null) {
+        if (this.members != null || this.supposed_type != "chat") {
             return true;
         }
 
-        this._members = new ChatMembers(this.id);
-        await this._members.load(offset);
+        this.members = new ChatMembers(this);
+        await this.members.load(offset);
     }
 
     // Readness
@@ -618,8 +616,6 @@ export class ChatMessage {
         try {
             return window.im.conversations._findConv(this.data.peer_id).peer;
         } catch (e) {
-            console.error(e);
-
             return window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(this.data.peer_id);
         }
     }
@@ -701,7 +697,6 @@ export class ChatMessage {
                 let f = window.im.conversations._findConv(this.data.peer_id).getPinnedMessageId() == this.id;
                 this.data.is_pinned = Number(f);
             } catch (e) {
-                console.error(e);
                 this.data.is_pinned = 0;
             }
         }
