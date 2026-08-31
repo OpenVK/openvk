@@ -7,7 +7,7 @@ const { EventHandler } = await es6import_Im(import.meta.url, './events.js');
 //import { Messenger, MessengerPage, ContactPage, ChatTopicPreviewPage } from './pages/messenger.js';
 const { Messenger, MessengerPage, ContactPage, ChatTopicPreviewPage } = await es6import_Im(import.meta.url, './pages/messenger.js');
 //import { Conversations, ConversationsPage } from './pages/conversations.js';
-const { Conversations, ConversationsPage } = await es6import_Im(import.meta.url, './pages/conversations.js');
+const { Conversations, ConversationsPage, Conversation } = await es6import_Im(import.meta.url, './pages/conversations.js');
 //import { Friends, FriendsPage } from './pages/friends.js';
 const { Friends, FriendsPage } = await es6import_Im(import.meta.url, './pages/friends.js');
 //import { SearchPage } from './pages/search.js';
@@ -33,6 +33,7 @@ export class InstantMessagesAndRelated {
 
         this.usage_type = "current_user";
         this.usage_id = null;
+        this.report_data = null;
 
         //this.current = new Currentness(this);
         this.cached_profiles = new ProfilesCache();
@@ -94,7 +95,7 @@ export class InstantMessagesAndRelated {
         await this.state._loadCurrent();
 
         try {
-            await this.conversations.loadNext();
+            await this.conversations.loadNext(this);
         } catch(e) {
             fastError(String(e));
         }
@@ -110,7 +111,11 @@ export class InstantMessagesAndRelated {
         console.log("IM | Inited");
     }
 
-    static async insertIn(container, as = null, fastchat = false, rewrite_tabs = true, report_id = null) {
+    static async insertAsReport(container, data) {
+        return await InstantMessagesAndRelated.insertIn(container, null, false, true, data);
+    }
+
+    static async insertIn(container, as = null, fastchat = false, rewrite_tabs = true, report_data = null) {
         let self = window.im_variants.getCurrentUser();
         const b = new URL(location.href)
 
@@ -122,6 +127,10 @@ export class InstantMessagesAndRelated {
             await self._showAgreement();
         }
 
+        if (report_data != null) {
+            self.report_data = report_data;
+        }
+
         if (as != null) {
             console.log("IM | ?as= detected", as);
             self = window.im_variants.getForGroup(Number(as));
@@ -131,7 +140,7 @@ export class InstantMessagesAndRelated {
             b.searchParams.set("as", String(as))
         } else {
             window.im_variants.set(self);
-            if (!self.is_ready) { await self.init(); }
+            if (!self.is_ready) { await self.init(true, report_data != null); }
 
             b.searchParams.delete("as")
         }
@@ -166,6 +175,41 @@ export class InstantMessagesAndRelated {
         }
 
         return self;
+    }
+
+    // вот там заглушку добавь, вот там глянь чёто отвалилось, вот там короче придумал добавь в функции аргумент чтобы сделать такое исключение в логике, чтобы мессенджер думал что он показывает от имени репортнувшего, оо пиздец бля, и ещё перезагрузи страницу 1000 раз
+    static async reportShowMessageContext(event, report_id, peer_id, message_id, author_id) {
+        const container = event.target.closest("#msg_context_place");
+        event.target.remove();
+        console.log(report_id, peer_id, message_id, author_id);
+
+        const f = await InstantMessagesAndRelated.insertAsReport(container, {
+            "report_id": report_id,
+            "peer_id": peer_id,
+            "message_id": message_id,
+            "author_id": author_id
+        });
+        window.im = f;
+        f.openTabByName("conversations");
+        /*
+        const messenger = new Messenger();
+        messenger._window = new MessengerPage();
+        messenger._window.container = container;
+
+        const convo = new Conversation({
+            "peer": await ChatGeneralForm.resolveByIdAndReturnClass(peer_id)
+        });
+        console.log(convo);
+        messenger.setChat(convo);
+        const c = await convo.getEndScrollPosition().loadOlder();
+        convo.getEndScrollPosition().result();
+        await messenger.view.render(container, {}, messenger);
+        messenger.goToMessage({
+            "peer_id": peer_id,
+            "id": message_id
+        }, convo, false);
+        u(".messages--peers-tabs").attr("style", "display:none");
+        //const im = await window.im_class.insertIn(document.querySelector("#msg_context_place"), null, false, false, global_id);*/
     }
 
     _showAgreement() {
@@ -363,7 +407,6 @@ export class InstantMessagesAndRelated {
         try {
             return this.getSelectedTab().getPageId()
         } catch(e) {
-            console.error(e);
             return null;
         }
     }
@@ -436,7 +479,11 @@ class IMState {
     }
 
     getId() {
-        return this.getOperator().id;
+        try {
+            return this.getOperator().id;
+        } catch(e) {
+            return window.openvk.current_id;
+        }
     }
     get is_compact_mode_enabled() { return localStorage.getItem("tw.im.modern_mode") === "1"; }
     get is_debug() { return localStorage.getItem("tw.im.debug") === "1"; }
@@ -480,14 +527,17 @@ class IMState {
         });
     }
 
-
     async _loadCurrent() {
         if (this.group_id == null) {
-            let _v = await window.OVKAPI.call('users.get', {
-                'user_ids': window.openvk.current_id,
-                'fields': ChatGeneralForm.BASE_FIELDS,
-            });
-            this.items.push(new ChatGeneralForm(_v[0]));
+            if (this.link.report_data) {
+                this.items.push(ChatGeneralForm.resolveById(this.link.report_data.author_id));
+            } else {
+                let _v = await window.OVKAPI.call('users.get', {
+                    'user_ids': window.openvk.current_id,
+                    'fields': ChatGeneralForm.BASE_FIELDS,
+                });
+                this.items.push(new ChatGeneralForm(_v[0]));
+            }
         } else {
             let _v = await window.OVKAPI.call('groups.getById', {
                 'group_ids': Math.abs(this.group_id),
@@ -501,11 +551,20 @@ class IMState {
     }
 
     getOperator() {
+        if (!this.items[this.item_index]) {
+            return new ChatGeneralForm();
+        }
+
         return this.items[this.item_index];
     }
 
     getCurrentConvo() {
-        return this.link.messenger.getCurrentChat();
+        const v = this.link.messenger.getCurrentChat();
+        if (!v) {
+            return new ChatGeneralForm();
+        }
+
+        return v;
     }
 
     async _checkSel(loc, sel_id = null) {

@@ -1546,6 +1546,7 @@
 "change_chat_title" = "Обновить название";
 "change_chat_avatar" = "Обновить аватар";
 "leave_chat" = "Покинуть чат";
+"return_to_chat" = "Вернуться в чат";
 "convo_search_messages" = "Поиск по сообщениям";
 "convo_invite_links" = "Пригласительные ссылки";
 

@@ -100,6 +100,8 @@ export const ActionsBar = ({ selectedMessages, count, onDelete, onUnselect, onRe
         }
     })
 
+    canForward = false;
+
     return html`
         <div class="messages--actions shown">
             <div>
@@ -252,6 +254,12 @@ export const ConversationItem = ({ conv, isForward = false, page = null }) => {
     // здесь появился соблазн добавить && peer.data.members_count > 3 чтобы число участников показывалось только если в беседе много людей
     // с одной стороны по названию или аватарке и так понятно, что это беседа, но название и аватарка могут быть изменены
     const d = last_msg != null && has_activity == false;
+    let last_sender_ava = "";
+    try {
+        last_sender_ava = last_msg.sender.getAvatar("mid", false);
+    } catch(e) {
+        console.error(e);
+    }
     return html`
         <div class="${cls1.join(' ')}" onClick=${() => window.im?.messenger.onConversationsClick(conv, isForward, page)}>
         <div class="crp-entry--image">
@@ -265,7 +273,7 @@ export const ConversationItem = ({ conv, isForward = false, page = null }) => {
         <div class="crp-entry--message">
             ${d && html`
             <div class="crp-entry--message---av">
-                <img src="${last_msg.sender.getAvatar("mid", false)}" />
+                <img src="${last_sender_ava}" />
             </div>
             <div class="crp-entry--message---text" dangerouslySetInnerHTML=${{ __html: last_msg.getText(false, true, true) }} />`}
             ${has_activity == true && html`
@@ -363,6 +371,8 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
     const avatar = peer.getAvatar("big");
     const is_from_chat = fromConvo.supposed_type == "chat" && peer.supposed_type != "chat";
     const is_club_related = peer.supposed_type == "club" || window.im.state.getOperator().supposed_type == "club";
+    const members = peer.members ? peer.members.items : null;
+    console.log(peer)
 
     return html`
     <div class="peer-window">
@@ -446,12 +456,14 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                 <div class="chat-tab-2">
                     <div>
                         <div>
-                            <b>${tr("participants")}</b> ()
+                            <b>${tr("participants")}</b> (${peer.data.members_count})
                         </div>
-                        <div>
-                            ${ peer.can("leave_chat") ? html`
+                        <div style="display: flex;gap: 5px;">
+                            ${ peer.can("leave_chat") ? ( !peer.isILeft() ? html`
                                 <a>${tr("leave_chat")}</a>
-                            ` : "" }
+                            ` : html`
+                                <a>${tr("return_to_chat")}</a>
+                            `) : ""}
                             ${ peer.can("invite_new") ? html`
                                 <a onClick=${(e) => { window.im.openTabByName("friends", true, {
                                     "referrer": "add_new",
@@ -460,7 +472,14 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                             ` : "" }
                         </div>
                     </div>
-                    <div class="chat-members"></div>
+                    <div class="chat-members">
+                        ${members ? members.map(item => {
+                            console.log(item)
+                            return html`
+                                
+                            `
+                        }) : ""}
+                    </div>
                 </div>
             ` : ""}
         </div>

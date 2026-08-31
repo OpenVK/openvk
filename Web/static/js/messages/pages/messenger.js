@@ -38,10 +38,11 @@ export class Messenger {
         this.replyTo = null;
         this.editMsg = null;
         this._typingStarted = null;
+        this._window = null;
     }
 
     getWindow() {
-        return window.im.getTab("messenger").render_class;
+        return this._window || window.im.getTab("messenger").render_class;
     }
 
     afterFirstRender() {
@@ -509,12 +510,14 @@ export class Messenger {
         return this.editMsg != null;
     }
 
-    async goToMessage(msg) {
+    async goToMessage(msg, presetConvo = null, open_tab = true) {
         try {
-            await (await window.im.openTabByName("messenger")).render();
+            if (open_tab) {
+                await (await window.im.openTabByName("messenger")).render();
+            }
         } catch (e) { console.error(e); }
 
-        this.view.goToMessage(msg);
+        this.view.goToMessage(msg, presetConvo);
     }
 
     setForwarded(msgs) { this.forwarded_msg = msgs; }
@@ -583,13 +586,13 @@ export class MessengerPage extends IMPage {
     }
 
     //async render(container, special_mode = null, messages = null) {
-    async render(container, options = {}) {
+    async render(container, options = {}, messenger = null) {
+        const orig_messenger = messenger || window.im.messenger;
         try {
-            window.im.messenger.currentDraft = this.getNode().find("#write .small-textarea").last().value;
+            orig_messenger.currentDraft = this.getNode().find("#write .small-textarea").last().value;
         } catch(e) {
             console.error(e);
         }
-        const orig_messenger = window.im.messenger;
         this.getNode().addClass("page-other");
 
         let messages = null;
@@ -600,7 +603,7 @@ export class MessengerPage extends IMPage {
             return;
         };
 
-        const currentConv = window.im.messenger.getCurrentChat();
+        const currentConv = orig_messenger.getCurrentChat();
         if (!currentConv) {
             render(html`<${ErrorConversation} />`, root)
             return;
@@ -620,10 +623,10 @@ export class MessengerPage extends IMPage {
             <div class="chat-window ${peer.id == window.im.state.getId() ? "saved-msgs" : ""}">
             <${PeerTabsView} hadTab=${true} tabs=${orig_messenger.opened_tabs} currentChat=${orig_messenger.currentChatId} page=${this} />
             <${ActionsBar}
-                selectedMessages=${window.im.messenger.selected_messages_objs}
-                count=${window.im.messenger.selected_messages_count}
+                selectedMessages=${orig_messenger.selected_messages_objs}
+                count=${orig_messenger.selected_messages_count}
                 onDelete=${() => this.callDeletion()}
-                onUnselect=${() => window.im.messenger.unselectAll()}
+                onUnselect=${() => orig_messenger.unselectAll()}
                 onReply=${() => this.onReplyButtonClick()}
                 onForwardClick=${() => { this.onForwardClick() }}
             />
@@ -632,20 +635,20 @@ export class MessengerPage extends IMPage {
                 convo=${currentConv}
                 dayDividedChunks=${messages} 
                 page=${this} />
-                <${InputArea}
+                ${!options.removeInput ? html`<${InputArea}
                 convo=${currentConv}
-                editMsg=${window.im.messenger.editMsg}
-                replyTo=${window.im.messenger.replyTo}
-                onRemoveReply=${() => window.im.messenger.removeReply()}
-                onSend=${() => window.im.messenger.onSendMessage()}
+                editMsg=${orig_messenger.editMsg}
+                replyTo=${orig_messenger.replyTo}
+                onRemoveReply=${() => orig_messenger.removeReply()}
+                onSend=${() => orig_messenger.onSendMessage()}
                 onKeyPress=${(e) => this.onTextareaKeyPress(e)}
-                currentDraft=${window.im.messenger.currentDraft}
+                currentDraft=${orig_messenger.currentDraft}
                 onInput=${(e) => { this.currentDraft = e.target.value; }}
                 togglePeerInfo=${(e) => { this.togglePeerInfo() }}
                 clickOnReply=${(msg, e) => { this.clickOnReply(msg, e) }}
-                forwarded_msg=${window.im.messenger.forwarded_msg}
-                onRemoveForward=${() => window.im.messenger.removeForward()}
-                />
+                forwarded_msg=${orig_messenger.forwarded_msg}
+                onRemoveForward=${() => orig_messenger.removeForward()}
+                />` : ""}
             </div>
             </div>
         </div>
@@ -712,11 +715,11 @@ export class MessengerPage extends IMPage {
         }
     }
 
-    async goToMessage(msg) {
+    async goToMessage(msg, presetConvo) {
         const id = msg.id;
         let conv = null;
         try {
-            conv = window.im.conversations._findConv(msg.peer_id);
+            conv = presetConvo ? presetConvo : window.im.conversations._findConv(msg.peer_id);
         } catch (e) {
             console.error(e);
         }
@@ -744,7 +747,10 @@ export class MessengerPage extends IMPage {
 
         console.log("IM | New scroll position: ", sp);
 
-        await window.im.messenger.selectConversation(conv);
+        if (!presetConvo) {
+            await window.im.messenger.selectConversation(conv);
+        }
+
         this.scrollToMessage(msg);
     }
 
@@ -1116,6 +1122,7 @@ export class ContactPage extends IMPage {
         this.getNode().addClass("page-other");
 
         const currentCorresponder = window.im.state.getCurrentConvo();
+        await currentCorresponder.peer.checkMembers();
         let peer = null;
         if (this.options.peer == null) {
             peer = currentCorresponder;

@@ -211,8 +211,15 @@ export class Conversations {
         });
     }
 
-    async loadNext() {
-        let convs = await this.getConversations(this.loaded_convs_count);
+    async loadNext(im = null) {
+        let convs = [];
+        console.log(im.report_data)
+        if (im && im.report_data) {
+            convs = [await this._findConvFromApi(im.report_data.peer_id)];
+        } else {
+            convs = await this.getConversations(this.loaded_convs_count);
+        }
+
         this._appendConvs(convs);
     }
 
