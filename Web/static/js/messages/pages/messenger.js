@@ -322,6 +322,19 @@ export class Messenger {
     }
 
     async viewMedia(media_type = "pinned") { }
+    async viewPinned(event, convo) {
+        event.target.classList.add("lagged");
+        if (!convo.hasPinned()) {
+            console.error("IM | Messenger | No pinned");
+            return;
+        }
+
+        await this.view.goToMessage({
+            peer_id: convo.id,
+            id: convo.getPinnedMessageId()
+        });
+        event.target.classList.remove("lagged");
+    }
 
     /* Selectness */
 

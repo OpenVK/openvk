@@ -694,7 +694,20 @@ export class ChatMessage {
     isReply() { return this.data.reply_message != null; }
     isError() { return this.data.error_text != null; }
     isEdited() { return this.data.edited == 1 || this.data.edited == true; }
-    isPinned() { return this.data.is_pinned == 1; }
+    //isPinned() { return this.data.is_pinned == 1; } решили что только одно сообщение может быть закреплено :(
+    isPinned() {
+        if (this.data.is_pinned == undefined) {
+            try {
+                let f = window.im.conversations._findConv(this.data.peer_id).getPinnedMessageId() == this.id;
+                this.data.is_pinned = Number(f);
+            } catch (e) {
+                console.error(e);
+                this.data.is_pinned = 0;
+            }
+        }
+
+        return this.data.is_pinned == 1;
+    }
 
     isDeleted(mode = 1) {
         // 0 - deleted by me via action, will not disappear but will leave placeholder text
@@ -966,6 +979,12 @@ export class ChatMessage {
         }
 
         this.data.is_pinned = Boolean(action);
+
+        if (action) {
+            window.im.messenger.getCurrentChat()._conversation.current_pinned_message = {
+                "id": this.id,
+            };
+        }
     }
 
     isRead() {

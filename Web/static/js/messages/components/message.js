@@ -22,6 +22,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
         msg.isError() ? 'msg-error' : '',
         msg.isEdited() ? 'msg-edited' : '',
         msg.isReply() ? 'msg-reply' : '',
+        msg.isPinned() ? 'msg-pinned' : '',
         (isSearchTpl) ? 'msg-searched': (msg.isError() ? "msg-error-hoverable" : 'msg-hoverable'),
         msg.isRead() ? 'msg-read': 'unread',
     ].filter(Boolean).join(' ');
@@ -84,7 +85,10 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                     `}
                 </div>
                 <p dangerouslySetInnerHTML=${{ __html: msg.getText(false) }} class="normalText text" />
-                <p class="msg-edit-mark">(${tr('edit_action_past').toLowerCase()})</p>
+                <p class="msg-modificators">
+                    <p class="modificator-edited">(${tr('edit_action_past').toLowerCase()})</p>
+                    <p class="modificator-pinned">(${tr('pinned_action_past').toLowerCase()})</p>
+                </p>
                 ${msg.getAttachments() && msg.getAttachments().length > 0 && html`
                     <div class="attachments">
                     ${msg.getAttachments().map((att) => html`<${Attachment} msg=${msg} att=${att} />`)}

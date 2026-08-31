@@ -686,7 +686,7 @@ class SettingsPage extends IMPage {
 
         const show_mail = location.hostname == "openvk.org";
         container.insertAdjacentHTML("beforeend", `
-            <div style="padding: 10px 10px;">
+            <div style="padding: 10px 75px;height: 100%;background: var(--common-2);">
                 <div>
                     <label style="display:none;"><input id="im.modern_mode" type="checkbox">${tr("im_option_compact_mode")} (beta)</label>
                     <label style="display:block;"><input id="im.debug" type="checkbox">${tr("im_option_debug")}</label>
@@ -716,17 +716,6 @@ class YellowHeader {
         }
 
         u(".page_yellowheader").html(text);
-
-        try {
-            append_switch_button = window.im.getSelectedTab().getPageId() == "conversations";
-        } catch(e) {}
-
-        if (append_switch_button == true) {
-            u(".page_yellowheader").append(`
-            <div style="float: right;">
-                <span><b><a onclick="imSwitchCurrent(event)">${tr("messenger_switch_current")}</a></b></span>
-            </div>`);
-        }
     }
 
     changeByConvNumber(conv_number) {
