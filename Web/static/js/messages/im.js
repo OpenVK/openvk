@@ -609,7 +609,7 @@ class IMState {
 
         let maybe_distance = 145;
         let tabs_height = container.querySelector('#im_page_tabs').clientHeight;
-        container.style.minHeight = window.outerHeight - tabs_height - maybe_distance + 'px';
+        //container.style.minHeight = window.outerHeight - tabs_height - maybe_distance + 'px';
     }
 
     async _resolvePosition(url = null, from_msg = false, firstLoad = false) {
