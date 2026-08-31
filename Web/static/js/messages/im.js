@@ -80,7 +80,7 @@ export class InstantMessagesAndRelated {
             if (!do_init) {
                 return;
             }
-        } catch(e) {
+        } catch (e) {
             console.error(e);
         }
 
@@ -96,7 +96,7 @@ export class InstantMessagesAndRelated {
 
         try {
             await this.conversations.loadNext(this);
-        } catch(e) {
+        } catch (e) {
             fastError(String(e));
         }
 
@@ -145,7 +145,6 @@ export class InstantMessagesAndRelated {
             b.searchParams.delete("as")
         }
 
-        self.state.addLoadSkeleton(container);
         self.state.isFastchat = fastchat;
         await self.waitLoad();
 
@@ -164,13 +163,13 @@ export class InstantMessagesAndRelated {
         //const found = await this._checkSel(new URL(location.href), sel_id);
         //if (!found) {
         //    this.selectTab('conversations');
-       	//}
+        //}
 
         try {
             await self.state._checkSel(b);
             self.state._changeHeight(self.root);
             self.state.removeLoadSkeleton(container);
-        } catch(e) {
+        } catch (e) {
             console.error(e);
         }
 
@@ -252,7 +251,7 @@ export class InstantMessagesAndRelated {
                 console.log(this.root, oldRoot)
                 item.render_class.changeContainer(this.root);
                 item.render();
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
         })
@@ -323,7 +322,7 @@ export class InstantMessagesAndRelated {
 
             console.log("IM | Show tab", _tab);
             _tab.showTab(this.root);
-        } catch(e) {
+        } catch (e) {
             console.error(e);
         }
 
@@ -335,7 +334,7 @@ export class InstantMessagesAndRelated {
         let got_class = null;
         let already_here = null;
 
-        switch(tab) {
+        switch (tab) {
             default:
                 console.error("no tab with name: ", tab);
                 break;
@@ -384,7 +383,7 @@ export class InstantMessagesAndRelated {
                     await got_tab.render();
                     got_tab.render_class.removeLoadSkeleton(this.root);
                 }
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
 
@@ -403,15 +402,16 @@ export class InstantMessagesAndRelated {
         return [this.getTab("conversations"), ...vals];
     }
     getSelectedTab(tab) { return this.tabs[this.selectedTabId]; }
-    getSelectedTabId() { 
+    getSelectedTabId() {
         try {
             return this.getSelectedTab().getPageId()
-        } catch(e) {
+        } catch (e) {
+            console.error(e);
             return null;
         }
     }
     getTabs() { return this.tabs.map(t => t.id); }
-    getTab(id) { return this.tabs.find(t => t.getPageId() == id);}
+    getTab(id) { return this.tabs.find(t => t.getPageId() == id); }
 }
 
 class IMVariants {
@@ -488,10 +488,10 @@ class IMState {
     get is_compact_mode_enabled() { return localStorage.getItem("tw.im.modern_mode") === "1"; }
     get is_debug() { return localStorage.getItem("tw.im.debug") === "1"; }
     get is_opened() { return location.pathname == "/im"; }
-    get is_active() { 
+    get is_active() {
         try {
             return window.im.getSelectedTabId() == "messenger" && this.is_opened == true;
-        } catch(e) { return false; }
+        } catch (e) { return false; }
     }
     get is_group() { return this.group_id != null }
 
@@ -574,7 +574,7 @@ class IMState {
 
         try {
             await this.link.openTabByName("conversations");
-        } catch(e) {
+        } catch (e) {
             console.error(e);
         }
 
@@ -641,7 +641,7 @@ class IMState {
 
             try {
                 u('body #fastchats_related #fastchats_chat #wrap').last().scroll({ top: 0 });
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
             return;
@@ -722,9 +722,13 @@ class IMState {
 
     removeLoadSkeleton(container) {
         try {
-            container.querySelector("#load_skeleton").remove();
-        } catch(e) {
-            u("#im_container #load_skeleton").remove();
+            if (container && container.querySelector("#load_skeleton")) {
+                container.querySelector("#load_skeleton").remove();
+            } else {
+                u("#load_skeleton").remove();
+            }
+        } catch (e) {
+            u("#load_skeleton").remove();
         }
     }
 
@@ -891,14 +895,14 @@ export class LongPollConnection {
                 data.updates.forEach((event) => {
                     this.link.event_handler.handle(event);
                 });
-                this.lp.ts = data.ts;
+            this.lp.ts = data.ts;
 
-                if (this.stopped == false) {
-                    this.listen();
-                }
-            };
-            xhr.send();
-        }
+            if (this.stopped == false) {
+                this.listen();
+            }
+        };
+        xhr.send();
+    }
 }
 
 export class FastChats {
@@ -915,7 +919,7 @@ export class FastChats {
         const d = localStorage.getItem("im.fastchat.tabs");
         try {
             return JSON.parse(d);
-        } catch(e) {
+        } catch (e) {
             console.error(e);
             return [];
         }
@@ -1007,7 +1011,7 @@ export class FastChats {
                 this.hideChatBar();
                 return;
             }
-        } catch(e) {
+        } catch (e) {
             console.error(e);
         }
 
@@ -1022,7 +1026,7 @@ export class FastChats {
             return;
         }
 
-        if(u("body #fastchats_related #fastchats_chat").hasClass("shown")) {
+        if (u("body #fastchats_related #fastchats_chat").hasClass("shown")) {
             this.hideChatBar();
         } else {
             this.showChatBar();
@@ -1041,7 +1045,7 @@ export class FastChats {
         setTimeout(() => {
             u("body #fastchats_related #fastchats_chat").removeClass("fading_state2");
             u("body #fastchats_related #fastchats_chat").removeClass("shown");
-        u("body #fastchats_related #fastchats_chat").attr("style", "");
+            u("body #fastchats_related #fastchats_chat").attr("style", "");
         }, 200);
     }
     isShown() { return u("body #fastchats_related #fastchats_chat").hasClass("shown") }

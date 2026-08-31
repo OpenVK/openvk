@@ -78,7 +78,7 @@ body.no-footer .page_footer {
 }
 
 .messenger-app--global-tabs #spec-actions.hidden {
-	display: none;
+    display: none;
 }
 
 .messenger-app--global-tabs #spec-actions .tab-divider {
@@ -89,9 +89,69 @@ body.no-footer .page_footer {
     display: inline-block;
 }
 
+body:has(#im_container.at_page) .page_yellowheader {
+    display: none !important;
+}
+
 #im_container.at_page {
-    margin: -10px -6px -10px -10px;
+    margin: -9px -6px -10px -10px;
     width: 629px;
+}
+
+.messenger-app--tabbar-wrap {
+    width: 100%;
+}
+
+.im-new-interface-banner {
+    display: flex;
+    align-items: flex-start;
+    padding: 16px 20px 14px 20px;
+    box-sizing: border-box;
+    background: #eef2f7;
+    width: calc(100% - 2px);
+}
+
+.im-new-interface-banner--mascot {
+    flex-shrink: 0;
+    margin-right: 18px;
+}
+
+.im-new-interface-banner--mascot img {
+    width: 104px;
+    height: 122px;
+    display: block;
+    object-fit: contain;
+}
+
+.im-new-interface-banner--content {
+    flex: 1;
+    min-width: 0;
+}
+
+.im-new-interface-banner--title {
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--summary, #45688E);
+    margin-bottom: 8px;
+}
+
+.im-new-interface-banner--text {
+    font-size: 11px;
+    line-height: 15px;
+    color: var(--text, #222222);
+    margin-bottom: 12px;
+}
+
+.im-new-interface-banner--actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.im-new-interface-banner--close-btn {
+    padding: 5px 12px;
+    font-size: 11px;
+    cursor: pointer;
 }
 
 .messenger-app--global-tabs {
@@ -99,8 +159,9 @@ body.no-footer .page_footer {
     align-items: center;
     justify-content: space-between;
     margin-left: unset;
-    width: unset;
+    /*width: unset;*/
     padding: 10px 10px 0px 10px;
+    background: #eef2f7;
 }
 
 #show_more.crp-load-more {
@@ -138,12 +199,24 @@ body.no-footer .page_footer {
 .crp-bottom {
     position: sticky;
     bottom: 0;
-    width: var(--messenger-width);
+    width: calc(var(--messenger-width) - 1px);
     background: var(--common-2);
     padding: 10px 11px;
     box-sizing: border-box;
     border-top: 1px solid var(--bg-slightly-border);
     user-select: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.crp-bottom--count {
+    color: var(--nobold, #777);
+    font-size: 11px;
+}
+
+.crp-bottom--actions {
+    margin-left: auto;
 }
 
 .crp-entry {
@@ -191,7 +264,7 @@ body.no-footer .page_footer {
     justify-content: center;
 }
 
-.crp-entry--message{
+.crp-entry--message {
     padding: 3px;
     width: 395px;
     border-radius: 3px;
@@ -205,7 +278,9 @@ body.no-footer .page_footer {
     border-radius: 3px;
 }
 
-.crp-entry--image>.chat_table_avatar { position: relative; }
+.crp-entry--image>.chat_table_avatar {
+    position: relative;
+}
 
 .chat_table_avatar {
     width: 100%;
@@ -282,7 +357,10 @@ body.no-footer .page_footer {
     margin-bottom: 0;
 }
 
-.messenger-app--messages---message .msg-modificators { display: inline; }
+.messenger-app--messages---message .msg-modificators {
+    display: inline;
+}
+
 .messenger-app--messages---message .msg-modificators p {
     display: none;
     color: #8c8c8c9c;
@@ -332,7 +410,8 @@ body.no-footer .page_footer {
     overflow: hidden;
     text-overflow: ellipsis;
     margin-top: 10px;
-    /* white-space: nowrap; */ /* myslivets: а как........... */
+    /* white-space: nowrap; */
+    /* myslivets: а как........... */
     margin-left: 4%;
 }
 
@@ -481,7 +560,7 @@ body.no-footer .page_footer {
     display: none;
 }
 
-.messenger-app--messages---message.msg-searched > .messenger-app--messages---message--wrap {
+.messenger-app--messages---message.msg-searched>.messenger-app--messages---message--wrap {
     padding: 0px 20px;
     width: 100%;
     box-sizing: border-box;
@@ -537,11 +616,11 @@ body.no-footer .page_footer {
     margin-right: 30px;
 }
 
-.messenger-app--messages---message > .messenger-app--messages---message--wrap .inlines {
+.messenger-app--messages---message>.messenger-app--messages---message--wrap .inlines {
     display: inline-block;
 }
 
-.messenger-app--messages---message .actions-2 > div {
+.messenger-app--messages---message .actions-2>div {
     width: 15px;
     height: 15px;
     background: url(../img/msg.png?v=2);
@@ -591,7 +670,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     cursor: pointer;
 }
 
-.messenger-app--messages---message > .messenger-app--messages---message--wrap {
+.messenger-app--messages---message>.messenger-app--messages---message--wrap {
     padding: 0px 60px;
     display: inline-flex;
 }
@@ -773,7 +852,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 }
 
 .messenger-app--messages---message .msg-attach-w-audio span {
-	display: inline;
+    display: inline;
 }
 
 .messenger-app--messages---message ._content .attachments:not(:empty) {
@@ -918,7 +997,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     display: block;
 }
 
-.messenger-app-end.m-selected .messenger-mountain{
+.messenger-app-end.m-selected .messenger-mountain {
     display: none;
 }
 
@@ -972,7 +1051,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 }
 
 .messages--peers-tabs .messages--peers-tab.selected a {
-	cursor: default;
+    cursor: default;
 }
 
 .messages--peers-tabs .messages--peers-tab a {
@@ -1146,7 +1225,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     flex-direction: column;
 }
 
-.peer-window .chat-actions-common > b {
+.peer-window .chat-actions-common>b {
     display: block;
     padding: 3px 0px 3px 0px;
 }
@@ -1434,11 +1513,12 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     vertical-align: top;
 }
 
-#im_container.compact .messenger-app, #im_container.compact .messenger-app--input {
+#im_container.compact .messenger-app,
+#im_container.compact .messenger-app--input {
     width: 368px;
 }
 
-#im_container.compact .messenger-app--messages---message >  .messenger-app--messages---message--wrap {
+#im_container.compact .messenger-app--messages---message>.messenger-app--messages---message--wrap {
     padding: 0px 18px;
     display: inline-flex;
 }
@@ -1505,11 +1585,13 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     z-index: 199;
 }
 
-#fastchats_related, #fastchats_related #fastchats_chat {
+#fastchats_related,
+#fastchats_related #fastchats_chat {
     display: none;
 }
 
-#fastchats_related.shown, #fastchats_related #fastchats_chat.shown {
+#fastchats_related.shown,
+#fastchats_related #fastchats_chat.shown {
     display: block;
 }
 
@@ -1662,7 +1744,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     display: block;
 }
 
-#fastchats_related #fastchats_chat .messages--actions > div {
+#fastchats_related #fastchats_chat .messages--actions>div {
     display: inline-block;
 }
 
@@ -1671,7 +1753,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     font-size: 11px;
 }
 
-#fastchats_related #fastchats_chat .messenger-app--messages---message > .messenger-app--messages---message--wrap {
+#fastchats_related #fastchats_chat .messenger-app--messages---message>.messenger-app--messages---message--wrap {
     padding: 0px 15px;
     width: 100%;
     box-sizing: border-box;
@@ -1855,4 +1937,3 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     align-items: center;
     justify-content: center;
 }
-
