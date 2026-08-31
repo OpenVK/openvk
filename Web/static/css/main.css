@@ -18,7 +18,7 @@
     /* by topics */
     --profile-link: #CCC;
     --summary: #45688E;
-    --error-bg:  #f781812e;
+    --error-bg: #f781812e;
     --cinema: #515151;
     --post-head: #EEEEEE;
     --unread: #96959033;
@@ -107,7 +107,7 @@ h1 {
 .page_header {
     position: relative;
     width: 791px;
-    height: 45px;
+    height: 43px;
     background: url('../img/header.png');
     background-repeat: no-repeat;
     background-position: 0;
@@ -167,7 +167,7 @@ h1 {
     display: inline-block;
     height: 29px;
     padding: 11px 4px 0 7px;
-    background: url('../img/divider.png') no-repeat;
+    /*background: url('../img/divider.png') no-repeat;*/
     background-size: 1.5px 41px;
 }
 
@@ -371,16 +371,18 @@ body.no_footer .navigation_footer {
     margin-top: -2px;
     font-size: 11px;
     text-align: left;
+    position: relative;
+    z-index: 2;
 }
 
 .wrap1 {
-    border: 1px solid #EBF0F4;
+    border: 1px solid #00407314;
     border-top: 0;
     width: auto;
 }
 
 .wrap2 {
-    border-right: 1px solid #F6F8FA;
+    border-right: 1px solid #00000009;
     border-top: 0;
 }
 
@@ -392,17 +394,18 @@ body.no_footer .navigation_footer {
     border-right: solid 1px #DCD4A4;
     border-left: solid 1px #E4DDB4;
     border-bottom: solid 1px #D7CF9E;
+    border-top: solid 1px #D7CF9E;
     overflow: hidden;
 }
 
 #wrapHI {
-    border-right: solid 1px #D5DDE6;
-    border-left: solid 1px #D5DDE6;
+    border-right: solid 1px #004ea625;
+    border-left: solid 1px #004ea625;
 }
 
 #wrapH {
-    border-right: solid 1px #EAEEF3;
-    border-left: solid 1px #EAEEF3;
+    border-right: solid 1px #004ea615;
+    border-left: solid 1px #004ea615;
 }
 
 .page_yellowheader span {
@@ -522,9 +525,9 @@ body.no_footer .navigation_footer {
     padding: 10px 10px;
 }
 
-.profile_links_important > a,
-.profile_links_important > #profile_link,
-.profile_links_important > .profile_link,
+.profile_links_important>a,
+.profile_links_important>#profile_link,
+.profile_links_important>.profile_link,
 .profile_links_important input[type="submit"] {
     width: 100%;
     text-align: center;
@@ -1994,8 +1997,8 @@ body.scrolled .toTop:hover,
 
 .page-wrap {
     border-bottom: solid 1px #C3CAD2;
-    border-left: solid 1px #DAE1E8;
-    border-right: solid 1px #DAE1E8;
+    border-left: solid 1px #004ea625;
+    border-right: solid 1px #004ea625;
     padding: 10px;
 }
 
@@ -3002,8 +3005,8 @@ a.poll-retract-vote {
     border-radius: 2px;
 }
 
-.post-horizontal .upload-item:hover .play-button, 
-.compact_video:hover .play-button, 
+.post-horizontal .upload-item:hover .play-button,
+.compact_video:hover .play-button,
 .docGalleryItem:hover .play-button {
     opacity: 1;
 }
@@ -3101,7 +3104,7 @@ a.poll-retract-vote {
     width: 100% !important;
 }
 
-.client_app > img {
+.client_app>img {
     top: 3px;
     position: relative;
 }
