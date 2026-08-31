@@ -35,7 +35,7 @@ body.no-scroll .page_footer {
 
 body.no-scroll .messenger-app--global-tabs {
     position: fixed;
-    top: 65px;
+    top: 75px;
     padding-top: 8px;
     background: white;
     z-index: 4;
@@ -53,7 +53,7 @@ body.no-scroll .messenger-app--global-tabs {
 body.no-scroll .messages--peers-tabs {
     position: fixed;
     z-index: 4;
-    top: 97px;
+    top: 74px;
     padding: 8px 10px;
     box-sizing: border-box;
     width: 627px;
@@ -105,10 +105,11 @@ body:has(#im_container.at_page) .page_yellowheader {
 .im-new-interface-banner {
     display: flex;
     align-items: flex-start;
-    padding: 16px 20px 14px 20px;
+    padding: 16px 20px 30px 20px;
     box-sizing: border-box;
     background: #eef2f7;
     width: calc(100% - 2px);
+    margin-top: -30px;
 }
 
 .im-new-interface-banner--mascot {
@@ -154,6 +155,10 @@ body:has(#im_container.at_page) .page_yellowheader {
     cursor: pointer;
 }
 
+.messenger-app--tabbar-wrap {
+    margin-top: 21px;
+}
+
 .messenger-app--global-tabs {
     display: flex;
     align-items: center;
@@ -161,7 +166,7 @@ body:has(#im_container.at_page) .page_yellowheader {
     margin-left: unset;
     /*width: unset;*/
     padding: 10px 10px 0px 10px;
-    background: #eef2f7;
+    margin-top: -33px;
 }
 
 #show_more.crp-load-more {
