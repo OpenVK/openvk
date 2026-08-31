@@ -35,7 +35,7 @@ body.no-scroll .page_footer {
 
 body.no-scroll .messenger-app--global-tabs {
     position: fixed;
-    top: 75px;
+    top: 74px;
     padding-top: 8px;
     background: white;
     z-index: 4;
@@ -70,7 +70,7 @@ body.no-scroll .page_header {
 
 body.no-scroll .sidebar {
     position: fixed;
-    top: 44px;
+    top: 43px;
 }
 
 body.no-footer .page_footer {
@@ -180,7 +180,7 @@ body:has(#im_container.at_page) .page_yellowheader {
     align-items: center;
     gap: 11px;
     padding: 11px 11px 11px 10px;
-    margin: 0px 0px 0px 1px;
+    margin: 0px 0px 0px 0px;
     box-sizing: border-box;
 }
 
@@ -1051,7 +1051,9 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 }
 
 .messages--peers-tabs .messages--peers-tab.selected {
-    background: var(--brand);
+    background: url(../img/button.png) #595959;
+    border: 1px solid #595959;
+    text-shadow: 0 1px 0 #555;
     font-weight: bold;
 }
 
