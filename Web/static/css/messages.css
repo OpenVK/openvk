@@ -136,7 +136,7 @@ body.no-footer .page_footer {
 }
 
 .crp-bottom {
-    position: fixed;
+    position: sticky;
     bottom: 0;
     width: var(--messenger-width);
     background: var(--common-2);
