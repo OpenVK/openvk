@@ -1462,6 +1462,10 @@
 "messages_error_1_description" = "There was a general error in sending this message...";
 "message_is_deleted" = "Missing message";
 
+"messages_new_interface_title" = "Long-awaited Messages update";
+"messages_new_interface_text" = "We completely rewrote the messaging section from scratch, making conversations truly fast and responsive. Messages are now delivered instantly in real time, with convenient conversation tabs, group chats, replies, and forwarding. The old slow messaging is a thing of the past — enjoy chatting!";
+"messages_new_interface_hide" = "Don't show this again";
+
 "create_chat" = "New chat";
 "to_friendslist" = "Show friends list";
 

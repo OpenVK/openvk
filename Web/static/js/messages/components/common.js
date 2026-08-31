@@ -63,7 +63,7 @@ export const PeerAvatar = ({ peer, className = "", loading = "lazy", saved_messa
 
 export const PeerTab = ({ conv, active, page }) => {
     return html`
-        <div class="messages--peers-tab${active ? ' selected' : ''} ${ !conv.isRead() ? 'unread' : ''}">
+        <div class="messages--peers-tab${active ? ' selected' : ''} ${!conv.isRead() ? 'unread' : ''}">
             <a onClick=${() => window.im?.messenger.selectConversation(conv)}>${conv.peer.getName(true, true)}</a>
             <span class="messages--peers-tab-counter">+${conv.unread_count}</span>
             <span class="messages--peers-tab-close" onClick=${() => window.im?.messenger.closeChat(conv, page)}>
@@ -186,25 +186,25 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
 
     return html`
     <div class="${cls.join(" ")}">
-        ${ replyTo && html`
+        ${replyTo && html`
             <div class="input-reply input-m">
                 <span onclick=${() => { clickOnReply(replyTo) }} aria-label="link" class="input-type">${tr("reply_to", replyTo.sender.getName())}</span>
                 <span class="input-close" onClick=${onRemoveReply}><div class="cross"></div></span>
             </div>
         `}
-        ${ editMsg && html`
+        ${editMsg && html`
             <div class="input-edit input-m">
                 <span onclick=${() => { clickOnReply(editMsg) }} aria-label="link" class="input-type">${tr("edit_of_message")}</span>
                 <span class="input-close" onClick=${(e) => { window.im.messenger.cancelEdit() }}><div class="cross"></div></span>
             </div>
         `}
-        ${ isForwarded ? html`
+        ${isForwarded ? html`
             <div class="input-forward input-m">
                 <span aria-label="link" class="input-type">${tr("forwarded_messages_noun", forwarded_msg.length)}</span>
                 <span class="input-close" onClick=${onRemoveForward}><div class="cross"></div></span>
             </div>`
-        : ""}
-        <div class="messenger-mountain" onClick=${(e) => {window.im.messenger.view.scrollToEndOfChat(e, convo)}}>
+            : ""}
+        <div class="messenger-mountain" onClick=${(e) => { window.im.messenger.view.scrollToEndOfChat(e, convo) }}>
             ${tr("viewing_old_messages")}
         </div>
         <div class="post-buttons">
@@ -223,7 +223,7 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
                     <div class="post-horizontal"></div>
                     <div class="post-vertical"></div>
                     <div class="input--messagebox-buttons">
-                        <button class="button" onClick=${onSend}>${ !is_editing ? tr('send') : tr('edit_action_lr')}</button>
+                        <button class="button" onClick=${onSend}>${!is_editing ? tr('send') : tr('edit_action_lr')}</button>
                         <${AttachmentMenu} />
                     </div>
                 </div>
@@ -290,6 +290,7 @@ export const ConversationItem = ({ conv, isForward = false, page = null }) => {
 
 export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCreateChat, onSearch, isForward, page, unreadMode }) => {
     const is_group = window.im.state.is_group;
+    const total_convs = window.im.conversations ? Number(window.im.conversations.total_convs || conversations.length) : conversations.length;
 
     return html`
         <div id="conversations-top-buttons">
@@ -297,7 +298,7 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
             <div id="conversations-search-bar">
                 <input class="search_input" type="text" placeholder="${tr('search_messages')}" onChange=${onSearch} />
             </div>
-            ${ !is_group ? html`<input type="button" class="button" value="${tr('create_chat')}" onClick=${onCreateChat} />` : "" }
+            ${!is_group ? html`<input type="button" class="button" value="${tr('create_chat')}" onClick=${onCreateChat} />` : ""}
             ` : html`
             <b>${tr("forward_messages_msg")}</b>
             <a>${tr("cancel")}</a>
@@ -312,13 +313,37 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
             `}
         </div>
         <div class="crp-bottom">
-            ${!unreadMode ? html`
-                <a onClick=${() => { window.im.conversations.toggleMode("unread") }}>${tr("conversations_show_unread")}</a> |<span> </span>
-            ` : html`
-                <a onClick=${() => {window.im.conversations.toggleMode("all")}}>${tr("conversations_show_all")}</a> |<span> </span>
-            `}
-            <a onclick=${() => { window.im.openTabByName("settings") }}>${tr("messenger_tab_settings")}</a> |<span> </span>
-            <a onClick=${(event) => { imSwitchCurrent(event) }}>${tr("messenger_switch_current")}</a>
+            <div class="crp-bottom--count">
+                ${total_convs > 0 ? tr("conversations_count_title", total_convs) : ""}
+            </div>
+            <div class="crp-bottom--actions">
+                ${!unreadMode ? html`
+                    <a onClick=${() => { window.im.conversations.toggleMode("unread") }}>${tr("conversations_show_unread")}</a> |<span> </span>
+                ` : html`
+                    <a onClick=${() => { window.im.conversations.toggleMode("all") }}>${tr("conversations_show_all")}</a> |<span> </span>
+                `}
+                <a onclick=${() => { window.im.openTabByName("settings") }}>${tr("messenger_tab_settings")}</a> |<span> </span>
+                <a onClick=${(event) => { imSwitchCurrent(event) }}>${tr("messenger_switch_current")}</a>
+            </div>
+        </div>
+    `;
+};
+
+export const MessagesNewInterfaceBanner = ({ onClose }) => {
+    return html`
+        <div class="im-new-interface-banner">
+            <div class="im-new-interface-banner--mascot">
+                <img src="/assets/packages/static/openvk/img/im/im_new_banner.png" alt="" />
+            </div>
+            <div class="im-new-interface-banner--content">
+                <div class="im-new-interface-banner--title">${tr('messages_new_interface_title')}</div>
+                <div class="im-new-interface-banner--text">
+                    ${tr('messages_new_interface_text')}
+                </div>
+                <div class="im-new-interface-banner--actions">
+                    <button class="button im-new-interface-banner--close-btn" onClick=${onClose}>${tr('messages_new_interface_hide')}</button>
+                </div>
+            </div>
         </div>
     `;
 };
@@ -327,38 +352,51 @@ export const TabBar = ({ tabs, activeTab, onTabSelect }) => {
     let activeTabName = "";
 
     try {
-        activeTabName = activeTab.getPageId();
-    } catch(e) {
+        activeTabName = activeTab ? activeTab.getPageId() : "";
+    } catch (e) {
         console.error(e);
     }
 
     const showContactButton = activeTabName == "messenger";
-    const showFriendsButton = !window.im.state.is_group && activeTabName != "friends";
+    const showFriendsButton = !window.im?.state?.is_group && activeTabName != "friends";
     const showSettingsButton = false;
     const showSpecActions = showSettingsButton || showContactButton || showFriendsButton;
 
+    const showBanner = !window.im?.state?.isFastchat && activeTabName === "conversations" && localStorage.getItem("tw.im.hide_new_interface_banner") !== "1";
+
+    const handleDismissBanner = (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        localStorage.setItem("tw.im.hide_new_interface_banner", "1");
+        if (window.im && window.im.updateTabs) {
+            window.im.updateTabs();
+        }
+    };
+
     return html`
-        <div class="messenger-app--global-tabs tabs">
-            <div class="inner-tabs">
-                ${tabs.map((tab) => html`
-                <a data-tab="${tab.getId()}"
-                    id="${tab.isActive() ? 'activetabs' : ''}"
-                    class="tab"
-                    onClick=${() => onTabSelect(tab)}>
-                    ${tab.getName()}
-                </a>
-                `)}
-            </div>
-            <div class="${showSpecActions == false ? 'hidden' : '' }" id="spec-actions">
-                ${showContactButton ? html`
-                    <a onclick=${() => { window.im.openTabByName("contact") }}>${tr('about_peer')}</a>
-                    <span class="tab-divider">|</span>
-                ` : '' }
-                ${showSettingsButton ? html`
-                    <a onclick=${() => { window.im.openTabByName("settings") }}>${tr("messenger_tab_settings")}</a>
-                    <span class="tab-divider">|</span> 
-                ` : ""}
-                ${showFriendsButton ? html`<a onclick=${() => { window.im.openTabByName("friends")} }>${tr('to_friendslist')}</a>` : ""}
+        <div class="messenger-app--tabbar-wrap">
+            ${showBanner ? html`<${MessagesNewInterfaceBanner} onClose=${handleDismissBanner} />` : ""}
+            <div class="messenger-app--global-tabs tabs">
+                <div class="inner-tabs">
+                    ${tabs.map((tab) => html`
+                    <a data-tab="${tab.getId()}"
+                        id="${tab.isActive() ? 'activetabs' : ''}"
+                        class="tab"
+                        onClick=${() => onTabSelect(tab)}>
+                        ${tab.getName()}
+                    </a>
+                    `)}
+                </div>
+                <div class="${showSpecActions == false ? 'hidden' : ''}" id="spec-actions">
+                    ${showContactButton ? html`
+                        <a onclick=${() => { window.im.openTabByName("contact") }}>${tr('about_peer')}</a>
+                        <span class="tab-divider">|</span>
+                    ` : ''}
+                    ${showSettingsButton ? html`
+                        <a onclick=${() => { window.im.openTabByName("settings") }}>${tr("messenger_tab_settings")}</a>
+                        <span class="tab-divider">|</span> 
+                    ` : ""}
+                    ${showFriendsButton ? html`<a onclick=${() => { window.im.openTabByName("friends") }}>${tr('to_friendslist')}</a>` : ""}
+                </div>
             </div>
         </div>
     `;
@@ -401,46 +439,46 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
         </div>
         <div class="chat-btns">
             <div class="chat-tab-1 chat-actions-common">
-                ${ peer.supposed_type == "chat" && (peer.can("update_title") || peer.can("update_avatar")) ? html`
-                <b>${ tr("chat_actions") }</b>
+                ${peer.supposed_type == "chat" && (peer.can("update_title") || peer.can("update_avatar")) ? html`
+                <b>${tr("chat_actions")}</b>
                 <div class="chat-tab-column">
-                    ${ peer.can("update_title") ? html`
+                    ${peer.can("update_title") ? html`
                         <a onClick=${(e) => { updateChatTitle(e, peer) }}>${tr("change_chat_title")}</a>
-                    ` : "" }
-                    ${ peer.can("update_avatar") ? html`
+                    ` : ""}
+                    ${peer.can("update_avatar") ? html`
                         <a onClick=${(e) => { updateChatAvatar(e, peer) }}>${tr("change_chat_avatar")}</a>
-                    ` : "" }
+                    ` : ""}
                 </div>       
                 ` : ""}
 
-                <b>${ tr("actions") }</b>
+                <b>${tr("actions")}</b>
                 <div class="chat-tab-column">
-                    ${ peer.can("view_invite_links") && html`<a>${tr("convo_invite_links")}</a>` }
+                    ${peer.can("view_invite_links") && html`<a>${tr("convo_invite_links")}</a>`}
                     <a onClick=${(e) => {
-                        window.im.openTabByName("search", true, {
-                            "q": "",
-                            "peer_id": peer.id
-                        })
-                    }}>${tr("convo_search_messages")}</a>
-                    ${ window.im.state.is_debug ? html`
-                        <a onClick=${(e) => {  fastError(`<textarea>${JSON.stringify(peer.data, null, 4)}</textarea>`); }}>JSON</a>
+            window.im.openTabByName("search", true, {
+                "q": "",
+                "peer_id": peer.id
+            })
+        }}>${tr("convo_search_messages")}</a>
+                    ${window.im.state.is_debug ? html`
+                        <a onClick=${(e) => { fastError(`<textarea>${JSON.stringify(peer.data, null, 4)}</textarea>`); }}>JSON</a>
                     ` : ""}
                     ${is_from_chat === true && html`
                     <div class="chat-actions-usr chat-actions-common">
                         <a><b>${tr("convo_action_kick")}</b></a>
                     </div>
                     `}
-                    ${ (is_club_related && peer.isClubMessagesBlocked()) ? html`
-                        <div class="chat-actions-usr chat-actions-common" onClick="${async (e) => {await peer.toggleClubMessagesBlockness(e, "enable")}}">
+                    ${(is_club_related && peer.isClubMessagesBlocked()) ? html`
+                        <div class="chat-actions-usr chat-actions-common" onClick="${async (e) => { await peer.toggleClubMessagesBlockness(e, "enable") }}">
                             <a>${tr("group_allow_messages")}</a>
                         </div>
                     ` : ""}
-                    ${ (is_club_related && !peer.isClubMessagesBlocked()) ? html`
-                        <div class="chat-actions-usr chat-actions-common" onClick="${async (e) => {await peer.toggleClubMessagesBlockness(e, "disable")}}">
+                    ${(is_club_related && !peer.isClubMessagesBlocked()) ? html`
+                        <div class="chat-actions-usr chat-actions-common" onClick="${async (e) => { await peer.toggleClubMessagesBlockness(e, "disable") }}">
                             <a>${tr("group_deny_messages")}</a>
                         </div>
                     ` : ""}
-                    ${ convo.hasPinned() ? html`
+                    ${convo.hasPinned() ? html`
                         <a onClick=${(e) => { window.im.messenger.viewPinned(e, convo) }}>${tr("chat_view_pinned_single")}</a>
                     ` : ""}
                 </div>
@@ -452,24 +490,25 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                     <a style="display:none;" onClick=${(e) => { window.im.messenger.viewMedia("documents") }}>${tr("chat_media_doc")} <span>100</span></a>
                 </div>
             </div>
-            ${ peer.supposed_type == "chat" ? html`
+            ${peer.supposed_type == "chat" ? html`
                 <div class="chat-tab-2">
                     <div>
                         <div>
                             <b>${tr("participants")}</b> (${peer.data.members_count})
-                        </div>
                         <div style="display: flex;gap: 5px;">
-                            ${ peer.can("leave_chat") ? ( !peer.isILeft() ? html`
+                            ${peer.can("leave_chat") ? (!peer.isILeft() ? html`
                                 <a>${tr("leave_chat")}</a>
                             ` : html`
                                 <a>${tr("return_to_chat")}</a>
                             `) : ""}
-                            ${ peer.can("invite_new") ? html`
-                                <a onClick=${(e) => { window.im.openTabByName("friends", true, {
-                                    "referrer": "add_new",
-                                    "convo_id": peer.id
-                                }) }}>${tr("chat_add_members_ext")}</a>
-                            ` : "" }
+                            ${peer.can("invite_new") ? html`
+                                <a onClick=${(e) => {
+                                    window.im.openTabByName("friends", true, {
+                                        "referrer": "add_new",
+                                        "convo_id": peer.id
+                                    })
+                                }}>${tr("chat_add_members_ext")}</a>
+                            ` : ""}
                         </div>
                     </div>
                     <div class="chat-members">
