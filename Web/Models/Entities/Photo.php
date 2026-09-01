@@ -375,12 +375,15 @@ class Photo extends Media
     {
         $res = (object) [];
 
+        $album = $this->getAlbum();
+
         $res->id       = $res->pid = $this->getVirtualId();
         $res->owner_id = $res->user_id = $this->getOwner()->getId();
-        $res->aid      = $res->album_id = 0;
+        $res->aid      = $res->album_id = $album ? $album->getId() : 0;
         $res->width    = $this->getDimensions()[0];
         $res->height   = $this->getDimensions()[1];
         $res->date     = $res->created = $this->getPublicationTime()->timestamp();
+        $res->text     = $this->getDescription() ?? "";
         if ($photo_sizes) {
             $res->sizes = array_values($this->getVkApiSizes());
             $res->src_small    = $res->photo_75 = $this->getURLBySizeId("miniscule");
@@ -400,7 +403,7 @@ class Photo extends Media
 
         if ($extended) {
             $res->likes       = [
-                "likes" => $this->getLikesCount(),
+                "count" => $this->getLikesCount(),
                 "user_likes" => 0,
                 "can_like" => 1,
                 "can_publish" => 1,
