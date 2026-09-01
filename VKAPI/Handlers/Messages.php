@@ -332,7 +332,7 @@ final class Messages extends VKAPIRequestHandler
         return (object) $data;
     }
 
-    public function getLongPollServer(int $need_pts = 1, int $version = 2, ?int $group_id = null): array
+    public function getLongPollServer(int $need_pts = 0, int $lp_version = 2, int $use_ssl = 0, ?int $group_id = null): array
     {
         $this->requireUser();
         $baseUrl = $this->broker->getLongPollBaseUrl();
@@ -342,7 +342,7 @@ final class Messages extends VKAPIRequestHandler
         }
 
         $params = [
-            "version"  => (string) $version,
+            "version"  => (string) $lp_version,
             "need_pts" => (string) $need_pts,
         ];
 
@@ -352,6 +352,12 @@ final class Messages extends VKAPIRequestHandler
 
         $data = $this->invoke("messages.getLongPollServer", $params, (int) $group_id);
         $data['server'] = $baseUrl;
+
+        $isLegacy = (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR <= 5 && defined("VKAPI_DECL_VER_MINOR") && VKAPI_DECL_VER_MINOR < 80);
+        if ($isLegacy && $need_pts === 0) {
+            unset($data['pts']);
+        }
+
         $data['unread_count'] = $this->getUser()->getUnreadMessagesCount();
 
         return $data;
@@ -609,11 +615,52 @@ final class Messages extends VKAPIRequestHandler
         $data = $this->invoke("messages.getById", $params);
 
         if (!empty($data['items'])) {
+            $isLegacy = (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR <= 5 && defined("VKAPI_DECL_VER_MINOR") && VKAPI_DECL_VER_MINOR < 80);
+            $chatsRepo = new ChatRepo();
+            $loadedChats = [];
+
             foreach ($data['items'] as &$item) {
-                if (isset($item['attachments'])) {
+                if (!empty($item['attachments'])) {
                     $this->replaceAttachments($item['attachments'], ["gift"]);
+                } else {
+                    $item['attachments'] = [];
+                }
+
+                if (!empty($item['fwd_messages'])) {
+                    foreach ($item['fwd_messages'] as &$fwd) {
+                        if (!empty($fwd['attachments'])) {
+                            $this->replaceAttachments($fwd['attachments'], ["gift"]);
+                        } else {
+                            $fwd['attachments'] = [];
+                        }
+                    }
+                    unset($fwd);
+                }
+
+                if (!empty($item['reply_message']['attachments'])) {
+                    $this->replaceAttachments($item['reply_message']['attachments'], ["gift"]);
+                }
+
+                if ($isLegacy && !empty($item['chat_id'])) {
+                    $cId = (int) $item['chat_id'];
+                    if (!isset($loadedChats[$cId])) {
+                        $loadedChats[$cId] = $chatsRepo->getByChatId($cId);
+                    }
+                    $chatObj = $loadedChats[$cId];
+                    if ($chatObj) {
+                        $chatStruct = $chatObj->toChatSettingsStruct($this->getUser());
+                        if (empty($item['title'])) {
+                            $item['title'] = $chatStruct['title'] ?? ("Chat " . $cId);
+                        }
+                        if (empty($item['photo_50'])) {
+                            $item['photo_50'] = $chatStruct['photo_50'] ?? "";
+                            $item['photo_100'] = $chatStruct['photo_100'] ?? "";
+                            $item['photo_200'] = $chatStruct['photo_200'] ?? "";
+                        }
+                    }
                 }
             }
+            unset($item);
         }
 
         if ($extended == 1) {
@@ -630,11 +677,13 @@ final class Messages extends VKAPIRequestHandler
         int $chat_id = -1,
         int $group_id = 0,
         string $user_ids = "",
+        string $peer_ids = "",
         string $message = "",
         int $sticker_id = -1,
         int $unnoticed = 0,
         string $attachment = "",
         int $random_id = 0,
+        int $guid = 0,
         int $reply_to = 0,
         string $forward_messages = "",
         string $forward = ""
@@ -665,6 +714,48 @@ final class Messages extends VKAPIRequestHandler
             }
         }
 
+        if ($guid !== 0 && $random_id === 0) {
+            $random_id = $guid;
+        }
+
+        // Multi-peer send (5.80+)
+        if (empty($peer_ids)) {
+            $peer_ids = (string) ($_POST['peer_ids'] ?? $_GET['peer_ids'] ?? '');
+        }
+
+        if (!empty($peer_ids)) {
+            $pIds = preg_split("%, ?%", $peer_ids);
+            if (count($pIds) > 100) {
+                $this->fail(913, "Too many recipients");
+            }
+
+            $results = [];
+            foreach ($pIds as $pIdStr) {
+                $pId = (int) trim($pIdStr);
+                if ($pId === 0) {
+                    continue;
+                }
+                try {
+                    $sentMid = (int) $this->send(-1, $pId, "", -1, $group_id, "", "", $message, $sticker_id, 1, $attachment, rand(1, 2147483647), 0, $reply_to, $forward_messages, $forward);
+                    $results[] = [
+                        "peer_id"                 => $pId,
+                        "message_id"              => $sentMid,
+                        "conversation_message_id" => $sentMid,
+                    ];
+                } catch (\Exception $e) {
+                    $results[] = [
+                        "peer_id" => $pId,
+                        "error"   => [
+                            "code"        => $e->getCode() ?: 900,
+                            "description" => $e->getMessage(),
+                        ],
+                    ];
+                }
+            }
+            return $results;
+        }
+
+        // Multi-user send (5.20)
         if (!empty($user_ids)) {
             $ids = preg_split("%, ?%", $user_ids);
             if (count($ids) > 100) {
@@ -673,13 +764,13 @@ final class Messages extends VKAPIRequestHandler
 
             $rIds = [];
             foreach ($ids as $id) {
-                $rIds[] = $this->send(-1, (int) $id, "", -1, $group_id, "", $message, $sticker_id, 1, $attachment, rand(1, 2147483647), $reply_to, $forward_messages, $forward);
+                $rIds[] = (int) $this->send(-1, (int) $id, "", -1, $group_id, "", "", $message, $sticker_id, 1, $attachment, rand(1, 2147483647), 0, $reply_to, $forward_messages, $forward);
             }
             return $rIds;
         }
 
         $resolvedId = $this->resolvePeer($user_id, $peer_id, $chat_id, $domain);
-        if (is_null($resolvedId)) {
+        if (is_null($resolvedId) || $resolvedId === 0) {
             $this->fail(100, "One of the parameters specified was missing or invalid: no recipient");
         }
 
@@ -715,7 +806,15 @@ final class Messages extends VKAPIRequestHandler
             "message"    => $message,
             "attachment" => implode(",", $attachment_secure),
             "random_id"  => (string) ($random_id ?: rand(1, 2147483647)),
+            "guid"       => (string) ($guid ?: $random_id),
         ];
+
+        if ($user_id > 0) {
+            $params["user_id"] = (string) $user_id;
+        }
+        if ($chat_id > 0) {
+            $params["chat_id"] = (string) $chat_id;
+        }
 
         if ($reply_to > 0) {
             $params["reply_to"] = (string) $reply_to;
@@ -781,7 +880,9 @@ final class Messages extends VKAPIRequestHandler
     public function delete(
         string $message_ids = "",
         int $delete_for_all = 0,
+        int $spam = 0,
         int $peer_id = 0,
+        int $chat_id = -1,
         int $group_id = 0,
         string $domain = "",
         int $user_id = -1
@@ -793,16 +894,17 @@ final class Messages extends VKAPIRequestHandler
             $this->fail(100, "One of the parameters specified was missing or invalid: message_ids is empty");
         }
 
-        $resolvedId = $this->resolvePeer($user_id, $peer_id, -1, $domain);
-        if (is_null($resolvedId) || $resolvedId === 0) {
-            $this->fail(936, "There is no peer with this id");
-        }
+        $resolvedId = $this->resolvePeer($user_id, $peer_id, $chat_id, $domain);
 
         $params = [
-            "peer_id"        => (string) $resolvedId,
             "message_ids"    => $message_ids,
             "delete_for_all" => (string) $delete_for_all,
+            "spam"           => (string) $spam,
         ];
+
+        if ($resolvedId !== 0 && !is_null($resolvedId)) {
+            $params["peer_id"] = (string) $resolvedId;
+        }
 
         return $this->invoke("messages.delete", $params, $group_id);
     }
@@ -839,11 +941,13 @@ final class Messages extends VKAPIRequestHandler
         int $peer_id = 0,
         string $domain = "",
         int $user_id = -1,
+        int $chat_id = -1,
         string $date = "",
         int $preview_length = 0,
         int $offset = 0,
         int $count = 20,
         int $extended = 0,
+        string $fields = "photo_200,online",
         int $group_id = 0
     ) {
         $this->requireUser();
@@ -852,7 +956,7 @@ final class Messages extends VKAPIRequestHandler
             $this->fail(100, "One of the parameters specified was missing or invalid: q is empty");
         }
 
-        $resolvedId = $this->resolvePeer($user_id, $peer_id, -1, $domain);
+        $resolvedId = $this->resolvePeer($user_id, $peer_id, $chat_id, $domain);
 
         $params = [
             "q"              => $q,
@@ -860,9 +964,10 @@ final class Messages extends VKAPIRequestHandler
             "offset"         => (string) abs($offset),
             "preview_length" => (string) max(0, $preview_length),
             "extended"       => $extended ? "1" : "0",
+            "fields"         => $fields,
         ];
 
-        if ($resolvedId !== 0) {
+        if ($resolvedId !== 0 && !is_null($resolvedId)) {
             $params["peer_id"] = (string) $resolvedId;
         }
 
@@ -873,15 +978,56 @@ final class Messages extends VKAPIRequestHandler
         $data = $this->invoke("messages.search", $params, $group_id);
 
         if (!empty($data['items'])) {
+            $isLegacy = (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR <= 5 && defined("VKAPI_DECL_VER_MINOR") && VKAPI_DECL_VER_MINOR < 80);
+            $chatsRepo = new ChatRepo();
+            $loadedChats = [];
+
             foreach ($data['items'] as &$item) {
-                if (isset($item['attachments'])) {
+                if (!empty($item['attachments'])) {
                     $this->replaceAttachments($item['attachments'], ["gift"]);
+                } else {
+                    $item['attachments'] = [];
+                }
+
+                if (!empty($item['fwd_messages'])) {
+                    foreach ($item['fwd_messages'] as &$fwd) {
+                        if (!empty($fwd['attachments'])) {
+                            $this->replaceAttachments($fwd['attachments'], ["gift"]);
+                        } else {
+                            $fwd['attachments'] = [];
+                        }
+                    }
+                    unset($fwd);
+                }
+
+                if (!empty($item['reply_message']['attachments'])) {
+                    $this->replaceAttachments($item['reply_message']['attachments'], ["gift"]);
+                }
+
+                if ($isLegacy && !empty($item['chat_id'])) {
+                    $cId = (int) $item['chat_id'];
+                    if (!isset($loadedChats[$cId])) {
+                        $loadedChats[$cId] = $chatsRepo->getByChatId($cId);
+                    }
+                    $chatObj = $loadedChats[$cId];
+                    if ($chatObj) {
+                        $chatStruct = $chatObj->toChatSettingsStruct($this->getUser());
+                        if (empty($item['title'])) {
+                            $item['title'] = $chatStruct['title'] ?? ("Chat " . $cId);
+                        }
+                        if (empty($item['photo_50'])) {
+                            $item['photo_50'] = $chatStruct['photo_50'] ?? "";
+                            $item['photo_100'] = $chatStruct['photo_100'] ?? "";
+                            $item['photo_200'] = $chatStruct['photo_200'] ?? "";
+                        }
+                    }
                 }
             }
+            unset($item);
         }
 
         if ($extended == 1) {
-            $this->hydrateExtendedData($data);
+            $this->hydrateExtendedData($data, $fields);
         }
 
         return $data;
@@ -890,12 +1036,18 @@ final class Messages extends VKAPIRequestHandler
     public function pin(
         int $peer_id = 0,
         int $message_id = 0,
+        int $cmid = 0,
+        int $conversation_message_id = 0,
         string $domain = "",
         int $user_id = -1,
         int $group_id = 0
     ) {
         $this->requireUser();
         $this->willExecuteWriteAction();
+
+        if ($message_id <= 0) {
+            $message_id = $conversation_message_id > 0 ? $conversation_message_id : $cmid;
+        }
 
         if ($message_id <= 0) {
             $this->fail(100, "One of the parameters specified was missing or invalid: message_id is required");
@@ -911,7 +1063,16 @@ final class Messages extends VKAPIRequestHandler
             "message_id" => (string) $message_id,
         ];
 
-        return $this->invoke("messages.pin", $params, $group_id);
+        if ($conversation_message_id > 0 || $cmid > 0) {
+            $params["conversation_message_id"] = (string) ($conversation_message_id > 0 ? $conversation_message_id : $cmid);
+        }
+
+        $data = $this->invoke("messages.pin", $params, $group_id);
+        if (is_array($data) && !empty($data['attachments'])) {
+            $this->replaceAttachments($data['attachments'], ["gift"]);
+        }
+
+        return $data;
     }
 
     public function unpin(
@@ -938,29 +1099,83 @@ final class Messages extends VKAPIRequestHandler
     public function getImportantMessages(
         int $count = 20,
         int $offset = 0,
+        int $start_message_id = 0,
+        int $preview_length = 0,
         int $extended = 0,
+        string $fields = "photo_200,online",
         int $group_id = 0
     ) {
         $this->requireUser();
 
         $params = [
-            "count"    => (string) $count,
-            "offset"   => (string) $offset,
-            "extended" => (string) $extended,
+            "count"            => (string) $count,
+            "offset"           => (string) $offset,
+            "start_message_id" => (string) $start_message_id,
+            "preview_length"   => (string) $preview_length,
+            "extended"         => (string) $extended,
+            "fields"           => $fields,
         ];
 
         $data = $this->invoke("messages.getImportantMessages", $params, $group_id);
 
-        if (!empty($data['items'])) {
-            foreach ($data['items'] as &$item) {
-                if (isset($item['attachments'])) {
-                    $this->replaceAttachments($item['attachments'], ["gift"]);
-                }
-            }
+        $isLegacy = (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR <= 5 && defined("VKAPI_DECL_VER_MINOR") && VKAPI_DECL_VER_MINOR < 80);
+
+        if ($isLegacy) {
+            $msgItems = &$data['items'];
+        } else {
+            $msgItems = &$data['messages']['items'];
         }
 
-        if ($extended == 1) {
-            $this->hydrateExtendedData($data);
+        if (!empty($msgItems) && is_array($msgItems)) {
+            $chatsRepo = new ChatRepo();
+            $loadedChats = [];
+
+            foreach ($msgItems as &$item) {
+                if (!empty($item['attachments'])) {
+                    $this->replaceAttachments($item['attachments'], ["gift"]);
+                } else {
+                    $item['attachments'] = [];
+                }
+
+                if (!empty($item['fwd_messages'])) {
+                    foreach ($item['fwd_messages'] as &$fwd) {
+                        if (!empty($fwd['attachments'])) {
+                            $this->replaceAttachments($fwd['attachments'], ["gift"]);
+                        } else {
+                            $fwd['attachments'] = [];
+                        }
+                    }
+                    unset($fwd);
+                }
+
+                if (!empty($item['reply_message']['attachments'])) {
+                    $this->replaceAttachments($item['reply_message']['attachments'], ["gift"]);
+                }
+
+                if ($isLegacy && !empty($item['chat_id'])) {
+                    $cId = (int) $item['chat_id'];
+                    if (!isset($loadedChats[$cId])) {
+                        $loadedChats[$cId] = $chatsRepo->getByChatId($cId);
+                    }
+                    $chatObj = $loadedChats[$cId];
+                    if ($chatObj) {
+                        $chatStruct = $chatObj->toChatSettingsStruct($this->getUser());
+                        if (empty($item['title'])) {
+                            $item['title'] = $chatStruct['title'] ?? ("Chat " . $cId);
+                        }
+                        if (empty($item['photo_50'])) {
+                            $item['photo_50'] = $chatStruct['photo_50'] ?? "";
+                            $item['photo_100'] = $chatStruct['photo_100'] ?? "";
+                            $item['photo_200'] = $chatStruct['photo_200'] ?? "";
+                        }
+                    }
+                }
+            }
+            unset($item);
+        }
+
+        if ($extended == 1 || !empty($fields)) {
+            $this->hydrateExtendedData($data, $fields);
         }
 
         return $data;
@@ -968,20 +1183,39 @@ final class Messages extends VKAPIRequestHandler
 
     public function markAsImportant(
         string $message_ids = "",
+        string $cmids = "",
+        string $conversation_message_ids = "",
+        int $peer_id = 0,
         int $important = 1,
-        int $group_id = 0
+        int $group_id = 0,
+        int $user_id = -1,
+        int $chat_id = -1,
+        string $domain = ""
     ) {
         $this->requireUser();
         $this->willExecuteWriteAction();
 
-        if (empty($message_ids)) {
+        $resolvedId = $this->resolvePeer($user_id, $peer_id, $chat_id, $domain);
+        $cmidsParam = !empty($conversation_message_ids) ? $conversation_message_ids : $cmids;
+
+        if (empty($message_ids) && empty($cmidsParam)) {
             $this->fail(100, "One of the parameters specified was missing or invalid: message_ids is empty");
         }
 
         $params = [
-            "message_ids" => $message_ids,
-            "important"   => (string) $important,
+            "important" => (string) $important,
         ];
+
+        if (!empty($message_ids)) {
+            $params["message_ids"] = $message_ids;
+        }
+        if (!empty($cmidsParam)) {
+            $params["conversation_message_ids"] = $cmidsParam;
+            $params["cmids"] = $cmidsParam;
+        }
+        if ($resolvedId) {
+            $params["peer_id"] = (string) $resolvedId;
+        }
 
         return $this->invoke("messages.markAsImportant", $params, $group_id);
     }
@@ -990,20 +1224,30 @@ final class Messages extends VKAPIRequestHandler
         int $peer_id = 0,
         int $start_message_id = 0,
         string $message_ids = "",
+        int $user_id = -1,
+        int $chat_id = -1,
+        string $domain = "",
+        int $mark_conversation_as_read = 0,
         int $group_id = 0
     ) {
         $this->requireUser();
         $this->willExecuteWriteAction();
 
-        if ($peer_id === 0 && empty($message_ids)) {
-            $this->fail(100, "One of the parameters specified was missing or invalid: peer_id or message_ids is required");
+        if ($peer_id === 0 && empty($message_ids) && $start_message_id === 0 && $user_id === -1 && $chat_id === -1 && empty($domain)) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: peer_id, start_message_id or message_ids is required");
         }
 
+        $resolvedId = $this->resolvePeer($user_id, $peer_id, $chat_id, $domain);
+
         $params = [
-            "peer_id"          => (string) $peer_id,
-            "start_message_id" => (string) $start_message_id,
-            "message_ids"      => $message_ids,
+            "start_message_id"          => (string) $start_message_id,
+            "message_ids"               => $message_ids,
+            "mark_conversation_as_read" => (string) $mark_conversation_as_read,
         ];
+
+        if ($resolvedId !== 0 && !is_null($resolvedId)) {
+            $params["peer_id"] = (string) $resolvedId;
+        }
 
         $this->invoke("messages.markAsRead", $params, $group_id);
 
@@ -1377,8 +1621,27 @@ final class Messages extends VKAPIRequestHandler
                 }
             }
 
+            if (isset($conversation['chat_settings']['pinned_message'])) {
+                if (!empty($conversation['chat_settings']['pinned_message']['attachments']) && is_array($conversation['chat_settings']['pinned_message']['attachments'])) {
+                    $this->replaceAttachments($conversation['chat_settings']['pinned_message']['attachments'], ["gift"]);
+                } else {
+                    $conversation['chat_settings']['pinned_message']['attachments'] = [];
+                }
+            }
+            if (isset($conversation['pinned_message'])) {
+                if (!empty($conversation['pinned_message']['attachments']) && is_array($conversation['pinned_message']['attachments'])) {
+                    $this->replaceAttachments($conversation['pinned_message']['attachments'], ["gift"]);
+                } else {
+                    $conversation['pinned_message']['attachments'] = [];
+                }
+            }
+
             if (isset($item['last_message']['attachments'])) {
-                $this->replaceAttachments($item['last_message']['attachments'], ["gift"]);
+                if (is_array($item['last_message']['attachments'])) {
+                    $this->replaceAttachments($item['last_message']['attachments'], ["gift"]);
+                } else {
+                    $item['last_message']['attachments'] = [];
+                }
             }
         }
         unset($item);
@@ -1646,23 +1909,162 @@ final class Messages extends VKAPIRequestHandler
         return $result;
     }
 
-    // Legacy alias: messages.searchDialogs (deprecated since 5.80, replaced by messages.searchConversations)
-    public function searchDialogs(string $q = '', int $extended = 0, int $group_id = 0): array
-    {
-        return $this->searchConversations($q, $extended, $group_id);
+    // Legacy method: messages.searchDialogs (deprecated since 5.80, replaced by messages.searchConversations)
+    public function searchDialogs(
+        string $q = '',
+        int $limit = 20,
+        string $fields = 'photo_50,photo_100,photo_200,online',
+        int $group_id = 0
+    ): array {
+        $this->requireUser();
+        $this->ensureBrokerActive();
+
+        $q = trim($q);
+        if (empty($q)) {
+            return [];
+        }
+
+        $limit = ($limit > 0 && $limit <= 100) ? $limit : 20;
+
+        // 1. Search conversations from IM backend
+        $convs = $this->searchConversations($q, 1, $group_id);
+        $items = $convs['items'] ?? [];
+
+        $results = [];
+        $addedUserIds = [];
+        $addedChatIds = [];
+
+        $chatsRepo = new ChatRepo();
+
+        foreach ($items as $item) {
+            if (count($results) >= $limit) {
+                break;
+            }
+
+            $peer = $item['conversation']['peer'] ?? null;
+            if (!$peer) continue;
+
+            $peerType = $peer['type'] ?? 'user';
+            $peerId = (int) ($peer['id'] ?? 0);
+
+            if ($peerType === 'user' && $peerId > 0 && !isset($addedUserIds[$peerId])) {
+                $addedUserIds[$peerId] = true;
+                $apiUsers = (new APIUsers())->get((string) $peerId, $fields);
+                if (!empty($apiUsers[0])) {
+                    $uObj = is_array($apiUsers[0]) ? (object) $apiUsers[0] : $apiUsers[0];
+                    $uObj->type = "profile";
+                    $results[] = $uObj;
+                }
+            } elseif ($peerType === 'chat') {
+                $localChatId = $peerId > 2000000000 ? ($peerId - 2000000000) : $peerId;
+                if (!isset($addedChatIds[$localChatId])) {
+                    $addedChatIds[$localChatId] = true;
+                    $chatEntity = $chatsRepo->getByChatId($localChatId);
+                    if (!$chatEntity) {
+                        $chatEntity = $chatsRepo->create($localChatId, "Chat " . $localChatId);
+                    }
+                    $chatStruct = $chatEntity->toVkApiStruct($this->getUser());
+                    $chatStruct['type'] = 'chat';
+                    $chatStruct['id'] = $localChatId;
+                    $results[] = (object) $chatStruct;
+                }
+            }
+        }
+
+        // 2. Fallback search users matching query if limit not yet reached
+        if (count($results) < $limit) {
+            $usersRepo = new USRRepo();
+            $stream = $usersRepo->find($q);
+            $moreUserIds = [];
+            foreach ($stream as $user) {
+                $uId = (int) $user->getId();
+                if (!isset($addedUserIds[$uId])) {
+                    $addedUserIds[$uId] = true;
+                    $moreUserIds[] = $uId;
+                    if (count($results) + count($moreUserIds) >= $limit) {
+                        break;
+                    }
+                }
+            }
+            if (!empty($moreUserIds)) {
+                $apiUsers = (new APIUsers())->get(implode(',', $moreUserIds), $fields);
+                foreach ($apiUsers as $u) {
+                    $uObj = is_array($u) ? (object) $u : $u;
+                    $uObj->type = "profile";
+                    $results[] = $uObj;
+                    if (count($results) >= $limit) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        return $results;
     }
 
     // Legacy alias: messages.getChatUsers (deprecated since 5.80, replaced by messages.getConversationMembers)
-    public function getChatUsers(int $chat_id = 0, string $fields = "", string $name_case = "nom"): array
+    public function getChatUsers(int $chat_id = 0, string $fields = "", string $name_case = "nom", int $group_id = 0): array
     {
         $this->requireUser();
+        $this->ensureBrokerActive();
+
+        if ($chat_id <= 0) {
+            $chat_id = (int) ($_GET['chat_id'] ?? $_POST['chat_id'] ?? 0);
+        }
+
+        if ($chat_id <= 0) {
+            if (!empty($_GET['peer_id']) && (int)$_GET['peer_id'] > 2000000000) {
+                $chat_id = (int)$_GET['peer_id'] - 2000000000;
+            } elseif (!empty($_POST['peer_id']) && (int)$_POST['peer_id'] > 2000000000) {
+                $chat_id = (int)$_POST['peer_id'] - 2000000000;
+            }
+        }
 
         if ($chat_id <= 0) {
             $this->fail(100, "One of the parameters is missing: chat_id");
         }
 
         $peer_id = 2000000000 + $chat_id;
-        return $this->getConversationMembers($peer_id);
+
+        // Fetch conversation members from openvk-im
+        $response = $this->invoke("messages.getConversationMembers", [
+            "peer_id"  => (string) $peer_id,
+            "extended" => "0",
+        ], $group_id);
+
+        $items = $response['items'] ?? [];
+        $invitedByMap = [];
+        $userIds = [];
+
+        foreach ($items as $item) {
+            $mId = (int) ($item['member_id'] ?? 0);
+            if ($mId > 0) {
+                $userIds[] = $mId;
+                $invitedByMap[$mId] = (int) ($item['invited_by'] ?? 0);
+            }
+        }
+
+        // If no fields requested -> return flat array of user IDs
+        if (empty($fields)) {
+            return $userIds;
+        }
+
+        // If fields are requested -> fetch User objects and attach invited_by
+        if (!empty($userIds)) {
+            $apiUsers = (new APIUsers())->get(implode(',', $userIds), $fields, $name_case);
+            $userList = [];
+            foreach ($apiUsers as $u) {
+                $uObj = is_array($u) ? (object) $u : $u;
+                $uId = $uObj->id ?? 0;
+                if (isset($invitedByMap[$uId])) {
+                    $uObj->invited_by = $invitedByMap[$uId];
+                }
+                $userList[] = $uObj;
+            }
+            return $userList;
+        }
+
+        return [];
     }
 
     public function getConversationMembers(int $peer_id = 0, int $extended = 0, int $group_id = 0): array
@@ -1693,13 +2095,11 @@ final class Messages extends VKAPIRequestHandler
         ];
     }
 
-    public function getConversationsById($peer_ids = '', int $extended = 0, int $group_id = 0): array
+    public function getConversationsById(string $peer_ids = '', int $extended = 0, int $group_id = 0): array
     {
         $this->requireUser();
         $this->ensureBrokerActive();
 
-        // это костыль, я не знаю почему peer_ids не передаётся в метод.
-        // я думаю потому что не задан тип
         if (empty($peer_ids)) {
             $peer_ids = $_GET['peer_ids'] ?? $_POST['peer_ids'] ?? '';
         }
@@ -1766,6 +2166,29 @@ final class Messages extends VKAPIRequestHandler
                             $chatEntity->setData($conversation['chat_settings']);
                         }
                         $conversation['chat_settings'] = $chatEntity->toChatSettingsStruct($this->getUser());
+                    }
+                }
+
+                if (isset($conversation['chat_settings']['pinned_message'])) {
+                    if (!empty($conversation['chat_settings']['pinned_message']['attachments']) && is_array($conversation['chat_settings']['pinned_message']['attachments'])) {
+                        $this->replaceAttachments($conversation['chat_settings']['pinned_message']['attachments'], ["gift"]);
+                    } else {
+                        $conversation['chat_settings']['pinned_message']['attachments'] = [];
+                    }
+                }
+                if (isset($conversation['pinned_message'])) {
+                    if (!empty($conversation['pinned_message']['attachments']) && is_array($conversation['pinned_message']['attachments'])) {
+                        $this->replaceAttachments($conversation['pinned_message']['attachments'], ["gift"]);
+                    } else {
+                        $conversation['pinned_message']['attachments'] = [];
+                    }
+                }
+
+                if (isset($item['last_message']['attachments'])) {
+                    if (is_array($item['last_message']['attachments'])) {
+                        $this->replaceAttachments($item['last_message']['attachments'], ["gift"]);
+                    } else {
+                        $item['last_message']['attachments'] = [];
                     }
                 }
             }
@@ -1941,6 +2364,7 @@ final class Messages extends VKAPIRequestHandler
         int $start_message_id = 0,
         int $rev = 0,
         int $extended = 0,
+        int $preview_length = 0,
         string $fields = "photo_200,online",
         int $group_id = 0
     ): array {
@@ -1965,6 +2389,11 @@ final class Messages extends VKAPIRequestHandler
             $resolvedPeerId = $report->getContentObject(true)->getPeerId();
         } else {
             $resolvedPeerId = $this->resolvePeer($user_id, $peer_id, $chat_id);
+            if (is_null($resolvedPeerId) || $resolvedPeerId === 0) {
+                $this->fail(100, "One of the parameters specified was missing or invalid: peer_id, user_id or chat_id");
+            }
+
+            $this->checkPeerAvailability($resolvedPeerId, $group_id);
         }
 
         $params = [
@@ -1974,8 +2403,16 @@ final class Messages extends VKAPIRequestHandler
             "start_message_id" => (string) $start_message_id,
             "rev"              => (string) $rev,
             "extended"         => (string) $extended,
+            "preview_length"   => (string) $preview_length,
             "fields"           => $fields,
         ];
+
+        if ($user_id > 0) {
+            $params["user_id"] = (string) $user_id;
+        }
+        if ($chat_id > 0) {
+            $params["chat_id"] = (string) $chat_id;
+        }
 
         if ($report != null) {
             $data = $this->invoke("messages.getHistory", $params, $group_id, $report->authorId());
@@ -1984,11 +2421,48 @@ final class Messages extends VKAPIRequestHandler
         }
 
         if (!empty($data['items'])) {
+            $isLegacy = (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR <= 5 && defined("VKAPI_DECL_VER_MINOR") && VKAPI_DECL_VER_MINOR < 80);
+            $loadedChat = null;
+            if ($isLegacy && $resolvedPeerId > 2000000000) {
+                $localChatId = $resolvedPeerId - 2000000000;
+                $loadedChat = (new ChatRepo())->getByChatId($localChatId);
+            }
+
             foreach ($data['items'] as &$message) {
                 if (!empty($message['attachments'])) {
                     $this->replaceAttachments($message['attachments'], ["gift"]);
+                } else {
+                    $message['attachments'] = [];
+                }
+
+                if (!empty($message['fwd_messages'])) {
+                    foreach ($message['fwd_messages'] as &$fwd) {
+                        if (!empty($fwd['attachments'])) {
+                            $this->replaceAttachments($fwd['attachments'], ["gift"]);
+                        } else {
+                            $fwd['attachments'] = [];
+                        }
+                    }
+                    unset($fwd);
+                }
+
+                if (!empty($message['reply_message']['attachments'])) {
+                    $this->replaceAttachments($message['reply_message']['attachments'], ["gift"]);
+                }
+
+                if ($isLegacy && $loadedChat && !empty($message['chat_id'])) {
+                    $chatStruct = $loadedChat->toChatSettingsStruct($this->getUser());
+                    if (empty($message['title'])) {
+                        $message['title'] = $chatStruct['title'] ?? ("Chat " . $message['chat_id']);
+                    }
+                    if (empty($message['photo_50'])) {
+                        $message['photo_50'] = $chatStruct['photo_50'] ?? "";
+                        $message['photo_100'] = $chatStruct['photo_100'] ?? "";
+                        $message['photo_200'] = $chatStruct['photo_200'] ?? "";
+                    }
                 }
             }
+            unset($message);
         }
 
         if ($extended == 1) {
@@ -1996,6 +2470,63 @@ final class Messages extends VKAPIRequestHandler
         }
 
         return $data;
+    }
+
+    public function getHistoryAttachments(
+        int $peer_id = 0,
+        string $media_type = "photo",
+        string $start_from = "",
+        int $count = 30,
+        int $photo_sizes = 0,
+        string $fields = "",
+        int $extended = 0,
+        int $group_id = 0,
+        int $preserve_order = 0,
+        int $max_forwards_level = 45,
+        int $user_id = -1,
+        int $chat_id = -1,
+        string $domain = ""
+    ): object {
+        $this->requireUser();
+
+        $resolvedId = $this->resolvePeer($user_id, $peer_id, $chat_id, $domain);
+        if (!$resolvedId) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: peer_id is required");
+        }
+
+        $params = [
+            "peer_id"            => (string) $resolvedId,
+            "media_type"         => $media_type,
+            "count"              => (string) $count,
+            "preserve_order"     => (string) $preserve_order,
+            "max_forwards_level" => (string) $max_forwards_level,
+        ];
+
+        if ($start_from !== "") {
+            $params["start_from"] = $start_from;
+        }
+        if ($photo_sizes > 0) {
+            $params["photo_sizes"] = (string) $photo_sizes;
+        }
+
+        $data = $this->invoke("messages.getHistoryAttachments", $params, $group_id);
+
+        if (is_array($data) && !empty($data['items'])) {
+            foreach ($data['items'] as &$item) {
+                if (!empty($item['attachment'])) {
+                    $attWrap = [$item['attachment']];
+                    $this->replaceAttachments($attWrap, ["gift"]);
+                    $item['attachment'] = $attWrap[0] ?? $item['attachment'];
+                }
+            }
+            unset($item);
+        }
+
+        if ($extended > 0 || !empty($fields)) {
+            $this->hydrateExtendedData($data, $fields);
+        }
+
+        return (object) $data;
     }
 
     // ----------------------------------
@@ -2184,7 +2715,96 @@ final class Messages extends VKAPIRequestHandler
         ];
     }
 
-    public function allowMessagesFromGroup(int $group_id)
+    public function getInviteLink(
+        int $peer_id = 0,
+        int $reset = 0,
+        int $group_id = 0,
+        int $chat_id = 0
+    ): object {
+        $this->requireUser();
+
+        $resolvedId = $peer_id;
+        if ($resolvedId <= 0 && $chat_id > 0) {
+            $resolvedId = $chat_id > 2000000000 ? $chat_id : (2000000000 + $chat_id);
+        }
+
+        if ($resolvedId <= 2000000000) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: peer_id must be a group chat");
+        }
+
+        $params = [
+            "peer_id" => (string) $resolvedId,
+            "reset"   => (string) $reset,
+        ];
+
+        $data = $this->invoke("messages.getInviteLink", $params, $group_id);
+        return (object) $data;
+    }
+
+    public function getChatPreview(
+        string $link = "",
+        string $fields = "photo_50,photo_100,photo_200",
+        int $group_id = 0
+    ): object {
+        $this->requireUser();
+
+        if (empty($link)) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: link is required");
+        }
+
+        $params = [
+            "link"   => $link,
+            "fields" => $fields,
+        ];
+
+        $data = $this->invoke("messages.getChatPreview", $params, $group_id);
+
+        if (is_array($data)) {
+            if (!empty($data['preview']['local_id'])) {
+                $localChatId = (int) $data['preview']['local_id'];
+                $chatsRepo = new ChatRepo();
+                $chatEntity = $chatsRepo->getByChatId($localChatId);
+                if ($chatEntity) {
+                    $chatStruct = $chatEntity->toChatSettingsStruct($this->getUser());
+                    $data['preview']['photo'] = [
+                        "photo_50"  => $chatStruct['photo_50'] ?? "",
+                        "photo_100" => $chatStruct['photo_100'] ?? "",
+                        "photo_200" => $chatStruct['photo_200'] ?? "",
+                    ];
+                    if (!empty($chatStruct['title'])) {
+                        $data['preview']['title'] = $chatStruct['title'];
+                    }
+                }
+            }
+
+            if (!empty($fields)) {
+                $this->hydrateExtendedData($data, $fields);
+            }
+        }
+
+        return (object) $data;
+    }
+
+    public function joinChatByInviteLink(
+        string $link = "",
+        int $group_id = 0
+    ): object {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        if (empty($link)) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: link is required");
+        }
+
+        $params = [
+            "link" => $link,
+        ];
+
+        $data = $this->invoke("messages.joinChatByInviteLink", $params, $group_id);
+        return (object) $data;
+    }
+
+    public function allowMessagesFromGroup(int $group_id, string $key = ""): int
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
