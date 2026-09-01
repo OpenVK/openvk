@@ -102,19 +102,23 @@ export class ChatGeneralForm {
         this.members = null;
     }
 
+    get CHAT_RUBICON() {
+        return ChatGeneralForm.CHAT_RUBICON;
+    }
+
     // ── identity ─────────────────────────────────────────────────────
 
     get id() {
         switch (this.supposed_type) {
             case 'user':
-                return this.data.id;
+                return Number(this.data.id);
             case 'club':
-                return this.data.id * -1;
+                return Number(this.data.id) * -1;
             case 'chat':
-                if (this.data.id < this.CHAT_RUBICON) {
-                    return this.data.id + this.CHAT_RUBICON;
+                if (Number(this.data.id) < ChatGeneralForm.CHAT_RUBICON) {
+                    return Number(this.data.id) + ChatGeneralForm.CHAT_RUBICON;
                 } else {
-                    return this.data.id;
+                    return Number(this.data.id);
                 }
         }
     }
@@ -329,7 +333,7 @@ export class ChatGeneralForm {
             return window.im._current;
         }
 
-        if (id > this.CHAT_RUBICON) {
+        if (id >= ChatGeneralForm.CHAT_RUBICON) {
             const __ = await window.OVKAPI.call('messages.getConversationsById', { 'peer_ids': id, 'fields': ChatGeneralForm.BASE_FIELDS });
 
             if (!__ || __.items.length == 0) {
@@ -411,7 +415,19 @@ export class ChatGeneralForm {
 
         try {
             const resp = await window.OVKAPI.call('messages.send', datas);
-            msg.data.id = resp;
+            if (typeof resp === 'object' && resp !== null) {
+                msg.data.id = resp.message_id || resp.id;
+                msg.data.conversation_message_id = resp.conversation_message_id || resp.cmid;
+                msg.data.local_id = msg.data.conversation_message_id;
+            } else {
+                msg.data.id = resp;
+                const prevMsg = this._chunks ? this._chunks.getLatestMessage() : null;
+                if (prevMsg && prevMsg.data && (prevMsg.data.conversation_message_id || prevMsg.data.local_id)) {
+                    const prevCmid = prevMsg.data.conversation_message_id || prevMsg.data.local_id;
+                    msg.data.conversation_message_id = prevCmid + 1;
+                    msg.data.local_id = msg.data.conversation_message_id;
+                }
+            }
             msg.data.is_sending = false;
             console.info('IM | Sent message to ' + this.id);
         } catch (e) {
@@ -556,7 +572,31 @@ export class ChatGeneralForm {
             params["group_id"] = Math.abs(window.im.state.getId());
         }
 
-        await window.OVKAPI.call("messages.markAsRead", params);
+        try {
+            await window.OVKAPI.call("messages.markAsRead", params);
+            if (this._chunks) {
+                const latestMsg = this._chunks.getLatestMessage();
+                if (latestMsg) {
+                    const msgId = (latestMsg.data && (latestMsg.data.local_id || latestMsg.data.id)) || latestMsg.id || 0;
+                    this.in_read = msgId;
+                }
+            }
+            if (window.im?.conversations) {
+                const conv = window.im.conversations._findConv(this.id);
+                if (conv) {
+                    conv.unread_count = 0;
+                }
+                window.im.conversations.update();
+            }
+            if (window.im?.messenger) {
+                window.im.messenger.update();
+            }
+            if (window.im?.fastChats) {
+                window.im.fastChats.update();
+            }
+        } catch (e) {
+            console.error("Failed to mark as read", e);
+        }
     }
 }
 
@@ -566,6 +606,7 @@ export class ChatMessage {
     static AUTHOR_NAME_HIDE_TIMEOUT = 600; // 60 * 10 = 10 minutes
 
     constructor(item = {}) {
+        item = item || {};
         this.data = item;
         this.has_not_loaded_attachments = false;
 
@@ -868,9 +909,11 @@ export class ChatMessage {
             }
         }
 
-        console.log(attachments.from, peer)
+        const cmidFromLp = attachments && (attachments['conversation_message_id'] || attachments['cmid']) ? Number(attachments['conversation_message_id'] || attachments['cmid']) : 0;
         const msg = new ChatMessage({
             'id': id,
+            'local_id': cmidFromLp,
+            'conversation_message_id': cmidFromLp,
             'flags': flags,
             'from_id': attachments.from ? Number(attachments.from) : peer,
             'date': ts,
@@ -984,17 +1027,29 @@ export class ChatMessage {
 
     isRead() {
         try {
-            if (this.data && this.data.read_state == 1) return true;
-            const peer = this.peer;
-            if (peer) {
-                const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
-                const msgId = (this.data && (this.data.local_id || this.data.id)) || this.id || 0;
-                const fromId = this.data ? this.data.from_id : 0;
-                if (fromId != currentUserId && peer.in_read && msgId <= peer.in_read) {
+            if (this.data && (this.data.read_state === 1 || this.data.read_state === true)) return true;
+            const peerId = this.data ? (this.data.peer_id || this.peer_id) : (this.peer_id || 0);
+            const conv = peerId ? window.im?.conversations?._findConv(peerId) : null;
+            const peer = conv?.peer || this.peer;
+            const outRead = peer?.out_read || conv?._conversation?.out_read || conv?.conversation?.out_read || 0;
+            const inRead = peer?.in_read || conv?._conversation?.in_read || conv?.conversation?.in_read || 0;
+            const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
+            const msgCmid = (this.data && (this.data.conversation_message_id || this.data.local_id)) || this.conversation_message_id || 0;
+            const msgId = (this.data && this.data.id) || this.id || 0;
+            const fromId = this.data ? this.data.from_id : (this.from_id || 0);
+
+            if (fromId != currentUserId && inRead > 0 && ((msgCmid > 0 && msgCmid <= inRead) || (msgId > 0 && msgId <= inRead))) {
+                return true;
+            }
+            if (fromId == currentUserId) {
+                if (outRead > 0 && ((msgCmid > 0 && msgCmid <= outRead) || (msgId > 0 && msgId <= outRead))) {
                     return true;
                 }
-                if (fromId == currentUserId && peer.out_read && msgId <= peer.out_read) {
-                    return true;
+                if (peer && peer._chunks) {
+                    const latest = peer._chunks.getLatestMessage();
+                    if (latest && latest.data && latest.data.from_id != currentUserId && (latest.id > msgId || latest.getSentTime() > this.getSentTime())) {
+                        return true;
+                    }
                 }
             }
             return false;

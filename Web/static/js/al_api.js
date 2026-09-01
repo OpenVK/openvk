@@ -55,18 +55,22 @@ const _pageLoaded = () => {
 };
 
 window.OVKAPI = new class {
-    async call(method, params, return_exception = false) {
+    async call(method, params = {}, return_exception = false, version = null) {
         if(!method) {
             return
         }
 
+        const api_version = version || params?.v || "5.86";
+
         const form_data = new FormData
-        Object.entries(params).forEach(fd => {
-            form_data.append(fd[0], fd[1])
+        Object.entries(params || {}).forEach(fd => {
+            if (fd[0] !== "v") {
+                form_data.append(fd[0], fd[1])
+            }
         })
 
         const __url_params = new URLSearchParams
-        __url_params.append("v", "5.200")
+        __url_params.append("v", api_version)
 
         if (!window.openvk) {
             await _pageLoaded();

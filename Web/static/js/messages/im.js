@@ -63,7 +63,7 @@ export class InstantMessagesAndRelated {
     }
 
     async init(do_init = true, ignore_initless = false) {
-        if (this.is_initing == true) {
+        if (this.is_initing == true || this.isReady == true) {
             return;
         }
 
@@ -98,6 +98,10 @@ export class InstantMessagesAndRelated {
             await this.conversations.loadNext(this);
         } catch (e) {
             fastError(String(e));
+        }
+
+        if (this.lp) {
+            this.lp.stop();
         }
 
         this.lp = new LongPollConnection(this);

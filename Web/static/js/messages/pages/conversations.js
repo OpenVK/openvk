@@ -11,12 +11,12 @@ const { html, render } = await es6import_Im(import.meta.url, "../components/rend
 export class ConversationsPage extends IMPage {
     static getPageId() { return "conversations"; }
     isVisibleWhenHidden() { return true; }
-    getTabName() { 
+    getTabName() {
         if (this.isForward()) {
-            return tr("messenger_tab_conversations_forward") 
+            return tr("messenger_tab_conversations_forward")
         }
 
-        return tr("messenger_tab_conversations") 
+        return tr("messenger_tab_conversations")
     }
     shouldCloseOnExit() { return this.container == null || this.isForward(); }
     updateHeader(header) { header.changeByConvNumber(Number(window.im.conversations.total_convs)); }
@@ -275,7 +275,7 @@ export class Conversations {
 export class Conversation {
     constructor(conversation_item) {
         this._conversation = conversation_item.conversation;
-        this._last_message = new ChatMessage(conversation_item.last_message);
+        this._last_message = conversation_item.last_message ? new ChatMessage(conversation_item.last_message) : null;
         this.peer = conversation_item.peer;
         this.activity_updated = new Date();
         this.current_activity = {};
@@ -318,7 +318,7 @@ export class Conversation {
                     s = tr("messenger_typing_other", names.length)
                     break
             }
-            if (names.length > 0) { 
+            if (names.length > 0) {
                 s = s + "...";
             }
         } else if (this.peer) {
@@ -364,6 +364,7 @@ export class Conversation {
     }
     updateLastMessage(msg) { this._last_message = msg; }
     get id() { return this.peer ? this.peer.id : (this._conversation?.peer?.id || 0); }
+
     get last_message() {
         try {
             if (this.peer && this.peer._chunks) {
@@ -378,35 +379,53 @@ export class Conversation {
 
         return this._last_message;
     }
+
+    set last_message(val) {
+        this._last_message = val ? (val instanceof ChatMessage ? val : new ChatMessage(val)) : null;
+    }
+
     get conversation() { return this._conversation; }
     get last_updated() { if (!this.last_message) { return null; } else { return this.last_message.getSentTime(); } }
     isRead() { return this.unread_count == 0; }
+
     get unread_count() {
+        if (this._unread_count !== undefined) {
+            return this._unread_count;
+        }
         if (this.peer && this.peer._chunks && this.peer._chunks.isMessagesInited()) {
             return this.peer._chunks.getUnreadCount();
         }
 
         try {
-            return this._conversation.unread_count || 0;
+            return (this._conversation && this._conversation.unread_count) ? this._conversation.unread_count : 0;
         } catch (e) {
             return 0;
         }
     }
+
     set unread_count(val) {
+        this._unread_count = Number(val) || 0;
         if (this._conversation) {
-            this._conversation.unread_count = val;
+            this._conversation.unread_count = this._unread_count;
         }
     }
-    pushMessage(msg, conv = null, check_chunk = true) { if (this.peer && this.peer._chunks) this.peer._chunks.pushNewMessage(msg, conv, check_chunk); }
-    findMessageById(id) { return (this.peer && this.peer._chunks) ? this.peer._chunks._findMessageById(id) : null; }
+
+    pushMessage(msg, conv = null, check_chunk = true) {
+        if (this.peer && this.peer._chunks) this.peer._chunks.pushNewMessage(msg, conv, check_chunk);
+    }
+
+    findMessageById(id) {
+        return (this.peer && this.peer._chunks) ? this.peer._chunks._findMessageById(id) : null;
+    }
 
     hasPinned() {
         return this.getPinnedMessageId() != null;
     }
+
     getPinnedMessageId() {
         try {
             return this._conversation.current_pinned_message.id;
-        } catch(e) {
+        } catch (e) {
             return null;
         }
     }

@@ -53,7 +53,7 @@ body.no-scroll .messenger-app--global-tabs {
 body.no-scroll .messages--peers-tabs {
     position: fixed;
     z-index: 4;
-    top: 74px;
+    top: 73px;
     padding: 8px 10px;
     box-sizing: border-box;
     width: 627px;
@@ -569,7 +569,7 @@ body:has(#im_container.at_page) .page_content {
 
 .messenger-app--messages .messenger-app--messages-array {
     margin-top: auto;
-    /*padding-top: 500px; */
+    padding-top: 500px;
     /*padding-bottom: 60px;*/
     z-index: 0;
 }
