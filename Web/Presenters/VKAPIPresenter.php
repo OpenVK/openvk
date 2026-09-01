@@ -397,10 +397,10 @@ final class VKAPIPresenter extends OpenVKPresenter
             try {
                 // Проверка типа параметра
                 $type = $parameter->getType();
-                if (($type && !$type->isBuiltin()) || is_null($val)) {
+                if (!$type || !$type->isBuiltin() || is_null($val)) {
                     $args[] = $val;
                 } else {
-                    settype($val, $parameter->getType()->getName());
+                    settype($val, $type->getName());
                     $args[] = $val;
                 }
             } catch (\Throwable $e) {
@@ -426,7 +426,10 @@ final class VKAPIPresenter extends OpenVKPresenter
 
         $has_rss = false;
         try {
-            $res = $this->callAPIMethod($object, $method, $_REQUEST, $identity, $platform, $has_rss);
+            $rawInput = file_get_contents("php://input");
+            $jsonInput = !empty($rawInput) ? @json_decode($rawInput, true) : null;
+            $requestParams = is_array($jsonInput) ? array_merge($_REQUEST, $jsonInput) : $_REQUEST;
+            $res = $this->callAPIMethod($object, $method, $requestParams, $identity, $platform, $has_rss);
         } catch (APIErrorException $ex) {
             $this->fail($ex->getCode(), $ex->getMessage(), $object, $method);
         }

@@ -503,6 +503,10 @@ class Chat extends RowModel
             $chatSettings["photo"] = $photoObj;
         }
 
+        if (!empty($this->hydratedData["pinned_message"])) {
+            $chatSettings["pinned_message"] = $this->hydratedData["pinned_message"];
+        }
+
         return $chatSettings;
     }
 }
