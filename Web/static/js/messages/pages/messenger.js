@@ -132,7 +132,7 @@ export class Messenger {
         }
 
         if (convo && convo.peer) {
-            //convo.peer.read();
+            convo.peer.read();
         }
     }
 

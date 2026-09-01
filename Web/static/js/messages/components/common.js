@@ -255,10 +255,12 @@ export const ConversationItem = ({ conv, isForward = false, page = null }) => {
     // с одной стороны по названию или аватарке и так понятно, что это беседа, но название и аватарка могут быть изменены
     const d = last_msg != null && has_activity == false;
     let last_sender_ava = "";
-    try {
-        last_sender_ava = last_msg.sender.getAvatar("mid", false);
-    } catch(e) {
-        console.error(e);
+    if (last_msg && last_msg.sender) {
+        try {
+            last_sender_ava = last_msg.sender.getAvatar("mid", false);
+        } catch(e) {
+            console.error(e);
+        }
     }
     return html`
         <div class="${cls1.join(' ')}" onClick=${() => window.im?.messenger.onConversationsClick(conv, isForward, page)}>

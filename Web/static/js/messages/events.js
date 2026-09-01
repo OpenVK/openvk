@@ -98,16 +98,16 @@ export class EventHandler {
 
     async ReadIncomeBeforeEvent(event) {
         const peerId = event[1];
-        const localId = event[2];
+        const localId = Number(event[2]);
 
         const _crs = await this.im.conversations._findConvFromApi(peerId);
         if (!_crs) return;
 
         if (_crs.peer) {
-            _crs.peer.in_read = localId;
+            _crs.peer.in_read = Math.max(_crs.peer.in_read || 0, localId);
         }
         if (_crs._conversation) {
-            _crs._conversation.in_read = localId;
+            _crs._conversation.in_read = Math.max(_crs._conversation.in_read || 0, localId);
         }
 
         const getPeerMsgs = (peer) => {
@@ -123,9 +123,10 @@ export class EventHandler {
 
         const currentUserId = window.openvk ? window.openvk.current_id : this.im.state.getId();
         getPeerMsgs(_crs.peer).forEach(msg => {
-            const msgId = (msg.data && (msg.data.local_id || msg.data.id)) || msg.id || 0;
+            const msgCmid = (msg.data && (msg.data.conversation_message_id || msg.data.local_id)) || msg.conversation_message_id || 0;
+            const msgId = (msg.data && msg.data.id) || msg.id || 0;
             const fromId = msg.data ? msg.data.from_id : (msg.from_id || 0);
-            if (msgId <= localId && fromId != currentUserId) {
+            if (((msgCmid > 0 && msgCmid <= localId) || (msgId > 0 && msgId <= localId)) && fromId != currentUserId) {
                 if (msg.data) msg.data.read_state = 1;
             }
         });
@@ -140,7 +141,6 @@ export class EventHandler {
             }
             _crs.unread_count = newUnread;
         }
-
 
         this.updateGlobalUnreadCounter();
 
@@ -158,16 +158,16 @@ export class EventHandler {
 
     async ReadOutcomeBeforeEvent(event) {
         const peerId = event[1];
-        const localId = event[2];
+        const localId = Number(event[2]);
 
         const _crs = await this.im.conversations._findConvFromApi(peerId);
         if (!_crs) return;
 
         if (_crs.peer) {
-            _crs.peer.out_read = localId;
+            _crs.peer.out_read = Math.max(_crs.peer.out_read || 0, localId);
         }
         if (_crs._conversation) {
-            _crs._conversation.out_read = localId;
+            _crs._conversation.out_read = Math.max(_crs._conversation.out_read || 0, localId);
         }
 
         const getPeerMsgs = (peer) => {
@@ -183,15 +183,22 @@ export class EventHandler {
 
         const currentUserId = window.openvk ? window.openvk.current_id : this.im.state.getId();
         getPeerMsgs(_crs.peer).forEach(msg => {
-            const msgId = (msg.data && (msg.data.local_id || msg.data.id)) || msg.id || 0;
+            const msgCmid = (msg.data && (msg.data.conversation_message_id || msg.data.local_id)) || msg.conversation_message_id || 0;
+            const msgId = (msg.data && msg.data.id) || msg.id || 0;
             const fromId = msg.data ? msg.data.from_id : (msg.from_id || 0);
-            if (msgId <= localId && fromId == currentUserId) {
+            if (((msgCmid > 0 && msgCmid <= localId) || (msgId > 0 && msgId <= localId)) && fromId == currentUserId) {
                 if (msg.data) msg.data.read_state = 1;
             }
         });
 
         if (this.im.messenger) {
             this.im.messenger.update();
+        }
+        if (this.im.conversations) {
+            this.im.conversations.update();
+        }
+        if (this.im.fastChats) {
+            this.im.fastChats.update();
         }
     }
 
@@ -200,8 +207,14 @@ export class EventHandler {
     async NewMessageEvent(event) {
         const _msg = await ChatMessage.fromEvent(event, this.im);
         const _crs = await this.im.conversations._findConvFromApi(_msg.peer_id);
+        if (!_crs) return;
 
-        if (!this.im.state.is_active && !_crs.peer.isMuted() && _msg.shouldBeNotified()) {
+        const currentUserId = window.openvk ? window.openvk.current_id : this.im.state.getId();
+        const isSelf = _msg.from_id == currentUserId;
+        const activeChat = (this.im.messenger && typeof this.im.messenger.getCurrentChat === 'function') ? this.im.messenger.getCurrentChat() : null;
+        const isActiveChatOpen = this.im.state.is_active && activeChat && activeChat.peer && activeChat.peer.id == _msg.peer_id;
+
+        if (!isActiveChatOpen && !isSelf && !_crs.peer.isMuted()) {
             triggerMessageNotification(_crs, _msg);
         }
 
@@ -215,25 +228,47 @@ export class EventHandler {
                     found.hydrateFromEvent(_msg);
                 }
 
+                _crs._last_message = _msg;
+                _crs.last_message = _msg;
+
+                if (!isSelf && !isActiveChatOpen) {
+                    _crs.unread_count = (_crs.unread_count || 0) + 1;
+                    if (_crs._conversation) {
+                        _crs._conversation.unread_count = _crs.unread_count;
+                    }
+                }
+
+                if (this.im.conversations && this.im.conversations.all_convs) {
+                    const idx = this.im.conversations.all_convs.indexOf(_crs);
+                    if (idx > 0) {
+                        this.im.conversations.all_convs.splice(idx, 1);
+                        this.im.conversations.all_convs.unshift(_crs);
+                    } else if (idx === -1) {
+                        this.im.conversations.all_convs.unshift(_crs);
+                    }
+                    this.im.conversations.update();
+                }
+
                 if (this.im.state.is_active) {
                     this.im.messenger.update();
-                    if (this.im.messenger.view.isAtEnd()) {
+                    if (this.im.messenger.view && this.im.messenger.view.isAtEnd()) {
                         this.im.messenger.view._scrollToEnd();
                     }
                 }
 
-                if (this.im.state.is_active && this.im.messenger) {
-                    const activeChat = this.im.messenger.getCurrentChat();
-                    if (activeChat && activeChat.peer && activeChat.peer.id == _msg.peer_id) {
-                        _crs.peer.read();
-                    }
+                if (isActiveChatOpen) {
+                    _crs.peer.read();
+                }
+
+                if (this.im.fastChats) {
+                    this.im.fastChats.update();
                 }
 
                 this.updateGlobalUnreadCounter();
             } catch (e) {
                 console.error(e);
             }
-        }, 100);
+        }, 50);
     }
 
     async EditMessageEvent(event) {
