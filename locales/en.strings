@@ -1555,6 +1555,21 @@
 
 "restrict_topic" = "Only administrators can comment";
 
+/* FastChats */
+"friends_online_count_zero" = "0 friends online";
+"friends_online_count_one" = "$1 friend online";
+"friends_online_count_other" = "$1 friends online";
+"start_typing_name" = "Start typing a name...";
+"fastchat_search_hint" = "Type a name and select a user to start a conversation.";
+"show_previous_messages" = "Show previous messages";
+"enter_your_message" = "Enter your message...";
+"was_n_mins_ago_one" = "last seen $1 min ago";
+"was_n_mins_ago_other" = "last seen $1 mins ago";
+"show_all_friends" = "Show all friends ($1)";
+"show_online_only" = "Show online only ($1)";
+"offline_divider" = "Offline";
+"no_messages_in_dialog" = "No messages here yet.";
+
 /* Errors */
 
 "error_1" = "Incorrect query";

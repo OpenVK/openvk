@@ -1628,6 +1628,25 @@
 
 "day_selection" = "Выбор дня";
 "report_bug" = "Сообщить об ошибке";
+
+/* FastChats */
+"friends_online_count_zero" = "0 человек онлайн";
+"friends_online_count_one" = "$1 человек онлайн";
+"friends_online_count_few" = "$1 человека онлайн";
+"friends_online_count_many" = "$1 человек онлайн";
+"friends_online_count_other" = "$1 человек онлайн";
+"start_typing_name" = "Начните вводить имя...";
+"fastchat_search_hint" = "Введите имя и выберите пользователя, чтобы начать диалог.";
+"show_previous_messages" = "Показать предыдущие сообщения";
+"enter_your_message" = "Введите Ваше сообщение...";
+"was_n_mins_ago_one" = "был(а) $1 минуту назад";
+"was_n_mins_ago_few" = "был(а) $1 минуты назад";
+"was_n_mins_ago_many" = "был(а) $1 минут назад";
+"was_n_mins_ago_other" = "был(а) $1 минут назад";
+"show_all_friends" = "Показать всех друзей ($1)";
+"show_online_only" = "Показать только онлайн ($1)";
+"offline_divider" = "Не в сети";
+"no_messages_in_dialog" = "Здесь пока нет сообщений.";
 "im_option_compact_mode" = "Широкоэкранный режим";
 "im_option_debug" = "Функции отладки";
 "im_option_photo_viewer" = "Лента в просмотрщике фото";

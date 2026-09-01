@@ -1175,12 +1175,15 @@ export class ChatMessage {
         }
 
         const cmidFromLp = attachments && (attachments['conversation_message_id'] || attachments['cmid']) ? Number(attachments['conversation_message_id'] || attachments['cmid']) : 0;
+        const curUid = window.openvk ? window.openvk.current_id : (im ? im.state.getId() : 0);
+        const fromId = attachments.from ? Number(attachments.from) : ((flags & 2) ? curUid : peer);
+
         const msg = new ChatMessage({
             'id': id,
             'local_id': cmidFromLp,
             'conversation_message_id': cmidFromLp,
             'flags': flags,
-            'from_id': attachments.from ? Number(attachments.from) : peer,
+            'from_id': fromId,
             'date': ts,
             'peer': peer,
             'peer_id': peer,

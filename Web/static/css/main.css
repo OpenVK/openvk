@@ -2534,7 +2534,7 @@ li {
     margin-top: 10px;
     padding: 7px;
     background-color: #f6f6f6;
-    border-bottom: 1.5px solid #DDDDDD;
+    /*border-bottom: 1.5px solid #DDDDDD;*/
     text-align: center;
     user-select: none;
 }

@@ -1,7 +1,7 @@
 //import { ChatGeneralForm } from './components/messages.js';
 const { ChatGeneralForm } = await es6import_Im(import.meta.url, './components/messages.js');
 //import { FastChatsBar, FastChatsWindow } from './components/extra.js';
-const { FastChatsBar, FastChatsWindow } = await es6import_Im(import.meta.url, './components/extra.js');
+const { FastChatsRoot } = await es6import_Im(import.meta.url, './components/fastchats.js');
 //import { EventHandler } from './events.js';
 const { EventHandler } = await es6import_Im(import.meta.url, './events.js');
 //import { Messenger, MessengerPage, ContactPage, ChatTopicPreviewPage } from './pages/messenger.js';
@@ -708,14 +708,8 @@ class IMState {
             if (!this.link.fastChats.isInserted) {
                 await this.link.fastChats.insertSelf();
             } else {
-                this.link.fastChats.updateSelf();
+                this.link.fastChats.show();
                 this.isFastchat = true;
-            }
-
-            this.link.fastChats.show();
-
-            if (this.link.fastChats.isShown()) {
-                this.link.fastChats.hideChatBar();
             }
         }
     }
@@ -943,171 +937,599 @@ export class FastChats {
 
     constructor() {
         this.isInserted = false;
+        this._hasLoadedData = false;
+        this.topZIndex = 10000;
+        this.onlineWindow = {
+            isOpened: false,
+            friends: [],
+            allFriends: [],
+            showAll: false,
+            searchQuery: "",
+            position: null,
+            zIndex: 10000,
+            isFocused: false
+        };
+        this.openedChats = [];
+        this.currentUserId = window.openvk ? window.openvk.current_id : 0;
+        this.currentUserAvatar = "";
     }
+
     getPinnedPeersIds() {
-        if (localStorage.getItem("im.fastchat.tabs") == null) {
-            localStorage.setItem("im.fastchat.tabs", "[]");
-        }
-
-        const d = localStorage.getItem("im.fastchat.tabs");
-        try {
-            return JSON.parse(d);
-        } catch (e) {
-            console.error(e);
-            return [];
-        }
+        return this.openedChats.map(c => c.peerId);
     }
-    async getPinnedPeers() {
-        const ids = this.getPinnedPeersIds();
-        const peers = [];
 
-        ids.forEach(async id => {
-            peers.push(await window.im.conversations._findConvFromApi(id));
-        });
-        return peers;
-    }
     pinPeer(convo) {
-        const peers = this.getPinnedPeersIds();
-        const uid = typeof convo == "number" ? convo : convo.id;
-
-        if (peers.indexOf(uid) !== -1) {
-            return;
-        }
-
-        peers.push(uid);
-
-        localStorage.setItem("im.fastchat.tabs", JSON.stringify(peers));
+        const uid = typeof convo === "number" ? convo : convo.id;
+        this.openChat(uid, false, true);
     }
+
     unpinPeer(convo) {
-        let peers = this.getPinnedPeersIds();
-        const uid = typeof convo == "number" ? convo : convo.id;
-        peers = peers.filter(item => { return item != uid });
-        localStorage.setItem("im.fastchat.tabs", JSON.stringify(peers));
+        const uid = typeof convo === "number" ? convo : convo.id;
+        this.closeChat(uid);
     }
-    shouldBeShown() { return !window.im.state.is_opened }
+
+    shouldBeShown() {
+        return !window.im.state.is_opened && this.currentUserId > 0;
+    }
+
     async insertSelf() {
-        if (localStorage.getItem("tw.im.remove_warning") !== "1") {
+        if (!this.shouldBeShown()) return;
+
+        let container = document.querySelector("#fastchats_container");
+        if (!container) {
+            container = document.createElement("div");
+            container.id = "fastchats_container";
+            document.body.appendChild(container);
+        }
+
+        this.isInserted = true;
+        if (!this._hasLoadedData) {
+            this._hasLoadedData = true;
+            await this.loadInitialData();
+        }
+        this.render();
+    }
+
+    async loadInitialData() {
+        try {
+            if (this.currentUserId > 0) {
+                const userRes = await window.OVKAPI.call('users.get', {
+                    user_ids: this.currentUserId,
+                    fields: 'photo_50'
+                });
+                if (userRes && userRes[0]) {
+                    this.currentUserAvatar = userRes[0].photo_50;
+                }
+            }
+
+            await this.loadOnlineFriends();
+            this.restoreSavedState();
+        } catch(e) {
+            console.error("FastChats | loadInitialData error:", e);
+        }
+    }
+
+    async loadOnlineFriends() {
+        try {
+            const res = await window.OVKAPI.call('friends.get', {
+                fields: 'first_name,last_name,photo_50,online,last_seen,sex',
+                order: 'hints'
+            });
+            if (res && res.items) {
+                const sorted = [...res.items].sort((a, b) => {
+                    const aOn = (a.online === 1 || a.online === true) ? 1 : 0;
+                    const bOn = (b.online === 1 || b.online === true) ? 1 : 0;
+                    return bOn - aOn;
+                });
+                this.onlineWindow.allFriends = sorted;
+                this.onlineWindow.friends = sorted.filter(f => f.online === 1 || f.online === true);
+            }
+        } catch(e) {
+            console.error("FastChats | loadOnlineFriends error:", e);
+        }
+    }
+
+    restoreSavedState() {
+        try {
+            const saved = localStorage.getItem("im.fastchats.state");
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (parsed.onlineWindowOpened !== undefined) {
+                    this.onlineWindow.isOpened = parsed.onlineWindowOpened;
+                }
+                if (parsed.onlinePosition) {
+                    this.onlineWindow.position = parsed.onlinePosition;
+                }
+                if (Array.isArray(parsed.chats)) {
+                    parsed.chats.forEach(c => {
+                        this.openChat(c.peerId, c.isMinimized, false, c.position, c.zIndex);
+                    });
+                }
+            }
+        } catch(e) {
+            console.error("FastChats | restoreSavedState error:", e);
+        }
+    }
+
+    saveState() {
+        try {
+            const state = {
+                onlineWindowOpened: this.onlineWindow.isOpened,
+                onlinePosition: this.onlineWindow.position,
+                chats: this.openedChats.map(c => ({
+                    peerId: c.peerId,
+                    isMinimized: c.isMinimized,
+                    position: c.position,
+                    zIndex: c.zIndex
+                }))
+            };
+            localStorage.setItem("im.fastchats.state", JSON.stringify(state));
+        } catch(e) {
+            console.error("FastChats | saveState error:", e);
+        }
+    }
+
+    focusChat(peerId) {
+        this.topZIndex++;
+        const chat = this.openedChats.find(c => c.peerId === peerId);
+        if (chat) {
+            chat.zIndex = this.topZIndex;
+            chat.isFocused = true;
+        }
+        this.openedChats.forEach(c => {
+            if (c.peerId !== peerId) c.isFocused = false;
+        });
+        this.onlineWindow.isFocused = false;
+        this.render();
+    }
+
+    moveChat(peerId, pos) {
+        const chat = this.openedChats.find(c => c.peerId === peerId);
+        if (chat) {
+            chat.position = pos;
+            this.saveState();
+            this.render();
+        }
+    }
+
+    focusOnline() {
+        this.topZIndex++;
+        this.onlineWindow.zIndex = this.topZIndex;
+        this.onlineWindow.isFocused = true;
+        this.openedChats.forEach(c => c.isFocused = false);
+        this.render();
+    }
+
+    moveOnline(pos) {
+        this.onlineWindow.position = pos;
+        this.saveState();
+        this.render();
+    }
+
+    async openChat(peerId, isMinimized = false, save = true, position = null, zIndex = null) {
+        this.topZIndex++;
+        let chat = this.openedChats.find(c => c.peerId === peerId);
+        if (chat) {
+            chat.isMinimized = isMinimized;
+            chat.zIndex = this.topZIndex;
+            chat.isFocused = true;
+            this.focusChat(peerId);
+            if (save) this.saveState();
+            if (!isMinimized) {
+                setTimeout(() => this.scrollToBottom(peerId), 50);
+            }
             return;
         }
 
-        u("body").append(`
-        <div id="fastchats_related">
-            <div id="fastchats_chat">
-                <div id="fastchat_head">
-                    <b></b>
+        const friend = this.onlineWindow.allFriends.find(f => f.id === peerId) || this.onlineWindow.friends.find(f => f.id === peerId);
+        const initialTitle = friend ? (friend.first_name + " " + friend.last_name) : "...";
+        const initialPhoto = friend ? (friend.photo_50 || "") : "";
 
-                    <div style="display: flex;gap: 5px;">
-                        <span id="fastchat_reveal" class="f_act" onclick="window.im.fastChats.reveal()"></span>
-                        <span id="fastchat_close" class="f_act" onclick="window.im.fastChats.close()"></span>
-                    </div>
-                </div>
-                <div id="wrap"></div>
-            </div>
-            <div id="fastchats"></div>
-        </div>`);
+        chat = {
+            peerId,
+            title: initialTitle,
+            photo: initialPhoto,
+            messages: [],
+            isMinimized,
+            isLoading: true,
+            hasMore: false,
+            text: "",
+            unreadCount: 0,
+            position: position,
+            zIndex: zIndex || this.topZIndex,
+            isFocused: true
+        };
+        this.openedChats.forEach(c => c.isFocused = false);
+        this.onlineWindow.isFocused = false;
+        this.openedChats.push(chat);
+        this.render();
 
-        await this.update();
-        this.isInserted = true;
+        try {
+            let title = initialTitle;
+            let photo = initialPhoto;
 
-        window.im_class.insertIn(document.querySelector('#fastchats_related #fastchats_chat #wrap'), null, true);
-        const wrapEl = document.querySelector('#fastchats_related #fastchats_chat #wrap');
-        if (wrapEl) {
-            wrapEl.addEventListener("scroll", () => {
-                if (window.im && window.im.messenger && window.im.messenger.view) {
-                    window.im.messenger.view.onMessagesScroll();
+            if (title === "..." || !photo) {
+                if (peerId > 0 && peerId < 2000000000) {
+                    const uRes = await window.OVKAPI.call('users.get', { user_ids: peerId, fields: 'photo_50' });
+                    if (uRes && uRes[0]) {
+                        title = uRes[0].first_name + " " + uRes[0].last_name;
+                        photo = uRes[0].photo_50;
+                    }
+                } else if (peerId < 0) {
+                    const gRes = await window.OVKAPI.call('groups.getById', { group_ids: Math.abs(peerId), fields: 'photo_50' });
+                    if (gRes && gRes[0]) {
+                        title = gRes[0].name;
+                        photo = gRes[0].photo_50;
+                    }
+                } else if (peerId >= 2000000000) {
+                    const cRes = await window.OVKAPI.call('messages.getChat', { chat_id: peerId - 2000000000, fields: 'photo_50' });
+                    if (cRes) {
+                        title = cRes.title;
+                        photo = cRes.photo_50;
+                    }
                 }
-            });
+
+                chat.title = title;
+                chat.photo = photo;
+            }
+
+            try {
+                const histRes = await window.OVKAPI.call('messages.getHistory', {
+                    peer_id: peerId,
+                    count: 15,
+                    extended: 1
+                });
+
+                if (histRes && Array.isArray(histRes.items)) {
+                    chat.messages = histRes.items.reverse();
+                    chat.hasMore = histRes.count > chat.messages.length;
+                } else {
+                    chat.messages = [];
+                    chat.hasMore = false;
+                }
+            } catch (histErr) {
+                console.warn("FastChats | messages.getHistory failed (new dialog):", histErr);
+                chat.messages = [];
+                chat.hasMore = false;
+            }
+
+            chat.isLoading = false;
+            this.render();
+            if (save) this.saveState();
+
+            if (!isMinimized) {
+                setTimeout(() => this.scrollToBottom(peerId), 50);
+            }
+        } catch(e) {
+            console.error("FastChats | openChat error:", e);
+            chat.isLoading = false;
+            this.render();
         }
     }
-    async updateSelf() {
-        window.im.rewriteTabs(document.querySelector('#fastchats_related #fastchats_chat #wrap'));
+
+    closeChat(peerId) {
+        this.openedChats = this.openedChats.filter(c => c.peerId !== peerId);
+        this.saveState();
+        this.render();
     }
-    async update() {
-        const el = document.querySelector("#fastchats");
-        if (!el) return;
-        const peers = await this.getPinnedPeers();
-        preactRender(html`<${FastChatsBar} pinnedItems=${peers} convos=${window.im.conversations} />`, el);
+
+    toggleChat(peerId) {
+        const chat = this.openedChats.find(c => c.peerId === peerId);
+        if (chat) {
+            chat.isMinimized = !chat.isMinimized;
+            this.focusChat(peerId);
+            if (!chat.isMinimized) {
+                chat.unreadCount = 0;
+                setTimeout(() => this.scrollToBottom(peerId), 50);
+            }
+            this.saveState();
+            this.render();
+        }
     }
-    show() {
-        u("body #fastchats_related").addClass("shown");
-        this.update();
+
+    async loadOlderMessages(peerId) {
+        const chat = this.openedChats.find(c => c.peerId === peerId);
+        if (!chat || chat.isLoading) return;
+
+        chat.isLoading = true;
+        try {
+            const histRes = await window.OVKAPI.call('messages.getHistory', {
+                peer_id: peerId,
+                count: 15,
+                offset: chat.messages.length,
+                extended: 1
+            });
+
+            if (histRes && histRes.items && histRes.items.length > 0) {
+                const olderMsgs = histRes.items.reverse();
+                chat.messages = [...olderMsgs, ...chat.messages];
+                chat.hasMore = histRes.count > chat.messages.length;
+            } else {
+                chat.hasMore = false;
+            }
+        } catch(e) {
+            console.error("FastChats | loadOlderMessages error:", e);
+        }
+        chat.isLoading = false;
+        this.render();
     }
-    hide() {
-        u("body #fastchats_related").removeClass("shown");
+
+    onTextChange(peerId, text) {
+        const chat = this.openedChats.find(c => c.peerId === peerId);
+        if (chat) {
+            chat.text = text;
+        }
     }
-    onEntryPointClick() {
-        this.toggleChatBar();
-        window.im.openTabByName("conversations");
+
+    async sendMessage(peerId) {
+        const chat = this.openedChats.find(c => Number(c.peerId) === Number(peerId));
+        if (!chat || !chat.text || !chat.text.trim()) return;
+
+        const text = chat.text.trim();
+        chat.text = "";
+        const randomId = Date.now();
+
+        const tempMsg = {
+            id: `temp_${randomId}`,
+            random_id: randomId,
+            from_id: this.currentUserId,
+            peer_id: peerId,
+            text: text,
+            date: Math.floor(Date.now() / 1000),
+            out: 1,
+            author_name: tr('you') || 'Вы',
+            author_photo: this.currentUserAvatar
+        };
+        chat.messages.push(tempMsg);
+        this.render();
+        this.scrollToBottom(peerId);
+
+        try {
+            const sendRes = await window.OVKAPI.call('messages.send', {
+                peer_id: peerId,
+                message: text,
+                random_id: randomId
+            });
+
+            const realId = Number((sendRes && sendRes.response) || sendRes || randomId);
+            tempMsg.id = realId;
+        } catch(e) {
+            console.error("FastChats | sendMessage error:", e);
+        }
+    }
+
+    onKeyDown(e, peerId) {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            this.sendMessage(peerId);
+        }
+    }
+
+    scrollToBottom(peerId) {
+        const el = document.querySelector(`#fc_messages_${peerId}`);
+        if (el) {
+            el.scrollTop = el.scrollHeight;
+        }
+    }
+
+    toggleOnlineWindow() {
+        this.onlineWindow.isOpened = !this.onlineWindow.isOpened;
+        this.focusOnline();
+        this.saveState();
+        this.render();
+    }
+
+    closeOnlineWindow() {
+        this.onlineWindow.isOpened = false;
+        this.saveState();
+        this.render();
+    }
+
+    onOnlineSearch(query) {
+        this.onlineWindow.searchQuery = query;
+        this.render();
+    }
+
+    onOnlineFriendClick(friend) {
+        this.openChat(friend.id, false, true);
     }
 
     selectConversation(e, convo) {
-        if (e.target.matches(".fastchat_close")) {
-            this.unpinPeer(convo);
-            window.im.messenger.closeChat(convo);
-
-            this.update();
-            return;
-        }
-
-        try {
-            if (convo.id == window.im.messenger.getCurrentChat().id && u("body #fastchats_related #fastchats_chat").hasClass("shown")) {
-                this.hideChatBar();
-                return;
-            }
-        } catch (e) {
-            console.error(e);
-        }
-
-        this.showChatBar();
-        window.im.messenger.selectConversation(convo, true);
+        const uid = typeof convo === "number" ? convo : convo.id;
+        this.openChat(uid, false, true);
     }
 
-    toggleChatBar() {
-        const tab_id = window.im.getSelectedTabId();
-        if (tab_id == "messenger" || tab_id == null) {
-            window.im.openTabByName("conversations");
-            return;
-        }
+    isShown() {
+        return this.isInserted;
+    }
 
-        if (u("body #fastchats_related #fastchats_chat").hasClass("shown")) {
-            this.hideChatBar();
+    show() {
+        if (!this.shouldBeShown()) return;
+        const container = document.querySelector("#fastchats_container");
+        if (container) {
+            container.style.display = "flex";
         } else {
-            this.showChatBar();
+            this.insertSelf();
         }
-    };
-    showChatBar() {
-        u("body #fastchats_related #fastchats_chat").attr("style", "display:block;");
-        u("body #fastchats_related #fastchats_chat").addClass("fading_state1");
-        setTimeout(() => {
-            u("body #fastchats_related #fastchats_chat").removeClass("fading_state1");
-            u("body #fastchats_related #fastchats_chat").addClass("shown");
-        }, 200);
     }
-    hideChatBar() {
-        u("body #fastchats_related #fastchats_chat").addClass("fading_state2");
-        setTimeout(() => {
-            u("body #fastchats_related #fastchats_chat").removeClass("fading_state2");
-            u("body #fastchats_related #fastchats_chat").removeClass("shown");
-            u("body #fastchats_related #fastchats_chat").attr("style", "");
-        }, 200);
-    }
-    isShown() { return u("body #fastchats_related #fastchats_chat").hasClass("shown") }
-    close() { this.hideChatBar(); }
-    reveal() {
-        if (window.im.getSelectedTabId() == "conversations") {
-            window.router.route({
-                "url": "/im"
-            });
+
+    hide() {
+        const container = document.querySelector("#fastchats_container");
+        if (container) {
+            container.style.display = "none";
         }
-        if (window.im.getSelectedTabId() == "messenger") {
-            const chat = window.im.messenger.getCurrentChat();
-            window.router.route({
-                "url": "/im?sel=" + (chat ? chat.peer.id : "")
+    }
+
+    updateSelf() {
+        this.render();
+    }
+
+    async update() {
+        await this.loadOnlineFriends();
+        this.render();
+    }
+
+    async onNewMessage(msg) {
+        if (!msg) return;
+
+        const currentUserId = Number(this.currentUserId || (window.openvk ? window.openvk.current_id : 0));
+        const rawPeer = (msg.data && (msg.data.peer_id || msg.data.peer)) || msg.peer_id || msg.peer || msg.from_id || (msg.data && msg.data.from_id) || 0;
+        const peerId = Number(rawPeer);
+        if (!peerId) return;
+
+        const msgFlags = Number((msg.data && msg.data.flags) || msg.flags || 0);
+        const isOut = Boolean((msgFlags & 2) || (typeof msg.isOut === 'function' && msg.isOut()) || (typeof msg.isMine === 'function' && msg.isMine()) || msg.out === 1);
+
+        const fromId = isOut ? currentUserId : Number((msg.data && msg.data.from_id) || msg.from_id || peerId);
+        const msgId = Number((msg.data && msg.data.id) || msg.id || Date.now());
+        const text = (msg.data && msg.data.text) || (typeof msg.getText === 'function' ? msg.getText() : '') || msg.text || msg.body || '';
+        const date = Number((msg.data && msg.data.date) || msg.date || Math.floor(Date.now() / 1000));
+        const randomId = Number((msg.data && msg.data.random_id) || msg.random_id || 0);
+
+        let chat = this.openedChats.find(c => Number(c.peerId) === peerId);
+
+        if (chat) {
+            // De-duplicate outgoing messages
+            if (isOut) {
+                const existing = chat.messages.find(m => 
+                    (Number(m.id) === msgId) ||
+                    (randomId && Number(m.random_id) === randomId) ||
+                    (m.out === 1 && m.text === text && Math.abs(date - m.date) < 30)
+                );
+
+                if (existing) {
+                    existing.id = msgId;
+                    if (randomId) existing.random_id = randomId;
+                    this.render();
+                    return;
+                }
+            } else {
+                if (chat.messages.some(m => Number(m.id) === msgId)) {
+                    return;
+                }
+            }
+
+            chat.messages.push({
+                id: msgId,
+                from_id: fromId,
+                peer_id: peerId,
+                text: text,
+                date: date,
+                out: isOut ? 1 : 0,
+                author_name: isOut ? (tr('you') || 'Вы') : chat.title,
+                author_photo: isOut ? this.currentUserAvatar : chat.photo
             });
+
+            if (!chat.isMinimized && chat.isFocused) {
+                window.OVKAPI.call('messages.markAsRead', {
+                    peer_id: peerId,
+                    start_message_id: msgId
+                }).catch(console.error);
+            } else if (!isOut) {
+                chat.unreadCount = (chat.unreadCount || 0) + 1;
+            }
+
+            this.render();
+            if (!chat.isMinimized) {
+                this.scrollToBottom(peerId);
+            }
+        } else if (!isOut && !window.im.state.is_opened) {
+            await this.openChat(peerId, true, true);
+            const openedChat = this.openedChats.find(c => Number(c.peerId) === peerId);
+            if (openedChat) {
+                openedChat.unreadCount = 1;
+                this.render();
+            }
+        }
+    }
+
+    onEditMessage(peerId, msgId, text) {
+        const chat = this.openedChats.find(c => Number(c.peerId) === Number(peerId));
+        if (chat && chat.messages) {
+            const msg = chat.messages.find(m => Number(m.id) === Number(msgId));
+            if (msg) {
+                msg.text = text;
+                this.render();
+            }
+        }
+    }
+
+    setUserOnline(userId, isOnline) {
+        const friend = this.onlineWindow.friends.find(f => f.id === userId);
+        if (friend) {
+            friend.online = isOnline ? 1 : 0;
+            if (!isOnline) {
+                friend.last_seen = { time: Math.floor(Date.now() / 1000) };
+            }
+            this.render();
+        } else if (isOnline) {
+            this.loadOnlineFriends();
+        }
+    }
+
+    onEscapePressed() {
+        // Find focused chat to minimize
+        const focusedChat = this.openedChats.find(c => c.isFocused && !c.isMinimized);
+        if (focusedChat) {
+            focusedChat.isMinimized = true;
+            this.saveState();
+            this.render();
+            return;
         }
 
-        this.hideChatBar();
+        if (this.onlineWindow.isFocused && this.onlineWindow.isOpened) {
+            this.onlineWindow.isOpened = false;
+            this.saveState();
+            this.render();
+        }
     }
+
+    toggleShowAllOnline() {
+        this.onlineWindow.showAll = !this.onlineWindow.showAll;
+        this.render();
+    }
+
+    render() {
+        const container = document.querySelector("#fastchats_container");
+        if (!container) return;
+        container.style.display = "flex";
+
+        preactRender(html`
+            <${FastChatsRoot}
+                onlineWindow=${this.onlineWindow}
+                openedChats=${this.openedChats}
+                currentUserId=${this.currentUserId}
+                currentUserAvatar=${this.currentUserAvatar}
+                onOnlineSearch=${(q) => this.onOnlineSearch(q)}
+                onOnlineFriendClick=${(f) => this.onOnlineFriendClick(f)}
+                onOnlineToggle=${() => this.toggleOnlineWindow()}
+                onOnlineClose=${() => this.closeOnlineWindow()}
+                onOnlineFocus=${() => this.focusOnline()}
+                onOnlineMove=${(pos) => this.moveOnline(pos)}
+                onOnlineToggleShowAll=${() => this.toggleShowAllOnline()}
+                onChatToggle=${(id) => this.toggleChat(id)}
+                onChatClose=${(id) => this.closeChat(id)}
+                onChatLoadOlder=${(id) => this.loadOlderMessages(id)}
+                onChatTextChange=${(id, txt) => this.onTextChange(id, txt)}
+                onChatSend=${(id) => this.sendMessage(id)}
+                onChatKeyDown=${(e, id) => this.onKeyDown(e, id)}
+                onChatFocus=${(id) => this.focusChat(id)}
+                onChatMove=${(id, pos) => this.moveChat(id, pos)}
+            />
+        `, container);
+    }
+}
+
+// Global Esc key listener for fastchats
+if (!window._fc_esc_inited) {
+    window._fc_esc_inited = true;
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+            if (window.im && window.im.fastChats) {
+                window.im.fastChats.onEscapePressed();
+            }
+        }
+    });
 }
 
 (async () => {
