@@ -1612,6 +1612,9 @@
 "chat_invite_join_btn" = "Join conversation";
 "chat_invite_open_btn" = "Go to conversation";
 "chat_invite_already_member" = "You are already a member of this conversation";
+"members_count_zero" = "No members";
+"members_count_one" = "$1 member";
+"members_count_other" = "$1 members";
 
 /* Errors */
 

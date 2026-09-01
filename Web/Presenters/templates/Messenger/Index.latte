@@ -1,15 +1,33 @@
 {extends "../@layout.latte"}
 
 {block title}
-    {if $imAvailable}
+    {if !empty($chatPreview)}
+        {tr('chat_invite_preview_title')} «{$chatPreview['chatTitle']}»
+    {elseif $imAvailable}
         {_my_messages}
     {else}
         {_section_maintenance}
     {/if}
 {/block}
 
+{block headIncludes}
+    {if !empty($chatPreview)}
+        <meta property="og:title" content="{tr('chat_invite_preview_title')}: {$chatPreview['chatTitle']} — {$instance_name}" />
+        <meta property="og:url" content="{$chatPreview['joinUrl']}" />
+        <meta property="og:type" content="website" />
+        <meta n:if="!empty($chatPreview['photoUrl'])" property="og:image" content="{$chatPreview['photoUrl']}" />
+        <meta n:if="!empty($chatPreview['photoUrl'])" property="og:image:secure_url" content="{$chatPreview['photoUrl']}" />
+        <meta property="og:description" content="{$chatPreview['description']}" />
+        <meta name="twitter:title" content="{tr('chat_invite_preview_title')}: {$chatPreview['chatTitle']} — {$instance_name}" />
+        <meta n:if="!empty($chatPreview['photoUrl'])" name="twitter:image" content="{$chatPreview['photoUrl']}" />
+        <meta name="twitter:description" content="{$chatPreview['description']}" />
+    {/if}
+{/block}
+
 {block header}
-    {if $imAvailable}
+    {if !empty($chatPreview)}
+        {tr('chat_invite_preview_title')}
+    {elseif $imAvailable}
         {_my_messages}
     {else}
         {_section_maintenance}
