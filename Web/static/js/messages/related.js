@@ -284,30 +284,11 @@ async function openChatTopic(event, prettyId) {
 }
 
 class DaySwitcher {
-    constructor(start_date, peer_id) {
-        this.start_date = start_date;
-        this.peer_id = peer_id;
-        this.msg = new CMessageBox({
-            title: tr("day_selection"),
-            body: `<div id="calender"></div>`,
-            buttons: [tr("close")],
-            callbacks: [() => {}],
-        });
-        this.renderCalendar();
-    }
-
-    renderCalendar() {
-        const datas = this.start_date.split("/");
-        const month = tr("month_year_template", tr("month_" + datas[0]), datas[2]);
-
-        this.msg.getNode().find("#calender").append(month);
-    }
-
-    async execute() {
-        const date = "1/1/1970";
-        const w = await window.OVKAPI.call("messages.getNearestMessageForDate", {
-            date: date,
-            peer_id: this.peer_id
-        })
+    constructor(start_date = null, peer_id = null) {
+        if (typeof window.openCalendarModal === "function") {
+            return window.openCalendarModal({ initialDate: start_date, peerId: peer_id });
+        }
     }
 }
+
+window.DaySwitcher = DaySwitcher;

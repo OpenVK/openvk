@@ -10,8 +10,9 @@ const { Messenger, MessengerPage, ContactPage, ChatTopicPreviewPage } = await es
 const { Conversations, ConversationsPage, Conversation } = await es6import_Im(import.meta.url, './pages/conversations.js');
 //import { Friends, FriendsPage } from './pages/friends.js';
 const { Friends, FriendsPage } = await es6import_Im(import.meta.url, './pages/friends.js');
-//import { SearchPage } from './pages/search.js';
 const { SearchPage } = await es6import_Im(import.meta.url, './pages/search.js');
+const { ImportantPage } = await es6import_Im(import.meta.url, './pages/important.js');
+const { ChatInvitePreviewPage } = await es6import_Im(import.meta.url, './pages/invite.js');
 //import { IMTab, IMPage } from './pages/page.js';
 const { IMTab, IMPage } = await es6import_Im(import.meta.url, './pages/page.js');
 //import { TabBar } from './components/common.js';
@@ -22,6 +23,10 @@ const { html, render } = await es6import_Im(import.meta.url, './components/rende
 const preactRender = render;
 //const tr = window.tr;
 //const u = window.u;
+
+export function isImWarningRemoved() {
+    return localStorage.getItem("tw.im.remove_warning") === "1" || localStorage.getItem("im.remove_warning") === "1";
+}
 
 export class InstantMessagesAndRelated {
     constructor(group_id = null) {
@@ -49,6 +54,10 @@ export class InstantMessagesAndRelated {
         this.fastChats = new FastChats();
     }
 
+    get is_ready() {
+        return this.isReady;
+    }
+
     async waitLoad() {
         return new Promise(resolve => {
             const check = () => {
@@ -64,6 +73,11 @@ export class InstantMessagesAndRelated {
 
     async init(do_init = true, ignore_initless = false) {
         if (this.is_initing == true || this.isReady == true) {
+            return;
+        }
+
+        if (!isImWarningRemoved() && !ignore_initless) {
+            console.log("IM | Init skipped: agreement (im.remove_warning) is not accepted");
             return;
         }
 
@@ -121,14 +135,52 @@ export class InstantMessagesAndRelated {
 
     static async insertIn(container, as = null, fastchat = false, rewrite_tabs = true, report_data = null) {
         let self = window.im_variants.getCurrentUser();
-        const b = new URL(location.href)
+        const b = new URL(location.href);
 
-        if (localStorage.getItem("tw.im.remove_warning") !== "1") {
+        if (!isImWarningRemoved() && report_data == null) {
             if (fastchat) {
-                return;
+                return null;
             }
 
-            await self._showAgreement();
+            const accepted = await self._showAgreement();
+            if (!accepted) {
+                const skeleton = container ? container.querySelector("#load_skeleton") : null;
+                if (skeleton) skeleton.remove();
+
+                if (container) {
+                    const titleText = (typeof tr === 'function' ? tr('messages_agreement_declined_title') : null) || 'Соглашение отклонено';
+                    const descText = (typeof tr === 'function' ? tr('messages_agreement_declined') : null) || 'Вы отклонили пользовательское соглашение сообщений. Чтобы получить доступ к сообщениям, необходимо принять соглашение.';
+                    const btnText = (typeof tr === 'function' ? tr('messages_agreement_accept_btn') : null) || 'Принять соглашение';
+
+                    container.innerHTML = `
+                        <div class="container_gray" style="margin-top: -10px;">
+                            <center style="background: white; border: #DEDEDE solid 1px; padding: 25px 20px;">
+                                <img src="/assets/packages/static/openvk/img/oof.apng" style="width: 120px; max-width: 25%; margin-bottom: 10px;" />
+                                <h3 style="margin: 0 0 10px; color: #333; font-size: 15px;">${escapeHtml(titleText)}</h3>
+                                <span style="color: #707070; margin: 0 0 15px; display: block; max-width: 480px; line-height: 1.4; font-size: 13px;">
+                                    ${escapeHtml(descText)}
+                                </span>
+                                <button class="button" id="_im_accept_agreement_btn" style="margin-top: 5px;">${escapeHtml(btnText)}</button>
+                            </center>
+                        </div>
+                    `;
+
+                    const acceptBtn = container.querySelector("#_im_accept_agreement_btn");
+                    if (acceptBtn) {
+                        acceptBtn.onclick = async () => {
+                            acceptBtn.classList.add("lagged");
+                            container.innerHTML = `
+                                <div id="load_skeleton" class="im_page_loader">
+                                    <img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="..." />
+                                </div>
+                            `;
+                            await InstantMessagesAndRelated.insertIn(container, as, fastchat, rewrite_tabs, report_data);
+                        };
+                    }
+                }
+
+                return null;
+            }
         }
 
         if (report_data != null) {
@@ -139,14 +191,14 @@ export class InstantMessagesAndRelated {
             console.log("IM | ?as= detected", as);
             self = window.im_variants.getForGroup(Number(as));
             window.im_variants.set(self);
-            if (!self.is_ready) { await self.init(); }
+            if (!self.isReady) { await self.init(); }
 
-            b.searchParams.set("as", String(as))
+            b.searchParams.set("as", String(as));
         } else {
             window.im_variants.set(self);
-            if (!self.is_ready) { await self.init(true, report_data != null); }
+            if (!self.isReady) { await self.init(true, report_data != null); }
 
-            b.searchParams.delete("as")
+            b.searchParams.delete("as");
         }
 
         self.state.isFastchat = fastchat;
@@ -232,15 +284,16 @@ export class InstantMessagesAndRelated {
                 unique_name: 'agreement',
                 buttons: [tr('cancel'), tr('ok')],
                 callbacks: [() => {
-                    msg.close()
-                    resolve(false)
+                    msg.close();
+                    resolve(false);
                 }, () => {
                     localStorage.setItem("tw.im.remove_warning", "1");
+                    localStorage.setItem("im.remove_warning", "1");
                     msg.close();
                     resolve(true);
                 }]
-            })
-        })
+            });
+        });
     }
 
     rewriteTabs(container) {
@@ -362,6 +415,12 @@ export class InstantMessagesAndRelated {
                 break;
             case "chat_preview_topic":
                 got_class = ChatTopicPreviewPage;
+                break;
+            case "important":
+                got_class = ImportantPage;
+                break;
+            case "chat_invite":
+                got_class = ChatInvitePreviewPage;
                 break;
         }
 
@@ -584,7 +643,15 @@ class IMState {
 
         const _sel = sel_id == null ? Number(loc.searchParams.get('sel')) : sel_id;
         const joinByTopic = loc ? loc.searchParams.get("joinByTopic") : null;
+        const joinCode = loc ? (loc.searchParams.get("join") || loc.searchParams.get("invite")) : null;
         const as = loc ? loc.searchParams.get("as") : null;
+
+        if (joinCode) {
+            this.link.openTabByName("chat_invite", true, {
+                joinCode: joinCode
+            });
+            return;
+        }
 
         if (joinByTopic != null) {
             this.link.openTabByName("chat_preview_topic", true, {
@@ -597,6 +664,16 @@ class IMState {
             if (peer) {
                 const _l = this.link.messenger.getChatWith(peer);
                 await this.link.messenger.selectConversation(_l);
+
+                const hashMatch = (loc.hash || location.hash || "").match(/#?msg-?\d+-(\d+)/);
+                const queryMsgId = loc.searchParams.get("msgid") || loc.searchParams.get("msg_id") || loc.searchParams.get("msg");
+                const targetMsgId = hashMatch ? Number(hashMatch[1]) : (queryMsgId ? Number(queryMsgId) : null);
+                if (targetMsgId) {
+                    setTimeout(() => {
+                        this.link.messenger.goToMessage({ id: targetMsgId, peer_id: _sel }, _l);
+                    }, 50);
+                }
+
                 return _l;
             } else {
                 console.error('No peer with this id!', sel_id);
@@ -834,10 +911,14 @@ class ProfilesCache {
 
     _moveToProfileCache(profiles = [], groups = [], remove_current = true) {
         (profiles || []).forEach((profile) => {
-            this._addProfileCache(new ChatGeneralForm(profile), remove_current);
+            if (profile && typeof profile === 'object' && profile.id != null) {
+                this._addProfileCache(new ChatGeneralForm(profile), remove_current);
+            }
         });
         (groups || []).forEach((group) => {
-            this._addProfileCache(new ChatGeneralForm(group), remove_current);
+            if (group && typeof group === 'object' && group.id != null) {
+                this._addProfileCache(new ChatGeneralForm(group), remove_current);
+            }
         });
     }
 
@@ -969,11 +1050,11 @@ export class FastChats {
     }
 
     shouldBeShown() {
-        return !window.im.state.is_opened && this.currentUserId > 0;
+        return isImWarningRemoved() && !window.im.state.is_opened && this.currentUserId > 0;
     }
 
     async insertSelf() {
-        if (!this.shouldBeShown()) return;
+        if (!isImWarningRemoved() || !this.shouldBeShown()) return;
 
         let container = document.querySelector("#fastchats_container");
         if (!container) {
@@ -1375,7 +1456,7 @@ export class FastChats {
         const currentUserId = Number(this.currentUserId || (window.openvk ? window.openvk.current_id : 0));
         const rawPeer = (msg.data && (msg.data.peer_id || msg.data.peer)) || msg.peer_id || msg.peer || msg.from_id || (msg.data && msg.data.from_id) || 0;
         const peerId = Number(rawPeer);
-        if (!peerId) return;
+        if (!peerId || peerId >= 2000000000) return;
 
         const msgFlags = Number((msg.data && msg.data.flags) || msg.flags || 0);
         const isOut = Boolean((msgFlags & 2) || (typeof msg.isOut === 'function' && msg.isOut()) || (typeof msg.isMine === 'function' && msg.isMine()) || msg.out === 1);
@@ -1543,6 +1624,10 @@ if (!window._fc_esc_inited) {
         window.im_variants = new IMVariants();
         window.im_variants.add(new InstantMessagesAndRelated());
         window.im_variants.setByIndex(0);
+    }
+
+    if (!isImWarningRemoved()) {
+        return;
     }
 
     await window.im.init();

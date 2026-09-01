@@ -681,23 +681,27 @@ class VideoViewer extends Viewer {
     }
 
     afterOpen(videoId, open_comments = false) {
-        console.log("videoid")
-        if (this.items[videoId]) {
+        console.log("videoid", videoId);
+        let key = videoId;
+        if (typeof key === 'string') {
+            key = key.replace(/^video/, '');
+        }
+
+        if (this.items[key]) {
+            this.selectItem(key, this.items[key]);
+        } else if (this.items[videoId]) {
             this.selectItem(videoId, this.items[videoId]);
         } else {
-            if (videoId == "skip") {
-                videoId = this.itemsOrder[0];
-            } else {
-                //this._appendApiItem({
-                //    "_PRESET_ID": videoId,
-                //});
+            const foundKey = Object.keys(this.items).find(k => {
+                const it = this.items[k];
+                return k === key || k === videoId || (it && (String(it.id) === String(key) || String(it.id) === String(videoId) || `${it.owner_id}_${it.id}` === key));
+            });
 
-                //if (this.itemsOrder.indexOf(firstPhotoId) === -1) {
-                //    this.itemsOrder.push(firstPhotoId);
-                //}
+            if (foundKey && this.items[foundKey]) {
+                this.selectItem(foundKey, this.items[foundKey]);
+            } else if (this.itemsOrder.length > 0 && this.items[this.itemsOrder[0]]) {
+                this.selectItem(this.itemsOrder[0], this.items[this.itemsOrder[0]]);
             }
-
-            this.selectItem(videoId, this.items[videoId]);
         }
 
         if (open_comments === true) {
@@ -858,7 +862,14 @@ class VideoViewer extends Viewer {
     }
 
     static async openById(ids, context = {}, event = null, open_comments = false) {
-        if (event != null) {
+        if (ids && typeof ids === 'object' && (ids.preventDefault || ids.target || ids instanceof Event)) {
+            const temp = ids;
+            ids = typeof context === 'string' ? context : (event || '');
+            event = temp;
+            context = {};
+        }
+
+        if (event != null && typeof event.preventDefault === 'function') {
             event.preventDefault();
             event.stopPropagation();
         }
@@ -867,16 +878,17 @@ class VideoViewer extends Viewer {
 
         try {
             const videoViewer = new VideoViewer();
-            const first_id = ids;
+            const cleanId = typeof ids === 'string' ? ids.replace(/^video/, '') : ids;
+            const first_id = cleanId;
 
             if (context == null || context.type == null) {
                 videoViewer.setContext({
-                    "id": ids
+                    "id": cleanId
                 });
                 await videoViewer.loadIdsOnlyContext();
             } else {
                 videoViewer.setContext(context);
-                await videoViewer.initalizeContext(null, ids);
+                await videoViewer.initalizeContext(null, cleanId);
             }
 
             videoViewer.open();
@@ -3201,9 +3213,9 @@ function OpenAvatarUpdateDialogue(group = null, chat = null, aspectRatio = NaN, 
         (function() {
             u("#tmpPhDelF").remove();
         }),
-    ]);
+    ], true);
 
-    msg.attr("style", "width: 600px;");
+    msg.getNode().attr("style", "width: 600px;");
     document.querySelector(".ovk-diag-body").style.padding = "13px"
 
     $("#avatarUpload input").on("change", (ev) => {
@@ -3251,7 +3263,7 @@ function OpenAvatarUpdateDialogue(group = null, chat = null, aspectRatio = NaN, 
             },
         });
 
-        msg.attr("style", "width: 487px;");
+        msg.getNode().attr("style", "width: 487px;");
 
         document.querySelector("#_uploadImg").onclick = (evv) => {
             cropper.getCroppedCanvas({
@@ -3263,8 +3275,16 @@ function OpenAvatarUpdateDialogue(group = null, chat = null, aspectRatio = NaN, 
 
                 if (chat != null) {
                     chat.updateAvatar(blob).then((resp) => {
-                        msg.close();
-                    })
+                        if (msg && typeof msg.close === 'function') {
+                            msg.close();
+                        } else {
+                            u(".ovk-diag-cont").remove();
+                            u("body").removeClass("dimmed");
+                            document.querySelector("html").style.overflowY = "scroll";
+                        }
+                    }).catch((err) => {
+                        document.querySelector("#_uploadImg")?.classList.remove("lagged");
+                    });
                     return;
                 }
 

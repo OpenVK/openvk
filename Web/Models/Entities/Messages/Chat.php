@@ -122,7 +122,7 @@ class Chat extends RowModel
 
     public function pushPhotoToHistory(Photo $photo): bool
     {
-        $history = $this->getPhotoHistory();
+        $history = $this->getAvatarsHistory(true);
         $id = $photo->getId();
 
         if (in_array($id, $history)) {
@@ -142,7 +142,7 @@ class Chat extends RowModel
 
     public function removePhotoFromHistory(?Photo $photo = null): bool
     {
-        $history = $this->getPhotoHistory();
+        $history = $this->getAvatarsHistory(true);
         $id = $photo ? $photo->getId() : $this->getPhotoId();
 
         $index = array_search($id, $history);
@@ -158,8 +158,17 @@ class Chat extends RowModel
 
     public function getAvatarsHistory(bool $ids_only = false): array
     {
-        $raw = $this->getRecord()->photos_history;
+        try {
+            $raw = $this->getRecord()->photos_history;
+        } catch (\Throwable $e) {
+            $raw = null;
+        }
+
         if (empty($raw)) {
+            $photo = $this->getPhoto();
+            if ($photo) {
+                return $ids_only ? [(int) $photo->getId()] : [$photo];
+            }
             return [];
         }
 
@@ -168,6 +177,11 @@ class Chat extends RowModel
         }
 
         return (new Photos)->getByIds(explode(",", $raw));
+    }
+
+    public function getPhotoHistory(bool $ids_only = false): array
+    {
+        return $this->getAvatarsHistory($ids_only);
     }
 
     public function deleteCurrentPhoto(): bool

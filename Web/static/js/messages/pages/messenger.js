@@ -7,7 +7,8 @@ const { MessageListView } = await es6import_Im(import.meta.url, "../components/m
 const { ErrorConversation, WriteBar, ActionsBar, PeerWindow, InputArea, PeerTabsView, TopicConversationChat, PinnedMessageBar } = await es6import_Im(import.meta.url, "../components/common.js");
 //import { IMTab, IMPage } from './page.js';
 const { IMTab, IMPage } = await es6import_Im(import.meta.url, "./page.js");
-const { ScrollPosition } = await es6import_Im(import.meta.url, "../components/partition.js");
+const { ScrollPosition, MessageChunk } = await es6import_Im(import.meta.url, "../components/partition.js");
+const { openCalendarModal, CalendarComponent } = await es6import_Im(import.meta.url, "../components/calendar.js");
 //import { html, render } from '../components/render.js';
 const { html, render } = await es6import_Im(import.meta.url, "../components/render.js");
 
@@ -662,11 +663,12 @@ export class Messenger {
     async goToMessage(msg, presetConvo = null, open_tab = true) {
         try {
             if (open_tab) {
-                await (await window.im.openTabByName("messenger")).render();
+                const tab = await window.im.openTabByName("messenger");
+                if (tab) await tab.render();
             }
         } catch (e) { console.error(e); }
 
-        this.view.goToMessage(msg, presetConvo);
+        await this.view.goToMessage(msg, presetConvo);
     }
 
     setForwarded(msgs) { this.forwarded_msg = msgs; }
@@ -681,8 +683,11 @@ export class Messenger {
         }
     }
 
-    showDaySwitcher(date) {
-        const m = new DaySwitcher(date, this.getCurrentChat().peer.id);
+    showDaySwitcher(date = null) {
+        openCalendarModal({
+            initialDate: date,
+            peerId: this.getCurrentChat()?.peer?.id
+        });
     }
 }
 
@@ -714,9 +719,9 @@ export class MessengerPage extends IMPage {
     }
     showHook() {
         try {
-            const v = window.im.messenger.getCurrentChat();
-            if (v.peer && v.peer.draft) {
-                v.peer.draft.loadScroll(window.im.getTab("messenger").render_class);
+            const v = window.im?.messenger?.getCurrentChat();
+            if (v && v.peer && v.peer.draft) {
+                v.peer.draft.loadScroll(this);
             } else {
                 this._scrollToEnd();
             }
@@ -767,6 +772,10 @@ export class MessengerPage extends IMPage {
 
         console.log(messages)
         const is_rendering_contact_window = (window.im.tab == "contact" && special_mode === null);
+        const initialDate = (messages && messages.length > 0)
+            ? (messages[messages.length - 1].readable_date || messages[messages.length - 1].date || "")
+            : "";
+
         render(html`
         <div id="chat-page">
             <div class="chat-window ${peer.id == window.im.state.getId() ? "saved-msgs" : ""}">
@@ -780,6 +789,11 @@ export class MessengerPage extends IMPage {
                 onForwardClick=${() => { this.onForwardClick() }}
                 onViewers=${(msg) => { this.onViewersButtonClick(null, msg || orig_messenger.selected_messages_objs[0]) }}
             />
+            ${initialDate ? html`
+                <div class="im_floating_date_wrap" onClick=${(e) => this.onFloatingDateClick(e)}>
+                    <b id="im_floating_date_text">${initialDate}</b>
+                </div>
+            ` : ""}
             <div class="messenger-app messenger-layer">
                 <${MessageListView}
                 convo=${currentConv}
@@ -813,6 +827,47 @@ export class MessengerPage extends IMPage {
 
     onTextareaKeyPress(e) {
         const ta = e.target;
+
+        if (e.which === 38 || e.key === "ArrowUp") {
+            const isAtStart = ta.selectionStart === 0 && ta.selectionEnd === 0;
+            const isEmpty = !ta.value || ta.value.trim().length === 0;
+            if ((isAtStart || isEmpty) && !window.im.messenger.isEditing()) {
+                const currentConv = window.im.messenger.getCurrentChat();
+                if (currentConv && currentConv.peer && currentConv.peer._chunks) {
+                    const msgs = currentConv.peer._chunks.getMessages() || [];
+                    let lastMyMsg = null;
+                    for (let i = msgs.length - 1; i >= 0; i--) {
+                        const m = msgs[i];
+                        if (m && !m.isDeleted() && !m.isAction() && m.isMine() && m.can("edit")) {
+                            lastMyMsg = m;
+                            break;
+                        }
+                    }
+
+                    if (lastMyMsg) {
+                        e.preventDefault();
+                        this.onEditButtonClick(e, lastMyMsg);
+                        setTimeout(() => {
+                            const inputEl = this.container?.querySelector("#write .small-textarea");
+                            if (inputEl) {
+                                inputEl.focus();
+                                const len = inputEl.value.length;
+                                inputEl.setSelectionRange(len, len);
+                            }
+                        }, 50);
+                        return false;
+                    }
+                }
+            }
+        }
+
+        if (e.which === 27 || e.key === "Escape") {
+            if (window.im.messenger.isEditing()) {
+                e.preventDefault();
+                window.im.messenger.cancelEdit();
+                return false;
+            }
+        }
 
         if (e.which !== 13) {
             const now = Date.now();
@@ -871,42 +926,90 @@ export class MessengerPage extends IMPage {
     }
 
     async goToMessage(msg, presetConvo) {
-        const id = msg.id;
-        let conv = null;
-        try {
-            conv = presetConvo ? presetConvo : window.im.conversations._findConv(msg.peer_id);
-        } catch (e) {
-            console.error(e);
+        const id = Number(typeof msg === 'object' ? (msg.id || msg.data?.id) : msg);
+        if (!id) return;
+
+        const peerId = Number(
+            (typeof msg === 'object' ? (msg.peer_id || msg.data?.peer_id) : null) ||
+            presetConvo?.peer?.id ||
+            presetConvo?.id ||
+            window.im.messenger.currentChatId
+        );
+
+        let conv = presetConvo;
+        if (!conv || (conv.peer && Number(conv.peer.id) !== peerId)) {
+            try {
+                conv = await window.im.conversations._findConvFromApi(peerId) || window.im.conversations._findConv(peerId);
+            } catch (e) {
+                console.error(e);
+            }
         }
         if (!conv) return;
 
-        const chunks = conv.peer._chunks;
+        if (Number(window.im.messenger.currentChatId) !== peerId) {
+            window.im.messenger.setChat(conv);
+            const tab = await window.im.openTabByName("messenger");
+            if (tab) await tab.render();
+        }
 
-        let found = false;
-        for (const chunk of chunks.chunks) {
-            if (chunk && chunk.id_range && chunk.hasMessageId(id)) {
-                found = true;
-                break;
+        const chunks = conv.peer._chunks;
+        let targetMsg = (chunks && chunks._messagesInited) ? chunks._findMessageById(id) : null;
+        let targetAnchorId = id;
+
+        if (targetMsg) {
+            // Сообщение уже есть в текущем диалоге — центрируем окно чанков вокруг него
+            let sp = conv.getScrollPosition();
+            if (!sp || !conv.hasScrollPosition()) {
+                sp = new ScrollPosition(conv.peer);
+                conv._scroll = sp;
+            }
+            sp.recenter(id);
+            await this.update();
+            this.scrollToMessage(id, peerId, conv);
+            return;
+        }
+
+        // Сообщения нет в текущем диалоге — полный сброс всех чанков и загрузка через getHistory
+        chunks.chunks = [];
+        chunks._map = new Map();
+        chunks._messagesInited = false;
+        chunks._cachedMessages = undefined;
+        chunks.invalidateCache = true;
+
+        const centerChunk = new MessageChunk([], true, 41);
+        centerChunk._direction = 'center';
+        await centerChunk.fetch({
+            peer_id: peerId,
+            start_message_id: id,
+            offset: -20,
+            count: 41,
+            extended: 1
+        });
+
+        // Проверяем, появилось ли желаемое сообщение после загрузки
+        const foundInLoaded = centerChunk.messages && centerChunk.messages.find(m => Number(m.id) === id);
+        if (foundInLoaded) {
+            targetAnchorId = id;
+        } else if (centerChunk.messages && centerChunk.messages.length > 0) {
+            // Если желаемое сообщение не появилось — узнать какой ID под индексом 20 (или ближайший)
+            const fallbackIdx = centerChunk.messages[20] ? 20 : Math.floor(centerChunk.messages.length / 2);
+            const nearestMsg = centerChunk.messages[fallbackIdx] || centerChunk.messages[0];
+            if (nearestMsg && nearestMsg.id) {
+                targetAnchorId = Number(nearestMsg.id);
             }
         }
 
-        if (!found) {
-            const newChunk = await chunks.fetchRelatively(id);
-            chunks.appendChunk(newChunk, false);
-        }
+        chunks.appendChunk(centerChunk, true);
+        chunks._messagesInited = true;
 
         const sp = new ScrollPosition(conv.peer);
-        sp.relyMessageId = id;
+        sp.relyMessageId = targetAnchorId;
         sp.direction = "any";
         conv._scroll = sp;
+        sp._invalidateCache();
 
-        console.log("IM | New scroll position: ", sp);
-
-        if (!presetConvo) {
-            await window.im.messenger.selectConversation(conv);
-        }
-
-        this.scrollToMessage(msg);
+        await this.update();
+        this.scrollToMessage(targetAnchorId, peerId, conv);
     }
 
     clickOnReply(msg, e) {
@@ -949,10 +1052,12 @@ export class MessengerPage extends IMPage {
         if (window.im.messenger.isForwarded()) { return; }
 
         window.im.messenger.editMsg = msg;
-        if (msg.getText().length > 0) {
-            window.im.messenger.prevDraft = String(this.container.querySelector("#write .small-textarea").value || "");
-            window.im.messenger.currentDraft = msg.getText();
-            this.getNode().find("#write .small-textarea").last().value = msg.getText();
+        const msgText = msg.getText ? msg.getText(true) : (msg.data?.text || "");
+        if (msgText.length > 0) {
+            window.im.messenger.prevDraft = String(this.container?.querySelector("#write .small-textarea")?.value || "");
+            window.im.messenger.currentDraft = msgText;
+            const inputEl = this.getNode().find("#write .small-textarea").last();
+            if (inputEl) inputEl.value = msgText;
         }
 
         if (msg.getAttachments().length > 0) {
@@ -1291,11 +1396,24 @@ export class MessengerPage extends IMPage {
         const viewportH = isFastchat ? (this.container?.clientHeight || 400) : (window.innerHeight || document.documentElement.clientHeight || 0);
         const scrollBottom = Math.max(0, scrollHeight - _scroll - viewportH);
 
+        const visibleAnchor = this.getFirstVisibleMessageElement();
+        if (visibleAnchor) {
+            const dayContainer = visibleAnchor.closest('.messenger-app--messages-day');
+            const dayDivider = dayContainer ? dayContainer.querySelector('.messenger-app--messages-day-time b') : null;
+            const dayText = dayDivider ? dayDivider.textContent.trim() : '';
+            const floatDateEl = document.querySelector('#im_floating_date_text');
+            if (floatDateEl && dayText) {
+                floatDateEl.textContent = dayText;
+            }
+        }
+
         const topThreshold = isFastchat ? 150 : 350;
         const bottomThreshold = isFastchat ? 150 : 350;
 
         if (_scroll < topThreshold && !scrollPos.reachedOldestPosition) {
             this.is_loading = true;
+            const topLoader = document.querySelector(".im_top_loader");
+            if (topLoader) topLoader.style.display = "block";
             try {
                 const anchorEl = this.getFirstVisibleMessageElement();
                 const prevAnchorTop = anchorEl ? anchorEl.getBoundingClientRect().top : null;
@@ -1326,6 +1444,7 @@ export class MessengerPage extends IMPage {
                 console.error("IM | loadOlder error:", err);
             } finally {
                 this.is_loading = false;
+                if (topLoader) topLoader.style.display = "none";
             }
         } else if (scrollBottom < bottomThreshold && !scrollPos.reachedNewestPosition) {
             this.is_loading = true;
@@ -1457,6 +1576,15 @@ export class MessengerPage extends IMPage {
         }
     }
 
+    onFloatingDateClick(e) {
+        if (e) e.stopPropagation();
+        if (window.im?.messenger?.showDaySwitcher) {
+            window.im.messenger.showDaySwitcher();
+        } else if (typeof window.DaySwitcher !== "undefined") {
+            new window.DaySwitcher();
+        }
+    }
+
     _scrollToEnd() {
         console.log("IM | scrolling page to the end");
         this._scrollTo("end");
@@ -1474,30 +1602,73 @@ export class MessengerPage extends IMPage {
         this._scrollToEnd();
     }
 
-    scrollToMessage(msg, load_chunk_where_it_can_be = false) {
-        const msgId = typeof msg === 'object' ? msg.id : msg;
+    scrollToMessage(msgId, peerId = null, conv = null) {
+        const targetId = Number(typeof msgId === 'object' ? (msgId.id || msgId.data?.id) : msgId);
+        const pid = Number(
+            peerId ||
+            (typeof msgId === 'object' ? (msgId.peer_id || msgId.data?.peer_id) : null) ||
+            window.im.messenger.currentChatId
+        );
 
-        const el = this.messagesListBlock
-            ? this.messagesListBlock.querySelector(`[data-msg-id="${msgId}"]`)
-            : document.querySelector(`[data-msg-id="${msgId}"]`);
+        let attempts = 0;
+        const maxAttempts = 25;
 
-        if (el) {
-            scrollTo({
-                top: el.offsetTop - 200,
-            });
+        const tryScroll = () => {
+            attempts++;
+            let el = document.querySelector(`#msg${pid}-${targetId}`) || document.querySelector(`[data-msg-id="${targetId}"]`);
 
-            el.classList.add("animated");
-
-            setTimeout(() => {
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 el.classList.remove("animated");
-            }, 5000);
+                void el.offsetWidth;
+                el.classList.add("animated");
+                setTimeout(() => {
+                    if (el && document.body.contains(el)) {
+                        el.classList.remove("animated");
+                    }
+                }, 5000);
+                console.log('IM | Scrolled to message anchor msg' + pid + '-' + targetId);
+                return true;
+            }
 
-            console.log('IM | Scrolled to message #' + msgId);
+            if (attempts < maxAttempts) {
+                setTimeout(tryScroll, 50);
+            } else if (conv && typeof conv.getScrollPosition === 'function') {
+                const visibleMsgs = (conv.getScrollPosition() ? conv.getScrollPosition().getMessages() : []) || [];
+                if (visibleMsgs.length > 0) {
+                    let closest = visibleMsgs[0];
+                    let minDiff = Math.abs(Number(closest.id) - targetId);
+                    for (const m of visibleMsgs) {
+                        if (m && m.id) {
+                            const diff = Math.abs(Number(m.id) - targetId);
+                            if (diff < minDiff) {
+                                minDiff = diff;
+                                closest = m;
+                            }
+                        }
+                    }
+                    if (closest && closest.id) {
+                        const fallbackEl = document.querySelector(`#msg${pid}-${closest.id}`) || document.querySelector(`[data-msg-id="${closest.id}"]`);
+                        if (fallbackEl) {
+                            fallbackEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            fallbackEl.classList.remove("animated");
+                            void fallbackEl.offsetWidth;
+                            fallbackEl.classList.add("animated");
+                            setTimeout(() => {
+                                if (fallbackEl && document.body.contains(fallbackEl)) {
+                                    fallbackEl.classList.remove("animated");
+                                }
+                            }, 5000);
+                        }
+                    }
+                }
+            }
+            return false;
+        };
 
-            return;
-        } else {
-            console.log('IM | Message #' + msgId + " is not available.");
-        }
+        requestAnimationFrame(() => {
+            tryScroll();
+        });
     }
 
     getCurrentText() { return this.container.querySelector(".messenger-app--input---messagebox textarea").value; }

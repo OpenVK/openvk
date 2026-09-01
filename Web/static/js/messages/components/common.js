@@ -1,5 +1,6 @@
 import { html, render } from './render.js';
 import { ChatGeneralForm } from './messages.js';
+import { openAttachmentsModal } from './attachments_modal.js';
 
 export const PeerAvatar = ({ peer, className = "", loading = "lazy", saved_messages_ava = true, orig_ava = true, size = "mid", onClick = null }) => {
     if (!peer) {
@@ -413,7 +414,8 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
                     <a onClick=${() => { window.im.conversations.toggleMode("all") }}>${tr("conversations_show_all")}</a> |<span> </span>
                 `}
                 <a onclick=${() => { window.im.openTabByName("settings") }}>${tr("messenger_tab_settings")}</a> |<span> </span>
-                <a onClick=${(event) => { imSwitchCurrent(event) }}>${tr("messenger_switch_current")}</a>
+                <a onClick=${(event) => { imSwitchCurrent(event) }}>${tr("messenger_switch_current")}</a> |<span> </span>
+                <a onClick=${() => { window.im.openTabByName("important") }}>${tr("important_messages") || "Важное"}</a>
             </div>
         </div>
     `;
@@ -462,15 +464,21 @@ export const TabBar = ({ tabs, activeTab, onTabSelect }) => {
         }
     };
 
+    const sortedTabs = (tabs || []).slice(0).sort((a, b) => {
+        if (a.getPageId() === "important") return 1;
+        if (b.getPageId() === "important") return -1;
+        return 0;
+    });
+
     return html`
         <div class="messenger-app--tabbar-wrap">
             ${showBanner ? html`<${MessagesNewInterfaceBanner} onClose=${handleDismissBanner} />` : ""}
             <div class="messenger-app--global-tabs tabs">
                 <div class="inner-tabs">
-                    ${tabs.map((tab) => html`
+                    ${sortedTabs.map((tab) => html`
                     <a data-tab="${tab.getId()}"
                         id="${tab.isActive() ? 'activetabs' : ''}"
-                        class="tab"
+                        class="tab ${tab.getPageId() === 'important' ? 'tab-important' : ''}"
                         onClick=${() => onTabSelect(tab)}>
                         ${tab.getName()}
                     </a>
@@ -557,6 +565,10 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                 "peer_id": peer.id
             })
         }}>${tr("convo_search_messages")}</a>
+                        <a onClick=${(e) => {
+                            e.preventDefault();
+                            openAttachmentsModal({ peer: peer, initialType: 'photo' });
+                        }}>${tr("conversation_materials") || "Материалы беседы"}</a>
                         ${window.im.state.is_debug ? html`
                             <a onClick=${(e) => { fastError(`<textarea>${JSON.stringify(peer.data, null, 4)}</textarea>`); }}>JSON</a>
                         ` : ""}
@@ -578,8 +590,42 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                         ${convo && typeof convo.hasPinned === 'function' && convo.hasPinned() ? html`
                             <a onClick=${(e) => { window.im.messenger.viewPinned(e, convo) }}>${tr("chat_view_pinned_single")}</a>
                         ` : ""}
+                        <a onClick=${(e) => {
+                            e.preventDefault();
+                            new CMessageBox({
+                                title: tr("clear_history") || "Очистить историю",
+                                body: tr("clear_history_confirm") || "Вы действительно хотите удалить всю историю сообщений в этом диалоге? Это действие нельзя отменить.",
+                                buttons: [tr("yes"), tr("no")],
+                                callbacks: [async () => {
+                                    try {
+                                        await window.OVKAPI.call("messages.deleteConversation", {
+                                            peer_id: peer.id
+                                        });
+                                        if (peer._chunks) {
+                                            peer._chunks.chunks = [];
+                                            peer._chunks._map = new Map();
+                                            peer._chunks._messagesInited = true;
+                                            peer._chunks._invalidateCache();
+                                        }
+                                        if (convo) {
+                                            convo.last_message = null;
+                                            convo._last_message = null;
+                                        }
+                                        window.im.openTabByName("messenger");
+                                        window.im.messenger.update();
+                                        if (window.im.conversations) {
+                                            window.im.conversations.update();
+                                        }
+                                    } catch (err) {
+                                        fastError(String(err));
+                                    }
+                                }, () => { }]
+                            });
+                        }}>${tr("clear_history") || "Очистить историю сообщений"}</a>
                     </div>
                 </div>
+
+                <${PeerInviteLinkSection} peer=${peer} />
 
                 ${peer.supposed_type == "chat" ? html`
                     <div class="peer-members-section">
@@ -709,6 +755,233 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
             </div>
         </div>
     </div>
+    `;
+};
+
+export const PeerInviteLinkSection = ({ peer }) => {
+    if (!peer || peer.supposed_type !== 'chat') return null;
+
+    if (!peer._inviteLinkState) {
+        peer._inviteLinkState = {
+            link: null,
+            isLoading: false
+        };
+    }
+
+    const fetchInviteLink = async (reset = 0) => {
+        peer._inviteLinkState.isLoading = true;
+        if (window.im.getTab("contact")?.render_class) {
+            window.im.getTab("contact").render_class.update();
+        }
+
+        try {
+            const res = await window.OVKAPI.call("messages.getInviteLink", {
+                peer_id: peer.id,
+                reset: reset
+            });
+            peer._inviteLinkState.link = (res && res.link) ? res.link : (res && res.response ? res.response.link : null);
+        } catch (e) {
+            console.error("Failed to get invite link:", e);
+        } finally {
+            peer._inviteLinkState.isLoading = false;
+            if (window.im.getTab("contact")?.render_class) {
+                window.im.getTab("contact").render_class.update();
+            }
+        }
+    };
+
+    const copyInviteLink = () => {
+        if (peer._inviteLinkState.link) {
+            navigator.clipboard.writeText(peer._inviteLinkState.link).then(() => {
+                fastError(tr("link_copied") || "Ссылка скопирована в буфер обмена!");
+            }).catch(console.error);
+        }
+    };
+
+    return html`
+        <div class="peer-invite-section">
+            <div class="chat-tab-2-header">
+                <b>${tr("convo_invite_link") || "Ссылка для приглашения"}</b>
+            </div>
+            <div class="peer-invite-body">
+                ${peer._inviteLinkState.link ? html`
+                    <div class="peer-invite-input-wrap">
+                        <input type="text" readonly class="peer-invite-input" value="${peer._inviteLinkState.link}" onClick=${(e) => e.target.select()} />
+                        <button class="button" onClick=${copyInviteLink}>${tr("copy") || "Скопировать"}</button>
+                    </div>
+                    <div class="peer-invite-reset">
+                        <a onClick=${() => fetchInviteLink(1)}>${tr("reset_invite_link") || "Сбросить ссылку"}</a>
+                    </div>
+                ` : html`
+                    <button class="button" disabled=${peer._inviteLinkState.isLoading} onClick=${() => fetchInviteLink(0)}>
+                        ${peer._inviteLinkState.isLoading ? (tr("loading") || "Загрузка...") : (tr("get_invite_link") || "Получить ссылку для приглашения")}
+                    </button>
+                `}
+            </div>
+        </div>
+    `;
+};
+
+export const PeerAttachmentsSection = ({ peer }) => {
+    if (!peer || !peer.id) return null;
+
+    if (!peer._attState) {
+        peer._attState = {
+            type: 'photo',
+            items: [],
+            isLoading: false,
+            hasLoaded: false
+        };
+    }
+
+    const loadAttachments = async (type) => {
+        peer._attState.type = type;
+        peer._attState.isLoading = true;
+        peer._attState.hasLoaded = true;
+        if (window.im.getTab("contact")?.render_class) {
+            window.im.getTab("contact").render_class.update();
+        }
+
+        try {
+            const res = await window.OVKAPI.call('messages.getHistoryAttachments', {
+                peer_id: peer.id,
+                media_type: type,
+                count: 30,
+                extended: 1
+            });
+            peer._attState.items = (res && res.items) || [];
+        } catch (e) {
+            console.error("Failed to load attachments:", e);
+            peer._attState.items = [];
+        } finally {
+            peer._attState.isLoading = false;
+            if (window.im.getTab("contact")?.render_class) {
+                window.im.getTab("contact").render_class.update();
+            }
+        }
+    };
+
+    if (!peer._attState.hasLoaded) {
+        loadAttachments(peer._attState.type);
+    }
+
+    const currentType = peer._attState.type;
+    const items = peer._attState.items || [];
+    const isLoading = peer._attState.isLoading;
+    const isGrid = currentType === 'photo' || currentType === 'video';
+
+    return html`
+        <div class="peer-attachments-section">
+            <div class="chat-tab-2-header">
+                <b>${tr("attachments") || "Вложения"}</b>
+                <div class="chat-header-actions">
+                    <a class="peer-att-open-modal-btn" onClick=${(e) => {
+                        e.preventDefault();
+                        openAttachmentsModal({ peer: peer, initialType: currentType });
+                    }}>${tr("open_all_materials") || "Показать все"}</a>
+                </div>
+            </div>
+            <div class="peer-att-tabs">
+                <a class="peer-att-tab ${currentType === 'photo' ? 'active' : ''}" onClick=${() => loadAttachments('photo')}>${tr('photos') || 'Фото'}</a>
+                <a class="peer-att-tab ${currentType === 'video' ? 'active' : ''}" onClick=${() => loadAttachments('video')}>${tr('videos') || 'Видео'}</a>
+                <a class="peer-att-tab ${currentType === 'audio' ? 'active' : ''}" onClick=${() => loadAttachments('audio')}>${tr('audios') || 'Аудио'}</a>
+                <a class="peer-att-tab ${currentType === 'doc' ? 'active' : ''}" onClick=${() => loadAttachments('doc')}>${tr('documents') || 'Файлы'}</a>
+                <a class="peer-att-tab ${currentType === 'link' ? 'active' : ''}" onClick=${() => loadAttachments('link')}>${tr('links') || 'Ссылки'}</a>
+            </div>
+            <div class="peer-att-content">
+                ${isLoading ? html`
+                    <div class="peer-att-loader"><img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="..." /></div>
+                ` : (items.length === 0 ? html`
+                    <div class="peer-att-empty">${tr('no_attachments') || 'Нет вложений этого типа'}</div>
+                ` : (isGrid ? html`
+                    <div class="peer-att-grid">
+                        ${items.map(item => {
+                            const photo = item.attachment?.photo;
+                            const video = item.attachment?.video;
+                            if (photo) {
+                                const thumb = photo.sizes?.find(s => s.type === 'm' || s.type === 'x' || s.type === 's')?.url
+                                    || photo.sizes?.find(s => s.type === 'm' || s.type === 'x' || s.type === 's')?.src
+                                    || photo.sizes?.[0]?.url
+                                    || photo.sizes?.[0]?.src
+                                    || photo.photo_604
+                                    || photo.photo_130
+                                    || photo.photo_75
+                                    || photo.url
+                                    || photo.image_url
+                                    || '/assets/packages/static/openvk/img/camera_200.png';
+                                return html`
+                                    <div class="peer-att-grid-item" onClick=${(e) => {
+                                        if (typeof PhotoViewer !== 'undefined') {
+                                            PhotoViewer.openById(e, `photo${photo.owner_id}_${photo.id}`);
+                                        }
+                                    }}>
+                                        <img src="${thumb}" alt="" />
+                                    </div>
+                                `;
+                            }
+                            if (video) {
+                                const thumb = video.image?.[0]?.url || video.image?.[0]?.src || video.photo_320 || video.photo_130 || video.image_url || '/assets/packages/static/openvk/img/video_placeholder.png';
+                                const durStr = video.duration ? (Math.floor(video.duration / 60) + ':' + ('0' + (video.duration % 60)).slice(-2)) : '';
+                                return html`
+                                    <div class="peer-att-grid-item video-item" onClick=${(e) => {
+                                        if (typeof VideoViewer !== 'undefined') {
+                                            VideoViewer.openById(`${video.owner_id}_${video.id}`, {}, e);
+                                        }
+                                    }}>
+                                        <img src="${thumb}" alt="" />
+                                        ${durStr ? html`<span class="peer-att-video-dur">${durStr}</span>` : ''}
+                                    </div>
+                                `;
+                            }
+                            return null;
+                        })}
+                    </div>
+                ` : html`
+                    <div class="peer-att-list">
+                        ${items.map(item => {
+                            const audio = item.attachment?.audio;
+                            const doc = item.attachment?.doc;
+                            const link = item.attachment?.link;
+
+                            if (audio) {
+                                return html`
+                                    <div class="peer-att-list-row audio-row">
+                                        <div class="peer-att-icon audio-icon"></div>
+                                        <div class="peer-att-list-meta">
+                                            <span class="peer-att-author">${audio.artist || 'Неизвестный'}</span> — <span class="peer-att-title">${audio.title || 'Без названия'}</span>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                            if (doc) {
+                                const sizeStr = doc.size ? (doc.size > 1048576 ? (doc.size / 1048576).toFixed(1) + ' МБ' : Math.round(doc.size / 1024) + ' КБ') : '';
+                                return html`
+                                    <div class="peer-att-list-row doc-row">
+                                        <div class="peer-att-icon doc-icon"></div>
+                                        <div class="peer-att-list-meta">
+                                            <a href="${doc.url}" target="_blank" class="peer-att-link-title">${doc.title || 'Документ'}</a>
+                                            <span class="peer-att-sub">${sizeStr}</span>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                            if (link) {
+                                return html`
+                                    <div class="peer-att-list-row link-row">
+                                        <div class="peer-att-icon link-icon"></div>
+                                        <div class="peer-att-list-meta">
+                                            <a href="${link.url}" target="_blank" class="peer-att-link-title">${link.title || link.url}</a>
+                                            <span class="peer-att-sub">${link.description || link.url}</span>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                            return null;
+                        })}
+                    </div>
+                `))}
+            </div>
+        </div>
     `;
 };
 

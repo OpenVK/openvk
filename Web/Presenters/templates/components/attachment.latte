@@ -113,6 +113,10 @@
             {include "../Documents/components/doc.latte", doc => $attachment, copyImportance => true, noTags => true}
         {/if}
     </div>
+{elseif is_array($attachment) && (($attachment['type'] ?? '') === 'link' || ($attachment['type'] ?? '') === 'share')}
+    {* Link attachments are displayed inline in text *}
+{elseif is_object($attachment) && (($attachment->type ?? '') === 'link' || ($attachment->type ?? '') === 'share')}
+    {* Link attachments are displayed inline in text *}
 {else}
     <span style="color:red;">{_version_incompatibility}</span>
 {/if}

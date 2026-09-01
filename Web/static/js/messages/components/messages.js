@@ -593,6 +593,7 @@ export class ChatGeneralForm {
         } catch (e) {
             fastError(String(e.message || e.error_msg || e));
             console.error("Failed to update chat avatar", e);
+            throw e;
         }
     }
 
@@ -635,8 +636,12 @@ export class ChatGeneralForm {
 
         event.target.classList.remove("lagged");
 
-        window.im.getTab("contact").render_class.update();
-        window.im.messenger.update();
+        if (window.im?.getTab("contact")?.render_class) {
+            window.im.getTab("contact").render_class.update();
+        }
+        if (window.im?.messenger) {
+            window.im.messenger.update();
+        }
     }
 
     async checkMembers(offset = 0) {
@@ -728,27 +733,34 @@ export class ChatMessage {
     static AUTHOR_NAME_HIDE_TIMEOUT = 600; // 60 * 10 = 10 minutes
 
     constructor(item = {}) {
+        if (item instanceof ChatMessage) {
+            item = item.data;
+        }
         item = item || {};
         this.data = item;
         this.has_not_loaded_attachments = false;
 
         if (item.reply_message != null) {
-            if (typeof item.reply_message.attachments == "string" && item.reply_message.attachments.length > 0) {
-                const a = item.reply_message.attachments.split(",");
-                const n = [];
-                a.forEach(i => {
-                    const _type = i.split('_')[0].replace(/[0-9]/g, '');
-                    const f = {};
-                    f['type'] = _type;
-                    f[_type] = {};
+            if (item.reply_message instanceof ChatMessage) {
+                this.data.reply_message = item.reply_message;
+            } else {
+                if (typeof item.reply_message.attachments == "string" && item.reply_message.attachments.length > 0) {
+                    const a = item.reply_message.attachments.split(",");
+                    const n = [];
+                    a.forEach(i => {
+                        const _type = i.split('_')[0].replace(/[0-9]/g, '');
+                        const f = {};
+                        f['type'] = _type;
+                        f[_type] = {};
 
-                    n.push(f);
-                })
+                        n.push(f);
+                    });
 
-                item.reply_message.attachments = n;
+                    item.reply_message.attachments = n;
+                }
+
+                this.data.reply_message = new ChatMessage(item.reply_message);
             }
-
-            this.data.reply_message = new ChatMessage(item.reply_message);
         }
 
         if (item.fwd_messages && Array.isArray(item.fwd_messages)) {
@@ -776,6 +788,9 @@ export class ChatMessage {
 
     _guessSender() {
         this.data.sender = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(this.data.from_id);
+        if (this.data.reply_message && typeof this.data.reply_message._guessSender === 'function') {
+            this.data.reply_message._guessSender();
+        }
         if (this.data.fwd_messages && Array.isArray(this.data.fwd_messages)) {
             this.data.fwd_messages.forEach(f => {
                 if (f && typeof f._guessSender === 'function') f._guessSender();
@@ -859,8 +874,9 @@ export class ChatMessage {
         }
     }
     getText(raw = false, conversation = false, with_attachments = false) {
+        const baseText = this.data.text ?? this.data.body ?? "";
         if (this.data.action != null) {
-            const actionText = this.getActionText();
+            const actionText = this.getActionText() || "";
             if (conversation) {
                 return raw ? actionText : escapeHtml(actionText);
             }
@@ -868,53 +884,70 @@ export class ChatMessage {
         }
 
         let txt = "";
+        let cleanBaseText = baseText;
+        if (conversation) {
+            cleanBaseText = baseText.replace(/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, '$1');
+        }
+
         if (raw) {
-            txt = this.data.text;
+            txt = cleanBaseText;
         } else {
-            txt = escapeHtml(this.data.text);
+            txt = escapeHtml(cleanBaseText);
         }
 
         if (conversation) {
             txt = "";
+            let allAtts = this.data.attachments;
+            if (allAtts && !Array.isArray(allAtts)) {
+                allAtts = typeof allAtts === 'object' ? Object.values(allAtts) : [allAtts];
+            }
+            const visualAttachments = (allAtts || []).filter(a => a && a.type !== 'link' && a.type !== 'share');
+
             if (with_attachments) {
-                if (this.data.attachments && this.data.attachments.length > 0) {
-                    const c = this.data.attachments[0];
+                if (visualAttachments.length > 0) {
+                    const c = visualAttachments[0];
 
                     switch (c.type) {
                         case "photo":
-                            txt += `<img class="conv_prev_img" src="${c.photo.photo_75}">`;
-
-                            if (this.data.text.length == 0) {
-                                txt += get_attachment_text(this.data.attachments[0]);
+                            const photoSrc = c.photo?.photo_75 || c.photo?.photo_130 || c.photo?.link || "";
+                            if (photoSrc) {
+                                txt += `<img class="conv_prev_img" src="${photoSrc}">`;
                             }
-
+                            if (!cleanBaseText || cleanBaseText.length === 0) {
+                                txt += get_attachment_text(c);
+                            }
                             break;
                         default:
-                            txt += get_attachment_text(this.data.attachments[0]);
+                            txt += get_attachment_text(c);
                             break;
                     }
 
                     txt += " ";
                 }
 
-                txt += ovk_proc_strtr(escapeHtml(this.data.text), 100);
+                txt += ovk_proc_strtr(escapeHtml(cleanBaseText), 100);
             } else {
-                if (this.data.attachments && this.data.attachments.length > 0) {
-                    txt = get_attachment_text(this.data.attachments[0]);
+                let attachTxt = "";
+                if (visualAttachments.length > 0) {
+                    attachTxt = get_attachment_text(visualAttachments[0]);
                 }
 
-                txt += escapeHtml(this.data.text);
+                if (cleanBaseText) {
+                    txt = attachTxt ? (attachTxt + " " + escapeHtml(cleanBaseText)) : escapeHtml(cleanBaseText);
+                } else {
+                    txt = attachTxt || (typeof tr === "function" && tr("message_no_text") ? "(" + tr("message_no_text").toLowerCase() + ")" : "...");
+                }
 
                 return txt;
             }
         } else {
             if (this.isSpecial("gift")) {
-                const msg = this.data.attachments[0].gift.message;
-                if (msg == "") {
-                    txt = ("(" + tr("message_no_text") + ")").toLowerCase();
+                const msg = this.data.attachments?.[0]?.gift?.message;
+                if (!msg) {
+                    txt = "(" + (typeof tr === "function" && tr("message_no_text") ? tr("message_no_text") : "сообщение без текста") + ")".toLowerCase();
+                } else {
+                    txt = msg;
                 }
-
-                txt = msg;
             }
         }
 
@@ -922,7 +955,16 @@ export class ChatMessage {
             return txt;
         }
 
-        return encode_emojis(nl2br(txt));
+        // Format markdown links [title](url) and plain URLs
+        let formattedTxt = txt;
+        formattedTxt = formattedTxt.replace(/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, (match, title, url) => {
+            return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="chat-link">${title}</a>`;
+        });
+        formattedTxt = formattedTxt.replace(/(^|[\s\(\[\{<]|&gt;)(https?:\/\/[^\s<>"'\]\)]+)/g, (match, prefix, url) => {
+            return `${prefix}<a href="${url}" target="_blank" rel="noopener noreferrer" class="chat-link">${url}</a>`;
+        });
+
+        return encode_emojis(nl2br(formattedTxt));
     }
 
     get reply() { return this.data.reply_message; }
@@ -930,7 +972,7 @@ export class ChatMessage {
     get id() { return this.data.id; }
     get conversation_message_id() { return this.data.conversation_message_id || this.data.id; }
     isAction() { return this.data.action != null; }
-    isReply() { return this.data.reply_message != null; }
+    isReply() { return Boolean(this.data.reply_message || this.data.reply_to); }
     isError() { return this.data.error_text != null; }
     isEdited() { return this.data.edited == 1 || this.data.edited == true; }
     isSending() { return Boolean(this.data?.is_sending || (this.id == null && !this.isError())); }
@@ -1071,10 +1113,14 @@ export class ChatMessage {
     }
     get peer_id() { return this.data.peer_id; }
     get from_id() { return this.data.from_id; }
-    getAttachments() {
-        const _at = this.data.attachments;
+    getAttachments(includeLinks = false) {
+        let _at = this.data.attachments;
         if (!_at) return [];
-        return _at;
+        if (!Array.isArray(_at)) {
+            _at = typeof _at === 'object' ? Object.values(_at) : [_at];
+        }
+        if (includeLinks) return _at;
+        return _at.filter(a => a && a.type !== 'link' && a.type !== 'share');
     }
     getStringAttachments() {
         const _at = this.data.attachments;
@@ -1129,16 +1175,64 @@ export class ChatMessage {
             new_attachments = await resolve_attachments(temp_str);
         }
 
-        if (attachments['reply_to']) {
-            const peer_obj = await window.im.conversations._findConvFromApi(peer);
-            const reply_id = attachments['reply_to'];
+        if (attachments['reply_to'] || attachments['reply']) {
+            const reply_id = attachments['reply_to'] || attachments['reply'];
+            try {
+                const peer_obj = await window.im.conversations._findConvFromApi(peer);
+                let __msg = peer_obj?.peer?._chunks ? await peer_obj.peer._chunks.findMessageByIdFromApi(reply_id) : null;
+                if (!__msg && peer_obj?.peer?._chunks) {
+                    __msg = peer_obj.peer._chunks._findMessageById(reply_id);
+                }
 
-            const __msg = await peer_obj.peer._chunks.findMessageByIdFromApi(reply_id);
-            if (__msg != null) {
-                reply_message = __msg;
-            } else {
+                if (__msg != null) {
+                    reply_message = __msg;
+                } else {
+                    let res = null;
+                    // First try getByConversationMessageId since LongPoll reply_to delivers the conversation-local cmid
+                    try {
+                        res = await window.OVKAPI.call("messages.getByConversationMessageId", {
+                            peer_id: peer,
+                            conversation_message_ids: reply_id,
+                            extended: 1
+                        });
+                    } catch (e) {
+                        res = null;
+                    }
+
+                    // If not found, fallback to messages.getById with global ID
+                    if (!res || !res.items || res.items.length === 0) {
+                        try {
+                            res = await window.OVKAPI.call("messages.getById", {
+                                message_ids: reply_id,
+                                extended: 1
+                            });
+                        } catch (e) {
+                            res = null;
+                        }
+                    }
+
+                    if (res && res.items && res.items.length > 0) {
+                        if (res.profiles || res.groups) {
+                            window.im.cached_profiles._moveToProfileCache(res.profiles, res.groups);
+                        }
+                        const item = res.items[0];
+                        const author = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(item.from_id);
+                        const ChatGeneralForm = getChatGeneralForm();
+                        item.sender = author ? new ChatGeneralForm(author) : null;
+                        reply_message = new ChatMessage(item);
+                    } else {
+                        reply_message = new ChatMessage({
+                            'id': reply_id,
+                            'conversation_message_id': reply_id,
+                            'text': '...'
+                        });
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to load reply message for event:", e);
                 reply_message = new ChatMessage({
                     'id': reply_id,
+                    'conversation_message_id': reply_id,
                     'text': '...'
                 });
             }

@@ -1449,6 +1449,14 @@
 /* Messages */
 
 "messages_unavailable" = "Messaging is currently unavailable or disabled on this server";
+"messages_agreement_1" = "By using the messaging section, you agree that:";
+"messages_agreement_2" = "You agree to the <a href=\"/terms\">terms</a> and <a href=\"/privacy\">privacy policy</a> of the site.";
+"messages_agreement_3" = "Media uploaded in conversations may remain accessible via direct link even after deletion.";
+"messages_agreement_4" = "In case a message is reported, a moderator may inspect the conversation to investigate context.";
+"messages_agreement_5" = "You must keep your account secure.";
+"messages_agreement_declined_title" = "Agreement declined";
+"messages_agreement_declined" = "You have declined the messaging terms of service. To access messaging, you must accept the agreement.";
+"messages_agreement_accept_btn" = "Accept agreement";
 
 "all_messages" = "All messages";
 
@@ -1479,6 +1487,24 @@
 "pinned_message" = "Pinned message";
 "unpin_message" = "Unpin message";
 "chat_view_pinned_single" = "Go to pinned message";
+
+"conversation_materials" = "Conversation materials";
+"open_all_materials" = "Show all";
+"voice_messages" = "Voice messages";
+"no_attachments" = "No attachments of this type found";
+"mark_important" = "Mark as important";
+"unmark_important" = "Unmark as important";
+"clear_history" = "Clear history";
+"clear_history_confirm" = "Are you sure you want to delete all messages in this conversation? This action cannot be undone.";
+
+"att_tab_photos" = "Photos";
+"att_tab_videos" = "Videos";
+"att_tab_audios" = "Audio tracks";
+"att_tab_docs" = "Documents";
+"att_tab_links" = "Links";
+"att_tab_voices" = "Voice messages";
+"links" = "Links";
+"photos_title" = "Photos";
 
 /* Polls */
 "poll" = "Poll";
@@ -1569,6 +1595,23 @@
 "show_online_only" = "Show online only ($1)";
 "offline_divider" = "Offline";
 "no_messages_in_dialog" = "No messages here yet.";
+"important_messages" = "Important";
+"no_important_messages" = "No important messages here yet.";
+"clear_history" = "Clear message history";
+"clear_history_confirm" = "Are you sure you want to delete all message history in this conversation? This action cannot be undone.";
+"convo_invite_link" = "Invite link";
+"get_invite_link" = "Get invite link";
+"reset_invite_link" = "Reset link";
+"no_attachments" = "No attachments of this type";
+"jump_to_date" = "Select date in calendar";
+"mark_important" = "Mark as important";
+"unmark_important" = "Unmark important";
+"join_chat_error" = "Failed to join conversation by invite link.";
+"chat_invite_preview_title" = "Chat invitation";
+"chat_invite_accept_btn" = "Accept invitation";
+"chat_invite_join_btn" = "Join conversation";
+"chat_invite_open_btn" = "Go to conversation";
+"chat_invite_already_member" = "You are already a member of this conversation";
 
 /* Errors */
 

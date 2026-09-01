@@ -1531,6 +1531,24 @@
 "you" = "Вы";
 "im_friends_list" = "Список друзей";
 
+"conversation_materials" = "Материалы беседы";
+"open_all_materials" = "Показать все";
+"voice_messages" = "Голосовые";
+"no_attachments" = "Вложений этого типа не найдено";
+"mark_important" = "Пометить как важное";
+"unmark_important" = "Снять отметку важного";
+"clear_history" = "Очистить историю";
+"clear_history_confirm" = "Вы действительно хотите удалить всю историю сообщений в этом диалоге? Это действие нельзя отменить.";
+
+"att_tab_photos" = "Фотографии";
+"att_tab_videos" = "Видеозаписи";
+"att_tab_audios" = "Аудиозаписи";
+"att_tab_docs" = "Документы";
+"att_tab_links" = "Ссылки";
+"att_tab_voices" = "Голосовые";
+"links" = "Ссылки";
+"photos_title" = "Фотографии";
+
 "im_online_currently" = "Online";
 
 "im_was_online_today_male" = "Был в сети в $1";
@@ -1621,10 +1639,13 @@
 "edit_of_message" = "Редактирование сообщения";
 
 "messages_agreement_1" = "Используя секцию сообщений, вы соглашаетесь с тем, что:";
-"messages_agreement_2" = "Вы согласны с <a href="/terms">правилами</a> и <a href="/privacy">политикой конфиденциальности</a> сайта.";
+"messages_agreement_2" = "Вы согласны с <a href=\"/terms\">правилами</a> и <a href=\"/privacy\">политикой конфиденциальности</a> сайта.";
 "messages_agreement_3" = "Загруженные в беседе медиафайлы могут быть доступны по ссылке даже после удаления.";
 "messages_agreement_4" = "В случае жалобы на сообщение модератор может посмотреть диалог, в котором его отправили, для выяснения контекста.";
 "messages_agreement_5" = "Нужно держать аккаунт в безопасности.";
+"messages_agreement_declined_title" = "Соглашение отклонено";
+"messages_agreement_declined" = "Вы отклонили пользовательское соглашение сообщений. Чтобы получить доступ к сообщениям, необходимо принять соглашение.";
+"messages_agreement_accept_btn" = "Принять соглашение";
 
 "day_selection" = "Выбор дня";
 "report_bug" = "Сообщить об ошибке";
@@ -1650,6 +1671,23 @@
 "im_option_compact_mode" = "Широкоэкранный режим";
 "im_option_debug" = "Функции отладки";
 "im_option_photo_viewer" = "Лента в просмотрщике фото";
+"important_messages" = "Важные сообщения";
+"no_important_messages" = "Здесь пока нет важных сообщений.";
+"clear_history" = "Очистить историю сообщений";
+"clear_history_confirm" = "Вы действительно хотите удалить всю историю сообщений в этом диалоге? Это действие нельзя отменить.";
+"convo_invite_link" = "Ссылка для приглашения";
+"get_invite_link" = "Получить ссылку для приглашения";
+"reset_invite_link" = "Сбросить ссылку";
+"no_attachments" = "Нет вложений этого типа";
+"jump_to_date" = "Выбрать дату в календаре";
+"mark_important" = "Пометить как важное";
+"unmark_important" = "Снять отметку важного";
+"join_chat_error" = "Не удалось присоединиться к беседе по ссылке.";
+"chat_invite_preview_title" = "Приглашение в беседу";
+"chat_invite_accept_btn" = "Принять приглашение";
+"chat_invite_join_btn" = "Присоединиться к беседе";
+"chat_invite_open_btn" = "Перейти к беседе";
+"chat_invite_already_member" = "Вы уже являетесь участником этой беседы";
 
 /* System messages */
 
