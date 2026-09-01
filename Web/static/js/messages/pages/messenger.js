@@ -42,22 +42,28 @@ export class Messenger {
     }
 
     getWindow() {
-        return this._window || window.im.getTab("messenger").render_class;
+        return this._window || window.im?.getTab("messenger")?.render_class || null;
     }
 
     afterFirstRender() {
         const current_chat = this.getCurrentChat();
         if (current_chat != null && current_chat.draft) {
             console.log("IM | Scroll from tab");
-            current_chat.draft.loadScroll(window.im.getTab("messenger").render_class);
+            const win = this.getWindow();
+            if (win) {
+                current_chat.draft.loadScroll(win);
+            }
         }
     }
 
     get view() { return this.getWindow(); }
 
-    update() {
+    async update() {
         try {
-            return this.getWindow()._triggerUpdate();
+            const win = this.getWindow();
+            if (win && typeof win._triggerUpdate === 'function') {
+                await win._triggerUpdate();
+            }
         } catch (e) {
             console.error(e);
         }
@@ -157,7 +163,13 @@ export class Messenger {
         const oldId = Number(this.currentChatId);
 
         try {
-            this.getCurrentChat().setDraft(Draft.fromPage(this.getWindow()));
+            const cur = this.getCurrentChat();
+            if (cur && typeof cur.setDraft === 'function') {
+                const win = this.getWindow();
+                if (win) {
+                    cur.setDraft(Draft.fromPage(win));
+                }
+            }
         } catch (e) {
             console.error(e);
         }
@@ -711,9 +723,9 @@ export class MessengerPage extends IMPage {
         } catch (e) { console.error(e); }
     }
     isDisablesScroll() { return true; }
-    _triggerUpdate() {
+    async _triggerUpdate() {
         window.im.conversations.update();
-        this.update();
+        await this.update();
     }
     updUrl() {
         const url = new URL(location.href);
@@ -1119,31 +1131,66 @@ export class MessengerPage extends IMPage {
 
         return document.documentElement.scrollHeight;
     }
+
+    getFirstVisibleMessageElement() {
+        const msgs = document.querySelectorAll('.messenger-app--messages---message[data-msg-id]');
+        const topThreshold = window.im.state.isFastchat ? 50 : 120;
+        for (let i = 0; i < msgs.length; i++) {
+            const rect = msgs[i].getBoundingClientRect();
+            if (rect.bottom > topThreshold) {
+                return msgs[i];
+            }
+        }
+        return msgs.length > 0 ? msgs[0] : null;
+    }
+
     async onMessagesScroll(e = null) {
         if (this.is_loading) return;
+        const currentConvo = window.im.messenger.getCurrentChat();
+        if (!currentConvo || !currentConvo.getScrollPosition()) return;
+
         this.is_loading = true;
 
         const oldHeight = this.getScrollHeight();
         const _scroll = this.getScrollTop();
-        const currentConvo = window.im.messenger.getCurrentChat();
+        const topThreshold = window.im.state.isFastchat ? 100 : 250;
 
-        if (_scroll < 21) {
+        if (_scroll < topThreshold) {
             console.log("IM | Loading older chunk from API");
-            await currentConvo.getScrollPosition().loadOlder();
-            currentConvo.getScrollPosition().result();
+            const anchorEl = this.getFirstVisibleMessageElement();
+            const prevAnchorTop = anchorEl ? anchorEl.getBoundingClientRect().top : null;
 
-            if (this.getScrollTop() < 21) {
-                this._scrollTo(this.getScrollHeight() - oldHeight + _scroll);
+            await currentConvo.getScrollPosition().loadOlder();
+            await currentConvo.getScrollPosition().result();
+
+            if (anchorEl && prevAnchorTop !== null && document.body.contains(anchorEl)) {
+                const newAnchorTop = anchorEl.getBoundingClientRect().top;
+                const diff = newAnchorTop - prevAnchorTop;
+                if (diff !== 0) {
+                    if (window.im.state.isFastchat) {
+                        const wrap = document.querySelector("#fastchats_related #fastchats_chat #wrap");
+                        if (wrap) wrap.scrollTop += diff;
+                    } else {
+                        window.scrollBy(0, diff);
+                    }
+                }
+            } else {
+                const newHeight = this.getScrollHeight();
+                const heightDiff = newHeight - oldHeight;
+                if (heightDiff > 0) {
+                    this._scrollTo(_scroll + heightDiff);
+                }
             }
         } else {
-            const scrollBottom = Math.max(0, this.getScrollHeight() - _scroll);
-            if (scrollBottom < 20) {
+            const viewportH = window.im.state.isFastchat ? (this.container?.clientHeight || 400) : (window.innerHeight || document.documentElement.clientHeight || 0);
+            const scrollBottom = Math.max(0, this.getScrollHeight() - _scroll - viewportH);
+            if (scrollBottom < 200) {
                 console.log("IM | Loading newer chunk from API");
                 await currentConvo.getScrollPosition().loadNewer();
-                currentConvo.getScrollPosition().result();
+                await currentConvo.getScrollPosition().result();
             }
 
-            if (scrollBottom > 4000) {
+            if (scrollBottom > 2000) {
                 this.getNode().find(".messenger-app-end").addClass("m-mountain");
             } else {
                 this.getNode().find(".messenger-app-end").removeClass("m-mountain");

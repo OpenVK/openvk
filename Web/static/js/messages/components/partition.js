@@ -25,21 +25,24 @@ export class MessageChunk {
 
     /** Oldest message inside the chunk. */
     get first_message() {
+        if (!this.messages || this.messages.length === 0) return null;
         return this.do_reverse ? this.messages[this.messages.length - 1] : this.messages[0];
     }
 
     /** Newest message inside the chunk. */
     get latest_message() {
+        if (!this.messages || this.messages.length === 0) return null;
         return this.do_reverse ? this.messages[0] : this.messages[this.messages.length - 1];
     }
 
     /** The [first, last] message-id interval covered by this chunk (map key / search). */
     get id_range() {
+        if (!this.messages || this.messages.length === 0) return null;
         const first = this.first_message?.id;
         let last = this.latest_message?.id;
         if (first == null || last == null) {
-            if (last == null && this.latest_message.data.is_sending) {
-                for (let i = this.messages.length-1;i > -1; i--) {
+            if (last == null && this.latest_message?.data?.is_sending) {
+                for (let i = this.messages.length - 1; i > -1; i--) {
                     if (this.messages[i] && this.messages[i].id) {
                         last = this.messages[i].id + 1;
                         break;
@@ -49,7 +52,7 @@ export class MessageChunk {
                 return null;
             }
         }
-        return { first, last };
+        return (first != null && last != null) ? { first, last } : null;
     }
 
     getMessages() {
@@ -142,12 +145,12 @@ export class Chunks {
     _invalidateCache() { this.invalidateCache = true; }
     isMessagesInited() { return this._messagesInited; }
     getLatestChunk() { return this.chunks[this._latest_chunk_id]; }
-    getLatestMessage() { return this.getLatestChunk().latest_message; }
+    getLatestMessage() { return this.getLatestChunk() ? this.getLatestChunk().latest_message : null; }
     appendChunk(chunk, replace_actual = true) {
         let key = this._getChunkKey(chunk);
         let idx = 0;
         if (key != null && this._map.has(key)) {
-            console.log("IM | Chunk reuse")
+            console.log("IM | Chunk reuse");
             return this._map.get(key); // already loaded → reuse
         }
 
@@ -157,7 +160,7 @@ export class Chunks {
         } else {
             this.chunks.push(chunk);
             idx = this.chunks.length - 1;
-            console.log("IM | Chunk ", idx)
+            console.log("IM | Chunk ", idx);
         }
 
         if (key != null) this._map.set(key, idx);
@@ -167,19 +170,25 @@ export class Chunks {
         return idx;
     }
     getMessages() {
-        if (this._cachedMessages != undefined) return this._cachedMessages;
+        if (this._cachedMessages != undefined && !this.invalidateCache) return this._cachedMessages;
 
         const sorted = this.sorted; // newest-first
         const fnl = [];
+        const seen = new Set();
         for (let i = sorted.length - 1; i >= 0; i--) {
-            sorted[i].getMessages().forEach((msg) => fnl.push(msg));
+            sorted[i].getMessages().forEach((msg) => {
+                if (msg && msg.id && !seen.has(msg.id)) {
+                    seen.add(msg.id);
+                    fnl.push(msg);
+                }
+            });
         }
 
         this._cachedMessages = fnl;
         return fnl;
     }
     async findMessageByIdFromApi(id) {
-        const found = this._chunks._findMessageById(id);
+        const found = this._findMessageById(id);
         return found;
     }
 
@@ -202,7 +211,7 @@ export class Chunks {
                 if (!item.isRead() && item.data.from_id != window.im.state.getId()) {
                     count += 1;
                 }
-            })
+            });
         } catch (e) {
             return count;
         }
@@ -232,8 +241,10 @@ export class Chunks {
         const params = {
             'peer_id': this._peer.id,
         };
-        params['start_message_id'] = messageId;
-        params['offset'] = options.newer ? -perPage-1  : "";
+        if (messageId != null) {
+            params['start_message_id'] = messageId;
+            params['offset'] = options.older ? 1 : (options.newer ? -perPage : 0);
+        }
 
         await chunk.fetch(params);
 
@@ -244,16 +255,9 @@ export class Chunks {
 
     pushNewMessage(msg, conv = null, check_chunk = true) {
         const actual = this.getLatestChunk(check_chunk);
-
-        /*if (!actual) {
-            if (conv != null) {
-                conv.updateLastMessage(msg)
-            };
-            return;
-        }*/
-
-        console.log(actual, msg);
-        actual.pushMessage(msg);
+        if (actual) {
+            actual.pushMessage(msg);
+        }
         this._invalidateCache();
         window.im.messenger.update();
     }
@@ -305,6 +309,8 @@ export class DayChunk {
 }
 
 export class ScrollPosition {
+    static MAX_RENDERED_CHUNKS = 10;
+
     constructor(peer) {
         this.peer = peer;
         this.direction = "any";
@@ -319,13 +325,18 @@ export class ScrollPosition {
         this._cachedDays = undefined;
     }
 
-    _invalidateCache() { this._cachedMessages = undefined; this._cachedDays = undefined; }
+    _invalidateCache() {
+        this._cachedMessages = undefined;
+        this._cachedDays = undefined;
+        if (this.peer && this.peer._chunks) {
+            this.peer._chunks._invalidateCache();
+        }
+    }
 
     static fromEnd(peer) {
         const n = new ScrollPosition(peer);
         n.direction = "end";
         n.reachedNewestPosition = true;
-
         return n;
     }
 
@@ -338,7 +349,15 @@ export class ScrollPosition {
     getMessages() {
         const chr = this.returnChronologicalDivision();
         const fnl = [];
-        chr.forEach((chunk) => chunk.getMessages().forEach((msg) => fnl.push(msg)));
+        const seen = new Set();
+        chr.forEach((chunk) => {
+            chunk.getMessages().forEach((msg) => {
+                if (msg && msg.id && !seen.has(msg.id)) {
+                    seen.add(msg.id);
+                    fnl.push(msg);
+                }
+            });
+        });
         return fnl;
     }
 
@@ -350,7 +369,6 @@ export class ScrollPosition {
         let anchorIndex = 0;
         if (this.direction != "end" && this.relyMessageId != null) {
             for (const [range, idx] of map.entries()) {
-                console.log(range, idx);
                 const sep = range.split(":");
                 const first = parseInt(sep[0], 10);
                 const last = parseInt(sep[1], 10);
@@ -366,9 +384,6 @@ export class ScrollPosition {
         visible.add(anchorIndex);
         this.newerIndexes.forEach((i) => visible.add(i));
 
-        //console.log(this.relyMessageId, anchorIndex)
-        //console.log("IM | visible: ", visible, this.olderIndexes, this.newerIndexes, anchorIndex);
-
         const ordered = [];
         visible.forEach((i) => {
             const chunk = chunks[i];
@@ -377,13 +392,28 @@ export class ScrollPosition {
             }
         });
 
-        console.log("IM | this peer visible chunks: ", ordered)
-
         ordered.sort(
             (a, b) => (a.first_message?.id ?? -Infinity) - (b.first_message?.id ?? -Infinity)
         );
 
-        console.log("IM | ordered: ", ordered)
+        // Windowing: limit maximum rendered chunks to 10
+        if (ordered.length > ScrollPosition.MAX_RENDERED_CHUNKS) {
+            if (this.direction === "end" || this.newerIndexes.length === 0) {
+                // Scrolling up: keep the oldest chunks, unload the bottom (newest) chunks from DOM
+                const trimmed = ordered.slice(0, ScrollPosition.MAX_RENDERED_CHUNKS);
+                this.reachedNewestPosition = false;
+                return trimmed;
+            } else if (this.olderIndexes.length === 0) {
+                // Scrolling down: keep the newest chunks, unload the top (oldest) chunks from DOM
+                const trimmed = ordered.slice(ordered.length - ScrollPosition.MAX_RENDERED_CHUNKS);
+                this.reachedOldestPosition = false;
+                return trimmed;
+            } else {
+                // Middle navigation: keep sliding window
+                const start = Math.max(0, ordered.length - ScrollPosition.MAX_RENDERED_CHUNKS);
+                return ordered.slice(start, start + ScrollPosition.MAX_RENDERED_CHUNKS);
+            }
+        }
 
         return ordered;
     }
@@ -392,15 +422,16 @@ export class ScrollPosition {
         if (this.peer._chunks.invalidateCache == false && this._cachedDays != undefined) return this._cachedDays;
 
         const chr = this.returnChronologicalDivision();
-
-        console.log(chr)
         const dayChunks = [];
         const dateMap = new Map();
+        const seenMsgIds = new Set();
 
         for (let i = 0; i < chr.length; i++) {
-
             chr[i].getMessages().forEach((msg) => {
-                console.log(msg.getSentTime())
+                if (!msg || !msg.id) return;
+                if (seenMsgIds.has(msg.id)) return;
+                seenMsgIds.add(msg.id);
+
                 if (!msg.getSentTime()) return;
                 if (msg.isDeleted(0)) return;
 
@@ -418,12 +449,9 @@ export class ScrollPosition {
         }
 
         dayChunks.sort((a, b) => {
-            const [monthA, dayA, yearA] = a.idate.split('/').map(Number);
-            const [monthB, dayB, yearB] = b.idate.split('/').map(Number);
-
-            if (monthA !== monthB) return monthA - monthB;
-            if (dayA !== dayB) return dayA - dayB;
-            return yearA - yearB;
+            const dateA = a.msg_date ? a.msg_date.getTime() : 0;
+            const dateB = b.msg_date ? b.msg_date.getTime() : 0;
+            return dateA - dateB;
         });
 
         this._cachedDays = dayChunks;
@@ -437,36 +465,63 @@ export class ScrollPosition {
             return;
         }
 
-        let msgs = null;
+        const chr = this.returnChronologicalDivision();
+        let oldestMsgId = null;
 
-        if (this.direction == "end") {
-            const first_message = this.peer._chunks.getNewestMessage();
-
-            if (first_message) {
-                msgs = await this.peer._chunks.fetchRelatively(first_message.id, { older: true });
-            } else {
-                msgs = await this.peer._chunks.fetchRelatively(null, { older: true });
-            }
+        if (chr.length > 0 && chr[0] && chr[0].first_message) {
+            oldestMsgId = chr[0].first_message.id;
         } else {
-            const chr = this.returnChronologicalDivision();
-            const oldestChunk = chr[0];
-
-            if (!oldestChunk) return;
-
-            msgs = await this.peer._chunks.fetchRelatively(oldestChunk.first_message.id, { older: true });
+            const newest = this.peer._chunks.getNewestMessage();
+            oldestMsgId = newest ? newest.id : null;
         }
 
-        console.log(msgs)
+        // Check if older chunk is already cached in chunks array
+        let foundInCache = false;
+        if (oldestMsgId != null) {
+            for (let i = 0; i < this.peer._chunks.chunks.length; i++) {
+                const chunk = this.peer._chunks.chunks[i];
+                if (chunk && chunk.latest_message && chunk.latest_message.id < oldestMsgId) {
+                    if (this.olderIndexes.indexOf(i) === -1) {
+                        this.olderIndexes.push(i);
+                        foundInCache = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (foundInCache) {
+            if (this.olderIndexes.length + this.newerIndexes.length > ScrollPosition.MAX_RENDERED_CHUNKS + 2) {
+                if (this.newerIndexes.length > 0) {
+                    this.newerIndexes.shift();
+                    this.reachedNewestPosition = false;
+                }
+            }
+            this._invalidateCache();
+            return;
+        }
+
+        const msgs = await this.peer._chunks.fetchRelatively(oldestMsgId, { older: true });
+
+        console.log(msgs);
         if (!msgs || !msgs.messages.length) {
             this.reachedOldestPosition = true;
             return;
         }
 
         const idx = this.peer._chunks.appendChunk(msgs);
-        console.log("IM | new chunk id: ", idx, this.olderIndexes);
+        console.log("IM | new older chunk id: ", idx, this.olderIndexes);
 
-        if (this.olderIndexes.indexOf(idx) == -1) {
+        if (this.olderIndexes.indexOf(idx) === -1) {
             this.olderIndexes.push(idx);
+        }
+
+        // Drop distant newer chunks from visible render when scrolling far up
+        if (this.olderIndexes.length + this.newerIndexes.length > ScrollPosition.MAX_RENDERED_CHUNKS + 2) {
+            if (this.newerIndexes.length > 0) {
+                this.newerIndexes.shift();
+                this.reachedNewestPosition = false;
+            }
         }
 
         this._invalidateCache();
@@ -476,17 +531,44 @@ export class ScrollPosition {
     }
 
     async loadNewer() {
-        if (this.reachedNewestPosition == true || this.direction == "end") {
+        if (this.reachedNewestPosition == true) {
             console.log("IM | reachedNewestPosition");
             return;
         }
 
         const chr = this.returnChronologicalDivision();
+        if (!chr.length) return;
+
         const newestChunk = chr[chr.length - 1];
+        if (!newestChunk || !newestChunk.latest_message) return;
 
-        if (!newestChunk) return;
+        const newestMsgId = newestChunk.latest_message.id;
 
-        const msgs = await this.peer._chunks.fetchRelatively(newestChunk.latest_message.id, { newer: true });
+        // Check if newer chunk is already cached in memory
+        let foundInCache = false;
+        for (let i = 0; i < this.peer._chunks.chunks.length; i++) {
+            const chunk = this.peer._chunks.chunks[i];
+            if (chunk && chunk.first_message && chunk.first_message.id > newestMsgId) {
+                if (this.newerIndexes.indexOf(i) === -1 && this.olderIndexes.indexOf(i) === -1) {
+                    this.newerIndexes.push(i);
+                    foundInCache = true;
+                    break;
+                }
+            }
+        }
+
+        if (foundInCache) {
+            if (this.olderIndexes.length + this.newerIndexes.length > ScrollPosition.MAX_RENDERED_CHUNKS + 2) {
+                if (this.olderIndexes.length > 0) {
+                    this.olderIndexes.shift();
+                    this.reachedOldestPosition = false;
+                }
+            }
+            this._invalidateCache();
+            return;
+        }
+
+        const msgs = await this.peer._chunks.fetchRelatively(newestMsgId, { newer: true });
 
         if (!msgs || !msgs.messages.length) {
             this.reachedNewestPosition = true;
@@ -494,8 +576,16 @@ export class ScrollPosition {
         }
 
         const idx = this.peer._chunks.appendChunk(msgs);
-        if (this.newerIndexes.indexOf(idx) == -1) {
+        if (this.newerIndexes.indexOf(idx) === -1) {
             this.newerIndexes.push(idx);
+        }
+
+        // Drop distant older chunks from visible render when scrolling far down
+        if (this.olderIndexes.length + this.newerIndexes.length > ScrollPosition.MAX_RENDERED_CHUNKS + 2) {
+            if (this.olderIndexes.length > 0) {
+                this.olderIndexes.shift();
+                this.reachedOldestPosition = false;
+            }
         }
 
         this._invalidateCache();
@@ -504,7 +594,7 @@ export class ScrollPosition {
         }
     }
 
-    result() {
-        window.im.messenger.update();
+    async result() {
+        await window.im.messenger.update();
     }
 }
