@@ -986,8 +986,10 @@ export class FastChats {
         window.im.rewriteTabs(document.querySelector('#fastchats_related #fastchats_chat #wrap'));
     }
     async update() {
+        const el = document.querySelector("#fastchats");
+        if (!el) return;
         const peers = await this.getPinnedPeers();
-        preactRender(html`<${FastChatsBar} pinnedItems=${peers} convos=${window.im.conversations} />`, document.querySelector("#fastchats"));
+        preactRender(html`<${FastChatsBar} pinnedItems=${peers} convos=${window.im.conversations} />`, el);
     }
     show() {
         u("body #fastchats_related").addClass("shown");

@@ -23,8 +23,8 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
         msg.isEdited() ? 'msg-edited' : '',
         msg.isReply() ? 'msg-reply' : '',
         msg.isPinned() ? 'msg-pinned' : '',
-        (isSearchTpl) ? 'msg-searched': (msg.isError() ? "msg-error-hoverable" : 'msg-hoverable'),
-        msg.isRead() ? 'msg-read': 'unread',
+        (isSearchTpl) ? 'msg-searched' : (msg.isError() ? "msg-error-hoverable" : 'msg-hoverable'),
+        msg.isRead() ? 'msg-read' : 'unread',
     ].filter(Boolean).join(' ');
 
     const has_postfix = msg.isSpecial("gift");
@@ -38,7 +38,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
     return html`
     <div class="${cls}"
         data-msg-id=${msg.id}
-        onMouseDown=${(e) => { 
+        onMouseDown=${(e) => {
             !isSearchTpl ? window.im?.messenger?.view.onMessageClick(msg, e) : null
         }}
         onClick=${(e) => {
@@ -133,7 +133,7 @@ export const SystemMessages = {
         return html`
             <div class="messenger-special-message centred">
                 <div>
-                    <b>${tr("event_chat_user_up_your_rating_"+sender.getGender(), sender.getName(), msg.data.action.member_id)}</b>
+                    <b>${tr("event_chat_user_up_your_rating_" + sender.getGender(), sender.getName(), msg.data.action.member_id)}</b>
                     <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
                     <p>«${escapeHtml(msg.data.action.text)}»</p>
                 </div>
@@ -145,7 +145,7 @@ export const SystemMessages = {
         return html`
             <div class="messenger-special-message centred">
                 <div>
-                    <b>${tr("event_chat_user_added_voices_"+sender.getGender(), sender.getName(), msg.data.action.member_id)}</b>
+                    <b>${tr("event_chat_user_added_voices_" + sender.getGender(), sender.getName(), msg.data.action.member_id)}</b>
                     <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
                     <p>«${escapeHtml(msg.data.action.text)}»</p>
                 </div>
@@ -169,23 +169,23 @@ const Attachment = ({ msg, att }) => {
     switch (att.type) {
         case 'photo':
             return html`
-            <a onclick=${(e) => {window.im.messenger.showAttachment(e, msg, att)}} class="msg-attach-j msg-attach-j-photo" href=${att.photo.link}>
+            <a onclick=${(e) => { window.im.messenger.showAttachment(e, msg, att) }} class="msg-attach-j msg-attach-j-photo" href=${att.photo.link}>
                 <img src=${att.photo.photo_604 ?? att.photo.photo_130} alt="..." />
             </a>`;
         case 'video':
             return html`
                 <div class="msg-attach-j msg-attach-j-video">
-                    <a onclick=${(e) => {window.im.messenger.showAttachment(e, msg, att)}} class="compact_video" href=${'/video' + att.video.owner_id + '_' + att.video.id}>
+                    <a onclick=${(e) => { window.im.messenger.showAttachment(e, msg, att) }} class="compact_video" href=${'/video' + att.video.owner_id + '_' + att.video.id}>
                         <div class='play-button'><div class='play-button-ico'></div></div>
                         <img src=${att.video.image[0].url} alt="..." />
                         ${att.video.length ? `<span class="length">${fmtTime(att.video.length)}</span>` : ""}
                     </a>
                 </div>`;
-	    case 'doc':
+        case 'doc':
             const ids = att.doc.owner_id + '_' + att.doc.id;
             return html`
                 <div class="msg-attach-w msg-attach-w-doc">
-                    <a data-id="${ids + (att.doc.access_key ? "_"+att.doc.access_key : "")}" href=${'/doc' + ids + (att.doc.access_key ? "?key="+att.doc.access_key : "")} class="attachment_note attachment_doc">
+                    <a data-id="${ids + (att.doc.access_key ? "_" + att.doc.access_key : "")}" href=${'/doc' + ids + (att.doc.access_key ? "?key=" + att.doc.access_key : "")} class="attachment_note attachment_doc">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"></polygon><polygon points="5 0 5 3 8 3 5 0"></polygon></svg>
                         <div class="docOpener attachment_note_content">
                             <span class="attachment_note_name">
@@ -207,12 +207,14 @@ const Attachment = ({ msg, att }) => {
         case 'wall':
             const isNoText = att.wall.text == null || att.wall.text.length == 0;
             const date = new Date(att.wall.date * 1000).toLocaleDateString(navigator.language, { hour: '2-digit', minute: '2-digit' });
+            const previewText = att.wall.text ? (typeof ovk_proc_strtr === 'function' ? ovk_proc_strtr(att.wall.text, 25) : att.wall.text.slice(0, 25)) : '';
+            const previewEscaped = typeof escapeHtml === 'function' ? escapeHtml(previewText) : previewText;
             return html`
                 <div class="msg-attach-w msg-attach-w-post">
-                    <a onclick="${(e) => { PostViewer.openById(e, idForItem(att.wall)) }}">
+                    <a onclick="${(e) => { typeof PostViewer !== 'undefined' && PostViewer.openById(e, typeof idForItem === 'function' ? idForItem(att.wall) : att.wall.id) }}">
                         <div class="_icon"></div>
                         <span>
-                            <b>${tr("post")}</b> ${isNoText ? tr("post_attachment_text", date).toLowerCase() : escapeHtml(ovk_proc_strtrt(att.wall.text, 25))}
+                            <b>${tr("post")}</b> ${isNoText ? tr("post_attachment_text", date).toLowerCase() : previewEscaped}
                         </span>
                     </a>
                 </div>
@@ -229,9 +231,9 @@ const Attachment = ({ msg, att }) => {
 };
 
 export const DayDivider = ({ date, day, idate }) => {
-  return html`
+    return html`
     <div class="messenger-app--messages-day-time">
-        <b onClick=${(e) => {window.im.messenger.showDaySwitcher(idate)}}>${date}</b>
+        <b onClick=${(e) => { window.im.messenger.showDaySwitcher(idate) }}>${date}</b>
     </div>
   `;
 };
@@ -241,7 +243,7 @@ export const DayChunkView = ({ chunk, page }) => {
     <div class="messenger-app--messages-day">
         <${DayDivider} day=${chunk.day} date=${chunk.readable_date} idate=${chunk.idate} />
         ${chunk.messages.map((msg, idx) => html`
-            <${MessageBubble} msg=${msg} index=${idx} chunk=${chunk} page=${page} />
+            <${MessageBubble} key=${msg.id || msg.conversation_message_id || idx} msg=${msg} index=${idx} chunk=${chunk} page=${page} />
         `)}
     </div>
     `;
@@ -257,7 +259,7 @@ export const MessageListView = ({ dayDividedChunks, convo, page }) => {
          ${isLoading ? html`
              <div id="gif_loader"></div>
          ` : html`
-            ${dayDividedChunks.map((chunk) => html`<${DayChunkView} chunk=${chunk} page=${page} />`)}
+            ${dayDividedChunks.map((chunk, cidx) => html`<${DayChunkView} key=${chunk.readable_date || chunk.idate || cidx} chunk=${chunk} page=${page} />`)}
             <div>
                 <${WriteBar} convo=${convo} />
             </div>
