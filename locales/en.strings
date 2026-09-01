@@ -1468,6 +1468,9 @@
 
 "create_chat" = "New chat";
 "to_friendslist" = "Show friends list";
+"pinned_message" = "Pinned message";
+"unpin_message" = "Unpin message";
+"chat_view_pinned_single" = "Go to pinned message";
 
 /* Polls */
 "poll" = "Poll";

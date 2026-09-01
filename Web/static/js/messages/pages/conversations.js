@@ -190,6 +190,12 @@ export class Conversations {
                 if (!item.peer.data.title && item.conversation?.chat_settings?.title) {
                     item.peer.data.title = item.conversation.chat_settings.title;
                 }
+                if (item.conversation?.chat_settings?.pinned_message) {
+                    item.peer.data.pinned_message = item.conversation.chat_settings.pinned_message;
+                }
+                if (item.conversation?.pinned_message) {
+                    item.peer.data.pinned_message = item.conversation.pinned_message;
+                }
             }
             lists.push(new Conversation(item));
         });
@@ -253,7 +259,11 @@ export class Conversations {
         }
 
         console.log("Not found chat with id ", id, ", returning a new one.")
-        const c = new Conversation({ 'peer': b });
+        const convPayload = { 'peer': b };
+        if (b.data && b.data._full_conversation) {
+            convPayload['conversation'] = b.data._full_conversation;
+        }
+        const c = new Conversation(convPayload);
         this.all_convs.push(c);
         return c;
     }
@@ -418,15 +428,79 @@ export class Conversation {
         return (this.peer && this.peer._chunks) ? this.peer._chunks._findMessageById(id) : null;
     }
 
-    hasPinned() {
-        return this.getPinnedMessageId() != null;
+    getPinnedMessage() {
+        if (this._conversation) {
+            if (this._conversation.current_pinned_message) return this._conversation.current_pinned_message;
+            if (this._conversation.pinned_message) return this._conversation.pinned_message;
+            if (this._conversation.chat_settings && this._conversation.chat_settings.pinned_message) return this._conversation.chat_settings.pinned_message;
+        }
+        if (this.peer && this.peer.data) {
+            if (this.peer.data.pinned_message) return this.peer.data.pinned_message;
+            if (this.peer.data.chat_settings && this.peer.data.chat_settings.pinned_message) return this.peer.data.chat_settings.pinned_message;
+            if (this.peer.data.current_pinned_message) return this.peer.data.current_pinned_message;
+        }
+        if (this.peer && this.peer._chunks && this.peer._chunks.chunks) {
+            for (const chunk of this.peer._chunks.chunks) {
+                if (chunk && chunk.messages) {
+                    for (const m of chunk.messages) {
+                        if (m && m.data && (m.data.is_pinned == 1 || m.data.is_pinned === true)) {
+                            return m.data;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    setPinnedMessage(msgData) {
+        if (!this._conversation) this._conversation = {};
+        this._conversation.pinned_message = msgData;
+        this._conversation.current_pinned_message = msgData;
+        if (this._conversation.chat_settings) {
+            this._conversation.chat_settings.pinned_message = msgData;
+        }
+        if (this.peer && this.peer.data) {
+            this.peer.data.pinned_message = msgData;
+            this.peer.data.current_pinned_message = msgData;
+            if (this.peer.data.chat_settings) {
+                this.peer.data.chat_settings.pinned_message = msgData;
+            }
+        }
+        if (this.peer && this.peer._chunks && this.peer._chunks.chunks) {
+            for (const chunk of this.peer._chunks.chunks) {
+                if (chunk && chunk.messages) {
+                    for (const m of chunk.messages) {
+                        if (m && m.data) {
+                            if (!msgData) {
+                                m.data.is_pinned = 0;
+                            } else if (m.data.id == msgData.id || m.data.conversation_message_id == msgData.conversation_message_id) {
+                                m.data.is_pinned = 1;
+                            } else {
+                                m.data.is_pinned = 0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    getPinnedMessageObject() {
+        const pin = this.getPinnedMessage();
+        if (!pin) return null;
+        if (pin instanceof ChatMessage) return pin;
+        const msg = new ChatMessage(pin);
+        if (!msg.peer_id && this.id) msg.data.peer_id = this.id;
+        return msg;
     }
 
     getPinnedMessageId() {
-        try {
-            return this._conversation.current_pinned_message.id;
-        } catch (e) {
-            return null;
-        }
+        const pin = this.getPinnedMessage();
+        return pin ? (pin.id || pin.conversation_message_id || null) : null;
+    }
+
+    hasPinned() {
+        return this.getPinnedMessageId() != null;
     }
 }

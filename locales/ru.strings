@@ -1556,7 +1556,8 @@
 
 "convo_action_kick" = "Кикнуть";
 "chat_media" = "Медиа";
-"chat_pinned" = "Закреплённые сообщения";
+"pinned_message" = "Закреплённое сообщение";
+"unpin_message" = "Открепить сообщение";
 "chat_view_pinned_single" = "Перейти к закреплённому";
 "chat_media_photo" = "Фото";
 "chat_media_video" = "Видео";

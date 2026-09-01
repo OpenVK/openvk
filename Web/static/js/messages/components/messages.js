@@ -334,12 +334,19 @@ export class ChatGeneralForm {
         }
 
         if (id >= ChatGeneralForm.CHAT_RUBICON) {
-            const __ = await window.OVKAPI.call('messages.getConversationsById', { 'peer_ids': id, 'fields': ChatGeneralForm.BASE_FIELDS });
+            const __ = await window.OVKAPI.call('messages.getConversationsById', { 'peer_ids': id, 'fields': ChatGeneralForm.BASE_FIELDS, 'extended': 1 });
 
-            if (!__ || __.items.length == 0) {
+            if (!__ || !__.items || __.items.length == 0) {
                 return null;
             }
-            return __.items[0].conversation.peer;
+            const conv = __.items[0].conversation || {};
+            const chatSettings = conv.chat_settings || {};
+            const chatData = (__.chats && __.chats.length > 0) ? __.chats[0] : {};
+            const peerData = Object.assign({ id: id, type: 'chat' }, chatSettings, chatData);
+            if (conv.pinned_message) peerData.pinned_message = conv.pinned_message;
+            if (chatSettings.pinned_message) peerData.pinned_message = chatSettings.pinned_message;
+            peerData._full_conversation = conv;
+            return peerData;
         } else {
             if (id > 0) {
                 const __ = await window.OVKAPI.call('users.get', { 'user_ids': id, 'fields': ChatGeneralForm.BASE_FIELDS });
