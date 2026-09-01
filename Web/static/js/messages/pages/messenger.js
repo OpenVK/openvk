@@ -58,11 +58,11 @@ export class Messenger {
 
     get view() { return this.getWindow(); }
 
-    async update() {
+    update() {
         try {
             const win = this.getWindow();
             if (win && typeof win._triggerUpdate === 'function') {
-                await win._triggerUpdate();
+                return win._triggerUpdate();
             }
         } catch (e) {
             console.error(e);
@@ -263,15 +263,12 @@ export class Messenger {
     }
 
     async setWriting() {
-        if (this._typingStarted == null) {
-            return;
-        }
-
-        this._typingStarted = null;
+        const curConvo = window.im?.state?.getCurrentConvo();
+        if (!curConvo) return;
 
         const params = {
             "type": "typing",
-            "peer_id": window.im.state.getCurrentConvo().id,
+            "peer_id": curConvo.id,
         };
         const gid = window.im.state.getId();
         if (gid < 0) {
@@ -279,8 +276,11 @@ export class Messenger {
         }
 
         console.log('IM | setWriting called');
-
-        await window.OVKAPI.call("messages.setActivity", params);
+        try {
+            await window.OVKAPI.call("messages.setActivity", params);
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     async sendToCurrentCorresponder() {
@@ -616,7 +616,7 @@ export class Messenger {
         const _tmp_atts = collect_attachments(u('.messenger-app--input---messagebox'));
         const win = this.getWindow();
 
-        if (win.getCurrentText() === '' && _tmp_atts.length == 0) return false;
+        if (win.getCurrentText() === '' && _tmp_atts.length == 0 && !this.isForwarded() && this.replyTo == null) return false;
         if (win.getCurrentText().length > 55000) {
             fastError("> 55000")
             return;
@@ -723,9 +723,9 @@ export class MessengerPage extends IMPage {
         } catch (e) { console.error(e); }
     }
     isDisablesScroll() { return true; }
-    async _triggerUpdate() {
+    _triggerUpdate() {
         window.im.conversations.update();
-        await this.update();
+        this.update();
     }
     updUrl() {
         const url = new URL(location.href);
@@ -778,6 +778,7 @@ export class MessengerPage extends IMPage {
                 onUnselect=${() => orig_messenger.unselectAll()}
                 onReply=${() => this.onReplyButtonClick()}
                 onForwardClick=${() => { this.onForwardClick() }}
+                onViewers=${(msg) => { this.onViewersButtonClick(null, msg || orig_messenger.selected_messages_objs[0]) }}
             />
             <div class="messenger-app messenger-layer">
                 <${MessageListView}
@@ -815,8 +816,9 @@ export class MessengerPage extends IMPage {
 
         if (e.which !== 13) {
             const now = Date.now();
-            if (!window.im.messenger._typingStarted) window.im.messenger._typingStarted = now;
-            if (now - window.im.messenger._typingStarted > 6000) { // 2s
+            const lastTyping = window.im.messenger._typingStarted;
+            if (!lastTyping || now - lastTyping > 5000) {
+                window.im.messenger._typingStarted = now;
                 window.im.messenger.setWriting();
             }
         }
@@ -836,6 +838,10 @@ export class MessengerPage extends IMPage {
     }
 
     onMessageClick(msg, e) {
+        if (msg.isDeleted()) {
+            return;
+        }
+
         if (msg.isError()) {
             const cmsg = new CMessageBox({
                 title: tr("error"),
@@ -956,6 +962,133 @@ export class MessengerPage extends IMPage {
         this.update();
     }
 
+    async onViewersButtonClick(e, msg) {
+        if (e && e.stopPropagation) e.stopPropagation();
+        if (window.im.messenger.isForwarded()) { return; }
+
+        const peerId = msg.data?.peer_id || msg.peer?.id;
+        const cmid = msg.data?.conversation_message_id || msg.conversation_message_id || msg.data?.local_id || msg.local_id || msg.data?.id;
+
+        const cmsg = new CMessageBox({
+            title: tr("message_viewers_title") || "Просмотрели сообщение",
+            body: `<div class="message-viewers-modal-loader" style="text-align:center; padding: 25px;"><div id="gif_loader"></div></div>`,
+            buttons: [tr("close")],
+            callbacks: [() => { }]
+        });
+
+        try {
+            const res = await window.OVKAPI.call("messages.getMessageViewers", {
+                peer_id: peerId,
+                conversation_message_id: cmid,
+                message_id: msg.data?.id || cmid,
+                extended: 1
+            });
+
+            const profiles = res.profiles || [];
+            const items = res.items || [];
+
+            if (!profiles.length && !items.length) {
+                cmsg.getNode().find(".message-viewers-modal-loader").parent().html(`
+                    <div class="message-viewers-empty" style="text-align: center; padding: 20px; color: var(--text-2ary); font-size: 13px;">
+                        ${tr("message_viewers_empty") || "Это сообщение ещё никто не прочитал"}
+                    </div>
+                `);
+                return;
+            }
+
+            const profMap = new Map();
+            profiles.forEach(p => profMap.set(p.id, p));
+
+            const usersListHtml = items.map(it => {
+                const prof = profMap.get(it.user_id) || {
+                    id: it.user_id,
+                    first_name: "id" + it.user_id,
+                    last_name: "",
+                    photo_50: "/assets/packages/static/openvk/img/camera_50.png"
+                };
+                const fullName = escapeHtml(`${prof.first_name || ""} ${prof.last_name || ""}`.trim());
+                const ava = prof.photo_50 || prof.photo_100 || "/assets/packages/static/openvk/img/camera_50.png";
+                const isOnline = prof.online == 1;
+
+                return `
+                    <div class="message-viewer-row" style="display: flex; align-items: center; padding: 6px 10px; border-bottom: 1px solid var(--bg-slightly-border);">
+                        <a href="/id${prof.id}" target="_blank" style="position: relative; margin-right: 10px; display: inline-block;">
+                            <img src="${ava}" style="width: 36px; height: 36px; object-fit: cover; display: block;" />
+                        </a>
+                        <div style="flex: 1; min-width: 0;">
+                            <a href="/id${prof.id}" target="_blank" style="font-weight: bold; color: var(--text-primary); text-decoration: none; font-size: 12px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                ${fullName}
+                            </a>
+                            <span style="font-size: 11px; color: var(--text-2ary);">
+                                ${isOnline ? (tr('online') || 'в сети') : (tr('offline') || '')}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+
+            const titleCount = (tr("message_viewers_count", items.length) || `Прочитали: ${items.length}`);
+            cmsg.getNode().find(".message-viewers-modal-loader").parent().html(`
+                <div class="message-viewers-list-wrap">
+                    <div style="font-size: 11px; color: var(--text-2ary); padding: 4px 10px 8px; border-bottom: 1px solid var(--bg-slightly-border); font-weight: bold;">
+                        ${titleCount}
+                    </div>
+                    <div class="message-viewers-list" style="max-height: 280px; overflow-y: auto;">
+                        ${usersListHtml}
+                    </div>
+                </div>
+            `);
+        } catch (err) {
+            cmsg.getNode().find(".message-viewers-modal-loader").parent().html(`
+                <div style="text-align: center; padding: 20px; color: #d00;">
+                    ${tr("error")}: ${escapeHtml(err?.message || "Failed to load viewers")}
+                </div>
+            `);
+        }
+    }
+
+    async onRestoreMessageClick(msg, e) {
+        if (e && e.stopPropagation) e.stopPropagation();
+        if (!msg || !msg.id) return;
+
+        try {
+            const peerId = msg.data?.peer_id || msg.peer?.id || window.im?.messenger?.getCurrentChat()?.peer?.id;
+            const res = await window.OVKAPI.call("messages.restore", {
+                message_id: msg.id,
+                peer_id: peerId
+            });
+
+            if (res === 1 || res) {
+                if (msg.data._orig_text !== undefined) {
+                    msg.restore();
+                } else {
+                    try {
+                        const fetched = await window.OVKAPI.call("messages.getById", {
+                            message_ids: msg.id,
+                            peer_id: peerId
+                        });
+                        if (fetched && fetched.items && fetched.items[0]) {
+                            const fMsg = fetched.items[0];
+                            msg.restore(fMsg.text, fMsg.attachments);
+                        } else {
+                            msg.restore();
+                        }
+                    } catch (e2) {
+                        msg.restore();
+                    }
+                }
+
+                const curChat = window.im?.messenger?.getCurrentChat ? window.im.messenger.getCurrentChat() : null;
+                if (curChat?.peer?._chunks) {
+                    curChat.peer._chunks._invalidateCache();
+                }
+                this.update();
+            }
+        } catch (err) {
+            console.error("Failed to restore message:", err);
+        }
+    }
+
     onPinButtonClick(e, msg) {
         if (window.im.messenger.isForwarded()) { return; }
         const isPinned = msg.isPinned();
@@ -1045,6 +1178,7 @@ export class MessengerPage extends IMPage {
     }
 
     toggleMessageSelection(msg, e) {
+        if (msg.isDeleted()) { return; }
         if (window.im.messenger.isForwarded()) { return; }
         if (msg.id == null) {
             if (e.target.closest(".error-checkmark") == null) {
@@ -1134,10 +1268,10 @@ export class MessengerPage extends IMPage {
 
     getFirstVisibleMessageElement() {
         const msgs = document.querySelectorAll('.messenger-app--messages---message[data-msg-id]');
-        const topThreshold = window.im.state.isFastchat ? 50 : 120;
+        const topThreshold = window.im?.state?.isFastchat ? 40 : 100;
         for (let i = 0; i < msgs.length; i++) {
             const rect = msgs[i].getBoundingClientRect();
-            if (rect.bottom > topThreshold) {
+            if (rect.top >= 0 || rect.bottom > topThreshold) {
                 return msgs[i];
             }
         }
@@ -1146,99 +1280,169 @@ export class MessengerPage extends IMPage {
 
     async onMessagesScroll(e = null) {
         if (this.is_loading) return;
-        const currentConvo = window.im.messenger.getCurrentChat();
-        if (!currentConvo || !currentConvo.getScrollPosition()) return;
+        const currentConvo = window.im?.messenger?.getCurrentChat();
+        if (!currentConvo) return;
+        const scrollPos = currentConvo.getScrollPosition();
+        if (!scrollPos) return;
 
-        this.is_loading = true;
-
-        const oldHeight = this.getScrollHeight();
         const _scroll = this.getScrollTop();
-        const topThreshold = window.im.state.isFastchat ? 100 : 250;
+        const scrollHeight = this.getScrollHeight();
+        const isFastchat = Boolean(window.im?.state?.isFastchat);
+        const viewportH = isFastchat ? (this.container?.clientHeight || 400) : (window.innerHeight || document.documentElement.clientHeight || 0);
+        const scrollBottom = Math.max(0, scrollHeight - _scroll - viewportH);
 
-        if (_scroll < topThreshold) {
-            console.log("IM | Loading older chunk from API");
-            const anchorEl = this.getFirstVisibleMessageElement();
-            const prevAnchorTop = anchorEl ? anchorEl.getBoundingClientRect().top : null;
+        const topThreshold = isFastchat ? 150 : 350;
+        const bottomThreshold = isFastchat ? 150 : 350;
 
-            await currentConvo.getScrollPosition().loadOlder();
-            await currentConvo.getScrollPosition().result();
+        if (_scroll < topThreshold && !scrollPos.reachedOldestPosition) {
+            this.is_loading = true;
+            try {
+                const anchorEl = this.getFirstVisibleMessageElement();
+                const prevAnchorTop = anchorEl ? anchorEl.getBoundingClientRect().top : null;
+                const oldHeight = this.getScrollHeight();
 
-            if (anchorEl && prevAnchorTop !== null && document.body.contains(anchorEl)) {
-                const newAnchorTop = anchorEl.getBoundingClientRect().top;
-                const diff = newAnchorTop - prevAnchorTop;
-                if (diff !== 0) {
-                    if (window.im.state.isFastchat) {
-                        const wrap = document.querySelector("#fastchats_related #fastchats_chat #wrap");
-                        if (wrap) wrap.scrollTop += diff;
-                    } else {
-                        window.scrollBy(0, diff);
+                await scrollPos.loadOlder();
+                scrollPos.result();
+
+                if (anchorEl && prevAnchorTop !== null && document.body.contains(anchorEl)) {
+                    const newAnchorTop = anchorEl.getBoundingClientRect().top;
+                    const diff = newAnchorTop - prevAnchorTop;
+                    if (diff !== 0) {
+                        if (isFastchat) {
+                            const wrap = document.querySelector("#fastchats_related #fastchats_chat #wrap");
+                            if (wrap) wrap.scrollTop += diff;
+                        } else {
+                            window.scrollBy(0, diff);
+                        }
+                    }
+                } else {
+                    const newHeight = this.getScrollHeight();
+                    const heightDiff = newHeight - oldHeight;
+                    if (heightDiff > 0) {
+                        this._scrollTo(_scroll + heightDiff);
                     }
                 }
-            } else {
-                const newHeight = this.getScrollHeight();
-                const heightDiff = newHeight - oldHeight;
-                if (heightDiff > 0) {
-                    this._scrollTo(_scroll + heightDiff);
-                }
+            } catch (err) {
+                console.error("IM | loadOlder error:", err);
+            } finally {
+                this.is_loading = false;
             }
-        } else {
-            const viewportH = window.im.state.isFastchat ? (this.container?.clientHeight || 400) : (window.innerHeight || document.documentElement.clientHeight || 0);
-            const scrollBottom = Math.max(0, this.getScrollHeight() - _scroll - viewportH);
-            if (scrollBottom < 200) {
-                console.log("IM | Loading newer chunk from API");
-                await currentConvo.getScrollPosition().loadNewer();
-                await currentConvo.getScrollPosition().result();
-            }
-
-            if (scrollBottom > 2000) {
-                this.getNode().find(".messenger-app-end").addClass("m-mountain");
-            } else {
-                this.getNode().find(".messenger-app-end").removeClass("m-mountain");
+        } else if (scrollBottom < bottomThreshold && !scrollPos.reachedNewestPosition) {
+            this.is_loading = true;
+            try {
+                await scrollPos.loadNewer();
+                scrollPos.result();
+            } catch (err) {
+                console.error("IM | loadNewer error:", err);
+            } finally {
+                this.is_loading = false;
             }
         }
 
-        this.is_loading = false;
+        if (scrollBottom > 2000) {
+            this.getNode().find(".messenger-app-end").addClass("m-mountain");
+        } else {
+            this.getNode().find(".messenger-app-end").removeClass("m-mountain");
+        }
     }
 
     callDeletion() {
         const ids = window.im.messenger.selected_messages;
-        const gid = window.im.state.getId()
+        if (!ids || ids.length === 0) return;
+
+        const gid = window.im.state.getId();
         const current_chat = window.im.messenger.getCurrentChat();
-        const box = new CMessageBox({
+        if (!current_chat) return;
+
+        const currentUserId = window.openvk ? window.openvk.current_id : window.im.state.getId();
+        const isChatAdmin = Boolean(
+            (current_chat.peer && typeof current_chat.peer.isAdmin === 'function' && current_chat.peer.isAdmin()) ||
+            (current_chat._conversation && current_chat._conversation.chat_settings && current_chat._conversation.chat_settings.admin_id === currentUserId) ||
+            (current_chat._conversation && current_chat._conversation.chat_settings && current_chat._conversation.chat_settings.is_admin) ||
+            (current_chat._conversation && current_chat._conversation.admin_id === currentUserId) ||
+            (current_chat.peer && current_chat.peer.data && current_chat.peer.data.admin_id === currentUserId)
+        );
+
+        let canDeleteForAll = ids.length > 0;
+        if (!isChatAdmin) {
+            ids.forEach((item) => {
+                const m = current_chat.peer._chunks._findMessageById(item);
+                if (m) {
+                    const fromId = m.data ? m.data.from_id : (m.from_id || 0);
+                    if (fromId != currentUserId) {
+                        canDeleteForAll = false;
+                    }
+                } else {
+                    canDeleteForAll = false;
+                }
+            });
+        }
+
+        const performDelete = async (deleteForAll = false) => {
+            let ids2 = [];
+            ids.forEach((item) => {
+                let m = current_chat.peer._chunks._findMessageById(item);
+                ids2.push(item);
+                if (m) {
+                    m.setDeleted(true);
+                }
+            });
+
+            const params = {
+                "message_ids": ids2.join(","),
+                "peer_id": current_chat.peer.id,
+                "delete_for_all": deleteForAll ? 1 : 0,
+            };
+            if (gid < 0) {
+                params["group_id"] = Math.abs(gid);
+            }
+            try {
+                await window.OVKAPI.call("messages.delete", params);
+            } catch (e) {
+                console.error(e);
+            }
+            if (current_chat.peer && current_chat.peer._chunks) {
+                current_chat.peer._chunks._invalidateCache();
+            }
+            if (typeof current_chat.getScrollPosition === 'function' && current_chat.getScrollPosition()) {
+                current_chat.getScrollPosition()._invalidateCache();
+            }
+            this._triggerUpdate();
+            window.im.messenger.unselectAll();
+        };
+
+        const buttons = [tr("delete_for_me")];
+        const callbacks = [() => performDelete(false)];
+
+        if (canDeleteForAll) {
+            buttons.push(tr("delete_for_all"));
+            callbacks.push(() => performDelete(true));
+        }
+
+        buttons.push(tr("cancel"));
+        callbacks.push(() => { });
+
+        new CMessageBox({
             title: tr("message_deletion", ids.length),
             body: tr("message_deletion_confirm"),
-            buttons: [tr('yes'), tr('no')],
-            callbacks: [async () => {
-                let ids2 = [];
-                ids.forEach((item) => {
-                    let m = current_chat.peer._chunks._findMessageById(item);
-                    ids2.push(item);
-                    m.setDeleted(true);
-                });
-
-                const params = {
-                    "message_ids": ids2.join(","),
-                    "peer_id": current_chat.peer.id
-                };
-                if (gid < 0) {
-                    params["group_id"] = Math.abs(gid);
-                }
-                await window.OVKAPI.call("messages.delete", params)
-                this._triggerUpdate();
-                window.im.messenger.unselectAll();
-            }, () => { }],
+            buttons: buttons,
+            callbacks: callbacks,
         });
     }
 
-    isAtEnd() {
-        const scrollBottom = Math.max(0, this.getScrollHeight() - this.getScrollTop());
-        return scrollBottom < 750;
+    isAtEnd(threshold = 350) {
+        const viewportH = window.im.state.isFastchat
+            ? (this.container?.clientHeight || 400)
+            : (window.innerHeight || document.documentElement.clientHeight || 0);
+        const scrollBottom = Math.max(0, this.getScrollHeight() - this.getScrollTop() - viewportH);
+        return scrollBottom <= threshold;
     }
     getScroll() { return document.documentElement.scrollTop; }
     _scrollTo(scroll_progress) {
         if (scroll_progress == "end") {
             if (window.im.state.isFastchat) {
-                scroll_progress = document.querySelector("#fastchats_related #fastchats_chat #wrap").scrollHeight;
+                const el = document.querySelector("#fastchats_related #fastchats_chat #wrap");
+                scroll_progress = el ? el.scrollHeight : 0;
             } else {
                 scroll_progress = document.documentElement.scrollHeight;
             }
@@ -1246,7 +1450,8 @@ export class MessengerPage extends IMPage {
 
         console.log("scrolling page to: ", scroll_progress);
         if (window.im.state.isFastchat) {
-            document.querySelector("#fastchats_related #fastchats_chat #wrap").scroll({ top: scroll_progress });
+            const el = document.querySelector("#fastchats_related #fastchats_chat #wrap");
+            if (el) el.scroll({ top: scroll_progress });
         } else {
             document.documentElement.scroll({ top: scroll_progress });
         }
@@ -1254,8 +1459,10 @@ export class MessengerPage extends IMPage {
 
     _scrollToEnd() {
         console.log("IM | scrolling page to the end");
-
         this._scrollTo("end");
+        requestAnimationFrame(() => {
+            this._scrollTo("end");
+        });
     }
 
     async scrollToEndOfChat(event, convo) {

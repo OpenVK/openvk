@@ -98,21 +98,34 @@ function updateChatTitle(e, chat) {
         return;
     }
 
+    const currentTitle = chat.name || chat.data?.title || chat.data?.name || "";
     const msg = new CMessageBox({
         title: tr("change_chat_title"),
         close_on_buttons: false,
         body: `
-            <input value="${escapeHtml(chat.name)}" type="text" id="_new_chat_title">
+            <div style="padding: 10px 0;">
+                <input value="${escapeHtml(currentTitle)}" type="text" id="_new_chat_title" style="width: 100%; box-sizing: border-box; padding: 6px 8px; font-size: 13px;">
+            </div>
         `,
         buttons: [tr("cancel"), tr("change")],
         callbacks: [() => {
             msg.close();
         }, async () => {
-            const new_title = msg.getNode().find("#_new_chat_title").last().value;
+            const inputEl = msg.getNode().find("#_new_chat_title").last();
+            const new_title = inputEl ? inputEl.value.trim() : "";
+            if (!new_title) return;
             msg.close();
             await chat.updateTitle(new_title);
         }]
-    })
+    });
+
+    setTimeout(() => {
+        const input = msg.getNode().find("#_new_chat_title").last();
+        if (input) {
+            input.focus();
+            input.select();
+        }
+    }, 50);
 }
 
 function updateChatAvatar(e, chat) {
@@ -121,23 +134,44 @@ function updateChatAvatar(e, chat) {
         return;
     }
 
-    OpenAvatarUpdateDialogue(null, chat, 1, 1)
+    if (typeof OpenAvatarUpdateDialogue === 'function') {
+        OpenAvatarUpdateDialogue(null, chat, 1, 1);
+    } else {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = "image/*";
+        input.onchange = async (ev) => {
+            if (ev.target.files && ev.target.files[0]) {
+                await chat.updateAvatar(ev.target.files[0]);
+            }
+        };
+        input.click();
+    }
 }
 
 function OpenChatAvatar(event, peer) {
-    console.log(peer)
+    console.log(peer);
+    if (!peer) return;
     if (peer.supposed_type == "chat") {
-        OpenMiniature(event, peer.getAvatar("max"), peer.id, "skip", "chat", null, true, 0)
+        if (typeof OpenMiniature === 'function') {
+            OpenMiniature(event, peer.getAvatar("max"), peer.id, "skip", "chat", null, true, 0);
+        }
         return;
     }
 
-    if (peer.data.photo_pid == null) {
+    if (peer.data?.photo_pid == null) {
         console.log("IM | Photo viewer | i think this user does not have avatar.");
         return;
     }
 
-    OpenAvatar(event, peer.getAvatar("max"), peer.id + '_profile', peer.data.photo_pid);
+    if (typeof OpenAvatar === 'function') {
+        OpenAvatar(event, peer.getAvatar("max"), peer.id + '_profile', peer.data.photo_pid);
+    }
 }
+
+window.updateChatTitle = updateChatTitle;
+window.updateChatAvatar = updateChatAvatar;
+window.OpenChatAvatar = OpenChatAvatar;
 
 function createChatTopic(group_id) {
     const msg = new CMessageBox({

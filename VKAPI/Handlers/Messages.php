@@ -783,7 +783,7 @@ final class Messages extends VKAPIRequestHandler
         $attachment_secure = [];
 
         foreach ($attachment_checked as $item) {
-            if (!$item->canBeViewedBy($this->getUser())) {
+            if (!$item || !$item->canBeViewedBy($this->getUser())) {
                 continue;
             } else {
                 $attachment_secure[] = $item->getAttachmentString();
@@ -853,7 +853,7 @@ final class Messages extends VKAPIRequestHandler
         $attachment_secure = [];
 
         foreach ($attachment_checked as $item) {
-            if (!$item->canBeViewedBy($this->getUser())) {
+            if (!$item || !$item->canBeViewedBy($this->getUser())) {
                 continue;
             } else {
                 $attachment_secure[] = $item->getAttachmentString();
@@ -1498,7 +1498,7 @@ final class Messages extends VKAPIRequestHandler
                 continue;
             }
 
-            if (!$currentUser->isFriendsWith($usr->getRealId())) {
+            if (!$currentUser->isFriendsWith($usr)) {
                 $this->fail(15, "Access denied: user with ID " . $usr->getRealId() . " is not your friend");
             }
 
@@ -1507,12 +1507,14 @@ final class Messages extends VKAPIRequestHandler
             }
         }
 
-        $params = [
-            "peer_id" => (string) $peer_id,
-            "user_id" => (string) $user_id,
-        ];
+        foreach ($targetUserIds as $targetId) {
+            $params = [
+                "peer_id" => (string) $peer_id,
+                "user_id" => (string) $targetId,
+            ];
 
-        $this->invoke("messages.addChatUser", $params, $group_id);
+            $this->invoke("messages.addChatUser", $params, $group_id);
+        }
 
         return 1;
     }
@@ -2084,7 +2086,7 @@ final class Messages extends VKAPIRequestHandler
         $response = $this->invoke("messages.getConversationMembers", $params, $group_id);
 
         if ($extended) {
-            $this->hydrateExtendedData($response);
+            $this->hydrateExtendedData($response, "photo_50,photo_100,photo_200,online,last_seen,sex");
         }
 
         return [
@@ -3001,5 +3003,31 @@ final class Messages extends VKAPIRequestHandler
         $report->save();
 
         return 1;
+    }
+
+    public function getMessageViewers(int $peer_id = 0, int $conversation_message_id = 0, int $message_id = 0, int $group_id = 0, int $extended = 0, string $fields = "photo_50,photo_100,online,last_seen,sex")
+    {
+        $this->requireUser();
+
+        $params = [
+            "peer_id" => $peer_id,
+        ];
+        if ($conversation_message_id > 0) {
+            $params["conversation_message_id"] = $conversation_message_id;
+        }
+        if ($message_id > 0) {
+            $params["message_id"] = $message_id;
+        }
+
+        $res = $this->invoke("messages.getMessageViewers", $params, $group_id);
+
+        if (!empty($res["user_ids"])) {
+            $apiUsers = (new APIUsers())->get(implode(',', $res["user_ids"]), $fields);
+            $res["profiles"] = $apiUsers;
+        } else {
+            $res["profiles"] = [];
+        }
+
+        return $res;
     }
 }
