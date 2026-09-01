@@ -50,10 +50,19 @@ body.no-scroll .messenger-app--global-tabs {
     padding: 7px 10px;
 }
 
-body.no-scroll .messages--peers-tabs {
+.messages--peers-header-wrap {
+    width: 100%;
+}
+
+body.no-scroll .messages--peers-header-wrap {
     position: fixed;
     z-index: 4;
     top: 73px;
+    box-sizing: border-box;
+    width: 627px;
+}
+
+body.no-scroll .messages--peers-tabs {
     padding: 8px 10px;
     box-sizing: border-box;
     width: 627px;
@@ -1119,6 +1128,67 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 .messages--peers-tabs .messages--peers-tab.selected a,
 .messages--peers-tabs .messages--peers-tab.selected .messages--peers-tab-close {
     color: var(--text-rev);
+}
+
+.messenger-pinned-bar {
+    display: flex;
+    align-items: center;
+    padding: 6px 12px;
+    background: #F6F6F6;
+    border-bottom: 1px solid var(--bg-slightly-border);
+    cursor: pointer;
+    user-select: none;
+    font-size: 11px;
+    transition: background 0.15s ease;
+    gap: 8px;
+    box-sizing: border-box;
+    position: relative;
+    width: 100%;
+}
+
+.messenger-pinned-bar:hover {
+    background: #EEEEEE;
+}
+
+.messenger-pinned-bar--content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.messenger-pinned-bar--title {
+    font-weight: bold;
+    color: var(--brand);
+    font-size: 11px;
+}
+
+.messenger-pinned-bar--text {
+    color: var(--text);
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.messenger-pinned-bar--text b {
+    color: var(--nobold);
+    font-weight: 600;
+}
+
+.messenger-pinned-bar--close {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.messenger-pinned-bar--close:hover .cross {
+    opacity: 1;
 }
 
 .messenger-app--input .peer-toggler {

@@ -3,8 +3,8 @@ const { ChatMessage, ChatGeneralForm, Draft } = await es6import_Im(import.meta.u
 //import { Conversation } from './conversations.js';
 const { Conversation } = await es6import_Im(import.meta.url, "./conversations.js");
 const { MessageListView } = await es6import_Im(import.meta.url, "../components/message.js");
-//import { ErrorConversation, WriteBar, ActionsBar, PeerWindow, InputArea, PeerTabsView, TopicConversationChat } from "../components/common.js"
-const { ErrorConversation, WriteBar, ActionsBar, PeerWindow, InputArea, PeerTabsView, TopicConversationChat } = await es6import_Im(import.meta.url, "../components/common.js");
+//import { ErrorConversation, WriteBar, ActionsBar, PeerWindow, InputArea, PeerTabsView, TopicConversationChat, PinnedMessageBar } from "../components/common.js"
+const { ErrorConversation, WriteBar, ActionsBar, PeerWindow, InputArea, PeerTabsView, TopicConversationChat, PinnedMessageBar } = await es6import_Im(import.meta.url, "../components/common.js");
 //import { IMTab, IMPage } from './page.js';
 const { IMTab, IMPage } = await es6import_Im(import.meta.url, "./page.js");
 const { ScrollPosition } = await es6import_Im(import.meta.url, "../components/partition.js");
@@ -324,7 +324,9 @@ export class Messenger {
 
     async viewMedia(media_type = "pinned") { }
     async viewPinned(event, convo) {
-        event.target.classList.add("lagged");
+        if (event && event.target && event.target.classList) {
+            event.target.classList.add("lagged");
+        }
         if (!convo.hasPinned()) {
             console.error("IM | Messenger | No pinned");
             return;
@@ -334,7 +336,142 @@ export class Messenger {
             peer_id: convo.id,
             id: convo.getPinnedMessageId()
         });
-        event.target.classList.remove("lagged");
+        if (event && event.target && event.target.classList) {
+            event.target.classList.remove("lagged");
+        }
+    }
+
+    async showPinnedModal(convo) {
+        let pinMsg = convo ? convo.getPinnedMessageObject() : null;
+        if (!pinMsg) return;
+
+        const peer = convo.peer;
+        const sender = pinMsg.sender || window.im?.cached_profiles?._findCachedProfileById(pinMsg.from_id);
+        const senderName = sender ? sender.getName(false, true) : (tr("user") + " " + pinMsg.from_id);
+        const senderAva = sender ? sender.getAvatar("mid") : "/assets/packages/static/openvk/img/camera_100.png";
+        const senderUrl = sender ? sender.getPageUrl() : "javascript:void(0);";
+        const formattedDate = pinMsg.getDate(2) + " " + pinMsg.getDate(0);
+        const formattedText = pinMsg.getText(false);
+
+        let attachmentsHtml = "";
+        const atts = pinMsg.getAttachments();
+        if (atts && atts.length > 0) {
+            attachmentsHtml = `<div class="attachments" style="margin-top: 8px;">`;
+            for (const att of atts) {
+                if (att.photo) {
+                    const src = att.photo.photo_604 || att.photo.photo_130 || att.photo.photo_75 || att.photo.link;
+                    attachmentsHtml += `<div style="margin-top:4px;"><img src="${src}" style="max-width: 100%; border-radius: 2px;" /></div>`;
+                } else if (att.video) {
+                    attachmentsHtml += `<div style="margin-top:4px;"><b>${tr("chat_media_video")}:</b> ${escapeHtml(att.video.title || "")}</div>`;
+                } else if (att.audio) {
+                    attachmentsHtml += `<div style="margin-top:4px;"><b>${tr("chat_media_audio")}:</b> ${escapeHtml(att.audio.artist || "")} - ${escapeHtml(att.audio.title || "")}</div>`;
+                } else if (att.doc) {
+                    attachmentsHtml += `<div style="margin-top:4px;"><b>${tr("chat_media_doc")}:</b> <a href="${att.doc.url}" target="_blank">${escapeHtml(att.doc.title || "")}</a></div>`;
+                }
+            }
+            attachmentsHtml += `</div>`;
+        }
+
+        const bodyHtml = `
+            <div class="pinned-message-modal-content" style="padding: 10px 0;">
+                <div style="display: flex; gap: 10px; align-items: flex-start;">
+                    <a href="${senderUrl}" style="flex-shrink: 0;">
+                        <img src="${senderAva}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" />
+                    </a>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                            <a href="${senderUrl}" style="font-weight: bold; color: var(--link); text-decoration: none;">${escapeHtml(senderName)}</a>
+                            <span style="color: #999; font-size: 10px;">${formattedDate}</span>
+                        </div>
+                        <div class="normalText" style="margin-top: 5px; font-size: 12px; line-height: 1.4; word-break: break-word;">
+                            ${formattedText}
+                        </div>
+                        ${attachmentsHtml}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const buttons = [tr("chat_view_pinned_single")];
+        const callbacks = [
+            async () => {
+                await this.view.goToMessage({
+                    id: pinMsg.id || convo.getPinnedMessageId(),
+                    peer_id: convo.id
+                });
+            }
+        ];
+
+        const canUnpin = (peer && typeof peer.can === 'function' && peer.can("pin")) || (pinMsg && typeof pinMsg.can === 'function' && pinMsg.can("pin"));
+        if (canUnpin) {
+            buttons.push(tr("unpin_message"));
+            callbacks.push(async () => {
+                await this.unpinMessage(convo);
+            });
+        }
+
+        buttons.push(tr("close"));
+        callbacks.push(Function.noop);
+
+        new CMessageBox({
+            title: tr("pinned_message"),
+            body: bodyHtml,
+            buttons: buttons,
+            callbacks: callbacks,
+            close_on_buttons: true,
+            unique_name: "pinned_message_box"
+        });
+    }
+
+    async unpinMessage(convo, confirm = true) {
+        if (!convo) return;
+
+        const doUnpin = async () => {
+            try {
+                const peerId = convo.peer ? convo.peer.id : convo.id;
+                const params = { "peer_id": peerId };
+                if (window.im.usage_type == "group") {
+                    params["group_id"] = Math.abs(window.im.state.getOperator().id);
+                }
+                await window.OVKAPI.call("messages.unpin", params);
+                if (typeof convo.setPinnedMessage === 'function') {
+                    convo.setPinnedMessage(null);
+                }
+                if (convo._conversation) {
+                    convo._conversation.current_pinned_message = null;
+                    convo._conversation.pinned_message = null;
+                    if (convo._conversation.chat_settings) {
+                        convo._conversation.chat_settings.pinned_message = null;
+                    }
+                }
+                if (convo.peer && convo.peer.data) {
+                    convo.peer.data.pinned_message = null;
+                    convo.peer.data.current_pinned_message = null;
+                    if (convo.peer.data.chat_settings) {
+                        convo.peer.data.chat_settings.pinned_message = null;
+                    }
+                }
+                this.update();
+            } catch (e) {
+                fastError(String(e));
+                console.error(e);
+            }
+        };
+
+        if (confirm) {
+            new CMessageBox({
+                title: tr("confirm"),
+                body: tr("unpin_button_click"),
+                buttons: [tr("yes"), tr("no")],
+                callbacks: [
+                    async () => { await doUnpin(); },
+                    Function.noop
+                ],
+                close_on_buttons: true
+            });
+        } else {
+            await doUnpin();
+        }
     }
 
     /* Selectness */
@@ -621,7 +758,7 @@ export class MessengerPage extends IMPage {
         render(html`
         <div id="chat-page">
             <div class="chat-window ${peer.id == window.im.state.getId() ? "saved-msgs" : ""}">
-            <${PeerTabsView} hadTab=${true} tabs=${orig_messenger.opened_tabs} currentChat=${orig_messenger.currentChatId} page=${this} />
+            <${PeerTabsView} hadTab=${true} tabs=${orig_messenger.opened_tabs} currentChat=${orig_messenger.currentChatId} page=${this} convo=${currentConv} />
             <${ActionsBar}
                 selectedMessages=${orig_messenger.selected_messages_objs}
                 count=${orig_messenger.selected_messages_count}
