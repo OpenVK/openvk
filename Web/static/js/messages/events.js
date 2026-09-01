@@ -12,6 +12,8 @@ export class EventHandler {
             5: "EditMessageEvent",
             6: "ReadIncomeBeforeEvent",
             7: "ReadOutcomeBeforeEvent",
+            8: "UserOnlineEvent",
+            9: "UserOfflineEvent",
             51: "ChatUpdateEvent",
             61: "TypingEvent",
         };
@@ -235,6 +237,11 @@ export class EventHandler {
 
     async NewMessageEvent(event) {
         const _msg = await ChatMessage.fromEvent(event, this.im);
+
+        if (this.im && this.im.fastChats) {
+            this.im.fastChats.onNewMessage(_msg);
+        }
+
         const _crs = await this.im.conversations._findConvFromApi(_msg.peer_id);
         if (!_crs) return;
 
@@ -290,10 +297,6 @@ export class EventHandler {
                     _crs.peer.read();
                 }
 
-                if (this.im.fastChats) {
-                    this.im.fastChats.update();
-                }
-
                 this.updateGlobalUnreadCounter();
             } catch (e) {
                 console.error(e);
@@ -309,6 +312,10 @@ export class EventHandler {
         const text = event[5];
         const attachments = event[6];
         const idk = event[7];
+
+        if (this.im && this.im.fastChats) {
+            this.im.fastChats.onEditMessage(peerId, msgId, text);
+        }
 
         const _crs = await this.im.conversations._findConvFromApi(peerId);
         if (!_crs) {
@@ -357,7 +364,21 @@ export class EventHandler {
         if (conv != null) {
             await conv.setTyping(userIds);
         } else {
-            console.error("IM | Event 61 | not found peer: ", _peerId, userIds)
+            console.error("IM | Event 61 | not found peer: ", _peerId, userIds);
+        }
+    }
+
+    async UserOnlineEvent(event) {
+        const userId = Math.abs(event[1]);
+        if (this.im.fastChats) {
+            this.im.fastChats.setUserOnline(userId, true);
+        }
+    }
+
+    async UserOfflineEvent(event) {
+        const userId = Math.abs(event[1]);
+        if (this.im.fastChats) {
+            this.im.fastChats.setUserOnline(userId, false);
         }
     }
 }

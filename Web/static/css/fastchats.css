@@ -1,0 +1,544 @@
+/* ==========================================================================
+   Classic FastChats (VKontakte 2012-2016 Style)
+   ========================================================================== */
+
+#fastchats_container {
+    position: fixed;
+    bottom: 0;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: flex-end;
+    gap: 10px;
+    font-family: tahoma, verdana, arial, sans-serif;
+    font-size: 11px;
+    pointer-events: none;
+}
+
+#fastchats_container * {
+    box-sizing: border-box;
+}
+
+#fastchats_container>* {
+    pointer-events: auto;
+}
+
+body.fc_dragging,
+body.fc_dragging * {
+    user-select: none !important;
+    cursor: grabbing !important;
+}
+
+/* Common Header Style for Fastchats */
+.fc_head {
+    height: 28px;
+    background: #4c4c4c;
+    color: #fff;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    border-radius: 4px 4px 0 0;
+    cursor: grab;
+    user-select: none;
+    line-height: 28px;
+    border-bottom: 1px solid #3c3c3c;
+}
+
+:root {
+    --fc-brand: var(--brand, #4c4c4c);
+    --fc-brand-hover: var(--brand-l-1, #606060);
+}
+
+.fc_head {
+    background: var(--fc-brand);
+}
+
+.fc_head:hover {
+    background: var(--fc-brand-hover);
+}
+
+.fc_head:active {
+    cursor: grabbing;
+}
+
+@keyframes fc_slide_up {
+    from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes fc_tab_appear {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fc_chat_box,
+.fc_friends_window {
+    animation: fc_slide_up 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fc_tab_minimized {
+    animation: fc_tab_appear 0.14s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fc_chat_box,
+.fc_friends_window,
+.fc_tab_minimized {
+    transition: box-shadow 0.15s ease;
+}
+
+.fc_chat_box.fc_focused,
+.fc_friends_window.fc_focused,
+.fc_tab_minimized.fc_focused {
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45) !important;
+}
+
+.fc_head .fc_head_title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #fff;
+    text-decoration: none;
+    font-size: 11px;
+    flex: 1;
+}
+
+.fc_head .fc_head_close {
+    width: 14px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0.7;
+    flex-shrink: 0;
+    margin-left: 6px;
+    font-size: 14px;
+    line-height: 14px;
+    color: #fff;
+}
+
+.fc_head .fc_head_close::before {
+    content: "×";
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.fc_head .fc_head_close:hover {
+    opacity: 1;
+}
+
+/* Online Friends List Window */
+.fc_friends_window {
+    width: 230px;
+    height: 400px;
+    background: #fff;
+    border: 1px solid var(--fc-brand);
+    border-radius: 4px 4px 0 0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+}
+
+.fc_friends_window.minimized {
+    height: 28px;
+    border-bottom: none;
+}
+
+.fc_friends_window .fc_search_wrap {
+    padding: 6px 8px;
+    background: #f7f7f7;
+    border-bottom: 1px solid #e7e8ec;
+    position: relative;
+}
+
+.fc_friends_window .fc_search_input {
+    width: 100%;
+    padding: 4px 8px 4px 22px;
+    font-size: 11px;
+    border: 1px solid #c5d0db;
+    border-radius: 2px;
+    outline: none;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23828a99' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E") no-repeat 6px center;
+}
+
+.fc_friends_window .fc_search_input:focus {
+    border-color: var(--fc-brand);
+}
+
+.fc_friends_list {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 2px 0;
+}
+
+.fc_friend_row {
+    display: flex;
+    align-items: center;
+    padding: 5px 8px;
+    cursor: pointer;
+    border-bottom: 1px solid #f2f2f2;
+    transition: background 0.1s;
+    gap: 8px;
+}
+
+.fc_friend_row:hover {
+    background: #f0f2f5;
+}
+
+.fc_friend_row .fc_avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 2px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.fc_friend_row .fc_info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.fc_friend_row .fc_name {
+    color: #2b587a;
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.fc_friend_row .fc_status {
+    font-size: 10px;
+    color: #939393;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 1px;
+}
+
+.fc_friend_row .fc_status.online {
+    color: #4a76a8;
+}
+
+.fc_friend_row .fc_action_btn {
+    padding: 2px 5px;
+    background: #e1e7ed;
+    color: #45688e;
+    font-size: 10px;
+    font-weight: bold;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.fc_friend_row:hover .fc_action_btn {
+    background: var(--fc-brand);
+    color: #fff;
+}
+
+.fc_friends_hint {
+    padding: 15px 12px;
+    text-align: center;
+    color: #828a99;
+    font-size: 11px;
+    line-height: 14px;
+}
+
+.fc_toggle_offline_btn {
+    height: 28px;
+    line-height: 28px;
+    padding: 0 10px;
+    text-align: center;
+    color: #2b587a;
+    font-size: 11px;
+    background: #f7f7f7;
+    border-top: 1px solid #e7e8ec;
+    cursor: pointer;
+    user-select: none;
+    flex-shrink: 0;
+    transition: background 0.1s;
+}
+
+.fc_toggle_offline_btn:hover {
+    background: #eef2f7;
+    text-decoration: underline;
+}
+
+.fc_divider_row {
+    padding: 3px 8px;
+    background: #f2f4f7;
+    color: #828a99;
+    font-size: 10px;
+    font-weight: bold;
+    border-top: 1px solid #e7e8ec;
+    border-bottom: 1px solid #e7e8ec;
+    user-select: none;
+}
+
+/* Chat Box Window */
+.fc_chat_box {
+    width: 260px;
+    height: 350px;
+    background: #fff;
+    border: 1px solid var(--fc-brand);
+    border-radius: 4px 4px 0 0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.fc_loading_state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 10px;
+}
+
+.fc_empty_history {
+    padding: 40px 15px;
+    text-align: center;
+    color: #828a99;
+    font-size: 11px;
+    line-height: 15px;
+}
+
+.fc_load_more {
+    padding: 6px;
+    text-align: center;
+    background: #f7f7f7;
+    border-bottom: 1px solid #e7e8ec;
+    color: #2b587a;
+    font-size: 11px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.fc_load_more:hover {
+    background: #eef2f7;
+    text-decoration: underline;
+}
+
+.fc_messages_list {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.fc_msg_row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.fc_msg_row .fc_msg_avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 2px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.fc_msg_row .fc_msg_body {
+    flex: 1;
+    min-width: 0;
+}
+
+.fc_msg_row .fc_msg_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2px;
+}
+
+.fc_msg_row .fc_msg_author {
+    color: #2b587a;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 11px;
+}
+
+.fc_msg_row .fc_msg_time {
+    color: #939393;
+    font-size: 10px;
+    flex-shrink: 0;
+}
+
+.fc_msg_row .fc_msg_text {
+    font-size: 11px;
+    line-height: 14px;
+    word-break: break-word;
+    color: #000;
+}
+
+/* Chat Input Bar */
+.fc_input_bar {
+    padding: 6px 8px;
+    background: #f7f7f7;
+    border-top: 1px solid #dce1e6;
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+}
+
+.fc_input_bar .fc_my_avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 2px;
+    object-fit: cover;
+    flex-shrink: 0;
+    margin-bottom: 2px;
+}
+
+.fc_input_bar .fc_textarea {
+    flex: 1;
+    min-height: 24px;
+    max-height: 80px;
+    padding: 4px 6px;
+    font-size: 11px;
+    font-family: inherit;
+    border: 1px solid #c5d0db;
+    border-radius: 2px;
+    resize: none;
+    outline: none;
+    line-height: 14px;
+}
+
+.fc_input_bar .fc_textarea:focus {
+    border-color: var(--fc-brand);
+}
+
+/* Minimized Tab */
+.fc_tab_minimized {
+    height: 28px;
+    width: 170px;
+    background: var(--fc-brand);
+    color: #fff;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    border-radius: 4px 4px 0 0;
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid var(--fc-brand);
+    border-bottom: none;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.fc_tab_minimized:hover {
+    background: var(--fc-brand-hover);
+}
+
+.fc_tab_minimized .fc_min_title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 11px;
+    color: #fff;
+    flex: 1;
+}
+
+.fc_tab_minimized .fc_unread_badge {
+    background: #e5460a;
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 4px;
+    border-radius: 2px;
+    margin-left: 5px;
+}
+
+.fc_tab_minimized .fc_head_close {
+    width: 14px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0.7;
+    flex-shrink: 0;
+    margin-left: 6px;
+    color: #fff;
+}
+
+.fc_tab_minimized .fc_head_close::before {
+    content: "×";
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.fc_tab_minimized .fc_head_close:hover {
+    opacity: 1;
+}
+
+/* Pinned online friends tab (shown when online window is closed) */
+.fc_online_tab_pinned {
+    position: fixed;
+    bottom: 0;
+    right: 20px;
+    height: 28px;
+    min-width: 130px;
+    max-width: 200px;
+    background: var(--fc-brand);
+    color: #fff;
+    font-weight: bold;
+    font-size: 11px;
+    font-family: tahoma, verdana, arial, sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 10px;
+    border-radius: 4px 4px 0 0;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.25);
+    z-index: 10000;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-bottom: none;
+    transition: background 0.12s ease, box-shadow 0.15s ease;
+    animation: fc_tab_appear 0.14s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fc_online_tab_pinned:hover {
+    background: var(--fc-brand-hover);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.35);
+}
+
+.fc_online_tab_pinned.fc_focused {
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.45);
+}
+
+.fc_online_tab_label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #fff;
+    text-decoration: none;
+    font-size: 11px;
+    flex: 1;
+    font-weight: bold;
+}
