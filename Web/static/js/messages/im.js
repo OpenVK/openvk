@@ -821,9 +821,11 @@ class YellowHeader {
 class ProfilesCache {
     constructor() {
         this.cached_profiles = [];
+        this._pending_fetches = new Set();
     }
 
     _addProfileCache(profile, remove_current = true) {
+        if (!profile) return;
         const similar = this._findCachedProfileById(profile.id);
         if (similar) {
             if (remove_current == false) {
@@ -836,23 +838,50 @@ class ProfilesCache {
         }
     }
 
-    _moveToProfileCache(profiles, groups, remove_current = true) {
-        profiles.forEach((profile) => {
+    _moveToProfileCache(profiles = [], groups = [], remove_current = true) {
+        (profiles || []).forEach((profile) => {
             this._addProfileCache(new ChatGeneralForm(profile), remove_current);
         });
-        groups.forEach((group) => {
+        (groups || []).forEach((group) => {
             this._addProfileCache(new ChatGeneralForm(group), remove_current);
         });
     }
 
     _findCachedProfileById(id) {
+        if (id == null) return null;
         const similar = this.cached_profiles.filter((item) => item.id == id);
         if (similar.length == 0) return null;
         return similar[0];
     }
 
+    _findProfile(id) {
+        return this._findCachedProfileByIdEvenIfNotCached(id);
+    }
+
     _findCachedProfileByIdEvenIfNotCached(id) {
-        return this._findCachedProfileById(id);
+        if (id == null) return null;
+        const found = this._findCachedProfileById(id);
+        if (found) return found;
+
+        if (id && !this._pending_fetches.has(id)) {
+            this._pending_fetches.add(id);
+            const isGroup = Number(id) < 0;
+            const apiMethod = isGroup ? 'groups.getById' : 'users.get';
+            const params = isGroup ? { group_ids: Math.abs(id), fields: 'photo_50,photo_100,online' } : { user_ids: id, fields: 'photo_50,photo_100,online,sex' };
+
+            window.OVKAPI.call(apiMethod, params).then(res => {
+                if (Array.isArray(res) && res.length > 0) {
+                    this._addProfileCache(new ChatGeneralForm(res[0]));
+                    if (window.im?.messenger) {
+                        window.im.messenger.update();
+                    }
+                }
+            }).catch(e => {
+                console.error("Failed to fetch profile for ID " + id, e);
+            });
+        }
+
+        return null;
     }
 }
 
@@ -981,6 +1010,14 @@ export class FastChats {
         this.isInserted = true;
 
         window.im_class.insertIn(document.querySelector('#fastchats_related #fastchats_chat #wrap'), null, true);
+        const wrapEl = document.querySelector('#fastchats_related #fastchats_chat #wrap');
+        if (wrapEl) {
+            wrapEl.addEventListener("scroll", () => {
+                if (window.im && window.im.messenger && window.im.messenger.view) {
+                    window.im.messenger.view.onMessagesScroll();
+                }
+            });
+        }
     }
     async updateSelf() {
         window.im.rewriteTabs(document.querySelector('#fastchats_related #fastchats_chat #wrap'));

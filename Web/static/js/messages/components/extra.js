@@ -34,8 +34,13 @@ export const FriendsPageTemplate = ({ friends, count, referrer, onFriendClick, o
             `}
             ${isAdd && html`
             <div class="friends-list-top">
-                <div class="friends-list-b">
-                    <input onClick=${(e) => { onSubmit(e) }} class="button" type="button" value="${tr('chat_add_members')}" />
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                    <div class="inf">
+                        <p style="margin: 0; color: var(--text-2ary);">${tr('add_chat_members_tip_1')}</p>
+                    </div>
+                    <div class="friends-list-b">
+                        <input onClick=${(e) => { onSubmit(e) }} class="button" type="button" value="${tr('chat_add_members')}" />
+                    </div>
                 </div>
             </div>
             `}
@@ -56,7 +61,7 @@ export const FriendsPageTemplate = ({ friends, count, referrer, onFriendClick, o
                         </div>
                     </div>
                     ${isChatCreation || isAdd ? html`
-                        <div><input type="checkbox" /></div>
+                        <div><input type="checkbox" checked=${isSelected(f)} style="pointer-events: none;" /></div>
                     ` : ""}
                 </div>
                 `)}

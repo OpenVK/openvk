@@ -1443,6 +1443,7 @@
 "search_messages_tab" = "Поиск";
 "search_sinister_noun" = "Поиск...";
 "no_messages" = "Никто Вам не писал, пока что.";
+"no_messages_in_chat" = "Здесь пока нет сообщений.";
 "messages_blocked" = "Вы не можете отправить сообщение этому пользователю, поскольку он ограничил круг лиц, которые могут присылать ему сообщения.";
 "enter_message" = "Введите сообщение";
 "messages_error_1" = "Сообщение не доставлено";
@@ -1459,6 +1460,11 @@
 "messenger_tab_chat_preview_topic" = "Присоединиться к обсуждению";
 "messenger_switch_current" = "Переключиться";
 "message_is_deleted" = "Сообщение удалено";
+"restore" = "Восстановить";
+"message_viewers" = "Кто прочитал";
+"message_viewers_title" = "Просмотрели сообщение";
+"message_viewers_empty" = "Это сообщение ещё никто не прочитал";
+"message_viewers_count" = "Прочитали: $1";
 
 "messages_new_interface_title" = "Долгожданное обновление диалогов";
 "messages_new_interface_text" = "Мы полностью переписали диалоги с нуля, сделав общение по-настоящему быстрым и живым. Сообщения теперь доставляются мгновенно в реальном времени, появились удобные вкладки диалогов, групповые беседы, ответы и пересылка. Старые медленные диалоги уходят в прошлое — приятного общения!";
@@ -1485,6 +1491,8 @@
 "message_deletion_other" = "Удаление $1 сообщений";
 "message_deletion" = "Удаление $1 сообщений";
 "message_deletion_confirm" = "Удалить эти сообщения? Это действие нельзя будет отменить.";
+"delete_for_me" = "Удалить для меня";
+"delete_for_all" = "Удалить для всех";
 
 "conversations_count_title_one" = "$1 переписка";
 "conversations_count_title_few" = "$1 переписки";
@@ -1520,6 +1528,7 @@
 "msg_sent_gift_neutral" = "Отправили подарок";
 
 "saved_messages" = "Избранное";
+"you" = "Вы";
 "im_friends_list" = "Список друзей";
 
 "im_online_currently" = "Online";
@@ -1544,12 +1553,17 @@
 "create_chat_f" = "Создать беседу";
 "chat_add_members" = "Добавить";
 "chat_add_members_ext" = "Добавить участников";
+"add_chat_members_tip_1" = "Выберите друзей, которых вы хотите добавить в беседу.";
 "create_chat_tip_1" = "Выберите друзей, которых вы хотели бы видеть в своей беседе.";
 "create_chat_tip_2" = "Когда всё будет готово, нажмите:";
 "chat_actions" = "Чат";
 "change_chat_title" = "Обновить название";
 "change_chat_avatar" = "Обновить аватар";
 "leave_chat" = "Покинуть чат";
+"leave_chat_confirm" = "Вы действительно хотите покинуть эту беседу?";
+"chat_owner" = "создатель";
+"chat_admin" = "администратор";
+"remove_from_chat" = "Исключить из беседы";
 "return_to_chat" = "Вернуться в чат";
 "convo_search_messages" = "Поиск по сообщениям";
 "convo_invite_links" = "Пригласительные ссылки";
@@ -1635,6 +1649,57 @@
 "event_chat_user_added_voices_female" = "$1 передала вам $2 голосов.";
 "event_chat_user_added_voices_neutral" = "$1 передали вам $2 голосов.";
 "event_coins_transfer_impersonal" = "Вам внесли голоса";
+
+"event_chat_pin_message_male" = "закрепил сообщение";
+"event_chat_pin_message_female" = "закрепила сообщение";
+"event_chat_pin_message_neutral" = "закрепили сообщение";
+"event_chat_pin_message_impersonal" = "Закреплено сообщение";
+
+"event_chat_unpin_message_male" = "открепил сообщение";
+"event_chat_unpin_message_female" = "открепила сообщение";
+"event_chat_unpin_message_neutral" = "открепили сообщение";
+"event_chat_unpin_message_impersonal" = "Откреплено сообщение";
+
+"event_chat_title_update_male" = "изменил название беседы на «$1»";
+"event_chat_title_update_female" = "изменила название беседы на «$1»";
+"event_chat_title_update_neutral" = "изменили название беседы на «$1»";
+"event_chat_title_update_impersonal" = "Название беседы обновлено";
+
+"event_chat_photo_update_male" = "обновил фотографию беседы";
+"event_chat_photo_update_female" = "обновила фотографию беседы";
+"event_chat_photo_update_neutral" = "обновили фотографию беседы";
+"event_chat_photo_update_impersonal" = "Фотография беседы обновлена";
+
+"event_chat_photo_remove_male" = "удалил фотографию беседы";
+"event_chat_photo_remove_female" = "удалила фотографию беседы";
+"event_chat_photo_remove_neutral" = "удалили фотографию беседы";
+"event_chat_photo_remove_impersonal" = "Фотография беседы удалена";
+
+"event_chat_invite_user_male" = "пригласил $1";
+"event_chat_invite_user_female" = "пригласила $1";
+"event_chat_invite_user_neutral" = "пригласили $1";
+"event_chat_invite_user_verb_male" = "пригласил";
+"event_chat_invite_user_verb_female" = "пригласила";
+"event_chat_invite_user_verb_neutral" = "пригласили";
+"event_chat_invite_user_self_male" = "вернулся в беседу";
+"event_chat_invite_user_self_female" = "вернулась в беседу";
+"event_chat_invite_user_self_neutral" = "вернулись в беседу";
+"event_chat_invite_user_by_link_male" = "присоединился к беседе по ссылке";
+"event_chat_invite_user_by_link_female" = "присоединилась к беседе по ссылке";
+"event_chat_invite_user_by_link_neutral" = "присоединились к беседе по ссылке";
+"event_chat_invite_user_impersonal" = "Приглашён участник";
+
+"event_chat_kick_user_male" = "исключил $1 из беседы";
+"event_chat_kick_user_female" = "исключила $1 из беседы";
+"event_chat_kick_user_neutral" = "исключили $1 из беседы";
+"event_chat_kick_user_verb_male" = "исключил";
+"event_chat_kick_user_verb_female" = "исключила";
+"event_chat_kick_user_verb_neutral" = "исключили";
+"event_chat_kick_user_self_male" = "покинул беседу";
+"event_chat_kick_user_self_female" = "покинула беседу";
+"event_chat_kick_user_self_neutral" = "покинули беседу";
+"event_chat_kick_user_impersonal" = "Участник исключён";
+"out_of_chat" = "из беседы";
 
 /* Stickers */
 
@@ -2171,8 +2236,9 @@
 "cancel" = "Отмена";
 "edit_action" = "Изменить";
 "edit_action_lr" = "Отредактировать";
-"edit_action_past" = "Отредактировано";
+"edit_action_past" = "(ред.)";
 "pinned_action_past" = "Закреплено";
+"send_action_progress" = "(отправка...)";
 "transfer" = "Передать";
 "close" = "Закрыть";
 "success" = "Успех";

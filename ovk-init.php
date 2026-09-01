@@ -356,17 +356,22 @@ function parseAttachments($attachments, array $allow_types = ['photo', 'video', 
                 }
 
                 $attachment_ids  = str_replace($attachment_type, '', $attachment_string);
+                $parts = explode('_', $attachment_ids);
                 if ($repositories[$attachment_type]['onlyId']) {
-                    [$attachment_owner, $attachment_id] = array_map('intval', explode('_', $attachment_ids));
+                    $attachment_id = (int) ($parts[0] ?? 0);
 
                     $repository_class = $repositories[$attachment_type]['repo'];
                     if (!$repository_class) {
                         continue;
                     }
                     $attachment_model = (new $repository_class())->{$repositories[$attachment_type]['method']}($attachment_id);
-                    $output_attachments[] = $attachment_model;
+                    if ($attachment_model) {
+                        $output_attachments[] = $attachment_model;
+                    }
                 } elseif ($repositories[$attachment_type]['withKey']) {
-                    [$attachment_owner, $attachment_id, $access_key] = explode('_', $attachment_ids);
+                    $attachment_owner = (int) ($parts[0] ?? 0);
+                    $attachment_id = (int) ($parts[1] ?? 0);
+                    $access_key = $parts[2] ?? null;
 
                     $repository_class = $repositories[$attachment_type]['repo'];
                     if (!$repository_class) {
@@ -374,16 +379,21 @@ function parseAttachments($attachments, array $allow_types = ['photo', 'video', 
                     }
                     $attachment_model = (new $repository_class())->{$repositories[$attachment_type]['method']}((int) $attachment_owner, (int) $attachment_id, $access_key);
 
-                    $output_attachments[] = $attachment_model;
+                    if ($attachment_model) {
+                        $output_attachments[] = $attachment_model;
+                    }
                 } else {
-                    [$attachment_owner, $attachment_id] = array_map('intval', explode('_', $attachment_ids));
+                    $attachment_owner = (int) ($parts[0] ?? 0);
+                    $attachment_id = (int) ($parts[1] ?? 0);
 
                     $repository_class = $repositories[$attachment_type]['repo'];
                     if (!$repository_class) {
                         continue;
                     }
                     $attachment_model = (new $repository_class())->{$repositories[$attachment_type]['method']}($attachment_owner, $attachment_id);
-                    $output_attachments[] = $attachment_model;
+                    if ($attachment_model) {
+                        $output_attachments[] = $attachment_model;
+                    }
                 }
             } catch (\Throwable $e) {
                 continue;

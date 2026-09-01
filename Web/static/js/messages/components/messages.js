@@ -62,19 +62,36 @@ class ChatMembers {
         this.total_count = 0;
         this.peer_id = link.id;
         this.offset = 0;
-        this.perPage = 10;
+        this.perPage = 50;
     }
 
     async load(offset = 0) {
-        const v = await window.OVKAPI.call("messages.getConversationMembers", {
-            "peer_id": this.peer_id,
-            "extended": 1,
-        });
-        this.total_count = v.count;
-        v.items.forEach(item => {
-            this.items.push(item);
-        });
-        this.offset += this.perPage;
+        try {
+            const v = await window.OVKAPI.call("messages.getConversationMembers", {
+                "peer_id": this.peer_id,
+                "extended": 1,
+                "fields": "photo_50,photo_100,online,last_seen,sex,screen_name"
+            });
+            if (v.profiles || v.groups) {
+                if (window.im.cached_profiles && typeof window.im.cached_profiles._moveToProfileCache === 'function') {
+                    window.im.cached_profiles._moveToProfileCache(v.profiles || [], v.groups || []);
+                }
+            }
+            this.total_count = v.count || (v.items ? v.items.length : 0);
+            this.items = [];
+            (v.items || []).forEach(item => {
+                const memberId = item.member_id || item.id;
+                let profile = (v.profiles || []).find(p => p.id == memberId) || (v.groups || []).find(g => -g.id == memberId) || null;
+                this.items.push({
+                    ...item,
+                    member_id: memberId,
+                    profile: profile
+                });
+            });
+            this.offset = (v.items || []).length;
+        } catch (e) {
+            console.error("IM | Failed to load conversation members", e);
+        }
     }
 }
 
@@ -136,7 +153,14 @@ export class ChatGeneralForm {
         if (this.supposed_type != "chat") {
             return false;
         }
-        return this.data.admin_id === window.openvk.current_id;
+        const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
+        if (this.data.admin_id === currentUserId) return true;
+        if (this.data.chat_settings) {
+            if (this.data.chat_settings.admin_id === currentUserId) return true;
+            if (this.data.chat_settings.is_admin) return true;
+            if (Array.isArray(this.data.chat_settings.admin_ids) && this.data.chat_settings.admin_ids.includes(currentUserId)) return true;
+        }
+        return false;
     }
 
     can(thing, relatively_current_group = null) { // unified function
@@ -401,14 +425,18 @@ export class ChatGeneralForm {
             const fwd = [];
             let peer_id = null;
             forward_msgs.forEach(item => {
-                fwd.push(item.id);
-                peer_id = item.peer_id;
+                const fId = item.id;
+                if (fId) fwd.push(fId);
+                peer_id = item.peer_id || item.data?.peer_id;
             });
 
+            datas['forward_messages'] = fwd.join(',');
             datas['forward'] = JSON.stringify({
                 "peer_id": peer_id,
-                "conversation_message_ids": fwd
+                "conversation_message_ids": fwd,
+                "message_ids": fwd
             });
+            msg.data.fwd_messages = forward_msgs.slice(0);
         }
 
         if (wait_until_send != null) {
@@ -437,6 +465,19 @@ export class ChatGeneralForm {
             }
             msg.data.is_sending = false;
             console.info('IM | Sent message to ' + this.id);
+            if (this._chunks) {
+                this._chunks._invalidateCache();
+            }
+            const conv = window.im?.conversations ? window.im.conversations._findConv(this.id) : null;
+            if (conv && typeof conv.getScrollPosition === 'function' && conv.getScrollPosition()) {
+                conv.getScrollPosition()._invalidateCache();
+            }
+            if (window.im?.messenger) {
+                window.im.messenger.update();
+            }
+            if (window.im?.conversations) {
+                window.im.conversations.update();
+            }
         } catch (e) {
             let d = String(e);
             if (d.startsWith("Error: Broker failure")) {
@@ -447,7 +488,12 @@ export class ChatGeneralForm {
             msg.data.resend_params = datas;
             msg.data.is_sending = false;
             console.error('IM | Did not sent message to ' + this.id, ': ', e);
-            window.im.messenger.update();
+            if (this._chunks) {
+                this._chunks._invalidateCache();
+            }
+            if (window.im?.messenger) {
+                window.im.messenger.update();
+            }
         }
     }
 
@@ -458,7 +504,40 @@ export class ChatGeneralForm {
             return;
         }
 
-        alert("ты хочешь поменять title на: " + title)
+        const chatId = this.id > ChatGeneralForm.CHAT_RUBICON ? (this.id - ChatGeneralForm.CHAT_RUBICON) : this.id;
+        try {
+            await window.OVKAPI.call("messages.editChat", {
+                "chat_id": chatId,
+                "title": title
+            });
+
+            this.data.title = title;
+            this.data.name = title;
+            if (this.data.chat_settings) {
+                this.data.chat_settings.title = title;
+            }
+
+            const conv = window.im.conversations._findConv(this.id);
+            if (conv) {
+                if (conv._conversation && conv._conversation.chat_settings) {
+                    conv._conversation.chat_settings.title = title;
+                }
+                if (conv.peer) {
+                    conv.peer.data.title = title;
+                    conv.peer.data.name = title;
+                }
+                conv.name = title;
+            }
+
+            window.im.conversations.update();
+            window.im.messenger.update();
+            if (window.im.getTab("contact") && window.im.getTab("contact").render_class) {
+                window.im.getTab("contact").render_class.update();
+            }
+        } catch (e) {
+            fastError(String(e.message || e.error_msg || e));
+            console.error("Failed to edit chat title", e);
+        }
     }
 
     async updateAvatar(blob) {
@@ -466,31 +545,55 @@ export class ChatGeneralForm {
             return;
         }
 
-        const group_id = null;
+        const chatId = this.id > ChatGeneralForm.CHAT_RUBICON ? (this.id - ChatGeneralForm.CHAT_RUBICON) : this.id;
+        try {
+            const v = await window.OVKAPI.call("photos.getChatUploadServer", {
+                "chat_id": chatId
+            });
+            const upload_url = v.upload_url;
+            const fd = new FormData();
+            fd.append("photo", blob, "chat_avatar.jpg");
 
-        const params = {
-            "chat_id": this.id - ChatGeneralForm.CHAT_RUBICON,
-            "group_id": group_id
+            const f = await fetch(upload_url, {
+                method: "POST",
+                body: fd
+            });
+            const j = await f.json();
+            const photo = j.photo;
+            const hash = j.hash;
+            const v1 = await window.OVKAPI.call("messages.setChatPhoto", {
+                "file": photo,
+                "hash": hash,
+                "chat_id": chatId,
+            });
+
+            if (v1 && (v1.chat || v1.response)) {
+                const c = v1.chat || v1.response;
+                if (c.photo_50) this.data.photo_50 = c.photo_50;
+                if (c.photo_100) this.data.photo_100 = c.photo_100;
+                if (c.photo_200) this.data.photo_200 = c.photo_200;
+                if (c.photo_max) this.data.photo_max = c.photo_max;
+            }
+
+            const conv = window.im.conversations._findConv(this.id);
+            if (conv && conv.peer) {
+                if (this.data.photo_50) conv.peer.data.photo_50 = this.data.photo_50;
+                if (this.data.photo_100) conv.peer.data.photo_100 = this.data.photo_100;
+                if (this.data.photo_200) conv.peer.data.photo_200 = this.data.photo_200;
+                if (this.data.photo_max) conv.peer.data.photo_max = this.data.photo_max;
+            }
+
+            window.im.conversations.update();
+            window.im.messenger.update();
+            if (window.im.getTab("contact") && window.im.getTab("contact").render_class) {
+                window.im.getTab("contact").render_class.update();
+            }
+
+            return v1;
+        } catch (e) {
+            fastError(String(e.message || e.error_msg || e));
+            console.error("Failed to update chat avatar", e);
         }
-        const v = await window.OVKAPI.call("photos.getChatUploadServer", params);
-        const upload_url = v.upload_url;
-        const fd = new FormData();
-        fd.append("photo", blob);
-
-        const f = await fetch(upload_url, {
-            method: "POST",
-            body: fd
-        })
-        const j = await f.json();
-        const photo = j.photo;
-        const hash = j.hash;
-        const v1 = await window.OVKAPI.call("messages.setChatPhoto", {
-            "file": photo,
-            "hash": hash,
-            "chat_id": this.id - ChatGeneralForm.CHAT_RUBICON,
-        });
-
-        return v1;
     }
 
     // blockness
@@ -537,7 +640,7 @@ export class ChatGeneralForm {
     }
 
     async checkMembers(offset = 0) {
-        if (this.members != null || this.supposed_type != "chat") {
+        if (this.supposed_type != "chat") {
             return true;
         }
 
@@ -587,11 +690,23 @@ export class ChatGeneralForm {
                     const msgId = (latestMsg.data && (latestMsg.data.local_id || latestMsg.data.id)) || latestMsg.id || 0;
                     this.in_read = msgId;
                 }
+                const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
+                this._chunks.getMessages().forEach(m => {
+                    if (m.data && m.data.from_id != currentUserId) {
+                        m.data.read_state = 1;
+                    }
+                });
+                this._chunks._invalidateCache();
             }
             if (window.im?.conversations) {
                 const conv = window.im.conversations._findConv(this.id);
                 if (conv) {
                     conv.unread_count = 0;
+                    if (conv._conversation) conv._conversation.unread_count = 0;
+                    if (conv.peer) conv.peer.in_read = this.in_read;
+                    if (typeof conv.getScrollPosition === 'function' && conv.getScrollPosition()) {
+                        conv.getScrollPosition()._invalidateCache();
+                    }
                 }
                 window.im.conversations.update();
             }
@@ -635,22 +750,46 @@ export class ChatMessage {
 
             this.data.reply_message = new ChatMessage(item.reply_message);
         }
+
+        if (item.fwd_messages && Array.isArray(item.fwd_messages)) {
+            this.data.fwd_messages = item.fwd_messages.map(f => f instanceof ChatMessage ? f : new ChatMessage(f));
+        } else if (item.forward_messages && Array.isArray(item.forward_messages)) {
+            this.data.fwd_messages = item.forward_messages.map(f => f instanceof ChatMessage ? f : new ChatMessage(f));
+        }
+    }
+
+    getFwdMessages() {
+        return this.data.fwd_messages || [];
     }
 
     async hydrateFromEvent(msg) {
+        const prevFwd = this.data.fwd_messages;
         this.data = msg.data;
+        if ((!this.data.fwd_messages || this.data.fwd_messages.length === 0) && prevFwd && prevFwd.length > 0) {
+            this.data.fwd_messages = prevFwd;
+        }
 
         if (this.has_not_loaded_attachments === true) {
             this.has_not_loaded_attachments = false;
         }
     }
 
-    _guessSender() { this.data.sender = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(this.data.from_id); }
+    _guessSender() {
+        this.data.sender = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(this.data.from_id);
+        if (this.data.fwd_messages && Array.isArray(this.data.fwd_messages)) {
+            this.data.fwd_messages.forEach(f => {
+                if (f && typeof f._guessSender === 'function') f._guessSender();
+            });
+        }
+    }
     doHideHead(another_msg) {
         let _time_eq = another_msg.data.date - this.data.date;
         return this.data.from_id == another_msg.data.from_id && _time_eq < ChatMessage.AUTHOR_NAME_HIDE_TIMEOUT && this.isAction() == false;
     }
-    isMine() { return this.data.from_id === window.im.state.getId(); }
+    isMine() {
+        const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
+        return Number(this.data.from_id) === Number(currentUserId);
+    }
     getSentTime() { return new Date(this.data.date * 1000); }
     hasSender() { return this.data.from_id != null; }
     get sender() {
@@ -667,7 +806,67 @@ export class ChatMessage {
             return window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(this.data.peer_id);
         }
     }
+    getActionText() {
+        if (!this.data.action) return "";
+        const act = this.data.action;
+        const type = act.type;
+        const sender = this.sender;
+        const gender = sender ? sender.getGender() : "neutral";
+
+        switch (type) {
+            case "chat_create": {
+                const title = (act.text || "").trim();
+                return title ? tr("event_chat_creation_" + gender, title) : (tr("event_chat_creation_no_title_" + gender) || tr("event_chat_create_impersonal"));
+            }
+            case "chat_title_update": {
+                const title = (act.text || "").trim();
+                return tr("event_chat_title_update_" + gender, title) || tr("event_chat_title_update_impersonal");
+            }
+            case "chat_photo_update":
+                return tr("event_chat_photo_update_" + gender) || tr("event_chat_photo_update_impersonal");
+            case "chat_photo_remove":
+                return tr("event_chat_photo_remove_" + gender) || tr("event_chat_photo_remove_impersonal");
+            case "chat_pin_message":
+                return tr("event_chat_pin_message_" + gender) || tr("event_chat_pin_message_impersonal");
+            case "chat_unpin_message":
+                return tr("event_chat_unpin_message_" + gender) || tr("event_chat_unpin_message_impersonal");
+            case "chat_invite_user": {
+                const mid = act.member_id ?? this.data.action_mid;
+                if (sender && mid == sender.id) {
+                    return tr("event_chat_invite_user_self_" + gender) || tr("event_chat_invite_user_impersonal");
+                }
+                const targetProf = window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached ? window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(mid) : window.im?.cached_profiles?._findCachedProfileById(mid);
+                const targetName = targetProf ? targetProf.getName() : `id${mid}`;
+                return tr("event_chat_invite_user_" + gender, targetName) || tr("event_chat_invite_user_impersonal");
+            }
+            case "chat_invite_user_by_link":
+                return tr("event_chat_invite_user_by_link_" + gender) || tr("event_chat_invite_user_impersonal");
+            case "chat_kick_user": {
+                const mid = act.member_id ?? this.data.action_mid;
+                if (sender && mid == sender.id) {
+                    return tr("event_chat_kick_user_self_" + gender) || tr("event_chat_kick_user_impersonal");
+                }
+                const targetProf = window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached ? window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(mid) : window.im?.cached_profiles?._findCachedProfileById(mid);
+                const targetName = targetProf ? targetProf.getName() : `id${mid}`;
+                return tr("event_chat_kick_user_" + gender, targetName) || tr("event_chat_kick_user_impersonal");
+            }
+            case "rating_up":
+                return tr("event_chat_user_up_your_rating_" + gender, sender?.getName(), act.member_id) || tr("event_chat_rating_up_impersonal");
+            case "coins_transfer":
+                return tr("event_chat_user_added_voices_" + gender, sender?.getName(), act.member_id) || tr("event_coins_transfer_impersonal");
+            default:
+                return tr("event_" + type + "_impersonal") || this.data.text || "";
+        }
+    }
     getText(raw = false, conversation = false, with_attachments = false) {
+        if (this.data.action != null) {
+            const actionText = this.getActionText();
+            if (conversation) {
+                return raw ? actionText : escapeHtml(actionText);
+            }
+            return raw ? actionText : encode_emojis(nl2br(escapeHtml(actionText)));
+        }
+
         let txt = "";
         if (raw) {
             txt = this.data.text;
@@ -696,10 +895,6 @@ export class ChatMessage {
                     }
 
                     txt += " ";
-                }
-
-                if (this.data.action != null) {
-                    txt = " " + tr("event_" + this.data.action.type + "_impersonal");
                 }
 
                 txt += ovk_proc_strtr(escapeHtml(this.data.text), 100);
@@ -738,11 +933,14 @@ export class ChatMessage {
     isReply() { return this.data.reply_message != null; }
     isError() { return this.data.error_text != null; }
     isEdited() { return this.data.edited == 1 || this.data.edited == true; }
-    //isPinned() { return this.data.is_pinned == 1; } решили что только одно сообщение может быть закреплено :(
+    isSending() { return Boolean(this.data?.is_sending || (this.id == null && !this.isError())); }
     isPinned() {
+        if (this.id == null) return false;
         if (this.data.is_pinned == undefined) {
             try {
-                let f = window.im.conversations._findConv(this.data.peer_id).getPinnedMessageId() == this.id;
+                const conv = window.im.conversations._findConv(this.data.peer_id);
+                const pinnedId = conv ? conv.getPinnedMessageId() : null;
+                let f = pinnedId != null && pinnedId == this.id;
                 this.data.is_pinned = Number(f);
             } catch (e) {
                 this.data.is_pinned = 0;
@@ -790,7 +988,13 @@ export class ChatMessage {
     }
 
     can(action, group) {
+        if (this.isDeleted()) {
+            return false;
+        }
+
         switch (action) {
+            case "reply":
+                return true;
             case "pin":
                 const peer = this.peer;
                 if (peer.supposed_type == "chat") {
@@ -799,7 +1003,12 @@ export class ChatMessage {
 
                 return peer.can("write");
             case "delete":
-                return this.data.from_id == window.im.state.getId();
+                return true;
+            case "delete_for_all":
+                const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
+                const isMine = this.data.from_id == currentUserId;
+                const isChatAdmin = this.peer && typeof this.peer.isAdmin === 'function' ? this.peer.isAdmin() : false;
+                return isMine || isChatAdmin;
             case "forward":
                 return true;
             case "edit":
@@ -819,16 +1028,35 @@ export class ChatMessage {
                 return this.data.from_id === window.im.state.getId();
             case "report":
                 return !this.isMine();
+            case "viewers":
+                if (this.isAction()) return false;
+                if (!this.isMine()) return false;
+                if (this.peer && this.peer.supposed_type === "chat") return true;
+                const pId = this.data?.peer_id || this.peer?.id || window.im?.messenger?.currentChatId;
+                if (pId > 2000000000 || (pId && String(pId).startsWith("2000"))) return true;
+                const curPeer = window.im?.messenger?.getCurrentChat ? window.im.messenger.getCurrentChat()?.peer : null;
+                return Boolean(curPeer && curPeer.supposed_type === "chat");
         }
     }
 
     setDeleted(by_me = false) {
+        if (this.data._orig_text === undefined && this.data.text !== tr('message_is_deleted')) {
+            this.data._orig_text = this.data.text;
+            this.data._orig_attachments = this.data.attachments;
+        }
         this.data.deleted = 1;
         if (by_me) {
             this.data.deleted_by_me = 1;
         }
         this.data.text = tr('message_is_deleted');
         this.data.attachments = [];
+    }
+
+    restore(origText = null, origAttachments = null) {
+        this.data.deleted = 0;
+        this.data.deleted_by_me = 0;
+        this.data.text = origText !== null ? origText : (this.data._orig_text !== undefined ? this.data._orig_text : "");
+        this.data.attachments = origAttachments !== null ? origAttachments : (this.data._orig_attachments !== undefined ? this.data._orig_attachments : []);
     }
 
     setText(text) {
@@ -916,6 +1144,36 @@ export class ChatMessage {
             }
         }
 
+        let fwd_messages = null;
+        if (attachments && (attachments['fwd'] || attachments['fwd_messages'])) {
+            const fwdRaw = attachments['fwd'] || attachments['fwd_messages'];
+            try {
+                const res = await window.OVKAPI.call("messages.getById", {
+                    message_ids: fwdRaw
+                });
+                if (res && res.items && res.items.length > 0) {
+                    fwd_messages = res.items.map(item => new ChatMessage(item));
+                }
+            } catch (e) {
+                console.error("Failed to load fwd messages for event:", e);
+            }
+        }
+
+        let action = null;
+        if (attachments && (attachments['source_act'] || attachments['act'])) {
+            const actType = attachments['source_act'] || attachments['act'];
+            const actMid = (attachments['source_mid'] || attachments['mid']) ? Number(attachments['source_mid'] || attachments['mid']) : null;
+            const actText = attachments['source_text'] || attachments['source_old_text'] || attachments['text'] || "";
+            action = {
+                type: actType,
+                member_id: actMid,
+                text: actText
+            };
+            if (actMid && window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached) {
+                window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(actMid);
+            }
+        }
+
         const cmidFromLp = attachments && (attachments['conversation_message_id'] || attachments['cmid']) ? Number(attachments['conversation_message_id'] || attachments['cmid']) : 0;
         const msg = new ChatMessage({
             'id': id,
@@ -929,7 +1187,12 @@ export class ChatMessage {
             'text': text,
             'attachments': new_attachments,
             'random_id': randomId,
-            'reply_message': reply_message
+            'reply_message': reply_message,
+            'fwd_messages': fwd_messages,
+            'action': action,
+            'action_type': action ? action.type : null,
+            'action_mid': action ? action.member_id : null,
+            'action_text': action ? action.text : null,
         });
         msg._guessSender();
 
@@ -949,6 +1212,37 @@ export class ChatMessage {
         }
 
         this.data.attachments = new_attachments;
+
+        if (data && (data['fwd'] || data['fwd_messages']) && (!this.data.fwd_messages || this.data.fwd_messages.length === 0)) {
+            const fwdRaw = data['fwd'] || data['fwd_messages'];
+            try {
+                const res = await window.OVKAPI.call("messages.getById", {
+                    message_ids: fwdRaw
+                });
+                if (res && res.items && res.items.length > 0) {
+                    this.data.fwd_messages = res.items.map(item => new ChatMessage(item));
+                }
+            } catch (e) {
+                console.error("Failed to load fwd messages for setAttachmentsFromLP:", e);
+            }
+        }
+
+        if (data && (data['source_act'] || data['act'])) {
+            const actType = data['source_act'] || data['act'];
+            const actMid = (data['source_mid'] || data['mid']) ? Number(data['source_mid'] || data['mid']) : null;
+            const actText = data['source_text'] || data['source_old_text'] || data['text'] || "";
+            this.data.action = {
+                type: actType,
+                member_id: actMid,
+                text: actText
+            };
+            this.data.action_type = actType;
+            this.data.action_mid = actMid;
+            this.data.action_text = actText;
+            if (actMid && window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached) {
+                window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(actMid);
+            }
+        }
     }
 
     // if message has the exclamation mark

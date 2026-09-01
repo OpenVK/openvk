@@ -1,5 +1,5 @@
 :root {
-    --messenger-width: 628px;
+    --messenger-width: 627px;
     --messenger-fastchat-width: 260px;
 }
 
@@ -235,7 +235,7 @@ body:has(#im_container.at_page) .page_content {
 }
 
 #conversations-top-buttons #conversations-search-bar {
-    width: 40%;
+    flex: 1;
 }
 
 .crp-list {
@@ -425,6 +425,7 @@ body:has(#im_container.at_page) .page_content {
     font-size: 10px;
 }
 
+.messenger-app--messages---message.msg-sending .msg-modificators .modificator-sending,
 .messenger-app--messages---message.msg-edited .msg-modificators .modificator-edited,
 .messenger-app--messages---message.msg-pinned .msg-modificators .modificator-pinned {
     display: inline;
@@ -508,6 +509,12 @@ body:has(#im_container.at_page) .page_content {
 .chat-window.saved-msgs .ava2,
 .chat-window.saved-msgs table.chat_table_avatar.ava2 {
     opacity: 0;
+}
+
+.model_content_textarea .ava2,
+.model_content_textarea .chat_table_avatar.ava2 {
+    cursor: pointer;
+    transition: opacity 150ms ease, transform 150ms ease;
 }
 
 .peer-window {
@@ -636,6 +643,34 @@ body:has(#im_container.at_page) .page_content {
     display: none;
 }
 
+.messenger-app--messages---message.msg-deleted {
+    opacity: 0.85;
+}
+
+.messenger-app--messages---message.msg-deleted .actions-2 {
+    display: none !important;
+}
+
+.messenger-app--messages---message.msg-deleted .text,
+.messenger-app--messages---message .msg-deleted-content,
+.messenger-app--messages---message .msg-deleted-label {
+    color: var(--text-2ary, #828a99) !important;
+    font-style: italic;
+}
+
+.messenger-app--messages---message .msg-restore-btn {
+    font-style: normal;
+    margin-left: 8px;
+    color: var(--accent, #2b587a);
+    cursor: pointer;
+    font-weight: normal;
+    text-decoration: none;
+}
+
+.messenger-app--messages---message .msg-restore-btn:hover {
+    text-decoration: underline;
+}
+
 .messenger-app--messages---message.same-author .checkmark,
 .messenger-app--messages---message.same-author .error-checkmark {
     margin: 0px 0px 0px 25px;
@@ -651,12 +686,11 @@ body:has(#im_container.at_page) .page_content {
     width: 20px;
     height: 20px;
     margin: 10px 0px 0px 25px;
-    background: url(../img/msg.png?v=2);
-    background-position: -62px -32px;
+    background: url(../img/audios_controls.png);
+    background-position: -163px -48px;
 }
 
-.messenger-app--messages---message--wrap .click-territory,
-.messenger-app--messages---message--wrap .actions-2 {
+.messenger-app--messages---message--wrap .click-territory {
     position: absolute;
     width: 55px;
     height: 100%;
@@ -665,10 +699,19 @@ body:has(#im_container.at_page) .page_content {
     transition: 200ms opacity;
 }
 
+.messenger-app--messages---message--wrap .actions-2 {
+    position: absolute;
+    min-width: 60px;
+    height: 100%;
+    opacity: 0;
+    transition: 200ms opacity;
+}
+
 .messenger-app--messages---message .actions-2 {
     display: inline-flex;
-    justify-content: end;
-    gap: 2px;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 4px;
     left: unset !important;
     right: 20px;
     margin-right: 30px;
@@ -681,17 +724,34 @@ body:has(#im_container.at_page) .page_content {
 .messenger-app--messages---message .actions-2>div {
     width: 15px;
     height: 15px;
-    background: url(../img/msg.png?v=2);
+    background: url(../img/audios_controls.png);
+    opacity: 0.7;
+}
+
+.messenger-app--messages---message .actions-2>div:hover {
+    opacity: 1;
+}
+
+.messenger-app--messages---message .actions-2 .viewers-icon {
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23828a99'%3E%3Cpath d='M8 3c-4 0-7 5-7 5s3 5 7 5 7-5 7-5-3-5-7-5zm0 8.5C6.07 11.5 4.5 9.93 4.5 8S6.07 4.5 8 4.5 11.5 6.07 11.5 8 9.93 11.5 8 11.5zm0-5.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4z'/%3E%3C/svg%3E") no-repeat center !important;
+    background-size: 14px 14px !important;
+    opacity: 0.7;
+    cursor: pointer;
+}
+
+.messenger-app--messages---message .actions-2 .viewers-icon:hover {
+    opacity: 1;
 }
 
 .messenger-app--messages---message .actions-2 .edit-icon {
-    background-position: -41px 0px;
-    background-size: 80px 37px;
+    background-position: -135px -50px;
 }
 
 .messenger-app--messages---message .actions-2 .pin-icon {
-    background-position: -20px 0px;
-    background-size: 80px 37px;
+    background: url(../img/pin.png);
+    background-position: 0px 0px;
+    background-size: 15px 15px;
+    filter: saturate(0);
 }
 
 .messenger-app--messages---message.msg-pinned .actions-2 .pin-icon {
@@ -704,8 +764,10 @@ body:has(#im_container.at_page) .page_content {
 }
 
 .messenger-app--messages---message .actions-2 .report-icon {
-    background-position: -1px 0px;
-    background-size: 80px 37px;
+    background: url(../img/docs_controls.png);
+    background-position: -31px 0px;
+    background-size: 80px 50px;
+    width: 18px;
 }
 
 .messenger-app--messages .messenger-app--messages-day-time {
@@ -764,6 +826,67 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     white-space: nowrap;
     height: 14px;
     line-height: 13px;
+}
+
+.messenger-app--messages---message .fwd-messages-container {
+    margin-top: 6px;
+    padding-left: 8px;
+    border-left: 2px solid var(--accent, hsl(212 0% 52% / 1));
+}
+
+.messenger-app--messages---message .fwd-messages-count {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent, hsl(212 0% 52% / 1));
+    margin-bottom: 4px;
+}
+
+.messenger-app--messages---message .fwd-message-block {
+    margin-top: 4px;
+    margin-bottom: 6px;
+}
+
+.messenger-app--messages---message .fwd-message-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 2px;
+}
+
+.messenger-app--messages---message .fwd-avatar {
+    width: 18px;
+    height: 18px;
+    border-radius: 3px;
+    object-fit: cover;
+    display: block;
+}
+
+.messenger-app--messages---message .fwd-author-info {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.messenger-app--messages---message .fwd-author-name {
+    font-size: 11px;
+    color: var(--text-primary, #222);
+    text-decoration: none;
+}
+
+.messenger-app--messages---message .fwd-author-name:hover {
+    text-decoration: underline;
+}
+
+.messenger-app--messages---message .fwd-date {
+    font-size: 10px;
+    color: var(--text-2ary, #828a99);
+}
+
+.messenger-app--messages---message .fwd-text {
+    font-size: 12px;
+    color: var(--text-primary, #222);
+    line-height: 1.35;
+    word-break: break-word;
 }
 
 .messenger-app--input>.ava,
@@ -944,6 +1067,25 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 
 #chat-page.overscrolled #messenger-app--down-button {
     display: block;
+}
+
+.messenger-app--no-messages {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 250px;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.messenger-app--no-messages p {
+    margin: 0;
+    color: var(--text-2ary);
+    font-size: 13px;
+    background: var(--bg-slightly);
+    border: 1px solid var(--bg-slightly-border);
+    padding: 12px 24px;
+    border-radius: 4px;
 }
 
 #im_container.at_page .messenger-app,
@@ -1221,31 +1363,21 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 
 .peer-window {
     background: var(--common-2);
-    display: inline-flex !important;
+    display: flex !important;
+    flex-direction: column;
     box-sizing: border-box;
-    width: var(--messenger-width);
-}
-
-.peer-window .back-side {
-    width: 70px;
-    margin-right: 20px;
-}
-
-.peer-window .back-side a {
-    display: block;
-    height: 100%;
-    padding: 20px 12px;
-}
-
-.peer-window .back-side a:hover {
-    background: var(--bg-slightly-2);
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 16px 20px;
+    flex: 1;
 }
 
 .peer-window .peer-side {
     display: flex;
     flex-direction: column;
-    width: 70%;
-    gap: 20px;
+    width: 100%;
+    gap: 16px;
 }
 
 .peer-window .peer-side .peer-info {
@@ -1253,7 +1385,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     gap: 20px;
     background: var(--bg-page);
     border: 1px solid var(--bg-slightly-border);
-    margin: 0px -16px 0px -16px;
+    border-radius: 4px;
     padding: 16px;
 }
 
@@ -1261,6 +1393,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     position: relative;
     width: 100px;
     height: 100px;
+    flex-shrink: 0;
 }
 
 .peer-window .peer-side .peer-info .peer-avatar a {
@@ -1272,6 +1405,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     display: block;
     width: 100%;
     height: 100%;
+    border-radius: 4px;
     object-fit: cover;
     image-rendering: -webkit-optimize-contrast;
 }
@@ -1283,30 +1417,33 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 .peer-window .peer-side .peer-info .peer-name {
     display: flex;
     flex-direction: column;
-    gap: 5px;
-    width: 70%;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
     justify-content: space-between;
 }
 
 .peer-window .peer-side .peer-info .peer-name-1 {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 4px;
 }
 
 .peer-window .peer-name .peer-actions-1 {
     display: flex;
     flex-wrap: wrap;
-    gap: 3px 10px;
-}
-
-.peer-window .peer-actions-1 a {
-    display: inline;
+    gap: 8px;
 }
 
 .peer-window .peer-side .peer-info .peer-name .peer-link {
     font-weight: bold;
-    font-size: 13px;
+    font-size: 14px;
+    color: var(--link-color, #2a5885);
+    text-decoration: none;
+}
+
+.peer-window .peer-side .peer-info .peer-name .peer-link:hover {
+    text-decoration: underline;
 }
 
 .peer-window .peer-side .peer-actions {
@@ -1318,7 +1455,8 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     bottom: 0;
     width: 100%;
     height: 20px;
-
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 0 0 4px 4px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1329,7 +1467,6 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     height: 12px;
     background: white;
     opacity: 0.7;
-
     transition: opacity 200ms ease-in-out;
 }
 
@@ -1338,7 +1475,8 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 }
 
 .peer-window .peer-status span {
-    color: var(--bg-slightly-border);
+    color: var(--text-2ary, #828282);
+    font-size: 12px;
 }
 
 .peer-window .chat-actions-common {
@@ -1348,48 +1486,193 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 
 .peer-window .chat-actions-common>b {
     display: block;
-    padding: 3px 0px 3px 0px;
+    padding: 6px 0 4px 0;
+    font-size: 13px;
+}
+
+.peer-window .chat-actions-common .chat-tab-column {
+    display: flex;
+    flex-direction: column;
 }
 
 .peer-window .chat-actions-common a {
-    padding: 10px 30px 10px 40px;
-}
-
-.peer-window .chat-actions-common a b {
-    font-weight: bold;
+    padding: 8px 12px;
+    color: var(--link-color, #2a5885);
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 13px;
 }
 
 .peer-window .chat-actions-common a:hover {
     background: var(--bg-slightly-2);
 }
 
-.peer-window .chat-actions-common a::before {
-    position: absolute;
-    content: "";
-    display: inline-block;
-}
-
-.peer-window .chat-btns {
-    margin: 0px -16px 0px -16px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-}
-
-.peer-window .chat-btns .chat-tab-column a,
-.peer-window .chat-btns .chat-tab-column b {
+.peer-window .peer-actions-container {
     display: flex;
-    user-select: none;
+    flex-direction: column;
+    gap: 16px;
 }
 
-.peer-window .chat-actions-media a {
+.peer-window .peer-members-section {
+    display: flex;
+    flex-direction: column;
+    margin-top: 8px;
+    padding-top: 14px;
+    border-top: 1px solid var(--bg-slightly-border);
+}
+
+.peer-window .peer-members-section .chat-tab-2-header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    padding: 0 4px 10px 4px;
+    border-bottom: 1px solid var(--bg-slightly-border);
+    margin-bottom: 4px;
 }
 
-.peer-window .chat-actions-media a span {
-    background: var(--bg-slightly-border);
+.peer-window .peer-members-section .chat-tab-2-header b {
+    font-size: 13px;
     font-weight: bold;
-    padding: 1px 2px;
+}
+
+.peer-window .peer-members-section .chat-tab-2-header .chat-header-actions {
+    display: flex;
+    gap: 14px;
+    font-size: 12px;
+}
+
+.peer-window .peer-members-section .chat-tab-2-header .chat-header-actions a {
+    cursor: pointer;
+    color: var(--link-color, #2a5885);
+    text-decoration: none;
+}
+
+.peer-window .peer-members-section .chat-tab-2-header .chat-header-actions a:hover {
+    text-decoration: underline;
+}
+
+.peer-window .chat-members-list {
+    display: flex;
+    flex-direction: column;
+    max-height: 480px;
+    overflow-y: auto;
+    border-top: 1px solid var(--bg-slightly-border);
+    border-bottom: 1px solid var(--bg-slightly-border);
+    background: var(--bg-page);
+}
+
+.peer-window .chat-members-list .chat-member-item {
+    padding: 6px 16px;
+    cursor: pointer;
+    font-weight: bold;
+    border-bottom: 1px solid var(--bg-slightly-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-page);
+    transition: background 120ms ease;
+}
+
+.peer-window .chat-members-list .chat-member-item:last-of-type {
+    border-bottom: unset;
+}
+
+.peer-window .chat-members-list .chat-member-item:hover {
+    background: var(--common-2);
+}
+
+.peer-window .chat-members-list .chat-member-item .inf {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    min-width: 0;
+    flex: 1;
+}
+
+.peer-window .chat-members-list .chat-member-item img.chat-member-ava {
+    width: 34px;
+    height: 34px;
+    object-fit: cover;
+    border-radius: 2px;
+    flex-shrink: 0;
+    display: block;
+    background: #eef2f5;
+}
+
+.peer-window .chat-members-list .chat-member-item .chat-member-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+.peer-window .chat-members-list .chat-member-item .chat-member-name {
+    font-weight: bold;
+    font-size: 13px;
+    color: var(--link-color, #2a5885);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.peer-window .chat-members-list .chat-member-item .chat-member-name:hover {
+    text-decoration: underline;
+}
+
+.peer-window .chat-members-list .chat-member-item .chat-member-badge {
+    font-size: 10px;
+    color: #517296;
+    background: rgba(81, 114, 150, 0.12);
+    padding: 1px 5px;
+    border-radius: 2px;
+    font-weight: 500;
+}
+
+.peer-window .chat-members-list .chat-member-item .chat-member-online {
+    color: #afafaf;
+    margin-left: 2px;
+    font-weight: normal;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.peer-window .chat-members-list .chat-member-item .chat-member-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    margin-left: 12px;
+}
+
+.peer-window .chat-members-list .chat-member-item .chat-member-action-btn {
+    font-size: 11px;
+    color: var(--link-color, #2a5885);
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: normal;
+    white-space: nowrap;
+}
+
+.peer-window .chat-members-list .chat-member-item .chat-member-action-btn:hover {
+    text-decoration: underline;
+}
+
+.peer-window .chat-members-list .chat-member-item .chat-member-action-kick {
+    color: #c94040;
+    font-size: 18px;
+    line-height: 1;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 2px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 120ms ease, background 120ms ease;
+}
+
+.peer-window .chat-members-list .chat-member-item .chat-member-action-kick:hover {
+    opacity: 1;
+    background: rgba(201, 64, 64, 0.12);
 }
 
 /* Friends */

@@ -38,21 +38,24 @@ export class MessageChunk {
     /** The [first, last] message-id interval covered by this chunk (map key / search). */
     get id_range() {
         if (!this.messages || this.messages.length === 0) return null;
-        const first = this.first_message?.id;
+        let first = this.first_message?.id;
         let last = this.latest_message?.id;
-        if (first == null || last == null) {
-            if (last == null && this.latest_message?.data?.is_sending) {
-                for (let i = this.messages.length - 1; i > -1; i--) {
-                    if (this.messages[i] && this.messages[i].id) {
-                        last = this.messages[i].id + 1;
-                        break;
-                    }
-                }
-            } else {
-                return null;
-            }
+        if (first == null && this.first_message?.data?.is_sending) {
+            first = 0;
         }
-        return (first != null && last != null) ? { first, last } : null;
+        if (last == null && this.latest_message?.data?.is_sending) {
+            for (let i = this.messages.length - 1; i > -1; i--) {
+                if (this.messages[i] && this.messages[i].id != null) {
+                    last = this.messages[i].id + 1;
+                    break;
+                }
+            }
+            if (last == null) last = 1;
+        }
+        if (first == null || last == null) {
+            return null;
+        }
+        return { first, last };
     }
 
     getMessages() {
@@ -72,9 +75,12 @@ export class MessageChunk {
     }
 
     /** Load messages from the IM backend into this chunk. */
-    async fetch(data) {
+    async fetch(data = {}) {
+        const defaultCount = (getChatGeneralForm()).MESSAGES_PER_PAGE || 20;
+        const count = data.count || this.count || defaultCount;
+        this.count = count;
         const params = {
-            'count': (getChatGeneralForm()).MESSAGES_PER_PAGE,
+            'count': count,
             'extended': 1,
             'fields': (getChatGeneralForm()).BASE_FIELDS,
         };
@@ -234,12 +240,13 @@ export class Chunks {
     }
 
     async fetchRelatively(messageId, options = {}) {
-        const perPage = 20;
+        const perPage = (getChatGeneralForm()).MESSAGES_PER_PAGE || 20;
         const chunk = new MessageChunk([], true, perPage);
         chunk._direction = options.older ? 'older' : (options.newer ? 'newer' : 'center');
 
         const params = {
             'peer_id': this._peer.id,
+            'count': perPage,
         };
         if (messageId != null) {
             params['start_message_id'] = messageId;
@@ -317,10 +324,8 @@ export class ScrollPosition {
         this.relyMessageId = null;
         this.reachedOldestPosition = false;
         this.reachedNewestPosition = false;
-        this.olderIndexes = [];
-        this.newerIndexes = [];
-        this.olderOffset = 0;
-        this.newerOffset = 0;
+        this.windowStartIndex = null;
+        this.windowEndIndex = null;
         this._cachedMessages = undefined;
         this._cachedDays = undefined;
     }
@@ -361,61 +366,56 @@ export class ScrollPosition {
         return fnl;
     }
 
+    getChronologicalChunks() {
+        const chunks = this.peer._chunks.chunks || [];
+        return chunks
+            .filter((chunk) => chunk && (chunk.id_range || (chunk.messages && chunk.messages.length > 0)))
+            .sort((a, b) => (a.first_message?.id ?? a.messages?.[0]?.id ?? -Infinity) - (b.first_message?.id ?? b.messages?.[0]?.id ?? -Infinity));
+    }
+
     returnChronologicalDivision() {
-        console.log("IM | returnChronologicalDivision");
-        const chunks = this.peer._chunks.chunks;
-        const map = this.peer._chunks._map;
+        const allChunks = this.getChronologicalChunks();
+        if (allChunks.length === 0) return [];
 
-        let anchorIndex = 0;
-        if (this.direction != "end" && this.relyMessageId != null) {
-            for (const [range, idx] of map.entries()) {
-                const sep = range.split(":");
-                const first = parseInt(sep[0], 10);
-                const last = parseInt(sep[1], 10);
-                if (this.relyMessageId >= first && this.relyMessageId <= last) {
-                    anchorIndex = idx;
-                    break;
-                }
-            }
-        }
+        const maxChunks = ScrollPosition.MAX_RENDERED_CHUNKS;
 
-        const visible = new Set([]);
-        this.olderIndexes.forEach((i) => visible.add(i));
-        visible.add(anchorIndex);
-        this.newerIndexes.forEach((i) => visible.add(i));
-
-        const ordered = [];
-        visible.forEach((i) => {
-            const chunk = chunks[i];
-            if (chunk && chunk.id_range) {
-                ordered.push(chunk);
-            }
-        });
-
-        ordered.sort(
-            (a, b) => (a.first_message?.id ?? -Infinity) - (b.first_message?.id ?? -Infinity)
-        );
-
-        // Windowing: limit maximum rendered chunks to 10
-        if (ordered.length > ScrollPosition.MAX_RENDERED_CHUNKS) {
-            if (this.direction === "end" || this.newerIndexes.length === 0) {
-                // Scrolling up: keep the oldest chunks, unload the bottom (newest) chunks from DOM
-                const trimmed = ordered.slice(0, ScrollPosition.MAX_RENDERED_CHUNKS);
-                this.reachedNewestPosition = false;
-                return trimmed;
-            } else if (this.olderIndexes.length === 0) {
-                // Scrolling down: keep the newest chunks, unload the top (oldest) chunks from DOM
-                const trimmed = ordered.slice(ordered.length - ScrollPosition.MAX_RENDERED_CHUNKS);
-                this.reachedOldestPosition = false;
-                return trimmed;
+        if (this.windowEndIndex === null || this.windowStartIndex === null) {
+            if (this.direction === "end" || this.relyMessageId == null) {
+                this.windowEndIndex = allChunks.length - 1;
+                this.windowStartIndex = Math.max(0, this.windowEndIndex - maxChunks + 1);
             } else {
-                // Middle navigation: keep sliding window
-                const start = Math.max(0, ordered.length - ScrollPosition.MAX_RENDERED_CHUNKS);
-                return ordered.slice(start, start + ScrollPosition.MAX_RENDERED_CHUNKS);
+                let anchorIdx = allChunks.length - 1;
+                for (let i = 0; i < allChunks.length; i++) {
+                    if (allChunks[i].hasMessageId(this.relyMessageId)) {
+                        anchorIdx = i;
+                        break;
+                    }
+                }
+                const half = Math.floor(maxChunks / 2);
+                this.windowStartIndex = Math.max(0, anchorIdx - half);
+                this.windowEndIndex = Math.min(allChunks.length - 1, this.windowStartIndex + maxChunks - 1);
             }
         }
 
-        return ordered;
+        this.windowStartIndex = Math.max(0, Math.min(this.windowStartIndex, allChunks.length - 1));
+        this.windowEndIndex = Math.max(this.windowStartIndex, Math.min(this.windowEndIndex, allChunks.length - 1));
+
+        if (this.windowEndIndex - this.windowStartIndex + 1 > maxChunks) {
+            if (this.direction === "end") {
+                this.windowStartIndex = this.windowEndIndex - maxChunks + 1;
+            } else {
+                this.windowEndIndex = this.windowStartIndex + maxChunks - 1;
+            }
+        }
+
+        if (this.windowEndIndex < allChunks.length - 1) {
+            this.reachedNewestPosition = false;
+        }
+        if (this.windowStartIndex > 0) {
+            this.reachedOldestPosition = false;
+        }
+
+        return allChunks.slice(this.windowStartIndex, this.windowEndIndex + 1);
     }
 
     getDayDividedMessages() {
@@ -428,9 +428,11 @@ export class ScrollPosition {
 
         for (let i = 0; i < chr.length; i++) {
             chr[i].getMessages().forEach((msg) => {
-                if (!msg || !msg.id) return;
-                if (seenMsgIds.has(msg.id)) return;
-                seenMsgIds.add(msg.id);
+                if (!msg) return;
+                if (msg.id != null) {
+                    if (seenMsgIds.has(msg.id)) return;
+                    seenMsgIds.add(msg.id);
+                }
 
                 if (!msg.getSentTime()) return;
                 if (msg.isDeleted(0)) return;
@@ -460,141 +462,119 @@ export class ScrollPosition {
     }
 
     async loadOlder() {
-        if (this.reachedOldestPosition == true) {
-            console.log("IM | reachedOldestPosition");
+        if (this.reachedOldestPosition) {
             return;
         }
 
-        const chr = this.returnChronologicalDivision();
-        let oldestMsgId = null;
-
-        if (chr.length > 0 && chr[0] && chr[0].first_message) {
-            oldestMsgId = chr[0].first_message.id;
-        } else {
-            const newest = this.peer._chunks.getNewestMessage();
-            oldestMsgId = newest ? newest.id : null;
+        const allChunks = this.getChronologicalChunks();
+        if (this.windowStartIndex === null) {
+            this.returnChronologicalDivision();
         }
 
-        // Check if older chunk is already cached in chunks array
-        let foundInCache = false;
-        if (oldestMsgId != null) {
-            for (let i = 0; i < this.peer._chunks.chunks.length; i++) {
-                const chunk = this.peer._chunks.chunks[i];
-                if (chunk && chunk.latest_message && chunk.latest_message.id < oldestMsgId) {
-                    if (this.olderIndexes.indexOf(i) === -1) {
-                        this.olderIndexes.push(i);
-                        foundInCache = true;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (foundInCache) {
-            if (this.olderIndexes.length + this.newerIndexes.length > ScrollPosition.MAX_RENDERED_CHUNKS + 2) {
-                if (this.newerIndexes.length > 0) {
-                    this.newerIndexes.shift();
-                    this.reachedNewestPosition = false;
-                }
+        if (this.windowStartIndex > 0) {
+            this.windowStartIndex--;
+            if (this.windowEndIndex - this.windowStartIndex + 1 > ScrollPosition.MAX_RENDERED_CHUNKS) {
+                this.windowEndIndex--;
+                this.reachedNewestPosition = false;
             }
             this._invalidateCache();
             return;
         }
 
-        const msgs = await this.peer._chunks.fetchRelatively(oldestMsgId, { older: true });
+        const oldestChunk = allChunks[0];
+        const oldestMsgId = oldestChunk ? oldestChunk.first_message?.id : null;
 
-        console.log(msgs);
+        const msgs = await this.peer._chunks.fetchRelatively(oldestMsgId, { older: true });
         if (!msgs || !msgs.messages.length) {
             this.reachedOldestPosition = true;
             return;
         }
 
-        const idx = this.peer._chunks.appendChunk(msgs);
-        console.log("IM | new older chunk id: ", idx, this.olderIndexes);
-
-        if (this.olderIndexes.indexOf(idx) === -1) {
-            this.olderIndexes.push(idx);
+        const existingIds = new Set();
+        allChunks.forEach(c => c.getMessages().forEach(m => { if (m && m.id) existingIds.add(m.id); }));
+        const hasOlder = msgs.messages.some(m => m && m.id && !existingIds.has(m.id));
+        if (!hasOlder) {
+            this.reachedOldestPosition = true;
+            return;
         }
 
-        // Drop distant newer chunks from visible render when scrolling far up
-        if (this.olderIndexes.length + this.newerIndexes.length > ScrollPosition.MAX_RENDERED_CHUNKS + 2) {
-            if (this.newerIndexes.length > 0) {
-                this.newerIndexes.shift();
-                this.reachedNewestPosition = false;
-            }
+        this.peer._chunks.appendChunk(msgs);
+
+        this.windowStartIndex = 0;
+        this.windowEndIndex = Math.min(this.getChronologicalChunks().length - 1, (this.windowEndIndex ?? 0) + 1);
+        if (this.windowEndIndex - this.windowStartIndex + 1 > ScrollPosition.MAX_RENDERED_CHUNKS) {
+            this.windowEndIndex = this.windowStartIndex + ScrollPosition.MAX_RENDERED_CHUNKS - 1;
+            this.reachedNewestPosition = false;
         }
 
         this._invalidateCache();
-        if (msgs.messages.length < 20) {
+        const expectedCount = msgs.count || 20;
+        if (msgs.messages.length < expectedCount) {
             this.reachedOldestPosition = true;
         }
     }
 
     async loadNewer() {
-        if (this.reachedNewestPosition == true) {
-            console.log("IM | reachedNewestPosition");
+        if (this.reachedNewestPosition) {
             return;
         }
 
-        const chr = this.returnChronologicalDivision();
-        if (!chr.length) return;
-
-        const newestChunk = chr[chr.length - 1];
-        if (!newestChunk || !newestChunk.latest_message) return;
-
-        const newestMsgId = newestChunk.latest_message.id;
-
-        // Check if newer chunk is already cached in memory
-        let foundInCache = false;
-        for (let i = 0; i < this.peer._chunks.chunks.length; i++) {
-            const chunk = this.peer._chunks.chunks[i];
-            if (chunk && chunk.first_message && chunk.first_message.id > newestMsgId) {
-                if (this.newerIndexes.indexOf(i) === -1 && this.olderIndexes.indexOf(i) === -1) {
-                    this.newerIndexes.push(i);
-                    foundInCache = true;
-                    break;
-                }
-            }
+        const allChunks = this.getChronologicalChunks();
+        if (this.windowEndIndex === null) {
+            this.returnChronologicalDivision();
         }
 
-        if (foundInCache) {
-            if (this.olderIndexes.length + this.newerIndexes.length > ScrollPosition.MAX_RENDERED_CHUNKS + 2) {
-                if (this.olderIndexes.length > 0) {
-                    this.olderIndexes.shift();
-                    this.reachedOldestPosition = false;
-                }
+        if (this.windowEndIndex < allChunks.length - 1) {
+            this.windowEndIndex++;
+            if (this.windowEndIndex - this.windowStartIndex + 1 > ScrollPosition.MAX_RENDERED_CHUNKS) {
+                this.windowStartIndex++;
+                this.reachedOldestPosition = false;
+            }
+            if (this.windowEndIndex >= allChunks.length - 1 && this.direction === "end") {
+                this.reachedNewestPosition = true;
             }
             this._invalidateCache();
             return;
         }
 
-        const msgs = await this.peer._chunks.fetchRelatively(newestMsgId, { newer: true });
+        const newestChunk = allChunks[allChunks.length - 1];
+        const newestMsgId = newestChunk ? newestChunk.latest_message?.id : null;
+        if (newestMsgId == null) {
+            this.reachedNewestPosition = true;
+            return;
+        }
 
+        const msgs = await this.peer._chunks.fetchRelatively(newestMsgId, { newer: true });
         if (!msgs || !msgs.messages.length) {
             this.reachedNewestPosition = true;
             return;
         }
 
-        const idx = this.peer._chunks.appendChunk(msgs);
-        if (this.newerIndexes.indexOf(idx) === -1) {
-            this.newerIndexes.push(idx);
+        const existingIds = new Set();
+        allChunks.forEach(c => c.getMessages().forEach(m => { if (m && m.id) existingIds.add(m.id); }));
+        const hasNewer = msgs.messages.some(m => m && m.id && !existingIds.has(m.id));
+        if (!hasNewer) {
+            this.reachedNewestPosition = true;
+            return;
         }
 
-        // Drop distant older chunks from visible render when scrolling far down
-        if (this.olderIndexes.length + this.newerIndexes.length > ScrollPosition.MAX_RENDERED_CHUNKS + 2) {
-            if (this.olderIndexes.length > 0) {
-                this.olderIndexes.shift();
-                this.reachedOldestPosition = false;
-            }
+        this.peer._chunks.appendChunk(msgs);
+
+        const updatedChunks = this.getChronologicalChunks();
+        this.windowEndIndex = updatedChunks.length - 1;
+        if (this.windowEndIndex - this.windowStartIndex + 1 > ScrollPosition.MAX_RENDERED_CHUNKS) {
+            this.windowStartIndex = this.windowEndIndex - ScrollPosition.MAX_RENDERED_CHUNKS + 1;
+            this.reachedOldestPosition = false;
         }
 
         this._invalidateCache();
-        if (msgs.messages.length < 20) {
+        const expectedCount = msgs.count || 20;
+        if (msgs.messages.length < expectedCount) {
             this.reachedNewestPosition = true;
         }
     }
 
-    async result() {
-        await window.im.messenger.update();
+    result() {
+        window.im.messenger.update();
     }
 }

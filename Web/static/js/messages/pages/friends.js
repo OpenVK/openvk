@@ -21,50 +21,46 @@ export class FriendsPage extends IMPage {
 
     static getPageId() { return "friends"; }
     shouldCloseOnExit() { return true; }
-    isSelected(peer) { return this.selected_friends.indexOf(peer) != -1; }
+    isSelected(peer) {
+        const id = peer?.id ?? peer;
+        return this.selected_friends.some(p => (p?.id ?? p) === id);
+    }
     _updTitleStr(name) { this.getNode().find("#_name").html(ovk_proc_strtr(escapeHtml(name), 100)); }
     onFriendClick(e, peer) {
         if (this.options.referrer == "chat_creation" || this.options.referrer == "add_new") {
-            const id = peer.id;
-            const t = e.target;
-            const f = t.closest(".friends-list-item");
-
-            if (peer.can("invite") == false) {
+            if (peer.can && peer.can("invite") === false) {
                 fastError(tr("error_user_forbid_invites"));
-                f.querySelector('input').checked = false;
                 return;
             }
 
-            if (this.selected_friends.indexOf(peer) == -1) {
+            const id = peer?.id ?? peer;
+            const idx = this.selected_friends.findIndex(p => (p?.id ?? p) === id);
+
+            if (idx === -1) {
                 this.selected_friends.push(peer);
-                f.classList.add("friends-selected");
-                f.querySelector('input').checked = true;
             } else {
-                this.selected_friends = this.selected_friends.filter(item => item !== peer);
-                f.classList.remove("friends-selected");
-                f.querySelector('input').checked = false;
+                this.selected_friends.splice(idx, 1);
             }
 
-            if (this._set_name == false) {
-                let n = [];
-                this.selected_friends.forEach(peer => {
-                    n.push(peer.getName(false, false));
-                });
+            if (this.options.referrer == "chat_creation") {
+                if (this._set_name == false) {
+                    let n = [];
+                    this.selected_friends.forEach(p => {
+                        n.push(p.getName ? p.getName(false, false) : p.name);
+                    });
 
-                if (n.length > 0) {
-                    this._updTitleStr(n.slice(0, 4).join(", "));
-                } else {
-                    this._updTitleStr("...");
+                    if (n.length > 0) {
+                        this._updTitleStr(n.slice(0, 4).join(", "));
+                    } else {
+                        this._updTitleStr("...");
+                    }
                 }
+
+                this.getNode().find("#_m_count").html(tr("members_count", this.selected_friends.length + 1));
             }
 
-            this.getNode().find("#_m_count").html(tr("members_count", this.selected_friends.length + 1));
-
+            this.update();
             return;
-        }
-
-        if (this.options.referrer == "add_new") {
-            const convo_id = this.options.convo_id;
         }
 
         window.im.messenger.selectConversationByPeerId(peer.id);
@@ -88,43 +84,54 @@ export class FriendsPage extends IMPage {
         });
     }
 
-    onCreateChat(e) {
+    async onCreateChat(e) {
         toggleUnclickability(e.target, true);
-
-        let title = this._set_name ? this.name : "";
 
         const ids = [];
         this.selected_friends.forEach(peer => {
-            ids.push(peer.id);
-        })
+            ids.push(peer.id || peer);
+        });
 
         if (this.options.referrer == "add_new") {
-            window.OVKAPI.call("messages.addChatUser", {
-                "peer_id": this.options.convo_id,
-                "user_id": ids.join(",")
-            });
-            window.im.messenger.selectConversationByPeerId(this.options.convo_id);
-            toggleUnclickability(e.target, false);
+            if (ids.length === 0) {
+                fastError(tr("error_chat_not_enough_friends") || "Выберите хотя бы одного друга");
+                toggleUnclickability(e.target, false);
+                return;
+            }
+
+            try {
+                await window.OVKAPI.call("messages.addChatUser", {
+                    "peer_id": this.options.convo_id,
+                    "user_id": ids.join(",")
+                });
+                await window.im.messenger.selectConversationByPeerId(this.options.convo_id);
+            } catch (err) {
+                fastError(String(err));
+            } finally {
+                toggleUnclickability(e.target, false);
+            }
             return;
         }
 
-        // пустые беседы нужны!!
+        let title = this._set_name ? this.name : "";
+
         if (ids.length < 0) {
             fastError(tr("error_chat_not_enough_friends"));
             toggleUnclickability(e.target, false);
             return;
         }
 
-        window.OVKAPI.call('messages.createChat', {
-            'title': title,
-            'user_ids': ids,
-        }).then((resp) => {
-            window.im.messenger.selectConversationByPeerId(resp + 2000000000);
-        }).catch(err => {
+        try {
+            const resp = await window.OVKAPI.call('messages.createChat', {
+                'title': title,
+                'user_ids': ids,
+            });
+            await window.im.messenger.selectConversationByPeerId(resp + 2000000000);
+        } catch (err) {
             fastError(String(err));
-        });
-
-        toggleUnclickability(e.target, false);
+        } finally {
+            toggleUnclickability(e.target, false);
+        }
     }
 
     onSearch(e) {
@@ -151,6 +158,10 @@ export class FriendsPage extends IMPage {
     }
 
     async beforeRender(container) {
+        if (!this.has_inited) {
+            this.selected_friends = [];
+            this.has_inited = true;
+        }
         if (this.friends_class.inited == false) {
             await this.friends_class.loadFriends();
             this.friends_class.inited = true;
@@ -159,7 +170,6 @@ export class FriendsPage extends IMPage {
 
     render(container) {
         const ref = this.options.referrer;
-        this.selected_friends = []; // nulling
         this.getNode().addClass("page-other");
 
         render(html`

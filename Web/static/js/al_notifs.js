@@ -37,7 +37,7 @@ async function setupNotificationListener() {
     const ERROR_RETRY_INTERVAL = 60000;
     let isFirstRequest = true;
 
-    while(true) {
+    while (true) {
         try {
             const notif = await API.Notifications.fetch();
 
@@ -53,13 +53,13 @@ async function setupNotificationListener() {
             }
 
             await new Promise(resolve => setTimeout(resolve, CHECK_MORE_INTERVAL));
-        } catch(rejection) {
+        } catch (rejection) {
             if (rejection.message === "Nothing to report" || rejection.code === 1983) {
                 if (isFirstRequest) {
                     console.info("Notifications | Cursor synced. Real-time notifications enabled.");
                     isFirstRequest = false;
                 } else {
-                    console.info("Notifications | No new notifications found, sleeping for " + POLL_INTERVAL/1000 + "s...")
+                    console.info("Notifications | No new notifications found, sleeping for " + POLL_INTERVAL / 1000 + "s...")
                 }
                 await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL));
             } else if (rejection.message === "Disabled" || rejection.code === 1999) {
@@ -99,7 +99,13 @@ async function triggerMessageNotification(conv, msg, timestamp) {
                 notif.body,
                 notif.ava,
                 () => {
-                    window.im_class.insertIn(document.querySelector('.page_content'), peer.id);
+                    if (window.im?.messenger && typeof window.im.messenger.selectConversationByPeerId === 'function' && document.querySelector('#im_container')) {
+                        window.im.messenger.selectConversationByPeerId(peer.id);
+                    } else if (window.router && typeof window.router.route === 'function') {
+                        window.router.route(`/im?sel=${peer.id}`);
+                    } else {
+                        window.location.href = `/im?sel=${peer.id}`;
+                    }
                 },
                 (notif.priority || 1) * 6000
             );
@@ -112,7 +118,7 @@ async function triggerMessageNotification(conv, msg, timestamp) {
     }
 }
 
-(async function() {
+(async function () {
     await setupNotificationListener();
 })();
 

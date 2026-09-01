@@ -31,19 +31,20 @@ export class EventHandler {
     }
 
     async ReplaceFlags(event) {
-        const msgId = event[1]
-        const peerId = event[3]
-        const flags = event[2]
+        const msgId = event[1];
+        const flags = event[2];
+        const peerId = event[3];
 
-        // message is deleted
-        if (flags == 128) {
-            const conv = await this.im.conversations._findConv(peerId);
-            console.log(conv);
-            const found = conv.peer._chunks._findMessageById(msgId);
-            console.log(found);
-
+        const _crs = await this.im.conversations._findConvFromApi(peerId);
+        if (_crs && _crs.peer) {
+            const found = _crs.peer._chunks._findMessageById(msgId);
             if (found != null) {
-                found.setDeleted(false);
+                if (flags & 128) {
+                    found.setDeleted(false);
+                } else if (found.isDeleted()) {
+                    found.restore();
+                }
+                if (_crs.peer._chunks) _crs.peer._chunks._invalidateCache();
                 this.im.messenger.update();
             }
         }
@@ -65,17 +66,24 @@ export class EventHandler {
         const flags = event[2];
         const peerId = event[3];
 
-        if (flags & 1) { // FlagUnread
-            const _crs = await this.im.conversations._findConvFromApi(peerId);
-            if (_crs && _crs.peer) {
-                const found = _crs.peer._chunks._findMessageById(msgId);
-                if (found && found.data) {
-                    found.data.read_state = 0;
-                    if (this.im.messenger) this.im.messenger.update();
+        const _crs = await this.im.conversations._findConvFromApi(peerId);
+        if (_crs && _crs.peer) {
+            const found = _crs.peer._chunks._findMessageById(msgId);
+            if (found) {
+                if (flags & 128) {
+                    found.setDeleted(false);
                 }
+                if (flags & 1 && found.data) {
+                    found.data.read_state = 0;
+                }
+                if (_crs.peer._chunks) _crs.peer._chunks._invalidateCache();
+                if (typeof _crs.getScrollPosition === 'function' && _crs.getScrollPosition()) {
+                    _crs.getScrollPosition()._invalidateCache();
+                }
+                if (this.im.messenger) this.im.messenger.update();
             }
-            this.updateGlobalUnreadCounter();
         }
+        this.updateGlobalUnreadCounter();
     }
 
     async ResetFlags(event) {
@@ -83,17 +91,24 @@ export class EventHandler {
         const flags = event[2];
         const peerId = event[3];
 
-        if (flags & 1) { // FlagUnread
-            const _crs = await this.im.conversations._findConvFromApi(peerId);
-            if (_crs && _crs.peer) {
-                const found = _crs.peer._chunks._findMessageById(msgId);
-                if (found && found.data) {
-                    found.data.read_state = 1;
-                    if (this.im.messenger) this.im.messenger.update();
+        const _crs = await this.im.conversations._findConvFromApi(peerId);
+        if (_crs && _crs.peer) {
+            const found = _crs.peer._chunks._findMessageById(msgId);
+            if (found) {
+                if (flags & 128) {
+                    found.restore();
                 }
+                if (flags & 1 && found.data) {
+                    found.data.read_state = 1;
+                }
+                if (_crs.peer._chunks) _crs.peer._chunks._invalidateCache();
+                if (typeof _crs.getScrollPosition === 'function' && _crs.getScrollPosition()) {
+                    _crs.getScrollPosition()._invalidateCache();
+                }
+                if (this.im.messenger) this.im.messenger.update();
             }
-            this.updateGlobalUnreadCounter();
         }
+        this.updateGlobalUnreadCounter();
     }
 
     async ReadIncomeBeforeEvent(event) {
@@ -140,6 +155,13 @@ export class EventHandler {
                 _crs._conversation.unread_count = newUnread;
             }
             _crs.unread_count = newUnread;
+        }
+
+        if (_crs.peer && _crs.peer._chunks) {
+            _crs.peer._chunks._invalidateCache();
+        }
+        if (typeof _crs.getScrollPosition === 'function' && _crs.getScrollPosition()) {
+            _crs.getScrollPosition()._invalidateCache();
         }
 
         this.updateGlobalUnreadCounter();
@@ -190,6 +212,13 @@ export class EventHandler {
                 if (msg.data) msg.data.read_state = 1;
             }
         });
+
+        if (_crs.peer && _crs.peer._chunks) {
+            _crs.peer._chunks._invalidateCache();
+        }
+        if (typeof _crs.getScrollPosition === 'function' && _crs.getScrollPosition()) {
+            _crs.getScrollPosition()._invalidateCache();
+        }
 
         if (this.im.messenger) {
             this.im.messenger.update();
@@ -250,8 +279,9 @@ export class EventHandler {
                 }
 
                 if (this.im.state.is_active) {
+                    const wasAtEnd = this.im.messenger.view ? this.im.messenger.view.isAtEnd() : false;
                     this.im.messenger.update();
-                    if (this.im.messenger.view && this.im.messenger.view.isAtEnd()) {
+                    if (wasAtEnd && this.im.messenger.view) {
                         this.im.messenger.view._scrollToEnd();
                     }
                 }

@@ -1454,13 +1454,21 @@
 
 "search_messages" = "Search messages...";
 "no_messages" = "No one has written to you yet.";
+"no_messages_in_chat" = "There are no messages here yet.";
+"saved_messages" = "Favorites";
+"you" = "You";
 "messages_blocked" = "Unfortunately, your message cannot be sent due to this user's privacy settings.";
 "enter_message" = "Enter message";
 "message_user_typing" = "$1 is typing a message...";
 
 "messages_error_1" = "Message not delivered";
 "messages_error_1_description" = "There was a general error in sending this message...";
-"message_is_deleted" = "Missing message";
+"message_is_deleted" = "Message deleted";
+"restore" = "Restore";
+"message_viewers" = "Who read this";
+"message_viewers_title" = "Message Viewers";
+"message_viewers_empty" = "No one has read this message yet";
+"message_viewers_count" = "Read by: $1";
 
 "messages_new_interface_title" = "Long-awaited Messages update";
 "messages_new_interface_text" = "We completely rewrote the messaging section from scratch, making conversations truly fast and responsive. Messages are now delivered instantly in real time, with convenient conversation tabs, group chats, replies, and forwarding. The old slow messaging is a thing of the past — enjoy chatting!";
@@ -1994,6 +2002,72 @@
 "no" = "No";
 "cancel" = "Cancel";
 "edit_action" = "Change";
+"edit_action_past" = "(edited)";
+"pinned_action_past" = "Pinned";
+"send_action_progress" = "(sending...)";
+"delete_for_me" = "Delete for me";
+"delete_for_all" = "Delete for everyone";
+"message_deletion_confirm" = "Are you sure you want to delete these messages? This action cannot be undone.";
+"change_chat_title" = "Change chat name";
+"change_chat_avatar" = "Change chat avatar";
+"leave_chat" = "Leave chat";
+"leave_chat_confirm" = "Are you sure you want to leave this conversation?";
+"add_chat_members_tip_1" = "Select the friends you would like to add to the conversation.";
+"chat_owner" = "creator";
+"chat_admin" = "administrator";
+"remove_from_chat" = "Remove from chat";
+
+"event_chat_pin_message_male" = "pinned a message";
+"event_chat_pin_message_female" = "pinned a message";
+"event_chat_pin_message_neutral" = "pinned a message";
+"event_chat_pin_message_impersonal" = "Pinned a message";
+
+"event_chat_unpin_message_male" = "unpinned the message";
+"event_chat_unpin_message_female" = "unpinned the message";
+"event_chat_unpin_message_neutral" = "unpinned the message";
+"event_chat_unpin_message_impersonal" = "Unpinned the message";
+
+"event_chat_title_update_male" = "changed the conversation title to «$1»";
+"event_chat_title_update_female" = "changed the conversation title to «$1»";
+"event_chat_title_update_neutral" = "changed the conversation title to «$1»";
+"event_chat_title_update_impersonal" = "Conversation title updated";
+
+"event_chat_photo_update_male" = "updated the conversation photo";
+"event_chat_photo_update_female" = "updated the conversation photo";
+"event_chat_photo_update_neutral" = "updated the conversation photo";
+"event_chat_photo_update_impersonal" = "Conversation photo updated";
+
+"event_chat_photo_remove_male" = "removed the conversation photo";
+"event_chat_photo_remove_female" = "removed the conversation photo";
+"event_chat_photo_remove_neutral" = "removed the conversation photo";
+"event_chat_photo_remove_impersonal" = "Conversation photo removed";
+
+"event_chat_invite_user_male" = "invited $1";
+"event_chat_invite_user_female" = "invited $1";
+"event_chat_invite_user_neutral" = "invited $1";
+"event_chat_invite_user_verb_male" = "invited";
+"event_chat_invite_user_verb_female" = "invited";
+"event_chat_invite_user_verb_neutral" = "invited";
+"event_chat_invite_user_self_male" = "returned to the conversation";
+"event_chat_invite_user_self_female" = "returned to the conversation";
+"event_chat_invite_user_self_neutral" = "returned to the conversation";
+"event_chat_invite_user_by_link_male" = "joined the conversation via link";
+"event_chat_invite_user_by_link_female" = "joined the conversation via link";
+"event_chat_invite_user_by_link_neutral" = "joined the conversation via link";
+"event_chat_invite_user_impersonal" = "Participant invited";
+
+"event_chat_kick_user_male" = "removed $1 from the conversation";
+"event_chat_kick_user_female" = "removed $1 from the conversation";
+"event_chat_kick_user_neutral" = "removed $1 from the conversation";
+"event_chat_kick_user_verb_male" = "removed";
+"event_chat_kick_user_verb_female" = "removed";
+"event_chat_kick_user_verb_neutral" = "removed";
+"event_chat_kick_user_self_male" = "left the conversation";
+"event_chat_kick_user_self_female" = "left the conversation";
+"event_chat_kick_user_self_neutral" = "left the conversation";
+"event_chat_kick_user_impersonal" = "Participant removed";
+"out_of_chat" = "from conversation";
+
 "transfer" = "Transfer";
 "close" = "Close";
 
