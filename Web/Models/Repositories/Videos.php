@@ -51,10 +51,35 @@ class Videos
                 "virtual_id" => $vId,
             ])->fetch();
         } else {
-            $video = $this->videos->where([
-                "context_id"  => $owner,
-                "context_vid" => $vId,
-            ])->fetch();
+            try {
+                $video = $this->videos->where([
+                    "context_id"  => $owner,
+                    "context_vid" => $vId,
+                ])->fetch();
+            } catch (\Throwable $e) {
+                $video = null;
+            }
+
+            if (is_null($video)) {
+                try {
+                    $video = $this->videos->where([
+                        "owner"      => $owner,
+                        "virtual_id" => $vId,
+                    ])->fetch();
+                } catch (\Throwable $e) {
+                    $video = null;
+                }
+            }
+
+            if (is_null($video)) {
+                try {
+                    $video = $this->videos->where([
+                        "id" => $vId,
+                    ])->fetch();
+                } catch (\Throwable $e) {
+                    $video = null;
+                }
+            }
         }
 
         if (is_null($video)) {

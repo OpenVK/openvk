@@ -191,32 +191,58 @@ final class Messages extends VKAPIRequestHandler
             return;
         }
 
-        $parsed = parseAttachments($attachments, array_merge(['photo', 'video', 'audio', 'doc', 'poll', 'wall'], $allowedAdditional));
-        $result = [];
-
-        foreach ($parsed as $attachment) {
-            if (!$attachment) {
-                $result[] = [
-                    "type"    => "unknown",
-                    "unknown" => []
-                ];
-
-                continue;
+        if (is_string($attachments)) {
+            $decoded = json_decode($attachments, true);
+            if (is_array($decoded)) {
+                $attachments = $decoded;
             }
-
-            if (!$attachment->canBeViewedBy($this->getUser())) {
-                $result[] = [
-                    "type"    => $attachment->shortName,
-                    $attachment->shortName => []
-                ];
-
-                continue;
-            }
-
-            $result[] = $attachment->toApiAttachment($this->getUser());
         }
 
-        $attachments = $result;
+        if (!is_array($attachments)) {
+            $attachments = [$attachments];
+        }
+
+        $strAttachments = [];
+        $objAttachments = [];
+
+        foreach ($attachments as $att) {
+            if (is_array($att) && !empty($att['type'])) {
+                $objAttachments[] = $att;
+            } elseif (is_object($att) && !empty($att->type)) {
+                $objAttachments[] = $att;
+            } elseif (is_string($att) && !empty($att)) {
+                $strAttachments[] = $att;
+            }
+        }
+
+        $result = [];
+        if (!empty($strAttachments)) {
+            $parsed = parseAttachments($strAttachments, array_merge(['photo', 'video', 'audio', 'doc', 'poll', 'wall'], $allowedAdditional));
+
+            foreach ($parsed as $attachment) {
+                if (!$attachment) {
+                    $result[] = [
+                        "type"    => "unknown",
+                        "unknown" => []
+                    ];
+
+                    continue;
+                }
+
+                if (!$attachment->canBeViewedBy($this->getUser())) {
+                    $result[] = [
+                        "type"    => $attachment->shortName,
+                        $attachment->shortName => []
+                    ];
+
+                    continue;
+                }
+
+                $result[] = $attachment->toApiAttachment($this->getUser());
+            }
+        }
+
+        $attachments = array_merge($result, $objAttachments);
     }
 
     /**
@@ -2516,9 +2542,32 @@ final class Messages extends VKAPIRequestHandler
         if (is_array($data) && !empty($data['items'])) {
             foreach ($data['items'] as &$item) {
                 if (!empty($item['attachment'])) {
-                    $attWrap = [$item['attachment']];
-                    $this->replaceAttachments($attWrap, ["gift"]);
-                    $item['attachment'] = $attWrap[0] ?? $item['attachment'];
+                    if (is_string($item['attachment'])) {
+                        $attWrap = [$item['attachment']];
+                        $this->replaceAttachments($attWrap, ["gift", "doc", "audio_message", "link"]);
+                        $type = '';
+                        if (!empty($attWrap[0])) {
+                            if (is_object($attWrap[0])) {
+                                $type = $attWrap[0]->type ?? '';
+                            } elseif (is_array($attWrap[0])) {
+                                $type = $attWrap[0]['type'] ?? '';
+                            }
+                        }
+
+                        if (!empty($attWrap[0]) && $type !== 'unknown' && $type !== '') {
+                            $item['attachment'] = $attWrap[0];
+                        } else {
+                            $rawStr = $item['attachment'];
+                            preg_match('/^[a-zA-Z_]+/', $rawStr, $m);
+                            $rawType = $m[0] ?? 'unknown';
+                            $item['attachment'] = [
+                                "type" => $rawType,
+                                $rawType => [
+                                    "raw" => $rawStr
+                                ]
+                            ];
+                        }
+                    }
                 }
             }
             unset($item);
@@ -2721,28 +2770,39 @@ final class Messages extends VKAPIRequestHandler
         int $peer_id = 0,
         int $reset = 0,
         int $group_id = 0,
-        int $chat_id = 0
+        int $chat_id = 0,
+        int $can_see_history = 0,
+        int $for_topic = 0
     ): object {
         $this->requireUser();
 
-        $resolvedId = $peer_id;
-        if ($resolvedId <= 0 && $chat_id > 0) {
-            $resolvedId = $chat_id > 2000000000 ? $chat_id : (2000000000 + $chat_id);
-        }
+        $resolvedId = $peer_id > 0 ? $peer_id : ($chat_id > 2000000000 ? $chat_id : 2000000000 + $chat_id);
 
         if ($resolvedId <= 2000000000) {
             $this->fail(100, "One of the parameters specified was missing or invalid: peer_id must be a group chat");
         }
 
         $params = [
-            "peer_id" => (string) $resolvedId,
-            "reset"   => (string) $reset,
+            "peer_id" => $resolvedId,
+            "reset"   => $reset,
         ];
 
-        $data = $this->invoke("messages.getInviteLink", $params, $group_id);
-        return (object) $data;
-    }
+        if ($can_see_history > 0 || $for_topic > 0) {
+            $params["can_see_history"] = 1;
+            $params["can_see_messages_before"] = 1;
+        }
 
+        $data = (object) $this->invoke("messages.getInviteLink", $params, $group_id);
+
+        if (!empty($data->link)) {
+            $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
+            $code = preg_match('/(?:join=|\/join\/|join\/|invite=)?([A-Za-z0-9_-]+)$/', (string) $data->link, $m) ? $m[1] : $data->link;
+            $data->link = ovk_scheme(true) . $host . "/im?join=" . $code;
+        }
+
+        return $data;
+    }
+    
     public function getChatPreview(
         string $link = "",
         string $fields = "photo_50,photo_100,photo_200",
@@ -2951,12 +3011,22 @@ final class Messages extends VKAPIRequestHandler
         return $this->invoke("im.getMe", [], $group_id);
     }
 
-    // $date - MM/DD/YYYY
-    public function getNearestMessageForDate(string $date, int $peer_id)
+    // $date - timestamp or string date
+    public function getNearestMessageForDate(string $date, int $peer_id = 0, int $user_id = -1, int $chat_id = -1, int $group_id = 0)
     {
         $this->requireUser();
 
-        return;
+        $resolvedId = $this->resolvePeer($user_id, $peer_id, $chat_id);
+        if ($resolvedId === 0 || is_null($resolvedId)) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: peer_id, user_id or chat_id is missing");
+        }
+
+        $params = [
+            "peer_id" => (string) $resolvedId,
+            "date"    => $date,
+        ];
+
+        return $this->invoke("messages.getNearestMessageForDate", $params, $group_id);
     }
 
     public function report(int $peer_id, int $message_id, ?int $group_id = null, string $type = "spam", string $comment = "")

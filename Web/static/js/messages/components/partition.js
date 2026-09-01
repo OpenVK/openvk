@@ -67,11 +67,16 @@ export class MessageChunk {
         else this.messages.push(msg);
     }
 
-    /** Does this chunk lexically contain the given message id? */
+    /** Does this chunk lexically or directly contain the given message id? */
     hasMessageId(id) {
+        if (id == null) return false;
+        const targetId = Number(id);
+        if (this.messages && this.messages.some(m => m && Number(m.id) === targetId)) {
+            return true;
+        }
         const range = this.id_range;
         if (!range) return false;
-        return id >= range.first && id <= range.last;
+        return targetId >= range.first && targetId <= range.last;
     }
 
     /** Load messages from the IM backend into this chunk. */
@@ -97,7 +102,18 @@ export class MessageChunk {
 
         console.log("IM | messages.getHistory ",params);
 
-        const messages = await window.OVKAPI.call('messages.getHistory', params);
+        let messages = null;
+        try {
+            messages = await window.OVKAPI.call('messages.getHistory', params);
+        } catch (e) {
+            console.error("IM | messages.getHistory error:", e);
+            messages = { count: 0, items: [], profiles: [], groups: [] };
+        }
+
+        if (!messages) messages = { count: 0, items: [], profiles: [], groups: [] };
+        if (!messages.items) messages.items = [];
+        if (!messages.profiles) messages.profiles = [];
+        if (!messages.groups) messages.groups = [];
 
         window.im.cached_profiles._moveToProfileCache(messages.profiles, messages.groups);
 
@@ -228,12 +244,18 @@ export class Chunks {
     // ── lookup / jumps ───────────────────────────────────────────
 
     _findMessageById(id) {
+        if (id == null) return null;
         let found = null;
+        const numId = Number(id);
         this.chunks.forEach((chunk) => {
             if (found) return;
             chunk.getMessages().forEach((m) => {
-                if (found) return;
-                if (m.id == id) found = m;
+                if (found || !m) return;
+                if (m.id == id || Number(m.id) === numId ||
+                    m.data?.conversation_message_id == id || Number(m.data?.conversation_message_id) === numId ||
+                    m.data?.local_id == id || Number(m.data?.local_id) === numId) {
+                    found = m;
+                }
             });
         });
         return found;
@@ -338,6 +360,16 @@ export class ScrollPosition {
         }
     }
 
+    recenter(messageId) {
+        this.relyMessageId = messageId != null ? Number(messageId) : null;
+        this.direction = (this.relyMessageId == null) ? "end" : "any";
+        this.windowStartIndex = null;
+        this.windowEndIndex = null;
+        this.reachedOldestPosition = false;
+        this.reachedNewestPosition = (this.direction === "end");
+        this._invalidateCache();
+    }
+
     static fromEnd(peer) {
         const n = new ScrollPosition(peer);
         n.direction = "end";
@@ -384,12 +416,15 @@ export class ScrollPosition {
                 this.windowEndIndex = allChunks.length - 1;
                 this.windowStartIndex = Math.max(0, this.windowEndIndex - maxChunks + 1);
             } else {
-                let anchorIdx = allChunks.length - 1;
+                let anchorIdx = -1;
                 for (let i = 0; i < allChunks.length; i++) {
                     if (allChunks[i].hasMessageId(this.relyMessageId)) {
                         anchorIdx = i;
                         break;
                     }
+                }
+                if (anchorIdx === -1) {
+                    anchorIdx = allChunks.length - 1;
                 }
                 const half = Math.floor(maxChunks / 2);
                 this.windowStartIndex = Math.max(0, anchorIdx - half);
@@ -487,6 +522,7 @@ export class ScrollPosition {
         const msgs = await this.peer._chunks.fetchRelatively(oldestMsgId, { older: true });
         if (!msgs || !msgs.messages.length) {
             this.reachedOldestPosition = true;
+            this.peer._chunks._messagesInited = true;
             return;
         }
 
@@ -495,6 +531,7 @@ export class ScrollPosition {
         const hasOlder = msgs.messages.some(m => m && m.id && !existingIds.has(m.id));
         if (!hasOlder) {
             this.reachedOldestPosition = true;
+            this.peer._chunks._messagesInited = true;
             return;
         }
 
@@ -541,12 +578,14 @@ export class ScrollPosition {
         const newestMsgId = newestChunk ? newestChunk.latest_message?.id : null;
         if (newestMsgId == null) {
             this.reachedNewestPosition = true;
+            this.peer._chunks._messagesInited = true;
             return;
         }
 
         const msgs = await this.peer._chunks.fetchRelatively(newestMsgId, { newer: true });
         if (!msgs || !msgs.messages.length) {
             this.reachedNewestPosition = true;
+            this.peer._chunks._messagesInited = true;
             return;
         }
 

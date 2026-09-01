@@ -96,12 +96,27 @@ export class Conversations {
         this.isShowingUnread = false;
     }
 
-    getWindow() { return window.im.getTab("conversations").render_class; }
-    update() { return this.getWindow().update(); }
+    getWindow() { return window.im?.getTab("conversations")?.render_class || null; }
+    update() {
+        const win = this.getWindow();
+        if (win && typeof win.update === 'function') {
+            return win.update();
+        }
+        return null;
+    }
 
     get convs() {
-        // сортировка по дате последнего сообщения
-        return (this.all_convs || []).slice(0).sort((a, b) => {
+        return (this.all_convs || []).filter(item => {
+            if (!item || !item.peer) return false;
+            const isGroupChat = item.peer.id >= ChatGeneralForm.CHAT_RUBICON || item.peer.supposed_type === 'chat';
+            if (isGroupChat) return true;
+
+            const hasLastMsg = Boolean(item.last_message && (item.last_message.text || item.last_message.body || item.last_message.data || item.last_message.id));
+            if (item.peer._chunks && item.peer._chunks.isMessagesInited()) {
+                return item.peer._chunks.getMessages().length > 0;
+            }
+            return hasLastMsg;
+        }).slice(0).sort((a, b) => {
             return Number(b.last_updated) - Number(a.last_updated);
         });
     }

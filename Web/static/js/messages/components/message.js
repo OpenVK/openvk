@@ -44,8 +44,29 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
         }
     }
 
+    const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
+    const msgAnchorId = `msg${peerId}-${msg.id}`;
+
+    const isReply = !isDeleted && (msg.isReply() || Boolean(msg.data?.reply_message) || Boolean(msg.data?.reply_to));
+    let replyAuthorName = "...";
+    const rep = msg.data?.reply_message || (msg.data?.reply_to ? { id: msg.data.reply_to } : null);
+    if (rep) {
+        if (rep.sender && typeof rep.sender.getName === "function") {
+            replyAuthorName = rep.sender.getName();
+        } else if (rep.data?.sender && typeof rep.data.sender.getName === "function") {
+            replyAuthorName = rep.data.sender.getName();
+        } else {
+            const fid = rep.from_id || rep.data?.from_id;
+            if (fid) {
+                const cached = window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached(fid);
+                replyAuthorName = cached && typeof cached.getName === "function" ? cached.getName() : "id" + fid;
+            }
+        }
+    }
+
     return html`
     <div class="${cls}"
+        id=${msgAnchorId}
         data-msg-id=${msg.id}
         onMouseDown=${(e) => {
             !isSearchTpl ? window.im?.messenger?.view.onMessageClick(msg, e) : null
@@ -59,6 +80,28 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
             </div>
             ${!isDeleted && html`
             <div class="actions-2">
+                <div onClick=${async (e) => {
+                    e.stopPropagation();
+                    const isImp = Boolean(msg.data?.important || (msg.data?.flags & 8));
+                    try {
+                        await window.OVKAPI.call("messages.markAsImportant", {
+                            message_ids: msg.id,
+                            important: isImp ? 0 : 1
+                        });
+                        if (!msg.data) msg.data = {};
+                        msg.data.important = isImp ? 0 : 1;
+                        if (isImp) {
+                            msg.data.flags = (msg.data.flags || 0) & ~8;
+                        } else {
+                            msg.data.flags = (msg.data.flags || 0) | 8;
+                        }
+                        if (window.im?.messenger?.view) {
+                            window.im.messenger.view.update();
+                        }
+                    } catch (err) {
+                        console.error(err);
+                    }
+                }} class="star-icon ${(msg.data?.important || (msg.data?.flags & 8)) ? 'active' : ''}" title="${(msg.data?.important || (msg.data?.flags & 8)) ? (tr('unmark_important') || 'Снять отметку важного') : (tr('mark_important') || 'Пометить как важное')}"></div>
                 ${msg.can("viewers") && html`
                     <div onClick=${(e) => { window.im.messenger.view.onViewersButtonClick(e, msg) }} class="viewers-icon" title="${tr('message_viewers') || 'Кто прочитал'}"></div>
                 `}
@@ -77,11 +120,11 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                 <img class="ava" src=${msg.sender?.getAvatar ? msg.sender.getAvatar() : "/assets/packages/static/openvk/img/camera_100.png"} alt=${msg.sender?.getName ? msg.sender.getName() : ""} />
             </div>
             <div class="inlines _content">
-                ${!isDeleted && msg.isReply() == true && html`
-                    <div class="reply-msg" onClick="${() => { !isSearchTpl ? window.im.messenger.view.scrollToMessage(msg.data.reply_message.id, true) : null }}">
-                        <span>${tr("reply_to_msg")}</span>
-                        <a class="reply-author">${msg.hasSender() && msg.sender ? msg.sender.getName() : "..."}</a>
-                        <span dangerouslySetInnerHTML=${{ __html: msg.data.reply_message.getText(false, true) }} />
+                ${isReply && html`
+                    <div class="reply-msg" onClick=${(e) => { e.stopPropagation(); if (!isSearchTpl && window.im?.messenger) { window.im.messenger.goToMessage(msg.data?.reply_message || { id: msg.data?.reply_to, peer_id: peerId }); } }}>
+                        <span>${typeof tr === "function" ? tr("reply_to_msg") : "В ответ на"}</span>
+                        <a class="reply-author">${replyAuthorName}</a>
+                        <span dangerouslySetInnerHTML=${{ __html: msg.data?.reply_message?.getText ? msg.data.reply_message.getText(false, true) : (msg.data?.reply_message?.data?.text || msg.data?.reply_message?.text || '...') }} />
                     </div>
                 `}
                 <a class="_sender" onClick=${(e) => { window.im?.messenger?.view?.onAuthorNameClick(msg, e) }}>
@@ -158,6 +201,8 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
 
 export const SystemMessages = {
     "chat_create": (msg, page) => {
+        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
+        const msgAnchorId = `msg${peerId}-${msg.id}`;
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
@@ -169,7 +214,7 @@ export const SystemMessages = {
             text = tr("event_chat_creation_no_title_" + gender) || tr("event_chat_creation_" + gender) || tr("event_chat_create_impersonal");
         }
         return html`
-            <div class="messenger-special-message">
+            <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
                     <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
                         <strong>${senderName} </strong>
@@ -181,12 +226,14 @@ export const SystemMessages = {
         `;
     },
     "chat_pin_message": (msg, page) => {
+        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
+        const msgAnchorId = `msg${peerId}-${msg.id}`;
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
         const text = tr("event_chat_pin_message_" + gender) || tr("event_chat_pin_message_impersonal") || "закрепил сообщение";
         return html`
-            <div class="messenger-special-message">
+            <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
                     <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
                         <strong>${senderName} </strong>
@@ -198,12 +245,14 @@ export const SystemMessages = {
         `;
     },
     "chat_unpin_message": (msg, page) => {
+        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
+        const msgAnchorId = `msg${peerId}-${msg.id}`;
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
         const text = tr("event_chat_unpin_message_" + gender) || tr("event_chat_unpin_message_impersonal") || "открепил сообщение";
         return html`
-            <div class="messenger-special-message">
+            <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
                     <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
                         <strong>${senderName} </strong>
@@ -215,13 +264,15 @@ export const SystemMessages = {
         `;
     },
     "chat_title_update": (msg, page) => {
+        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
+        const msgAnchorId = `msg${peerId}-${msg.id}`;
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
         const title = (msg.data?.action?.text || msg.action?.text || "").trim();
         const text = tr("event_chat_title_update_" + gender, title) || `изменил название беседы на «${title}»`;
         return html`
-            <div class="messenger-special-message">
+            <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
                     <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
                         <strong>${senderName} </strong>
@@ -233,12 +284,14 @@ export const SystemMessages = {
         `;
     },
     "chat_photo_update": (msg, page) => {
+        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
+        const msgAnchorId = `msg${peerId}-${msg.id}`;
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
         const text = tr("event_chat_photo_update_" + gender) || "обновил фотографию беседы";
         return html`
-            <div class="messenger-special-message">
+            <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
                     <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
                         <strong>${senderName} </strong>
@@ -250,12 +303,14 @@ export const SystemMessages = {
         `;
     },
     "chat_photo_remove": (msg, page) => {
+        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
+        const msgAnchorId = `msg${peerId}-${msg.id}`;
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
         const text = tr("event_chat_photo_remove_" + gender) || "удалил фотографию беседы";
         return html`
-            <div class="messenger-special-message">
+            <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
                     <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
                         <strong>${senderName} </strong>
@@ -267,6 +322,8 @@ export const SystemMessages = {
         `;
     },
     "chat_invite_user": (msg, page) => {
+        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
+        const msgAnchorId = `msg${peerId}-${msg.id}`;
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
@@ -274,7 +331,7 @@ export const SystemMessages = {
         if (sender && mid == sender.id) {
             const text = tr("event_chat_invite_user_self_" + gender) || "вернулся в беседу";
             return html`
-                <div class="messenger-special-message">
+                <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                     <div>
                         <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
                             <strong>${senderName} </strong>
@@ -291,7 +348,7 @@ export const SystemMessages = {
         const verb = tr("event_chat_invite_user_verb_" + gender) || (gender === "female" ? "пригласила" : gender === "neutral" ? "пригласили" : "пригласил");
 
         return html`
-            <div class="messenger-special-message">
+            <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
                     <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
                         <strong>${senderName} </strong>
@@ -306,12 +363,14 @@ export const SystemMessages = {
         `;
     },
     "chat_invite_user_by_link": (msg, page) => {
+        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
+        const msgAnchorId = `msg${peerId}-${msg.id}`;
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
         const text = tr("event_chat_invite_user_by_link_" + gender) || "присоединился к беседе по ссылке";
         return html`
-            <div class="messenger-special-message">
+            <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
                     <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
                         <strong>${senderName} </strong>
@@ -323,6 +382,8 @@ export const SystemMessages = {
         `;
     },
     "chat_kick_user": (msg, page) => {
+        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
+        const msgAnchorId = `msg${peerId}-${msg.id}`;
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
@@ -330,7 +391,7 @@ export const SystemMessages = {
         if (sender && mid == sender.id) {
             const text = tr("event_chat_kick_user_self_" + gender) || "покинул беседу";
             return html`
-                <div class="messenger-special-message">
+                <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                     <div>
                         <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
                             <strong>${senderName} </strong>
@@ -347,7 +408,7 @@ export const SystemMessages = {
         const verb = tr("event_chat_kick_user_verb_" + gender) || (gender === "female" ? "исключила" : gender === "neutral" ? "исключили" : "исключил");
 
         return html`
-            <div class="messenger-special-message">
+            <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
                     <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
                         <strong>${senderName} </strong>
@@ -362,11 +423,13 @@ export const SystemMessages = {
         `;
     },
     "rating_up": (msg, page) => {
+        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
+        const msgAnchorId = `msg${peerId}-${msg.id}`;
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
         return html`
-            <div class="messenger-special-message centred">
+            <div class="messenger-special-message centred" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
                     <b>${tr("event_chat_user_up_your_rating_" + gender, senderName, msg.data?.action?.member_id)}</b>
                     <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
@@ -376,11 +439,13 @@ export const SystemMessages = {
         `;
     },
     "coins_transfer": (msg, page) => {
+        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
+        const msgAnchorId = `msg${peerId}-${msg.id}`;
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
         return html`
-            <div class="messenger-special-message centred">
+            <div class="messenger-special-message centred" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
                     <b>${tr("event_chat_user_added_voices_" + gender, senderName, msg.data?.action?.member_id)}</b>
                     <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
@@ -390,8 +455,10 @@ export const SystemMessages = {
         `;
     },
     "unknown": (msg, page) => {
+        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
+        const msgAnchorId = `msg${peerId}-${msg.id}`;
         return html`
-            <div class="messenger-special-message">
+            <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div class="messenger-app--messages---message--wrap">
                     <div class="_content">
                         <span class="text">${msg.getText()}</span>
@@ -462,23 +529,37 @@ const Attachment = ({ msg, att }) => {
                     <img src="${att.gift.gift.thumb_256}" />
                 </div>
             `;
+        case "link":
+        case "share":
+            return null;
         default:
             return html`<div class="msg-attach-w msg-attach-w-unknown">${tr("version_incompatibility")}</div>`;
     }
 };
 
 export const DayDivider = ({ date, day, idate }) => {
+    const displayDate = date || day || idate || "";
+
+    const onDateClick = (e) => {
+        if (e) e.stopPropagation();
+        if (window.im?.messenger?.showDaySwitcher) {
+            window.im.messenger.showDaySwitcher(idate || date);
+        }
+    };
+
     return html`
     <div class="messenger-app--messages-day-time">
-        <b onClick=${(e) => { window.im.messenger.showDaySwitcher(idate) }}>${date}</b>
+        <b onClick=${onDateClick} title="${tr('jump_to_date') || 'Выбрать дату в календаре'}">${displayDate}</b>
     </div>
   `;
 };
 
 export const DayChunkView = ({ chunk, page }) => {
+    const chunkDate = chunk.date || chunk.readable_date || chunk.day || chunk.idate;
+
     return html`
     <div class="messenger-app--messages-day">
-        <${DayDivider} day=${chunk.day} date=${chunk.readable_date} idate=${chunk.idate} />
+        <${DayDivider} day=${chunk.day} date=${chunkDate} idate=${chunk.idate} />
         ${chunk.messages.map((msg, idx) => html`
             <${MessageBubble} key=${msg.id || msg.conversation_message_id || idx} msg=${msg} index=${idx} chunk=${chunk} page=${page} />
         `)}
@@ -494,6 +575,7 @@ export const MessageListView = ({ dayDividedChunks, convo, page }) => {
     return html`
     <div class="messenger-app--messages">
       <div class="messenger-app--messages-array">
+         <div class="im_top_loader" style="display: none;"><img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="..." /></div>
          ${isLoading ? html`
              <div id="gif_loader"></div>
          ` : html`
