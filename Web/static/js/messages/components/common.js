@@ -253,6 +253,36 @@ export const WriteBar = ({ convo }) => {
     `;
 }
 
+export const getReplySnippet = (msg) => {
+    if (!msg) return "";
+    let text = "";
+    if (typeof msg.getText === 'function') {
+        text = msg.getText(true) || "";
+    } else if (msg.data?.text) {
+        text = msg.data.text;
+    }
+
+    text = text.replace(/[\r\n]+/g, ' ').trim();
+
+    if (!text && msg.data?.attachments) {
+        let atts = msg.data.attachments;
+        if (!Array.isArray(atts)) {
+            atts = typeof atts === 'object' ? Object.values(atts) : [atts];
+        }
+        if (atts.length > 0 && atts[0]) {
+            const t = atts[0].type;
+            if (t === 'photo') text = '[' + (tr('attachment_photo') || 'Фотография') + ']';
+            else if (t === 'video') text = '[' + (tr('attachment_video') || 'Видеозапись') + ']';
+            else if (t === 'audio') text = '[' + (tr('attachment_audio') || 'Аудиозапись') + ']';
+            else if (t === 'doc') text = '[' + (tr('attachment_doc') || 'Документ') + ']';
+            else if (t === 'sticker') text = '[' + (tr('attachment_sticker') || 'Стикер') + ']';
+            else text = '[' + (tr('attachment') || 'Вложение') + ']';
+        }
+    }
+
+    return text;
+};
+
 export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress, currentDraft, onInput, togglePeerInfo, clickOnReply, convo, forwarded_msg, onRemoveForward }) => {
     const is_editing = editMsg != null;
     const current_user = window.im.state.getOperator();
@@ -267,15 +297,35 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
     return html`
     <div class="${cls.join(" ")}">
         ${replyTo && html`
-            <div class="input-reply input-m">
-                <span onclick=${() => { clickOnReply(replyTo) }} aria-label="link" class="input-type">${tr("reply_to", replyTo.sender.getName())}</span>
-                <span class="input-close" onClick=${onRemoveReply}><div class="cross"></div></span>
+            <div class="input-reply input-m" onclick=${(e) => {
+                if (!e.target.closest('.input-close')) {
+                    clickOnReply(replyTo);
+                }
+            }}>
+                <div class="input-reply-content">
+                    <span class="input-type">${tr("reply_to", replyTo.sender ? replyTo.sender.getName() : "")}:</span>
+                    <span class="input-reply-text">${getReplySnippet(replyTo)}</span>
+                </div>
+                <span class="input-close" onClick=${(e) => {
+                    e.stopPropagation();
+                    onRemoveReply();
+                }}><div class="cross"></div></span>
             </div>
         `}
         ${editMsg && html`
-            <div class="input-edit input-m">
-                <span onclick=${() => { clickOnReply(editMsg) }} aria-label="link" class="input-type">${tr("edit_of_message")}</span>
-                <span class="input-close" onClick=${(e) => { window.im.messenger.cancelEdit() }}><div class="cross"></div></span>
+            <div class="input-edit input-m" onclick=${(e) => {
+                if (!e.target.closest('.input-close')) {
+                    clickOnReply(editMsg);
+                }
+            }}>
+                <div class="input-reply-content">
+                    <span class="input-type">${tr("edit_of_message")}:</span>
+                    <span class="input-reply-text">${getReplySnippet(editMsg)}</span>
+                </div>
+                <span class="input-close" onClick=${(e) => {
+                    e.stopPropagation();
+                    window.im.messenger.cancelEdit();
+                }}><div class="cross"></div></span>
             </div>
         `}
         ${isForwarded ? html`

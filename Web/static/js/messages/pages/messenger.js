@@ -825,19 +825,140 @@ export class MessengerPage extends IMPage {
         u(this.container).find(".messenger-app--messages .messenger-app--messages-array").attr("style", "padding-bottom:" + h + "px;");
     }
 
+    _getChronologicalMessages(currentConv) {
+        if (!currentConv) return [];
+
+        const allMsgs = [];
+        const seen = new Set();
+
+        const addMsg = (m) => {
+            if (!m) return;
+            const key = m.id != null ? m.id : (m.data?.random_id || m.data?.conversation_message_id);
+            if (key != null && seen.has(key)) return;
+            if (key != null) seen.add(key);
+            allMsgs.push(m);
+        };
+
+        if (currentConv.peer && currentConv.peer._chunks) {
+            const chunks = currentConv.peer._chunks.chunks || [];
+            chunks.forEach(chunk => {
+                if (chunk && chunk.messages) {
+                    chunk.getMessages().forEach(addMsg);
+                }
+            });
+        }
+
+        if (typeof currentConv.getScrollPosition === 'function' && currentConv.getScrollPosition()) {
+            const sp = currentConv.getScrollPosition();
+            const days = sp._cachedDays || (typeof sp.getDayDividedMessages === 'function' ? sp.getDayDividedMessages() : []);
+            (days || []).forEach(day => {
+                if (day && day.messages) {
+                    day.messages.forEach(addMsg);
+                }
+            });
+        }
+
+        if (currentConv.last_message) addMsg(currentConv.last_message);
+        if (currentConv._last_message) addMsg(currentConv._last_message);
+
+        const domNodes = this.container?.querySelectorAll('.messenger-app--messages---message[data-msg-id]');
+        if (domNodes && domNodes.length > 0 && currentConv.peer?._chunks?._findMessageById) {
+            domNodes.forEach(node => {
+                const id = Number(node.getAttribute('data-msg-id'));
+                if (id && !seen.has(id)) {
+                    const m = currentConv.peer._chunks._findMessageById(id);
+                    if (m) addMsg(m);
+                }
+            });
+        }
+
+        allMsgs.sort((a, b) => {
+            const dateA = Number(a.data?.date || 0);
+            const dateB = Number(b.data?.date || 0);
+            if (dateA !== dateB) return dateA - dateB;
+            const idA = Number(a.id || a.data?.conversation_message_id || 0);
+            const idB = Number(b.id || b.data?.conversation_message_id || 0);
+            return idA - idB;
+        });
+
+        return allMsgs;
+    }
+
     onTextareaKeyPress(e) {
         const ta = e.target;
+        const isCtrl = e.ctrlKey || e.metaKey;
 
         if (e.which === 38 || e.key === "ArrowUp") {
+            const currentConv = window.im.messenger.getCurrentChat();
+
+            // Ctrl + ArrowUp: циклический переход по ответам (реплаям) в истории
+            if (isCtrl) {
+                if (currentConv) {
+                    const allMsgs = this._getChronologicalMessages(currentConv);
+                    const replyable = allMsgs.filter(m => m && !m.isDeleted() && !m.isAction() && (typeof m.can !== 'function' || m.can("reply")));
+
+                    if (replyable.length > 0) {
+                        e.preventDefault();
+                        let targetMsg = null;
+                        const currentReply = window.im.messenger.replyTo;
+
+                        if (!currentReply) {
+                            // Первое нажатие — последнее сообщение
+                            targetMsg = replyable[replyable.length - 1];
+                        } else {
+                            // Повторное нажатие — переходим к предыдущему по порядку (выше в истории)
+                            const currentId = currentReply.id;
+                            const curIdx = replyable.findIndex(m =>
+                                (currentId != null && m.id != null && m.id === currentId) || m === currentReply
+                            );
+
+                            if (curIdx > 0) {
+                                targetMsg = replyable[curIdx - 1];
+                            } else if (curIdx === 0) {
+                                targetMsg = replyable[0];
+                            } else {
+                                targetMsg = replyable[replyable.length - 1];
+                            }
+                        }
+
+                        if (targetMsg) {
+                            if (ta && ta.value) {
+                                window.im.messenger.currentDraft = ta.value;
+                                this.currentDraft = ta.value;
+                            }
+                            window.im.messenger.unselectAll();
+                            window.im.messenger.replyTo = targetMsg;
+                            this.update();
+                            setTimeout(() => {
+                                const targetEl = this.container?.querySelector(`.messenger-app--messages---message[data-msg-id="${targetMsg.id}"]`);
+                                if (targetEl) {
+                                    targetEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                                }
+                                const inputEl = document.querySelector("#write .small-textarea");
+                                if (inputEl) {
+                                    inputEl.focus();
+                                    const len = inputEl.value.length;
+                                    inputEl.setSelectionRange(len, len);
+                                }
+                            }, 30);
+                            return false;
+                        }
+                    }
+                }
+                return false;
+            }
+
+            // Обычный ArrowUp: редактирование последнего сообщения пользователя
             const isAtStart = ta.selectionStart === 0 && ta.selectionEnd === 0;
             const isEmpty = !ta.value || ta.value.trim().length === 0;
             if ((isAtStart || isEmpty) && !window.im.messenger.isEditing()) {
-                const currentConv = window.im.messenger.getCurrentChat();
-                if (currentConv && currentConv.peer && currentConv.peer._chunks) {
-                    const msgs = currentConv.peer._chunks.getMessages() || [];
+                if (currentConv) {
+                    const allMsgs = this._getChronologicalMessages(currentConv);
+
+                    // Находим последнее редактируемое сообщение текущего пользователя с конца к началу
                     let lastMyMsg = null;
-                    for (let i = msgs.length - 1; i >= 0; i--) {
-                        const m = msgs[i];
+                    for (let i = allMsgs.length - 1; i >= 0; i--) {
+                        const m = allMsgs[i];
                         if (m && !m.isDeleted() && !m.isAction() && m.isMine() && m.can("edit")) {
                             lastMyMsg = m;
                             break;
@@ -848,7 +969,7 @@ export class MessengerPage extends IMPage {
                         e.preventDefault();
                         this.onEditButtonClick(e, lastMyMsg);
                         setTimeout(() => {
-                            const inputEl = this.container?.querySelector("#write .small-textarea");
+                            const inputEl = document.querySelector("#write .small-textarea");
                             if (inputEl) {
                                 inputEl.focus();
                                 const len = inputEl.value.length;
@@ -861,10 +982,55 @@ export class MessengerPage extends IMPage {
             }
         }
 
+        // Ctrl + ArrowDown: переход вперед по реплаям или снятие реплая
+        if ((e.which === 40 || e.key === "ArrowDown") && isCtrl) {
+            if (window.im.messenger.replyTo != null) {
+                e.preventDefault();
+                const currentConv = window.im.messenger.getCurrentChat();
+                if (currentConv) {
+                    const allMsgs = this._getChronologicalMessages(currentConv);
+                    const replyable = allMsgs.filter(m => m && !m.isDeleted() && !m.isAction() && (typeof m.can !== 'function' || m.can("reply")));
+                    const currentId = window.im.messenger.replyTo.id;
+                    const curIdx = replyable.findIndex(m =>
+                        (currentId != null && m.id != null && m.id === currentId) || m === window.im.messenger.replyTo
+                    );
+
+                    let nextReplyMsg = null;
+                    if (curIdx >= 0 && curIdx < replyable.length - 1) {
+                        nextReplyMsg = replyable[curIdx + 1];
+                        window.im.messenger.replyTo = nextReplyMsg;
+                        this.update();
+                    } else {
+                        window.im.messenger.removeReply();
+                    }
+                    setTimeout(() => {
+                        if (nextReplyMsg) {
+                            const targetEl = this.container?.querySelector(`.messenger-app--messages---message[data-msg-id="${nextReplyMsg.id}"]`);
+                            if (targetEl) {
+                                targetEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                            }
+                        }
+                        const inputEl = document.querySelector("#write .small-textarea");
+                        if (inputEl) {
+                            inputEl.focus();
+                            const len = inputEl.value.length;
+                            inputEl.setSelectionRange(len, len);
+                        }
+                    }, 30);
+                }
+                return false;
+            }
+        }
+
         if (e.which === 27 || e.key === "Escape") {
             if (window.im.messenger.isEditing()) {
                 e.preventDefault();
                 window.im.messenger.cancelEdit();
+                return false;
+            }
+            if (window.im.messenger.replyTo != null) {
+                e.preventDefault();
+                window.im.messenger.removeReply();
                 return false;
             }
         }
@@ -1027,6 +1193,14 @@ export class MessengerPage extends IMPage {
             window.im.messenger.replyTo = m;
 
             this.update();
+            setTimeout(() => {
+                const inputEl = document.querySelector("#write .small-textarea");
+                if (inputEl) {
+                    inputEl.focus();
+                    const len = inputEl.value.length;
+                    inputEl.setSelectionRange(len, len);
+                }
+            }, 50);
         };
 
         if (window.im.messenger.editMsg != null) {

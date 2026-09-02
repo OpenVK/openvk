@@ -806,7 +806,9 @@ export class ChatMessage {
     }
     isMine() {
         const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
-        return Number(this.data.from_id) === Number(currentUserId);
+        const fromId = Number(this.data.from_id?.id || this.data.from_id);
+        const isSelf = fromId != null && !isNaN(fromId) && fromId === Number(currentUserId);
+        return Boolean(this.data.out === 1 || isSelf);
     }
     getSentTime() { return new Date(this.data.date * 1000); }
     hasSender() { return this.data.from_id != null; }
@@ -1058,7 +1060,7 @@ export class ChatMessage {
                 return true;
             case "edit":
                 if (this.data.can_edit != null) {
-                    return this.data.can_edit === 1;
+                    return Boolean(this.data.can_edit);
                 }
 
                 if (group != null) {
@@ -1069,8 +1071,7 @@ export class ChatMessage {
                     return false;
                 }
 
-                // return this.data.can_edit;
-                return this.data.from_id === window.im.state.getId();
+                return this.isMine();
             case "report":
                 return !this.isMine();
             case "viewers":

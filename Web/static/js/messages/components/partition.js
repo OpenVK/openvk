@@ -164,7 +164,10 @@ export class Chunks {
         const range = chunk?.id_range;
         return range ? `${range.first}:${range.last}` : null;
     }
-    _invalidateCache() { this.invalidateCache = true; }
+    _invalidateCache() {
+        this.invalidateCache = true;
+        this._cachedMessages = undefined;
+    }
     isMessagesInited() { return this._messagesInited; }
     getLatestChunk() {
         if (!this.chunks || this.chunks.length === 0) {
@@ -239,20 +242,31 @@ export class Chunks {
     getMessages() {
         if (this._cachedMessages != undefined && !this.invalidateCache) return this._cachedMessages;
 
-        const sorted = this.sorted; // newest-first
-        const fnl = [];
+        const all = [];
         const seen = new Set();
-        for (let i = sorted.length - 1; i >= 0; i--) {
-            sorted[i].getMessages().forEach((msg) => {
-                if (msg && msg.id && !seen.has(msg.id)) {
-                    seen.add(msg.id);
-                    fnl.push(msg);
-                }
+        this.chunks.forEach((chunk) => {
+            if (!chunk || !chunk.messages) return;
+            chunk.getMessages().forEach((msg) => {
+                if (!msg) return;
+                const key = msg.id != null ? msg.id : (msg.data?.random_id || msg.data?.conversation_message_id);
+                if (key != null && seen.has(key)) return;
+                if (key != null) seen.add(key);
+                all.push(msg);
             });
-        }
+        });
 
-        this._cachedMessages = fnl;
-        return fnl;
+        all.sort((a, b) => {
+            const dateA = Number(a.data?.date || 0);
+            const dateB = Number(b.data?.date || 0);
+            if (dateA !== dateB) return dateA - dateB;
+            const idA = Number(a.id || a.data?.conversation_message_id || 0);
+            const idB = Number(b.id || b.data?.conversation_message_id || 0);
+            return idA - idB;
+        });
+
+        this._cachedMessages = all;
+        this.invalidateCache = false;
+        return all;
     }
     async findMessageByIdFromApi(id) {
         const found = this._findMessageById(id);
