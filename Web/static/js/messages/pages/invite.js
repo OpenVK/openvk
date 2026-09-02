@@ -68,28 +68,32 @@ export const ChatInvitePreviewView = ({
             </div>
 
             <!-- Square avatars grid -->
-            ${profiles && profiles.length > 0 ? html`
+            ${(profiles && profiles.length > 0) || remainingCount > 0 ? html`
                 <div class="chat-invite-grid-wrapper" style="display: flex; align-items: center; justify-content: center; margin-bottom: 28px;">
-                    <div class="chat-invite-avatars-grid" style="display: grid; grid-template-columns: repeat(${Math.min(6, profiles.length)}, 38px); gap: 4px;">
-                        ${profiles.slice(0, 12).map(p => {
-        const pName = `${p.first_name || ''} ${p.last_name || ''}`.trim();
-        const pAvatar = p.photo_50 || p.photo_100 || '/assets/packages/static/openvk/img/camera_50.png';
-        return html`
+                    <div class="chat-invite-avatars-grid" style="display: grid; grid-template-columns: repeat(${Math.min(6, (profiles ? profiles.length : 0) + (remainingCount > 0 ? 1 : 0))}, 38px); gap: 4px;">
+                        ${(profiles || []).map(p => {
+                            const pName = `${p.first_name || ''} ${p.last_name || ''}`.trim();
+                            const pAvatar = p.photo_50 || p.photo_100 || '/assets/packages/static/openvk/img/camera_50.png';
+                            return html`
                                 <img
                                     src="${pAvatar}"
                                     title="${pName}"
                                     alt="${pName}"
-                                    style="width: 38px; height: 38px; object-fit: cover; border: 1px solid var(--bg-slightly-border, #d3d9de); border-radius: 0; display: block;"
+                                    style="width: 38px; height: 38px; object-fit: cover; border: 1px solid var(--bg-slightly-border, #d3d9de); border-radius: 0; box-sizing: border-box; display: block;"
                                     onError=${(e) => { e.target.src = '/assets/packages/static/openvk/img/camera_50.png'; }}
                                 />
                             `;
-    })}
+                        })}
+                        ${remainingCount > 0 ? html`
+                            <div
+                                class="chat-invite-more-badge"
+                                title="+${remainingCount}"
+                                style="width: 38px; height: 38px; background: #666; color: #fff; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; user-select: none; border-radius: 0; box-sizing: border-box; border: 1px solid var(--bg-slightly-border, #d3d9de);"
+                            >
+                                +${remainingCount}
+                            </div>
+                        ` : ''}
                     </div>
-                    ${remainingCount > 0 ? html`
-                        <span class="chat-invite-more-badge" style="font-size: 15px; font-weight: bold; color: var(--nobold, #555); margin-left: 10px; user-select: none;">
-                            +${remainingCount}
-                        </span>
-                    ` : ''}
                 </div>
             ` : ''}
 
@@ -193,8 +197,21 @@ export class ChatInvitePreviewPage extends IMPage {
             }
         }
 
-        const displayedProfiles = profiles.slice(0, 12);
-        const remainingCount = Math.max(0, membersCount - displayedProfiles.length);
+        let displayedProfiles = profiles ? profiles.slice(0) : [];
+        let remainingCount = 0;
+
+        if (membersCount > 12) {
+            displayedProfiles = displayedProfiles.slice(0, 11);
+            remainingCount = membersCount - displayedProfiles.length;
+        } else if (membersCount > displayedProfiles.length) {
+            if (displayedProfiles.length >= 11) {
+                displayedProfiles = displayedProfiles.slice(0, 11);
+            }
+            remainingCount = membersCount - displayedProfiles.length;
+        } else {
+            displayedProfiles = displayedProfiles.slice(0, 12);
+            remainingCount = 0;
+        }
 
         const handleJoin = async () => {
             if (this.isJoining) return;

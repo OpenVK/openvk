@@ -1159,6 +1159,14 @@
 "month_11" = "Ноябрь";
 "month_12" = "Декабрь";
 
+"week_day_short_1" = "Пн";
+"week_day_short_2" = "Вт";
+"week_day_short_3" = "Ср";
+"week_day_short_4" = "Чт";
+"week_day_short_5" = "Пт";
+"week_day_short_6" = "Сб";
+"week_day_short_7" = "Вс";
+
 "news" = "Новости";
 "news_more" = "Подробнее »";
 "bday_reminder" = "Напоминание";
@@ -1472,6 +1480,7 @@
 
 "to_friendslist" = "К списку друзей";
 "about_peer" = "Контакт";
+"about_peer_chat" = "О чате";
 "selected_messages" = "Выбрано $1 сообщений";
 "delete_message" = "Удалить";
 "reply_to_message" = "Ответить";
@@ -1482,7 +1491,7 @@
 "msg_resend" = "Попробовать снова";
 "msg_error_send_to_dev" = "Написать разработчику";
 
-"conversations_show_unread" = "Показать непрочитанные";
+"conversations_show_unread" = "Только непрочитанные";
 "conversations_show_all" = "Показать все переписки";
 
 "message_deletion_one" = "Удаление сообщения";
@@ -1511,6 +1520,7 @@
 
 "reply_to" = "Ответ на сообщение $1";
 "reply_to_msg" = "В ответ на";
+"reply_to_message_user" = "в ответ на сообщение $1";
 "written_in_chat" = "В переписке";
 "viewing_old_messages" = "Вернуться к новым сообщениям";
 

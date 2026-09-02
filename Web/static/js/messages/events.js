@@ -5,6 +5,7 @@ export class EventHandler {
     constructor(im) {
         this.im = im;
         this.codes = {
+            0: "MsgDeleteEvent",
             1: "ReplaceFlags",
             2: "SetFlags",
             3: "ResetFlags",
@@ -14,22 +15,53 @@ export class EventHandler {
             7: "ReadOutcomeBeforeEvent",
             8: "UserOnlineEvent",
             9: "UserOfflineEvent",
+            10: "ChatResetFlagsEvent",
+            11: "ChatReplaceFlagsEvent",
+            12: "ChatSetFlagsEvent",
+            13: "MassDeleteMessagesEvent",
+            14: "MassRestoreMessagesEvent",
             51: "ChatUpdateEvent",
+            52: "ChatUpdateEvent",
             61: "TypingEvent",
+            62: "TypingEvent",
+            63: "TypingEvent",
+            64: "TypingEvent",
+            80: "CounterUpdateEvent",
         };
+        this._updateCounterTimeout = null;
     }
 
     async handle(event) {
         if (!Array.isArray(event)) return;
 
         const method = this.codes[event[0]];
-        console.log("lp event: ", event)
+        console.log("lp event: ", event);
         console.log(this.im);
         if (!method) {
             console.info('unknown event,  ', event[0]);
-        } else {
+        } else if (typeof this[method] === 'function') {
             await this[method](event);
         }
+    }
+
+    async MsgDeleteEvent(event) {
+        const msgId = event[1];
+        if (this.im && this.im.conversations && this.im.conversations.all_convs) {
+            this.im.conversations.all_convs.forEach(conv => {
+                if (conv.peer && conv.peer._chunks) {
+                    const found = conv.peer._chunks._findMessageById(msgId);
+                    if (found) {
+                        found.setDeleted(true);
+                        conv.peer._chunks._invalidateCache();
+                    }
+                }
+            });
+            this.im.conversations.update();
+        }
+        if (this.im.messenger) {
+            this.im.messenger.update();
+        }
+        this.updateGlobalUnreadCounter();
     }
 
     async ReplaceFlags(event) {
@@ -50,17 +82,38 @@ export class EventHandler {
                 this.im.messenger.update();
             }
         }
+        this.updateGlobalUnreadCounter();
     }
 
-    updateGlobalUnreadCounter() {
-        try {
+    updateGlobalUnreadCounter(explicitCount = null) {
+        if (typeof explicitCount === 'number' && !isNaN(explicitCount)) {
             if (this.im && this.im.state && typeof this.im.state._updateCounter === 'function') {
-                const count = this.im.state.getUnreadCounter();
-                this.im.state._updateCounter(count);
+                this.im.state._updateCounter(explicitCount);
             }
-        } catch (e) {
-            console.error("Error updating global unread counter:", e);
         }
+
+        if (this._updateCounterTimeout) {
+            clearTimeout(this._updateCounterTimeout);
+        }
+        this._updateCounterTimeout = setTimeout(async () => {
+            try {
+                if (this.im && this.im.state && typeof this.im.state.fetchUnreadCounter === 'function') {
+                    await this.im.state.fetchUnreadCounter();
+                } else if (window.OVKAPI) {
+                    const params = {};
+                    if (this.im?.state?.group_id != null) {
+                        params.group_id = Math.abs(this.im.state.group_id);
+                    }
+                    const res = await window.OVKAPI.call('messages.getUnreadConversations', params);
+                    const count = (res && typeof res.count === 'number') ? res.count : (typeof res === 'number' ? res : 0);
+                    if (this.im && this.im.state && typeof this.im.state._updateCounter === 'function') {
+                        this.im.state._updateCounter(count);
+                    }
+                }
+            } catch (e) {
+                console.error("Error updating global unread counter:", e);
+            }
+        }, 50);
     }
 
     async SetFlags(event) {
@@ -231,6 +284,7 @@ export class EventHandler {
         if (this.im.fastChats) {
             this.im.fastChats.update();
         }
+        this.updateGlobalUnreadCounter();
     }
 
 
@@ -379,6 +433,83 @@ export class EventHandler {
         const userId = Math.abs(event[1]);
         if (this.im.fastChats) {
             this.im.fastChats.setUserOnline(userId, false);
+        }
+    }
+
+    async ChatResetFlagsEvent(event) {
+        const peerId = event[1];
+        const mask = event[2];
+        const conv = await this.im.conversations._findConvFromApi(peerId);
+        if (conv && this.im.conversations) {
+            this.im.conversations.update();
+        }
+        this.updateGlobalUnreadCounter();
+    }
+
+    async ChatReplaceFlagsEvent(event) {
+        const peerId = event[1];
+        const flags = event[2];
+        const conv = await this.im.conversations._findConvFromApi(peerId);
+        if (conv && this.im.conversations) {
+            this.im.conversations.update();
+        }
+        this.updateGlobalUnreadCounter();
+    }
+
+    async ChatSetFlagsEvent(event) {
+        const peerId = event[1];
+        const mask = event[2];
+        const conv = await this.im.conversations._findConvFromApi(peerId);
+        if (conv && this.im.conversations) {
+            this.im.conversations.update();
+        }
+        this.updateGlobalUnreadCounter();
+    }
+
+    async MassDeleteMessagesEvent(event) {
+        const peerId = event[1];
+        const localId = Number(event[2]);
+        const _crs = await this.im.conversations._findConvFromApi(peerId);
+        if (_crs && _crs.peer && _crs.peer._chunks) {
+            _crs.peer._chunks.getMessages().forEach(msg => {
+                const msgCmid = (msg.data && (msg.data.conversation_message_id || msg.data.local_id)) || msg.conversation_message_id || 0;
+                const msgId = (msg.data && msg.data.id) || msg.id || 0;
+                if ((msgCmid > 0 && msgCmid <= localId) || (msgId > 0 && msgId <= localId)) {
+                    msg.setDeleted(true);
+                }
+            });
+            _crs.peer._chunks._invalidateCache();
+        }
+        if (this.im.messenger) this.im.messenger.update();
+        if (this.im.conversations) this.im.conversations.update();
+        this.updateGlobalUnreadCounter();
+    }
+
+    async MassRestoreMessagesEvent(event) {
+        const peerId = event[1];
+        const localId = Number(event[2]);
+        const _crs = await this.im.conversations._findConvFromApi(peerId);
+        if (_crs && _crs.peer && _crs.peer._chunks) {
+            _crs.peer._chunks.getMessages().forEach(msg => {
+                const msgCmid = (msg.data && (msg.data.conversation_message_id || msg.data.local_id)) || msg.conversation_message_id || 0;
+                const msgId = (msg.data && msg.data.id) || msg.id || 0;
+                if ((msgCmid > 0 && msgCmid <= localId) || (msgId > 0 && msgId <= localId)) {
+                    msg.restore();
+                }
+            });
+            _crs.peer._chunks._invalidateCache();
+        }
+        if (this.im.messenger) this.im.messenger.update();
+        if (this.im.conversations) this.im.conversations.update();
+        this.updateGlobalUnreadCounter();
+    }
+
+    async CounterUpdateEvent(event) {
+        const count = typeof event[1] === 'number' ? event[1] : Number(event[1]);
+        if (!isNaN(count)) {
+            this.updateGlobalUnreadCounter(count);
+        } else {
+            this.updateGlobalUnreadCounter();
         }
     }
 }

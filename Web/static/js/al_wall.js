@@ -456,6 +456,8 @@ class PhotoViewer extends Viewer {
         if (this.context.type == "chat" || this.mode == "tg" || this.context.type == null || (this.context.not_load_comments || false) == true) {
             if (window.im && window.im.state.is_debug) {
                 this._getCurrentEntryCacheNode().last().innerHTML = itemId;
+            } else {
+                this._getCurrentEntryCacheNode().last().innerHTML = "";
             }
             return;
         }

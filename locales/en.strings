@@ -1477,6 +1477,9 @@
 "message_viewers_title" = "Message Viewers";
 "message_viewers_empty" = "No one has read this message yet";
 "message_viewers_count" = "Read by: $1";
+"reply_to" = "In reply to $1";
+"reply_to_msg" = "In reply to";
+"reply_to_message_user" = "in reply to $1's message";
 
 "messages_new_interface_title" = "Long-awaited Messages update";
 "messages_new_interface_text" = "We completely rewrote the messaging section from scratch, making conversations truly fast and responsive. Messages are now delivered instantly in real time, with convenient conversation tabs, group chats, replies, and forwarding. The old slow messaging is a thing of the past — enjoy chatting!";

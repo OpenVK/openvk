@@ -68,22 +68,18 @@ export class CalendarComponent {
     update() {
         if (!this.container) return;
 
-        const monthNames = [
-            (typeof tr === 'function' ? tr("month_1") : null) || "Январь",
-            (typeof tr === 'function' ? tr("month_2") : null) || "Февраль",
-            (typeof tr === 'function' ? tr("month_3") : null) || "Март",
-            (typeof tr === 'function' ? tr("month_4") : null) || "Апрель",
-            (typeof tr === 'function' ? tr("month_5") : null) || "Май",
-            (typeof tr === 'function' ? tr("month_6") : null) || "Июнь",
-            (typeof tr === 'function' ? tr("month_7") : null) || "Июль",
-            (typeof tr === 'function' ? tr("month_8") : null) || "Август",
-            (typeof tr === 'function' ? tr("month_9") : null) || "Сентябрь",
-            (typeof tr === 'function' ? tr("month_10") : null) || "Октябрь",
-            (typeof tr === 'function' ? tr("month_11") : null) || "Ноябрь",
-            (typeof tr === 'function' ? tr("month_12") : null) || "Декабрь"
-        ];
+        const monthNames = [];
+        for (i = 1; i != 12; i++) {
+            monthNames.push(tr("month_" + i));
+        }
+        const weekdays = [];
+        for (let i = 1; i != 8; i++) {
+            weekdays.push(tr("week_day_short_" + i));
+        }
 
-        const weekdays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+        for (let i = 0; i != 12; i++) {
+            monthNames.push(tr("month_1"));
+        }
 
         const firstDayOfMonth = new Date(this.currentYear, this.currentMonth, 1);
         let firstDayIndex = firstDayOfMonth.getDay() - 1;
@@ -111,7 +107,9 @@ export class CalendarComponent {
 
         const thisYear = new Date().getFullYear();
         const years = [];
-        for (let y = thisYear - 15; y <= thisYear + 2; y++) {
+
+        // 11.11.2019 овк запустили
+        for (let y = 2019; y <= thisYear; y++) {
             years.push(y);
         }
 
