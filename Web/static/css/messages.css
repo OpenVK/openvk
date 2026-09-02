@@ -1580,21 +1580,47 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 }
 
 .messenger-app-end.m-selected .input-m {
-    display: grid;
-    grid-template-columns: 1fr 0fr;
-    gap: 23px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    height: 16px;
     border-top: 1px solid var(--brand);
+    cursor: pointer;
 }
 
-.messenger-app-end.m-selected .input-m {
-    height: 12px;
+.messenger-app-end .input-m .input-reply-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.messenger-app-end .input-m .input-reply-content .input-type {
+    font-weight: bold;
+    color: var(--brand);
+    flex-shrink: 0;
+}
+
+.messenger-app-end .input-m .input-reply-content .input-reply-text {
+    color: var(--nobold, #656565);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-weight: normal;
 }
 
-.messenger-app-end.m-selected .input-m {
-    cursor: pointer;
+.messenger-app--messages---message.msg-replying-to {
+    background: rgba(81, 129, 184, 0.12) !important;
+    box-shadow: inset 3px 0 0 var(--brand, #5181b8);
+}
+
+.messenger-app--messages---message.msg-editing-this {
+    background: rgba(230, 160, 40, 0.12) !important;
+    box-shadow: inset 3px 0 0 #e6a028;
 }
 
 .messenger-app-end .messenger-mountain {
@@ -1625,10 +1651,19 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 }
 
 .messenger-app .messenger-app-status .write-bar {
-    padding: 0px 75px;
-    font-weight: bold;
+    padding: 0px 45px;
     max-height: 19px;
     color: var(--nobold);
+}
+
+.messenger-app .messenger-app-status .write-bar:not(:empty)::before {
+    content: '';
+    display: inline-block;
+    width: 15px;
+    height: 11px;
+    background: url(../img/im/typing.gif) no-repeat 0 0;
+    vertical-align: -1px;
+    margin-right: 6px;
 }
 
 .messages--peers-tabs {

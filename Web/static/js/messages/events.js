@@ -403,22 +403,75 @@ export class EventHandler {
 
 
     async TypingEvent(event) {
-        const _peerId = event[1];
-        const _userIds = event[2];
-        let userIds = null;
+        const code = Number(event[0]);
+        let peerId = null;
+        let userIds = [];
+        let variant = "writing";
+        let flags = 1;
 
-        if (Array.isArray(_userIds)) {
-            userIds = _userIds;
-        } else {
-            userIds = String(_userIds).split(",");
+        switch (code) {
+            case 61: {
+                // [61, $user_id, $flags]
+                const userId = Number(event[1]);
+                flags = Number(event[2] ?? 1);
+                peerId = userId;
+                userIds = [userId];
+                if (flags === 2) {
+                    variant = "audiomessage";
+                }
+                break;
+            }
+            case 62: {
+                // [62, $user_id, $chat_id, $flags?]
+                const userId = Number(event[1]);
+                const chatId = Number(event[2]);
+                flags = Number(event[3] ?? 1);
+                const CHAT_RUBICON = ChatGeneralForm.CHAT_RUBICON || 2000000000;
+                peerId = chatId < CHAT_RUBICON ? CHAT_RUBICON + chatId : chatId;
+                userIds = [userId];
+                if (flags === 2) {
+                    variant = "audiomessage";
+                }
+                break;
+            }
+            case 63: {
+                // [63, $user_ids, $peer_id, $total_count, $ts]
+                const rawUsers = event[1];
+                peerId = Number(event[2]);
+                userIds = Array.isArray(rawUsers) ? rawUsers.map(Number) : [Number(rawUsers)];
+                variant = "writing";
+                break;
+            }
+            case 64: {
+                // [64, $user_ids, $peer_id, $total_count, $ts]
+                const rawUsers = event[1];
+                peerId = Number(event[2]);
+                userIds = Array.isArray(rawUsers) ? rawUsers.map(Number) : [Number(rawUsers)];
+                variant = "audiomessage";
+                break;
+            }
+            default: {
+                peerId = Number(event[1]);
+                userIds = Array.isArray(event[2]) ? event[2].map(Number) : [Number(event[2])];
+                break;
+            }
         }
 
-        const conv = await this.im.conversations._findConvFromApi(_peerId);
+        const conv = await this.im.conversations._findConvFromApi(peerId);
 
         if (conv != null) {
-            await conv.setTyping(userIds);
+            if (flags === 0) {
+                if (conv.current_activity) {
+                    userIds.forEach(uid => delete conv.current_activity[uid]);
+                    if (this.im && this.im.messenger) {
+                        this.im.messenger.update();
+                    }
+                }
+            } else {
+                await conv.setTyping(userIds, variant);
+            }
         } else {
-            console.error("IM | Event 61 | not found peer: ", _peerId, userIds);
+            console.error(`IM | Event ${code} | not found peer: `, peerId, userIds);
         }
     }
 

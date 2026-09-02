@@ -32,10 +32,14 @@ function formatReplyDate(date) {
 export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
     const isSearchTpl = fromSearch == "1";
     const isDeleted = msg.isDeleted();
+    const isReplyingTo = Boolean(window.im?.messenger?.replyTo && (Number(window.im.messenger.replyTo.id) === Number(msg.id) || window.im.messenger.replyTo === msg));
+    const isEditingThis = Boolean(window.im?.messenger?.editMsg && (Number(window.im.messenger.editMsg.id) === Number(msg.id) || window.im.messenger.editMsg === msg));
     const cls = [
         'messenger-app--messages---message',
         'messenger-layer',
         isSelected(msg) ? 'msg-selected' : '',
+        isReplyingTo ? 'msg-replying-to' : '',
+        isEditingThis ? 'msg-editing-this' : '',
         hideHead(msg, index, chunk) ? 'same-author' : '',
         isDeleted ? 'msg-deleted' : '',
         msg.isError() ? 'msg-error' : '',
