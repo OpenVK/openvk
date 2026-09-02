@@ -2958,7 +2958,7 @@ final class Messages extends VKAPIRequestHandler
 
         return (object) [
             "count" => sizeof($photos),
-            "items" => $photos,
+            "items" => array_reverse($photos),
         ];
     }
 

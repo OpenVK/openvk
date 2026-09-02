@@ -502,9 +502,9 @@ body.fc_dragging * {
     right: 20px;
     height: 28px;
     min-width: 130px;
+    width: 60px;
     max-width: 200px;
-    background: var(--fc-brand);
-    color: #fff;
+    background: var(--brand-bg);
     font-weight: bold;
     font-size: 11px;
     font-family: tahoma, verdana, arial, sans-serif;
@@ -536,7 +536,7 @@ body.fc_dragging * {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: #fff;
+    color: #a7a7a7;
     text-decoration: none;
     font-size: 11px;
     flex: 1;

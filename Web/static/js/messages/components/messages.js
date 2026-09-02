@@ -721,6 +721,9 @@ export class ChatGeneralForm {
             if (window.im?.fastChats) {
                 window.im.fastChats.update();
             }
+            if (window.im?.event_handler && typeof window.im.event_handler.updateGlobalUnreadCounter === 'function') {
+                window.im.event_handler.updateGlobalUnreadCounter();
+            }
         } catch (e) {
             console.error("Failed to mark as read", e);
         }

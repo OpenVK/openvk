@@ -559,23 +559,32 @@ class IMState {
     get is_group() { return this.group_id != null }
 
     getUnreadCounter() {
-        let counter = 0;
-        if (this.link && this.link.conversations && this.link.conversations.all_convs) {
-            this.link.conversations.all_convs.forEach(item => {
-                if (!item.isRead()) {
-                    counter += 1;
-                }
-            });
+        return this.unread_counter || 0;
+    }
+
+    async fetchUnreadCounter() {
+        try {
+            if (!window.OVKAPI) return this.unread_counter || 0;
+            const params = {};
+            if (this.group_id != null) {
+                params.group_id = Math.abs(this.group_id);
+            }
+            const res = await window.OVKAPI.call('messages.getUnreadConversations', params);
+            const count = (res && typeof res.count === 'number') ? res.count : (typeof res === 'number' ? res : 0);
+            this._updateCounter(count);
+            return count;
+        } catch (e) {
+            console.error("Error fetching unread counter from API:", e);
+            return this.unread_counter || 0;
         }
-        return counter;
     }
 
     _updateCounter(new_number) {
-        this.unread_counter = new_number;
+        this.unread_counter = Number(new_number) || 0;
 
         const bElements = document.querySelectorAll(".im_counter b");
         bElements.forEach(el => {
-            el.innerHTML = String(new_number);
+            el.innerHTML = String(this.unread_counter);
         });
 
         const cntElements = document.querySelectorAll(".im_counter");

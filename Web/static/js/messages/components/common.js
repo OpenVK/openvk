@@ -358,7 +358,9 @@ export const ConversationItem = ({ conv, isForward = false, page = null }) => {
             <div class="crp-entry--message---av">
                 <img src="${last_sender_ava}" />
             </div>
-            <div class="crp-entry--message---text" dangerouslySetInnerHTML=${{ __html: last_msg.getText(false, true, true) }} />`}
+            <div class="crp-entry--message---text">
+                <span dangerouslySetInnerHTML=${{ __html: last_msg.getText(false, true, true) }} />
+            </div>`}
             ${has_activity == true && html`
                 <div class="crp-entry--message---av"></div>
                 <div class="crp-entry--message---text">
@@ -379,7 +381,7 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
         <div id="conversations-top-buttons">
             ${!isForward ? html`
             <div id="conversations-search-bar">
-                <input class="search_input" type="text" placeholder="${tr('search_messages')}" onChange=${onSearch} />
+                <input class="search_input cool" type="text" placeholder="${tr('search_messages')}" onChange=${onSearch} />
             </div>
             ${!is_group ? html`
                 <input type="button" class="button" value="${tr('saved_messages') || 'Избранное'}" onClick=${() => {
@@ -408,6 +410,9 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
                 ${total_convs > 0 ? tr("conversations_count_title", total_convs) : ""}
             </div>
             <div class="crp-bottom--actions">
+                ${isForward ? html`
+                    <a onClick=${() => { window.im.messenger.onConversationsClick(window.openvk.current_id, isForward, page); }}>${tr("saved_messages")}</a>
+                ` : html`
                 ${!unreadMode ? html`
                     <a onClick=${() => { window.im.conversations.toggleMode("unread") }}>${tr("conversations_show_unread")}</a> |<span> </span>
                 ` : html`
@@ -416,6 +421,7 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
                 <a onclick=${() => { window.im.openTabByName("settings") }}>${tr("messenger_tab_settings")}</a> |<span> </span>
                 <a onClick=${(event) => { imSwitchCurrent(event) }}>${tr("messenger_switch_current")}</a> |<span> </span>
                 <a onClick=${() => { window.im.openTabByName("important") }}>${tr("important_messages") || "Важное"}</a>
+                `}
             </div>
         </div>
     `;
@@ -450,6 +456,14 @@ export const TabBar = ({ tabs, activeTab, onTabSelect }) => {
     }
 
     const showContactButton = activeTabName == "messenger";
+    let contactText = tr('about_peer');
+    try {
+        if (activeTabName == "messenger" && window.im.messenger.getCurrentChat().peer.supposed_type == "chat") {
+            contactText = tr("about_peer_chat");
+        }
+    } catch (e) {
+        console.error(e);
+    }
     const showFriendsButton = !window.im?.state?.is_group && activeTabName != "friends";
     const showSettingsButton = false;
     const showSpecActions = showSettingsButton || showContactButton || showFriendsButton;
@@ -486,7 +500,7 @@ export const TabBar = ({ tabs, activeTab, onTabSelect }) => {
                 </div>
                 <div class="${showSpecActions == false ? 'hidden' : ''}" id="spec-actions">
                     ${showContactButton ? html`
-                        <a onclick=${() => { window.im.openTabByName("contact") }}>${tr('about_peer')}</a>
+                        <a onclick=${() => { window.im.openTabByName("contact") }}>${contactText}</a>
                         <span class="tab-divider">|</span>
                     ` : ''}
                     ${showSettingsButton ? html`
@@ -615,6 +629,9 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                                         window.im.messenger.update();
                                         if (window.im.conversations) {
                                             window.im.conversations.update();
+                                        }
+                                        if (window.im?.event_handler && typeof window.im.event_handler.updateGlobalUnreadCounter === 'function') {
+                                            window.im.event_handler.updateGlobalUnreadCounter();
                                         }
                                     } catch (err) {
                                         fastError(String(err));

@@ -166,7 +166,18 @@ export class Chunks {
     }
     _invalidateCache() { this.invalidateCache = true; }
     isMessagesInited() { return this._messagesInited; }
-    getLatestChunk() { return this.chunks[this._latest_chunk_id]; }
+    getLatestChunk() {
+        if (!this.chunks || this.chunks.length === 0) {
+            const startChunk = new MessageChunk([], true, 20, "start");
+            this.chunks.push(startChunk);
+            return startChunk;
+        }
+        const sorted = this.sorted;
+        if (sorted.length > 0 && sorted[0] && (sorted[0].latest_message || (sorted[0].messages && sorted[0].messages.length > 0))) {
+            return sorted[0];
+        }
+        return this.chunks[0];
+    }
     getLatestMessage() { return this.getLatestChunk() ? this.getLatestChunk().latest_message : null; }
     appendChunk(chunk, replace_actual = true) {
         let key = this._getChunkKey(chunk);
@@ -177,8 +188,42 @@ export class Chunks {
         }
 
         if (this._messagesInited == false && replace_actual == true) {
-            this.chunks[0] = chunk;
+            const existingMessages = [];
+            this.chunks.forEach(c => {
+                if (c && c.messages) {
+                    c.messages.forEach(m => {
+                        if (m) existingMessages.push(m);
+                    });
+                }
+            });
+
+            if (existingMessages.length > 0) {
+                existingMessages.forEach(m => {
+                    const mId = m.id;
+                    const mRandomId = m.data?.random_id;
+                    const mCmid = m.data?.conversation_message_id || m.data?.local_id;
+                    const alreadyPresent = chunk.messages.some(cm => {
+                        if (mId != null && cm.id != null && (cm.id == mId || Number(cm.id) === Number(mId))) return true;
+                        if (mRandomId != null && cm.data?.random_id != null && cm.data.random_id == mRandomId) return true;
+                        if (mCmid != null && cm.data && (cm.data.conversation_message_id == mCmid || cm.data.local_id == mCmid)) return true;
+                        return false;
+                    });
+                    if (!alreadyPresent) {
+                        chunk.pushMessage(m);
+                    }
+                });
+
+                if (chunk.do_reverse) {
+                    chunk.messages.sort((a, b) => (Number(b.id || b.data?.local_id || 0)) - (Number(a.id || a.data?.local_id || 0)));
+                } else {
+                    chunk.messages.sort((a, b) => (Number(a.id || a.data?.local_id || 0)) - (Number(b.id || b.data?.local_id || 0)));
+                }
+            }
+
+            this.chunks = [chunk];
+            this._map = new Map();
             key = this._getChunkKey(chunk);
+            idx = 0;
         } else {
             this.chunks.push(chunk);
             idx = this.chunks.length - 1;
@@ -285,10 +330,22 @@ export class Chunks {
     pushNewMessage(msg, conv = null, check_chunk = true) {
         const actual = this.getLatestChunk(check_chunk);
         if (actual) {
-            actual.pushMessage(msg);
+            const msgId = msg?.id;
+            const msgRandomId = msg?.data?.random_id;
+            const msgCmid = msg?.data?.conversation_message_id || msg?.data?.local_id;
+            const alreadyExists = actual.messages.some(m =>
+                (msgId != null && m?.id != null && (m.id == msgId || Number(m.id) === Number(msgId))) ||
+                (msgRandomId != null && m?.data?.random_id != null && m.data.random_id == msgRandomId) ||
+                (msgCmid != null && m?.data && (m.data.conversation_message_id == msgCmid || m.data.local_id == msgCmid))
+            );
+            if (!alreadyExists) {
+                actual.pushMessage(msg);
+            }
         }
         this._invalidateCache();
-        window.im.messenger.update();
+        if (window.im && window.im.messenger) {
+            window.im.messenger.update();
+        }
     }
 
     /** Jump back to the newest side (the "return to newest" / DOWN button). */
@@ -501,12 +558,13 @@ export class ScrollPosition {
             return;
         }
 
+        const isFirstLoad = !this.peer._chunks.isMessagesInited();
         const allChunks = this.getChronologicalChunks();
         if (this.windowStartIndex === null) {
             this.returnChronologicalDivision();
         }
 
-        if (this.windowStartIndex > 0) {
+        if (!isFirstLoad && this.windowStartIndex > 0) {
             this.windowStartIndex--;
             if (this.windowEndIndex - this.windowStartIndex + 1 > ScrollPosition.MAX_RENDERED_CHUNKS) {
                 this.windowEndIndex--;
@@ -517,19 +575,25 @@ export class ScrollPosition {
         }
 
         const oldestChunk = allChunks[0];
-        const oldestMsgId = oldestChunk ? oldestChunk.first_message?.id : null;
+        const oldestMsgId = (!isFirstLoad && oldestChunk) ? oldestChunk.first_message?.id : null;
 
-        const msgs = await this.peer._chunks.fetchRelatively(oldestMsgId, { older: true });
+        const msgs = await this.peer._chunks.fetchRelatively(oldestMsgId, { older: !isFirstLoad });
         if (!msgs || !msgs.messages.length) {
             this.reachedOldestPosition = true;
             this.peer._chunks._messagesInited = true;
+            if (isFirstLoad) {
+                this.reachedNewestPosition = true;
+                this.windowStartIndex = 0;
+                this.windowEndIndex = Math.max(0, this.getChronologicalChunks().length - 1);
+            }
+            this._invalidateCache();
             return;
         }
 
         const existingIds = new Set();
         allChunks.forEach(c => c.getMessages().forEach(m => { if (m && m.id) existingIds.add(m.id); }));
         const hasOlder = msgs.messages.some(m => m && m.id && !existingIds.has(m.id));
-        if (!hasOlder) {
+        if (!isFirstLoad && !hasOlder) {
             this.reachedOldestPosition = true;
             this.peer._chunks._messagesInited = true;
             return;
@@ -537,11 +601,18 @@ export class ScrollPosition {
 
         this.peer._chunks.appendChunk(msgs);
 
-        this.windowStartIndex = 0;
-        this.windowEndIndex = Math.min(this.getChronologicalChunks().length - 1, (this.windowEndIndex ?? 0) + 1);
-        if (this.windowEndIndex - this.windowStartIndex + 1 > ScrollPosition.MAX_RENDERED_CHUNKS) {
-            this.windowEndIndex = this.windowStartIndex + ScrollPosition.MAX_RENDERED_CHUNKS - 1;
-            this.reachedNewestPosition = false;
+        const updatedChunks = this.getChronologicalChunks();
+        if (isFirstLoad) {
+            this.windowStartIndex = 0;
+            this.windowEndIndex = Math.max(0, updatedChunks.length - 1);
+            this.reachedNewestPosition = true;
+        } else {
+            this.windowStartIndex = 0;
+            this.windowEndIndex = Math.min(updatedChunks.length - 1, (this.windowEndIndex ?? 0) + 1);
+            if (this.windowEndIndex - this.windowStartIndex + 1 > ScrollPosition.MAX_RENDERED_CHUNKS) {
+                this.windowEndIndex = this.windowStartIndex + ScrollPosition.MAX_RENDERED_CHUNKS - 1;
+                this.reachedNewestPosition = false;
+            }
         }
 
         this._invalidateCache();
