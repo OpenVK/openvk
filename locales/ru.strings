@@ -692,6 +692,7 @@
 "header_home" = "главная";
 "header_groups" = "группы";
 "header_people" = "люди";
+"header_music" = "музыка";
 "header_invite" = "пригласить";
 "header_help" = "помощь";
 "header_log_out" = "выйти";

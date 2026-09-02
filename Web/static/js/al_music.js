@@ -730,6 +730,7 @@ window.player = new class {
 
         if(!this.audioPlayer.paused) {
             this.uiPlayer.find('.playButton').addClass('pause')
+            u('#head_play_btn').addClass('playing')
             if(this.linkedInlinePlayer) {
                 this.linkedInlinePlayer.find('.playerButton .playIcon').addClass('paused')
             }
@@ -738,6 +739,7 @@ window.player = new class {
             }
         } else {
             this.uiPlayer.find('.playButton').removeClass('pause')
+            u('#head_play_btn').removeClass('playing')
             if(this.linkedInlinePlayer) {
                 this.linkedInlinePlayer.find('.playerButton .playIcon').removeClass('paused')
             }
