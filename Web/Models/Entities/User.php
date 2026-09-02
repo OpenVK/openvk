@@ -51,8 +51,11 @@ class User extends RowModel
     protected function _abstractRelationGenerator(string $filename, int $page = 1, int $limit = 6): \Traversable
     {
         $id     = $this->getId();
+        $page   = max(1, $page);
+        $limit  = max(1, $limit);
+        $offset = ($page - 1) * $limit;
         $query  = "SELECT id FROM\n" . file_get_contents(__DIR__ . "/../sql/$filename.tsql");
-        $query .= "\n LIMIT " . $limit . " OFFSET " . (($page - 1) * $limit);
+        $query .= "\n LIMIT " . $limit . " OFFSET " . $offset;
 
         $ids = [];
         $rels = DatabaseConnection::i()->getConnection()->query($query, $id, $id);
