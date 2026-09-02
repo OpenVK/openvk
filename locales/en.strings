@@ -699,6 +699,7 @@
 "header_home" = "home";
 "header_groups" = "groups";
 "header_people" = "people";
+"header_music" = "music";
 "header_invite" = "invite";
 "header_help" = "help";
 "header_log_out" = "log out";

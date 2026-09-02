@@ -499,11 +499,11 @@
         box-sizing: border-box;
     }
 
-    #search_box {
+    .header-search-box {
         height: 100% !important;
     }
 
-    #search_box input[type="search"] {
+    .header-search-box input[type="search"] {
         height: 30px;
         width: 227px;
         background: #fff
@@ -516,9 +516,12 @@
         font-size: 13px !important;
     }
 
+    body .search_expanded_at_all .header-search-box,
     body .search_expanded_at_all .header_navigation #search_box {
         display: flex;
         align-items: center;
+        margin-left: 0;
+        float: unset;
     }
 
     body .search_expanded_at_all .header_navigation {
@@ -534,20 +537,26 @@
         padding: 0px 4px;
     }
 
+    .header-search-box,
     .header_navigation #search_box,
+    body.menu-expanded .search_expanded_at_all .header-search-box,
     body.menu-expanded .search_expanded_at_all .header_navigation #search_box {
         display: none;
         padding: 0px 0px 0px 7px;
+        margin-left: 0;
+        float: unset;
     }
 
     .page_header.search_expanded select[name="section"] {
         display: none !important;
     }
 
+    .header-search-box .search_box_button,
     .header_navigation #search_box .search_box_button {
         width: 60px;
     }
 
+    .header-search-box .search_box_button span,
     .header_navigation #search_box .search_box_button span {
         font-size: 18px;
     }
@@ -2703,10 +2712,12 @@
         width: 46px;
     }
 
+    body .search_expanded_at_all .header-search-box,
     body .search_expanded_at_all .header_navigation #search_box {
         width: 190px;
     }
 
+    .header-search-box .search_box_button span,
     .header_navigation #search_box .search_box_button span {
         font-size: 10px;
     }

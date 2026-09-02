@@ -1120,8 +1120,8 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 
 .messenger-app--messages---message ._content .attachments .msg-attach-j {
     display: inline-block;
-    height: 83px;
-    max-width: 150px;
+    max-height: 512px;
+    max-width: 512px;
     margin-right: 5px;
 }
 

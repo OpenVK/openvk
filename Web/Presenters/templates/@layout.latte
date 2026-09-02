@@ -112,6 +112,33 @@
             <div id="xhead" class="dm"></div>
             <div class="page_header{if $instance_name != \OPENVK_DEFAULT_INSTANCE_NAME} page_custom_header{/if}{if $atSearch ?? false} search_expanded search_expanded_at_all{/if}">
                 <a href="/" class="home_button{if $instance_name != \OPENVK_DEFAULT_INSTANCE_NAME} home_button_custom{/if}" title="{$instance_name}">{if $instance_name != \OPENVK_DEFAULT_INSTANCE_NAME}{$instance_name}{/if}</a>
+                {if !isset($thisUser) || !$thisUser->isDeactivated()}
+                <div id="search_box" class="header-search-box">
+                    <div id="search_box_fr">
+                        <form id='search_form' action="/search" method="get">
+                            <div id='search_and_one_more_wrapper'>
+                                {var $section = $_REQUEST['section'] ?? ''}
+                                <input n:attr="value => $_REQUEST['q'] ?? NULL" autocomplete="off" type="search" maxlength="79" name="q" placeholder="{_header_search}" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
+                                <select name="section">
+                                    <option n:attr="selected => $section == 'users'" value="users">{_s_by_people}</option>
+                                    <option n:attr="selected => $section == 'groups'" value="groups">{_s_by_groups}</option>
+                                    <option n:attr="selected => $section == 'events'" value="events">{_s_by_events}</option>
+                                    <option n:attr="selected => $section == 'posts'" value="posts">{_s_by_posts}</option>
+                                    <option n:attr="selected => $section == 'videos'" value="videos">{_s_by_videos}</option>
+                                    <option n:attr="selected => $section == 'apps'" value="apps">{_s_by_apps}</option>
+                                    <option n:attr="selected => $section == 'audios'" value="audios">{_s_by_audios}</option>
+                                    <option n:attr="selected => $section == 'audios_playlists'" value="audios_playlists">{_s_by_audios_playlists}</option>
+                                    <option n:attr="selected => $section == 'docs'" value="docs">{_s_by_documents}</option>
+                                </select>
+                            </div>
+                            <button class="search_box_button">
+                                <span>{_header_search}</span>
+                            </button>
+                        </form>
+                    </div>
+                    <div id="searchBoxFastTips"></div>
+                </div>
+                {/if}
                 <div class="mobile_title">
                     <span>
                     {ifset title}
@@ -138,14 +165,17 @@
                                 <a href="/logout?hash={urlencode($csrfToken)}">{_header_log_out}</a>
                             </div>
                         {else}
-                            <div class="link link_long_screens">
-                                <a href="/">{_header_home}</a>
+                            <div class="link">
+                                <a href="/search?section=users">{_header_people}</a>
                             </div>
-                            <div class="link link_long_screens">
+                            <div class="link">
                                 <a href="/search?section=groups">{_header_groups}</a>
                             </div>
                             <div class="link">
-                                <a href="/search?q=&section=users&order=rating">{_header_search}</a>
+                                <a id="head_music" href="/audios{$thisUser->getId()}">
+                                    <span>{_header_music}</span>
+                                    <div id="head_play_btn" onclick="event.preventDefault(); event.stopPropagation(); return headPlayPause(event);"></div>
+                                </a>
                             </div>
                             <div class="link">
                                 <a href="/invite">{_header_invite}</a>
@@ -155,31 +185,6 @@
                             </div>
                             <div class="link">
                                 <a id="logout_link" href="/logout?hash={urlencode($csrfToken)}">{_header_log_out}</a>
-                            </div>
-                            <div class="link header_divider_stick" id="search_box">
-                                <div id="search_box_fr">
-                                    <form id='search_form' action="/search" method="get">
-                                        <div id='search_and_one_more_wrapper'>
-                                            {var $section = $_REQUEST['section'] ?? ''}
-                                            <input n:attr="value => $_REQUEST['q'] ?? NULL" autocomplete="off" type="search" maxlength="79" name="q" placeholder="{_header_search}" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
-                                            <select name="section">
-                                                <option n:attr="selected => $section == 'users'" value="users">{_s_by_people}</option>
-                                                <option n:attr="selected => $section == 'groups'" value="groups">{_s_by_groups}</option>
-                                                <option n:attr="selected => $section == 'events'" value="events">{_s_by_events}</option>
-                                                <option n:attr="selected => $section == 'posts'" value="posts">{_s_by_posts}</option>
-                                                <option n:attr="selected => $section == 'videos'" value="videos">{_s_by_videos}</option>
-                                                <option n:attr="selected => $section == 'apps'" value="apps">{_s_by_apps}</option>
-                                                <option n:attr="selected => $section == 'audios'" value="audios">{_s_by_audios}</option>
-                                                <option n:attr="selected => $section == 'audios_playlists'" value="audios_playlists">{_s_by_audios_playlists}</option>
-                                                <option n:attr="selected => $section == 'docs'" value="docs">{_s_by_documents}</option>
-                                            </select>
-                                        </div>
-                                        <button class="search_box_button">
-                                            <span>{_header_search}</span>
-                                        </button>
-                                    </form>
-                                </div>
-                                <div id="searchBoxFastTips"></div>
                             </div>
                         {/if}
                     {else}
