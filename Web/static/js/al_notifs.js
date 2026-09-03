@@ -58,8 +58,6 @@ async function setupNotificationListener() {
                 if (isFirstRequest) {
                     console.info("Notifications | Cursor synced. Real-time notifications enabled.");
                     isFirstRequest = false;
-                } else {
-                    console.info("Notifications | No new notifications found, sleeping for " + POLL_INTERVAL / 1000 + "s...")
                 }
                 await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL));
             } else if (rejection.message === "Disabled" || rejection.code === 1999) {

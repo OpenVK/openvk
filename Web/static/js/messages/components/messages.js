@@ -1,5 +1,6 @@
 import { MessageChunk, Chunks, DayChunk } from "./partition.js";
-//const { MessageChunk, Chunks, DayChunk } = await es6import_Im(import.meta.url, "./partition.js");
+import { getAppLocale, getTimeFormatOptions, formatTime, formatDate } from "./common.js";
+import { imLog } from "../logger.js";
 
 export class Draft {
     constructor() {
@@ -22,7 +23,7 @@ export class Draft {
     }
 
     loadToPage(page) {
-        console.log("applying ", this, " to ", page);
+        imLog("Draft | applying", this, "to", page);
         if (this.text != null) {
             window.im.messenger.currentDraft = this.text;
             page.container.querySelector(".messenger-app--input---messagebox textarea").value = this.text;
@@ -34,7 +35,7 @@ export class Draft {
             page.container.querySelector(".post-vertical").innerHTML = this.attachments_html[1];
         }
         if (this.editMsg) {
-            console.log("this.editMsg", this.editMsg);
+            imLog("Draft | editMsg:", this.editMsg);
             window.im.messenger.editMsg = this.editMsg;
         } else {
             window.im.messenger.editMsg = null;
@@ -50,7 +51,7 @@ export class Draft {
         if (this.scroll != null) {
             page._scrollTo(this.scroll);
         } else {
-            console.log(this);
+            imLog("loadScroll default to end:", this);
             page._scrollToEnd();
         }
     }
@@ -259,7 +260,7 @@ export class ChatGeneralForm {
 
         return ava ?? '/assets/packages/static/openvk/img/camera_100.png';
     }
-    hasAvatar() { return this.data.photo_200 != null }
+    hasAvatar() { return this.data.photo_200 != null && !this.data.photo_200.includes("/assets/packages/static/openvk/img/") }
     getName(count_self = false, short = false) {
         if (count_self && this.isSavedMessages()) {
             return tr("saved_messages");
@@ -325,8 +326,8 @@ export class ChatGeneralForm {
         const date = new Date(time * 1000);
         const today = new Date();
         const sameMonth = date.getMonth() === today.getMonth();
-        const timeStr = date.toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit' });
-        const dayStr = date.toLocaleDateString(navigator.language, {
+        const timeStr = formatTime(date, false);
+        const dayStr = formatDate(date, {
             month: '2-digit',
             day: '2-digit'
         });
@@ -344,6 +345,66 @@ export class ChatGeneralForm {
         }
 
         return tr("im_was_online_other_" + this.getGender(), timeStr, dayStr).toLowerCase();
+    }
+
+    isOnline() {
+        if (this.supposed_type !== "user") return false;
+        if (this.online === 1 || this.data?.online === 1) return true;
+        const lastSeenTime = this.data?.last_seen?.time;
+        if (lastSeenTime) {
+            const now = Math.floor(Date.now() / 1000);
+            if (now - lastSeenTime <= 300) return true;
+        }
+        return false;
+    }
+
+    getOfflineBarString() {
+        if (this.supposed_type !== "user" || this.isSavedMessages()) {
+            return null;
+        }
+
+        if (this.isOnline()) {
+            return null;
+        }
+
+        const name = this.data?.first_name || this.getName(false, true) || this.getName() || "";
+        const gender = this.getGender();
+
+        let lastSeen = this.data?.last_seen;
+        if (!lastSeen?.time && window.im?.cached_profiles) {
+            const cached = window.im.cached_profiles._findCachedProfileById(this.id);
+            if (cached?.data?.last_seen) lastSeen = cached.data.last_seen;
+            else if (cached?.last_seen) lastSeen = cached.last_seen;
+        }
+
+        if (!lastSeen || !lastSeen.time) {
+            const res = tr("im_write_bar_offline_unknown_" + gender, name);
+            return res.startsWith("@") ? `${name} был в сети недавно` : res;
+        }
+
+        const time = lastSeen.time;
+        const date = new Date(time * 1000);
+        const today = new Date();
+        const sameMonth = date.getMonth() === today.getMonth();
+        const sameYear = date.getFullYear() === today.getFullYear();
+        const timeStr = formatTime(date, false);
+        const dayStr = formatDate(date, {
+            month: '2-digit',
+            day: '2-digit'
+        });
+
+        if (sameYear && sameMonth && date.getDate() === today.getDate()) {
+            const res = tr("im_write_bar_offline_today_" + gender, name, timeStr);
+            return res.startsWith("@") ? `${name} был в сети сегодня в ${timeStr}` : res;
+        }
+
+        if (sameYear && sameMonth && date.getDate() === today.getDate() - 1) {
+            const res = tr("im_write_bar_offline_yesterday_" + gender, name, timeStr);
+            return res.startsWith("@") ? `${name} был в сети вчера в ${timeStr}` : res;
+        }
+
+        const res = tr("im_write_bar_offline_other_" + gender, name, timeStr, dayStr);
+        return res.startsWith("@") ? `${name} был в сети ${dayStr} в ${timeStr}` : res;
     }
 
     isMuted() {
@@ -444,7 +505,7 @@ export class ChatGeneralForm {
         }
 
         if (msg.is_deleted == true) {
-            console.info('IM | Maybe message send interrupted, so does not sending. ', this.id, msg);
+            imLog.info('IM | Maybe message send interrupted, so does not sending. ', this.id, msg);
             return;
         }
 
@@ -464,7 +525,7 @@ export class ChatGeneralForm {
                 }
             }
             msg.data.is_sending = false;
-            console.info('IM | Sent message to ' + this.id);
+            imLog('Sent message to ' + this.id, resp);
             if (this._chunks) {
                 this._chunks._invalidateCache();
             }
@@ -870,6 +931,18 @@ export class ChatMessage {
                 const targetName = targetProf ? targetProf.getName() : `id${mid}`;
                 return tr("event_chat_kick_user_" + gender, targetName) || tr("event_chat_kick_user_impersonal");
             }
+            case "chat_moderator_add": {
+                const mid = act.member_id ?? this.data.action_mid;
+                const targetProf = window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached ? window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(mid) : window.im?.cached_profiles?._findCachedProfileById(mid);
+                const targetName = targetProf ? targetProf.getName() : `id${mid}`;
+                return tr("event_chat_moderator_add_" + gender, targetName) || tr("event_chat_moderator_add_impersonal");
+            }
+            case "chat_moderator_remove": {
+                const mid = act.member_id ?? this.data.action_mid;
+                const targetProf = window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached ? window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(mid) : window.im?.cached_profiles?._findCachedProfileById(mid);
+                const targetName = targetProf ? targetProf.getName() : `id${mid}`;
+                return tr("event_chat_moderator_remove_" + gender, targetName) || tr("event_chat_moderator_remove_impersonal");
+            }
             case "rating_up":
                 return tr("event_chat_user_up_your_rating_" + gender, sender?.getName(), act.member_id) || tr("event_chat_rating_up_impersonal");
             case "coins_transfer":
@@ -949,7 +1022,7 @@ export class ChatMessage {
             if (this.isSpecial("gift")) {
                 const msg = this.data.attachments?.[0]?.gift?.message;
                 if (!msg) {
-                    txt = "(" + (typeof tr === "function" && tr("message_no_text") ? tr("message_no_text") : "сообщение без текста") + ")".toLowerCase();
+                    txt = "(" + (typeof tr === "function" ? tr("message_no_text") : "message without text").toLowerCase() + ")";
                 } else {
                     txt = msg;
                 }
@@ -1134,11 +1207,7 @@ export class ChatMessage {
         const conv_day = this.getConvDay();
         switch (mode) {
             case 0:
-                return this.getSentTime().toLocaleTimeString(navigator.language, {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                });
+                return formatTime(this.getSentTime(), true);
             case 1:
                 return month_day_string(this.getSentTime());
             case 2:
@@ -1160,12 +1229,12 @@ export class ChatMessage {
     getConvDay(always_with_year = false) {
         const date = this.getSentTime();
         if (always_with_year == false && date.getFullYear() == new Date().getFullYear()) {
-            return date.toLocaleDateString(navigator.language);
+            return formatDate(date);
         } else {
-            return date.toLocaleDateString(navigator.language, {
+            return formatDate(date, {
                 month: '2-digit',
                 day: '2-digit'
-            })
+            });
         }
     }
 
@@ -1355,7 +1424,7 @@ export class ChatMessage {
         try {
             const resp = await window.OVKAPI.call('messages.send', this.data.resend_params);
             this.data.id = resp;
-            console.info('IM | Resent message to ' + this.id);
+            imLog.info('IM | Resent message to ' + this.id);
             this.data.error_text = null;
             this.data.resend_params = null;
         } catch (e) {
@@ -1393,7 +1462,7 @@ export class ChatMessage {
 
         window.im.messenger.update();
 
-        console.log("successfuly edited ", this, resp)
+        imLog("successfully edited", this, resp);
     }
 
     async togglePin(action) {

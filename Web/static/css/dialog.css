@@ -46,7 +46,7 @@ body.manyMsgs .ovk-msg-all:last-of-type {
 }
 
 .ovk-diag-head {
-    padding: 15px 12px 15px 30px;
+    padding: 15px 12px 15px 13px;
     background-color: var(--brand);
     border-bottom: 1px solid #3e3e3e;
     color: #fff;

@@ -357,7 +357,7 @@ function parseAttachments($attachments, array $allow_types = ['photo', 'video', 
 
                 $attachment_ids  = str_replace($attachment_type, '', $attachment_string);
                 $parts = explode('_', $attachment_ids);
-                if ($repositories[$attachment_type]['onlyId']) {
+                if (!empty($repositories[$attachment_type]['onlyId'])) {
                     $attachment_id = (int) ($parts[0] ?? 0);
 
                     $repository_class = $repositories[$attachment_type]['repo'];
@@ -368,7 +368,7 @@ function parseAttachments($attachments, array $allow_types = ['photo', 'video', 
                     if ($attachment_model) {
                         $output_attachments[] = $attachment_model;
                     }
-                } elseif ($repositories[$attachment_type]['withKey']) {
+                } elseif (!empty($repositories[$attachment_type]['withKey'])) {
                     $attachment_owner = (int) ($parts[0] ?? 0);
                     $attachment_id = (int) ($parts[1] ?? 0);
                     $access_key = $parts[2] ?? null;

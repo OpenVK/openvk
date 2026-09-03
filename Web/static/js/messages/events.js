@@ -1,5 +1,6 @@
 //import { ChatMessage, ChatGeneralForm } from './components/messages.js';
 const { ChatGeneralForm, ChatMessage } = await es6import_Im(import.meta.url, './components/messages.js');
+const { imLog } = await es6import_Im(import.meta.url, './logger.js');
 
 export class EventHandler {
     constructor(im) {
@@ -35,10 +36,9 @@ export class EventHandler {
         if (!Array.isArray(event)) return;
 
         const method = this.codes[event[0]];
-        console.log("lp event: ", event);
-        console.log(this.im);
+        imLog("LP Event:", event, method || "unknown");
         if (!method) {
-            console.info('unknown event,  ', event[0]);
+            imLog.info('unknown event,  ', event[0]);
         } else if (typeof this[method] === 'function') {
             await this[method](event);
         }
@@ -480,12 +480,49 @@ export class EventHandler {
         if (this.im.fastChats) {
             this.im.fastChats.setUserOnline(userId, true);
         }
+        const prof = window.im?.cached_profiles?._findCachedProfileById(userId);
+        if (prof) {
+            prof.online = 1;
+            if (prof.data) prof.data.online = 1;
+        }
+        if (this.im.conversations) {
+            const conv = this.im.conversations._findConv(userId);
+            if (conv && conv.peer) {
+                conv.peer.online = 1;
+                if (conv.peer.data) conv.peer.data.online = 1;
+            }
+        }
+        if (this.im.messenger) {
+            this.im.messenger.update();
+        }
     }
 
     async UserOfflineEvent(event) {
         const userId = Math.abs(event[1]);
+        const time = event[4] || event[3] || Math.floor(Date.now() / 1000);
         if (this.im.fastChats) {
             this.im.fastChats.setUserOnline(userId, false);
+        }
+        const prof = window.im?.cached_profiles?._findCachedProfileById(userId);
+        if (prof) {
+            prof.online = 0;
+            if (prof.data) {
+                prof.data.online = 0;
+                prof.data.last_seen = { time: Number(time) };
+            }
+        }
+        if (this.im.conversations) {
+            const conv = this.im.conversations._findConv(userId);
+            if (conv && conv.peer) {
+                conv.peer.online = 0;
+                if (conv.peer.data) {
+                    conv.peer.data.online = 0;
+                    conv.peer.data.last_seen = { time: Number(time) };
+                }
+            }
+        }
+        if (this.im.messenger) {
+            this.im.messenger.update();
         }
     }
 

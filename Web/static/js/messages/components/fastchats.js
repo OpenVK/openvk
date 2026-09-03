@@ -1,4 +1,5 @@
 import { html } from './render.js';
+import { formatTime } from './common.js';
 
 /**
  * Universal drag handler for floating fastchat windows
@@ -267,7 +268,7 @@ export const FastChatBox = ({
         const isOut = msg.from_id === currentUserId || msg.out === 1;
         const authorName = isOut ? (tr('you') || 'Вы') : (msg.author_name || chat.title);
         const authorAva = isOut ? currentUserAvatar : (msg.author_photo || chat.photo);
-        const timeStr = msg.time_str || (msg.date ? new Date(msg.date * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '');
+        const timeStr = msg.time_str || (msg.date ? formatTime(msg.date, false) : '');
 
         return html`
                         <div class="fc_msg_row" data-msg-id="${msg.id}">
