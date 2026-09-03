@@ -23,6 +23,8 @@ final class MessengerPresenter extends OpenVKPresenter
         $isAvailable = $im->isEnabled() && $im->pingLP();
 
         $this->template->imAvailable = $isAvailable;
+        $this->template->joinCode = $joinCode;
+        $this->template->isAuthorized = !is_null($this->user->identity);
 
         if (!empty($joinCode) && is_string($joinCode) && $isAvailable) {
             $this->loadChatPreviewMetadata($joinCode);
@@ -38,12 +40,14 @@ final class MessengerPresenter extends OpenVKPresenter
         try {
             $raw = $im->invokeMethod(0, "messages.getChatPreview", ['link' => $joinCode]);
             if (empty($raw)) {
+                $this->template->chatPreviewError = tr("chat_invite_invalid_error");
                 return;
             }
 
             $res = json_decode($raw, true);
             $preview = $res['response']['preview'] ?? $res['preview'] ?? null;
             if (!$preview) {
+                $this->template->chatPreviewError = tr("chat_invite_invalid_error");
                 return;
             }
 
@@ -74,15 +78,46 @@ final class MessengerPresenter extends OpenVKPresenter
 
             $desc = tr("chat_invite_preview_title") . " • " . tr("members_count", $membersCount);
 
+            $rawProfiles = $res['response']['profiles'] ?? $res['profiles'] ?? [];
+            $profiles = [];
+            $limit = ($membersCount > 12) ? 11 : 12;
+
+            if (!empty($rawProfiles)) {
+                $userRepo = new \openvk\Web\Models\Repositories\Users();
+                foreach ($rawProfiles as $pItem) {
+                    if (count($profiles) >= $limit) {
+                        break;
+                    }
+                    $uId = is_array($pItem) ? ($pItem['id'] ?? 0) : (int) $pItem;
+                    if ($uId > 0) {
+                        $u = $userRepo->get($uId);
+                        if ($u) {
+                            $profiles[] = [
+                                'name'   => $u->getCanonicalName(),
+                                'avatar' => $u->getAvatarUrl('miniscule'),
+                            ];
+                        }
+                    }
+                }
+            }
+
+            $remainingCount = max(0, $membersCount - count($profiles));
+            if ($remainingCount > 0 && count($profiles) > 11) {
+                $profiles = array_slice($profiles, 0, 11);
+                $remainingCount = max(0, $membersCount - count($profiles));
+            }
+
             $this->template->chatPreview = [
-                'chatTitle'    => $chatTitle,
-                'membersCount' => $membersCount,
-                'photoUrl'     => $photoUrl,
-                'description'  => $desc,
-                'joinUrl'      => $baseUrl . "/im?join=" . $joinCode,
+                'chatTitle'      => $chatTitle,
+                'membersCount'   => $membersCount,
+                'photoUrl'       => $photoUrl,
+                'description'    => $desc,
+                'joinUrl'        => $baseUrl . "/im?join=" . $joinCode,
+                'profiles'       => $profiles,
+                'remainingCount' => $remainingCount,
             ];
         } catch (\Throwable $e) {
-            // Ignore preview metadata fetch errors so page render doesn't break
+            $this->template->chatPreviewError = tr("chat_invite_invalid_error");
         }
     }
 }

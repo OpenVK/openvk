@@ -317,10 +317,10 @@ abstract class Postable extends Attachable
     public function getContextId(): int
     {
         if (!$this->getRecord()) {
-            return $this->changes["context_id"];
+            return (int) ($this->changes["context_id"] ?? 0);
         }
 
-        return $this->getRecord()->context_id;
+        return (int) $this->getRecord()->context_id;
     }
 
     public function hasContext(): bool
@@ -329,7 +329,7 @@ abstract class Postable extends Attachable
             return false;
         }
 
-        return ($this->getRecord()->context_id != 0 && $this->getRecord()->context_id != null) || $this->changes["context_id"] != null;
+        return !empty($this->getRecord()?->context_id) || !empty($this->changes["context_id"]);
     }
 
     public function canBeCommentedBy(?User $user): bool

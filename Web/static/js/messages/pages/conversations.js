@@ -7,6 +7,7 @@ const { IMTab, IMPage } = await es6import_Im(import.meta.url, "./page.js");
 //import { html, render } from '../components/render.js';
 const { ScrollPosition } = await es6import_Im(import.meta.url, "../components/partition.js");
 const { html, render } = await es6import_Im(import.meta.url, "../components/render.js");
+const { imLog } = await es6import_Im(import.meta.url, "../logger.js");
 
 export class ConversationsPage extends IMPage {
     static getPageId() { return "conversations"; }
@@ -37,7 +38,7 @@ export class ConversationsPage extends IMPage {
         const q = String(e.target.value);
         e.target.value = "";
 
-        console.log(q)
+        imLog("Search query:", q);
         window.im.openTabByName("search", true, {
             "q": q
         });
@@ -234,7 +235,7 @@ export class Conversations {
 
     async loadNext(im = null) {
         let convs = [];
-        console.log(im.report_data)
+        imLog("loadNext report_data:", im?.report_data);
         if (im && im.report_data) {
             convs = [await this._findConvFromApi(im.report_data.peer_id)];
         } else {
@@ -245,19 +246,14 @@ export class Conversations {
     }
 
     _findConv(id) {
-        //console.log("Trying to find convo with id", id)
-        const _l = this.all_convs.filter((itm) => itm.peer && itm.peer.id == id);
-        if (_l[0] == undefined) {
-            throw Error('Not found chat, id: ' + String(id));
-        }
-        return _l[0];
+        const found = this.all_convs.find((itm) => itm.peer && itm.peer.id == id);
+        return found || null;
     }
 
     async _findConvFromApi(id, check_cached = false) {
-        try {
-            return this._findConv(id);
-        } catch (e) {
-            console.error(e);
+        const existing = this._findConv(id);
+        if (existing) {
+            return existing;
         }
 
         let b = null;
@@ -270,10 +266,10 @@ export class Conversations {
         }
 
         if (!b) {
-            throw Error('Not found chat ' + id);
+            return null;
         }
 
-        console.log("Not found chat with id ", id, ", returning a new one.")
+        imLog("Chat with id", id, "not in all_convs, created new Conversation from API");
         const convPayload = { 'peer': b };
         if (b.data && b.data._full_conversation) {
             convPayload['conversation'] = b.data._full_conversation;
@@ -363,7 +359,7 @@ export class Conversation {
     async setTyping(user_ids = [], variant = "writing") {
         const REMOVE_TYPING_TIMEOUT = 5000;
 
-        console.log("IM | Conversations | ", this, " is writing")
+        imLog("Conversations | writing activity:", this, user_ids);
 
         for (const item of user_ids) {
             const val = {
@@ -381,7 +377,7 @@ export class Conversation {
 
         setTimeout(() => {
             if (this.activity_updated.getTime() == old.getTime()) {
-                console.info("IM | Conversations | Wiped activity for ", this, "!")
+                imLog("Conversations | Wiped activity for", this);
                 this.current_activity = {};
                 window.im.messenger.update();
             }

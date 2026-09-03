@@ -9,14 +9,16 @@
         if (window.im_class == null) {
             const o_url = new URL(location.href);
             return setTimeout(() => {
-                console.log("IM | Delay init")
+                if (window.imLog) window.imLog("Delay init");
                 if (o_url.href == n_url.href) {
                     this.loadPage();
                 }
             }, 1000);
         }
 
-        window.im_class.insertIn(document.querySelector('.page_content'), n_url.searchParams.get("as"));
+        if (!document.querySelector('.page_content #im_container')) {
+            window.im_class.insertIn(document.querySelector('.page_content'), n_url.searchParams.get("as"));
+        }
     }
 
     document.addEventListener("DOMContentLoaded", (e) => {

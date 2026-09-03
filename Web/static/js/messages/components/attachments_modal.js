@@ -1,5 +1,95 @@
 const { html, render } = await es6import_Im(import.meta.url, './render.js');
 
+const AudioAttachment = ({ audio }) => {
+    if (!audio) return null;
+    const audioId = audio.global_id || audio.id || audio.aid || 0;
+    const artist = audio.artist || audio.performer || '';
+    const title = audio.title || audio.name || '';
+    const duration = audio.duration || audio.length || 0;
+    const durationFormatted = typeof fmtTime === 'function' ? fmtTime(duration) : `${Math.floor(duration / 60)}:${(duration % 60 < 10 ? '0' : '') + (duration % 60)}`;
+    const isPlaying = window.player && window.player.current_track_id == audioId && !window.player.audioPlayer?.paused;
+    let keysObj = {};
+    try {
+        if (audio.keys && typeof audio.keys === 'object') {
+            keysObj = audio.keys;
+        } else if (typeof audio.keys === 'string' && audio.keys.trim().startsWith('{')) {
+            keysObj = JSON.parse(audio.keys);
+        }
+    } catch (e) {
+        keysObj = {};
+    }
+    const keysStr = JSON.stringify(keysObj);
+    const playUrl = audio.manifest || audio.url || '';
+    const downloadUrl = audio.url || '';
+    const trackName = `${artist} — ${title}`;
+
+    return html`
+        <div id="audioEmbed-${audioId}"
+             data-realid="${audioId}"
+             data-name="${trackName}"
+             data-genre="${audio.genre_str || audio.genre || 'Other'}"
+             class="audioEmbed ctx_place msg-attach-audio-player"
+             data-length="${duration}"
+             data-keys=${keysStr}
+             data-url="${playUrl}"
+             data-owner-id="${audio.owner_id || 0}">
+            <audio class="audio"></audio>
+
+            <div class="audioEntry">
+                <div class="audioEntryWrapper" draggable="false">
+                    <div class="playerButton">
+                        <div class="playIcon ${isPlaying ? 'paused' : ''}"></div>
+                    </div>
+
+                    <div class="status">
+                        <div class="mediaInfo noOverflow" title="${trackName}">
+                            <div class="info">
+                                <strong class="performer">
+                                    <a draggable="false" href="/search?section=audios&order=listens&only_performers=on&q=${encodeURIComponent(artist)}" onClick=${(e) => e.stopPropagation()}>${artist}</a>
+                                </strong>
+                                <span class="tire">—</span>
+                                <span draggable="false" class="title">${title}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mini_timer">
+                        <span class="nobold hideOnHover" data-unformatted="${duration}">${durationFormatted}</span>
+                        <div class="buttons">
+                            <div class="add-icon musicIcon hovermeicon" data-id="${audioId}" title="${typeof tr === 'function' ? tr('add') : 'Добавить'}" onClick=${(e) => { e.stopPropagation(); if (typeof __showAudioAddDialog === 'function') __showAudioAddDialog(Number(audioId)); }}></div>
+                            ${downloadUrl ? html`<a class="download-icon musicIcon" href="${downloadUrl}" download="${artist} - ${title}.mp3" title="${typeof tr === 'function' ? tr('download') : 'Скачать'}" onClick=${(e) => e.stopPropagation()}></a>` : ''}
+                        </div>
+                    </div>
+                </div>
+                <div class="subTracks ${isPlaying ? 'shown' : ''}" draggable="false">
+                    <div class="lengthTrackWrapper">
+                        <div class="track lengthTrack">
+                            <div class="selectableTrack">
+                                <div class="selectableTrackLoadProgress">
+                                    <div class="load_bar"></div>
+                                </div>
+                                <div class="selectableTrackSlider">
+                                    <div class="slider"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="volumeTrackWrapper">
+                        <div class="track volumeTrack">
+                            <div class="selectableTrack">
+                                <div class="selectableTrackSlider">
+                                    <div class="slider"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+};
+
 export class AttachmentsModalComponent {
     constructor({ peer, initialType = 'photo', onClose = null } = {}) {
         this.peer = peer;
@@ -65,6 +155,29 @@ export class AttachmentsModalComponent {
                 const newItems = res.items || [];
                 if (isMore) {
                     this.items = this.items.concat(newItems);
+                    if (this.currentType === 'audio' && window.player && window.player.connectionType === '.generic_audio_list') {
+                        newItems.forEach(it => {
+                            const a = it.attachment?.audio;
+                            if (!a) return;
+                            const aId = Number(a.global_id || a.id || a.aid || 0);
+                            if (!window.player.hasTrackWithId(aId)) {
+                                let keys = {};
+                                try {
+                                    if (a.keys && typeof a.keys === 'object') keys = a.keys;
+                                    else if (typeof a.keys === 'string' && a.keys.trim().startsWith('{')) keys = JSON.parse(a.keys);
+                                } catch (e) {}
+                                window.player.appendTrack({
+                                    'id': aId,
+                                    'available': true,
+                                    'keys': keys,
+                                    'length': Number(a.duration || a.length || 0),
+                                    'url': a.manifest || a.url || '',
+                                    'name': a.title || a.name || '',
+                                    'performer': a.artist || a.performer || ''
+                                });
+                            }
+                        });
+                    }
                 } else {
                     this.items = newItems;
                 }
@@ -138,12 +251,13 @@ export class AttachmentsModalComponent {
     update() {
         if (!this.container) return;
 
+        const OXYGEN_MIME = '/assets/packages/static/openvk/img/oxygen-icons/16x16';
         const tabs = [
-            { id: 'photo', label: (typeof tr === 'function' ? (tr('att_tab_photos') || tr('photos_title')) : null) || 'Фотографии', icon: 'photo' },
-            { id: 'video', label: (typeof tr === 'function' ? (tr('att_tab_videos') || tr('videos')) : null) || 'Видеозаписи', icon: 'video' },
-            { id: 'audio', label: (typeof tr === 'function' ? (tr('att_tab_audios') || tr('audios')) : null) || 'Аудиозаписи', icon: 'audio' },
-            { id: 'doc', label: (typeof tr === 'function' ? (tr('att_tab_docs') || tr('documents')) : null) || 'Файлы', icon: 'doc' },
-            { id: 'link', label: (typeof tr === 'function' ? (tr('att_tab_links') || tr('links')) : null) || 'Ссылки', icon: 'link' }
+            { id: 'photo', label: (typeof tr === 'function' ? (tr('att_tab_photos') || tr('photos_title')) : null) || 'Фотографии', iconSrc: `${OXYGEN_MIME}/mimetypes/application-x-egon.png` },
+            { id: 'video', label: (typeof tr === 'function' ? (tr('att_tab_videos') || tr('videos')) : null) || 'Видеозаписи', iconSrc: `${OXYGEN_MIME}/mimetypes/application-vnd.rn-realmedia.png` },
+            { id: 'audio', label: (typeof tr === 'function' ? (tr('att_tab_audios') || tr('audios')) : null) || 'Аудиозаписи', iconSrc: `${OXYGEN_MIME}/mimetypes/audio-ac3.png` },
+            { id: 'doc', label: (typeof tr === 'function' ? (tr('att_tab_docs') || tr('documents')) : null) || 'Файлы', iconSrc: `${OXYGEN_MIME}/mimetypes/x-office-document.png` },
+            { id: 'link', label: (typeof tr === 'function' ? (tr('att_tab_links') || tr('links')) : null) || 'Ссылки', iconSrc: `${OXYGEN_MIME}/mimetypes/application-x-srt.png` }
         ];
 
         render(html`
@@ -152,18 +266,21 @@ export class AttachmentsModalComponent {
                     <div class="att-modal-tabs">
                         ${tabs.map(t => html`
                             <a class="att-modal-tab ${this.currentType === t.id ? 'active' : ''}" onClick=${() => this.setType(t.id)}>
-                                ${t.label}
+                                <img class="att-tab-icon" src="${t.iconSrc}" alt="" />
+                                <span>${t.label}</span>
                             </a>
                         `)}
                     </div>
+                    ${this.currentType !== 'audio' ? html`
                     <div class="att-modal-view-switcher">
-                        <button class="att-view-btn ${this.viewMode === 'grid' ? 'active' : ''}" title="Сетка" onClick=${() => this.setViewMode('grid')}>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        <button class="att-view-btn ${this.viewMode === 'grid' ? 'active' : ''}" title=${tr('view_grid')} onClick=${() => this.setViewMode('grid')}>
+                            <span class="mono-icon mono-icon-expand"></span>
                         </button>
-                        <button class="att-view-btn ${this.viewMode === 'list' ? 'active' : ''}" title="Список" onClick=${() => this.setViewMode('list')}>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                        <button class="att-view-btn ${this.viewMode === 'list' ? 'active' : ''}" title=${tr('view_list')} onClick=${() => this.setViewMode('list')}>
+                            <span class="mono-icon mono-icon-list"></span>
                         </button>
                     </div>
+                    ` : ''}
                 </div>
 
                 <div class="att-modal-body-scroll">
@@ -182,7 +299,7 @@ export class AttachmentsModalComponent {
                             <span>${(typeof tr === 'function' ? tr('no_attachments') : null) || 'Вложений этого типа не найдено'}</span>
                         </div>
                     ` : html`
-                        ${this.viewMode === 'grid' ? this.renderGridView() : this.renderListView()}
+                        ${this.currentType === 'audio' ? this.renderAudioView() : (this.viewMode === 'grid' ? this.renderGridView() : this.renderListView())}
 
                         ${this.nextFrom ? html`
                             <div class="att-modal-load-more">
@@ -195,6 +312,25 @@ export class AttachmentsModalComponent {
                 </div>
             </div>
         `, this.container);
+    }
+
+    renderAudioView() {
+        const seenIds = new Set();
+        const uniqueAudios = [];
+        this.items.forEach(item => {
+            const audio = item.attachment?.audio;
+            if (!audio) return;
+            const audioId = Number(audio.global_id || audio.id || audio.aid || 0);
+            if (!audioId || seenIds.has(audioId)) return;
+            seenIds.add(audioId);
+            uniqueAudios.push(audio);
+        });
+
+        return html`
+            <div class="att-modal-audio-list generic_audio_list">
+                ${uniqueAudios.map(audio => html`<${AudioAttachment} audio=${audio} />`)}
+            </div>
+        `;
     }
 
     renderGridView() {
@@ -273,17 +409,7 @@ export class AttachmentsModalComponent {
             }
 
             if (audio) {
-                const durStr = audio.duration ? (Math.floor(audio.duration / 60) + ':' + ('0' + (audio.duration % 60)).slice(-2)) : '';
-                return html`
-                            <div class="att-grid-cell card-cell audio-card" onClick=${(e) => this.openAudio(e, item)}>
-                                <div class="att-card-icon audio-icon"></div>
-                                <div class="att-card-info">
-                                    <strong class="att-card-name">${audio.title || 'Аудио'}</strong>
-                                    <span class="att-card-sub">${audio.artist || 'Исполнитель'}</span>
-                                </div>
-                                ${durStr ? html`<span class="att-card-dur">${durStr}</span>` : ''}
-                            </div>
-                        `;
+                return html`<${AudioAttachment} audio=${audio} />`;
             }
 
             if (doc) {
@@ -298,6 +424,7 @@ export class AttachmentsModalComponent {
                                     <img src="${previewUrl}" class="att-doc-img-preview" alt="" />
                                 ` : html`
                                     <div class="att-card-icon doc-icon">
+                                        <img class="att-card-mime-icon" src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/x-office-document.png" alt="" />
                                         <span class="att-ext-badge">${ext.toUpperCase().slice(0, 4)}</span>
                                     </div>
                                 `}
@@ -313,7 +440,9 @@ export class AttachmentsModalComponent {
                 const domain = link.url ? link.url.replace(/^https?:\/\//i, '').split('/')[0] : '';
                 return html`
                             <a href="${link.url}" target="_blank" class="att-grid-cell card-cell link-card" title="${link.title || link.url}">
-                                <div class="att-card-icon link-icon"></div>
+                                <div class="att-card-icon link-icon">
+                                    <span class="mono-icon mono-icon-link"></span>
+                                </div>
                                 <div class="att-card-info">
                                     <strong class="att-card-name">${link.title || link.url}</strong>
                                     <span class="att-card-sub">${domain}</span>
@@ -331,7 +460,7 @@ export class AttachmentsModalComponent {
                     }}>
                                 <div class="att-card-icon voice-icon"></div>
                                 <div class="att-card-info">
-                                    <strong class="att-card-name">Голосовое сообщение</strong>
+                                    <strong class="att-card-name">${tr('voice_message')}</strong>
                                     <span class="att-card-sub">${durStr || '0:00'}</span>
                                 </div>
                             </div>
@@ -427,16 +556,7 @@ export class AttachmentsModalComponent {
             }
 
             if (audio) {
-                const durStr = audio.duration ? (Math.floor(audio.duration / 60) + ':' + ('0' + (audio.duration % 60)).slice(-2)) : '';
-                return html`
-                            <div class="att-list-row audio-row" onClick=${(e) => this.openAudio(e, item)}>
-                                <div class="att-list-icon-w audio-icon-w"></div>
-                                <div class="att-list-meta">
-                                    <span class="att-list-main-title"><strong>${audio.artist || 'Неизвестный'}</strong> — ${audio.title || 'Без названия'}</span>
-                                </div>
-                                ${durStr ? html`<span class="att-list-right-dur">${durStr}</span>` : ''}
-                            </div>
-                        `;
+                return html`<${AudioAttachment} audio=${audio} />`;
             }
 
             if (doc) {
@@ -445,13 +565,14 @@ export class AttachmentsModalComponent {
                 return html`
                             <div class="att-list-row doc-row">
                                 <div class="att-list-icon-w doc-icon-w">
+                                    <img class="att-card-mime-icon" src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/x-office-document.png" alt="" />
                                     <span class="att-list-ext">${ext.toUpperCase().slice(0, 4)}</span>
                                 </div>
                                 <div class="att-list-meta">
                                     <a href="${doc.url}" target="_blank" class="att-list-main-title doc-title-link">${doc.title || 'Документ'}</a>
                                     <span class="att-list-sub">${sizeStr}</span>
                                 </div>
-                                <a href="${doc.url}" target="_blank" class="att-list-action-btn doc-download-btn" title="Скачать">
+                                <a href="${doc.url}" target="_blank" class="att-list-action-btn doc-download-btn" title=${tr('download')}>
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                                 </a>
                             </div>
@@ -462,7 +583,9 @@ export class AttachmentsModalComponent {
                 const domain = link.url ? link.url.replace(/^https?:\/\//i, '').split('/')[0] : '';
                 return html`
                             <a href="${link.url}" target="_blank" class="att-list-row link-row">
-                                <div class="att-list-icon-w link-icon-w"></div>
+                                <div class="att-list-icon-w link-icon-w">
+                                    <span class="mono-icon mono-icon-link"></span>
+                                </div>
                                 <div class="att-list-meta">
                                     <span class="att-list-main-title">${link.title || link.url}</span>
                                     <span class="att-list-sub">${domain} ${link.description ? `— ${link.description}` : ''}</span>
@@ -482,8 +605,8 @@ export class AttachmentsModalComponent {
                         audioEl.play();
                     }}>
                                 <div class="att-list-icon-w voice-icon-w"></div>
-                                <div class="att-list-meta">
-                                    <span class="att-list-main-title">Голосовое сообщение</span>
+                                <div class="att-card-info att-list-meta">
+                                    <span class="att-list-main-title">${tr('voice_message')}</span>
                                     <span class="att-list-sub">${durStr}</span>
                                 </div>
                             </div>

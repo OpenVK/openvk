@@ -1,5 +1,5 @@
 import { getChatMessageClass, getChatGeneralForm } from './messages.js';
-//const { getChatMessageClass, getChatGeneralForm } = await es6import_Im(import.meta.url, "./messages.js");
+import { imLog } from '../logger.js';
 
 // rememba me:
 // top is down, down is top, bc messages are inverted.
@@ -100,7 +100,7 @@ export class MessageChunk {
         const anchored = params.start_message_id != null;
         if (!anchored) delete params.start_message_id;
 
-        console.log("IM | messages.getHistory ",params);
+        imLog("Partition | messages.getHistory", params);
 
         let messages = null;
         try {
@@ -186,7 +186,7 @@ export class Chunks {
         let key = this._getChunkKey(chunk);
         let idx = 0;
         if (key != null && this._map.has(key)) {
-            console.log("IM | Chunk reuse");
+            imLog("Partition | Chunk reuse:", key);
             return this._map.get(key); // already loaded → reuse
         }
 
@@ -230,7 +230,7 @@ export class Chunks {
         } else {
             this.chunks.push(chunk);
             idx = this.chunks.length - 1;
-            console.log("IM | Chunk ", idx);
+            imLog("Partition | Appended chunk index:", idx);
         }
 
         if (key != null) this._map.set(key, idx);

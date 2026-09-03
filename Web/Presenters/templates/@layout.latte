@@ -1,7 +1,7 @@
 {capture $pageTitle}{ifset title}{include title}{/ifset}{/capture}
 {if !isset($parentModule) || substr($parentModule, 0, 21) === 'libchandler:absolute.'}
 <!DOCTYPE html>
-<html>
+<html lang="{php echo getLanguage()}">
     <head>
         <title>
             {ifset title}{$pageTitle} - {/ifset}{$instance_name}
@@ -398,7 +398,7 @@
                                 <a id="minilink-albums" class="minilink" href="/albums{$thisUser->getId()}">
                                     <img src="/assets/packages/static/openvk/img/photos.svg">
                                 </a>
-                                {if (OPENVK_ROOT_CONF["openvk"]["credentials"]["im"]["enable"] ?? false)}
+                                {if (\OPENVK_ROOT_CONF["openvk"]["credentials"]["im"]["enable"] ?? false)}
                                 <a id="minilink-messenger" class="minilink" href="/im">
                                     <object type="internal/link" class="im_counter">
                                         <div class="counter">
@@ -501,9 +501,9 @@
                 {/foreach}
                 <a href="/language" class="link">all languages &raquo;</a>
             </p>
-            <p class="navigation_centrize">OpenVK <a href="/about:openvk">{php echo OPENVK_VERSION}</a> | PHP: {phpversion()} | DB: {$dbVersion}</p>
+            <p class="navigation_centrize">OpenVK <a href="/about:openvk">{php echo \OPENVK_VERSION}</a> | PHP: {phpversion()} | DB: {$dbVersion}</p>
             <p class="navigation_centrize" n:ifcontent>
-                {php echo OPENVK_ROOT_CONF["openvk"]["appearance"]["motd"]}
+                {php echo \OPENVK_ROOT_CONF["openvk"]["appearance"]["motd"]}
             </p>
         </div>
 
@@ -548,7 +548,7 @@
 
         <script>bsdnHydrate();</script>
 
-        <script n:if="\OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['enable']" async defer data-domain="{php echo \OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['domain']}" src="{php echo OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['server']}js/plausible.js"></script>
+        <script n:if="\OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['enable']" async defer data-domain="{php echo \OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['domain']}" src="{php echo \OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['server']}js/plausible.js"></script>
 
         <script n:if="\OPENVK_ROOT_CONF['openvk']['telemetry']['piwik']['enable']">
             {var $piwik = (object) \OPENVK_ROOT_CONF['openvk']['telemetry']['piwik']}
@@ -589,12 +589,14 @@
                 "max_filesize_mb": 1000000,
                 "current_id": {ifset $thisUser}{$thisUser->getId()}{else}0{/ifset},
                 "dev_id": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["devAccount"] ?? 1381},
-                "admin_id": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["adminAccount"]},
-                "support_id": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["supportAccount"]},
+                "admin_id": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["adminAccount"] ?? 1},
+                "support_id": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["supportAccount"] ?? 1},
                 "disable_ajax": {$disable_ajax ?? 0},
                 "max_add_fields": {ovkGetQuirk("users.max-fields")},
                 "docs_max": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["docs"]["maxSize"]},
                 "docs_allowed": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["docs"]["allowedFormats"]},
+                "lang": {php echo json_encode(getLanguage())},
+                "locale": {php echo json_encode(explode(';', tr('__locale'))[0] ?? 'ru_RU.UTF-8')},
             }
         </script>
 

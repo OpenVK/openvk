@@ -1,6 +1,67 @@
 import { html, render } from './render.js';
 import { ChatGeneralForm } from './messages.js';
 import { openAttachmentsModal } from './attachments_modal.js';
+import { imLog } from '../logger.js';
+
+export function getAppLocale() {
+    if (window.openvk && window.openvk.locale) {
+        const raw = window.openvk.locale.split(';')[0].split('.')[0].replace('_', '-');
+        if (raw) return raw;
+    }
+    if (typeof tr === "function") {
+        const raw = tr("__locale");
+        if (raw && !raw.startsWith("@")) {
+            const tag = raw.split(";")[0].split(".")[0].replace("_", "-");
+            if (tag) return tag;
+        }
+    }
+    if (window.openvk && window.openvk.lang) {
+        return window.openvk.lang;
+    }
+    const htmlLang = document.documentElement?.lang;
+    if (htmlLang) return htmlLang;
+    return "ru-RU";
+}
+
+export function is24HourFormat() {
+    const override = localStorage.getItem("tw.im.24h");
+    if (override !== null) {
+        return override === "1";
+    }
+    const loc = getAppLocale().toLowerCase();
+    if (loc.startsWith("ru") || loc.startsWith("uk") || loc.startsWith("be") || loc.startsWith("kk")) {
+        return true;
+    }
+    return true;
+}
+
+export function getTimeFormatOptions(withSeconds = false) {
+    const is24 = is24HourFormat();
+    const opts = {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: !is24,
+        hourCycle: is24 ? "h23" : "h12",
+    };
+    if (withSeconds) {
+        opts.second = "2-digit";
+    }
+    return opts;
+}
+
+export function formatTime(date, withSeconds = false) {
+    if (!date) return "";
+    const d = (date instanceof Date) ? date : new Date(typeof date === "number" && date < 10000000000 ? date * 1000 : date);
+    if (isNaN(d.getTime())) return "";
+    return d.toLocaleTimeString(getAppLocale(), getTimeFormatOptions(withSeconds));
+}
+
+export function formatDate(date, options = {}) {
+    if (!date) return "";
+    const d = (date instanceof Date) ? date : new Date(typeof date === "number" && date < 10000000000 ? date * 1000 : date);
+    if (isNaN(d.getTime())) return "";
+    return d.toLocaleDateString(getAppLocale(), options);
+}
 
 export const PeerAvatar = ({ peer, className = "", loading = "lazy", saved_messages_ava = true, orig_ava = true, size = "mid", onClick = null }) => {
     if (!peer) {
@@ -84,20 +145,20 @@ export const PinnedMessageBar = ({ convo }) => {
     const pinMsg = convo.getPinnedMessageObject();
     if (!pinMsg) return null;
 
-    let senderName = "Закреплённое сообщение";
+    let senderName = tr("pinned_message");
     try {
         const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
         const senderId = pinMsg.from_id || (pinMsg.data ? pinMsg.data.from_id : null);
         const isMine = (pinMsg.isMine && pinMsg.isMine()) || (senderId && senderId === currentUserId);
 
         if (isMine) {
-            senderName = (typeof tr === 'function' ? tr("you") : null) || "Вы";
+            senderName = tr("you");
         } else {
             const sender = pinMsg.sender || (window.im?.cached_profiles && window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(senderId));
             if (sender && typeof sender.getName === 'function') {
                 senderName = sender.getName(false, true) || sender.getName(false);
-            } else if (typeof tr === 'function') {
-                senderName = tr("pinned_message") || "Закреплённое сообщение";
+            } else {
+                senderName = tr("pinned_message");
             }
         }
     } catch (e) {
@@ -236,22 +297,38 @@ export const AttachmentMenu = () => {
 };
 
 export const WriteBar = ({ convo }) => {
+    if (!convo) return null;
     let cls = ["messenger-app-status"];
-    const a = convo.getActivityMsg();
+    const a = typeof convo.getActivityMsg === "function" ? convo.getActivityMsg() : ["", []];
+    const isTyping = a && a[1] && a[1].length > 0;
+    let content = "";
+    let barType = "";
 
-    console.log(convo)
-    if (a[1].length > 0) {
+    if (isTyping) {
+        content = a[0];
+        barType = "is-typing";
         cls.push("shown");
+    } else if (convo.peer && typeof convo.peer.getOfflineBarString === "function") {
+        const offlineMsg = convo.peer.getOfflineBarString();
+        if (offlineMsg) {
+            content = offlineMsg;
+            barType = "is-offline";
+            cls.push("shown");
+        }
+    }
+
+    if (!content) {
+        return null;
     }
 
     return html`
         <div class="${cls.join(' ')}">
-            <div class="write-bar">
-                ${a[0]}
+            <div class="write-bar ${barType}">
+                ${content}
             </div>
         </div>
     `;
-}
+};
 
 export const getReplySnippet = (msg) => {
     if (!msg) return "";
@@ -307,9 +384,9 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
                     <span class="input-reply-text">${getReplySnippet(replyTo)}</span>
                 </div>
                 <span class="input-close" onClick=${(e) => {
-                    e.stopPropagation();
-                    onRemoveReply();
-                }}><div class="cross"></div></span>
+                e.stopPropagation();
+                onRemoveReply();
+            }}><div class="cross"></div></span>
             </div>
         `}
         ${editMsg && html`
@@ -323,9 +400,9 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
                     <span class="input-reply-text">${getReplySnippet(editMsg)}</span>
                 </div>
                 <span class="input-close" onClick=${(e) => {
-                    e.stopPropagation();
-                    window.im.messenger.cancelEdit();
-                }}><div class="cross"></div></span>
+                e.stopPropagation();
+                window.im.messenger.cancelEdit();
+            }}><div class="cross"></div></span>
             </div>
         `}
         ${isForwarded ? html`
@@ -414,7 +491,7 @@ export const ConversationItem = ({ conv, isForward = false, page = null }) => {
             ${has_activity == true && html`
                 <div class="crp-entry--message---av"></div>
                 <div class="crp-entry--message---text">
-                    ${(conv.getActivityMsg()[0] || "").toLowerCase()}
+                    ${(conv.getActivityMsg()[0] || "")}
                 </div>
             `}
             <div class="unread-msgs-count">+${conv.unread_count}</div>
@@ -481,7 +558,7 @@ export const MessagesNewInterfaceBanner = ({ onClose }) => {
     return html`
         <div class="im-new-interface-banner">
             <div class="im-new-interface-banner--mascot">
-                <img src="/assets/packages/static/openvk/img/im/im_new_banner.png" alt="" />
+                <img src="/assets/packages/static/openvk/img/im/im_new_banner.png?v=1" alt="" />
             </div>
             <div class="im-new-interface-banner--content">
                 <div class="im-new-interface-banner--title">${tr('messages_new_interface_title')}</div>
@@ -568,6 +645,8 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
     const peer = convo?.peer || convo;
     if (!peer) return null;
 
+    const isChat = peer.supposed_type == "chat";
+    const canEditTitle = isChat && (typeof peer.can !== 'function' || peer.can("update_title"));
     const supposed_type = peer.supposed_type;
     const isOnline = peer.online == 1;
     const avatar = peer.getAvatar ? peer.getAvatar("big") : "";
@@ -577,6 +656,29 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
     const currentUserId = window.openvk ? window.openvk.current_id : window.im.state.getId();
     const isChatAdmin = peer.isAdmin ? peer.isAdmin() : false;
     const membersCount = peer.members?.total_count || peer.data?.members_count || (members ? members.length : 0);
+
+    const updateContactTab = () => {
+        if (window.im.getTab("contact")?.render_class) {
+            window.im.getTab("contact").render_class.update();
+        }
+    };
+
+    const saveChatTitle = async () => {
+        const newTitle = (peer._tempTitle ?? '').trim();
+        peer._titleEditing = false;
+        if (newTitle && newTitle !== (peer.getName ? peer.getName() : peer.name)) {
+            await peer.updateTitle(newTitle);
+        } else {
+            updateContactTab();
+        }
+    };
+
+    const cancelChatTitle = (e) => {
+        if (e) e.preventDefault();
+        peer._titleEditing = false;
+        peer._tempTitle = null;
+        updateContactTab();
+    };
 
     return html`
     <div class="peer-window">
@@ -590,7 +692,61 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                 </div>
                 <div class="peer-name">
                     <div class="peer-name-1">
-                        <a class="peer-link" href=${peer.getPageUrl ? peer.getPageUrl() : '#'}>${peer.getName ? peer.getName() : (peer.name || '')}</a>
+                        ${isChat && peer._titleEditing ? html`
+                            <div class="peer-title-edit-wrap">
+                                <input
+                                    type="text"
+                                    class="peer-title-input"
+                                    value=${peer._tempTitle ?? (peer.getName ? peer.getName() : (peer.name || ''))}
+                                    onInput=${(e) => { peer._tempTitle = e.target.value; }}
+                                    onKeyDown=${(e) => {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    saveChatTitle();
+                } else if (e.key === "Escape") {
+                    e.preventDefault();
+                    cancelChatTitle(e);
+                }
+            }}
+                                />
+                                <button class="button peer-title-save-btn" onClick=${saveChatTitle}>${tr("save")}</button>
+                                <a class="peer-title-cancel-btn" onClick=${cancelChatTitle} title="${tr('cancel')}"><span class="chats-close-icon"></span></a>
+                            </div>
+                        ` : html`
+                            <a
+                                class="peer-link ${isChat && canEditTitle ? 'peer-title-editable' : ''}"
+                                href=${!isChat && peer.getPageUrl ? peer.getPageUrl() : '#'}
+                                title=${isChat && canEditTitle ? (tr("change_chat_title") || "Нажмите, чтобы изменить название") : ""}
+                                onClick=${(e) => {
+                e.preventDefault();
+                if (isChat) {
+                    if (canEditTitle) {
+                        peer._titleEditing = true;
+                        peer._tempTitle = peer.getName ? peer.getName() : (peer.name || '');
+                        updateContactTab();
+                        setTimeout(() => {
+                            const input = document.querySelector(".peer-title-input");
+                            if (input) {
+                                input.focus();
+                                input.select();
+                            }
+                        }, 50);
+                    }
+                } else {
+                    const url = peer.getPageUrl ? peer.getPageUrl() : null;
+                    if (url) {
+                        if (window.router && typeof window.router.route === 'function') {
+                            window.router.route(url);
+                        } else {
+                            location.href = url;
+                        }
+                    }
+                }
+            }}
+                            >
+                                ${peer.getName ? peer.getName() : (peer.name || '')}
+                            </a>
+                        `}
 
                         <div class="peer-status">
                             ${peer.supposed_type == "chat" ? html`
@@ -602,96 +758,79 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                     </div>
 
                     <div class="peer-actions-1">
-                        <a class="button" onClick=${() => { window.im.messenger.selectConversation(peer) }}>${tr('write_message')}</a>
-                    </div>
-                </div>
-            </div>
-            <div class="peer-actions-container">
-                <div class="chat-actions-common">
-                    ${peer.supposed_type == "chat" && (peer.can("update_title") || peer.can("update_avatar")) ? html`
-                    <b>${tr("chat_actions") || "Чат"}</b>
-                    <div class="chat-tab-column">
-                        ${peer.can("update_title") ? html`
-                            <a onClick=${(e) => { window.updateChatTitle ? window.updateChatTitle(e, peer) : null }}>${tr("change_chat_title")}</a>
-                        ` : ""}
-                        ${peer.can("update_avatar") ? html`
+                        ${isChat && peer.can("update_avatar") ? html`
                             <a onClick=${(e) => { window.updateChatAvatar ? window.updateChatAvatar(e, peer) : null }}>${tr("change_chat_avatar")}</a>
                         ` : ""}
-                    </div>       
-                    ` : ""}
-
-                    <b>${tr("actions") || "Действия"}</b>
-                    <div class="chat-tab-column">
-                        ${peer.can("view_invite_links") && html`<a>${tr("convo_invite_links")}</a>`}
                         <a onClick=${(e) => {
             window.im.openTabByName("search", true, {
                 "q": "",
                 "peer_id": peer.id
-            })
+            });
         }}>${tr("convo_search_messages")}</a>
                         <a onClick=${(e) => {
-                            e.preventDefault();
-                            openAttachmentsModal({ peer: peer, initialType: 'photo' });
-                        }}>${tr("conversation_materials") || "Материалы беседы"}</a>
-                        ${window.im.state.is_debug ? html`
-                            <a onClick=${(e) => { fastError(`<textarea>${JSON.stringify(peer.data, null, 4)}</textarea>`); }}>JSON</a>
+            e.preventDefault();
+            openAttachmentsModal({ peer: peer, initialType: 'photo' });
+        }}>${tr("conversation_materials") || "Материалы беседы"}</a>
+                        ${convo && typeof convo.hasPinned === 'function' && convo.hasPinned() ? html`
+                            <a onClick=${(e) => { window.im.messenger.viewPinned(e, convo); }}>${tr("chat_view_pinned_single")}</a>
                         ` : ""}
-                        ${is_from_chat === true && html`
-                        <div class="chat-actions-usr chat-actions-common">
-                            <a><b>${tr("convo_action_kick")}</b></a>
-                        </div>
-                        `}
+                        <a onClick=${(e) => {
+            e.preventDefault();
+            new CMessageBox({
+                title: tr("clear_history") || "Очистить историю",
+                body: tr("clear_history_confirm") || "Вы действительно хотите удалить всю историю сообщений в этом диалоге? Это действие нельзя отменить.",
+                buttons: [tr("yes"), tr("no")],
+                callbacks: [async () => {
+                    try {
+                        await window.OVKAPI.call("messages.deleteConversation", {
+                            peer_id: peer.id
+                        });
+                        if (peer._chunks) {
+                            peer._chunks.chunks = [];
+                            peer._chunks._map = new Map();
+                            peer._chunks._messagesInited = true;
+                            peer._chunks._invalidateCache();
+                        }
+                        if (convo) {
+                            convo.last_message = null;
+                            convo._last_message = null;
+                        }
+                        window.im.openTabByName("messenger");
+                        window.im.messenger.update();
+                        if (window.im.conversations) {
+                            window.im.conversations.update();
+                        }
+                        if (window.im?.event_handler && typeof window.im.event_handler.updateGlobalUnreadCounter === 'function') {
+                            window.im.event_handler.updateGlobalUnreadCounter();
+                        }
+                    } catch (err) {
+                        fastError(String(err));
+                    }
+                }, () => { }]
+            });
+        }}>${tr("clear_history") || "Очистить историю сообщений"}</a>
+                        ${is_from_chat === true ? html`
+                            <div class="chat-actions-usr">
+                                <a><b>${tr("convo_action_kick")}</b></a>
+                            </div>
+                        ` : ""}
                         ${(is_club_related && peer.isClubMessagesBlocked()) ? html`
-                            <div class="chat-actions-usr chat-actions-common" onClick="${async (e) => { await peer.toggleClubMessagesBlockness(e, "enable") }}">
+                            <div class="chat-actions-usr" onClick="${async (e) => { await peer.toggleClubMessagesBlockness(e, "enable"); }}">
                                 <a>${tr("group_allow_messages")}</a>
                             </div>
                         ` : ""}
                         ${(is_club_related && !peer.isClubMessagesBlocked()) ? html`
-                            <div class="chat-actions-usr chat-actions-common" onClick="${async (e) => { await peer.toggleClubMessagesBlockness(e, "disable") }}">
+                            <div class="chat-actions-usr" onClick="${async (e) => { await peer.toggleClubMessagesBlockness(e, "disable"); }}">
                                 <a>${tr("group_deny_messages")}</a>
                             </div>
                         ` : ""}
-                        ${convo && typeof convo.hasPinned === 'function' && convo.hasPinned() ? html`
-                            <a onClick=${(e) => { window.im.messenger.viewPinned(e, convo) }}>${tr("chat_view_pinned_single")}</a>
+                        ${window.im.state.is_debug ? html`
+                            <a onClick=${(e) => { fastError(`<textarea>${JSON.stringify(peer.data, null, 4)}</textarea>`); }}>JSON</a>
                         ` : ""}
-                        <a onClick=${(e) => {
-                            e.preventDefault();
-                            new CMessageBox({
-                                title: tr("clear_history") || "Очистить историю",
-                                body: tr("clear_history_confirm") || "Вы действительно хотите удалить всю историю сообщений в этом диалоге? Это действие нельзя отменить.",
-                                buttons: [tr("yes"), tr("no")],
-                                callbacks: [async () => {
-                                    try {
-                                        await window.OVKAPI.call("messages.deleteConversation", {
-                                            peer_id: peer.id
-                                        });
-                                        if (peer._chunks) {
-                                            peer._chunks.chunks = [];
-                                            peer._chunks._map = new Map();
-                                            peer._chunks._messagesInited = true;
-                                            peer._chunks._invalidateCache();
-                                        }
-                                        if (convo) {
-                                            convo.last_message = null;
-                                            convo._last_message = null;
-                                        }
-                                        window.im.openTabByName("messenger");
-                                        window.im.messenger.update();
-                                        if (window.im.conversations) {
-                                            window.im.conversations.update();
-                                        }
-                                        if (window.im?.event_handler && typeof window.im.event_handler.updateGlobalUnreadCounter === 'function') {
-                                            window.im.event_handler.updateGlobalUnreadCounter();
-                                        }
-                                    } catch (err) {
-                                        fastError(String(err));
-                                    }
-                                }, () => { }]
-                            });
-                        }}>${tr("clear_history") || "Очистить историю сообщений"}</a>
                     </div>
                 </div>
-
+            </div>
+            <div class="peer-actions-container">
                 <${PeerInviteLinkSection} peer=${peer} />
 
                 ${peer.supposed_type == "chat" ? html`
@@ -743,16 +882,53 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                     const defaultAva = isClub ? "/assets/packages/static/openvk/img/community_100.png" : "/assets/packages/static/openvk/img/camera_100.png";
                     const avatarSrc = (memberObj && memberObj.getAvatar("mid")) || profile.photo_50 || profile.photo_100 || profile.photo_200 || defaultAva;
                     const profileUrl = isClub ? `/club${Math.abs(memberId)}` : `/id${memberId}`;
-                    const isOwner = item.is_owner === true || item.is_owner === 1 || peer.data?.admin_id == memberId;
+                    const isModerator = (item.is_moderator === true || item.is_moderator === 1 || (item.is_admin && !item.is_owner)) && !(item.is_owner === true || item.is_owner === 1);
+                    const isOwner = (item.is_owner === true || item.is_owner === 1 || (peer.data?.admin_id == memberId && !isModerator)) && !isModerator;
                     const isAdmin = item.is_admin === true || item.is_admin === 1 || isOwner;
                     const isSelf = memberId == currentUserId;
                     const canKick = (item.can_kick || isChatAdmin) && !isSelf && !isOwner;
+                    const currentMember = (members || []).find(m => (m.member_id || m.id) == currentUserId);
+                    const isCurrentOwner = (currentMember && (currentMember.is_owner === true || currentMember.is_owner === 1)) || (peer.data?.admin_id == currentUserId && (!currentMember || !currentMember.is_moderator)) || isChatAdmin;
+                    const canManageModerator = isCurrentOwner && !isSelf && !isOwner;
+
+                    const toggleModerator = (e) => {
+                        e.preventDefault();
+                        const confirmBody = isModerator
+                            ? (tr("remove_moderator_confirm", escapeHtml(name)) || `Вы действительно хотите снять полномочия модератора с ${escapeHtml(name)}?`)
+                            : (tr("set_moderator_confirm", escapeHtml(name)) || `Вы действительно хотите назначить ${escapeHtml(name)} модератором этой беседы?`);
+
+                        new CMessageBox({
+                            title: tr("confirmation"),
+                            body: confirmBody,
+                            buttons: [tr("yes"), tr("no")],
+                            callbacks: [async () => {
+                                try {
+                                    const method = isModerator ? "messages.removeChatModerator" : "messages.setChatModerator";
+                                    await window.OVKAPI.call(method, {
+                                        "peer_id": peer.id,
+                                        "user_id": memberId
+                                    });
+                                    if (peer.members) {
+                                        peer.members = null;
+                                    }
+                                    await peer.checkMembers();
+                                    if (window.im.getTab("contact") && window.im.getTab("contact").render_class) {
+                                        window.im.getTab("contact").render_class.update();
+                                    }
+                                } catch (err) {
+                                    fastError(String(err));
+                                }
+                            }, () => { }]
+                        });
+                    };
 
                     let roleText = "";
                     if (isOwner) {
-                        roleText = tr("chat_owner") || "создатель";
+                        roleText = tr("chat_owner");
+                    } else if (isModerator) {
+                        roleText = tr("chat_moderator");
                     } else if (isAdmin) {
-                        roleText = tr("chat_admin") || "администратор";
+                        roleText = tr("chat_admin");
                     }
 
                     let onlineText = "";
@@ -785,12 +961,17 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                                 await window.im.messenger.selectConversationByPeerId(memberId);
                             }}>${tr("write_message") || "Написать сообщение"}</a>
                                             `}
+                                            ${canManageModerator && html`
+                                                <a class="chat-member-action-mod ${isModerator ? 'active' : ''}" title=${isModerator ? (tr("remove_moderator") || "Снять полномочия модератора") : (tr("set_as_moderator") || "Назначить модератором")} onClick=${toggleModerator}>
+                                                    <span class="chat-mod-star-icon"></span>
+                                                </a>
+                                            `}
                                             ${canKick && html`
                                                 <a class="chat-member-action-kick" title=${tr("remove_from_chat") || "Исключить"} onClick=${(e) => {
                                 e.preventDefault();
                                 new CMessageBox({
-                                    title: tr("confirmation") || "Подтверждение",
-                                    body: `Вы уверены, что хотите исключить <b>${escapeHtml(name)}</b> из беседы?`,
+                                    title: tr("confirmation"),
+                                    body: tr("kick_confirm", escapeHtml(name)),
                                     buttons: [tr("yes"), tr("no")],
                                     callbacks: [async () => {
                                         try {
@@ -810,7 +991,7 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                                         }
                                     }, () => { }]
                                 });
-                            }}>×</a>
+                            }}><span class="chats-close-icon"></span></a>
                                             `}
                                         </div>
                                     </div>
@@ -943,9 +1124,9 @@ export const PeerAttachmentsSection = ({ peer }) => {
                 <b>${tr("attachments") || "Вложения"}</b>
                 <div class="chat-header-actions">
                     <a class="peer-att-open-modal-btn" onClick=${(e) => {
-                        e.preventDefault();
-                        openAttachmentsModal({ peer: peer, initialType: currentType });
-                    }}>${tr("open_all_materials") || "Показать все"}</a>
+            e.preventDefault();
+            openAttachmentsModal({ peer: peer, initialType: currentType });
+        }}>${tr("open_all_materials") || "Показать все"}</a>
                 </div>
             </div>
             <div class="peer-att-tabs">
@@ -963,55 +1144,55 @@ export const PeerAttachmentsSection = ({ peer }) => {
                 ` : (isGrid ? html`
                     <div class="peer-att-grid">
                         ${items.map(item => {
-                            const photo = item.attachment?.photo;
-                            const video = item.attachment?.video;
-                            if (photo) {
-                                const thumb = photo.sizes?.find(s => s.type === 'm' || s.type === 'x' || s.type === 's')?.url
-                                    || photo.sizes?.find(s => s.type === 'm' || s.type === 'x' || s.type === 's')?.src
-                                    || photo.sizes?.[0]?.url
-                                    || photo.sizes?.[0]?.src
-                                    || photo.photo_604
-                                    || photo.photo_130
-                                    || photo.photo_75
-                                    || photo.url
-                                    || photo.image_url
-                                    || '/assets/packages/static/openvk/img/camera_200.png';
-                                return html`
+            const photo = item.attachment?.photo;
+            const video = item.attachment?.video;
+            if (photo) {
+                const thumb = photo.sizes?.find(s => s.type === 'm' || s.type === 'x' || s.type === 's')?.url
+                    || photo.sizes?.find(s => s.type === 'm' || s.type === 'x' || s.type === 's')?.src
+                    || photo.sizes?.[0]?.url
+                    || photo.sizes?.[0]?.src
+                    || photo.photo_604
+                    || photo.photo_130
+                    || photo.photo_75
+                    || photo.url
+                    || photo.image_url
+                    || '/assets/packages/static/openvk/img/camera_200.png';
+                return html`
                                     <div class="peer-att-grid-item" onClick=${(e) => {
-                                        if (typeof PhotoViewer !== 'undefined') {
-                                            PhotoViewer.openById(e, `photo${photo.owner_id}_${photo.id}`);
-                                        }
-                                    }}>
+                        if (typeof PhotoViewer !== 'undefined') {
+                            PhotoViewer.openById(e, `photo${photo.owner_id}_${photo.id}`);
+                        }
+                    }}>
                                         <img src="${thumb}" alt="" />
                                     </div>
                                 `;
-                            }
-                            if (video) {
-                                const thumb = video.image?.[0]?.url || video.image?.[0]?.src || video.photo_320 || video.photo_130 || video.image_url || '/assets/packages/static/openvk/img/video_placeholder.png';
-                                const durStr = video.duration ? (Math.floor(video.duration / 60) + ':' + ('0' + (video.duration % 60)).slice(-2)) : '';
-                                return html`
+            }
+            if (video) {
+                const thumb = video.image?.[0]?.url || video.image?.[0]?.src || video.photo_320 || video.photo_130 || video.image_url || '/assets/packages/static/openvk/img/video_placeholder.png';
+                const durStr = video.duration ? (Math.floor(video.duration / 60) + ':' + ('0' + (video.duration % 60)).slice(-2)) : '';
+                return html`
                                     <div class="peer-att-grid-item video-item" onClick=${(e) => {
-                                        if (typeof VideoViewer !== 'undefined') {
-                                            VideoViewer.openById(`${video.owner_id}_${video.id}`, {}, e);
-                                        }
-                                    }}>
+                        if (typeof VideoViewer !== 'undefined') {
+                            VideoViewer.openById(`${video.owner_id}_${video.id}`, {}, e);
+                        }
+                    }}>
                                         <img src="${thumb}" alt="" />
                                         ${durStr ? html`<span class="peer-att-video-dur">${durStr}</span>` : ''}
                                     </div>
                                 `;
-                            }
-                            return null;
-                        })}
+            }
+            return null;
+        })}
                     </div>
                 ` : html`
                     <div class="peer-att-list">
                         ${items.map(item => {
-                            const audio = item.attachment?.audio;
-                            const doc = item.attachment?.doc;
-                            const link = item.attachment?.link;
+            const audio = item.attachment?.audio;
+            const doc = item.attachment?.doc;
+            const link = item.attachment?.link;
 
-                            if (audio) {
-                                return html`
+            if (audio) {
+                return html`
                                     <div class="peer-att-list-row audio-row">
                                         <div class="peer-att-icon audio-icon"></div>
                                         <div class="peer-att-list-meta">
@@ -1019,10 +1200,10 @@ export const PeerAttachmentsSection = ({ peer }) => {
                                         </div>
                                     </div>
                                 `;
-                            }
-                            if (doc) {
-                                const sizeStr = doc.size ? (doc.size > 1048576 ? (doc.size / 1048576).toFixed(1) + ' МБ' : Math.round(doc.size / 1024) + ' КБ') : '';
-                                return html`
+            }
+            if (doc) {
+                const sizeStr = doc.size ? (doc.size > 1048576 ? (doc.size / 1048576).toFixed(1) + ' МБ' : Math.round(doc.size / 1024) + ' КБ') : '';
+                return html`
                                     <div class="peer-att-list-row doc-row">
                                         <div class="peer-att-icon doc-icon"></div>
                                         <div class="peer-att-list-meta">
@@ -1031,9 +1212,9 @@ export const PeerAttachmentsSection = ({ peer }) => {
                                         </div>
                                     </div>
                                 `;
-                            }
-                            if (link) {
-                                return html`
+            }
+            if (link) {
+                return html`
                                     <div class="peer-att-list-row link-row">
                                         <div class="peer-att-icon link-icon"></div>
                                         <div class="peer-att-list-meta">
@@ -1042,9 +1223,9 @@ export const PeerAttachmentsSection = ({ peer }) => {
                                         </div>
                                     </div>
                                 `;
-                            }
-                            return null;
-                        })}
+            }
+            return null;
+        })}
                     </div>
                 `))}
             </div>

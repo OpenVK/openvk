@@ -3523,9 +3523,14 @@ async function __processPaginatorNextPage(page)
         container.append(node)
     })
 
-    u(`.paginator:not(.paginator-at-top)`).html(parsed_content.querySelector('.paginator:not(.paginator-at-top)').innerHTML)
-    if(u(`.paginator:not(.paginator-at-top)`).nodes[0].closest('.scroll_container')) {
-        container.nodes[0].append(u(`.paginator:not(.paginator-at-top)`).nodes[0].parentNode)
+    const next_paginator = parsed_content.querySelector('.paginator:not(.paginator-at-top)')
+    if(next_paginator) {
+        u(`.paginator:not(.paginator-at-top)`).html(next_paginator.innerHTML)
+        if(u(`.paginator:not(.paginator-at-top)`).nodes[0].closest('.scroll_container')) {
+            container.nodes[0].append(u(`.paginator:not(.paginator-at-top)`).nodes[0].parentNode)
+        }
+    } else {
+        u(`.paginator:not(.paginator-at-top)`).remove()
     }
 
     if(window.player && window.player.isAtAudiosPage() && window.player.isAtCurrentContextPage()) {
@@ -3542,7 +3547,9 @@ async function __processPaginatorNextPage(page)
     //history.replaceState(null, null, new_url)
 
     showMoreObserver.disconnect()
-    showMoreObserver.observe(u('.paginator:not(.paginator-at-top)').nodes[0])
+    if(u('.paginator:not(.paginator-at-top)').length > 0) {
+        showMoreObserver.observe(u('.paginator:not(.paginator-at-top)').nodes[0])
+    }
 
     window.router.scroll_page = page;
     if(typeof __scrollHook != 'undefined') {
@@ -3586,7 +3593,12 @@ const showMoreObserver = new IntersectionObserver(entries => {
                 return
             }
 
-            const page_number = Number(next_page.html())
+            const page_number = parseInt(next_page.html())
+            if(isNaN(page_number) || page_number <= 0 || next_page.nodes[0]?.tagName !== 'A') {
+                u('.paginator:not(.paginator-at-top)').removeClass('lagged')
+                showMoreObserver.unobserve(target.nodes[0])
+                return
+            }
 
             try {
                 await __processPaginatorNextPage(page_number)

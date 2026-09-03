@@ -245,6 +245,50 @@ final class Messages extends VKAPIRequestHandler
         $attachments = array_merge($result, $objAttachments);
     }
 
+    private function sanitizeMessageAttachmentsRecursive(array &$message): void
+    {
+        if (!empty($message['attachments'])) {
+            $this->replaceAttachments($message['attachments'], ["gift"]);
+        } else {
+            $message['attachments'] = [];
+        }
+
+        if (!empty($message['fwd_messages']) && is_array($message['fwd_messages'])) {
+            foreach ($message['fwd_messages'] as &$fwd) {
+                if (is_array($fwd)) {
+                    $this->sanitizeMessageAttachmentsRecursive($fwd);
+                }
+            }
+            unset($fwd);
+        }
+
+        if (!empty($message['reply_message']) && is_array($message['reply_message'])) {
+            $this->sanitizeMessageAttachmentsRecursive($message['reply_message']);
+        }
+    }
+
+    private function collectEntityIdsRecursive(array $message, array &$userIds, array &$groupIds): void
+    {
+        $senderId = (int) ($message['from_id'] ?? $message['user_id'] ?? 0);
+        if ($senderId > 0 && $senderId < 2000000000) {
+            $userIds[] = $senderId;
+        } elseif ($senderId < 0) {
+            $groupIds[] = abs($senderId);
+        }
+
+        if (!empty($message['reply_message']) && is_array($message['reply_message'])) {
+            $this->collectEntityIdsRecursive($message['reply_message'], $userIds, $groupIds);
+        }
+
+        if (!empty($message['fwd_messages']) && is_array($message['fwd_messages'])) {
+            foreach ($message['fwd_messages'] as $fwd) {
+                if (is_array($fwd)) {
+                    $this->collectEntityIdsRecursive($fwd, $userIds, $groupIds);
+                }
+            }
+        }
+    }
+
     /**
      * Преобразует расширенные данные (profiles, groups, chats) в полные структуры VK API
      *
@@ -493,22 +537,7 @@ final class Messages extends VKAPIRequestHandler
                 }
 
                 if (!$isDeleted) {
-                    if (!empty($msgObj['attachments'])) {
-                        $this->replaceAttachments($msgObj['attachments'], ["gift"]);
-                    } else {
-                        $msgObj['attachments'] = [];
-                    }
-
-                    if (!empty($msgObj['fwd_messages'])) {
-                        foreach ($msgObj['fwd_messages'] as &$fwd) {
-                            if (!empty($fwd['attachments'])) {
-                                $this->replaceAttachments($fwd['attachments'], ["gift"]);
-                            } else {
-                                $fwd['attachments'] = [];
-                            }
-                        }
-                        unset($fwd);
-                    }
+                    $this->sanitizeMessageAttachmentsRecursive($msgObj);
                 }
 
                 if ($chatId > 0) {
@@ -592,11 +621,7 @@ final class Messages extends VKAPIRequestHandler
                         $chatIDs[] = (int) $item['chat_id'];
                     }
                     if (!empty($item['fwd_messages'])) {
-                        foreach ($item['fwd_messages'] as $fwd) {
-                            if (!empty($fwd['user_id']) && $fwd['user_id'] > 0 && $fwd['user_id'] < 2000000000) {
-                                $userIDs[] = (int) $fwd['user_id'];
-                            }
-                        }
+                        $this->collectEntityIdsRecursive($item, $userIDs, $groupIDs);
                     }
                 }
             }
@@ -646,26 +671,7 @@ final class Messages extends VKAPIRequestHandler
             $loadedChats = [];
 
             foreach ($data['items'] as &$item) {
-                if (!empty($item['attachments'])) {
-                    $this->replaceAttachments($item['attachments'], ["gift"]);
-                } else {
-                    $item['attachments'] = [];
-                }
-
-                if (!empty($item['fwd_messages'])) {
-                    foreach ($item['fwd_messages'] as &$fwd) {
-                        if (!empty($fwd['attachments'])) {
-                            $this->replaceAttachments($fwd['attachments'], ["gift"]);
-                        } else {
-                            $fwd['attachments'] = [];
-                        }
-                    }
-                    unset($fwd);
-                }
-
-                if (!empty($item['reply_message']['attachments'])) {
-                    $this->replaceAttachments($item['reply_message']['attachments'], ["gift"]);
-                }
+                $this->sanitizeMessageAttachmentsRecursive($item);
 
                 if ($isLegacy && !empty($item['chat_id'])) {
                     $cId = (int) $item['chat_id'];
@@ -1009,29 +1015,10 @@ final class Messages extends VKAPIRequestHandler
             $loadedChats = [];
 
             foreach ($data['items'] as &$item) {
-                if (!empty($item['attachments'])) {
-                    $this->replaceAttachments($item['attachments'], ["gift"]);
-                } else {
-                    $item['attachments'] = [];
-                }
+                $this->sanitizeMessageAttachmentsRecursive($item);
 
-                if (!empty($item['fwd_messages'])) {
-                    foreach ($item['fwd_messages'] as &$fwd) {
-                        if (!empty($fwd['attachments'])) {
-                            $this->replaceAttachments($fwd['attachments'], ["gift"]);
-                        } else {
-                            $fwd['attachments'] = [];
-                        }
-                    }
-                    unset($fwd);
-                }
-
-                if (!empty($item['reply_message']['attachments'])) {
-                    $this->replaceAttachments($item['reply_message']['attachments'], ["gift"]);
-                }
-
-                if ($isLegacy && !empty($item['chat_id'])) {
-                    $cId = (int) $item['chat_id'];
+                $cId = !empty($item['chat_id']) ? (int) $item['chat_id'] : (!empty($item['peer_id']) && (int) $item['peer_id'] > 2000000000 ? ((int) $item['peer_id'] - 2000000000) : 0);
+                if ($cId > 0) {
                     if (!isset($loadedChats[$cId])) {
                         $loadedChats[$cId] = $chatsRepo->getByChatId($cId);
                     }
@@ -1157,26 +1144,7 @@ final class Messages extends VKAPIRequestHandler
             $loadedChats = [];
 
             foreach ($msgItems as &$item) {
-                if (!empty($item['attachments'])) {
-                    $this->replaceAttachments($item['attachments'], ["gift"]);
-                } else {
-                    $item['attachments'] = [];
-                }
-
-                if (!empty($item['fwd_messages'])) {
-                    foreach ($item['fwd_messages'] as &$fwd) {
-                        if (!empty($fwd['attachments'])) {
-                            $this->replaceAttachments($fwd['attachments'], ["gift"]);
-                        } else {
-                            $fwd['attachments'] = [];
-                        }
-                    }
-                    unset($fwd);
-                }
-
-                if (!empty($item['reply_message']['attachments'])) {
-                    $this->replaceAttachments($item['reply_message']['attachments'], ["gift"]);
-                }
+                $this->sanitizeMessageAttachmentsRecursive($item);
 
                 if ($isLegacy && !empty($item['chat_id'])) {
                     $cId = (int) $item['chat_id'];
@@ -1782,22 +1750,7 @@ final class Messages extends VKAPIRequestHandler
                 $msgObj['body'] = ovk_truncate_words($msgObj['body'], $preview_length);
             }
 
-            if (!empty($msgObj['attachments'])) {
-                $this->replaceAttachments($msgObj['attachments'], ["gift"]);
-            } else {
-                $msgObj['attachments'] = [];
-            }
-
-            if (!empty($msgObj['fwd_messages'])) {
-                foreach ($msgObj['fwd_messages'] as &$fwd) {
-                    if (!empty($fwd['attachments'])) {
-                        $this->replaceAttachments($fwd['attachments'], ["gift"]);
-                    } else {
-                        $fwd['attachments'] = [];
-                    }
-                }
-                unset($fwd);
-            }
+            $this->sanitizeMessageAttachmentsRecursive($msgObj);
 
             if ($peerType === 'chat') {
                 $localChatId = $peerId > 2000000000 ? ($peerId - 2000000000) : $peerId;
@@ -1890,11 +1843,7 @@ final class Messages extends VKAPIRequestHandler
                         $chatIDs[] = (int) $item['chat_id'];
                     }
                     if (!empty($item['fwd_messages'])) {
-                        foreach ($item['fwd_messages'] as $fwd) {
-                            if (!empty($fwd['user_id']) && $fwd['user_id'] > 0 && $fwd['user_id'] < 2000000000) {
-                                $userIDs[] = (int) $fwd['user_id'];
-                            }
-                        }
+                        $this->collectEntityIdsRecursive($item, $userIDs, $groupIDs);
                     }
                 }
             }
@@ -2457,26 +2406,7 @@ final class Messages extends VKAPIRequestHandler
             }
 
             foreach ($data['items'] as &$message) {
-                if (!empty($message['attachments'])) {
-                    $this->replaceAttachments($message['attachments'], ["gift"]);
-                } else {
-                    $message['attachments'] = [];
-                }
-
-                if (!empty($message['fwd_messages'])) {
-                    foreach ($message['fwd_messages'] as &$fwd) {
-                        if (!empty($fwd['attachments'])) {
-                            $this->replaceAttachments($fwd['attachments'], ["gift"]);
-                        } else {
-                            $fwd['attachments'] = [];
-                        }
-                    }
-                    unset($fwd);
-                }
-
-                if (!empty($message['reply_message']['attachments'])) {
-                    $this->replaceAttachments($message['reply_message']['attachments'], ["gift"]);
-                }
+                $this->sanitizeMessageAttachmentsRecursive($message);
 
                 if ($isLegacy && $loadedChat && !empty($message['chat_id'])) {
                     $chatStruct = $loadedChat->toChatSettingsStruct($this->getUser());
@@ -2494,6 +2424,19 @@ final class Messages extends VKAPIRequestHandler
         }
 
         if ($extended == 1) {
+            if (!empty($data['items'])) {
+                $extUserIDs = [];
+                $extGroupIDs = [];
+                foreach ($data['items'] as $item) {
+                    $this->collectEntityIdsRecursive($item, $extUserIDs, $extGroupIDs);
+                }
+                if (!empty($extUserIDs)) {
+                    $data['profiles'] = array_merge($data['profiles'] ?? [], $extUserIDs);
+                }
+                if (!empty($extGroupIDs)) {
+                    $data['groups'] = array_merge($data['groups'] ?? [], $extGroupIDs);
+                }
+            }
             $this->hydrateExtendedData($data, $fields);
         }
 
@@ -3089,13 +3032,91 @@ final class Messages extends VKAPIRequestHandler
             $params["message_id"] = $message_id;
         }
 
-        $res = $this->invoke("messages.getMessageViewers", $params, $group_id);
+        $res = $this->invoke("im.getMessageViewers", $params, $group_id);
 
         if (!empty($res["user_ids"])) {
             $apiUsers = (new APIUsers())->get(implode(',', $res["user_ids"]), $fields);
             $res["profiles"] = $apiUsers;
         } else {
             $res["profiles"] = [];
+        }
+
+        return $res;
+    }
+
+    public function setChatModerator(int $peer_id = 0, int $user_id = 0, int $chat_id = 0, int $group_id = 0): int
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        $this->ensureBrokerActive();
+
+        if ($peer_id === 0 && $chat_id > 0) {
+            $peer_id = 2000000000 + $chat_id;
+        }
+
+        if ($peer_id <= 2000000000 || $user_id <= 0) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: peer_id and user_id are required");
+        }
+
+        $params = [
+            "peer_id" => $peer_id,
+            "user_id" => $user_id,
+        ];
+
+        $res = $this->invoke("im.setChatModerator", $params, $group_id);
+        return is_numeric($res) ? (int) $res : 1;
+    }
+
+    public function removeChatModerator(int $peer_id = 0, int $user_id = 0, int $chat_id = 0, int $group_id = 0): int
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        $this->ensureBrokerActive();
+
+        if ($peer_id === 0 && $chat_id > 0) {
+            $peer_id = 2000000000 + $chat_id;
+        }
+
+        if ($peer_id <= 2000000000 || $user_id <= 0) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: peer_id and user_id are required");
+        }
+
+        $params = [
+            "peer_id" => $peer_id,
+            "user_id" => $user_id,
+        ];
+
+        $res = $this->invoke("im.removeChatModerator", $params, $group_id);
+        return is_numeric($res) ? (int) $res : 1;
+    }
+
+    public function getChatModerators(int $peer_id = 0, int $chat_id = 0, int $extended = 0, string $fields = "photo_50,photo_100,online", int $group_id = 0): array
+    {
+        $this->requireUser();
+        $this->ensureBrokerActive();
+
+        if ($peer_id === 0 && $chat_id > 0) {
+            $peer_id = 2000000000 + $chat_id;
+        }
+
+        if ($peer_id <= 2000000000) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: peer_id must be a group chat");
+        }
+
+        $params = [
+            "peer_id" => $peer_id,
+        ];
+
+        $res = $this->invoke("im.getChatModerators", $params, $group_id);
+
+        if ($extended && !empty($res["items"])) {
+            $allIds = array_unique(array_filter(array_merge([$res["owner_id"] ?? 0], $res["items"] ?? [])));
+            if (!empty($allIds)) {
+                $apiUsers = (new APIUsers())->get(implode(',', $allIds), $fields);
+                $res["profiles"] = $apiUsers;
+            } else {
+                $res["profiles"] = [];
+            }
         }
 
         return $res;

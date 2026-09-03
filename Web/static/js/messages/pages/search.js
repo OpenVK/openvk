@@ -21,7 +21,7 @@ export class SearchPage extends IMPage {
 
     async beforeRender() {
         if (this.items == null) {
-            this.params = this._getParams(this.options.q, this.options.peer_id);
+            this.params = this._getParams(this.options.q, this.options.peer_id, 0, 25, this.options.date);
             
             let items = await this.search(this.params);
 
@@ -38,30 +38,42 @@ export class SearchPage extends IMPage {
         this.getNode().addClass("page-other");
         render(html`<${SearchPageTemplate} 
             q=${this.options.q} 
+            date=${this.options.date}
             c=${this}
-            onSearch=${(e) => {this.onSearch(e)}}
+            onSearch=${(q, date) => this.onSearch(q, date)}
+            onCancel=${() => this.onCancel()}
             />`, container);
     }
 
     _getParams(q, peer_id = null, offset = 0, perPage = 25, date = null) {
         const p = {
-            "q": q,
+            "q": q || " ",
             "offset": offset,
             "count": perPage,
             "extended": 1,
             "fields": ChatGeneralForm.BASE_FIELDS
         };
         if (peer_id) { p["peer_id"] = peer_id; }
+        if (date) { p["date"] = date; }
         if (window.im.state.getId() < 0) { p["group_id"] = Math.abs(window.im.state.getId()); }
         return p; 
     }
 
-    async onSearch(event) {
-        this.options.q = event.target.value;
+    async onSearch(query, date = null) {
+        this.options.q = typeof query === "string" ? query : (query?.target?.value ?? "");
+        if (date !== null && date !== undefined) {
+            this.options.date = date;
+        }
         this.items = null;
 
         await this.beforeRender(this.container);
         await this.render(this.container);
+    }
+
+    onCancel() {
+        if (window.im) {
+            window.im.selectTab("conversations");
+        }
     }
 
     async search(params) {
@@ -76,7 +88,9 @@ export class SearchPage extends IMPage {
             };
         }
 
-        window.im.cached_profiles._moveToProfileCache(vals.profiles, vals.groups, false);
+        if (vals.profiles || vals.groups) {
+            window.im.cached_profiles._moveToProfileCache(vals.profiles, vals.groups, false);
+        }
 
         const _l = _authorize(vals.items, null, null,
             (item) => {
@@ -91,23 +105,23 @@ export class SearchPage extends IMPage {
         );
 
         return {
-            "count": vals.count,
+            "count": vals.count || 0,
             "items": _l
         };
     }
 
     async moveOffset(e) {
-        toggleUnclickability(e.target, true);
+        if (e && e.target) toggleUnclickability(e.target, true);
 
-        let new_offset = this.params.offset + this.params.count;
+        let new_offset = (this.params.offset || 0) + (this.params.count || 25);
         this.params.offset = new_offset;
         const items = await this.search(this.params);
         items.items.forEach(item => {
             this.items.push(item);
         });
 
-        toggleUnclickability(e.target, false);
+        if (e && e.target) toggleUnclickability(e.target, false);
 
-        this._render();
+        await this.render(this.container);
     }
 }

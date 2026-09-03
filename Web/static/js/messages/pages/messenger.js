@@ -9,8 +9,8 @@ const { ErrorConversation, WriteBar, ActionsBar, PeerWindow, InputArea, PeerTabs
 const { IMTab, IMPage } = await es6import_Im(import.meta.url, "./page.js");
 const { ScrollPosition, MessageChunk } = await es6import_Im(import.meta.url, "../components/partition.js");
 const { openCalendarModal, CalendarComponent } = await es6import_Im(import.meta.url, "../components/calendar.js");
-//import { html, render } from '../components/render.js';
 const { html, render } = await es6import_Im(import.meta.url, "../components/render.js");
+const { imLog } = await es6import_Im(import.meta.url, "../logger.js");
 
 export class Messenger {
     static MAX_SELECTED_MESSAGES = 100;
@@ -49,7 +49,7 @@ export class Messenger {
     afterFirstRender() {
         const current_chat = this.getCurrentChat();
         if (current_chat != null && current_chat.draft) {
-            console.log("IM | Scroll from tab");
+            imLog("Messenger | Scroll from tab");
             const win = this.getWindow();
             if (win) {
                 current_chat.draft.loadScroll(win);
@@ -77,7 +77,7 @@ export class Messenger {
         }
 
         if (window.im.state.is_debug) {
-            console.log(convo);
+            imLog("Selected conversation:", convo);
         }
 
         this.setChat(convo);
@@ -209,7 +209,7 @@ export class Messenger {
     }
 
     hasChat(conv) {
-        console.log(this.opened_tabs, conv)
+        imLog("hasChat:", this.opened_tabs, conv);
         return this.opened_tabs.indexOf(conv) !== -1;
     }
 
@@ -247,12 +247,17 @@ export class Messenger {
         }
 
         try {
-            if (this.opened_tabs[idx - 1] != null) {
-                this.selectConversation(this.opened_tabs[idx - 1]);
-            } else if (this.opened_tabs[idx + 1] != null) {
-                this.selectConversation(this.opened_tabs[idx + 1]);
-            } else {
+            imLog("closeChat:", idx, this.opened_tabs);
+            if (idx == 0) {
                 window.im.openTabByName("conversations");
+            } else {
+                if (this.opened_tabs[idx - 1] != null) {
+                    this.selectConversation(this.opened_tabs[idx - 1]);
+                } else if (this.opened_tabs[idx + 1] != null) {
+                    this.selectConversation(this.opened_tabs[idx + 1]);
+                } else {
+                    window.im.openTabByName("conversations");
+                }
             }
         } catch (e) {
             console.error(e);
@@ -276,7 +281,7 @@ export class Messenger {
             params["group_id"] = Math.abs(gid);
         }
 
-        console.log('IM | setWriting called');
+        imLog('IM | setWriting called');
         try {
             await window.OVKAPI.call("messages.setActivity", params);
         } catch (e) {
@@ -547,7 +552,7 @@ export class Messenger {
         });
 
         if (!first) {
-            console.log("IM | Messenger | Opening photo | Not found ", attachment, " image in", photos)
+            imLog("IM | Messenger | Opening photo | Not found ", attachment, " image in", photos);
             return;
         };
 
@@ -646,7 +651,7 @@ export class Messenger {
         const win = this.getWindow();
         this._clearAttachments();
 
-        console.log(this.prevDraft)
+        imLog("prevDraft:", this.prevDraft);
         win.setCurrentText(this.prevDraft ? this.prevDraft : "");
         this.currentDraft = String(this.prevDraft || "");
         this.prevDraft = null;
@@ -770,7 +775,7 @@ export class MessengerPage extends IMPage {
             messages = sp.getDayDividedMessages();
         }
 
-        console.log(messages)
+        imLog("Messenger rendered messages:", messages);
         const is_rendering_contact_window = (window.im.tab == "contact" && special_mode === null);
         const initialDate = (messages && messages.length > 0)
             ? (messages[messages.length - 1].readable_date || messages[messages.length - 1].date || "")
@@ -1741,7 +1746,7 @@ export class MessengerPage extends IMPage {
             }
         }
 
-        console.log("scrolling page to: ", scroll_progress);
+        imLog("scrolling page to: ", scroll_progress);
         if (window.im.state.isFastchat) {
             const el = document.querySelector("#fastchats_related #fastchats_chat #wrap");
             if (el) el.scroll({ top: scroll_progress });
@@ -1760,7 +1765,7 @@ export class MessengerPage extends IMPage {
     }
 
     _scrollToEnd() {
-        console.log("IM | scrolling page to the end");
+        imLog("IM | scrolling page to the end");
         this._scrollTo("end");
         requestAnimationFrame(() => {
             this._scrollTo("end");
@@ -1801,7 +1806,7 @@ export class MessengerPage extends IMPage {
                         el.classList.remove("animated");
                     }
                 }, 5000);
-                console.log('IM | Scrolled to message anchor msg' + pid + '-' + targetId);
+                imLog('IM | Scrolled to message anchor msg' + pid + '-' + targetId);
                 return true;
             }
 
@@ -1846,7 +1851,7 @@ export class MessengerPage extends IMPage {
     }
 
     getCurrentText() { return this.container.querySelector(".messenger-app--input---messagebox textarea").value; }
-    setCurrentText(text) { console.log("setCurrentText"); this.container.querySelector(".messenger-app--input---messagebox textarea").value = text; }
+    setCurrentText(text) { this.container.querySelector(".messenger-app--input---messagebox textarea").value = text; }
     getCurrentAttachments() { return [this.container.querySelector(".post-horizontal").innerHTML, this.container.querySelector(".post-vertical").innerHTML]; }
 }
 

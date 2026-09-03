@@ -25,7 +25,7 @@ export class FriendsPage extends IMPage {
         const id = peer?.id ?? peer;
         return this.selected_friends.some(p => (p?.id ?? p) === id);
     }
-    _updTitleStr(name) { this.getNode().find("#_name").html(ovk_proc_strtr(escapeHtml(name), 100)); }
+    _updTitleStr(name) { this.getNode().find("#_name").last().value = ovk_proc_strtr(name, 100); }
     onFriendClick(e, peer) {
         if (this.options.referrer == "chat_creation" || this.options.referrer == "add_new") {
             if (peer.can && peer.can("invite") === false) {
@@ -52,11 +52,11 @@ export class FriendsPage extends IMPage {
                     if (n.length > 0) {
                         this._updTitleStr(n.slice(0, 4).join(", "));
                     } else {
-                        this._updTitleStr("...");
+                        this._updTitleStr();
                     }
                 }
 
-                this.getNode().find("#_m_count").html(tr("members_count", this.selected_friends.length + 1));
+                this.getNode().find("#_m_count").html(tr("you_and") + ( this.selected_friends.length > 0 ? " " + tr("members_count", this.selected_friends.length) : "..."));
             }
 
             this.update();
@@ -67,21 +67,15 @@ export class FriendsPage extends IMPage {
     }
 
     onTitleChangeClick(e) {
-        const msg = new CMessageBox({
-            title: tr("name_your_chat"),
-            body: `<div><input id="chatInputTitle" type="text"></div>`,
-            close_on_buttons: false,
-            buttons: [tr('ok'), tr('cancel')],
-            callbacks: [() => {
-                const name = document.querySelector("#chatInputTitle").value;
-                if (!name || name.length == 0) { return; }
-
-                this.name = name;
-                this._set_name = true;
-                this._updTitleStr(this.name);
-                msg.close();
-            }, () => {msg.close()}]
-        });
+        const name = e.target.value;
+        if (name.length == 0 || name == "") {
+            this.name = null;
+            this._set_name = false;
+        } else {
+            this.name = name;
+            this._set_name = true;
+            this._updTitleStr(this.name);
+        }
     }
 
     async onCreateChat(e) {

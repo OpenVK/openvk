@@ -1,5 +1,6 @@
-import { WriteBar } from './common.js';
+import { WriteBar, formatTime, formatDate, getTimeFormatOptions, getAppLocale } from './common.js';
 import { html, render } from './render.js';
+import { ChatMessage } from './messages.js';
 
 function isSelected(msg) {
     const view = window.im?.messenger;
@@ -13,7 +14,7 @@ function hideHead(msg, index, chunk) {
 
 function formatReplyDate(date) {
     if (!date || !(date instanceof Date) || isNaN(date.getTime())) return "";
-    const timeStr = date.toLocaleTimeString(navigator.language || 'default', { hour: '2-digit', minute: '2-digit' });
+    const timeStr = formatTime(date, false);
     const atStr = typeof tr === "function" && tr("time_at_sp") && !tr("time_at_sp").startsWith("@") ? tr("time_at_sp") : " в ";
 
     const day = date.getDate();
@@ -25,15 +26,71 @@ function formatReplyDate(date) {
         return `${day} ${monthStr} ${year}${atStr}${timeStr}`;
     }
 
-    const dateStr = date.toLocaleDateString(navigator.language || 'default', { day: 'numeric', month: 'long', year: 'numeric' });
+    const dateStr = formatDate(date, { day: 'numeric', month: 'long', year: 'numeric' });
     return `${dateStr}${atStr}${timeStr}`;
 }
+
+export const ForwardedMessages = ({ msg, depth = 0, inModal = false }) => {
+    if (!msg || typeof msg.getFwdMessages !== "function" || depth >= 10) {
+        return null;
+    }
+    const fwdList = msg.getFwdMessages();
+    if (!fwdList || !fwdList.length || fwdList.length === 0) {
+        return null;
+    }
+
+    return html`
+        <div class="fwd-messages-container depth-${depth}">
+            ${depth === 0 ? html`<div class="fwd-messages-count">${tr("forwarded_messages_noun", fwdList.length)}</div>` : null}
+            ${fwdList.map((fwd) => {
+                const fwdSender = fwd.sender || (window.im?.cached_profiles && window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(fwd.from_id || fwd.data?.from_id));
+                const fwdName = fwdSender?.getName ? fwdSender.getName() : (fwd.from_id ? "id" + fwd.from_id : "...");
+                const fwdAva = fwdSender?.getAvatar ? fwdSender.getAvatar("mid", false) : "/assets/packages/static/openvk/img/camera_50.png";
+
+                const childFwds = typeof fwd.getFwdMessages === "function" ? fwd.getFwdMessages() : null;
+                const hasChildren = Boolean(childFwds && childFwds.length > 0);
+                const isLastInTree = inModal ? (depth >= 9 && Boolean(fwd.data?.has_fwd_messages || fwd.data?.forward_messages)) : (depth >= 9 || !hasChildren);
+
+                return html`
+                    <div class="fwd-message-block">
+                        <div class="fwd-message-head">
+                            <a href="/id${fwd.from_id || fwd.data?.from_id}" target="_blank" class="fwd-avatar-link">
+                                <img class="fwd-avatar" src=${fwdAva} alt=${fwdName} />
+                            </a>
+                            <div class="fwd-author-info">
+                                <a class="fwd-author-name" href="/id${fwd.from_id || fwd.data?.from_id}" target="_blank">
+                                    <strong>${fwdName}</strong>
+                                </a>
+                                <span class="fwd-date">${typeof fwd.getDate === "function" ? fwd.getDate(0) : ""}</span>
+                            </div>
+                        </div>
+                        <div class="fwd-text" dangerouslySetInnerHTML=${{ __html: typeof fwd.getText === "function" ? fwd.getText(false) : (fwd.data?.text || fwd.text || "") }} />
+                        ${fwd.getAttachments && fwd.getAttachments().length > 0 && html`
+                            <div class="attachments">
+                                ${fwd.getAttachments().map((att) => html`<${Attachment} msg=${fwd} att=${att} />`)}
+                            </div>
+                        `}
+                        ${depth < 9 ? html`<${ForwardedMessages} msg=${fwd} depth=${depth + 1} inModal=${inModal} />` : null}
+                        ${isLastInTree ? html`
+                            <div class="fwd-open-modal-wrap">
+                                <a class="fwd-open-modal-link" href="javascript:void(0)" onClick=${(e) => { e.preventDefault(); openForwardedMessageModal(fwd); }}>
+                                    ${tr("open_message") || "Открыть сообщение"}
+                                </a>
+                            </div>
+                        ` : null}
+                    </div>
+                `;
+            })}
+        </div>
+    `;
+};
 
 export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
     const isSearchTpl = fromSearch == "1";
     const isDeleted = msg.isDeleted();
     const isReplyingTo = Boolean(window.im?.messenger?.replyTo && (Number(window.im.messenger.replyTo.id) === Number(msg.id) || window.im.messenger.replyTo === msg));
     const isEditingThis = Boolean(window.im?.messenger?.editMsg && (Number(window.im.messenger.editMsg.id) === Number(msg.id) || window.im.messenger.editMsg === msg));
+    const isImportant = Boolean(msg.data?.important || (msg.data?.flags & 8));
     const cls = [
         'messenger-app--messages---message',
         'messenger-layer',
@@ -47,6 +104,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
         msg.isEdited() ? 'msg-edited' : '',
         msg.isReply() ? 'msg-reply' : '',
         msg.isPinned() ? 'msg-pinned' : '',
+        isImportant ? 'msg-important' : '',
         (isSearchTpl) ? 'msg-searched' : (msg.isError() ? "msg-error-hoverable" : 'msg-hoverable'),
         msg.isRead() ? 'msg-read' : 'unread',
     ].filter(Boolean).join(' ');
@@ -203,9 +261,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                 }
             }}>
                         <div class="reply-msg-header">
-                            ${typeof tr === "function" && tr("reply_to_message_user", replyAuthorName) && !tr("reply_to_message_user", replyAuthorName).startsWith("@")
-                ? tr("reply_to_message_user", replyAuthorName)
-                : ("в ответ на сообщение " + replyAuthorName)}
+                            ${tr("reply_to_message_user", replyAuthorName)}
                         </div>
                         <div class="reply-msg-head">
                             <a href=${replyFromId ? `/id${replyFromId}` : "javascript:void(0)"} target="_blank" class="reply-avatar-link" onClick=${(e) => e.stopPropagation()}>
@@ -246,37 +302,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                     ${msg.getAttachments().map((att) => html`<${Attachment} msg=${msg} att=${att} />`)}
                     </div>
                 `}
-                ${!isDeleted && msg.getFwdMessages() && msg.getFwdMessages().length > 0 && html`
-                    <div class="fwd-messages-container">
-                        <div class="fwd-messages-count">${tr("forwarded_messages_noun", msg.getFwdMessages().length)}</div>
-                        ${msg.getFwdMessages().map((fwd) => {
-                    const fwdSender = fwd.sender || (window.im?.cached_profiles && window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(fwd.from_id || fwd.data?.from_id));
-                    const fwdName = fwdSender?.getName ? fwdSender.getName() : (fwd.from_id ? "id" + fwd.from_id : "...");
-                    const fwdAva = fwdSender?.getAvatar ? fwdSender.getAvatar("mid", false) : "/assets/packages/static/openvk/img/camera_50.png";
-                    return html`
-                                <div class="fwd-message-block">
-                                    <div class="fwd-message-head">
-                                        <a href="/id${fwd.from_id || fwd.data?.from_id}" target="_blank" class="fwd-avatar-link">
-                                            <img class="fwd-avatar" src=${fwdAva} alt=${fwdName} />
-                                        </a>
-                                        <div class="fwd-author-info">
-                                            <a class="fwd-author-name" href="/id${fwd.from_id || fwd.data?.from_id}" target="_blank">
-                                                <strong>${fwdName}</strong>
-                                            </a>
-                                            <span class="fwd-date">${typeof fwd.getDate === "function" ? fwd.getDate(0) : ""}</span>
-                                        </div>
-                                    </div>
-                                    <div class="fwd-text" dangerouslySetInnerHTML=${{ __html: typeof fwd.getText === "function" ? fwd.getText(false) : (fwd.data?.text || fwd.text || "") }} />
-                                    ${fwd.getAttachments && fwd.getAttachments().length > 0 && html`
-                                        <div class="attachments">
-                                            ${fwd.getAttachments().map((att) => html`<${Attachment} msg=${fwd} att=${att} />`)}
-                                        </div>
-                                    `}
-                                </div>
-                            `;
-                })}
-                    </div>
-                `}
+                ${!isDeleted && html`<${ForwardedMessages} msg=${msg} depth=${0} />`}
                 ${!isDeleted && msg.has_not_loaded_attachments == true && html`
                     <img src=${_loader_link} />
                 `}
@@ -509,6 +535,58 @@ export const SystemMessages = {
             </div>
         `;
     },
+    "chat_moderator_add": (msg, page) => {
+        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
+        const msgAnchorId = `msg${peerId}-${msg.id}`;
+        const sender = msg.sender;
+        const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
+        const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
+        const mid = msg.data?.action?.member_id ?? msg.data?.action_mid;
+        const targetProf = window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached ? window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(mid) : window.im?.cached_profiles?._findCachedProfileById(mid);
+        const targetName = targetProf?.getName ? targetProf.getName() : (mid ? `id${mid}` : "...");
+        const verb = tr("event_chat_moderator_add_verb_" + gender);
+
+        return html`
+            <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
+                <div>
+                    <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
+                        <strong>${senderName} </strong>
+                    </a>
+                    <span class="text">${verb} </span>
+                    <a class="_sender" href="/id${mid}" target="_blank">
+                        <strong>${targetName}</strong>
+                    </a>
+                    <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
+                </div>
+            </div>
+        `;
+    },
+    "chat_moderator_remove": (msg, page) => {
+        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
+        const msgAnchorId = `msg${peerId}-${msg.id}`;
+        const sender = msg.sender;
+        const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
+        const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
+        const mid = msg.data?.action?.member_id ?? msg.data?.action_mid;
+        const targetProf = window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached ? window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(mid) : window.im?.cached_profiles?._findCachedProfileById(mid);
+        const targetName = targetProf?.getName ? targetProf.getName() : (mid ? `id${mid}` : "...");
+        const verb = tr("event_chat_moderator_remove_verb_" + gender);
+
+        return html`
+            <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
+                <div>
+                    <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
+                        <strong>${senderName} </strong>
+                    </a>
+                    <span class="text">${verb} </span>
+                    <a class="_sender" href="/id${mid}" target="_blank">
+                        <strong>${targetName}</strong>
+                    </a>
+                    <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
+                </div>
+            </div>
+        `;
+    },
     "rating_up": (msg, page) => {
         const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
         const msgAnchorId = `msg${peerId}-${msg.id}`;
@@ -560,6 +638,8 @@ const CompactReplyAttachment = ({ rep, att }) => {
     if (!att || !att.type) return null;
     const type = att.type;
 
+    const OXYGEN_BASE = '/assets/packages/static/openvk/img/oxygen-icons/16x16';
+
     switch (type) {
         case 'photo': {
             const photoSrc = att.photo?.photo_75 || att.photo?.photo_130 || att.photo?.sizes?.[0]?.url || att.photo?.link || att.photo?.photo_604 || '';
@@ -571,7 +651,7 @@ const CompactReplyAttachment = ({ rep, att }) => {
                         window.im.messenger.showAttachment(e, rep, att);
                     }
                 }}>
-                    ${photoSrc ? html`<img class="reply-compact-thumb" src=${photoSrc} alt="photo" />` : html`<span class="reply-attach-icon">📷</span>`}
+                    ${photoSrc ? html`<img class="reply-compact-thumb" src=${photoSrc} alt="photo" />` : html`<img class="reply-attach-icon reply-attach-oxygen" src="${OXYGEN_BASE}/mimetypes/application-x-egon.png" alt="photo" />`}
                     <span class="reply-attach-label">${label}</span>
                 </div>
             `;
@@ -586,7 +666,7 @@ const CompactReplyAttachment = ({ rep, att }) => {
                         window.im.messenger.showAttachment(e, rep, att);
                     }
                 }}>
-                    ${videoThumb ? html`<img class="reply-compact-thumb" src=${videoThumb} alt="video" />` : html`<span class="reply-attach-icon">🎬</span>`}
+                    ${videoThumb ? html`<img class="reply-compact-thumb" src=${videoThumb} alt="video" />` : html`<img class="reply-attach-icon reply-attach-oxygen" src="${OXYGEN_BASE}/mimetypes/application-vnd.rn-realmedia.png" alt="video" />`}
                     <span class="reply-attach-label">${title}</span>
                 </div>
             `;
@@ -602,7 +682,7 @@ const CompactReplyAttachment = ({ rep, att }) => {
                         window.im.messenger.showAttachment(e, rep, att);
                     }
                 }}>
-                    <span class="reply-attach-icon">🎵</span>
+                    <img class="reply-attach-icon reply-attach-oxygen" src="${OXYGEN_BASE}/mimetypes/audio-ac3.png" alt="audio" />
                     <span class="reply-attach-label">${fullTitle}</span>
                 </div>
             `;
@@ -612,7 +692,7 @@ const CompactReplyAttachment = ({ rep, att }) => {
             const ids = att.doc ? (att.doc.owner_id + '_' + att.doc.id + (att.doc.access_key ? "?key=" + att.doc.access_key : "")) : "";
             return html`
                 <a class="reply-compact-attach reply-compact-doc" title=${docTitle} href=${ids ? '/doc' + ids : 'javascript:void(0)'} onClick=${(e) => e.stopPropagation()}>
-                    <span class="reply-attach-icon">📄</span>
+                    <img class="reply-attach-icon reply-attach-oxygen" src="${OXYGEN_BASE}/mimetypes/x-office-document.png" alt="doc" />
                     <span class="reply-attach-label">${docTitle}</span>
                 </a>
             `;
@@ -626,7 +706,7 @@ const CompactReplyAttachment = ({ rep, att }) => {
                         PostViewer.openById(e, typeof idForItem === 'function' ? idForItem(att.wall) : att.wall.id);
                     }
                 }}>
-                    <span class="reply-attach-icon">📝</span>
+                    <img class="reply-attach-icon reply-attach-oxygen" src="${OXYGEN_BASE}/actions/mail-message-new.png" alt="wall" />
                     <span class="reply-attach-label">${wallTitle}</span>
                 </div>
             `;
@@ -636,7 +716,7 @@ const CompactReplyAttachment = ({ rep, att }) => {
             const giftTitle = typeof tr === 'function' && tr('gift') && !tr('gift').startsWith('@') ? tr('gift') : 'Подарок';
             return html`
                 <div class="reply-compact-attach reply-compact-gift" title=${giftTitle}>
-                    ${giftThumb ? html`<img class="reply-compact-thumb" src=${giftThumb} alt="gift" />` : html`<span class="reply-attach-icon">🎁</span>`}
+                    ${giftThumb ? html`<img class="reply-compact-thumb" src=${giftThumb} alt="gift" />` : html`<span class="reply-attach-icon mono-icon mono-icon-gift"></span>`}
                     <span class="reply-attach-label">${giftTitle}</span>
                 </div>
             `;
@@ -644,9 +724,9 @@ const CompactReplyAttachment = ({ rep, att }) => {
         case 'sticker': {
             const stickerThumb = att.sticker?.images?.[0]?.url || att.sticker?.photo_64 || att.sticker?.photo_128 || '';
             return html`
-                <div class="reply-compact-attach reply-compact-sticker" title="Стикер">
-                    ${stickerThumb ? html`<img class="reply-compact-thumb" src=${stickerThumb} alt="sticker" />` : ''}
-                    <span class="reply-attach-label">Стикер</span>
+                <div class="reply-compact-attach reply-compact-sticker" title=${tr("attachment_sticker")}>
+                    ${stickerThumb ? html`<img class="reply-compact-thumb" src=${stickerThumb} alt="sticker" />` : html`<img class="reply-attach-icon reply-attach-oxygen" src="${OXYGEN_BASE}/emotes/face-smile.png" alt="sticker" />`}
+                    <span class="reply-attach-label">${tr("attachment_sticker")}</span>
                 </div>
             `;
         }
@@ -654,7 +734,7 @@ const CompactReplyAttachment = ({ rep, att }) => {
             const pollQ = att.poll?.question || (typeof tr === 'function' && tr('poll') && !tr('poll').startsWith('@') ? tr('poll') : 'Опрос');
             return html`
                 <div class="reply-compact-attach reply-compact-poll" title=${pollQ}>
-                    <span class="reply-attach-icon">📊</span>
+                    <img class="reply-attach-icon reply-attach-oxygen" src="${OXYGEN_BASE}/apps/kchart.png" alt="poll" />
                     <span class="reply-attach-label">${pollQ}</span>
                 </div>
             `;
@@ -663,6 +743,7 @@ const CompactReplyAttachment = ({ rep, att }) => {
             if (type === 'link' || type === 'share') return null;
             return html`
                 <div class="reply-compact-attach reply-compact-generic">
+                    <span class="reply-attach-icon mono-icon mono-icon-link"></span>
                     <span class="reply-attach-label">(${type})</span>
                 </div>
             `;
@@ -676,15 +757,14 @@ const WallPostAttachment = ({ wall }) => {
     const ownerId = wall.to_id || wall.owner_id || 0;
     const fromId = wall.from_id || ownerId;
     const dateObj = wall.date ? new Date(wall.date * 1000) : null;
-    const formattedDate = dateObj ? dateObj.toLocaleDateString(navigator.language, {
+    const formattedDate = dateObj ? formatDate(dateObj, {
         day: 'numeric',
         month: 'short',
-        hour: '2-digit',
-        minute: '2-digit'
+        ...getTimeFormatOptions(false)
     }) : '';
 
     const authorProfile = window.im?.cached_profiles && window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(fromId || ownerId);
-    const authorName = wall.author_name || (authorProfile?.getName ? authorProfile.getName() : (ownerId < 0 ? 'Группа' : 'Пользователь'));
+    const authorName = wall.author_name || (authorProfile?.getName ? authorProfile.getName() : (ownerId < 0 ? tr('conversation_title_club') : tr('user')));
     const defaultAva = ownerId < 0 ? '/assets/packages/static/openvk/img/community_50.png' : '/assets/packages/static/openvk/img/camera_50.png';
     const authorAvatar = wall.author_avatar || (authorProfile?.getAvatar ? authorProfile.getAvatar('mid', false) : defaultAva);
     const authorLink = ownerId < 0 ? `/club${Math.abs(ownerId)}` : `/id${ownerId}`;
@@ -819,60 +899,60 @@ const WallPostAttachment = ({ wall }) => {
             ${layoutTiles.length > 0 && html`
                 <div class="attachments attachments_b" style="width: 100%; height: ${layoutHeight};">
                     ${layoutTiles.map(tile => {
-                        const styleStr = `float: ${tile.float || 'left'}; width: ${tile.percentWidth || 100}%; height: ${tile.height || 'auto'};`;
-                        if (tile.type === 'photo') {
-                            const photo = tile.photo;
-                            const photoSrc = photo.photo_604 || photo.photo_320 || photo.photo_130 || photo.photo_75 || photo.sizes?.[0]?.url || photo.link || '';
-                            const photoLink = photo.link || `/photo${photo.owner_id}_${photo.id}`;
-                            return html`
+        const styleStr = `float: ${tile.float || 'left'}; width: ${tile.percentWidth || 100}%; height: ${tile.height || 'auto'};`;
+        if (tile.type === 'photo') {
+            const photo = tile.photo;
+            const photoSrc = photo.photo_604 || photo.photo_320 || photo.photo_130 || photo.photo_75 || photo.sizes?.[0]?.url || photo.link || '';
+            const photoLink = photo.link || `/photo${photo.owner_id}_${photo.id}`;
+            return html`
                                 <div class="attachment" style=${styleStr}>
                                     <a class="wall-media-tile" href=${photoLink} onClick=${(e) => {
-                                        e.stopPropagation();
-                                        if (typeof OpenMiniature === 'function') {
-                                            OpenMiniature(e, photo.photo_604 || photo.link, fullPostId, photo.id, 'post');
-                                        }
-                                    }}>
+                    e.stopPropagation();
+                    if (typeof OpenMiniature === 'function') {
+                        OpenMiniature(e, photo.photo_604 || photo.link, fullPostId, photo.id, 'post');
+                    }
+                }}>
                                         <img class="media media_makima" src=${photoSrc} alt=${photo.text || 'photo'} loading="lazy" />
                                     </a>
                                 </div>
                             `;
-                        } else if (tile.type === 'video') {
-                            const rawVideo = tile.video?.video || tile.video || {};
-                            const videoId = rawVideo.id;
-                            const videoOwnerId = rawVideo.owner_id;
-                            const videoTitle = rawVideo.title || rawVideo.name || 'Видеозапись';
-                            const videoDuration = rawVideo.duration || rawVideo.length || 0;
-                            const videoThumb = rawVideo.thumbnail || rawVideo.photo_320 || rawVideo.photo_130 || rawVideo.image?.[0]?.url || rawVideo.image || '/assets/packages/static/openvk/video/rendering.apng';
-                            const durationFormatted = videoDuration ? (typeof fmtTime === 'function' ? fmtTime(videoDuration) : `${Math.floor(videoDuration / 60)}:${(videoDuration % 60 < 10 ? '0' : '') + (videoDuration % 60)}`) : '';
-                            return html`
+        } else if (tile.type === 'video') {
+            const rawVideo = tile.video?.video || tile.video || {};
+            const videoId = rawVideo.id;
+            const videoOwnerId = rawVideo.owner_id;
+            const videoTitle = rawVideo.title || rawVideo.name || tr('attachment_video');
+            const videoDuration = rawVideo.duration || rawVideo.length || 0;
+            const videoThumb = rawVideo.thumbnail || rawVideo.photo_320 || rawVideo.photo_130 || rawVideo.image?.[0]?.url || rawVideo.image || '/assets/packages/static/openvk/video/rendering.apng';
+            const durationFormatted = videoDuration ? (typeof fmtTime === 'function' ? fmtTime(videoDuration) : `${Math.floor(videoDuration / 60)}:${(videoDuration % 60 < 10 ? '0' : '') + (videoDuration % 60)}`) : '';
+            return html`
                                 <div class="attachment" style=${styleStr}>
                                     <a class="compact_video" href="/video${videoOwnerId}_${videoId}" onClick=${(e) => {
-                                        e.stopPropagation();
-                                        if (typeof VideoViewer !== 'undefined') {
-                                            VideoViewer.openById(videoOwnerId + '_' + videoId, {}, e);
-                                        }
-                                    }}>
+                    e.stopPropagation();
+                    if (typeof VideoViewer !== 'undefined') {
+                        VideoViewer.openById(videoOwnerId + '_' + videoId, {}, e);
+                    }
+                }}>
                                         <div class="play-button"><div class="play-button-ico"></div></div>
                                         ${durationFormatted ? html`<div class="video-length">${durationFormatted}</div>` : ''}
                                         <img class="media media_makima" src=${videoThumb} alt=${videoTitle} loading="lazy" />
                                     </a>
                                 </div>
                             `;
-                        }
-                        return null;
-                    })}
+        }
+        return null;
+    })}
                 </div>
             `}
 
             ${layoutExtras.length > 0 && html`
                 <div class="attachments attachments_m">
                     ${layoutExtras.map(extra => {
-                        if (extra.type === 'audio') {
-                            return html`<${Attachment} msg=${null} att=${extra} />`;
-                        } else if (extra.type === 'doc') {
-                            const doc = extra.doc;
-                            const docId = doc.owner_id + '_' + doc.id + (doc.access_key ? '?key=' + doc.access_key : '');
-                            return html`
+        if (extra.type === 'audio') {
+            return html`<${Attachment} msg=${null} att=${extra} />`;
+        } else if (extra.type === 'doc') {
+            const doc = extra.doc;
+            const docId = doc.owner_id + '_' + doc.id + (doc.access_key ? '?key=' + doc.access_key : '');
+            return html`
                                 <div class="attachment_note attachment_doc" onClick=${(e) => e.stopPropagation()}>
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"></polygon><polygon points="5 0 5 3 8 3 5 0"></polygon></svg>
                                     <div class="attachment_note_content">
@@ -881,12 +961,102 @@ const WallPostAttachment = ({ wall }) => {
                                     </div>
                                 </div>
                             `;
-                        } else {
-                            return html`<${CompactReplyAttachment} rep=${null} att=${extra} />`;
-                        }
-                    })}
+        } else {
+            return html`<${CompactReplyAttachment} rep=${null} att=${extra} />`;
+        }
+    })}
                 </div>
             `}
+        </div>
+    `;
+};
+
+export const AudioAttachment = ({ audio }) => {
+    if (!audio) return null;
+    const audioId = audio.global_id || audio.id || audio.aid || 0;
+    const artist = audio.artist || audio.performer || '';
+    const title = audio.title || audio.name || '';
+    const duration = audio.duration || audio.length || 0;
+    const durationFormatted = typeof fmtTime === 'function' ? fmtTime(duration) : `${Math.floor(duration / 60)}:${(duration % 60 < 10 ? '0' : '') + (duration % 60)}`;
+    const isPlaying = window.player && window.player.current_track_id == audioId && !window.player.audioPlayer?.paused;
+    let keysObj = {};
+    try {
+        if (audio.keys && typeof audio.keys === 'object') {
+            keysObj = audio.keys;
+        } else if (typeof audio.keys === 'string' && audio.keys.trim().startsWith('{')) {
+            keysObj = JSON.parse(audio.keys);
+        }
+    } catch (e) {
+        keysObj = {};
+    }
+    const keysStr = JSON.stringify(keysObj);
+    const playUrl = audio.manifest || audio.url || '';
+    const downloadUrl = audio.url || '';
+    const trackName = `${artist} — ${title}`;
+
+    return html`
+        <div id="audioEmbed-${audioId}"
+             data-realid="${audioId}"
+             data-name="${trackName}"
+             data-genre="${audio.genre_str || audio.genre || 'Other'}"
+             class="audioEmbed ctx_place msg-attach-audio-player"
+             data-length="${duration}"
+             data-keys=${keysStr}
+             data-url="${playUrl}"
+             data-owner-id="${audio.owner_id || 0}">
+            <audio class="audio"></audio>
+
+            <div class="audioEntry">
+                <div class="audioEntryWrapper" draggable="false">
+                    <div class="playerButton">
+                        <div class="playIcon ${isPlaying ? 'paused' : ''}"></div>
+                    </div>
+
+                    <div class="status">
+                        <div class="mediaInfo noOverflow" title="${trackName}">
+                            <div class="info">
+                                <strong class="performer">
+                                    <a draggable="false" href="/search?section=audios&order=listens&only_performers=on&q=${encodeURIComponent(artist)}" onClick=${(e) => e.stopPropagation()}>${artist}</a>
+                                </strong>
+                                <span class="tire">—</span>
+                                <span draggable="false" class="title">${title}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mini_timer">
+                        <span class="nobold hideOnHover" data-unformatted="${duration}">${durationFormatted}</span>
+                        <div class="buttons">
+                            <div class="add-icon musicIcon hovermeicon" data-id="${audioId}" title="${typeof tr === 'function' ? tr('add') : 'Добавить'}" onClick=${(e) => { e.stopPropagation(); if (typeof __showAudioAddDialog === 'function') __showAudioAddDialog(Number(audioId)); }}></div>
+                            ${downloadUrl ? html`<a class="download-icon musicIcon" href="${downloadUrl}" download="${artist} - ${title}.mp3" title="${typeof tr === 'function' ? tr('download') : 'Скачать'}" onClick=${(e) => e.stopPropagation()}></a>` : ''}
+                        </div>
+                    </div>
+                </div>
+                <div class="subTracks ${isPlaying ? 'shown' : ''}" draggable="false">
+                    <div class="lengthTrackWrapper">
+                        <div class="track lengthTrack">
+                            <div class="selectableTrack">
+                                <div class="selectableTrackLoadProgress">
+                                    <div class="load_bar"></div>
+                                </div>
+                                <div class="selectableTrackSlider">
+                                    <div class="slider"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="volumeTrackWrapper">
+                        <div class="track volumeTrack">
+                            <div class="selectableTrack">
+                                <div class="selectableTrackSlider">
+                                    <div class="slider"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     `;
 };
@@ -922,96 +1092,8 @@ const Attachment = ({ msg, att }) => {
                         </div>
                     </a>
                 </div>`;
-        case 'audio': {
-            const audio = att.audio;
-            if (!audio) return null;
-            const audioId = audio.global_id || audio.id || audio.aid || 0;
-            const artist = audio.artist || audio.performer || '';
-            const title = audio.title || audio.name || '';
-            const duration = audio.duration || audio.length || 0;
-            const durationFormatted = typeof fmtTime === 'function' ? fmtTime(duration) : `${Math.floor(duration / 60)}:${(duration % 60 < 10 ? '0' : '') + (duration % 60)}`;
-            const isPlaying = window.player && window.player.current_track_id == audioId && !window.player.audioPlayer?.paused;
-            let keysObj = {};
-            try {
-                if (audio.keys && typeof audio.keys === 'object') {
-                    keysObj = audio.keys;
-                } else if (typeof audio.keys === 'string' && audio.keys.trim().startsWith('{')) {
-                    keysObj = JSON.parse(audio.keys);
-                }
-            } catch (e) {
-                keysObj = {};
-            }
-            const keysStr = JSON.stringify(keysObj);
-            const playUrl = audio.manifest || audio.url || '';
-            const downloadUrl = audio.url || '';
-            const trackName = `${artist} — ${title}`;
-
-            return html`
-                <div id="audioEmbed-${audioId}"
-                     data-realid="${audioId}"
-                     data-name="${trackName}"
-                     data-genre="${audio.genre_str || audio.genre || 'Other'}"
-                     class="audioEmbed ctx_place msg-attach-audio-player"
-                     data-length="${duration}"
-                     data-keys=${keysStr}
-                     data-url="${playUrl}"
-                     data-owner-id="${audio.owner_id || 0}">
-                    <audio class="audio"></audio>
-
-                    <div class="audioEntry">
-                        <div class="audioEntryWrapper" draggable="false">
-                            <div class="playerButton">
-                                <div class="playIcon ${isPlaying ? 'paused' : ''}"></div>
-                            </div>
-
-                            <div class="status">
-                                <div class="mediaInfo noOverflow" title="${trackName}">
-                                    <div class="info">
-                                        <strong class="performer">
-                                            <a draggable="false" href="/search?section=audios&order=listens&only_performers=on&q=${encodeURIComponent(artist)}" onClick=${(e) => e.stopPropagation()}>${artist}</a>
-                                        </strong>
-                                        <span class="tire">—</span>
-                                        <span draggable="false" class="title">${title}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mini_timer">
-                                <span class="nobold hideOnHover" data-unformatted="${duration}">${durationFormatted}</span>
-                                <div class="buttons">
-                                    <div class="add-icon musicIcon hovermeicon" data-id="${audioId}" title="${typeof tr === 'function' ? tr('add') : 'Добавить'}" onClick=${(e) => { e.stopPropagation(); if (typeof __showAudioAddDialog === 'function') __showAudioAddDialog(Number(audioId)); }}></div>
-                                    ${downloadUrl ? html`<a class="download-icon musicIcon" href="${downloadUrl}" download="${artist} - ${title}.mp3" title="${typeof tr === 'function' ? tr('download') : 'Скачать'}" onClick=${(e) => e.stopPropagation()}></a>` : ''}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="subTracks ${isPlaying ? 'shown' : ''}" draggable="false">
-                            <div class="lengthTrackWrapper">
-                                <div class="track lengthTrack">
-                                    <div class="selectableTrack">
-                                        <div class="selectableTrackLoadProgress">
-                                            <div class="load_bar"></div>
-                                        </div>
-                                        <div class="selectableTrackSlider">
-                                            <div class="slider"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="volumeTrackWrapper">
-                                <div class="track volumeTrack">
-                                    <div class="selectableTrack">
-                                        <div class="selectableTrackSlider">
-                                            <div class="slider"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
+        case 'audio':
+            return html`<${AudioAttachment} audio=${att.audio} />`;
         case 'wall':
             return html`<${WallPostAttachment} wall=${att.wall} />`;
         case "gift":
@@ -1040,7 +1122,7 @@ export const DayDivider = ({ date, day, idate }) => {
 
     return html`
     <div class="messenger-app--messages-day-time">
-        <b onClick=${onDateClick} title="${tr('jump_to_date') || 'Выбрать дату в календаре'}">${displayDate}</b>
+        <b onClick=${onDateClick} title="${tr('jump_to_date')}">${displayDate}</b>
     </div>
   `;
 };
@@ -1085,3 +1167,90 @@ export const MessageListView = ({ dayDividedChunks, convo, page }) => {
     </div>
   `;
 };
+
+export const ForwardedModalView = ({ msg, isLoading = false }) => {
+    if (!msg) return null;
+    const fromId = msg.from_id || msg.data?.from_id || 0;
+    const sender = msg.sender || msg.data?.sender || (window.im?.cached_profiles && window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(fromId));
+    const authorName = sender?.getName ? sender.getName() : (fromId ? "id" + fromId : "...");
+    const authorAva = sender?.getAvatar ? sender.getAvatar("mid", false) : "/assets/packages/static/openvk/img/camera_50.png";
+    const dateStr = typeof msg.getDate === "function" ? msg.getDate(0) : (msg.data?.date ? formatTime(msg.data.date, true) : (msg.date ? formatTime(msg.date, true) : ""));
+    const textHtml = typeof msg.getText === "function" ? msg.getText(false) : (msg.data?.text || msg.text || "");
+    const attachments = typeof msg.getAttachments === "function" ? msg.getAttachments() : (msg.data?.attachments || []);
+
+    return html`
+        <div class="fwd-modal-content">
+            <div class="fwd-message-block fwd-modal-root-message">
+                <div class="fwd-message-head">
+                    <a href="/id${fromId}" target="_blank" class="fwd-avatar-link">
+                        <img class="fwd-avatar" src=${authorAva} alt=${authorName} />
+                    </a>
+                    <div class="fwd-author-info">
+                        <a class="fwd-author-name" href="/id${fromId}" target="_blank">
+                            <strong>${authorName}</strong>
+                        </a>
+                        <span class="fwd-date">${dateStr}</span>
+                    </div>
+                </div>
+                <div class="fwd-text" dangerouslySetInnerHTML=${{ __html: textHtml }} />
+                ${attachments && attachments.length > 0 && html`
+                    <div class="attachments">
+                        ${attachments.map((att) => html`<${Attachment} msg=${msg} att=${att} />`)}
+                    </div>
+                `}
+                ${isLoading && html`<div class="fwd-modal-loading" style="padding: 8px; text-align: center; color: var(--text-muted, #828a99);">${tr("loading") || "Загрузка..."}</div>`}
+                <${ForwardedMessages} msg=${msg} depth=${0} inModal=${true} />
+            </div>
+        </div>
+    `;
+};
+
+export function openForwardedMessageModal(fwd) {
+    if (!fwd) return;
+
+    const modalId = "fwd_modal_container_" + (fwd.id || fwd.data?.id || Math.floor(Math.random() * 100000));
+    const title = typeof tr === "function" && tr("message") && !tr("message").startsWith("@") ? tr("message") : "Сообщение";
+    const modal = new CMessageBox({
+        title: title,
+        body: `<div id="${modalId}" class="fwd-modal-body"></div>`,
+        custom_template: typeof msgboxModernTemplate === "function" ? msgboxModernTemplate(title, `<div id="${modalId}" class="fwd-modal-body"></div>`) : null,
+        close_on_buttons: false,
+    });
+
+    modal.getNode().attr("style", "z-index: 1000;");
+    modal.getNode().find(".ovk-diag").attr("style", "width: 580px; max-width: 95vw;");
+    modal.getNode().find(".ovk-diag-body").attr("style", "max-height: 80vh; overflow-y: auto; padding: 15px;");
+    modal.getNode().find(".ovk-diag-head #_close").on("click", () => modal.close());
+
+    // Retrieve container DOM node
+    const container = document.getElementById(modalId) ||
+        (modal.getNode().find("#" + modalId).nodes && modal.getNode().find("#" + modalId).nodes[0]) ||
+        (modal.getNode().find(".ovk-diag-body").nodes && modal.getNode().find(".ovk-diag-body").nodes[0]);
+
+    if (!container) {
+        console.error("Failed to find modal container for forwarded message");
+        return;
+    }
+
+    render(html`<${ForwardedModalView} msg=${fwd} />`, container);
+
+    const msgId = fwd.id || fwd.data?.id;
+    if (msgId && window.OVKAPI && (!fwd.getFwdMessages || fwd.getFwdMessages().length === 0)) {
+        render(html`<${ForwardedModalView} msg=${fwd} isLoading=${true} />`, container);
+        window.OVKAPI.call("messages.getById", { message_ids: msgId })
+            .then((res) => {
+                const item = res?.items?.[0] || res?.[0];
+                if (item) {
+                    const full = new ChatMessage(item);
+                    if (typeof full._guessSender === "function") {
+                        full._guessSender();
+                    }
+                    render(html`<${ForwardedModalView} msg=${full} isLoading=${false} />`, container);
+                }
+            })
+            .catch((e) => {
+                console.error("Failed to load message in modal:", e);
+                render(html`<${ForwardedModalView} msg=${fwd} isLoading=${false} />`, container);
+            });
+    }
+}

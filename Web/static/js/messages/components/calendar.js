@@ -69,16 +69,12 @@ export class CalendarComponent {
         if (!this.container) return;
 
         const monthNames = [];
-        for (i = 1; i != 12; i++) {
+        for (let i = 1; i <= 12; i++) {
             monthNames.push(tr("month_" + i));
         }
         const weekdays = [];
         for (let i = 1; i != 8; i++) {
             weekdays.push(tr("week_day_short_" + i));
-        }
-
-        for (let i = 0; i != 12; i++) {
-            monthNames.push(tr("month_1"));
         }
 
         const firstDayOfMonth = new Date(this.currentYear, this.currentMonth, 1);

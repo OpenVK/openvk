@@ -179,23 +179,7 @@ export class ChatInvitePreviewPage extends IMPage {
         const localChatId = Number(preview?.local_id || 0);
         const peerId = localChatId > 2000000000 ? localChatId : (2000000000 + localChatId);
 
-        let membersText = "";
-        if (membersCount === 1) {
-            membersText = "1 участник";
-        } else if (membersCount >= 2 && membersCount <= 4) {
-            membersText = `${membersCount} участника`;
-        } else {
-            membersText = `${membersCount} участников`;
-        }
-        if (typeof tr === 'function') {
-            if (membersCount === 1 && tr("friends_online_count_one")) {
-                membersText = tr("friends_online_count_one", 1).replace("онлайн", "").trim();
-            } else if (membersCount >= 2 && membersCount <= 4 && tr("friends_online_count_few")) {
-                membersText = tr("friends_online_count_few", membersCount).replace("онлайн", "").trim();
-            } else if (tr("friends_online_count_many")) {
-                membersText = tr("friends_online_count_many", membersCount).replace("онлайн", "").trim();
-            }
-        }
+        let membersText = tr("members_count", membersCount);
 
         let displayedProfiles = profiles ? profiles.slice(0) : [];
         let remainingCount = 0;

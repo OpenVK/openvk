@@ -19,13 +19,20 @@ const { IMTab, IMPage } = await es6import_Im(import.meta.url, './pages/page.js')
 const { TabBar } = await es6import_Im(import.meta.url, './components/common.js');
 //import { html, render as preactRender } from './components/render.js';
 const { html, render } = await es6import_Im(import.meta.url, './components/render.js');
+const { imLog, isImVerboseLogging } = await es6import_Im(import.meta.url, './logger.js');
 
 const preactRender = render;
 //const tr = window.tr;
 //const u = window.u;
 
+export { imLog, isImVerboseLogging };
+
 export function isImWarningRemoved() {
     return localStorage.getItem("tw.im.remove_warning") === "1" || localStorage.getItem("im.remove_warning") === "1";
+}
+
+export function isVerboseLogging() {
+    return isImVerboseLogging();
 }
 
 export class InstantMessagesAndRelated {
@@ -45,6 +52,7 @@ export class InstantMessagesAndRelated {
         this.event_handler = new EventHandler(this);
         this.state = new IMState(this, group_id);
 
+        this.log = imLog;
         this.isReady = false;
         this.is_initing = false;
         this.conversations = new Conversations();
@@ -77,14 +85,19 @@ export class InstantMessagesAndRelated {
         }
 
         if (!isImWarningRemoved() && !ignore_initless) {
-            console.log("IM | Init skipped: agreement (im.remove_warning) is not accepted");
+            imLog("Init skipped: agreement (im.remove_warning) is not accepted");
             return;
         }
 
         // иначе будут лишние запросы
         try {
+            if (window.openvk && window.openvk.current_id == 0) {
+                this.isReady = true;
+                return;
+            }
+
             if (!ignore_initless) {
-                if (window.openvk.current_id == 0 || window.openvk.disable_ajax == 1 || Number(localStorage.getItem('ux.disable_ajax_routing') ?? 0) == 1 || Number(localStorage.getItem('tw.im.disable_messenger') ?? 0) == 1) {
+                if (window.openvk.disable_ajax == 1 || Number(localStorage.getItem('ux.disable_ajax_routing') ?? 0) == 1 || Number(localStorage.getItem('tw.im.disable_messenger') ?? 0) == 1) {
                     if (location.pathname != "/im") {
                         this.isReady = true;
                         return;
@@ -99,8 +112,7 @@ export class InstantMessagesAndRelated {
         }
 
         this.is_initing = true;
-        console.trace();
-        console.log("IM | Init", this.state);
+        imLog("IM | Init", this.state);
 
         if (window.OVKAPI == null) {
             await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -126,7 +138,7 @@ export class InstantMessagesAndRelated {
 
         this.isReady = true;
         this.is_initing = false;
-        console.log("IM | Inited");
+        imLog("Inited");
     }
 
     static async insertAsReport(container, data) {
@@ -134,6 +146,12 @@ export class InstantMessagesAndRelated {
     }
 
     static async insertIn(container, as = null, fastchat = false, rewrite_tabs = true, report_data = null) {
+        if ((!window.openvk || window.openvk.current_id == 0) && report_data == null) {
+            const skeleton = container ? container.querySelector("#load_skeleton") : null;
+            if (skeleton) skeleton.remove();
+            return null;
+        }
+
         let self = window.im_variants.getCurrentUser();
         const b = new URL(location.href);
 
@@ -188,7 +206,7 @@ export class InstantMessagesAndRelated {
         }
 
         if (as != null) {
-            console.log("IM | ?as= detected", as);
+            imLog("?as= detected", as);
             self = window.im_variants.getForGroup(Number(as));
             window.im_variants.set(self);
             if (!self.isReady) { await self.init(); }
@@ -204,13 +222,15 @@ export class InstantMessagesAndRelated {
         self.state.isFastchat = fastchat;
         await self.waitLoad();
 
-        console.log("IM | Insert in ", container, " fastchat: ", fastchat);
+        imLog("Insert in", container, "fastchat:", fastchat);
 
-        const node = u(`<div id="im_container"><div id="im_page_tabs"></div><div id="im_page_containers"></div></div>`)
-        if (!fastchat) { node.addClass("at_page"); }
-        if (!fastchat && self.state.is_compact_mode_enabled == true) { node.addClass("compact"); }
+        if (!container.querySelector("#im_container")) {
+            const node = u(`<div id="im_container"><div id="im_page_tabs"></div><div id="im_page_containers"></div></div>`)
+            if (!fastchat) { node.addClass("at_page"); }
+            if (!fastchat && self.state.is_compact_mode_enabled == true) { node.addClass("compact"); }
 
-        container.insertAdjacentHTML("beforeend", node.last().outerHTML);
+            container.insertAdjacentHTML("beforeend", node.last().outerHTML);
+        }
 
         if (rewrite_tabs == true) {
             self.rewriteTabs(container);
@@ -236,7 +256,7 @@ export class InstantMessagesAndRelated {
     static async reportShowMessageContext(event, report_id, peer_id, message_id, author_id) {
         const container = event.target.closest("#msg_context_place");
         event.target.remove();
-        console.log(report_id, peer_id, message_id, author_id);
+        imLog("reportShowMessageContext", report_id, peer_id, message_id, author_id);
 
         const f = await InstantMessagesAndRelated.insertAsReport(container, {
             "report_id": report_id,
@@ -305,7 +325,7 @@ export class InstantMessagesAndRelated {
                 if (this.root == oldRoot) {
                     return;
                 }
-                console.log(this.root, oldRoot)
+                imLog("rewriteTabs root:", this.root, oldRoot);
                 item.render_class.changeContainer(this.root);
                 item.render();
             } catch (e) {
@@ -346,20 +366,22 @@ export class InstantMessagesAndRelated {
             tab = this.tabs.indexOf(tab);
         }
 
-        console.log("IM | Selected tab " + tab);
+        imLog("Selected tab " + tab);
 
         this.state._toggleScrollMode(false);
 
         this.selectedTabId = tab;
-        this.root.querySelectorAll("#im_page_containers .im_page").forEach(item => {
-            console.log("IM | Hide tab", item);
-            item.classList.add("hidden");
-        });
+        if (this.root) {
+            this.root.querySelectorAll("#im_page_containers .im_page").forEach(item => {
+                imLog("Hide tab", item);
+                item.classList.add("hidden");
+            });
+        }
         try {
             const _tab = this.tabs[tab];
             this.tabs.forEach(item => {
                 if (_tab != item && item.shouldClose()) {
-                    console.log("IM | Closed tab", item);
+                    imLog("Closed tab", item);
                     item.close();
                 }
             });
@@ -369,16 +391,21 @@ export class InstantMessagesAndRelated {
             _tab.updateHeader(this.header);
             _tab.render_class.updUrl();
 
-            const b = this.root.querySelector(`#im_page_containers .im_page[data-id="${_tab.getId()}"]`);
-            if (!b) {
-                console.log("IM | Tab not found, inserting again", _tab);
-                this.root.querySelector("#im_page_containers").insertAdjacentHTML("beforeend", `
-                    <div class="im_page" data-id="${_tab.getId()}"></div>
-                `);
+            const b = this.root ? this.root.querySelector(`#im_page_containers .im_page[data-id="${_tab.getId()}"]`) : null;
+            if (!b && this.root) {
+                imLog("Tab not found, inserting again", _tab);
+                const pageContainers = this.root.querySelector("#im_page_containers");
+                if (pageContainers) {
+                    pageContainers.insertAdjacentHTML("beforeend", `
+                        <div class="im_page" data-id="${_tab.getId()}"></div>
+                    `);
+                }
             }
 
-            console.log("IM | Show tab", _tab);
-            _tab.showTab(this.root);
+            imLog("Show tab", _tab);
+            if (this.root) {
+                _tab.showTab(this.root);
+            }
         } catch (e) {
             console.error(e);
         }
@@ -433,18 +460,24 @@ export class InstantMessagesAndRelated {
         }
 
         if (already_here != null) {
+            if (options && options.q !== undefined && already_here.render_class && typeof already_here.render_class.onSearch === 'function') {
+                already_here.render_class.onSearch(options.q, options.date ?? null);
+            }
             this.selectTab(this.tabs.indexOf(already_here));
 
             return already_here;
         } else {
             try {
+                if (!this.root) {
+                    this.root = document.querySelector("#im_container");
+                }
                 got_tab = got_class.openTab(this.root, options);
                 if (got_tab != null) {
-                    got_tab.render_class.addLoadSkeleton(this.root);
-                    console.log(got_tab.render_class)
+                    if (this.root) got_tab.render_class.addLoadSkeleton(this.root);
+                    imLog("Opened tab class:", got_tab.render_class);
                     this.selectTab(this.addTab(got_tab));
                     await got_tab.render();
-                    got_tab.render_class.removeLoadSkeleton(this.root);
+                    if (this.root) got_tab.render_class.removeLoadSkeleton(this.root);
                 }
             } catch (e) {
                 console.error(e);
@@ -506,8 +539,9 @@ class IMVariants {
     getForGroup(group_id) {
         let found = null;
         this.items.forEach(item => {
-            console.log(item.state, group_id)
+            imLog("Check item state:", item.state, group_id);
             if (item.state.group_id == group_id) {
+                imLog("Found variant for group:", item.state, group_id);
                 found = item;
             }
         });
@@ -701,7 +735,7 @@ class IMState {
 
     _pushState(url) {
         if (this.isFastchat == true) {
-            console.info("this.isFastchat: ", this.isFastchat, " url: ", url)
+            imLog.info("this.isFastchat: ", this.isFastchat, " url: ", url);
             return;
         }
 
@@ -730,10 +764,17 @@ class IMState {
             u('body').removeClass('no-scroll');
 
             try {
-                u('body #fastchats_related #fastchats_chat #wrap').last().scroll({ top: 0 });
-            } catch (e) {
-                console.error(e);
-            }
+                const wrap = document.querySelector('body #fastchats_related #fastchats_chat #wrap');
+                if (wrap) {
+                    if (typeof wrap.scroll === 'function') {
+                        wrap.scroll({ top: 0 });
+                    } else if (typeof wrap.scrollTo === 'function') {
+                        wrap.scrollTo({ top: 0 });
+                    } else {
+                        wrap.scrollTop = 0;
+                    }
+                }
+            } catch (e) {}
             return;
         }
 
@@ -762,7 +803,7 @@ class IMState {
     }
 
     async _resolvePosition(url = null, from_msg = false, firstLoad = false) {
-        console.log("IM | _resolvePosition");
+        imLog("_resolvePosition");
 
         if (window.openvk.current_id == 0 || window.openvk.disable_ajax == 1) {
             return;
@@ -777,12 +818,12 @@ class IMState {
         if (from_msg) { should_fullsize = true; }
 
         if (should_fullsize) {
-            console.log("IM | position is in page");
+            imLog("position is in page");
 
             u('.page_content').html('');
 
             if (!firstLoad) {
-                window.im_class.insertIn(document.querySelector('.page_content'), n_url.searchParams.get("as"));
+                await window.im_class.insertIn(document.querySelector('.page_content'), n_url.searchParams.get("as"));
             }
             u('body').addClass("no_footer");
 
@@ -790,7 +831,7 @@ class IMState {
             this.link.fastChats.hide();
             this.isFastchat = false;
         } else {
-            console.log("IM | position is in fastchats");
+            imLog("position is in fastchats");
             if (!this.link.fastChats.isInserted) {
                 await this.link.fastChats.insertSelf();
             } else {
@@ -833,20 +874,27 @@ class SettingsPage extends IMPage {
 
         const show_mail = location.hostname == "openvk.org";
         container.insertAdjacentHTML("beforeend", `
-            <div style="padding: 10px 75px;height: 100%;background: var(--common-2);">
+            <div style="padding: 40% 20%;height: 100%;background: var(--common-2);">
                 <div>
-                    <label style="display:none;"><input id="im.modern_mode" type="checkbox">${tr("im_option_compact_mode")} (beta)</label>
+                    <b>Openvk IM</b>
+                    <label style="display:block;"><input id="im.24h" type="checkbox">${tr("im_option_24h_format") || "24-часовой формат времени"}</label>
+                    <label style="display:block;"><input id="im.modern_mode" type="checkbox">${tr("im_option_compact_mode")} (beta)</label>
                     <label style="display:block;"><input id="im.debug" type="checkbox">${tr("im_option_debug")}</label>
                     <label style="display:block;"><input id="viewers.photo.list" type="checkbox">${tr("im_option_photo_viewer")} (Beta)</label>
                     ${show_mail ? `<p><a onclick="window.im.messenger.selectConversationByPeerId(window.openvk.dev_id)">${tr("report_bug")}</a></p>` : ""}
                 </div>
             </div>
         `);
-        container.querySelector("input").addEventListener("change", (e) => {
-            localStorage.setItem("tw." + e.target.id, Number(e.target.checked));
-        });
         container.querySelectorAll("input").forEach((item) => {
-            item.checked = localStorage.getItem("tw." + item.id) == "1" || false;
+            if (item.id === "im.24h") {
+                const val = localStorage.getItem("tw." + item.id);
+                item.checked = val !== null ? val === "1" : true;
+            } else {
+                item.checked = localStorage.getItem("tw." + item.id) == "1" || false;
+            }
+            item.addEventListener("change", (e) => {
+                localStorage.setItem("tw." + e.target.id, Number(e.target.checked));
+            });
         });
     }
 }
@@ -981,7 +1029,7 @@ export class LongPollConnection {
             params.group_id = group_id;
         }
         this.lp = await window.OVKAPI.call('messages.getLongPollServer', params);
-        console.log("LP | Created connection to the current user");
+        imLog("LP | Created connection to the current user");
     }
 
     stop() {
@@ -998,10 +1046,11 @@ export class LongPollConnection {
 
     listen() {
         if (this.is_stopped) {
-            console.log("LP | stop is set, not listening.");
-        };
+            imLog("LP | stop is set, not listening.");
+            return;
+        }
 
-        console.log("LP | New cycle of listening");
+        imLog("LP | New cycle of listening");
         let xhr = new XMLHttpRequest();
         const mode = 2 + 8 + 32 + 64 + 128;
         const connection_string = this.lp.server + '?key=' + this.lp.key + '&ts=' + this.lp.ts + '&pts=' + this.lp.pts + '&mode=' + mode;

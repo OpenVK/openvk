@@ -89,8 +89,12 @@ export class IMPage {
     async afterFirstRender(container) {}
     afterOpen() {}
     changeContainer(main_container) {
-        main_container.querySelector("#im_page_containers").insertAdjacentHTML("beforeend", `<div class="im_page" data-id="${this.id}"></div>`);
-        this.container = main_container.querySelector(`.im_page[data-id="${this.id}"]`);
+        if (!main_container) return;
+        const pageContainers = main_container.querySelector("#im_page_containers");
+        if (pageContainers) {
+            pageContainers.insertAdjacentHTML("beforeend", `<div class="im_page" data-id="${this.id}"></div>`);
+            this.container = main_container.querySelector(`.im_page[data-id="${this.id}"]`);
+        }
     }
     static openTab(main_container, options = {}) {
         const new_class = new this();
@@ -108,6 +112,7 @@ export class IMPage {
         return tab;
     }
     addLoadSkeleton(container, remove_before = false) {
+        if (!container) return;
         if (remove_before == true) { container.innerHTML = ""; }
         container.insertAdjacentHTML("beforeend", `<div id="load_skeleton" class="im_page_loader"><img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="..." /></div>`);
     }

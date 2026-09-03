@@ -94,7 +94,7 @@ async function showUserDialog(event, userId) {
 
 function updateChatTitle(e, chat) {
     if (!chat) {
-        console.log("IM | Editing | чата нет");
+        imLog("Editing | chat not found");
         return;
     }
 
@@ -130,7 +130,7 @@ function updateChatTitle(e, chat) {
 
 function updateChatAvatar(e, chat) {
     if (!chat) {
-        console.log("IM | Editing | чата нет");
+        imLog("Editing | chat not found");
         return;
     }
 
@@ -150,7 +150,7 @@ function updateChatAvatar(e, chat) {
 }
 
 function OpenChatAvatar(event, peer) {
-    console.log(peer);
+    imLog("OpenChatAvatar peer:", peer);
     if (!peer) return;
     if (peer.supposed_type == "chat") {
         if (typeof OpenMiniature === 'function') {
@@ -160,7 +160,7 @@ function OpenChatAvatar(event, peer) {
     }
 
     if (peer.data?.photo_pid == null) {
-        console.log("IM | Photo viewer | i think this user does not have avatar.");
+        imLog("Photo viewer | user does not have avatar");
         return;
     }
 

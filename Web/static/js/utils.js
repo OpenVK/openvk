@@ -344,7 +344,8 @@ function month_day_string(date) {
     // old langs
 
     if (ret.startsWith("@")) {
-        return date.toLocaleDateString(navigator.language);
+        const appLocale = (window.openvk && (window.openvk.locale || window.openvk.lang)) || (typeof tr === "function" && !tr("__locale").startsWith("@") ? tr("__locale").split(";")[0].split(".")[0].replace("_", "-") : "ru-RU");
+        return date.toLocaleDateString(appLocale);
     }
 
     return ret;
@@ -555,3 +556,45 @@ function encode_emojis(text) {
         return `<span class="emoji-picker-item emoji emoji_${es}">${emoji}</span>`;
     });
 }
+
+if (typeof window !== "undefined" && !window.imLog) {
+    window.isImVerboseLogging = function() {
+        try {
+            return localStorage.getItem("im.verbose_logging") === "1"
+                || localStorage.getItem("im.verbose_logging") === "true"
+                || localStorage.getItem("tw.im.verbose_logging") === "1";
+        } catch (e) {
+            return false;
+        }
+    };
+
+    window.imLog = function(...args) {
+        if (window.isImVerboseLogging()) {
+            console.log("[IM]", ...args);
+        }
+    };
+
+    window.imLog.info = function(...args) { if (window.isImVerboseLogging()) console.info("[IM]", ...args); };
+    window.imLog.warn = function(...args) { if (window.isImVerboseLogging()) console.warn("[IM]", ...args); };
+    window.imLog.error = function(...args) { if (window.isImVerboseLogging()) console.error("[IM]", ...args); };
+    window.imLog.debug = function(...args) { if (window.isImVerboseLogging()) console.debug("[IM]", ...args); };
+    window.imLog.table = function(...args) { if (window.isImVerboseLogging()) console.table(...args); };
+    window.imLog.group = function(...args) { if (window.isImVerboseLogging()) console.group("[IM]", ...args); };
+    window.imLog.groupEnd = function() { if (window.isImVerboseLogging()) console.groupEnd(); };
+    window.imLog.enable = function() {
+        try {
+            localStorage.setItem("im.verbose_logging", "1");
+            localStorage.setItem("tw.im.verbose_logging", "1");
+        } catch (e) {}
+        console.log("%c[IM] Verbose logging ENABLED (im.verbose_logging = 1)", "color: #4bb34b; font-weight: bold;");
+    };
+    window.imLog.disable = function() {
+        try {
+            localStorage.removeItem("im.verbose_logging");
+            localStorage.removeItem("tw.im.verbose_logging");
+        } catch (e) {}
+        console.log("%c[IM] Verbose logging DISABLED", "color: #e64646; font-weight: bold;");
+    };
+    window.imLog.isEnabled = window.isImVerboseLogging;
+}
+

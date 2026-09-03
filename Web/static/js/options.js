@@ -282,6 +282,8 @@ window.tweaks = [
     new TweakOption("im.modern_mode", function () {}),
     new TweakOption("im.remove_warning", function () {}),
     new TweakOption("im.debug", function () {}),
+    new TweakOption("im.verbose_logging", function () {}),
+    new TweakOption("im.24h", function () {}, true),
     new TweakOption("viewers.photo.list", function () {}),
 ]
 
@@ -302,6 +304,14 @@ window.openPluginSettings = () => {
 
     settings.on("change", "input", (e) => {
         const _name = e.target.closest('label').querySelector("span").innerHTML
-        localStorage.setItem("tw."+_name, Number(e.target.checked))
+        const _val = Number(e.target.checked)
+        localStorage.setItem("tw."+_name, _val)
+        if (_name === "im.verbose_logging") {
+            if (_val) {
+                localStorage.setItem("im.verbose_logging", "1")
+            } else {
+                localStorage.removeItem("im.verbose_logging")
+            }
+        }
     })
 }

@@ -414,9 +414,19 @@
             <div class="content_subtitle">
                 {tr("videos", $videosCount)}
                 <div style="float:right;">
+                    {if $thisUser && ($canBeModified || $club->canUploadVideo($thisUser))}
+                        <a href="/videos{$club->getRealId()}?act=upload">{_upload_button}</a> |
+                    {/if}
                     <a href="/videos{$club->getRealId()}">{_all_title}</a>
                 </div>
             </div>
+            
+            {if $videosCount == 0 && $thisUser && ($canBeModified || $club->canUploadVideo($thisUser))}
+                <div class="section_empty">
+                    <a href="/videos{$club->getRealId()}?act=upload" class="videos">{_upload_button}</a>
+                </div>
+            {/if}
+            
             <div class="hide_on_mobiles" style="padding: 5px;">
                 {foreach $videos as $video}
                     {include "../Videos/ProfileVideo.latte", video => $video, ref => $club->getRealId()}

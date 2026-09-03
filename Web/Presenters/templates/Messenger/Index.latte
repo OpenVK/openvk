@@ -35,7 +35,9 @@
 {/block}
 
 {block content}
-    {if $imAvailable}
+    {if empty($thisUser) && !empty($joinCode)}
+        {include "partials/unauth_invite.latte"}
+    {elseif $imAvailable}
         {include "partials/container.latte"}
     {else}
         {include "partials/maintenance.latte"}

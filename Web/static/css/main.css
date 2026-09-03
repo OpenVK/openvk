@@ -1005,6 +1005,10 @@ input[type="number"] {
     background-position: 0px -120px;
 }
 
+.section_empty a.videos::before {
+    background-position: 0px -96px;
+}
+
 .section_empty a.music::before {
     background-position: 0px -48px;
 }
@@ -3133,7 +3137,7 @@ a.poll-retract-vote {
     display: flex;
     flex-direction: column;
     z-index: 11;
-    width: 100%;
+    width: 621px;
     box-sizing: border-box;
 }
 

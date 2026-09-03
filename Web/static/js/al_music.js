@@ -593,6 +593,7 @@ window.player = new class {
             playedPages: [],
         }
         this.tracks = []
+        this.ajaxPlayer_ClearQueueBlock()
         //this.__realAudioPlayer = document.createElement("audio")
         this.listen_coef = 0
     }
@@ -679,14 +680,25 @@ window.player = new class {
     }
 
     __appendTracks(list, after = true) {
+        const uniqueList = []
+        list.forEach(item => {
+            if(!this.hasTrackWithId(item.id) && !uniqueList.some(u => u.id == item.id)) {
+                uniqueList.push(item)
+            }
+        })
+
+        if(uniqueList.length === 0) {
+            return
+        }
+
         if(after) {
-            this.tracks = this.tracks.concat(list)
+            this.tracks = this.tracks.concat(uniqueList)
         } else {
-            this.tracks = list.concat(this.tracks)
+            this.tracks = uniqueList.concat(this.tracks)
         }
 
         if (this.ajaxPlayer_CheckIfBlockHasBeenShown()) {
-            list.forEach(item => {
+            uniqueList.forEach(item => {
                 this.ajaxPlayer_AddTrackBlockToTheQueueBlock(item)
             })
         }
@@ -862,16 +874,41 @@ window.player = new class {
         u('#ajax_audio_player').removeClass('hidden')
     }
 
+    ajaxPlayer_ClearQueueBlock() {
+        const q = document.getElementById('aj_player_tracks')
+        if(q) {
+            q.innerHTML = ''
+        }
+    }
+
+    async setCustomPlaylist(tracks, targetId = null, startPlaying = true) {
+        this.tracks = []
+        this.ajaxPlayer_ClearQueueBlock()
+        this.__appendTracks(tracks, true)
+
+        const playId = targetId || (tracks[0] ? tracks[0].id : null)
+        if(playId) {
+            await this.setTrack(playId)
+            if(startPlaying) {
+                if(!this.isAtAudiosPage()) {
+                    this.ajReveal()
+                }
+                await this.play()
+            }
+        }
+    }
+
     ajaxPlayer_CheckIfBlockHasBeenShown() {
         return u('#ajax_audio_player').length > 0
     }
 
     ajaxPlayer_AddTrackBlockToTheQueueBlock(item) {
         const track = new AudioTrack(item)
+        const trackIndex = this.tracks.findIndex(s => s.id == item.id)
 
         u("#ajax_audio_player #aj_player #aj_player_tracks").append(`
             <div class="aj_track" data-id="${track.getId()}">
-                <span class="num">${this.tracks.findIndex(s => s.id == item.id) + 1}</span>
+                <span class="num">${trackIndex !== -1 ? trackIndex + 1 : this.tracks.length}</span>
                 <b> ${ovk_proc_strtr(escapeHtml(track.getName()), 50)}</b>
             </div>
         `)
@@ -1035,31 +1072,45 @@ u(document).on('click', '.audioEntry .playerButton > .playIcon', async (e) => {
         return
     }
 
-    if(!window.player.hasTrackWithId(id) && !window.player.isAtAudiosPage()) {
-        let _nodes = null
+    let _nodes = null
+    let _container_node = null
 
-        try_these_containers = [".attachments", ".content_list", ".generic_audio_list", ".audiosInsert", ".scroll_container", ".container_gray"]
-        try_these_containers.forEach(__container => {
-            if(u(e.target).closest(__container).length > 0) {
-                window.player.connectionType = __container
-                _nodes = u(e.target).closest(__container).find('.audioEmbed').nodes
-            }
-        })
+    const try_these_containers = [".attachments", ".content_list", ".generic_audio_list", ".audiosInsert", ".scroll_container", ".container_gray"]
+    try_these_containers.forEach(__container => {
+        const matched = u(e.target).closest(__container)
+        if(matched.length > 0) {
+            window.player.connectionType = __container
+            _container_node = matched.nodes[0]
+            _nodes = matched.find('.audioEmbed').nodes
+        }
+    })
 
+    const isDifferentContainer = _container_node && window.player.__container_node !== _container_node
+    if((!window.player.hasTrackWithId(id) || isDifferentContainer) && !window.player.isAtAudiosPage()) {
+        window.player.__container_node = _container_node
         window.player.tracks = []
-        _nodes.forEach(el => {
-            const tempAudio = u(el)
-            const name = tempAudio.attr('data-name').split(' — ')
-            window.player.appendTrack({
-                'id': Number(tempAudio.attr('data-realid')),
-                'available': true, // , судя по всему
-                'keys': JSON.parse(tempAudio.attr('data-keys')),
-                'length': Number(tempAudio.attr('data-length')),
-                'url': tempAudio.attr('data-url'),
-                'name': name[1],
-                'performer': name[0]
+        window.player.ajaxPlayer_ClearQueueBlock()
+        if(_nodes) {
+            const seenIds = new Set()
+            _nodes.forEach(el => {
+                const tempAudio = u(el)
+                const realId = Number(tempAudio.attr('data-realid'))
+                if(!realId || seenIds.has(realId)) {
+                    return
+                }
+                seenIds.add(realId)
+                const name = tempAudio.attr('data-name').split(' — ')
+                window.player.appendTrack({
+                    'id': realId,
+                    'available': true, // , судя по всему
+                    'keys': JSON.parse(tempAudio.attr('data-keys')),
+                    'length': Number(tempAudio.attr('data-length')),
+                    'url': tempAudio.attr('data-url'),
+                    'name': name[1],
+                    'performer': name[0]
+                })
             })
-        })
+        }
     } else if(!window.player.hasTrackWithId(id) && window.player.isAtAudiosPage()) {
         // Track isn't in the loaded pages yet (e.g. jumped ahead/behind more than one
         // page's worth of tracks). Walk outward from the already-loaded page range instead
