@@ -578,7 +578,7 @@ class IMState {
     getId() {
         try {
             return this.getOperator().id;
-        } catch(e) {
+        } catch (e) {
             return window.openvk.current_id;
         }
     }
@@ -774,7 +774,7 @@ class IMState {
                         wrap.scrollTop = 0;
                     }
                 }
-            } catch (e) {}
+            } catch (e) { }
             return;
         }
 
@@ -874,7 +874,7 @@ class SettingsPage extends IMPage {
 
         const show_mail = location.hostname == "openvk.org";
         container.insertAdjacentHTML("beforeend", `
-            <div style="padding: 40% 20%;height: 100%;background: var(--common-2);">
+            <div style="box-sizing: border-box;padding: 40% 20%;height: 100%;background: var(--common-2);">
                 <div>
                     <b>Openvk IM</b>
                     <label style="display:block;"><input id="im.24h" type="checkbox">${tr("im_option_24h_format") || "24-часовой формат времени"}</label>
@@ -1143,7 +1143,7 @@ export class FastChats {
 
             await this.loadOnlineFriends();
             this.restoreSavedState();
-        } catch(e) {
+        } catch (e) {
             console.error("FastChats | loadInitialData error:", e);
         }
     }
@@ -1163,7 +1163,7 @@ export class FastChats {
                 this.onlineWindow.allFriends = sorted;
                 this.onlineWindow.friends = sorted.filter(f => f.online === 1 || f.online === true);
             }
-        } catch(e) {
+        } catch (e) {
             console.error("FastChats | loadOnlineFriends error:", e);
         }
     }
@@ -1185,7 +1185,7 @@ export class FastChats {
                     });
                 }
             }
-        } catch(e) {
+        } catch (e) {
             console.error("FastChats | restoreSavedState error:", e);
         }
     }
@@ -1203,7 +1203,7 @@ export class FastChats {
                 }))
             };
             localStorage.setItem("im.fastchats.state", JSON.stringify(state));
-        } catch(e) {
+        } catch (e) {
             console.error("FastChats | saveState error:", e);
         }
     }
@@ -1255,7 +1255,11 @@ export class FastChats {
             this.focusChat(peerId);
             if (save) this.saveState();
             if (!isMinimized) {
-                setTimeout(() => this.scrollToBottom(peerId), 50);
+                if (chat.firstUnreadMsgId) {
+                    setTimeout(() => this.scrollToUnread(peerId), 50);
+                } else {
+                    setTimeout(() => this.scrollToBottom(peerId), 50);
+                }
             }
             return;
         }
@@ -1274,6 +1278,7 @@ export class FastChats {
             hasMore: false,
             text: "",
             unreadCount: 0,
+            firstUnreadMsgId: null,
             position: position,
             zIndex: zIndex || this.topZIndex,
             isFocused: true
@@ -1322,6 +1327,19 @@ export class FastChats {
                 if (histRes && Array.isArray(histRes.items)) {
                     chat.messages = histRes.items.reverse();
                     chat.hasMore = histRes.count > chat.messages.length;
+                    chat.unreadCount = histRes.unread || 0;
+
+                    let firstUnread = null;
+                    if (chat.unreadCount > 0) {
+                        for (const msg of chat.messages) {
+                            const isOut = msg.from_id === this.currentUserId || msg.out === 1;
+                            if (!isOut && (msg.read_state === 0 || msg.read_state === false || msg.unread === 1)) {
+                                firstUnread = msg;
+                                break;
+                            }
+                        }
+                    }
+                    chat.firstUnreadMsgId = firstUnread ? firstUnread.id : null;
                 } else {
                     chat.messages = [];
                     chat.hasMore = false;
@@ -1337,9 +1355,13 @@ export class FastChats {
             if (save) this.saveState();
 
             if (!isMinimized) {
-                setTimeout(() => this.scrollToBottom(peerId), 50);
+                if (chat.firstUnreadMsgId) {
+                    setTimeout(() => this.scrollToUnread(peerId), 50);
+                } else {
+                    setTimeout(() => this.scrollToBottom(peerId), 50);
+                }
             }
-        } catch(e) {
+        } catch (e) {
             console.error("FastChats | openChat error:", e);
             chat.isLoading = false;
             this.render();
@@ -1358,8 +1380,21 @@ export class FastChats {
             chat.isMinimized = !chat.isMinimized;
             this.focusChat(peerId);
             if (!chat.isMinimized) {
+                if (chat.unreadCount > 0 && !chat.firstUnreadMsgId) {
+                    for (const msg of chat.messages) {
+                        const isOut = msg.from_id === this.currentUserId || msg.out === 1;
+                        if (!isOut && (msg.read_state === 0 || msg.read_state === false || msg.unread === 1)) {
+                            chat.firstUnreadMsgId = msg.id;
+                            break;
+                        }
+                    }
+                }
                 chat.unreadCount = 0;
-                setTimeout(() => this.scrollToBottom(peerId), 50);
+                if (chat.firstUnreadMsgId) {
+                    setTimeout(() => this.scrollToUnread(peerId), 50);
+                } else {
+                    setTimeout(() => this.scrollToBottom(peerId), 50);
+                }
             }
             this.saveState();
             this.render();
@@ -1386,7 +1421,7 @@ export class FastChats {
             } else {
                 chat.hasMore = false;
             }
-        } catch(e) {
+        } catch (e) {
             console.error("FastChats | loadOlderMessages error:", e);
         }
         chat.isLoading = false;
@@ -1432,8 +1467,74 @@ export class FastChats {
 
             const realId = Number((sendRes && sendRes.response) || sendRes || randomId);
             tempMsg.id = realId;
-        } catch(e) {
+        } catch (e) {
             console.error("FastChats | sendMessage error:", e);
+        }
+    }
+
+    async sendSticker(peerId, stickerId, packId = null, stickerData = null) {
+        const chat = this.openedChats.find(c => Number(c.peerId) === Number(peerId));
+        if (!chat) return;
+
+        if (!stickerData && typeof window.findStickerData === 'function') {
+            stickerData = window.findStickerData(stickerId);
+        }
+
+        const sId = Number(stickerId);
+        const pId = Number(packId || (stickerData ? stickerData.product_id : 0));
+        const photo128 = stickerData?.photo_128 || (pId ? `/sticker/${pId}/${sId}_128.webp` : '');
+        const photo256 = stickerData?.photo_256 || photo128;
+        const photo512 = stickerData?.photo_512 || (pId ? `/sticker/${pId}/${sId}_512.webp` : photo128);
+
+        const stickerObj = {
+            id: sId,
+            sticker_id: sId,
+            product_id: pId,
+            photo_64: photo128,
+            photo_128: photo128,
+            photo_256: photo256,
+            photo_352: photo512,
+            photo_512: photo512,
+            width: 512,
+            height: 512,
+            images: stickerData?.images || [
+                { url: photo128, width: 128, height: 128 },
+                { url: photo256, width: 256, height: 256 },
+                { url: photo512, width: 512, height: 512 }
+            ]
+        };
+
+        const randomId = Date.now();
+        const tempMsg = {
+            id: `temp_${randomId}`,
+            random_id: randomId,
+            from_id: this.currentUserId,
+            peer_id: peerId,
+            text: "",
+            date: Math.floor(Date.now() / 1000),
+            out: 1,
+            author_name: tr('you') || 'Вы',
+            author_photo: this.currentUserAvatar,
+            attachments: [{
+                type: 'sticker',
+                sticker: stickerObj
+            }]
+        };
+        chat.messages.push(tempMsg);
+        this.render();
+        this.scrollToBottom(peerId);
+
+        try {
+            const sendRes = await window.OVKAPI.call('messages.send', {
+                peer_id: peerId,
+                attachment: 'sticker' + sId,
+                random_id: randomId
+            });
+
+            const realId = Number((sendRes && sendRes.response) || sendRes || randomId);
+            tempMsg.id = realId;
+        } catch (e) {
+            console.error("FastChats | sendSticker error:", e);
         }
     }
 
@@ -1448,6 +1549,16 @@ export class FastChats {
         const el = document.querySelector(`#fc_messages_${peerId}`);
         if (el) {
             el.scrollTop = el.scrollHeight;
+        }
+    }
+
+    scrollToUnread(peerId) {
+        const el = document.querySelector(`#fc_unread_${peerId}`);
+        const list = document.querySelector(`#fc_messages_${peerId}`);
+        if (el && list) {
+            el.scrollIntoView({ block: 'start' });
+        } else {
+            this.scrollToBottom(peerId);
         }
     }
 
@@ -1530,7 +1641,7 @@ export class FastChats {
         if (chat) {
             // De-duplicate outgoing messages
             if (isOut) {
-                const existing = chat.messages.find(m => 
+                const existing = chat.messages.find(m =>
                     (Number(m.id) === msgId) ||
                     (randomId && Number(m.random_id) === randomId) ||
                     (m.out === 1 && m.text === text && Math.abs(date - m.date) < 30)
@@ -1539,6 +1650,10 @@ export class FastChats {
                 if (existing) {
                     existing.id = msgId;
                     if (randomId) existing.random_id = randomId;
+                    const newAtts = (msg.data && msg.data.attachments) || msg.attachments || [];
+                    if (newAtts && newAtts.length > 0 && (!existing.attachments || existing.attachments.length === 0)) {
+                        existing.attachments = newAtts;
+                    }
                     this.render();
                     return;
                 }
@@ -1556,7 +1671,8 @@ export class FastChats {
                 date: date,
                 out: isOut ? 1 : 0,
                 author_name: isOut ? (tr('you') || 'Вы') : chat.title,
-                author_photo: isOut ? this.currentUserAvatar : chat.photo
+                author_photo: isOut ? this.currentUserAvatar : chat.photo,
+                attachments: (msg.data && msg.data.attachments) || msg.attachments || []
             });
 
             if (!chat.isMinimized && chat.isFocused) {

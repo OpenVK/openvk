@@ -453,7 +453,7 @@ class PhotoViewer extends Viewer {
             return;
         }
 
-        if (this.context.type == "chat" || this.mode == "tg" || this.context.type == null || (this.context.not_load_comments || false) == true) {
+        if (this.context.type == "chat" || this.context.type == null || (this.context.not_load_comments || false) == true) {
             if (window.im && window.im.state.is_debug) {
                 this._getCurrentEntryCacheNode().last().innerHTML = itemId;
             } else {
@@ -2946,11 +2946,11 @@ u(document).on('click', '.post.post-nsfw .post-content', (e) => {
     u(e.target).closest('.post-nsfw').removeClass('post-nsfw')
 })
 
-u(document).on('focusin', '#write', (e) => {
+u(document).on('focusin click', '#write', (e) => {
     const target = u(e.target).closest('#write')
     target.addClass('expanded-textarea')
     target.find('.post-buttons').attr('style', 'display:block')
-    target.find('.small-textarea').addClass('expanded-textarea')
+    target.find('.small-textarea, .content-editable').addClass('expanded-textarea')
 })
 
 async function repost(id, repost_type = 'post') {

@@ -96,7 +96,7 @@ final class VideosPresenter extends OpenVKPresenter
         if ($gid != null) {
             $group = (new Clubs)->get((int) $gid);
 
-            if (!$group || !$group->canBeModifiedBy($this->user->identity)) {
+            if (!$group || !$group->canUploadVideo($this->user->identity)) {
                 $this->flashFail("err", tr("error"), tr("access_denied"));
             }
         }

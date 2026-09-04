@@ -1047,6 +1047,8 @@ input[type="search"],
 input[type~="search"],
 input[type~="date"],
 input[type~="time"],
+input[type="url"],
+input[type~="url"],
 input[type~="datetime-local"],
 select {
     border: 1px solid #C0CAD5;
@@ -1222,32 +1224,185 @@ h4 {
     height: 24px;
 }
 
-.expanded-textarea {
-    min-height: 48px;
+.expanded-textarea,
+.content-editable.expanded-textarea,
+#write.expanded-textarea .content-editable,
+#write.expanded-textarea .small-textarea,
+#write.expanded-textarea textarea {
+    min-height: 52px !important;
+    height: auto !important;
 }
 
 .model_content_textarea.has_emoji_picker .textareas {
     position: relative;
 }
 
-.has_emoji_picker.model_content_textarea textarea {
+.has_emoji_picker.model_content_textarea textarea,
+.has_emoji_picker.model_content_textarea .content-editable {
     padding: 4px 30px 4px 6px;
 }
 
-.model_content_textarea.has_emoji_picker.expanded-textarea .emoji_picker_entrypoint {
+.content-editable {
+    font-family: unset;
+    border: 1px solid #C0CAD5;
+    font-size: 9pt;
+    min-height: 24px;
+    width: 100%;
+    padding: 4px;
+    box-sizing: border-box;
+    background: #fff;
+    color: #000;
+    overflow-y: auto;
+    word-break: break-word;
+    white-space: pre-wrap;
+    outline: none;
+    cursor: text;
+    user-select: text;
+    line-height: 1.35;
+}
+
+.content-editable.expanded-textarea,
+#write.expanded-textarea .content-editable {
+    min-height: 52px !important;
+    height: auto !important;
+}
+
+.content-editable:focus {
+    border-color: #567ca4;
+}
+
+.content-editable:empty::before {
+    content: attr(data-placeholder);
+    color: #828a99;
+    pointer-events: none;
+    display: block;
+}
+
+.content-editable img.emoji {
+    vertical-align: -3px;
+    display: inline-block;
+    cursor: default;
+    user-select: all;
+    pointer-events: none;
+}
+
+.emoji_picker_entrypoint {
     width: 16px;
     height: 17px;
     background: url(../img/im/chats.png);
     background-position: 190px 0px;
-    position: absolute;
-    right: 5px;
-    top: 5px;
+    cursor: pointer;
     opacity: 0.7;
 }
 
-.model_content_textarea.has_emoji_picker.expanded-textarea .emoji_picker_entrypoint:hover {
+.emoji_picker_entrypoint:hover {
     opacity: 1;
 }
+
+.model_content_textarea.has_emoji_picker .emoji_picker_entrypoint {
+    position: absolute;
+    right: 5px;
+    top: 4px;
+    z-index: 2;
+}
+
+.model_content_textarea.has_emoji_picker.expanded-textarea .emoji_picker_entrypoint {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    z-index: 2;
+}
+
+.emoji-input-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    background: #fff;
+    border: 1px solid #C0CAD5;
+    border-radius: 2px;
+    padding: 2px 4px;
+    cursor: text;
+    transition: border-color 0.15s ease-in-out;
+}
+
+.emoji-input-wrap:focus-within {
+    border-color: #567ca4;
+}
+
+.emoji-input-wrap .content-editable-wrap {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto !important;
+    position: relative;
+    margin: 0;
+    padding: 0;
+}
+
+.emoji-input-wrap .content-editable {
+    display: block !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    min-height: 18px !important;
+    height: auto !important;
+    max-height: 72px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    word-break: break-word !important;
+    white-space: normal !important;
+    line-height: 18px !important;
+    font-size: 12px !important;
+    outline: none !important;
+    text-align: left !important;
+    box-sizing: border-box !important;
+}
+
+.emoji-input-wrap textarea.content-editable-fallback {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    min-height: 18px;
+    height: auto;
+    max-height: 72px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    word-break: break-word;
+    white-space: normal;
+    line-height: 18px;
+    font-size: 12px;
+    outline: none;
+    resize: none;
+    box-sizing: border-box;
+}
+
+.emoji-input-wrap .content-editable+textarea,
+.emoji-input-wrap textarea[style*="display: none"],
+.emoji-input-wrap textarea[style*="display:none"] {
+    display: none !important;
+}
+
+.emoji-input-wrap .emoji_picker_entrypoint {
+    position: static !important;
+    flex: 0 0 16px;
+    width: 16px;
+    height: 17px;
+    margin: 1px 0 0 3px !important;
+    top: auto !important;
+    right: auto !important;
+    cursor: pointer;
+    align-self: flex-start;
+}
+
 
 ul {
     list-style-type: square;
@@ -1358,9 +1513,10 @@ table.User {
 }
 
 #auth .container_gray {
-    margin-left: -10px;
     margin-bottom: -10px;
-    width: 603px;
+    margin-left: -10px;
+    width: 627px;
+    box-sizing: border-box;
 }
 
 .tabs {
@@ -2139,6 +2295,7 @@ h4.gift_cat_header {
     padding: 6px 15px;
     background-color: #eee;
     text-align: center;
+    user-select: none;
 }
 
 #ovkDraw {
@@ -4850,94 +5007,1238 @@ hr {
     }
 }
 
-/* emoji and stickers */
-
-.emoji-picker,
-.emoji-picker * {
-    scrollbar-width: none;
-}
-
-.emoji-picker {
-    width: 233px;
-    max-height: 200px;
-    overflow-y: auto;
-    padding: 6px 8px 40px 8px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    position: relative;
-}
-
-.emoji-picker-footer {
-    bottom: 0;
-    height: 30px;
-    width: 100%;
-    background: gray;
-    position: absolute;
-    overflow-y: auto;
-    display: grid;
-    grid-template-columns: 1fr 0fr;
-}
-
-.emoji-picker-footer .sticker-store {
-    width: 30px;
-    background: darkseagreen;
-}
-
-.emoji-picker-footer .s-tab {
-    width: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.emoji-picker-footer .s-tab {
-    cursor: pointer;
-}
-
-.emoji-picker-footer .s-tab-smileys {
-    background: cadetblue;
-}
-
-.emoji-picker-footer .sticker-tabs {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-}
-
-.emoji-picker .emoji-picker-group-items {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 3px;
-    box-sizing: border-box;
-}
-
-.emoji-picker .emoji-picker-group .group-title {
-    font-size: 12px;
-    margin-bottom: 4px;
-    padding: 5px 0px 5px 8px;
-}
-
-.emoji-picker .emoji-picker-group:first-of-type .group-title {
-    padding-top: unset;
-}
-
-.emoji-picker .emoji-picker-group-items .emoji-picker-item {
-    cursor: pointer;
-    width: 16px;
-    height: 16px;
-}
+/* ==========================================================================
+   Emoji and Stickers Picker (VK Style)
+   ========================================================================== */
 
 .tippy-box[data-theme~="emoji"] {
-    border-radius: 1px;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.08);
+    background: #fff;
 }
 
 .tippy-box[data-theme~="emoji"] .tippy-content {
-    padding: 0px 0px !important;
+    padding: 0 !important;
+}
+
+.emoji-picker-wrap {
+    width: 275px;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 4px;
+    overflow: hidden;
+    user-select: none;
+    font-family: tahoma, verdana, arial, sans-serif;
+    font-size: 11px;
+}
+
+.emoji-picker-wrap.stickers-disabled .sticker-picker-groups,
+.emoji-picker-wrap.stickers-disabled .emoji-footer-divider,
+.emoji-picker-wrap.stickers-disabled .emoji-footer-right {
+    display: none !important;
+}
+
+.emoji-picker-scroll {
+    height: 215px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 6px 8px 8px 8px;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: #c5d0db transparent;
+}
+
+.emoji-picker-scroll::-webkit-scrollbar {
+    width: 5px;
+}
+
+.emoji-picker-scroll::-webkit-scrollbar-thumb {
+    background-color: #c5d0db;
+    border-radius: 3px;
+}
+
+.emoji-picker-group {
+    margin-bottom: 12px;
+}
+
+.emoji-picker-group:last-child {
+    margin-bottom: 4px;
+}
+
+.emoji-picker-group .group-title {
+    font-size: 11px;
+    font-weight: bold;
+    color: #656565;
+    padding: 4px 2px 4px 2px;
+    border-bottom: 1px solid #f0f2f5;
+    margin-bottom: 4px;
+}
+
+.emoji-picker-group-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    box-sizing: border-box;
+}
+
+.emoji-picker-item {
+    cursor: pointer;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    transition: background 0.1s, transform 0.08s;
+}
+
+.emoji-picker-item:hover {
+    transform: scale(1.15);
+}
+
+.emoji-picker-loading {
+    padding: 40px 10px;
+    text-align: center;
+    color: #828a99;
+    font-size: 11px;
+}
+
+/* Footer & Horizontal Category Navigation */
+.emoji-picker-footer {
+    height: 34px;
+    background: #f7f7f7;
+    border-top: 1px solid #e7e8ec;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4px;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 2;
+}
+
+.emoji-footer-left {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    gap: 3px;
+}
+
+.emoji-main-tab {
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.emoji-main-tab.active {
+    background: #e8edf3;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.emoji-icon {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    background: url(../img/im/emoji_sprite.png);
+}
+
+.emoji-category-nav {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+}
+
+.emoji-category-nav::-webkit-scrollbar {
+    display: none;
+}
+
+.emoji-cat-btn {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    cursor: pointer;
+    opacity: 0.65;
+    flex-shrink: 0;
+    transition: opacity 0.1s, background 0.1s;
+}
+
+.emoji-cat-btn-recent {
+    background: url(../img/im/emoji_sprite.png);
+    background-position: 18px 0px;
+    width: 18px;
+    height: 18px;
+    margin-top: 3px;
+}
+
+.emoji-cat-btn:hover {
+    opacity: 1;
+    background: #e7ecf2;
+}
+
+.emoji-cat-btn.active {
+    opacity: 1;
+    background: #dae2eb;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.emoji-scroll-arrow {
+    width: 18px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0.6;
+    color: #55677d;
+    flex-shrink: 0;
+    border-radius: 2px;
+    transition: opacity 0.1s, background 0.1s;
+}
+
+.emoji-scroll-arrow:hover {
+    opacity: 1;
+    background: #e7ecf2;
+}
+
+.emoji-footer-divider {
+    width: 1px;
+    height: 18px;
+    background: #dce1e6;
+    margin: 0 4px;
+    flex-shrink: 0;
+}
+
+.emoji-footer-right {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    flex-shrink: 0;
+}
+
+.emoji-footer-right .sticker-tabs {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    max-width: 96px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.emoji-footer-right .sticker-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.emoji-footer-right .s-tab {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    cursor: pointer;
+    opacity: 0.65;
+    transition: opacity 0.1s, background 0.1s;
+    flex-shrink: 0;
+}
+
+.emoji-footer-right .s-tab:hover {
+    opacity: 1;
+    background: #e7ecf2;
+}
+
+.emoji-footer-right .s-tab.active {
+    opacity: 1;
+    background: #dae2eb;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.emoji-footer-right .s-tab-recent svg {
+    color: #55677d;
+}
+
+.emoji-footer-right .s-tab img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    border-radius: 2px;
+}
+
+.emoji-footer-right .sticker-store-btn {
+    width: 16px;
+    height: 18px;
+    margin: 6px 4px;
+    margin-bottom: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.1s, background 0.1s;
+    background: url(../img/im/emoji_sprite.png) no-repeat -19px 0px;
+}
+
+.emoji-footer-right .sticker-store-btn:hover {
+    opacity: 1;
+}
+
+/* Sticker picker in scroll area */
+.sticker-picker-groups {
+    border-top: 1px solid #f0f2f5;
+    margin-top: 8px;
+    padding-top: 4px;
+}
+
+.sticker-picker-pack {
+    margin-bottom: 12px;
+}
+
+.sticker-picker-pack:last-child {
+    margin-bottom: 4px;
+}
+
+.sticker-picker-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 2px 0;
+    box-sizing: border-box;
+}
+
+.sticker-picker-item {
+    width: 59px;
+    height: 59px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: background 0.1s ease, transform 0.1s ease;
+    padding: 2px;
+    position: relative;
+}
+
+.sticker-picker-item:hover {
+    background: #f0f2f5;
+    transform: scale(1.08);
+}
+
+.sticker-picker-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.sticker-picker-empty {
+    padding: 24px 12px;
+    text-align: center;
+    color: #828a99;
+    font-size: 11px;
+}
+
+.sticker-empty-btn {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 11px;
+    text-decoration: none;
+}
+
+.msg-attach-w-sticker {
+    display: inline-block;
+    margin: 4px 0;
+}
+
+.msg-sticker-img {
+    max-width: 128px;
+    max-height: 128px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.fc_msg_sticker {
+    margin-top: 4px;
+}
+
+.fc_msg_sticker img {
+    max-width: 96px;
+    max-height: 96px;
+    object-fit: contain;
+    display: block;
+}
+
+.sticker-attached-item {
+    display: inline-block;
+    position: relative;
+    width: 60px;
+    height: 60px;
+    margin: 4px 6px 4px 0;
+    vertical-align: top;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid #dce1e6;
+    background: #f7f8fa;
+    box-sizing: border-box;
+}
+
+.sticker-attached-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.sticker-attached-remove {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 16px;
+    height: 16px;
+    line-height: 14px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.sticker-attached-remove:hover {
+    background: rgba(0, 0, 0, 0.8);
 }
 
 .title_insignificant {
     display: block;
     padding: 8px 132px;
+}
+
+/* Stickershop */
+
+.stickers_packs_grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.stickers_pack_card {
+    flex: 0 0 calc((100% - 24px) / 4);
+    max-width: calc((100% - 24px) / 4);
+    box-sizing: border-box;
+    border: 1px solid #c0cad5;
+    padding: 8px;
+    background: #fff;
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.stickers_pack_card:hover {
+    border-color: #9baec2;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.stickers_pack_thumb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: #f7f8fa;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 6px;
+    text-decoration: none;
+}
+
+.stickers_pack_thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    transition: transform 0.15s ease;
+}
+
+.stickers_pack_name {
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1.25;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.stickers_pack_name a {
+    color: #2a5885;
+    text-decoration: none;
+}
+
+.stickers_pack_author {
+    color: #777;
+    font-size: 11px;
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.stickers_pack_author a {
+    color: #777;
+    text-decoration: underline;
+}
+
+.stickers_pack_desc {
+    color: #555;
+    font-size: 11px;
+    margin-top: 3px;
+    line-height: 1.25;
+    height: 42px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.stickers_pack_footer {
+    margin-top: auto;
+    padding-top: 8px;
+}
+
+.stickers_pack_price_free {
+    color: #43a047;
+    font-weight: bold;
+    font-size: 11px;
+    text-decoration: none;
+}
+
+.stickers_pack_price_paid {
+    color: #2a5885;
+    font-weight: bold;
+    font-size: 11px;
+    text-decoration: none;
+}
+
+.stickers_pack_status_purchased {
+    color: #777;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+/* Stickershop Modal & Dialogs */
+
+.stickers_withdraw_modal {
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.stickers_withdraw_available {
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.stickers_withdraw_available_val {
+    color: #2a5885;
+}
+
+.stickers_withdraw_field {
+    margin-bottom: 10px;
+}
+
+.stickers_withdraw_label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.stickers_withdraw_input_row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stickers_withdraw_input {
+    width: 100px;
+    padding: 4px;
+    box-sizing: border-box;
+    font-size: 12px;
+}
+
+.stickers_withdraw_all_btn {
+    font-size: 11px;
+    text-decoration: underline;
+    color: #2a5885;
+    cursor: pointer;
+}
+
+.stickers_withdraw_calc_box {
+    background: #f7f9fa;
+    border: 1px solid #dbe2e8;
+    border-radius: 3px;
+    padding: 8px 10px;
+}
+
+.stickers_withdraw_tax_row {
+    color: #666;
+    margin-bottom: 3px;
+}
+
+.stickers_withdraw_tax_val {
+    font-weight: normal;
+}
+
+.stickers_withdraw_receive_row {
+    font-weight: bold;
+    color: #2a5885;
+    font-size: 12px;
+}
+
+.stickers_withdraw_receive_val {
+    font-weight: bold;
+}
+
+.stickers_withdraw_err {
+    display: none;
+    color: #d00;
+    margin-top: 6px;
+    font-weight: bold;
+}
+
+/* Stickershop Layout & Spacing */
+
+.stickers_margin_bar {
+    margin: 0 -10px;
+}
+
+.stickers_margin_bottom {
+    margin: 0 -10px -10px;
+}
+
+.stickers_edit_container {
+    margin: 0 -10px -10px;
+    padding: 15px;
+}
+
+.stickers_inline_form {
+    margin: 0;
+    display: inline-block;
+}
+
+.stickers_divider {
+    border: 0;
+    border-top: 1px solid #dbe2e8;
+    margin: 15px 0;
+}
+
+.stickers_section_title {
+    font-weight: bold;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.stickers_section_hint {
+    color: #666;
+    font-size: 11px;
+    margin-bottom: 12px;
+}
+
+/* Stickershop Balance Card */
+
+.stickers_balance_box {
+    background: #fff;
+    border: 1px solid #c0cad5;
+    border-radius: 2px;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.stickers_balance_label {
+    font-size: 11px;
+    color: #777;
+}
+
+.stickers_balance_val {
+    font-size: 16px;
+    color: #2a5885;
+    font-weight: bold;
+    margin-top: 2px;
+}
+
+.stickers_balance_hint {
+    font-size: 11px;
+    color: #555;
+    margin-top: 3px;
+}
+
+/* Stickers Form Controls */
+
+.stickers_input_text {
+    width: 320px;
+}
+
+.stickers_input_textarea {
+    width: 320px;
+    height: 60px;
+}
+
+.stickers_input_price {
+    width: 100px;
+}
+
+.stickers_sample_title {
+    font-size: 11px;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+.stickers_cards_grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.existing_sticker_card,
+.draft_sticker_card {
+    border: 1px solid #c0cad5;
+    background: #fff;
+    border-radius: 3px;
+    padding: 8px;
+    width: 124px;
+    text-align: center;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+
+.existing_sticker_card.sticker_card_deleted {
+    opacity: 0.35;
+    background-color: #fbeae5;
+}
+
+.existing_sticker_thumb,
+.draft_sticker_thumb {
+    width: 72px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2px;
+    overflow: hidden;
+}
+
+.existing_sticker_thumb img,
+.draft_sticker_thumb img {
+    max-width: 72px;
+    max-height: 72px;
+    object-fit: contain;
+}
+
+.existing_sticker_label_main,
+.draft_sticker_cover_label {
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.existing_sticker_label_delete,
+.draft_sticker_delete_btn {
+    color: #c33;
+    font-size: 11px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.stickers_upload_actions {
+    margin-bottom: 12px;
+}
+
+.stickers_upload_file_input {
+    display: none;
+}
+
+.stickers_draft_counter {
+    color: #666;
+    font-size: 11px;
+    margin-left: 10px;
+}
+
+.stickers_form_buttons {
+    margin-top: 15px;
+}
+
+.stickers_form_btn_save {
+    float: right;
+}
+
+.stickers_form_btn_delete {
+    float: left;
+}
+
+.stickers_lottie_badge {
+    font-size: 11px;
+    color: #0277bd;
+    font-weight: bold;
+    background: #e1f5fe;
+    padding: 6px 10px;
+    border-radius: 3px;
+    text-align: center;
+}
+
+/* Stickers Shop & View Page */
+
+.stickers_banner_link {
+    display: block;
+    line-height: 0;
+}
+
+.stickers_banner_img {
+    width: 100%;
+    max-width: 627px;
+    height: auto;
+    display: block;
+}
+
+.stickers_search_box {
+    margin-bottom: 8px;
+}
+
+.stickers_search_input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.stickers_pack_thumb_empty {
+    width: 100%;
+    height: 100%;
+    background: #f0f2f5;
+}
+
+.stickers_pack_desc_empty {
+    height: 42px;
+}
+
+.stickers_pack_author_balance {
+    margin-top: 4px;
+    font-size: 10px;
+    color: #555;
+}
+
+.stickers_pack_balance_val {
+    color: #2a5885;
+}
+
+.stickers_pack_uninstall_wrap {
+    margin-top: 6px;
+}
+
+.stickers_pack_uninstall_btn {
+    font-size: 10px;
+    padding: 2px 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.stickers_view_edit_link {
+    margin-right: 12px;
+}
+
+.stickers_view_container {
+    margin: 0 -10px;
+    padding: 15px;
+}
+
+.stickers_view_table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.stickers_view_icon_cell {
+    width: 100px;
+    vertical-align: top;
+    text-align: center;
+}
+
+.stickers_view_main_icon {
+    object-fit: contain;
+}
+
+.stickers_view_icon_empty {
+    width: 96px;
+    height: 96px;
+    background: #eef1f4;
+    border-radius: 4px;
+    margin: 0 auto;
+}
+
+.stickers_view_info_cell {
+    padding-left: 15px;
+    vertical-align: top;
+}
+
+.stickers_view_title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.stickers_view_author {
+    color: #777;
+    font-size: 11px;
+    margin-bottom: 8px;
+}
+
+.stickers_view_author_link {
+    color: #777;
+    text-decoration: underline;
+}
+
+.stickers_view_desc {
+    color: #333;
+    font-size: 12px;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.stickers_view_actions {
+    margin-top: 10px;
+}
+
+.stickers_view_actions_row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.stickers_view_grid_wrap {
+    margin: 10px -10px -10px;
+    padding: 15px;
+    background: #fff;
+    border-top: 1px solid #e1e7ed;
+    box-sizing: border-box;
+    width: 628px;
+}
+
+.stickers_view_grid_title {
+    font-size: 12px;
+    font-weight: bold;
+    color: #45688e;
+    margin-bottom: 12px;
+}
+
+.stickers_view_grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.stickers_view_item {
+    width: 108px;
+    min-height: 118px;
+    border: 1px solid #e9edf1;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    padding: 8px 6px 6px;
+    background: #fafbfc;
+    box-sizing: border-box;
+    transition: transform 0.1s, border-color 0.1s;
+}
+
+.stickers_view_item:hover {
+    border-color: #a2b6cc;
+    transform: scale(1.04);
+}
+
+.stickers_view_item_thumb {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stickers_view_item_img {
+    max-width: 80px;
+    max-height: 80px;
+    object-fit: contain;
+}
+
+.stickers_view_item_emojis {
+    margin-top: 2px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+    line-height: 1;
+    max-width: 96px;
+}
+
+/* Stickers Pack Preview Modal */
+.ovk-diag-cont:has(.stickers_pack_modal),
+.stickers_pack_modal_cont {
+    width: 540px !important;
+    max-width: 95vw !important;
+}
+
+.stickers_pack_modal {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-sizing: border-box;
+}
+
+.stickers_modal_header {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+}
+
+.stickers_modal_cover_wrap {
+    width: 108px;
+    height: 108px;
+    min-width: 108px;
+    border: 1px solid #e1e7ed;
+    border-radius: 4px;
+    background: #fafbfc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 4px;
+    box-sizing: border-box;
+}
+
+.stickers_modal_cover_wrap img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.stickers_modal_cover_placeholder {
+    width: 100%;
+    height: 100%;
+    background: #f0f2f5;
+    border-radius: 2px;
+}
+
+.stickers_modal_info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.stickers_modal_title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2b2f33;
+    line-height: 1.25;
+    word-break: break-word;
+}
+
+.stickers_modal_author {
+    font-size: 11px;
+    color: #777;
+    line-height: 1.2;
+    margin-bottom: 2px;
+}
+
+.stickers_modal_desc {
+    font-size: 12px;
+    color: #444;
+    line-height: 1.4;
+    margin-bottom: 6px;
+    word-break: break-word;
+}
+
+.stickers_modal_actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: auto;
+}
+
+.stickers_modal_subbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4px;
+    margin-bottom: -4px;
+}
+
+.stickers_modal_copy_link {
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.stickers_modal_copy_link:hover {
+    text-decoration: underline;
+}
+
+.stickers_modal_count {
+    font-size: 11px;
+    color: #777;
+}
+
+.stickers_modal_grid_wrap {
+    padding: 4px 0;
+    max-height: 290px;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.stickers_modal_grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+}
+
+.stickers_modal_item {
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    padding: 4px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.stickers_modal_item:hover {
+    border-color: #c0c6d0;
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.stickers_modal_item img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+    pointer-events: none;
+}
+
+.stickers_modal_loading {
+    padding: 30px;
+    text-align: center;
+    color: #777;
+    font-size: 13px;
+}
+
+.stickers_modal_close_cross {
+    float: right;
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-size: 20px;
+    line-height: 14px;
+    cursor: pointer;
+    font-weight: 400;
+}
+
+.stickers_modal_close_cross:hover {
+    color: #fff;
+}
+
+.stickers_modal_head_title {
+    display: inline-block;
+    max-width: 440px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}
+
+/* Dim modal and picker on sticker hold */
+.stickers_pack_modal_cont.is-sticker-holding .ovk-diag,
+.emoji-picker-wrap.is-sticker-holding {
+    opacity: 0.25;
+    filter: brightness(0.85);
+    transition: opacity 0.12s ease, filter 0.12s ease;
+    pointer-events: none;
+}
+
+/* 512px preview centered on screen */
+.stickers_hold_preview_wrap {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.stickers_hold_preview_wrap img {
+    max-width: min(512px, 85vw);
+    max-height: min(512px, 85vh);
+    object-fit: contain;
+    filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.45));
+    animation: stickerPreviewPop 0.12s ease-out;
+}
+
+@keyframes stickerPreviewPop {
+    0% {
+        transform: scale(0.85);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 580px) {
+    .stickers_modal_grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .stickers_modal_head_title {
+        max-width: 260px;
+    }
 }

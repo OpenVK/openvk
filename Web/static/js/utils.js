@@ -210,6 +210,8 @@ function serializeForm(form, submitter = null) {
             case 'submit':
             case 'email':
             case 'phone':
+            case 'number':
+            case 'url':
             case 'search':
             case 'password':
             case 'date':
@@ -224,8 +226,23 @@ function serializeForm(form, submitter = null) {
 
                 break
             case 'file':
-                if (!inp.multiple) {
-                    if (inp.files[0]) {
+                if (inp.id === 'stickers_file_input' && typeof window._getDraftFiles === 'function') {
+                    const draftFiles = window._getDraftFiles()
+                    if (draftFiles && draftFiles.length > 0) {
+                        for (let i = 0; i < draftFiles.length; i++) {
+                            fd.append(inp.name, draftFiles[i])
+                        }
+                        break
+                    }
+                }
+                if (inp.multiple) {
+                    if (inp.files && inp.files.length > 0) {
+                        for (let i = 0; i < inp.files.length; i++) {
+                            fd.append(inp.name, inp.files[i])
+                        }
+                    }
+                } else {
+                    if (inp.files && inp.files[0]) {
                         fd.append(inp.name, inp.files[0])
                     } else {
                         const emptyFile = new Blob([], { type: 'application/octet-stream' })
@@ -235,6 +252,11 @@ function serializeForm(form, submitter = null) {
                 break
             case 'radio':
                 if (inp.checked) {
+                    fd.append(inp.name, inp.value)
+                }
+                break
+            default:
+                if (typeof inp.value !== 'undefined') {
                     fd.append(inp.name, inp.value)
                 }
                 break
@@ -352,23 +374,20 @@ function month_day_string(date) {
 }
 
 function get_attachments_list_from_lp(attachments) {
-    // returns "photo1_2,video1_3" from {"attach1": "1_2", "attach1_type": "photo"}
+    // returns ["photo1_2", "sticker28"] from {"attach1": "1_2", "attach1_type": "photo"}
+    if (!attachments || typeof attachments !== 'object') return [];
     let temp_str = [];
-    let i = 0;
-    let associative = Object.entries(attachments);
-    associative.forEach(item => {
-        if (item[0].startsWith("attach")) {
-            const _type = associative[i + 1];
-            if (!_type || _type[0] == "from") {
-                return;
-            }
-
-            temp_str.push(_type[1] + item[1]);
+    let i = 1;
+    while (attachments['attach' + i] !== undefined || attachments['attach' + i + '_type'] !== undefined) {
+        const val = attachments['attach' + i] || '';
+        const type = attachments['attach' + i + '_type'] || '';
+        if (type && val) {
+            temp_str.push(type + val);
+        } else if (val) {
+            temp_str.push(val);
         }
-
-        i += 1;
-    });
-
+        i++;
+    }
     return temp_str;
 }
 
@@ -548,17 +567,24 @@ function encode_emoji(emoji) {
     return hexString;
 }
 
-function encode_emojis(text) {
-    const emojiRegex = /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu;
+let emojiSequenceRegex;
+try {
+    emojiSequenceRegex = new RegExp('[\\p{RGI_Emoji}]', 'gv');
+} catch (e) {
+    emojiSequenceRegex = /(?:\p{Regional_Indicator}{2}|[\p{Extended_Pictographic}\p{Emoji_Presentation}](?:[\uFE00-\uFE0F]|\p{Emoji_Modifier})?(?:\u200D[\p{Extended_Pictographic}\p{Emoji_Presentation}](?:[\uFE00-\uFE0F]|\p{Emoji_Modifier})?)*)/gu;
+}
 
-    return text.replace(emojiRegex, (emoji) => {
-        const es = encode_emoji(emoji);
-        return `<span class="emoji-picker-item emoji emoji_${es}">${emoji}</span>`;
+function encode_emojis(text) {
+    if (!text) return "";
+    return text.replace(emojiSequenceRegex, (emoji) => {
+        let es = encode_emoji(emoji);
+        if (es === "2764FE0F") es = "2764";
+        return `<span class="emoji emoji_${es}">${emoji}</span>`;
     });
 }
 
 if (typeof window !== "undefined" && !window.imLog) {
-    window.isImVerboseLogging = function() {
+    window.isImVerboseLogging = function () {
         try {
             return localStorage.getItem("im.verbose_logging") === "1"
                 || localStorage.getItem("im.verbose_logging") === "true"
@@ -568,31 +594,31 @@ if (typeof window !== "undefined" && !window.imLog) {
         }
     };
 
-    window.imLog = function(...args) {
+    window.imLog = function (...args) {
         if (window.isImVerboseLogging()) {
             console.log("[IM]", ...args);
         }
     };
 
-    window.imLog.info = function(...args) { if (window.isImVerboseLogging()) console.info("[IM]", ...args); };
-    window.imLog.warn = function(...args) { if (window.isImVerboseLogging()) console.warn("[IM]", ...args); };
-    window.imLog.error = function(...args) { if (window.isImVerboseLogging()) console.error("[IM]", ...args); };
-    window.imLog.debug = function(...args) { if (window.isImVerboseLogging()) console.debug("[IM]", ...args); };
-    window.imLog.table = function(...args) { if (window.isImVerboseLogging()) console.table(...args); };
-    window.imLog.group = function(...args) { if (window.isImVerboseLogging()) console.group("[IM]", ...args); };
-    window.imLog.groupEnd = function() { if (window.isImVerboseLogging()) console.groupEnd(); };
-    window.imLog.enable = function() {
+    window.imLog.info = function (...args) { if (window.isImVerboseLogging()) console.info("[IM]", ...args); };
+    window.imLog.warn = function (...args) { if (window.isImVerboseLogging()) console.warn("[IM]", ...args); };
+    window.imLog.error = function (...args) { if (window.isImVerboseLogging()) console.error("[IM]", ...args); };
+    window.imLog.debug = function (...args) { if (window.isImVerboseLogging()) console.debug("[IM]", ...args); };
+    window.imLog.table = function (...args) { if (window.isImVerboseLogging()) console.table(...args); };
+    window.imLog.group = function (...args) { if (window.isImVerboseLogging()) console.group("[IM]", ...args); };
+    window.imLog.groupEnd = function () { if (window.isImVerboseLogging()) console.groupEnd(); };
+    window.imLog.enable = function () {
         try {
             localStorage.setItem("im.verbose_logging", "1");
             localStorage.setItem("tw.im.verbose_logging", "1");
-        } catch (e) {}
+        } catch (e) { }
         console.log("%c[IM] Verbose logging ENABLED (im.verbose_logging = 1)", "color: #4bb34b; font-weight: bold;");
     };
-    window.imLog.disable = function() {
+    window.imLog.disable = function () {
         try {
             localStorage.removeItem("im.verbose_logging");
             localStorage.removeItem("tw.im.verbose_logging");
-        } catch (e) {}
+        } catch (e) { }
         console.log("%c[IM] Verbose logging DISABLED", "color: #e64646; font-weight: bold;");
     };
     window.imLog.isEnabled = window.isImVerboseLogging;

@@ -341,7 +341,7 @@ abstract class OpenVKPresenter extends SimplePresenter
         }
 
         if (!OPENVK_ROOT_CONF["openvk"]["preferences"]["maintenanceMode"]["all"]) {
-            if ($this->presenterName && OPENVK_ROOT_CONF["openvk"]["preferences"]["maintenanceMode"][$this->presenterName]) {
+            if ($this->presenterName && (OPENVK_ROOT_CONF["openvk"]["preferences"]["maintenanceMode"][$this->presenterName] ?? false)) {
                 $this->pass("openvk!Maintenance->section", $this->presenterName);
             }
         } else {

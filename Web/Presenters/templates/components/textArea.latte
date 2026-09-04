@@ -8,8 +8,14 @@
 <div id="write" class='has_emoji_picker model_content_textarea' style="padding: 5px 0;" data-id="{isset($owner) ? (gettype($owner) == 'integer' ? $owner : $owner->getId())}">
     <form action="{$route}" method="post" enctype="multipart/form-data" style="margin:0;">
         <div class="textareas">
-            <textarea id="wall-post-input{$textAreaId}" placeholder="{_write}" name="text" style="width: 100%;resize: none;" class="small-textarea" autocomplete="off"></textarea>
-            <div class="emoji_picker_entrypoint"></div>
+            {include "content-editable.latte",
+                id => "wall-post-input" . $textAreaId,
+                name => "text",
+                placeholder => (tr("write")),
+                class => "small-textarea",
+                style => "width: 100%; resize: none;"
+            }
+            <div class="emoji_picker_entrypoint" {if ($postOpts ?? true)}data-stickers="0"{/if}></div>
         </div>
 
         <div>

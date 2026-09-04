@@ -1121,6 +1121,25 @@ class User extends RowModel
         return (bool) $this->getRecord()->verified;
     }
 
+    public function canCreateStickers(): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        return (bool) ($this->getRecord()->can_create_stickers ?? false);
+    }
+
+    public function rawCanCreateStickers(): bool
+    {
+        return (bool) ($this->getRecord()->can_create_stickers ?? false);
+    }
+
+    public function setCanCreateStickers(bool|int $value): void
+    {
+        $this->stateChanges("can_create_stickers", (int) (bool) $value);
+    }
+
     public function isBanned(): bool
     {
         return !is_null($this->getBanReason());

@@ -48,8 +48,8 @@ body.fc_dragging * {
 }
 
 :root {
-    --fc-brand: var(--brand, #4c4c4c);
-    --fc-brand-hover: var(--brand-l-1, #606060);
+    --fc-brand: rgba(0, 0, 0, 0.7);
+    --fc-brand-hover: rgba(0, 0, 0, 0.62);
 }
 
 .fc_head {
@@ -541,4 +541,33 @@ body.fc_dragging * {
     font-size: 11px;
     flex: 1;
     font-weight: bold;
+}
+
+/* Unread messages divider */
+.fc_unread_divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 12px;
+    user-select: none;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.fc_unread_divider::before,
+.fc_unread_divider::after {
+    content: "";
+    flex: 1 1 0%;
+    height: 1px;
+    background: #d3d9de;
+    background: var(--divider, #d3d9de);
+}
+
+.fc_unread_divider_text {
+    padding: 0 8px;
+    font-size: 10px;
+    font-weight: bold;
+    color: #65758c;
+    color: var(--color-text-secondary, var(--nobold, #65758c));
+    white-space: nowrap;
 }

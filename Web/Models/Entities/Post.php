@@ -536,6 +536,11 @@ class Post extends Postable
                         "type" => "poll",
                         "poll" => $attachment->toVkApiStruct($user),
                     ];
+                } elseif ($attachment instanceof \openvk\Web\Models\Entities\Messages\Sticker) {
+                    $res->attachments[] = (object) [
+                        "type"    => "sticker",
+                        "sticker" => (object) $attachment->toVkApiStruct($user),
+                    ];
                 }
             }
         }

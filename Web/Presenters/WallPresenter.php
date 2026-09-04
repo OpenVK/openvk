@@ -668,7 +668,7 @@ final class WallPresenter extends OpenVKPresenter
         }
         $user = $this->user->id;
 
-        $isAjax = $this->queryParam("ajax") == '1';
+        $isAjax = $this->postParam("ajax") == '1';
 
         $wallOwner = ($wall > 0 ? (new Users())->get($wall) : (new Clubs())->get($wall * -1));
 
@@ -743,7 +743,7 @@ final class WallPresenter extends OpenVKPresenter
         $post->setArchived(!$wasArchived);
         $post->save();
 
-        if ($this->queryParam("ajax")) {
+        if ($this->postParam("ajax")) {
             $this->returnJson([
                 "success" => true,
                 "archived" => !$wasArchived,

@@ -4,7 +4,7 @@ const { ChatMessage, ChatGeneralForm, Draft } = await es6import_Im(import.meta.u
 const { Conversation } = await es6import_Im(import.meta.url, "./conversations.js");
 const { MessageListView } = await es6import_Im(import.meta.url, "../components/message.js");
 //import { ErrorConversation, WriteBar, ActionsBar, PeerWindow, InputArea, PeerTabsView, TopicConversationChat, PinnedMessageBar } from "../components/common.js"
-const { ErrorConversation, WriteBar, ActionsBar, PeerWindow, InputArea, PeerTabsView, TopicConversationChat, PinnedMessageBar } = await es6import_Im(import.meta.url, "../components/common.js");
+const { ErrorConversation, WriteBar, ActionsBar, PeerWindow, InputArea, PeerTabsView, TopicConversationChat, PeerInfoView } = await es6import_Im(import.meta.url, "../components/common.js");
 //import { IMTab, IMPage } from './page.js';
 const { IMTab, IMPage } = await es6import_Im(import.meta.url, "./page.js");
 const { ScrollPosition, MessageChunk } = await es6import_Im(import.meta.url, "../components/partition.js");
@@ -76,6 +76,8 @@ export class Messenger {
             throw new Error();
         }
 
+        const hadUnread = Boolean((convo.unread_count > 0) || !convo.isRead());
+
         if (window.im.state.is_debug) {
             imLog("Selected conversation:", convo);
         }
@@ -96,9 +98,26 @@ export class Messenger {
                 console.error(e);
             }
 
-            if (scrollToEnd == true) {
+            if (scrollToEnd == true && !hadUnread) {
                 this.getWindow()._scrollToEnd();
             }
+        }
+
+        if (hadUnread && convo.peer && convo.peer.isMessagesInited()) {
+            let firstUnread = null;
+            const dayChunks = convo.getScrollPosition()?.getDayDividedMessages?.() || [];
+            for (const chunk of dayChunks) {
+                for (const msg of chunk.messages) {
+                    if (msg && !msg.isMine() && !msg.isRead()) {
+                        firstUnread = msg;
+                        break;
+                    }
+                }
+                if (firstUnread) break;
+            }
+            convo.peer._firstUnreadMsgId = firstUnread ? (firstUnread.id || firstUnread.conversation_message_id) : null;
+        } else if (!hadUnread && convo.peer) {
+            convo.peer._firstUnreadMsgId = null;
         }
 
         try {
@@ -646,6 +665,72 @@ export class Messenger {
         win.setCurrentText("");
     }
 
+    async sendSticker(stickerId, packId = null, stickerData = null) {
+        const corresponder = window.im?.state?.getCurrentConvo();
+        if (!corresponder || !corresponder.peer) return;
+
+        const view = this.getWindow();
+        const reply_to = this.replyTo;
+        let reply_param = null;
+        if (reply_to) { reply_param = reply_to; }
+
+        if (!stickerData && typeof window.findStickerData === 'function') {
+            stickerData = window.findStickerData(stickerId);
+        }
+
+        const sId = Number(stickerId);
+        const pId = Number(packId || (stickerData ? stickerData.product_id : 0));
+        const photo128 = stickerData?.photo_128 || (pId ? `/sticker/${pId}/${sId}_128.webp` : '');
+        const photo256 = stickerData?.photo_256 || photo128;
+        const photo512 = stickerData?.photo_512 || (pId ? `/sticker/${pId}/${sId}_512.webp` : photo128);
+
+        const stickerObj = {
+            id: sId,
+            sticker_id: sId,
+            product_id: pId,
+            photo_64: photo128,
+            photo_128: photo128,
+            photo_256: photo256,
+            photo_352: photo512,
+            photo_512: photo512,
+            width: 512,
+            height: 512,
+            images: stickerData?.images || [
+                { url: photo128, width: 128, height: 128 },
+                { url: photo256, width: 256, height: 256 },
+                { url: photo512, width: 512, height: 512 }
+            ]
+        };
+
+        const randomId = Math.floor(Math.random() * 2147483647);
+
+        const msg = new ChatMessage({
+            'from_id': window.im.state.getOperator().id,
+            'peer_id': corresponder.id,
+            'date': Math.round((new Date()).getTime() / 1000),
+            'is_sending': true,
+            'is_sticker': 1,
+            'random_id': randomId,
+            'attachments': [{
+                type: 'sticker',
+                sticker: stickerObj
+            }]
+        });
+        if (typeof msg._guessSender === 'function') {
+            msg._guessSender();
+        }
+        msg.setText("");
+
+        this.removeReply();
+        this.removeForwarded();
+
+        return await corresponder.peer.sendMessage(msg, reply_param, ['sticker' + sId], null, () => {
+            if (view && typeof view._scrollToEnd === 'function') {
+                view._scrollToEnd();
+            }
+        });
+    }
+
     cancelEdit(render = true) {
         window.im.messenger.editMsg = null;
         const win = this.getWindow();
@@ -694,6 +779,13 @@ export class Messenger {
             peerId: this.getCurrentChat()?.peer?.id
         });
     }
+
+    scrollToUnread() {
+        const win = this.getWindow();
+        if (win && typeof win.scrollToUnread === 'function') {
+            win.scrollToUnread();
+        }
+    }
 }
 
 export class MessengerPage extends IMPage {
@@ -725,7 +817,9 @@ export class MessengerPage extends IMPage {
     showHook() {
         try {
             const v = window.im?.messenger?.getCurrentChat();
-            if (v && v.peer && v.peer.draft) {
+            if (v && v.peer && v.peer._firstUnreadMsgId) {
+                this.scrollToUnread();
+            } else if (v && v.peer && v.peer.draft && v.peer.draft.scroll != null) {
                 v.peer.draft.loadScroll(this);
             } else {
                 this._scrollToEnd();
@@ -785,6 +879,7 @@ export class MessengerPage extends IMPage {
         <div id="chat-page">
             <div class="chat-window ${peer.id == window.im.state.getId() ? "saved-msgs" : ""}">
             <${PeerTabsView} hadTab=${true} tabs=${orig_messenger.opened_tabs} currentChat=${orig_messenger.currentChatId} page=${this} convo=${currentConv} />
+            <${PeerInfoView} page=${this} convo=${currentConv} togglePeerInfo=${() => {this.togglePeerInfo()}} />
             <${ActionsBar}
                 selectedMessages=${orig_messenger.selected_messages_objs}
                 count=${orig_messenger.selected_messages_count}
@@ -1502,15 +1597,19 @@ export class MessengerPage extends IMPage {
             window.im.selectTab('messenger');
             window.im.messenger.toggled_peer_obj = null;
         } else {
-            const _c = window.im.state.getCurrentConvo();
-            await _c.peer.checkMembers();
+            if (window.im.getSelectedTabId() == "contact") {
+                window.im.openTabByName('messenger');
+            } else {
+                const _c = window.im.state.getCurrentConvo();
+                await _c.peer.checkMembers();
 
-            if (typeof window.im !== 'undefined' && window.im.selectTab) {
-                window.im.openTabByName('contact', false, {
-                    peer: {
-                        "peer": sender
-                    }
-                });
+                if (typeof window.im !== 'undefined' && window.im.selectTab) {
+                    window.im.openTabByName('contact', false, {
+                        peer: {
+                            "peer": sender
+                        }
+                    });
+                }
             }
         }
 
@@ -1772,6 +1871,44 @@ export class MessengerPage extends IMPage {
         });
     }
 
+    scrollToUnread() {
+        let attempts = 0;
+        const maxAttempts = 30;
+
+        const tryScroll = () => {
+            attempts++;
+            const el = document.getElementById("im_unread_divider");
+            if (el) {
+                if (window.im.state.isFastchat) {
+                    const wrap = document.querySelector("#fastchats_related #fastchats_chat #wrap");
+                    if (wrap) {
+                        const wrapRect = wrap.getBoundingClientRect();
+                        const elRect = el.getBoundingClientRect();
+                        wrap.scrollTop += (elRect.top - wrapRect.top - 20);
+                        return true;
+                    }
+                }
+                const headerOffset = 145;
+                const rect = el.getBoundingClientRect();
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const targetY = Math.max(0, scrollTop + rect.top - headerOffset);
+                window.scrollTo({ top: targetY, behavior: 'auto' });
+                return true;
+            }
+
+            if (attempts < maxAttempts) {
+                setTimeout(tryScroll, 50);
+            } else {
+                this._scrollToEnd();
+            }
+            return false;
+        };
+
+        requestAnimationFrame(() => {
+            tryScroll();
+        });
+    }
+
     async scrollToEndOfChat(event, convo) {
         if (convo.hasScrollPosition()) {
             convo._scroll = null;
@@ -1850,8 +1987,14 @@ export class MessengerPage extends IMPage {
         });
     }
 
-    getCurrentText() { return this.container.querySelector(".messenger-app--input---messagebox textarea").value; }
-    setCurrentText(text) { this.container.querySelector(".messenger-app--input---messagebox textarea").value = text; }
+    getCurrentText() {
+        const el = this.container.querySelector(".messenger-app--input---messagebox .content-editable, .messenger-app--input---messagebox textarea");
+        return el ? el.value : "";
+    }
+    setCurrentText(text) {
+        const el = this.container.querySelector(".messenger-app--input---messagebox .content-editable, .messenger-app--input---messagebox textarea");
+        if (el) el.value = text;
+    }
     getCurrentAttachments() { return [this.container.querySelector(".post-horizontal").innerHTML, this.container.querySelector(".post-vertical").innerHTML]; }
 }
 
@@ -1865,7 +2008,7 @@ export class ContactPage extends IMPage {
         const currentCorresponder = window.im.state.getCurrentConvo();
         await currentCorresponder.peer.checkMembers();
         let peer = null;
-        if (this.options.peer == null) {
+        if (this.options.peer == null || this.options.peer.peer == null) {
             peer = currentCorresponder;
         } else {
             peer = this.options.peer;

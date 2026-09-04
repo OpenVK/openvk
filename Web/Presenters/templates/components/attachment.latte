@@ -112,6 +112,9 @@
         {else}
             {include "../Documents/components/doc.latte", doc => $attachment, copyImportance => true, noTags => true}
         {/if}
+{elseif $attachment instanceof \openvk\Web\Models\Entities\Messages\Sticker}
+    <div class="msg-attach-w msg-attach-w-sticker" data-sticker-id="{$attachment->getId()}">
+        <img class="msg-sticker-img" src="{$attachment->getImageUrl(128)}" alt="sticker" loading="lazy" />
     </div>
 {elseif is_array($attachment) && (($attachment['type'] ?? '') === 'link' || ($attachment['type'] ?? '') === 'share')}
     {* Link attachments are displayed inline in text *}

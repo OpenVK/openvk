@@ -65,9 +65,9 @@ final class Utils extends VKAPIRequestHandler
     {
         $this->requireUser();
 
-        $allowTypes = ["photo", "video", "note", "audio"];
+        $allowTypes = ["photo", "video", "note", "audio", "sticker", "gift"];
         if ($allow_type == 0) {
-            $allowTypes = ["photo", "video", "doc", "audio", "wall"];
+            $allowTypes = ["photo", "video", "doc", "audio", "wall", "sticker", "gift"];
         }
 
         $a = parseAttachments($attachments, $allowTypes);

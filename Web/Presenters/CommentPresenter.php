@@ -109,7 +109,7 @@ final class CommentPresenter extends OpenVKPresenter
         if (!empty($this->postParam("horizontal_attachments"))) {
             $horizontal_attachments_array = array_slice(explode(",", $this->postParam("horizontal_attachments")), 0, OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"]);
             if (sizeof($horizontal_attachments_array) > 0) {
-                $horizontal_attachments = parseAttachments($horizontal_attachments_array, ['photo', 'video']);
+                $horizontal_attachments = parseAttachments($horizontal_attachments_array, ['photo', 'video', 'sticker']);
             }
         }
 

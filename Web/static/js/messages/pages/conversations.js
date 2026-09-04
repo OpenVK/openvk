@@ -435,8 +435,8 @@ export class Conversation {
         if (this.peer && this.peer._chunks) this.peer._chunks.pushNewMessage(msg, conv, check_chunk);
     }
 
-    findMessageById(id) {
-        return (this.peer && this.peer._chunks) ? this.peer._chunks._findMessageById(id) : null;
+    findMessageById(id, randomId = null) {
+        return (this.peer && this.peer._chunks) ? this.peer._chunks._findMessageById(id, randomId) : null;
     }
 
     getPinnedMessage() {

@@ -1077,6 +1077,7 @@
 
 "feedback" = "Ответы";
 "unread" = "Непрочитанное";
+"unread_messages" = "Непрочитанные сообщения";
 "archive" = "Архив";
 "notifications_like" = "$1 оценил вашу $2запись$3 от $4";
 "notifications_repost" = "$1 поделился(-лась) вашей $2записью$3 от $4";
@@ -1369,6 +1370,7 @@
 "text_of_the_post" = "Текст записи";
 "delete_content" = "Удалить контент";
 "today" = "сегодня";
+"yesterday" = "Вчера";
 
 "will_be_watched" = "Скоро её рассмотрят модераторы";
 
@@ -1483,7 +1485,8 @@
 "message_viewers_title" = "Просмотрели сообщение";
 "message_viewers_empty" = "Это сообщение ещё никто не прочитал";
 "message_viewers_count" = "Прочитали: $1";
-"messenger_friends_info" = "Это список ваших друзей.<br><br>Вы можете добавить сюда <a href="/friends$1?act=incoming">подписчиков</a> или <a href="/invite">пригласить</a> тех, кто ещё не зарегистрировался.";
+"messenger_friends_info_1" = "Пригласить";
+"messenger_friends_info_2" = "Добавить из подписчиков";
 
 "messages_new_interface_title" = "Долгожданное обновление диалогов";
 "messages_new_interface_text" = "Мы полностью переписали диалоги с нуля, сделав общение по-настоящему быстрым и живым. Сообщения теперь доставляются мгновенно в реальном времени, появились удобные вкладки диалогов, групповые беседы, ответы и пересылка. Старые медленные диалоги уходят в прошлое — приятного общения!";
@@ -1649,7 +1652,7 @@
 "messenger_typing_one_user" = "$1 набирает сообщение";
 "messenger_typing_two_users" = "$1 и $2 набирают";
 "messenger_typing_three_users" = "$1, $2 и $3 набирают";
-"messenger_typing_other" = "$1 набирают";
+"messenger_typing_other" = "$1 набирают сообщение..."; /* больше трёх */
 
 "messages_search_count_one" = "По данному запросу найдено одно сообщение";
 "messages_search_count_few" = "По данному запросу найдено $1 сообщения";
@@ -1797,7 +1800,84 @@
 
 /* Stickers */
 
-"emoji_group_recent" = "Недавние";
+"stickers" = "Стикеры";
+"stickers_store" = "Магазин стикеров";
+"stickers_manage" = "Установленные наборы";
+"stickers_author" = "Автор стикеров";
+"stickers_search_placeholder" = "Поиск по наборам стикеров";
+"stickers_tab_popular" = "Популярные";
+"stickers_tab_free" = "Бесплатные";
+"stickers_free" = "Бесплатно";
+"stickers_tab_all" = "Все";
+"stickers_tab_author" = "Студия стикеров";
+"stickers_dialogs" = "Диалоги";
+"stickers_banner_placeholder" = "[рекламный баннер со стикерами, рандомный]";
+"stickers_no_packs" = "Наборов стикеров пока нет";
+"stickers_pack_sample" = "набор";
+"stickers_new_pack" = "Создание набора стикеров";
+"stickers_edit_pack" = "Редактирование набора стикеров";
+"stickers_create_pack_btn" = "+ Создать набор";
+"stickers_pack_name" = "Название набора";
+"stickers_pack_slug" = "Короткое имя (slug)";
+"stickers_pack_desc" = "Описание";
+"stickers_pack_price" = "Стоимость (в голосах, 0 — бесплатно)";
+"stickers_pack_author" = "Автор (имя или псевдоним)";
+"stickers_pack_author_url" = "Ссылка на автора (сайт, канал)";
+"stickers_pack_author_placeholder" = "Имя автора";
+"stickers_pack_unlisted" = "Скрыть из каталога (доступ только по ссылке)";
+"stickers_upload_title" = "Стикеры в наборе";
+"stickers_upload_hint" = "Поддерживаются PNG, JPG, WebP, SVG и Lottie JSON. Изображения автоматически конвертируются в WebP трёх размеров (128px, 256px, 512px).";
+"stickers_select_files" = "Выбрать файлы";
+"stickers_cover" = "Обложка";
+"stickers_set_cover" = "Сделать обложкой";
+"stickers_emoji_placeholder" = "Эмодзи";
+"stickers_delete_sticker" = "Удалить";
+"stickers_save_pack" = "Сохранить набор";
+"stickers_pack_saved" = "Набор стикеров сохранён";
+"stickers_pack_created" = "Набор стикеров успешно создан";
+"stickers_pack_deleted" = "Набор стикеров удалён";
+"stickers_create_forbidden" = "У вас нет прав для создания наборов стикеров";
+"stickers_edit_forbidden" = "У вас нет прав для редактирования этого набора";
+"stickers_delete_pack" = "Удалить набор";
+"stickers_delete_pack_confirm" = "Вы уверены, что хотите удалить этот набор стикеров?";
+"stickers_err_no_name" = "Укажите название набора";
+"stickers_err_bad_slug" = "Короткое имя может содержать только латинские буквы, цифры, дефис и подчёркивание";
+"stickers_err_slug_taken" = "Набор с таким коротким именем уже существует";
+"stickers_err_no_stickers" = "В наборе должен быть хотя бы один стикер";
+"stickers_add_pack" = "Добавить бесплатно";
+"stickers_buy_pack" = "Купить за $1";
+"stickers_installed" = "Набор добавлен";
+"stickers_purchased_label" = "Приобретён";
+"stickers_not_enough_coins" = "Недостаточно голосов для покупки";
+"stickers_pack_purchased" = "Набор стикеров успешно добавлен!";
+"stickers_uninstall_pack" = "Убрать набор";
+"stickers_uninstall_confirm" = "Вы уверены, что хотите удалить этот набор из своих стикеров?";
+"stickers_pack_uninstalled" = "Вы отписались от набора";
+"stickers_pack_balance" = "Баланс набора";
+"stickers_balance" = "На счету вашего набора <b>$1</b> голосов.";
+"stickers_withdrawal_q" = "вывести?";
+"stickers_withdrawal" = "Вывод средств";
+"stickers_withdrawal_prompt" = "Сколько голосов вы хотите вывести на свой счёт? (максимум $1)";
+"stickers_withdraw_modal_title" = "Вывод голосов";
+"stickers_withdraw_modal_available" = "Доступно на балансе набора";
+"stickers_withdraw_modal_amount_label" = "Сколько голосов вывести:";
+"stickers_withdraw_all" = "Вывести всё";
+"stickers_withdraw_tax" = "Комиссия вывода";
+"stickers_withdraw_no_tax" = "без комиссии";
+"stickers_withdraw_receive" = "Вы получите на свой счёт:";
+"stickers_withdraw_execute" = "Вывести";
+"stickers_withdraw_btn" = "Вывести на счёт";
+"stickers_withdrawal_empty" = "На балансе этого набора нет средств для вывода";
+"stickers_withdrawal_bad_amount" = "Указана некорректная сумма для вывода";
+"stickers_withdrawal_success" = "Успешно выведено $1 на ваш счёт!";
+"stickers_copy_link" = "Скопировать ссылку";
+"stickers_link_copied" = "Ссылка скопирована!";
+"stickers_pack_info_title" = "Информация о наборе";
+"stickers_count" = "$1 стикеров";
+"stickers_count_zero" = "0 стикеров";
+"stickers_count_one" = "$1 стикер";
+"stickers_count_few" = "$1 стикера";
+"stickers_count_other" = "$1 стикеров";
 "emoji_group_smileys_emotion" = "Смайлы";
 "emoji_group_people_body" = "Люди";
 "emoji_group_animals_nature" = "Природа";
@@ -1807,6 +1887,7 @@
 "emoji_group_objects" = "Предметы";
 "emoji_group_symbols" = "Символы";
 "emoji_group_flags" = "Флаги";
+"buy_stickers" = "Мои стикеры";
 
 /* Messages (Other) */
 
@@ -2092,6 +2173,7 @@
 "admin_shortcode" = "Короткий адрес";
 "admin_verification" = "Верификация";
 "admin_hide_global_feed" = "Не отображать в глобальной ленте";
+"admin_can_create_stickers" = "Создание наборов стикеров";
 "admin_banreason" = "Причина блокировки";
 "admin_banned" = "заблокирован";
 "admin_actions" = "Действия";
@@ -3040,3 +3122,6 @@
 "chat_invite_login_btn" = "Войти";
 "chat_invite_not_registered" = "Ещё не зарегистрированы?";
 "chat_invite_invalid_error" = "Ссылка приглашения недействительна или срок её действия истёк.";
+"stickers_empty_prompt" = "У вас пока нет стикеров";
+"stickers_goto_store" = "Магазин стикеров";
+"stickers_recent" = "Недавние стикеры";

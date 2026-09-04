@@ -19,9 +19,11 @@ CREATE TABLE IF NOT EXISTS `stickerpacks` (
   `main_sticker_id` bigint(20) unsigned DEFAULT NULL,
   `author` varchar(256) DEFAULT NULL,
   `author_id` varchar(256) DEFAULT NULL,
+  `author_url` varchar(512) DEFAULT NULL,
   `owner_id` bigint(20) unsigned DEFAULT NULL,
   `slug` varchar(128) NOT NULL,
   `price` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `coins` decimal(20,6) NOT NULL DEFAULT '0.000000',
   `end_time` bigint(20) unsigned DEFAULT NULL,
   `unlisted` tinyint(1) NOT NULL DEFAULT '0',
   `gift_sticker_id` bigint(20) unsigned DEFAULT NULL,
@@ -85,3 +87,6 @@ ALTER TABLE `stickerpack_relations`
 ALTER TABLE `sticker_purchases`
   ADD CONSTRAINT `FK_spurchase_user` FOREIGN KEY (`user`) REFERENCES `profiles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_spurchase_stickerpack` FOREIGN KEY (`stickerpack`) REFERENCES `stickerpacks` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `profiles`
+  ADD `can_create_stickers` tinyint(1) NOT NULL DEFAULT '0';

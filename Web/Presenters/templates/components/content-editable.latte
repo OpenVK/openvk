@@ -1,0 +1,21 @@
+{*
+ * Usage: {include "components/content-editable.latte", id => "my_input", name => "text", placeholder => "Write...", value => "...", class => "small-textarea", submitOnEnter => false}
+ *}
+
+{var $id = $id ?? ('ce_' . bin2hex(random_bytes(4)))}
+{var $name = $name ?? 'text'}
+{var $placeholder = $placeholder ?? ''}
+{var $class = $class ?? 'small-textarea'}
+{var $style = $style ?? ''}
+{var $submitOnEnter = $submitOnEnter ?? false}
+{var $value = $value ?? ''}
+
+<div class="content-editable-wrap" style="position: relative; width: 100%;">
+    <textarea id="{$id}"
+              name="{$name}"
+              class="{$class} content-editable-fallback"
+              placeholder="{$placeholder}"
+              data-submit-on-enter="{$submitOnEnter ? 'true' : 'false'}"
+              style="{$style}"
+              autocomplete="off">{$value}</textarea>
+</div>

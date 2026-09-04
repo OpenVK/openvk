@@ -301,7 +301,7 @@ function ovk_is_ssl(): bool
     return $GLOBALS["requestIsSSL"];
 }
 
-function parseAttachments($attachments, array $allow_types = ['photo', 'video', 'note', 'audio']): array
+function parseAttachments($attachments, array $allow_types = ['photo', 'video', 'note', 'audio', 'doc', 'poll', 'wall', 'gift', 'sticker']): array
 {
     $exploded_attachments = is_array($attachments) ? $attachments : explode(",", $attachments);
     $exploded_attachments = array_slice($exploded_attachments, 0, OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"] ?? 10);
@@ -343,7 +343,13 @@ function parseAttachments($attachments, array $allow_types = ['photo', 'video', 
         ],
         'gift' => [
             'repo' => 'openvk\Web\Models\Repositories\Gifts',
-            'method' => 'getSentGiftById'
+            'method' => 'getSentGiftById',
+            'onlyId' => true,
+        ],
+        'sticker' => [
+            'repo'   => 'openvk\Web\Models\Repositories\Stickers',
+            'method' => 'getSticker',
+            'onlyId' => true,
         ],
     ];
 
@@ -358,7 +364,7 @@ function parseAttachments($attachments, array $allow_types = ['photo', 'video', 
                 $attachment_ids  = str_replace($attachment_type, '', $attachment_string);
                 $parts = explode('_', $attachment_ids);
                 if (!empty($repositories[$attachment_type]['onlyId'])) {
-                    $attachment_id = (int) ($parts[0] ?? 0);
+                    $attachment_id = (int) (ltrim($parts[0], '_') ?: ($parts[1] ?? 0));
 
                     $repository_class = $repositories[$attachment_type]['repo'];
                     if (!$repository_class) {

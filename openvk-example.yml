@@ -69,6 +69,8 @@ openvk:
             allowedFormats: ["jpg", "jpeg", "png", "gif", "webp", "psd", "aep", "docx", "doc", "odt", "txt", "md", "pptx", "ppt", "xls", "xlsx", "pdf", "djvu", "fb2", "ps", "apk", "zip", "7z", "mp4", "avi", "mp3", "flac"]
         apps:
             withdrawTax: 8
+        stickers:
+            withdrawTax: 2
         security:
             requireEmail: false
             requirePhone: false
@@ -179,6 +181,11 @@ openvk:
             enable: false
             text: "Global alert example <b>with HTML</b>"
             canBeDismissed: true
+        stickersBanner:
+            enable: false
+            src: "https://example.org/stickers_banner.png" # Width - 630px, height - auto
+            caption: "New stickers feature!"
+            link: "/stickers"
         bellsAndWhistles:
             testLabel: false
         defaultMobileTheme: ""

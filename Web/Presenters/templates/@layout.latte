@@ -233,8 +233,8 @@
                                 <div class="mobile_v">{_mobile_audios}</div>
                             </a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('messages')" href="/im" class="link my_messages">
-                                <span class="pc_v">{_my_messages}</span>
-                                <span class="mobile_v">{_mobile_messages}</span>
+                                <div class="pc_v">{_my_messages}</div>
+                                <div class="mobile_v">{_mobile_messages}</div>
                                 <object type="internal/link" class="im_counter">
                                     (<b>{0}</b>)
                                 </object>
@@ -247,7 +247,10 @@
                                 <div class="pc_v">{_my_groups}</div>
                                 <div class="mobile_v">{_mobile_groups}</div>
                             </a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('events')" href="/events{$thisUser->getId()}" class="link my_groups">{_my_events}</a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('events')" href="/events{$thisUser->getId()}" class="link my_groups">
+                                <div class="pc_v">{_my_events}</div>
+                                <div class="mobile_v">{_meetings}</div>
+                            </a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('news')" href="/feed" class="link my_feed" title="{_my_feed} [Alt+Shift+,]" accesskey=",">
                                 <div class="pc_v">{_my_feed}</div>
                                 <div class="mobile_v">{_news}</div>
@@ -267,6 +270,7 @@
                             {if $thisUser->getLeftMenuItemStatus('docs') || $thisUser->getLeftMenuItemStatus('apps')}
                                 <div class="menu_divider"></div>
                                 <a n:if="$thisUser->getLeftMenuItemStatus('apps')" href="/apps?act=installed" class="link my_apps">{_apps}</a>
+                                <a href="/stickers" class="link my_stickers">{_stickers_store}</a>
                                 <a n:if="$thisUser->getLeftMenuItemStatus('docs')" href="/docs" class="link my_documents">{_my_documents}</a>
                                 {*<a n:if="$thisUser->getLeftMenuItemStatus('fave')" href="/fave" class="link my_bookmarks">{_bookmarks_tab}</a>*}
                             {/if}
@@ -533,6 +537,7 @@
         {script "js/al_despacito_wall.js"}
         {script "js/al_photos.js"}
         {script "js/options.js"}
+        {script "js/content-editable.js"}
         {script "js/stickers.js"}
         {script "js/messages/related.js"}
 

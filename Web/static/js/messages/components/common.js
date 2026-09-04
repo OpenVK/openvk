@@ -70,7 +70,7 @@ export const PeerAvatar = ({ peer, className = "", loading = "lazy", saved_messa
 
     if (peer.id === window.im.state.getId()) {
         if (!saved_messages_ava && !orig_ava) {
-            return html`<div style="display:block;width:52px;height:52px;" onClick=${onClick}></div>`;
+            return html`<div class="${className}" style="display:block;width:52px;height:52px;" onClick=${onClick}></div>`;
         }
 
         if (!orig_ava) {
@@ -317,9 +317,9 @@ export const WriteBar = ({ convo }) => {
         }
     }
 
-    if (!content) {
+    /*if (!content) {
         return null;
-    }
+    }*/
 
     return html`
         <div class="${cls.join(' ')}">
@@ -360,11 +360,99 @@ export const getReplySnippet = (msg) => {
     return text;
 };
 
+export function getEmojiHex(emoji) {
+    if (typeof encode_emoji === 'function') return encode_emoji(emoji);
+    let hex = '';
+    for (let i = 0; i < emoji.length; i++) {
+        hex += emoji.charCodeAt(i).toString(16).padStart(4, '0').toUpperCase();
+    }
+    return hex;
+}
+
+export function getDisplayRecentSmiles() {
+    const DEFAULT_SMILES = ['😊', '😃', '😉', '😄', '👍', '❤', '🔥', '😂'];
+    let recents = [];
+    if (typeof getRecentSmiles === 'function') {
+        recents = getRecentSmiles();
+    } else {
+        try {
+            recents = JSON.parse(localStorage.getItem('recent_smiles') || '[]');
+        } catch (e) { }
+    }
+    const list = (recents || []).filter(s => s && s.trim()).slice(0, 8);
+    for (const def of DEFAULT_SMILES) {
+        if (list.length >= 8) break;
+        if (!list.includes(def)) list.push(def);
+    }
+    return list.slice(0, 8);
+}
+
+export function onRecentSmileClick(s, e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const target = document.querySelector('#write .content-editable')
+        || (window.ContentEditable && window.ContentEditable.lastFocused ? window.ContentEditable.lastFocused.el : null)
+        || document.querySelector('#write .small-textarea')
+        || document.querySelector('.content-editable')
+        || document.querySelector('.small-textarea');
+
+    if (target) {
+        if (typeof target.insertEmoji === 'function') {
+            target.insertEmoji(s);
+        } else if (target._contentEditable) {
+            target._contentEditable.insertEmoji(s);
+        } else {
+            const start = typeof target.selectionStart !== 'undefined' ? target.selectionStart : target.value.length;
+            const end = typeof target.selectionEnd !== 'undefined' ? target.selectionEnd : target.value.length;
+            const val = target.value;
+            target.value = val.substring(0, start) + s + val.substring(end);
+            target.selectionStart = target.selectionEnd = start + s.length;
+            target.focus();
+            target.dispatchEvent(new Event('input', { bubbles: true }));
+            target.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+    }
+    if (typeof addSmile === 'function') {
+        addSmile(s);
+    }
+    if (typeof updateRecentSmilesInPicker === 'function') {
+        updateRecentSmilesInPicker();
+    }
+    if (typeof window.updateRecentSmilesBar === 'function') {
+        window.updateRecentSmilesBar();
+    }
+}
+
+if (typeof window !== 'undefined' && !window._imRecentSmilesInit) {
+    window._imRecentSmilesInit = true;
+    window.updateRecentSmilesBar = () => {
+        const bars = document.querySelectorAll('.im-recent-smiles-bar');
+        if (!bars || bars.length === 0) return;
+        const smiles = getDisplayRecentSmiles();
+        bars.forEach(bar => {
+            bar.innerHTML = smiles.map(s => {
+                const hex = getEmojiHex(s);
+                return `<span class="im-recent-smile-btn" title="${s}" data-emoji="${s}"><span class="emoji emoji_${hex}">${s}</span></span>`;
+            }).join('');
+        });
+    };
+
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.im-recent-smile-btn');
+        if (btn && btn.closest('.im-recent-smiles-bar')) {
+            const emoji = btn.dataset.emoji || btn.getAttribute('title');
+            if (emoji) {
+                onRecentSmileClick(emoji, e);
+            }
+        }
+    });
+}
+
 export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress, currentDraft, onInput, togglePeerInfo, clickOnReply, convo, forwarded_msg, onRemoveForward }) => {
     const is_editing = editMsg != null;
     const current_user = window.im.state.getOperator();
     const corresponder = window.im.state.getCurrentConvo();
     const isForwarded = forwarded_msg && forwarded_msg.length && forwarded_msg.length > 0;
+    const recentSmiles = getDisplayRecentSmiles();
     const cls = [
         "messenger-app-end",
         (replyTo || editMsg || isForwarded) ? 'm-selected' : '',
@@ -419,18 +507,55 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
                 <img class="ava" src=${current_user.getAvatar("mid", false)} alt=${current_user.getName()} />
                 <div class="messenger-app--input---messagebox">
                     <div class="textareas has_emoji_picker">
-                        <textarea
-                        class="small-textarea"
-                        placeholder=${tr('enter_message')}
-                        value=${currentDraft}
-                        onInput=${onInput}
-                        onKeyDown=${onKeyPress}></textarea>
+                        ${(typeof window !== 'undefined' && window.ContentEditable && typeof window.ContentEditable.isSupported === 'function' && window.ContentEditable.isSupported()) ? html`
+                            <div
+                                class="small-textarea content-editable"
+                                contenteditable="true"
+                                role="textbox"
+                                aria-multiline="true"
+                                data-placeholder=${tr('enter_message')}
+                                onInput=${onInput}
+                                onKeyDown=${onKeyPress}
+                                ref=${(el) => {
+                if (el && !el._contentEditable && window.ContentEditable) {
+                    new window.ContentEditable(el, { submitOnEnter: true, placeholder: tr('enter_message') });
+                    if (currentDraft && el.getText() !== currentDraft) {
+                        el.setText(currentDraft);
+                    }
+                } else if (el && el._contentEditable && currentDraft != null && el.getText() !== currentDraft) {
+                    el.setText(currentDraft);
+                }
+            }}
+                            ></div>
+                        ` : html`
+                            <textarea
+                                class="small-textarea"
+                                placeholder=${tr('enter_message')}
+                                value=${currentDraft}
+                                onInput=${onInput}
+                                onKeyDown=${onKeyPress}
+                            ></textarea>
+                        `}
                         <div class="emoji_picker_entrypoint"></div>
                     </div>
                     <div class="post-horizontal"></div>
                     <div class="post-vertical"></div>
                     <div class="input--messagebox-buttons">
-                        <button class="button" onClick=${onSend}>${!is_editing ? tr('send') : tr('edit_action_lr')}</button>
+                        <div class="input--messagebox-left">
+                            <button class="button" onClick=${onSend}>${!is_editing ? tr('send') : tr('edit_action_lr')}</button>
+                            <div class="im-recent-smiles-bar">
+                                ${recentSmiles.map(s => html`
+                                    <span
+                                        class="im-recent-smile-btn"
+                                        title="${s}"
+                                        data-emoji="${s}"
+                                        onClick=${(e) => onRecentSmileClick(s, e)}
+                                    >
+                                        <span class="emoji emoji_${getEmojiHex(s)}">${s}</span>
+                                    </span>
+                                `)}
+                            </div>
+                        </div>
                         <${AttachmentMenu} />
                     </div>
                 </div>
@@ -472,13 +597,17 @@ export const ConversationItem = ({ conv, isForward = false, page = null }) => {
     }
     return html`
         <div class="${cls1.join(' ')}" onClick=${() => window.im?.messenger.onConversationsClick(conv, isForward, page)}>
-        <div class="crp-entry--image">
-            <${PeerAvatar} peer=${peer} orig_ava=${false} />
-        </div>
-        <div class="crp-entry--info">
-            <a>${ovk_proc_strtr(peer.getName(true), 30)}</a>
-            ${peer.supposed_type == "chat" && peer.data.members_count ? html`<span>${tr("members_count", peer.data.members_count)}</span>` : ""}
-            ${last_msg && html`<span>${last_msg.getDate(2)}</span>`}
+        <div style="display: flex;">
+            <div class="crp-entry--image">
+                <${PeerAvatar} peer=${peer} orig_ava=${false} />
+            </div>
+            <div class="crp-entry--info">
+                <a>${ovk_proc_strtr(peer.getName(true), 30)}</a>
+                <div class="crp-entry--excess">
+                    ${peer.supposed_type == "chat" && peer.data.members_count ? html`<span>${tr("members_count", peer.data.members_count)}</span>` : ""}
+                    ${last_msg && html`<span>${last_msg.getDate(2)}</span>`}
+                </div>
+            </div>
         </div>
         <div class="crp-entry--message">
             ${d && html`
@@ -494,8 +623,8 @@ export const ConversationItem = ({ conv, isForward = false, page = null }) => {
                     ${(conv.getActivityMsg()[0] || "")}
                 </div>
             `}
-            <div class="unread-msgs-count">+${conv.unread_count}</div>
         </div>
+        <div class="unread-msgs-count">+${conv.unread_count}</div>
         </div>
     `;
 };
@@ -511,7 +640,7 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
                 <input class="search_input cool" type="text" placeholder="${tr('search_messages')}" onChange=${onSearch} />
             </div>
             ${!is_group ? html`
-                <input type="button" class="button" value="${tr('saved_messages') || 'Избранное'}" onClick=${() => {
+                <input type="button" class="button excess" value="${tr('saved_messages') || 'Избранное'}" onClick=${() => {
                     const myId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
                     if (myId) {
                         window.im.messenger.selectConversationByPeerId(myId);
@@ -682,6 +811,7 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
 
     return html`
     <div class="peer-window">
+        <div class="peer-back" onClick=${(e) => { window.im.messenger.view.togglePeerInfo() }}>${tr("back")}</div>
         <div class="peer-side">
             <div class="peer-info">
                 <div class="peer-avatar sliding-thing-wrapper ${!peer.hasAvatar() ? "no-avatar" : ""}">
@@ -879,7 +1009,7 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                     const isClub = memberId < 0;
                     const memberObj = (profile && (profile.first_name || profile.name)) ? new ChatGeneralForm(profile) : null;
                     const name = memberObj ? memberObj.getName() : (profile.first_name ? `${profile.first_name} ${profile.last_name}`.trim() : (profile.name || `id${memberId}`));
-                    const defaultAva = isClub ? "/assets/packages/static/openvk/img/community_100.png" : "/assets/packages/static/openvk/img/camera_100.png";
+                    const defaultAva = isClub ? "/assets/packages/static/openvk/img/community_100.png" : "/assets/packages/static/openvk/img/camera_200.png";
                     const avatarSrc = (memberObj && memberObj.getAvatar("mid")) || profile.photo_50 || profile.photo_100 || profile.photo_200 || defaultAva;
                     const profileUrl = isClub ? `/club${Math.abs(memberId)}` : `/id${memberId}`;
                     const isModerator = (item.is_moderator === true || item.is_moderator === 1 || (item.is_admin && !item.is_owner)) && !(item.is_owner === true || item.is_owner === 1);
@@ -1005,6 +1135,17 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
     </div>
     `;
 };
+
+export const PeerInfoView = ({ page, convo, togglePeerInfo }) => {
+    const peer = convo.peer;
+
+    return html`
+        <div onClick=${(e) => { togglePeerInfo() }} class="messages--peers-header-peer-name">
+            <img class="ava" src="${peer.getAvatar()}" />
+            <span>${peer.getName()}</span>
+        </div>
+    `;
+}
 
 export const PeerInviteLinkSection = ({ peer }) => {
     if (!peer || peer.supposed_type !== 'chat') return null;
