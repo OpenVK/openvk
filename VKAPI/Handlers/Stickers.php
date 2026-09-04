@@ -8,20 +8,15 @@ use openvk\Web\Models\Repositories\Stickers as StickersRepo;
 
 final class Stickers extends VKAPIRequestHandler
 {
-    public function get(int $user_id = 0, int $count = 10, int $offset = 0): object
+    public function get(int $user_id = 0, int $count = 50, int $offset = 0): object
     {
-        return (object) [
-            'count' => 0,
-            'items' => [],
-        ];
-
         $this->requireUser();
 
         if ($user_id < 1) {
             $user_id = $this->getUser()->getId();
         }
 
-        $server_url = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
+        $server_url = ovk_scheme(true) . ($_SERVER["HTTP_HOST"] ?? "");
         $repo       = new StickersRepo();
         $packs      = $repo->getMyPacks($this->getUser(), 1, $count);
 
@@ -36,7 +31,7 @@ final class Stickers extends VKAPIRequestHandler
             $data = $pack->toVkApiStruct($this->getUser());
             $stickers = [];
             foreach ($pack->getStickers(1, 100) as $sticker) {
-                $stickers[] = $sticker->toVkApiStruct();
+                $stickers[] = $sticker->toVkApiStruct($this->getUser(), $pack->getId());
             }
 
             $data["stickers"] = $stickers;
@@ -47,16 +42,11 @@ final class Stickers extends VKAPIRequestHandler
         return $this->generateItems($repo->getMyPacksCount($this->getUser()), $items);
     }
 
-    public function getAll(int $count = 10, int $offset = 0): object
+    public function getAll(int $count = 50, int $offset = 0): object
     {
-        return (object) [
-            'count' => 0,
-            'items' => [],
-        ];
-
         $this->requireUser();
 
-        $server_url = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
+        $server_url = ovk_scheme(true) . ($_SERVER["HTTP_HOST"] ?? "");
         $repo       = new StickersRepo();
 
         $packs = $repo->getPacks(1, $count);
@@ -79,11 +69,6 @@ final class Stickers extends VKAPIRequestHandler
 
     public function getFrom(int $stickerpack_id): object
     {
-        return (object) [
-            'count' => 0,
-            'items' => [],
-        ];
-
         $this->requireUser();
 
         $repo = new StickersRepo();
@@ -102,13 +87,13 @@ final class Stickers extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
-        $server_url = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
+        $server_url = ovk_scheme(true) . ($_SERVER["HTTP_HOST"] ?? "");
         $stickers = [];
 
         $pack_item = $pack->toVkApiStruct($this->getUser());
 
         foreach ($pack->getStickers(1, 100) as $sticker) {
-            $pack_item["stickers"][] = $sticker->toVkApiStruct();
+            $pack_item["stickers"][] = $sticker->toVkApiStruct($this->getUser(), $pack->getId());
         }
 
         return (object) $pack_item;
@@ -116,11 +101,6 @@ final class Stickers extends VKAPIRequestHandler
 
     public function buy(int $stickerpack_id): object
     {
-        return (object) [
-            "success" => 1,
-            "pack_id" => 0,
-        ];;
-
         $this->requireUser();
         $this->willExecuteWriteAction();
 

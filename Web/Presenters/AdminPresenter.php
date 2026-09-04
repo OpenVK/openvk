@@ -214,6 +214,7 @@ final class AdminPresenter extends OpenVKPresenter
                     $user->setOnline(intval($this->postParam("online")));
                 }
                 $user->setVerified(empty($this->postParam("verify") ? 0 : 1));
+                $user->setCanCreateStickers(!empty($this->postParam("can_create_stickers")));
                 if ($this->postParam("add-to-group")) {
                     if (!(new ChandlerGroups())->isUserAMember($this->postParam("add-to-group"), $user->getChandlerGUID())) {
                         $query = "INSERT INTO `ChandlerACLRelations` (`user`, `group`) VALUES ('" . $user->getChandlerGUID() . "', '" . $this->postParam("add-to-group") . "')";
@@ -920,10 +921,12 @@ final class AdminPresenter extends OpenVKPresenter
         $this->template->form->description = $pack->getDescription() ?? "";
         $this->template->form->slug        = $pack->getSlug();
         $this->template->form->price       = $pack->getPrice();
+        $this->template->form->coins       = $pack->getBalance();
         $this->template->form->end_time    = $pack->getEndTime();
         $this->template->form->unlisted    = $pack->isUnlisted();
         $this->template->form->author      = $pack->getAuthor() ?? "";
         $this->template->form->author_id   = $pack->getAuthorId();
+        $this->template->form->author_url  = $pack->getAuthorUrl() ?? "";
         $this->template->form->owner_id    = $pack->getOwnerId();
         $this->template->form->main_sticker = $pack->getMainSticker();
         $this->template->form->gift_sticker = $pack->getGiftSticker();
@@ -944,9 +947,11 @@ final class AdminPresenter extends OpenVKPresenter
         $pack->setDescription($this->postParam("description"));
         $pack->setSlug($this->postParam("slug"));
         $pack->setPrice((int) $this->postParam("price"));
+        $pack->setCoins((float) ($this->postParam("coins") ?? 0));
         $pack->setUnlisted(!empty($this->postParam("unlisted")));
         $pack->setAuthor($this->postParam("author"));
         $pack->setAuthorId($this->postParam("author_id"));
+        $pack->setAuthorUrl($this->postParam("author_url"));
 
         $endTime = $this->postParam("end_time");
         $pack->setEndTime(!empty($endTime) ? (int) $endTime : null);

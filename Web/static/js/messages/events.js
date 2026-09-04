@@ -310,7 +310,7 @@ export class EventHandler {
 
         setTimeout(() => {
             try {
-                const found = _crs.findMessageById(_msg.id);
+                const found = _crs.findMessageById(_msg.id, _msg.random_id || _msg.data?.random_id);
 
                 if (found == null) {
                     _crs.pushMessage(_msg);

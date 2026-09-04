@@ -217,7 +217,7 @@ final class Messages extends VKAPIRequestHandler
 
         $result = [];
         if (!empty($strAttachments)) {
-            $parsed = parseAttachments($strAttachments, array_merge(['photo', 'video', 'audio', 'doc', 'poll', 'wall'], $allowedAdditional));
+            $parsed = parseAttachments($strAttachments, array_merge(['photo', 'video', 'audio', 'doc', 'poll', 'wall', 'sticker'], $allowedAdditional));
 
             foreach ($parsed as $attachment) {
                 if (!$attachment) {
@@ -806,16 +806,26 @@ final class Messages extends VKAPIRequestHandler
             $this->fail(100, "One of the parameters specified was missing or invalid: no recipient");
         }
 
-        // TODO
-        if ($sticker_id !== -1) {
-            $this->fail(-151, "Stickers are not implemented");
-        }
-
-        $attachment_checked = parseAttachments($attachment, ["photo", "video", "doc", "audio", "wall"]);
+        $attachment_checked = parseAttachments($attachment, ["photo", "video", "doc", "audio", "wall", "sticker"]);
         $attachment_secure = [];
+
+        if ($sticker_id > 0) {
+            $stk = (new \openvk\Web\Models\Repositories\Stickers())->getSticker($sticker_id);
+            if (!$stk || $stk->isDeleted()) {
+                $this->fail(100, "Sticker not found");
+            }
+
+            if (!$stk->canBeUsedBy($this->getUser())) {
+                $this->fail(100, "Sticker is not available for you");
+            }
+
+            $attachment_secure[] = $stk->getAttachmentString();
+        }
 
         foreach ($attachment_checked as $item) {
             if (!$item || !$item->canBeViewedBy($this->getUser())) {
+                continue;
+            } elseif ($item instanceof \openvk\Web\Models\Entities\Messages\Sticker && !$item->canBeUsedBy($this->getUser())) {
                 continue;
             } else {
                 $attachment_secure[] = $item->getAttachmentString();
@@ -881,7 +891,7 @@ final class Messages extends VKAPIRequestHandler
             $this->fail(936, "There is no peer with this id");
         }
 
-        $attachment_checked = parseAttachments($attachment, ["photo", "video", "doc", "audio", "wall"]);
+        $attachment_checked = parseAttachments($attachment, ["photo", "video", "doc", "audio", "wall", "sticker"]);
         $attachment_secure = [];
 
         foreach ($attachment_checked as $item) {

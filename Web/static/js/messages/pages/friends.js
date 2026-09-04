@@ -49,11 +49,13 @@ export class FriendsPage extends IMPage {
                         n.push(p.getName ? p.getName(false, false) : p.name);
                     });
 
-                    if (n.length > 0) {
-                        this._updTitleStr(n.slice(0, 4).join(", "));
-                    } else {
-                        this._updTitleStr();
-                    }
+                    try {
+                        if (n.length > 0) {
+                            this._updTitleStr(n.slice(0, 4).join(", "));
+                        } else {
+                            this._updTitleStr();
+                        }
+                    } catch (e) {console.error(e);}
                 }
 
                 this.getNode().find("#_m_count").html(tr("you_and") + ( this.selected_friends.length > 0 ? " " + tr("members_count", this.selected_friends.length) : "..."));

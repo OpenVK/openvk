@@ -75,7 +75,8 @@ export const FriendsPageTemplate = ({ friends, count, referrer, onFriendClick, o
                 </div>
                 `}
                 ${!(isChatCreation || isAdd) ? html`
-                    <p dangerouslySetInnerHTML=${{ __html: tr("messenger_friends_info", window.openvk.current_id) }} />
+                    <p><a href="/invite">${tr("messenger_friends_info_1")}</a></p>
+                    <p><a href="/friends${window.openvk.current_id}?act=incoming">${tr("messenger_friends_info_2")}</a></p>
                 ` : ""}
             </div>
         </div>

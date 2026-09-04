@@ -308,7 +308,7 @@ tr.e,
 .playlistListView .playlistCover,
 .photosInsert > div,
 .attachment_selector #attachment_insert #attachment_insert_count {
-    background-color: #231e33 !important;
+    background-color: #291f49 !important;
 }
 
 .content_subtitle,
@@ -330,7 +330,7 @@ tr.v,
 .tippy-box[data-theme~="vk"],
 .searchOptions,
 .like_tooltip_wrapper .like_tooltip_body {
-    background-color: #1e1a2b !important;
+    background-color: #3a2c69 !important;
 }
 
 .post-author {

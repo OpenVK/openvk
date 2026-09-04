@@ -12,8 +12,6 @@ use Nette\Database\Table\ActiveRow;
 class Stickers
 {
     private $context;
-    private $stickers;
-    private $packs;
 
     /* aggressive sql caching */
     private static $cache = [];
@@ -22,8 +20,16 @@ class Stickers
     public function __construct()
     {
         $this->context = DatabaseConnection::i()->getContext();
-        $this->stickers = $this->context->table("stickers");
-        $this->packs    = $this->context->table("stickerpacks");
+    }
+
+    private function getPacksTable()
+    {
+        return $this->context->table("stickerpacks");
+    }
+
+    private function getStickersTable()
+    {
+        return $this->context->table("stickers");
     }
 
     private function toSticker(?ActiveRow $ar): ?Sticker
@@ -38,19 +44,49 @@ class Stickers
 
     public function get(int $id): ?Sticker
     {
-        return self::$cache[$id] ??= $this->toSticker($this->stickers->get($id));
+        return self::$cache[$id] ??= $this->toSticker($this->getStickersTable()->where("id", $id)->fetch());
+    }
+
+    public function getSticker(int $id): ?Sticker
+    {
+        return $this->get($id);
     }
 
     public function getPack(int $id): ?StickerPack
     {
-        return self::$cachePack[$id] ??= $this->toStickerPack($this->packs->get($id));
+        if (isset(self::$cachePack[$id])) {
+            return self::$cachePack[$id];
+        }
+
+        $row = $this->getPacksTable()->where("id", $id)->fetch();
+        return self::$cachePack[$id] = $this->toStickerPack($row);
     }
 
-    public function getPacks(int $page, ?int $perPage = null, &$count = null): \Traversable
+    public function clearCache(?int $packId = null): void
     {
-        $packs = $this->packs
+        if ($packId !== null) {
+            unset(self::$cachePack[$packId]);
+        } else {
+            self::$cachePack = [];
+            self::$cache = [];
+        }
+    }
+
+    public function getPackBySlug(string $slug): ?StickerPack
+    {
+        $row = $this->getPacksTable()->where("deleted", false)->where("slug", $slug)->fetch();
+        return $this->toStickerPack($row);
+    }
+
+    public function getPacks(int $page, ?int $perPage = null, &$count = null, ?string $section = null): \Traversable
+    {
+        $packs = $this->getPacksTable()
             ->where("deleted", false)
             ->where("unlisted", false);
+
+        if ($section === "free") {
+            $packs = $packs->where("price", 0);
+        }
 
         $count = $packs->count("*");
         $packs = $packs->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
@@ -63,13 +99,14 @@ class Stickers
     public function getMyPacks(User $user, int $page, ?int $perPage = null, &$count = null): \Traversable
     {
         $purchases = $this->context->table("sticker_purchases")
-            ->where("user", $user->getId());
+            ->where("user", $user->getId())
+            ->where("purchased", 1);
 
         $count = $purchases->count("*");
         $purchases = $purchases->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
 
         foreach ($purchases as $purchase) {
-            $packRec = $this->packs->get($purchase->stickerpack);
+            $packRec = $this->getPacksTable()->where("id", $purchase->stickerpack)->fetch();
             if ($packRec && !$packRec->deleted) {
                 yield new StickerPack($packRec);
             }
@@ -80,12 +117,47 @@ class Stickers
     {
         return $this->context->table("sticker_purchases")
             ->where("user", $user->getId())
+            ->where("purchased", 1)
             ->count("*");
+    }
+
+    public function getInstalledPackIds(User $user): array
+    {
+        $purchases = $this->context->table("sticker_purchases")
+            ->where("user", $user->getId())
+            ->where("purchased", 1)
+            ->fetchPairs("stickerpack", "stickerpack");
+
+        return array_map("intval", array_keys($purchases));
+    }
+
+    public function getPurchasedPackIds(User $user): array
+    {
+        return $this->getInstalledPackIds($user);
+    }
+
+    public function getBoughtPackIds(User $user): array
+    {
+        $purchases = $this->context->table("sticker_purchases")
+            ->where("user", $user->getId())
+            ->where("purchased", [1, 2])
+            ->fetchPairs("stickerpack", "stickerpack");
+
+        $boughtIds = array_map("intval", array_keys($purchases));
+
+        $owned = $this->context->table("stickerpacks")
+            ->where("owner_id", $user->getId())
+            ->where("deleted", false)
+            ->fetchPairs("id", "id");
+
+        $ownedIds = array_map("intval", array_keys($owned));
+
+        return array_values(array_unique(array_merge($boughtIds, $ownedIds)));
     }
 
     public function getAllPacks(int $page, ?int $perPage = null, &$count = null): \Traversable
     {
-        $packs = $this->packs
+        $packs = $this->getPacksTable()
             ->where("deleted", false);
 
         $count = $packs->count("*");
@@ -98,7 +170,7 @@ class Stickers
 
     public function getAllPacksCount(): int
     {
-        return $this->packs->where("deleted", false)->count("*");
+        return $this->getPacksTable()->where("deleted", false)->count("*");
     }
 
     public function getPackStickers(StickerPack $pack, int $page, ?int $perPage = null, &$count = null): \Traversable
@@ -110,7 +182,7 @@ class Stickers
         $rels  = $rels->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
 
         foreach ($rels as $rel) {
-            $stickerRec = $this->stickers->get($rel->sticker);
+            $stickerRec = $this->getStickersTable()->where("id", $rel->sticker)->fetch();
             if ($stickerRec) {
                 yield new Sticker($stickerRec);
             }
@@ -126,7 +198,7 @@ class Stickers
 
     public function find(string $query): \Traversable
     {
-        $packs = $this->packs
+        $packs = $this->getPacksTable()
             ->where("deleted", false)
             ->where("name LIKE ?", "%$query%");
 
@@ -137,7 +209,7 @@ class Stickers
 
     public function createPack(string $name, string $slug, int $created, User $created_by): StickerPack
     {
-        $row = $this->packs->insert([
+        $row = $this->getPacksTable()->insert([
             "name"    => $name,
             "slug"    => $slug,
             "created" => $created,
@@ -149,10 +221,32 @@ class Stickers
 
     public function createSticker(string $emoji = ""): Sticker
     {
-        $row = $this->stickers->insert([
+        $row = $this->getStickersTable()->insert([
             "emoji" => $emoji,
         ]);
 
         return new Sticker($row);
+    }
+
+    public function getCreatedPacks(User $user, int $page, ?int $perPage = null, &$count = null): \Traversable
+    {
+        $packs = $this->getPacksTable()
+            ->where("deleted", false)
+            ->where("owner_id", $user->getId());
+
+        $count = $packs->count("*");
+        $packs = $packs->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
+
+        foreach ($packs as $pack) {
+            yield new StickerPack($pack);
+        }
+    }
+
+    public function getCreatedPacksCount(User $user): int
+    {
+        return $this->getPacksTable()
+            ->where("deleted", false)
+            ->where("owner_id", $user->getId())
+            ->count("*");
     }
 }

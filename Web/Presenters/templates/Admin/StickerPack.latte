@@ -50,6 +50,13 @@
                 <input class="text long-field" type="number" id="price" name="price" min="0" value="{$form->price}" />
             </div>
             <div class="field-group">
+                <label for="coins">
+                    Balance (votes)
+                </label>
+                <input class="text long-field" type="number" step="0.01" min="0" id="coins" name="coins" value="{$form->coins}" />
+                <div class="description">Accumulated votes on pack balance.</div>
+            </div>
+            <div class="field-group">
                 <label for="end_time">
                     End time (Unix timestamp)
                 </label>
@@ -68,6 +75,13 @@
                 </label>
                 <input class="text long-field" type="text" id="author_id" name="author_id" value="{$form->author_id}" />
                 <div class="description">Comma-separated list of profile IDs.</div>
+            </div>
+            <div class="field-group">
+                <label for="author_url">
+                    Author link (URL)
+                </label>
+                <input class="text long-field" type="url" id="author_url" name="author_url" value="{$form->author_url}" placeholder="https://example.com/..." />
+                <div class="description">External link or channel URL (e.g. Telegram channel, website, social profile).</div>
             </div>
             <div class="field-group">
                 <label for="owner_id">

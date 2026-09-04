@@ -302,17 +302,19 @@ export class Chunks {
 
     // ── lookup / jumps ───────────────────────────────────────────
 
-    _findMessageById(id) {
-        if (id == null) return null;
+    _findMessageById(id, randomId = null) {
+        if (id == null && randomId == null) return null;
         let found = null;
-        const numId = Number(id);
+        const numId = id != null ? Number(id) : null;
+        const numRand = randomId != null ? Number(randomId) : null;
         this.chunks.forEach((chunk) => {
             if (found) return;
             chunk.getMessages().forEach((m) => {
                 if (found || !m) return;
-                if (m.id == id || Number(m.id) === numId ||
+                if ((id != null && (m.id == id || Number(m.id) === numId ||
                     m.data?.conversation_message_id == id || Number(m.data?.conversation_message_id) === numId ||
-                    m.data?.local_id == id || Number(m.data?.local_id) === numId) {
+                    m.data?.local_id == id || Number(m.data?.local_id) === numId)) ||
+                    (numRand && (Number(m.random_id) === numRand || Number(m.data?.random_id) === numRand))) {
                     found = m;
                 }
             });
@@ -345,11 +347,11 @@ export class Chunks {
         const actual = this.getLatestChunk(check_chunk);
         if (actual) {
             const msgId = msg?.id;
-            const msgRandomId = msg?.data?.random_id;
+            const msgRandomId = msg?.data?.random_id || msg?.random_id;
             const msgCmid = msg?.data?.conversation_message_id || msg?.data?.local_id;
             const alreadyExists = actual.messages.some(m =>
                 (msgId != null && m?.id != null && (m.id == msgId || Number(m.id) === Number(msgId))) ||
-                (msgRandomId != null && m?.data?.random_id != null && m.data.random_id == msgRandomId) ||
+                (msgRandomId != null && (m?.data?.random_id == msgRandomId || m?.random_id == msgRandomId)) ||
                 (msgCmid != null && m?.data && (m.data.conversation_message_id == msgCmid || m.data.local_id == msgCmid))
             );
             if (!alreadyExists) {
@@ -357,6 +359,10 @@ export class Chunks {
             }
         }
         this._invalidateCache();
+        const convToInvalidate = conv || (window.im?.conversations ? window.im.conversations._findConv(this._peer?.id) : null);
+        if (convToInvalidate && typeof convToInvalidate.getScrollPosition === 'function' && convToInvalidate.getScrollPosition()) {
+            convToInvalidate.getScrollPosition()._invalidateCache();
+        }
         if (window.im && window.im.messenger) {
             window.im.messenger.update();
         }

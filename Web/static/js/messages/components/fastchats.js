@@ -269,8 +269,14 @@ export const FastChatBox = ({
         const authorName = isOut ? (tr('you') || 'Вы') : (msg.author_name || chat.title);
         const authorAva = isOut ? currentUserAvatar : (msg.author_photo || chat.photo);
         const timeStr = msg.time_str || (msg.date ? formatTime(msg.date, false) : '');
+        const isTargetUnread = chat.firstUnreadMsgId && (Number(msg.id) === Number(chat.firstUnreadMsgId));
 
         return html`
+                        ${isTargetUnread ? html`
+                            <div class="fc_unread_divider" id="fc_unread_${chat.peerId}">
+                                <span class="fc_unread_divider_text">${tr('unread_messages') || 'Непрочитанные сообщения'}</span>
+                            </div>
+                        ` : null}
                         <div class="fc_msg_row" data-msg-id="${msg.id}">
                             <img src="${authorAva || '/assets/packages/static/openvk/img/camera_50.png'}" class="fc_msg_avatar" />
                             <div class="fc_msg_body">
@@ -278,7 +284,25 @@ export const FastChatBox = ({
                                     <span class="fc_msg_author">${authorName}</span>
                                     <span class="fc_msg_time">${timeStr}</span>
                                 </div>
-                                <div class="fc_msg_text">${msg.text || (msg.body || '')}</div>
+                                <div class="fc_msg_text">
+                                    ${msg.text || (msg.body || '')}
+                                    ${msg.attachments && Array.isArray(msg.attachments) && msg.attachments.map(att => {
+                                        if (att && att.type === 'sticker') {
+                                            let stk = att.sticker || {};
+                                            let sId = stk.sticker_id || stk.id;
+                                            if ((!stk.photo_128 && !stk.photo_256 && (!stk.images || !stk.images.length)) && typeof window.findStickerData === 'function' && sId) {
+                                                const found = window.findStickerData(sId);
+                                                if (found) stk = { ...found, ...stk };
+                                            }
+                                            let img = stk.photo_128 || stk.photo_256 || (stk.images && stk.images[0]?.url) || (stk.product_id && sId ? `/sticker/${stk.product_id}/${sId}_128.webp` : '');
+                                            if (img && window.location.protocol === 'https:' && img.startsWith('http://')) {
+                                                img = img.replace(/^http:\/\//i, 'https://');
+                                            }
+                                            return html`<div class="fc_msg_sticker"><img src="${img}" alt="sticker" loading="lazy" /></div>`;
+                                        }
+                                        return null;
+                                    })}
+                                </div>
                             </div>
                         </div>
                     `;
@@ -295,6 +319,7 @@ export const FastChatBox = ({
                     onKeyDown=${(e) => onKeyDown(e, chat.peerId)}
                     onFocus=${() => onFocus(chat.peerId)}
                 ></textarea>
+                <div class="fc_emoji_btn emoji_picker_entrypoint" title="${tr('smiles')}"></div>
             </div>
         </div>
     `;

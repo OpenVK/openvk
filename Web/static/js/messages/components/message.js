@@ -1102,6 +1102,23 @@ const Attachment = ({ msg, att }) => {
                     <img src="${att.gift.gift.thumb_256}" />
                 </div>
             `;
+        case "sticker": {
+            let stk = att.sticker || {};
+            let sId = stk.sticker_id || stk.id;
+            if ((!stk.photo_128 && !stk.photo_256 && !stk.photo_512 && (!stk.images || !stk.images.length)) && typeof window.findStickerData === 'function' && sId) {
+                const found = window.findStickerData(sId);
+                if (found) stk = { ...found, ...stk };
+            }
+            let imgUrl = stk.photo_256 || stk.photo_512 || stk.photo_128 || (stk.images && stk.images[2] ? stk.images[2].url : (stk.images && stk.images[0] ? stk.images[0].url : (stk.product_id && sId ? `/sticker/${stk.product_id}/${sId}_128.webp` : '')));
+            if (imgUrl && window.location.protocol === 'https:' && imgUrl.startsWith('http://')) {
+                imgUrl = imgUrl.replace(/^http:\/\//i, 'https://');
+            }
+            return html`
+                <div class="msg-attach-w msg-attach-w-sticker" data-sticker-id="${stk.sticker_id || stk.id}">
+                    <img class="msg-sticker-img" src="${imgUrl}" alt="sticker" loading="lazy" />
+                </div>
+            `;
+        }
         case "link":
         case "share":
             return null;
@@ -1127,15 +1144,23 @@ export const DayDivider = ({ date, day, idate }) => {
   `;
 };
 
-export const DayChunkView = ({ chunk, page }) => {
+export const DayChunkView = ({ chunk, page, unreadMsgId }) => {
     const chunkDate = chunk.date || chunk.readable_date || chunk.day || chunk.idate;
 
     return html`
     <div class="messenger-app--messages-day">
         <${DayDivider} day=${chunk.day} date=${chunkDate} idate=${chunk.idate} />
-        ${chunk.messages.map((msg, idx) => html`
-            <${MessageBubble} key=${msg.id || msg.conversation_message_id || idx} msg=${msg} index=${idx} chunk=${chunk} page=${page} />
-        `)}
+        ${chunk.messages.map((msg, idx) => {
+            const isTargetUnread = unreadMsgId && (Number(msg.id) === Number(unreadMsgId) || Number(msg.conversation_message_id) === Number(unreadMsgId));
+            return html`
+                ${isTargetUnread ? html`
+                    <div class="im-unread-divider" id="im_unread_divider">
+                        <span class="im-unread-divider-text">${tr("unread_messages") || "Непрочитанные сообщения"}</span>
+                    </div>
+                ` : null}
+                <${MessageBubble} key=${msg.id || msg.conversation_message_id || idx} msg=${msg} index=${idx} chunk=${chunk} page=${page} />
+            `;
+        })}
     </div>
     `;
 };
@@ -1144,6 +1169,20 @@ export const MessageListView = ({ dayDividedChunks, convo, page }) => {
     const isMessagesInited = convo?.peer?.isMessagesInited ? convo.peer.isMessagesInited() : true;
     const isLoading = !isMessagesInited;
     const hasMessages = dayDividedChunks && dayDividedChunks.length > 0;
+
+    let unreadMsgId = convo?.peer?._firstUnreadMsgId;
+    if (unreadMsgId === undefined && convo && (convo.unread_count > 0 || !convo.isRead()) && dayDividedChunks) {
+        for (const chunk of dayDividedChunks) {
+            for (const msg of chunk.messages) {
+                if (msg && !msg.isMine() && !msg.isRead()) {
+                    unreadMsgId = msg.id || msg.conversation_message_id;
+                    if (convo.peer) convo.peer._firstUnreadMsgId = unreadMsgId;
+                    break;
+                }
+            }
+            if (unreadMsgId) break;
+        }
+    }
 
     return html`
     <div class="messenger-app--messages">
@@ -1157,7 +1196,7 @@ export const MessageListView = ({ dayDividedChunks, convo, page }) => {
                     <p>${tr('no_messages_in_chat') || "Здесь пока нет сообщений."}</p>
                 </div>
             ` : html`
-                ${dayDividedChunks.map((chunk, cidx) => html`<${DayChunkView} key=${chunk.readable_date || chunk.idate || cidx} chunk=${chunk} page=${page} />`)}
+                ${dayDividedChunks.map((chunk, cidx) => html`<${DayChunkView} key=${chunk.readable_date || chunk.idate || cidx} chunk=${chunk} page=${page} unreadMsgId=${unreadMsgId} />`)}
             `}
             <div>
                 <${WriteBar} convo=${convo} />

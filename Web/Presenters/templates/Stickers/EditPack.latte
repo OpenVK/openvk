@@ -1,0 +1,392 @@
+{extends "../@layout.latte"}
+
+{block title}
+    {if $isNew}{_stickers_new_pack}{else}{_stickers_edit_pack}{/if}
+{/block}
+
+{block header}
+    {_stickers}
+{/block}
+
+{block content}
+    <div class="tabs">
+        {include "Tabs.latte", act => 'author'}
+    </div>
+
+    <div class="summaryBar display_flex_row display_flex_space_between stickers_margin_bar">
+        <div class="summary">
+            {if $isNew}{_stickers_new_pack}{else}{_stickers_edit_pack}{/if}
+        </div>
+        <a href="/stickers?act=author">{_back}</a>
+    </div>
+
+    <div class="container_gray stickers_edit_container">
+        {if !$isNew && $pack}
+            <div class="stickers_balance_box">
+                <div>
+                    <div class="stickers_balance_label">{_stickers_pack_balance}</div>
+                    <div class="stickers_balance_val">
+                        {tr('coins', (int) round($pack->getBalance()))}
+                    </div>
+                    <div class="stickers_balance_hint">
+                        {tr("stickers_balance", (int) round($pack->getBalance()))|noescape}
+                        {if $pack->getBalance() > 0}
+                            (<a href="javascript:withdrawStickers({$pack->getId()}, {$pack->getBalance()})">{_stickers_withdrawal_q}</a>)
+                        {/if}
+                    </div>
+                </div>
+                {if $pack->getBalance() > 0}
+                    <div>
+                        <button type="button" class="button" onclick="withdrawStickers({$pack->getId()}, {$pack->getBalance()});">
+                            {_stickers_withdraw_btn}
+                        </button>
+                    </div>
+                {/if}
+            </div>
+        {/if}
+
+        <form id="packForm" method="POST" enctype="multipart/form-data" action="{if $isNew}/stickers/new{else}/stickers/edit/{$pack->getId()}{/if}">
+            <input type="hidden" name="hash" value="{$csrfToken}" />
+
+            <table class="flexible_table" cellspacing="8" cellpadding="0" width="100%" border="0">
+                <tbody>
+                    <tr>
+                        <td width="150" valign="top">
+                            <span class="nobold">{_stickers_pack_name}:</span>
+                        </td>
+                        <td>
+                            <input type="text" name="name" class="stickers_input_text" value="{$pack ? $pack->getName() : ''}" required />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="top">
+                            <span class="nobold">{_stickers_pack_slug}:</span>
+                        </td>
+                        <td>
+                            <input type="text" name="slug" class="stickers_input_text" value="{$pack ? $pack->getSlug() : ''}" placeholder="my-pack-name" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="top">
+                            <span class="nobold">{_stickers_pack_desc}:</span>
+                        </td>
+                        <td>
+                            <textarea name="description" class="stickers_input_textarea">{$pack ? $pack->getDescription() : ''}</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="top">
+                            <span class="nobold">{_stickers_pack_price}:</span>
+                        </td>
+                        <td>
+                            <input type="number" name="price" min="0" class="stickers_input_price" value="{$pack ? $pack->getPrice() : 0}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="top">
+                            <span class="nobold">{_stickers_pack_author}:</span>
+                        </td>
+                        <td>
+                            <input type="text" name="author" class="stickers_input_text" value="{$pack ? $pack->getAuthor() : ''}" placeholder="{_stickers_pack_author_placeholder}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="top">
+                            <span class="nobold">{_stickers_pack_author_url}:</span>
+                        </td>
+                        <td>
+                            <input type="url" name="author_url" class="stickers_input_text" value="{$pack ? $pack->getAuthorUrl() : ''}" placeholder="https://example.com/..." />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <label>
+                                <input type="checkbox" name="unlisted" value="1" {if $pack && $pack->isUnlisted()}checked{/if} />
+                                {_stickers_pack_unlisted}
+                            </label>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <hr class="stickers_divider" />
+
+            <div class="stickers_section_title">
+                {_stickers_upload_title}
+            </div>
+            <div class="stickers_section_hint">
+                {_stickers_upload_hint}
+            </div>
+
+            {* Existing stickers list (if editing) *}
+            {if !$isNew && sizeof($existingStickers) > 0}
+                <div class="stickers_sample_title">
+                    {_stickers_upload_title} ({sizeof($existingStickers)}):
+                </div>
+                <div class="stickers_cards_grid">
+                    {foreach $existingStickers as $stk}
+                        <div class="existing_sticker_card" id="stk_card_{$stk->getId()}">
+                            <div class="existing_sticker_thumb">
+                                <img src="{$stk->getImageUrl(128)}" width="72" height="72" alt="" />
+                            </div>
+                            <div class="emoji-input-wrap">
+                                <div class="content-editable-wrap">
+                                    <textarea name="existing_emojis[{$stk->getId()}]"
+                                              class="content-editable-fallback sticker-emoji-input"
+                                              placeholder="{_stickers_emoji_placeholder}"
+                                              data-submit-on-enter="false"
+                                              data-single-line="true"
+                                              rows="1">{$stk->getEmoji()}</textarea>
+                                </div>
+                                <div class="emoji_picker_entrypoint" title="{_stickers_emoji_placeholder}"></div>
+                            </div>
+                            <label class="existing_sticker_label_main">
+                                <input type="radio" name="main_sticker_id" value="{$stk->getId()}" {if $pack->getMainSticker() && $pack->getMainSticker()->getId() === $stk->getId()}checked{/if} />
+                                {_stickers_cover}
+                            </label>
+                            <label class="existing_sticker_label_delete">
+                                <input type="checkbox" name="delete_stickers[]" value="{$stk->getId()}" onchange="toggleStickerDelete(this, 'stk_card_{$stk->getId()}')" />
+                                {_stickers_delete_sticker}
+                            </label>
+                        </div>
+                    {/foreach}
+                </div>
+            {/if}
+
+            {* File input & Draft preview area *}
+            <div class="stickers_upload_actions">
+                <input type="file" id="stickers_file_input" name="stickers[]" multiple accept="image/*,.svg,.json" class="stickers_upload_file_input" />
+                <button type="button" class="button" onclick="document.getElementById('stickers_file_input').click();">
+                    {_stickers_select_files}
+                </button>
+                <span id="draft_counter" class="stickers_draft_counter"></span>
+            </div>
+
+            {* Container for client-side drafts *}
+            <div id="drafts_container" class="stickers_cards_grid"></div>
+
+            <hr class="stickers_divider" />
+
+            <div class="stickers_form_buttons">
+                <button type="submit" class="button stickers_form_btn_save">
+                    {if $isNew}{_stickers_save_pack}{else}{_save}{/if}
+                </button>
+
+                {if !$isNew}
+                    <button type="button" class="button stickers_form_btn_delete" onclick="confirmDeletePack(document.getElementById('packForm'));">
+                        {_stickers_delete_pack}
+                    </button>
+                {/if}
+            </div>
+        </form>
+    </div>
+
+    <script>
+        (function() {
+            window.stickersWithdrawTax = {floatval($withdrawTax ?? 0)};
+            var draftFiles = [];
+            window._getDraftFiles = function() { return draftFiles; };
+
+            var fileInput = document.getElementById('stickers_file_input');
+            var draftsContainer = document.getElementById('drafts_container');
+            var draftCounter = document.getElementById('draft_counter');
+            var isNewPack = {if $isNew}true{else}false{/if};
+
+            window.toggleStickerDelete = function(cb, cardId) {
+                var card = document.getElementById(cardId);
+                if (card) {
+                    card.classList.toggle('sticker_card_deleted', cb.checked);
+                }
+            };
+
+            if (fileInput) {
+                fileInput.addEventListener('change', function(e) {
+                    var files = Array.from(e.target.files);
+                    if (!files.length) return;
+
+                    draftFiles = draftFiles.concat(files);
+                    syncInputFiles();
+                    renderDrafts();
+                });
+            }
+
+            function syncInputFiles() {
+                try {
+                    var dt = new DataTransfer();
+                    draftFiles.forEach(function(f) { dt.items.add(f); });
+                    if (fileInput) {
+                        fileInput.files = dt.files;
+                    }
+                } catch (err) {
+                    console.error('DataTransfer error:', err);
+                }
+                if (draftCounter) {
+                    draftCounter.innerText = draftFiles.length > 0 ? ('(' + draftFiles.length + ')') : '';
+                }
+            }
+            window.syncInputFiles = syncInputFiles;
+
+            window.removeDraft = function(index) {
+                draftFiles.splice(index, 1);
+                syncInputFiles();
+                renderDrafts();
+            };
+
+            function renderDrafts() {
+                if (!draftsContainer) return;
+                draftsContainer.innerHTML = '';
+                if (draftFiles.length === 0) return;
+
+                draftFiles.forEach(function(file, idx) {
+                    var card = document.createElement('div');
+                    card.className = 'draft_sticker_card';
+
+                    var imgWrapper = document.createElement('div');
+                    imgWrapper.className = 'draft_sticker_thumb';
+
+                    var isJson = file.name.endsWith('.json') || file.type === 'application/json';
+                    if (isJson) {
+                        imgWrapper.innerHTML = '<div class="stickers_lottie_badge">LOTTIE<br/>JSON</div>';
+                    } else {
+                        var img = document.createElement('img');
+                        var reader = new FileReader();
+                        reader.onload = function(evt) {
+                            img.src = evt.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                        imgWrapper.appendChild(img);
+                    }
+
+                    var emojiWrap = document.createElement('div');
+                    emojiWrap.className = 'emoji-input-wrap';
+
+                    var ceWrap = document.createElement('div');
+                    ceWrap.className = 'content-editable-wrap';
+
+                    var emojiTextarea = document.createElement('textarea');
+                    emojiTextarea.name = 'emojis[]';
+                    emojiTextarea.className = 'content-editable-fallback sticker-emoji-input';
+                    emojiTextarea.placeholder = {_stickers_emoji_placeholder};
+                    emojiTextarea.title = {_stickers_emoji_placeholder};
+                    emojiTextarea.setAttribute('data-submit-on-enter', 'false');
+                    emojiTextarea.setAttribute('data-single-line', 'true');
+                    emojiTextarea.rows = 1;
+                    if (file._draftEmoji) {
+                        emojiTextarea.value = file._draftEmoji;
+                    }
+                    emojiTextarea.addEventListener('change', function() {
+                        file._draftEmoji = emojiTextarea.value;
+                    });
+
+                    var pickerBtn = document.createElement('div');
+                    pickerBtn.className = 'emoji_picker_entrypoint';
+                    pickerBtn.title = {_stickers_emoji_placeholder};
+
+                    ceWrap.appendChild(emojiTextarea);
+                    emojiWrap.appendChild(ceWrap);
+                    emojiWrap.appendChild(pickerBtn);
+
+                    var coverLabel = document.createElement('label');
+                    coverLabel.className = 'draft_sticker_cover_label';
+                    var coverRadio = document.createElement('input');
+                    coverRadio.type = 'radio';
+                    coverRadio.name = isNewPack ? 'main_sticker_index' : 'new_main_sticker_index';
+                    coverRadio.value = idx;
+                    if (isNewPack && idx === 0) {
+                        coverRadio.checked = true;
+                    }
+                    coverRadio.addEventListener('change', function() {
+                        if (coverRadio.checked) {
+                            document.querySelectorAll('input[name="main_sticker_id"]').forEach(function(r) {
+                                r.checked = false;
+                            });
+                        }
+                    });
+
+                    coverLabel.appendChild(coverRadio);
+                    coverLabel.appendChild(document.createTextNode(' ' + {_stickers_cover}));
+
+                    var delBtn = document.createElement('a');
+                    delBtn.href = 'javascript:void(0);';
+                    delBtn.className = 'draft_sticker_delete_btn';
+                    delBtn.innerText = {_stickers_delete_sticker};
+                    delBtn.onclick = function() {
+                        window.removeDraft(idx);
+                    };
+
+                    card.appendChild(imgWrapper);
+                    card.appendChild(emojiWrap);
+                    card.appendChild(coverLabel);
+                    card.appendChild(delBtn);
+
+                    draftsContainer.appendChild(card);
+
+                    if (window.ContentEditable && typeof window.ContentEditable.enhance === 'function') {
+                        var inst = window.ContentEditable.enhance(emojiTextarea);
+                        if (inst && inst.el) {
+                            inst.el.addEventListener('input', function() {
+                                file._draftEmoji = inst.getText();
+                            });
+                        }
+                    }
+                });
+            }
+            window.renderDrafts = renderDrafts;
+
+            document.querySelectorAll('input[name="main_sticker_id"]').forEach(function(r) {
+                r.addEventListener('change', function() {
+                    if (r.checked) {
+                        document.querySelectorAll('input[name="new_main_sticker_index"]').forEach(function(dr) {
+                            dr.checked = false;
+                        });
+                    }
+                });
+            });
+
+            // Form submit sync for content-editable fields and file inputs
+            var packForm = document.getElementById('packForm');
+            if (packForm) {
+                packForm.addEventListener('submit', function() {
+                    syncInputFiles();
+                    document.querySelectorAll('.emoji-input-wrap').forEach(function(wrap) {
+                        var editable = wrap.querySelector('.content-editable');
+                        var textarea = wrap.querySelector('textarea');
+                        if (editable && textarea) {
+                            var val = '';
+                            if (editable._contentEditable && typeof editable._contentEditable.getText === 'function') {
+                                val = editable._contentEditable.getText();
+                            } else if (typeof window.ContentEditable !== 'undefined' && typeof window.ContentEditable.htmlToText === 'function') {
+                                val = window.ContentEditable.htmlToText(editable);
+                            } else {
+                                val = editable.innerText || editable.textContent || '';
+                            }
+                            try {
+                                var nativeSetter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')?.set;
+                                if (nativeSetter) {
+                                    nativeSetter.call(textarea, val);
+                                } else {
+                                    textarea.value = val;
+                                }
+                            } catch (e) {
+                                textarea.value = val;
+                            }
+                            textarea.textContent = val;
+                        }
+                    });
+                });
+            }
+        })();
+
+        // Click anywhere on .emoji-input-wrap to focus inner editable
+        document.addEventListener('click', function(e) {
+            var wrap = e.target.closest('.emoji-input-wrap');
+            if (wrap && !e.target.closest('.emoji_picker_entrypoint')) {
+                var editable = wrap.querySelector('.content-editable, textarea');
+                if (editable && document.activeElement !== editable) {
+                    editable.focus();
+                }
+            }
+        });
+    </script>
+{/block}

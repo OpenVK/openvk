@@ -84,6 +84,8 @@ body.no-scroll .messenger-app--global-tabs {
 
 #im_container.compact .messenger-app--global-tabs {
     padding: 7px 10px;
+    position: absolute;
+    display: none;
 }
 
 .messages--peers-header-wrap {
@@ -345,6 +347,11 @@ body:has(#im_container.at_page) .page_content {
     margin-right: 15px;
 }
 
+.crp-entry--excess {
+    display: flex;
+    flex-direction: column;
+}
+
 .crp-entry--image {
     width: 50px;
     height: 50px;
@@ -486,11 +493,12 @@ body:has(#im_container.at_page) .page_content {
 }
 
 .crp-entry--message---av img {
-    max-width: 32px;
     border-radius: 3px;
     margin-top: 20%;
     margin-left: 10%;
-    max-height: 37px;
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
 }
 
 .crp-entry--message---av,
@@ -569,7 +577,7 @@ body:has(#im_container.at_page) .page_content {
     width: 627px;
     height: 42px;
     background: #F6F6F6;
-    border-bottom: 1px solid #707070;
+    border-bottom: 1px solid var(--bg-slightly-border);
     padding: 8px 14px;
     box-sizing: border-box;
 }
@@ -798,7 +806,7 @@ body:has(#im_container.at_page) .page_content {
 }
 
 .messenger-app--messages---message .actions-2 .edit-icon {
-    background-position: -135px -50px !important;
+    background-position: -127px -44px !important;
 }
 
 .messenger-app--messages---message .actions-2 .pin-icon {
@@ -892,6 +900,35 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 
 .messenger-app--messages .messenger-app--messages-day-time b:hover {
     color: var(--color-text, #222);
+}
+
+.im-unread-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 16px 20px 14px 20px;
+    user-select: none;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.im-unread-divider::before,
+.im-unread-divider::after {
+    content: "";
+    flex: 1 1 0%;
+    height: 1px;
+    background: #d3d9de;
+    background: var(--divider, #d3d9de);
+}
+
+.im-unread-divider-text {
+    padding: 0 14px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #65758c;
+    color: var(--color-text-secondary, var(--nobold, #65758c));
+    white-space: nowrap;
+    letter-spacing: 0.2px;
 }
 
 .messenger-app--messages---message>.messenger-app--messages---message--wrap {
@@ -1704,19 +1741,67 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     margin-top: 8px !important;
 }
 
+.messenger-app--input .input--messagebox-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.messenger-app--input .im-recent-smiles-bar {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    user-select: none;
+}
+
+.messenger-app--input .im-recent-smile-btn {
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: transform 0.08s ease, background 0.1s ease;
+}
+
+.messenger-app--input .im-recent-smile-btn:hover {
+    transform: scale(1.15);
+}
+
 .messenger-app--input---messagebox {
     box-sizing: border-box;
     width: calc(100% - 128px);
     float: right;
 }
 
-.messenger-app--input---messagebox textarea {
+.messenger-app--input---messagebox textarea,
+.messenger-app--input---messagebox .content-editable {
     width: 100%;
     min-height: 53px;
     max-height: 200px;
     resize: none;
-    padding: 3px 6px;
+    padding: 4px 28px 4px 6px;
     font-size: 11px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    border: 1px solid #C0CAD5;
+    background: #fff;
+    outline: none;
+    line-height: 1.35;
+}
+
+.messenger-app--input---messagebox .content-editable:focus {
+    border-color: #567ca4;
+}
+
+.messenger-app--input---messagebox .content-editable:empty::before {
+    content: attr(data-placeholder);
+    color: #828a99;
+    pointer-events: none;
+    display: block;
 }
 
 .messenger-app--input .blocked {
@@ -1804,9 +1889,9 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     padding: 10px 60px;
     box-sizing: border-box;
     text-align: center;
-    border-top: 1px solid var(--brand-l-1);
+    border-top: 1px solid #d6d6d6;
     font-weight: bold;
-    color: var(--text);
+    color: #949494;
     user-select: none;
     cursor: pointer;
 
@@ -2097,6 +2182,10 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 
 .peer-window .peer-side .peer-info .peer-name .peer-link.peer-title-editable {
     cursor: pointer;
+}
+
+.peer-window .peer-back {
+    display: none;
 }
 
 .peer-title-edit-wrap {
@@ -2560,6 +2649,35 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     height: 60px;
 }
 
+.messages--peers-header-peer-name {
+    height: 44px;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    width: 368px;
+    box-sizing: border-box;
+    position: fixed;
+    top: 42px;
+    z-index: 2;
+    background: #f6f6f6;
+    padding: 0px 15px;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.messages--peers-header-peer-name .ava {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+    object-position: top;
+    border-radius: 2px;
+}
+
+.messages--peers-header-peer-name span {
+    font-weight: bold;
+    color: #606060;
+}
+
 /* Send dialog */
 
 #user-send-dialog {
@@ -2839,33 +2957,38 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     display: block;
 }
 
-#im_container.compact .messenger-app--global-tabs .inner-tabs {
-    display: none;
-}
-
 #im_container.compact .im_page.page-conversations {
     position: fixed;
-    top: 87px;
+    top: 41px;
+    overflow-x: hidden;
     overflow-y: auto;
     height: 100%;
     width: 260px;
     display: block !important;
 }
 
+#im_container.compact .crp-bottom {
+    width: 100%;
+    flex-direction: column;
+    align-items: start;
+}
+
 #im_container.compact .im_page.page-other {
     /*position: absolute;*/
-    margin-top: 89px;
+    margin-top: 15px;
+    margin-top: 17px;
     right: 0;
-    width: 370px;
-    margin-left: 260px;
+    width: 369px;
+    margin-left: 259px;
+    border-left: 1px solid var(--brand-bg);
+}
+
+#im_container.compact .im_page.page-other .peer-window {
+    height: 100%;
 }
 
 #im_container.compact {
     position: relative;
-}
-
-#im_container.compact .messages--peers-tabs {
-    display: none;
 }
 
 #im_container.compact .messenger-app--tab-messenger {
@@ -2882,10 +3005,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 
 #im_container.compact .crp-list {
     max-height: 80%;
-}
-
-#im_container.compact .messenger-app--input .ava {
-    display: none;
+    overflow-x: hidden;
 }
 
 #im_container.compact .messenger-app--input .messenger-app--input---messagebox {
@@ -2924,11 +3044,15 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 }
 
 #im_container.compact .messages--actions {
-    width: 400px;
+    width: 369px;
+    height: 46px;
+    top: 40px;
+    font-size: 10px;
+    padding: 13px 14px;
 }
 
-#im_container.compact .messages--peers-tabs .messages--peers-tab {
-    display: none;
+#im_container.compact .messages--actions .message-tab {
+    padding: 4px 5px;
 }
 
 #im_container.compact .messenger-app--input {
@@ -2937,10 +3061,89 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 
 #im_container.compact .crp-entry--info {
     width: 398px;
+    justify-content: flex-start;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-#im_container.compact .crp-entry--message {
-    display: none;
+#im_container.compact .crp-list .crp-entry {
+    flex-direction: column;
+}
+
+#im_container.compact .crp-list .crp-entry .crp-entry--message {
+    position: absolute;
+    left: 71px;
+    top: 25px;
+    width: 129px;
+    height: 28px;
+    overflow-y: hidden;
+    display: flex;
+    align-items: center;
+}
+
+#im_container.compact .crp-list .crp-entry--message---av img {
+    margin-top: 0px;
+    margin-left: 0px;
+    width: 25px;
+    height: 25px;
+}
+
+#im_container.compact .crp-list .crp-entry--message---text {
+    margin-left: 0px;
+    height: 24px;
+    margin-top: 0px;
+    align-items: start;
+}
+
+#im_container.compact .messenger-app--tab-friends {
+    display: flex;
+    flex-direction: column-reverse;
+    height: unset;
+}
+
+#im_container.compact .messenger-app--tab-friends .friends-list-top {
+    padding: 10px 10px;
+}
+
+#im_container.compact .messenger-app--tab-friends .friends-list .friends-list-item {
+    margin: 0px;
+}
+
+#im_container.compact .im_floating_date_wrap,
+#im_container.compact .messenger-pinned-bar,
+#im_container.compact .messenger-app-end.m-selected .input-m {
+    width: 368px;
+    box-sizing: border-box;
+}
+
+#im_container.compact .messages--peers-header-wrap {
+    top: 85px;
+}
+
+#im_container.compact .messages--peers-header-wrap .messenger-pinned-bar {
+    padding: 9px 12px;
+}
+
+#im_container.compact .peer-window .peer-back {
+    display: block;
+}
+
+#im_container.compact .messages--peers-header-peer-name {
+    display: flex;
+}
+
+#im_container.compact .messenger-app-status .write-bar {
+    padding: 0px 8px;
+}
+
+#im_container.compact .im_page.page-conversations .excess,
+#im_container.compact .im_page.page-conversations .crp-entry--excess,
+#im_container.compact .messages--peers-tabs .messages--peers-tab,
+#im_container.compact .messenger-app--input .ava,
+#im_container.compact .messages--peers-tabs,
+#im_container.compact .messenger-app--global-tabs .inner-tabs {
+    display: none !important;
 }
 
 /* other monolithish */
@@ -3217,8 +3420,8 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 }
 
 #fastchats_related #fastchats_chat .crp-entry--message---av img {
-    width: 20px;
-    height: 20px;
+    width: 25px;
+    height: 25px;
     margin-left: 0px;
     margin-top: 0px;
     object-fit: cover;
@@ -4085,11 +4288,14 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 
 /* Mobile Theme for Messenger */
 @media (max-width: 768px) {
+    #im_container.at_page {
+        margin-top: 15px;
+    }
 
     #im_container,
     .messenger-app,
     .chat-window {
-        width: 100% !important;
+        width: 100vw !important;
         max-width: 100% !important;
     }
 
@@ -4106,6 +4312,85 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     .messenger-app--messages---message .actions-2 {
         display: flex !important;
         opacity: 0.8;
+    }
+
+    .crp-list .crp-entry {
+        max-height: 80px;
+    }
+
+    .crp-list .crp-entry .crp-entry--message {
+        display: flex;
+    }
+
+    .crp-list .crp-entry .crp-entry--message .crp-entry--message---text {
+        align-items: start;
+        margin-top: unset;
+    }
+
+    .crp-list .crp-entry .crp-entry--info span {
+        font-size: 12px;
+    }
+
+    .crp-entry--message---av img {
+        margin: 0;
+    }
+
+    .messages--peers-tabs .messages--peers-tab .cross {
+        margin-bottom: 1px;
+    }
+
+    .messenger-app--messages---message>.messenger-app--messages---message--wrap {
+        padding: 0px 10px;
+    }
+
+    .messenger-app--input {
+        padding: 10px 15px;
+        width: 97vw !important;
+    }
+
+    .messenger-app--input .input--messagebox-buttons {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: end;
+    }
+
+    .messages--actions {
+        width: 100vw;
+        top: 48px;
+        height: auto;
+    }
+
+    body.no-scroll .im_floating_date_wrap {
+        width: 100vw;
+    }
+
+    body.no-scroll .messenger-app--global-tabs {
+        top: 49px;
+        width: 100vw !important;
+        margin-left: -1px;
+        margin-top: unset;
+        height: unset;
+        max-height: unset;
+    }
+
+    body.no-scroll .messages--peers-header-wrap {
+        top: 89px;
+    }
+
+    .messenger-app--tab-friends {
+        display: flex;
+        flex-direction: column-reverse;
+        height: auto;
+    }
+
+    .messenger-app--tab-friends .friends-list-top {
+        padding: 10px 24px;
+    }
+
+    .messenger-app--tab-friends .friends-list .friends-list-item {
+        margin: 0;
+        padding: 10px 25px;
     }
 
     .peer-window .peer-side {

@@ -478,6 +478,10 @@ export class ChatGeneralForm {
             datas['reply_to'] = reply_to.id;
         }
 
+        if (msg.data && msg.data.random_id) {
+            datas['random_id'] = msg.data.random_id;
+        }
+
         if (attachments != null) {
             datas['attachment'] = attachments.join(',');
         }
@@ -840,9 +844,33 @@ export class ChatMessage {
 
     async hydrateFromEvent(msg) {
         const prevFwd = this.data.fwd_messages;
+        const prevAttachments = this.data.attachments;
         this.data = msg.data;
         if ((!this.data.fwd_messages || this.data.fwd_messages.length === 0) && prevFwd && prevFwd.length > 0) {
             this.data.fwd_messages = prevFwd;
+        }
+        if ((!this.data.attachments || this.data.attachments.length === 0) && prevAttachments && prevAttachments.length > 0) {
+            this.data.attachments = prevAttachments;
+        } else if (this.data.attachments && prevAttachments) {
+            this.data.attachments.forEach(att => {
+                if (att && att.type === 'sticker' && (!att.sticker?.photo_128 || !att.sticker?.images?.length)) {
+                    const prevStk = prevAttachments.find(p => p && p.type === 'sticker')?.sticker;
+                    if (prevStk && (prevStk.id === att.sticker?.id || prevStk.sticker_id === att.sticker?.sticker_id)) {
+                        att.sticker = { ...prevStk, ...att.sticker };
+                    }
+                }
+            });
+        }
+
+        if (this.data.attachments && Array.isArray(this.data.attachments)) {
+            this.data.attachments.forEach(att => {
+                if (att && att.type === 'sticker' && (!att.sticker?.photo_128 || !att.sticker?.images?.length)) {
+                    const localStk = typeof window.findStickerData === 'function' ? window.findStickerData(att.sticker?.id || att.sticker?.sticker_id) : null;
+                    if (localStk) {
+                        att.sticker = { ...localStk, ...att.sticker };
+                    }
+                }
+            });
         }
 
         if (this.has_not_loaded_attachments === true) {
@@ -1089,7 +1117,11 @@ export class ChatMessage {
             return this.isAction();
         }
         if (like == "sticker") {
-            return this.data.is_sticker == 1;
+            if (this.data.is_sticker == 1) return true;
+            if (this.data.attachments && Array.isArray(this.data.attachments)) {
+                return this.data.attachments.some(a => a && a.type === 'sticker');
+            }
+            return false;
         }
         if (like == "gift") {
             try {
@@ -1243,9 +1275,41 @@ export class ChatMessage {
         let new_attachments = null;
         let reply_message = null;
 
-        if (attachments['attach1']) {
+        if (attachments && (attachments['attach1'] || attachments['attach1_type'])) {
             const temp_str = get_attachments_list_from_lp(attachments);
-            new_attachments = await resolve_attachments(temp_str);
+            if (temp_str.length > 0) {
+                try {
+                    new_attachments = await resolve_attachments(temp_str);
+                } catch (e) {
+                    console.error("resolve_attachments error:", e);
+                }
+            }
+
+            if (attachments['attach1_type'] === 'sticker' && (!new_attachments || new_attachments.length === 0)) {
+                const sId = parseInt(attachments['attach1']);
+                const localStk = typeof window.findStickerData === 'function' ? window.findStickerData(sId) : null;
+                if (localStk) {
+                    new_attachments = [{
+                        type: 'sticker',
+                        sticker: localStk
+                    }];
+                }
+            } else if (new_attachments && Array.isArray(new_attachments)) {
+                new_attachments.forEach(att => {
+                    if (att && att.type === 'sticker') {
+                        if (att.sticker && (att.sticker.id || att.sticker.sticker_id)) {
+                            window._stickersCache = window._stickersCache || new Map();
+                            window._stickersCache.set(Number(att.sticker.id || att.sticker.sticker_id), att.sticker);
+                        }
+                        if (!att.sticker?.photo_128 || !att.sticker?.images?.length) {
+                            const localStk = typeof window.findStickerData === 'function' ? window.findStickerData(att.sticker?.id || att.sticker?.sticker_id) : null;
+                            if (localStk) {
+                                att.sticker = { ...localStk, ...att.sticker };
+                            }
+                        }
+                    }
+                });
+            }
         }
 
         if (attachments['reply_to'] || attachments['reply']) {
@@ -1345,6 +1409,8 @@ export class ChatMessage {
         const curUid = window.openvk ? window.openvk.current_id : (im ? im.state.getId() : 0);
         const fromId = attachments.from ? Number(attachments.from) : ((flags & 2) ? curUid : peer);
 
+        const isStickerMsg = (new_attachments && new_attachments.some(a => a && a.type === 'sticker')) ? 1 : 0;
+
         const msg = new ChatMessage({
             'id': id,
             'local_id': cmidFromLp,
@@ -1356,6 +1422,7 @@ export class ChatMessage {
             'peer_id': peer,
             'text': text,
             'attachments': new_attachments,
+            'is_sticker': isStickerMsg,
             'random_id': randomId,
             'reply_message': reply_message,
             'fwd_messages': fwd_messages,
@@ -1376,12 +1443,46 @@ export class ChatMessage {
     }
     async setAttachmentsFromLP(data) {
         let new_attachments = null;
-        if (data['attach1']) {
+        if (data && (data['attach1'] || data['attach1_type'])) {
             const temp_str = get_attachments_list_from_lp(data);
-            new_attachments = await resolve_attachments(temp_str);
+            if (temp_str.length > 0) {
+                try {
+                    new_attachments = await resolve_attachments(temp_str);
+                } catch (e) {
+                    console.error("resolve_attachments error:", e);
+                }
+            }
+
+            if (data['attach1_type'] === 'sticker' && (!new_attachments || new_attachments.length === 0)) {
+                const sId = parseInt(data['attach1']);
+                const localStk = typeof window.findStickerData === 'function' ? window.findStickerData(sId) : null;
+                if (localStk) {
+                    new_attachments = [{
+                        type: 'sticker',
+                        sticker: localStk
+                    }];
+                }
+            } else if (new_attachments && Array.isArray(new_attachments)) {
+                new_attachments.forEach(att => {
+                    if (att && att.type === 'sticker') {
+                        if (att.sticker && (att.sticker.id || att.sticker.sticker_id)) {
+                            window._stickersCache = window._stickersCache || new Map();
+                            window._stickersCache.set(Number(att.sticker.id || att.sticker.sticker_id), att.sticker);
+                        }
+                        if (!att.sticker?.photo_128 || !att.sticker?.images?.length) {
+                            const localStk = typeof window.findStickerData === 'function' ? window.findStickerData(att.sticker?.id || att.sticker?.sticker_id) : null;
+                            if (localStk) {
+                                att.sticker = { ...localStk, ...att.sticker };
+                            }
+                        }
+                    }
+                });
+            }
         }
 
-        this.data.attachments = new_attachments;
+        if (new_attachments) {
+            this.data.attachments = new_attachments;
+        }
 
         if (data && (data['fwd'] || data['fwd_messages']) && (!this.data.fwd_messages || this.data.fwd_messages.length === 0)) {
             const fwdRaw = data['fwd'] || data['fwd_messages'];

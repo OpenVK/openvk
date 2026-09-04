@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace openvk\Web\Models\Entities;
+namespace openvk\Web\Models\Entities\Messages;
 
 use Chandler\Database\DatabaseConnection as DB;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\User;
+use openvk\Web\Models\Repositories\Users;
 
 class StickerPack extends RowModel
 {
@@ -26,14 +27,43 @@ class StickerPack extends RowModel
     {
         $mainId = $this->getRecord()->main_sticker_id;
         if (!$mainId) {
-            $stickersList = iterator_to_array($this->getStickers(1, 2));
-
-            if (sizeof($stickersList) != 0) {
-                return new Sticker(DB::i()->getContext()->table("stickers")->get($stickersList[0]->getId()));
+            $first = DB::i()->getContext()->table("stickerpack_relations")
+                ->where("stickerpack", $this->getId())
+                ->order("id ASC")
+                ->fetch();
+            if (!$first) {
+                return null;
             }
+            $mainId = $first->sticker;
         }
 
-        return new Sticker(DB::i()->getContext()->table("stickers")->get($mainId));
+        $row = DB::i()->getContext()->table("stickers")->get($mainId);
+        if (!$row || $row->deleted) {
+            return null;
+        }
+
+        $s = new Sticker($row);
+        $s->setPackId($this->getId());
+        return $s;
+    }
+
+    public function canEdit(?\openvk\Web\Models\Entities\User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        return $this->getOwnerId() === $user->getId() && $user->canCreateStickers();
+    }
+
+    public function getFormat(): string
+    {
+        $main = $this->getMainSticker();
+        return $main ? $main->getFormat($this->getId()) : "webp";
     }
 
     public function getSlug(): string
@@ -77,6 +107,11 @@ class StickerPack extends RowModel
         return $this->getRecord()->author_id;
     }
 
+    public function getAuthorUrl(): ?string
+    {
+        return $this->getRecord()->author_url;
+    }
+
     public function getAuthorIds(): array
     {
         $csv = $this->getRecord()->author_id;
@@ -91,6 +126,70 @@ class StickerPack extends RowModel
     {
         $id = $this->getRecord()->owner_id;
         return is_null($id) ? null : (int) $id;
+    }
+
+    public function getOwner(): ?User
+    {
+        $ownerId = $this->getOwnerId();
+        if (!$ownerId) {
+            return null;
+        }
+
+        return (new Users())->get($ownerId);
+    }
+
+    public function getBalance(): float
+    {
+        return (float) ($this->getRecord()->coins ?? 0.0);
+    }
+
+    public function getCoins(): float
+    {
+        return $this->getBalance();
+    }
+
+    public function setCoins(float $coins): void
+    {
+        $this->stateChanges("coins", $coins);
+    }
+
+    public function addCoins(float $coins): float
+    {
+        $res = $this->getBalance() + $coins;
+        $this->setCoins($res);
+        $this->save();
+
+        return $res;
+    }
+
+    public function withdrawCoins(?float $amount = null): float
+    {
+        $balance = $this->getBalance();
+        if ($balance <= 0) {
+            return 0.0;
+        }
+
+        if ($amount === null) {
+            $amount = $balance;
+        } elseif ($amount <= 0 || $amount > $balance) {
+            return 0.0;
+        }
+
+        $taxPercent = (float) (OPENVK_ROOT_CONF["openvk"]["preferences"]["stickers"]["withdrawTax"] ?? 0);
+        $tax        = ($amount / 100) * $taxPercent;
+        $received   = $amount - $tax;
+
+        $owner = $this->getOwner();
+        if (!$owner) {
+            return 0.0;
+        }
+
+        $owner->setCoins($owner->getCoins() + $received);
+        $this->setCoins($balance - $amount);
+        $this->save();
+        $owner->save();
+
+        return $received;
     }
 
     public function getCreated(): int
@@ -109,8 +208,10 @@ class StickerPack extends RowModel
 
         foreach ($rels as $rel) {
             $stickerRec = DB::i()->getContext()->table("stickers")->get($rel->sticker);
-            if ($stickerRec) {
-                yield new Sticker($stickerRec);
+            if ($stickerRec && !$stickerRec->deleted) {
+                $s = new Sticker($stickerRec);
+                $s->setPackId($this->getId());
+                yield $s;
             }
         }
     }
@@ -122,9 +223,14 @@ class StickerPack extends RowModel
             ->count("*");
     }
 
+    public function isDeleted(): bool
+    {
+        return (bool) $this->getRecord()->deleted;
+    }
+
     public function isAvailable(): bool
     {
-        if ($this->getRecord()->deleted) {
+        if ($this->isDeleted()) {
             return false;
         }
 
@@ -147,6 +253,28 @@ class StickerPack extends RowModel
             ->where("stickerpack", $this->getId())
             ->where("purchased", 1)
             ->count("*") > 0;
+    }
+
+    public function hasBoughtBy(?User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        if ($this->getOwner() && $this->getOwner()->getId() === $user->getId()) {
+            return true;
+        }
+
+        $row = DB::i()->getContext()->table("sticker_purchases")
+            ->where("user", $user->getId())
+            ->where("stickerpack", $this->getId())
+            ->fetch();
+
+        if ($row && in_array((int) $row->purchased, [1, 2], true)) {
+            return true;
+        }
+
+        return false;
     }
 
     public function getPurchaseStatus(User $user): int
@@ -178,8 +306,20 @@ class StickerPack extends RowModel
             return false;
         }
 
-        if ($existing && (int) $existing->purchased === 2) {
-            $existing->update(["purchased" => 1]);
+        $isOwner = $this->getOwner() && $this->getOwner()->getId() === $user->getId();
+        $isPreviousPurchase = $existing && (int) $existing->purchased === 2;
+
+        // If previously bought or user is the author, install without deducting coins
+        if ($isOwner || $isPreviousPurchase) {
+            if ($existing) {
+                $existing->update(["purchased" => 1]);
+            } else {
+                DB::i()->getContext()->table("sticker_purchases")->insert([
+                    "user"        => $user->getId(),
+                    "stickerpack" => $this->getId(),
+                    "purchased"   => 1,
+                ]);
+            }
             return true;
         }
 
@@ -193,13 +333,18 @@ class StickerPack extends RowModel
         if ($price > 0) {
             $user->setCoins($coins - $price);
             $user->save();
+            $this->addCoins((float) $price);
         }
 
-        DB::i()->getContext()->table("sticker_purchases")->insert([
-            "user"       => $user->getId(),
-            "stickerpack" => $this->getId(),
-            "purchased"  => 1,
-        ]);
+        if ($existing) {
+            $existing->update(["purchased" => 1]);
+        } else {
+            DB::i()->getContext()->table("sticker_purchases")->insert([
+                "user"        => $user->getId(),
+                "stickerpack" => $this->getId(),
+                "purchased"   => 1,
+            ]);
+        }
 
         return true;
     }
@@ -214,6 +359,26 @@ class StickerPack extends RowModel
         if ($existing && (int) $existing->purchased === 1) {
             $existing->update(["purchased" => 2]);
         }
+    }
+
+    public function uninstall(User $user): bool
+    {
+        $existing = DB::i()->getContext()->table("sticker_purchases")
+            ->where("user", $user->getId())
+            ->where("stickerpack", $this->getId())
+            ->fetch();
+
+        if (!$existing) {
+            return false;
+        }
+
+        if ($this->getPrice() > 0 || ($this->getOwner() && $this->getOwner()->getId() === $user->getId())) {
+            $existing->update(["purchased" => 2]);
+        } else {
+            $existing->delete();
+        }
+
+        return true;
     }
 
     public function giftTo(User $from, User $to): void
@@ -291,6 +456,11 @@ class StickerPack extends RowModel
         $this->stateChanges("author_id", $authorId);
     }
 
+    public function setAuthorUrl(?string $authorUrl): void
+    {
+        $this->stateChanges("author_url", $authorUrl);
+    }
+
     public function setOwnerId(?int $ownerId): void
     {
         $this->stateChanges("owner_id", $ownerId);
@@ -333,6 +503,22 @@ class StickerPack extends RowModel
 
     public function delete(bool $softly = true): void
     {
+        $dir = OPENVK_ROOT . "/storage/stickers/" . $this->getId();
+        if (is_dir($dir)) {
+            $items = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS),
+                \RecursiveIteratorIterator::CHILD_FIRST
+            );
+            foreach ($items as $item) {
+                $item->isDir() ? @rmdir($item->getRealPath()) : @unlink($item->getRealPath());
+            }
+            @rmdir($dir);
+        }
+
+        DB::i()->getContext()->table("stickerpack_relations")
+            ->where("stickerpack", $this->getId())
+            ->delete();
+
         parent::delete($softly);
     }
 

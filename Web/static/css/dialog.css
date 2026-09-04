@@ -105,7 +105,7 @@ body.manyMsgs .ovk-msg-all:last-of-type {
     background: unset;
     box-shadow: unset;
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
 }
 
 .ovk-photo-view-dimmer.mode-tg .ovk-photo-view .photo_com_title {
