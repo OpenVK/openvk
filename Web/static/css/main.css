@@ -99,18 +99,19 @@ h1 {
     justify-content: space-between;
 }
 
-.layout {
+.layout,
+#page_layout {
     width: 791px;
     margin: 0 auto;
 }
 
 .page_header {
     position: relative;
-    width: 791px;
+    width: 100%;
     height: 43px;
     background: url('../img/header.png');
     background-repeat: no-repeat;
-    background-position: 0;
+    background-position: -9999px -9999px !important;
 }
 
 @media only screen and (-webkit-device-pixel-ratio >=1.25),
@@ -119,16 +120,79 @@ only screen and (resolution >=1.25dppx) {
     .page_header {
         background: url('../img/header_2x.png');
         background-repeat: no-repeat;
-        background-size: 100% 100%;
+        background-position: -9999px -9999px !important;
     }
 
     .page_custom_header {
         background: url('../img/header_custom_2x.png');
         background-repeat: no-repeat;
-        background-size: 100% 100%;
+        background-position: -9999px -9999px !important;
     }
 }
 
+.page_header>.back,
+.p_head>.back,
+.page_header>.left,
+.p_head>.left,
+.page_header>.right,
+.p_head>.right {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background-image: inherit;
+    background-size: 791px 100%;
+    pointer-events: none;
+}
+
+.page_header>.back,
+.p_head>.back {
+    left: 0;
+    right: 0;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.page_header>.back::before,
+.p_head>.back::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-image: inherit;
+    background-size: 791px 100%;
+    background-position: -300px 0;
+    background-repeat: no-repeat;
+    transform: scaleX(10000);
+    transform-origin: 0 0;
+}
+
+.page_header>.left,
+.p_head>.left {
+    left: 0;
+    width: 175px;
+    background-position: left top;
+    background-repeat: no-repeat;
+    z-index: 2;
+}
+
+.page_header>.right,
+.p_head>.right {
+    right: 0;
+    width: 20px;
+    background-position: right top;
+    background-repeat: no-repeat;
+    z-index: 2;
+}
+
+.page_header>.content,
+.p_head>.content {
+    position: relative;
+    z-index: 3;
+    height: 100%;
+    padding: 0;
+}
 
 .page_header .mobile_title,
 #fast_notifications,
@@ -144,6 +208,7 @@ only screen and (resolution >=1.25dppx) {
 
 .page_custom_header {
     background: url('../img/header_custom.png');
+    background-position: -9999px -9999px !important;
 }
 
 #page_act {
@@ -156,6 +221,8 @@ only screen and (resolution >=1.25dppx) {
 
 .home_button {
     position: absolute;
+    left: 0;
+    top: 0;
     width: 145px;
     height: 42px;
 }
