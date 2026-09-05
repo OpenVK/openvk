@@ -233,6 +233,13 @@ final class Wall extends VKAPIRequestHandler
                 $post_temp_obj->geo = $post->getVkApiGeo();
             }
 
+            $viewsCount = $post->getViews();
+            if ($viewsCount !== null) {
+                $post_temp_obj->views = (object) [
+                    "count" => $viewsCount
+                ];
+            }
+
             $items[] = $post_temp_obj;
 
             if ($from_id > 0) {
@@ -455,6 +462,13 @@ final class Wall extends VKAPIRequestHandler
                         "user_reposted" => 0,
                     ],
                 ];
+
+                $viewsCount = $post->getViews();
+                if ($viewsCount !== null) {
+                    $post_temp_obj->views = (object) [
+                        "count" => $viewsCount
+                    ];
+                }
 
                 if ($post->hasSource()) {
                     $post_temp_obj->copyright = $post->getVkApiCopyright();
