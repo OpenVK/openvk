@@ -169,6 +169,10 @@ final class GroupPresenter extends OpenVKPresenter
         if ($club->isEvent() && !$club->isEventOver() && (int) $this->postParam("flag") == 1) {
             $flag = 1;
         }
+        
+        if ($club->isClosed() && !$club->isPrivate() && !$club->getSubscriptionStatus($this->user->identity)) {
+            $flag = 1;
+        }
 
         $club->toggleSubscription($this->user->identity, $flag);
 

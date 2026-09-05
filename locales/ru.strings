@@ -378,6 +378,8 @@
 "subscriptions" = "Подписки";
 "join_community" = "Вступить в группу";
 "leave_community" = "Выйти из группы";
+"clubs_sumbit_request" = "Отправить заявку";
+"clubs_cancel_request" = "Отменить заявку";
 "check_community" = "Просмотр группы";
 "add_to_list_event" = "Добавить в список";
 "ill_come_to_meeting" = "Я приду";

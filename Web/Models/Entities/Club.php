@@ -254,22 +254,24 @@ class Club extends RowModel
 
     public function isSubscriptionAccepted(User $user): bool
     {
-        return !is_null($this->getRecord()->related("subscriptions.follower")->where([
-            "follower" => $this->getId(),
-            "target"   => $user->getId(),
+        return $this->getRecord()->related("subscriptions.target")->where([
+            "follower" => $user->getId(),
+            "target"   => $this->getId(),
+            "model"    => static::class,
             "flags"    => 0
-        ])->fetch());
+        ])->count("*") === 1;
         ;
     }
 
     public function isJoinRequestSent(User $user): bool
     {
         if ($this->isClosed()) {
-            return !is_null($this->getRecord()->related("subscriptions.follower")->where([
-                "follower" => $this->getId(),
-                "target"   => $user->getId(),
+            return $this->getRecord()->related("subscriptions.target")->where([
+                "follower" => $user->getId(),
+                "target"   => $this->getId(),
+                "model"    => static::class,
                 "flags"    => 1
-            ])->fetch());
+            ])->count("*") === 1;
         } else {
             return false;
         }
