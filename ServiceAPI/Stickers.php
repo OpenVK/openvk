@@ -130,30 +130,38 @@ class Stickers implements Handler
 
         $stickersList = [];
         foreach ($pack->getStickers(-1) as $s) {
+            $isLottie = ($s->getFormat($pack->getId()) === "lottie");
             $stickersList[] = [
-                "id"     => $s->getId(),
-                "emoji"  => $s->getEmoji(),
-                "url"    => $s->getImageUrl(128, $pack->getId()),
-                "url512" => $s->getImageUrl(512, $pack->getId()),
+                "id"          => $s->getId(),
+                "emoji"       => $s->getEmoji(),
+                "url"         => $s->getImageUrl(128, $pack->getId()),
+                "url512"      => $s->getImageUrl(512, $pack->getId()),
+                "is_animated" => $isLottie,
+                "anim_url"    => $isLottie ? $s->getAnimationUrl($pack->getId()) : null,
             ];
         }
 
+        $coverIsLottie = $cover && ($cover->getFormat($pack->getId()) === "lottie");
+
         $resolve([
-            "id"          => $pack->getId(),
-            "name"        => $pack->getName(),
-            "slug"        => $pack->getSlug(),
-            "description" => $pack->getDescription() ?? "",
-            "price"       => $pack->getPrice(),
-            "author"      => $pack->getAuthor() ?? "",
-            "author_url"  => $pack->getAuthorUrl() ?? "",
-            "cover_url"   => $cover ? $cover->getImageUrl(512, $pack->getId()) : null,
-            "isPurchased" => $isPurchased,
-            "isBought"    => $isBought,
-            "isOwner"     => $isOwner,
-            "canEdit"     => $pack->canEdit($this->user),
-            "isAuthorized"=> (bool) $this->user,
-            "stickers"    => $stickersList,
-            "count"       => count($stickersList),
+            "id"                => $pack->getId(),
+            "name"              => $pack->getName(),
+            "slug"              => $pack->getSlug(),
+            "description"       => $pack->getDescription() ?? "",
+            "price"             => $pack->getPrice(),
+            "author"            => $pack->getAuthor() ?? "",
+            "author_url"        => $pack->getAuthorUrl() ?? "",
+            "cover_url"         => $cover ? $cover->getImageUrl(512, $pack->getId()) : null,
+            "cover_is_animated" => $coverIsLottie,
+            "cover_anim_url"    => $coverIsLottie ? $cover->getAnimationUrl($pack->getId()) : null,
+            "is_animated"       => ($pack->getFormat() === "lottie"),
+            "isPurchased"       => $isPurchased,
+            "isBought"          => $isBought,
+            "isOwner"           => $isOwner,
+            "canEdit"           => $pack->canEdit($this->user),
+            "isAuthorized"      => (bool) $this->user,
+            "stickers"          => $stickersList,
+            "count"             => count($stickersList),
         ]);
     }
 

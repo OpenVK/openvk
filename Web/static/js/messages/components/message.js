@@ -1,6 +1,7 @@
 import { WriteBar, formatTime, formatDate, getTimeFormatOptions, getAppLocale } from './common.js';
-import { html, render } from './render.js';
+import { html, render, Component } from './render.js';
 import { ChatMessage } from './messages.js';
+import { MessageMakimaGrid } from './makima_grid.js';
 
 function isSelected(msg) {
     const view = window.im?.messenger;
@@ -43,15 +44,15 @@ export const ForwardedMessages = ({ msg, depth = 0, inModal = false }) => {
         <div class="fwd-messages-container depth-${depth}">
             ${depth === 0 ? html`<div class="fwd-messages-count">${tr("forwarded_messages_noun", fwdList.length)}</div>` : null}
             ${fwdList.map((fwd) => {
-                const fwdSender = fwd.sender || (window.im?.cached_profiles && window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(fwd.from_id || fwd.data?.from_id));
-                const fwdName = fwdSender?.getName ? fwdSender.getName() : (fwd.from_id ? "id" + fwd.from_id : "...");
-                const fwdAva = fwdSender?.getAvatar ? fwdSender.getAvatar("mid", false) : "/assets/packages/static/openvk/img/camera_50.png";
+        const fwdSender = fwd.sender || (window.im?.cached_profiles && window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(fwd.from_id || fwd.data?.from_id));
+        const fwdName = fwdSender?.getName ? fwdSender.getName() : (fwd.from_id ? "id" + fwd.from_id : "...");
+        const fwdAva = fwdSender?.getAvatar ? fwdSender.getAvatar("mid", false) : "/assets/packages/static/openvk/img/camera_50.png";
 
-                const childFwds = typeof fwd.getFwdMessages === "function" ? fwd.getFwdMessages() : null;
-                const hasChildren = Boolean(childFwds && childFwds.length > 0);
-                const isLastInTree = inModal ? (depth >= 9 && Boolean(fwd.data?.has_fwd_messages || fwd.data?.forward_messages)) : (depth >= 9 || !hasChildren);
+        const childFwds = typeof fwd.getFwdMessages === "function" ? fwd.getFwdMessages() : null;
+        const hasChildren = Boolean(childFwds && childFwds.length > 0);
+        const isLastInTree = inModal ? (depth >= 9 && Boolean(fwd.data?.has_fwd_messages || fwd.data?.forward_messages)) : (depth >= 9 || !hasChildren);
 
-                return html`
+        return html`
                     <div class="fwd-message-block">
                         <div class="fwd-message-head">
                             <a href="/id${fwd.from_id || fwd.data?.from_id}" target="_blank" class="fwd-avatar-link">
@@ -66,21 +67,19 @@ export const ForwardedMessages = ({ msg, depth = 0, inModal = false }) => {
                         </div>
                         <div class="fwd-text" dangerouslySetInnerHTML=${{ __html: typeof fwd.getText === "function" ? fwd.getText(false) : (fwd.data?.text || fwd.text || "") }} />
                         ${fwd.getAttachments && fwd.getAttachments().length > 0 && html`
-                            <div class="attachments">
-                                ${fwd.getAttachments().map((att) => html`<${Attachment} msg=${fwd} att=${att} />`)}
-                            </div>
+                            <${MessageAttachments} msg=${fwd} depth=${depth + 1} />
                         `}
                         ${depth < 9 ? html`<${ForwardedMessages} msg=${fwd} depth=${depth + 1} inModal=${inModal} />` : null}
                         ${isLastInTree ? html`
                             <div class="fwd-open-modal-wrap">
                                 <a class="fwd-open-modal-link" href="javascript:void(0)" onClick=${(e) => { e.preventDefault(); openForwardedMessageModal(fwd); }}>
-                                    ${tr("open_message") || "Открыть сообщение"}
+                                    ${tr("open_message")}
                                 </a>
                             </div>
                         ` : null}
                     </div>
                 `;
-            })}
+    })}
         </div>
     `;
 };
@@ -220,9 +219,9 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                 } catch (err) {
                     console.error(err);
                 }
-            }} class="star-icon ${(msg.data?.important || (msg.data?.flags & 8)) ? 'active' : ''}" title="${(msg.data?.important || (msg.data?.flags & 8)) ? (tr('unmark_important') || 'Снять отметку важного') : (tr('mark_important') || 'Пометить как важное')}"></div>
+            }} class="star-icon ${(msg.data?.important || (msg.data?.flags & 8)) ? 'active' : ''}" title="${(msg.data?.important || (msg.data?.flags & 8)) ? tr('unmark_important') : tr('mark_important')}"></div>
                 ${msg.can("viewers") && html`
-                    <div onClick=${(e) => { window.im.messenger.view.onViewersButtonClick(e, msg) }} class="viewers-icon" title="${tr('message_viewers') || 'Кто прочитал'}"></div>
+                    <div onClick=${(e) => { window.im.messenger.view.onViewersButtonClick(e, msg) }} class="viewers-icon" title="${tr('message_viewers')}"></div>
                 `}
                 ${msg.can("edit") && html`
                     <div onClick=${(e) => { window.im.messenger.view.onEditButtonClick(e, msg) }} class="edit-icon"></div>
@@ -287,7 +286,9 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                 ${isDeleted ? html`
                     <p class="normalText text msg-deleted-content">
                         <span class="msg-deleted-label">${tr('message_is_deleted')}</span>
-                        <a class="msg-restore-btn" onClick=${(e) => { window.im.messenger.view.onRestoreMessageClick(msg, e) }}>${tr('restore') || 'Восстановить'}</a>
+                        ${(typeof msg.can === 'function' ? msg.can('restore') : msg.isMine()) && html`
+                            <a class="msg-restore-btn" onClick=${(e) => { window.im.messenger.view.onRestoreMessageClick(msg, e) }}>${tr('restore')}</a>
+                        `}
                     </p>
                 ` : html`
                     <p dangerouslySetInnerHTML=${{ __html: msg.getText(false) }} class="normalText text" />
@@ -298,9 +299,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                     <p class="modificator-pinned">${tr('pinned_action_past')}</p>
                 </p>
                 ${!isDeleted && msg.getAttachments() && msg.getAttachments().length > 0 && html`
-                    <div class="attachments">
-                    ${msg.getAttachments().map((att) => html`<${Attachment} msg=${msg} att=${att} />`)}
-                    </div>
+                    <${MessageAttachments} msg=${msg} depth=${0} />
                 `}
                 ${!isDeleted && html`<${ForwardedMessages} msg=${msg} depth=${0} />`}
                 ${!isDeleted && msg.has_not_loaded_attachments == true && html`
@@ -324,7 +323,7 @@ export const SystemMessages = {
         if (chat_title && chat_title !== "undefined") {
             text = tr("event_chat_creation_" + gender, chat_title);
         } else {
-            text = tr("event_chat_creation_no_title_" + gender) || tr("event_chat_creation_" + gender) || tr("event_chat_create_impersonal");
+            text = tr("event_chat_creation_no_title_" + gender);
         }
         return html`
             <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
@@ -344,7 +343,7 @@ export const SystemMessages = {
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
-        const text = tr("event_chat_pin_message_" + gender) || tr("event_chat_pin_message_impersonal") || "закрепил сообщение";
+        const text = tr("event_chat_pin_message_" + gender);
         return html`
             <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
@@ -363,7 +362,7 @@ export const SystemMessages = {
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
-        const text = tr("event_chat_unpin_message_" + gender) || tr("event_chat_unpin_message_impersonal") || "открепил сообщение";
+        const text = tr("event_chat_unpin_message_" + gender);
         return html`
             <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
@@ -383,7 +382,7 @@ export const SystemMessages = {
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
         const title = (msg.data?.action?.text || msg.action?.text || "").trim();
-        const text = tr("event_chat_title_update_" + gender, title) || `изменил название беседы на «${title}»`;
+        const text = tr("event_chat_title_update_" + gender, title);
         return html`
             <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
@@ -402,7 +401,7 @@ export const SystemMessages = {
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
-        const text = tr("event_chat_photo_update_" + gender) || "обновил фотографию беседы";
+        const text = tr("event_chat_photo_update_" + gender);
         return html`
             <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
@@ -421,7 +420,7 @@ export const SystemMessages = {
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
-        const text = tr("event_chat_photo_remove_" + gender) || "удалил фотографию беседы";
+        const text = tr("event_chat_photo_remove_" + gender);
         return html`
             <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
@@ -442,7 +441,7 @@ export const SystemMessages = {
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
         const mid = msg.data?.action?.member_id ?? msg.data?.action_mid;
         if (sender && mid == sender.id) {
-            const text = tr("event_chat_invite_user_self_" + gender) || "вернулся в беседу";
+            const text = tr("event_chat_invite_user_self_" + gender);
             return html`
                 <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                     <div>
@@ -458,7 +457,7 @@ export const SystemMessages = {
 
         const targetProf = window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached ? window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(mid) : window.im?.cached_profiles?._findCachedProfileById(mid);
         const targetName = targetProf?.getName ? targetProf.getName() : (mid ? `id${mid}` : "...");
-        const verb = tr("event_chat_invite_user_verb_" + gender) || (gender === "female" ? "пригласила" : gender === "neutral" ? "пригласили" : "пригласил");
+        const verb = tr("event_chat_invite_user_verb_" + gender);
 
         return html`
             <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
@@ -481,7 +480,7 @@ export const SystemMessages = {
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
-        const text = tr("event_chat_invite_user_by_link_" + gender) || "присоединился к беседе по ссылке";
+        const text = tr("event_chat_invite_user_by_link_" + gender);
         return html`
             <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
@@ -502,7 +501,7 @@ export const SystemMessages = {
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
         const mid = msg.data?.action?.member_id ?? msg.data?.action_mid;
         if (sender && mid == sender.id) {
-            const text = tr("event_chat_kick_user_self_" + gender) || "покинул беседу";
+            const text = tr("event_chat_kick_user_self_" + gender);
             return html`
                 <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                     <div>
@@ -518,7 +517,7 @@ export const SystemMessages = {
 
         const targetProf = window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached ? window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(mid) : window.im?.cached_profiles?._findCachedProfileById(mid);
         const targetName = targetProf?.getName ? targetProf.getName() : (mid ? `id${mid}` : "...");
-        const verb = tr("event_chat_kick_user_verb_" + gender) || (gender === "female" ? "исключила" : gender === "neutral" ? "исключили" : "исключил");
+        const verb = tr("event_chat_kick_user_verb_" + gender);
 
         return html`
             <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
@@ -1061,6 +1060,107 @@ export const AudioAttachment = ({ audio }) => {
     `;
 };
 
+export const MessageAttachments = ({ msg, attachments = null, depth = 0 }) => {
+    const list = attachments || (typeof msg?.getAttachments === 'function' ? msg.getAttachments() : (msg?.data?.attachments || msg?.attachments || []));
+    if (!list || list.length === 0) return null;
+
+    const visual = [];
+    const others = [];
+
+    list.forEach(att => {
+        if (!att) return;
+        if ((att.type === 'photo' && att.photo) || (att.type === 'video' && att.video)) {
+            visual.push(att);
+        } else {
+            others.push(att);
+        }
+    });
+
+    return html`
+        <div class="msg-attachments-container">
+            ${visual.length > 0 && html`
+                <${MessageMakimaGrid} visualItems=${visual} msg=${msg} depth=${depth} />
+            `}
+            ${others.length > 0 && html`
+                <div class="attachments">
+                    ${others.map((att) => html`<${Attachment} msg=${msg} att=${att} />`)}
+                </div>
+            `}
+        </div>
+    `;
+};
+
+export class LottieSticker extends Component {
+    constructor(props) {
+        super(props);
+        this.containerRef = null;
+        this.anim = null;
+    }
+
+    componentDidMount() {
+        this.loadAnim();
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.url !== this.props.url) {
+            this.loadAnim();
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.anim) {
+            try { this.anim.destroy(); } catch (e) {}
+            this.anim = null;
+        }
+    }
+
+    loadAnim() {
+        if (this.anim) {
+            try { this.anim.destroy(); } catch (e) {}
+            this.anim = null;
+        }
+        if (!this.containerRef || !this.props.url) return;
+        const lottie = window.lottie;
+        if (!lottie) {
+            console.warn("Lottie library is not available on window.lottie");
+            return;
+        }
+
+        try {
+            this.anim = lottie.loadAnimation({
+                container: this.containerRef,
+                renderer: 'svg',
+                loop: true,
+                autoplay: true,
+                path: this.props.url
+            });
+        } catch (e) {
+            console.error("Failed to load Lottie animation:", e);
+        }
+    }
+
+    handleClick(e) {
+        e.stopPropagation();
+        if (this.anim) {
+            this.anim.goToAndPlay(0, true);
+        }
+    }
+
+    render() {
+        const { stickerId, width = 160, height = 160 } = this.props;
+        return html`
+            <div 
+                class="msg-attach-w msg-attach-w-sticker msg-attach-w-lottie msg-lottie-sticker"
+                ref=${(el) => { this.containerRef = el; }}
+                onClick=${(e) => this.handleClick(e)}
+                data-sticker-id="${stickerId}"
+                title="Click to replay"
+                style="width: ${width}px; height: ${height}px; max-width: 100%; cursor: pointer;"
+            ></div>
+        `;
+    }
+}
+
 const Attachment = ({ msg, att }) => {
     switch (att.type) {
         case 'photo':
@@ -1109,6 +1209,22 @@ const Attachment = ({ msg, att }) => {
                 const found = window.findStickerData(sId);
                 if (found) stk = { ...found, ...stk };
             }
+
+            let animUrl = stk.animation_url || (stk.animations && stk.animations[0]?.url) || '';
+            if (!animUrl && stk.photo_128 && stk.photo_128.endsWith('.json')) {
+                animUrl = stk.photo_128;
+            }
+            if (!animUrl && stk.product_id && sId && stk.is_animated) {
+                animUrl = `/sticker/${stk.product_id}/${sId}_512.json`;
+            }
+
+            if (animUrl) {
+                if (window.location.protocol === 'https:' && animUrl.startsWith('http://')) {
+                    animUrl = animUrl.replace(/^http:\/\//i, 'https://');
+                }
+                return html`<${LottieSticker} url=${animUrl} stickerId=${sId} />`;
+            }
+
             let imgUrl = stk.photo_256 || stk.photo_512 || stk.photo_128 || (stk.images && stk.images[2] ? stk.images[2].url : (stk.images && stk.images[0] ? stk.images[0].url : (stk.product_id && sId ? `/sticker/${stk.product_id}/${sId}_128.webp` : '')));
             if (imgUrl && window.location.protocol === 'https:' && imgUrl.startsWith('http://')) {
                 imgUrl = imgUrl.replace(/^http:\/\//i, 'https://');
@@ -1151,16 +1267,16 @@ export const DayChunkView = ({ chunk, page, unreadMsgId }) => {
     <div class="messenger-app--messages-day">
         <${DayDivider} day=${chunk.day} date=${chunkDate} idate=${chunk.idate} />
         ${chunk.messages.map((msg, idx) => {
-            const isTargetUnread = unreadMsgId && (Number(msg.id) === Number(unreadMsgId) || Number(msg.conversation_message_id) === Number(unreadMsgId));
-            return html`
+        const isTargetUnread = unreadMsgId && (Number(msg.id) === Number(unreadMsgId) || Number(msg.conversation_message_id) === Number(unreadMsgId));
+        return html`
                 ${isTargetUnread ? html`
                     <div class="im-unread-divider" id="im_unread_divider">
-                        <span class="im-unread-divider-text">${tr("unread_messages") || "Непрочитанные сообщения"}</span>
+                        <span class="im-unread-divider-text">${tr("unread_messages")}</span>
                     </div>
                 ` : null}
                 <${MessageBubble} key=${msg.id || msg.conversation_message_id || idx} msg=${msg} index=${idx} chunk=${chunk} page=${page} />
             `;
-        })}
+    })}
     </div>
     `;
 };
@@ -1193,7 +1309,7 @@ export const MessageListView = ({ dayDividedChunks, convo, page }) => {
          ` : html`
             ${!hasMessages ? html`
                 <div class="messenger-app--no-messages">
-                    <p>${tr('no_messages_in_chat') || "Здесь пока нет сообщений."}</p>
+                    <p>${tr('no_messages_in_chat')}</p>
                 </div>
             ` : html`
                 ${dayDividedChunks.map((chunk, cidx) => html`<${DayChunkView} key=${chunk.readable_date || chunk.idate || cidx} chunk=${chunk} page=${page} unreadMsgId=${unreadMsgId} />`)}
@@ -1233,11 +1349,9 @@ export const ForwardedModalView = ({ msg, isLoading = false }) => {
                 </div>
                 <div class="fwd-text" dangerouslySetInnerHTML=${{ __html: textHtml }} />
                 ${attachments && attachments.length > 0 && html`
-                    <div class="attachments">
-                        ${attachments.map((att) => html`<${Attachment} msg=${msg} att=${att} />`)}
-                    </div>
+                    <${MessageAttachments} msg=${msg} attachments=${attachments} depth=${0} />
                 `}
-                ${isLoading && html`<div class="fwd-modal-loading" style="padding: 8px; text-align: center; color: var(--text-muted, #828a99);">${tr("loading") || "Загрузка..."}</div>`}
+                ${isLoading && html`<div class="fwd-modal-loading" style="padding: 8px; text-align: center; color: var(--text-muted, #828a99);">${tr("loading")}</div>`}
                 <${ForwardedMessages} msg=${msg} depth=${0} inModal=${true} />
             </div>
         </div>

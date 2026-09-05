@@ -1,5 +1,6 @@
 import { html } from './render.js';
 import { formatTime } from './common.js';
+import { LottieSticker } from './message.js';
 
 /**
  * Universal drag handler for floating fastchat windows
@@ -274,7 +275,7 @@ export const FastChatBox = ({
         return html`
                         ${isTargetUnread ? html`
                             <div class="fc_unread_divider" id="fc_unread_${chat.peerId}">
-                                <span class="fc_unread_divider_text">${tr('unread_messages') || 'Непрочитанные сообщения'}</span>
+                                <span class="fc_unread_divider_text">${tr('unread_messages')}</span>
                             </div>
                         ` : null}
                         <div class="fc_msg_row" data-msg-id="${msg.id}">
@@ -294,6 +295,22 @@ export const FastChatBox = ({
                                                 const found = window.findStickerData(sId);
                                                 if (found) stk = { ...found, ...stk };
                                             }
+
+                                            let animUrl = stk.animation_url || (stk.animations && stk.animations[0]?.url) || '';
+                                            if (!animUrl && stk.photo_128 && stk.photo_128.endsWith('.json')) {
+                                                animUrl = stk.photo_128;
+                                            }
+                                            if (!animUrl && stk.product_id && sId && stk.is_animated) {
+                                                animUrl = `/sticker/${stk.product_id}/${sId}_512.json`;
+                                            }
+
+                                            if (animUrl) {
+                                                if (window.location.protocol === 'https:' && animUrl.startsWith('http://')) {
+                                                    animUrl = animUrl.replace(/^http:\/\//i, 'https://');
+                                                }
+                                                return html`<div class="fc_msg_sticker"><${LottieSticker} url=${animUrl} stickerId=${sId} width=${110} height=${110} /></div>`;
+                                            }
+
                                             let img = stk.photo_128 || stk.photo_256 || (stk.images && stk.images[0]?.url) || (stk.product_id && sId ? `/sticker/${stk.product_id}/${sId}_128.webp` : '');
                                             if (img && window.location.protocol === 'https:' && img.startsWith('http://')) {
                                                 img = img.replace(/^http:\/\//i, 'https://');

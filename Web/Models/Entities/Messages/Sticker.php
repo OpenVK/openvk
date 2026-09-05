@@ -184,6 +184,16 @@ class Sticker extends Attachable
         return "/sticker/" . $pid . "/" . $this->getId() . "_" . $size . "." . $ext;
     }
 
+    public function getAnimationUrl(?int $packId = null): ?string
+    {
+        $pid = $packId ?? $this->getPackId() ?? 0;
+        if ($this->getFormat($pid) === "lottie") {
+            return "/sticker/" . $pid . "/" . $this->getId() . "_512.json";
+        }
+
+        return null;
+    }
+
     public function hasOutline(): bool
     {
         $path = $this->getStorageDir();
@@ -225,8 +235,17 @@ class Sticker extends Attachable
             return true;
         }
 
-        // 2. Lottie animation (JSON): stub for Lottie support, keep as is
-        if ($mime === "application/json" || $ext === "json" || $ext === "tgs") {
+        // 2. Lottie animation (JSON / TGS)
+        if ($ext === "tgs") {
+            $content = @file_get_contents($file);
+            $decompressed = $content ? @gzdecode($content) : false;
+            if ($decompressed !== false) {
+                file_put_contents($dir . "sticker.json", $decompressed);
+                return true;
+            }
+        }
+
+        if ($mime === "application/json" || $ext === "json") {
             copy($file, $dir . "sticker.json");
             return true;
         }
@@ -330,7 +349,15 @@ class Sticker extends Attachable
         ];
 
         if ($format === "lottie") {
-            $data["animation_url"] = $server_url . "/sticker/" . $pid . "/" . $this->getId() . "_512.json";
+            $animUrl = $server_url . "/sticker/" . $pid . "/" . $this->getId() . "_512.json";
+            $data["animation_url"] = $animUrl;
+            $data["is_animated"]   = true;
+            $data["animations"]    = [
+                [
+                    "type" => "light",
+                    "url"  => $animUrl,
+                ],
+            ];
         }
 
         return $data;

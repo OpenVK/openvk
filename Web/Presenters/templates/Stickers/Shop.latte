@@ -66,8 +66,15 @@
                 {var $cardUrl = $act === 'author' ? ('/stickers/edit/' . $pack->getId()) : ('/stickers/' . $pack->getSlug())}
                 <div class="stickers_pack_card">
                     <a href="{$cardUrl}" class="stickers_pack_thumb" {if $act !== 'author'}onclick="openStickerPackModal({$pack->getSlug()}, event);"{/if}>
-                        <img n:if="$pack->getMainSticker()" src="{$pack->getMainSticker()->getImageUrl(512)}" alt="{$pack->getName()}" />
-                        <div n:if="!$pack->getMainSticker()" class="stickers_modal_cover_placeholder"></div>
+                        {if $pack->getMainSticker()}
+                            {if $pack->getMainSticker()->getFormat($pack->getId()) === 'lottie'}
+                                <div class="stickers_pack_thumb_lottie" data-anim-url="{$pack->getMainSticker()->getAnimationUrl($pack->getId())}"></div>
+                            {else}
+                                <img src="{$pack->getMainSticker()->getImageUrl(512)}" alt="{$pack->getName()}" />
+                            {/if}
+                        {else}
+                            <div class="stickers_modal_cover_placeholder"></div>
+                        {/if}
                     </a>
 
                     <div class="stickers_pack_name">
@@ -144,6 +151,9 @@
 
     <script>
         window.stickersWithdrawTax = {floatval($withdrawTax ?? 0)};
+        if (typeof window.initStaticLottieStickers === 'function') {
+            window.initStaticLottieStickers();
+        }
     </script>
     {if !empty($autoOpenPack)}
         <script>

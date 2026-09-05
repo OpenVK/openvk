@@ -28,8 +28,15 @@
         <table class="stickers_view_table">
             <tr>
                 <td class="stickers_view_icon_cell">
-                    <img n:if="$pack->getMainSticker()" src="{$pack->getMainSticker()->getImageUrl(128)}" alt="{$pack->getName()}" width="96" height="96" class="stickers_view_main_icon" />
-                    <div n:if="!$pack->getMainSticker()" class="stickers_view_icon_empty"></div>
+                    {if $pack->getMainSticker()}
+                        {if $pack->getMainSticker()->getFormat($pack->getId()) === 'lottie'}
+                            <div class="stickers-lottie-container stickers_view_main_icon_lottie" data-anim-url="{$pack->getMainSticker()->getAnimationUrl($pack->getId())}" style="width: 96px; height: 96px;"></div>
+                        {else}
+                            <img src="{$pack->getMainSticker()->getImageUrl(128)}" alt="{$pack->getName()}" width="96" height="96" class="stickers_view_main_icon" />
+                        {/if}
+                    {else}
+                        <div class="stickers_view_icon_empty"></div>
+                    {/if}
                 </td>
                 <td class="stickers_view_info_cell">
                     <div class="stickers_view_title">
@@ -104,7 +111,11 @@
                     <div class="stickers_view_item"
                          title="{$stk->getEmoji() ? $stk->getEmoji() : ''}">
                         <div class="stickers_view_item_thumb">
-                            <img src="{$stk->getImageUrl(128)}" class="stickers_view_item_img" alt="" />
+                            {if $stk->getFormat($pack->getId()) === 'lottie'}
+                                <div class="stickers-lottie-container" data-anim-url="{$stk->getAnimationUrl($pack->getId())}" style="width: 64px; height: 64px;"></div>
+                            {else}
+                                <img src="{$stk->getImageUrl(128)}" class="stickers_view_item_img" alt="" />
+                            {/if}
                         </div>
                         <div class="normalText text stickers_view_item_emojis" n:if="$stk->getEmoji()">
                             {$stk->getFormattedEmoji()|noescape}

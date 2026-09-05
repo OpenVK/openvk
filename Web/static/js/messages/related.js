@@ -265,7 +265,10 @@ async function imSwitchCurrent() {
 }
 
 async function openChatTopic(event, prettyId) {
-    toggleUnclickability(event.target, true);
+    window.router.route({
+        "url": "/im?join=" + prettyId + "&act=topic"
+    });
+    /*toggleUnclickability(event.target, true);
 
     const group_id = prettyId.split("_")[0];
     const topic_id = prettyId.split("_")[1];
@@ -280,7 +283,7 @@ async function openChatTopic(event, prettyId) {
         fastError(e)
     }
 
-    toggleUnclickability(event.target, false);
+    toggleUnclickability(event.target, false);*/
 }
 
 class DaySwitcher {

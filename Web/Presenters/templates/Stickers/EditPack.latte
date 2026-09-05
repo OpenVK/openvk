@@ -128,7 +128,11 @@
                     {foreach $existingStickers as $stk}
                         <div class="existing_sticker_card" id="stk_card_{$stk->getId()}">
                             <div class="existing_sticker_thumb">
-                                <img src="{$stk->getImageUrl(128)}" width="72" height="72" alt="" />
+                                {if $stk->getFormat($pack->getId()) === 'lottie'}
+                                    <div class="stickers-lottie-container" data-anim-url="{$stk->getAnimationUrl($pack->getId())}" style="width: 72px; height: 72px;"></div>
+                                {else}
+                                    <img src="{$stk->getImageUrl(128)}" width="72" height="72" alt="" />
+                                {/if}
                             </div>
                             <div class="emoji-input-wrap">
                                 <div class="content-editable-wrap">
@@ -156,7 +160,7 @@
 
             {* File input & Draft preview area *}
             <div class="stickers_upload_actions">
-                <input type="file" id="stickers_file_input" name="stickers[]" multiple accept="image/*,.svg,.json" class="stickers_upload_file_input" />
+                <input type="file" id="stickers_file_input" name="stickers[]" multiple accept="image/*,.svg,.json,.tgs" class="stickers_upload_file_input" />
                 <button type="button" class="button" onclick="document.getElementById('stickers_file_input').click();">
                     {_stickers_select_files}
                 </button>
@@ -246,8 +250,30 @@
                     imgWrapper.className = 'draft_sticker_thumb';
 
                     var isJson = file.name.endsWith('.json') || file.type === 'application/json';
+                    var isTgs = file.name.endsWith('.tgs');
                     if (isJson) {
-                        imgWrapper.innerHTML = '<div class="stickers_lottie_badge">LOTTIE<br/>JSON</div>';
+                        if (window.lottie) {
+                            var reader = new FileReader();
+                            reader.onload = function(evt) {
+                                try {
+                                    var animData = JSON.parse(evt.target.result);
+                                    window.lottie.loadAnimation({
+                                        container: imgWrapper,
+                                        renderer: 'svg',
+                                        loop: true,
+                                        autoplay: true,
+                                        animationData: animData
+                                    });
+                                } catch (err) {
+                                    imgWrapper.innerHTML = '<div class="stickers_lottie_badge">LOTTIE<br/>JSON</div>';
+                                }
+                            };
+                            reader.readAsText(file);
+                        } else {
+                            imgWrapper.innerHTML = '<div class="stickers_lottie_badge">LOTTIE<br/>JSON</div>';
+                        }
+                    } else if (isTgs) {
+                        imgWrapper.innerHTML = '<div class="stickers_lottie_badge">LOTTIE<br/>TGS</div>';
                     } else {
                         var img = document.createElement('img');
                         var reader = new FileReader();

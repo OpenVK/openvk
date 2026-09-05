@@ -156,8 +156,8 @@ final class StickersPresenter extends OpenVKPresenter
         $filePath = null;
         $mime     = "image/webp";
 
-        // 1. Vector SVG
-        if ($format === "svg" || file_exists($dir . "sticker.svg") || file_exists($dir . "{$size}.svg")) {
+        // 1. Format-specific check
+        if ($format === "svg") {
             foreach (["{$size}.svg", "512.svg", "128.svg", "sticker.svg"] as $candidate) {
                 if (file_exists($dir . $candidate)) {
                     $filePath = $dir . $candidate;
@@ -165,10 +165,7 @@ final class StickersPresenter extends OpenVKPresenter
                     break;
                 }
             }
-        }
-
-        // 2. Lottie animation (JSON)
-        if (!$filePath && ($format === "json" || file_exists($dir . "sticker.json") || file_exists($dir . "lottie.json"))) {
+        } elseif ($format === "json") {
             foreach (["sticker.json", "lottie.json"] as $candidate) {
                 if (file_exists($dir . $candidate)) {
                     $filePath = $dir . $candidate;
@@ -176,15 +173,41 @@ final class StickersPresenter extends OpenVKPresenter
                     break;
                 }
             }
-        }
-
-        // 3. WebP
-        if (!$filePath) {
+        } elseif ($format === "webp") {
             foreach (["{$size}.webp", "512.webp", "256.webp", "128.webp"] as $candidate) {
                 if (file_exists($dir . $candidate)) {
                     $filePath = $dir . $candidate;
                     $mime     = "image/webp";
                     break;
+                }
+            }
+        }
+
+        // 2. Fallback if format not found or not specified: check SVG, JSON, WebP
+        if (!$filePath) {
+            if (file_exists($dir . "sticker.svg") || file_exists($dir . "{$size}.svg")) {
+                foreach (["{$size}.svg", "512.svg", "128.svg", "sticker.svg"] as $candidate) {
+                    if (file_exists($dir . $candidate)) {
+                        $filePath = $dir . $candidate;
+                        $mime     = "image/svg+xml";
+                        break;
+                    }
+                }
+            } elseif (file_exists($dir . "sticker.json") || file_exists($dir . "lottie.json")) {
+                foreach (["sticker.json", "lottie.json"] as $candidate) {
+                    if (file_exists($dir . $candidate)) {
+                        $filePath = $dir . $candidate;
+                        $mime     = "application/json";
+                        break;
+                    }
+                }
+            } else {
+                foreach (["{$size}.webp", "512.webp", "256.webp", "128.webp"] as $candidate) {
+                    if (file_exists($dir . $candidate)) {
+                        $filePath = $dir . $candidate;
+                        $mime     = "image/webp";
+                        break;
+                    }
                 }
             }
         }
@@ -210,6 +233,7 @@ final class StickersPresenter extends OpenVKPresenter
         $lastModified = gmdate("D, d M Y H:i:s", filemtime($filePath)) . " GMT";
 
         header("Content-Type: $mime");
+        header("Access-Control-Allow-Origin: *");
         header("Cache-Control: public, max-age=31536000, immutable");
         header("ETag: $etag");
         header("Last-Modified: $lastModified");

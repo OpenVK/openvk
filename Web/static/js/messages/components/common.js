@@ -676,7 +676,7 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
                 `}
                 <a onclick=${() => { window.im.openTabByName("settings") }}>${tr("messenger_tab_settings")}</a> |<span> </span>
                 <a onClick=${(event) => { imSwitchCurrent(event) }}>${tr("messenger_switch_current")}</a> |<span> </span>
-                <a onClick=${() => { window.im.openTabByName("important") }}>${tr("important_messages") || "Важное"}</a>
+                ${is_group ? html`<a onClick=${() => { window.im.openTabByName("important") }}>${tr("important_messages") || "Важное"}</a>` : "" }
                 `}
             </div>
         </div>

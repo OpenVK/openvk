@@ -119,7 +119,7 @@
                     Sticker image
                     <span class="aui-icon icon-required"></span>
                 </label>
-                <input type="file" name="sticker[]" accept="image/png" required="required" />
+                <input type="file" name="sticker[]" accept="image/*,.svg,.json,.tgs" required="required" />
                 <input class="text" type="text" name="emoji[]" value="" placeholder="😀 emoji" style="width: 100px; margin-left: 8px;" />
                 <a href="#" class="aui-button aui-button-link add-sticker-row" style="margin-left: 8px;">+</a>
             </div>
@@ -156,7 +156,11 @@
                         {$sticker->getId()}
                     </td>
                     <td style="vertical-align: middle;">
-                        <img style="max-height: 64px;" src="{$sticker->getImageUrl(128)}" alt="Sticker #{$sticker->getId()}" />
+                        {if $sticker->getFormat($pack->getId()) === 'lottie'}
+                            <div class="stickers-lottie-container" data-anim-url="{$sticker->getAnimationUrl($pack->getId())}" style="width: 64px; height: 64px; display: inline-block;"></div>
+                        {else}
+                            <img style="max-height: 64px;" src="{$sticker->getImageUrl(128)}" alt="Sticker #{$sticker->getId()}" />
+                        {/if}
                     </td>
                     <td style="vertical-align: middle;">
                         {$sticker->getEmoji()}

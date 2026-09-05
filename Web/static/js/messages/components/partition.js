@@ -129,6 +129,10 @@ export class MessageChunk {
             (item, arr) => { arr.push(new ChatMessageClass(item)); }
         );
 
+        if (params && (params.rev === 1 || params.rev === "1")) {
+            _l.reverse();
+        }
+
         this.messages = _l;
         this._start_message_id = anchored ? data.start_message_id : null;
 
@@ -333,7 +337,15 @@ export class Chunks {
         };
         if (messageId != null) {
             params['start_message_id'] = messageId;
-            params['offset'] = options.older ? 1 : (options.newer ? -perPage : 0);
+            if (options.newer) {
+                params['offset'] = 1;
+                params['rev'] = 1;
+            } else if (options.older) {
+                params['offset'] = 1;
+                params['rev'] = 0;
+            } else {
+                params['offset'] = 0;
+            }
         }
 
         await chunk.fetch(params);
@@ -595,7 +607,16 @@ export class ScrollPosition {
         }
 
         const oldestChunk = allChunks[0];
-        const oldestMsgId = (!isFirstLoad && oldestChunk) ? oldestChunk.first_message?.id : null;
+        let oldestMsgId = null;
+        if (!isFirstLoad && oldestChunk && oldestChunk.messages) {
+            const ms = oldestChunk.getMessages();
+            for (let i = 0; i < ms.length; i++) {
+                if (ms[i] && ms[i].id != null) {
+                    oldestMsgId = ms[i].id;
+                    break;
+                }
+            }
+        }
 
         const msgs = await this.peer._chunks.fetchRelatively(oldestMsgId, { older: !isFirstLoad });
         if (!msgs || !msgs.messages.length) {
@@ -666,9 +687,19 @@ export class ScrollPosition {
         }
 
         const newestChunk = allChunks[allChunks.length - 1];
-        const newestMsgId = newestChunk ? newestChunk.latest_message?.id : null;
+        let newestMsgId = null;
+        if (newestChunk && newestChunk.messages) {
+            const ms = newestChunk.getMessages();
+            for (let i = ms.length - 1; i >= 0; i--) {
+                if (ms[i] && ms[i].id != null) {
+                    newestMsgId = ms[i].id;
+                    break;
+                }
+            }
+        }
         if (newestMsgId == null) {
             this.reachedNewestPosition = true;
+            this.direction = "end";
             this.peer._chunks._messagesInited = true;
             return;
         }
@@ -676,6 +707,7 @@ export class ScrollPosition {
         const msgs = await this.peer._chunks.fetchRelatively(newestMsgId, { newer: true });
         if (!msgs || !msgs.messages.length) {
             this.reachedNewestPosition = true;
+            this.direction = "end";
             this.peer._chunks._messagesInited = true;
             return;
         }
@@ -685,6 +717,7 @@ export class ScrollPosition {
         const hasNewer = msgs.messages.some(m => m && m.id && !existingIds.has(m.id));
         if (!hasNewer) {
             this.reachedNewestPosition = true;
+            this.direction = "end";
             return;
         }
 
@@ -701,6 +734,7 @@ export class ScrollPosition {
         const expectedCount = msgs.count || 20;
         if (msgs.messages.length < expectedCount) {
             this.reachedNewestPosition = true;
+            this.direction = "end";
         }
     }
 

@@ -747,6 +747,7 @@ final class UserPresenter extends OpenVKPresenter
                     "menu_aplikoj"   => "apps",
                     "menu_doxc"      => "docs",
                     "menu_feva"      => "fave",
+                    "menu_stickers"  => "stickers",
                 ];
                 foreach ($settings as $checkbox => $setting) {
                     $user->setLeftMenuItemStatus($setting, $this->checkbox($checkbox));

@@ -1318,9 +1318,12 @@ export class FastChats {
             }
 
             try {
+                const conv = window.im?.conversations?._findConv(peerId);
+                const unreadCount = Number(conv?.unread_count || 0);
+                const fetchCount = Math.min(100, Math.max(15, unreadCount + 5));
                 const histRes = await window.OVKAPI.call('messages.getHistory', {
                     peer_id: peerId,
-                    count: 15,
+                    count: fetchCount,
                     extended: 1
                 });
 
@@ -1486,6 +1489,8 @@ export class FastChats {
         const photo256 = stickerData?.photo_256 || photo128;
         const photo512 = stickerData?.photo_512 || (pId ? `/sticker/${pId}/${sId}_512.webp` : photo128);
 
+        const animUrl = stickerData?.animation_url || (stickerData?.animations && stickerData?.animations[0]?.url) || '';
+
         const stickerObj = {
             id: sId,
             sticker_id: sId,
@@ -1497,6 +1502,9 @@ export class FastChats {
             photo_512: photo512,
             width: 512,
             height: 512,
+            animation_url: animUrl || (stickerData?.is_animated && pId ? `/sticker/${pId}/${sId}_512.json` : ''),
+            is_animated: Boolean(animUrl || stickerData?.is_animated),
+            animations: stickerData?.animations || (animUrl ? [{ type: 'light', url: animUrl }] : []),
             images: stickerData?.images || [
                 { url: photo128, width: 128, height: 128 },
                 { url: photo256, width: 256, height: 256 },

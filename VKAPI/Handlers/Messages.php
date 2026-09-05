@@ -195,6 +195,8 @@ final class Messages extends VKAPIRequestHandler
             $decoded = json_decode($attachments, true);
             if (is_array($decoded)) {
                 $attachments = $decoded;
+            } else {
+                $attachments = explode(',', $attachments);
             }
         }
 
@@ -211,7 +213,12 @@ final class Messages extends VKAPIRequestHandler
             } elseif (is_object($att) && !empty($att->type)) {
                 $objAttachments[] = $att;
             } elseif (is_string($att) && !empty($att)) {
-                $strAttachments[] = $att;
+                foreach (explode(',', $att) as $sub) {
+                    $sub = trim($sub);
+                    if ($sub !== '') {
+                        $strAttachments[] = $sub;
+                    }
+                }
             }
         }
 
@@ -2931,16 +2938,13 @@ final class Messages extends VKAPIRequestHandler
         }
 
         $chat = $topic->getChat();
-        if (!$chat || !$chat->canJoin($this->getUser())) {
-            $this->fail(15, "Access denied");
-        }
 
-        $res = $chat->join([$this->getUser()]);
-        if (!$res) {
-            $this->fail(4040404, "Not implemented");
-        }
+        $params = [
+            "link" => $link,
+        ];
 
-        return $chat->getId();
+        $data = $this->invoke("messages.joinChatByInviteLink", $params, $group_id);
+        return (object) $data;
     }
 
     public function getUnreadMessages(int $group_id = 0)
