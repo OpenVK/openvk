@@ -113,6 +113,10 @@ body.no-scroll .messages--peers-tabs {
 body.no-scroll .page_header {
     position: fixed;
     z-index: 3;
+    width: inherit;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
 }
 
 body.no-scroll .sidebar {
