@@ -526,7 +526,7 @@ body.no_footer .navigation_footer {
 }
 
 .page_body {
-    width: 632px;
+    width: calc(100% - 159px);
     float: right;
     margin-right: 15px;
     margin-top: -2px;
@@ -579,7 +579,8 @@ body.no_footer .navigation_footer {
 
 .page_content {
     display: inline-block;
-    width: 610px;
+    width: 100%;
+    box-sizing: border-box;
     position: relative;
 }
 
@@ -1599,7 +1600,8 @@ table.User {
 #auth .container_gray {
     margin-bottom: -10px;
     margin-left: -10px;
-    width: 627px;
+    margin-right: -10px;
+    width: auto;
     box-sizing: border-box;
 }
 
@@ -1607,7 +1609,8 @@ table.User {
     border-bottom: 1px solid #707070;
     padding: 0 10px;
     margin-left: -10px;
-    width: 607px;
+    margin-right: -10px;
+    width: auto;
     overflow-x: auto;
     white-space: nowrap;
 }

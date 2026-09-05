@@ -84,6 +84,27 @@ window.router = new class {
         u('.page_body').html(page_body.html())
         u('.sidebar').html(sidebar.html())
         u('.page_footer').html(page_footer.html())
+
+        const new_layout = parsed_content.querySelector('.layout, #page_layout')
+        const current_layout = document.querySelector('.layout, #page_layout')
+        if (current_layout && new_layout) {
+            const old_style = current_layout.getAttribute('style') || ''
+            const new_style = new_layout.getAttribute('style') || ''
+
+            if (new_layout.hasAttribute('style')) {
+                current_layout.setAttribute('style', new_layout.getAttribute('style'))
+            } else {
+                current_layout.removeAttribute('style')
+            }
+
+            if (new_layout.className) {
+                current_layout.className = new_layout.className
+            }
+
+            if (old_style !== new_style) {
+                window.dispatchEvent(new Event('resize'))
+            }
+        }
         if(backdrop.length > 0) {
             if(u('#backdrop').length == 0) {
                 u('body').append(`<div id="backdrop"></div>`)
@@ -109,6 +130,12 @@ window.router = new class {
             } else {
                 u('.page_header').removeClass('search_expanded')
             }
+        }
+
+        if(page_header.hasClass('page_custom_header')) {
+            u('.page_header').addClass('page_custom_header')
+        } else {
+            u('.page_header').removeClass('page_custom_header')
         }
 
         u("meta[name=csrf]").attr("value", u(parsed_content.querySelector('meta[name=csrf]')).attr('value'))
