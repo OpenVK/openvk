@@ -113,6 +113,23 @@ h1 {
     background-position: 0;
 }
 
+@media only screen and (-webkit-device-pixel-ratio >=1.25),
+only screen and (resolution >=1.25dppx) {
+
+    .page_header {
+        background: url('../img/header_2x.png');
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+    }
+
+    .page_custom_header {
+        background: url('../img/header_custom_2x.png');
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+    }
+}
+
+
 .page_header .mobile_title,
 #fast_notifications,
 #myPagePreview,
@@ -5034,8 +5051,9 @@ hr {
 }
 
 .emoji-picker-wrap.stickers-disabled .sticker-picker-groups,
-.emoji-picker-wrap.stickers-disabled .emoji-footer-divider,
-.emoji-picker-wrap.stickers-disabled .emoji-footer-right {
+.emoji-picker-wrap.stickers-disabled .emoji-tabs-divider,
+.emoji-picker-wrap.stickers-disabled .sticker-tabs,
+.emoji-picker-wrap.stickers-disabled .sticker-store-btn {
     display: none !important;
 }
 
@@ -5105,26 +5123,18 @@ hr {
     font-size: 11px;
 }
 
-/* Footer & Horizontal Category Navigation */
+/* Footer & Unified Category / Sticker Navigation */
 .emoji-picker-footer {
     height: 34px;
     background: #f7f7f7;
     border-top: 1px solid #e7e8ec;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     padding: 0 4px;
+    gap: 3px;
     box-sizing: border-box;
     position: relative;
     z-index: 2;
-}
-
-.emoji-footer-left {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    min-width: 0;
-    gap: 3px;
 }
 
 .emoji-main-tab {
@@ -5150,7 +5160,7 @@ hr {
     background: url(../img/im/emoji_sprite.png);
 }
 
-.emoji-category-nav {
+.emoji-tabs-nav {
     display: flex;
     align-items: center;
     gap: 2px;
@@ -5162,8 +5172,15 @@ hr {
     scrollbar-width: none;
 }
 
-.emoji-category-nav::-webkit-scrollbar {
+.emoji-tabs-nav::-webkit-scrollbar {
     display: none;
+}
+
+.emoji-category-nav {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
 }
 
 .emoji-cat-btn {
@@ -5198,6 +5215,66 @@ hr {
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
+.emoji-tabs-divider {
+    width: 1px;
+    height: 18px;
+    background: #dce1e6;
+    margin: 0 4px;
+    flex-shrink: 0;
+}
+
+.sticker-tabs {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.s-tab {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    cursor: pointer;
+    opacity: 0.65;
+    transition: opacity 0.1s, background 0.1s;
+    flex-shrink: 0;
+}
+
+.s-tab:hover {
+    opacity: 1;
+    background: #e7ecf2;
+}
+
+.s-tab.active {
+    opacity: 1;
+    background: #dae2eb;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.s-tab-recent .emoji-cat-btn-recent {
+    margin-top: 3px;
+}
+
+.s-tab img,
+.s-tab .sticker-lottie-thumb {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.s-tab .sticker-lottie-thumb svg {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+}
+
 .emoji-scroll-arrow {
     width: 18px;
     height: 24px;
@@ -5217,85 +5294,24 @@ hr {
     background: #e7ecf2;
 }
 
-.emoji-footer-divider {
-    width: 1px;
-    height: 18px;
-    background: #dce1e6;
-    margin: 0 4px;
-    flex-shrink: 0;
-}
-
-.emoji-footer-right {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    flex-shrink: 0;
-}
-
-.emoji-footer-right .sticker-tabs {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    max-width: 96px;
-    overflow-x: auto;
-    scrollbar-width: none;
-}
-
-.emoji-footer-right .sticker-tabs::-webkit-scrollbar {
-    display: none;
-}
-
-.emoji-footer-right .s-tab {
-    width: 24px;
+.sticker-store-btn {
+    width: 18px;
     height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 3px;
-    cursor: pointer;
-    opacity: 0.65;
-    transition: opacity 0.1s, background 0.1s;
-    flex-shrink: 0;
-}
-
-.emoji-footer-right .s-tab:hover {
-    opacity: 1;
-    background: #e7ecf2;
-}
-
-.emoji-footer-right .s-tab.active {
-    opacity: 1;
-    background: #dae2eb;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
-}
-
-.emoji-footer-right .s-tab-recent svg {
-    color: #55677d;
-}
-
-.emoji-footer-right .s-tab img {
-    width: 20px;
-    height: 20px;
-    object-fit: contain;
-    border-radius: 2px;
-}
-
-.emoji-footer-right .sticker-store-btn {
-    width: 16px;
-    height: 18px;
-    margin: 6px 4px;
-    margin-bottom: 7px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     opacity: 0.7;
     transition: opacity 0.1s, background 0.1s;
-    background: url(../img/im/emoji_sprite.png) no-repeat -19px 0px;
+    background: url(../img/im/emoji_sprite.png) no-repeat -18px 3px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin: 0 1px;
 }
 
-.emoji-footer-right .sticker-store-btn:hover {
+.sticker-store-btn:hover {
     opacity: 1;
+    background-color: #e7ecf2;
 }
 
 /* Sticker picker in scroll area */
@@ -5349,6 +5365,21 @@ hr {
     -webkit-user-drag: none;
 }
 
+.sticker-picker-item .sticker-lottie-thumb {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.sticker-picker-item .sticker-lottie-thumb svg {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+}
+
 .sticker-picker-empty {
     padding: 24px 12px;
     text-align: center;
@@ -5379,6 +5410,19 @@ hr {
     -webkit-user-drag: none;
 }
 
+.msg-lottie-sticker {
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+}
+
+.msg-lottie-sticker svg {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}
+
 .fc_msg_sticker {
     margin-top: 4px;
 }
@@ -5388,6 +5432,11 @@ hr {
     max-height: 96px;
     object-fit: contain;
     display: block;
+}
+
+.fc_msg_sticker .msg-lottie-sticker {
+    width: 96px !important;
+    height: 96px !important;
 }
 
 .sticker-attached-item {
@@ -5482,6 +5531,22 @@ hr {
     object-fit: contain;
     display: block;
     transition: transform 0.15s ease;
+}
+
+.stickers_pack_thumb .stickers_pack_thumb_lottie,
+.stickers-lottie-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stickers_pack_thumb .stickers_pack_thumb_lottie svg,
+.stickers-lottie-container svg {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
 }
 
 .stickers_pack_name {
@@ -6053,6 +6118,20 @@ hr {
     display: block;
 }
 
+.stickers_modal_lottie_cover {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stickers_modal_lottie_cover svg {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+}
+
 .stickers_modal_cover_placeholder {
     width: 100%;
     height: 100%;
@@ -6161,6 +6240,21 @@ hr {
     pointer-events: none;
 }
 
+.stickers_modal_item .sticker-lottie-thumb {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.stickers_modal_item .sticker-lottie-thumb svg {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+}
+
 .stickers_modal_loading {
     padding: 30px;
     text-align: center;
@@ -6219,6 +6313,21 @@ hr {
     object-fit: contain;
     filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.45));
     animation: stickerPreviewPop 0.12s ease-out;
+}
+
+.stickers_hold_preview_wrap .stickers_hold_lottie_anim {
+    max-width: min(512px, 85vw);
+    max-height: min(512px, 85vh);
+    width: 256px;
+    height: 256px;
+    filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.45));
+    animation: stickerPreviewPop 0.12s ease-out;
+}
+
+.stickers_hold_preview_wrap .stickers_hold_lottie_anim svg {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
 }
 
 @keyframes stickerPreviewPop {

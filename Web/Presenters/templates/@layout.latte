@@ -36,6 +36,7 @@
         {script "js/node_modules/react-dom/dist/react-dom.min.js"}
         {script "js/vnd_literallycanvas.js"}
         {css "js/node_modules/literallycanvas/lib/css/literallycanvas.css"}
+        {script "js/node_modules/lottie-web/build/player/lottie.min.js"}
         {script_module "js/messages/im.js"}
 
         {if $isTimezoned == NULL}
@@ -270,7 +271,7 @@
                             {if $thisUser->getLeftMenuItemStatus('docs') || $thisUser->getLeftMenuItemStatus('apps')}
                                 <div class="menu_divider"></div>
                                 <a n:if="$thisUser->getLeftMenuItemStatus('apps')" href="/apps?act=installed" class="link my_apps">{_apps}</a>
-                                <a href="/stickers" class="link my_stickers">{_stickers_store}</a>
+                                <a n:if="$thisUser->getLeftMenuItemStatus('stickers')" href="/stickers" class="link my_stickers">{_stickers_store}</a>
                                 <a n:if="$thisUser->getLeftMenuItemStatus('docs')" href="/docs" class="link my_documents">{_my_documents}</a>
                                 {*<a n:if="$thisUser->getLeftMenuItemStatus('fave')" href="/fave" class="link my_bookmarks">{_bookmarks_tab}</a>*}
                             {/if}

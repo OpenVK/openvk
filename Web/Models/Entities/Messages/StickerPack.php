@@ -524,8 +524,15 @@ class StickerPack extends RowModel
 
     public function toVkApiStruct(?User $user): array
     {
-        $server_url = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
+        $server_url = ovk_scheme(true) . ($_SERVER["HTTP_HOST"] ?? "");
         $mainSticker = $this->getMainSticker();
+
+        $isAnimated = false;
+        $animUrl = null;
+        if ($mainSticker && $mainSticker->getFormat($this->getId()) === "lottie") {
+            $isAnimated = true;
+            $animUrl = $server_url . $mainSticker->getAnimationUrl($this->getId());
+        }
 
         return [
             "id"             => $this->getId(),
@@ -537,6 +544,8 @@ class StickerPack extends RowModel
             "purchased"      => $this->isPurchasedBy($user) ? 1 : 0,
             "photo_128"      => $mainSticker ? ($server_url . $mainSticker->getImageUrl(128)) : "",
             "photo_256"      => $mainSticker ? ($server_url . $mainSticker->getImageUrl(256)) : "",
+            "is_animated"    => $isAnimated,
+            "animation_url"  => $animUrl,
             "stickers_count" => $this->getStickersCount(),
             "stickers"       => [],
         ];

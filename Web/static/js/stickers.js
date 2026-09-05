@@ -271,24 +271,22 @@ function renderEmojiGrid(with_stickers = false) {
             <div class="sticker-picker-groups"></div>
         </div>
         <div class="emoji-picker-footer">
-            <div class="emoji-footer-left">
-                <div class="emoji-main-tab active" data-target="emojis" title="${tr('emoji_group_smileys_emotion') || 'Смайлы'}">
-                    <span class="emoji-icon"></span>
-                </div>
+            <div class="emoji-main-tab active" data-target="emojis" title="${tr('emoji_group_smileys_emotion') || 'Смайлы'}">
+                <span class="emoji-icon"></span>
+            </div>
+            <div class="emoji-tabs-nav">
                 <div class="emoji-category-nav">
                     ${catButtonsHtml}
                 </div>
-                <div class="emoji-scroll-arrow" title="${tr('next') || 'Далее'}">
-                    <svg viewBox="0 0 8 12" width="5" height="9">
-                        <path d="M1.5 1l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </div>
-            </div>
-            <div class="emoji-footer-divider"></div>
-            <div class="emoji-footer-right">
+                <div class="emoji-tabs-divider" style="display: none;"></div>
                 <div class="sticker-tabs"></div>
-                <a href="/stickers" class="sticker-store-btn" title="${tr('stickers_store') || 'Магазин стикеров'}"></a>
             </div>
+            <div class="emoji-scroll-arrow" title="${tr('next') || 'Далее'}">
+                <svg viewBox="0 0 8 12" width="5" height="9">
+                    <path d="M1.5 1l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <a href="/stickers" class="sticker-store-btn" title="${tr('stickers_store') || 'Магазин стикеров'}"></a>
         </div>
     `;
 
@@ -310,7 +308,13 @@ function renderEmojiGrid(with_stickers = false) {
             const packId = parseInt(stickerItem.dataset.packId);
             const photo128 = stickerItem.querySelector('img')?.src;
             const photo512 = stickerItem.dataset.url512;
-            sendOrAttachSticker(stickerId, packId, { photo_128: photo128, photo_512: photo512 });
+            const animUrl = stickerItem.dataset.animationUrl;
+            sendOrAttachSticker(stickerId, packId, {
+                photo_128: photo128,
+                photo_512: photo512,
+                animation_url: animUrl || '',
+                is_animated: Boolean(animUrl)
+            });
             return;
         }
     });
@@ -319,23 +323,38 @@ function renderEmojiGrid(with_stickers = false) {
     initStickerPickerHoldPreview(wrapper);
 
     const scrollContainer = wrapper.querySelector('.emoji-picker-scroll');
+    const tabsNav = wrapper.querySelector('.emoji-tabs-nav');
     const categoryNav = wrapper.querySelector('.emoji-category-nav');
+    const stickerTabs = wrapper.querySelector('.sticker-tabs');
     const arrowBtn = wrapper.querySelector('.emoji-scroll-arrow');
     const mainTab = wrapper.querySelector('.emoji-main-tab');
-    const footerLeft = wrapper.querySelector('.emoji-footer-left');
-    const stickerTabs = wrapper.querySelector('.sticker-tabs');
+    const footer = wrapper.querySelector('.emoji-picker-footer');
+
+    function ensureTabVisible(tabEl, containerEl) {
+        if (!tabEl || !containerEl) return;
+        const tabRect = tabEl.getBoundingClientRect();
+        const containerRect = containerEl.getBoundingClientRect();
+        if (tabRect.left < containerRect.left) {
+            containerEl.scrollBy({ left: tabRect.left - containerRect.left - 6, behavior: 'smooth' });
+        } else if (tabRect.right > containerRect.right) {
+            containerEl.scrollBy({ left: tabRect.right - containerRect.right + 6, behavior: 'smooth' });
+        }
+    }
 
     // Main smileys tab click handler
     if (mainTab) {
         mainTab.addEventListener('click', () => {
             if (scrollContainer) scrollContainer.scrollTo({ top: 0, behavior: 'smooth' });
-            if (categoryNav) categoryNav.scrollTo({ left: 0, behavior: 'smooth' });
+            if (tabsNav) tabsNav.scrollTo({ left: 0, behavior: 'smooth' });
             wrapper.querySelectorAll('.s-tab').forEach(b => b.classList.remove('active'));
             mainTab.classList.add('active');
+            const firstCat = wrapper.querySelector('.emoji-cat-btn');
+            wrapper.querySelectorAll('.emoji-cat-btn').forEach(b => b.classList.remove('active'));
+            if (firstCat) firstCat.classList.add('active');
         });
     }
 
-    // Category click handler
+    // Category and sticker tab click handler
     wrapper.addEventListener('click', (e) => {
         const catBtn = e.target.closest('.emoji-cat-btn');
         if (catBtn) {
@@ -349,6 +368,7 @@ function renderEmojiGrid(with_stickers = false) {
             catBtn.classList.add('active');
             wrapper.querySelectorAll('.s-tab').forEach(b => b.classList.remove('active'));
             if (mainTab) mainTab.classList.add('active');
+            if (tabsNav) ensureTabVisible(catBtn, tabsNav);
             return;
         }
 
@@ -364,32 +384,33 @@ function renderEmojiGrid(with_stickers = false) {
             sTab.classList.add('active');
             if (mainTab) mainTab.classList.remove('active');
             wrapper.querySelectorAll('.emoji-cat-btn').forEach(b => b.classList.remove('active'));
+            if (tabsNav) ensureTabVisible(sTab, tabsNav);
             return;
         }
     });
 
-    // Arrow click handler: horizontal scroll for category tabs
-    if (arrowBtn && categoryNav) {
+    // Arrow click handler: horizontal scroll for unified tabs strip
+    if (arrowBtn && tabsNav) {
         arrowBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            const step = 65;
-            if (categoryNav.scrollLeft + categoryNav.clientWidth >= categoryNav.scrollWidth - 8) {
-                categoryNav.scrollTo({ left: 0, behavior: 'smooth' });
+            const step = 75;
+            if (tabsNav.scrollLeft + tabsNav.clientWidth >= tabsNav.scrollWidth - 8) {
+                tabsNav.scrollTo({ left: 0, behavior: 'smooth' });
             } else {
-                categoryNav.scrollBy({ left: step, behavior: 'smooth' });
+                tabsNav.scrollBy({ left: step, behavior: 'smooth' });
             }
         });
     }
 
-    // Horizontal wheel scroll handler for category tabs
-    if (footerLeft && categoryNav) {
-        footerLeft.addEventListener('wheel', (e) => {
+    // Horizontal wheel scroll handler for unified tabs strip
+    if (footer && tabsNav) {
+        footer.addEventListener('wheel', (e) => {
             if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
                 e.preventDefault();
                 let move = e.deltaY;
                 if (e.deltaMode === 1) move *= 28;
                 else if (e.deltaMode === 2) move *= 100;
-                categoryNav.scrollBy({ left: move, behavior: 'auto' });
+                tabsNav.scrollBy({ left: move, behavior: 'auto' });
             }
         }, { passive: false });
     }
@@ -419,16 +440,8 @@ function renderEmojiGrid(with_stickers = false) {
                 sTabs.forEach(tab => {
                     const isActive = tab.dataset.packId === activePackId;
                     tab.classList.toggle('active', isActive);
-                    if (isActive && stickerTabs) {
-                        const tabLeft = tab.offsetLeft;
-                        const tabRight = tabLeft + tab.offsetWidth;
-                        const navScrollLeft = stickerTabs.scrollLeft;
-                        const navWidth = stickerTabs.clientWidth;
-                        if (tabLeft < navScrollLeft) {
-                            stickerTabs.scrollTo({ left: tabLeft, behavior: 'smooth' });
-                        } else if (tabRight > navScrollLeft + navWidth) {
-                            stickerTabs.scrollTo({ left: tabRight - navWidth, behavior: 'smooth' });
-                        }
+                    if (isActive && tabsNav) {
+                        ensureTabVisible(tab, tabsNav);
                     }
                 });
             } else {
@@ -449,16 +462,8 @@ function renderEmojiGrid(with_stickers = false) {
                     btns.forEach(b => {
                         const isActive = b.dataset.target === activeGroupSlug;
                         b.classList.toggle('active', isActive);
-                        if (isActive && categoryNav) {
-                            const btnLeft = b.offsetLeft;
-                            const btnRight = btnLeft + b.offsetWidth;
-                            const navScrollLeft = categoryNav.scrollLeft;
-                            const navWidth = categoryNav.clientWidth;
-                            if (btnLeft < navScrollLeft) {
-                                categoryNav.scrollTo({ left: btnLeft, behavior: 'smooth' });
-                            } else if (btnRight > navScrollLeft + navWidth) {
-                                categoryNav.scrollTo({ left: btnRight - navWidth, behavior: 'smooth' });
-                            }
+                        if (isActive && tabsNav) {
+                            ensureTabVisible(b, tabsNav);
                         }
                     });
                 }
@@ -489,34 +494,67 @@ async function updateStickerPacksInPicker(wrapper) {
     if (recentStickers.length > 0) {
         tabsHtml += `
             <div class="s-tab s-tab-recent" data-pack-id="recent" title="${tr('stickers_recent') || 'Недавние'}">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
+                <span class="emoji-cat-btn-recent"></span>
             </div>
         `;
     }
 
     packs.forEach(pack => {
-        const iconUrl = pack.photo_128 || (pack.stickers && pack.stickers[0] ? pack.stickers[0].photo_128 : '');
-        tabsHtml += `
-            <div class="s-tab" data-pack-id="${pack.id}" title="${escapeHtml(pack.name || '')}">
-                <img src="${iconUrl}" loading="lazy" alt="" />
-            </div>
-        `;
+        const firstStk = pack.stickers && pack.stickers[0] ? pack.stickers[0] : null;
+        const animUrl = pack.animation_url || (firstStk ? (firstStk.animation_url || (firstStk.animations && firstStk.animations[0]?.url) || (firstStk.is_animated ? `/sticker/${pack.id}/${firstStk.id}_512.json` : '')) : '') || (pack.is_animated ? `/sticker/${pack.id}/${(firstStk ? firstStk.id : pack.id)}_512.json` : '');
+        const isLottie = Boolean(pack.is_animated || (firstStk && firstStk.is_animated) || (pack.photo_128 && pack.photo_128.endsWith('.json')) || (firstStk && firstStk.photo_128 && firstStk.photo_128.endsWith('.json')));
+        const finalAnimUrl = animUrl || (pack.photo_128 && pack.photo_128.endsWith('.json') ? pack.photo_128 : '') || (firstStk && firstStk.photo_128 && firstStk.photo_128.endsWith('.json') ? firstStk.photo_128 : '');
+        const iconUrl = pack.photo_128 || (firstStk ? firstStk.photo_128 : '');
+
+        if (isLottie && finalAnimUrl) {
+            tabsHtml += `
+                <div class="s-tab" data-pack-id="${pack.id}" title="${escapeHtml(pack.name || '')}">
+                    <div class="sticker-lottie-thumb" data-anim-url="${finalAnimUrl}"></div>
+                </div>
+            `;
+        } else {
+            tabsHtml += `
+                <div class="s-tab" data-pack-id="${pack.id}" title="${escapeHtml(pack.name || '')}">
+                    <img src="${iconUrl}" loading="lazy" alt="" />
+                </div>
+            `;
+        }
     });
     stickerTabsEl.innerHTML = tabsHtml;
+
+    const dividerEl = wrapper.querySelector('.emoji-tabs-divider');
+    if (dividerEl) {
+        dividerEl.style.display = (tabsHtml.length > 0) ? 'block' : 'none';
+    }
 
     // 2. Build sticker groups HTML
     let packsHtml = '';
 
     // Recent stickers pack
     if (recentStickers.length > 0) {
-        const recentItemsHtml = recentStickers.map(stk => `
-            <div class="sticker-picker-item" data-sticker-id="${stk.id}" data-pack-id="${stk.pack_id || ''}" data-url512="${stk.photo_512 || ''}" title="">
-                <img src="${stk.photo_128}" loading="lazy" alt="sticker" />
-            </div>
-        `).join('');
+        const recentItemsHtml = recentStickers.map(stk => {
+            const parentPack = (_myStickerPacks || []).find(p => String(p.id) === String(stk.pack_id));
+            let animUrl = stk.animation_url || (stk.animations && stk.animations[0]?.url) || (stk.photo_128 && stk.photo_128.endsWith('.json') ? stk.photo_128 : '') || (stk.is_animated && stk.pack_id ? `/sticker/${stk.pack_id}/${stk.id}_512.json` : '') || '';
+            const isLottie = Boolean(animUrl || stk.is_animated || (parentPack && parentPack.is_animated) || (stk.photo_128 && stk.photo_128.endsWith('.json')));
+            if (isLottie && !animUrl && stk.pack_id && stk.id) {
+                animUrl = `/sticker/${stk.pack_id}/${stk.id}_512.json`;
+            }
+            const p128 = stk.photo_128 || (stk.pack_id ? `/sticker/${stk.pack_id}/${stk.id}_128.webp` : '');
+            const p512 = stk.photo_512 || (stk.pack_id ? `/sticker/${stk.pack_id}/${stk.id}_512.webp` : '');
+            return `
+                <div class="sticker-picker-item ${isLottie ? 'is-lottie-item' : ''}" 
+                     data-sticker-id="${stk.id}" 
+                     data-pack-id="${stk.pack_id || ''}" 
+                     data-url512="${p512}" 
+                     data-animation-url="${animUrl}" 
+                     title="">
+                    ${isLottie 
+                        ? `<div class="sticker-lottie-thumb" data-anim-url="${animUrl}"></div>` 
+                        : `<img src="${p128}" loading="lazy" alt="" />`
+                    }
+                </div>
+            `;
+        }).join('');
 
         packsHtml += `
             <div class="sticker-picker-pack" data-pack-id="recent">
@@ -531,11 +569,24 @@ async function updateStickerPacksInPicker(wrapper) {
         packs.forEach(pack => {
             const stickers = pack.stickers || [];
             const stickersHtml = stickers.map(stk => {
+                let animUrl = stk.animation_url || (stk.animations && stk.animations[0]?.url) || (stk.photo_128 && stk.photo_128.endsWith('.json') ? stk.photo_128 : '') || (stk.is_animated && pack.id ? `/sticker/${pack.id}/${stk.id}_512.json` : '') || (pack.is_animated ? `/sticker/${pack.id}/${stk.id}_512.json` : '');
+                const isLottie = Boolean(animUrl || stk.is_animated || pack.is_animated || (stk.photo_128 && stk.photo_128.endsWith('.json')));
+                if (isLottie && !animUrl && pack.id && stk.id) {
+                    animUrl = `/sticker/${pack.id}/${stk.id}_512.json`;
+                }
                 const p128 = stk.photo_128 || `/sticker/${pack.id}/${stk.id}_128.webp`;
                 const p512 = stk.photo_512 || `/sticker/${pack.id}/${stk.id}_512.webp`;
                 return `
-                    <div class="sticker-picker-item" data-sticker-id="${stk.id}" data-pack-id="${pack.id}" data-url512="${p512}" title="${escapeHtml(stk.emoji || '')}">
-                        <img src="${p128}" loading="lazy" alt="sticker" />
+                    <div class="sticker-picker-item ${isLottie ? 'is-lottie-item' : ''}" 
+                         data-sticker-id="${stk.id}" 
+                         data-pack-id="${pack.id}" 
+                         data-url512="${p512}" 
+                         data-animation-url="${animUrl}" 
+                         title="${escapeHtml(stk.emoji || '')}">
+                        ${isLottie 
+                            ? `<div class="sticker-lottie-thumb" data-anim-url="${animUrl}"></div>` 
+                            : `<img src="${p128}" loading="lazy" alt="" />`
+                        }
                     </div>
                 `;
             }).join('');
@@ -559,17 +610,39 @@ async function updateStickerPacksInPicker(wrapper) {
     }
 
     stickerGroupsEl.innerHTML = packsHtml;
+
+    // Render static first frame for Lottie thumbnails in picker (both tabs and sticker items)
+    if (window.lottie) {
+        wrapper.querySelectorAll('.sticker-lottie-thumb').forEach(thumb => {
+            const url = thumb.dataset.animUrl;
+            if (url && !thumb._lottieInitialized) {
+                thumb._lottieInitialized = true;
+                try {
+                    const anim = window.lottie.loadAnimation({
+                        container: thumb,
+                        renderer: 'svg',
+                        loop: false,
+                        autoplay: false,
+                        path: url
+                    });
+                    thumb._lottieAnim = anim;
+                } catch (e) {}
+            }
+        });
+    }
 }
 
 function initStickerPickerHoldPreview(wrapper) {
     let holdTimer = null;
     let previewEl = null;
     let activeItem = null;
+    let currentAnim = null;
 
     function createPreview(item) {
         if (!item) return;
+        const animUrl = item.dataset.animationUrl;
         const url512 = item.dataset.url512 || item.querySelector('img')?.src;
-        if (!url512) return;
+        if (!animUrl && !url512) return;
 
         removePreview();
         activeItem = item;
@@ -578,11 +651,37 @@ function initStickerPickerHoldPreview(wrapper) {
 
         previewEl = document.createElement('div');
         previewEl.className = 'stickers_hold_preview_wrap';
-        previewEl.innerHTML = `<img src="${url512}" alt="preview" />`;
-        document.body.appendChild(previewEl);
+
+        if (animUrl && window.lottie) {
+            const lottieWrap = document.createElement('div');
+            lottieWrap.className = 'stickers_hold_lottie_anim';
+            lottieWrap.style.width = '256px';
+            lottieWrap.style.height = '256px';
+            previewEl.appendChild(lottieWrap);
+            document.body.appendChild(previewEl);
+
+            try {
+                currentAnim = window.lottie.loadAnimation({
+                    container: lottieWrap,
+                    renderer: 'svg',
+                    loop: true,
+                    autoplay: true,
+                    path: animUrl
+                });
+            } catch (err) {
+                console.error("Lottie preview error:", err);
+            }
+        } else {
+            previewEl.innerHTML = `<img src="${url512}" alt="preview" />`;
+            document.body.appendChild(previewEl);
+        }
     }
 
     function removePreview() {
+        if (currentAnim) {
+            try { currentAnim.destroy(); } catch (e) {}
+            currentAnim = null;
+        }
         if (previewEl) {
             previewEl.remove();
             previewEl = null;
@@ -622,6 +721,40 @@ function initStickerPickerHoldPreview(wrapper) {
             removePreview();
         }
     });
+
+    // Hover animation for Lottie items in picker: play on enter, return to first frame on leave without flicker
+    wrapper.addEventListener('mouseenter', (e) => {
+        const item = e.target.closest('.sticker-picker-item.is-lottie-item');
+        if (!item) return;
+        const thumb = item.querySelector('.sticker-lottie-thumb');
+        if (!thumb || !window.lottie) return;
+
+        if (thumb._lottieAnim) {
+            thumb._lottieAnim.setLoop(true);
+            thumb._lottieAnim.play();
+        } else if (item.dataset.animationUrl) {
+            try {
+                const anim = window.lottie.loadAnimation({
+                    container: thumb,
+                    renderer: 'svg',
+                    loop: true,
+                    autoplay: true,
+                    path: item.dataset.animationUrl
+                });
+                thumb._lottieAnim = anim;
+                thumb._lottieInitialized = true;
+            } catch (err) {}
+        }
+    }, true);
+
+    wrapper.addEventListener('mouseleave', (e) => {
+        const item = e.target.closest('.sticker-picker-item.is-lottie-item');
+        if (!item) return;
+        const thumb = item.querySelector('.sticker-lottie-thumb');
+        if (thumb && thumb._lottieAnim) {
+            thumb._lottieAnim.goToAndStop(0, true);
+        }
+    }, true);
 
     // Touch events
     wrapper.addEventListener('touchstart', (e) => {
@@ -666,11 +799,15 @@ function sendOrAttachSticker(stickerId, packId, stickerData = {}) {
     if (trigger && !isStickersAllowed(trigger)) return;
 
     // 1. Save to recent stickers
+    const isAnim = Boolean(stickerData.is_animated || stickerData.animation_url || (stickerData.photo_128 && stickerData.photo_128.endsWith('.json')));
+    const animUrl = stickerData.animation_url || (isAnim && packId && stickerId ? `/sticker/${packId}/${stickerId}_512.json` : '');
     addSticker({
         id: stickerId,
         pack_id: packId,
-        photo_128: stickerData.photo_128 || `/sticker/${packId}/${stickerId}_128.webp`,
-        photo_512: stickerData.photo_512 || `/sticker/${packId}/${stickerId}_512.webp`,
+        photo_128: isAnim ? animUrl : (stickerData.photo_128 || `/sticker/${packId}/${stickerId}_128.webp`),
+        photo_512: isAnim ? animUrl : (stickerData.photo_512 || `/sticker/${packId}/${stickerId}_512.webp`),
+        animation_url: animUrl,
+        is_animated: isAnim,
     });
 
     // 2. Hide tippy picker
@@ -763,12 +900,7 @@ function updateRecentSmilesInPicker() {
             btn.className = 'emoji-cat-btn';
             btn.dataset.target = 'recent';
             btn.title = tr('emoji_group_recent') || 'Недавние';
-            btn.innerHTML = `
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-            `;
+            btn.innerHTML = `<span class="emoji-cat-btn-recent"></span>`;
             categoryNav.prepend(btn);
         }
     } else if (recentGroup) {
@@ -850,6 +982,8 @@ function findStickerData(stickerId) {
                     const p128 = s.photo_128 || `/sticker/${p.id}/${sId}_128.webp`;
                     const p256 = s.photo_256 || p128;
                     const p512 = s.photo_512 || `/sticker/${p.id}/${sId}_512.webp`;
+                    const animUrl = s.animation_url || (s.animations && s.animations[0]?.url) || (s.is_animated && p.id ? `/sticker/${p.id}/${sId}_512.json` : '');
+                    const isAnim = Boolean(animUrl || s.is_animated);
                     const data = {
                         id: sId,
                         sticker_id: sId,
@@ -857,6 +991,9 @@ function findStickerData(stickerId) {
                         photo_128: p128,
                         photo_256: p256,
                         photo_512: p512,
+                        animation_url: animUrl || '',
+                        is_animated: isAnim,
+                        animations: s.animations || (animUrl ? [{ type: 'light', url: animUrl }] : []),
                         images: s.images || [
                             { url: p128, width: 128, height: 128 },
                             { url: p256, width: 256, height: 256 },
@@ -877,6 +1014,8 @@ function findStickerData(stickerId) {
         const p128 = r.photo_128 || (pId ? `/sticker/${pId}/${sId}_128.webp` : '');
         const p256 = r.photo_256 || p128;
         const p512 = r.photo_512 || (pId ? `/sticker/${pId}/${sId}_512.webp` : p128);
+        const animUrl = r.animation_url || (r.is_animated && pId ? `/sticker/${pId}/${sId}_512.json` : '');
+        const isAnim = Boolean(animUrl || r.is_animated);
         const data = {
             id: sId,
             sticker_id: sId,
@@ -884,6 +1023,9 @@ function findStickerData(stickerId) {
             photo_128: p128,
             photo_256: p256,
             photo_512: p512,
+            animation_url: animUrl || '',
+            is_animated: isAnim,
+            animations: r.animations || (animUrl ? [{ type: 'light', url: animUrl }] : []),
             images: [
                 { url: p128, width: 128, height: 128 },
                 { url: p256, width: 256, height: 256 },
@@ -897,6 +1039,71 @@ function findStickerData(stickerId) {
     return null;
 }
 window.findStickerData = findStickerData;
+
+function initStaticLottieStickers(root = document) {
+    if (!window.lottie) return;
+    root.querySelectorAll('.msg-attach-w-lottie[data-animation-url], .stickers_pack_thumb_lottie[data-anim-url], .stickers-lottie-container[data-anim-url], .sticker-lottie-thumb[data-anim-url]').forEach(el => {
+        if (el._lottieInitialized) return;
+        el._lottieInitialized = true;
+        const url = el.dataset.animationUrl || el.dataset.animUrl;
+        if (!url) return;
+        try {
+            const isLoop = !el.classList.contains('lottie-no-loop') && !el.closest('.s-tab') && !el.closest('.sticker-picker-item');
+            const anim = window.lottie.loadAnimation({
+                container: el,
+                renderer: 'svg',
+                loop: isLoop,
+                autoplay: isLoop,
+                path: url
+            });
+            el.addEventListener('click', (e) => {
+                e.stopPropagation();
+                anim.goToAndPlay(0, true);
+            });
+        } catch (err) {}
+    });
+}
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    initStaticLottieStickers();
+} else {
+    document.addEventListener('DOMContentLoaded', () => initStaticLottieStickers());
+}
+window.addEventListener('load', () => initStaticLottieStickers());
+window.addEventListener('popstate', () => setTimeout(() => initStaticLottieStickers(), 50));
+window.initStaticLottieStickers = initStaticLottieStickers;
+
+let _lottieInitTimer = null;
+const _lottieObserver = new MutationObserver((mutations) => {
+    let hasTarget = false;
+    for (const m of mutations) {
+        for (const node of m.addedNodes) {
+            if (node.nodeType === 1) {
+                if (node.matches && node.matches('.stickers_pack_thumb_lottie, .stickers-lottie-container, .msg-attach-w-lottie, .sticker-lottie-thumb')) {
+                    hasTarget = true;
+                    break;
+                }
+                if (node.querySelector && node.querySelector('.stickers_pack_thumb_lottie, .stickers-lottie-container, .msg-attach-w-lottie, .sticker-lottie-thumb')) {
+                    hasTarget = true;
+                    break;
+                }
+            }
+        }
+        if (hasTarget) break;
+    }
+    if (hasTarget) {
+        clearTimeout(_lottieInitTimer);
+        _lottieInitTimer = setTimeout(() => {
+            initStaticLottieStickers();
+        }, 20);
+    }
+});
+if (document.body) {
+    _lottieObserver.observe(document.body, { childList: true, subtree: true });
+} else {
+    document.addEventListener('DOMContentLoaded', () => {
+        if (document.body) _lottieObserver.observe(document.body, { childList: true, subtree: true });
+    });
+}
 
 function addSmile(smile) {
     const s = getRecentSmiles();
@@ -1191,9 +1398,13 @@ async function openStickerPackModal(slugOrId, event) {
             });
         }
 
-        const coverHtml = info.cover_url
-            ? `<img src="${escapeHtml(info.cover_url)}" alt="${escapeHtml(info.name)}" />`
-            : `<div class="stickers_modal_cover_placeholder"></div>`;
+        const isCoverLottie = Boolean(info.cover_is_animated || (info.cover_url && info.cover_url.endsWith('.json')));
+        const coverAnimUrl = info.cover_anim_url || (isCoverLottie ? info.cover_url : '');
+        const coverHtml = isCoverLottie
+            ? `<div class="stickers_modal_lottie_cover" data-anim-url="${escapeHtml(coverAnimUrl)}"></div>`
+            : (info.cover_url
+                ? `<img src="${escapeHtml(info.cover_url)}" alt="${escapeHtml(info.name)}" />`
+                : `<div class="stickers_modal_cover_placeholder"></div>`);
 
         let authorHtml = '';
         if (info.author || info.author_url) {
@@ -1224,11 +1435,22 @@ async function openStickerPackModal(slugOrId, event) {
 
         let stickersGridHtml = '';
         if (info.stickers && info.stickers.length > 0) {
-            stickersGridHtml = info.stickers.map(s => `
-                <div class="stickers_modal_item" data-url512="${escapeHtml(s.url512 || s.url)}" title="${escapeHtml(s.emoji || '')}">
-                    <img src="${escapeHtml(s.url)}" alt="${escapeHtml(s.emoji || '')}" loading="lazy" draggable="false" />
-                </div>
-            `).join('');
+            stickersGridHtml = info.stickers.map(s => {
+                const isLottie = Boolean(s.is_animated || (s.url && s.url.endsWith('.json')) || (s.url512 && s.url512.endsWith('.json')));
+                const animUrl = s.anim_url || (isLottie ? (s.url512 || s.url) : '');
+                if (isLottie) {
+                    return `
+                        <div class="stickers_modal_item is-lottie-item" data-url512="${escapeHtml(animUrl)}" data-animation-url="${escapeHtml(animUrl)}" title="${escapeHtml(s.emoji || '')}">
+                            <div class="sticker-lottie-thumb" data-anim-url="${escapeHtml(animUrl)}"></div>
+                        </div>
+                    `;
+                }
+                return `
+                    <div class="stickers_modal_item" data-url512="${escapeHtml(s.url512 || s.url)}" title="${escapeHtml(s.emoji || '')}">
+                        <img src="${escapeHtml(s.url)}" alt="${escapeHtml(s.emoji || '')}" loading="lazy" draggable="false" />
+                    </div>
+                `;
+            }).join('');
         }
 
         const bodyHtml = `
@@ -1263,6 +1485,79 @@ async function openStickerPackModal(slugOrId, event) {
             bodyContainer.nodes[0].innerHTML = bodyHtml;
         }
 
+        if (window.lottie) {
+            const coverEl = node.find('.stickers_modal_lottie_cover').nodes[0];
+            if (coverEl && coverAnimUrl) {
+                try {
+                    window.lottie.loadAnimation({
+                        container: coverEl,
+                        renderer: 'svg',
+                        loop: true,
+                        autoplay: true,
+                        path: coverAnimUrl
+                    });
+                } catch (e) {
+                    console.error("Cover lottie error:", e);
+                }
+            }
+
+            node.find('.stickers_modal_item.is-lottie-item .sticker-lottie-thumb').nodes.forEach(thumb => {
+                const u = thumb.dataset.animUrl;
+                if (u && !thumb._lottieInitialized) {
+                    thumb._lottieInitialized = true;
+                    try {
+                        const anim = window.lottie.loadAnimation({
+                            container: thumb,
+                            renderer: 'svg',
+                            loop: false,
+                            autoplay: false,
+                            path: u
+                        });
+                        thumb._lottieAnim = anim;
+                    } catch (e) {
+                        console.error("Modal item lottie error:", e);
+                    }
+                }
+            });
+        }
+
+        // Hover animation for Lottie stickers in modal grid: play on enter, return to first frame on leave without flicker
+        const modalGrid = node.find('.stickers_modal_grid').nodes[0];
+        if (modalGrid) {
+            modalGrid.addEventListener('mouseenter', (e) => {
+                const item = e.target.closest('.stickers_modal_item.is-lottie-item');
+                if (!item) return;
+                const thumb = item.querySelector('.sticker-lottie-thumb');
+                if (!thumb || !window.lottie) return;
+
+                if (thumb._lottieAnim) {
+                    thumb._lottieAnim.setLoop(true);
+                    thumb._lottieAnim.play();
+                } else if (item.dataset.animationUrl) {
+                    try {
+                        const anim = window.lottie.loadAnimation({
+                            container: thumb,
+                            renderer: 'svg',
+                            loop: true,
+                            autoplay: true,
+                            path: item.dataset.animationUrl
+                        });
+                        thumb._lottieAnim = anim;
+                        thumb._lottieInitialized = true;
+                    } catch (err) {}
+                }
+            }, true);
+
+            modalGrid.addEventListener('mouseleave', (e) => {
+                const item = e.target.closest('.stickers_modal_item.is-lottie-item');
+                if (!item) return;
+                const thumb = item.querySelector('.sticker-lottie-thumb');
+                if (thumb && thumb._lottieAnim) {
+                    thumb._lottieAnim.goToAndStop(0, true);
+                }
+            }, true);
+        }
+
         const copyBtn = node.find('#stickers_modal_copy_btn').nodes[0];
         if (copyBtn) {
             copyBtn.addEventListener('click', async (e) => {
@@ -1278,14 +1573,15 @@ async function openStickerPackModal(slugOrId, event) {
         }
 
         const actionBtn = node.find('#stickers_modal_action_btn').nodes[0];
-        if (actionBtn && !actionBtn.disabled) {
-            actionBtn.addEventListener('click', async (e) => {
-                e.preventDefault();
+        if (actionBtn && !info.isPurchased) {
+            actionBtn.addEventListener('click', async () => {
                 if (!info.isAuthorized) {
-                    location.href = '/login';
+                    window.location.href = '/login?return_to=' + encodeURIComponent(window.location.pathname + window.location.search);
                     return;
                 }
+
                 actionBtn.disabled = true;
+                actionBtn.textContent = tr('loading') || 'Загрузка...';
 
                 try {
                     const res = await API.Stickers.buyPack(info.id);
@@ -1312,10 +1608,44 @@ async function openStickerPackModal(slugOrId, event) {
         }
         const previewImg = document.getElementById('stickers_hold_preview_img');
         let isHolding = false;
+        let modalCurrentAnim = null;
 
         function showPreview(url512) {
-            if (!url512 || !previewWrap || !previewImg) return;
-            previewImg.src = url512;
+            if (!url512 || !previewWrap) return;
+            if (modalCurrentAnim) {
+                try { modalCurrentAnim.destroy(); } catch (e) {}
+                modalCurrentAnim = null;
+            }
+
+            const isJson = url512.endsWith('.json');
+            if (isJson && window.lottie) {
+                if (previewImg) previewImg.style.display = 'none';
+                let lottieWrap = previewWrap.querySelector('.stickers_hold_lottie_anim');
+                if (!lottieWrap) {
+                    lottieWrap = document.createElement('div');
+                    lottieWrap.className = 'stickers_hold_lottie_anim';
+                    previewWrap.appendChild(lottieWrap);
+                }
+                lottieWrap.style.display = 'block';
+                lottieWrap.innerHTML = '';
+                try {
+                    modalCurrentAnim = window.lottie.loadAnimation({
+                        container: lottieWrap,
+                        renderer: 'svg',
+                        loop: true,
+                        autoplay: true,
+                        path: url512
+                    });
+                } catch (e) {}
+            } else {
+                const lottieWrap = previewWrap.querySelector('.stickers_hold_lottie_anim');
+                if (lottieWrap) lottieWrap.style.display = 'none';
+                if (previewImg) {
+                    previewImg.style.display = 'block';
+                    previewImg.src = url512;
+                }
+            }
+
             previewWrap.style.display = 'flex';
             node.addClass('is-sticker-holding');
             isHolding = true;
@@ -1324,8 +1654,22 @@ async function openStickerPackModal(slugOrId, event) {
         function hidePreview() {
             if (!isHolding) return;
             isHolding = false;
-            if (previewWrap) previewWrap.style.display = 'none';
-            if (previewImg) previewImg.src = '';
+            if (modalCurrentAnim) {
+                try { modalCurrentAnim.destroy(); } catch (e) {}
+                modalCurrentAnim = null;
+            }
+            if (previewWrap) {
+                previewWrap.style.display = 'none';
+                const lottieWrap = previewWrap.querySelector('.stickers_hold_lottie_anim');
+                if (lottieWrap) {
+                    lottieWrap.innerHTML = '';
+                    lottieWrap.style.display = 'none';
+                }
+            }
+            if (previewImg) {
+                previewImg.src = '';
+                previewImg.style.display = 'block';
+            }
             node.removeClass('is-sticker-holding');
         }
 
@@ -1344,8 +1688,8 @@ async function openStickerPackModal(slugOrId, event) {
                 if (!isHolding) return;
                 const el = document.elementFromPoint(e.clientX, e.clientY);
                 const item = el ? el.closest('.stickers_modal_item') : null;
-                if (item && item.dataset.url512 && previewImg.src !== item.dataset.url512) {
-                    previewImg.src = item.dataset.url512;
+                if (item && item.dataset.url512 && previewImg && previewImg.src !== item.dataset.url512) {
+                    showPreview(item.dataset.url512);
                 }
             };
 
@@ -1355,6 +1699,24 @@ async function openStickerPackModal(slugOrId, event) {
 
             window.addEventListener('mousemove', onMouseMove);
             window.addEventListener('mouseup', onMouseUp);
+
+            let cleanupUrlBackup = cleanupUrl;
+            let currentCleanup = () => {
+                window.removeEventListener('mousemove', onMouseMove);
+                window.removeEventListener('mouseup', onMouseUp);
+                node.find('.stickers_modal_item.is-lottie-item .sticker-lottie-thumb').nodes.forEach(thumb => {
+                    if (thumb._lottieAnim) {
+                        try { thumb._lottieAnim.destroy(); } catch (e) {}
+                        thumb._lottieAnim = null;
+                    }
+                });
+                if (modalCurrentAnim) {
+                    try { modalCurrentAnim.destroy(); } catch (e) {}
+                    modalCurrentAnim = null;
+                }
+                hidePreview();
+                cleanupUrlBackup();
+            };
 
             let touchTimer = null;
             gridEl.addEventListener('touchstart', (e) => {
@@ -1373,8 +1735,8 @@ async function openStickerPackModal(slugOrId, event) {
                     const touch = e.touches[0];
                     const el = document.elementFromPoint(touch.clientX, touch.clientY);
                     const item = el ? el.closest('.stickers_modal_item') : null;
-                    if (item && item.dataset.url512 && previewImg.src !== item.dataset.url512) {
-                        previewImg.src = item.dataset.url512;
+                    if (item && item.dataset.url512) {
+                        showPreview(item.dataset.url512);
                     }
                 } else if (touchTimer) {
                     clearTimeout(touchTimer);

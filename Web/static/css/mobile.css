@@ -2114,6 +2114,7 @@
 
     .side_link {
         font-size: 14px;
+        float: unset !important;
     }
 
     .oldPostDelete {
@@ -2490,6 +2491,28 @@
 
     .post .post-menu-s .post-menu *:not(.comment-reply) {
         display: none;
+    }
+
+    .stickers_packs_grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .stickers_pack_card {
+        max-width: 100%;
+    }
+
+    #fastchats_container {
+        display: none !important;
+    }
+
+    .ovk-diag-cont:has(.stickers_pack_modal), .stickers_pack_modal_cont {
+        max-width: 100% !important;
+    }
+
+    .stickers_modal_grid_wrap {
+        max-width: 100%;
+        max-height: 100%;
     }
 }
 

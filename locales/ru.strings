@@ -1544,6 +1544,7 @@
 "preview_attachment_audio" = "Аудио";
 "preview_attachment_wall" = "Репост";
 "preview_attachment_gift" = "Подарок";
+"preview_attachment_sticker" = "Стикер";
 "message_no_text" = "Без текста";
 "post_attachment_text" = "От $1";
 

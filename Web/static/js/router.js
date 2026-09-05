@@ -168,6 +168,7 @@ window.router = new class {
         this.applyTweaks();
 
         document.body.classList.remove('no_footer');
+        window.initStaticLottieStickers?.();
 
         if (window.im) {
             window.im.state._toggleScrollMode(false);

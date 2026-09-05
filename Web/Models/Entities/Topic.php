@@ -103,7 +103,7 @@ class Topic extends Postable
     public function getURL(): string
     {
         if ($this->isChatAttached()) {
-            return "/im?joinByTopic=" . $this->getPrettyId();
+            return "/im?join=" . $this->getPrettyId() . "&act=topic";
         }
 
         return "/topic" . $this->getPrettyId();

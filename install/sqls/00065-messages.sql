@@ -1,9 +1,42 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
+ALTER TABLE `documents` ADD `private` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `unlisted`;
+ALTER TABLE `videos` ADD `private` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `unlisted`, ADD `access_key` VARCHAR(100) NULL DEFAULT NULL AFTER `link`;
+ALTER TABLE `photos` ADD `unlisted` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `height`;
+ALTER TABLE `photos` ADD `access_key` VARCHAR(100) NULL DEFAULT NULL AFTER `unlisted`;
+
+ALTER TABLE `photos` ADD `context_id` BIGINT(20) DEFAULT NULL AFTER `private`, ADD `context_admin` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_id`, ADD `context_unlisted` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_admin`, ADD `context_vid` BIGINT(20) UNSIGNED DEFAULT NULL AFTER `context_unlisted`;
+ALTER TABLE `videos` ADD `context_id` BIGINT(20) DEFAULT NULL AFTER `private`, ADD `context_admin` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_id`, ADD `context_unlisted` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_admin`, ADD `context_vid` BIGINT(20) UNSIGNED DEFAULT NULL AFTER `context_unlisted`;
+ALTER TABLE `documents` ADD `context_id` BIGINT(20) DEFAULT NULL AFTER `private`, ADD `context_admin` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_id`, ADD `context_unlisted` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_admin`, ADD `context_vid` BIGINT(20) UNSIGNED DEFAULT NULL AFTER `context_unlisted`;
+ALTER TABLE `audios` ADD `context_id` BIGINT(20) DEFAULT NULL AFTER `deleted`, ADD `context_admin` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_id`, ADD `context_unlisted` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_admin`, ADD `context_vid` BIGINT(20) UNSIGNED DEFAULT NULL AFTER `context_unlisted`;
+ALTER TABLE `audios` ADD `access_key` VARCHAR(100) NULL DEFAULT NULL AFTER `unlisted`;
+
+CREATE TABLE `chats` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `chat_id` bigint(20) NOT NULL,
+  `title` varchar(255) NOT NULL DEFAULT '',
+  `description` varchar(4096) NOT NULL DEFAULT '',
+  `photo_id` bigint(20) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_chats_photo_id` FOREIGN KEY (`photo_id`) REFERENCES `photos` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+ALTER TABLE `blacklist_relations` CHANGE `author` `author` BIGINT NULL, CHANGE `target` `target` BIGINT NULL;
+ALTER TABLE `blacklist_relations` ADD `reason` VARCHAR(255) NULL AFTER `target`, ADD `until` BIGINT UNSIGNED NULL AFTER `reason`;
+
 DROP TABLE IF EXISTS `stickers`;
 DROP TABLE IF EXISTS `stickerpacks`;
 DROP TABLE IF EXISTS `sticker_relations`;
+
+ALTER TABLE `chats` ADD COLUMN `photos_history` text DEFAULT NULL AFTER `photo_id`;
+ALTER TABLE `topics` ADD `chat_id` BIGINT UNSIGNED DEFAULT NULL AFTER `flags`;
+ALTER TABLE `chats` ADD `edited` BIGINT UNSIGNED NULL DEFAULT NULL AFTER `description`;
+ALTER TABLE `gift_user_relations` ADD `deleted` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `sent`;
+
+ALTER TABLE `groups` ADD COLUMN `is_messages_enabled` tinyint(1) NOT NULL DEFAULT '0' AFTER `enforce_hiding_from_global_feed`;
+ALTER TABLE `groups` ADD COLUMN `everyone_can_upload_videos` tinyint(1) NOT NULL DEFAULT '0' AFTER `is_messages_enabled`;
+ALTER TABLE `groups` ADD COLUMN `deleted` tinyint(1) NOT NULL DEFAULT '0' AFTER `is_messages_enabled`;
 
 CREATE TABLE IF NOT EXISTS `stickers` (
   `id` bigint(20) unsigned NOT NULL,

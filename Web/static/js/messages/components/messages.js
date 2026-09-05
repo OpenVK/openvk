@@ -1140,6 +1140,10 @@ export class ChatMessage {
     }
 
     can(action, group) {
+        if (action === "restore") {
+            return Boolean(this.isDeleted() && this.isMine());
+        }
+
         if (this.isDeleted()) {
             return false;
         }

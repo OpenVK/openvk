@@ -13,6 +13,7 @@
     "leaflet": "^1.9.4",
     "leaflet-control-geocoder": "^2.4.0",
     "literallycanvas": "^0.5.2",
+    "lottie-web": "^5.13.0",
     "monaco-editor": "^0.20.0",
     "msgpack-lite": "^0.1.26",
     "plotly.js-dist": "^1.52.3",

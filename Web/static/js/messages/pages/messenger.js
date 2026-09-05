@@ -89,13 +89,57 @@ export class Messenger {
             await tab.render();
         } catch (e) { console.error(e); }
 
-        if (!convo.peer.isMessagesInited()) {
+        if (!convo.peer.isMessagesInited() || hadUnread) {
             try {
                 await tab.render();
-                const c = await convo.getEndScrollPosition().loadOlder();
-                convo.getEndScrollPosition().result();
+
+                const unreadCount = Number(convo.unread_count || convo._conversation?.unread_count || 0);
+                const effectiveUnread = Math.max(unreadCount, hadUnread ? 1 : 0);
+                const count = 25;
+                const offset = hadUnread ? Math.max(0, effectiveUnread - (count - 5)) : 0;
+                const isAtEnd = (offset === 0);
+
+                if (hadUnread && offset > 0) {
+                    convo.peer._chunks.chunks = [];
+                    convo.peer._chunks._map = new Map();
+                    convo.peer._chunks._messagesInited = false;
+                    convo.peer._chunks._cachedMessages = undefined;
+                    convo.peer._chunks.invalidateCache = true;
+
+                    const unreadChunk = new MessageChunk([], true, count);
+                    unreadChunk._direction = 'center';
+                    await unreadChunk.fetch({
+                        peer_id: convo.peer.id,
+                        offset: offset,
+                        count: count,
+                        extended: 1
+                    });
+
+                    convo.peer._chunks.appendChunk(unreadChunk, true);
+                    convo.peer._chunks._messagesInited = true;
+
+                    const sp = new ScrollPosition(convo.peer);
+                    sp.direction = "any";
+                    sp.reachedNewestPosition = false;
+                    sp.reachedOldestPosition = (unreadChunk.messages.length < count);
+                    convo._scroll = sp;
+                    sp._invalidateCache();
+                } else if (!convo.peer.isMessagesInited() || hadUnread) {
+                    if (hadUnread) {
+                        convo.peer._chunks.chunks = [];
+                        convo.peer._chunks._map = new Map();
+                        convo.peer._chunks._messagesInited = false;
+                        convo.peer._chunks._cachedMessages = undefined;
+                        convo.peer._chunks.invalidateCache = true;
+                        convo.getEndScrollPosition().recenter(null);
+                    }
+                    await convo.getEndScrollPosition().loadOlder();
+                    convo._scroll = convo.getEndScrollPosition();
+                }
+
+                convo.getScrollPosition()?.result?.();
             } catch (e) { // может быть и broker failure.
-                console.error(e);
+                console.error("IM | selectConversation load error:", e);
             }
 
             if (scrollToEnd == true && !hadUnread) {
@@ -105,7 +149,8 @@ export class Messenger {
 
         if (hadUnread && convo.peer && convo.peer.isMessagesInited()) {
             let firstUnread = null;
-            const dayChunks = convo.getScrollPosition()?.getDayDividedMessages?.() || [];
+            const sp = convo.getScrollPosition();
+            const dayChunks = sp?.getDayDividedMessages?.() || [];
             for (const chunk of dayChunks) {
                 for (const msg of chunk.messages) {
                     if (msg && !msg.isMine() && !msg.isRead()) {
@@ -115,7 +160,11 @@ export class Messenger {
                 }
                 if (firstUnread) break;
             }
-            convo.peer._firstUnreadMsgId = firstUnread ? (firstUnread.id || firstUnread.conversation_message_id) : null;
+            const firstUnreadId = firstUnread ? (firstUnread.id || firstUnread.conversation_message_id) : null;
+            convo.peer._firstUnreadMsgId = firstUnreadId;
+            if (firstUnreadId && sp) {
+                sp.relyMessageId = Number(firstUnreadId);
+            }
         } else if (!hadUnread && convo.peer) {
             convo.peer._firstUnreadMsgId = null;
         }
@@ -123,6 +172,9 @@ export class Messenger {
         try {
             await tab.render();
             tab.showTab();
+            if (hadUnread && convo.peer?._firstUnreadMsgId) {
+                this.scrollToUnread();
+            }
         } catch (e) { console.error(e); }
         const newId = Number(this.currentChatId);
 
@@ -157,7 +209,8 @@ export class Messenger {
             window.im.fastChats.update();
         }
 
-        if (convo && convo.peer) {
+        const currentSp = convo?.getScrollPosition();
+        if (convo && convo.peer && (!currentSp || currentSp.reachedNewestPosition)) {
             convo.peer.read();
         }
     }
@@ -684,6 +737,8 @@ export class Messenger {
         const photo256 = stickerData?.photo_256 || photo128;
         const photo512 = stickerData?.photo_512 || (pId ? `/sticker/${pId}/${sId}_512.webp` : photo128);
 
+        const animUrl = stickerData?.animation_url || (stickerData?.animations && stickerData?.animations[0]?.url) || '';
+
         const stickerObj = {
             id: sId,
             sticker_id: sId,
@@ -695,6 +750,9 @@ export class Messenger {
             photo_512: photo512,
             width: 512,
             height: 512,
+            animation_url: animUrl || (stickerData?.is_animated && pId ? `/sticker/${pId}/${sId}_512.json` : ''),
+            is_animated: Boolean(animUrl || stickerData?.is_animated),
+            animations: stickerData?.animations || (animUrl ? [{ type: 'light', url: animUrl }] : []),
             images: stickerData?.images || [
                 { url: photo128, width: 128, height: 128 },
                 { url: photo256, width: 256, height: 256 },
@@ -1429,6 +1487,7 @@ export class MessengerPage extends IMPage {
     async onRestoreMessageClick(msg, e) {
         if (e && e.stopPropagation) e.stopPropagation();
         if (!msg || !msg.id) return;
+        if (typeof msg.can === 'function' ? !msg.can('restore') : !msg.isMine()) return;
 
         try {
             const peerId = msg.data?.peer_id || msg.peer?.id || window.im?.messenger?.getCurrentChat()?.peer?.id;
@@ -1729,6 +1788,12 @@ export class MessengerPage extends IMPage {
             try {
                 await scrollPos.loadNewer();
                 scrollPos.result();
+                if (scrollPos.reachedNewestPosition) {
+                    const currentChat = this.getCurrentChat();
+                    if (currentChat && currentChat.peer) {
+                        currentChat.peer.read();
+                    }
+                }
             } catch (err) {
                 console.error("IM | loadNewer error:", err);
             } finally {
