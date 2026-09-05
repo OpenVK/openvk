@@ -271,12 +271,23 @@
         height: 49px !important;
         width: 100vw !important;
         background: linear-gradient(#707070, #3b3b3b);
+        background-position: 0 0 !important;
         display: flex;
         align-items: center;
         justify-content: center;
         position: fixed !important;
         z-index: 298;
         top: 0;
+    }
+
+    .page_header > .back,
+    .page_header > .left,
+    .page_header > .right {
+        display: none !important;
+    }
+
+    .page_header > .content {
+        display: contents;
     }
 
     .page_header #fast_notifications {
