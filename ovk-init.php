@@ -71,6 +71,26 @@ function ovk_proc_strtr(string $string, int $length = 0): string
     return $newString . ($string !== $newString ? "…" : ""); #if cut hasn't happened, don't append "..."
 }
 
+function ovk_truncate_words(string $text, int $length): string
+{
+    if ($length <= 0 || mb_strlen($text) <= $length) {
+        return $text;
+    }
+
+    $sub = mb_substr($text, 0, $length);
+    $nextChar = mb_substr($text, $length, 1);
+
+    if (preg_match('/\s/u', $nextChar)) {
+        return rtrim($sub) . "…";
+    }
+
+    if (preg_match('/^(.*)\s+[^\s]*$/su', $sub, $matches)) {
+        return rtrim($matches[1]) . "…";
+    }
+
+    return $sub . "…";
+}
+
 function knuth_shuffle(iterable $arr, int $seed): array
 {
     $data   = is_array($arr) ? $arr : iterator_to_array($arr);
@@ -281,9 +301,26 @@ function ovk_is_ssl(): bool
     return $GLOBALS["requestIsSSL"];
 }
 
-function parseAttachments($attachments, array $allow_types = ['photo', 'video', 'note', 'audio']): array
+function parseAttachments($attachments, array $allow_types = ['photo', 'video', 'note', 'audio', 'doc', 'poll', 'wall', 'gift', 'sticker']): array
 {
-    $exploded_attachments = is_array($attachments) ? $attachments : explode(",", $attachments);
+    $exploded_attachments = [];
+    if (is_string($attachments)) {
+        $exploded_attachments = explode(",", $attachments);
+    } elseif (is_array($attachments)) {
+        foreach ($attachments as $item) {
+            if (is_string($item)) {
+                foreach (explode(",", $item) as $sub) {
+                    $sub = trim($sub);
+                    if ($sub !== "") {
+                        $exploded_attachments[] = $sub;
+                    }
+                }
+            } elseif (!empty($item)) {
+                $exploded_attachments[] = $item;
+            }
+        }
+    }
+
     $exploded_attachments = array_slice($exploded_attachments, 0, OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"] ?? 10);
     $exploded_attachments = array_unique($exploded_attachments);
     $imploded_types = implode('|', $allow_types);
@@ -292,10 +329,12 @@ function parseAttachments($attachments, array $allow_types = ['photo', 'video', 
         'photo' => [
             'repo'   => 'openvk\Web\Models\Repositories\Photos',
             'method' => 'getByOwnerAndVID',
+            'withKey' => true,
         ],
         'video' => [
             'repo' => 'openvk\Web\Models\Repositories\Videos',
             'method' => 'getByOwnerAndVID',
+            'withKey' => true,
         ],
         'audio' => [
             'repo' => 'openvk\Web\Models\Repositories\Audios',
@@ -315,6 +354,20 @@ function parseAttachments($attachments, array $allow_types = ['photo', 'video', 
             'method' => 'getDocumentById',
             'withKey' => true,
         ],
+        'wall' => [
+            'repo' => 'openvk\Web\Models\Repositories\Posts',
+            'method' => 'getPostById'
+        ],
+        'gift' => [
+            'repo' => 'openvk\Web\Models\Repositories\Gifts',
+            'method' => 'getSentGiftById',
+            'onlyId' => true,
+        ],
+        'sticker' => [
+            'repo'   => 'openvk\Web\Models\Repositories\Stickers',
+            'method' => 'getSticker',
+            'onlyId' => true,
+        ],
     ];
 
     foreach ($exploded_attachments as $attachment_string) {
@@ -326,17 +379,22 @@ function parseAttachments($attachments, array $allow_types = ['photo', 'video', 
                 }
 
                 $attachment_ids  = str_replace($attachment_type, '', $attachment_string);
-                if ($repositories[$attachment_type]['onlyId']) {
-                    [$attachment_owner, $attachment_id] = array_map('intval', explode('_', $attachment_ids));
+                $parts = explode('_', $attachment_ids);
+                if (!empty($repositories[$attachment_type]['onlyId'])) {
+                    $attachment_id = (int) (ltrim($parts[0], '_') ?: ($parts[1] ?? 0));
 
                     $repository_class = $repositories[$attachment_type]['repo'];
                     if (!$repository_class) {
                         continue;
                     }
                     $attachment_model = (new $repository_class())->{$repositories[$attachment_type]['method']}($attachment_id);
-                    $output_attachments[] = $attachment_model;
-                } elseif ($repositories[$attachment_type]['withKey']) {
-                    [$attachment_owner, $attachment_id, $access_key] = explode('_', $attachment_ids);
+                    if ($attachment_model) {
+                        $output_attachments[] = $attachment_model;
+                    }
+                } elseif (!empty($repositories[$attachment_type]['withKey'])) {
+                    $attachment_owner = (int) ($parts[0] ?? 0);
+                    $attachment_id = (int) ($parts[1] ?? 0);
+                    $access_key = $parts[2] ?? null;
 
                     $repository_class = $repositories[$attachment_type]['repo'];
                     if (!$repository_class) {
@@ -344,18 +402,23 @@ function parseAttachments($attachments, array $allow_types = ['photo', 'video', 
                     }
                     $attachment_model = (new $repository_class())->{$repositories[$attachment_type]['method']}((int) $attachment_owner, (int) $attachment_id, $access_key);
 
-                    $output_attachments[] = $attachment_model;
+                    if ($attachment_model) {
+                        $output_attachments[] = $attachment_model;
+                    }
                 } else {
-                    [$attachment_owner, $attachment_id] = array_map('intval', explode('_', $attachment_ids));
+                    $attachment_owner = (int) ($parts[0] ?? 0);
+                    $attachment_id = (int) ($parts[1] ?? 0);
 
                     $repository_class = $repositories[$attachment_type]['repo'];
                     if (!$repository_class) {
                         continue;
                     }
                     $attachment_model = (new $repository_class())->{$repositories[$attachment_type]['method']}($attachment_owner, $attachment_id);
-                    $output_attachments[] = $attachment_model;
+                    if ($attachment_model) {
+                        $output_attachments[] = $attachment_model;
+                    }
                 }
-            } catch (\Throwable) {
+            } catch (\Throwable $e) {
                 continue;
             }
         }

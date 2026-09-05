@@ -133,7 +133,7 @@ final class UserPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
 
         $user = $this->users->get($id);
-        $page = abs((int) ($this->queryParam("p") ?? 1));
+        $page = max(1, (int) ($this->queryParam("p") ?: 1));
         if (!$user) {
             $this->notFound();
         } elseif (!$user->getPrivacyPermission('friends.read', $this->user->identity ?? null)) {
@@ -173,7 +173,7 @@ final class UserPresenter extends OpenVKPresenter
             }
 
             $this->template->user = $user;
-            $this->template->page = (int) ($this->queryParam("p") ?? 1);
+            $this->template->page = max(1, (int) ($this->queryParam("p") ?: 1));
             $this->template->admin = $this->queryParam("act") == "managed";
         }
     }
@@ -193,7 +193,7 @@ final class UserPresenter extends OpenVKPresenter
             }
 
             $this->template->user = $user;
-            $this->template->page = (int) ($this->queryParam("p") ?? 1);
+            $this->template->page = max(1, (int) ($this->queryParam("p") ?: 1));
             $this->template->admin = $this->queryParam("act") == "managed";
         }
     }
@@ -678,6 +678,7 @@ final class UserPresenter extends OpenVKPresenter
                     "messages.write",
                     "audios.read",
                     "likes.read",
+                    "messages.add_to_chats",
                 ];
                 foreach ($settings as $setting) {
                     $input = $this->postParam(str_replace(".", "_", $setting));
@@ -746,6 +747,7 @@ final class UserPresenter extends OpenVKPresenter
                     "menu_aplikoj"   => "apps",
                     "menu_doxc"      => "docs",
                     "menu_feva"      => "fave",
+                    "menu_stickers"  => "stickers",
                 ];
                 foreach ($settings as $checkbox => $setting) {
                     $user->setLeftMenuItemStatus($setting, $this->checkbox($checkbox));

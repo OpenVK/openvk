@@ -13,6 +13,7 @@ class Post extends Postable
 {
     use Traits\TRichText;
     protected $tableName = "posts";
+    public $shortName    = "wall";
     protected $upperNodeReferenceColumnName = "wall";
 
     private function setLikeRecursively(bool $liked, User $user, int $depth): void
@@ -412,16 +413,145 @@ class Post extends Postable
         $res = (object) [];
 
         $res->id      = $this->getVirtualId();
-        $res->to_id   = $this->getWallOwner()->getRealId();
+        $res->owner_id = $res->to_id = $this->getWallOwner()->getRealId();
         $res->from_id = $this->getOwner()->getRealId();
         $res->date    = $this->getPublicationTime()->timestamp();
         $res->text    = $this->getText(false);
-        $res->attachments = []; # todo
+        $res->attachments = [];
 
         $res->copy_owner_id = null; # todo
         $res->copy_post_id  = null; # todo
 
         return $res;
+    }
+
+    public function toApiAttachment(?User $user = null): array
+    {
+        $res = (object) [];
+
+        $res->id       = $this->getVirtualId();
+        $res->owner_id = $res->to_id = $this->getWallOwner()->getRealId();
+        $res->from_id  = $this->getOwner()->getRealId();
+        $res->date     = $this->getPublicationTime()->timestamp();
+        $res->text     = $this->getText(false);
+        $res->attachments = [];
+
+        $author = $this->getOwner();
+        $res->author_name   = $author ? $author->getCanonicalName() : "";
+        $res->author_avatar = $author ? $author->getAvatarUrl("mid") : "";
+
+        if (!$this->isArchived()) {
+            try {
+                $layoutData = $this->getChildrenWithLayout(380);
+                $tiles = [];
+                foreach ($layoutData->tiles as $tile) {
+                    $item = $tile[2];
+                    $type = ($item instanceof \openvk\Web\Models\Entities\Photo) ? "photo" : (($item instanceof \openvk\Web\Models\Entities\Video) ? "video" : "unknown");
+                    
+                    $tilePayload = null;
+                    if ($type === "photo") {
+                        $tilePayload = $item->toVkApiStruct(true, false);
+                    } elseif ($type === "video") {
+                        $vStruct = $item->toVkApiStruct($user);
+                        $tilePayload = is_object($vStruct) && isset($vStruct->video) ? (object) $vStruct->video : (is_array($vStruct) && isset($vStruct['video']) ? (object) $vStruct['video'] : $vStruct);
+                        if (is_object($tilePayload)) {
+                            $thumb = $item->getThumbnailURL();
+                            $tilePayload->thumbnail = $thumb;
+                            $tilePayload->photo_320 = $thumb;
+                            $tilePayload->photo_130 = $thumb;
+                        }
+                    }
+
+                    $tiles[] = (object) [
+                        "width"  => $tile[0],
+                        "height" => $tile[1],
+                        "float"  => $tile[3],
+                        "type"   => $type,
+                        $type    => $tilePayload,
+                    ];
+                }
+
+                $extras = [];
+                foreach ($layoutData->extras as $extra) {
+                    if ($extra instanceof \openvk\Web\Models\Entities\Audio) {
+                        $extras[] = (object) [
+                            "type"  => "audio",
+                            "audio" => $extra->toVkApiStruct($user),
+                        ];
+                    } elseif ($extra instanceof \openvk\Web\Models\Entities\Document) {
+                        $extras[] = (object) [
+                            "type" => "doc",
+                            "doc"  => $extra->toVkApiStruct($user),
+                        ];
+                    } elseif ($extra instanceof \openvk\Web\Models\Entities\Poll) {
+                        $extras[] = (object) [
+                            "type" => "poll",
+                            "poll" => $extra->toVkApiStruct($user),
+                        ];
+                    }
+                }
+
+                $res->layout = (object) [
+                    "width"  => $layoutData->width,
+                    "height" => $layoutData->height,
+                    "tiles"  => $tiles,
+                    "extras" => $extras,
+                ];
+            } catch (\Throwable $e) {
+                // Ignore layout errors
+            }
+
+            foreach ($this->getChildren() as $attachment) {
+                if ($attachment instanceof \openvk\Web\Models\Entities\Photo) {
+                    if ($attachment->isDeleted()) continue;
+                    $res->attachments[] = (object) [
+                        "type"  => "photo",
+                        "photo" => $attachment->toVkApiStruct(true, false),
+                    ];
+                } elseif ($attachment instanceof \openvk\Web\Models\Entities\Video) {
+                    $vStruct = $attachment->toVkApiStruct($user);
+                    $vObj = is_object($vStruct) && isset($vStruct->video) ? (object) $vStruct->video : (is_array($vStruct) && isset($vStruct['video']) ? (object) $vStruct['video'] : $vStruct);
+                    if (is_object($vObj)) {
+                        $thumb = $attachment->getThumbnailURL();
+                        $vObj->thumbnail = $thumb;
+                        $vObj->photo_320 = $thumb;
+                        $vObj->photo_130 = $thumb;
+                    }
+                    $res->attachments[] = (object) [
+                        "type"  => "video",
+                        "video" => $vObj,
+                    ];
+                } elseif ($attachment instanceof \openvk\Web\Models\Entities\Audio) {
+                    $res->attachments[] = (object) [
+                        "type"  => "audio",
+                        "audio" => $attachment->toVkApiStruct($user),
+                    ];
+                } elseif ($attachment instanceof \openvk\Web\Models\Entities\Document) {
+                    $res->attachments[] = (object) [
+                        "type" => "doc",
+                        "doc"  => $attachment->toVkApiStruct($user),
+                    ];
+                } elseif ($attachment instanceof \openvk\Web\Models\Entities\Poll) {
+                    $res->attachments[] = (object) [
+                        "type" => "poll",
+                        "poll" => $attachment->toVkApiStruct($user),
+                    ];
+                } elseif ($attachment instanceof \openvk\Web\Models\Entities\Messages\Sticker) {
+                    $res->attachments[] = (object) [
+                        "type"    => "sticker",
+                        "sticker" => (object) $attachment->toVkApiStruct($user),
+                    ];
+                }
+            }
+        }
+
+        $res->copy_owner_id = null; # todo
+        $res->copy_post_id  = null; # todo
+
+        return [
+            "type" => "wall",
+            "wall" => $res,
+        ];
     }
 
     public function canBeEditedBy(?User $user = null): bool
@@ -570,5 +700,10 @@ class Post extends Postable
             'coordinates' => $this->getLat() . ',' . $this->getLon(),
             'name' => $this->getGeo()->name,
         ];
+    }
+
+    public function getAccessKey(): ?string
+    {
+        return null;
     }
 }

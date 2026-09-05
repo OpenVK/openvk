@@ -8,6 +8,7 @@ use openvk\Web\Util\DateTime;
 use Nette\Database\Table\ActiveRow;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\Club;
+use openvk\Web\Models\Entities\Messages\Message;
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Repositories\{Applications, Comments, Notes, Reports, Audios, Documents, Users, Posts, Photos, Videos, Clubs};
 use Chandler\Database\DatabaseConnection as DB;
@@ -63,31 +64,57 @@ class Report extends RowModel
         return (int) $this->getRecord()->target_id;
     }
 
-    public function getContentObject()
+    public function getContentObject(bool $extended = false)
     {
-        if ($this->getContentType() == "post") {
-            return (new Posts())->get($this->getContentId());
-        } elseif ($this->getContentType() == "photo") {
-            return (new Photos())->get($this->getContentId());
-        } elseif ($this->getContentType() == "video") {
-            return (new Videos())->get($this->getContentId());
-        } elseif ($this->getContentType() == "group") {
-            return (new Clubs())->get($this->getContentId());
-        } elseif ($this->getContentType() == "comment") {
-            return (new Comments())->get($this->getContentId());
-        } elseif ($this->getContentType() == "note") {
-            return (new Notes())->get($this->getContentId());
-        } elseif ($this->getContentType() == "app") {
-            return (new Applications())->get($this->getContentId());
-        } elseif ($this->getContentType() == "user") {
-            return (new Users())->get($this->getContentId());
-        } elseif ($this->getContentType() == "audio") {
-            return (new Audios())->get($this->getContentId());
-        } elseif ($this->getContentType() == "doc") {
-            return (new Documents())->get($this->getContentId());
-        } else {
-            return null;
+        switch ($this->getContentType()) {
+            case "post":
+                return (new Posts())->get($this->getContentId());
+                break;
+            case "photo":
+                return (new Photos())->get($this->getContentId());
+                break;
+            case "video":
+                return (new Videos())->get($this->getContentId());
+                break;
+            case "group":
+                return (new Clubs())->get($this->getContentId());
+                break;
+            case "comment":
+                return (new Comments())->get($this->getContentId());
+                break;
+            case "note":
+                return (new Notes())->get($this->getContentId());
+                break;
+            case "app":
+                return (new Applications())->get($this->getContentId());
+                break;
+            case "user":
+                return (new Users())->get($this->getContentId());
+                break;
+            case "audio":
+                return (new Audios())->get($this->getContentId());
+                break;
+            case "doc":
+                return (new Documents())->get($this->getContentId());
+                break;
+            case "message":
+                if ($extended == true) {
+                    try {
+                        #return Message::fromGlobalId($this->getContentId(), 0);
+                        return Message::fromGlobalId($this->getContentId(), $this->authorId());
+                    } catch (\Throwable $e) {
+                        bdump($e);
+                        return null;
+                    }
+                } else {
+                    return new Message((object) [
+                        "global_id" => $this->getContentId()
+                    ]);
+                }
+                break;
         }
+
+        return null;
     }
 
     public function getAuthor(): RowModel
@@ -100,28 +127,31 @@ class Report extends RowModel
         return (new Users())->get($this->getRecord()->user_id);
     }
 
-    public function banUser($initiator)
+    public function banUser($initiator, string $reasonOwner = "")
     {
-        $reason = $this->getContentType() !== "user" ? ("**content-" . $this->getContentType() . "-" . $this->getContentId() . "**") : ("Подозрительная активность");
-        $this->getAuthor()->ban($reason, false, time() + $this->getAuthor()->getNewBanTime(), $initiator);
+        $author = $this->getAuthor();
+        $author->ban($reasonOwner, false, time() + $author->getNewBanTime(), $initiator);
     }
 
-    public function deleteContent()
+    public function deleteContent(string $reason = "")
     {
-        if ($this->getContentType() !== "user") {
+        if ($this->getContentType() === "message") {
+            $obj = $this->getContentObject();
+        }
+
+        if (!in_array($this->getContentType(), ["message", "user"])) {
             $pubTime = $this->getContentObject()->getPublicationTime();
-            if (method_exists($this->getContentObject(), "getName")) {
-                $name = $this->getContentObject()->getName();
-                $placeholder = "$pubTime ($name)";
-            } else {
-                $placeholder = "$pubTime";
+            $postId = method_exists($this->getContentObject(), "getPrettyId") ? $this->getContentObject()->getPrettyId() : $this->getContentObject()->getId();
+            $reasonPlaceholder = "";
+            if ($reason != "") {
+                $reasonPlaceholder = " по причине " . $reason;
             }
 
             if ($this->getAuthor() instanceof Club) {
                 $name = $this->getAuthor()->getName();
-                $this->getAuthor()->getOwner()->adminNotify("Ваш контент, который опубликовали $placeholder в созданной вами группе \"$name\" был удалён модераторами инстанса. За повторные или серьёзные нарушения группу могут заблокировать.");
+                $this->getAuthor()->getOwner()->adminNotify("Ваш контент с id $postId, который был опубликован $pubTime в созданной вами группе \"$name\" был удалён модераторами инстанса$reasonPlaceholder. За повторные или серьёзные нарушения группу могут заблокировать.");
             } else {
-                $this->getAuthor()->adminNotify("Ваш контент, который вы опубликовали $placeholder был удалён модераторами инстанса. За повторные или серьёзные нарушения вас могут заблокировать.");
+                $this->getAuthor()->adminNotify("Ваш контент с id $postId, который был опубликован $pubTime был удалён модераторами инстанса$reasonPlaceholder. За повторные или серьёзные нарушения вас могут заблокировать.");
             }
             $this->getContentObject()->delete($this->getContentType() !== "app");
         }

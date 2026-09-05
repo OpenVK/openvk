@@ -21,6 +21,7 @@ final class Account extends VKAPIRequestHandler
             "id"                  => $user->getId(),
             "is_verified"         => $user->isVerified(),
             "verification_status" => $user->isVerified() ? 'verified' : 'unverified',
+            "can_create_stickers" => $user->canCreateStickers(),
             "last_name"           => $user->getLastName(),
             "home_town"           => $user->getHometown(),
             "status"              => $user->getStatus(),

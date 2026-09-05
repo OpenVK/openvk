@@ -7,7 +7,8 @@ namespace openvk\Web\Models\Entities;
 use openvk\Web\Models\Repositories\{Photos, Topics, Videos, Documents};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
-use openvk\Web\Models\Entities\{User, Manager};
+use openvk\Web\Models\Entities\{User, Manager, Chat};
+use openvk\Web\Models\Entities\Relationships\Blacklist;
 use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Managers, Posts};
 use Nette\Database\Table\{ActiveRow, GroupedSelection};
 use Chandler\Database\DatabaseConnection as DB;
@@ -37,14 +38,21 @@ class Club extends RowModel
     public const WALL_OPEN     = 1;
     public const WALL_LIMITED  = 2;
 
+    private $_avatarAlbum = null;
+
     public function getId(): int
     {
         return $this->getRecord()->id;
     }
 
+    public function getAvatarAlbum(): ?Album
+    {
+        return $this->_avatarAlbum ??= (new Albums())->getClubAvatarAlbum($this);
+    }
+
     public function getAvatarPhoto(): ?Photo
     {
-        $avAlbum  = (new Albums())->getClubAvatarAlbum($this);
+        $avAlbum  = $this->getAvatarAlbum();
         $avCount  = $avAlbum->getPhotosCount();
         $avPhotos = $avAlbum->getPhotos($avCount, 1);
 
@@ -172,6 +180,43 @@ class Club extends RowModel
     public function isHidingFromGlobalFeedEnforced(): bool
     {
         return (bool) $this->getRecord()->enforce_hiding_from_global_feed;
+    }
+
+    public function isMessagesEnabled(): bool
+    {
+        return (bool) $this->getRecord()->is_messages_enabled;
+    }
+
+    public function canWriteMessage(?User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        $blacklist = $this->getBlacklist();
+        if ($blacklist->isBanned($user)) {
+            return false;
+        }
+
+        return $this->isMessagesEnabled();
+    }
+
+    public function getLinkedChats(): array
+    {
+        $chats = DB::i()->getContext()->table("chats")
+            ->where("group_id = ?", $this->getId());
+
+        $result = [];
+        foreach ($chats as $row) {
+            $result[] = new Chat($row);
+        }
+
+        return $result;
+    }
+
+    public function isDeleted(): bool
+    {
+        return (bool) $this->getRecord()->deleted;
     }
 
     /*
@@ -496,9 +541,19 @@ class Club extends RowModel
         return $this->getRecord()->alert;
     }
 
+    public function getBlacklist(): Blacklist
+    {
+        return new Blacklist($this);
+    }
+
     public function getRealId(): int
     {
         return $this->getId() * -1;
+    }
+
+    public function isEveryoneCanUploadVideos(): bool
+    {
+        return (bool) $this->getRecord()->everyone_can_upload_videos;
     }
 
     public function isEveryoneCanUploadAudios(): bool
@@ -513,6 +568,15 @@ class Club extends RowModel
         }
 
         return $this->isEveryoneCanUploadAudios() || $this->canBeModifiedBy($user);
+    }
+
+    public function canUploadVideo(?User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        return $this->canBeModifiedBy($user);
     }
 
     public function canUploadDocs(?User $user): bool
@@ -531,6 +595,9 @@ class Club extends RowModel
 
     public function toVkApiStruct(?User $user = null, string $fields = ''): object
     {
+        $blacklist = new Blacklist($this);
+        $blacklist2 = $user ? new Blacklist($user) : null;
+
         $res = (object) [];
 
         $res->id          = $this->getId();
@@ -542,6 +609,9 @@ class Club extends RowModel
         $res->is_admin    = $user ? (int) $this->canBeModifiedBy($user) : 0;
         $res->deactivated = null;
         $res->can_access_closed = 1;
+        $res->is_me_blocked = $user ? (int) $blacklist->isBanned($user) : 0;
+        $res->is_messages_blocked = $user ? (int) $blacklist2->isBanned($this) : 0;
+        $res->can_message = $res->is_messages_blocked == 0 && $res->is_messages_blocked == 0;
 
         if (!is_array($fields)) {
             $fields = explode(',', $fields);
@@ -561,6 +631,18 @@ class Club extends RowModel
                     break;
                 case 'background':
                     $res->background = $this->getBackDropPictureURLs();
+                    break;
+                case 'photo_id':
+                    $av = $this->getAvatarPhoto();
+
+                    if ($av != null) {
+                        $res->photo_id = $av->getVirtualId();
+                        $res->photo_pid = $av->getPrettyIdWithKey();
+                    } else {
+                        $res->photo_id = null;
+                        $res->photo_pid = null;
+                    }
+
                     break;
                 case 'photo_50':
                     $res->photo_50 = $this->getAvatarUrl('miniscule', $avatar_photo);

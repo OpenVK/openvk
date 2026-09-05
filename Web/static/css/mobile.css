@@ -271,12 +271,23 @@
         height: 49px !important;
         width: 100vw !important;
         background: linear-gradient(#707070, #3b3b3b);
+        background-position: 0 0 !important;
         display: flex;
         align-items: center;
         justify-content: center;
         position: fixed !important;
         z-index: 298;
         top: 0;
+    }
+
+    .page_header > .back,
+    .page_header > .left,
+    .page_header > .right {
+        display: none !important;
+    }
+
+    .page_header > .content {
+        display: contents;
     }
 
     .page_header #fast_notifications {
@@ -499,11 +510,11 @@
         box-sizing: border-box;
     }
 
-    #search_box {
+    .header-search-box {
         height: 100% !important;
     }
 
-    #search_box input[type="search"] {
+    .header-search-box input[type="search"] {
         height: 30px;
         width: 227px;
         background: #fff
@@ -516,9 +527,12 @@
         font-size: 13px !important;
     }
 
+    body .search_expanded_at_all .header-search-box,
     body .search_expanded_at_all .header_navigation #search_box {
         display: flex;
         align-items: center;
+        margin-left: 0;
+        float: unset;
     }
 
     body .search_expanded_at_all .header_navigation {
@@ -534,20 +548,26 @@
         padding: 0px 4px;
     }
 
+    .header-search-box,
     .header_navigation #search_box,
+    body.menu-expanded .search_expanded_at_all .header-search-box,
     body.menu-expanded .search_expanded_at_all .header_navigation #search_box {
         display: none;
         padding: 0px 0px 0px 7px;
+        margin-left: 0;
+        float: unset;
     }
 
     .page_header.search_expanded select[name="section"] {
         display: none !important;
     }
 
+    .header-search-box .search_box_button,
     .header_navigation #search_box .search_box_button {
         width: 60px;
     }
 
+    .header-search-box .search_box_button span,
     .header_navigation #search_box .search_box_button span {
         font-size: 18px;
     }
@@ -1158,6 +1178,7 @@
 
     .profile-hints a {
         font-size: 14px;
+        display: none;
     }
 
     .completeness-gauge {
@@ -1872,7 +1893,7 @@
     }
 
     .ovk-diag-action > .button {
-        padding: 10px 10px;
+        padding: 4px 10px;
         width: 100%;
     }
 
@@ -2104,6 +2125,7 @@
 
     .side_link {
         font-size: 14px;
+        float: unset !important;
     }
 
     .oldPostDelete {
@@ -2208,6 +2230,18 @@
         margin-top: 13px;
     }
 
+    .post.post_oldschool > tbody > tr > td > .post-content {
+        margin-left: -41px;
+    }
+
+    .post.in-window > tbody > tr > td > .post-content {
+        margin-left: 0px;
+    }
+
+    .ovk-photo-view.ovk-post-viewer .photo_viewer_wrapper {
+        margin: 0;
+    }
+
     .post.post_microblog .post-all-contents > .post-author {
         margin-top: 10px;
         margin-left: -5px;
@@ -2248,66 +2282,9 @@
         margin-bottom: 6px;
     }
 
-    /* Messenger */
-
-    .crp-entry {
-        display: grid;
-        grid-template-columns: 0fr 0fr 1fr;
-    }
-
-    .crp-entry .crp-entry--message {
-        width: 100%;
-    }
-
-    .crp-entry--image {
-        margin-right: 0px;
-    }
-
-    .crp-entry--info {
-        margin-top: unset;
-        width: 93px;
-        margin-left: 8px;
-        margin-right: 0px;
-        font-size: 15px;
-    }
-
-    .crp-entry--message {
-        font-size: 15px;
-    }
-
-    .messenger-app {
-        width: 100%;
-    }
-
-    .messenger-app--input {
-        padding: 10px 2% 25px 2%;
-    }
-
-    .messenger-app--messages {
-        padding: 10px 2%;
-    }
-
-    .messenger-app--messages---message {
-        gap: 3px;
-    }
-
-    .messenger-app--messages---message ._content {
-        width: 70%;
-    }
-
-    .messenger-app--messages---message ._content span,
-    .messenger-app--messages---message ._content > a {
-        font-size: 15px;
-    }
-
-    .messenger-app--messages---message ._content span {
-        font-size: 15px;
-        margin-top: 5px;
-    }
-
-    .messenger-app--messages---message .time {
-        width: 100px;
-        font-size: 13px;
+    .search_input {
+        background: url(/assets/packages/static/openvk/img/search_icon.png) no-repeat 7px 7px;
+        padding-left: 25px !important;
     }
 
     /* Support */
@@ -2510,6 +2487,12 @@
         color: unset;
     }
 
+    .title_insignificant {
+        padding: 5px 0px;
+        margin: 0px 0px 7px 0px;
+        font-size: 16px;
+    }
+
     body.ajax_request_made #ajloader,
     #ajloader.shown {
         display: flex;
@@ -2519,6 +2502,28 @@
 
     .post .post-menu-s .post-menu *:not(.comment-reply) {
         display: none;
+    }
+
+    .stickers_packs_grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .stickers_pack_card {
+        max-width: 100%;
+    }
+
+    #fastchats_container {
+        display: none !important;
+    }
+
+    .ovk-diag-cont:has(.stickers_pack_modal), .stickers_pack_modal_cont {
+        max-width: 100% !important;
+    }
+
+    .stickers_modal_grid_wrap {
+        max-width: 100%;
+        max-height: 100%;
     }
 }
 
@@ -2552,10 +2557,12 @@
         width: 46px;
     }
 
+    body .search_expanded_at_all .header-search-box,
     body .search_expanded_at_all .header_navigation #search_box {
         width: 190px;
     }
 
+    .header-search-box .search_box_button span,
     .header_navigation #search_box .search_box_button span {
         font-size: 10px;
     }

@@ -69,6 +69,8 @@ openvk:
             allowedFormats: ["jpg", "jpeg", "png", "gif", "webp", "psd", "aep", "docx", "doc", "odt", "txt", "md", "pptx", "ppt", "xls", "xlsx", "pdf", "djvu", "fb2", "ps", "apk", "zip", "7z", "mp4", "avi", "mp3", "flac"]
         apps:
             withdrawTax: 8
+        stickers:
+            withdrawTax: 2
         security:
             requireEmail: false
             requirePhone: false
@@ -94,18 +96,22 @@ openvk:
                         friends.outgoing_sub: 25
                         wall.post: 5000
                         gifts.send: 30
+                        messages.notfriends: 10
         blacklists:
             limit: 100
             applyToAdmins: true
         registration:
             enable: true
             disablingReason: ""
+            redirectAfter: null
             emailWhitelist:
                 enable: false
                 allowedHosts: []
         support:
             supportName: "Agent"
             adminAccount: 1 # Change this ok
+            supportAccount: 1
+            devAccount: 1381
             fastAnswers:
                 - "This is a list of quick answers to common questions for support. Post your responses here and agents can send it quickly with just 3 clicks"
                 - "There can be as many answers as you want, but it is best to have a maximum of 10.\n\nYou can also remove all answers from the list to disable this feature"
@@ -175,6 +181,11 @@ openvk:
             enable: false
             text: "Global alert example <b>with HTML</b>"
             canBeDismissed: true
+        stickersBanner:
+            enable: false
+            src: "https://example.org/stickers_banner.png" # Width - 630px, height - auto
+            caption: "New stickers feature!"
+            link: "/stickers"
         bellsAndWhistles:
             testLabel: false
         defaultMobileTheme: ""
@@ -214,12 +225,16 @@ openvk:
                 dsn: "mysql:unix_host=localhost;dbname=openvk-eventdb" # or unix_socket=/tmp/mysql.sock
                 user: "root"
                 password: "DATABASE_PASSWORD"
+        redis:
+            addr: "127.0.0.1"
+            port: 6379
+            password: ""
         notificationsBroker:
             enable: false
-            redis:
-                addr: "127.0.0.1"
-                port: 6379
-                password: ""
             stream:
                 maxlen: 1000         # Maximum notifications in memory at once
                 prefix: "ovk_notifs"
+        im:
+            enable: false
+            server_url: "http://127.0.0.1:8080" # Internal URL, can be localhost.
+            lp_server_addr: "openvk.org" # Fill this if its on a different subdomain or left empty

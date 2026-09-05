@@ -111,12 +111,13 @@ final class GiftsPresenter extends OpenVKPresenter
         }
 
         $comment      = empty($c = $this->postParam("comment")) ? null : $c;
-        $notification = new GiftNotification($user, $this->user->identity, $gift, $comment);
-        $notification->emit();
+
         $this->user->identity->setCoins($coinsLeft);
         $this->user->identity->save();
-        $user->gift($this->user->identity, $gift, $comment, !is_null($this->postParam("anonymous")));
+        $data = $user->gift($this->user->identity, $gift, $comment, !is_null($this->postParam("anonymous")));
         $gift->used();
+        $notification = new GiftNotification($user, $this->user->identity, $gift, $data->id);
+        $notification->emit();
 
         $this->flash("succ", tr("gift_sent"), tr("gift_sent_desc", $user->getFirstName(), $gift->getPrice()));
         $this->redirect($user->getURL());

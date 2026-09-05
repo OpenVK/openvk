@@ -8,6 +8,7 @@ use openvk\Web\Models\Repositories\Clubs as ClubsRepo;
 use openvk\Web\Models\Repositories\Users as UsersRepo;
 use openvk\Web\Models\Repositories\Posts as PostsRepo;
 use openvk\Web\Models\Entities\Club;
+use openvk\Web\Models\Entities\Relationships\Blacklist;
 
 final class Groups extends VKAPIRequestHandler
 {
@@ -111,7 +112,7 @@ final class Groups extends VKAPIRequestHandler
                     "id"          => intval($clbs[$i]),
                     "name"        => "DELETED",
                     "screen_name" => "club" . intval($clbs[$i]),
-                    "type"        => "group",
+                    "type"        => "undefined",
                     "description" => "This group was deleted or it doesn't exist",
                 ];
             } elseif ($clbs[$i] == null) {
@@ -322,5 +323,88 @@ final class Groups extends VKAPIRequestHandler
                 "can_recall" => 0,
             ];
         }
+    }
+
+    public function ban(int $group_id, int $owner_id, int $reason = 0, int $end_date = 0, string $comment = "", bool $comment_visible = true)
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $club = (new ClubsRepo())->get($group_id);
+        $user = (new UsersRepo())->get($owner_id);
+
+        if (!$club || !$club->canBeViewedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        if (!$club->canBeModifiedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        if (!$user || $user->isDeleted()) {
+            $this->fail(15, "Not found");
+        }
+
+        if ($user->getId() === $this->getUser()->getId()) {
+            $this->fail(15, "Access denied: cannot ban yourself");
+        }
+
+        $blacklist = new Blacklist($club);
+        $blacklist->ban($user, $comment ?? null, $end_date > 0 ? $end_date : null);
+
+        return 1;
+    }
+
+    public function unban(int $group_id, int $owner_id)
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $club = (new ClubsRepo())->get($group_id);
+        $user = (new UsersRepo())->get($owner_id);
+
+        if (!$club || !$club->canBeViewedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        if (!$club->canBeModifiedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        if (!$user || $user->isDeleted()) {
+            $this->fail(15, "Not found");
+        }
+
+        $blacklist = new Blacklist($club);
+        $blacklist->unban($user);
+
+        return 1;
+    }
+
+    public function getBanned(int $group_id, int $offset = 0, int $count = 20, string $fields = "")
+    {
+        $this->requireUser();
+
+        $club = (new ClubsRepo())->get($group_id);
+
+        if (!$club || !$club->canBeViewedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        if (!$club->canBeModifiedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        $blacklist = new Blacklist($club);
+        $result = (object) [
+            "count" => $blacklist->getBannedCount(),
+            "items" => [],
+        ];
+
+        foreach ($blacklist->getBanned($offset, $count) as $user) {
+            $result->items[] = $user->toVkApiStruct($this->getUser(), $fields);
+        }
+
+        return $result;
     }
 }

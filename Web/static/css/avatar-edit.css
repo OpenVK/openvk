@@ -1,4 +1,5 @@
-.avatar_block {
+.avatar_block,
+.sliding-thing-wrapper {
     position: relative;
     clip-path: inset(0 0 0.7% 0);
 }
@@ -34,21 +35,27 @@
     opacity: 1;
 }
 
-.avatar_block *, .avatar_block .avatarDelete::before {
+.avatar_block *, .avatar_block .avatarDelete::before,
+div.sliding-thing-wrapper .sliding-thing {
     -webkit-transition: all 200ms ease-in-out;
     -moz-transition: all 200ms ease-in-out;
     -o-transition: all 200ms ease-in-out;
     transition: all 200ms ease-in-out;
 }
 
-._add_image::before {
+._add_image::before,
+.avatar_variants #draw_image::before {
     margin-top: 2px;
     content: ' ';
-    background: url('/assets/packages/static/openvk/img/upload.png?v=2');
+    background: url('/assets/packages/static/openvk/img/upload.png?v=3');
     width: 10px;
     height: 10px;
     display: inline-block;
     margin-left: 15px;
+}
+
+.avatar_variants #draw_image::before {
+    background-position: 0px -19px;
 }
 
 .avatarDelete {
@@ -78,12 +85,14 @@ div.avatar_block:hover .avatarDelete {
     opacity: 1 !important;
 }
 
-div.avatar_block:hover .avatar_variants {
+div.avatar_block:hover .avatar_variants,
+div.sliding-thing-wrapper:hover .sliding-thing {
     opacity: 1 !important;
     margin-bottom: 1px;
 }
 
-.avatar_controls .avatar_variants {
+.avatar_controls .avatar_variants,
+div.sliding-thing-wrapper .sliding-thing {
     opacity:0;
     position:absolute;
     background-color: rgba(0, 0, 0, 0.75);

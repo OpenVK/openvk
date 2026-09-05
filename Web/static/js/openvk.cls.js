@@ -2,6 +2,8 @@
     console.error('!!! You forgot to install NPM packages !!!')
 }
 
+const _loader_link = `/assets/packages/static/openvk/img/loading_mini.gif`;
+
 function expand_comment_textarea(id) {
     var el = document.getElementById('commentTextArea'+id);
     var wi = document.getElementById('wall-post-input'+id);
@@ -285,13 +287,13 @@ function openJsSettings() {
             <td>
                 <label for='ux.auto_scroll'>${tr('auto_scroll')}</label>
             </td>
-        </tr>    
+        </tr>
         <tr>
             <td width="120" valign="top"></td>
             <td>
                 <a href="javascript:openPluginSettings()">${tr('ui_settings_window')}</a>
             </td>
-        </tr>  
+        </tr>
     `)
 }
 
@@ -318,6 +320,15 @@ let lastScrollTop = 0;
 $(document).on("scroll", () => {
     const currentScrollTop = $(document).scrollTop();
     const navigation = $(".navigation");
+
+    try {
+        if (window.im && window.im.state.is_active) {
+            window.im.messenger.view.onMessagesScroll();
+            return;
+        }
+    } catch(e) {
+        console.error(e);
+    }
 
     if (window.isMobile && isMobile()) {
         return;

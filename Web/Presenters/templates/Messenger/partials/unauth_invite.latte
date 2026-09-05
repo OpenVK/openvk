@@ -1,0 +1,77 @@
+{if !empty($chatPreview)}
+    <div class="chat-invite-tab-page" style="padding: 36px 20px; max-width: 480px; margin: 0 auto; text-align: center;">
+        <h2 style="font-size: 18px; font-weight: bold; margin: 0 0 22px; color: var(--color-text, #222); letter-spacing: -0.2px;">
+            {tr('chat_invite_preview_title')}
+        </h2>
+
+        <div class="chat-invite-avatar-box" style="margin-bottom: 16px; display: flex; justify-content: center;">
+            <img
+                src="{$chatPreview['photoUrl']}"
+                alt=""
+                style="width: 120px; height: 120px; object-fit: cover; border: 2px solid var(--bg-slightly-border, #d3d9de); border-radius: 0; display: block; box-shadow: 0 1px 3px rgba(0,0,0,0.08);"
+                onerror="this.src='/assets/packages/static/openvk/img/camera_200.png';"
+            />
+        </div>
+
+        <b style="font-size: 16px; color: var(--color-text, #222); display: block; margin-bottom: 4px; word-break: break-word;">
+            {$chatPreview['chatTitle']}
+        </b>
+
+        <div style="font-size: 12px; color: var(--nobold, #777); margin-bottom: 22px;">
+            {tr("members_count", $chatPreview['membersCount'])}
+        </div>
+
+        {if !empty($chatPreview['profiles']) || ($chatPreview['remainingCount'] ?? 0) > 0}
+            <div class="chat-invite-grid-wrapper" style="display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
+                <div class="chat-invite-avatars-grid" style="display: grid; grid-template-columns: repeat({min(6, count($chatPreview['profiles']) + (($chatPreview['remainingCount'] ?? 0) > 0 ? 1 : 0))}, 38px); gap: 4px;">
+                    {foreach $chatPreview['profiles'] as $profile}
+                        <img
+                            src="{$profile['avatar']}"
+                            title="{$profile['name']}"
+                            alt="{$profile['name']}"
+                            style="width: 38px; height: 38px; object-fit: cover; border: 1px solid var(--bg-slightly-border, #d3d9de); border-radius: 0; box-sizing: border-box; display: block;"
+                            onerror="this.src='/assets/packages/static/openvk/img/camera_50.png';"
+                        />
+                    {/foreach}
+                    {if ($chatPreview['remainingCount'] ?? 0) > 0}
+                        <div
+                            class="chat-invite-more-badge"
+                            title="+{$chatPreview['remainingCount']}"
+                            style="width: 38px; height: 38px; background: #666; color: #fff; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; user-select: none; border-radius: 0; box-sizing: border-box; border: 1px solid var(--bg-slightly-border, #d3d9de);"
+                        >
+                            +{$chatPreview['remainingCount']}
+                        </div>
+                    {/if}
+                </div>
+            </div>
+        {/if}
+
+        <div class="msg info" style="margin: 0 auto 18px; max-width: 380px; text-align: center; font-size: 13px; line-height: 1.4;">
+            <b>{tr("chat_invite_unauthorized")}</b><br />
+            {tr("chat_invite_unauth_notice")}
+        </div>
+
+        <div style="margin-top: 10px;">
+            <a
+                class="button"
+                href="/login?jReturnTo={rawurlencode('/im?join=' . $joinCode)}"
+                style="width: 100%; max-width: 340px; padding: 9px 20px; font-size: 13px; font-weight: 500; margin: 0 auto; display: block; box-sizing: border-box; text-decoration: none; text-align: center; background-position: 0px 0px;"
+            >
+                {tr("chat_invite_login_btn")}
+            </a>
+        </div>
+
+        <div style="margin-top: 14px; font-size: 12px; color: var(--nobold, #777);">
+            {tr("chat_invite_not_registered")} <a href="/reg">{tr("registration")}</a>
+        </div>
+    </div>
+{else}
+    <div class="chat-invite-tab-wrap" style="padding: 60px 20px; text-align: center;">
+        <div style="color: #d00; font-size: 14px; margin-bottom: 16px;">
+            {$chatPreviewError ?? tr("chat_invite_invalid_error")}
+        </div>
+        <a class="button" href="/">
+            {tr("back")}
+        </a>
+    </div>
+{/if}

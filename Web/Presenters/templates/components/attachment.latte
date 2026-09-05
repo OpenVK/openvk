@@ -1,7 +1,7 @@
 {if $attachment instanceof \openvk\Web\Models\Entities\Photo}
     {if !$attachment->isDeleted()}
         {var $link = "/photo" . ($attachment->isAnonymous() ? ("s/" . base_convert((string) $attachment->getId(), 10, 32)) : $attachment->getPrettyId())}
-        <a href="{$link}" onclick="OpenMiniature(event, {$attachment->getURLBySizeId('larger')}, {$parent->getPrettyId()}, {$attachment->getPrettyId()}, {$parentType})">
+        <a href="{$link}" onclick="OpenMiniature(event, {$attachment->getURLBySizeId('larger')}, {$parent->getPrettyId()}, {$attachment->getPrettyIdWithKey()}, {$parentType})">
             <img n:class="media, $tilesCount > 1 ? media_makima" src="{$attachment->getURLBySizeId('normal')}" alt="{$attachment->getDescription()}" loading=lazy />
         </a>
     {else}
@@ -16,21 +16,25 @@
                 <video class="media" src="{$attachment->getURL()}"></video>
             </div>
         {else}
-            {var $driver = $attachment->getVideoDriver()}
-            {if !$driver}
-                <span style="color:red;">{_version_incompatibility}</span>
-            {else}
-                {$driver->getEmbed("100%")|noescape}
-            {/if}
+            <div class="compact_video" onclick="VideoViewer.openById({$attachment->getPrettyIdWithKey()}, {}, event)">
+                <div class='play-button'>
+                    <div class='play-button-ico'></div>
+                </div>
+                <div class='video-length' n:if="$attachment->getLength() != NULL">
+                    {$attachment->getFormattedLength()}
+                </div>
+
+                <img class="media media_makima" src="{$attachment->getThumbnailURL()}" loading=lazy />
+            </div>
         {/if}
 
         <div class="video-wowzer">
             <div class="small-video-ico"></div>
-            <a href="/video{$attachment->getPrettyId()}" id="videoOpen" data-id="{$attachment->getPrettyId()}">{$attachment->getName()}</a>
+            <a href="/video{$attachment->getPrettyId()}" onclick="VideoViewer.openById({$attachment->getPrettyIdWithKey()}, {}, event)">{$attachment->getName()}</a>
             <span class="video-wowzer-length" n:if="$attachment->getLength() != NULL">({$attachment->getFormattedLength()})</span>
         </div>
     {else}
-        <a class='compact_video' id='videoOpen' data-id='{$attachment->getPrettyId()}' href="/video{$attachment->getPrettyId()}">
+        <a class='compact_video' onclick="VideoViewer.openById({$attachment->getPrettyIdWithKey()}, {}, event)" href="/video{$attachment->getPrettyId()}">
             <div class='play-button'>
                 <div class='play-button-ico'></div>
             </div>
@@ -108,7 +112,14 @@
         {else}
             {include "../Documents/components/doc.latte", doc => $attachment, copyImportance => true, noTags => true}
         {/if}
+{elseif $attachment instanceof \openvk\Web\Models\Entities\Messages\Sticker}
+    <div class="msg-attach-w msg-attach-w-sticker" data-sticker-id="{$attachment->getId()}">
+        <img class="msg-sticker-img" src="{$attachment->getImageUrl(128)}" alt="sticker" loading="lazy" />
     </div>
+{elseif is_array($attachment) && (($attachment['type'] ?? '') === 'link' || ($attachment['type'] ?? '') === 'share')}
+    {* Link attachments are displayed inline in text *}
+{elseif is_object($attachment) && (($attachment->type ?? '') === 'link' || ($attachment->type ?? '') === 'share')}
+    {* Link attachments are displayed inline in text *}
 {else}
     <span style="color:red;">{_version_incompatibility}</span>
 {/if}

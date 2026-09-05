@@ -6,6 +6,9 @@ namespace openvk\Web\Models\Entities;
 
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Repositories\Clubs;
+use openvk\Web\Models\Repositories\Chats;
+use openvk\Web\Models\Entities\Messages\Chat;
+use openvk\Web\Models\Entities\User;
 use openvk\Web\Util\DateTime;
 
 class Topic extends Postable
@@ -34,11 +37,36 @@ class Topic extends Postable
 
     public function getTitle(): string
     {
+        $chat = $this->getChat();
+        if ($chat != null && $this->getRecord()->title == "-") {
+            return $chat->getTitle();
+        }
+
         return $this->getRecord()->title;
+    }
+
+    public function getChat(?User $user = null): ?Chat
+    {
+        if (!$this->isChatAttached()) {
+            return null;
+        }
+
+        $chat = (new Chats)->get($this->getRecord()->chat_id, true, $user);
+
+        return $chat;
+    }
+
+    public function isChatAttached(): bool
+    {
+        return $this->getRecord()->chat_id != null;
     }
 
     public function isClosed(): bool
     {
+        if ($this->isChatAttached()) {
+            return true;
+        }
+
         return (bool) $this->getRecord()->closed;
     }
 
@@ -72,20 +100,42 @@ class Topic extends Postable
         return $this->getOwner(false)->getId() === $user->getId() || $this->getClub()->canBeModifiedBy($user);
     }
 
+    public function getURL(): string
+    {
+        if ($this->isChatAttached()) {
+            return "/im?join=" . $this->getPrettyId() . "&act=topic";
+        }
+
+        return "/topic" . $this->getPrettyId();
+    }
+
     public function getLastComment(): ?Comment
     {
+        if ($this->isChatAttached()) {
+            return null;
+        }
+
         $array = iterator_to_array($this->getLastComments(1));
         return $array[0] ?? null;
     }
 
     public function getFirstComment(): ?Comment
     {
+        if ($this->isChatAttached()) {
+            return null;
+        }
+
         $array = iterator_to_array($this->getComments(1));
         return $array[0] ?? null;
     }
 
     public function getUpdateTime(): DateTime
     {
+        $chat = $this->getChat();
+        if ($chat != null) {
+            return $chat->getEditTime() ?? $this->getPublicationTime();
+        }
+
         $lastComment = $this->getLastComment();
         if (!is_null($lastComment)) {
             return $lastComment->getPublicationTime();
@@ -132,6 +182,13 @@ class Topic extends Postable
         if ($preview == 1) {
             $res->first_comment = $this->getFirstComment() ? ovk_proc_strtr($this->getFirstComment()->getText(false), $preview_length) : null;
             $res->last_comment  = $this->getLastComment() ? ovk_proc_strtr($this->getLastComment()->getText(false), $preview_length) : null;
+        }
+
+        $chat = $this->getChat();
+        if ($chat != null) {
+            $res->type = "chat";
+        } else {
+            $res->type = "topic";
         }
 
         return $res;

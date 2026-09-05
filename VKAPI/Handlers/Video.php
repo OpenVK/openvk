@@ -17,7 +17,7 @@ final class Video extends VKAPIRequestHandler
 {
     public function get(int $owner_id = 0, string $videos = "", string $fields = "", int $offset = 0, int $count = 30, int $extended = 0): object
     {
-        $this->requireUser();
+        # $this->requireUser();
 
         if (!empty($videos)) {
             $vids = array_unique(explode(',', $videos));
@@ -31,9 +31,10 @@ final class Video extends VKAPIRequestHandler
             $items = [];
 
             foreach ($vids as $vid) {
-                $id    = explode("_", $vid);
+                $cleanVid = preg_replace('/^video/', '', trim($vid));
+                $id       = explode("_", $cleanVid);
 
-                $video = (new VideosRepo())->getByOwnerAndVID(intval($id[0]), intval($id[1]));
+                $video = (new VideosRepo())->getByOwnerAndVID(intval($id[0]), intval($id[1] ?? 0), $id[2] ?? null);
                 if ($video && !$video->isDeleted()) {
                     $out_video = $video->getApiStructure($this->getUser())->video;
                     $items[] = $out_video;
@@ -80,14 +81,14 @@ final class Video extends VKAPIRequestHandler
             if ($owner_id > 0) {
                 $user = (new UsersRepo())->get($owner_id);
             } else {
-                $this->fail(1, "Not implemented");
+                $user = (new ClubsRepo())->get($owner_id * -1);
             }
 
             if (!$user || $user->isDeleted()) {
                 $this->fail(14, "Invalid user");
             }
 
-            if (!$user->getPrivacyPermission('videos.read', $this->getUser())) {
+            if ($user->getRealId() > 0 && !$user->getPrivacyPermission('videos.read', $this->getUser())) {
                 $this->fail(21, "This user chose to hide his videos.");
             }
 
@@ -139,6 +140,58 @@ final class Video extends VKAPIRequestHandler
                 "items" => $items,
             ];
         }
+    }
+
+    public function edit(int $owner_id, int $video_id, ?string $name = null, ?string $desc = null, int $no_comments = 0, int $repeat = 0)
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $video = (new VideosRepo())->getByOwnerAndVIDUnsafe($owner_id, $video_id);
+        $changes = 0;
+
+        if (!$video || $video->isDeleted() || !$video->canBeModifiedBy($this->getUser())) {
+            $this->fail(14, "Access denied");
+        }
+
+        if ($name != null) {
+            $video->setName($name);
+            $changes += 1;
+        }
+
+        if ($desc != null) {
+            $video->setDescription($desc);
+            $changes += 1;
+        }
+
+        if ($changes > 0) {
+            $video->save();
+        }
+
+        return [
+            "success" => 1
+        ];
+    }
+
+    public function delete(int $owner_id, int $video_id, int $target_id = null)
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        if ($target_id != null) {
+            $this->fail(-40, "Videos cannot be collected at this moment.");
+        }
+
+        $video = (new VideosRepo())->getByOwnerAndVIDUnsafe($owner_id, $video_id);
+
+        if (!$video || $video->isDeleted() || !$video->canBeModifiedBy($this->getUser())) {
+            $this->fail(14, "Access denied");
+        }
+
+        # $video->isolate();
+        $video->delete();
+
+        return 1;
     }
 
     public function search(string $q = '', int $sort = 0, int $offset = 0, int $count = 10, bool $extended = false, string $fields = ''): object

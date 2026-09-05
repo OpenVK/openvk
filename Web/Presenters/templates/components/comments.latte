@@ -4,11 +4,11 @@
 {var $readOnly = $readOnly ?? false}
 {var $custom_id = $custom_id ?? null}
 
-<div>
+<div class="item_comments_head">
     <h4 n:if="$showTitle ?? true">{_comments} ({$count})</h4>
 
     {if isset($sort) && $count > 5}
-        <a class="sort_link" n:attr="href => $sort == 'desc' ? '?sort=asc' : '?sort=desc'">
+        <a onclick="click_on_sort(event)" class="sort_link" n:attr="href => $sort == 'desc' ? '?sort=asc' : '?sort=desc'">
             {if $sort == 'desc'}
                 {_new_first}
             {else}
@@ -37,5 +37,5 @@
         {include "paginator.latte", conf => (object) ["page" => $page, "count" => $count, "amount" => sizeof($comments), "perPage" => 10]}
     </div>
 {else}
-    {_comments_tip}
+    <span id="none_tip">{_comments_tip}</span>
 {/if}

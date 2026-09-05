@@ -120,7 +120,7 @@ window.tweaks = [
             console.log(ovk_video_id)
 
             u(item).closest(".attachment").nodes[0].insertAdjacentHTML('afterBegin', `
-                <a id="videoOpen" data-id="${ovk_video_id[1]}" style="display:flex;flex-direction:column;" target="_blank" href="https://youtu.be/${id}">
+                <a onclick="VideoViewer.openById('${ovk_video_id[1]}', {}, event)" style="display:flex;flex-direction:column;" target="_blank" href="https://youtu.be/${id}">
                     <b>YouTube Video:</b>
                     <img src="${thumbnail}">
                 </a>
@@ -249,6 +249,13 @@ window.tweaks = [
         addScrollHook(wall_compact)
         wall_compact()
     }),
+    new TweakOption("wall.disable_globalfeed", function () {
+        this.customCSS(`
+            .feed_switcher #ki {
+                display: none;
+            }
+        `);
+    }),
     new TweakOption("wall.words_censor", function () {
         this.customCSS(`
             .hidden_because_of_word {
@@ -272,6 +279,12 @@ window.tweaks = [
         addScrollHook(hide_posts)
         hide_posts()
     }),
+    new TweakOption("im.modern_mode", function () {}),
+    new TweakOption("im.remove_warning", function () {}),
+    new TweakOption("im.debug", function () {}),
+    new TweakOption("im.verbose_logging", function () {}),
+    new TweakOption("im.24h", function () {}, true),
+    new TweakOption("viewers.photo.list", function () {}),
 ]
 
 window.openPluginSettings = () => {
@@ -291,6 +304,14 @@ window.openPluginSettings = () => {
 
     settings.on("change", "input", (e) => {
         const _name = e.target.closest('label').querySelector("span").innerHTML
-        localStorage.setItem("tw."+_name, Number(e.target.checked))
+        const _val = Number(e.target.checked)
+        localStorage.setItem("tw."+_name, _val)
+        if (_name === "im.verbose_logging") {
+            if (_val) {
+                localStorage.setItem("im.verbose_logging", "1")
+            } else {
+                localStorage.removeItem("im.verbose_logging")
+            }
+        }
     })
 }

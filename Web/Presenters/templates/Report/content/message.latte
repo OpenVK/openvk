@@ -1,0 +1,21 @@
+{block content}
+    {if !$message}
+        {include "../components/error.latte", description => tr("reported_message_display_error")}
+    {else}
+        <p>
+            <b>{tr("reported_message_contains_2")}</b>:
+            {$message->getText()}
+        </p>
+        <p>
+            <b>{tr("reported_message_contains_1")}</b>:
+            {$message->getAttachmentsString()}
+        </p>
+        <p>
+            <p>{tr("reported_message_contains_3", $message->getSenderId(), $message->getPeerId())}</p>
+        </p>
+
+        <div id="msg_context_place">
+            <input onclick="window.im_class.reportShowMessageContext(event, {$report->getId()}, {$message->getPeerId()}, {$message->getId()}, {$report->authorId()})" type="button" class="button" value="{_resolve_message_context} (BETA)">
+        </div>
+    {/if}
+{/block}

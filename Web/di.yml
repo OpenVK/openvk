@@ -28,6 +28,7 @@ services:
     - openvk\Web\Presenters\PollPresenter
     - openvk\Web\Presenters\BannedLinkPresenter
     - openvk\Web\Presenters\DocumentsPresenter
+    - openvk\Web\Presenters\StickersPresenter
     - openvk\Web\Models\Repositories\Users
     - openvk\Web\Models\Repositories\Posts
     - openvk\Web\Models\Repositories\Polls
@@ -55,5 +56,6 @@ services:
     - openvk\Web\Models\Repositories\ChandlerGroups
     - openvk\Web\Models\Repositories\Documents
     - openvk\Web\Models\Repositories\Faves
+    - openvk\Web\Models\Repositories\Stickers
     - openvk\Web\Presenters\MaintenancePresenter
     - openvk\Web\Presenters\NoSpamPresenter

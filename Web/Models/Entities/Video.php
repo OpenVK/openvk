@@ -18,7 +18,9 @@ class Video extends Media
     public const TYPE_UNKNOWN = -1;
 
     protected $tableName     = "videos";
+    public $shortName        = "video";
     protected $fileExtension = "mp4";
+    protected $containsContextColumns = true;
 
     protected $processingPlaceholder = "video/rendering";
 
@@ -154,7 +156,7 @@ class Video extends Media
             "type" => "video",
             "video" => [
                 "can_comment" => 1,
-                "can_like" => 1,  // we don't h-have wikes in videos
+                "can_like" => 1,  // we h-have wikes in videos
                 "can_repost" => 1,
                 "can_subscribe" => 1,
                 "can_add_to_faves" => 0,
@@ -179,9 +181,10 @@ class Video extends Media
                 ],
                 "width" => $dimensions ? $dimensions[0] : 640,
                 "height" => $dimensions ? $dimensions[1] : 480,
-                "id" => $this->getVirtualId(),
-                "owner_id" => $this->getOwner()->getId(),
-                "user_id" => $this->getOwner()->getId(),
+                "id" => $this->getCompromiseVirtualId(),
+                "owner_id" => $this->getOwner()->getRealId(),
+                "access_key" => $this->getAccessKey(),
+                "user_id" => $this->getOwner()->getRealId(),
                 "title" => $this->getName(),
                 "is_favorite" => false,
                 "player" => !$fromYoutube ? $this->getURL() : $this->getVideoDriver()->getURL(),
@@ -218,6 +221,11 @@ class Video extends Media
         return $this->getApiStructure($user);
     }
 
+    public function toApiAttachment(User $user): object
+    {
+        return $this->getApiStructure($user);
+    }
+
     public function setLink(string $link): string
     {
         if (preg_match(file_get_contents(__DIR__ . "/../VideoDrivers/regex/youtube.txt"), $link, $matches)) {
@@ -229,8 +237,20 @@ class Video extends Media
         }
 
         $this->stateChanges("link", $pointer);
+        $this->stateChanges("access_key", bin2hex(random_bytes(9)));
 
         return $pointer;
+    }
+
+    public function setAsFromMessage(): void
+    {
+        $this->stateChanges("private", 1);
+        $this->stateChanges("unlisted", 1);
+    }
+
+    public function isPrivate(): bool
+    {
+        return (bool) $this->getRecord()->private;
     }
 
     public function isDeleted(): bool

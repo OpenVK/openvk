@@ -21,7 +21,7 @@
 
 {var $bigText = mb_strlen($post->getText()) > 520 || substr_count($post->getText(), "\n") + 1 > 10}
 
-<table border="0" style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, post_microblog, !$compact ? post-divider, $post->isExplicit() ? post-nsfw">
+<table border="0" style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, post_microblog, !$compact ? post-divider, $post->isExplicit() ? post-nsfw, $post->isPinned() ? is-pinned, $compact ? mini-post : common-post">
     <tbody>
         <tr>
             <td class="post-author-ava" width="54" valign="top">
@@ -54,29 +54,28 @@
 
                     {if $compact}
                         <br>
-                        <a href="/wall{$post->getPrettyId()}" class="date">
+                        <a href="/wall{$post->getPrettyId()}" onclick="PostViewer.openById(event, {$post->getPrettyIdWithKey()})" class="date">
                             {$post->getPublicationTime()}
                         </a>
                     {/if}
 
-                    <span n:if="$post->isPinned()" class="nobold">{_pinned}</span>
+                    <span class="nobold pinned_mark">{_pinned}</span>
 
-
-                    <a n:if="$canBeDeleted && !($forceNoDeleteLink ?? false) && $compact == false" class="delete" id="_wallDelete" data="{$post->getPrettyId()}" href="/wall{$post->getPrettyId()}/delete"></a>
-                    <a n:if="!$canBeDeleted" class="report" title="{_report}" href="javascript:reportPost({$post->getId()})"></a>
+                    <a onclick="ajax_delete(event)" n:if="$canBeDeleted && !($forceNoDeleteLink ?? false) && $compact == false" class="postAction delete" href="/wall{$post->getPrettyId()}/delete"></a>
+                    <a n:if="!$canBeDeleted" class="postAction report" title="{_report}" href="javascript:reportPost({$post->getId()})"></a>
 
                     {if $canBePinned && !($forceNoPinLink ?? false) && $compact == false}
                         {if $post->isPinned()}
-                            <a class="pin" href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}"></a>
+                            <a onclick="ajax_pin(event)" class="postAction pin unpin" href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}"></a>
                         {else}
-                            <a class="pin" href="/wall{$post->getPrettyId()}/pin?act=pin&hash={rawurlencode($csrfToken)}"></a>
+                            <a onclick="ajax_pin(event)" class="postAction pin" href="/wall{$post->getPrettyId()}/pin?act=pin&hash={rawurlencode($csrfToken)}"></a>
                         {/if}
                     {/if}
-                    <a n:if="$canBeArchived && !($forceNoDeleteLink ?? false) && $compact == false && !$post->isArchived()" class="archive_post" href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}" title="{_archive_action}"></a>
-                    <a n:if="$canBeArchived && !($forceNoDeleteLink ?? false) && $compact == false && $post->isArchived()" class="archive_post" href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}" title="{_unarchive_action}"></a>
+                    <a n:if="$canBeArchived && !($forceNoDeleteLink ?? false) && $compact == false && !$post->isArchived()" class="postAction archive_post" href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}" title="{_archive_action}"></a>
+                    <a n:if="$canBeArchived && !($forceNoDeleteLink ?? false) && $compact == false && $post->isArchived()" class="postAction archive_post" href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}" title="{_unarchive_action}"></a>
 
                     {if $post->canBeEditedBy($thisUser) && !($forceNoEditLink ?? false) && $compact == false}
-                        <a class="edit" id="editPost"></a>
+                        <a class="postAction edit" id="editPost"></a>
                     {/if}
                 </div>
                 <div class="post-content" id="{$post->getPrettyId()}" data-localized-nsfw-text="{_nsfw_warning}">
@@ -130,7 +129,7 @@
                 </div>
                 <div class='post-edit' n:if='!$compact'></div>
                 <div class="post-menu" n:if="$compact == false">
-                    <a href="{if $suggestion ?? false}javascript:void(0){else}/wall{$post->getPrettyId()}{/if}" class="date">{$post->getPublicationTime()}
+                    <a onclick="PostViewer.openById(event, {$post->getPrettyIdWithKey()})" href="{if $suggestion ?? false}javascript:void(0){else}/wall{$post->getPrettyId()}{/if}" class="date">{$post->getPublicationTime()}
                         <span n:if="$post->getEditTime()" class="edited editedMark">({_edited_short})</span>
                     </a>
 
@@ -143,14 +142,14 @@
                         <a n:if="!($forceNoCommentsLink ?? false) && $commentsCount == 0" href="javascript:expand_comment_textarea({$commentTextAreaId})">{_comment}</a>
 
                         <div class="like_wrap">
-                            <a n:if="!($forceNoShareLink ?? false)" id="reposts{$post->getPrettyId()}" class="post-share-button" href="javascript:repost('{$post->getPrettyId()}', 'post')">
+                            <a n:if="!($forceNoShareLink ?? false)" id="reposts{$post->getPrettyId()}" class="post-share-button post-microblog-common-button" href="javascript:repost('{$post->getPrettyId()}', 'post')">
                                 <div class="repost-icon" style="opacity: 0.4;"></div>
                                 <span class="likeCnt" id="repostsCount{$post->getPrettyId()}">{if $repostsCount > 0}{$repostsCount}{/if}</span>
                             </a>
 
                             {if !($forceNoLike ?? false)}
                                 {var $liked = $post->hasLikeFrom($thisUser)}
-                                <a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$post->getPrettyId()}" data-type='post'>
+                                <a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button post-microblog-common-button" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$post->getPrettyId()}" data-type='post'>
                                     <div class="heart" id="{if $liked}liked{/if}"></div>
                                     <span class="likeCnt">{if $likesCount > 0}{$likesCount}{/if}</span>
                                 </a>
@@ -159,7 +158,7 @@
                     {/if}
                 </div>
                 <div n:if="!($forceNoCommentsLink ?? false) && $commentSection == true && $compact == false" class="post-menu-s">
-                    <a n:if="$commentsCount > 3" href="/wall{$post->getPrettyId()}" class="expand_button">{_view_other_comments} ({$commentsCount - 3})</a>
+                    <a n:if="$commentsCount > 3" href="/wall{$post->getPrettyId()}" class="expand_button" onclick="PostViewer.openById(event, {$post->getPrettyIdWithKey()})">{_view_other_comments} ({$commentsCount - 3})</a>
                     {foreach $comments as $comment}
                         {include "../comment.latte", comment => $comment, $compact => true}
                     {/foreach}

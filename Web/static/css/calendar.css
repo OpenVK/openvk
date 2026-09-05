@@ -1,0 +1,119 @@
+/* OpenVK Calendar Component */
+.ovk-calendar-widget {
+    padding: 8px 10px 10px;
+    font-size: 12px;
+    user-select: none;
+    max-width: 270px;
+    margin: 0 auto;
+    background: var(--bg-page, #ffffff);
+}
+
+.ovk-cal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 6px;
+}
+
+.ovk-cal-nav-btn {
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--bg-slightly-border, #d6d6d6);
+    border-radius: 2px;
+    background: var(--bg-page, #ffffff);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    color: #555555;
+    transition: background 0.1s, color 0.1s, border-color 0.1s;
+}
+
+.ovk-cal-nav-btn:hover {
+    background: #f0f0f0;
+    color: #222222;
+    border-color: #b8b8b8;
+}
+
+.ovk-cal-selects {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    flex: 1;
+}
+
+.ovk-cal-selects select {
+    padding: 2px 5px;
+    font-size: 12px;
+    border: 1px solid var(--bg-slightly-border, #d6d6d6);
+    border-radius: 2px;
+    background: var(--bg-page, #ffffff);
+    color: var(--color-text, #333333);
+}
+
+.ovk-cal-selects select:hover,
+.ovk-cal-selects select:focus {
+    border-color: #b8b8b8;
+    outline: none;
+}
+
+.ovk-cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    text-align: center;
+}
+
+.ovk-cal-weekday {
+    font-size: 10px;
+    font-weight: bold;
+    color: #888888;
+    padding: 4px 0 6px;
+    border-bottom: 1px solid var(--bg-slightly-border, #e7e8ec);
+    margin-bottom: 4px;
+}
+
+.ovk-cal-day {
+    padding: 5px 0;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 11px;
+    color: var(--color-text, #333333);
+    transition: background 0.1s, color 0.1s;
+}
+
+.ovk-cal-day:hover {
+    background: #e8ebef;
+    color: #222222;
+}
+
+.ovk-cal-day.ovk-cal-day-other {
+    color: #c0c0c0;
+    cursor: default;
+}
+
+.ovk-cal-day.ovk-cal-day-other:hover {
+    background: transparent;
+    color: #c0c0c0;
+}
+
+.ovk-cal-day.ovk-cal-day-today {
+    font-weight: bold;
+    color: #222222;
+    border: 1px solid #b8b8b8;
+    background: #f7f7f7;
+}
+
+.ovk-cal-day.ovk-cal-day-selected {
+    background: #6a7989;
+    color: #ffffff !important;
+    font-weight: bold;
+}
+
+.ovk-cal-day.ovk-cal-day-selected:hover {
+    background: #5b6978;
+    color: #ffffff !important;
+}

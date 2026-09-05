@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace openvk\Web\Models\Entities;
+namespace openvk\Web\Models\Entities\Messages;
 
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Repositories\Clubs;
@@ -10,15 +10,29 @@ use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\Entities\Photo;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Util\DateTime;
+use openvk\Web\Util\IMBroker;
 
 /**
  * Message entity.
+ * @deprecated Use IM API instead.
  */
-class Message extends RowModel
+class Message
 {
-    use Traits\TRichText;
-    use Traits\TAttachmentHost;
-    protected $tableName = "messages";
+    private $data;
+
+    public function __construct($data = null)
+    {
+        $this->data = $data ? $data : new \stdClass();
+    }
+
+    private function getRecord()
+    {
+        if (is_array($this->data)) {
+            return (object) $this->data;
+        }
+
+        return $this->data;
+    }
 
     /**
      * Get message ID.
@@ -28,6 +42,45 @@ class Message extends RowModel
     public function getId(): ?int
     {
         return $this->getRecord()->id;
+    }
+    /**
+     * Get message text.
+     *
+     * @returns string
+     */
+    public function getText(bool $richText = false): string
+    {
+        return $this->getRecord()->content ?? $this->getRecord()->text;
+    }
+
+    public function getAttachmentsString()
+    {
+        return $this->getRecord()->attachments;
+    }
+
+    public function getSenderId()
+    {
+        return $this->getRecord()->from_id;
+    }
+
+    public function getPeerId()
+    {
+        return $this->getRecord()->peer_id;
+    }
+
+    public function getOwner() 
+    {
+        return get_entity_by_id($this->getSenderId());
+    }
+
+    /**
+     * Sets message text.
+     *
+     * @returns void
+     */
+    public function setContent(string $text): void
+    {
+        $this->data->content = $text;
     }
     /**
      * Get origin of the message.
@@ -123,6 +176,30 @@ class Message extends RowModel
     public function isUnread(): bool
     {
         return (bool) $this->getRecord()->unread;
+    }
+
+    public static function fromGlobalId(int $global_id, int $from_id = 0): ?Message
+    {
+        $broker = IMBroker::i();
+        $response = $broker->invokeMethod($from_id, "messages.getById", [
+            "message_ids" => $global_id,
+        ]);
+
+        if ($response == false) {
+            return null;
+        }
+
+        $data = json_decode($response, true);
+        if ($data == null || $data["response"] == null) {
+            return null;
+        }
+
+        return new Message($data["response"]["items"][0]);
+    }
+
+    public function delete()
+    {
+
     }
 
     /**

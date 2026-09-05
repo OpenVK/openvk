@@ -9,7 +9,7 @@ class CMessageBox {
         const close_on_buttons = options.close_on_buttons ?? true
         const unique_name = options.unique_name ?? null
         const warn_on_exit = options.warn_on_exit ?? false
-        const custom_template = options.custom_template ?? null
+        let custom_template = options.custom_template ?? null
         if(unique_name && window.messagebox_stack.find(item => item.unique_name == unique_name) != null) {
             return
         }
@@ -20,15 +20,15 @@ class CMessageBox {
         this.close_on_buttons = close_on_buttons
         this.unique_name = unique_name
         this.warn_on_exit = warn_on_exit
+        this._viewer = null;
 
         if(!custom_template) {
-            u('body').addClass('dimmed').append(this.__getTemplate())
-        } else {
-            custom_template.addClass('ovk-msg-all')
-            custom_template.attr('data-id', this.id)
-            u('body').addClass('dimmed').append(custom_template)
+            custom_template = msgboxFacebookTemplate(this.title, this.body);
         }
-        
+
+        custom_template.addClass("ovk-msg-all")
+        custom_template.attr('data-id', this.id)
+        u('body').addClass('dimmed').append(custom_template)
         u('html').attr('style', 'overflow-y:hidden')
 
         buttons.forEach((text, callback) => {
@@ -44,6 +44,15 @@ class CMessageBox {
         })
 
         window.messagebox_stack.push(this)
+        this._checkCount();
+    }
+
+    _checkCount() {
+        if (window.messagebox_stack.length > 1) {
+            u("body").addClass("manyMsgs");
+        } else {
+            u("body").removeClass("manyMsgs");
+        }
     }
 
     __getTemplate() {
@@ -90,12 +99,11 @@ class CMessageBox {
         const current_item  = window.messagebox_stack.find(item => item.id == this.id)
         const index_of_item = window.messagebox_stack.indexOf(current_item)
         window.messagebox_stack = array_splice(window.messagebox_stack, index_of_item)
-        
-        delete this
     }
 
     close() {
         this.__exitDialog()
+        this._checkCount();
     }
 
     hide() {
@@ -103,28 +111,60 @@ class CMessageBox {
         u('html').attr('style', 'overflow-y:scroll')
         this.getNode().attr('style', 'display: none;').addClass('msgbox-hidden')
         this.hidden = true
+        this._checkCount();
     }
 
     reveal() {
         u('body').addClass('dimmed')
         u('html').attr('style', 'overflow-y:hidden')
-        this.getNode().attr('style', 'display: block;')
+        this.getNode().attr('style', '')
         this.hidden = false
+        this._checkCount();
     }
 
-    static toggleLoader() {
-        u('#ajloader').toggleClass('shown')
+    static isToggling() {
+        return u('#ajloader').hasClass('shown');
+    }
+
+    static toggleLoader(state = null) {
+        if (state == null) {
+            u('#ajloader').toggleClass('shown')
+            return;
+        }
+
+        if (state == true) {
+            u('#ajloader').addClass('shown')
+        } else {
+            u('#ajloader').removeClass('shown')
+        }
     }
 }
 
 window.messagebox_stack = []
 
-function MessageBox(title, body, buttons, callbacks, return_msg = false) {
+function find_msgbox_by_node(node) {
+    return find_msgbox_by_id(node.dataset.id);
+}
+
+function find_msgbox_by_id(msg_id) {
+    let msg = null;
+    window.messagebox_stack.forEach((item) => {
+        if (item.id == msg_id) {
+            msg = item;
+            return;
+        }
+    });
+
+    return msg;
+}
+
+function MessageBox(title, body, buttons, callbacks, return_msg = false, unique_name = null) {
     const msg = new CMessageBox({
         title: title,
         body: body,
         buttons: buttons,
         callbacks: callbacks,
+        unique_name: unique_name
     })
 
     if(return_msg) {
@@ -177,3 +217,613 @@ u(document).on('click', 'body.dimmed .dimmer', async (e) => {
         }
     }
 })
+
+// Abstract viewer
+
+class Viewer {
+    viewer_name = "abstract_viewer";
+
+    constructor() {
+        this.av_modes = ["vk", "tg", "pptx"];
+        this.mode = "vk";
+        this.itemsOrder = [];
+        this.items = {};
+        this.currentId = null;
+        this.context = {};
+        this.totalItemsCount = null;
+        this._cachedDetails = {};
+        this.resetContext();
+
+        /*
+
+        Example:
+
+        type: album
+        album_id: x
+        per_page: y ?? 10
+
+        */
+
+        this.modal = null;
+        this.isSliding = false;
+        this._draggable_ctx = null;
+        this._resizeable_ctx = null;
+    }
+
+    get count() {
+        return this.itemsOrder.length;
+    }
+
+    get currentIndex() {
+        return this.itemsOrder.indexOf(this.currentId);
+    }
+
+    get currentItem() {
+        return this.items[this.currentId];
+    }
+
+    get itemsByOrder() {
+        const items = [];
+
+        this.itemsOrder.forEach(item => {
+            items.push(this.items[item]);
+        })
+
+        return items;
+    }
+
+    setContext(data) {
+        this._setMainContext(data);
+    }
+
+    loadCustomContext(res, direction = 1) {
+        if (!res.items || res.items.length == 0) {
+            this.sides_ended["right"] = true;
+            return;
+        }
+
+        res.items.forEach((item) => {
+            this._appendApiItem(item, null, null, direction < 0);
+        });
+        this.totalItemsCount = res.count;
+    }
+
+    initalizeContext() {}
+    selectItem(pid, item_api_res) {}
+    async selectItemByApiId(id) {
+        const entry = this.items[id];
+        if (!entry) {
+            console.error("Msgboxes | " + this.viewer_name + " | Not found entry with id ", id)
+            return;
+        };
+
+        console.log("selected item ", id, entry);
+
+        await this.selectItem(id, entry);
+    }
+    _isLoadable() { return false; }
+    async _loadLoadableContext(side) { return; }
+
+    async _resolveOffset(owner_id, item_id, type, additional_id = null, reverse = false) {
+        const params = {
+            "method": type,
+            "owner_id": owner_id,
+            "id": item_id,
+            "perPage": this.context.perPage ?? 10,
+            "rev": Number(reverse)
+        };
+        if (additional_id != null) {
+            params["id2"] = additional_id;
+        }
+
+        return await window.OVKAPI.call("utils.resolveOffset", params);
+    }
+
+    _setMainContext(data) {
+        this.context.type = data.type;
+        this.context.first_item_url = data.first_item_url || null;
+        this.context.perPage = data.perPage || 20;
+        this.context.offset = this._isLoadable()
+        ? (Number((new URL(location.href)).searchParams.get('p') ?? (window.router.scroll_page ?? 1)) - 1) * this.context.perPage
+        : 0;
+
+        if (data.custom_offset != null) {
+            this.context.offset = data.custom_offset;
+        }
+
+        if (data.offset != null) {
+            this.context.offset = data.offset;
+        }
+
+        this.context.reverse = data.reverse || false;
+        this.context.custom_context = data.custom_context || null;
+        this.context.id = data.id || null;
+        this.context.owner_id = data.owner_id || null;
+    }
+
+    resetContext() {
+        this.context = {};
+        this.sides_ended = {
+            "right": false,
+            "left": false
+        };
+    }
+    _appendApiItem(item, profiles = null, groups = null, prepend = false) {
+        const existing = {};
+        this.itemsOrder.forEach((id) => {
+            existing[id] = true;
+        });
+
+        const pid = idForItem(item);
+        if (existing[pid]) {
+            return;
+        }
+
+        console.log(pid, item)
+        this._appendItemToList(pid, item, profiles, groups);
+
+        if (prepend == false) {
+            this.itemsOrder.push(pid);
+        } else {
+            this.itemsOrder.unshift(pid);
+        }
+    }
+
+    // abstract method cuz every viewer has different display of its items
+    _appendItemToList(pid, item) {
+        this.items[pid] = {
+            id: pid,
+        };
+    }
+
+    createMsgbox() {}
+
+    open() {
+        if (!this.modal) {
+            this.createMsgbox();
+        }
+
+        this.modal.reveal();
+        this.modal._viewer = this;
+
+        return this.modal.getNode();
+    }
+    afterOpen() {}
+
+    close(close_type = 0) {
+        switch (close_type) {
+            case 0:
+                console.log("Msgboxes | " + this.viewer_name + " | Closing")
+                this.modal.close();
+                break;
+            case 1:
+                console.log("Msgboxes | " + this.viewer_name + " | Hiding window")
+                this.modal.hide();
+                break;
+        }
+
+        this._removeW();
+    }
+
+    shouldPushW() { return true; }
+    _pushW(id) {
+        if (window.messagebox_stack.length > 1) {
+            console.error("viewers | i think there is a common \"w\".");
+            return;
+        }
+        if (!this.shouldPushW()) {
+            console.error("viewers | sorry but not pushing ?w.");
+            return;
+        }
+
+        const url = new URL(location.href);
+        const _ct = this._encodeContext();
+        url.searchParams.set("w", this._getEntityPageName() + id);
+        if (false && _ct && _ct.length > 0) {
+            url.searchParams.set("z", _ct);
+        }
+
+        history.replaceState({}, '', url.toString());
+    }
+
+    _removeW() {
+        if (window.messagebox_stack.length > 0) {
+            return;
+        }
+
+        const url = new URL(location.href);
+        url.searchParams.delete("w");
+        url.searchParams.delete("z");
+        history.replaceState({}, '', url.toString());
+    }
+
+    async slide(direction) {
+        if (this.isSliding == true) {
+            console.log("isSliding")
+            return;
+        }
+
+        if (this.count <= 1) {
+            console.error("noItems!!!!!!")
+            return
+        };
+
+        this.isSliding = true;
+
+        let idx = this.currentIndex + direction;
+        console.log(idx)
+
+        if (idx < 0) {
+            if (this._isLoadable()) {
+                this.context.offset -= 20;
+                if (this.context.offset < 0) {
+                    this.context.offset = 0;
+                    // to start
+                };
+
+                await this._loadLoadableContext(direction);
+                idx = this.itemsOrder.length - 1;
+            } else {
+                idx = this.count - 1;
+            }
+        } else if (idx >= this.count) {
+            if (this._isLoadable()) {
+                this.context.offset += 20;
+                await this._loadLoadableContext(direction);
+            } else {
+                idx = 0;
+            }
+        }
+
+        const nextId = this.itemsOrder[idx];
+        if (nextId) {
+            await this.selectItemByApiId(nextId);
+        }
+
+        this.isSliding = false;
+    }
+
+    _getCurrentEntryCacheNode() {}
+    _removeCacheForEntry(entry) {
+        entry.cached = null;
+    }
+
+    _removeCacheForCurrentEntry() {
+        let entry = this.currentItem;
+        console.log(this.items, this.currentItem, entry)
+
+        if (entry) {
+            this._removeCacheForEntry(entry);
+        }
+    }
+
+    _updDetailsUrlForCurrentEntry(url) {
+        let entry = this.currentItem;
+
+        console.log(entry, this)
+        if (entry) {
+            entry.postfix = url;
+            entry.cached = null;
+
+            this._removeDetails();
+            this._loadDetails(this.currentId);
+        } else {
+            console.error("no entry")
+        }
+    }
+    async loadNextDetailsPage(event) {
+        await this._loadDetails(this.currentId, "pagination", event);
+    }
+
+    _removeDetails() {
+        this.modal.getNode().find(".ovk-modal-details").html(`<div class="modal-state-loader-switching"><img src="${_loader_link}"></div>`);
+    }
+
+    _addCachedDetailsToEntry(entry, html) {
+        entry.cached = html;
+    }
+
+    _getEntityPageName() {
+        return "photo";
+    }
+
+    _getDetailsUrl(id, postfix) {
+        let item_ids = idUrlFromArray(id);
+        let str = new URL(location.origin + "/" + this._getEntityPageName() + item_ids);
+
+        if (postfix != null) {
+            postfix.forEach((value, key) => {
+                str.searchParams.set(key, value);
+            })
+        }
+
+        return str.toString();
+    }
+
+    _encodeContext() {
+        return JSON.stringify(this.context);
+    }
+
+    _decodeContext(ctx) {
+        return JSON.decode(ctx);
+    }
+
+    // states
+
+    _updFrame(item) {}
+    async setCurrentEntryDeleted(state) {
+        const el = this.currentItem;
+        el.deleted = true;
+        await this.deleteItem(el);
+        this._updFrame(el);
+    }
+    async deleteItem(element) {}
+
+    setMode(mode) {
+        this.mode = mode;
+        this.av_modes.forEach(el => {
+            this.modal.getNode().removeClass("mode-"+el);
+        })
+        this.modal.getNode().addClass("mode-"+mode);
+    }
+
+    // оно должно превращать само окно в перетаскиваемый элемент а не создавать новый элемент
+    _showMinimized(item) {
+        this.modal.getNode().addClass("ovk-msg-minimized");
+        u("body").removeClass("dimmed");
+        u("html").attr("style", "")
+
+        // jquery ui
+        this._draggable_ctx  = $(this.modal.getNode().nodes[0]).draggable({
+            cursor: 'grabbing', 
+            containment: 'window', 
+            cancel: '.miniplayer-body'
+        });
+        this._resizeable_ctx = $(this.modal.getNode().nodes[0]).resizable({
+            maxHeight: 700,
+            maxWidth: 1000,
+            minHeight: 150,
+            minWidth: 200
+        });
+    }
+
+    _returnFromMinimized() {
+        u("body").addClass("dimmed");
+        u("html").attr("style", "overflow-y: hidden;")
+        this.modal.getNode().removeClass("ovk-msg-minimized");
+        this.modal.getNode().attr("style", "");
+
+        if (this._draggable_ctx != null) {
+            this._draggable_ctx.destroy();
+            this._resizeable_ctx.destroy();
+            this._draggable_ctx = null;
+            this._resizeable_ctx = null;
+        }
+    }
+
+    isMinimized() {
+        return this.modal.getNode().hasClass("ovk-msg-minimized");
+    }
+
+    // pagination
+
+    _getPage(target) {
+        const p = target.closest(".paginator");
+        const l = p.querySelector("a.active");
+        if (!l) {
+            return;
+        }
+        target.classList.add("lagged");
+        let next = l.nextElementSibling;
+        const his_url = new URL(next.href);
+        const his_page = his_url.searchParams.get("p");
+
+        return [Number(his_page), next];
+    }
+
+    _appendDetailsAsPagination(next_btn, show_more_btn, details, entry) {
+        let appends = 0;
+        const ps5 = new DOMParser().parseFromString(details, "text/html");
+        const counts = ps5.querySelectorAll(".scroll_node").length;
+        ps5.querySelectorAll(".scroll_node").forEach(item => {
+            if (appends == 0) {
+                this.modal.getNode().find(".scroll_container").append(item);
+            } else {
+                this.modal.getNode().find(".scroll_container").before(item);
+            }
+        })
+
+        const his_url = new URL(next_btn.href);
+        his_url.searchParams.set("p", Number(his_url.searchParams.get("p")) + 1)
+        if (next_btn) {
+            next_btn.href = his_url;
+        }
+
+        if (counts < 10) {
+            show_more_btn.remove();
+        } else {
+            show_more_btn.classList.remove("lagged");
+        }
+
+        this._addCachedDetailsToEntry(entry, this.modal.getNode().find(".ovk-modal-details").last().innerHTML)
+    }
+}
+
+const photoViewerTemplate =
+`<div class="ovk-photo-view-dimmer ovk-white-modal">
+    <div class="ovk-photo-view-overlay ovk-photo-view-overlay-left"></div>
+    <div class="ovk-photo-view-overlay ovk-photo-view-overlay-right">
+        <div class="ovk-photo-close-icon"></div>
+    </div>
+    <div class="ovk-photo-view">
+        <div class="photo_com_title">
+            <text id="photo_com_title_photos">
+                <img src="${_loader_link}">
+            </text>
+            <div>
+                <a style="display:none;" id="ovk-viewer-slideshow">${tr("show_slideshow")}</a>
+                <a style="display:none;" id="ovk-viewer-minimize">${tr("minimize")}</a>
+                <a id="ovk-photo-close">${tr("close")}</a>
+            </div>
+        </div>
+        <div class="photo_viewer_wrapper miniplayer-body">
+            <div class="ovk-photo-slide-left"></div>
+            <div class="ovk-photo-slide-right"></div>
+            <img src="${_loader_link}" id="ovk-photo-img">
+        </div>
+        <div class="ovk-photo-details ovk-modal-details miniplayer-body">
+            <img src="${_loader_link}">
+        </div>
+    </div>
+</div>`;
+const videoViewerTemplate = `
+<div class="ovk-photo-view-dimmer ovk-video-view-dimmer ovk-white-modal">
+    <div class="ovk-photo-view-overlay ovk-photo-view-overlay-right">
+        <div class="ovk-photo-close-icon"></div>
+    </div>
+    <div class="ovk-modal-player-window">
+        <div id="player-infos">
+            <div id="ovk-player-part">
+                <div class='top-part'>
+                    <b id="videoTitle"></b>
+
+                    <div class="miniplayer-head-buttons">
+                        <div id='miniplayer_return'></div>
+                        <div id='miniplayer_close'></div>
+                    </div>
+
+                    <div class='top-part-buttons'>
+                        <a id='__modal_player_minimize' class='hoverable_color'>${tr('hide_player')}</a>
+                        |
+                        <a id='__modal_player_close' class='hoverable_color'>${tr('close')}</a>
+                    </div>
+                </div>
+                <div class='center-part miniplayer-body' id="playerHtml"></div>
+                <div class='bottom-part miniplayer-body'>
+                    <div>
+                        <a id='__toggle_comments' class='hoverable_color'>${tr('show_comments')}</a>
+                    </div>
+                    <div id="videoMoveArrows">
+                        <a id='toggleBar' class='hoverable_color'>${tr('toggle_queue_video')}</a>
+                        <a id="move_back" class='hoverable_color'>←</a>
+                        <a id="move_next" class='hoverable_color'>→</a>
+                    </div>
+                </div>
+            </div>
+            <div id="ovk-player-info" class="ovk-modal-details"></div>
+        </div>
+        <div id="player-video-queue">
+            <div id="player-video-name-of"></div>
+            <div id="player-video-items"></div>
+        </div>
+    </div>
+</div>`;
+const youtubeVideoTemplate = (id) => { return `
+<iframe
+width="600"
+height="340"
+src="https://www.youtube-nocookie.com/embed/${id}"
+frameborder="0"
+sandbox="allow-same-origin allow-scripts allow-popups"
+allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+allowfullscreen></iframe>` };
+const postViewerTemplate = `
+<div class="ovk-photo-view-dimmer ovk-post-viewer-dimmer ovk-white-modal">
+    <div class="ovk-photo-view-overlay ovk-photo-view-overlay-right">
+        <div class="ovk-photo-close-icon"></div>
+    </div>
+    <div class="ovk-photo-view ovk-post-viewer">
+        <div class="post_com_title">
+            <div class="itemAuthor">
+                <a><img class="itemAuthorAva"></a>
+                <div class="itemAuthor2">
+                    <span class="itemAuthorName">
+                        <a></a>
+                    </span>
+                    <a class="itemPostTime"></a>
+                </div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items: end;gap: 8px;">
+                <div style="margin-top: 9px;">
+                    <a style="display:none;" id="ovk-viewer-slideshow">${tr("show_slideshow")}</a>
+                    <a style="display:none;" id="ovk-viewer-minimize">${tr("minimize")}</a>
+
+                    <a id="ovk-photo-close">${tr("close")}</a>
+                </div>
+
+                <div id="post-win-arrows">
+                    <a id="move_back">←</a>
+                    <a id="move_next">→</a>
+                </div>
+            </div>
+        </div>
+        <div class="photo_viewer_wrapper miniplayer-body">
+            <div id="itemContent">
+                <img src="${_loader_link}" id="ovk-photo-img">
+
+            </div>
+        </div>
+        <div class="ovk-post-details miniplayer-body">
+            <div id="itemContentActions">
+                <img src="${_loader_link}">
+            </div>
+            <div id="itemContentComments" class="ovk-modal-details"></div>
+        </div>
+    </div>
+</div>
+`
+const msgboxModernTemplate = (title, body) => {
+    return u(`
+    <div class="ovk-modern-msg ovk-msg-all">
+        <div class="ovk-diag">
+            <div class="ovk-diag-head">${title}<div><a id="_close">${tr("close")}</a></div></div>
+            <div class="ovk-diag-body">${body}</div>
+        </div>
+    </div>`);
+}
+
+const msgboxFacebookTemplate = (title, body) => {
+    return u(
+    `<div class="ovk-diag-cont ovk-msg-all">
+        <div class="ovk-diag">
+            <div class="ovk-diag-head">${title}</div>
+            <div class="ovk-diag-body">${body}</div>
+            <div class="ovk-diag-action"></div>
+        </div>
+    </div>`)
+}
+
+function _checkViewerType(type, w, callback) {
+    const ws = w.split(",");
+    const r = ws[0];
+
+    if (r.includes(type)) {
+        const ids = r.replace(type, "");
+        callback(ids);
+    }
+}
+
+function _checkViewers() {
+    const url = new URL(location.href);
+    const w = url.searchParams.get("w");
+    let decoded = null;
+    if (url.searchParams.get("z") != null) {
+        decoded = JSON.decode(url.searchParams.get("w"));
+    }
+
+    // такого вида: wall0_0
+
+    if (!w || w.length == 0) {
+        return;
+    }
+
+    _checkViewerType("wall", w, (id) => {
+        PostViewer.openById(null, id);
+    });
+    _checkViewerType("photo", w, (id) => {
+        PhotoViewer.openById(id);
+    });
+    _checkViewerType("video", w, (id) => {
+        VideoViewer.openById(id);
+    });
+}
