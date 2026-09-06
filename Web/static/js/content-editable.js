@@ -372,16 +372,20 @@
             let range = null;
             if (sel.rangeCount > 0) {
                 const currentRange = sel.getRangeAt(0);
-                if (this.el.contains(currentRange.commonAncestorContainer)) {
+                if (currentRange && currentRange.commonAncestorContainer && this.el.contains(currentRange.commonAncestorContainer)) {
                     range = currentRange;
                 }
             }
             if (!range && this.savedRange) {
-                range = this.savedRange;
-                try {
-                    sel.removeAllRanges();
-                    sel.addRange(range);
-                } catch (e) { }
+                if (this.savedRange.commonAncestorContainer && this.el.contains(this.savedRange.commonAncestorContainer)) {
+                    range = this.savedRange;
+                    try {
+                        sel.removeAllRanges();
+                        sel.addRange(range);
+                    } catch (e) { }
+                } else {
+                    this.savedRange = null;
+                }
             }
             if (!range) {
                 range = document.createRange();
@@ -406,7 +410,7 @@
 
             if (!success) {
                 const sel = window.getSelection();
-                if (sel && sel.rangeCount > 0) {
+                if (sel && sel.rangeCount > 0 && sel.getRangeAt(0).commonAncestorContainer && this.el.contains(sel.getRangeAt(0).commonAncestorContainer)) {
                     const range = sel.getRangeAt(0);
                     range.deleteContents();
                     const frag = range.createContextualFragment(html);
@@ -419,12 +423,25 @@
                         sel.removeAllRanges();
                         sel.addRange(range);
                     }
+                } else {
+                    const frag = document.createRange().createContextualFragment(html);
+                    this.el.appendChild(frag);
+                    const newRange = document.createRange();
+                    newRange.selectNodeContents(this.el);
+                    newRange.collapse(false);
+                    if (sel) {
+                        try {
+                            sel.removeAllRanges();
+                            sel.addRange(newRange);
+                        } catch (e) { }
+                    }
                 }
             }
             this.saveRange();
             this._isDirty = true;
             this._cachedText = null;
             this._scheduleSync();
+            this.el.dispatchEvent(new Event('input', { bubbles: true }));
         }
 
         // Line break with native Undo support (Ctrl+Z) and trailing sentinel handling

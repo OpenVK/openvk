@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace openvk\VKAPI\Handlers;
 
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
+use openvk\Web\Util\IMBroker;
 use openvk\Web\Util\Validator;
 
 final class Account extends VKAPIRequestHandler
@@ -74,7 +75,10 @@ final class Account extends VKAPIRequestHandler
     {
         $this->requireUser();
 
-        # Цiй метод є заглушка
+        $user = $this->getUser();
+        $user->setOnline(time() - 301);
+        $user->save(false);
+        IMBroker::i()->setUserOffline($user->getId(), 0);
 
         return 1;
     }

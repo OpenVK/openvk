@@ -201,7 +201,7 @@ export class Messenger {
                 this.cancelEdit();
                 this.removeForwarded();
 
-                let draft = this.getCurrentChat().draft;
+                let draft = this.getCurrentChat()?.draft;
                 if (!draft && newDraft == true) {
                     draft = new Draft();
                 }
@@ -303,9 +303,17 @@ export class Messenger {
     }
 
     selectChat(conv) {
-        const id = this.opened_tabs.indexOf(conv);
+        if (!conv) return;
+        let id = this.opened_tabs.indexOf(conv);
         if (id === -1) {
-            console.error("can't find convo in tab", conv)
+            const convPeerId = Number(conv.peer?.id || conv.id);
+            id = this.opened_tabs.findIndex(item => convPeerId && Number(item.peer?.id || item.id) === convPeerId);
+            if (id !== -1) {
+                this.opened_tabs[id] = conv;
+            }
+        }
+        if (id === -1) {
+            console.error("can't find convo in tab", conv);
             return;
         }
 
@@ -313,8 +321,10 @@ export class Messenger {
     }
 
     hasChat(conv) {
+        if (!conv) return false;
         imLog("hasChat:", this.opened_tabs, conv);
-        return this.opened_tabs.indexOf(conv) !== -1;
+        const convPeerId = Number(conv.peer?.id || conv.id);
+        return this.opened_tabs.some(item => item === conv || (convPeerId && Number(item.peer?.id || item.id) === convPeerId));
     }
 
     getTabsCount() {
@@ -322,19 +332,17 @@ export class Messenger {
     }
 
     getChatWith(chat_general_form) {
-        let is = null;
-        window.im.conversations.convs.forEach((item) => {
-            if (item.peer.id == chat_general_form.id) {
-                is = item;
-                return;
-            }
-        });
+        if (!chat_general_form) return null;
+        const targetId = Number(chat_general_form.id || chat_general_form.peer?.id);
+        let found = this.opened_tabs.find(item => Number(item.peer?.id || item.id) === targetId);
+        if (found) return found;
 
-        if (!is) {
-            return new Conversation({ 'peer': chat_general_form });
+        if (window.im?.conversations?.convs) {
+            found = window.im.conversations.convs.find(item => Number(item.peer?.id || item.id) === targetId);
+            if (found) return found;
         }
 
-        return is;
+        return new Conversation({ 'peer': chat_general_form });
     }
 
     getCurrentChat() {
@@ -342,40 +350,58 @@ export class Messenger {
         return this.opened_tabs[this.currentChatId] || null;
     }
 
-    closeChat(conv, page) {
-        const idx = this.opened_tabs.indexOf(conv);
+    async closeChat(conv, page) {
+        let idx = this.opened_tabs.indexOf(conv);
+        if (idx === -1) {
+            const convPeerId = Number(conv?.peer?.id || conv?.id);
+            idx = this.opened_tabs.findIndex(item => convPeerId && Number(item.peer?.id || item.id) === convPeerId);
+        }
         if (idx === -1) return;
 
         const currentConv = this.getCurrentChat();
-        const wasCurrent = currentConv && (
+        const wasCurrent = Boolean(currentConv && (
             currentConv === conv ||
-            Number(currentConv.peer?.id) === Number(conv.peer?.id)
-        );
+            Number(currentConv.peer?.id || currentConv.id) === Number(conv?.peer?.id || conv?.id)
+        ));
 
         this.opened_tabs.splice(idx, 1);
 
-        if (typeof window.im !== 'undefined' && window.im.updateTabs) {
-            window.im.updateTabs();
-        }
+        imLog("closeChat:", idx, "remaining tabs:", this.opened_tabs.length);
 
-        try {
-            imLog("closeChat:", idx, "remaining tabs:", this.opened_tabs.length);
-            if (this.opened_tabs.length === 0) {
-                this.currentChatId = null;
-                window.im.openTabByName("conversations");
-            } else if (wasCurrent) {
-                const nextIdx = Math.min(idx, this.opened_tabs.length - 1);
-                const nextConv = this.opened_tabs[nextIdx];
-                if (nextConv) {
-                    this.selectConversation(nextConv);
+        if (this.opened_tabs.length === 0) {
+            this.currentChatId = null;
+            if (typeof window.im !== 'undefined') {
+                if (window.im.updateTabs) {
+                    window.im.updateTabs();
                 }
+                await window.im.openTabByName("conversations");
             }
-        } catch (e) {
-            console.error("IM | closeChat error:", e);
+            return;
         }
 
-        if (page && typeof page.update === 'function') {
-            page.update();
+        if (wasCurrent) {
+            const nextIdx = Math.min(idx, this.opened_tabs.length - 1);
+            const nextConv = this.opened_tabs[nextIdx];
+            this.currentChatId = nextIdx;
+            if (nextConv) {
+                await this.selectConversation(nextConv);
+            }
+            if (typeof window.im !== 'undefined' && window.im.updateTabs) {
+                window.im.updateTabs();
+            }
+        } else {
+            this.currentChatId = this.opened_tabs.indexOf(currentConv);
+            if (this.currentChatId === -1 || this.currentChatId >= this.opened_tabs.length) {
+                this.currentChatId = 0;
+            }
+            if (page && typeof page.update === 'function') {
+                page.update();
+            } else {
+                this.update();
+            }
+            if (typeof window.im !== 'undefined' && window.im.updateTabs) {
+                window.im.updateTabs();
+            }
         }
     }
 
@@ -1039,7 +1065,12 @@ export class MessengerPage extends IMPage {
     updUrl() {
         const url = new URL(location.href);
         url.searchParams.delete("joinByTopic");
-        url.searchParams.set("sel", String(window.im.messenger.getCurrentChat().peer.id));
+        const cur = window.im?.messenger?.getCurrentChat();
+        if (cur && cur.peer && cur.peer.id) {
+            url.searchParams.set("sel", String(cur.peer.id));
+        } else {
+            url.searchParams.delete("sel");
+        }
         window.im.state._pushState(url.toString());
     }
 
@@ -1513,7 +1544,9 @@ export class MessengerPage extends IMPage {
     }
 
     onEditButtonClick(e, msg) {
-        if (window.im.messenger.isForwarded()) { return; }
+        if (!msg || window.im.messenger.isForwarded()) { return; }
+        if (typeof msg.can === 'function' && !msg.can("edit")) { return; }
+        if (typeof msg.isSpecial === 'function' && msg.isSpecial("sticker")) { return; }
 
         window.im.messenger.editMsg = msg;
         const msgText = msg.getText ? msg.getText(true) : (msg.data?.text || "");

@@ -114,11 +114,24 @@ export const PeerAvatar = ({ peer, className = "", loading = "lazy", saved_messa
 };
 
 export const PeerTab = ({ conv, active, page }) => {
+    const peerName = conv?.peer?.getName ? conv.peer.getName(true, true) : (conv?.name || conv?.id || "");
+    const unreadCount = conv?.unread_count || 0;
+    const isUnread = conv && typeof conv.isRead === 'function' ? !conv.isRead() : false;
+
     return html`
-        <div class="messages--peers-tab${active ? ' selected' : ''} ${!conv.isRead() ? 'unread' : ''}">
-            <a onClick=${() => window.im?.messenger.selectConversation(conv)}>${conv.peer.getName(true, true)}</a>
-            <span class="messages--peers-tab-counter">+${conv.unread_count}</span>
-            <span class="messages--peers-tab-close" onClick=${() => window.im?.messenger.closeChat(conv, page)}>
+        <div class="messages--peers-tab${active ? ' selected' : ''} ${isUnread ? 'unread' : ''}">
+            <a onClick=${(e) => {
+            if (e && e.preventDefault) e.preventDefault();
+            window.im?.messenger.selectConversation(conv);
+        }}>${peerName}</a>
+            <span class="messages--peers-tab-counter">+${unreadCount}</span>
+            <span class="messages--peers-tab-close" onClick=${(e) => {
+            if (e) {
+                if (e.preventDefault) e.preventDefault();
+                if (e.stopPropagation) e.stopPropagation();
+            }
+            window.im?.messenger.closeChat(conv, page);
+        }}>
                 <div class="cross ${active ? "white" : ""}"></div>
             </span>
         </div>
@@ -131,8 +144,8 @@ export const PeerTabsView = ({ had_more_one_tab, tabs, currentChat, page, convo 
     return html`
         <div class="messages--peers-header-wrap">
             <div class="messages--peers-tabs">
-                ${tabs.map((tab, idx) => html`
-                    <${PeerTab} conv=${tab} active=${idx === currentChat} page=${page} />
+                ${(tabs || []).map((tab, idx) => html`
+                    <${PeerTab} key=${tab?.peer ? tab.peer.id : (tab?.id || idx)} conv=${tab} active=${idx === currentChat} page=${page} />
                 `)}
             </div>
             <${PinnedMessageBar} convo=${convo} />
@@ -388,27 +401,72 @@ export function getDisplayRecentSmiles() {
 }
 
 export function onRecentSmileClick(s, e) {
-    if (e && e.preventDefault) e.preventDefault();
-    const target = document.querySelector('#write .content-editable')
-        || (window.ContentEditable && window.ContentEditable.lastFocused ? window.ContentEditable.lastFocused.el : null)
-        || document.querySelector('#write .small-textarea')
-        || document.querySelector('.content-editable')
-        || document.querySelector('.small-textarea');
+    if (e) {
+        if (e.preventDefault) e.preventDefault();
+        if (e.stopPropagation) e.stopPropagation();
+    }
+
+    let target = null;
+    if (e && e.target) {
+        const btn = e.target.closest ? (e.target.closest('.im-recent-smile-btn') || e.target) : e.target;
+        const box = btn.closest ? btn.closest('#write, .messenger-app--input, .model_content_textarea, .messenger-app-end, .im_page') : null;
+        if (box) {
+            target = box.querySelector('.content-editable, .small-textarea, textarea');
+        }
+    }
+
+    if (!target) {
+        const activePage = document.querySelector('#im_page_containers .im_page:not(.hidden)')
+            || document.querySelector('.im_page:not(.hidden)');
+        if (activePage) {
+            target = activePage.querySelector('#write .content-editable, #write .small-textarea, .content-editable, .small-textarea, textarea');
+        }
+    }
+
+    if (!target && window.ContentEditable && window.ContentEditable.lastFocused) {
+        const focusedEl = window.ContentEditable.lastFocused.el;
+        if (focusedEl && document.contains(focusedEl) && !focusedEl.closest('.im_page.hidden, .hidden')) {
+            target = focusedEl;
+        }
+    }
+
+    if (!target) {
+        const allEditables = document.querySelectorAll('.content-editable, .small-textarea, textarea');
+        for (const el of allEditables) {
+            if (document.contains(el) && !el.closest('.im_page.hidden, .hidden')) {
+                target = el;
+                break;
+            }
+        }
+    }
+
+    if (!target) {
+        target = document.querySelector('#write .content-editable')
+            || document.querySelector('#write .small-textarea')
+            || document.querySelector('.content-editable')
+            || document.querySelector('.small-textarea');
+    }
 
     if (target) {
+        if (!target.insertEmoji && !target._contentEditable && window.ContentEditable && target.classList && target.classList.contains('content-editable')) {
+            new window.ContentEditable(target, { submitOnEnter: true, placeholder: target.getAttribute('data-placeholder') || '' });
+        }
         if (typeof target.insertEmoji === 'function') {
             target.insertEmoji(s);
-        } else if (target._contentEditable) {
+        } else if (target._contentEditable && typeof target._contentEditable.insertEmoji === 'function') {
             target._contentEditable.insertEmoji(s);
         } else {
             const start = typeof target.selectionStart !== 'undefined' ? target.selectionStart : target.value.length;
             const end = typeof target.selectionEnd !== 'undefined' ? target.selectionEnd : target.value.length;
-            const val = target.value;
+            const val = target.value || '';
             target.value = val.substring(0, start) + s + val.substring(end);
             target.selectionStart = target.selectionEnd = start + s.length;
             target.focus();
             target.dispatchEvent(new Event('input', { bubbles: true }));
             target.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        if (typeof target.focus === 'function') {
+            try { target.focus(); } catch (err) { }
         }
     }
     if (typeof addSmile === 'function') {
@@ -436,8 +494,15 @@ if (typeof window !== 'undefined' && !window._imRecentSmilesInit) {
         });
     };
 
+    document.addEventListener('mousedown', (e) => {
+        const btn = e.target.closest ? e.target.closest('.im-recent-smile-btn') : null;
+        if (btn && btn.closest('.im-recent-smiles-bar')) {
+            e.preventDefault();
+        }
+    });
+
     document.addEventListener('click', (e) => {
-        const btn = e.target.closest('.im-recent-smile-btn');
+        const btn = e.target.closest ? e.target.closest('.im-recent-smile-btn') : null;
         if (btn && btn.closest('.im-recent-smiles-bar')) {
             const emoji = btn.dataset.emoji || btn.getAttribute('title');
             if (emoji) {
@@ -557,6 +622,7 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
                                         class="im-recent-smile-btn"
                                         title="${s}"
                                         data-emoji="${s}"
+                                        onMouseDown=${(e) => { e.preventDefault(); }}
                                         onClick=${(e) => onRecentSmileClick(s, e)}
                                     >
                                         <span class="emoji emoji_${getEmojiHex(s)}">${s}</span>
@@ -581,15 +647,29 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
 };
 
 export const ConversationItem = ({ conv, isForward = false, page = null }) => {
+    const cls1 = ["crp-entry"];
     const last_msg = conv.last_message;
     const peer = conv.peer;
     const has_activity = conv.hasActivity();
-    const cls1 = ["crp-entry"];
-    if (last_msg && (last_msg.data.from_id == peer.id || peer.isSavedMessages() == true)) {
+    const lastFromId = Number(last_msg?.data ? (last_msg.data.from_id?.id || last_msg.data.from_id) : (last_msg?.from_id || 0));
+    if (last_msg && (lastFromId === Number(peer?.id) || (peer && typeof peer.isSavedMessages === 'function' && peer.isSavedMessages()))) {
         cls1.push("crp-entry-replied-same");
     }
     if (!conv.isRead()) {
         cls1.push("unread");
+    }
+
+    const isOutgoingUnread = Boolean(
+        last_msg &&
+        !has_activity &&
+        (typeof last_msg.isMine === 'function' ? last_msg.isMine() : false) &&
+        (peer && typeof peer.isSavedMessages === 'function' ? !peer.isSavedMessages() : true) &&
+        (typeof last_msg.isRead === 'function' ? !last_msg.isRead(conv) : false)
+    );
+
+    const messageCls = ["crp-entry--message"];
+    if (isOutgoingUnread) {
+        messageCls.push("unread");
     }
 
     // здесь появился соблазн добавить && peer.data.members_count > 3 чтобы число участников показывалось только если в беседе много людей
@@ -617,7 +697,7 @@ export const ConversationItem = ({ conv, isForward = false, page = null }) => {
                 </div>
             </div>
         </div>
-        <div class="crp-entry--message">
+        <div class="${messageCls.join(' ')}">
             ${d && html`
             <div class="crp-entry--message---av">
                 <img src="${last_sender_ava}" />
@@ -688,7 +768,7 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
                 }
             }
         }}>
-            ${conversations.length > 0 ? conversations.map((conv) => html`<${ConversationItem} key=${conv.peer ? conv.peer.id : (conv.id || conv._conversation?.peer?.id)} conv=${conv} isForward=${isForward} page=${page} />`) : html`<${ConversationsListError} unreadMode=${unreadMode} is_group=${is_group} />`}
+            ${conversations.length > 0 ? conversations.map((conv) => html`<${ConversationItem} key=${conv.peer ? conv.peer.id : (conv.id || conv._conversation?.peer?.id)} conv=${conv} isForward=${isForward} page=${page} />`) : (!isLoadingMore ? html`<${ConversationsListError} unreadMode=${unreadMode} is_group=${is_group} />` : "")}
             ${(hasMore || isLoadingMore) && html`
             <div class="crp-lazy-loader ${isLoadingMore ? 'loading' : 'idle'}">
                 ${isLoadingMore ? html`
@@ -747,10 +827,11 @@ export const TabBar = ({ tabs, activeTab, onTabSelect }) => {
         console.error(e);
     }
 
-    const showContactButton = activeTabName == "messenger";
+    const curChat = window.im?.messenger?.getCurrentChat();
+    const showContactButton = activeTabName == "messenger" && Boolean(curChat && curChat.peer);
     let contactText = tr('about_peer');
     try {
-        if (activeTabName == "messenger" && window.im.messenger.getCurrentChat().peer.supposed_type == "chat") {
+        if (showContactButton && curChat.peer.supposed_type == "chat") {
             contactText = tr("about_peer_chat");
         }
     } catch (e) {

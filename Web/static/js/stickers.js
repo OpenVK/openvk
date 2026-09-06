@@ -27,15 +27,26 @@ function appendEmoji(e) {
 
     // 2. Check ContentEditable.lastFocused
     if (!textarea && window.ContentEditable && window.ContentEditable.lastFocused) {
-        textarea = window.ContentEditable.lastFocused.el;
+        const ceEl = window.ContentEditable.lastFocused.el;
+        if (ceEl && document.contains(ceEl) && !ceEl.closest('.im_page.hidden, .hidden')) {
+            textarea = ceEl;
+        }
     }
 
     // 3. Check last focused textarea/input
-    if (!textarea && lastFocusedInput && document.contains(lastFocusedInput)) {
+    if (!textarea && lastFocusedInput && document.contains(lastFocusedInput) && !lastFocusedInput.closest('.im_page.hidden, .hidden')) {
         textarea = lastFocusedInput;
     }
 
     // 4. Fallbacks
+    if (!textarea) {
+        const activePage = document.querySelector('#im_page_containers .im_page:not(.hidden)')
+            || document.querySelector('.im_page:not(.hidden)');
+        if (activePage) {
+            textarea = activePage.querySelector('#write .content-editable, #write .small-textarea, .content-editable, .small-textarea, textarea');
+        }
+    }
+
     if (!textarea) {
         textarea = document.querySelector('#write .content-editable')
             || document.querySelector('#write .small-textarea')
@@ -798,7 +809,6 @@ function sendOrAttachSticker(stickerId, packId, stickerData = {}) {
     const trigger = window._currentEmojiTrigger;
     if (trigger && !isStickersAllowed(trigger)) return;
 
-    // 1. Save to recent stickers
     const isAnim = Boolean(stickerData.is_animated || stickerData.animation_url || (stickerData.photo_128 && stickerData.photo_128.endsWith('.json')));
     const animUrl = stickerData.animation_url || (isAnim && packId && stickerId ? `/sticker/${packId}/${stickerId}_512.json` : '');
     addSticker({
@@ -810,12 +820,10 @@ function sendOrAttachSticker(stickerId, packId, stickerData = {}) {
         is_animated: isAnim,
     });
 
-    // 2. Hide tippy picker
     if (trigger && trigger._tippy) {
         trigger._tippy.hide();
     }
 
-    // 3. Fastchats (floating chat boxes) - check first if triggered from fastchat
     if (trigger && trigger.closest('.fc_chat_box')) {
         const fcBox = trigger.closest('.fc_chat_box');
         const peerId = fcBox.id.replace('fc_chat_', '');
@@ -825,40 +833,56 @@ function sendOrAttachSticker(stickerId, packId, stickerData = {}) {
         }
     }
 
-    // 4. Full messenger chat window
-    if (window.im && window.im.messenger && window.im.state && window.im.state.getCurrentConvo()) {
+    const inMessenger = trigger && trigger.closest('#im_container, .messenger-app, .messenger-app-end, .im_page');
+    if (inMessenger && window.im && window.im.messenger && window.im.state && window.im.state.getCurrentConvo()) {
         window.im.messenger.sendSticker(stickerId, packId, stickerData);
         return;
     }
 
-    // 5. Comments only (attach media)
-    if (trigger) {
-        const box = trigger.closest('.reply_form, form, #write');
-        if (box && isStickersAllowed(trigger)) {
-            const hContainer = box.querySelector('.post-horizontal') || document.querySelector('.post-horizontal');
-            if (hContainer) {
-                const postButtons = hContainer.closest('.post-buttons');
-                if (postButtons) {
-                    postButtons.style.display = 'block';
+    if (trigger && isStickersAllowed(trigger)) {
+        const box = trigger.closest('.reply_form, form, #write, .commentsTextFieldWrap');
+        if (box) {
+            const form = box.tagName === 'FORM' ? box : box.querySelector('form');
+            if (form) {
+                let hInput = form.querySelector('input[name="horizontal_attachments"]');
+                if (!hInput) {
+                    hInput = document.createElement('input');
+                    hInput.type = 'hidden';
+                    hInput.name = 'horizontal_attachments';
+                    form.appendChild(hInput);
                 }
-                // Only allow one sticker attached in comments
-                hContainer.querySelectorAll('.sticker-attached-item').forEach(el => el.remove());
+                hInput.value = `sticker${stickerId}`;
 
-                const imgUrl = stickerData.photo_128 || `/sticker/${packId}/${stickerId}_128.webp`;
-                const attachLink = document.createElement('a');
-                attachLink.dataset.type = 'sticker';
-                attachLink.dataset.id = stickerId;
-                attachLink.className = 'sticker-attached-item';
-                attachLink.innerHTML = `
-                    <img src="${imgUrl}" alt="sticker" />
-                    <span class="sticker-attached-remove">&times;</span>
-                `;
-                attachLink.querySelector('.sticker-attached-remove').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    attachLink.remove();
+                const textareas = form.querySelectorAll('textarea[name="text"], .content-editable');
+                textareas.forEach(txt => {
+                    if (txt._contentEditable && typeof txt._contentEditable.clear === 'function') {
+                        txt._contentEditable.clear();
+                    } else if (typeof txt.clear === 'function') {
+                        txt.clear();
+                    }
+                    if (txt.setText) txt.setText('');
+                    if (txt.value !== undefined) txt.value = '';
                 });
-                hContainer.appendChild(attachLink);
+
+                const vInput = form.querySelector('input[name="vertical_attachments"]');
+                if (vInput) vInput.value = '';
+
+                const hContainer = box.querySelector('.post-horizontal') || form.querySelector('.post-horizontal');
+                if (hContainer) {
+                    hContainer.innerHTML = `<a data-type="sticker" data-id="${stickerId}" class="sticker-attached-item"><img src="${stickerData.photo_128 || `/sticker/${packId}/${stickerId}_128.webp`}" alt="sticker" /></a>`;
+                }
+
+                if (typeof ajax_posting === 'function') {
+                    const fakeEvent = {
+                        target: form,
+                        submitter: null,
+                        preventDefault: () => { },
+                        stopPropagation: () => { },
+                    };
+                    ajax_posting(fakeEvent, u(form));
+                } else {
+                    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+                }
                 return;
             }
         }

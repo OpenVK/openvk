@@ -762,6 +762,10 @@ final class Messages extends VKAPIRequestHandler
             $message = '';
         }
 
+        if ($sticker_id > 0 && !empty($message)) {
+            $this->fail(100, "Stickers cannot be sent with text");
+        }
+
         if (empty($message) && empty($attachment) && $sticker_id <= 0 && empty($forward_messages) && empty($forward) && $reply_to <= 0) {
             $this->fail(100, "Message text is empty or invalid");
         }
@@ -848,6 +852,18 @@ final class Messages extends VKAPIRequestHandler
             }
         }
 
+        $hasSticker = $sticker_id > 0;
+        foreach ($attachment_checked as $item) {
+            if ($item instanceof \openvk\Web\Models\Entities\Messages\Sticker) {
+                $hasSticker = true;
+                break;
+            }
+        }
+
+        if ($hasSticker && !empty($message)) {
+            $this->fail(100, "Stickers cannot be sent with text");
+        }
+
         if (empty($message) && sizeof($attachment_secure) == 0 && empty($forward_messages) && $reply_to <= 0) {
             $this->fail(100, "Message text is empty or invalid");
         }
@@ -907,10 +923,39 @@ final class Messages extends VKAPIRequestHandler
             $this->fail(936, "There is no peer with this id");
         }
 
+        // Forbid editing messages that have a sticker
+        $msgData = $this->invoke("messages.getById", [
+            "message_ids" => (string) $message_id,
+        ]);
+        if (!empty($msgData['items'][0])) {
+            $msgItem = $msgData['items'][0];
+            $hasExistingSticker = false;
+            if (!empty($msgItem['attachments'])) {
+                foreach ((array) $msgItem['attachments'] as $att) {
+                    if (is_string($att) && str_starts_with($att, 'sticker')) {
+                        $hasExistingSticker = true;
+                        break;
+                    } elseif (is_array($att) && ($att['type'] ?? '') === 'sticker') {
+                        $hasExistingSticker = true;
+                        break;
+                    } elseif (is_object($att) && ($att->type ?? '') === 'sticker') {
+                        $hasExistingSticker = true;
+                        break;
+                    }
+                }
+            }
+            if ($hasExistingSticker) {
+                $this->fail(920, "Can't edit message with sticker");
+            }
+        }
+
         $attachment_checked = parseAttachments($attachment, ["photo", "video", "doc", "audio", "wall", "sticker"]);
         $attachment_secure = [];
 
         foreach ($attachment_checked as $item) {
+            if ($item instanceof \openvk\Web\Models\Entities\Messages\Sticker) {
+                $this->fail(920, "Can't edit message with sticker");
+            }
             if (!$item || !$item->canBeViewedBy($this->getUser())) {
                 continue;
             } else {

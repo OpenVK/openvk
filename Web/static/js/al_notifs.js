@@ -1,10 +1,26 @@
-createjs.Sound.registerSound("/assets/packages/static/openvk/audio/notify.mp3", "notification");
+createjs.Sound.registerSound("/assets/packages/static/openvk/audio/notification.mp3", "notification");
+createjs.Sound.registerSound("/assets/packages/static/openvk/audio/newmsg.mp3", "newmsg");
 
-function __actualPlayNotifSound() {
-    createjs.Sound.play("notification");
+let isAudioUnlocked = false;
+
+function __actualPlayNotifSound(type = "notification") {
+    try {
+        createjs.Sound.play(type);
+    } catch (e) {
+        console.error("Notification sound playback error", e);
+    }
 }
 
-window.playNotifSound = Function.noop;
+window.playNotifSound = function (type = "notification") {
+    if (isAudioUnlocked) {
+        __actualPlayNotifSound(type);
+    }
+}
+
+u(document.body).on("click", () => {
+    isAudioUnlocked = true;
+    window.playNotifSound = __actualPlayNotifSound;
+}, { once: true })
 
 function incrementNotificationsCounter() {
     document.querySelectorAll('a[href="/notifications"]').forEach(link => {
@@ -43,7 +59,7 @@ async function setupNotificationListener() {
 
             if (notif) {
                 if (!isFirstRequest) {
-                    playNotifSound();
+                    playNotifSound("notification");
                     console.info("Notifications | New notification", notif);
                     NewNotification(notif.title, notif.body, notif.ava, Function.noop, (notif.priority || 1) * 6000);
                     incrementNotificationsCounter();
@@ -91,7 +107,7 @@ async function triggerMessageNotification(conv, msg, timestamp) {
         };
 
         if (typeof NewNotification === 'function') {
-            playNotifSound();
+            playNotifSound("newmsg");
             NewNotification(
                 notif.title,
                 notif.body,
@@ -119,5 +135,3 @@ async function triggerMessageNotification(conv, msg, timestamp) {
 (async function () {
     await setupNotificationListener();
 })();
-
-u(document.body).on("click", () => window.playNotifSound = window.__actualPlayNotifSound);

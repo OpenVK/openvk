@@ -179,9 +179,24 @@ class Comment extends Post
         return $res;
     }
 
+    public function hasSticker(): bool
+    {
+        foreach ($this->getChildren() as $attachment) {
+            if ($attachment instanceof \openvk\Web\Models\Entities\Messages\Sticker) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function canBeEditedBy(?User $user = null): bool
     {
         if (!$user) {
+            return false;
+        }
+
+        if ($this->hasSticker()) {
             return false;
         }
 

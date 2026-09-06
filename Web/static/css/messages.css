@@ -741,7 +741,7 @@ body:has(#im_container.at_page) .page-wrap {
 .messenger-app--messages .messenger-app--messages-array {
     margin-top: auto;
     padding-top: 12px;
-    padding-bottom: 12px;
+    /*padding-bottom: 12px;*/
     z-index: 0;
 }
 
@@ -2146,7 +2146,9 @@ body:has(#im_container.at_page) .page-wrap {
 
 .messenger-app .messenger-app-status .write-bar {
     padding: 0px 65px;
+    min-height: 19px;
     max-height: 19px;
+    line-height: 19px;
     color: var(--nobold);
 }
 
@@ -4523,6 +4525,10 @@ body:has(#im_container.at_page) .page-wrap {
     height: 16px;
     object-fit: contain;
     margin-bottom: 2px;
+}
+
+.notification_ballon .conv_prev_attachment_text {
+    color: white;
 }
 
 /* Mobile Theme for Messenger */

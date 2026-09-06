@@ -165,7 +165,7 @@ export function getChatMessageClass() {
 export class ChatGeneralForm {
     static CHAT_RUBICON = 2000000000;
     static MESSAGES_PER_PAGE = 20;
-    static BASE_FIELDS = 'photo_100,photo_200,photo_max,last_seen,photo_id,status,sex,can_write_private_message,can_invite,followers_count,is_messages_blocked';
+    static BASE_FIELDS = 'photo_100,photo_200,photo_max,last_seen,online,photo_id,status,sex,can_write_private_message,can_invite,followers_count,is_messages_blocked';
     static SAVED_MESSAGES_AVATAR = "/assets/packages/static/openvk/img/im/saved_messages.png";
     static CHAT_NO_AVATAR = "/assets/packages/static/openvk/img/im/chat_meaningless.jpg";
 
@@ -176,6 +176,21 @@ export class ChatGeneralForm {
 
         this._messages_inited = false;
         this.members = null;
+        if (this.data.online !== undefined) {
+            this._online = this.data.online;
+        }
+    }
+
+    get online() {
+        if (this._online !== undefined) return this._online;
+        return this.data ? this.data.online : undefined;
+    }
+
+    set online(val) {
+        this._online = val;
+        if (this.data) {
+            this.data.online = val;
+        }
     }
 
     get CHAT_RUBICON() {
@@ -368,19 +383,30 @@ export class ChatGeneralForm {
     }
 
     getOnlineStatusString() {
-        if (this.data.followers_count) {
-            return tr("followers", this.data.followers_count);
+        if (this.supposed_type === 'club') {
+            return tr("followers", this.data.followers_count || 0);
         }
 
-        if (this.data.members_count) {
-            return tr("members_count", this.data.members_count);
+        if (this.supposed_type === 'chat') {
+            return tr("members_count", this.data.members_count || (this.members?.length || 0));
         }
 
-        if (!this.data.last_seen) {
+        if (this.isOnline()) {
+            return tr("online");
+        }
+
+        let lastSeen = this.data?.last_seen;
+        if (!lastSeen?.time && window.im?.cached_profiles) {
+            const cached = window.im.cached_profiles._findCachedProfileById(this.id);
+            if (cached?.data?.last_seen) lastSeen = cached.data.last_seen;
+            else if (cached?.last_seen) lastSeen = cached.last_seen;
+        }
+
+        if (!lastSeen || !lastSeen.time) {
             return tr("im_was_online_unkown_" + this.getGender()).toLowerCase();
         }
 
-        const time = this.data.last_seen.time;
+        const time = lastSeen.time;
         const date = new Date(time * 1000);
         const today = new Date();
         const sameMonth = date.getMonth() === today.getMonth();
@@ -389,10 +415,6 @@ export class ChatGeneralForm {
             month: '2-digit',
             day: '2-digit'
         });
-
-        if ((Math.floor(today.getTime() / 1000) - Math.floor(date.getTime() / 1000)) <= 300) {
-            return tr("online")
-        }
 
         if (sameMonth && date.getDate() === today.getDate()) {
             return tr("im_was_online_today_" + this.getGender(), timeStr).toLowerCase();
@@ -408,6 +430,7 @@ export class ChatGeneralForm {
     isOnline() {
         if (this.supposed_type !== "user") return false;
         if (this.online === 1 || this.data?.online === 1) return true;
+        if (this.online === 0 || this.data?.online === 0) return false;
         const lastSeenTime = this.data?.last_seen?.time;
         if (lastSeenTime) {
             const now = Math.floor(Date.now() / 1000);
@@ -532,10 +555,37 @@ export class ChatGeneralForm {
             msg.setText('');
         }
 
+        const isSaved = typeof this.isSavedMessages === 'function' ? this.isSavedMessages() : false;
+        msg.data = msg.data || {};
+        msg.data.out = 1;
+        msg.out = 1;
+        msg.data.read_state = isSaved ? 1 : 0;
+        msg.read_state = msg.data.read_state;
+        msg.peer = this;
+        msg.peer_id = this.id;
+
         this._chunks.pushNewMessage(msg);
         if (push_callback) {
             push_callback();
         }
+
+        const conv = window.im?.conversations ? window.im.conversations._findConv(this.id) : null;
+        if (conv) {
+            conv.last_message = msg;
+            conv._last_message = msg;
+            if (window.im?.conversations?.all_convs) {
+                const all = window.im.conversations.all_convs;
+                const idx = all.indexOf(conv);
+                if (idx > 0) {
+                    all.splice(idx, 1);
+                    all.unshift(conv);
+                }
+            }
+        }
+        if (window.im?.conversations) {
+            window.im.conversations.update();
+        }
+
         const datas = {
             'peer_id': this.id,
             'message': cleanText ? rawText : '',
@@ -600,12 +650,23 @@ export class ChatGeneralForm {
                     msg.data.local_id = msg.data.conversation_message_id;
                 }
             }
+            msg.id = msg.data.id;
+            msg.conversation_message_id = msg.data.conversation_message_id;
             msg.data.is_sending = false;
+            msg.data.out = 1;
+            msg.out = 1;
+            msg.data.read_state = isSaved ? 1 : 0;
+            msg.read_state = msg.data.read_state;
+
+            if (conv) {
+                conv.last_message = msg;
+                conv._last_message = msg;
+            }
+
             imLog('Sent message to ' + this.id, resp);
             if (this._chunks) {
                 this._chunks._invalidateCache();
             }
-            const conv = window.im?.conversations ? window.im.conversations._findConv(this.id) : null;
             if (conv && typeof conv.getScrollPosition === 'function' && conv.getScrollPosition()) {
                 conv.getScrollPosition()._invalidateCache();
             }
@@ -877,6 +938,10 @@ export class ChatGeneralForm {
 
                     if (conv.unread_count === 0) {
                         this._firstUnreadMsgId = null;
+                        if (conv._last_message && !conv._last_message.isMine()) {
+                            if (conv._last_message.data) conv._last_message.data.read_state = 1;
+                            conv._last_message.read_state = 1;
+                        }
                     }
 
                     if (conv.peer) conv.peer.in_read = this.in_read;
@@ -1009,9 +1074,9 @@ export class ChatMessage {
     }
     isMine() {
         const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
-        const fromId = Number(this.data.from_id?.id || this.data.from_id);
-        const isSelf = fromId != null && !isNaN(fromId) && fromId === Number(currentUserId);
-        return Boolean(this.data.out === 1 || isSelf);
+        const fromId = Number(this.data ? (this.data.from_id?.id || this.data.from_id) : (this.from_id || 0));
+        const isSelf = fromId != null && !isNaN(fromId) && Number(currentUserId) != null && fromId === Number(currentUserId);
+        return Boolean((this.data && this.data.out === 1) || this.out === 1 || isSelf);
     }
     getSentTime() { return new Date(this.data.date * 1000); }
     hasSender() { return this.data.from_id != null; }
@@ -1023,11 +1088,15 @@ export class ChatMessage {
         return this.data.sender;
     }
     get peer() {
+        if (this._peer) return this._peer;
         try {
             return window.im.conversations._findConv(this.data.peer_id).peer;
         } catch (e) {
             return window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(this.data.peer_id);
         }
+    }
+    set peer(val) {
+        this._peer = val;
     }
     getActionText() {
         if (!this.data.action) return "";
@@ -1325,15 +1394,15 @@ export class ChatMessage {
             case "forward":
                 return true;
             case "edit":
+                if (this.isAction() == true || this.isSpecial("sticker") == true) {
+                    return false;
+                }
+
                 if (this.data.can_edit != null) {
                     return Boolean(this.data.can_edit);
                 }
 
                 if (group != null) {
-                    return false;
-                }
-
-                if (this.isAction() == true || this.isSpecial("sticker") == true) {
                     return false;
                 }
 
@@ -1382,6 +1451,10 @@ export class ChatMessage {
         return !this.peer.isMuted();
     }
     get peer_id() { return this.data.peer_id; }
+    set peer_id(val) {
+        if (!this.data) this.data = {};
+        this.data.peer_id = val;
+    }
     get from_id() { return this.data.from_id; }
     getAttachments(includeLinks = false) {
         let _at = this.data.attachments;
@@ -1571,12 +1644,16 @@ export class ChatMessage {
         const fromId = attachments.from ? Number(attachments.from) : ((flags & 2) ? curUid : peer);
 
         const isStickerMsg = (new_attachments && new_attachments.some(a => a && a.type === 'sticker')) ? 1 : 0;
+        const isOut = Boolean(flags & 2);
+        const isUnread = Boolean(flags & 1);
 
         const msg = new ChatMessage({
             'id': id,
             'local_id': cmidFromLp,
             'conversation_message_id': cmidFromLp,
             'flags': flags,
+            'out': isOut ? 1 : 0,
+            'read_state': isUnread ? 0 : 1,
             'from_id': fromId,
             'date': ts,
             'peer': peer,
@@ -1592,6 +1669,12 @@ export class ChatMessage {
             'action_mid': action ? action.member_id : null,
             'action_text': action ? action.text : null,
         });
+        msg.out = isOut ? 1 : 0;
+        msg.read_state = isUnread ? 0 : 1;
+        if (msg.data) {
+            msg.data.out = isOut ? 1 : 0;
+            msg.data.read_state = isUnread ? 0 : 1;
+        }
         msg._guessSender();
 
         // temp fix
@@ -1767,9 +1850,9 @@ export class ChatMessage {
         }
     }
 
-    isRead() {
+    isRead(conv = null) {
         try {
-            if (this.data && (this.data.read_state === 1 || this.data.read_state === true)) return true;
+            if (this.read_state === 1 || this.read_state === true || this.data?.read_state === 1 || this.data?.read_state === true) return true;
             const currentChat = window.im?.messenger?.getCurrentChat();
             const currentChatId = currentChat?.peer?.id || (window.im?.messenger?.currentChatId ? Number(window.im.messenger.currentChatId) : 0);
             const peerId = (this.data && (this.data.peer_id || (this.data.chat_id ? 2000000000 + Number(this.data.chat_id) : 0)))
@@ -1777,19 +1860,28 @@ export class ChatMessage {
                 || (this.peer?.id)
                 || currentChatId
                 || 0;
-            const conv = peerId ? window.im?.conversations?._findConv(peerId) : currentChat;
+            conv = conv || (peerId ? window.im?.conversations?._findConv(peerId) : currentChat);
             const peer = conv?.peer || this.peer || currentChat?.peer;
-            const outRead = peer?.out_read || conv?._conversation?.out_read || conv?.conversation?.out_read || 0;
-            const inRead = peer?.in_read || conv?._conversation?.in_read || conv?.conversation?.in_read || 0;
+            if (peer && typeof peer.isSavedMessages === 'function' && peer.isSavedMessages()) {
+                return true;
+            }
+            const outRead = Number(peer?.out_read || conv?._conversation?.out_read || conv?.conversation?.out_read || 0);
+            const inRead = Number(peer?.in_read || conv?._conversation?.in_read || conv?.conversation?.in_read || 0);
             const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
             const msgCmid = Number((this.data && (this.data.conversation_message_id || this.data.local_id)) || this.conversation_message_id || 0);
             const msgId = Number((this.data && this.data.id) || this.id || 0);
             const fromId = Number(this.data ? (this.data.from_id?.id || this.data.from_id) : (this.from_id || 0));
+            const isMine = Boolean((this.data && this.data.out === 1) || this.out === 1 || (fromId && currentUserId && fromId === Number(currentUserId)));
 
-            if (fromId != currentUserId && inRead > 0 && ((msgCmid > 0 && msgCmid <= inRead) || (msgId > 0 && msgId <= inRead))) {
-                return true;
-            }
-            if (fromId == currentUserId) {
+            if (!isMine) {
+                if (inRead > 0 && ((msgCmid > 0 && msgCmid <= inRead) || (msgId > 0 && msgId <= inRead))) {
+                    return true;
+                }
+                const rawUnread = conv?._conversation?.unread_count ?? conv?._unread_count;
+                if (rawUnread === 0) {
+                    return true;
+                }
+            } else {
                 if (outRead > 0 && ((msgCmid > 0 && msgCmid <= outRead) || (msgId > 0 && msgId <= outRead))) {
                     return true;
                 }
@@ -1799,6 +1891,9 @@ export class ChatMessage {
                         return true;
                     }
                 }
+            }
+            if (this.read_state !== undefined) {
+                return Boolean(this.read_state);
             }
             return Boolean(this.data?.read_state);
         } catch (e) {

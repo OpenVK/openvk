@@ -7,6 +7,7 @@ namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\{IP, User, PasswordReset, EmailVerification};
 use openvk\Web\Models\Repositories\{Bans, IPs, Users, Restores, Verifications};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
+use openvk\Web\Util\IMBroker;
 use openvk\Web\Util\Validator;
 use Chandler\Session\Session;
 use Chandler\Security\User as ChandlerUser;
@@ -256,6 +257,12 @@ final class AuthPresenter extends OpenVKPresenter
     {
         $this->assertUserLoggedIn();
         $this->assertNoCSRF();
+        if ($this->user && $this->user->id) {
+            $user = $this->user->identity;
+            $user->setOnline(time() - 301);
+            $user->save(false);
+            IMBroker::i()->setUserOffline($this->user->id, 0);
+        }
         $this->authenticator->logout();
         Session::i()->set("_su", null);
 

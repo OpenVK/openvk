@@ -29,6 +29,16 @@ export class ConversationsPage extends IMPage {
     _update() { this.wRender(); }
     isForward() { return this.options.forward != null }
 
+    async beforeRender(container) {
+        if (window.im?.conversations && window.im.conversations.all_convs.length === 0 && !window.im.conversations.isLoadingMore && !window.im.conversations._hasNoMore) {
+            try {
+                await window.im.conversations.loadNext();
+            } catch (e) {
+                console.error("ConversationsPage | beforeRender loadNext failed:", e);
+            }
+        }
+    }
+
     async loadNext(e) {
         if (!window.im?.conversations) return;
         if (window.im.conversations.isLoadingMore) return;
@@ -75,6 +85,10 @@ export class ConversationsPage extends IMPage {
             });
         } else {
             convs = orig_convs;
+        }
+
+        if (convs.length === 0 && window.im?.conversations && !window.im.conversations.isLoadingMore && !window.im.conversations._hasNoMore) {
+            window.im.conversations.loadNext().then(() => this.update()).catch(console.error);
         }
 
         render(html`
@@ -346,6 +360,40 @@ export class Conversation {
         this.draft = null;
         this._endScrollPosition = ScrollPosition.fromEnd(this.peer);
         this._scroll = null;
+
+        if (this.peer && this._conversation) {
+            if (this._conversation.out_read != null) {
+                this.peer.out_read = Math.max(this.peer.out_read || 0, Number(this._conversation.out_read));
+            }
+            if (this._conversation.in_read != null) {
+                this.peer.in_read = Math.max(this.peer.in_read || 0, Number(this._conversation.in_read));
+            }
+        }
+
+        if (this._last_message) {
+            if (this.peer) {
+                this._last_message._peer = this.peer;
+                try {
+                    this._last_message.peer = this.peer;
+                } catch (e) {}
+                if (this._last_message.data) {
+                    this._last_message.data.peer = this.peer;
+                    if (!this._last_message.data.peer_id && this.peer.id) {
+                        this._last_message.data.peer_id = this.peer.id;
+                    }
+                }
+            }
+            const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
+            const fromId = Number(this._last_message.data ? (this._last_message.data.from_id?.id || this._last_message.data.from_id) : (this._last_message.from_id || 0));
+            const isMine = Boolean((this._last_message.data && this._last_message.data.out === 1) || this._last_message.out === 1 || (fromId && currentUserId && fromId === Number(currentUserId)));
+            const outRead = Number(this.peer?.out_read || this._conversation?.out_read || 0);
+            const msgCmid = Number(this._last_message.data?.conversation_message_id || this._last_message.data?.local_id || this._last_message.conversation_message_id || 0);
+            const msgId = Number(this._last_message.data?.id || this._last_message.id || 0);
+            if (isMine && outRead > 0 && ((msgCmid > 0 && msgCmid <= outRead) || (msgId > 0 && msgId <= outRead))) {
+                if (this._last_message.data) this._last_message.data.read_state = 1;
+                this._last_message.read_state = 1;
+            }
+        }
     }
 
     hasScrollPosition() { return this._scroll != null; }
@@ -426,7 +474,7 @@ export class Conversation {
             }
         }, REMOVE_TYPING_TIMEOUT);
     }
-    updateLastMessage(msg) { this._last_message = msg; }
+    updateLastMessage(msg) { this.last_message = msg; }
     get id() { return this.peer ? this.peer.id : (this._conversation?.peer?.id || 0); }
 
     get last_message() {
@@ -446,6 +494,30 @@ export class Conversation {
 
     set last_message(val) {
         this._last_message = val ? (val instanceof ChatMessage ? val : new ChatMessage(val)) : null;
+        if (this._last_message) {
+            if (this.peer) {
+                this._last_message._peer = this.peer;
+                try {
+                    this._last_message.peer = this.peer;
+                } catch (e) {}
+                if (this._last_message.data) {
+                    this._last_message.data.peer = this.peer;
+                    if (!this._last_message.data.peer_id && this.peer.id) {
+                        this._last_message.data.peer_id = this.peer.id;
+                    }
+                }
+            }
+            const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
+            const fromId = Number(this._last_message.data ? (this._last_message.data.from_id?.id || this._last_message.data.from_id) : (this._last_message.from_id || 0));
+            const isMine = Boolean((this._last_message.data && this._last_message.data.out === 1) || this._last_message.out === 1 || (fromId && currentUserId && fromId === Number(currentUserId)));
+            const outRead = Number(this.peer?.out_read || this._conversation?.out_read || 0);
+            const msgCmid = Number(this._last_message.data?.conversation_message_id || this._last_message.data?.local_id || this._last_message.conversation_message_id || 0);
+            const msgId = Number(this._last_message.data?.id || this._last_message.id || 0);
+            if (isMine && outRead > 0 && ((msgCmid > 0 && msgCmid <= outRead) || (msgId > 0 && msgId <= outRead))) {
+                if (this._last_message.data) this._last_message.data.read_state = 1;
+                this._last_message.read_state = 1;
+            }
+        }
     }
 
     get conversation() { return this._conversation; }

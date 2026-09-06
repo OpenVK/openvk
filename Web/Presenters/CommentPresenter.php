@@ -96,7 +96,7 @@ final class CommentPresenter extends OpenVKPresenter
         }
 
         $photo = null;
-        if ($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
+        if (isset($_FILES["_pic_attachment"]) && $_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
             try {
                 $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"]);
             } catch (ISE $ex) {
@@ -120,7 +120,32 @@ final class CommentPresenter extends OpenVKPresenter
             }
         }
 
-        if (empty($this->postParam("text")) && sizeof($horizontal_attachments) < 1 && sizeof($vertical_attachments) < 1) {
+        $hasSticker = false;
+        $filtered_horizontal_attachments = [];
+        foreach ($horizontal_attachments as $att) {
+            if ($att instanceof \openvk\Web\Models\Entities\Messages\Sticker) {
+                if (!$att->canBeUsedBy($this->user->identity)) {
+                    continue;
+                }
+                if ($hasSticker) {
+                    continue; // only 1 sticker allowed in comments
+                }
+                $hasSticker = true;
+                $filtered_horizontal_attachments[] = $att;
+            } else {
+                $filtered_horizontal_attachments[] = $att;
+            }
+        }
+        $horizontal_attachments = $filtered_horizontal_attachments;
+
+        $rawText = (string) ($this->postParam("text") ?? "");
+        $cleanText = trim(preg_replace('/[\s\x{200b}\x{feff}\x{00a0}]+/u', ' ', $rawText));
+
+        if ($hasSticker) {
+            $cleanText = '';
+        }
+
+        if (empty($cleanText) && sizeof($horizontal_attachments) < 1 && sizeof($vertical_attachments) < 1) {
             $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_comment_empty"), 0, $isAjax);
         }
 
@@ -134,7 +159,7 @@ final class CommentPresenter extends OpenVKPresenter
             $comment->setOwner($this->user->id);
             $comment->setModel(get_class($entity));
             $comment->setTarget($entity->getId());
-            $comment->setContent($this->postParam("text"));
+            $comment->setContent($hasSticker ? "" : $cleanText);
             $comment->setCreated(time());
             $comment->setReply_To($replyTo);
             $comment->setFlags($flags);
@@ -145,6 +170,9 @@ final class CommentPresenter extends OpenVKPresenter
 
         foreach ($horizontal_attachments as $horizontal_attachment) {
             if (!$horizontal_attachment || $horizontal_attachment->isDeleted() || !$horizontal_attachment->canBeViewedBy($this->user->identity)) {
+                continue;
+            }
+            if ($horizontal_attachment instanceof \openvk\Web\Models\Entities\Messages\Sticker && !$horizontal_attachment->canBeUsedBy($this->user->identity)) {
                 continue;
             }
 

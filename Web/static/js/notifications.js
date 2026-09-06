@@ -1,7 +1,6 @@
-Function.noop = () => {};
+Function.noop = () => { };
 
 var _n_counter = 0;
-
 var counter = 0;
 
 window.baseTitle = document.title;
@@ -10,7 +9,7 @@ function updateTitle() {
     document.title = counter > 0 ? `(${counter}) ${window.baseTitle}` : window.baseTitle;
 }
 
-window.setBaseTitle = function(title) {
+window.setBaseTitle = function (title) {
     window.baseTitle = title;
     updateTitle();
 };
@@ -20,11 +19,9 @@ window.addEventListener("focus", () => {
     updateTitle();
 });
 
-function NewNotification(title, body, avatar = null, callback = () => {}, time = 5000, count = true) {
-    if(avatar != null) {
-        avatar = '<avatar>' +
-            '<img src="' + avatar + '">' +
-        '</avatar>';
+function NewNotification(title, body, avatar = null, callback = () => { }, time = 5000, count = true) {
+    if (avatar != null) {
+        avatar = '<avatar><img src="' + avatar + '"></avatar>';
     } else {
         avatar = '';
     }
@@ -33,7 +30,7 @@ function NewNotification(title, body, avatar = null, callback = () => {}, time =
     let id = _n_counter;
 
     let notification = u(
-    `<div class="notification_ballon notification_ballon_wrap" id="n${id}">
+        `<div class="notification_ballon notification_ballon_wrap" id="n${id}">
         <notification_title>
             ${title}
             <a class="close">X</a> 
@@ -44,51 +41,71 @@ function NewNotification(title, body, avatar = null, callback = () => {}, time =
                 ${body}
             </content>
         </wrap>
-    </div>
-    `);
+    </div>`
+    );
 
-    u(".notifications_global_wrap").append(notification);
+    u(".notifications_global_wrap").prepend(notification);
 
     function getPrototype() {
-        return u("#n"+id);
+        return u("#n" + id);
     }
 
     let closed = false;
+    let timerId = null;
 
     function __closeNotification() {
-        if(closed) {
-            return;
-        }
-
-        if(document.visibilityState != "visible")
-            return setTimeout(() => {__closeNotification()}, time); // delay notif deletion
-        
+        if (closed) return;
         closed = true;
-        if(count && counter > 0) {
+
+        document.removeEventListener("visibilitychange", checkVisibilityAndStartTimer);
+        window.removeEventListener("focus", checkVisibilityAndStartTimer);
+
+        if (timerId) clearTimeout(timerId);
+
+        if (count && counter > 0) {
             counter--;
             updateTitle();
         }
 
         getPrototype().addClass('disappears');
-        return setTimeout(() => {getPrototype().remove()}, 500);
+        setTimeout(() => { getPrototype().remove(); }, 500);
     }
 
-    if(count == true) {
+    function checkVisibilityAndStartTimer() {
+        if (closed || timerId) return;
+
+        if (document.visibilityState === "visible") {
+            document.removeEventListener("visibilitychange", checkVisibilityAndStartTimer);
+            window.removeEventListener("focus", checkVisibilityAndStartTimer);
+
+            timerId = setTimeout(() => {
+                __closeNotification();
+            }, time);
+        }
+    }
+
+    if (count === true) {
         counter++;
         updateTitle();
     }
-    
-    setTimeout(() => {__closeNotification()}, time);
 
-    notification.children('notification_title').children('a.close').on('click', function(e) {
+    if (document.visibilityState === "visible") {
+        checkVisibilityAndStartTimer();
+    } else {
+        document.addEventListener("visibilitychange", checkVisibilityAndStartTimer);
+        window.addEventListener("focus", checkVisibilityAndStartTimer);
+    }
+
+    notification.children('notification_title').children('a.close').on('click', function (e) {
+        e.stopPropagation();
         __closeNotification();
     });
 
-    notification.on('click', function(e) {
+    notification.on('click', function (e) {
         if (!notification.hasClass('disappears')) {
             Reflect.apply(callback, {
                 closeNotification: () => __closeNotification(),
-                $notification:     () => getPrototype()
+                $notification: () => getPrototype()
             }, [e]);
 
             __closeNotification();

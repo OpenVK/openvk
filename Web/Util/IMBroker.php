@@ -114,13 +114,67 @@ class IMBroker
 
             $context = stream_context_create([
                 'http' => [
-                    'timeout' => 30,
+                    'timeout' => 5,
                     'ignore_errors' => true,
                 ],
             ]);
 
             return @file_get_contents($url, false, $context);
         });
+    }
+
+    public function isUserOnlineInRedis(int $userId): bool
+    {
+        try {
+            $score = $this->redis->zscore('im:online_users', (string) $userId);
+            if ($score !== null) {
+                return (time() - (int) $score) <= 300;
+            }
+        } catch (\Exception $e) {
+            // ignore
+        }
+        return false;
+    }
+
+    public function touchUserOnline(int $userId): bool
+    {
+        try {
+            $this->redis->zadd('im:online_users', [(string) $userId => time()]);
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public function setUserOnline(int $userId, int $extra = 0): bool
+    {
+        try {
+            $this->redis->zadd('im:online_users', [(string) $userId => time()]);
+            if ($this->enabled) {
+                $this->invokeMethod($userId, "im.setUserOnline", [
+                    "extra" => $extra,
+                    "force" => 1,
+                ]);
+            }
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public function setUserOffline(int $userId, int $flags = 0): bool
+    {
+        try {
+            $this->redis->zrem('im:online_users', (string) $userId);
+            if ($this->enabled) {
+                $this->invokeMethod($userId, "im.setUserOffline", [
+                    "flags" => $flags,
+                ]);
+            }
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     public function invokeWithKey(int $userId, callable $callback)
@@ -149,3 +203,4 @@ class IMBroker
     }
 
 }
+

@@ -26,8 +26,10 @@ export class IMTab {
     }
 
     showTab(root) {
-        this.render_class.container.classList.remove("hidden");
-        this.render_class.showHook();
+        if (this.render_class && this.render_class.container) {
+            this.render_class.container.classList.remove("hidden");
+            this.render_class.showHook();
+        }
     }
 
     shouldClose() {
@@ -92,8 +94,13 @@ export class IMPage {
         if (!main_container) return;
         const pageContainers = main_container.querySelector("#im_page_containers");
         if (pageContainers) {
-            pageContainers.insertAdjacentHTML("beforeend", `<div class="im_page" data-id="${this.id}"></div>`);
-            this.container = main_container.querySelector(`.im_page[data-id="${this.id}"]`);
+            const existing = pageContainers.querySelector(`.im_page[data-id="${this.id}"]`);
+            if (existing) {
+                this.container = existing;
+            } else {
+                pageContainers.insertAdjacentHTML("beforeend", `<div class="im_page" data-id="${this.id}"></div>`);
+                this.container = main_container.querySelector(`.im_page[data-id="${this.id}"]`);
+            }
         }
     }
     static openTab(main_container, options = {}) {
@@ -118,10 +125,13 @@ export class IMPage {
     }
     removeLoadSkeleton(container) { 
         try { 
-            container.querySelector("#load_skeleton").remove(); 
-        } catch(e) { 
-            u("#im_container #load_skeleton").remove();
-        }
+            if (container && container.querySelector && container.querySelector("#load_skeleton")) {
+                container.querySelectorAll("#load_skeleton").forEach(el => el.remove());
+            }
+        } catch(e) {}
+        try { 
+            document.querySelectorAll("#load_skeleton").forEach(el => el.remove());
+        } catch(e) {}
     }
     showHook() {}
 }

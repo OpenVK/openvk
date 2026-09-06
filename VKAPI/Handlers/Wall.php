@@ -1289,7 +1289,7 @@ final class Wall extends VKAPIRequestHandler
             $this->fail(102, "Invalid comment");
         }
 
-        if (!$comment->canBeEditedBy($this->getUser())) {
+        if (!$comment->canBeEditedBy($this->getUser()) || $comment->hasSticker()) {
             $this->fail(15, "Access to editing comment denied");
         }
 

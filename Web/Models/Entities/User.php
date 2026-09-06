@@ -1416,9 +1416,16 @@ class User extends RowModel
 
     public function updOnline(string $platform): bool
     {
+        $wasOnline = $this->isOnline();
         $this->setOnline(time());
         $this->setClient_name($platform);
         $this->save(false);
+
+        if (!$wasOnline) {
+            IMBroker::i()->setUserOnline($this->getId());
+        } else {
+            IMBroker::i()->touchUserOnline($this->getId());
+        }
 
         return true;
     }
