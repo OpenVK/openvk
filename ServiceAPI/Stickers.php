@@ -113,6 +113,12 @@ class Stickers implements Handler
         $pack = null;
         if (is_numeric($packIdOrSlug)) {
             $pack = $this->stickers->getPack((int) $packIdOrSlug);
+            if (!$pack) {
+                $sticker = $this->stickers->getSticker((int) $packIdOrSlug);
+                if ($sticker && $sticker->getPackId()) {
+                    $pack = $this->stickers->getPack($sticker->getPackId());
+                }
+            }
         }
         if (!$pack && is_string($packIdOrSlug)) {
             $pack = $this->stickers->getPackBySlug($packIdOrSlug);

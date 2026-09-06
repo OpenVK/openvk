@@ -67,9 +67,10 @@ async function showUserDialog(event, userId) {
             return;
         }
 
-        const text = msg.getNode().find("#_text").last().value;
+        const rawText = msg.getNode().find("#_text").last() ? (msg.getNode().find("#_text").last().value || '') : '';
+        const cleanText = rawText.replace(/[\s\u200b\ufeff\u00a0]/g, '');
         const atts = collect_attachments(msg.getNode().find("#write"));
-        if (!text && atts.length == 0) {
+        if (!cleanText && atts.length == 0) {
             toggleUnclickability(btn, false);
             return;
         };
@@ -77,7 +78,7 @@ async function showUserDialog(event, userId) {
         try {
             await window.OVKAPI.call('messages.send', {
                 peer_id: targetUserId,
-                message: text,
+                message: cleanText ? rawText : '',
                 attachment: atts.join(","),
             });
             msg.close();

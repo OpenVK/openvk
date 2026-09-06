@@ -548,10 +548,10 @@ async function updateStickerPacksInPicker(wrapper) {
                      data-url512="${p512}" 
                      data-animation-url="${animUrl}" 
                      title="">
-                    ${isLottie 
-                        ? `<div class="sticker-lottie-thumb" data-anim-url="${animUrl}"></div>` 
-                        : `<img src="${p128}" loading="lazy" alt="" />`
-                    }
+                    ${isLottie
+                    ? `<div class="sticker-lottie-thumb" data-anim-url="${animUrl}"></div>`
+                    : `<img src="${p128}" loading="lazy" alt="" />`
+                }
                 </div>
             `;
         }).join('');
@@ -583,10 +583,10 @@ async function updateStickerPacksInPicker(wrapper) {
                          data-url512="${p512}" 
                          data-animation-url="${animUrl}" 
                          title="${escapeHtml(stk.emoji || '')}">
-                        ${isLottie 
-                            ? `<div class="sticker-lottie-thumb" data-anim-url="${animUrl}"></div>` 
-                            : `<img src="${p128}" loading="lazy" alt="" />`
-                        }
+                        ${isLottie
+                        ? `<div class="sticker-lottie-thumb" data-anim-url="${animUrl}"></div>`
+                        : `<img src="${p128}" loading="lazy" alt="" />`
+                    }
                     </div>
                 `;
             }).join('');
@@ -626,7 +626,7 @@ async function updateStickerPacksInPicker(wrapper) {
                         path: url
                     });
                     thumb._lottieAnim = anim;
-                } catch (e) {}
+                } catch (e) { }
             }
         });
     }
@@ -679,7 +679,7 @@ function initStickerPickerHoldPreview(wrapper) {
 
     function removePreview() {
         if (currentAnim) {
-            try { currentAnim.destroy(); } catch (e) {}
+            try { currentAnim.destroy(); } catch (e) { }
             currentAnim = null;
         }
         if (previewEl) {
@@ -743,7 +743,7 @@ function initStickerPickerHoldPreview(wrapper) {
                 });
                 thumb._lottieAnim = anim;
                 thumb._lottieInitialized = true;
-            } catch (err) {}
+            } catch (err) { }
         }
     }, true);
 
@@ -1060,7 +1060,7 @@ function initStaticLottieStickers(root = document) {
                 e.stopPropagation();
                 anim.goToAndPlay(0, true);
             });
-        } catch (err) {}
+        } catch (err) { }
     });
 }
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
@@ -1377,7 +1377,7 @@ async function openStickerPackModal(slugOrId, event) {
 
     const head = node.find('.ovk-diag-head');
     if (head.nodes[0] && !head.find('.stickers_modal_close_cross').nodes.length) {
-        head.append(u('<a href="javascript:void(0)" class="stickers_modal_close_cross">&times;</a>'));
+        head.append(u('<a href="javascript:void(0)" class="stickers_modal_close_cross"></a>'));
         head.find('.stickers_modal_close_cross').on('click', (e) => {
             e.preventDefault();
             msg.close();
@@ -1390,7 +1390,7 @@ async function openStickerPackModal(slugOrId, event) {
 
         if (head.nodes[0]) {
             const titleSpan = escapeHtml(info.name);
-            const closeBtn = '<a href="javascript:void(0)" class="stickers_modal_close_cross">&times;</a>';
+            const closeBtn = '<a href="javascript:void(0)" class="stickers_modal_close_cross"></a>';
             head.nodes[0].innerHTML = titleSpan + closeBtn;
             head.find('.stickers_modal_close_cross').on('click', (e) => {
                 e.preventDefault();
@@ -1544,7 +1544,7 @@ async function openStickerPackModal(slugOrId, event) {
                         });
                         thumb._lottieAnim = anim;
                         thumb._lottieInitialized = true;
-                    } catch (err) {}
+                    } catch (err) { }
                 }
             }, true);
 
@@ -1613,7 +1613,7 @@ async function openStickerPackModal(slugOrId, event) {
         function showPreview(url512) {
             if (!url512 || !previewWrap) return;
             if (modalCurrentAnim) {
-                try { modalCurrentAnim.destroy(); } catch (e) {}
+                try { modalCurrentAnim.destroy(); } catch (e) { }
                 modalCurrentAnim = null;
             }
 
@@ -1636,7 +1636,7 @@ async function openStickerPackModal(slugOrId, event) {
                         autoplay: true,
                         path: url512
                     });
-                } catch (e) {}
+                } catch (e) { }
             } else {
                 const lottieWrap = previewWrap.querySelector('.stickers_hold_lottie_anim');
                 if (lottieWrap) lottieWrap.style.display = 'none';
@@ -1655,7 +1655,7 @@ async function openStickerPackModal(slugOrId, event) {
             if (!isHolding) return;
             isHolding = false;
             if (modalCurrentAnim) {
-                try { modalCurrentAnim.destroy(); } catch (e) {}
+                try { modalCurrentAnim.destroy(); } catch (e) { }
                 modalCurrentAnim = null;
             }
             if (previewWrap) {
@@ -1706,12 +1706,12 @@ async function openStickerPackModal(slugOrId, event) {
                 window.removeEventListener('mouseup', onMouseUp);
                 node.find('.stickers_modal_item.is-lottie-item .sticker-lottie-thumb').nodes.forEach(thumb => {
                     if (thumb._lottieAnim) {
-                        try { thumb._lottieAnim.destroy(); } catch (e) {}
+                        try { thumb._lottieAnim.destroy(); } catch (e) { }
                         thumb._lottieAnim = null;
                     }
                 });
                 if (modalCurrentAnim) {
-                    try { modalCurrentAnim.destroy(); } catch (e) {}
+                    try { modalCurrentAnim.destroy(); } catch (e) { }
                     modalCurrentAnim = null;
                 }
                 hidePreview();
@@ -1789,6 +1789,33 @@ function updateShopPackCard(slug) {
 }
 
 window.openStickerPackModal = openStickerPackModal;
+
+// Global click handler: clicking any sticker in messages or attachments opens the pack modal
+document.addEventListener('click', (e) => {
+    if (e.target.closest('.stickers_pack_modal, .stickers_pack_modal_cont, .emoji_picker_box, .emoji-picker-container')) {
+        return;
+    }
+    const stickerEl = e.target.closest('.msg-attach-w-sticker, .msg-lottie-sticker, .fc_msg_sticker');
+    if (!stickerEl) return;
+    if (e.defaultPrevented) return;
+
+    let packId = stickerEl.getAttribute('data-pack-id');
+    const stickerId = stickerEl.getAttribute('data-sticker-id');
+
+    if (!packId && stickerId && typeof window.findStickerData === 'function') {
+        const found = window.findStickerData(stickerId);
+        if (found && found.product_id) {
+            packId = found.product_id;
+        }
+    }
+
+    const targetPack = packId || stickerId;
+    if (targetPack && typeof window.openStickerPackModal === 'function') {
+        e.preventDefault();
+        e.stopPropagation();
+        window.openStickerPackModal(targetPack, e);
+    }
+});
 
 window.addEventListener('popstate', (e) => {
     const u = new URL(location.href);

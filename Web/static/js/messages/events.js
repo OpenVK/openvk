@@ -348,7 +348,11 @@ export class EventHandler {
                 }
 
                 if (isActiveChatOpen) {
-                    _crs.peer.read();
+                    const wasAtEnd = this.im.messenger.view ? this.im.messenger.view.isAtEnd() : false;
+                    const isWindowFocused = (typeof document === 'undefined' || !document.hidden) && (typeof document.hasFocus !== 'function' || document.hasFocus());
+                    if (wasAtEnd && isWindowFocused) {
+                        _crs.peer.read();
+                    }
                 }
 
                 this.updateGlobalUnreadCounter();

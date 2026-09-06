@@ -55,6 +55,9 @@ export class Messenger {
                 current_chat.draft.loadScroll(win);
             }
         }
+        setTimeout(() => {
+            this.getWindow()?._checkAndFillUnderflow?.();
+        }, 150);
     }
 
     get view() { return this.getWindow(); }
@@ -77,6 +80,22 @@ export class Messenger {
         }
 
         const hadUnread = Boolean((convo.unread_count > 0) || !convo.isRead());
+
+        if (this.getWindow()) {
+            const win = this.getWindow();
+            if (typeof win._clearUnreadSpacing === 'function') {
+                win._clearUnreadSpacing();
+            }
+            if (win._readObserver) {
+                win._readObserver.disconnect();
+                win._readObserver = null;
+            }
+            if (win._readTimer) {
+                clearTimeout(win._readTimer);
+                win._readTimer = null;
+            }
+            win._pendingReadId = 0;
+        }
 
         if (window.im.state.is_debug) {
             imLog("Selected conversation:", convo);
@@ -147,7 +166,7 @@ export class Messenger {
             }
         }
 
-        if (hadUnread && convo.peer && convo.peer.isMessagesInited()) {
+        if (convo.peer) {
             let firstUnread = null;
             const sp = convo.getScrollPosition();
             const dayChunks = sp?.getDayDividedMessages?.() || [];
@@ -161,20 +180,17 @@ export class Messenger {
                 if (firstUnread) break;
             }
             const firstUnreadId = firstUnread ? (firstUnread.id || firstUnread.conversation_message_id) : null;
-            convo.peer._firstUnreadMsgId = firstUnreadId;
-            if (firstUnreadId && sp) {
-                sp.relyMessageId = Number(firstUnreadId);
+            if (firstUnreadId) {
+                convo.peer._firstUnreadMsgId = firstUnreadId;
+                if (sp) sp.relyMessageId = Number(firstUnreadId);
+            } else if (!hadUnread) {
+                convo.peer._firstUnreadMsgId = null;
             }
-        } else if (!hadUnread && convo.peer) {
-            convo.peer._firstUnreadMsgId = null;
         }
 
         try {
             await tab.render();
             tab.showTab();
-            if (hadUnread && convo.peer?._firstUnreadMsgId) {
-                this.scrollToUnread();
-            }
         } catch (e) { console.error(e); }
         const newId = Number(this.currentChatId);
 
@@ -209,10 +225,20 @@ export class Messenger {
             window.im.fastChats.update();
         }
 
+        if (convo.peer?._firstUnreadMsgId) {
+            this.scrollToUnread();
+        } else if (scrollToEnd == true || !hadUnread) {
+            this.getWindow()?._scrollToEnd?.();
+        }
+
         const currentSp = convo?.getScrollPosition();
-        if (convo && convo.peer && (!currentSp || currentSp.reachedNewestPosition)) {
+        if (!hadUnread && !convo.peer?._firstUnreadMsgId && convo && convo.peer && (!currentSp || currentSp.reachedNewestPosition)) {
             convo.peer.read();
         }
+
+        setTimeout(() => {
+            this.getWindow()?._checkAndFillUnderflow?.();
+        }, 150);
     }
 
     async selectConversationByPeerId(id) {
@@ -242,6 +268,12 @@ export class Messenger {
                 if (win) {
                     cur.setDraft(Draft.fromPage(win));
                 }
+            }
+            const win = this.getWindow();
+            if (win) {
+                win.is_loading = false;
+                win._scrollTicking = false;
+                win.currentVisibleDate = null;
             }
         } catch (e) {
             console.error(e);
@@ -312,30 +344,37 @@ export class Messenger {
 
     closeChat(conv, page) {
         const idx = this.opened_tabs.indexOf(conv);
-        if (idx !== -1) { this.opened_tabs.splice(idx, 1) };
+        if (idx === -1) return;
+
+        const currentConv = this.getCurrentChat();
+        const wasCurrent = currentConv && (
+            currentConv === conv ||
+            Number(currentConv.peer?.id) === Number(conv.peer?.id)
+        );
+
+        this.opened_tabs.splice(idx, 1);
 
         if (typeof window.im !== 'undefined' && window.im.updateTabs) {
             window.im.updateTabs();
         }
 
         try {
-            imLog("closeChat:", idx, this.opened_tabs);
-            if (idx == 0) {
+            imLog("closeChat:", idx, "remaining tabs:", this.opened_tabs.length);
+            if (this.opened_tabs.length === 0) {
+                this.currentChatId = null;
                 window.im.openTabByName("conversations");
-            } else {
-                if (this.opened_tabs[idx - 1] != null) {
-                    this.selectConversation(this.opened_tabs[idx - 1]);
-                } else if (this.opened_tabs[idx + 1] != null) {
-                    this.selectConversation(this.opened_tabs[idx + 1]);
-                } else {
-                    window.im.openTabByName("conversations");
+            } else if (wasCurrent) {
+                const nextIdx = Math.min(idx, this.opened_tabs.length - 1);
+                const nextConv = this.opened_tabs[nextIdx];
+                if (nextConv) {
+                    this.selectConversation(nextConv);
                 }
             }
         } catch (e) {
-            console.error(e);
+            console.error("IM | closeChat error:", e);
         }
 
-        if (page) {
+        if (page && typeof page.update === 'function') {
             page.update();
         }
     }
@@ -363,15 +402,24 @@ export class Messenger {
 
     async sendToCurrentCorresponder() {
         const view = this.getWindow();
-        const text = view.getCurrentText();
+        let text = view ? (view.getCurrentText() || '') : '';
         const reply_to = this.replyTo;
         let reply_param = null;
         let attachments_list = null;
-        const corresponder = window.im.state.getCurrentConvo();
+        const corresponder = window.im?.state?.getCurrentConvo();
+        if (!corresponder || !corresponder.peer) return;
 
         const attachments = collect_attachments(u('.messenger-app--input---messagebox'));
         if (attachments.length > 0) { attachments_list = attachments; }
         if (reply_to) { reply_param = reply_to; }
+
+        const cleanText = text.replace(/[\s\u200b\ufeff\u00a0]/g, '');
+        if (!cleanText) {
+            text = '';
+        }
+        if (!text && !attachments_list && !reply_param && (!this.forwarded_msg || this.forwarded_msg.length === 0)) {
+            return;
+        }
 
         if (text.length <= Messenger.MESSAGE_CHUNK_LENGTH + 20) {
             const msg = new ChatMessage({
@@ -689,38 +737,114 @@ export class Messenger {
         }
     }
 
+    async _ensureAtEndBeforeSend(convo = null) {
+        const currentConv = convo || window.im?.state?.getCurrentConvo();
+        if (!currentConv) return;
+        const win = this.getWindow();
+
+        const chunks = currentConv.peer?._chunks;
+        const scrollPos = currentConv.getScrollPosition();
+        const endSp = currentConv.getEndScrollPosition();
+
+        let isViewingHistory = false;
+
+        if (currentConv._scroll != null && endSp != null && currentConv._scroll !== endSp) {
+            isViewingHistory = true;
+        }
+        if (scrollPos && scrollPos.reachedNewestPosition === false) {
+            isViewingHistory = true;
+        }
+
+        if (chunks) {
+            const latestChunkMsg = chunks.getLatestMessage ? chunks.getLatestMessage() : null;
+            const convLastMsg = currentConv.last_message || currentConv._last_message || currentConv._conversation?.last_message;
+
+            const latestId = Number(latestChunkMsg?.id || latestChunkMsg?.data?.conversation_message_id || latestChunkMsg?.data?.id || 0);
+            const convLastId = Number(convLastMsg?.id || convLastMsg?.data?.conversation_message_id || convLastMsg?.data?.id || 0);
+
+            if (latestId > 0 && convLastId > 0 && latestId < convLastId) {
+                isViewingHistory = true;
+            }
+        }
+
+        if (isViewingHistory) {
+            if (chunks) {
+                chunks.chunks = [];
+                chunks._map = new Map();
+                chunks._messagesInited = false;
+                chunks._cachedMessages = undefined;
+                chunks.invalidateCache = true;
+            }
+            if (endSp) {
+                endSp.recenter(null);
+                await endSp.loadOlder();
+            }
+            currentConv._scroll = endSp;
+            currentConv._scroll?._invalidateCache?.();
+        } else {
+            if (endSp) {
+                const allChunks = endSp.getChronologicalChunks();
+                if (allChunks.length > 0) {
+                    endSp.windowEndIndex = allChunks.length - 1;
+                    endSp.windowStartIndex = Math.max(0, endSp.windowEndIndex - (endSp.constructor.MAX_RENDERED_CHUNKS || 10) + 1);
+                    endSp.reachedNewestPosition = true;
+                    endSp._invalidateCache();
+                }
+            }
+            currentConv._scroll = endSp;
+        }
+
+        if (win) {
+            await win.update();
+            win._scrollToEnd(false);
+            win._clearUnreadSpacing();
+            win.updateMountainButton();
+        }
+    }
+
     // onSendMessageButtonClick
     async onSendMessage() {
         const _tmp_atts = collect_attachments(u('.messenger-app--input---messagebox'));
         const win = this.getWindow();
+        const rawText = win ? (win.getCurrentText() || '') : '';
+        const cleanText = rawText.replace(/[\s\u200b\ufeff\u00a0]/g, '');
 
-        if (win.getCurrentText() === '' && _tmp_atts.length == 0 && !this.isForwarded() && this.replyTo == null) return false;
-        if (win.getCurrentText().length > 55000) {
+        if (!cleanText && _tmp_atts.length === 0 && !this.isForwarded() && this.replyTo == null) return false;
+        if (rawText.length > 55000) {
             fastError("> 55000")
             return;
         }
 
         if (this.editMsg != null) {
-            this.editMsg.edit(win.getCurrentText(), _tmp_atts);
+            if (!cleanText && _tmp_atts.length === 0) return false;
+            this.editMsg.edit(cleanText ? rawText : '', _tmp_atts);
 
             this.cancelEdit();
             return;
         }
 
-        win._scrollToEnd();
+        await this._ensureAtEndBeforeSend(window.im?.state?.getCurrentConvo());
 
         this.sendToCurrentCorresponder();
 
-        window.im.state.getCurrentConvo().clearDraft();
+        this.currentDraft = "";
+        if (win) {
+            win.currentDraft = "";
+            win.setCurrentText("");
+        }
+        if (window.im?.state?.getCurrentConvo()) {
+            window.im.state.getCurrentConvo().clearDraft();
+        }
         this._clearAttachments();
         this.removeReply();
         this.removeForwarded();
-        win.setCurrentText("");
     }
 
     async sendSticker(stickerId, packId = null, stickerData = null) {
         const corresponder = window.im?.state?.getCurrentConvo();
         if (!corresponder || !corresponder.peer) return;
+
+        await this._ensureAtEndBeforeSend(corresponder);
 
         const view = this.getWindow();
         const reply_to = this.replyTo;
@@ -795,13 +919,20 @@ export class Messenger {
         this._clearAttachments();
 
         imLog("prevDraft:", this.prevDraft);
-        win.setCurrentText(this.prevDraft ? this.prevDraft : "");
-        this.currentDraft = String(this.prevDraft || "");
+        const restored = this.prevDraft ? this.prevDraft : "";
+        if (win) {
+            win.setCurrentText(restored);
+            win.currentDraft = String(restored);
+        }
+        this.currentDraft = String(restored);
         this.prevDraft = null;
 
         if (render == true) {
-            this.getWindow().update();
+            this.getWindow()?.update();
         }
+        setTimeout(() => {
+            this.getWindow()?.setInputSelectionToEnd?.();
+        }, 50);
     }
 
     isEditing() {
@@ -871,23 +1002,39 @@ export class MessengerPage extends IMPage {
 
         this.replyTo = null;
         this.editMsg = null;
+        this._scrollTicking = false;
+        this._readObserver = null;
+        this._readTimer = null;
+        this._pendingReadId = 0;
+        this._hasBoundReadVisibility = false;
+    }
+    getCurrentChat() {
+        return window.im?.messenger?.getCurrentChat?.() || this.current_chat;
     }
     showHook() {
         try {
             const v = window.im?.messenger?.getCurrentChat();
             if (v && v.peer && v.peer._firstUnreadMsgId) {
                 this.scrollToUnread();
-            } else if (v && v.peer && v.peer.draft && v.peer.draft.scroll != null) {
-                v.peer.draft.loadScroll(this);
+            } else if (v && v.draft && (v.draft.scroll != null || v.draft.anchorMsgId != null || v.draft.isAtEnd)) {
+                this._clearUnreadSpacing();
+                v.draft.loadScroll(this);
             } else {
+                this._clearUnreadSpacing();
                 this._scrollToEnd();
             }
+            this.updateMountainButton();
+            this._setupReadObserver();
+            this._setupResizeListener();
+            setTimeout(() => this._checkAndFillUnderflow(), 150);
         } catch (e) { console.error(e); }
     }
     isDisablesScroll() { return true; }
     _triggerUpdate() {
-        window.im.conversations.update();
-        this.update();
+        if (window.im?.conversations) {
+            window.im.conversations.update();
+        }
+        return this.update();
     }
     updUrl() {
         const url = new URL(location.href);
@@ -900,7 +1047,9 @@ export class MessengerPage extends IMPage {
     async render(container, options = {}, messenger = null) {
         const orig_messenger = messenger || window.im.messenger;
         try {
-            orig_messenger.currentDraft = this.getNode().find("#write .small-textarea").last().value;
+            const currentText = this.getCurrentText();
+            orig_messenger.currentDraft = currentText || "";
+            this.currentDraft = currentText || "";
         } catch (e) {
             console.error(e);
         }
@@ -929,15 +1078,17 @@ export class MessengerPage extends IMPage {
 
         imLog("Messenger rendered messages:", messages);
         const is_rendering_contact_window = (window.im.tab == "contact" && special_mode === null);
-        const initialDate = (messages && messages.length > 0)
-            ? (messages[messages.length - 1].readable_date || messages[messages.length - 1].date || "")
-            : "";
+        const initialDate = this.currentVisibleDate || (
+            (messages && messages.length > 0)
+                ? (messages[messages.length - 1].readable_date || messages[messages.length - 1].date || "")
+                : ""
+        );
 
         render(html`
         <div id="chat-page">
             <div class="chat-window ${peer.id == window.im.state.getId() ? "saved-msgs" : ""}">
             <${PeerTabsView} hadTab=${true} tabs=${orig_messenger.opened_tabs} currentChat=${orig_messenger.currentChatId} page=${this} convo=${currentConv} />
-            <${PeerInfoView} page=${this} convo=${currentConv} togglePeerInfo=${() => {this.togglePeerInfo()}} />
+            <${PeerInfoView} page=${this} convo=${currentConv} togglePeerInfo=${() => { this.togglePeerInfo() }} />
             <${ActionsBar}
                 selectedMessages=${orig_messenger.selected_messages_objs}
                 count=${orig_messenger.selected_messages_count}
@@ -947,12 +1098,12 @@ export class MessengerPage extends IMPage {
                 onForwardClick=${() => { this.onForwardClick() }}
                 onViewers=${(msg) => { this.onViewersButtonClick(null, msg || orig_messenger.selected_messages_objs[0]) }}
             />
-            ${initialDate ? html`
-                <div class="im_floating_date_wrap" onClick=${(e) => this.onFloatingDateClick(e)}>
-                    <b id="im_floating_date_text">${initialDate}</b>
-                </div>
-            ` : ""}
             <div class="messenger-app messenger-layer">
+                ${initialDate ? html`
+                    <div class="im_floating_date_wrap" onClick=${(e) => this.onFloatingDateClick(e)}>
+                        <b id="im_floating_date_text">${initialDate}</b>
+                    </div>
+                ` : ""}
                 <${MessageListView}
                 convo=${currentConv}
                 dayDividedChunks=${messages} 
@@ -965,7 +1116,11 @@ export class MessengerPage extends IMPage {
                 onSend=${() => orig_messenger.onSendMessage()}
                 onKeyPress=${(e) => this.onTextareaKeyPress(e)}
                 currentDraft=${orig_messenger.currentDraft}
-                onInput=${(e) => { this.currentDraft = e.target.value; }}
+                onInput=${(e) => {
+                    const val = e.target.value;
+                    this.currentDraft = val;
+                    if (orig_messenger) orig_messenger.currentDraft = val;
+                }}
                 togglePeerInfo=${(e) => { this.togglePeerInfo() }}
                 clickOnReply=${(msg, e) => { this.clickOnReply(msg, e) }}
                 forwarded_msg=${orig_messenger.forwarded_msg}
@@ -976,11 +1131,11 @@ export class MessengerPage extends IMPage {
         </div>
         `, root);
         this._updPadding();
+        this._setupReadObserver();
     }
 
     _updPadding() {
-        const h = u(this.container).find(".messenger-app-end").last().clientHeight //- 15;
-        u(this.container).find(".messenger-app--messages .messenger-app--messages-array").attr("style", "padding-bottom:" + h + "px;");
+        // Obsolete with flex layout; no-op preserved for backwards compatibility
     }
 
     _getChronologicalMessages(currentConv) {
@@ -1061,10 +1216,8 @@ export class MessengerPage extends IMPage {
                         const currentReply = window.im.messenger.replyTo;
 
                         if (!currentReply) {
-                            // Первое нажатие — последнее сообщение
                             targetMsg = replyable[replyable.length - 1];
                         } else {
-                            // Повторное нажатие — переходим к предыдущему по порядку (выше в истории)
                             const currentId = currentReply.id;
                             const curIdx = replyable.findIndex(m =>
                                 (currentId != null && m.id != null && m.id === currentId) || m === currentReply
@@ -1080,9 +1233,10 @@ export class MessengerPage extends IMPage {
                         }
 
                         if (targetMsg) {
-                            if (ta && ta.value) {
-                                window.im.messenger.currentDraft = ta.value;
-                                this.currentDraft = ta.value;
+                            const val = this.getCurrentText();
+                            if (val) {
+                                window.im.messenger.currentDraft = val;
+                                this.currentDraft = val;
                             }
                             window.im.messenger.unselectAll();
                             window.im.messenger.replyTo = targetMsg;
@@ -1092,12 +1246,7 @@ export class MessengerPage extends IMPage {
                                 if (targetEl) {
                                     targetEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                                 }
-                                const inputEl = document.querySelector("#write .small-textarea");
-                                if (inputEl) {
-                                    inputEl.focus();
-                                    const len = inputEl.value.length;
-                                    inputEl.setSelectionRange(len, len);
-                                }
+                                this.setInputSelectionToEnd();
                             }, 30);
                             return false;
                         }
@@ -1106,14 +1255,12 @@ export class MessengerPage extends IMPage {
                 return false;
             }
 
-            // Обычный ArrowUp: редактирование последнего сообщения пользователя
-            const isAtStart = ta.selectionStart === 0 && ta.selectionEnd === 0;
-            const isEmpty = !ta.value || ta.value.trim().length === 0;
-            if ((isAtStart || isEmpty) && !window.im.messenger.isEditing()) {
+            // ArrowUp: редактирование последнего сообщения
+            const isEmpty = this.isInputEmpty(ta);
+            if (isEmpty && !window.im.messenger.isEditing()) {
                 if (currentConv) {
                     const allMsgs = this._getChronologicalMessages(currentConv);
 
-                    // Находим последнее редактируемое сообщение текущего пользователя с конца к началу
                     let lastMyMsg = null;
                     for (let i = allMsgs.length - 1; i >= 0; i--) {
                         const m = allMsgs[i];
@@ -1127,12 +1274,7 @@ export class MessengerPage extends IMPage {
                         e.preventDefault();
                         this.onEditButtonClick(e, lastMyMsg);
                         setTimeout(() => {
-                            const inputEl = document.querySelector("#write .small-textarea");
-                            if (inputEl) {
-                                inputEl.focus();
-                                const len = inputEl.value.length;
-                                inputEl.setSelectionRange(len, len);
-                            }
+                            this.setInputSelectionToEnd();
                         }, 50);
                         return false;
                     }
@@ -1168,12 +1310,7 @@ export class MessengerPage extends IMPage {
                                 targetEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                             }
                         }
-                        const inputEl = document.querySelector("#write .small-textarea");
-                        if (inputEl) {
-                            inputEl.focus();
-                            const len = inputEl.value.length;
-                            inputEl.setSelectionRange(len, len);
-                        }
+                        this.setInputSelectionToEnd();
                     }, 30);
                 }
                 return false;
@@ -1202,7 +1339,7 @@ export class MessengerPage extends IMPage {
             }
         }
 
-        if (e.which === 13) {
+        if (e.which === 13 || e.key === "Enter") {
             window.im.messenger._typingStarted = null;
             if (!e.metaKey && !e.shiftKey) {
                 e.preventDefault();
@@ -1352,12 +1489,7 @@ export class MessengerPage extends IMPage {
 
             this.update();
             setTimeout(() => {
-                const inputEl = document.querySelector("#write .small-textarea");
-                if (inputEl) {
-                    inputEl.focus();
-                    const len = inputEl.value.length;
-                    inputEl.setSelectionRange(len, len);
-                }
+                this.setInputSelectionToEnd();
             }, 50);
         };
 
@@ -1386,10 +1518,9 @@ export class MessengerPage extends IMPage {
         window.im.messenger.editMsg = msg;
         const msgText = msg.getText ? msg.getText(true) : (msg.data?.text || "");
         if (msgText.length > 0) {
-            window.im.messenger.prevDraft = String(this.container?.querySelector("#write .small-textarea")?.value || "");
+            window.im.messenger.prevDraft = this.getCurrentText();
             window.im.messenger.currentDraft = msgText;
-            const inputEl = this.getNode().find("#write .small-textarea").last();
-            if (inputEl) inputEl.value = msgText;
+            this.setCurrentText(msgText);
         }
 
         if (msg.getAttachments().length > 0) {
@@ -1397,6 +1528,9 @@ export class MessengerPage extends IMPage {
         }
 
         this.update();
+        setTimeout(() => {
+            this.setInputSelectionToEnd();
+        }, 50);
     }
 
     async onViewersButtonClick(e, msg) {
@@ -1682,55 +1816,238 @@ export class MessengerPage extends IMPage {
         this.togglePeerInfo(msg.sender);
     }
 
-    onScrollDownButtonClick() {
-        // "Return to the newest" — reset the active chunk to the actual
-        // (newest) chunk, then scroll to the bottom.
-        /*const corresponder = window.im.state.getCurrentConvo();
-        if (corresponder && typeof corresponder.scrollToNewest === "function") {
-            corresponder.scrollToNewest();
-        } else {
-            this._scrollToEnd();
-        }*/
+    getMessagesContainer() {
+        if (this._messagesContainer && document.body.contains(this._messagesContainer)) {
+            return this._messagesContainer;
+        }
+        this._messagesContainer = this.container ? this.container.querySelector(".messenger-app--messages") : document.querySelector(".messenger-app--messages");
+        return this._messagesContainer;
     }
 
     getScrollTop() {
-        if (window.im.state.isFastchat) {
-            return this.container.scrollTop;
-        }
-
-        return document.documentElement.scrollTop;
+        const el = this.getMessagesContainer();
+        return el ? el.scrollTop : 0;
     }
-    getScrollHeight() {
-        if (window.im.state.isFastchat) {
-            return this.container.scrollHeight;
-        }
 
-        return document.documentElement.scrollHeight;
+    getScrollHeight() {
+        const el = this.getMessagesContainer();
+        return el ? el.scrollHeight : 0;
     }
 
     getFirstVisibleMessageElement() {
-        const msgs = document.querySelectorAll('.messenger-app--messages---message[data-msg-id]');
-        const topThreshold = window.im?.state?.isFastchat ? 40 : 100;
-        for (let i = 0; i < msgs.length; i++) {
-            const rect = msgs[i].getBoundingClientRect();
-            if (rect.top >= 0 || rect.bottom > topThreshold) {
-                return msgs[i];
+        const container = this.getMessagesContainer();
+        if (!container) return null;
+        const msgs = container.querySelectorAll('.messenger-app--messages---message[data-msg-id]');
+        const len = msgs.length;
+        if (len === 0) return null;
+
+        const containerRect = container.getBoundingClientRect();
+        const targetTop = containerRect.top + 20;
+
+        let low = 0;
+        let high = len - 1;
+        let best = null;
+
+        while (low <= high) {
+            const mid = (low + high) >> 1;
+            const rect = msgs[mid].getBoundingClientRect();
+            if (rect.bottom > targetTop) {
+                best = msgs[mid];
+                high = mid - 1;
+            } else {
+                low = mid + 1;
             }
         }
-        return msgs.length > 0 ? msgs[0] : null;
+
+        return best || msgs[len - 1];
     }
 
-    async onMessagesScroll(e = null) {
+    async _performScrollPreservingUpdate(actionFn) {
+        const container = this.getMessagesContainer();
+        if (!container) {
+            if (typeof actionFn === "function") await actionFn();
+            return;
+        }
+
+        const anchorMsg = this.getFirstVisibleMessageElement();
+        const anchorId = anchorMsg ? (anchorMsg.getAttribute('data-msg-id') || anchorMsg.dataset?.msgId) : null;
+        const containerRectBefore = container.getBoundingClientRect();
+        const anchorRectBefore = anchorMsg ? anchorMsg.getBoundingClientRect() : null;
+        const anchorRelTopBefore = (anchorRectBefore && containerRectBefore)
+            ? (anchorRectBefore.top - containerRectBefore.top)
+            : null;
+        const oldScrollTop = container.scrollTop;
+        const oldScrollHeight = container.scrollHeight;
+
+        if (typeof actionFn === "function") {
+            await actionFn();
+        }
+
+        let currentAnchor = (anchorMsg && container.contains(anchorMsg)) ? anchorMsg : null;
+        if (!currentAnchor && anchorId) {
+            currentAnchor = container.querySelector(`.messenger-app--messages---message[data-msg-id="${anchorId}"]`);
+        }
+
+        if (currentAnchor && anchorRelTopBefore !== null) {
+            const containerRectAfter = container.getBoundingClientRect();
+            const anchorRectAfter = currentAnchor.getBoundingClientRect();
+            const anchorRelTopAfter = anchorRectAfter.top - containerRectAfter.top;
+            const diff = anchorRelTopAfter - anchorRelTopBefore;
+            if (Math.abs(diff) > 0.5) {
+                container.scrollTop = oldScrollTop + diff;
+            }
+        } else {
+            const diff = container.scrollHeight - oldScrollHeight;
+            if (Math.abs(diff) > 0.5) {
+                container.scrollTop = oldScrollTop + diff;
+            }
+        }
+    }
+
+    onMessagesScroll(e = null) {
+        if (this._scrollTicking) return;
+        this._scrollTicking = true;
+        window.requestAnimationFrame(() => {
+            this._scrollTicking = false;
+            this._handleMessagesScroll(e);
+        });
+    }
+
+    onMessagesWheel(e) {
+        if (!e || e.ctrlKey || e.metaKey || e.altKey) return;
+        if (e.deltaY < 0) {
+            const container = this.getMessagesContainer();
+            if (!container || this.is_loading) return;
+
+            const currentConvo = this.getCurrentChat();
+            const scrollPos = currentConvo?.getScrollPosition();
+            if (!scrollPos || scrollPos.reachedOldestPosition) return;
+
+            const arrayEl = container.querySelector(".messenger-app--messages-array");
+            const isUnderflowing = arrayEl && (arrayEl.offsetHeight < container.clientHeight);
+
+            if (container.scrollTop <= 100 || isUnderflowing) {
+                if (isUnderflowing) {
+                    this._checkAndFillUnderflow();
+                } else {
+                    this.onMessagesScroll();
+                }
+            }
+        }
+    }
+
+    onMessagesTouchStart(e) {
+        if (e && e.touches && e.touches[0]) {
+            this._touchStartY = e.touches[0].clientY;
+        }
+    }
+
+    onMessagesTouchMove(e) {
+        if (!e || !e.touches || !e.touches[0] || this._touchStartY == null) return;
+        const currentY = e.touches[0].clientY;
+        const deltaY = currentY - this._touchStartY;
+        if (deltaY > 30) {
+            const container = this.getMessagesContainer();
+            if (!container || this.is_loading) return;
+
+            const currentConvo = this.getCurrentChat();
+            const scrollPos = currentConvo?.getScrollPosition();
+            if (!scrollPos || scrollPos.reachedOldestPosition) return;
+
+            const arrayEl = container.querySelector(".messenger-app--messages-array");
+            const isUnderflowing = arrayEl && (arrayEl.offsetHeight < container.clientHeight);
+
+            if (container.scrollTop <= 10 || isUnderflowing) {
+                if (isUnderflowing) {
+                    this._checkAndFillUnderflow();
+                } else {
+                    this.onMessagesScroll();
+                }
+            }
+        }
+    }
+
+    _setupResizeListener() {
+        if (typeof window !== "undefined" && !this._hasBoundResize) {
+            this._hasBoundResize = true;
+            window.addEventListener("resize", () => {
+                if (this._resizeTimer) clearTimeout(this._resizeTimer);
+                this._resizeTimer = setTimeout(() => {
+                    this._checkAndFillUnderflow();
+                }, 100);
+            });
+        }
+    }
+
+    async _checkAndFillUnderflow() {
+        const container = this.getMessagesContainer();
+        if (!container || this.is_loading) return;
+
+        const currentConvo = this.getCurrentChat();
+        const scrollPos = currentConvo?.getScrollPosition();
+        if (!scrollPos || scrollPos.reachedOldestPosition) return;
+
+        const currentPeerId = currentConvo?.peer?.id;
+        const arrayEl = container.querySelector(".messenger-app--messages-array");
+        if (!arrayEl) return;
+
+        const arrayHeight = arrayEl.offsetHeight;
+        const viewportH = container.clientHeight;
+
+        if (viewportH > 0 && arrayHeight > 0 && arrayHeight < viewportH && !scrollPos.reachedOldestPosition) {
+            this.is_loading = true;
+            const topLoader = container.querySelector(".im_top_loader") || document.querySelector(".im_top_loader");
+            if (topLoader) topLoader.style.display = "block";
+            let hasError = false;
+            let loadedAny = false;
+            const prevMsgCount = container.querySelectorAll(".messenger-app--messages---message[data-msg-id]").length;
+
+            try {
+                await scrollPos.loadOlder();
+                if (this.getCurrentChat()?.peer?.id !== currentPeerId) {
+                    return;
+                }
+                if (topLoader) topLoader.style.display = "none";
+                await this._performScrollPreservingUpdate(async () => {
+                    await scrollPos.result();
+                });
+
+                if (this.getCurrentChat()?.peer?.id !== currentPeerId) {
+                    return;
+                }
+
+                const newMsgCount = container.querySelectorAll(".messenger-app--messages---message[data-msg-id]").length;
+                if (newMsgCount > prevMsgCount) {
+                    loadedAny = true;
+                }
+            } catch (err) {
+                hasError = true;
+                console.error("IM | _checkAndFillUnderflow error:", err);
+            } finally {
+                this.is_loading = false;
+                if (topLoader) topLoader.style.display = "none";
+                this.updateMountainButton();
+
+                if (!hasError && loadedAny && !scrollPos.reachedOldestPosition && this.getCurrentChat()?.peer?.id === currentPeerId) {
+                    setTimeout(() => this._checkAndFillUnderflow(), 50);
+                }
+            }
+        }
+    }
+
+    async _handleMessagesScroll(e = null) {
         if (this.is_loading) return;
-        const currentConvo = window.im?.messenger?.getCurrentChat();
+        const currentConvo = this.getCurrentChat();
         if (!currentConvo) return;
         const scrollPos = currentConvo.getScrollPosition();
         if (!scrollPos) return;
 
-        const _scroll = this.getScrollTop();
-        const scrollHeight = this.getScrollHeight();
-        const isFastchat = Boolean(window.im?.state?.isFastchat);
-        const viewportH = isFastchat ? (this.container?.clientHeight || 400) : (window.innerHeight || document.documentElement.clientHeight || 0);
+        const container = this.getMessagesContainer();
+        if (!container) return;
+
+        const _scroll = container.scrollTop;
+        const scrollHeight = container.scrollHeight;
+        const viewportH = container.clientHeight;
         const scrollBottom = Math.max(0, scrollHeight - _scroll - viewportH);
 
         const visibleAnchor = this.getFirstVisibleMessageElement();
@@ -1738,74 +2055,87 @@ export class MessengerPage extends IMPage {
             const dayContainer = visibleAnchor.closest('.messenger-app--messages-day');
             const dayDivider = dayContainer ? dayContainer.querySelector('.messenger-app--messages-day-time b') : null;
             const dayText = dayDivider ? dayDivider.textContent.trim() : '';
-            const floatDateEl = document.querySelector('#im_floating_date_text');
-            if (floatDateEl && dayText) {
-                floatDateEl.textContent = dayText;
+            if (dayText) {
+                this.currentVisibleDate = dayText;
+                const floatDateWrap = this.container?.querySelector('.im_floating_date_wrap') || document.querySelector('.im_floating_date_wrap');
+                const floatDateEl = this.container?.querySelector('#im_floating_date_text') || document.querySelector('#im_floating_date_text');
+                if (floatDateEl && floatDateEl.textContent !== dayText) {
+                    floatDateEl.textContent = dayText;
+                }
+
+                if (floatDateWrap && dayDivider) {
+                    const containerRect = container.getBoundingClientRect();
+                    const dividerRect = dayDivider.getBoundingClientRect();
+                    const isDividerAtTop = (dividerRect.top >= containerRect.top - 12 && dividerRect.bottom <= containerRect.top + 50);
+                    if (isDividerAtTop) {
+                        floatDateWrap.style.opacity = '0';
+                        floatDateWrap.style.pointerEvents = 'none';
+                    } else {
+                        floatDateWrap.style.opacity = '1';
+                        floatDateWrap.style.pointerEvents = 'auto';
+                    }
+                }
             }
         }
 
-        const topThreshold = isFastchat ? 150 : 350;
-        const bottomThreshold = isFastchat ? 150 : 350;
+        const topThreshold = 200;
+        const bottomThreshold = 200;
 
         if (_scroll < topThreshold && !scrollPos.reachedOldestPosition) {
             this.is_loading = true;
-            const topLoader = document.querySelector(".im_top_loader");
+            const topLoader = container.querySelector(".im_top_loader") || document.querySelector(".im_top_loader");
             if (topLoader) topLoader.style.display = "block";
+            const currentPeerId = currentConvo?.peer?.id;
             try {
-                const anchorEl = this.getFirstVisibleMessageElement();
-                const prevAnchorTop = anchorEl ? anchorEl.getBoundingClientRect().top : null;
-                const oldHeight = this.getScrollHeight();
-
                 await scrollPos.loadOlder();
-                scrollPos.result();
-
-                if (anchorEl && prevAnchorTop !== null && document.body.contains(anchorEl)) {
-                    const newAnchorTop = anchorEl.getBoundingClientRect().top;
-                    const diff = newAnchorTop - prevAnchorTop;
-                    if (diff !== 0) {
-                        if (isFastchat) {
-                            const wrap = document.querySelector("#fastchats_related #fastchats_chat #wrap");
-                            if (wrap) wrap.scrollTop += diff;
-                        } else {
-                            window.scrollBy(0, diff);
-                        }
-                    }
-                } else {
-                    const newHeight = this.getScrollHeight();
-                    const heightDiff = newHeight - oldHeight;
-                    if (heightDiff > 0) {
-                        this._scrollTo(_scroll + heightDiff);
-                    }
-                }
+                if (this.getCurrentChat()?.peer?.id !== currentPeerId) return;
+                if (topLoader) topLoader.style.display = "none";
+                await this._performScrollPreservingUpdate(async () => {
+                    await scrollPos.result();
+                });
+                if (this.getCurrentChat()?.peer?.id !== currentPeerId) return;
             } catch (err) {
                 console.error("IM | loadOlder error:", err);
             } finally {
                 this.is_loading = false;
                 if (topLoader) topLoader.style.display = "none";
+                this.onMessagesScroll();
             }
         } else if (scrollBottom < bottomThreshold && !scrollPos.reachedNewestPosition) {
             this.is_loading = true;
+            const currentPeerId = currentConvo?.peer?.id;
             try {
                 await scrollPos.loadNewer();
-                scrollPos.result();
+                if (this.getCurrentChat()?.peer?.id !== currentPeerId) return;
+                await this._performScrollPreservingUpdate(async () => {
+                    await scrollPos.result();
+                });
+                if (this.getCurrentChat()?.peer?.id !== currentPeerId) return;
                 if (scrollPos.reachedNewestPosition) {
                     const currentChat = this.getCurrentChat();
-                    if (currentChat && currentChat.peer) {
-                        currentChat.peer.read();
+                    if (currentChat) {
+                        currentChat._scroll = currentChat.getEndScrollPosition();
+                        if (currentChat.peer) {
+                            currentChat.peer.read();
+                        }
                     }
                 }
             } catch (err) {
                 console.error("IM | loadNewer error:", err);
             } finally {
                 this.is_loading = false;
+                this.onMessagesScroll();
             }
         }
 
-        if (scrollBottom > 2000) {
-            this.getNode().find(".messenger-app-end").addClass("m-mountain");
-        } else {
-            this.getNode().find(".messenger-app-end").removeClass("m-mountain");
+        if (this.isAtEnd(60)) {
+            const currentChat = this.getCurrentChat();
+            if (currentChat && (currentChat.unread_count === 0 || currentChat.isRead())) {
+                this._clearUnreadSpacing();
+            }
         }
+
+        this.updateMountainButton();
     }
 
     callDeletion() {
@@ -1892,79 +2222,144 @@ export class MessengerPage extends IMPage {
         });
     }
 
-    isAtEnd(threshold = 350) {
-        const viewportH = window.im.state.isFastchat
-            ? (this.container?.clientHeight || 400)
-            : (window.innerHeight || document.documentElement.clientHeight || 0);
-        const scrollBottom = Math.max(0, this.getScrollHeight() - this.getScrollTop() - viewportH);
+    isAtEnd(threshold = 120) {
+        const el = this.getMessagesContainer();
+        if (!el) return true;
+        const scrollBottom = Math.max(0, el.scrollHeight - el.scrollTop - el.clientHeight);
         return scrollBottom <= threshold;
     }
-    getScroll() { return document.documentElement.scrollTop; }
+
+    getScroll() { return this.getScrollTop(); }
+
     _scrollTo(scroll_progress) {
-        if (scroll_progress == "end") {
-            if (window.im.state.isFastchat) {
-                const el = document.querySelector("#fastchats_related #fastchats_chat #wrap");
-                scroll_progress = el ? el.scrollHeight : 0;
-            } else {
-                scroll_progress = document.documentElement.scrollHeight;
-            }
+        const el = this.getMessagesContainer();
+        if (!el) return;
+        if (scroll_progress === "end") {
+            scroll_progress = el.scrollHeight;
         }
 
-        imLog("scrolling page to: ", scroll_progress);
-        if (window.im.state.isFastchat) {
-            const el = document.querySelector("#fastchats_related #fastchats_chat #wrap");
-            if (el) el.scroll({ top: scroll_progress });
-        } else {
-            document.documentElement.scroll({ top: scroll_progress });
-        }
+        imLog("scrolling messages container to: ", scroll_progress);
+        el.scrollTop = scroll_progress;
     }
 
     onFloatingDateClick(e) {
         if (e) e.stopPropagation();
         if (window.im?.messenger?.showDaySwitcher) {
-            window.im.messenger.showDaySwitcher();
+            window.im.messenger.showDaySwitcher(this.currentVisibleDate || null);
         } else if (typeof window.DaySwitcher !== "undefined") {
-            new window.DaySwitcher();
+            new window.DaySwitcher(this.currentVisibleDate || null);
         }
     }
 
-    _scrollToEnd() {
-        imLog("IM | scrolling page to the end");
-        this._scrollTo("end");
-        requestAnimationFrame(() => {
-            this._scrollTo("end");
-        });
+    _clearUnreadSpacing() {
+        const el = this.getMessagesContainer();
+        if (!el) return;
+        el.classList.remove("has-unread-divider");
+        const arrayEl = el.querySelector(".messenger-app--messages-array");
+        if (arrayEl) {
+            if (arrayEl.style.marginTop) arrayEl.style.marginTop = "";
+            if (arrayEl.style.paddingBottom) arrayEl.style.paddingBottom = "";
+        }
+    }
+
+    _scrollToEnd(smooth = false) {
+        imLog("IM | scrolling messages to the end");
+        this._clearUnreadSpacing();
+        const el = this.getMessagesContainer();
+        if (el) {
+            if (smooth && typeof el.scrollTo === 'function') {
+                el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+            } else {
+                el.scrollTop = el.scrollHeight;
+            }
+            requestAnimationFrame(() => {
+                if (el) el.scrollTop = el.scrollHeight;
+            });
+        }
+    }
+
+    updateMountainButton() {
+        const container = this.getMessagesContainer();
+        if (!container) return;
+
+        const currentConv = this.getCurrentChat();
+        const scrollPos = currentConv?.getScrollPosition();
+        const chunks = currentConv?.peer?._chunks;
+
+        let isViewingHistory = false;
+
+        if (currentConv) {
+            if (currentConv._scroll != null && currentConv._scroll !== currentConv.getEndScrollPosition()) {
+                isViewingHistory = true;
+            }
+            if (scrollPos && scrollPos.reachedNewestPosition === false) {
+                isViewingHistory = true;
+            }
+
+            const latestChunkMsg = chunks?.getLatestMessage ? chunks.getLatestMessage() : null;
+            const convLastMsg = currentConv.last_message || currentConv._last_message || currentConv._conversation?.last_message;
+
+            const latestId = Number(latestChunkMsg?.id || latestChunkMsg?.data?.conversation_message_id || 0);
+            const convLastId = Number(convLastMsg?.id || convLastMsg?.data?.conversation_message_id || 0);
+
+            if (latestId > 0 && convLastId > 0 && latestId < convLastId) {
+                isViewingHistory = true;
+            }
+        }
+
+        const scrollBottom = Math.max(0, container.scrollHeight - container.scrollTop - container.clientHeight);
+
+        const shouldShow = isViewingHistory || (scrollBottom > 2000);
+
+        const endNode = this.getNode().find(".messenger-app-end");
+        if (shouldShow) {
+            endNode.addClass("m-mountain");
+        } else {
+            endNode.removeClass("m-mountain");
+        }
     }
 
     scrollToUnread() {
         let attempts = 0;
-        const maxAttempts = 30;
+        const maxAttempts = 35;
 
         const tryScroll = () => {
             attempts++;
             const el = document.getElementById("im_unread_divider");
-            if (el) {
-                if (window.im.state.isFastchat) {
-                    const wrap = document.querySelector("#fastchats_related #fastchats_chat #wrap");
-                    if (wrap) {
-                        const wrapRect = wrap.getBoundingClientRect();
-                        const elRect = el.getBoundingClientRect();
-                        wrap.scrollTop += (elRect.top - wrapRect.top - 20);
-                        return true;
-                    }
+            const container = this.getMessagesContainer();
+            const arrayEl = container ? container.querySelector(".messenger-app--messages-array") : null;
+
+            if (el && container) {
+                container.classList.add("has-unread-divider");
+
+                const topTargetMargin = 12;
+                const currentRelTop = el.getBoundingClientRect().top - container.getBoundingClientRect().top;
+                const scrollDelta = currentRelTop - topTargetMargin;
+                container.scrollTop += scrollDelta;
+
+                this.updateMountainButton();
+
+                if (attempts < 5) {
+                    requestAnimationFrame(() => {
+                        const newRelTop = el.getBoundingClientRect().top - container.getBoundingClientRect().top;
+                        const maxScroll = container.scrollHeight - container.clientHeight;
+                        if (Math.abs(newRelTop - topTargetMargin) > 2 && container.scrollTop < maxScroll) {
+                            tryScroll();
+                        } else {
+                            this._setupReadObserver();
+                        }
+                    });
+                } else {
+                    this._setupReadObserver();
                 }
-                const headerOffset = 145;
-                const rect = el.getBoundingClientRect();
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                const targetY = Math.max(0, scrollTop + rect.top - headerOffset);
-                window.scrollTo({ top: targetY, behavior: 'auto' });
                 return true;
             }
 
             if (attempts < maxAttempts) {
-                setTimeout(tryScroll, 50);
+                setTimeout(tryScroll, 35);
             } else {
                 this._scrollToEnd();
+                this._setupReadObserver();
             }
             return false;
         };
@@ -1974,13 +2369,112 @@ export class MessengerPage extends IMPage {
         });
     }
 
-    async scrollToEndOfChat(event, convo) {
-        if (convo.hasScrollPosition()) {
-            convo._scroll = null;
-            await this.update();
+    _setupReadObserver() {
+        if (this._readObserver) {
+            this._readObserver.disconnect();
+            this._readObserver = null;
         }
 
-        this._scrollToEnd();
+        const container = this.getMessagesContainer();
+        if (!container || typeof IntersectionObserver === "undefined") return;
+
+        const unreadElements = container.querySelectorAll(".messenger-app--messages---message.unread[data-msg-id]");
+        if (!unreadElements || unreadElements.length === 0) return;
+
+        this._readObserver = new IntersectionObserver((entries) => {
+            if (typeof document !== "undefined" && (document.hidden || (typeof document.hasFocus === 'function' && !document.hasFocus()))) {
+                return;
+            }
+
+            let maxVisibleUnreadId = 0;
+            entries.forEach((entry) => {
+                if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+                    const id = Number(entry.target.getAttribute("data-msg-id"));
+                    if (id && id > maxVisibleUnreadId) {
+                        maxVisibleUnreadId = id;
+                    }
+                }
+            });
+
+            if (maxVisibleUnreadId > 0) {
+                this._scheduleMarkAsRead(maxVisibleUnreadId);
+            }
+        }, {
+            root: container,
+            threshold: [0.5]
+        });
+
+        unreadElements.forEach(el => this._readObserver.observe(el));
+
+        if (typeof window !== "undefined" && !this._hasBoundReadVisibility) {
+            this._hasBoundReadVisibility = true;
+            const onVisible = () => {
+                if (!document.hidden) {
+                    this._setupReadObserver();
+                }
+            };
+            document.addEventListener("visibilitychange", onVisible);
+            window.addEventListener("focus", onVisible);
+        }
+    }
+
+    _scheduleMarkAsRead(maxId) {
+        this._pendingReadId = Math.max(this._pendingReadId || 0, maxId);
+        if (this._readTimer) {
+            clearTimeout(this._readTimer);
+        }
+        this._readTimer = setTimeout(async () => {
+            this._readTimer = null;
+            const idToRead = this._pendingReadId;
+            this._pendingReadId = 0;
+            if (!idToRead) return;
+            if (typeof document !== "undefined" && (document.hidden || (typeof document.hasFocus === 'function' && !document.hasFocus()))) {
+                return;
+            }
+
+            const currentChat = this.getCurrentChat();
+            if (currentChat && currentChat.peer && typeof currentChat.peer.read === "function") {
+                await currentChat.peer.read(idToRead);
+            }
+        }, 500);
+    }
+
+    async scrollToEndOfChat(event, convo = null) {
+        if (event && typeof event.preventDefault === "function") {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        const currentConv = convo || this.getCurrentChat();
+        if (!currentConv) return;
+
+        // По требованию: ВСЕГДА делаем запрос к серверу и загружаем самые последние сообщения
+        if (currentConv.peer?._chunks) {
+            currentConv.peer._chunks.chunks = [];
+            currentConv.peer._chunks._map = new Map();
+            currentConv.peer._chunks._messagesInited = false;
+            currentConv.peer._chunks._cachedMessages = undefined;
+            currentConv.peer._chunks.invalidateCache = true;
+        }
+
+        const endSp = currentConv.getEndScrollPosition();
+        if (endSp) {
+            endSp.recenter(null);
+            await endSp.loadOlder();
+        }
+        currentConv._scroll = endSp;
+        currentConv._scroll?._invalidateCache?.();
+
+        await this.update();
+        this._scrollToEnd(false);
+        this._clearUnreadSpacing();
+
+        this.updateMountainButton();
+
+        if (currentConv.peer && typeof currentConv.peer.read === "function") {
+            currentConv.peer.read();
+        }
+
+        setTimeout(() => this._checkAndFillUnderflow(), 100);
     }
 
     scrollToMessage(msgId, peerId = null, conv = null) {
@@ -2008,6 +2502,7 @@ export class MessengerPage extends IMPage {
                         el.classList.remove("animated");
                     }
                 }, 5000);
+                this.updateMountainButton();
                 imLog('IM | Scrolled to message anchor msg' + pid + '-' + targetId);
                 return true;
             }
@@ -2053,12 +2548,95 @@ export class MessengerPage extends IMPage {
     }
 
     getCurrentText() {
+        if (!this.container) return "";
         const el = this.container.querySelector(".messenger-app--input---messagebox .content-editable, .messenger-app--input---messagebox textarea");
-        return el ? el.value : "";
+        if (!el) return "";
+        if (el.tagName && el.tagName.toLowerCase() === "textarea") {
+            return el.value || "";
+        }
+        if (el._contentEditable && typeof el._contentEditable.getText === "function") {
+            return el._contentEditable.getText();
+        }
+        if (typeof el.getText === "function") {
+            return el.getText();
+        }
+        return el.innerText || el.textContent || "";
     }
     setCurrentText(text) {
-        const el = this.container.querySelector(".messenger-app--input---messagebox .content-editable, .messenger-app--input---messagebox textarea");
-        if (el) el.value = text;
+        if (!this.container) return;
+        const el = this.container.querySelector(".messenger-app--input---messagebox .content-editable, .messenger-app--input---messagebox textarea, #write .content-editable, #write textarea");
+        if (!el) return;
+        if (el.tagName && el.tagName.toLowerCase() === "textarea") {
+            el.value = text;
+        } else if (el._contentEditable && typeof el._contentEditable.setText === "function") {
+            if (!text && typeof el._contentEditable.clear === "function") {
+                el._contentEditable.clear();
+            } else {
+                el._contentEditable.setText(text);
+            }
+        } else if (typeof el.setText === "function") {
+            el.setText(text);
+        } else {
+            el.innerText = text;
+        }
+
+        const writeEl = this.container.querySelector("#write");
+        if (writeEl) {
+            const ta = writeEl.querySelector("textarea");
+            if (ta && ta !== el) ta.value = text;
+        }
+
+        if (!text) {
+            this.currentDraft = "";
+            if (window.im?.messenger) {
+                window.im.messenger.currentDraft = "";
+            }
+            const curChat = this.getCurrentChat();
+            if (curChat && typeof curChat.clearDraft === "function") {
+                curChat.clearDraft();
+            }
+        }
+    }
+    isInputEmpty(el) {
+        if (!el) el = this.container?.querySelector(".messenger-app--input---messagebox .content-editable, .messenger-app--input---messagebox textarea, #write .small-textarea");
+        if (!el) return true;
+        let text = "";
+        if (el.tagName && el.tagName.toLowerCase() === "textarea") {
+            text = el.value || "";
+        } else if (el._contentEditable && typeof el._contentEditable.getText === "function") {
+            text = el._contentEditable.getText();
+        } else if (typeof el.getText === "function") {
+            text = el.getText();
+        } else if (el.value !== undefined) {
+            text = el.value || "";
+        } else {
+            text = el.innerText || el.textContent || "";
+        }
+        return !text || text.trim().length === 0;
+    }
+    setInputSelectionToEnd(el) {
+        if (!el) {
+            el = this.container?.querySelector(".messenger-app--input---messagebox .content-editable, .messenger-app--input---messagebox textarea, #write .small-textarea");
+        }
+        if (!el) return;
+        el.focus();
+        if (el.tagName && el.tagName.toLowerCase() === "textarea") {
+            const len = el.value ? el.value.length : 0;
+            if (typeof el.setSelectionRange === "function") {
+                el.setSelectionRange(len, len);
+            }
+        } else if (typeof el.setSelectionRange === "function") {
+            el.setSelectionRange();
+        } else if (window.getSelection && document.createRange) {
+            try {
+                const range = document.createRange();
+                range.selectNodeContents(el);
+                range.collapse(false);
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+            } catch (err) { }
+        }
     }
     getCurrentAttachments() { return [this.container.querySelector(".post-horizontal").innerHTML, this.container.querySelector(".post-vertical").innerHTML]; }
 }

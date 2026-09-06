@@ -456,8 +456,7 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
     const cls = [
         "messenger-app-end",
         (replyTo || editMsg || isForwarded) ? 'm-selected' : '',
-        convo.hasScrollPosition() && (!editMsg && !replyTo) ? "m-mountain m-mountain-fatal" : "",
-    ]
+    ];
 
     return html`
     <div class="${cls.join(" ")}">
@@ -499,7 +498,11 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
                 <span class="input-close" onClick=${onRemoveForward}><div class="cross"></div></span>
             </div>`
             : ""}
-        <div class="messenger-mountain" onClick=${(e) => { window.im.messenger.view.scrollToEndOfChat(e, convo) }}>
+        <div class="messenger-mountain" onClick=${(e) => {
+            if (window.im?.messenger?.view?.scrollToEndOfChat) {
+                window.im.messenger.view.scrollToEndOfChat(e, convo);
+            }
+        }}>
             ${tr("viewing_old_messages")}
         </div>
         <div class="post-buttons">
@@ -517,13 +520,18 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
                                 onInput=${onInput}
                                 onKeyDown=${onKeyPress}
                                 ref=${(el) => {
-                if (el && !el._contentEditable && window.ContentEditable) {
+                if (!el) return;
+                if (!el._contentEditable && window.ContentEditable) {
                     new window.ContentEditable(el, { submitOnEnter: true, placeholder: tr('enter_message') });
-                    if (currentDraft && el.getText() !== currentDraft) {
+                    if (currentDraft) {
                         el.setText(currentDraft);
                     }
-                } else if (el && el._contentEditable && currentDraft != null && el.getText() !== currentDraft) {
-                    el.setText(currentDraft);
+                    el._lastConvoId = convo?.id;
+                } else if (el._contentEditable) {
+                    if (convo && convo.id !== el._lastConvoId) {
+                        el._lastConvoId = convo.id;
+                        el.setText(currentDraft || '');
+                    }
                 }
             }}
                             ></div>
@@ -597,7 +605,7 @@ export const ConversationItem = ({ conv, isForward = false, page = null }) => {
     }
     return html`
         <div class="${cls1.join(' ')}" onClick=${() => window.im?.messenger.onConversationsClick(conv, isForward, page)}>
-        <div style="display: flex;">
+        <div style="display: flex; align-items: center; flex-shrink: 0;">
             <div class="crp-entry--image">
                 <${PeerAvatar} peer=${peer} orig_ava=${false} />
             </div>
@@ -620,7 +628,7 @@ export const ConversationItem = ({ conv, isForward = false, page = null }) => {
             ${has_activity == true && html`
                 <div class="crp-entry--message---av"></div>
                 <div class="crp-entry--message---text">
-                    ${(conv.getActivityMsg()[0] || "")}
+                    <span>${(conv.getActivityMsg()[0] || "")}</span>
                 </div>
             `}
         </div>
@@ -629,9 +637,26 @@ export const ConversationItem = ({ conv, isForward = false, page = null }) => {
     `;
 };
 
-export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCreateChat, onSearch, isForward, page, unreadMode }) => {
+export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCreateChat, onSearch, isForward, page, unreadMode, isLoadingMore }) => {
     const is_group = window.im.state.is_group;
     const total_convs = window.im.conversations ? Number(window.im.conversations.total_convs || conversations.length) : conversations.length;
+
+    let rafId = null;
+    const handleScroll = (e) => {
+        if (rafId) return;
+        const target = e.currentTarget || e.target;
+        if (!target) return;
+        rafId = requestAnimationFrame(() => {
+            rafId = null;
+            if (!hasMore || isLoadingMore || window.im?.conversations?.isLoadingMore) return;
+            const remaining = target.scrollHeight - target.scrollTop - target.clientHeight;
+            if (remaining <= 250) {
+                if (typeof onLoadMore === 'function') {
+                    onLoadMore();
+                }
+            }
+        });
+    };
 
     return html`
         <div id="conversations-top-buttons">
@@ -653,11 +678,22 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
             <a>${tr("cancel")}</a>
             `}
         </div>
-        <div class="crp-list">
-            ${conversations.length > 0 ? conversations.map((conv) => html`<${ConversationItem} conv=${conv} isForward=${isForward} page=${page} />`) : html`<${ConversationsListError} unreadMode=${unreadMode} is_group=${is_group} />`}
-            ${hasMore && html`
-            <div onClick=${onLoadMore} id="show_more" class="crp-load-more">
-                ${tr('show_next')}
+        <div class="crp-list" onScroll=${handleScroll} ref=${(el) => {
+            if (!el) return;
+            if (hasMore && !isLoadingMore && !window.im?.conversations?.isLoadingMore) {
+                if (el.scrollHeight <= el.clientHeight) {
+                    if (typeof onLoadMore === 'function') {
+                        onLoadMore();
+                    }
+                }
+            }
+        }}>
+            ${conversations.length > 0 ? conversations.map((conv) => html`<${ConversationItem} key=${conv.peer ? conv.peer.id : (conv.id || conv._conversation?.peer?.id)} conv=${conv} isForward=${isForward} page=${page} />`) : html`<${ConversationsListError} unreadMode=${unreadMode} is_group=${is_group} />`}
+            ${(hasMore || isLoadingMore) && html`
+            <div class="crp-lazy-loader ${isLoadingMore ? 'loading' : 'idle'}">
+                ${isLoadingMore ? html`
+                    <img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="..." />
+                ` : ""}
             </div>
             `}
         </div>
@@ -675,8 +711,8 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
                     <a onClick=${() => { window.im.conversations.toggleMode("all") }}>${tr("conversations_show_all")}</a> |<span> </span>
                 `}
                 <a onclick=${() => { window.im.openTabByName("settings") }}>${tr("messenger_tab_settings")}</a> |<span> </span>
-                <a onClick=${(event) => { imSwitchCurrent(event) }}>${tr("messenger_switch_current")}</a> |<span> </span>
-                ${is_group ? html`<a onClick=${() => { window.im.openTabByName("important") }}>${tr("important_messages") || "Важное"}</a>` : "" }
+                <a onClick=${(event) => { imSwitchCurrent(event) }}>${tr("messenger_switch_current")}</a>
+                ${!is_group ? html` |<span> </span><a onClick=${() => { window.im.openTabByName("important") }}>${tr("important_messages")}</a>` : ""}
                 `}
             </div>
         </div>

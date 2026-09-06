@@ -126,7 +126,12 @@ export class MessageChunk {
             messages.groups,
             (item) => item.from_id,
             (item, author) => { item.sender = new ChatGeneralForm(author); },
-            (item, arr) => { arr.push(new ChatMessageClass(item)); }
+            (item, arr) => {
+                if (!item.peer_id && params.peer_id) {
+                    item.peer_id = params.peer_id;
+                }
+                arr.push(new ChatMessageClass(item));
+            }
         );
 
         if (params && (params.rev === 1 || params.rev === "1")) {
@@ -277,9 +282,26 @@ export class Chunks {
         return found;
     }
 
+    _getChunkMaxKey(chunk) {
+        if (!chunk || !chunk.messages || chunk.messages.length === 0) return -Infinity;
+        let maxTime = -Infinity;
+        let maxId = -Infinity;
+        for (const m of chunk.messages) {
+            if (!m) continue;
+            if (m.is_sending || m.data?.is_sending) {
+                return Infinity;
+            }
+            const t = m.data?.date ? Number(m.data.date) : (m.getSentTime?.()?.getTime() ? Math.round(m.getSentTime().getTime() / 1000) : 0);
+            if (t > maxTime) maxTime = t;
+            const id = Number(m.id || m.data?.conversation_message_id || m.data?.id || m.data?.local_id || 0);
+            if (id > maxId) maxId = id;
+        }
+        return (maxTime === -Infinity ? 0 : maxTime) * 1000000 + (maxId === -Infinity ? 0 : maxId);
+    }
+
     get sorted() {
         return this.chunks.slice(0).sort(
-            (a, b) => (b.latest_message?.id ?? -Infinity) - (a.latest_message?.id ?? -Infinity)
+            (a, b) => this._getChunkMaxKey(b) - this._getChunkMaxKey(a)
         );
     }
 
@@ -487,11 +509,26 @@ export class ScrollPosition {
         return fnl;
     }
 
+    _getChunkMinKey(chunk) {
+        if (!chunk || !chunk.messages || chunk.messages.length === 0) return Infinity;
+        let minTime = Infinity;
+        let minId = Infinity;
+        for (const m of chunk.messages) {
+            if (!m) continue;
+            const t = m.data?.date ? Number(m.data.date) : (m.getSentTime?.()?.getTime() ? Math.round(m.getSentTime().getTime() / 1000) : 0);
+            if (t > 0 && t < minTime) minTime = t;
+            const id = Number(m.id || m.data?.conversation_message_id || m.data?.id || m.data?.local_id || 0);
+            if (id > 0 && id < minId) minId = id;
+        }
+        if (minTime === Infinity && minId === Infinity) return 0;
+        return (minTime === Infinity ? 0 : minTime) * 1000000 + (minId === Infinity ? 0 : minId);
+    }
+
     getChronologicalChunks() {
         const chunks = this.peer._chunks.chunks || [];
         return chunks
             .filter((chunk) => chunk && (chunk.id_range || (chunk.messages && chunk.messages.length > 0)))
-            .sort((a, b) => (a.first_message?.id ?? a.messages?.[0]?.id ?? -Infinity) - (b.first_message?.id ?? b.messages?.[0]?.id ?? -Infinity));
+            .sort((a, b) => this._getChunkMinKey(a) - this._getChunkMinKey(b));
     }
 
     returnChronologicalDivision() {
@@ -500,7 +537,7 @@ export class ScrollPosition {
 
         const maxChunks = ScrollPosition.MAX_RENDERED_CHUNKS;
 
-        if (this.windowEndIndex === null || this.windowStartIndex === null) {
+        if (this.windowEndIndex === null || this.windowStartIndex === null || (this.direction === "end" && this.reachedNewestPosition)) {
             if (this.direction === "end" || this.relyMessageId == null) {
                 this.windowEndIndex = allChunks.length - 1;
                 this.windowStartIndex = Math.max(0, this.windowEndIndex - maxChunks + 1);
@@ -549,13 +586,20 @@ export class ScrollPosition {
         const dayChunks = [];
         const dateMap = new Map();
         const seenMsgIds = new Set();
+        const seenRandomIds = new Set();
 
         for (let i = 0; i < chr.length; i++) {
             chr[i].getMessages().forEach((msg) => {
                 if (!msg) return;
-                if (msg.id != null) {
-                    if (seenMsgIds.has(msg.id)) return;
-                    seenMsgIds.add(msg.id);
+                const msgId = msg.id != null ? Number(msg.id) : (msg.data?.id != null ? Number(msg.data.id) : null);
+                const msgRand = msg.data?.random_id != null ? Number(msg.data.random_id) : (msg.random_id != null ? Number(msg.random_id) : null);
+
+                if (msgId != null && msgId > 0) {
+                    if (seenMsgIds.has(msgId)) return;
+                    seenMsgIds.add(msgId);
+                } else if (msgRand != null && msgRand !== 0) {
+                    if (seenRandomIds.has(msgRand)) return;
+                    seenRandomIds.add(msgRand);
                 }
 
                 if (!msg.getSentTime()) return;
@@ -574,10 +618,29 @@ export class ScrollPosition {
             });
         }
 
+        // 1. Sort days chronologically
         dayChunks.sort((a, b) => {
             const dateA = a.msg_date ? a.msg_date.getTime() : 0;
             const dateB = b.msg_date ? b.msg_date.getTime() : 0;
             return dateA - dateB;
+        });
+
+        // 2. Sort messages WITHIN each day strictly chronologically (oldest to newest)
+        dayChunks.forEach(dc => {
+            dc.messages.sort((a, b) => {
+                const timeA = a.data?.date ? Number(a.data.date) : (a.getSentTime?.()?.getTime() ? Math.round(a.getSentTime().getTime() / 1000) : 0);
+                const timeB = b.data?.date ? Number(b.data.date) : (b.getSentTime?.()?.getTime() ? Math.round(b.getSentTime().getTime() / 1000) : 0);
+                if (timeA !== timeB) return timeA - timeB;
+
+                const isSendingA = Boolean(a.is_sending || a.data?.is_sending);
+                const isSendingB = Boolean(b.is_sending || b.data?.is_sending);
+                if (isSendingA && !isSendingB) return 1;
+                if (!isSendingA && isSendingB) return -1;
+
+                const idA = Number(a.id || a.data?.conversation_message_id || a.data?.id || a.data?.local_id || 0);
+                const idB = Number(b.id || b.data?.conversation_message_id || b.data?.id || b.data?.local_id || 0);
+                return idA - idB;
+            });
         });
 
         this._cachedDays = dayChunks;
@@ -606,20 +669,24 @@ export class ScrollPosition {
             return;
         }
 
-        const oldestChunk = allChunks[0];
         let oldestMsgId = null;
-        if (!isFirstLoad && oldestChunk && oldestChunk.messages) {
-            const ms = oldestChunk.getMessages();
-            for (let i = 0; i < ms.length; i++) {
-                if (ms[i] && ms[i].id != null) {
-                    oldestMsgId = ms[i].id;
-                    break;
+        let minId = Infinity;
+        if (!isFirstLoad) {
+            for (const c of allChunks) {
+                const ms = c.getMessages();
+                for (let i = 0; i < ms.length; i++) {
+                    const m = ms[i];
+                    const id = m ? Number(m.id || m.data?.id) : 0;
+                    if (id > 0 && id < minId) {
+                        minId = id;
+                        oldestMsgId = id;
+                    }
                 }
             }
         }
 
         const msgs = await this.peer._chunks.fetchRelatively(oldestMsgId, { older: !isFirstLoad });
-        if (!msgs || !msgs.messages.length) {
+        if (!msgs || !msgs.messages || !msgs.messages.length) {
             this.reachedOldestPosition = true;
             this.peer._chunks._messagesInited = true;
             if (isFirstLoad) {
@@ -632,8 +699,14 @@ export class ScrollPosition {
         }
 
         const existingIds = new Set();
-        allChunks.forEach(c => c.getMessages().forEach(m => { if (m && m.id) existingIds.add(m.id); }));
-        const hasOlder = msgs.messages.some(m => m && m.id && !existingIds.has(m.id));
+        allChunks.forEach(c => c.getMessages().forEach(m => {
+            const id = m ? Number(m.id || m.data?.id) : 0;
+            if (id > 0) existingIds.add(id);
+        }));
+        const hasOlder = msgs.messages.some(m => {
+            const id = m ? Number(m.id || m.data?.id) : 0;
+            return id > 0 && !existingIds.has(id);
+        });
         if (!isFirstLoad && !hasOlder) {
             this.reachedOldestPosition = true;
             this.peer._chunks._messagesInited = true;
@@ -686,14 +759,16 @@ export class ScrollPosition {
             return;
         }
 
-        const newestChunk = allChunks[allChunks.length - 1];
         let newestMsgId = null;
-        if (newestChunk && newestChunk.messages) {
-            const ms = newestChunk.getMessages();
-            for (let i = ms.length - 1; i >= 0; i--) {
-                if (ms[i] && ms[i].id != null) {
-                    newestMsgId = ms[i].id;
-                    break;
+        let maxId = -Infinity;
+        for (const c of allChunks) {
+            const ms = c.getMessages();
+            for (let i = 0; i < ms.length; i++) {
+                const m = ms[i];
+                const id = m ? Number(m.id || m.data?.id) : 0;
+                if (id > 0 && id > maxId) {
+                    maxId = id;
+                    newestMsgId = id;
                 }
             }
         }
@@ -705,7 +780,7 @@ export class ScrollPosition {
         }
 
         const msgs = await this.peer._chunks.fetchRelatively(newestMsgId, { newer: true });
-        if (!msgs || !msgs.messages.length) {
+        if (!msgs || !msgs.messages || !msgs.messages.length) {
             this.reachedNewestPosition = true;
             this.direction = "end";
             this.peer._chunks._messagesInited = true;
@@ -713,8 +788,14 @@ export class ScrollPosition {
         }
 
         const existingIds = new Set();
-        allChunks.forEach(c => c.getMessages().forEach(m => { if (m && m.id) existingIds.add(m.id); }));
-        const hasNewer = msgs.messages.some(m => m && m.id && !existingIds.has(m.id));
+        allChunks.forEach(c => c.getMessages().forEach(m => {
+            const id = m ? Number(m.id || m.data?.id) : 0;
+            if (id > 0) existingIds.add(id);
+        }));
+        const hasNewer = msgs.messages.some(m => {
+            const id = m ? Number(m.id || m.data?.id) : 0;
+            return id > 0 && !existingIds.has(id);
+        });
         if (!hasNewer) {
             this.reachedNewestPosition = true;
             this.direction = "end";
@@ -739,6 +820,6 @@ export class ScrollPosition {
     }
 
     result() {
-        window.im.messenger.update();
+        return window.im.messenger.update();
     }
 }

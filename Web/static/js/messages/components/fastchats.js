@@ -304,18 +304,30 @@ export const FastChatBox = ({
                                                 animUrl = `/sticker/${stk.product_id}/${sId}_512.json`;
                                             }
 
+                                            let pId = stk.product_id || stk.pack_id;
+                                            if (!pId && typeof window.findStickerData === 'function' && sId) {
+                                                const found = window.findStickerData(sId);
+                                                if (found && found.product_id) pId = found.product_id;
+                                            }
+                                            const targetPack = pId || sId;
+
                                             if (animUrl) {
                                                 if (window.location.protocol === 'https:' && animUrl.startsWith('http://')) {
                                                     animUrl = animUrl.replace(/^http:\/\//i, 'https://');
                                                 }
-                                                return html`<div class="fc_msg_sticker"><${LottieSticker} url=${animUrl} stickerId=${sId} width=${110} height=${110} /></div>`;
+                                                return html`<div class="fc_msg_sticker"><${LottieSticker} url=${animUrl} stickerId=${sId} packId=${targetPack} width=${110} height=${110} /></div>`;
                                             }
 
                                             let img = stk.photo_128 || stk.photo_256 || (stk.images && stk.images[0]?.url) || (stk.product_id && sId ? `/sticker/${stk.product_id}/${sId}_128.webp` : '');
                                             if (img && window.location.protocol === 'https:' && img.startsWith('http://')) {
                                                 img = img.replace(/^http:\/\//i, 'https://');
                                             }
-                                            return html`<div class="fc_msg_sticker"><img src="${img}" alt="sticker" loading="lazy" /></div>`;
+                                            return html`<div class="fc_msg_sticker" style="cursor: pointer;" onClick=${(e) => {
+                                                e.stopPropagation();
+                                                if (typeof window.openStickerPackModal === 'function' && targetPack) {
+                                                    window.openStickerPackModal(targetPack, e);
+                                                }
+                                            }}><img src="${img}" alt="sticker" loading="lazy" /></div>`;
                                         }
                                         return null;
                                     })}

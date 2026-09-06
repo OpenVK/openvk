@@ -756,40 +756,7 @@ class IMState {
     }
 
     _toggleScrollMode(enable = true) {
-        /*if (window.isMobile && window.isMobile()) {
-            return;
-        }*/
-
-        if (this.isFastchat || !this.is_opened) {
-            u('body').removeClass('no-scroll');
-
-            try {
-                const wrap = document.querySelector('body #fastchats_related #fastchats_chat #wrap');
-                if (wrap) {
-                    if (typeof wrap.scroll === 'function') {
-                        wrap.scroll({ top: 0 });
-                    } else if (typeof wrap.scrollTo === 'function') {
-                        wrap.scrollTo({ top: 0 });
-                    } else {
-                        wrap.scrollTop = 0;
-                    }
-                }
-            } catch (e) { }
-            return;
-        }
-
-        if (enable) {
-            if (!u('body').hasClass('no-scroll')) {
-                window._prevScroll = scrollY;
-            }
-
-            u('body').addClass('no-scroll');
-        } else {
-            scrollTo(0, window._prevScroll);
-
-            window._prevScroll = null;
-            u('body').removeClass('no-scroll');
-        }
+        u('body').removeClass('no-scroll');
     }
 
     _changeHeight(container) {
@@ -1440,7 +1407,9 @@ export class FastChats {
 
     async sendMessage(peerId) {
         const chat = this.openedChats.find(c => Number(c.peerId) === Number(peerId));
-        if (!chat || !chat.text || !chat.text.trim()) return;
+        if (!chat || !chat.text) return;
+        const cleanText = chat.text.replace(/[\s\u200b\ufeff\u00a0]/g, '');
+        if (!cleanText) return;
 
         const text = chat.text.trim();
         chat.text = "";
@@ -1547,7 +1516,7 @@ export class FastChats {
     }
 
     onKeyDown(e, peerId) {
-        if (e.key === "Enter" && !e.shiftKey) {
+        if ((e.key === "Enter" || e.which === 13) && !e.shiftKey) {
             e.preventDefault();
             this.sendMessage(peerId);
         }

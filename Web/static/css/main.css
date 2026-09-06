@@ -1005,9 +1005,10 @@ input[type="number"] {
 }
 
 .left_big_block {
-    width: 397px;
+    --gap: 10px;
+    width: calc(100% - 200px - var(--gap));
     float: left;
-    margin-right: 13px;
+    margin-right: var(--gap);
 }
 
 .right_small_block {
@@ -1368,7 +1369,7 @@ h4 {
     display: inline-block;
     cursor: default;
     user-select: all;
-    pointer-events: none;
+    pointer-events: auto;
 }
 
 .emoji_picker_entrypoint {
@@ -1609,10 +1610,10 @@ table.User {
     border-bottom: 1px solid #707070;
     padding: 0 10px;
     margin-left: -10px;
-    margin-right: -10px;
     width: auto;
     overflow-x: auto;
     white-space: nowrap;
+    width: 100%;
 }
 
 .tabs.stupid-fix {
@@ -5701,17 +5702,19 @@ hr {
 .msg-attach-w-sticker {
     display: inline-block;
     margin: 4px 0;
+    cursor: pointer;
 }
 
 .msg-sticker-img {
     max-width: 128px;
     max-height: 128px;
-    width: auto;
-    height: auto;
+    width: 128px;
+    height: 128px;
     object-fit: contain;
     display: block;
     user-select: none;
     -webkit-user-drag: none;
+    cursor: pointer;
 }
 
 .msg-lottie-sticker {
@@ -6568,16 +6571,16 @@ hr {
 
 .stickers_modal_close_cross {
     float: right;
-    color: rgba(255, 255, 255, 0.85);
-    text-decoration: none;
-    font-size: 20px;
-    line-height: 14px;
     cursor: pointer;
-    font-weight: 400;
+    background: url(../img/wall.png) -12px 0px;
+    width: 16px;
+    height: 16px;
+    margin: 2px;
+    opacity: 0.8;
 }
 
 .stickers_modal_close_cross:hover {
-    color: #fff;
+    opacity: 1;
 }
 
 .stickers_modal_head_title {

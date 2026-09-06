@@ -1,13 +1,14 @@
-body.dimmed > .dimmer {
+body.dimmed>.dimmer {
     z-index: 200;
     position: fixed;
     width: 100%;
     height: 100%;
     background-color: #000000cf;
     opacity: 1;
+    left: 0px;
 }
 
-body.dimmed > .dimmer #clickable {
+body.dimmed>.dimmer #clickable {
     margin: 100px;
     height: 100%;
 }
@@ -40,7 +41,9 @@ body.manyMsgs .ovk-msg-all:last-of-type {
     /*border: 1px solid #505050;*/
 }
 
-.ovk-diag-head, .ovk-diag-body, .ovk-diag-action {
+.ovk-diag-head,
+.ovk-diag-body,
+.ovk-diag-action {
     width: 100%;
     box-sizing: border-box;
 }
@@ -86,7 +89,7 @@ body.manyMsgs .ovk-msg-all:last-of-type {
     text-align: right;
 }
 
-.ovk-diag-action > .button {
+.ovk-diag-action>.button {
     margin-left: 10px;
 }
 
@@ -144,7 +147,8 @@ body.manyMsgs .ovk-msg-all:last-of-type {
     opacity: 40%;
 }
 
-.ovk-photo-view-overlay-right:hover, .ovk-photo-view-overlay-left:hover + .ovk-photo-view-overlay-right {
+.ovk-photo-view-overlay-right:hover,
+.ovk-photo-view-overlay-left:hover+.ovk-photo-view-overlay-right {
     opacity: 100%;
 }
 
@@ -336,11 +340,13 @@ body.manyMsgs .ovk-msg-all:last-of-type {
     font-size: 12px;
 }
 
-.ovk-modal-player-window #ovk-player-part .top-part .top-part-buttons, .ovk-modal-player-window #ovk-player-part .bottom-part {
+.ovk-modal-player-window #ovk-player-part .top-part .top-part-buttons,
+.ovk-modal-player-window #ovk-player-part .bottom-part {
     color: var(--cinema);
 }
 
-.ovk-modal-player-window #ovk-player-part .top-part .top-part-buttons a, .ovk-modal-player-window #ovk-player-part .bottom-part a {
+.ovk-modal-player-window #ovk-player-part .top-part .top-part-buttons a,
+.ovk-modal-player-window #ovk-player-part .bottom-part a {
     color: var(--cinema);
     font-size: 10px;
 }
@@ -375,7 +381,8 @@ body.manyMsgs .ovk-msg-all:last-of-type {
     color: gray;
 }
 
-.ovk-modal-player-window .center-part .bsdn, .ovk-modal-player-window .center-part .bsdn-player {
+.ovk-modal-player-window .center-part .bsdn,
+.ovk-modal-player-window .center-part .bsdn-player {
     height: 100%;
     width: 100%;
 }
@@ -767,15 +774,15 @@ body.manyMsgs .ovk-msg-all:last-of-type {
     padding: unset;
 }
 
-.post.in-window > tbody,
-.post.in-window > tbody > tr,
-.post.in-window > tbody > tr > td {
+.post.in-window>tbody,
+.post.in-window>tbody>tr,
+.post.in-window>tbody>tr>td {
     width: 100%;
     display: block;
 }
 
-.post.in-window > tbody .post-content .text .really_text,
-.post.in-window > tbody .post-content .text > span {
+.post.in-window>tbody .post-content .text .really_text,
+.post.in-window>tbody .post-content .text>span {
     font-size: 1.4em;
     font-family: Georgia;
     padding: 0;
@@ -794,7 +801,7 @@ body.manyMsgs .ovk-msg-all:last-of-type {
     margin-top: 2px;
     display: block;
     font-size: 12px;
-    color:gray;
+    color: gray;
 }
 
 .ovk-post-viewer #itemContentComments .item_comments {

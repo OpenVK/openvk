@@ -1109,14 +1109,14 @@ export class LottieSticker extends Component {
 
     componentWillUnmount() {
         if (this.anim) {
-            try { this.anim.destroy(); } catch (e) {}
+            try { this.anim.destroy(); } catch (e) { }
             this.anim = null;
         }
     }
 
     loadAnim() {
         if (this.anim) {
-            try { this.anim.destroy(); } catch (e) {}
+            try { this.anim.destroy(); } catch (e) { }
             this.anim = null;
         }
         if (!this.containerRef || !this.props.url) return;
@@ -1144,17 +1144,21 @@ export class LottieSticker extends Component {
         if (this.anim) {
             this.anim.goToAndPlay(0, true);
         }
+        const targetPack = this.props.packId || this.props.stickerId;
+        if (typeof window.openStickerPackModal === 'function' && targetPack) {
+            window.openStickerPackModal(targetPack, e);
+        }
     }
 
     render() {
-        const { stickerId, width = 160, height = 160 } = this.props;
+        const { stickerId, width = 128, height = 128, packId } = this.props;
         return html`
             <div 
                 class="msg-attach-w msg-attach-w-sticker msg-attach-w-lottie msg-lottie-sticker"
                 ref=${(el) => { this.containerRef = el; }}
                 onClick=${(e) => this.handleClick(e)}
                 data-sticker-id="${stickerId}"
-                title="Click to replay"
+                data-pack-id="${packId || ''}"
                 style="width: ${width}px; height: ${height}px; max-width: 100%; cursor: pointer;"
             ></div>
         `;
@@ -1218,11 +1222,20 @@ const Attachment = ({ msg, att }) => {
                 animUrl = `/sticker/${stk.product_id}/${sId}_512.json`;
             }
 
+            let pId = stk.product_id || stk.pack_id;
+            if (!pId && typeof window.findStickerData === 'function' && sId) {
+                const found = window.findStickerData(sId);
+                if (found && found.product_id) {
+                    pId = found.product_id;
+                }
+            }
+            const targetPack = pId || sId;
+
             if (animUrl) {
                 if (window.location.protocol === 'https:' && animUrl.startsWith('http://')) {
                     animUrl = animUrl.replace(/^http:\/\//i, 'https://');
                 }
-                return html`<${LottieSticker} url=${animUrl} stickerId=${sId} />`;
+                return html`<${LottieSticker} url=${animUrl} stickerId=${sId} packId=${targetPack} />`;
             }
 
             let imgUrl = stk.photo_256 || stk.photo_512 || stk.photo_128 || (stk.images && stk.images[2] ? stk.images[2].url : (stk.images && stk.images[0] ? stk.images[0].url : (stk.product_id && sId ? `/sticker/${stk.product_id}/${sId}_128.webp` : '')));
@@ -1230,7 +1243,18 @@ const Attachment = ({ msg, att }) => {
                 imgUrl = imgUrl.replace(/^http:\/\//i, 'https://');
             }
             return html`
-                <div class="msg-attach-w msg-attach-w-sticker" data-sticker-id="${stk.sticker_id || stk.id}">
+                <div 
+                    class="msg-attach-w msg-attach-w-sticker" 
+                    data-sticker-id="${sId}"
+                    data-pack-id="${targetPack || ''}"
+                    onClick=${(e) => {
+                        e.stopPropagation();
+                        if (typeof window.openStickerPackModal === 'function' && targetPack) {
+                            window.openStickerPackModal(targetPack, e);
+                        }
+                    }}
+                    style="cursor: pointer;"
+                >
                     <img class="msg-sticker-img" src="${imgUrl}" alt="sticker" loading="lazy" />
                 </div>
             `;
@@ -1267,7 +1291,10 @@ export const DayChunkView = ({ chunk, page, unreadMsgId }) => {
     <div class="messenger-app--messages-day">
         <${DayDivider} day=${chunk.day} date=${chunkDate} idate=${chunk.idate} />
         ${chunk.messages.map((msg, idx) => {
-        const isTargetUnread = unreadMsgId && (Number(msg.id) === Number(unreadMsgId) || Number(msg.conversation_message_id) === Number(unreadMsgId));
+        const msgId = Number(msg.id || 0);
+        const msgCmid = Number(msg.conversation_message_id || msg.data?.conversation_message_id || msg.data?.local_id || 0);
+        const targetId = Number(unreadMsgId || 0);
+        const isTargetUnread = targetId > 0 && (msgId === targetId || msgCmid === targetId);
         return html`
                 ${isTargetUnread ? html`
                     <div class="im-unread-divider" id="im_unread_divider">
@@ -1287,7 +1314,7 @@ export const MessageListView = ({ dayDividedChunks, convo, page }) => {
     const hasMessages = dayDividedChunks && dayDividedChunks.length > 0;
 
     let unreadMsgId = convo?.peer?._firstUnreadMsgId;
-    if (unreadMsgId === undefined && convo && (convo.unread_count > 0 || !convo.isRead()) && dayDividedChunks) {
+    if (!unreadMsgId && convo && dayDividedChunks) {
         for (const chunk of dayDividedChunks) {
             for (const msg of chunk.messages) {
                 if (msg && !msg.isMine() && !msg.isRead()) {
@@ -1301,7 +1328,21 @@ export const MessageListView = ({ dayDividedChunks, convo, page }) => {
     }
 
     return html`
-    <div class="messenger-app--messages">
+    <div
+      class="messenger-app--messages"
+      ref=${(el) => {
+            if (page) {
+                page._messagesContainer = el;
+                if (el && typeof page._checkAndFillUnderflow === "function") {
+                    setTimeout(() => page._checkAndFillUnderflow(), 100);
+                }
+            }
+        }}
+      onScroll=${(e) => { if (page && typeof page.onMessagesScroll === "function") page.onMessagesScroll(e); }}
+      onWheel=${(e) => { if (page && typeof page.onMessagesWheel === "function") page.onMessagesWheel(e); }}
+      onTouchStart=${(e) => { if (page && typeof page.onMessagesTouchStart === "function") page.onMessagesTouchStart(e); }}
+      onTouchMove=${(e) => { if (page && typeof page.onMessagesTouchMove === "function") page.onMessagesTouchMove(e); }}
+    >
       <div class="messenger-app--messages-array">
          <div class="im_top_loader" style="display: none;"><img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="..." /></div>
          ${isLoading ? html`

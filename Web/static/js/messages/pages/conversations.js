@@ -9,6 +9,11 @@ const { ScrollPosition } = await es6import_Im(import.meta.url, "../components/pa
 const { html, render } = await es6import_Im(import.meta.url, "../components/render.js");
 const { imLog } = await es6import_Im(import.meta.url, "../logger.js");
 
+export const CONVERSATIONS_PER_PAGE = 10;
+if (typeof window !== 'undefined') {
+    window.CONVERSATIONS_PER_PAGE = CONVERSATIONS_PER_PAGE;
+}
+
 export class ConversationsPage extends IMPage {
     static getPageId() { return "conversations"; }
     isVisibleWhenHidden() { return true; }
@@ -25,11 +30,11 @@ export class ConversationsPage extends IMPage {
     isForward() { return this.options.forward != null }
 
     async loadNext(e) {
-        toggleUnclickability(e.target, true);
+        if (!window.im?.conversations) return;
+        if (window.im.conversations.isLoadingMore) return;
+        if (!window.im.conversations.has_more_items) return;
 
         await window.im.conversations.loadNext();
-        this._update();
-        toggleUnclickability(e.target, false);
     }
 
     // search
@@ -76,6 +81,7 @@ export class ConversationsPage extends IMPage {
         <${ConversationListView}
             conversations=${convs}
             hasMore=${window.im.conversations.has_more_items}
+            isLoadingMore=${window.im.conversations.isLoadingMore}
             onLoadMore=${(e) => this.loadNext(e)}
             onCreateChat=${() => this._chatCreationModal()}
             onSearch=${(e) => this._onMessagesSearch(e)}
@@ -88,9 +94,13 @@ export class ConversationsPage extends IMPage {
 }
 
 export class Conversations {
+    static get CONVERSATIONS_PER_PAGE() { return CONVERSATIONS_PER_PAGE; }
+
     constructor() {
         this.total_convs = 0;
-        this.CONVERSATIONS_PER_PAGE = 100;
+        this.CONVERSATIONS_PER_PAGE = CONVERSATIONS_PER_PAGE;
+        this.isLoadingMore = false;
+        this._hasNoMore = false;
         this.q = null;
         this.peer_id_search = null;
         this.all_convs = [];
@@ -123,8 +133,11 @@ export class Conversations {
     }
 
     get has_more_items() {
-        if (!this.total_convs) return false;
-        return this.loaded_convs_count < this.total_convs;
+        if (this._hasNoMore) return false;
+        if (this.total_convs && this.all_convs && this.all_convs.length >= this.total_convs) {
+            return false;
+        }
+        return true;
     }
 
     get loaded_convs_count() {
@@ -158,9 +171,10 @@ export class Conversations {
     }
 
     async getConversations(offset = 0) {
+        const count = this.CONVERSATIONS_PER_PAGE || CONVERSATIONS_PER_PAGE;
         const params = {
             extended: 1,
-            count: this.CONVERSATIONS_PER_PAGE,
+            count: count,
             offset: offset,
             fields: ChatGeneralForm.BASE_FIELDS,
         };
@@ -183,7 +197,8 @@ export class Conversations {
             window.im.cached_profiles._addProfileCache(new ChatGeneralForm(group));
         });
 
-        convs.items.forEach((item) => {
+        const rawItems = convs?.items || [];
+        rawItems.forEach((item) => {
             const id = item.conversation.peer.id;
             item.peer = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(id);
             if (!item.peer) {
@@ -216,7 +231,7 @@ export class Conversations {
             lists.push(new Conversation(item));
         });
 
-        if (!this.total_convs) {
+        if (typeof convs?.count === 'number') {
             this.total_convs = convs.count;
         }
 
@@ -227,22 +242,50 @@ export class Conversations {
         if (!this.all_convs) {
             this.all_convs = [];
         }
+        if (!Array.isArray(convs)) return;
 
         convs.forEach((item) => {
-            this.all_convs.push(item);
+            if (!item || !item.peer) return;
+            const existingIdx = this.all_convs.findIndex((existing) => existing?.peer?.id === item.peer.id);
+            if (existingIdx !== -1) {
+                this.all_convs[existingIdx] = item;
+            } else {
+                this.all_convs.push(item);
+            }
         });
     }
 
     async loadNext(im = null) {
-        let convs = [];
-        imLog("loadNext report_data:", im?.report_data);
-        if (im && im.report_data) {
-            convs = [await this._findConvFromApi(im.report_data.peer_id)];
-        } else {
-            convs = await this.getConversations(this.loaded_convs_count);
+        if (this.isLoadingMore) {
+            return;
+        }
+        if (this._hasNoMore && !(im && im.report_data)) {
+            return;
         }
 
-        this._appendConvs(convs);
+        this.isLoadingMore = true;
+        this.update();
+        try {
+            let convs = [];
+            imLog("loadNext report_data:", im?.report_data);
+            if (im && im.report_data) {
+                convs = [await this._findConvFromApi(im.report_data.peer_id)];
+            } else {
+                const count = this.CONVERSATIONS_PER_PAGE || CONVERSATIONS_PER_PAGE;
+                const offset = this.loaded_convs_count;
+                convs = await this.getConversations(offset);
+                if (!convs || convs.length < count) {
+                    this._hasNoMore = true;
+                }
+            }
+
+            this._appendConvs(convs);
+        } catch (e) {
+            console.error("Failed to load more conversations:", e);
+        } finally {
+            this.isLoadingMore = false;
+            this.update();
+        }
     }
 
     _findConv(id) {

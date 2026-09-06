@@ -127,7 +127,7 @@
                 <div class="right"></div>
                 <div class="content">
                     <a href="/" class="home_button{if $instance_name != \OPENVK_DEFAULT_INSTANCE_NAME} home_button_custom{/if}" title="{$instance_name}">{if $instance_name != \OPENVK_DEFAULT_INSTANCE_NAME}{$instance_name}{/if}</a>
-                    {if !isset($thisUser) || !$thisUser->isDeactivated()}
+                    {if isset($thisUser) && !$thisUser->isDeactivated()}
                     <div id="search_box" class="header-search-box">
                         <div id="search_box_fr">
                             <form id='search_form' action="/search" method="get">

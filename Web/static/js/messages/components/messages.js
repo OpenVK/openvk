@@ -9,45 +9,103 @@ export class Draft {
         this.scroll = null;
         this.editMsg = null;
         this.forwarded_msg = null;
+        this.anchorMsgId = null;
+        this.anchorRelTop = null;
+        this.isAtEnd = false;
     }
 
     static fromPage(page) {
         const d = new Draft();
-        d.text = page.getCurrentText();
-        d.attachments_html = page.getCurrentAttachments();
-        d.scroll = page.getScroll();
-        d.editMsg = window.im.messenger.editMsg;
-        d.forwarded_msg = window.im.messenger.forwarded_msg;
+        if (!page) return d;
+
+        d.text = typeof page.getCurrentText === 'function' ? page.getCurrentText() : "";
+        d.attachments_html = typeof page.getCurrentAttachments === 'function' ? page.getCurrentAttachments() : [];
+        d.scroll = typeof page.getScroll === 'function' ? page.getScroll() : 0;
+        d.isAtEnd = typeof page.isAtEnd === 'function' ? page.isAtEnd(100) : false;
+
+        const anchorMsg = typeof page.getFirstVisibleMessageElement === 'function'
+            ? page.getFirstVisibleMessageElement()
+            : null;
+        if (anchorMsg) {
+            d.anchorMsgId = anchorMsg.getAttribute('data-msg-id') || anchorMsg.dataset?.msgId || null;
+            const container = typeof page.getMessagesContainer === 'function' ? page.getMessagesContainer() : null;
+            if (container) {
+                const cRect = container.getBoundingClientRect();
+                const mRect = anchorMsg.getBoundingClientRect();
+                d.anchorRelTop = mRect.top - cRect.top;
+            }
+        }
+
+        d.editMsg = window.im?.messenger?.editMsg || null;
+        d.forwarded_msg = window.im?.messenger?.forwarded_msg || null;
 
         return d;
     }
 
     loadToPage(page) {
+        if (!page) return;
         imLog("Draft | applying", this, "to", page);
         if (this.text != null) {
-            window.im.messenger.currentDraft = this.text;
-            page.container.querySelector(".messenger-app--input---messagebox textarea").value = this.text;
+            if (window.im?.messenger) {
+                window.im.messenger.currentDraft = this.text;
+            }
+            if (typeof page.setCurrentText === 'function') {
+                page.setCurrentText(this.text);
+            } else if (page.container) {
+                const ce = page.container.querySelector(".small-textarea.content-editable");
+                if (ce && ce._contentEditable && typeof ce._contentEditable.setText === 'function') {
+                    ce._contentEditable.setText(this.text);
+                } else {
+                    const ta = page.container.querySelector(".messenger-app--input---messagebox textarea, .small-textarea");
+                    if (ta) ta.value = this.text;
+                }
+            }
         }
-        if (this.attachments_html[0] != null) {
-            page.container.querySelector(".post-horizontal").innerHTML = this.attachments_html[0];
+        if (page.container) {
+            if (this.attachments_html && this.attachments_html[0] != null) {
+                const h = page.container.querySelector(".post-horizontal");
+                if (h) h.innerHTML = this.attachments_html[0];
+            }
+            if (this.attachments_html && this.attachments_html[1] != null) {
+                const v = page.container.querySelector(".post-vertical");
+                if (v) v.innerHTML = this.attachments_html[1];
+            }
         }
-        if (this.attachments_html[1] != null) {
-            page.container.querySelector(".post-vertical").innerHTML = this.attachments_html[1];
-        }
-        if (this.editMsg) {
-            imLog("Draft | editMsg:", this.editMsg);
-            window.im.messenger.editMsg = this.editMsg;
-        } else {
-            window.im.messenger.editMsg = null;
-        }
-        if (this.forwarded_msg) {
-            window.im.messenger.setForwarded(this.forwarded_msg);
+        if (window.im?.messenger) {
+            if (this.editMsg) {
+                imLog("Draft | editMsg:", this.editMsg);
+                window.im.messenger.editMsg = this.editMsg;
+            } else {
+                window.im.messenger.editMsg = null;
+            }
+            if (this.forwarded_msg) {
+                window.im.messenger.setForwarded(this.forwarded_msg);
+            }
         }
 
         this.loadScroll(page);
     }
 
     loadScroll(page) {
+        if (!page) return;
+        if (this.isAtEnd) {
+            page._scrollToEnd();
+            return;
+        }
+
+        const container = typeof page.getMessagesContainer === 'function' ? page.getMessagesContainer() : null;
+        if (this.anchorMsgId && container) {
+            const anchorEl = container.querySelector(`.messenger-app--messages---message[data-msg-id="${this.anchorMsgId}"]`);
+            if (anchorEl) {
+                const cRect = container.getBoundingClientRect();
+                const mRect = anchorEl.getBoundingClientRect();
+                const currentRelTop = mRect.top - cRect.top;
+                const targetRelTop = this.anchorRelTop != null ? this.anchorRelTop : 20;
+                container.scrollTop += (currentRelTop - targetRelTop);
+                return;
+            }
+        }
+
         if (this.scroll != null) {
             page._scrollTo(this.scroll);
         } else {
@@ -460,13 +518,27 @@ export class ChatGeneralForm {
     // переход к действиям
 
     async sendMessage(msg, reply_to = null, attachments = null, wait_until_send = null, push_callback = null, forward_msgs = null) {
+        const rawText = (msg && typeof msg.getText === 'function') ? (msg.getText(true) || '') : '';
+        const cleanText = rawText.replace(/[\s\u200b\ufeff\u00a0]/g, '');
+        const hasAttachments = attachments != null && attachments.length > 0;
+        const hasForward = forward_msgs != null && forward_msgs.length > 0;
+        const hasReply = reply_to != null;
+
+        if (!cleanText && !hasAttachments && !hasForward && !hasReply) {
+            return;
+        }
+
+        if (!cleanText && msg && typeof msg.setText === 'function') {
+            msg.setText('');
+        }
+
         this._chunks.pushNewMessage(msg);
         if (push_callback) {
             push_callback();
         }
         const datas = {
             'peer_id': this.id,
-            'message': msg.getText(true),
+            'message': cleanText ? rawText : '',
             //'attachment': msg.getStringAttachments(), не помню что это
         };
 
@@ -754,16 +826,26 @@ export class ChatGeneralForm {
 
         try {
             await window.OVKAPI.call("messages.markAsRead", params);
+            let newlyReadCount = 0;
             if (this._chunks) {
                 const latestMsg = this._chunks.getLatestMessage();
-                if (latestMsg) {
-                    const msgId = (latestMsg.data && (latestMsg.data.local_id || latestMsg.data.id)) || latestMsg.id || 0;
-                    this.in_read = msgId;
+                const latestMsgId = latestMsg ? ((latestMsg.data && (latestMsg.data.local_id || latestMsg.data.id)) || latestMsg.id || 0) : 0;
+                const targetReadId = startMessageId > 0 ? Number(startMessageId) : Number(latestMsgId);
+
+                if (targetReadId > 0) {
+                    this.in_read = Math.max(this.in_read || 0, targetReadId);
                 }
+
                 const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
                 this._chunks.getMessages().forEach(m => {
+                    const mId = Number(m.id || m.conversation_message_id || 0);
                     if (m.data && m.data.from_id != currentUserId) {
-                        m.data.read_state = 1;
+                        if (!targetReadId || (mId > 0 && mId <= targetReadId)) {
+                            if (m.data.read_state === 0) {
+                                m.data.read_state = 1;
+                                newlyReadCount++;
+                            }
+                        }
                     }
                 });
                 this._chunks._invalidateCache();
@@ -771,8 +853,32 @@ export class ChatGeneralForm {
             if (window.im?.conversations) {
                 const conv = window.im.conversations._findConv(this.id);
                 if (conv) {
-                    conv.unread_count = 0;
-                    if (conv._conversation) conv._conversation.unread_count = 0;
+                    let remainingUnreadInChunks = 0;
+                    if (this._chunks) {
+                        const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
+                        this._chunks.getMessages().forEach(m => {
+                            if (m.data && m.data.from_id != currentUserId && m.data.read_state === 0) {
+                                remainingUnreadInChunks++;
+                            }
+                        });
+                    }
+
+                    if (startMessageId > 0 && remainingUnreadInChunks > 0) {
+                        conv.unread_count = remainingUnreadInChunks;
+                        if (conv._conversation) conv._conversation.unread_count = remainingUnreadInChunks;
+                    } else if (startMessageId > 0 && conv.unread_count > newlyReadCount) {
+                        conv.unread_count = Math.max(0, conv.unread_count - newlyReadCount);
+                        if (conv._conversation) conv._conversation.unread_count = conv.unread_count;
+                    } else {
+                        conv.unread_count = 0;
+                        if (conv._conversation) conv._conversation.unread_count = 0;
+                        this._firstUnreadMsgId = null;
+                    }
+
+                    if (conv.unread_count === 0) {
+                        this._firstUnreadMsgId = null;
+                    }
+
                     if (conv.peer) conv.peer.in_read = this.in_read;
                     if (typeof conv.getScrollPosition === 'function' && conv.getScrollPosition()) {
                         conv.getScrollPosition()._invalidateCache();
@@ -807,6 +913,14 @@ export class ChatMessage {
         item = item || {};
         this.data = item;
         this.has_not_loaded_attachments = false;
+
+        if (!this.data.peer_id) {
+            if (this.data.chat_id) {
+                this.data.peer_id = 2000000000 + Number(this.data.chat_id);
+            } else if (window.im?.messenger?.currentChatId) {
+                this.data.peer_id = Number(window.im.messenger.currentChatId);
+            }
+        }
 
         if (item.reply_message != null) {
             if (item.reply_message instanceof ChatMessage) {
@@ -984,7 +1098,30 @@ export class ChatMessage {
         if (this.data.action != null) {
             const actionText = this.getActionText() || "";
             if (conversation) {
-                return raw ? actionText : escapeHtml(actionText);
+                if (!actionText) return "";
+                const sender = this.sender;
+                const senderName = sender?.getName ? (sender.getName(false, true) || sender.getName()) : (this.data?.from_id ? "id" + this.data.from_id : "");
+                let formattedAction = "";
+                let rawAction = "";
+
+                if (senderName) {
+                    if (actionText.startsWith(senderName)) {
+                        const rest = actionText.slice(senderName.length);
+                        formattedAction = `<span class="im-action-msg"><b>${escapeHtml(senderName)}</b>${escapeHtml(rest)}</span>`;
+                        rawAction = actionText;
+                    } else {
+                        const lowerAction = actionText.charAt(0).toLowerCase() + actionText.slice(1);
+                        formattedAction = `<span class="im-action-msg"><b>${escapeHtml(senderName)}</b> ${escapeHtml(lowerAction)}</span>`;
+                        rawAction = `${senderName} ${lowerAction}`;
+                    }
+                } else {
+                    formattedAction = `<span class="im-action-msg">${escapeHtml(actionText)}</span>`;
+                    rawAction = actionText;
+                }
+
+                formattedAction = formattedAction.replace(/[\r\n]+/g, ' ').replace(/\s{2,}/g, ' ').trim();
+                rawAction = rawAction.replace(/[\r\n]+/g, ' ').replace(/\s{2,}/g, ' ').trim();
+                return raw ? rawAction : formattedAction;
             }
             return raw ? actionText : encode_emojis(nl2br(escapeHtml(actionText)));
         }
@@ -992,7 +1129,11 @@ export class ChatMessage {
         let txt = "";
         let cleanBaseText = baseText;
         if (conversation) {
-            cleanBaseText = baseText.replace(/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, '$1');
+            cleanBaseText = baseText
+                .replace(/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, '$1')
+                .replace(/[\r\n]+/g, ' ')
+                .replace(/\s{2,}/g, ' ')
+                .trim();
         }
 
         if (raw) {
@@ -1044,7 +1185,8 @@ export class ChatMessage {
                     txt = attachTxt || (typeof tr === "function" && tr("message_no_text") ? "(" + tr("message_no_text").toLowerCase() + ")" : "...");
                 }
 
-                return txt;
+                txt = txt.replace(/<br\s*\/?>/gi, ' ').replace(/[\r\n]+/g, ' ').replace(/\s{2,}/g, ' ').trim();
+                return raw ? txt : encode_emojis(txt);
             }
         } else {
             if (this.isSpecial("gift")) {
@@ -1061,6 +1203,15 @@ export class ChatMessage {
             return txt;
         }
 
+        if (conversation) {
+            let formattedTxt = txt
+                .replace(/<br\s*\/?>/gi, ' ')
+                .replace(/[\r\n]+/g, ' ')
+                .replace(/\s{2,}/g, ' ')
+                .trim();
+            return encode_emojis(formattedTxt);
+        }
+
         // Format markdown links [title](url) and plain URLs
         let formattedTxt = txt;
         formattedTxt = formattedTxt.replace(/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, (match, title, url) => {
@@ -1073,10 +1224,16 @@ export class ChatMessage {
         return encode_emojis(nl2br(formattedTxt));
     }
 
-    get reply() { return this.data.reply_message; }
-    get global_id() { return this.data.global_id || this.data.id; }
-    get id() { return this.data.id; }
-    get conversation_message_id() { return this.data.conversation_message_id || this.data.id; }
+    get reply() { return this.data ? this.data.reply_message : undefined; }
+    set reply(val) { if (this.data) this.data.reply_message = val; }
+    get global_id() { return this.data ? (this.data.global_id || this.data.id) : undefined; }
+    set global_id(val) { if (this.data) this.data.global_id = val; }
+    get id() { return this.data ? this.data.id : undefined; }
+    set id(val) { if (this.data) this.data.id = val; }
+    get conversation_message_id() { return this.data ? (this.data.conversation_message_id || this.data.id) : undefined; }
+    set conversation_message_id(val) { if (this.data) this.data.conversation_message_id = val; }
+    get is_sending() { return this.isSending(); }
+    set is_sending(val) { if (this.data) this.data.is_sending = Boolean(val); }
     isAction() { return this.data.action != null; }
     isReply() { return Boolean(this.data.reply_message || this.data.reply_to); }
     isError() { return this.data.error_text != null; }
@@ -1541,12 +1698,21 @@ export class ChatMessage {
     }
 
     async edit(text, attachments = []) {
+        const rawText = text || '';
+        const cleanText = rawText.replace(/[\s\u200b\ufeff\u00a0]/g, '');
+        const hasAttachments = attachments && attachments.length > 0;
+
+        if (!cleanText && !hasAttachments) {
+            return;
+        }
+        const textToSend = cleanText ? rawText : '';
+
         let resp = null;
         try {
             const params = {
                 "peer_id": this.peer_id,
                 "message_id": this.id,
-                "message": text,
+                "message": textToSend,
                 "keep_forward_messages": 1,
                 "attachment": attachments.join(",")
             };
@@ -1562,7 +1728,7 @@ export class ChatMessage {
             return;
         }
 
-        this.data.text = text;
+        this.data.text = textToSend;
         this.data.edited = true;
 
         window.im.messenger.update();
@@ -1604,15 +1770,21 @@ export class ChatMessage {
     isRead() {
         try {
             if (this.data && (this.data.read_state === 1 || this.data.read_state === true)) return true;
-            const peerId = this.data ? (this.data.peer_id || this.peer_id) : (this.peer_id || 0);
-            const conv = peerId ? window.im?.conversations?._findConv(peerId) : null;
-            const peer = conv?.peer || this.peer;
+            const currentChat = window.im?.messenger?.getCurrentChat();
+            const currentChatId = currentChat?.peer?.id || (window.im?.messenger?.currentChatId ? Number(window.im.messenger.currentChatId) : 0);
+            const peerId = (this.data && (this.data.peer_id || (this.data.chat_id ? 2000000000 + Number(this.data.chat_id) : 0)))
+                || this.peer_id
+                || (this.peer?.id)
+                || currentChatId
+                || 0;
+            const conv = peerId ? window.im?.conversations?._findConv(peerId) : currentChat;
+            const peer = conv?.peer || this.peer || currentChat?.peer;
             const outRead = peer?.out_read || conv?._conversation?.out_read || conv?.conversation?.out_read || 0;
             const inRead = peer?.in_read || conv?._conversation?.in_read || conv?.conversation?.in_read || 0;
             const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
-            const msgCmid = (this.data && (this.data.conversation_message_id || this.data.local_id)) || this.conversation_message_id || 0;
-            const msgId = (this.data && this.data.id) || this.id || 0;
-            const fromId = this.data ? this.data.from_id : (this.from_id || 0);
+            const msgCmid = Number((this.data && (this.data.conversation_message_id || this.data.local_id)) || this.conversation_message_id || 0);
+            const msgId = Number((this.data && this.data.id) || this.id || 0);
+            const fromId = Number(this.data ? (this.data.from_id?.id || this.data.from_id) : (this.from_id || 0));
 
             if (fromId != currentUserId && inRead > 0 && ((msgCmid > 0 && msgCmid <= inRead) || (msgId > 0 && msgId <= inRead))) {
                 return true;
@@ -1628,7 +1800,7 @@ export class ChatMessage {
                     }
                 }
             }
-            return false;
+            return Boolean(this.data?.read_state);
         } catch (e) {
             return false;
         }

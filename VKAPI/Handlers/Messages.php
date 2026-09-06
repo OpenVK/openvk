@@ -757,6 +757,15 @@ final class Messages extends VKAPIRequestHandler
             $random_id = $guid;
         }
 
+        $cleanMessage = trim(preg_replace('/[\s\x{200b}\x{feff}\x{00a0}]+/u', ' ', $message));
+        if ($cleanMessage === '') {
+            $message = '';
+        }
+
+        if (empty($message) && empty($attachment) && $sticker_id <= 0 && empty($forward_messages) && empty($forward) && $reply_to <= 0) {
+            $this->fail(100, "Message text is empty or invalid");
+        }
+
         // Multi-peer send (5.80+)
         if (empty($peer_ids)) {
             $peer_ids = (string) ($_POST['peer_ids'] ?? $_GET['peer_ids'] ?? '');
@@ -764,7 +773,7 @@ final class Messages extends VKAPIRequestHandler
 
         if (!empty($peer_ids)) {
             $pIds = preg_split("%, ?%", $peer_ids);
-            if (count($pIds) > 100) {
+            if (count($pIds) > 25) {
                 $this->fail(913, "Too many recipients");
             }
 
@@ -907,6 +916,11 @@ final class Messages extends VKAPIRequestHandler
             } else {
                 $attachment_secure[] = $item->getAttachmentString();
             }
+        }
+
+        $cleanMessage = trim(preg_replace('/[\s\x{200b}\x{feff}\x{00a0}]+/u', ' ', $message));
+        if ($cleanMessage === '') {
+            $message = '';
         }
 
         if (empty($message) && sizeof($attachment_secure) == 0) {

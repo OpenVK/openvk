@@ -3,26 +3,45 @@
     --messenger-fastchat-width: 260px;
 }
 
-body.no-scroll #chat-page {
-    overflow-x: hidden;
-    min-height: 100vh;
+#chat-page {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+}
+
+.chat-window {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+    position: relative;
+}
+
+.messenger-app.messenger-layer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+    position: relative;
 }
 
 .im_floating_date_wrap {
     display: flex;
     justify-content: center;
-    position: sticky;
-    top: 115px;
+    position: absolute;
+    top: 10px;
+    left: 0;
+    right: 0;
     z-index: 5;
     pointer-events: none;
-    margin-bottom: -22px;
-}
-
-body.no-scroll .im_floating_date_wrap {
-    position: fixed;
-    top: 160px;
-    width: 627px;
-    z-index: 5;
+    transition: opacity 0.15s ease;
 }
 
 .im_floating_date_wrap b {
@@ -45,39 +64,6 @@ body.no-scroll .im_floating_date_wrap {
     border-color: var(--color-gray, #b0b0b0);
 }
 
-body.no-scroll .navigation {
-    top: unset !important;
-}
-
-body.no-scroll .floating_sidebar.show {
-    display: none;
-}
-
-body.no-scroll {
-    overflow-x: hidden;
-    scrollbar-gutter: unset;
-}
-
-body.no-scroll #wrapH {
-    position: fixed;
-    z-index: 4;
-    top: 43px;
-    width: 630px;
-}
-
-body.no-scroll .page_footer {
-    display: none;
-}
-
-body.no-scroll .messenger-app--global-tabs {
-    position: fixed;
-    top: 74px;
-    padding-top: 8px;
-    background: white;
-    z-index: 4;
-    width: 606px !important;
-}
-
 #im_container.at_page.compact {
     margin: -4px -4px -10px -10px;
 }
@@ -90,38 +76,19 @@ body.no-scroll .messenger-app--global-tabs {
 
 .messages--peers-header-wrap {
     width: 100%;
+    flex: 0 0 auto;
+    position: relative;
+    z-index: 3;
 }
 
-body.no-scroll .messages--peers-header-wrap {
-    position: fixed;
-    z-index: 4;
-    top: 73px;
-    box-sizing: border-box;
-    width: 627px;
-}
-
-body.no-scroll .messages--peers-tabs {
+.messages--peers-tabs {
     padding: 8px 10px;
     box-sizing: border-box;
-    width: 627px;
+    width: 100%;
     gap: 5px;
     background: #F6F6F6;
     border-bottom: 1px solid var(--bg-slightly-border);
     box-shadow: 1px 1px 2px 0px var(--bg-slightly-border);
-}
-
-body.no-scroll .page_header {
-    position: fixed;
-    z-index: 3;
-    width: inherit;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-}
-
-body.no-scroll .sidebar {
-    position: fixed;
-    top: 43px;
 }
 
 body.no-footer .page_footer {
@@ -140,7 +107,15 @@ body.no-footer .page_footer {
     display: inline-block;
 }
 
+body:has(#im_container.at_page) {
+    overflow-y: hidden;
+}
+
 body:has(#im_container.at_page) .page_yellowheader {
+    display: none !important;
+}
+
+body:has(#im_container.at_page) .page_footer {
     display: none !important;
 }
 
@@ -149,16 +124,22 @@ body:has(#im_container.at_page) .page_content {
     grid-template-columns: 1fr;
 }
 
+body:has(#im_container.at_page) .page-wrap {
+    border-bottom: unset;
+}
+
 #im_container.at_page {
     grid-row: 1;
     grid-column: 1;
     margin: 0px -6px -10px -10px;
     width: 629px;
-    min-height: calc(100vh - 43px);
+    height: calc(100vh - 52px);
+    max-height: calc(100vh - 52px);
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
 }
+
 
 #im_container.at_page:has(.im_page:not(.hidden)) {
     z-index: 1;
@@ -173,6 +154,7 @@ body:has(#im_container.at_page) .page_content {
     display: flex;
     flex-direction: column;
     min-height: 0;
+    overflow: hidden;
 }
 
 #im_container.at_page .im_page:not(.hidden) {
@@ -180,6 +162,31 @@ body:has(#im_container.at_page) .page_content {
     display: flex;
     flex-direction: column;
     min-height: 0;
+    overflow: hidden;
+}
+
+#im_container.at_page .im_page.page-other {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    scrollbar-width: thin;
+    scrollbar-color: #717171b3 #f0f1f2;
+}
+
+#im_container.at_page .im_page.page-other::-webkit-scrollbar {
+    width: 6px;
+}
+
+#im_container.at_page .im_page.page-other::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#im_container.at_page .im_page.page-other::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+#im_container.at_page .im_page.page-other::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.35);
 }
 
 .im_page.page-conversations {
@@ -200,7 +207,7 @@ body:has(#im_container.at_page) .page_content {
     box-sizing: border-box;
     background: #eef2f7;
     width: calc(100% - 2px);
-    margin-top: -30px;
+    margin-top: -29px;
 }
 
 .im-new-interface-banner--mascot {
@@ -257,13 +264,27 @@ body:has(#im_container.at_page) .page_content {
     align-items: center;
     justify-content: space-between;
     margin-left: unset;
-    /*width: unset;*/
+    width: unset;
     padding: 10px 10px 0px 10px;
-    margin-top: -33px;
+    margin-top: -34px;
+    margin-right: 2px;
 }
 
-#show_more.crp-load-more {
-    margin-top: unset;
+.crp-lazy-loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 0;
+    min-height: 36px;
+    box-sizing: border-box;
+}
+
+.crp-lazy-loader.idle {
+    padding: 0;
+    min-height: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
 }
 
 #conversations-top-buttons {
@@ -276,6 +297,7 @@ body:has(#im_container.at_page) .page_content {
     margin: 0px 0px 0px 0px;
     box-sizing: border-box;
     flex-shrink: 0;
+    margin-right: 2px;
 }
 
 #conversations-top-buttons #conversations-search-bar {
@@ -289,6 +311,25 @@ body:has(#im_container.at_page) .page_content {
     flex: 1 1 auto;
     min-height: 0;
     overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #717171b3 #f0f1f2;
+}
+
+.crp-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.crp-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.crp-list::-webkit-scrollbar-thumb {
+    background: #717171b3;
+    border-radius: 3px;
+}
+
+.crp-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.35);
 }
 
 .crp-list .conversations_error_page {
@@ -299,7 +340,7 @@ body:has(#im_container.at_page) .page_content {
 .crp-bottom {
     position: sticky;
     bottom: 0;
-    width: calc(var(--messenger-width) - 1px);
+    width: var(--messenger-width);
     background: var(--common-2);
     padding: 10px 11px;
     box-sizing: border-box;
@@ -323,6 +364,11 @@ body:has(#im_container.at_page) .page_content {
 
 .crp-entry {
     display: flex;
+    align-items: center;
+    height: 66px;
+    min-height: 66px;
+    flex-shrink: 0;
+    box-sizing: border-box;
     padding: 8px 10px;
     cursor: pointer;
     margin-left: 1px;
@@ -372,9 +418,16 @@ body:has(#im_container.at_page) .page_content {
 }
 
 .crp-entry--message {
-    padding: 3px;
+    padding: 3px 0;
     width: 395px;
+    max-width: 395px;
+    min-width: 0;
+    height: 36px;
     border-radius: 3px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .crp-entry--image>img,
@@ -496,41 +549,63 @@ body:has(#im_container.at_page) .page_content {
     display: none;
 }
 
+.crp-entry--message---av {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    flex-shrink: 0;
+    border-radius: 3px;
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: middle;
+}
+
 .crp-entry--message---av img {
     border-radius: 3px;
-    margin-top: 20%;
-    margin-left: 10%;
     width: 32px;
     height: 32px;
     object-fit: cover;
+    display: block;
 }
 
-.crp-entry--message---av,
 .crp-entry--message---text {
+    flex: 1;
+    min-width: 0;
+    max-width: 100%;
+    height: 20px;
+    line-height: 20px;
+    margin-left: 8px;
+    color: var(--text-2);
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.crp-entry--message---text span {
     display: inline-block;
-    vertical-align: top;
-    max-width: 50px;
-    min-width: 32px;
-    border-radius: 3px;
-}
-
-.crp-entry--message---text {
-    max-height: 40px;
-    max-width: 310px;
+    max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-top: 10px;
-    /* white-space: nowrap; */
-    /* myslivets: а как........... */
-    margin-left: 4%;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.crp-entry--message---text br {
+    display: none !important;
 }
 
 .crp-entry--message---text .conv_prev_img {
-    display: inline;
-    width: 20px;
-    height: 20px;
+    display: inline-block;
+    vertical-align: middle;
+    width: 18px;
+    height: 18px;
     object-fit: cover;
     border-radius: 2px;
+    margin-right: 4px;
+    flex-shrink: 0;
 }
 
 .messenger-app--messages---message .time {
@@ -544,11 +619,15 @@ body:has(#im_container.at_page) .page_content {
     margin-left: 5px;
 }
 
-.crp-entry--message---text {
-    color: var(--text-2);
-    display: inline-flex;
-    gap: 5px;
-    align-items: center;
+.im-action-msg,
+.crp-entry--message---text .im-action-msg {
+    color: var(--nobold, #777);
+    font-style: italic;
+}
+
+.im-action-msg b,
+.crp-entry--message---text .im-action-msg b {
+    font-weight: bold;
 }
 
 .messenger-app--messages---message .time span {
@@ -575,10 +654,12 @@ body:has(#im_container.at_page) .page_content {
 
 .messages--actions {
     display: none;
-    position: fixed;
-    top: 73px;
-    z-index: 4;
-    width: 627px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 6;
+    width: 100%;
     height: 42px;
     background: #F6F6F6;
     border-bottom: 1px solid var(--bg-slightly-border);
@@ -613,9 +694,31 @@ body:has(#im_container.at_page) .page_content {
 .messenger-app--messages {
     display: flex;
     flex-direction: column;
-    height: 70%;
-    min-height: 100vh;
-    margin-top: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    overflow-anchor: none;
+    position: relative;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.messenger-app--messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.messenger-app--messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.messenger-app--messages::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+.messenger-app--messages::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.35);
 }
 
 .messenger-app--messages .messenger-special-message {
@@ -637,9 +740,14 @@ body:has(#im_container.at_page) .page_content {
 
 .messenger-app--messages .messenger-app--messages-array {
     margin-top: auto;
-    padding-top: 500px;
-    /*padding-bottom: 60px;*/
+    padding-top: 12px;
+    padding-bottom: 12px;
     z-index: 0;
+}
+
+.messenger-app.messenger-layer:has(#im_unread_divider) .im_floating_date_wrap,
+.messenger-app.has-unread-divider .im_floating_date_wrap {
+    display: none !important;
 }
 
 .messenger-app--messages---message {
@@ -877,17 +985,8 @@ body:has(#im_container.at_page) .page_content {
 .messenger-app--messages .messenger-app--messages-day-time {
     display: flex;
     justify-content: center;
-    margin: 10px 0px;
-    position: sticky;
-    top: 135px;
-    z-index: 100;
-    pointer-events: none;
-}
-
-body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-day-time {
-    position: fixed;
-    top: 135px;
-    width: 620px;
+    margin: 14px 0px 10px 0px;
+    position: static;
 }
 
 .messenger-app--messages .messenger-app--messages-day-time b {
@@ -898,7 +997,6 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     font-weight: bold;
     cursor: pointer;
     pointer-events: auto;
-    text-shadow: 0 1px 2px #fff, 0 0 6px #fff, 0 0 12px #fff;
     transition: color 0.1s ease;
 }
 
@@ -1952,9 +2050,12 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 }
 
 .messenger-app-end {
-    position: fixed;
+    position: relative;
     background: var(--bg-page);
-    bottom: 0px;
+    bottom: auto;
+    flex: 0 0 auto;
+    width: 100%;
+    z-index: 2;
 }
 
 .messenger-app-end .input-m {
@@ -2025,17 +2126,17 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     color: #949494;
     user-select: none;
     cursor: pointer;
-
     display: none;
+    transition: background-color 0.15s ease;
+}
+
+.messenger-app-end .messenger-mountain:hover {
+    background: var(--common-2, #eef2f7);
 }
 
 .messenger-app-end.m-mountain .messenger-mountain,
 .messenger-app-end.m-mountain-fatal .messenger-mountain {
     display: block;
-}
-
-.messenger-app-end.m-selected .messenger-mountain {
-    display: none;
 }
 
 .messenger-app .messenger-app-status {
@@ -2221,8 +2322,9 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
     width: 100%;
     max-width: 650px;
     margin: 0 auto;
-    padding: 16px 20px;
-    flex: 1;
+    padding: 16px 20px 24px 20px;
+    flex: 1 0 auto;
+    min-height: 100%;
 }
 
 .peer-window .peer-side {
@@ -3105,17 +3207,23 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
 }
 
 #im_container.compact .im_page.page-other {
-    /*position: absolute;*/
-    margin-top: 15px;
     margin-top: 17px;
     right: 0;
     width: 369px;
     margin-left: 259px;
     border-left: 1px solid var(--brand-bg);
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: calc(100vh - 58px);
+    max-height: calc(100vh - 58px);
+    box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 
 #im_container.compact .im_page.page-other .peer-window {
-    height: 100%;
+    height: auto;
+    min-height: 100%;
 }
 
 #im_container.compact {
@@ -4496,11 +4604,11 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
         height: auto;
     }
 
-    body.no-scroll .im_floating_date_wrap {
+    .im_floating_date_wrap {
         width: 100vw;
     }
 
-    body.no-scroll .messenger-app--global-tabs {
+    .messenger-app--global-tabs {
         top: 49px;
         width: 100vw !important;
         margin-left: -1px;
@@ -4509,7 +4617,7 @@ body.no_scroll.is_scrolling .messenger-app--messages .messenger-app--messages-da
         max-height: unset;
     }
 
-    body.no-scroll .messages--peers-header-wrap {
+    .messages--peers-header-wrap {
         top: 89px;
     }
 
