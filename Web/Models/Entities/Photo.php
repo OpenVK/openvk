@@ -471,7 +471,7 @@ class Photo extends Media
         if ($album !== null) {
             $album->removePhoto($this);
         }
-        
+
         parent::delete($softly);
     }
 }
