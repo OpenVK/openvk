@@ -466,8 +466,12 @@ class Photo extends Media
 
     public function delete(bool $softly = true): void
     {
-        $this->getAlbum()->removePhoto($this);
+        $album = $this->getAlbum();
 
+        if ($album !== null) {
+            $album->removePhoto($this);
+        }
+        
         parent::delete($softly);
     }
 }
