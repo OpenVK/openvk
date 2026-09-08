@@ -1,0 +1,18 @@
+var v = API.video.get({
+    "owner_id": Args.owner_id,
+    "album_id": Args.album_id,
+    "offset": Args.offset,
+    "count": Args.count,
+    "extended": 1
+});
+if (!v) {
+    v = {"count": 0, "items": [], "profiles": [], "groups": []};
+}
+if (Args.need_tabs) {
+    v.tabs = {
+        "albums": 0,
+        "user_videos": v.count ? v.count : 0,
+        "uploaded": v.count ? v.count : 0
+    };
+}
+return v;

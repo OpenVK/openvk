@@ -1,0 +1,25 @@
+var dlgs = API.messages.getDialogs({"offset": Args.offset, "count": Args.count});
+var uids = [];
+if (dlgs && dlgs.items) {
+    var i = 0;
+    while (i < dlgs.items.length) {
+        var msg = dlgs.items[i].message;
+        if (msg) {
+            if (msg.user_id > 0) {
+                uids.push(msg.user_id);
+            }
+            if (msg.admin_id && msg.admin_id > 0) {
+                uids.push(msg.admin_id);
+            }
+        }
+        i = i + 1;
+    }
+}
+var profiles = [];
+if (uids.length > 0) {
+    profiles = API.users.get({"user_ids": uids.join(","), "fields": "photo_50,photo_100,photo_200,online"});
+}
+return {
+    "a": dlgs,
+    "p": profiles
+};

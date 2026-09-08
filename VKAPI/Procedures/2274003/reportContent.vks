@@ -1,0 +1,7 @@
+var res = API.reports.add({
+    "owner_id": Args.owner_id ? Args.owner_id : 1,
+    "type": Args.type ? Args.type : "post",
+    "reason": Args.reason ? Args.reason : 0,
+    "comment": "Report"
+});
+return 1;

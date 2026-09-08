@@ -77,7 +77,7 @@ class Parser
     private function expect(string $type, $value = null): array
     {
         if (!$this->check($type, $value)) {
-            $got = $this->peek();
+            $got  = $this->peek();
             $want = $value !== null ? "'$value'" : $type;
             $desc = $got["type"] === "eof" ? "end of script" : "'" . $got["value"] . "'";
             throw new APIErrorException("Syntax error: expected $want but got $desc", 12);
@@ -219,6 +219,46 @@ class Parser
         $this->expect("keyword", "for");
         $this->expect("punc", "(");
 
+        if ($this->check("keyword", "var")) {
+            $savedPos = $this->pos;
+            $this->advance();
+            if ($this->check("name")) {
+                $varName = $this->advance()["value"];
+                if ($this->check("keyword", "in")) {
+                    $this->advance();
+                    $obj = $this->parseExpression();
+                    $this->expect("punc", ")");
+                    $body = $this->parseStatement();
+                    return [
+                        "kind"   => "for_in",
+                        "is_var" => true,
+                        "var"    => $varName,
+                        "object" => $obj,
+                        "body"   => $body,
+                    ];
+                }
+            }
+            $this->pos = $savedPos;
+        } elseif ($this->check("name")) {
+
+            $savedPos = $this->pos;
+            $varName  = $this->advance()["value"];
+            if ($this->check("keyword", "in")) {
+                $this->advance();
+                $obj = $this->parseExpression();
+                $this->expect("punc", ")");
+                $body = $this->parseStatement();
+                return [
+                    "kind"   => "for_in",
+                    "is_var" => false,
+                    "var"    => $varName,
+                    "object" => $obj,
+                    "body"   => $body,
+                ];
+            }
+            $this->pos = $savedPos;
+        }
+
         $init = null;
         if (!$this->check("punc", ";")) {
             if ($this->check("keyword", "var")) {
@@ -244,7 +284,11 @@ class Parser
     {
         $this->expect("keyword", "return");
         $value = null;
-        if (!$this->check("punc", ";") && !$this->check("punc", "}") && !$this->isEof()) {
+        $statementStarters = ["var", "if", "while", "do", "for", "break", "continue", "return"];
+        $tok = $this->peek();
+        $isStatementStarter = ($tok["type"] === "keyword" && in_array($tok["value"], $statementStarters, true));
+
+        if (!$this->check("punc", ";") && !$this->check("punc", "}") && !$this->isEof() && !$isStatementStarter) {
             $value = $this->parseExpression();
         }
         $this->acceptSemicolons();
@@ -259,19 +303,39 @@ class Parser
         return $this->parseAssignment();
     }
 
+    private const ASSIGN_OPS = [
+        "=", "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=", "<<=", ">>=", ">>>=",
+    ];
+
     private function parseAssignment(): array
     {
-        $left = $this->parseLogicalOr();
+        $left = $this->parseTernary();
 
-        if ($this->accept("op", "=")) {
+        $tok = $this->peek();
+        if ($tok["type"] === "op" && in_array($tok["value"], self::ASSIGN_OPS, true)) {
+            $op = $this->advance()["value"];
             if (!in_array($left["kind"], ["name", "member", "index"], true)) {
                 throw new APIErrorException("Syntax error: invalid assignment target", 12);
             }
             $value = $this->parseAssignment();
-            return ["kind" => "assign", "target" => $left, "value" => $value];
+            return ["kind" => "assign", "op" => $op, "target" => $left, "value" => $value];
         }
 
         return $left;
+    }
+
+    private function parseTernary(): array
+    {
+        $cond = $this->parseLogicalOr();
+
+        if ($this->accept("op", "?")) {
+            $then = $this->parseAssignment();
+            $this->expect("op", ":");
+            $else = $this->parseAssignment();
+            return ["kind" => "ternary", "cond" => $cond, "then" => $then, "else" => $else];
+        }
+
+        return $cond;
     }
 
     private function parseLogicalOr(): array
@@ -288,11 +352,47 @@ class Parser
 
     private function parseLogicalAnd(): array
     {
-        $left = $this->parseEquality();
+        $left = $this->parseBitwiseOr();
         while ($this->check("op", "&&")) {
             $this->advance();
-            $right = $this->parseEquality();
+            $right = $this->parseBitwiseOr();
             $left  = ["kind" => "logical", "op" => "&&", "left" => $left, "right" => $right];
+        }
+
+        return $left;
+    }
+
+    private function parseBitwiseOr(): array
+    {
+        $left = $this->parseBitwiseXor();
+        while ($this->check("op", "|")) {
+            $this->advance();
+            $right = $this->parseBitwiseXor();
+            $left  = ["kind" => "binary", "op" => "|", "left" => $left, "right" => $right];
+        }
+
+        return $left;
+    }
+
+    private function parseBitwiseXor(): array
+    {
+        $left = $this->parseBitwiseAnd();
+        while ($this->check("op", "^")) {
+            $this->advance();
+            $right = $this->parseBitwiseAnd();
+            $left  = ["kind" => "binary", "op" => "^", "left" => $left, "right" => $right];
+        }
+
+        return $left;
+    }
+
+    private function parseBitwiseAnd(): array
+    {
+        $left = $this->parseEquality();
+        while ($this->check("op", "&")) {
+            $this->advance();
+            $right = $this->parseEquality();
+            $left  = ["kind" => "binary", "op" => "&", "left" => $left, "right" => $right];
         }
 
         return $left;
@@ -301,7 +401,12 @@ class Parser
     private function parseEquality(): array
     {
         $left = $this->parseRelational();
-        while ($this->check("op", "==") || $this->check("op", "!=")) {
+        while (
+            $this->check("op", "==")
+            || $this->check("op", "!=")
+            || $this->check("op", "===")
+            || $this->check("op", "!==")
+        ) {
             $op    = $this->advance()["value"];
             $right = $this->parseRelational();
             $left  = ["kind" => "binary", "op" => $op, "left" => $left, "right" => $right];
@@ -312,8 +417,26 @@ class Parser
 
     private function parseRelational(): array
     {
+        $left = $this->parseShift();
+        while (
+            $this->check("op", "<")
+            || $this->check("op", ">")
+            || $this->check("op", "<=")
+            || $this->check("op", ">=")
+            || $this->check("keyword", "in")
+        ) {
+            $op    = $this->advance()["value"];
+            $right = $this->parseShift();
+            $left  = ["kind" => "binary", "op" => $op, "left" => $left, "right" => $right];
+        }
+
+        return $left;
+    }
+
+    private function parseShift(): array
+    {
         $left = $this->parseAdditive();
-        while ($this->check("op", "<") || $this->check("op", ">") || $this->check("op", "<=") || $this->check("op", ">=")) {
+        while ($this->check("op", "<<") || $this->check("op", ">>") || $this->check("op", ">>>")) {
             $op    = $this->advance()["value"];
             $right = $this->parseAdditive();
             $left  = ["kind" => "binary", "op" => $op, "left" => $left, "right" => $right];
@@ -348,10 +471,34 @@ class Parser
 
     private function parseUnary(): array
     {
-        if ($this->check("op", "-") || $this->check("op", "!")) {
+        if ($this->check("op", "-") || $this->check("op", "!") || $this->check("op", "~") || $this->check("op", "+")) {
             $op      = $this->advance()["value"];
             $operand = $this->parseUnary();
             return ["kind" => "unary", "op" => $op, "operand" => $operand];
+        }
+
+        if ($this->check("op", "++") || $this->check("op", "--")) {
+            $op      = $this->advance()["value"];
+            $operand = $this->parseUnary();
+            if (!in_array($operand["kind"], ["name", "member", "index"], true)) {
+                throw new APIErrorException("Syntax error: invalid increment/decrement target", 12);
+            }
+            return ["kind" => "update", "op" => $op, "target" => $operand, "prefix" => true];
+        }
+
+        if ($this->check("keyword", "typeof")) {
+            $this->advance();
+            $operand = $this->parseUnary();
+            return ["kind" => "unary", "op" => "typeof", "operand" => $operand];
+        }
+
+        if ($this->check("keyword", "delete")) {
+            $this->advance();
+            $operand = $this->parseUnary();
+            if (!in_array($operand["kind"], ["name", "member", "index"], true)) {
+                throw new APIErrorException("Syntax error: invalid delete target", 12);
+            }
+            return ["kind" => "unary", "op" => "delete", "operand" => $operand];
         }
 
         return $this->parsePostfix();
@@ -383,6 +530,12 @@ class Parser
                 } else {
                     throw new APIErrorException("Syntax error: '@' must be followed by '.' or '['", 12);
                 }
+            } elseif ($this->check("op", "++") || $this->check("op", "--")) {
+                $op = $this->advance()["value"];
+                if (!in_array($expr["kind"], ["name", "member", "index"], true)) {
+                    throw new APIErrorException("Syntax error: invalid postfix increment/decrement target", 12);
+                }
+                $expr = ["kind" => "update", "op" => $op, "target" => $expr, "prefix" => false];
             } else {
                 break;
             }
@@ -490,8 +643,8 @@ class Parser
                     throw new APIErrorException("Syntax error: invalid object key", 12);
                 }
 
-                $this->expect("punc", ":");
-                $value  = $this->parseAssignment();
+                $this->expect("op", ":");
+                $value   = $this->parseAssignment();
                 $props[] = ["key" => $key, "value" => $value];
             } while ($this->accept("punc", ","));
         }

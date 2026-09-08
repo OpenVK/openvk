@@ -1,0 +1,27 @@
+var filter = Args.filter ? Args.filter : "all";
+var wall = API.wall.get({
+    "owner_id": Args.owner_id,
+    "offset": Args.offset,
+    "count": Args.count,
+    "filter": filter,
+    "extended": 1,
+    "photo_sizes": Args.photo_sizes
+});
+if (!wall) {
+    wall = {"count": 0, "items": [], "profiles": [], "groups": []};
+}
+if (Args.offset == 0 || !Args.offset) {
+    var oid = Args.owner_id;
+    var st = null;
+    if (oid > 0) {
+        st = API.status.get({"user_id": oid});
+    } else if (oid < 0) {
+        st = API.status.get({"group_id": -oid});
+    } else {
+        st = API.status.get({});
+    }
+    if (st) {
+        wall.status = st;
+    }
+}
+return wall;

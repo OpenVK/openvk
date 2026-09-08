@@ -1,0 +1,9 @@
+return API.newsfeed.get({
+    "filters": Args.filters,
+    "count": Args.count,
+    "start_from": Args.start_from,
+    "photo_sizes": Args.photo_sizes,
+    "source_ids": Args.source_ids,
+    "return_banned": Args.return_banned,
+    "max_photos": Args.max_photos
+});

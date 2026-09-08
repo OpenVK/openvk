@@ -32,6 +32,22 @@ class APIToken extends RowModel
         return $this->getRecord()->platform;
     }
 
+    public function setPlatform(string $platform): void
+    {
+        $this->stateChanges("platform", $platform);
+    }
+
+    public function getClientId(): ?int
+    {
+        $rec = $this->getRecord();
+        return isset($rec->client_id) && !is_null($rec->client_id) ? (int) $rec->client_id : null;
+    }
+
+    public function setClientId(?int $clientId): void
+    {
+        $this->stateChanges("client_id", $clientId);
+    }
+
     public function isRevoked(): bool
     {
         return $this->isDeleted();

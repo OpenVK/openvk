@@ -1,0 +1,27 @@
+var gifts = API.gifts.get({
+    "user_id": Args.user_id,
+    "count": Args.count,
+    "offset": Args.offset
+});
+var uids = [];
+if (gifts && gifts.items) {
+    var i = 0;
+    while (i < gifts.items.length) {
+        var fromId = gifts.items[i].from_id;
+        if (fromId && fromId > 0) {
+            uids.push(fromId);
+        }
+        i = i + 1;
+    }
+}
+var profiles = [];
+if (uids.length > 0) {
+    profiles = API.users.get({
+        "user_ids": uids.join(","),
+        "fields": "photo_50,photo_100"
+    });
+}
+return {
+    "gifts": gifts && gifts.items ? gifts.items : (gifts ? gifts : []),
+    "profiles": profiles
+};

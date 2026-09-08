@@ -1,0 +1,19 @@
+var offset = Args.offset ? Args.offset : 0;
+var count = Args.count ? Args.count : 20;
+var managers = API.groups.getMembers({
+    "group_id": Args.group_id,
+    "offset": offset,
+    "count": count,
+    "fields": Args.fields
+});
+var group = API.groups.getById({"group_id": Args.group_id, "fields": "contacts"})[0];
+var mgrList = {
+    "count": managers && managers.count ? managers.count : 0,
+    "items": managers && managers.items ? managers.items : []
+};
+return {
+    "managers": mgrList,
+    "count": mgrList.count,
+    "items": mgrList.items,
+    "contacts": group && group.contacts ? group.contacts : []
+};

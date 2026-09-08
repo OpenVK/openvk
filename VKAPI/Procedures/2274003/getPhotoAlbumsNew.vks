@@ -1,0 +1,6 @@
+return API.photos.getAlbums({
+    "owner_id": Args.owner_id,
+    "need_system": Args.need_system,
+    "need_covers": Args.need_covers,
+    "photo_sizes": Args.photo_sizes
+});
