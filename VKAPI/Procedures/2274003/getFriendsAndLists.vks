@@ -1,0 +1,13 @@
+var friends = API.friends.get({
+    "user_id": Args.user_id,
+    "fields": Args.fields,
+    "order": Args.order
+});
+var lists = [];
+if (Args.need_lists) {
+    lists = API.friends.getLists();
+}
+return {
+    "items": friends && friends.items ? friends.items : (friends ? friends : []),
+    "lists": lists && lists.items ? lists.items : (lists ? lists : [])
+};

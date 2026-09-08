@@ -1,0 +1,6 @@
+var offset = Args.offset ? Args.offset : 0;
+return {
+    "count": 0,
+    "items": [],
+    "new_offset": offset
+};

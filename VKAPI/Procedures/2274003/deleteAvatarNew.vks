@@ -1,0 +1,25 @@
+var ownerId = Args.owner_id;
+if (ownerId > 0) {
+    var users = API.users.get({
+        "user_ids": ownerId,
+        "fields": "photo_50,photo_100,photo_200"
+    });
+    var u = users && users.length > 0 ? users[0] : null;
+    return {
+        "id": ownerId,
+        "photo_50": u && u.photo_50 ? u.photo_50 : "",
+        "photo_100": u && u.photo_100 ? u.photo_100 : "",
+        "photo_200": u && u.photo_200 ? u.photo_200 : "",
+        "photo_rec": u && u.photo_50 ? u.photo_50 : "",
+        "photo_medium_rec": u && u.photo_100 ? u.photo_100 : ""
+    };
+} else {
+    var groupId = -ownerId;
+    var groups = API.groups.getById({"group_id": groupId});
+    var g = groups && groups.length > 0 ? groups[0] : null;
+    return {
+        "id": groupId,
+        "photo_50": g && g.photo_50 ? g.photo_50 : "",
+        "photo_100": g && g.photo_100 ? g.photo_100 : ""
+    };
+}

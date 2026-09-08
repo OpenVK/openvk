@@ -1,0 +1,5 @@
+return API.notifications.get({
+    "count": Args.count,
+    "start_from": Args.start_from,
+    "photo_sizes": Args.photo_sizes
+});

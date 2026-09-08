@@ -1,0 +1,10 @@
+var fields = "city,country,place,description,wiki_page,members_count,counters,start_date,end_date,can_post,can_see_all_posts,activity,status,contacts,links,fixed_post,verified,site,ban_info";
+var group = API.groups.getById({"group_id": Args.group_id, "fields": fields})[0];
+if (!group) {
+    return {};
+}
+if (Args.photo_count && Args.photo_count > 0) {
+    var photos = API.photos.get({"owner_id": -Args.group_id, "count": Args.photo_count});
+    group.photos = photos ? (photos.items ? photos.items : photos) : [];
+}
+return group;

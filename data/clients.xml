@@ -1,13 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Clients name="standard">
-    <Client tag="vk4me" name="VK4ME" url="http://vk4me.crx.moe/" img="/assets/packages/static/openvk/img/app_icons/vk4me.png" />
-    <Client tag="openvk_legacy_android" name="OpenVK Legacy" url="https://f-droid.org/packages/uk.openvk.android.legacy/" img="/assets/packages/static/openvk/img/app_icons/openvk_legacy.png" />
-    <Client tag="openvk_refresh_android" name="OpenVK Refresh" url="https://github.com/openvk/mobile-android-refresh" img="/assets/packages/static/openvk/img/app_icons/openvk_refresh.png" />
-    <Client tag="openvk_native" name="OpenVK Native" url="https://openvk.org/club9628" img="/assets/packages/static/openvk/img/app_icons/openvk_native.png" />
-    <Client tag="openvk_native_ios" name="OpenVK Native" url="https://openvk.org/club9628" img="/assets/packages/static/openvk/img/app_icons/openvk_native.png" />
-    <Client tag="openvk_flux_android" name="OpenVK Flux" url="https://openvk.org/openvkflux" img="/assets/packages/static/openvk/img/app_icons/openvk_flux.png" />
-    <Client tag="openvk_ios" name="OpenVK for iOS" url="https://github.com/openvk/mobile-ios" img="/assets/packages/static/openvk/img/app_icons/ios.png" />
-    <Client tag="renaissance" name="через Агент Mail.ru (Renaissance)" url="https://mrim.su" img="/assets/packages/static/openvk/img/app_icons/renaissance_agent.png" />
-    <Client tag="Kate Mobile" name="Kate Mobile (Community Mod)" url="http://katemobile.ru" img="/assets/packages/static/openvk/img/app_icons/kate.png" />
-    <Client tag="Matcha" name="Matcha" url="https://github.com/DeliriousVoid/Matcha" img="/assets/packages/static/openvk/img/app_icons/matcha.png" />
+    <Client id="10001" tag="openvk_legacy_android" name="OpenVK Legacy" platform="android" url="https://f-droid.org/packages/uk.openvk.android.legacy/" img="/assets/packages/static/openvk/img/app_icons/openvk_legacy.png" />
+    <Client id="10002" tag="openvk_refresh_android" name="OpenVK Refresh" platform="android" url="https://github.com/openvk/mobile-android-refresh" img="/assets/packages/static/openvk/img/app_icons/openvk_refresh.png" />
+    <Client id="10003" tag="openvk_flux_android" name="OpenVK Flux" platform="android" url="https://openvk.org/openvkflux" img="/assets/packages/static/openvk/img/app_icons/openvk_flux.png" />
+    <Client id="10003" tag="openvk_legacy_ios" name="OpenVK Legacy iOS" platform="iphone" img="/assets/packages/static/openvk/img/app_icons/ios.png" />
+    <Client id="10004" tag="openvk_native" name="OpenVK Native" platform="android" url="https://openvk.org/club9628" img="/assets/packages/static/openvk/img/app_icons/openvk_native.png" />
+    <Client id="10004" tag="openvk_native_ios" name="OpenVK Native iOS" platform="iphone" url="https://openvk.org/club9628" img="/assets/packages/static/openvk/img/app_icons/openvk_native.png" />
+    <Client id="10005" tag="openvk_ios" name="OpenVK for iOS" platform="iphone" url="https://github.com/openvk/mobile-ios" img="/assets/packages/static/openvk/img/app_icons/ios.png" />
+    <Client id="10006" tag="vk4me" name="VK4ME" platform="mobile" url="http://vk4me.crx.moe/" img="/assets/packages/static/openvk/img/app_icons/vk4me.png" />
+    <Client id="10007" tag="vika_touch" name="Vika Touch" platform="mobile" />  // кика хохотач ахахахаххахахахахах
+    <Client id="10008" tag="Matcha" name="Matcha" platform="android" url="https://github.com/DeliriousVoid/Matcha" img="/assets/packages/static/openvk/img/app_icons/matcha.png" />
+    <Client id="20000" tag="renaissance" name="через Агент Mail.ru (Renaissance)" platform="api" url="https://mrim.su" img="/assets/packages/static/openvk/img/app_icons/renaissance_agent.png" />
+
+    <Client id="2274003" tag="vk_android" name="VK for Android" platform="android" img="/assets/packages/static/openvk/img/app_icons/vk.png" />
+    <Client id="2685278" tag="Kate Mobile" name="Kate Mobile (Community Mod)" platform="android" url="http://katemobile.ru" img="/assets/packages/static/openvk/img/app_icons/kate.png" />
+    <Client id="3034484" tag="vk_ipad" name="VK for iPad" platform="iphone" img="/assets/packages/static/openvk/img/app_icons/vk.png" />
+    <Client id="3140623" tag="vk_iphone" name="VK for iPhone" platform="iphone" img="/assets/packages/static/openvk/img/app_icons/vk.png" />
+    <Client id="3502561" tag="vk_windows_8" name="VK for Windows 8" platform="api" img="/assets/packages/static/openvk/img/app_icons/vk.png" />
+    <Client id="3680547" tag="vk_ios" name="VK for iOS" platform="iphone" img="/assets/packages/static/openvk/img/app_icons/vk.png" />
+    <Client id="3697615" tag="vk_windows" name="VK for Windows" platform="api" img="/assets/packages/static/openvk/img/app_icons/vk.png" />
+    <Client id="4083558" tag="VFeed" name="VFeed" platform="iphone" url="https://vfeed.app" img="/assets/packages/static/openvk/img/app_icons/vfeed.png" />
+    <Client id="5027722" tag="vk_wphone" name="VK for Windows Phone" platform="wphone" img="/assets/packages/static/openvk/img/app_icons/vk.png" />
+    <Client id="5030499" tag="vk_messenger" name="VK Messenger" platform="api" img="/assets/packages/static/openvk/img/app_icons/vk.png" />
+    <Client id="6146827" tag="vk_me" name="VK Me" platform="android" img="/assets/packages/static/openvk/img/app_icons/vk.png" />
 </Clients>

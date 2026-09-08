@@ -1,0 +1,2 @@
+var votes = API.account.getBalance();
+return {"votes": votes.votes};

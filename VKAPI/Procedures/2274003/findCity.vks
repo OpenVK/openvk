@@ -1,0 +1,6 @@
+var countryId = 1;
+var cityId = 1;
+return {
+    "country": countryId,
+    "city": cityId
+};

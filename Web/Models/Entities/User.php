@@ -1106,64 +1106,12 @@ class User extends RowModel
     public function getOnlinePlatform(bool $forAPI = false): ?string
     {
         $platform = $this->getRecord()->client_name;
-        if ($forAPI) {
-            switch ($platform) {
-                case 'openvk_native':
-                case 'openvk_flux_android':
-                case 'openvk_refresh_android':
-                case 'openvk_legacy_android':
-                case 'Kate Mobile':
-                case 'VK for Android':
-                    return 'android';
-                    break;
-
-                case 'openvk_native_ios':
-                case 'openvk_ios':
-                case 'openvk_legacy_ios':
-                case 'VK for iOS':
-                    return 'iphone';
-                    break;
-
-                case 'vika_touch': // кика хохотач ахахахаххахахахахах
-                case 'vk4me':
-                    return 'mobile';
-                    break;
-
-                case null:
-                    return null;
-                    break;
-
-                default:
-                    return 'api';
-                    break;
-            }
-        } else {
-            return $platform;
-        }
+        return $forAPI ? \openvk\VKAPI\ClientRegistry::getPlatformForApi($platform) : $platform;
     }
 
     public function getOnlinePlatformDetails(): array
     {
-        $clients = simplexml_load_file(OPENVK_ROOT . "/data/clients.xml");
-
-        foreach ($clients as $client) {
-            if ($client['tag'] == $this->getOnlinePlatform()) {
-                return [
-                    "tag"  => $client['tag'],
-                    "name" => $client['name'],
-                    "url"  => $client['url'],
-                    "img"  => $client['img'],
-                ];
-                break;
-            }
-        }
-
-        return [
-            "tag"  => $this->getOnlinePlatform(),
-            "name" => null,
-            "url"  => null,
-            "img"  => null,
-        ];
+        return \openvk\VKAPI\ClientRegistry::getDetails($this->getOnlinePlatform());
     }
 
     public function prefersNotToSeeRating(): bool

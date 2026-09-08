@@ -1,0 +1,17 @@
+var c = API.account.getCounters();
+if (!c) {
+    c = {
+        "notifications": 0,
+        "friends": 0,
+        "messages": 0,
+        "photos": 0,
+        "videos": 0,
+        "groups": 0,
+    };
+}
+c.https_required = 0;
+c.photos = 0;
+c.videos = 0;
+c.groups = 0;
+c.intro = 0;
+return c;

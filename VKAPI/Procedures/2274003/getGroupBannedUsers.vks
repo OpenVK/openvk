@@ -1,0 +1,9 @@
+var admins = API.groups.getMembers({
+    "group_id": Args.group_id,
+    "fields": "photo_50,photo_100,photo_200,first_name_acc,last_name_acc,sex"
+});
+return {
+    "count": 0,
+    "items": [],
+    "admins": admins && admins.items ? admins.items : []
+};

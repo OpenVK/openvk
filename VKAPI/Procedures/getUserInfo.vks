@@ -1,0 +1,71 @@
+var fields = Args.fields;
+if (fields == null || fields == "") {
+    fields = "photo_100,photo_50,exports,country,sex,status,bdate,first_name_gen,last_name_gen,verified";
+}
+
+var me = API.users.get({"fields": fields})[0];
+var counters = {
+    "friends": 0,
+    "messages": 0,
+    "photos": 0,
+    "videos": 0,
+    "groups": 0,
+    "notifications": 0,
+    "sdk": 0,
+    "app_requests": 0
+};
+
+var info = {
+    "country": "RU",
+    "https_required": 0,
+    "intro": 0,
+    "lang": 0,
+    "money_p2p_params": {
+        "min_amount": 100,
+        "max_amount": 75000,
+        "currency": "RUB"
+    },
+    "audio_ads": {
+        "day_limit": 10000,
+        "track_limit": 10000,
+        "types_allowed": [],
+        "sections": ["my", "user_playlists", "group_playlists", "my_playlists", "recent", "audio_feed", "recs", "feed"]
+    },
+    "profiler_settings": {
+        "api_requests": true,
+        "download_patterns": [],
+        "raise_to_record_enabled": true,
+        "music_intro": false,
+        "settings": [
+            {"name": "audio_ads", "available": false},
+            {"name": "gif_autoplay", "available": true},
+            {"name": "video_autoplay", "available": true},
+            {"name": "stories", "available": false}
+        ],
+        "community_comments": false
+    }
+};
+
+var newsfeed = {
+    "lists": [],
+    "sections": [],
+    "feed_type": "top",
+    "refresh_timeout_recent": 600000,
+    "refresh_timeout_top": 600000,
+    "refresh_timeout_recommended": 600000,
+    "items": [],
+    "profiles": [],
+    "groups": []
+};
+
+return {
+    "profile": me,
+    "info": info,
+    "counters": counters,
+    "newsfeed": newsfeed,
+    "time": 0,
+    "allow_buy_votes": 1,
+    "ads_stoplist": [],
+    "show_html_games": 0,
+    "defaultAudioPlayer": "standard"
+};

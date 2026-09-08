@@ -867,27 +867,20 @@ u(document).on("paste", ".vouncher_input", function(event) {
 var tooltipClientTemplate = Handlebars.compile(`
     <table>
         <tr>
+            {{#if img}}
             <td width="54" valign="top">
                 <img src="{{img}}" width="54" />
             </td>
             <td width="1"></td>
+            {{/if}}
             <td width="150" valign="top">
                 <text>
                     {{app_tr}}: <b>{{name}}</b>
-                </text><br/>
-                <a href="{{url}}">${tr("learn_more")}</a>
-            </td>
-        </tr>
-    </table>
-`);
-
-var tooltipClientNoInfoTemplate = Handlebars.compile(`
-    <table>
-        <tr>
-            <td width="150" valign="top">
-                <text>
-                    {{app_tr}}: <b>{{name}}</b>
-                </text><br/>
+                </text>
+                {{#if url}}
+                <br/>
+                <a href="{{url}}" target="_blank" rel="noopener noreferrer">${tr("learn_more")}</a>
+                {{/if}}
             </td>
         </tr>
     </table>
@@ -907,28 +900,18 @@ tippy.delegate("body", {
     },
 
     onShow: async function(that) {
-        let client_tag = that.reference.dataset.appTag;
-        let client_name = that.reference.dataset.appName;
-        let client_url = that.reference.dataset.appUrl;
-        let client_img = that.reference.dataset.appImg;
-        
-        if(client_name != undefined) {
-            let res = {
-                'name':   client_name,
-                'url':    client_url,
-                'img':    client_img,
-                'app_tr': tr("app") 
-            };
-    
-            that.setContent(tooltipClientTemplate(res));
-        } else {
-            let res = {
-                'name': client_tag,
-                'app_tr': tr("app") 
-            };
-    
-            that.setContent(tooltipClientNoInfoTemplate(res));
-        }
+        let ref = that.reference.dataset;
+        let client_name = ref.appName && ref.appName.trim() ? ref.appName.trim() : null;
+        let client_tag  = ref.appTag && ref.appTag.trim() ? ref.appTag.trim() : null;
+        let client_url  = ref.appUrl && ref.appUrl.trim() ? ref.appUrl.trim() : null;
+        let client_img  = ref.appImg && ref.appImg.trim() ? ref.appImg.trim() : null;
+
+        that.setContent(tooltipClientTemplate({
+            'name':   client_name || client_tag,
+            'url':    client_url,
+            'img':    client_img,
+            'app_tr': tr("app")
+        }));
     }
 });
 

@@ -1,0 +1,10 @@
+var unread = 0;
+var dialogs = API.messages.getDialogs({"count": 1});
+if (dialogs) {
+    if (dialogs.unread_dialogs) {
+        unread = dialogs.unread_dialogs;
+    } else if (dialogs.count) {
+        unread = dialogs.count;
+    }
+}
+return unread;

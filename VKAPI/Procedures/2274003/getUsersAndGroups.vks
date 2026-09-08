@@ -1,0 +1,19 @@
+var users = [];
+if (Args.user_ids) {
+    users = API.users.get({
+        "user_ids": Args.user_ids,
+        "fields": Args.fields,
+        "name_case": Args.name_case
+    });
+}
+var groups = [];
+if (Args.group_ids) {
+    groups = API.groups.getById({
+        "group_ids": Args.group_ids,
+        "fields": Args.fields
+    });
+}
+return {
+    "users": users,
+    "groups": groups
+};
