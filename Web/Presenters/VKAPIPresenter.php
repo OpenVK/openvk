@@ -331,7 +331,6 @@ final class VKAPIPresenter extends OpenVKPresenter
         $platform = null;
         $clientId = null;
         $tokenObj = null;
-        
         $authMechanism = $this->queryParam("auth_mechanism") ?? "token";
         if ($authMechanism === "roaming") {
             if ($this->queryParam("callback")) {
