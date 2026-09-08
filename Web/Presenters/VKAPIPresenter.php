@@ -327,6 +327,11 @@ final class VKAPIPresenter extends OpenVKPresenter
      */
     private function resolveIdentity(string $object, string $method, ?string $explicitToken = null): array
     {
+        $identity = null;
+        $platform = null;
+        $clientId = null;
+        $tokenObj = null;
+        
         $authMechanism = $this->queryParam("auth_mechanism") ?? "token";
         if ($authMechanism === "roaming") {
             if ($this->queryParam("callback")) {
@@ -338,12 +343,7 @@ final class VKAPIPresenter extends OpenVKPresenter
             }
 
             $identity = $this->user->identity;
-            $platform = null;
         } else {
-            $identity = null;
-            $platform = null;
-            $clientId = null;
-            $tokenObj = null;
             $tokenStr = $explicitToken ?? $this->requestParam("access_token");
             if (!is_null($tokenStr)) {
                 $tokenObj = (new APITokens())->getByCode($tokenStr);
