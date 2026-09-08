@@ -3,8 +3,9 @@
 {var $sort = $sort ?? 'asc'}
 {var $readOnly = $readOnly ?? false}
 {var $custom_id = $custom_id ?? null}
+{var $canComment = $thisUser && $parent->canBeCommentedBy($thisUser)}
 
-<div class="item_comments_head">
+<div class="item_comments_head" n:if="$count > 0 || $canComment">
     <h4 n:if="$showTitle ?? true">{_comments} ({$count})</h4>
 
     {if isset($sort) && $count > 5}
@@ -19,7 +20,7 @@
         </a>
     {/if}
 </div>
-<div n:ifset="$thisUser" id="standaloneCommentBox">
+<div n:if="$canComment" id="standaloneCommentBox">
     {var $commentsURL = "/al_comments/create/$model/" . $parent->getId()}
     {var $club = $parent instanceof \openvk\Web\Models\Entities\Post && $parent->getTargetWall() < 0 ? (new openvk\Web\Models\Repositories\Clubs)->get(abs($parent->getTargetWall())) : ($club ?? null)}
     {if !$readOnly}
@@ -37,5 +38,5 @@
         {include "paginator.latte", conf => (object) ["page" => $page, "count" => $count, "amount" => sizeof($comments), "perPage" => 10]}
     </div>
 {else}
-    <span id="none_tip">{_comments_tip}</span>
+    <span n:if="$canComment" id="none_tip">{_comments_tip}</span>
 {/if}

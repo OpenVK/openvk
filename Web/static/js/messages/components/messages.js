@@ -979,6 +979,20 @@ export class ChatMessage {
         this.data = item;
         this.has_not_loaded_attachments = false;
 
+        if (typeof item.attachments === "string" && item.attachments.length > 0) {
+            const a = item.attachments.split(",");
+            const n = [];
+            a.forEach(i => {
+                const _type = i.split('_')[0].replace(/[0-9]/g, '');
+                if (_type) {
+                    const f = { type: _type };
+                    f[_type] = {};
+                    n.push(f);
+                }
+            });
+            item.attachments = n;
+        }
+
         if (!this.data.peer_id) {
             if (this.data.chat_id) {
                 this.data.peer_id = 2000000000 + Number(this.data.chat_id);
@@ -1228,6 +1242,15 @@ export class ChatMessage {
                             const photoSrc = c.photo?.photo_75 || c.photo?.photo_130 || c.photo?.link || "";
                             if (photoSrc) {
                                 txt += `<img class="conv_prev_img" src="${photoSrc}">`;
+                            }
+                            if (!cleanBaseText || cleanBaseText.length === 0) {
+                                txt += get_attachment_text(c);
+                            }
+                            break;
+                        case "sticker":
+                            const stickerSrc = c.sticker?.photo_64 || c.sticker?.photo_128 || c.sticker?.images?.[0]?.url || "";
+                            if (stickerSrc) {
+                                txt += `<img class="conv_prev_img" src="${stickerSrc}">`;
                             }
                             if (!cleanBaseText || cleanBaseText.length === 0) {
                                 txt += get_attachment_text(c);

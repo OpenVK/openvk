@@ -308,41 +308,6 @@ export class InstantMessagesAndRelated {
         }
     }
 
-    // вот там заглушку добавь, вот там глянь чёто отвалилось, вот там короче придумал добавь в функции аргумент чтобы сделать такое исключение в логике, чтобы мессенджер думал что он показывает от имени репортнувшего, оо пиздец бля, и ещё перезагрузи страницу 1000 раз
-    static async reportShowMessageContext(event, report_id, peer_id, message_id, author_id) {
-        const container = event.target.closest("#msg_context_place");
-        event.target.remove();
-        imLog("reportShowMessageContext", report_id, peer_id, message_id, author_id);
-
-        const f = await InstantMessagesAndRelated.insertAsReport(container, {
-            "report_id": report_id,
-            "peer_id": peer_id,
-            "message_id": message_id,
-            "author_id": author_id
-        });
-        window.im = f;
-        f.openTabByName("conversations");
-        /*
-        const messenger = new Messenger();
-        messenger._window = new MessengerPage();
-        messenger._window.container = container;
-
-        const convo = new Conversation({
-            "peer": await ChatGeneralForm.resolveByIdAndReturnClass(peer_id)
-        });
-        console.log(convo);
-        messenger.setChat(convo);
-        const c = await convo.getEndScrollPosition().loadOlder();
-        convo.getEndScrollPosition().result();
-        await messenger.view.render(container, {}, messenger);
-        messenger.goToMessage({
-            "peer_id": peer_id,
-            "id": message_id
-        }, convo, false);
-        u(".messages--peers-tabs").attr("style", "display:none");
-        //const im = await window.im_class.insertIn(document.querySelector("#msg_context_place"), null, false, false, global_id);*/
-    }
-
     _showAgreement() {
         return new Promise((resolve, reject) => {
             const msg = new CMessageBox({
@@ -569,7 +534,7 @@ export class InstantMessagesAndRelated {
                 console.error(e);
                 try {
                     document.querySelectorAll("#load_skeleton").forEach(el => el.remove());
-                } catch (err) {}
+                } catch (err) { }
             }
 
             return got_tab;
@@ -586,12 +551,15 @@ export class InstantMessagesAndRelated {
         const vals = this.tabs.filter(t => t.visible() && t.getPageId() != "conversations");
         return [this.getTab("conversations"), ...vals];
     }
-    getSelectedTab(tab) { return this.tabs[this.selectedTabId]; }
+    getSelectedTab(tab) {
+        if (this.selectedTabId === null || this.selectedTabId === undefined) return null;
+        return this.tabs[this.selectedTabId] || null;
+    }
     getSelectedTabId() {
         try {
-            return this.getSelectedTab().getPageId()
+            const tab = this.getSelectedTab();
+            return tab ? (typeof tab.getPageId === 'function' ? tab.getPageId() : tab.id) : null;
         } catch (e) {
-            console.error(e);
             return null;
         }
     }
@@ -662,6 +630,47 @@ class IMState {
         this.item_index = 0;
         this.group_id = group_id;
         this.isFastchat = false;
+
+        this._mediaQuery = window.matchMedia('(max-width: 768px)');
+        this._is_mobile = this._mediaQuery.matches;
+        this._initMobileListener();
+    }
+
+    get is_mobile() {
+        return this._is_mobile;
+    }
+
+    _initMobileListener() {
+        const handler = (e) => {
+            const wasMobile = this._is_mobile;
+            this._is_mobile = e.matches;
+
+            document.body.classList.toggle('im_mobile', this._is_mobile);
+
+            if (wasMobile !== this._is_mobile) {
+                imLog(`[IM] Viewport switched: is_mobile = ${this._is_mobile}`);
+
+                if (this.link.fastChats) {
+                    if (this._is_mobile) {
+                        this.link.fastChats.hide();
+                    } else {
+                        this.link.fastChats.render();
+                    }
+                }
+
+                if (this.link.messenger) {
+                    this.link.messenger.update();
+                }
+            }
+        };
+
+        if (typeof this._mediaQuery.addEventListener === 'function') {
+            this._mediaQuery.addEventListener('change', handler);
+        } else if (typeof this._mediaQuery.addListener === 'function') {
+            this._mediaQuery.addListener(handler);
+        }
+
+        document.body.classList.toggle('im_mobile', this._is_mobile);
     }
 
     getId() {
@@ -676,8 +685,11 @@ class IMState {
     get is_opened() { return location.pathname == "/im"; }
     get is_active() {
         try {
-            return window.im.getSelectedTabId() == "messenger" && this.is_opened == true;
-        } catch (e) { return false; }
+            if (!this.is_opened || !window.im) return false;
+            return window.im.getSelectedTabId() === "messenger";
+        } catch (e) {
+            return false;
+        }
     }
     get is_group() { return this.group_id != null }
 
@@ -720,6 +732,8 @@ class IMState {
                 el.classList.remove("zero_counter");
             }
         });
+
+        updateFaviconBadge(this.unread_counter);
     }
 
     async _loadCurrent() {
@@ -783,12 +797,6 @@ class IMState {
                 joinCode: joinCode
             });
             return;
-        }
-
-        if (joinByTopic != null) {
-            this.link.openTabByName("chat_preview_topic", true, {
-                "topic": joinByTopic
-            });
         }
 
         if (_sel) {
@@ -873,12 +881,8 @@ class IMState {
             return;
         }
 
-        if (!url) {
-            url = location.href;
-        }
-
-        const n_url = url ? new URL(url) : null;
-        let should_fullsize = n_url ? n_url.pathname == "/im" : false;
+        const n_url = new URL(url || location.href, location.origin);
+        let should_fullsize = n_url.pathname === "/im";
         if (from_msg) { should_fullsize = true; }
 
         if (should_fullsize) {
@@ -905,7 +909,7 @@ class IMState {
             try {
                 this.removeLoadSkeleton(pageContent);
                 document.querySelectorAll("#load_skeleton").forEach(el => el.remove());
-            } catch (e) {}
+            } catch (e) { }
         } else {
             imLog("position is in fastchats");
             if (!this.link.fastChats.isInserted) {
@@ -927,10 +931,10 @@ class IMState {
             if (container && container.querySelector && container.querySelector("#load_skeleton")) {
                 container.querySelectorAll("#load_skeleton").forEach(el => el.remove());
             }
-        } catch (e) {}
+        } catch (e) { }
         try {
             document.querySelectorAll("#load_skeleton").forEach(el => el.remove());
-        } catch (e) {}
+        } catch (e) { }
     }
 
     isCommon() {
@@ -950,7 +954,7 @@ class SettingsPage extends IMPage {
 
         const show_mail = location.hostname == "openvk.org";
         container.insertAdjacentHTML("beforeend", `
-            <div style="box-sizing: border-box;padding: 40% 20%;height: 100%;background: var(--common-2);">
+            <div class="messenger-settings">
                 <div>
                     <b>Openvk IM</b>
                     <label style="display:block;"><input id="im.24h" type="checkbox">${tr("im_option_24h_format") || "24-часовой формат времени"}</label>
@@ -1097,6 +1101,9 @@ export class LongPollConnection {
     constructor(im) {
         this.stopped = false;
         this.link = im;
+        this.xhr = null;
+        this.retryDelay = 1000;
+        this.retryTimer = null;
     }
 
     async create(group_id = null) {
@@ -1104,20 +1111,35 @@ export class LongPollConnection {
         if (group_id) {
             params.group_id = group_id;
         }
-        this.lp = await window.OVKAPI.call('messages.getLongPollServer', params);
-        imLog("LP | Created connection to the current user");
+        try {
+            this.lp = await window.OVKAPI.call('messages.getLongPollServer', params);
+            imLog("LP | Created connection to the current user");
+            this.retryDelay = 1000;
+            return true;
+        } catch (e) {
+            console.error("LP | Failed to getLongPollServer:", e);
+            return false;
+        }
     }
 
     stop() {
         this.stopped = true;
+        if (this.retryTimer) {
+            clearTimeout(this.retryTimer);
+            this.retryTimer = null;
+        }
+        if (this.xhr) {
+            try { this.xhr.abort(); } catch (e) { }
+            this.xhr = null;
+        }
     }
 
     get is_stopped() {
-        return this.stopped == true || (!this.link.state.isCommon() && !this.link.state.isCurrentUser());
+        return this.stopped === true || (!this.link.state.isCommon() && !this.link.state.isCurrentUser());
     }
 
     getFirstCounter() {
-        return this.lp.unread_count;
+        return this.lp ? this.lp.unread_count : 0;
     }
 
     listen() {
@@ -1126,24 +1148,114 @@ export class LongPollConnection {
             return;
         }
 
-        imLog("LP | New cycle of listening");
-        let xhr = new XMLHttpRequest();
-        const mode = 2 + 8 + 32 + 64 + 128;
-        const connection_string = this.lp.server + '?key=' + this.lp.key + '&ts=' + this.lp.ts + '&pts=' + this.lp.pts + '&mode=' + mode;
-        xhr.open('GET', connection_string, true);
-        xhr.onload = () => {
-            let data = JSON.parse(xhr.responseText);
-            if (data?.updates?.length > 0)
-                data.updates.forEach((event) => {
-                    this.link.event_handler.handle(event);
-                });
-            this.lp.ts = data.ts;
+        if (!this.lp || !this.lp.server) {
+            this.scheduleRetry(2000, async () => {
+                const ok = await this.create(Math.abs(this.link.state.group_id));
+                if (ok) this.listen();
+            });
+            return;
+        }
 
-            if (this.stopped == false) {
+        if (this.xhr) {
+            try { this.xhr.abort(); } catch (e) { }
+            this.xhr = null;
+        }
+
+        this.xhr = new XMLHttpRequest();
+        const mode = 2 + 8 + 32 + 64 + 128 + 256; // 256 - custom fields
+
+        let serverUrl = this.lp.server;
+        if (!/^https?:\/\//i.test(serverUrl)) {
+            serverUrl = 'https://' + serverUrl;
+        }
+
+        const connection_string = serverUrl + '?key=' + this.lp.key + '&ts=' + this.lp.ts + '&pts=' + this.lp.pts + '&mode=' + mode + '&version=' + 3;
+
+        this.xhr.open('GET', connection_string, true);
+        this.xhr.timeout = 35000;
+
+        this.xhr.onload = async () => {
+            if (this.xhr.status !== 200) {
+                this.handleError(`HTTP ${this.xhr.status}`);
+                return;
+            }
+
+            let data = null;
+            try {
+                data = JSON.parse(this.xhr.responseText);
+            } catch (e) {
+                this.handleError("Non-JSON response (Cloudflare/Gateway page)");
+                return;
+            }
+
+            this.retryDelay = 1000;
+
+            if (data.failed) {
+                if (data.failed === 1) {
+                    this.lp.ts = data.ts;
+                    this.scheduleNext(50);
+                } else if (data.failed === 2 || data.failed === 3) {
+                    this.scheduleRetry(1000, async () => {
+                        const ok = await this.create(Math.abs(this.link.state.group_id));
+                        if (ok) this.listen();
+                    });
+                } else {
+                    this.handleError(`LP failed code: ${data.failed}`);
+                }
+                return;
+            }
+
+            if (data.updates && data.updates.length > 0) {
+                for (const event of data.updates) {
+                    await this.link.event_handler.handle(event);
+                }
+            }
+            if (data.ts) {
+                this.lp.ts = data.ts;
+            }
+
+            this.scheduleNext(50);
+        };
+
+        this.xhr.onerror = () => this.handleError("Network disconnected");
+
+        this.xhr.ontimeout = () => {
+            if (!this.is_stopped) {
                 this.listen();
             }
         };
-        xhr.send();
+
+        this.xhr.send();
+    }
+
+    handleError(reason) {
+        if (this.is_stopped) return;
+        console.warn(`[IM] LP Error: ${reason}. Backoff delay: ${this.retryDelay / 1000}s`);
+
+        const delay = this.retryDelay;
+        this.retryDelay = Math.min(15000, this.retryDelay * 2);
+
+        this.scheduleRetry(delay, () => this.listen());
+    }
+
+    scheduleNext(delay = 50) {
+        if (this.is_stopped) return;
+        if (this.retryTimer) clearTimeout(this.retryTimer);
+        this.retryTimer = setTimeout(() => {
+            this.retryTimer = null;
+            this.listen();
+        }, delay);
+    }
+
+    scheduleRetry(delay, callback) {
+        if (this.is_stopped) return;
+        if (this.retryTimer) clearTimeout(this.retryTimer);
+        this.retryTimer = setTimeout(async () => {
+            this.retryTimer = null;
+            if (!this.is_stopped) {
+                await callback();
+            }
+        }, delay);
     }
 }
 
@@ -1184,7 +1296,9 @@ export class FastChats {
     }
 
     shouldBeShown() {
-        return isImWarningRemoved() && !window.im.state.is_opened && this.currentUserId > 0;
+        if (window.im?.state?.is_mobile) return false;
+        const isImPage = location.pathname === "/im" || (window.im && window.im.state && window.im.state.is_opened);
+        return isImWarningRemoved() && !isImPage && this.currentUserId > 0;
     }
 
     async insertSelf() {
@@ -1296,12 +1410,20 @@ export class FastChats {
         });
         this.onlineWindow.isFocused = false;
         this.render();
+        this.markChatAsRead(peerId);
     }
 
     moveChat(peerId, pos) {
         const chat = this.openedChats.find(c => c.peerId === peerId);
         if (chat) {
-            chat.position = pos;
+            if (chat.isMinimized) {
+                chat.position = {
+                    x: pos.x,
+                    y: window.innerHeight - 350
+                };
+            } else {
+                chat.position = pos;
+            }
             this.saveState();
             this.render();
         }
@@ -1343,6 +1465,34 @@ export class FastChats {
         const friend = this.onlineWindow.allFriends.find(f => f.id === peerId) || this.onlineWindow.friends.find(f => f.id === peerId);
         const initialTitle = friend ? (friend.first_name + " " + friend.last_name) : "...";
         const initialPhoto = friend ? (friend.photo_50 || "") : "";
+
+        if (!position) {
+            const chatWidth = 250;
+            const chatHeight = 350;
+            const minTabWidth = 170;
+            const gap = 5;
+            let rightOffset = 20;
+            const isOnlineWindowInRightCorner = this.onlineWindow.isOpened &&
+                (!this.onlineWindow.position || this.onlineWindow.position.x > window.innerWidth - 300);
+
+            if (isOnlineWindowInRightCorner) {
+                const onlineWidth = 230;
+                rightOffset += 15 + onlineWidth + gap;
+            }
+
+            this.openedChats.forEach(c => {
+                if (c.peerId === peerId) return;
+                rightOffset += (c.isMinimized ? minTabWidth : chatWidth) + gap;
+            });
+
+            const activeChatsCount = this.openedChats.filter(c => !c.isMinimized && c.peerId !== peerId).length;
+            rightOffset += activeChatsCount * (chatWidth + gap);
+
+            const spawnX = Math.max(10, window.innerWidth - rightOffset - chatWidth);
+            const spawnY = Math.max(10, window.innerHeight - chatHeight);
+
+            position = { x: spawnX, y: spawnY };
+        }
 
         chat = {
             peerId,
@@ -1434,11 +1584,12 @@ export class FastChats {
             if (save) this.saveState();
 
             if (!isMinimized) {
-                if (chat.firstUnreadMsgId) {
+                setTimeout(() => this.markChatAsRead(peerId), 300);
+                /*if (chat.firstUnreadMsgId) {
                     setTimeout(() => this.scrollToUnread(peerId), 50);
                 } else {
                     setTimeout(() => this.scrollToBottom(peerId), 50);
-                }
+                }*/
             }
         } catch (e) {
             console.error("FastChats | openChat error:", e);
@@ -1455,56 +1606,115 @@ export class FastChats {
 
     toggleChat(peerId) {
         const chat = this.openedChats.find(c => c.peerId === peerId);
-        if (chat) {
-            chat.isMinimized = !chat.isMinimized;
-            this.focusChat(peerId);
-            if (!chat.isMinimized) {
-                if (chat.unreadCount > 0 && !chat.firstUnreadMsgId) {
-                    for (const msg of chat.messages) {
-                        const isOut = msg.from_id === this.currentUserId || msg.out === 1;
-                        if (!isOut && (msg.read_state === 0 || msg.read_state === false || msg.unread === 1)) {
-                            chat.firstUnreadMsgId = msg.id;
-                            break;
-                        }
+        if (!chat) return;
+
+        const chatWidth = 250;
+        const minTabWidth = 170;
+        const widthDiff = chatWidth - minTabWidth;
+        const chatHeight = 350;
+
+        chat.isMinimized = !chat.isMinimized;
+        this.focusChat(peerId);
+
+        if (!chat.isMinimized) {
+            const curX = chat.position ? chat.position.x : (window.innerWidth - minTabWidth - 20);
+            const newX = Math.max(10, curX - widthDiff);
+            const newY = Math.max(10, window.innerHeight - chatHeight);
+
+            chat.position = { x: newX, y: newY };
+
+            if (chat.unreadCount > 0 && !chat.firstUnreadMsgId) {
+                for (const msg of chat.messages) {
+                    const isOut = msg.from_id === this.currentUserId || msg.out === 1;
+                    if (!isOut && (msg.read_state === 0 || msg.read_state === false || msg.unread === 1)) {
+                        chat.firstUnreadMsgId = msg.id;
+                        break;
                     }
                 }
-                chat.unreadCount = 0;
-                if (chat.firstUnreadMsgId) {
-                    setTimeout(() => this.scrollToUnread(peerId), 50);
-                } else {
-                    setTimeout(() => this.scrollToBottom(peerId), 50);
-                }
             }
-            this.saveState();
-            this.render();
+            chat.unreadCount = 0;
+
+            if (chat.firstUnreadMsgId) {
+                setTimeout(() => this.scrollToUnread(peerId), 50);
+            } else {
+                setTimeout(() => this.scrollToBottom(peerId), 50);
+            }
+        } else {
+            if (chat.position) {
+                const newX = Math.min(window.innerWidth - minTabWidth - 10, chat.position.x + widthDiff);
+                chat.position = {
+                    x: newX,
+                    y: Math.max(10, window.innerHeight - chatHeight)
+                };
+            }
         }
+
+        this.saveState();
+        this.render();
     }
 
     async loadOlderMessages(peerId) {
         const chat = this.openedChats.find(c => c.peerId === peerId);
-        if (!chat || chat.isLoading) return;
+        if (!chat || chat.isLoadingOlder || chat.isLoading) return;
 
-        chat.isLoading = true;
+        chat.isLoadingOlder = true;
+        this.render();
+
         try {
+            const offsetCount = chat.messages.filter(m => !String(m.id).startsWith('temp_')).length;
+
             const histRes = await window.OVKAPI.call('messages.getHistory', {
                 peer_id: peerId,
                 count: 15,
-                offset: chat.messages.length,
+                offset: offsetCount,
                 extended: 1
             });
 
             if (histRes && histRes.items && histRes.items.length > 0) {
                 const olderMsgs = histRes.items.reverse();
-                chat.messages = [...olderMsgs, ...chat.messages];
+
+                const existingIds = new Set(chat.messages.map(m => String(m.id)));
+                const uniqueOlder = olderMsgs.filter(m => !existingIds.has(String(m.id)));
+
+                const listEl = document.querySelector(`#fc_messages_${peerId}`);
+                const prevScrollHeight = listEl ? listEl.scrollHeight : 0;
+                const prevScrollTop = listEl ? listEl.scrollTop : 0;
+
+                if (uniqueOlder.length > 0) {
+                    chat.messages = [...uniqueOlder, ...chat.messages];
+                }
                 chat.hasMore = histRes.count > chat.messages.length;
+
+                chat.isLoadingOlder = false;
+                this.render();
+
+                const updatedList = document.querySelector(`#fc_messages_${peerId}`) || listEl;
+                if (updatedList && prevScrollHeight > 0) {
+                    const scrollDiff = updatedList.scrollHeight - prevScrollHeight;
+                    const oldBehavior = updatedList.style.scrollBehavior;
+                    updatedList.style.scrollBehavior = 'auto';
+                    updatedList.scrollTop = prevScrollTop + scrollDiff;
+                    updatedList.style.scrollBehavior = oldBehavior;
+
+                    requestAnimationFrame(() => {
+                        if (updatedList) {
+                            const newDiff = updatedList.scrollHeight - prevScrollHeight;
+                            if (newDiff > 0) {
+                                updatedList.scrollTop = prevScrollTop + newDiff;
+                            }
+                        }
+                    });
+                }
             } else {
                 chat.hasMore = false;
+                chat.isLoadingOlder = false;
+                this.render();
             }
         } catch (e) {
             console.error("FastChats | loadOlderMessages error:", e);
+            chat.isLoadingOlder = false;
+            this.render();
         }
-        chat.isLoading = false;
-        this.render();
     }
 
     onTextChange(peerId, text) {
@@ -1650,6 +1860,11 @@ export class FastChats {
 
     toggleOnlineWindow() {
         this.onlineWindow.isOpened = !this.onlineWindow.isOpened;
+
+        if (this.onlineWindow.isOpened) {
+            this.onlineWindow.position = null;
+        }
+
         this.focusOnline();
         this.saveState();
         this.render();
@@ -1680,7 +1895,10 @@ export class FastChats {
     }
 
     show() {
-        if (!this.shouldBeShown()) return;
+        if (!this.shouldBeShown()) {
+            this.hide();
+            return;
+        }
         const container = document.querySelector("#fastchats_container");
         if (container) {
             container.style.display = "flex";
@@ -1772,9 +1990,10 @@ export class FastChats {
 
             this.render();
             if (!chat.isMinimized) {
-                this.scrollToBottom(peerId);
+                setTimeout(() => this.markChatAsRead(peerId), 200);
+                //this.scrollToBottom(peerId);
             }
-        } else if (!isOut && !window.im.state.is_opened) {
+        } else if (!isOut && this.shouldBeShown()) {
             await this.openChat(peerId, true, true);
             const openedChat = this.openedChats.find(c => Number(c.peerId) === peerId);
             if (openedChat) {
@@ -1833,6 +2052,12 @@ export class FastChats {
     render() {
         const container = document.querySelector("#fastchats_container");
         if (!container) return;
+
+        if (!this.shouldBeShown()) {
+            container.style.display = "none";
+            return;
+        }
+
         container.style.display = "flex";
 
         preactRender(html`
@@ -1859,6 +2084,53 @@ export class FastChats {
             />
         `, container);
     }
+
+    markChatAsRead(peerId) {
+        const chat = this.openedChats.find(c => Number(c.peerId) === Number(peerId));
+        if (!chat || chat.isMinimized) return;
+
+        // debounce
+        if (chat._readThrottleTimer) return;
+        chat._readThrottleTimer = setTimeout(() => {
+            chat._readThrottleTimer = null;
+        }, 500);
+
+        const box = document.querySelector(`.fc_chat_box[data-peer-id="${peerId}"]`);
+        const list = box ? box.querySelector('.fc_messages_list') : null;
+        if (!list) return;
+
+        const listRect = list.getBoundingClientRect();
+        const msgRows = list.querySelectorAll('.fc_msg_row[data-msg-id]');
+        let maxVisibleId = 0;
+
+        msgRows.forEach(row => {
+            const rect = row.getBoundingClientRect();
+            if (rect.bottom >= listRect.top && rect.top <= listRect.bottom) {
+                const id = Number(row.getAttribute('data-msg-id'));
+                if (id && !String(id).startsWith('temp_') && id > maxVisibleId) {
+                    maxVisibleId = id;
+                }
+            }
+        });
+
+        if (!maxVisibleId || maxVisibleId <= (chat.lastReadMarkedId || 0)) {
+            return;
+        }
+
+        chat.lastReadMarkedId = maxVisibleId;
+
+        window.OVKAPI.call('messages.markAsRead', {
+            peer_id: peerId,
+            start_message_id: maxVisibleId
+        }).then(() => {
+            chat.unreadCount = 0;
+            chat.firstUnreadMsgId = null;
+            this.render();
+        }).catch((err) => {
+            imLog.error("FastChats markAsRead error:", err);
+            chat.lastReadMarkedId = 0;
+        });
+    }
 }
 
 // Global Esc key listener for fastchats
@@ -1872,6 +2144,38 @@ if (!window._fc_esc_inited) {
         }
     });
 }
+
+let _originalFaviconUrl = null;
+
+export function updateFaviconBadge(count) {
+    count = Number(count) || 0;
+
+    let link = document.querySelector("link[rel~='icon']");
+    if (!link) {
+        link = document.createElement("link");
+        link.rel = "shortcut icon";
+        document.head.appendChild(link);
+    }
+
+    if (!_originalFaviconUrl) {
+        _originalFaviconUrl = '/assets/packages/static/openvk/img/icon.ico';
+    }
+
+    if (count <= 0) {
+        if (link.href !== _originalFaviconUrl) {
+            link.href = _originalFaviconUrl;
+        }
+        return;
+    }
+
+    const iconIndex = Math.min(9, Math.max(1, count));
+    const targetUrl = `/assets/packages/static/openvk/img/im/favs/fav_im${iconIndex}.ico`;
+
+    if (!link.href.endsWith(targetUrl)) {
+        link.href = targetUrl;
+    }
+}
+
 
 (async () => {
     if (window.openvk.current_id == 0) {

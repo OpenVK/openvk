@@ -398,10 +398,9 @@ final class Messages extends VKAPIRequestHandler
 
         if (!empty($data['messages']['items'])) {
             foreach ($data['messages']['items'] as &$msg) {
-                if (isset($msg['attachments'])) {
-                    $this->replaceAttachments($msg['attachments'], ["gift"]);
-                }
+                $this->sanitizeMessageAttachmentsRecursive($msg);
             }
+            unset($msg);
         }
 
         $this->hydrateExtendedData($data, $fields);
@@ -428,7 +427,7 @@ final class Messages extends VKAPIRequestHandler
         }
 
         $data = $this->invoke("messages.getLongPollServer", $params, (int) $group_id);
-        $data['server'] = $baseUrl;
+        $data['server'] = preg_replace('#^(https?:)?//#i', '', $baseUrl);
 
         $isLegacy = (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR <= 5 && defined("VKAPI_DECL_VER_MINOR") && VKAPI_DECL_VER_MINOR < 80);
         if ($isLegacy && $need_pts === 0) {
@@ -757,20 +756,11 @@ final class Messages extends VKAPIRequestHandler
             $random_id = $guid;
         }
 
-        $cleanMessage = trim(preg_replace('/[\s\x{200b}\x{feff}\x{00a0}]+/u', ' ', $message));
+        $cleanMessage = trim(preg_replace('/[\s\x{200b}\x{feff}\x{00a0}\x{200c}\x{200d}]+/u', ' ', $message));
         if ($cleanMessage === '') {
             $message = '';
         }
 
-        if ($sticker_id > 0 && !empty($message)) {
-            $this->fail(100, "Stickers cannot be sent with text");
-        }
-
-        if (empty($message) && empty($attachment) && $sticker_id <= 0 && empty($forward_messages) && empty($forward) && $reply_to <= 0) {
-            $this->fail(100, "Message text is empty or invalid");
-        }
-
-        // Multi-peer send (5.80+)
         if (empty($peer_ids)) {
             $peer_ids = (string) ($_POST['peer_ids'] ?? $_GET['peer_ids'] ?? '');
         }
@@ -807,10 +797,9 @@ final class Messages extends VKAPIRequestHandler
             return $results;
         }
 
-        // Multi-user send (5.20)
         if (!empty($user_ids)) {
             $ids = preg_split("%, ?%", $user_ids);
-            if (count($ids) > 100) {
+            if (count($ids) > 25) {
                 $this->fail(913, "Too many recipients");
             }
 
@@ -828,6 +817,8 @@ final class Messages extends VKAPIRequestHandler
 
         $attachment_checked = parseAttachments($attachment, ["photo", "video", "doc", "audio", "wall", "sticker"]);
         $attachment_secure = [];
+        $stickerCount = 0;
+        $otherAttachCount = 0;
 
         if ($sticker_id > 0) {
             $stk = (new \openvk\Web\Models\Repositories\Stickers())->getSticker($sticker_id);
@@ -839,32 +830,46 @@ final class Messages extends VKAPIRequestHandler
                 $this->fail(100, "Sticker is not available for you");
             }
 
+            $stickerCount++;
             $attachment_secure[] = $stk->getAttachmentString();
         }
 
         foreach ($attachment_checked as $item) {
             if (!$item || !$item->canBeViewedBy($this->getUser())) {
                 continue;
-            } elseif ($item instanceof \openvk\Web\Models\Entities\Messages\Sticker && !$item->canBeUsedBy($this->getUser())) {
-                continue;
-            } else {
-                $attachment_secure[] = $item->getAttachmentString();
             }
-        }
 
-        $hasSticker = $sticker_id > 0;
-        foreach ($attachment_checked as $item) {
             if ($item instanceof \openvk\Web\Models\Entities\Messages\Sticker) {
-                $hasSticker = true;
-                break;
+                if (!$item->canBeUsedBy($this->getUser())) {
+                    $this->fail(100, "Sticker is not available for you");
+                }
+                $stickerCount++;
+            } else {
+                $otherAttachCount++;
+            }
+
+            $attachment_secure[] = $item->getAttachmentString();
+        }
+
+        if ($stickerCount > 0) {
+            if ($stickerCount > 1) {
+                $this->fail(100, "Only one sticker can be sent per message");
+            }
+
+            if ($otherAttachCount > 0) {
+                $this->fail(100, "Stickers cannot be sent with other attachments");
+            }
+
+            if (!empty($message)) {
+                $this->fail(100, "Stickers cannot be sent with text");
+            }
+
+            if (!empty($forward_messages)) {
+                $this->fail(100, "Stickers cannot be sent with forwarded messages");
             }
         }
 
-        if ($hasSticker && !empty($message)) {
-            $this->fail(100, "Stickers cannot be sent with text");
-        }
-
-        if (empty($message) && sizeof($attachment_secure) == 0 && empty($forward_messages) && $reply_to <= 0) {
+        if (empty($message) && count($attachment_secure) === 0 && empty($forward_messages) && $reply_to <= 0) {
             $this->fail(100, "Message text is empty or invalid");
         }
 
@@ -874,7 +879,6 @@ final class Messages extends VKAPIRequestHandler
 
         $this->checkPeerAvailability($resolvedId, $group_id);
 
-        # Finally we get to send a message!
         $params = [
             "peer_id"    => (string) $resolvedId,
             "message"    => $message,
@@ -889,11 +893,9 @@ final class Messages extends VKAPIRequestHandler
         if ($chat_id > 0) {
             $params["chat_id"] = (string) $chat_id;
         }
-
         if ($reply_to > 0) {
             $params["reply_to"] = (string) $reply_to;
         }
-
         if (!empty($forward_messages)) {
             $params["forward_messages"] = $forward_messages;
         }
@@ -1348,10 +1350,9 @@ final class Messages extends VKAPIRequestHandler
 
         if (!empty($data['items'])) {
             foreach ($data['items'] as &$item) {
-                if (isset($item['attachments'])) {
-                    $this->replaceAttachments($item['attachments'], ["gift"]);
-                }
+                $this->sanitizeMessageAttachmentsRecursive($item);
             }
+            unset($item);
         }
 
         if ($extended) {
@@ -1693,27 +1694,15 @@ final class Messages extends VKAPIRequestHandler
                 }
             }
 
-            if (isset($conversation['chat_settings']['pinned_message'])) {
-                if (!empty($conversation['chat_settings']['pinned_message']['attachments']) && is_array($conversation['chat_settings']['pinned_message']['attachments'])) {
-                    $this->replaceAttachments($conversation['chat_settings']['pinned_message']['attachments'], ["gift"]);
-                } else {
-                    $conversation['chat_settings']['pinned_message']['attachments'] = [];
-                }
+            if (!empty($conversation['chat_settings']['pinned_message']) && is_array($conversation['chat_settings']['pinned_message'])) {
+                $this->sanitizeMessageAttachmentsRecursive($conversation['chat_settings']['pinned_message']);
             }
-            if (isset($conversation['pinned_message'])) {
-                if (!empty($conversation['pinned_message']['attachments']) && is_array($conversation['pinned_message']['attachments'])) {
-                    $this->replaceAttachments($conversation['pinned_message']['attachments'], ["gift"]);
-                } else {
-                    $conversation['pinned_message']['attachments'] = [];
-                }
+            if (!empty($conversation['pinned_message']) && is_array($conversation['pinned_message'])) {
+                $this->sanitizeMessageAttachmentsRecursive($conversation['pinned_message']);
             }
 
-            if (isset($item['last_message']['attachments'])) {
-                if (is_array($item['last_message']['attachments'])) {
-                    $this->replaceAttachments($item['last_message']['attachments'], ["gift"]);
-                } else {
-                    $item['last_message']['attachments'] = [];
-                }
+            if (!empty($item['last_message']) && is_array($item['last_message'])) {
+                $this->sanitizeMessageAttachmentsRecursive($item['last_message']);
             }
         }
         unset($item);
@@ -2222,27 +2211,15 @@ final class Messages extends VKAPIRequestHandler
                     }
                 }
 
-                if (isset($conversation['chat_settings']['pinned_message'])) {
-                    if (!empty($conversation['chat_settings']['pinned_message']['attachments']) && is_array($conversation['chat_settings']['pinned_message']['attachments'])) {
-                        $this->replaceAttachments($conversation['chat_settings']['pinned_message']['attachments'], ["gift"]);
-                    } else {
-                        $conversation['chat_settings']['pinned_message']['attachments'] = [];
-                    }
+                if (!empty($conversation['chat_settings']['pinned_message']) && is_array($conversation['chat_settings']['pinned_message'])) {
+                    $this->sanitizeMessageAttachmentsRecursive($conversation['chat_settings']['pinned_message']);
                 }
-                if (isset($conversation['pinned_message'])) {
-                    if (!empty($conversation['pinned_message']['attachments']) && is_array($conversation['pinned_message']['attachments'])) {
-                        $this->replaceAttachments($conversation['pinned_message']['attachments'], ["gift"]);
-                    } else {
-                        $conversation['pinned_message']['attachments'] = [];
-                    }
+                if (!empty($conversation['pinned_message']) && is_array($conversation['pinned_message'])) {
+                    $this->sanitizeMessageAttachmentsRecursive($conversation['pinned_message']);
                 }
 
-                if (isset($item['last_message']['attachments'])) {
-                    if (is_array($item['last_message']['attachments'])) {
-                        $this->replaceAttachments($item['last_message']['attachments'], ["gift"]);
-                    } else {
-                        $item['last_message']['attachments'] = [];
-                    }
+                if (!empty($item['last_message']) && is_array($item['last_message'])) {
+                    $this->sanitizeMessageAttachmentsRecursive($item['last_message']);
                 }
             }
             unset($item);
@@ -2324,6 +2301,19 @@ final class Messages extends VKAPIRequestHandler
                 $filteredItems[] = $item;
             }
         }
+
+        foreach ($filteredItems as &$item) {
+            if (!empty($item['conversation']['chat_settings']['pinned_message']) && is_array($item['conversation']['chat_settings']['pinned_message'])) {
+                $this->sanitizeMessageAttachmentsRecursive($item['conversation']['chat_settings']['pinned_message']);
+            }
+            if (!empty($item['conversation']['pinned_message']) && is_array($item['conversation']['pinned_message'])) {
+                $this->sanitizeMessageAttachmentsRecursive($item['conversation']['pinned_message']);
+            }
+            if (!empty($item['last_message']) && is_array($item['last_message'])) {
+                $this->sanitizeMessageAttachmentsRecursive($item['last_message']);
+            }
+        }
+        unset($item);
 
         if ($extended === 1) {
             $this->hydrateExtendedData($response);

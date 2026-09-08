@@ -33,7 +33,7 @@ function NewNotification(title, body, avatar = null, callback = () => { }, time 
         `<div class="notification_ballon notification_ballon_wrap" id="n${id}">
         <notification_title>
             ${title}
-            <a class="close">X</a> 
+            <a class="close">&times;</a> 
         </notification_title>
         <wrap>
             ${avatar}
@@ -52,15 +52,16 @@ function NewNotification(title, body, avatar = null, callback = () => { }, time 
 
     let closed = false;
     let timerId = null;
+    let isHovered = false;
+    let remainingTime = time;
+    let timerStartTimestamp = null;
 
     function __closeNotification() {
         if (closed) return;
         closed = true;
 
-        document.removeEventListener("visibilitychange", checkVisibilityAndStartTimer);
-        window.removeEventListener("focus", checkVisibilityAndStartTimer);
-
-        if (timerId) clearTimeout(timerId);
+        stopTimer();
+        cleanupListeners();
 
         if (count && counter > 0) {
             counter--;
@@ -71,30 +72,62 @@ function NewNotification(title, body, avatar = null, callback = () => { }, time 
         setTimeout(() => { getPrototype().remove(); }, 500);
     }
 
-    function checkVisibilityAndStartTimer() {
-        if (closed || timerId) return;
+    function startTimer() {
+        if (closed || timerId || isHovered) return;
+        if (document.hidden || document.visibilityState !== "visible") return;
 
-        if (document.visibilityState === "visible") {
-            document.removeEventListener("visibilitychange", checkVisibilityAndStartTimer);
-            window.removeEventListener("focus", checkVisibilityAndStartTimer);
+        timerStartTimestamp = Date.now();
+        timerId = setTimeout(() => {
+            __closeNotification();
+        }, remainingTime);
+    }
 
-            timerId = setTimeout(() => {
-                __closeNotification();
-            }, time);
+    function stopTimer() {
+        if (timerId) {
+            clearTimeout(timerId);
+            timerId = null;
+            if (timerStartTimestamp) {
+                remainingTime -= (Date.now() - timerStartTimestamp);
+                if (remainingTime < 1000) remainingTime = 1000;
+            }
         }
     }
+
+    function onVisibilityChange() {
+        if (document.hidden || document.visibilityState !== "visible") {
+            stopTimer();
+        } else {
+            startTimer();
+        }
+    }
+
+    function cleanupListeners() {
+        document.removeEventListener("visibilitychange", onVisibilityChange);
+        window.removeEventListener("focus", onVisibilityChange);
+        window.removeEventListener("blur", onVisibilityChange);
+    }
+
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener("focus", onVisibilityChange);
+    window.addEventListener("blur", onVisibilityChange);
+
+    notification.on('mouseenter', function () {
+        isHovered = true;
+        stopTimer();
+    });
+
+    notification.on('mouseleave', function () {
+        isHovered = false;
+        remainingTime = time;
+        startTimer();
+    });
 
     if (count === true) {
         counter++;
         updateTitle();
     }
 
-    if (document.visibilityState === "visible") {
-        checkVisibilityAndStartTimer();
-    } else {
-        document.addEventListener("visibilitychange", checkVisibilityAndStartTimer);
-        window.addEventListener("focus", checkVisibilityAndStartTimer);
-    }
+    startTimer();
 
     notification.children('notification_title').children('a.close').on('click', function (e) {
         e.stopPropagation();

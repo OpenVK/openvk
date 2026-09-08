@@ -444,6 +444,10 @@ class Viewer {
         }
 
         if (this.count <= 1) {
+            if (this.mode == "tg") {
+                this.close();
+            }
+
             console.error("noItems!!!!!!")
             return
         };

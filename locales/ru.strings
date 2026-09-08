@@ -1656,6 +1656,12 @@
 "messenger_typing_two_users" = "$1 и $2 набирают";
 "messenger_typing_three_users" = "$1, $2 и $3 набирают";
 "messenger_typing_other" = "$1 набирают сообщение..."; /* больше трёх */
+"messenger_audiomessage_between_two" = "Записывает голосовое сообщение";
+"messenger_audiomessage_one_user" = "$1 записывает голосовое сообщение";
+"messenger_audiomessage_two_users" = "$1 и $2 записывают голосовые сообщения";
+"messenger_audiomessage_three_users" = "$1, $2 и $3 записывают голосовые сообщения";
+"messenger_audiomessage_other" = "$1 записывают голосовые сообщения";
+
 
 "messages_search_count_one" = "По данному запросу найдено одно сообщение";
 "messages_search_count_few" = "По данному запросу найдено $1 сообщения";

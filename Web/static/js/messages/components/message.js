@@ -90,9 +90,13 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
     const isReplyingTo = Boolean(window.im?.messenger?.replyTo && (Number(window.im.messenger.replyTo.id) === Number(msg.id) || window.im.messenger.replyTo === msg));
     const isEditingThis = Boolean(window.im?.messenger?.editMsg && (Number(window.im.messenger.editMsg.id) === Number(msg.id) || window.im.messenger.editMsg === msg));
     const isImportant = Boolean(msg.data?.important || (msg.data?.flags & 8));
+    const isMobile = Boolean(window.im?.state?.is_mobile || (typeof document !== 'undefined' && document.body.classList.contains('im_mobile')));
+    const hasDropdown = page?.activeDropdownMsgId === msg.id;
+
     const cls = [
         'messenger-app--messages---message',
         'messenger-layer',
+        hasDropdown ? 'has-active-dropdown' : '',
         isSelected(msg) ? 'msg-selected' : '',
         isReplyingTo ? 'msg-replying-to' : '',
         isEditingThis ? 'msg-editing-this' : '',
@@ -182,23 +186,190 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
         }
     }
 
+    const makeReply = (e) => {
+        if (isDeleted || isSearchTpl) return;
+        if (typeof msg.can === 'function' && !msg.can('reply')) return;
+        if (window.im?.messenger?.isForwarded?.()) return;
+
+        if (e.target.closest('a, button, input, textarea, .actions-2, .msg-mobile-actions, .audioEmbed, .play-button, .compact_video, .reply-msg-container, .checkmark')) {
+            return;
+        }
+
+        e.preventDefault();
+
+        if (isMobile && navigator.vibrate) {
+            try { navigator.vibrate(35); } catch (err) { }
+        }
+
+        try {
+            window.getSelection()?.removeAllRanges();
+        } catch (err) { }
+
+        if (page?.activeDropdownMsgId) {
+            page.activeDropdownMsgId = null;
+        }
+
+        window.im.messenger.replyTo = msg;
+        window.im.messenger.unselectAll();
+        window.im.messenger.update();
+
+        setTimeout(() => {
+            window.im.messenger.view?.setInputSelectionToEnd?.();
+        }, 50);
+    };
+
     return html`
     <div class="${cls}"
         id=${msgAnchorId}
         data-msg-id=${msg.id}
         onMouseDown=${(e) => {
-            !isSearchTpl ? window.im?.messenger?.view.onMessageClick(msg, e) : null
+            !isSearchTpl && !isMobile ? window.im?.messenger?.view.onMessageClick(msg, e) : null;
         }}
         onClick=${(e) => {
-            isSearchTpl ? window.im.messenger.goToMessage(msg) : null
-        }}>
+            if (isSearchTpl) {
+                window.im.messenger.goToMessage(msg);
+                return;
+            }
+            if (isMobile) {
+                if (e.target.closest('a, button, input, textarea, .msg-mobile-actions, .audioEmbed, .play-button, .compact_video, .reply-msg-container, .checkmark')) {
+                    return;
+                }
+                if (page?.activeDropdownMsgId) {
+                    page.activeDropdownMsgId = null;
+                    page.update();
+                }
+                e.preventDefault();
+                if (page && typeof page.toggleMessageSelection === 'function') {
+                    page.toggleMessageSelection(msg, e);
+                } else if (window.im?.messenger) {
+                    if (window.im.messenger.isMessageSelected(msg)) {
+                        window.im.messenger.unselectMessage(msg);
+                    } else {
+                        window.im.messenger.selectMessage(msg);
+                    }
+                }
+            }
+        }}
+        onDblClick=${!isMobile ? makeReply : null}
+        onContextMenu=${isMobile ? makeReply : null}
+        >
         <div class="messenger-app--messages---message--wrap">
-            <div class="inlines click-territory">
-                <div class="checkmark"></div>
-            </div>
-            ${!isDeleted && html`
-            <div class="actions-2">
-                <div onClick=${async (e) => {
+            ${!isDeleted && !isMobile ? html`
+                <div class="inlines click-territory">
+                    <div class="checkmark"></div>
+                </div>
+            ` : null}
+
+            ${!isDeleted && (isMobile ? html`
+                <div class="msg-mobile-actions">
+                    ${isImportant && html`
+                        <div class="star-icon active" title="${tr('unmark_important') || 'Важное'}"></div>
+                    `}
+                    <div class="msg-dropdown-wrap">
+                        <div 
+                            class="msg-dropdown-btn ${hasDropdown ? 'active' : ''}" 
+                            onClick=${(e) => {
+                e.stopPropagation();
+                if (page) {
+                    // Если сообщение ближе к низу экрана — открываем меню вверх
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    page.activeDropdownOpenUp = (window.innerHeight - rect.bottom) < 230;
+                    page.activeDropdownMsgId = (page.activeDropdownMsgId === msg.id ? null : msg.id);
+                    page.update();
+                }
+            }}
+                            title="${tr('actions') || 'Действия'}"
+                        >
+                            <!-- Аккуратная иконка трех точек вместо текстовых символов -->
+                            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                                <circle cx="8" cy="3" r="1.5"/>
+                                <circle cx="8" cy="8" r="1.5"/>
+                                <circle cx="8" cy="13" r="1.5"/>
+                            </svg>
+                        </div>
+
+                        ${hasDropdown && html`
+                            <div class="msg-dropdown-menu ${page?.activeDropdownOpenUp ? 'open-up' : ''}" onClick=${(e) => e.stopPropagation()}>
+                                <div class="msg-dropdown-item" onClick=${(e) => {
+                    e.stopPropagation();
+                    page.activeDropdownMsgId = null;
+                    window.im.messenger.replyTo = msg;
+                    window.im.messenger.update();
+                    setTimeout(() => window.im.messenger.view?.setInputSelectionToEnd?.(), 50);
+                }}>
+                                    ${tr('reply') || 'Ответить'}
+                                </div>
+
+                                ${msg.can("edit") && html`
+                                    <div class="msg-dropdown-item" onClick=${(e) => {
+                        e.stopPropagation();
+                        page.activeDropdownMsgId = null;
+                        window.im.messenger.view?.onEditButtonClick(e, msg);
+                    }}>
+                                        ${tr('edit') || 'Редактировать'}
+                                    </div>
+                                `}
+
+                                ${msg.can("pin") && html`
+                                    <div class="msg-dropdown-item" onClick=${(e) => {
+                        e.stopPropagation();
+                        page.activeDropdownMsgId = null;
+                        window.im.messenger.view?.onPinButtonClick(e, msg);
+                    }}>
+                                        ${msg.isPinned() ? (tr('unpin') || 'Открепить') : (tr('pin') || 'Закрепить')}
+                                    </div>
+                                `}
+
+                                <div class="msg-dropdown-item" onClick=${async (e) => {
+                    e.stopPropagation();
+                    page.activeDropdownMsgId = null;
+                    const isImp = Boolean(msg.data?.important || (msg.data?.flags & 8));
+                    try {
+                        await window.OVKAPI.call("messages.markAsImportant", {
+                            message_ids: msg.id,
+                            important: isImp ? 0 : 1
+                        });
+                        if (!msg.data) msg.data = {};
+                        msg.data.important = isImp ? 0 : 1;
+                        if (isImp) {
+                            msg.data.flags = (msg.data.flags || 0) & ~8;
+                        } else {
+                            msg.data.flags = (msg.data.flags || 0) | 8;
+                        }
+                        window.im?.messenger?.view?.update();
+                    } catch (err) {
+                        console.error(err);
+                    }
+                }}>
+                                    ${isImportant ? (tr('unmark_important') || 'Снять отметку') : (tr('mark_important') || 'Отметить важным')}
+                                </div>
+
+                                ${msg.can("viewers") && html`
+                                    <div class="msg-dropdown-item" onClick=${(e) => {
+                        e.stopPropagation();
+                        page.activeDropdownMsgId = null;
+                        window.im.messenger.view?.onViewersButtonClick(e, msg);
+                    }}>
+                                        ${tr('message_viewers') || 'Просмотрели'}
+                                    </div>
+                                `}
+
+                                ${msg.can("report") && html`
+                                    <div class="msg-dropdown-item" onClick=${(e) => {
+                        e.stopPropagation();
+                        page.activeDropdownMsgId = null;
+                        window.im.messenger.view?.onReportButtonClick(e, msg);
+                    }}>
+                                        ${tr('report') || 'Пожаловаться'}
+                                    </div>
+                                `}
+                            </div>
+                        `}
+                    </div>
+                </div>
+            ` : html`
+                <div class="actions-2">
+                    <div onClick=${async (e) => {
                 e.stopPropagation();
                 const isImp = Boolean(msg.data?.important || (msg.data?.flags & 8));
                 try {
@@ -220,26 +391,27 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                     console.error(err);
                 }
             }} class="star-icon ${(msg.data?.important || (msg.data?.flags & 8)) ? 'active' : ''}" title="${(msg.data?.important || (msg.data?.flags & 8)) ? tr('unmark_important') : tr('mark_important')}"></div>
-                ${msg.can("viewers") && html`
-                    <div onClick=${(e) => { window.im.messenger.view.onViewersButtonClick(e, msg) }} class="viewers-icon" title="${tr('message_viewers')}"></div>
-                `}
-                ${msg.can("edit") && html`
-                    <div onClick=${(e) => { window.im.messenger.view.onEditButtonClick(e, msg) }} class="edit-icon"></div>
-                `}
-                ${msg.can("pin") && html`
-                    <div onClick=${(e) => { window.im.messenger.view.onPinButtonClick(e, msg) }} class="pin-icon"></div>
-                `}
-                ${msg.can("report") && html`
-                    <div onClick=${(e) => { window.im.messenger.view.onReportButtonClick(e, msg) }} class="report-icon"></div>
-                `}
-            </div>
-            `}
+                    ${msg.can("viewers") && html`
+                        <div onClick=${(e) => { window.im.messenger.view.onViewersButtonClick(e, msg) }} class="viewers-icon" title="${tr('message_viewers')}"></div>
+                    `}
+                    ${msg.can("edit") && html`
+                        <div onClick=${(e) => { window.im.messenger.view.onEditButtonClick(e, msg) }} class="edit-icon"></div>
+                    `}
+                    ${msg.can("pin") && html`
+                        <div onClick=${(e) => { window.im.messenger.view.onPinButtonClick(e, msg) }} class="pin-icon"></div>
+                    `}
+                    ${msg.can("report") && html`
+                        <div onClick=${(e) => { window.im.messenger.view.onReportButtonClick(e, msg) }} class="report-icon"></div>
+                    `}
+                </div>
+            `)}
+
             <div class="inlines _avatar">
                 <img class="ava" src=${msg.sender?.getAvatar ? msg.sender.getAvatar() : "/assets/packages/static/openvk/img/camera_100.png"} alt=${msg.sender?.getName ? msg.sender.getName() : ""} />
             </div>
             <div class="inlines _content">
-                <a class="_sender" onClick=${(e) => { window.im?.messenger?.view?.onAuthorNameClick(msg, e) }}>
-                    <strong>${msg.sender?.getName ? msg.sender.getName(false, true) : (msg.data?.from_id ? "id" + msg.data.from_id : "...")}</strong>
+                <a class="_sender" href=${msg.sender?.getPageUrl ? msg.sender.getPageUrl() : "javascript:void(0)"}>
+                    <strong>${msg.sender?.getName ? msg.sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...")}</strong>
                 </a>
                 ${has_postfix ? html`
                 <div class="msg-postfix">
@@ -311,6 +483,17 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
   `;
 };
 
+if (typeof window !== 'undefined' && !window._msgDropdownCloserInited) {
+    window._msgDropdownCloserInited = true;
+    document.addEventListener('click', (e) => {
+        const curPage = window.im?.messenger?.view;
+        if (curPage && curPage.activeDropdownMsgId && !e.target.closest('.msg-dropdown-wrap')) {
+            curPage.activeDropdownMsgId = null;
+            curPage.update();
+        }
+    });
+}
+
 export const SystemMessages = {
     "chat_create": (msg, page) => {
         const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
@@ -328,7 +511,7 @@ export const SystemMessages = {
         return html`
             <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
-                    <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
+                    <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
                         <strong>${senderName} </strong>
                     </a>
                     <span class="text">${text.toLowerCase()}</span>
@@ -347,7 +530,7 @@ export const SystemMessages = {
         return html`
             <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
-                    <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
+                    <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
                         <strong>${senderName} </strong>
                     </a>
                     <span class="text">${text.toLowerCase()}</span>
@@ -366,7 +549,7 @@ export const SystemMessages = {
         return html`
             <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
-                    <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
+                    <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
                         <strong>${senderName} </strong>
                     </a>
                     <span class="text">${text.toLowerCase()}</span>
@@ -386,7 +569,7 @@ export const SystemMessages = {
         return html`
             <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
-                    <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
+                    <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
                         <strong>${senderName} </strong>
                     </a>
                     <span class="text">${text.toLowerCase()}</span>
@@ -405,7 +588,7 @@ export const SystemMessages = {
         return html`
             <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
-                    <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
+                    <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
                         <strong>${senderName} </strong>
                     </a>
                     <span class="text">${text.toLowerCase()}</span>
@@ -424,7 +607,7 @@ export const SystemMessages = {
         return html`
             <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
-                    <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
+                    <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
                         <strong>${senderName} </strong>
                     </a>
                     <span class="text">${text.toLowerCase()}</span>
@@ -445,7 +628,7 @@ export const SystemMessages = {
             return html`
                 <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                     <div>
-                        <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
+                        <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
                             <strong>${senderName} </strong>
                         </a>
                         <span class="text">${text.toLowerCase()}</span>
@@ -462,7 +645,7 @@ export const SystemMessages = {
         return html`
             <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
-                    <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
+                    <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
                         <strong>${senderName} </strong>
                     </a>
                     <span class="text">${verb} </span>
@@ -484,7 +667,7 @@ export const SystemMessages = {
         return html`
             <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
-                    <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
+                    <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
                         <strong>${senderName} </strong>
                     </a>
                     <span class="text">${text.toLowerCase()}</span>
@@ -505,7 +688,7 @@ export const SystemMessages = {
             return html`
                 <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                     <div>
-                        <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
+                        <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
                             <strong>${senderName} </strong>
                         </a>
                         <span class="text">${text.toLowerCase()}</span>
@@ -522,7 +705,7 @@ export const SystemMessages = {
         return html`
             <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
-                    <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
+                    <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
                         <strong>${senderName} </strong>
                     </a>
                     <span class="text">${verb} </span>
@@ -548,7 +731,7 @@ export const SystemMessages = {
         return html`
             <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
-                    <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
+                    <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
                         <strong>${senderName} </strong>
                     </a>
                     <span class="text">${verb} </span>
@@ -574,7 +757,7 @@ export const SystemMessages = {
         return html`
             <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
-                    <a class="_sender" onClick=${(e) => { page?.onAuthorNameClick ? page.onAuthorNameClick(msg, e) : null }}>
+                    <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
                         <strong>${senderName} </strong>
                     </a>
                     <span class="text">${verb} </span>
@@ -1165,7 +1348,7 @@ export class LottieSticker extends Component {
     }
 }
 
-const Attachment = ({ msg, att }) => {
+export const Attachment = ({ msg, att }) => {
     switch (att.type) {
         case 'photo':
             return html`
@@ -1248,11 +1431,11 @@ const Attachment = ({ msg, att }) => {
                     data-sticker-id="${sId}"
                     data-pack-id="${targetPack || ''}"
                     onClick=${(e) => {
-                        e.stopPropagation();
-                        if (typeof window.openStickerPackModal === 'function' && targetPack) {
-                            window.openStickerPackModal(targetPack, e);
-                        }
-                    }}
+                    e.stopPropagation();
+                    if (typeof window.openStickerPackModal === 'function' && targetPack) {
+                        window.openStickerPackModal(targetPack, e);
+                    }
+                }}
                     style="cursor: pointer;"
                 >
                     <img class="msg-sticker-img" src="${imgUrl}" alt="sticker" loading="lazy" />

@@ -11,20 +11,123 @@ function __actualPlayNotifSound(type = "notification") {
     }
 }
 
-window.playNotifSound = function (type = "notification") {
-    if (isAudioUnlocked) {
-        __actualPlayNotifSound(type);
+u(document.body).on("click", () => {
+    isAudioUnlocked = true;
+}, { once: true });
+
+// --- Межвкладочная синхронизация звуков и уведомлений ---
+const playedSoundIds = new Set();
+const syncChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('ovk_notifs_sync') : null;
+
+function markSoundPlayed(uniqueId) {
+    playedSoundIds.add(uniqueId);
+    setTimeout(() => playedSoundIds.delete(uniqueId), 15000);
+}
+
+function isTabFocused() {
+    return typeof document !== 'undefined' && !document.hidden
+        && (typeof document.hasFocus === 'function' ? document.hasFocus() : true);
+}
+
+function getActiveChatPeerId() {
+    try {
+        if (!window.im?.state?.is_active) return null;
+        const chat = window.im?.messenger?.getCurrentChat?.();
+        return chat?.peer?.id || null;
+    } catch (e) {
+        return null;
     }
 }
 
-u(document.body).on("click", () => {
-    isAudioUnlocked = true;
-    window.playNotifSound = __actualPlayNotifSound;
-}, { once: true })
+// --- Кросс-вкладочное подавление звука ---
+const TAB_ID = Date.now() + '_' + Math.random().toString(36).slice(2);
+const CHAT_KEY_PREFIX = 'ovk_chat_';
+const CHAT_STALE_MS = 15000;
+
+function updateActiveChatForTab() {
+    const key = CHAT_KEY_PREFIX + TAB_ID;
+    const peerId = getActiveChatPeerId();
+    if (peerId != null) {
+        localStorage.setItem(key, JSON.stringify({ peer: peerId, ts: Date.now() }));
+    } else {
+        localStorage.removeItem(key);
+    }
+}
+
+function cleanupTabChat() {
+    localStorage.removeItem(CHAT_KEY_PREFIX + TAB_ID);
+}
+
+function isChatOpenInAnyTab(peerId) {
+    const now = Date.now();
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i);
+        if (!key || !key.startsWith(CHAT_KEY_PREFIX)) continue;
+        try {
+            const data = JSON.parse(localStorage.getItem(key));
+            if (now - data.ts > CHAT_STALE_MS) {
+                localStorage.removeItem(key);
+                continue;
+            }
+            if (Number(data.peer) === Number(peerId)) return true;
+        } catch (e) { continue; }
+    }
+    return false;
+}
+
+setInterval(updateActiveChatForTab, 5000);
+updateActiveChatForTab();
+window.addEventListener('pagehide', cleanupTabChat);
+window.addEventListener('beforeunload', cleanupTabChat);
+
+window.addEventListener('focus', updateActiveChatForTab);
+window.addEventListener('visibilitychange', updateActiveChatForTab);
+window.addEventListener('hashchange', updateActiveChatForTab);
+window.addEventListener('popstate', updateActiveChatForTab);
+
+try {
+    const imObserverTarget = document.querySelector('#im_container') || document.body;
+    const _chatObserver = new MutationObserver(() => updateActiveChatForTab());
+    _chatObserver.observe(imObserverTarget, { childList: true, subtree: true });
+} catch (e) { /* noop */ }
+
+if (syncChannel) {
+    syncChannel.onmessage = (e) => {
+        const data = e.data;
+        if (!data) return;
+
+        if (data.type === 'SOUND_PLAYED') {
+            markSoundPlayed(data.id);
+        } else if (data.type === 'SHOW_GLOBAL_NOTIF') {
+            displayGlobalNotification(data.notif, false);
+        }
+    };
+}
+
+async function playNotifSoundOnce(uniqueId, type = "notification") {
+    if (!isAudioUnlocked || !uniqueId || playedSoundIds.has(uniqueId)) {
+        return;
+    }
+
+    if (!isTabFocused()) {
+        await new Promise(r => setTimeout(r, 120 + Math.floor(Math.random() * 80)));
+        if (playedSoundIds.has(uniqueId)) return;
+    }
+
+    markSoundPlayed(uniqueId);
+    if (syncChannel) {
+        syncChannel.postMessage({ type: 'SOUND_PLAYED', id: uniqueId });
+    }
+    __actualPlayNotifSound(type);
+}
+
+window.playNotifSound = function (type = "notification") {
+    playNotifSoundOnce(Date.now() + "_" + Math.random(), type);
+};
+window.playUniqueSound = playNotifSoundOnce;
 
 function incrementNotificationsCounter() {
     document.querySelectorAll('a[href="/notifications"]').forEach(link => {
-
         let counterObject = link.querySelector('object');
 
         if (!counterObject) {
@@ -45,6 +148,20 @@ function incrementNotificationsCounter() {
     });
 }
 
+function displayGlobalNotification(notif, shouldBroadcast = true) {
+    const notifKey = 'notif_' + (notif.id || (notif.title + notif.body));
+
+    if (shouldBroadcast) {
+        playNotifSoundOnce(notifKey, "notification");
+    }
+    NewNotification(notif.title, notif.body, notif.ava, Function.noop, (notif.priority || 1) * 6000);
+    incrementNotificationsCounter();
+
+    if (shouldBroadcast && syncChannel) {
+        syncChannel.postMessage({ type: 'SHOW_GLOBAL_NOTIF', notif });
+    }
+}
+
 async function setupNotificationListener() {
     console.info("Notifications | Setting up notifications listener...");
 
@@ -59,10 +176,7 @@ async function setupNotificationListener() {
 
             if (notif) {
                 if (!isFirstRequest) {
-                    playNotifSound("notification");
-                    console.info("Notifications | New notification", notif);
-                    NewNotification(notif.title, notif.body, notif.ava, Function.noop, (notif.priority || 1) * 6000);
-                    incrementNotificationsCounter();
+                    displayGlobalNotification(notif, true);
                 } else {
                     console.info("Notifications | First request: skipping alert (syncing cursor)");
                 }
@@ -85,7 +199,7 @@ async function setupNotificationListener() {
             }
         }
     }
-};
+}
 
 async function triggerMessageNotification(conv, msg, timestamp) {
     try {
@@ -95,7 +209,6 @@ async function triggerMessageNotification(conv, msg, timestamp) {
         const ava = peer.getAvatar();
 
         if (peer.id === window.openvk.current_id || sender.id === window.openvk.current_id) {
-            console.log("IM | There is no sense to display this message");
             return;
         }
 
@@ -106,8 +219,18 @@ async function triggerMessageNotification(conv, msg, timestamp) {
             priority: 1,
         };
 
-        if (typeof NewNotification === 'function') {
-            playNotifSound("newmsg");
+        const soundId = 'msg_' + (msg.id || msg.random_id);
+        if (isChatOpenInAnyTab(peer.id)) {
+            markSoundPlayed(soundId);
+            if (syncChannel) {
+                syncChannel.postMessage({ type: 'SOUND_PLAYED', id: soundId });
+            }
+        } else {
+            playNotifSoundOnce(soundId, "newmsg");
+        }
+
+        const thisTabHasChat = getActiveChatPeerId() != null && Number(getActiveChatPeerId()) === Number(peer.id);
+        if (!thisTabHasChat && typeof NewNotification === 'function') {
             NewNotification(
                 notif.title,
                 notif.body,
@@ -123,10 +246,7 @@ async function triggerMessageNotification(conv, msg, timestamp) {
                 },
                 (notif.priority || 1) * 6000
             );
-        } else {
-            console.log("Msg notifs | Got a new message but NewNotification not found:", notif);
         }
-
     } catch (error) {
         console.error("Msg notifs | Error occurred while forming notification:", error);
     }

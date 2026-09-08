@@ -83,6 +83,8 @@ export class Messenger {
 
         if (this.getWindow()) {
             const win = this.getWindow();
+            win._lastMarkedReadId = 0;
+            win._pendingReadId = 0;
             if (typeof win._clearUnreadSpacing === 'function') {
                 win._clearUnreadSpacing();
             }
@@ -227,14 +229,23 @@ export class Messenger {
 
         if (convo.peer?._firstUnreadMsgId) {
             this.scrollToUnread();
-        } else if (scrollToEnd == true || !hadUnread) {
+        } else {
             this.getWindow()?._scrollToEnd?.();
         }
 
-        const currentSp = convo?.getScrollPosition();
-        if (!hadUnread && !convo.peer?._firstUnreadMsgId && convo && convo.peer && (!currentSp || currentSp.reachedNewestPosition)) {
-            convo.peer.read();
-        }
+        setTimeout(() => {
+            const win = this.getWindow();
+            if (win) {
+                win._setupReadObserver();
+                win._checkVisibleUnreadImmediate();
+            }
+            if (convo && convo.peer && typeof convo.peer.read === "function") {
+                const sp = convo.getScrollPosition();
+                if (!convo.peer._firstUnreadMsgId || !sp || sp.reachedNewestPosition) {
+                    convo.peer.read();
+                }
+            }
+        }, 100);
 
         setTimeout(() => {
             this.getWindow()?._checkAndFillUnderflow?.();
@@ -707,13 +718,13 @@ export class Messenger {
                 if (typeof PhotoViewer === 'undefined') return;
 
                 viewer = new PhotoViewer();
-                viewer.context.not_load_comments = true;
+                viewer.context.type = "messenger";
                 await viewer.loadAlbumContext({
                     count: queue_items.length,
                     items: queue_items
                 });
                 viewer.open();
-                viewer.setMode("tg");
+                //viewer.setMode("tg");
                 viewer.afterOpen(idForItem(first));
 
                 break;
@@ -1631,13 +1642,15 @@ export class MessengerPage extends IMPage {
                 `;
             }).join("");
 
+            const isMobile = window.im?.state?.is_mobile;
+
             const titleCount = (tr("message_viewers_count", items.length) || `Прочитали: ${items.length}`);
             cmsg.getNode().find(".message-viewers-modal-loader").parent().html(`
                 <div class="message-viewers-list-wrap">
                     <div style="font-size: 11px; color: var(--text-2ary); padding: 4px 10px 8px; border-bottom: 1px solid var(--bg-slightly-border); font-weight: bold;">
                         ${titleCount}
                     </div>
-                    <div class="message-viewers-list" style="max-height: 280px; overflow-y: auto;">
+                    <div class="message-viewers-list" style="${isMobile ? "max-height: 280px;" : ""} overflow-y: auto;">
                         ${usersListHtml}
                     </div>
                 </div>
@@ -1846,7 +1859,8 @@ export class MessengerPage extends IMPage {
         e.preventDefault();
         e.stopPropagation();
 
-        this.togglePeerInfo(msg.sender);
+
+        //this.togglePeerInfo(msg.sender);
     }
 
     getMessagesContainer() {
@@ -2169,6 +2183,7 @@ export class MessengerPage extends IMPage {
         }
 
         this.updateMountainButton();
+        this._checkVisibleUnreadImmediate();
     }
 
     callDeletion() {
@@ -2411,17 +2426,20 @@ export class MessengerPage extends IMPage {
         const container = this.getMessagesContainer();
         if (!container || typeof IntersectionObserver === "undefined") return;
 
+        const currentConv = this.getCurrentChat();
+        const currentInRead = Number(currentConv?.peer?.in_read || currentConv?._conversation?.in_read || 0);
+        const lastMarked = Number(this._lastMarkedReadId || 0);
+        const alreadyReadBorder = Math.max(currentInRead, lastMarked);
+
         const unreadElements = container.querySelectorAll(".messenger-app--messages---message.unread[data-msg-id]");
         if (!unreadElements || unreadElements.length === 0) return;
 
         this._readObserver = new IntersectionObserver((entries) => {
-            if (typeof document !== "undefined" && (document.hidden || (typeof document.hasFocus === 'function' && !document.hasFocus()))) {
-                return;
-            }
+            if (typeof document !== "undefined" && document.hidden) return;
 
             let maxVisibleUnreadId = 0;
             entries.forEach((entry) => {
-                if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+                if (entry.isIntersecting && entry.intersectionRatio >= 0.1) {
                     const id = Number(entry.target.getAttribute("data-msg-id"));
                     if (id && id > maxVisibleUnreadId) {
                         maxVisibleUnreadId = id;
@@ -2429,47 +2447,84 @@ export class MessengerPage extends IMPage {
                 }
             });
 
-            if (maxVisibleUnreadId > 0) {
+            if (maxVisibleUnreadId > 0 && maxVisibleUnreadId > alreadyReadBorder) {
                 this._scheduleMarkAsRead(maxVisibleUnreadId);
             }
         }, {
             root: container,
-            threshold: [0.5]
+            threshold: [0.1, 0.5]
         });
 
-        unreadElements.forEach(el => this._readObserver.observe(el));
+        unreadElements.forEach(el => {
+            const id = Number(el.getAttribute("data-msg-id"));
+            if (id > alreadyReadBorder) {
+                this._readObserver.observe(el);
+            }
+        });
 
-        if (typeof window !== "undefined" && !this._hasBoundReadVisibility) {
-            this._hasBoundReadVisibility = true;
-            const onVisible = () => {
-                if (!document.hidden) {
-                    this._setupReadObserver();
+        this._checkVisibleUnreadImmediate();
+    }
+
+    _checkVisibleUnreadImmediate() {
+        const container = this.getMessagesContainer();
+        if (!container || (typeof document !== "undefined" && document.hidden)) return;
+
+        const currentConv = this.getCurrentChat();
+        const currentInRead = Number(currentConv?.peer?.in_read || currentConv?._conversation?.in_read || 0);
+        const lastMarked = Number(this._lastMarkedReadId || 0);
+        const alreadyReadBorder = Math.max(currentInRead, lastMarked);
+
+        const containerRect = container.getBoundingClientRect();
+        const unreadElements = container.querySelectorAll(".messenger-app--messages---message.unread[data-msg-id]");
+        let maxId = 0;
+
+        unreadElements.forEach(el => {
+            const id = Number(el.getAttribute("data-msg-id"));
+            if (id > alreadyReadBorder) {
+                const rect = el.getBoundingClientRect();
+                if (rect.bottom >= containerRect.top + 5 && rect.top <= containerRect.bottom - 5) {
+                    if (id > maxId) maxId = id;
                 }
-            };
-            document.addEventListener("visibilitychange", onVisible);
-            window.addEventListener("focus", onVisible);
+            }
+        });
+
+        if (maxId > 0) {
+            this._scheduleMarkAsRead(maxId);
         }
     }
 
     _scheduleMarkAsRead(maxId) {
+        const currentChat = this.getCurrentChat();
+        const currentInRead = Number(currentChat?.peer?.in_read || currentChat?._conversation?.in_read || 0);
+        const alreadyMarked = Number(this._lastMarkedReadId || 0);
+
+        if (!maxId || maxId <= currentInRead || maxId <= alreadyMarked) {
+            return;
+        }
+
         this._pendingReadId = Math.max(this._pendingReadId || 0, maxId);
+
         if (this._readTimer) {
             clearTimeout(this._readTimer);
         }
+
         this._readTimer = setTimeout(async () => {
             this._readTimer = null;
             const idToRead = this._pendingReadId;
             this._pendingReadId = 0;
-            if (!idToRead) return;
-            if (typeof document !== "undefined" && (document.hidden || (typeof document.hasFocus === 'function' && !document.hasFocus()))) {
-                return;
+
+            if (!idToRead || idToRead <= (this._lastMarkedReadId || 0)) return;
+            if (typeof document !== "undefined" && document.hidden) return;
+
+            this._lastMarkedReadId = idToRead;
+            if (currentChat?.peer) {
+                currentChat.peer.in_read = Math.max(currentChat.peer.in_read || 0, idToRead);
             }
 
-            const currentChat = this.getCurrentChat();
             if (currentChat && currentChat.peer && typeof currentChat.peer.read === "function") {
                 await currentChat.peer.read(idToRead);
             }
-        }, 500);
+        }, 200);
     }
 
     async scrollToEndOfChat(event, convo = null) {
@@ -2480,7 +2535,6 @@ export class MessengerPage extends IMPage {
         const currentConv = convo || this.getCurrentChat();
         if (!currentConv) return;
 
-        // По требованию: ВСЕГДА делаем запрос к серверу и загружаем самые последние сообщения
         if (currentConv.peer?._chunks) {
             currentConv.peer._chunks.chunks = [];
             currentConv.peer._chunks._map = new Map();

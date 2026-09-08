@@ -1,7 +1,6 @@
 import { html } from './render.js';
 import { formatTime } from './common.js';
-import { LottieSticker } from './message.js';
-
+import { Attachment } from './message.js';
 /**
  * Universal drag handler for floating fastchat windows
  */
@@ -74,6 +73,7 @@ export const FastChatOnlineWindow = ({
     position,
     zIndex,
     isFocused,
+    openedChats,
     onSearch,
     onFriendClick,
     onToggle,
@@ -100,12 +100,7 @@ export const FastChatOnlineWindow = ({
         return name.includes(searchQuery.toLowerCase());
     });
 
-    const styleStr = position
-        ? `position: fixed; left: ${position.x}px; top: ${position.y}px; z-index: ${zIndex || 10000}; margin: 0;`
-        : `position: relative; z-index: ${zIndex || 10000};`;
-
     if (!isOpened) {
-        // Always pinned to bottom-right as a fixed tab when closed
         return html`
             <div
                 class="fc_online_tab_pinned ${isFocused ? 'fc_focused' : ''}"
@@ -116,10 +111,9 @@ export const FastChatOnlineWindow = ({
         `;
     }
 
-    // When opened without dragging, anchor fixed bottom-right with same offset as #fastchats_container
     const openedStyle = position
         ? `position: fixed; left: ${position.x}px; top: ${position.y}px; z-index: ${zIndex || 10000}; margin: 0;`
-        : `position: fixed; right: 20px; bottom: 30px; z-index: ${zIndex || 10000}; margin: 0;`;
+        : `position: fixed; right: 20px; bottom: 0px; z-index: ${zIndex || 10000}; margin: 0;`;
 
     let hasRenderedOfflineDivider = false;
 
@@ -163,6 +157,10 @@ export const FastChatOnlineWindow = ({
             hasRenderedOfflineDivider = true;
         }
 
+        const opened = openedChats && openedChats.find(c => Number(c.peerId) === Number(f.id));
+        const conv = window.im?.conversations?._findConv && window.im.conversations._findConv(f.id);
+        const unreadCount = opened ? (opened.unreadCount || 0) : Number(conv?.unread_count || 0);
+
         return html`
                         ${showDivider && html`
                             <div class="fc_divider_row">${tr('offline_divider') || 'Не в сети'}</div>
@@ -173,7 +171,9 @@ export const FastChatOnlineWindow = ({
                                 <span class="fc_name">${fullName}</span>
                                 <span class="fc_status ${isOnline ? 'online' : ''}">${statusText}</span>
                             </div>
-                            <div class="fc_action_btn">+1</div>
+                            ${unreadCount > 0 ? html`
+                                <div class="fc_action_btn fc_unread_badge">+${unreadCount}</div>
+                            ` : null}
                         </div>
                     `;
     }) : html`
@@ -211,15 +211,16 @@ export const FastChatBox = ({
     onFocus,
     onMove
 }) => {
-    const styleStr = chat.position
-        ? `position: fixed; left: ${chat.position.x}px; top: ${chat.position.y}px; z-index: ${chat.zIndex || 10000}; margin: 0;`
-        : `position: relative; z-index: ${chat.zIndex || 10000};`;
 
     if (chat.isMinimized) {
+        const minStyleStr = chat.position
+            ? `position: fixed; left: ${chat.position.x}px; bottom: 0px; z-index: ${chat.zIndex || 10000}; margin: 0;`
+            : `position: fixed; bottom: 0px; z-index: ${chat.zIndex || 10000}; margin: 0;`;
+
         return html`
             <div
                 class="fc_tab_minimized ${chat.isFocused ? 'fc_focused' : ''}"
-                style=${styleStr}
+                style=${minStyleStr}
                 onMouseDown=${(e) => handleHeaderMouseDown(e, chat.position, () => onFocus(chat.peerId), (pos) => onMove(chat.peerId, pos), () => onToggle(chat.peerId))}
             >
                 <div class="fc_min_title">${chat.title}</div>
@@ -228,6 +229,10 @@ export const FastChatBox = ({
             </div>
         `;
     }
+
+    const styleStr = chat.position
+        ? `position: fixed; left: ${chat.position.x}px; top: ${chat.position.y}px; z-index: ${chat.zIndex || 10000}; margin: 0;`
+        : `position: relative; z-index: ${chat.zIndex || 10000};`;
 
     const messages = chat.messages || [];
 
@@ -246,13 +251,19 @@ export const FastChatBox = ({
                 <div class="fc_head_close" onClick=${(e) => { e.stopPropagation(); onClose(chat.peerId); }}></div>
             </div>
 
-            ${chat.hasMore && html`
-                <div class="fc_load_more" onClick=${() => onLoadOlder(chat.peerId)}>
-                    ${tr('show_previous_messages') || 'Показать предыдущие сообщения'}
-                </div>
-            `}
+            <div class="fc_messages_list" id="fc_messages_${chat.peerId}"
+            onScroll=${() => {
+            if (window.im?.fastChats) {
+                window.im.fastChats.markChatAsRead(chat.peerId);
+            }
+        }}>
+                
+                ${chat.hasMore && html`
+                    <div class="fc_load_more ${chat.isLoadingOlder ? 'fc_loading' : ''}" onClick=${() => !chat.isLoadingOlder && onLoadOlder(chat.peerId)}>
+                        ${chat.isLoadingOlder ? (tr('loading') || 'Загрузка...') : (tr('show_previous_messages') || 'Показать предыдущие сообщения')}
+                    </div>
+                `}
 
-            <div class="fc_messages_list" id="fc_messages_${chat.peerId}">
                 ${chat.isLoading && messages.length === 0 && html`
                     <div class="fc_loading_state">
                         <img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="..." />
@@ -266,19 +277,19 @@ export const FastChatBox = ({
                 `}
 
                 ${messages.map(msg => {
-        const isOut = msg.from_id === currentUserId || msg.out === 1;
-        const authorName = isOut ? (tr('you') || 'Вы') : (msg.author_name || chat.title);
-        const authorAva = isOut ? currentUserAvatar : (msg.author_photo || chat.photo);
-        const timeStr = msg.time_str || (msg.date ? formatTime(msg.date, false) : '');
-        const isTargetUnread = chat.firstUnreadMsgId && (Number(msg.id) === Number(chat.firstUnreadMsgId));
+            const isOut = msg.from_id === currentUserId || msg.out === 1;
+            const authorName = isOut ? (tr('you') || 'Вы') : (msg.author_name || chat.title);
+            const authorAva = isOut ? currentUserAvatar : (msg.author_photo || chat.photo);
+            const timeStr = msg.time_str || (msg.date ? formatTime(msg.date, false) : '');
+            const isTargetUnread = chat.firstUnreadMsgId && (Number(msg.id) === Number(chat.firstUnreadMsgId));
 
-        return html`
+            return html`
                         ${isTargetUnread ? html`
-                            <div class="fc_unread_divider" id="fc_unread_${chat.peerId}">
+                            <div class="fc_unread_divider" id="fc_unread_${chat.peerId}" key=${`unread_${msg.id}`}>
                                 <span class="fc_unread_divider_text">${tr('unread_messages')}</span>
                             </div>
                         ` : null}
-                        <div class="fc_msg_row" data-msg-id="${msg.id}">
+                        <div class="fc_msg_row" data-msg-id="${msg.id}" key=${msg.id}>
                             <img src="${authorAva || '/assets/packages/static/openvk/img/camera_50.png'}" class="fc_msg_avatar" />
                             <div class="fc_msg_body">
                                 <div class="fc_msg_header">
@@ -287,55 +298,20 @@ export const FastChatBox = ({
                                 </div>
                                 <div class="fc_msg_text">
                                     ${msg.text || (msg.body || '')}
-                                    ${msg.attachments && Array.isArray(msg.attachments) && msg.attachments.map(att => {
-                                        if (att && att.type === 'sticker') {
-                                            let stk = att.sticker || {};
-                                            let sId = stk.sticker_id || stk.id;
-                                            if ((!stk.photo_128 && !stk.photo_256 && (!stk.images || !stk.images.length)) && typeof window.findStickerData === 'function' && sId) {
-                                                const found = window.findStickerData(sId);
-                                                if (found) stk = { ...found, ...stk };
-                                            }
-
-                                            let animUrl = stk.animation_url || (stk.animations && stk.animations[0]?.url) || '';
-                                            if (!animUrl && stk.photo_128 && stk.photo_128.endsWith('.json')) {
-                                                animUrl = stk.photo_128;
-                                            }
-                                            if (!animUrl && stk.product_id && sId && stk.is_animated) {
-                                                animUrl = `/sticker/${stk.product_id}/${sId}_512.json`;
-                                            }
-
-                                            let pId = stk.product_id || stk.pack_id;
-                                            if (!pId && typeof window.findStickerData === 'function' && sId) {
-                                                const found = window.findStickerData(sId);
-                                                if (found && found.product_id) pId = found.product_id;
-                                            }
-                                            const targetPack = pId || sId;
-
-                                            if (animUrl) {
-                                                if (window.location.protocol === 'https:' && animUrl.startsWith('http://')) {
-                                                    animUrl = animUrl.replace(/^http:\/\//i, 'https://');
-                                                }
-                                                return html`<div class="fc_msg_sticker"><${LottieSticker} url=${animUrl} stickerId=${sId} packId=${targetPack} width=${110} height=${110} /></div>`;
-                                            }
-
-                                            let img = stk.photo_128 || stk.photo_256 || (stk.images && stk.images[0]?.url) || (stk.product_id && sId ? `/sticker/${stk.product_id}/${sId}_128.webp` : '');
-                                            if (img && window.location.protocol === 'https:' && img.startsWith('http://')) {
-                                                img = img.replace(/^http:\/\//i, 'https://');
-                                            }
-                                            return html`<div class="fc_msg_sticker" style="cursor: pointer;" onClick=${(e) => {
-                                                e.stopPropagation();
-                                                if (typeof window.openStickerPackModal === 'function' && targetPack) {
-                                                    window.openStickerPackModal(targetPack, e);
-                                                }
-                                            }}><img src="${img}" alt="sticker" loading="lazy" /></div>`;
-                                        }
-                                        return null;
-                                    })}
+                                    ${msg.attachments && Array.isArray(msg.attachments) && msg.attachments.length > 0 && html`
+                                        <div class="fc_attachments_wrap">
+                                            ${msg.attachments.map(att => html`
+                                                <div class="fc_attachment_row" key=${att.type + (att[att.type]?.id || '')}>
+                                                    <${Attachment} msg=${msg} att=${att} />
+                                                </div>
+                                            `)}
+                                        </div>
+                                    `}
                                 </div>
                             </div>
                         </div>
                     `;
-    })}
+        })}
             </div>
 
             <div class="fc_input_bar">
@@ -390,6 +366,7 @@ export const FastChatsRoot = ({
                 position=${onlineWindow.position}
                 zIndex=${onlineWindow.zIndex}
                 isFocused=${onlineWindow.isFocused}
+                openedChats=${openedChats}
                 onSearch=${onOnlineSearch}
                 onFriendClick=${onOnlineFriendClick}
                 onToggle=${onOnlineToggle}

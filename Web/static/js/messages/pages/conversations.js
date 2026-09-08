@@ -375,7 +375,7 @@ export class Conversation {
                 this._last_message._peer = this.peer;
                 try {
                     this._last_message.peer = this.peer;
-                } catch (e) {}
+                } catch (e) { }
                 if (this._last_message.data) {
                     this._last_message.data.peer = this.peer;
                     if (!this._last_message.data.peer_id && this.peer.id) {
@@ -405,43 +405,74 @@ export class Conversation {
     getActivityMsg() {
         let s = "";
         let names = [];
-        if (this.peer && this.peer.supposed_type == "chat") {
-            const a = Object.entries(this.current_activity ?? {});
+        const activity = this.current_activity ?? {};
 
-            a.forEach(item => {
-                if (item[1].conv && item[1].conv.peer) {
-                    names.push(item[1].conv.peer.getName());
+        if (this.peer && this.peer.supposed_type === "chat") {
+            const typingNames = [];
+            const audioNames = [];
+
+            Object.entries(activity).forEach(([uid, item]) => {
+                const name = item?.conv?.peer?.getName?.() || `id${uid}`;
+                if (item?.variant === "audiomessage") {
+                    audioNames.push(name);
+                } else {
+                    typingNames.push(name);
                 }
-            })
+            });
 
-            switch (names.length) {
-                case 0:
-                    break;
-                case 1:
-                    s = tr("messenger_typing_one_user", names[0]);
-                    break;
-                case 2:
-                    s = tr("messenger_typing_two_users", names[0], names[1]);
-                    break;
-                case 3:
-                    s = tr("messenger_typing_three_users", names[0], names[1], names[2]);
-                    break;
-                default:
-                    s = tr("messenger_typing_other", names.length)
-                    break
+            names = [...audioNames, ...typingNames];
+            const totalCount = names.length;
+
+            if (totalCount === 0) {
+                return ["", []];
             }
-            if (names.length > 0) {
-                s = s + "...";
+
+            if (audioNames.length > 0 && typingNames.length === 0) {
+                switch (audioNames.length) {
+                    case 1:
+                        s = tr("messenger_audiomessage_one_user", audioNames[0]);
+                        break;
+                    case 2:
+                        s = tr("messenger_audiomessage_two_users", audioNames[0], audioNames[1]);
+                        break;
+                    case 3:
+                        s = tr("messenger_audiomessage_three_users", audioNames[0], audioNames[1], audioNames[2]);
+                        break;
+                    default:
+                        s = tr("messenger_audiomessage_other", audioNames.length);
+                        break;
+                }
+            } else {
+                switch (totalCount) {
+                    case 1:
+                        s = tr("messenger_typing_one_user", names[0]);
+                        break;
+                    case 2:
+                        s = tr("messenger_typing_two_users", names[0], names[1]);
+                        break;
+                    case 3:
+                        s = tr("messenger_typing_three_users", names[0], names[1], names[2]);
+                        break;
+                    default:
+                        s = tr("messenger_typing_other", totalCount);
+                        break;
+                }
+            }
+
+            if (s) {
+                s += "...";
             }
         } else if (this.peer) {
-            const v = Object.values(this.current_activity);
+            const v = Object.values(activity);
 
             if (v.length > 0) {
                 names.push("peer");
-                if (v[0].variant == "writing") {
-                    s = tr("messenger_typing_between_two")
+                if (v[0].variant === "audiomessage") {
+                    s = tr("messenger_audiomessage_between_two");
+                } else {
+                    s = tr("messenger_typing_between_two");
                 }
-                s = s + "...";
+                s += "...";
             }
         }
 
@@ -499,7 +530,7 @@ export class Conversation {
                 this._last_message._peer = this.peer;
                 try {
                     this._last_message.peer = this.peer;
-                } catch (e) {}
+                } catch (e) { }
                 if (this._last_message.data) {
                     this._last_message.data.peer = this.peer;
                     if (!this._last_message.data.peer_id && this.peer.id) {

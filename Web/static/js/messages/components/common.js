@@ -278,7 +278,7 @@ export const ActionsBar = ({ selectedMessages, count, onDelete, onUnselect, onRe
 
 export const AttachmentMenu = () => {
     return html`
-        <div>
+        <div class="attachmentMenu">
             <a class="menu_toggler">${tr('attach')}</a>
             <div id="wallAttachmentMenu" class="up_direction hidden">
                 <a class="header menu_toggler">${tr('attach')}</a>

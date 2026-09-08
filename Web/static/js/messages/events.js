@@ -417,6 +417,19 @@ export class EventHandler {
         const _crs = await this.im.conversations._findConvFromApi(_msg.peer_id);
         if (!_crs) return;
 
+        if (_crs.current_activity && _msg.from_id) {
+            const senderId = Number(_msg.from_id?.id || _msg.from_id || _msg.data?.from_id?.id || _msg.data?.from_id || 0);
+            if (_crs.current_activity && senderId) {
+                delete _crs.current_activity[senderId];
+                if (this.im && this.im.messenger) {
+                    this.im.messenger.update();
+                }
+                if (this.im && this.im.conversations) {
+                    this.im.conversations.update();
+                }
+            }
+        }
+
         const currentUserId = window.openvk ? window.openvk.current_id : this.im.state.getId();
         const isSelf = _msg.from_id == currentUserId || (typeof _msg.isMine === 'function' ? _msg.isMine() : false);
         if (isSelf) {
@@ -429,7 +442,7 @@ export class EventHandler {
         const activeChat = (this.im.messenger && typeof this.im.messenger.getCurrentChat === 'function') ? this.im.messenger.getCurrentChat() : null;
         const isActiveChatOpen = this.im.state.is_active && activeChat && activeChat.peer && activeChat.peer.id == _msg.peer_id;
 
-        if (!isActiveChatOpen && !isSelf && !_crs.peer.isMuted()) {
+        if (!isSelf && !_crs.peer.isMuted()) {
             triggerMessageNotification(_crs, _msg);
         }
 
@@ -491,7 +504,7 @@ export class EventHandler {
         const msgId = event[1];
         const flags = event[2];
         const peerId = event[3];
-        const editTime = event[5];
+        const editTime = event[4];
         const text = event[5];
         const attachments = event[6];
         const idk = event[7];
@@ -540,7 +553,6 @@ export class EventHandler {
 
         switch (code) {
             case 61: {
-                // [61, $user_id, $flags]
                 const userId = Number(event[1]);
                 flags = Number(event[2] ?? 1);
                 peerId = userId;
@@ -551,7 +563,6 @@ export class EventHandler {
                 break;
             }
             case 62: {
-                // [62, $user_id, $chat_id, $flags?]
                 const userId = Number(event[1]);
                 const chatId = Number(event[2]);
                 flags = Number(event[3] ?? 1);
@@ -563,20 +574,27 @@ export class EventHandler {
                 }
                 break;
             }
-            case 63: {
-                // [63, $user_ids, $peer_id, $total_count, $ts]
-                const rawUsers = event[1];
-                peerId = Number(event[2]);
-                userIds = Array.isArray(rawUsers) ? rawUsers.map(Number) : [Number(rawUsers)];
-                variant = "writing";
-                break;
-            }
+            case 63:
             case 64: {
-                // [64, $user_ids, $peer_id, $total_count, $ts]
-                const rawUsers = event[1];
-                peerId = Number(event[2]);
-                userIds = Array.isArray(rawUsers) ? rawUsers.map(Number) : [Number(rawUsers)];
-                variant = "audiomessage";
+                let rawUsers;
+                if (Array.isArray(event[1])) {
+                    rawUsers = event[1];
+                    peerId = Number(event[2]);
+                } else if (Array.isArray(event[2])) {
+                    peerId = Number(event[1]);
+                    rawUsers = event[2];
+                } else {
+                    peerId = Number(event[1]);
+                    rawUsers = [event[2]];
+                }
+
+                userIds = rawUsers.map(Number).filter(id => !isNaN(id) && id > 0);
+                variant = code === 64 ? "audiomessage" : "writing";
+
+                const totalCount = Number(event[3] ?? userIds.length);
+                if (totalCount === 0 || userIds.length === 0) {
+                    flags = 0;
+                }
                 break;
             }
             default: {
@@ -586,21 +604,38 @@ export class EventHandler {
             }
         }
 
-        const conv = await this.im.conversations._findConvFromApi(peerId);
+        const hadUsers = userIds.length > 0;
+        const currentUserId = Number(window.openvk ? window.openvk.current_id : this.im?.state?.getId?.());
+        if (currentUserId) {
+            userIds = userIds.filter(id => id !== currentUserId);
+            if (hadUsers && userIds.length === 0) {
+                return;
+            }
+        }
 
-        if (conv != null) {
-            if (flags === 0) {
-                if (conv.current_activity) {
+        const conv = await this.im.conversations._findConvFromApi(peerId);
+        if (!conv) {
+            console.error(`IM | Event ${code} | not found peer: `, peerId, userIds);
+            return;
+        }
+
+        if (flags === 0) {
+            if (conv.current_activity) {
+                if (userIds.length > 0) {
                     userIds.forEach(uid => delete conv.current_activity[uid]);
-                    if (this.im && this.im.messenger) {
-                        this.im.messenger.update();
-                    }
+                } else {
+                    conv.current_activity = {};
                 }
-            } else {
-                await conv.setTyping(userIds, variant);
+                if (this.im) {
+                    if (this.im.messenger) this.im.messenger.update();
+                    if (this.im.conversations) this.im.conversations.update();
+                }
+            }
+            if (typeof conv.clearTyping === 'function') {
+                conv.clearTyping(userIds);
             }
         } else {
-            console.error(`IM | Event ${code} | not found peer: `, peerId, userIds);
+            await conv.setTyping(userIds, variant);
         }
     }
 
