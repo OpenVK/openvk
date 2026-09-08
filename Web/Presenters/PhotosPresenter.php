@@ -410,10 +410,34 @@ final class PhotosPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
         }
 
-        if (!is_null($album = $photo->getAlbum())) {
+        $redirect = null;
+        $returnTo = $this->queryParam("return_to");
+
+        if (is_string($returnTo) && $returnTo !== "") {
+            $parsedReturnTo = parse_url($returnTo);
+            if ($parsedReturnTo !== false && !isset($parsedReturnTo["host"]) && str_starts_with($returnTo, "/") && !str_starts_with($returnTo, "//")) {
+                $redirect = $returnTo;
+            } elseif ($parsedReturnTo !== false && isset($parsedReturnTo["host"])) {
+                $currentHost = strtolower((string) ($_SERVER["HTTP_HOST"] ?? ""));
+                $returnHost = strtolower($parsedReturnTo["host"] . (isset($parsedReturnTo["port"]) ? ":" . $parsedReturnTo["port"] : ""));
+                if ($currentHost !== "" && $returnHost === $currentHost) {
+                    $redirect = $parsedReturnTo["path"] ?? "/";
+                    if (isset($parsedReturnTo["query"])) {
+                        $redirect .= "?" . $parsedReturnTo["query"];
+                    }
+                    if (isset($parsedReturnTo["fragment"])) {
+                        $redirect .= "#" . $parsedReturnTo["fragment"];
+                    }
+                }
+            }
+        }
+
+        if ($redirect === null && !is_null($album = $photo->getAlbum())) {
             $redirect = '/album' . $album->getPrettyId();
-        } else {
-            $redirect = "/id0";
+        }
+
+        if ($redirect === null) {
+            $redirect = $photo->getOwner()->getURL();
         }
 
         $photo->isolate();
