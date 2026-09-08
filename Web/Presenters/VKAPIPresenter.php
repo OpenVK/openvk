@@ -48,7 +48,7 @@ final class VKAPIPresenter extends OpenVKPresenter
 
         if (VKAPI_DECL_VER !== VKAPI_OVK_APP) {
             $payload = [
-                "error" => $payload
+                "error" => $payload,
             ];
         }
 
