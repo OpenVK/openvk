@@ -25,9 +25,6 @@ final class VKAPIPresenter extends OpenVKPresenter
 
     private function fail(int $code, string $message, string $object, string $method): void
     {
-        header("HTTP/1.1 400 Bad API Call");
-        header("Content-Type: application/json");
-
         $payload = [
             "error_code"     => $code,
             "error_msg"      => $message,
@@ -47,7 +44,18 @@ final class VKAPIPresenter extends OpenVKPresenter
             array_unshift($payload["request_params"], [ "key" => $key, "value" => $value ]);
         }
 
-        exit(json_encode($payload));
+        $callback = $this->queryParam("callback");
+        if ($callback) {
+            $payload = $callback . '(' . json_encode($payload) . ');';
+            header("HTTP/1.1 200 OK");
+            header('Content-Type: application/javascript');
+        } else {
+            $payload = json_encode($payload);
+            header("HTTP/1.1 400 Bad API Call");
+            header("Content-Type: application/json");
+        }
+
+        exit($payload);
     }
 
     private function twofaFail(int $userId, string $data): void
@@ -446,7 +454,7 @@ final class VKAPIPresenter extends OpenVKPresenter
             ]);
 
             if ($callback) {
-                $result = $callback . '(' . $result . ')';
+                $result = $callback . '(' . $result . ');';
                 header('Content-Type: application/javascript');
             } else {
                 header("Content-Type: application/json");
