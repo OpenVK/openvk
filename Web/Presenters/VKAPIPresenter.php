@@ -25,6 +25,8 @@ final class VKAPIPresenter extends OpenVKPresenter
 
     private function fail(int $code, string $message, string $object, string $method): void
     {
+        $this->processVKAPIVersion();
+
         $payload = [
             "error_code"     => $code,
             "error_msg"      => $message,
@@ -44,6 +46,12 @@ final class VKAPIPresenter extends OpenVKPresenter
             array_unshift($payload["request_params"], [ "key" => $key, "value" => $value ]);
         }
 
+        if (VKAPI_DECL_VER !== VKAPI_OVK_APP) {
+            $payload = [
+                "error" => $payload
+            ];
+        }
+
         $callback = $this->queryParam("callback");
         if ($callback) {
             $payload = $callback . '(' . json_encode($payload) . ');';
@@ -51,7 +59,13 @@ final class VKAPIPresenter extends OpenVKPresenter
             header('Content-Type: application/javascript');
         } else {
             $payload = json_encode($payload);
-            header("HTTP/1.1 400 Bad API Call");
+            if (VKAPI_DECL_VER !== VKAPI_OVK_APP) {
+                // don't exactly know why it throws 200 if there's definately an error
+                header("HTTP/1.1 200 OK");
+            } else {
+                header("HTTP/1.1 400 Bad API Call");
+            }
+
             header("Content-Type: application/json");
         }
 
@@ -417,14 +431,20 @@ final class VKAPIPresenter extends OpenVKPresenter
             }
         }
 
+        $this->processVKAPIVersion();
+
+        return $handler->{$method}(...$args);
+    }
+
+    public function processVKAPIVersion(): void
+    {
         if (!defined("VKAPI_DECL_VER")) {
             $version = $this->requestParam("v") ?? "5.9999"; // 9999 for ovk apps
             define("VKAPI_DECL_VER", $version);
+            define("VKAPI_OVK_APP", "5.9999");
             define("VKAPI_DECL_VER_MAJOR", intval(explode('.', $version)[0] ?? "5"));
-            define("VKAPI_DECL_VER_MINOR", intval(explode('.', $version)[1] ?? "100"));
+            define("VKAPI_DECL_VER_MINOR", intval(explode('.', $version)[1] ?? "199"));
         }
-
-        return $handler->{$method}(...$args);
     }
 
     public function renderRoute(string $object, string $method): void
@@ -510,7 +530,7 @@ final class VKAPIPresenter extends OpenVKPresenter
 
         $result = json_encode($payload);
         if ($callback) {
-            $result = $callback . '(' . $result . ')';
+            $result = $callback . '(' . $result . ');';
             header('Content-Type: application/javascript');
         } else {
             header("Content-Type: application/json");
