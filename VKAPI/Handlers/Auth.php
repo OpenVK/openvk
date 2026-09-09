@@ -12,8 +12,8 @@ final class Auth extends VKAPIRequestHandler
     {
         // dummy function, always return passwd
         return (object) [
-            "flow_name" => "need_password", 
-            "sid" => "1"
+            "flow_name" => "need_password",
+            "sid" => "1",
         ];
     }
 }
