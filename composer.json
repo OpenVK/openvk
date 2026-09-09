@@ -15,7 +15,7 @@
         "openvk/chandler": "dev-master",
         "whichbrowser/parser": "dev-master",
         "james-heinrich/getid3": "^1.9@dev",
-        "rybakit/msgpack": "dev-master",
+        "rybakit/msgpack": "^0.10.0",
         "wapmorgan/binary-stream": "dev-master",
         "al/emoji-detector": "dev-master",
         "ezyang/htmlpurifier": "dev-master",

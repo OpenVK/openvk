@@ -11,6 +11,7 @@ use openvk\Web\Models\Entities\{User, APIToken};
 use openvk\Web\Models\Repositories\{Users, APITokens};
 use lfkeitel\phptotp\{Base32, Totp};
 use WhichBrowser;
+use MessagePack\Packer;
 
 final class VKAPIPresenter extends OpenVKPresenter
 {
@@ -53,23 +54,13 @@ final class VKAPIPresenter extends OpenVKPresenter
         }
 
         $callback = $this->queryParam("callback");
-        if ($callback) {
-            $payload = $callback . '(' . json_encode($payload) . ');';
+        if (VKAPI_DECL_VER !== VKAPI_OVK_APP) {
+            // don't exactly know why it throws 200 if there's definately an error
             header("HTTP/1.1 200 OK");
-            header('Content-Type: application/javascript');
         } else {
-            $payload = json_encode($payload);
-            if (VKAPI_DECL_VER !== VKAPI_OVK_APP) {
-                // don't exactly know why it throws 200 if there's definately an error
-                header("HTTP/1.1 200 OK");
-            } else {
-                header("HTTP/1.1 400 Bad API Call");
-            }
-
-            header("Content-Type: application/json");
+            header("HTTP/1.1 400 Bad API Call");
         }
-
-        exit($payload);
+        $this->packMessage($payload, $callback);
     }
 
     private function twofaFail(int $userId, string $data): void
@@ -87,7 +78,7 @@ final class VKAPIPresenter extends OpenVKPresenter
             "validation_resend" => "nowhere",
         ];
 
-        exit(json_encode($payload));
+        $this->packMessage($payload);
     }
 
     private function badMethod(string $object, string $method): void
@@ -155,12 +146,11 @@ final class VKAPIPresenter extends OpenVKPresenter
                 $pendingInfo = $this->getPendingUploadInfo($folder, $data["USER"]);
 
                 header("HTTP/1.1 507 Insufficient Storage");
-                header("Content-Type: application/json");
-                exit(json_encode([
+                $this->packMessage([
                     "error" => "insufficient_storage",
                     "error_description" => "There are $maxFiles pending already. Please save them before uploading more :3",
                     "pending_uploads" => $pendingInfo,
-                ]));
+                ]);
             }
         }
 
@@ -187,11 +177,11 @@ final class VKAPIPresenter extends OpenVKPresenter
             header("HTTP/1.0 202 Accepted");
 
             $photo = $data["USER"] . "|" . $slot . "|" . $data["GROUP"];
-            exit(json_encode([
+            $this->packMessage([
                 "server" => "ephemeral",
                 "photo"  => $photo,
                 "hash"   => hash_hmac("sha3-224", $photo, $secret),
-            ]));
+            ]);
         }
 
         $files = [];
@@ -212,11 +202,11 @@ final class VKAPIPresenter extends OpenVKPresenter
 
                     header("HTTP/1.1 507 Insufficient Storage");
                     header("Content-Type: application/json");
-                    exit(json_encode([
+                    $this->packMessage([
                         "error" => "insufficient_storage",
                         "error_description" => "There are $maxFiles pending already. Please save them before uploading more :3",
                         "pending_uploads" => $pendingInfo,
-                    ]));
+                    ]);
                 }
             }
 
@@ -239,12 +229,12 @@ final class VKAPIPresenter extends OpenVKPresenter
         $filesManifest = json_encode($filesManifest);
         $manifestHash  = hash_hmac("sha3-224", $filesManifest, $secret);
         header("HTTP/1.0 202 Accepted");
-        exit(json_encode([
+        $this->packMessage([
             "server"      => "ephemeral",
             "photos_list" => $filesManifest,
             "album_id"    => "undefined",
             "hash"        => $manifestHash,
-        ]));
+        ]);
     }
 
     private function evictOldestPendingUploads(string $folder, string $userId, int $maxFiles, array $protectedSlots = []): int
@@ -512,22 +502,12 @@ final class VKAPIPresenter extends OpenVKPresenter
 
             header("Content-Type: application/rss+xml;charset=UTF-8");
         } else {
-            $result = json_encode([
+            $result = [
                 "response" => $res,
-            ]);
+            ];
 
-            if ($callback) {
-                $result = $callback . '(' . $result . ');';
-                header('Content-Type: application/javascript');
-            } else {
-                header("Content-Type: application/json");
-            }
+            $this->packMessage($result, $callback);
         }
-
-        $size = strlen($result);
-        #header("Content-Length: $size");
-
-        exit($result);
     }
 
     public function renderExecute(?string $procedure = null): void
@@ -750,18 +730,13 @@ final class VKAPIPresenter extends OpenVKPresenter
             $token->save();
         }
 
-        $payload = json_encode([
+        $this->packMessage([
             "access_token" => $token->getFormattedToken(),
             "expires_in"   => 0,
             "user_id"      => $uId,
             "is_stale"     => $tokenIsStale,
             "secret"       => "super_secret_value",
         ]);
-
-        $size = strlen($payload);
-        header("Content-Type: application/json");
-        header("Content-Length: $size");
-        exit($payload);
     }
 
     public function renderOAuthLogin()
@@ -964,6 +939,22 @@ final class VKAPIPresenter extends OpenVKPresenter
         }
 
         return null;
+    }
+
+    private function packMessage($message, string $callback = null): string
+    {
+        $format = $_SERVER['HTTP_X_RESPONSE_FORMAT'];
+        if ($format == 'msgpack') {
+            header("Content-Type: application/x-msgpack");
+            $packer = new Packer();
+            exit($packer->pack($message));
+        } elseif ($callback) {
+            header("Content-Type: application/javascript");
+            exit($callback . "(" . json_encode($message) . ");");
+        } else {
+            header("Content-Type: application/json");
+            exit(json_encode($message));
+        }
     }
 
     /*

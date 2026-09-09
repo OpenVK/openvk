@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4808b32611f9f8a6a313d28e9e140357",
+    "content-hash": "9ed964c6a25c28bbe8ace2a62b7bfc84",
     "packages": [
         {
             "name": "al/emoji-detector",
@@ -2516,16 +2516,16 @@
         },
         {
             "name": "rybakit/msgpack",
-            "version": "dev-master",
+            "version": "v0.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rybakit/msgpack.php.git",
-                "reference": "5c8fb3c91f3e3193c8bd1e4be66f3ae83d600090"
+                "reference": "17fdc1e09f986181850dcfef4851a03ea6539e95"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rybakit/msgpack.php/zipball/5c8fb3c91f3e3193c8bd1e4be66f3ae83d600090",
-                "reference": "5c8fb3c91f3e3193c8bd1e4be66f3ae83d600090",
+                "url": "https://api.github.com/repos/rybakit/msgpack.php/zipball/17fdc1e09f986181850dcfef4851a03ea6539e95",
+                "reference": "17fdc1e09f986181850dcfef4851a03ea6539e95",
                 "shasum": ""
             },
             "require": {
@@ -2542,7 +2542,6 @@
                 "ext-decimal": "For converting overflowed integers to Decimal objects",
                 "ext-gmp": "For converting overflowed integers to GMP objects"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -2568,7 +2567,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rybakit/msgpack.php/issues",
-                "source": "https://github.com/rybakit/msgpack.php/tree/master"
+                "source": "https://github.com/rybakit/msgpack.php/tree/v0.10.0"
             },
             "funding": [
                 {
@@ -2576,7 +2575,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-04-25T22:46:54+00:00"
+            "time": "2026-04-22T23:40:57+00:00"
         },
         {
             "name": "scssphp/scssphp",
@@ -6222,7 +6221,6 @@
         "james-heinrich/getid3": 20,
         "lfkeitel/phptotp": 20,
         "openvk/chandler": 20,
-        "rybakit/msgpack": 20,
         "scssphp/scssphp": 20,
         "vearutop/php-obscene-censor-rus": 20,
         "wapmorgan/binary-stream": 20,
