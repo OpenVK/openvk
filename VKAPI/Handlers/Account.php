@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace openvk\VKAPI\Handlers;
 
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
+use openvk\Web\Models\Entities\Relationships\VoteChangeInfo;
 use openvk\Web\Util\Validator;
 
 final class Account extends VKAPIRequestHandler
@@ -270,6 +271,8 @@ final class Account extends VKAPIRequestHandler
             $this->fail(-251, "Can't transfer votes to yourself");
         }
 
+        VoteChangeInfo::sendAction($this->getUser(), $receiver_entity, $value);
+
         $this->getUser()->setCoins($this->getUser()->getCoins() - $value);
         $this->getUser()->save();
 
@@ -279,6 +282,32 @@ final class Account extends VKAPIRequestHandler
         (new \openvk\Web\Models\Entities\Notifications\CoinsTransferNotification($receiver_entity, $this->getUser(), $value, $message))->emit();
 
         return (object) ['votes' => $this->getUser()->getCoins()];
+    }
+
+    public function getVotesHistory(int $offset = 0, int $count = 10, string $fields = "photo_50"): object
+    {
+        $this->requireUser();
+
+        if (!OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"]) {
+            $this->fail(-105, "Commerce is disabled on this instance");
+        }
+
+        $response = [
+            "items"    => [],
+            "profiles" => [],
+            "groups"   => [],
+            "apps"     => [],
+        ];
+
+        $history = VoteChangeInfo::getHistory($this->getUser(), $offset, $count);
+
+        foreach ($history as $item) {
+            $struct = $item->toVkApiStruct();
+            $response[$item->getExtendedKey()][] = $item->getInitiator()->toVkApiStruct($this->getUser(), $fields);
+            $response["items"][] = $struct;
+        }
+
+        return (object) $response;
     }
 
     public function ban(int $owner_id): int
