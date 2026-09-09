@@ -35,25 +35,29 @@ final class UserPresenter extends OpenVKPresenter
     {
         $user = $this->users->get($id);
 
-        if (!$user || $user->isDeleted() || !$user->canBeViewedBy($this->user->identity)) {
-            if (!is_null($user) && $user->isDeactivated()) {
+        if (!$user) {
+            $this->notFound();
+        }
+
+        if ($user->isDeleted() || !$user->canBeViewedBy($this->user->identity)) {
+            if ($user->isDeactivated()) {
                 $this->template->_template = "User/deactivated.latte";
 
                 $this->template->user = $user;
-            } elseif (!is_null($user) && $user->isDeleted()) {
+            } elseif ($user->isDeleted()) {
                 $this->template->_template = "User/deleted.latte";
-            } elseif (!is_null($user) && $this->user->identity && $this->user->identity->isBlacklistedBy($user)) {
+            } elseif ($this->user->identity && $this->user->identity->isBlacklistedBy($user)) {
                 $this->template->_template = "User/blacklisted.latte";
 
                 $this->template->blacklist_status = $user->isBlacklistedBy($this->user->identity);
                 $this->template->ignore_status = $user->isIgnoredBy($this->user->identity);
                 $this->template->user = $user;
-            } elseif (!is_null($user) && $user->isBlacklistedBy($this->user->identity)) {
+            } elseif ($user->isBlacklistedBy($this->user->identity)) {
                 $this->template->_template = "User/blacklisted_pov.latte";
 
                 $this->template->ignore_status = $user->isIgnoredBy($this->user->identity);
                 $this->template->user = $user;
-            } elseif (!is_null($user) && !$user->canBeViewedBy($this->user->identity)) {
+            } elseif (!$user->canBeViewedBy($this->user->identity)) {
                 $this->template->_template = "User/private.latte";
 
                 $this->template->user = $user;
