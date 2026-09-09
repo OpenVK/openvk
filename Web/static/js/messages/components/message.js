@@ -410,7 +410,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                 <img class="ava" src=${msg.sender?.getAvatar ? msg.sender.getAvatar() : "/assets/packages/static/openvk/img/camera_100.png"} alt=${msg.sender?.getName ? msg.sender.getName() : ""} />
             </div>
             <div class="inlines _content">
-                <a class="_sender" href=${msg.sender?.getPageUrl ? msg.sender.getPageUrl() : "javascript:void(0)"}>
+                <a class="_sender" onClick=${(e) => {window.im.messenger.view.onAuthorNameClick(e, msg)}} href=${msg.sender?.getPageUrl ? msg.sender.getPageUrl() : "javascript:void(0)"}>
                     <strong>${msg.sender?.getName ? msg.sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...")}</strong>
                 </a>
                 ${has_postfix ? html`
@@ -628,7 +628,7 @@ export const SystemMessages = {
             return html`
                 <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
                     <div>
-                        <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
+                        <a class="_sender" onClick=${(e) => {window.im.messenger.view.onAuthorNameClick(e, msg)}} href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
                             <strong>${senderName} </strong>
                         </a>
                         <span class="text">${text.toLowerCase()}</span>
@@ -789,12 +789,13 @@ export const SystemMessages = {
         const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
         const msgAnchorId = `msg${peerId}-${msg.id}`;
         const sender = msg.sender;
+        const peer = msg.peer;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
         return html`
             <div class="messenger-special-message centred" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
-                    <b>${tr("event_chat_user_added_voices_" + gender, senderName, msg.data?.action?.member_id)}</b>
+                    <b>${msg.isMine() ? tr("event_chat_user_added_voices_self", peer.getName(), msg.data?.action?.member_id) : tr("event_chat_user_added_voices_" + gender, senderName, msg.data?.action?.member_id)}</b>
                     <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
                     <p>«${escapeHtml(msg.data?.action?.text || "")}»</p>
                 </div>
@@ -873,7 +874,7 @@ const CompactReplyAttachment = ({ rep, att }) => {
             const docTitle = att.doc?.title || (typeof tr === 'function' && tr('document') && !tr('document').startsWith('@') ? tr('document') : 'Документ');
             const ids = att.doc ? (att.doc.owner_id + '_' + att.doc.id + (att.doc.access_key ? "?key=" + att.doc.access_key : "")) : "";
             return html`
-                <a class="reply-compact-attach reply-compact-doc" title=${docTitle} href=${ids ? '/doc' + ids : 'javascript:void(0)'} onClick=${(e) => e.stopPropagation()}>
+                <a target="_blank" class="reply-compact-attach reply-compact-doc" title=${docTitle} href=${ids ? '/doc' + ids : 'javascript:void(0)'} onClick=${(e) => e.stopPropagation()}>
                     <img class="reply-attach-icon reply-attach-oxygen" src="${OXYGEN_BASE}/mimetypes/x-office-document.png" alt="doc" />
                     <span class="reply-attach-label">${docTitle}</span>
                 </a>
@@ -1298,6 +1299,9 @@ export class LottieSticker extends Component {
     }
 
     loadAnim() {
+        if ((localStorage.getItem("tw.im.disable_lottie") || "0") == "1") {
+            return;
+        }
         if (this.anim) {
             try { this.anim.destroy(); } catch (e) { }
             this.anim = null;

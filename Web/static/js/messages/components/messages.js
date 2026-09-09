@@ -489,7 +489,10 @@ export class ChatGeneralForm {
     }
 
     isMuted() {
-        return false;
+        const isMuteAll = localStorage.getItem("tw.im.mute_all") || "0" == "1";
+        const isMute = isMuteAll;
+
+        return isMuteAll;
     }
 
     // ── initial loading ──────────────────────────────────────────────

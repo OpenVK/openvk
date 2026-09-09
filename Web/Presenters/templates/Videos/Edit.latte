@@ -29,6 +29,10 @@
                 <textarea name="desc">{$video->getDescription()}</textarea>
             </td>
           </tr>
+          <tr n:if="$video->isUnlisted()">
+            <td></td>
+            <td>{tr("unlisted")}</td>
+          </tr>
           <tr>
             <td width="120" valign="top"></td>
             <td>

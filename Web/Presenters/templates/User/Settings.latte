@@ -472,7 +472,6 @@
                 </div>
                 {_points_count}<br/>
                 <small><a href="?act=finance.top-up">[{_have_voucher}?]</a></small><br>
-                <small><a href="/stickers">[{_buy_stickers}]</a></small><br>
                 <small n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['ton']['enabled']">
                     <a href="javascript:showCoinsTopUpTroughTon()">[{_transfer_trough_ton}]</a>
                 </small>
@@ -647,6 +646,12 @@
                                 <option {if intval($isTimezoned) == $tz}selected{/if} value="{$tz}">{tr('timezone-'.$tz)}</option>
                             {/foreach}
                         </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <label style="display:block;"><input  onchange="tweakChange(event)" data-act='localstorage_item' name='tw.im.24h' id="tw.im.24h" type="checkbox">{tr("im_option_24h_format")}</label>
                     </td>
                 </tr>
                 <tr>

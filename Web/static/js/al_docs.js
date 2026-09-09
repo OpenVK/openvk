@@ -1,7 +1,7 @@
 function showDocumentUploadDialog(target = null, append_to_url = null, after_upload = null, textareaNode = null)
 {
     let file = null
-    const is_from_messenger = textareaNode.closest(".messenger-layer").length > 0;
+    const is_from_messenger = textareaNode && textareaNode.closest(".messenger-layer").length > 0;
     const cmsg = new CMessageBox({
         title: tr("document_uploading_in_general"),
         body: `
@@ -126,7 +126,7 @@ u(document).on("drop", "#_document_upload_frame", (e) => {
     u("#_document_upload_frame #upload_btn").trigger("change")
 })
 
-u(document).on('click', '.docMainItem #edit_icon', async (e) => {
+async function onEditIconButtonClick(event) {
     e.preventDefault()
     if(u("#ajloader").hasClass("shown")) {
         return
@@ -193,11 +193,11 @@ u(document).on('click', '.docMainItem #edit_icon', async (e) => {
     cmsg_2.getNode().attr('style', "width: 400px;")
 
     CMessageBox.toggleLoader()
-})
+}
 
-u(document).on('click', '#upload_entry_point', (e) => {
-    showDocumentUploadDialog(null, Number(e.target.dataset.gid))
-})
+function onUploadEntryPointClick(event) {
+    showDocumentUploadDialog(null, Number(event.target.dataset.gid))
+}
 
 u(document).on('change', "#docs_page_wrapper select[name='docs_sort']", (e) => {
     const new_url = new URL(location.href)

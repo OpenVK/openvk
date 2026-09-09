@@ -735,7 +735,11 @@ class VideoViewer extends Viewer {
     _updFrame(item, init_player = true) {
         console.log("_updFrame")
         console.log(item)
-        this.modal.getNode().removeClass("viewer-deleted");
+
+        if (this.modal) {
+            this.modal.getNode().removeClass("viewer-deleted");
+        }
+
         if (item && item.deleted == true) {
             this.modal.getNode().addClass("viewer-deleted");
         }
@@ -882,6 +886,7 @@ class VideoViewer extends Viewer {
             const videoViewer = new VideoViewer();
             const cleanId = typeof ids === 'string' ? ids.replace(/^video/, '') : ids;
             const first_id = cleanId;
+            console.log(cleanId)
 
             if (context == null || context.type == null) {
                 videoViewer.setContext({
@@ -890,7 +895,7 @@ class VideoViewer extends Viewer {
                 await videoViewer.loadIdsOnlyContext();
             } else {
                 videoViewer.setContext(context);
-                await videoViewer.initalizeContext(null, cleanId);
+                await videoViewer.initalizeContext(context, cleanId);
             }
 
             videoViewer.open();
@@ -903,9 +908,10 @@ class VideoViewer extends Viewer {
     }
 
     static async openByIdFromWall(ids, owner_id, event, open_comments = false) {
-        await VideoViewer.openById(ids, {
+        await VideoViewer.openById("video" + ids, {
             "type": "uploaded_by",
-            "owner_id": owner_id
+            "owner_id": owner_id,
+            "id": ids,
         }, event, open_comments);
     }
 
@@ -1889,7 +1895,7 @@ async function showArticle(note_id) {
     u("body").addClass("article");
 }
 
-u(document).on("click", "#editPost", async (e) => {
+async function onPostEditButtonClick(e) {
     const target = u(e.target)
     let post = null;
     if (target.closest(".ovk-msg-all").length > 0) {
@@ -1915,7 +1921,9 @@ u(document).on("click", "#editPost", async (e) => {
 
     if (edit_place.html() == '') {
         target.addClass('lagged')
-        const params = {}
+        const params = {
+            "extended": 1
+        }
         if (type == 'post') {
             params['posts'] = post.attr('data-id')
         } else {
@@ -2121,7 +2129,7 @@ u(document).on("click", "#editPost", async (e) => {
     }
 
     post.addClass('editing')
-})
+}
 
 async function __uploadToTextarea(file, textareaNode, is_from_messenger = false) {
     if (textareaNode.closest(".messenger-layer").length > 0) {
@@ -4187,11 +4195,11 @@ function back_textarea_to_default(node) {
     });
 }
 
-$(document).on("click", ".archive_post", function (e) {
+function onArchivePostButtonClick(e) {
     e.preventDefault();
-    let url = $(this).attr("href");
-    let post = $(this).closest(".post, .post-horizontal");
-    let postContainer = $(this).closest(".scroll_node");
+    let url = $(e.target).attr("href");
+    let post = $(e.target).closest(".post, .post-horizontal");
+    let postContainer = $(e.target).closest(".scroll_node");
 
     if (!url.includes("ajax=1")) {
         url += (url.includes("?") ? "&" : "?") + "ajax=1";
@@ -4212,7 +4220,7 @@ $(document).on("click", ".archive_post", function (e) {
             }
         }
     });
-});
+}
 
 function ajax_delete(event = null) {
     if (event != null) {

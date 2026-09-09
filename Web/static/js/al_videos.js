@@ -1,4 +1,4 @@
-u(document).on('click', `#uploadVideo`, async (e) => {
+async function onUploadVideoClick(e) {
     e.preventDefault();
     let url = location.href
     let form = u('#videoUploadForm')
@@ -44,4 +44,4 @@ u(document).on('click', `#uploadVideo`, async (e) => {
         form.find(".progress-bar").nodes[0].style.width = "0%"
         form.removeClass('lagged')
     }
-})
+}

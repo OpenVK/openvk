@@ -40,8 +40,8 @@ final class VideosPresenter extends OpenVKPresenter
         }
 
         $this->template->user   = $owner;
-        $this->template->videos = $this->videos->getByUser($owner, (int) ($this->queryParam("p") ?? 1));
-        $this->template->count  = $this->videos->getUserVideosCount($owner);
+        $this->template->videos = (new Videos)->getByUser($owner, (int) ($this->queryParam("p") ?? 1));
+        $this->template->count  = (new Videos)->getUserVideosCount($owner);
         $this->template->paginatorConf = (object) [
             "count"   => $this->template->count,
             "page"    => (int) ($this->queryParam("p") ?? 1),

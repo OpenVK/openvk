@@ -1719,6 +1719,8 @@
 "im_option_debug" = "Функции отладки";
 "im_option_photo_viewer" = "Лента в просмотрщике фото";
 "im_option_24h_format" = "24-часовой формат времени";
+"im_option_mute_local" = "Отключить уведомления в этом браузере";
+"im_option_disable_animated_stickers" = "Отключить анимированные стикеры";
 "open_message" = "Открыть сообщение";
 "important_messages" = "Важные сообщения";
 "no_important_messages" = "Здесь пока нет важных сообщений.";
@@ -1751,6 +1753,7 @@
 "event_chat_user_up_your_rating_female" = "$1 повысила ваш рейтинг на $2 единицы.";
 "event_chat_user_up_your_rating_neutral" = "$1 повысили ваш рейтинг на $2 единицы.";
 "event_chat_rating_up_impersonal" = "Вам повысили рейтинг";
+"event_chat_user_added_voices_self" = "Вы передали $1 $2 голосов.";
 "event_chat_user_added_voices_male" = "$1 передал вам $2 голосов.";
 "event_chat_user_added_voices_female" = "$1 передала вам $2 голосов.";
 "event_chat_user_added_voices_neutral" = "$1 передали вам $2 голосов.";
@@ -1887,6 +1890,7 @@
 "stickers_count_one" = "$1 стикер";
 "stickers_count_few" = "$1 стикера";
 "stickers_count_other" = "$1 стикеров";
+"emoji_group_recent" = "Недавно использовали";
 "emoji_group_smileys_emotion" = "Смайлы";
 "emoji_group_people_body" = "Люди";
 "emoji_group_animals_nature" = "Природа";

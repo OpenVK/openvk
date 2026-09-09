@@ -270,7 +270,7 @@ function openJsSettings() {
         <tr>
             <td width="120" valign="top">
                 <span class="nobold">
-                    <input type='checkbox' data-act='localstorage_item' data-inverse="1" name='ux.disable_ajax_routing' id="ux.disable_ajax_routing" ${CURRENT_DISABLE_AJAX == 0 ? 'checked' : ''}>
+                    <input type='checkbox' onchange="tweakChange(event)" data-act='localstorage_item' data-inverse="1" name='ux.disable_ajax_routing' id="ux.disable_ajax_routing" ${CURRENT_DISABLE_AJAX == 0 ? 'checked' : ''}>
                 </span>
             </td>
             <td>
@@ -280,7 +280,7 @@ function openJsSettings() {
         <tr>
             <td width="120" valign="top">
                 <span class="nobold">
-                    <input type='checkbox' data-act='localstorage_item' name='ux.auto_scroll' id="ux.auto_scroll" ${CURRENT_AUTO_SCROLL == 1 ? 'checked' : ''}>
+                    <input type='checkbox' onchange="tweakChange(event)" data-act='localstorage_item' name='ux.auto_scroll' id="ux.auto_scroll" ${CURRENT_AUTO_SCROLL == 1 ? 'checked' : ''}>
                 </span>
             </td>
             <td>

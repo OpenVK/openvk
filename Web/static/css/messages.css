@@ -1144,8 +1144,8 @@ body:has(#im_container.at_page) .page-wrap {
     gap: 4px;
     font-size: 11px;
     color: var(--text-2, #555);
-    background: var(--bg-hover, rgba(0, 0, 0, 0.04));
-    border: 1px solid var(--bg-slightly-border, rgba(0, 0, 0, 0.08));
+    /*background: var(--bg-hover, rgba(0, 0, 0, 0.04));
+    border: 1px solid var(--bg-slightly-border, rgba(0, 0, 0, 0.08));*/
     border-radius: 3px;
     padding: 1px 5px 1px 2px;
     line-height: 1.2;
@@ -2890,7 +2890,7 @@ body:has(#im_container.at_page) .page-wrap {
     width: 368px;
     box-sizing: border-box;
     position: absolute;
-    top: -43px;
+    top: -3px;
     z-index: 2;
     background: #f6f6f6;
     padding: 0px 15px;
@@ -3205,7 +3205,6 @@ body:has(#im_container.at_page) .page-wrap {
 }
 
 #im_container.compact .im_page.page-other {
-    margin-top: 17px;
     right: 0;
     width: 369px;
     margin-left: 259px;
@@ -3325,6 +3324,7 @@ body:has(#im_container.at_page) .page-wrap {
     margin-left: 0px;
     width: 25px;
     height: 25px;
+    object-position: top;
 }
 
 #im_container.compact .crp-list .crp-entry--message---text {
@@ -3356,7 +3356,7 @@ body:has(#im_container.at_page) .page-wrap {
 }
 
 #im_container.compact .messages--peers-header-wrap {
-    top: 85px;
+    top: 41px;
 }
 
 #im_container.compact .messages--peers-header-wrap .messenger-pinned-bar {

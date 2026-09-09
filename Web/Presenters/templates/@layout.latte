@@ -133,7 +133,7 @@
                             <form id='search_form' action="/search" method="get">
                                 <div id='search_and_one_more_wrapper'>
                                     {var $section = $_REQUEST['section'] ?? ''}
-                                    <input n:attr="value => $_REQUEST['q'] ?? NULL" autocomplete="off" type="search" maxlength="79" name="q" placeholder="{_header_search}" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
+                                    <input n:attr="value => $_REQUEST['q'] ?? NULL" onkeydown="onSearchTipKeydown(event)" oninput="onSearchBoxInput(event)" autocomplete="off" type="search" maxlength="79" name="q" placeholder="{_header_search}" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
                                     <select name="section">
                                         <option n:attr="selected => $section == 'users'" value="users">{_s_by_people}</option>
                                         <option n:attr="selected => $section == 'groups'" value="groups">{_s_by_groups}</option>

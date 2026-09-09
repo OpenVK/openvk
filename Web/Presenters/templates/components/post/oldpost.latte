@@ -134,7 +134,7 @@
                     {/if}
 
                     {if !($forceNoEditLink ?? false) && isset($thisUser) && $post->canBeEditedBy($thisUser)}
-                        <a class="m_hide post_unique_btns" id="editPost"
+                        <a onclick="onPostEditButtonClick(event)" class="m_hide post_unique_btns" id="editPost"
                            data-id="{$post->getPrettyId()}">{_edit}</a> <span class="m_hide">&nbsp;|&nbsp;</span>
                     {/if}
 
@@ -148,7 +148,7 @@
                     {/if}
 
                     {if $feedIgnoreButton ?? false && !$canBeDeleted}
-                    <a class="m_hide" id="__ignoreSomeoneFeed" data-val='1' data-id="{$wallOwner->getRealId()}">{_feed_ignore}</a> &nbsp;|&nbsp;
+                    <a class="m_hide" onclick="onIgnoreSomeoneClick(event, true)" id="__ignoreSomeoneFeed" data-val='1' data-id="{$wallOwner->getRealId()}">{_feed_ignore}</a> &nbsp;|&nbsp;
                     {/if}
 
                     {if !$canBeDeleted}

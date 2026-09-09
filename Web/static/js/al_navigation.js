@@ -17,7 +17,7 @@ u(document).on('focusout', '#search_box input[type="search"], .header-search-box
     }, 200)
 })
 
-u(document).on('click', (e) => {
+$(document).on('click', (e) => {
     if (window.openvk.at_search) {
         return
     }
@@ -28,7 +28,7 @@ u(document).on('click', (e) => {
     }
 })
 
-u(document).on('keydown', (e) => {
+$(document).on('keydown', (e) => {
     if (e.keyCode === 27) {
         if (window.openvk.at_search) {
             return
@@ -42,16 +42,16 @@ u(document).on('keydown', (e) => {
     }
 })
 
-u(document).on('click', '.search_option_name', (e) => {
+function onSearchOptionNameClick(e) {
     const target = e.target.closest('.search_option')
     // 🤪
     $(target.querySelector('.search_option_content')).slideToggle(250, "swing");
     setTimeout(() => {
         u(target).toggleClass('search_option_hidden')
     }, 250)
-})
+}
 
-u(document).on('click', '#search_reset', (e) => {
+function onSearchResetClick(e) {
     u(`.page_search_options input[type='text']`).nodes.forEach(inp => {
         inp.value = ''
     })
@@ -72,9 +72,13 @@ u(document).on('click', '#search_reset', (e) => {
     u(`.page_search_options select`).nodes.forEach(sel => {
         sel.value = sel.dataset.default
     })
-})
+}
 
-u(`#search_box input[type='search']`).on('input', async (e) => {
+$(document).on("click", ".search_option_name", (e) => {
+    onSearchOptionNameClick(e);
+});
+
+async function onSearchBoxInput(e) {
     if (window.openvk.at_search) {
         return
     }
@@ -165,7 +169,7 @@ u(`#search_box input[type='search']`).on('input', async (e) => {
     json_result.items.forEach(item => {
         const id = idForItem(item);
         u('#searchBoxFastTips').append(`
-            <a href='${item['url']}' ${section == 'videos' ? `onclick="VideoViewer.openById('${id}')"` : ''}>
+            <a onkeydown="onSearchTipKeydown(event)" href='${item['url']}' ${section == 'videos' ? `onclick="VideoViewer.openById('${id}')"` : ''}>
                 <img src='${item['preview']}' class='search_tip_preview_block'>
                 <div class='search_tip_info_block'>
                     <b>${ovk_proc_strtr(item['name'].escapeHtml(), 50)}</b>
@@ -174,9 +178,9 @@ u(`#search_box input[type='search']`).on('input', async (e) => {
             </a>
         `)
     })
-})
+}
 
-u(document).on('keydown', `#search_box input[type='search'], #searchBoxFastTips a`, (e) => {
+function onSearchTipKeydown(e) {
     const u_tips = u('#searchBoxFastTips a')
     if (u_tips.length < 1) {
         return
@@ -214,7 +218,7 @@ u(document).on('keydown', `#search_box input[type='search'], #searchBoxFastTips 
 
             break
     }
-})
+}
 
 window.headPlayPause = async function (e) {
     if (e) {

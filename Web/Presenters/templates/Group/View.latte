@@ -286,7 +286,7 @@
         {if $canReport}
         <a class="profile_link" style="display:block;" href="javascript:reportClub({$club->getId()})">{_report}</a>
         {/if}
-        <a n:if="!$club->isHideFromGlobalFeedEnabled()" class="profile_link" style="display:block;" id="__ignoreSomeone" data-val='{!$ignore_status ? 1 : 0}' data-id="{$club->getRealId()}">
+        <a n:if="!$club->isHideFromGlobalFeedEnabled()" onclick="onIgnoreSomeoneClick(event)" class="profile_link" style="display:block;" id="__ignoreSomeone" data-val='{!$ignore_status ? 1 : 0}' data-id="{$club->getRealId()}">
             {if !$ignore_status}{_ignore_club}{else}{_unignore_club}{/if}
         </a>
     </div>
@@ -407,7 +407,7 @@
             </div>
         </div>
     </div>
-    <div class="fictional_profile_section" n:if="!empty($videosCount) && $videosCount > 0">
+    <div class="fictional_profile_section" n:if="(!empty($videosCount) && $videosCount > 0) || $canBeModified">
         <div class="content_title_expanded" onclick="hidePanel(this, {$videosCount});">
             {_videos}
         </div>

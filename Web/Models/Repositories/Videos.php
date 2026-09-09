@@ -106,7 +106,7 @@ class Videos
         $request = $this->videos;
 
         if ($user->getRealId() > 0) {
-            $request = $request->where("owner", $user->getId())->where(["deleted" => 0, "unlisted" => 0, "context_id" => null]);
+            $request = $request->where("owner", $user->getId())->where(["deleted" => 0, "unlisted" => 0, "context_id" => 0]);
         } else {
             $request = $request->where("context_id", $user->getRealId())->where(["deleted" => 0, "unlisted" => 0, "context_unlisted" => 0]);
         }
@@ -122,7 +122,7 @@ class Videos
         $request = $this->videos;
 
         if ($user->getRealId() > 0) {
-            $request = $request->where("owner", $user->getId())->where(["deleted" => 0, "unlisted" => 0, "context_id" => null]);
+            $request = $request->where("owner", $user->getId())->where(["deleted" => 0, "unlisted" => 0, "context_id" => 0]);
         } else {
             $request = $request->where("context_id", $user->getRealId())->where(["deleted" => 0, "unlisted" => 0, "context_unlisted" => 0]);
         }

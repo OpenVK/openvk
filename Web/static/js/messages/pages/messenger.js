@@ -1415,7 +1415,7 @@ export class MessengerPage extends IMPage {
             return;
         }
 
-        if (e.buttons !== 1 && e.type == 'mousemove') return;
+        if (e.buttons !== 1 || e.type == 'mousemove') return;
         if (window.im.messenger.replyTo != null) return;
         if (window.im.messenger.selected_messages_count == 0 && !e.target.closest(".click-territory")) {
             return;
@@ -1855,12 +1855,11 @@ export class MessengerPage extends IMPage {
         window.im.messenger.is_switching = false;
     }
 
-    onAuthorNameClick(msg, e) {
+    onAuthorNameClick(e, msg) {
         e.preventDefault();
         e.stopPropagation();
 
-
-        //this.togglePeerInfo(msg.sender);
+        this.togglePeerInfo(msg.sender);
     }
 
     getMessagesContainer() {

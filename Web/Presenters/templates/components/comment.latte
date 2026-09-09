@@ -53,11 +53,11 @@
                             {/if}
                             {if $comment->canBeEditedBy($thisUser)}
                                 <span>|</span>
-                                <a id="editPost" data-id="{$comment->getId()}">{_edit}</a>
+                                <a onclick="onPostEditButtonClick(event)" id="editPost" data-id="{$comment->getId()}">{_edit}</a>
                             {/if}
                             {if !$no_reply_button}
                                 <span>|</span>
-                                <a class="comment-reply">{_reply}</a>
+                                <a onclick="commentReply(event)" class="comment-reply">{_reply}</a>
                             {/if}
                             {if $thisUser->getId() != $author->getRealId()}
                                 <span>|</span>

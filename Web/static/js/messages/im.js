@@ -952,16 +952,25 @@ class SettingsPage extends IMPage {
     render(container) {
         this.getNode().addClass("page-other");
 
-        const show_mail = location.hostname == "openvk.org";
+        const show_mail = true; //location.hostname == "openvk.org";
         container.insertAdjacentHTML("beforeend", `
             <div class="messenger-settings">
                 <div>
-                    <b>Openvk IM</b>
-                    <label style="display:block;"><input id="im.24h" type="checkbox">${tr("im_option_24h_format") || "24-часовой формат времени"}</label>
-                    <label style="display:block;"><input id="im.modern_mode" type="checkbox">${tr("im_option_compact_mode")} (beta)</label>
-                    <label style="display:block;"><input id="im.debug" type="checkbox">${tr("im_option_debug")}</label>
-                    <label style="display:block;"><input id="viewers.photo.list" type="checkbox">${tr("im_option_photo_viewer")} (Beta)</label>
-                    ${show_mail ? `<p><a onclick="window.im.messenger.selectConversationByPeerId(window.openvk.dev_id)">${tr("report_bug")}</a></p>` : ""}
+                    <div style="text-align: center;">
+                        <b>OpenVK Polylogues</b>
+                    </div>
+                    <div>
+                        <label style="display:block;"><input id="im.modern_mode" type="checkbox">${tr("im_option_compact_mode")} (beta)</label>
+                        <label style="display:block;"><input id="viewers.photo.list" type="checkbox">${tr("im_option_photo_viewer")} (Beta)</label>
+                    </div>
+                    <div>
+                        <label style="display:block;"><input id="im.mute_all" type="checkbox">${tr("im_option_mute_local")}</label>
+                    </div>
+                    <div>
+                        <label style="display:block;"><input id="im.debug" type="checkbox">${tr("im_option_debug")}</label>
+                        <label style="display:block;"><input id="im.disable_lottie" type="checkbox">${tr("im_option_disable_animated_stickers")}</label>
+                        ${show_mail ? `<p><a onclick="window.im.messenger.selectConversationByPeerId(window.openvk.dev_id)">${tr("report_bug")}</a></p>` : ""}
+                    </div>
                 </div>
             </div>
         `);
@@ -1919,7 +1928,7 @@ export class FastChats {
     }
 
     async update() {
-        await this.loadOnlineFriends();
+        //await this.loadOnlineFriends(); too much
         this.render();
     }
 
@@ -2149,6 +2158,11 @@ let _originalFaviconUrl = null;
 
 export function updateFaviconBadge(count) {
     count = Number(count) || 0;
+    const isMuteAll = localStorage.getItem("tw.im.mute_all") || "0" == "1";
+
+    if (isMuteAll) {
+        return;
+    }
 
     let link = document.querySelector("link[rel~='icon']");
     if (!link) {
