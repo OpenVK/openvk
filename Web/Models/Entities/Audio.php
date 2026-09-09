@@ -406,7 +406,7 @@ class Audio extends Media
         $obj = (object) [];
         $obj->unique_id  = base64_encode((string) $this->getId());
         $obj->id         = $obj->aid = $this->getVirtualId();
-        $obj->artist     = $this->getPerformer();
+        $obj->artist     = $obj->performer = $this->getPerformer();
         $obj->title      = $this->getTitle();
         $obj->duration   = $this->getLength();
         $obj->url        = false;

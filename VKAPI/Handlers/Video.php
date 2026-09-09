@@ -15,9 +15,13 @@ use openvk\Web\Models\Repositories\Comments as CommentsRepo;
 
 final class Video extends VKAPIRequestHandler
 {
-    public function get(int $owner_id = 0, string $videos = "", string $fields = "", int $offset = 0, int $count = 30, int $extended = 0): object
+    public function get(int $owner_id = 0, string $videos = "", string $fields = "", int $offset = 0, int $count = 30, int $extended = 0, int $video_id = 0): object|array
     {
         # $this->requireUser();
+
+        if (empty($videos) && $video_id > 0) {
+            $videos = "{$owner_id}_{$video_id}";
+        }
 
         if (!empty($videos)) {
             $vids = array_unique(explode(',', $videos));
@@ -46,6 +50,10 @@ final class Video extends VKAPIRequestHandler
                         }
                     }
                 }
+            }
+
+            if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                return array_merge([count($items)], $items);
             }
 
             if ($extended == 1) {
@@ -78,6 +86,10 @@ final class Video extends VKAPIRequestHandler
                 "items" => $items,
             ];
         } else {
+            if ($owner_id === 0 && $this->getUser()) {
+                $owner_id = $this->getUser()->getId();
+            }
+
             if ($owner_id > 0) {
                 $user = (new UsersRepo())->get($owner_id);
             } else {
@@ -108,6 +120,10 @@ final class Video extends VKAPIRequestHandler
                         $groups[] = abs($video['owner_id']);
                     }
                 }
+            }
+
+            if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                return array_merge([$videosCount], $items);
             }
 
             if ($extended == 1) {
@@ -194,7 +210,7 @@ final class Video extends VKAPIRequestHandler
         return 1;
     }
 
-    public function search(string $q = '', int $sort = 0, int $offset = 0, int $count = 10, bool $extended = false, string $fields = ''): object
+    public function search(string $q = '', int $sort = 0, int $offset = 0, int $count = 10, bool $extended = false, string $fields = ''): object|array
     {
         $this->requireUser();
 
@@ -219,6 +235,10 @@ final class Video extends VKAPIRequestHandler
                     $groups[] = abs($return_item['owner_id']);
                 }
             }
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return array_merge([$count], $return_items);
         }
 
         if ($extended) {

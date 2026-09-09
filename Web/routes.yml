@@ -413,6 +413,8 @@ routes:
       handler: "Admin->uploadStickerOutline"
     - url: "/upload/photo/{text}"
       handler: "VKAPI->photoUpload"
+    - url: "/api.php"
+      handler: "VKAPI->apiPHP"
     - url: "/method/execute"
       handler: "VKAPI->execute"
     - url: "/method/{text}.{text}"

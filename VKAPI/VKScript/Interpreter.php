@@ -484,14 +484,21 @@ class Interpreter
     private function evalFilter(array $node)
     {
         $value    = $this->eval($node["object"]);
-        $elements = $this->toList($value);
+        if (is_object($value) && isset($value->items) && is_array($value->items)) {
+            $elements = $value->items;
+        } elseif (is_array($value) && isset($value["items"]) && is_array($value["items"])) {
+            $elements = $value["items"];
+        } else {
+            $elements = $this->toList($value);
+        }
         $out      = [];
 
         foreach ($elements as $el) {
-            if ($node["mode"] === "member") {
-                $out[] = $this->getMember($el, $node["name"]);
-            } else {
-                $out[] = $this->getIndex($el, $this->eval($node["index"]));
+            $val = ($node["mode"] === "member")
+                ? $this->getMember($el, $node["name"])
+                : $this->getIndex($el, $this->eval($node["index"]));
+            if ($val !== null) {
+                $out[] = $val;
             }
         }
 

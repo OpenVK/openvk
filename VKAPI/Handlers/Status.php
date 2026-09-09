@@ -11,9 +11,8 @@ final class Status extends VKAPIRequestHandler
 {
     public function get(int $user_id = 0, int $group_id = 0)
     {
-        $this->requireUser();
-
         if ($user_id == 0 && $group_id == 0) {
+            $this->requireUser();
             $user_id = $this->getUser()->getId();
         }
 
@@ -22,13 +21,13 @@ final class Status extends VKAPIRequestHandler
         } else {
             $user = (new UsersRepo())->get($user_id);
 
-            if (!$user || $user->isDeleted() || !$user->canBeViewedBy($this->getUser())) {
+            if (!$user || $user->isDeleted() || ($this->getUser() && !$user->canBeViewedBy($this->getUser()))) {
                 $this->fail(15, "Invalid user");
             }
 
             $audioStatus = $user->getCurrentAudioStatus();
             $res = [
-                "text" => $user->getStatus(),
+                "text" => $user->getStatus() ?? "",
             ];
 
             if ($audioStatus) {

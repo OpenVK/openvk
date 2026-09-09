@@ -11,11 +11,20 @@ use openvk\Web\Models\Repositories\Reports;
 
 final class Users extends VKAPIRequestHandler
 {
-    public function get(string $user_ids = "0", string $fields = "", int $offset = 0, int $count = 100, User $authuser = null /* костыль(( */): array
+    public function get(string $user_ids = "0", string $fields = "", int $offset = 0, int $count = 100, User $authuser = null /* костыль(( */, string $name_case = "nom"): array
     {
         if ($authuser == null) {
             $authuser = $this->getUser();
         }
+
+        $caseMap = [
+            'gen' => 'genitive',
+            'dat' => 'dative',
+            'acc' => 'accusative',
+            'ins' => 'instrumental',
+            'abl' => 'prepositional',
+        ];
+        $morphCase = $caseMap[strtolower($name_case)] ?? null;
 
         $users = new UsersRepo();
         if ($user_ids == "0") {
@@ -52,10 +61,12 @@ final class Users extends VKAPIRequestHandler
                         "deactivated" => "deleted",
                     ];
                 } elseif ($usr->isBanned()) {
+                    $firstName = $morphCase ? $usr->getMorphedName($morphCase, false, false) : $usr->getFirstName(true);
+                    $lastName  = $morphCase ? $usr->getMorphedName($morphCase, false, true)  : $usr->getLastName(true);
                     $response[$i] = (object) [
                         "id"          => $usr->getId(),
-                        "first_name"  => $usr->getFirstName(true),
-                        "last_name"   => $usr->getLastName(true),
+                        "first_name"  => $firstName,
+                        "last_name"   => $lastName,
                         "deactivated" => "banned",
                         "ban_reason"  => $usr->getBanReason(),
                     ];
@@ -63,16 +74,23 @@ final class Users extends VKAPIRequestHandler
 
                 } else {
                     $canView = $usr->canBeViewedBy($this->getUser());
+                    $firstName = $morphCase ? $usr->getMorphedName($morphCase, false, false) : $usr->getFirstName(true);
+                    $lastName  = $morphCase ? $usr->getMorphedName($morphCase, false, true)  : $usr->getLastName(true);
                     $response[$i] = (object) [
                         "id"                => $usr->getId(),
-                        "first_name"        => $usr->getFirstName(true),
-                        "last_name"         => $usr->getLastName(true),
+                        "first_name"        => $firstName,
+                        "last_name"         => $lastName,
                         "is_closed"         => (int) $usr->isClosed(),
                         "can_access_closed" => (int) $canView,
                     ];
 
+                    if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                        $response[$i]->uid = $usr->getId();
+                    }
+
                     $flds = explode(',', $fields);
                     foreach ($flds as $field) {
+                        $field = trim($field);
                         switch ($field) {
                             case "first_name_gen":
                                 $response[$i]->first_name_gen = $usr->getMorphedName("genitive", false, false);
@@ -107,13 +125,23 @@ final class Users extends VKAPIRequestHandler
                             case "photo_max":
                                 $response[$i]->photo_max = $usr->getAvatarURL("original");
                                 break;
+                            case "photo":
+                            case "photo_rec":
                             case "photo_50":
+                                $response[$i]->photo = $usr->getAvatarURL();
+                                $response[$i]->photo_rec = $usr->getAvatarURL();
                                 $response[$i]->photo_50 = $usr->getAvatarURL();
                                 break;
+                            case "photo_medium":
+                            case "photo_medium_rec":
                             case "photo_100":
+                                $response[$i]->photo_medium = $usr->getAvatarURL("tiny");
+                                $response[$i]->photo_medium_rec = $usr->getAvatarURL("tiny");
                                 $response[$i]->photo_100 = $usr->getAvatarURL("tiny");
                                 break;
+                            case "photo_big":
                             case "photo_200":
+                                $response[$i]->photo_big = $usr->getAvatarURL("normal");
                                 $response[$i]->photo_200 = $usr->getAvatarURL("normal");
                                 break;
                             case "photo_200_orig": # вообще не ебу к чему эта строка ну пусть будет кек
@@ -238,10 +266,38 @@ final class Users extends VKAPIRequestHandler
                                     break;
                                 }
 
-                                $response[$i]->city = (object) [
-                                    'id' => 0,
-                                    'title' => $usr->getCity(),
-                                ];
+                                $cityStr = $usr->getCity();
+                                if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                                    $response[$i]->city = !empty($cityStr) ? $usr->getId() : 0;
+                                } else {
+                                    $response[$i]->city = (object) [
+                                        'id' => 0,
+                                        'title' => $cityStr,
+                                    ];
+                                }
+                                break;
+                            case "relation":
+                                if (!$canView) {
+                                    break;
+                                }
+
+                                $response[$i]->relation = $usr->getMaritalStatus();
+                                break;
+                            case "contacts":
+                                if (!$canView) {
+                                    break;
+                                }
+
+                                $response[$i]->mobile_phone = $usr->getPhone() ?? "";
+                                $response[$i]->home_phone = "";
+                                break;
+                            case "education":
+                                if (!$canView) {
+                                    break;
+                                }
+
+                                $response[$i]->university_name = "";
+                                $response[$i]->graduation = "";
                                 break;
                             case "home_town":
                                 if (!$canView) {
@@ -394,6 +450,21 @@ final class Users extends VKAPIRequestHandler
                                 break;
                             case "can_invite":
                                 $response[$i]->can_invite = (int) $usr->getPrivacyPermission("messages.add_to_chats", $this->getUser());
+                                break;
+                            case "can_post":
+                                $response[$i]->can_post = (int) $usr->getPrivacyPermission("wall.write", $this->getUser());
+                                break;
+                            case "can_see_all_posts":
+                                $response[$i]->can_see_all_posts = (int) $canView;
+                                break;
+                            case "can_see_audio":
+                                $response[$i]->can_see_audio = (int) ($canView && $usr->getPrivacyPermission("audios.read", $this->getUser()));
+                                break;
+                            case "can_send_friend_request":
+                                $response[$i]->can_send_friend_request = (int) ($authuser && $authuser->getId() !== $usr->getId() && $usr->getPrivacyPermission("friends.add", $authuser));
+                                break;
+                            case "is_friend":
+                                $response[$i]->is_friend = (int) ($authuser && $usr->getSubscriptionStatus($authuser) === User::SUBSCRIPTION_MUTUAL);
                                 break;
                         }
                     }

@@ -389,7 +389,8 @@ class Document extends Media
     public function toVkApiStruct(?User $user = null, bool $return_tags = false): object
     {
         $res = new \stdClass();
-        $res->id = $this->getId();
+        $res->id  = $this->getId();
+        $res->did = $this->getId();
         if ($this->isOwnerHidden() && $user !== null && $this->getOwnerID() == $user->getId()) {
             $res->true_owner_id = $this->getOwnerID();
         } elseif (!$this->isOwnerHidden()) {

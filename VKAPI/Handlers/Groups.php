@@ -12,7 +12,7 @@ use openvk\Web\Models\Entities\Relationships\Blacklist;
 
 final class Groups extends VKAPIRequestHandler
 {
-    public function get(int $user_id = 0, string $fields = "", int $offset = 0, int $count = 6, bool $online = false, string $filter = "groups", int $extended = 0): object
+    public function get(int $user_id = 0, string $fields = "", int $offset = 0, int $count = 6, bool $online = false, string $filter = "groups", int $extended = 0): object|array
     {
         $this->requireUser();
 
@@ -62,6 +62,14 @@ final class Groups extends VKAPIRequestHandler
             }
         } else {
             $rClubs = [];
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            if ($extended === 0) {
+                $gids = array_map(fn($c) => is_object($c) ? ($c->id ?? $c->gid) : $c, $rClubs);
+                return array_merge([$clbsCount], $gids);
+            }
+            return array_merge([$clbsCount], array_values($rClubs));
         }
 
         return (object) [

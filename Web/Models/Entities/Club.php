@@ -725,6 +725,13 @@ class Club extends RowModel
             }
         }
 
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            $res->gid = $this->getId();
+            $res->photo = $this->getAvatarUrl('miniscule', $avatar_photo);
+            $res->photo_medium = $this->getAvatarUrl('tiny', $avatar_photo);
+            $res->photo_big = $this->getAvatarUrl('normal', $avatar_photo);
+        }
+
         return $res;
     }
 

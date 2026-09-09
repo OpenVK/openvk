@@ -152,6 +152,20 @@ class Video extends Media
     {
         $fromYoutube = $this->getType() == Video::TYPE_EMBED;
         $dimensions  = $this->getDimensions();
+
+        if ($fromYoutube) {
+            $files = [
+                "external" => $this->getVideoDriver()?->getURL() ?? "",
+            ];
+        } else {
+            $url = $this->getURL();
+            $files = [
+                "mp4_240" => $url,
+                "mp4_360" => $url,
+                "mp4_480" => $url . "#vkuservideo",
+            ];
+        }
+
         $res = (object) [
             "type" => "video",
             "video" => [
@@ -163,7 +177,7 @@ class Video extends Media
                 "can_add" => 0,
                 "comments" => $this->getCommentsCount(),
                 "date" => $this->getPublicationTime()->timestamp(),
-                "description" => $this->getDescription(),
+                "description" => $this->getDescription() ?? "",
                 "duration" => $this->getLength(),
                 "image" => [
                     (object) [
@@ -182,15 +196,14 @@ class Video extends Media
                 "width" => $dimensions ? $dimensions[0] : 640,
                 "height" => $dimensions ? $dimensions[1] : 480,
                 "id" => $this->getCompromiseVirtualId(),
+                "vid" => $this->getCompromiseVirtualId(),
                 "owner_id" => $this->getOwner()->getRealId(),
                 "access_key" => $this->getAccessKey(),
                 "user_id" => $this->getOwner()->getRealId(),
                 "title" => $this->getName(),
                 "is_favorite" => false,
-                "player" => !$fromYoutube ? $this->getURL() : $this->getVideoDriver()->getURL(),
-                "files" => !$fromYoutube ? [
-                    "mp4_480" => $this->getURL() . "#vkuservideo",
-                ] : [],
+                "player" => !$fromYoutube ? $this->getURL() : ($this->getVideoDriver()?->getURL() ?? ""),
+                "files" => (object) $files,
                 "added" => 0,
                 "repeat" => 0,
                 "type" => "video",
@@ -204,6 +217,15 @@ class Video extends Media
         ];
         if ($fromYoutube) {
             $res->video['platform'] = "youtube";
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            $thumb = $this->getThumbnailURL();
+            if (!str_starts_with($thumb, "http://") && !str_starts_with($thumb, "https://")) {
+                $thumb = ovk_scheme(true) . ($_SERVER['HTTP_HOST'] ?? "ovk.zazios.ru") . $thumb;
+            }
+            $res->video['image'] = $thumb;
+            $res->video['image_medium'] = $thumb;
         }
 
         if (!is_null($user)) {

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace openvk\VKAPI\Handlers;
 
+use openvk\Web\Models\Repositories\Comments as CommentsRepo;
+
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Repositories\Posts as PostsRepo;
 use openvk\Web\Models\Repositories\Photos as PhotosRepo;
@@ -321,6 +323,44 @@ final class Newsfeed extends VKAPIRequestHandler
             $result['next_from'] = $next_from;
         }
 
+        # Legacy field mapping for API < 5.0 (VK 3.x clients)
+        if (VKAPI_DECL_VER_MAJOR < 5) {
+            foreach ($result['items'] as &$item) {
+                if (is_object($item)) {
+                    if (isset($item->id)) {
+                        $item->post_id = $item->id;
+                    }
+                    if (isset($item->owner_id)) {
+                        $item->source_id = $item->owner_id;
+                    }
+                }
+            }
+            unset($item);
+
+            if (isset($result['profiles'])) {
+                foreach ($result['profiles'] as &$p) {
+                    if (is_object($p)) {
+                        $p->uid = $p->id;
+                        $p->photo = $p->photo_50 ?? "";
+                        $p->photo_medium_rec = $p->photo_100 ?? $p->photo_50 ?? "";
+                    }
+                }
+                unset($p);
+            }
+
+            if (isset($result['groups'])) {
+                foreach ($result['groups'] as &$g) {
+                    if (is_object($g)) {
+                        $g->gid = $g->id;
+                        $g->photo = $g->photo_50 ?? "";
+                        $g->photo_medium = $g->photo_100 ?? $g->photo_50 ?? "";
+                        $g->is_admin = $g->is_admin ?? 0;
+                    }
+                }
+                unset($g);
+            }
+        }
+
         return $result;
     }
 
@@ -623,5 +663,269 @@ final class Newsfeed extends VKAPIRequestHandler
         }
 
         return 1;
+    }
+
+    public function getComments(
+        int $count = 30,
+        string $filters = "post",
+        string $reposts = "",
+        int $start_time = 0,
+        int $end_time = 0,
+        int $last_comments = 1,
+        int $last_comments_count = 1,
+        string $start_from = "",
+        string $fields = "",
+        int $offset = 0
+    ): object {
+        $this->requireUser();
+
+        $count  = max(1, min(100, $count));
+        $offset = max(0, min(1000, $offset));
+
+        if (!empty($start_from) && is_numeric($start_from) && $offset === 0) {
+            $offset = (int) $start_from;
+        }
+
+        $userId = $this->getUser()->getId();
+
+        $subs = DatabaseConnection::i()
+            ->getContext()
+            ->table("subscriptions")
+            ->where("follower", $userId);
+        $subscribedWalls = array_map(function ($rel) {
+            return $rel->target * ($rel->model === "openvk\Web\Models\Entities\User" ? 1 : -1);
+        }, iterator_to_array($subs));
+        $subscribedWalls[] = $userId;
+
+        $myComments = DatabaseConnection::i()
+            ->getContext()
+            ->table("comments")
+            ->select("target")
+            ->where("model", "openvk\\Web\\Models\\Entities\\Post")
+            ->where("owner", $userId)
+            ->where("deleted", 0);
+        $userCommentedTargets = [];
+        foreach ($myComments as $mc) {
+            $userCommentedTargets[] = (int) $mc->target;
+        }
+
+        $commentsQuery = DatabaseConnection::i()
+            ->getContext()
+            ->table("comments")
+            ->select("target, created, owner")
+            ->where("model", "openvk\\Web\\Models\\Entities\\Post")
+            ->where("deleted", 0);
+
+        if ($start_time > 0) {
+            $commentsQuery->where("created >= ?", $start_time);
+        }
+        if ($end_time > 0) {
+            $commentsQuery->where("created <= ?", $end_time);
+        }
+
+        $commentsQuery->order("id DESC")->limit(max(300, ($offset + $count) * 10));
+
+        $allPostCandidates = [];
+        foreach ($commentsQuery as $row) {
+            $target = (int) $row->target;
+            if (!isset($allPostCandidates[$target])) {
+                $allPostCandidates[$target] = (int) $row->created;
+            }
+        }
+
+        if (empty($allPostCandidates)) {
+            return (object) [
+                "items"    => [],
+                "profiles" => [],
+                "groups"   => [],
+                "new_from" => "0",
+            ];
+        }
+
+        $targetIds = array_keys($allPostCandidates);
+
+        $postsQuery = DatabaseConnection::i()
+            ->getContext()
+            ->table("posts")
+            ->where("id", $targetIds)
+            ->where("deleted", 0)
+            ->where("suggested", 0)
+            ->where("archived", 0);
+
+        if (!empty($userCommentedTargets)) {
+            $postsQuery->where("wall IN (?) OR owner = ? OR id IN (?)", $subscribedWalls, $userId, $userCommentedTargets);
+        } else {
+            $postsQuery->where("wall IN (?) OR owner = ?", $subscribedWalls, $userId);
+        }
+
+        $postRows = [];
+        foreach ($postsQuery as $post) {
+            $postRows[] = [
+                "id"   => (int) $post->id,
+                "time" => $allPostCandidates[(int) $post->id] ?? (int) $post->created,
+            ];
+        }
+
+        usort($postRows, fn($a, $b) => $b["time"] <=> $a["time"]);
+
+        $pagedPostRows = array_slice($postRows, $offset, $count);
+        $hasMore       = sizeof($postRows) > ($offset + $count);
+        $newFrom       = $hasMore ? (string) ($offset + $count) : "0";
+
+        $final_items    = [];
+        $final_profiles = [];
+        $final_groups   = [];
+        $neededUserIds  = [];
+        $neededGroupIds = [];
+
+        $wallHandler  = new Wall();
+        $commentsRepo = new CommentsRepo();
+        $postsRepo    = new PostsRepo();
+
+        foreach ($pagedPostRows as $row) {
+            $post = $postsRepo->get($row["id"]);
+            if (!$post || !$post->canBeViewedBy($this->getUser())) {
+                continue;
+            }
+
+            $wallResp = $wallHandler->getById($post->getPrettyId(), 1, $fields, $this->getUser());
+            $items = is_object($wallResp) && isset($wallResp->items) ? $wallResp->items : (is_array($wallResp) ? $wallResp : []);
+            if (empty($items)) {
+                continue;
+            }
+
+            $item = $items[0];
+            $item->type      = "post";
+            $item->source_id = (int) $item->owner_id;
+            $item->post_id   = (int) $item->id;
+
+            $rawLastComments = $commentsRepo->getLastCommentsByTarget($post, max(1, $last_comments_count));
+            $commentsList    = [];
+            foreach ($rawLastComments as $comment) {
+                $cOwner   = $comment->getOwner();
+                $cOwnerId = $cOwner->getId();
+                if ($cOwner instanceof \openvk\Web\Models\Entities\Club) {
+                    $cOwnerId = -$cOwnerId;
+                    $neededGroupIds[abs($cOwnerId)] = true;
+                } else {
+                    $neededUserIds[$cOwnerId] = true;
+                }
+
+                $commentsList[] = (object) [
+                    "id"   => $comment->getId(),
+                    "uid"  => $cOwnerId,
+                    "text" => $comment->getText(false),
+                    "date" => $comment->getPublicationTime()->timestamp(),
+                ];
+            }
+
+            $commentsCount = $commentsRepo->getCommentsCountByTarget($post);
+            $item->comments = (object) [
+                "count"    => $commentsCount,
+                "can_post" => 1,
+                "list"     => $commentsList,
+            ];
+
+            if (!isset($item->likes) || !is_object($item->likes)) {
+                $item->likes = (object) [
+                    "count"       => $post->getLikesCount(),
+                    "user_likes"  => (int) $post->hasLikeFrom($this->getUser()),
+                    "can_publish" => 1,
+                ];
+            } else {
+                $item->likes->user_likes ??= (int) $post->hasLikeFrom($this->getUser());
+                $item->likes->can_publish ??= 1;
+            }
+
+            $final_items[] = $item;
+
+            if ($item->from_id > 0) {
+                $neededUserIds[$item->from_id] = true;
+            } elseif ($item->from_id < 0) {
+                $neededGroupIds[abs($item->from_id)] = true;
+            }
+
+            if ($item->source_id > 0) {
+                $neededUserIds[$item->source_id] = true;
+            } elseif ($item->source_id < 0) {
+                $neededGroupIds[abs($item->source_id)] = true;
+            }
+
+            if (is_object($wallResp)) {
+                foreach ($wallResp->profiles ?? [] as $prof) {
+                    $pid = $prof->id ?? $prof->uid ?? null;
+                    if ($pid) {
+                        $final_profiles[$pid] = $prof;
+                    }
+                }
+                foreach ($wallResp->groups ?? [] as $grp) {
+                    $gid = $grp->id ?? $grp->gid ?? null;
+                    if ($gid) {
+                        $final_groups[$gid] = $grp;
+                    }
+                }
+            }
+        }
+
+        $usersRepo = new UsersRepo();
+        foreach (array_keys($neededUserIds) as $uId) {
+            if (isset($final_profiles[$uId])) {
+                continue;
+            }
+            $u = $usersRepo->get($uId);
+            if ($u && !$u->isDeleted()) {
+                $final_profiles[$uId] = (object) [
+                    "id"               => $u->getId(),
+                    "uid"              => $u->getId(),
+                    "first_name"       => $u->getFirstName(),
+                    "last_name"        => $u->getLastName(),
+                    "photo"            => $u->getAvatarURL(),
+                    "photo_50"         => $u->getAvatarURL(),
+                    "photo_100"        => $u->getAvatarURL("tiny"),
+                    "photo_medium_rec" => $u->getAvatarURL("tiny"),
+                    "online"           => (int) $u->isOnline(),
+                ];
+            }
+        }
+
+        $clubsRepo = new ClubsRepo();
+        foreach (array_keys($neededGroupIds) as $gId) {
+            if (isset($final_groups[$gId])) {
+                continue;
+            }
+            $g = $clubsRepo->get($gId);
+            if ($g) {
+                $final_groups[$gId] = (object) [
+                    "id"           => $g->getId(),
+                    "gid"          => $g->getId(),
+                    "name"         => $g->getName(),
+                    "photo"        => $g->getAvatarURL(),
+                    "photo_50"     => $g->getAvatarURL(),
+                    "photo_medium" => $g->getAvatarURL("tiny"),
+                    "photo_100"    => $g->getAvatarURL("tiny"),
+                    "is_admin"     => (int) $g->canBeModifiedBy($this->getUser()),
+                ];
+            }
+        }
+
+        foreach ($final_profiles as &$p) {
+            $p->uid ??= $p->id;
+            $p->photo ??= $p->photo_50 ?? "";
+            $p->photo_medium_rec ??= $p->photo_100 ?? $p->photo_50 ?? $p->photo ?? "";
+        }
+
+        foreach ($final_groups as &$g) {
+            $g->gid ??= $g->id;
+            $g->photo ??= $g->photo_50 ?? "";
+            $g->photo_medium ??= $g->photo_100 ?? $g->photo_50 ?? $g->photo ?? "";
+            $g->is_admin ??= 0;
+        }
+
+        return (object) [
+            "items"    => $final_items,
+            "profiles" => array_values($final_profiles),
+            "groups"   => array_values($final_groups),
+            "new_from" => (string) $newFrom,
+        ];
     }
 }

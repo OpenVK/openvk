@@ -263,6 +263,12 @@ final class Messages extends VKAPIRequestHandler
         if (!empty($message['fwd_messages']) && is_array($message['fwd_messages'])) {
             foreach ($message['fwd_messages'] as &$fwd) {
                 if (is_array($fwd)) {
+                    $fwd['mid'] = (int) ($fwd['id'] ?? 0);
+                    if (!isset($fwd['from_id'])) {
+                        $fwd['from_id'] = (int) ($fwd['user_id'] ?? 0);
+                    }
+                    $fwd['body'] = (string) ($fwd['body'] ?? $fwd['text'] ?? "");
+                    $fwd['date'] = (int) ($fwd['date'] ?? 0);
                     $this->sanitizeMessageAttachmentsRecursive($fwd);
                 }
             }
@@ -1736,6 +1742,9 @@ final class Messages extends VKAPIRequestHandler
         $payload = $this->invoke("messages.getConversations", $params, $group_id);
 
         if (empty($payload['items'])) {
+            if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                return [0];
+            }
             return [
                 "count" => 0,
                 "items" => [],
@@ -1865,7 +1874,26 @@ final class Messages extends VKAPIRequestHandler
                 $msgObj['user_id'] = $peerId;
             }
 
+            $msgObj['uid'] = $msgObj['user_id'];
+            $msgObj['mid'] = $msgObj['id'];
+
+            if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                if (isset($msgObj['chat_active'])) {
+                    $msgObj['chat_active'] = is_array($msgObj['chat_active'])
+                        ? implode(',', array_filter($msgObj['chat_active']))
+                        : (string) $msgObj['chat_active'];
+                }
+            }
+
             $flatMessages[] = $msgObj;
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            $total = (int) ($payload['count'] ?? count($flatMessages));
+            if ($total === 0 || empty($flatMessages)) {
+                return [0];
+            }
+            return array_merge([$total], $flatMessages);
         }
 
         $result = [
@@ -2431,6 +2459,14 @@ final class Messages extends VKAPIRequestHandler
 
             $resolvedPeerId = $report->getContentObject(true)->getPeerId();
         } else {
+            if ($user_id > 2000000000) {
+                $chat_id = $user_id - 2000000000;
+                $user_id = 0;
+            } elseif ($peer_id > 2000000000) {
+                $chat_id = $peer_id - 2000000000;
+                $peer_id = 0;
+            }
+
             $resolvedPeerId = $this->resolvePeer($user_id, $peer_id, $chat_id);
             if (is_null($resolvedPeerId) || $resolvedPeerId === 0) {
                 $this->fail(100, "One of the parameters specified was missing or invalid: peer_id, user_id or chat_id");
@@ -2474,6 +2510,14 @@ final class Messages extends VKAPIRequestHandler
             foreach ($data['items'] as &$message) {
                 $this->sanitizeMessageAttachmentsRecursive($message);
 
+                $message['mid'] = (int) ($message['id'] ?? 0);
+                if (!isset($message['from_id'])) {
+                    $message['from_id'] = (int) ($message['user_id'] ?? 0);
+                }
+                $message['body'] = (string) ($message['body'] ?? $message['text'] ?? "");
+                $message['read_state'] = (int) ($message['read_state'] ?? 0);
+                $message['date'] = (int) ($message['date'] ?? 0);
+
                 if ($isLegacy && $loadedChat && !empty($message['chat_id'])) {
                     $chatStruct = $loadedChat->toChatSettingsStruct($this->getUser());
                     if (empty($message['title'])) {
@@ -2504,6 +2548,15 @@ final class Messages extends VKAPIRequestHandler
                 }
             }
             $this->hydrateExtendedData($data, $fields);
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            $items = $data['items'] ?? [];
+            $count = (int) ($data['count'] ?? count($items));
+            if ($count === 0 || empty($items)) {
+                return [0];
+            }
+            return array_merge([$count], $items);
         }
 
         return $data;
