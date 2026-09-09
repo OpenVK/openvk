@@ -97,6 +97,10 @@ final class VKAPIPresenter extends OpenVKPresenter
 
     public function onServerError(\Throwable $e): ?string
     {
+        if (defined("CHANDLER_ROOT_CONF") && (CHANDLER_ROOT_CONF["debug"] ?? false)) {
+            return null;
+        }
+
         $object = $this->currentObject ?? "";
         $method = $this->currentMethod ?? "";
 

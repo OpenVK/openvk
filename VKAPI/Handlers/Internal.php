@@ -25,4 +25,9 @@ final class Internal extends VKAPIRequestHandler
             ],
         ];*/
     }
+
+    public function giveMeException(): void
+    {
+        throw new \RuntimeException("Test exception for server error interception");
+    }
 }
