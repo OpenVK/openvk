@@ -16,6 +16,9 @@ use MessagePack\Packer;
 final class VKAPIPresenter extends OpenVKPresenter
 {
     protected $silent = true;
+    private ?string $currentObject = null;
+    private ?string $currentMethod = null;
+
     private function logRequest(string $object, string $method): void
     {
         $date   = date(DATE_COOKIE);
@@ -28,13 +31,14 @@ final class VKAPIPresenter extends OpenVKPresenter
     {
         $this->processVKAPIVersion();
 
+        $methodName = (!empty($object) && !empty($method)) ? "$object.$method" : ($object ?: $method);
         $payload = [
             "error_code"     => $code,
             "error_msg"      => $message,
             "request_params" => [
                 [
                     "key"   => "method",
-                    "value" => "$object.$method",
+                    "value" => $methodName,
                 ],
                 [
                     "key"   => "oauth",
@@ -89,6 +93,35 @@ final class VKAPIPresenter extends OpenVKPresenter
     private function badMethodCall(string $object, string $method, string $param): void
     {
         $this->fail(100, "Required parameter '$param' missing.", $object, $method);
+    }
+
+    public function onServerError(\Throwable $e): ?string
+    {
+        $object = $this->currentObject ?? "";
+        $method = $this->currentMethod ?? "";
+
+        if (empty($object) && empty($method)) {
+            $uri = parse_url($_SERVER["REQUEST_URI"] ?? "", PHP_URL_PATH) ?? "";
+            if (preg_match('#/method/([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)#', $uri, $m)) {
+                $object = $m[1];
+                $method = $m[2];
+            } elseif (!empty($_REQUEST["method"])) {
+                $reqMethod = (string) $_REQUEST["method"];
+                if (str_contains($reqMethod, ".")) {
+                    [$object, $method] = explode(".", $reqMethod, 2);
+                } else {
+                    $object = $reqMethod;
+                    $method = "";
+                }
+            }
+        }
+
+        $code    = 10;
+        $message = "Internal server error: could not process request";
+
+        $this->fail($code, $message, $object ?: "server", $method ?: "error");
+
+        return null;
     }
 
     public function onStartup(): void
@@ -534,6 +567,9 @@ final class VKAPIPresenter extends OpenVKPresenter
 
     public function renderRoute(string $object, string $method): void
     {
+        $this->currentObject = $object;
+        $this->currentMethod = $method;
+
         if (strtolower($object) === "execute") {
             $this->renderExecute($method);
             return;
@@ -786,6 +822,9 @@ final class VKAPIPresenter extends OpenVKPresenter
 
     public function renderExecute(?string $procedure = null): void
     {
+        $this->currentObject = "execute";
+        $this->currentMethod = $procedure ?? "";
+
         $callback = $this->queryParam("callback");
 
         $jsonData = null;
