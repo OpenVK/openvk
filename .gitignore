@@ -7,10 +7,7 @@ Web/static/js/node_modules
 tmp/*
 !tmp/api-storage/.gitkeep
 !tmp/themepack_artifacts/.gitkeep
-themepacks/*
-!themepacks/.gitkeep
-!themepacks/openvk_modern
-!themepacks/midnight
+themepacks
 storage/*
 !storage/.gitkeep
 logs/
