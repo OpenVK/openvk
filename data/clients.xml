@@ -11,6 +11,7 @@
     <Client id="10007" tag="vika_touch" name="Vika Touch" platform="mobile" />  // кика хохотач ахахахаххахахахахах
     <Client id="10008" tag="Matcha" name="Matcha" platform="android" url="https://github.com/DeliriousVoid/Matcha" img="/assets/packages/static/openvk/img/app_icons/matcha.png" />
     <Client id="20000" tag="renaissance" name="через Агент Mail.ru (Renaissance)" platform="api" url="https://mrim.su" img="/assets/packages/static/openvk/img/app_icons/renaissance_agent.png" />
+    <Client id="20001" tag="libopenvk" name="libopenvk" platform="api" url="https://github.com/SachaTending/libopenvk" />
 
     <Client id="2274003" tag="vk_android" name="VK for Android" platform="android" img="/assets/packages/static/openvk/img/app_icons/vk.png" />
     <Client id="2685278" tag="Kate Mobile" name="Kate Mobile (Community Mod)" platform="android" url="http://katemobile.ru" img="/assets/packages/static/openvk/img/app_icons/kate.png" />
