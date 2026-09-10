@@ -2154,39 +2154,18 @@ if (!window._fc_esc_inited) {
     });
 }
 
-let _originalFaviconUrl = null;
-
 export function updateFaviconBadge(count) {
     count = Number(count) || 0;
-    const isMuteAll = localStorage.getItem("tw.im.mute_all") || "0" == "1";
+    const isMuteAll = (localStorage.getItem("tw.im.mute_all") ?? "0") === "1";
 
     if (isMuteAll) {
-        return;
+        count = 0;
     }
 
-    let link = document.querySelector("link[rel~='icon']");
-    if (!link) {
-        link = document.createElement("link");
-        link.rel = "shortcut icon";
-        document.head.appendChild(link);
-    }
-
-    if (!_originalFaviconUrl) {
-        _originalFaviconUrl = '/assets/packages/static/openvk/img/icon.ico';
-    }
-
-    if (count <= 0) {
-        if (link.href !== _originalFaviconUrl) {
-            link.href = _originalFaviconUrl;
-        }
-        return;
-    }
-
-    const iconIndex = Math.min(9, Math.max(1, count));
-    const targetUrl = `/assets/packages/static/openvk/img/im/favs/fav_im${iconIndex}.ico`;
-
-    if (!link.href.endsWith(targetUrl)) {
-        link.href = targetUrl;
+    if (window.Favicon) {
+        window.Favicon.setIm(count);
+    } else if (typeof setFavicon === 'function') {
+        setFavicon(count > 0 ? (count > 9 ? 'im9+' : `im${count}`) : null);
     }
 }
 

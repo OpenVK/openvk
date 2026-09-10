@@ -7,7 +7,7 @@
             {ifset title}{$pageTitle} - {/ifset}{$instance_name}
         </title>
         <meta charset="utf-8" />
-        <link rel="shortcut icon" href="/assets/packages/static/openvk/img/icon.ico" />
+        <link rel="shortcut icon" href="/assets/packages/static/openvk/img/favicon/main.ico" />
         <meta name="application-name" content="{$instance_name}" />
         <meta n:ifset="$csrfToken" name="csrf" value="{$csrfToken}" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -18,6 +18,7 @@
         {script "js/node_modules/umbrellajs/umbrella.min.js"}
         {script "js/l10n.js"}
         {script "js/openvk.cls.js"}
+        {script "js/favicon.js"}
         {script "js/utils.js"}
 
         {script "js/node_modules/dashjs/dist/dash.all.min.js"}

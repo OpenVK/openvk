@@ -638,10 +638,10 @@ window.player = new class {
     }
 
     __setFavicon(state = 'playing') {
-        if(state == 'playing') {
-            document.querySelector('link[rel="icon"], link[rel="shortcut icon"]').setAttribute("href", "/assets/packages/static/openvk/img/favicons/favicon24_paused.png")
-        } else {
-            document.querySelector('link[rel="icon"], link[rel="shortcut icon"]').setAttribute("href", "/assets/packages/static/openvk/img/favicons/favicon24_playing.png")
+        if (window.Favicon) {
+            window.Favicon.setMusic(state);
+        } else if (typeof setFavicon === 'function') {
+            setFavicon(state === 'playing' ? 'play' : 'pause');
         }
     }
 

@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
         <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
-        <link rel="icon">
+        <link rel="shortcut icon" href="/assets/packages/static/openvk/img/favicon/main.ico" />
         <title>{$audio->getName()}</title>
         
         {css "css/main.css"}
@@ -11,6 +11,7 @@
         {script "js/node_modules/dashjs/dist/dash.all.min.js"}
         {script "js/node_modules/jquery/dist/jquery.min.js"}
         {script "js/node_modules/umbrellajs/umbrella.min.js"}
+        {script "js/favicon.js"}
     </head>
     <body id="audioEmbed">
         {include "player.latte", audio => $audio}
