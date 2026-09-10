@@ -2913,12 +2913,18 @@ li {
     width: 100%;
 }
 
-.im_counter {
+.counter {
     display: none !important;
 }
 
-.im_counter.shown {
-    display: inline-block !important;
+.counter.shown {
+    display: block !important;
+    float: right;
+    background: #e6e6e6;
+    color: #2B587A;
+    padding: 1px 7px;
+    border-radius: 2px;
+    margin-top: -1px;
 }
 
 .floating_sidebar {

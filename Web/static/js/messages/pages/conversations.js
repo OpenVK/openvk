@@ -229,6 +229,9 @@ export class Conversations {
                 window.im.cached_profiles._addProfileCache(item.peer);
             }
             if (item.peer) {
+                if (item.conversation?.can_write) {
+                    item.peer.data.can_write = item.conversation.can_write;
+                }
                 if (item.conversation?.chat_settings?.members) {
                     item.peer.data.members = item.conversation.chat_settings.members;
                 }
@@ -237,6 +240,18 @@ export class Conversations {
                 }
                 if (item.conversation?.chat_settings?.pinned_message) {
                     item.peer.data.pinned_message = item.conversation.chat_settings.pinned_message;
+                }
+                if (item.conversation?.chat_settings?.state) {
+                    item.peer.data.chat_settings = item.peer.data.chat_settings || {};
+                    item.peer.data.chat_settings.state = item.conversation.chat_settings.state;
+                    item.peer.data.state = item.conversation.chat_settings.state;
+                    if (item.conversation.chat_settings.state === 'kicked' || item.conversation.can_write?.reason === 915) {
+                        item.peer.data.kicked = 1;
+                        item.peer.data.left = 0;
+                    } else if (item.conversation.chat_settings.state === 'left' || item.conversation.can_write?.reason === 916) {
+                        item.peer.data.left = 1;
+                        item.peer.data.kicked = 0;
+                    }
                 }
                 if (item.conversation?.pinned_message) {
                     item.peer.data.pinned_message = item.conversation.pinned_message;
@@ -401,6 +416,27 @@ export class Conversation {
     getScrollPosition() { return this.hasScrollPosition() ? this._scroll : this.getEndScrollPosition(); }
     setDraft(draft) { this.draft = draft }
     clearDraft() { this.draft = null }
+    canWrite() {
+        if (this._conversation && this._conversation.can_write !== undefined) {
+            if (typeof this._conversation.can_write === 'object' && this._conversation.can_write !== null) {
+                return !!this._conversation.can_write.allowed;
+            }
+            return !!this._conversation.can_write;
+        }
+        return this.peer ? this.peer.can("write") : true;
+    }
+    getCantWriteInfo() {
+        if (this._conversation?.can_write && typeof this._conversation.can_write === 'object') {
+            if (this._conversation.can_write.allowed === false) {
+                if (this.peer && typeof this.peer.getCantWriteInfo === 'function') {
+                    return this.peer.getCantWriteInfo();
+                }
+            }
+        }
+        return this.peer && typeof this.peer.getCantWriteInfo === 'function'
+            ? this.peer.getCantWriteInfo()
+            : { allowed: true, text: "" };
+    }
     hasActivity() { return this.peer ? this.getActivityMsg()[1].length > 0 : false; }
     getActivityMsg() {
         let s = "";

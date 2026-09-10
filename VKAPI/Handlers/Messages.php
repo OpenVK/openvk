@@ -122,7 +122,7 @@ final class Messages extends VKAPIRequestHandler
                 if ($senderObj) {
                     if (method_exists($peer, 'canWriteMessage')) {
                         if (!$peer->canWriteMessage($senderObj)) {
-                            $this->fail(946, "This group blacklisted your account");
+                            $this->fail(902, "Can't send messages to this user");
                         }
                     }
                 }
@@ -131,6 +131,12 @@ final class Messages extends VKAPIRequestHandler
             }
 
             if ($peerId > 0 && $peerId < 2000000000 && $senderId !== $peerId) {
+                if ($senderObj instanceof \openvk\Web\Models\Entities\User) {
+                    if ($peer->isBlacklistedBy($senderObj) || $senderObj->isBlacklistedBy($peer)) {
+                        $this->fail(900, "Can't send messages for users from blacklist");
+                    }
+                }
+
                 if ($senderId > 0 && method_exists($peer, 'getPrivacyPermission')) {
                     if (!$peer->getPrivacyPermission('messages.write', $senderObj)) {
                         $existence = $this->invoke("im.checkPeerExist", [
@@ -138,7 +144,7 @@ final class Messages extends VKAPIRequestHandler
                         ]);
 
                         if (!$existence["exists"]) {
-                            $this->fail(945, "This chat is disabled because of privacy settings");
+                            $this->fail(901, "Can't send messages by user privacy settings");
                         }
                     }
 
@@ -149,6 +155,58 @@ final class Messages extends VKAPIRequestHandler
                     }
                 }
             }
+        }
+    }
+
+    private function enrichConversationCanWrite(array &$conversation, int $currentUserId): void
+    {
+        $peer = $conversation['peer'] ?? null;
+        if (!$peer) {
+            $conversation['can_write'] = ['allowed' => true];
+            return;
+        }
+
+        $pType = $peer['type'] ?? 'user';
+        $pId = (int) ($peer['id'] ?? 0);
+
+        if ($pType === 'user') {
+            if ($pId === $currentUserId && $currentUserId > 0) {
+                $conversation['can_write'] = ['allowed' => true];
+            } else {
+                $peerUser = (new USRRepo())->get($pId);
+                if (!$peerUser || $peerUser->isDeleted() || $peerUser->isBanned()) {
+                    $conversation['can_write'] = ['allowed' => false, 'reason' => 18];
+                } elseif ($this->getUser() && ($peerUser->isBlacklistedBy($this->getUser()) || $this->getUser()->isBlacklistedBy($peerUser))) {
+                    $conversation['can_write'] = ['allowed' => false, 'reason' => 900];
+                } elseif ($this->getUser() && !$peerUser->getPrivacyPermission('messages.write', $this->getUser())) {
+                    $conversation['can_write'] = ['allowed' => false, 'reason' => 901];
+                } else {
+                    $conversation['can_write'] = ['allowed' => true];
+                }
+            }
+        } elseif ($pType === 'group') {
+            $club = (new ClubRepo())->get(abs($pId));
+            if (!$club || (method_exists($club, 'isDeleted') && $club->isDeleted()) || (method_exists($club, 'isBanned') && $club->isBanned())) {
+                $conversation['can_write'] = ['allowed' => false, 'reason' => 18];
+            } elseif ($this->getUser() && method_exists($club, 'canWriteMessage') && !$club->canWriteMessage($this->getUser())) {
+                $conversation['can_write'] = ['allowed' => false, 'reason' => 902];
+            } else {
+                $conversation['can_write'] = ['allowed' => true];
+            }
+        } elseif ($pType === 'chat') {
+            $settings = $conversation['chat_settings'] ?? [];
+            $state = $settings['state'] ?? 'in';
+            if ($state === 'kicked') {
+                $conversation['can_write'] = ['allowed' => false, 'reason' => 915];
+            } elseif ($state === 'left') {
+                $conversation['can_write'] = ['allowed' => false, 'reason' => 916];
+            } elseif (isset($conversation['can_write']['allowed']) && !$conversation['can_write']['allowed']) {
+                // preserve reason from openvk-im
+            } else {
+                $conversation['can_write'] = ['allowed' => true];
+            }
+        } else {
+            $conversation['can_write'] = ['allowed' => true];
         }
     }
 
@@ -786,6 +844,8 @@ final class Messages extends VKAPIRequestHandler
         $cleanMessage = trim(preg_replace('/[\s\x{200b}\x{feff}\x{00a0}\x{200c}\x{200d}]+/u', ' ', $message));
         if ($cleanMessage === '') {
             $message = '';
+        } else {
+            $message = preg_replace('/^[\s\x{200b}\x{feff}\x{00a0}\x{200c}\x{200d}]+|[\s\x{200b}\x{feff}\x{00a0}\x{200c}\x{200d}]+$/u', '', $message);
         }
 
         if (empty($peer_ids)) {
@@ -992,9 +1052,11 @@ final class Messages extends VKAPIRequestHandler
             }
         }
 
-        $cleanMessage = trim(preg_replace('/[\s\x{200b}\x{feff}\x{00a0}]+/u', ' ', $message));
+        $cleanMessage = trim(preg_replace('/[\s\x{200b}\x{feff}\x{00a0}\x{200c}\x{200d}]+/u', ' ', $message));
         if ($cleanMessage === '') {
             $message = '';
+        } else {
+            $message = preg_replace('/^[\s\x{200b}\x{feff}\x{00a0}\x{200c}\x{200d}]+|[\s\x{200b}\x{feff}\x{00a0}\x{200c}\x{200d}]+$/u', '', $message);
         }
 
         if (empty($message) && sizeof($attachment_secure) == 0) {
@@ -1756,6 +1818,8 @@ final class Messages extends VKAPIRequestHandler
             if (!empty($item['last_message']) && is_array($item['last_message'])) {
                 $this->sanitizeMessageAttachmentsRecursive($item['last_message']);
             }
+
+            $this->enrichConversationCanWrite($conversation, $currentUserId);
         }
         unset($item);
 
@@ -2303,6 +2367,8 @@ final class Messages extends VKAPIRequestHandler
                 if (!empty($item['last_message']) && is_array($item['last_message'])) {
                     $this->sanitizeMessageAttachmentsRecursive($item['last_message']);
                 }
+
+                $this->enrichConversationCanWrite($conversation, $currentUserId);
             }
             unset($item);
         }
@@ -2384,6 +2450,7 @@ final class Messages extends VKAPIRequestHandler
             }
         }
 
+        $currentUserId = $this->getUser()->getId();
         foreach ($filteredItems as &$item) {
             if (!empty($item['conversation']['chat_settings']['pinned_message']) && is_array($item['conversation']['chat_settings']['pinned_message'])) {
                 $this->sanitizeMessageAttachmentsRecursive($item['conversation']['chat_settings']['pinned_message']);
@@ -2393,6 +2460,9 @@ final class Messages extends VKAPIRequestHandler
             }
             if (!empty($item['last_message']) && is_array($item['last_message'])) {
                 $this->sanitizeMessageAttachmentsRecursive($item['last_message']);
+            }
+            if (!empty($item['conversation'])) {
+                $this->enrichConversationCanWrite($item['conversation'], $currentUserId);
             }
         }
         unset($item);
@@ -2529,8 +2599,6 @@ final class Messages extends VKAPIRequestHandler
             if (is_null($resolvedPeerId) || $resolvedPeerId === 0) {
                 $this->fail(100, "One of the parameters specified was missing or invalid: peer_id, user_id or chat_id");
             }
-
-            $this->checkPeerAvailability($resolvedPeerId, $group_id);
         }
 
         $params = [

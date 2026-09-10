@@ -1454,7 +1454,7 @@
 
 "messages_unavailable" = "Messaging is currently unavailable or disabled on this server";
 "messages_agreement_1" = "By using the messaging section, you agree that:";
-"messages_agreement_2" = "You agree to the <a href=\"/terms\">terms</a> and <a href=\"/privacy\">privacy policy</a> of the site.";
+"messages_agreement_2" = "You agree to the <a href="/terms">terms</a> and <a href="/privacy">privacy policy</a> of the site.";
 "messages_agreement_3" = "Media uploaded in conversations may remain accessible via direct link even after deletion.";
 "messages_agreement_4" = "In case a message is reported, a moderator may inspect the conversation to investigate context.";
 "messages_agreement_5" = "You must keep your account secure.";
@@ -1512,6 +1512,16 @@
 "att_tab_voices" = "Voice messages";
 "links" = "Links";
 "photos_title" = "Photos";
+
+"cannot_write_default" = "You cannot send messages to this user.";
+"cannot_write_user_deleted" = "This user has been deleted or suspended.";
+"cannot_write_user_banned" = "This user has been banned.";
+"cannot_write_user_deactivated" = "This account has been deactivated.";
+"cannot_write_blacklist" = "You cannot message this user due to privacy settings or blacklist.";
+"cannot_write_group_disabled" = "Messages are disabled in this community.";
+"cannot_write_chat_kicked" = "You were excluded from this conversation.";
+"cannot_write_chat_left" = "You have left this conversation.";
+"cannot_write_chat_readonly" = "You cannot write to this conversation.";
 
 /* Polls */
 "poll" = "Poll";
@@ -3049,7 +3059,7 @@
 "event_chat_create_impersonal" = "Conversation created";
 "forward_messages" = "Forward";
 "forward_messages_msg" = "Forwarded messages";
-"forwarded_messages_noun" = "Forwarded messages";
+"forwarded_messages_noun" = "Forwarded messages ($1)";
 "go_to_dialog" = "Go to conversation";
 "going_to_report_message" = "Report message";
 "group_allow_messages" = "Allow messages";

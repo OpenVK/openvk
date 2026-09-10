@@ -149,6 +149,8 @@ class ChatMembers {
             });
             this.offset = (v.items || []).length;
         } catch (e) {
+            this.failed = true;
+            this.items = [];
             console.error("IM | Failed to load conversation members", e);
         }
     }
@@ -239,14 +241,39 @@ export class ChatGeneralForm {
 
     can(thing, relatively_current_group = null) { // unified function
         switch (thing) {
-            case "write":
-                return (this.data.can_write_private_message ?? this.data.can_write ?? 1) === 1;
+            case "write": {
+                if (this.data.deactivated) return false;
+                if (this.supposed_type === 'club' && typeof this.isClubMessagesBlocked === 'function' && this.isClubMessagesBlocked()) {
+                    return false;
+                }
+                if (this.data.can_message === false) {
+                    return false;
+                }
+                if (this.supposed_type === 'chat' && this.isILeft()) {
+                    return false;
+                }
+                if (this.data.can_write !== undefined && this.data.can_write !== null) {
+                    if (typeof this.data.can_write === 'object') {
+                        return !!this.data.can_write.allowed;
+                    } else if (typeof this.data.can_write === 'boolean') {
+                        return this.data.can_write;
+                    } else if (typeof this.data.can_write === 'number') {
+                        return this.data.can_write === 1;
+                    }
+                }
+                if (this.data.can_write_private_message !== undefined && this.data.can_write_private_message !== null) {
+                    return Number(this.data.can_write_private_message) === 1;
+                }
+                return true;
+            }
             case "update_title":
             case "invite_new":
             case "update_avatar":
                 return this.isAdmin() && this.supposed_type == "chat";
             case "leave_chat":
-                return this.supposed_type == "chat";
+                return this.supposed_type == "chat" && !this.isKicked() && !this.isILeft();
+            case "return_to_chat":
+                return this.supposed_type == "chat" && this.isILeft() && !this.isKicked();
             case "view_invite_links":
                 return this.supposed_type == "chat" && false;
             case "pin":
@@ -259,7 +286,81 @@ export class ChatGeneralForm {
     }
 
     isILeft() {
+        if (this.supposed_type !== 'chat') return false;
+        if (this.data.left === 1 || this.data.left === true || this.data.kicked === 1 || this.data.kicked === true) return true;
+        if (this.data.chat_settings?.state === 'left' || this.data.chat_settings?.state === 'kicked') return true;
+        if (this.data.state === 'left' || this.data.state === 'kicked') return true;
+        if (this.data._full_conversation?.chat_settings?.state === 'left' || this.data._full_conversation?.chat_settings?.state === 'kicked') return true;
+        if (this.data.can_write && typeof this.data.can_write === 'object' && this.data.can_write.allowed === false) {
+            if ([915, 916, 917].includes(Number(this.data.can_write.reason))) return true;
+        }
+        if (this.data._full_conversation?.can_write && typeof this.data._full_conversation.can_write === 'object' && this.data._full_conversation.can_write.allowed === false) {
+            if ([915, 916, 917].includes(Number(this.data._full_conversation.can_write.reason))) return true;
+        }
         return false;
+    }
+
+    isKicked() {
+        if (this.supposed_type !== 'chat') return false;
+        if (this.data.kicked === 1 || this.data.kicked === true) return true;
+        if (this.data.chat_settings?.state === 'kicked') return true;
+        if (this.data.state === 'kicked') return true;
+        if (this.data._full_conversation?.chat_settings?.state === 'kicked') return true;
+        if (this.data.can_write && typeof this.data.can_write === 'object' && Number(this.data.can_write.reason) === 915) return true;
+        if (this.data._full_conversation?.can_write && typeof this.data._full_conversation.can_write === 'object' && Number(this.data._full_conversation.can_write.reason) === 915) return true;
+        return false;
+    }
+
+    getCantWriteInfo() {
+        if (this.can("write")) {
+            return { allowed: true, text: "" };
+        }
+
+        let reason = 0;
+        if (this.data.can_write && typeof this.data.can_write === 'object' && this.data.can_write.reason) {
+            reason = Number(this.data.can_write.reason);
+        }
+
+        if (this.supposed_type === 'chat') {
+            if (reason === 915 || this.isKicked()) {
+                return { allowed: false, reason: 915, text: tr("cannot_write_chat_kicked") };
+            }
+            if (reason === 916 || this.isILeft()) {
+                return { allowed: false, reason: 916, text: tr("cannot_write_chat_left") };
+            }
+            if (reason === 917) {
+                return { allowed: false, reason: 917, text: tr("cannot_write_chat_readonly") };
+            }
+            return { allowed: false, reason: reason || 917, text: tr("cannot_write_chat_readonly") };
+        }
+
+        if (this.supposed_type === 'club') {
+            if (reason === 18) {
+                return { allowed: false, reason: 18, text: tr("cannot_write_user_deleted") };
+            }
+            return { allowed: false, reason: 902, text: tr("cannot_write_group_disabled") };
+        }
+
+        if (reason === 18 || this.data.deactivated) {
+            if (this.data.deactivated === 'banned') {
+                return { allowed: false, reason: 18, text: tr("cannot_write_user_banned") };
+            }
+            return { allowed: false, reason: 18, text: tr("cannot_write_user_deactivated") };
+        }
+
+        if (reason === 900) {
+            return { allowed: false, reason: 900, text: tr("cannot_write_blacklist") };
+        }
+
+        if (reason === 901) {
+            return { allowed: false, reason: 901, text: tr("messages_blocked") };
+        }
+
+        if (this.data.can_write_private_message === 0) {
+            return { allowed: false, reason: 901, text: tr("messages_blocked") };
+        }
+
+        return { allowed: false, reason: reason || 901, text: tr("cannot_write_default") };
     }
 
     get has_custom_avatar() {
@@ -512,8 +613,16 @@ export class ChatGeneralForm {
             const chatSettings = conv.chat_settings || {};
             const chatData = (__.chats && __.chats.length > 0) ? __.chats[0] : {};
             const peerData = Object.assign({ id: id, type: 'chat' }, chatSettings, chatData);
+            if (conv.can_write) peerData.can_write = conv.can_write;
             if (conv.pinned_message) peerData.pinned_message = conv.pinned_message;
             if (chatSettings.pinned_message) peerData.pinned_message = chatSettings.pinned_message;
+            if (chatSettings.state === 'kicked' || chatData.kicked === 1 || conv.can_write?.reason === 915) {
+                peerData.kicked = 1;
+                peerData.left = 0;
+            } else if (chatSettings.state === 'left' || chatData.left === 1 || conv.can_write?.reason === 916) {
+                peerData.left = 1;
+                peerData.kicked = 0;
+            }
             peerData._full_conversation = conv;
             return peerData;
         } else {
@@ -554,8 +663,9 @@ export class ChatGeneralForm {
             return;
         }
 
-        if (!cleanText && msg && typeof msg.setText === 'function') {
-            msg.setText('');
+        const trimmedText = cleanText ? rawText.replace(/^[\s\u200b\ufeff\u00a0\u200c\u200d]+|[\s\u200b\ufeff\u00a0\u200c\u200d]+$/g, '') : '';
+        if (msg && typeof msg.setText === 'function') {
+            msg.setText(trimmedText);
         }
 
         const isSaved = typeof this.isSavedMessages === 'function' ? this.isSavedMessages() : false;
@@ -591,7 +701,7 @@ export class ChatGeneralForm {
 
         const datas = {
             'peer_id': this.id,
-            'message': cleanText ? rawText : '',
+            'message': trimmedText,
             //'attachment': msg.getStringAttachments(), не помню что это
         };
 
@@ -680,9 +790,36 @@ export class ChatGeneralForm {
                 window.im.conversations.update();
             }
         } catch (e) {
-            let d = String(e);
+            let d = String(e?.message || e?.error_msg || e);
             if (d.startsWith("Error: Broker failure")) {
                 d = d.replace("Error: Broker failure: ", "");
+            }
+
+            let errCode = Number(e?.error_code || e?.error?.error_code || 0);
+            if (!errCode) {
+                if (d.includes("900") || d.toLowerCase().includes("blacklist")) errCode = 900;
+                else if (d.includes("901") || d.toLowerCase().includes("privacy")) errCode = 901;
+                else if (d.includes("902")) errCode = 902;
+                else if (d.includes("18") || d.toLowerCase().includes("deleted") || d.toLowerCase().includes("banned")) errCode = 18;
+                else if (d.includes("915") || d.toLowerCase().includes("kicked")) errCode = 915;
+                else if (d.includes("916") || d.toLowerCase().includes("left")) errCode = 916;
+                else if (d.includes("917")) errCode = 917;
+            }
+
+            if ([18, 900, 901, 902, 915, 916, 917].includes(errCode)) {
+                this.data.can_write = { allowed: false, reason: errCode };
+                if (conv && conv._conversation) {
+                    conv._conversation.can_write = { allowed: false, reason: errCode };
+                }
+                if (window.im?.fastChats) {
+                    const fc = window.im.fastChats.openedChats?.find(c => Number(c.peerId) === Number(this.id));
+                    if (fc) {
+                        fc.canWrite = false;
+                        fc.cantWriteReason = errCode;
+                        fc.cantWriteText = window.im.fastChats.getCantWriteText(fc);
+                        window.im.fastChats.render();
+                    }
+                }
             }
 
             msg.data.error_text = d;
@@ -694,6 +831,9 @@ export class ChatGeneralForm {
             }
             if (window.im?.messenger) {
                 window.im.messenger.update();
+            }
+            if (window.im?.conversations) {
+                window.im.conversations.update();
             }
         }
     }
@@ -846,7 +986,7 @@ export class ChatGeneralForm {
     }
 
     async checkMembers(offset = 0) {
-        if (this.supposed_type != "chat") {
+        if (this.supposed_type != "chat" || this.isILeft()) {
             return true;
         }
 
@@ -1027,15 +1167,56 @@ export class ChatMessage {
             }
         }
 
-        if (item.fwd_messages && Array.isArray(item.fwd_messages)) {
-            this.data.fwd_messages = item.fwd_messages.map(f => f instanceof ChatMessage ? f : new ChatMessage(f));
-        } else if (item.forward_messages && Array.isArray(item.forward_messages)) {
-            this.data.fwd_messages = item.forward_messages.map(f => f instanceof ChatMessage ? f : new ChatMessage(f));
+        let rawFwd = item.fwd_messages || item.forward_messages;
+        if (rawFwd) {
+            if (!Array.isArray(rawFwd) && typeof rawFwd === 'object') {
+                rawFwd = Object.values(rawFwd);
+            }
+            if (Array.isArray(rawFwd)) {
+                this.data.fwd_messages = rawFwd.map(f => f instanceof ChatMessage ? f : new ChatMessage(f));
+            }
         }
     }
 
     getFwdMessages() {
         return this.data.fwd_messages || [];
+    }
+
+    getFwdCount() {
+        if (!this.data) return 0;
+        const fwd = this.getFwdMessages();
+        if (Array.isArray(fwd) && fwd.length > 0) return fwd.length;
+        if (this.data.forward_messages) {
+            const fwds = Array.isArray(this.data.forward_messages) ? this.data.forward_messages : (typeof this.data.forward_messages === 'object' ? Object.values(this.data.forward_messages) : []);
+            if (fwds.length > 0) return fwds.length;
+        }
+        if (this.data.fwd_messages) {
+            const fwds = Array.isArray(this.data.fwd_messages) ? this.data.fwd_messages : (typeof this.data.fwd_messages === 'object' ? Object.values(this.data.fwd_messages) : []);
+            if (fwds.length > 0) return fwds.length;
+        }
+        const fwdRaw = this.data.fwd || this.data.attachments?.fwd || this.data.attachments?.fwd_messages;
+        if (typeof fwdRaw === 'string' && fwdRaw.trim().length > 0) {
+            return fwdRaw.split(',').filter(Boolean).length || 1;
+        }
+        if (this.data.attachments) {
+            let atts = this.data.attachments;
+            if (!Array.isArray(atts) && typeof atts === 'object') {
+                atts = Object.values(atts);
+            }
+            if (Array.isArray(atts)) {
+                const fwdAtt = atts.find(a => a && (a.type === 'fwd' || a.type === 'fwd_messages' || a.type === 'forward' || a.type === 'forward_messages'));
+                if (fwdAtt) {
+                    if (typeof fwdAtt.count === 'number' && fwdAtt.count > 0) return fwdAtt.count;
+                    if (Array.isArray(fwdAtt.items) && fwdAtt.items.length > 0) return fwdAtt.items.length;
+                    if (Array.isArray(fwdAtt.fwd_messages) && fwdAtt.fwd_messages.length > 0) return fwdAtt.fwd_messages.length;
+                    return 1;
+                }
+            }
+        }
+        if (this.data.has_fwd_messages) {
+            return 1;
+        }
+        return 0;
     }
 
     async hydrateFromEvent(msg) {
@@ -1234,7 +1415,10 @@ export class ChatMessage {
             if (allAtts && !Array.isArray(allAtts)) {
                 allAtts = typeof allAtts === 'object' ? Object.values(allAtts) : [allAtts];
             }
-            const visualAttachments = (allAtts || []).filter(a => a && a.type !== 'link' && a.type !== 'share');
+            const visualAttachments = (allAtts || []).filter(a => a && a.type !== 'link' && a.type !== 'share' && a.type !== 'fwd' && a.type !== 'fwd_messages' && a.type !== 'forward' && a.type !== 'forward_messages');
+            const fwdCount = (typeof this.getFwdCount === 'function') ? this.getFwdCount() : 0;
+            const fwdText = fwdCount > 0 ? (typeof tr === 'function' ? tr('forwarded_messages_noun', fwdCount) : `Пересланные сообщения (${fwdCount})`) : "";
+            const fwdHtml = fwdText ? `<span class="conv_prev_attachment_text">${escapeHtml(fwdText)}</span>` : "";
 
             if (with_attachments) {
                 if (visualAttachments.length > 0) {
@@ -1264,14 +1448,31 @@ export class ChatMessage {
                             break;
                     }
 
-                    txt += " ";
+                    if (fwdHtml) {
+                        txt += (txt ? " " : "") + fwdHtml;
+                    }
+                    if (cleanBaseText) {
+                        txt += " " + ovk_proc_strtr(escapeHtml(cleanBaseText), 100);
+                    }
+                } else {
+                    if (fwdHtml) {
+                        txt += fwdHtml;
+                        if (cleanBaseText) {
+                            txt += " " + ovk_proc_strtr(escapeHtml(cleanBaseText), 100);
+                        }
+                    } else if (cleanBaseText) {
+                        txt += ovk_proc_strtr(escapeHtml(cleanBaseText), 100);
+                    } else {
+                        txt = typeof tr === "function" && tr("message_no_text") ? "(" + tr("message_no_text").toLowerCase() + ")" : "...";
+                    }
                 }
-
-                txt += ovk_proc_strtr(escapeHtml(cleanBaseText), 100);
             } else {
                 let attachTxt = "";
                 if (visualAttachments.length > 0) {
                     attachTxt = get_attachment_text(visualAttachments[0]);
+                }
+                if (fwdHtml) {
+                    attachTxt = attachTxt ? (attachTxt + " " + fwdHtml) : fwdHtml;
                 }
 
                 if (cleanBaseText) {
@@ -1281,7 +1482,7 @@ export class ChatMessage {
                 }
 
                 txt = txt.replace(/<br\s*\/?>/gi, ' ').replace(/[\r\n]+/g, ' ').replace(/\s{2,}/g, ' ').trim();
-                return raw ? txt : encode_emojis(txt);
+                return raw ? txt.replace(/<[^>]*>/g, '').trim() : encode_emojis(txt);
             }
         } else {
             if (this.isSpecial("gift")) {
@@ -1295,7 +1496,7 @@ export class ChatMessage {
         }
 
         if (raw) {
-            return txt;
+            return conversation ? txt.replace(/<[^>]*>/g, '').trim() : txt;
         }
 
         if (conversation) {
@@ -1689,6 +1890,7 @@ export class ChatMessage {
             'is_sticker': isStickerMsg,
             'random_id': randomId,
             'reply_message': reply_message,
+            'fwd': attachments ? (attachments['fwd'] || attachments['fwd_messages'] || null) : null,
             'fwd_messages': fwd_messages,
             'action': action,
             'action_type': action ? action.type : null,
@@ -1754,6 +1956,10 @@ export class ChatMessage {
             this.data.attachments = new_attachments;
         }
 
+        if (data && (data['fwd'] || data['fwd_messages'])) {
+            this.data.fwd = data['fwd'] || data['fwd_messages'];
+        }
+
         if (data && (data['fwd'] || data['fwd_messages']) && (!this.data.fwd_messages || this.data.fwd_messages.length === 0)) {
             const fwdRaw = data['fwd'] || data['fwd_messages'];
             try {
@@ -1800,6 +2006,27 @@ export class ChatMessage {
             this.data.resend_params = null;
         } catch (e) {
             this.data.error_text = r;
+            let d = String(e?.message || e?.error_msg || e);
+            let errCode = Number(e?.error_code || e?.error?.error_code || 0);
+            if (!errCode) {
+                if (d.includes("900") || d.toLowerCase().includes("blacklist")) errCode = 900;
+                else if (d.includes("901") || d.toLowerCase().includes("privacy")) errCode = 901;
+                else if (d.includes("902")) errCode = 902;
+                else if (d.includes("18") || d.toLowerCase().includes("deleted") || d.toLowerCase().includes("banned")) errCode = 18;
+                else if (d.includes("915") || d.toLowerCase().includes("kicked")) errCode = 915;
+                else if (d.includes("916") || d.toLowerCase().includes("left")) errCode = 916;
+                else if (d.includes("917")) errCode = 917;
+            }
+            if ([18, 900, 901, 902, 915, 916, 917].includes(errCode)) {
+                if (this.peer && this.peer.data) {
+                    this.peer.data.can_write = { allowed: false, reason: errCode };
+                }
+                const conv = window.im?.conversations?._findConv(this.peer_id);
+                if (conv) {
+                    if (conv._conversation) conv._conversation.can_write = { allowed: false, reason: errCode };
+                    if (conv.peer && conv.peer.data) conv.peer.data.can_write = { allowed: false, reason: errCode };
+                }
+            }
             console.error('IM | STILL can not send message to ' + this.id, ': ', e);
         }
 

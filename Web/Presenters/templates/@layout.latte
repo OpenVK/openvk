@@ -169,7 +169,7 @@
                         <object n:class="$notificationsCount == 0 ? zero_counter : '' ">
                             <b>{$notificationsCount}</b>
                         </object>
-                        <object class="im_counter">
+                        <object class="imc counter">
                             <b>0</b>
                         </object>
                     </a>
@@ -232,8 +232,8 @@
                                 <div class="pc_v">{_my_friends}</div>
                                 <div class="mobile_v">{_mobile_friends}</div>
                                 <object type="internal/link" n:if="$thisUser->getRequestsCount() > 0">
-                                    <a href="/friends{$thisUser->getId()}?act=incoming" class="linkunderline">
-                                       (<b>{$thisUser->getRequestsCount()}</b>)
+                                    <a href="/friends{$thisUser->getId()}?act=incoming" class="counter shown">
+                                       <b>{$thisUser->getRequestsCount()}</b>
                                     </a>
                                 </object>
                             </a>
@@ -253,8 +253,8 @@
                             <a n:if="$thisUser->getLeftMenuItemStatus('messages')" href="/im" class="link my_messages">
                                 <div class="pc_v">{_my_messages}</div>
                                 <div class="mobile_v">{_mobile_messages}</div>
-                                <object type="internal/link" class="im_counter">
-                                    (<b>{0}</b>)
+                                <object type="internal/link" class="imc counter">
+                                    <b>{0}</b>
                                 </object>
                             </a>
                             {/if}
@@ -277,8 +277,8 @@
                             <a href="/notifications" class="link my_feedback" title="{_my_feedback} [Alt+Shift+N]" accesskey="n">
                                 <div class="pc_v">{_my_feedback}</div>
                                 <div class="mobile_v">{_feedback}</div>
-                                <object type="internal/link" n:if="$notificationsCount > 0">
-                                    (<b>{$notificationsCount}</b>)
+                                <object type="internal/link" class="counter shown" n:if="$notificationsCount > 0">
+                                    <b>{$notificationsCount}</b>
                                 </object>
                             </a>
                             <a href="/settings" class="link my_settings">
@@ -333,9 +333,9 @@
                                 <a n:foreach="$thisUser->getPinnedClubs() as $pinnedclub" href="{$pinnedclub->getURL()}" class="link group_link pinned_club">
                                     {ovk_proc_strtr($pinnedclub->getName(), 14)}
 
-                                    <object type="internal/link" style="white-space: normal;" id="sug{$pinnedclub->getId()}" n:if="$pinnedclub->getSuggestedPostsCount($thisUser) > 0 && $pinnedclub->getWallType() == 2">
-                                        <a href="/club{$pinnedclub->getId()}/suggested" class="linkunderline">
-                                            (<b>{$pinnedclub->getSuggestedPostsCount($thisUser)}</b>)
+                                    <object type="internal/link" class="counter shown" style="white-space: normal;" id="sug{$pinnedclub->getId()}" n:if="$pinnedclub->getSuggestedPostsCount($thisUser) > 0 && $pinnedclub->getWallType() == 2">
+                                        <a href="/club{$pinnedclub->getId()}/suggested" class="counter shown">
+                                            <b>{$pinnedclub->getSuggestedPostsCount($thisUser)}</b>
                                         </a>
                                     </object>
                                 </a>
@@ -411,7 +411,7 @@
 
                             <div class="floating_sidebar">
                                 <a id="minilink-friends" class="minilink" href="/friends{$thisUser->getId()}">
-                                    <object type="internal/link" n:if="$thisUser->getRequestsCount() > 0">
+                                    <object type="internal/link" class="counter shown" n:if="$thisUser->getRequestsCount() > 0">
                                         <div class="counter">
                                             +{$thisUser->getRequestsCount()}
                                         </div>
@@ -423,7 +423,7 @@
                                 </a>
                                 {if (\OPENVK_ROOT_CONF["openvk"]["credentials"]["im"]["enable"] ?? false)}
                                 <a id="minilink-messenger" class="minilink" href="/im">
-                                    <object type="internal/link" class="im_counter">
+                                    <object type="internal/link" class="imc counter">
                                         <div class="counter">
                                             +<b>0</b>
                                         </div>
@@ -435,7 +435,7 @@
                                     <img src="/assets/packages/static/openvk/img/groups.svg">
                                 </a>
                                 <a id="minilink-notifications" class="minilink" href="/notifications">
-                                    <object type="internal/link" n:if="$notificationsCount > 0">
+                                    <object type="internal/link" class="counter shown" n:if="$notificationsCount > 0">
                                         <div class="counter">
                                             +{$notificationsCount}
                                         </div>

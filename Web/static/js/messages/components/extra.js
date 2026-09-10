@@ -148,6 +148,18 @@ function getSearchMessageSnippet(msg, query) {
         }
     }
 
+    if (!rawText) {
+        const fwdCount = (typeof msg.getFwdCount === 'function') ? msg.getFwdCount() : (
+            (msg.getFwdMessages && msg.getFwdMessages().length) ||
+            (msg.data?.fwd_messages && (Array.isArray(msg.data.fwd_messages) ? msg.data.fwd_messages.length : Object.keys(msg.data.fwd_messages).length)) ||
+            (msg.data?.forward_messages && (Array.isArray(msg.data.forward_messages) ? msg.data.forward_messages.length : Object.keys(msg.data.forward_messages).length)) ||
+            0
+        );
+        if (fwdCount > 0) {
+            rawText = `[${typeof tr === 'function' ? tr('forwarded_messages_noun', fwdCount) : `Пересланные сообщения (${fwdCount})`}]`;
+        }
+    }
+
     const div = document.createElement("div");
     div.textContent = rawText;
     const escaped = div.innerHTML;

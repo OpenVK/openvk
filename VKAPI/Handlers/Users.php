@@ -472,7 +472,21 @@ final class Users extends VKAPIRequestHandler
                                 }
                                 break;
                             case "can_write_private_message":
-                                $response[$i]->can_write_private_message = 1;
+                                $canWrite = 1;
+                                if ($usr->isDeleted() || $usr->isBanned()) {
+                                    $canWrite = 0;
+                                } elseif ($this->getUser()) {
+                                    if ($this->getUser()->getId() !== $usr->getId()) {
+                                        if ($usr->isBlacklistedBy($this->getUser()) || $this->getUser()->isBlacklistedBy($usr)) {
+                                            $canWrite = 0;
+                                        } elseif (!$usr->getPrivacyPermission("messages.write", $this->getUser())) {
+                                            $canWrite = 0;
+                                        }
+                                    }
+                                } else {
+                                    $canWrite = 0;
+                                }
+                                $response[$i]->can_write_private_message = $canWrite;
                                 break;
                             case "can_invite":
                                 $response[$i]->can_invite = (int) $usr->getPrivacyPermission("messages.add_to_chats", $this->getUser());

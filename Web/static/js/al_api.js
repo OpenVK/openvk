@@ -94,7 +94,12 @@ window.OVKAPI = new class {
                 return json_response;
             }
 
-            throw new Error(json_response.error_msg)
+            const errObj = json_response.error || json_response;
+            const msg = errObj.error_msg || json_response.error_msg || "API Error";
+            const err = new Error(msg);
+            err.error_code = Number(errObj.error_code || json_response.error_code || 0);
+            err.error = errObj;
+            throw err;
         }
     }
 }

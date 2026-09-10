@@ -446,6 +446,67 @@ export class EventHandler {
             triggerMessageNotification(_crs, _msg);
         }
 
+        const action = _msg.data?.action || _msg.action;
+        if (action) {
+            const actMid = Number(_msg.data?.action_mid || _msg.action_mid || _msg.data?.action?.member_id || 0);
+            const currentUserIdNum = Number(currentUserId);
+            if (actMid && actMid === currentUserIdNum) {
+                const senderId = Number(_msg.from_id?.id || _msg.from_id || _msg.data?.from_id?.id || _msg.data?.from_id || 0);
+                if (action === "chat_kick_user") {
+                    const isLeft = senderId === currentUserIdNum;
+                    const reasonCode = isLeft ? 916 : 915;
+                    if (_crs.peer) {
+                        _crs.peer.data.left = isLeft ? 1 : 0;
+                        _crs.peer.data.kicked = isLeft ? 0 : 1;
+                        _crs.peer.data.chat_settings = _crs.peer.data.chat_settings || {};
+                        _crs.peer.data.chat_settings.state = isLeft ? 'left' : 'kicked';
+                        _crs.peer.data.can_write = { allowed: false, reason: reasonCode };
+                    }
+                    if (_crs._conversation) {
+                        _crs._conversation.can_write = { allowed: false, reason: reasonCode };
+                        if (_crs._conversation.chat_settings) {
+                            _crs._conversation.chat_settings.state = isLeft ? 'left' : 'kicked';
+                        }
+                    }
+                    if (this.im.fastChats) {
+                        const fc = this.im.fastChats.openedChats?.find(c => Number(c.peerId) === Number(_msg.peer_id));
+                        if (fc) {
+                            fc.canWrite = false;
+                            fc.cantWriteReason = reasonCode;
+                            fc.cantWriteText = this.im.fastChats.getCantWriteText(fc);
+                            this.im.fastChats.render();
+                        }
+                    }
+                } else if (action === "chat_invite_user" || action === "chat_invite_user_by_link") {
+                    if (_crs.peer) {
+                        _crs.peer.data.left = 0;
+                        _crs.peer.data.kicked = 0;
+                        _crs.peer.data.chat_settings = _crs.peer.data.chat_settings || {};
+                        _crs.peer.data.chat_settings.state = 'in';
+                        _crs.peer.data.can_write = { allowed: true };
+                    }
+                    if (_crs._conversation) {
+                        _crs._conversation.can_write = { allowed: true };
+                        if (_crs._conversation.chat_settings) {
+                            _crs._conversation.chat_settings.state = 'in';
+                        }
+                    }
+                    if (this.im.fastChats) {
+                        const fc = this.im.fastChats.openedChats?.find(c => Number(c.peerId) === Number(_msg.peer_id));
+                        if (fc) {
+                            fc.canWrite = true;
+                            fc.cantWriteReason = null;
+                            fc.cantWriteText = null;
+                            this.im.fastChats.render();
+                        }
+                    }
+                }
+                if (this.im.messenger) {
+                    this.im.messenger.update();
+                }
+            }
+        }
+
         setTimeout(() => {
             try {
                 const found = _crs.findMessageById(_msg.id, _msg.random_id || _msg.data?.random_id);
@@ -533,6 +594,33 @@ export class EventHandler {
     async ChatUpdateEvent(event) {
         const _type = event[1];
         const peer_id = event[2];
+
+        try {
+            const convById = await window.OVKAPI.call('messages.getConversationsById', { peer_ids: peer_id });
+            if (convById && convById.items && convById.items[0]) {
+                const cItem = convById.items[0];
+                const _crs = this.im.conversations?._findConv(peer_id);
+                if (_crs) {
+                    if (cItem.conversation) {
+                        _crs._conversation = cItem.conversation;
+                        if (cItem.conversation.can_write && _crs.peer) {
+                            _crs.peer.data.can_write = cItem.conversation.can_write;
+                        }
+                    }
+                }
+                if (this.im.fastChats) {
+                    const fc = this.im.fastChats.openedChats?.find(c => Number(c.peerId) === Number(peer_id));
+                    if (fc && cItem.conversation?.can_write) {
+                        fc.canWrite = !!cItem.conversation.can_write.allowed;
+                        fc.cantWriteReason = cItem.conversation.can_write.reason;
+                        fc.cantWriteText = this.im.fastChats.getCantWriteText(fc);
+                        this.im.fastChats.render();
+                    }
+                }
+            }
+        } catch (e) {
+            console.warn("ChatUpdateEvent error:", e);
+        }
 
         const _crs = await this.im.conversations._findConvFromApi(peer_id, true);
         if (this.im.conversations) {

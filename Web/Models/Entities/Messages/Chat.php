@@ -35,16 +35,23 @@ class Chat extends RowModel
         }
 
         $data = json_decode($response, true);
-        if ($data == null || $data["response"] == null) {
+        if ($data == null || empty($data["response"]["items"])) {
             return;
         }
 
-        $this->hydratedData = $data["response"]["items"][0]["conversation"];
+        $conv = $data["response"]["items"][0]["conversation"] ?? [];
+        $chatSettings = $conv["chat_settings"] ?? [];
+        $chatInfo = $data["response"]["chats"][0] ?? [];
+        $this->hydratedData = array_merge($chatInfo, $conv, $chatSettings);
     }
 
     public function setData(array $data)
     {
-        $this->hydratedData = $data;
+        if (isset($data["chat_settings"]) && is_array($data["chat_settings"])) {
+            $this->hydratedData = array_merge($data, $data["chat_settings"]);
+        } else {
+            $this->hydratedData = $data;
+        }
     }
 
     //
@@ -256,11 +263,67 @@ class Chat extends RowModel
 
     public function isMember(?User $user): bool
     {
-        return true;
+        if ($user === null) {
+            return false;
+        }
+
+        $userId = (int) $user->getId();
+        $userRealId = (int) $user->getRealId();
+
+        if ($this->hasData()) {
+            if (!empty($this->hydratedData["left"]) || !empty($this->hydratedData["kicked"])) {
+                return false;
+            }
+
+            $state = $this->hydratedData["state"] ?? ($this->hydratedData["chat_settings"]["state"] ?? null);
+            if ($state === "left" || $state === "kicked") {
+                return false;
+            }
+
+            if (isset($this->hydratedData["can_write"]["reason"])) {
+                $reason = (int) $this->hydratedData["can_write"]["reason"];
+                if ($reason === 915 || $reason === 916) {
+                    return false;
+                }
+            }
+
+            $members = $this->hydratedData["members"] ?? $this->hydratedData["users"] ?? ($this->hydratedData["chat_settings"]["members"] ?? ($this->hydratedData["chat_settings"]["users"] ?? null));
+            if (is_array($members) && !empty($members)) {
+                $memberIds = array_map("intval", $members);
+                if (!in_array($userId, $memberIds, true) && !in_array($userRealId, $memberIds, true)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        $this->loadData($user);
+        if ($this->hasData()) {
+            return $this->isMember($user);
+        }
+
+        return false;
     }
 
     public function isKicked(?User $user): bool
     {
+        if ($user === null) {
+            return false;
+        }
+
+        if ($this->hasData()) {
+            if (!empty($this->hydratedData["kicked"])) {
+                return true;
+            }
+            $state = $this->hydratedData["state"] ?? ($this->hydratedData["chat_settings"]["state"] ?? null);
+            if ($state === "kicked") {
+                return true;
+            }
+            if (isset($this->hydratedData["can_write"]["reason"]) && (int) $this->hydratedData["can_write"]["reason"] === 915) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -423,17 +486,21 @@ class Chat extends RowModel
         $userId = $user ? $user->getId() : 0;
         $isAdmin = (($this->hydratedData["admin_id"] ?? null) === $userRealId && $userRealId > 0);
 
+        $isMember = $this->isMember($user);
+
         $payload = [];
         $payload["type"] = "chat";
 
         if ($this->hasData()) {
             $payload["admin_id"] = (int) ($this->hydratedData["admin_id"] ?? 0);
-            if (!empty($this->hydratedData["left"])) {
+            if (!empty($this->hydratedData["left"]) || (!$isMember && empty($this->hydratedData["kicked"]))) {
                 $payload["left"] = 1;
             }
             if (!empty($this->hydratedData["kicked"])) {
                 $payload["kicked"] = 1;
             }
+        } elseif (!$isMember) {
+            $payload["left"] = 1;
         }
 
         $payload["title"] = $this->resolveChatTitle($userId);
@@ -441,20 +508,25 @@ class Chat extends RowModel
         $payload["id"] = $this->getChatId();
         $payload["local_id"] = $this->getChatId();
 
-        if ($photo != null) {
+        if ($isMember && $photo != null) {
             $payload["photo_50"] = $photo->getURLBySizeId("miniscule");
             $payload["photo_100"] = $photo->getURLBySizeId("tiny");
             $payload["photo_200"] = $photo->getURLBySizeId("normal");
             $payload["avatar_max"] = $photo->getURLBySizeId("larger");
-        } else {
+        } elseif ($isMember) {
             $payload["avatar_max"] = $payload["photo_200"] = $payload["photo_100"] = $payload["photo_50"] = $server_url . "/assets/packages/static/openvk/img/im/chat_meaningless.jpg";
+        } else {
+            $payload["avatar_max"] = $payload["photo_200"] = $payload["photo_100"] = $payload["photo_50"] = "";
         }
 
-        $members = array_map("intval", $this->hydratedData["members"] ?? $this->hydratedData["users"] ?? []);
+        $rawMembers = array_map("intval", $this->hydratedData["members"] ?? $this->hydratedData["users"] ?? []);
+        $members = $isMember ? $rawMembers : [];
         $payload["users"] = $members;
         if (!empty($members)) {
             $payload["members"] = $members;
             $payload["members_count"] = sizeof($members);
+        } else {
+            $payload["members_count"] = sizeof($rawMembers);
         }
         $payload["push_settings"] = [
             "sound" => 1,
@@ -462,14 +534,14 @@ class Chat extends RowModel
         ];
 
         $defaultAcl = [
-            "can_invite"             => true,
-            "can_change_info"        => $isAdmin,
-            "can_change_pin"         => $isAdmin,
-            "can_promote_users"      => $isAdmin,
-            "can_see_invite_link"    => $isAdmin,
-            "can_change_invite_link" => $isAdmin,
-            "can_moderate"           => $isAdmin,
-            "can_copy_chat"          => $isAdmin,
+            "can_invite"             => $isMember,
+            "can_change_info"        => $isMember && $isAdmin,
+            "can_change_pin"         => $isMember && $isAdmin,
+            "can_promote_users"      => $isMember && $isAdmin,
+            "can_see_invite_link"    => $isMember && $isAdmin,
+            "can_change_invite_link" => $isMember && $isAdmin,
+            "can_moderate"           => $isMember && $isAdmin,
+            "can_copy_chat"          => $isMember && $isAdmin,
         ];
 
         $this->hydratedData['acl'] = array_merge($defaultAcl, $this->hydratedData['acl'] ?? []);
@@ -479,11 +551,12 @@ class Chat extends RowModel
 
     public function toChatSettingsStruct(?User $user): array
     {
+        $isMember = $this->isMember($user);
         $struct = $this->toVkApiStruct($user);
 
         $photo = $this->getPhoto();
         $photoObj = null;
-        if ($photo != null) {
+        if ($isMember && $photo != null) {
             $photoObj = [
                 "photo_50"  => $photo->getURLBySizeId("miniscule"),
                 "photo_100" => $photo->getURLBySizeId("tiny"),
@@ -491,26 +564,30 @@ class Chat extends RowModel
             ];
         }
 
-        $members = array_map("intval", $this->hydratedData["members"] ?? $this->hydratedData["users"] ?? []);
-        $state = "in";
+        $rawMembers = array_map("intval", $this->hydratedData["members"] ?? $this->hydratedData["users"] ?? []);
+        $state = $this->hydratedData["state"] ?? ($isMember ? "in" : "left");
         if (!empty($this->hydratedData["left"])) {
             $state = "left";
         } elseif (!empty($this->hydratedData["kicked"])) {
             $state = "kicked";
+        } elseif (!$isMember) {
+            $state = "left";
         }
+
+        $members = $isMember ? $rawMembers : [];
 
         $chatSettings = [
             "title"         => $struct["title"] ?? ("Chat " . $this->getChatId()),
-            "members_count" => count($members),
+            "members_count" => count($rawMembers),
             "state"         => $state,
             "admin_id"      => (int) ($this->hydratedData["admin_id"] ?? 0),
-            "active_ids"    => array_slice($members, 0, 10),
+            "active_ids"    => $isMember ? array_slice($rawMembers, 0, 10) : [],
             "members"       => $members,
             "users"         => $members,
-            "photo_50"      => $struct["photo_50"] ?? "",
-            "photo_100"     => $struct["photo_100"] ?? "",
-            "photo_200"     => $struct["photo_200"] ?? "",
-            "avatar_max"    => $struct["avatar_max"] ?? "",
+            "photo_50"      => $isMember ? ($struct["photo_50"] ?? "") : "",
+            "photo_100"     => $isMember ? ($struct["photo_100"] ?? "") : "",
+            "photo_200"     => $isMember ? ($struct["photo_200"] ?? "") : "",
+            "avatar_max"    => $isMember ? ($struct["avatar_max"] ?? "") : "",
         ];
 
         if ($photoObj !== null) {

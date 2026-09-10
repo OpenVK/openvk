@@ -370,6 +370,18 @@ export const getReplySnippet = (msg) => {
         }
     }
 
+    if (!text) {
+        const fwdCount = (typeof msg.getFwdCount === 'function') ? msg.getFwdCount() : (
+            (msg.getFwdMessages && msg.getFwdMessages().length) ||
+            (msg.data?.fwd_messages && (Array.isArray(msg.data.fwd_messages) ? msg.data.fwd_messages.length : Object.keys(msg.data.fwd_messages).length)) ||
+            (msg.data?.forward_messages && (Array.isArray(msg.data.forward_messages) ? msg.data.forward_messages.length : Object.keys(msg.data.forward_messages).length)) ||
+            0
+        );
+        if (fwdCount > 0) {
+            text = '[' + (typeof tr === 'function' ? tr('forwarded_messages_noun', fwdCount) : `Пересланные сообщения (${fwdCount})`) + ']';
+        }
+    }
+
     return text;
 };
 
@@ -518,14 +530,24 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
     const corresponder = window.im.state.getCurrentConvo();
     const isForwarded = forwarded_msg && forwarded_msg.length && forwarded_msg.length > 0;
     const recentSmiles = getDisplayRecentSmiles();
+
+    const cantWriteInfo = (convo && typeof convo.getCantWriteInfo === 'function')
+        ? convo.getCantWriteInfo()
+        : (convo?.peer && typeof convo.peer.getCantWriteInfo === 'function'
+            ? convo.peer.getCantWriteInfo()
+            : (corresponder && typeof corresponder.getCantWriteInfo === 'function'
+                ? corresponder.getCantWriteInfo()
+                : { allowed: true, text: "" }));
+    const canWrite = cantWriteInfo.allowed !== false;
+
     const cls = [
         "messenger-app-end",
-        (replyTo || editMsg || isForwarded) ? 'm-selected' : '',
+        (canWrite && (replyTo || editMsg || isForwarded)) ? 'm-selected' : '',
     ];
 
     return html`
     <div class="${cls.join(" ")}">
-        ${replyTo && html`
+        ${canWrite && replyTo && html`
             <div class="input-reply input-m" onclick=${(e) => {
                 if (!e.target.closest('.input-close')) {
                     clickOnReply(replyTo);
@@ -541,7 +563,7 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
             }}><div class="cross"></div></span>
             </div>
         `}
-        ${editMsg && html`
+        ${canWrite && editMsg && html`
             <div class="input-edit input-m" onclick=${(e) => {
                 if (!e.target.closest('.input-close')) {
                     clickOnReply(editMsg);
@@ -557,7 +579,7 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
             }}><div class="cross"></div></span>
             </div>
         `}
-        ${isForwarded ? html`
+        ${canWrite && isForwarded ? html`
             <div class="input-forward input-m">
                 <span aria-label="link" class="input-type">${tr("forwarded_messages_noun", forwarded_msg.length)}</span>
                 <span class="input-close" onClick=${onRemoveForward}><div class="cross"></div></span>
@@ -570,78 +592,86 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
         }}>
             ${tr("viewing_old_messages")}
         </div>
-        <div class="post-buttons">
-            <div class="model_content_textarea messenger-app--input has_emoji_picker expanded-textarea" id="write">
-                <img class="ava" src=${current_user.getAvatar("mid", false)} alt=${current_user.getName()} />
-                <div class="messenger-app--input---messagebox">
-                    <div class="textareas has_emoji_picker">
-                        ${(typeof window !== 'undefined' && window.ContentEditable && typeof window.ContentEditable.isSupported === 'function' && window.ContentEditable.isSupported()) ? html`
-                            <div
-                                class="small-textarea content-editable"
-                                contenteditable="true"
-                                role="textbox"
-                                aria-multiline="true"
-                                data-placeholder=${tr('enter_message')}
-                                onInput=${onInput}
-                                onKeyDown=${onKeyPress}
-                                ref=${(el) => {
-                if (!el) return;
-                if (!el._contentEditable && window.ContentEditable) {
-                    new window.ContentEditable(el, { submitOnEnter: true, placeholder: tr('enter_message') });
-                    if (currentDraft) {
-                        el.setText(currentDraft);
-                    }
-                    el._lastConvoId = convo?.id;
-                } else if (el._contentEditable) {
-                    if (convo && convo.id !== el._lastConvoId) {
-                        el._lastConvoId = convo.id;
-                        el.setText(currentDraft || '');
-                    }
-                }
-            }}
-                            ></div>
-                        ` : html`
-                            <textarea
-                                class="small-textarea"
-                                placeholder=${tr('enter_message')}
-                                value=${currentDraft}
-                                onInput=${onInput}
-                                onKeyDown=${onKeyPress}
-                            ></textarea>
-                        `}
-                        <div class="emoji_picker_entrypoint"></div>
-                    </div>
-                    <div class="post-horizontal"></div>
-                    <div class="post-vertical"></div>
-                    <div class="input--messagebox-buttons">
-                        <div class="input--messagebox-left">
-                            <button class="button" onClick=${onSend}>${!is_editing ? tr('send') : tr('edit_action_lr')}</button>
-                            <div class="im-recent-smiles-bar">
-                                ${recentSmiles.map(s => html`
-                                    <span
-                                        class="im-recent-smile-btn"
-                                        title="${s}"
-                                        data-emoji="${s}"
-                                        onMouseDown=${(e) => { e.preventDefault(); }}
-                                        onClick=${(e) => onRecentSmileClick(s, e)}
-                                    >
-                                        <span class="emoji emoji_${getEmojiHex(s)}">${s}</span>
-                                    </span>
-                                `)}
-                            </div>
-                        </div>
-                        <${AttachmentMenu} />
-                    </div>
+        ${!canWrite ? html`
+            <div class="post-buttons im-cant-write-container">
+                <div class="messenger-app--cant-write">
+                    <div class="im-cant-write-text">${cantWriteInfo.text || tr('cannot_write_default')}</div>
                 </div>
-                <${PeerAvatar}
-                    peer=${replyTo ? replyTo.sender : corresponder.peer}
-                    className="ava ava2"
-                    loading="eager"
-                    saved_messages_ava=${false}
-                    orig_ava=${false}
-                    onClick=${() => { window.im.openTabByName("contact") }} />
             </div>
-        </div>
+        ` : html`
+            <div class="post-buttons">
+                <div class="model_content_textarea messenger-app--input has_emoji_picker expanded-textarea" id="write">
+                    <img class="ava" src=${current_user.getAvatar("mid", false)} alt=${current_user.getName()} />
+                    <div class="messenger-app--input---messagebox">
+                        <div class="textareas has_emoji_picker">
+                            ${(typeof window !== 'undefined' && window.ContentEditable && typeof window.ContentEditable.isSupported === 'function' && window.ContentEditable.isSupported()) ? html`
+                                <div
+                                    class="small-textarea content-editable"
+                                    contenteditable="true"
+                                    role="textbox"
+                                    aria-multiline="true"
+                                    data-placeholder=${tr('enter_message')}
+                                    onInput=${onInput}
+                                    onKeyDown=${onKeyPress}
+                                    ref=${(el) => {
+                    if (!el) return;
+                    if (!el._contentEditable && window.ContentEditable) {
+                        new window.ContentEditable(el, { submitOnEnter: true, placeholder: tr('enter_message') });
+                        if (currentDraft) {
+                            el.setText(currentDraft);
+                        }
+                        el._lastConvoId = convo?.id;
+                    } else if (el._contentEditable) {
+                        if (convo && convo.id !== el._lastConvoId) {
+                            el._lastConvoId = convo.id;
+                            el.setText(currentDraft || '');
+                        }
+                    }
+                }}
+                                ></div>
+                            ` : html`
+                                <textarea
+                                    class="small-textarea"
+                                    placeholder=${tr('enter_message')}
+                                    value=${currentDraft}
+                                    onInput=${onInput}
+                                    onKeyDown=${onKeyPress}
+                                ></textarea>
+                            `}
+                            <div class="emoji_picker_entrypoint"></div>
+                        </div>
+                        <div class="post-horizontal"></div>
+                        <div class="post-vertical"></div>
+                        <div class="input--messagebox-buttons">
+                            <div class="input--messagebox-left">
+                                <button class="button" onClick=${onSend}>${!is_editing ? tr('send') : tr('edit_action_lr')}</button>
+                                <div class="im-recent-smiles-bar">
+                                    ${recentSmiles.map(s => html`
+                                        <span
+                                            class="im-recent-smile-btn"
+                                            title="${s}"
+                                            data-emoji="${s}"
+                                            onMouseDown=${(e) => { e.preventDefault(); }}
+                                            onClick=${(e) => onRecentSmileClick(s, e)}
+                                        >
+                                            <span class="emoji emoji_${getEmojiHex(s)}">${s}</span>
+                                        </span>
+                                    `)}
+                                </div>
+                            </div>
+                            <${AttachmentMenu} />
+                        </div>
+                    </div>
+                    <${PeerAvatar}
+                        peer=${replyTo ? replyTo.sender : (corresponder ? corresponder.peer : null)}
+                        className="ava ava2"
+                        loading="eager"
+                        saved_messages_ava=${false}
+                        orig_ava=${false}
+                        onClick=${() => { window.im.openTabByName("contact") }} />
+                </div>
+            </div>
+        `}
     </div>
   `;
 };
@@ -1021,6 +1051,53 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                         ${convo && typeof convo.hasPinned === 'function' && convo.hasPinned() ? html`
                             <a onClick=${(e) => { window.im.messenger.viewPinned(e, convo); }}>${tr("chat_view_pinned_single")}</a>
                         ` : ""}
+                        ${peer.can("return_to_chat") ? html`
+                            <a onClick=${async (e) => {
+                                e.preventDefault();
+                                try {
+                                    await window.OVKAPI.call("messages.addChatUser", {
+                                        "peer_id": peer.id,
+                                        "user_id": currentUserId
+                                    });
+                                    peer.data.left = 0;
+                                    peer.data.kicked = 0;
+                                    peer.data.chat_settings = peer.data.chat_settings || {};
+                                    peer.data.chat_settings.state = 'in';
+                                    peer.data.state = 'in';
+                                    peer.data.can_write = { allowed: true };
+
+                                    const conv = window.im.conversations?._findConv(peer.id);
+                                    if (conv) {
+                                        if (conv._conversation) {
+                                            conv._conversation.can_write = { allowed: true };
+                                            if (conv._conversation.chat_settings) {
+                                                conv._conversation.chat_settings.state = 'in';
+                                            }
+                                        }
+                                        if (conv.peer) {
+                                            conv.peer.data.left = 0;
+                                            conv.peer.data.kicked = 0;
+                                            conv.peer.data.can_write = { allowed: true };
+                                        }
+                                    }
+
+                                    if (window.im?.fastChats) {
+                                        const fc = window.im.fastChats.openedChats?.find(c => Number(c.peerId) === Number(peer.id));
+                                        if (fc) {
+                                            fc.canWrite = true;
+                                            fc.cantWriteReason = null;
+                                            fc.cantWriteText = null;
+                                            window.im.fastChats.render();
+                                        }
+                                    }
+
+                                    window.im.openTabByName("messenger");
+                                    window.im.messenger.update();
+                                } catch (err) {
+                                    fastError(String(err));
+                                }
+                            }}><b>${tr("return_to_chat")}</b></a>
+                        ` : ""}
                         <a onClick=${(e) => {
             e.preventDefault();
             new CMessageBox({
@@ -1080,7 +1157,7 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
             <div class="peer-actions-container">
                 <${PeerInviteLinkSection} peer=${peer} />
 
-                ${peer.supposed_type == "chat" ? html`
+                ${peer.supposed_type == "chat" && !peer.isILeft() ? html`
                     <div class="peer-members-section">
                         <div class="chat-tab-2-header">
                             <b>${tr("participants") || "Участники"} (${membersCount})</b>
@@ -1093,7 +1170,7 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                     })
                 }}>${tr("chat_add_members_ext")}</a>
                                 ` : ""}
-                                ${peer.can("leave_chat") ? (!peer.isILeft() ? html`
+                                ${peer.can("leave_chat") ? html`
                                     <a onClick=${(e) => {
                     e.preventDefault();
                     new CMessageBox({
@@ -1106,6 +1183,38 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                                     "peer_id": peer.id,
                                     "user_id": currentUserId
                                 });
+                                peer.data.left = 1;
+                                peer.data.kicked = 0;
+                                peer.data.chat_settings = peer.data.chat_settings || {};
+                                peer.data.chat_settings.state = 'left';
+                                peer.data.state = 'left';
+                                peer.data.can_write = { allowed: false, reason: 916 };
+
+                                const conv = window.im.conversations?._findConv(peer.id);
+                                if (conv) {
+                                    if (conv._conversation) {
+                                        conv._conversation.can_write = { allowed: false, reason: 916 };
+                                        if (conv._conversation.chat_settings) {
+                                            conv._conversation.chat_settings.state = 'left';
+                                        }
+                                    }
+                                    if (conv.peer) {
+                                        conv.peer.data.left = 1;
+                                        conv.peer.data.kicked = 0;
+                                        conv.peer.data.can_write = { allowed: false, reason: 916 };
+                                    }
+                                }
+
+                                if (window.im?.fastChats) {
+                                    const fc = window.im.fastChats.openedChats?.find(c => Number(c.peerId) === Number(peer.id));
+                                    if (fc) {
+                                        fc.canWrite = false;
+                                        fc.cantWriteReason = 916;
+                                        fc.cantWriteText = window.im.fastChats.getCantWriteText(fc);
+                                        window.im.fastChats.render();
+                                    }
+                                }
+
                                 window.im.openTabByName("messenger");
                                 window.im.messenger.update();
                             } catch (err) {
@@ -1114,9 +1223,7 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                         }, () => { }]
                     });
                 }}>${tr("leave_chat")}</a>
-                                ` : html`
-                                    <a>${tr("return_to_chat")}</a>
-                                `) : ""}
+                                ` : ""}
                             </div>
                         </div>
                         <div class="chat-members-list">
@@ -1226,6 +1333,34 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                                                 "peer_id": peer.id,
                                                 "user_id": memberId
                                             });
+                                            if (Number(memberId) === Number(currentUserId)) {
+                                                peer.data.kicked = 1;
+                                                peer.data.chat_settings = peer.data.chat_settings || {};
+                                                peer.data.chat_settings.state = 'kicked';
+                                                peer.data.can_write = { allowed: false, reason: 915 };
+
+                                                const conv = window.im.conversations?._findConv(peer.id);
+                                                if (conv) {
+                                                    if (conv._conversation) conv._conversation.can_write = { allowed: false, reason: 915 };
+                                                    if (conv.peer) {
+                                                        conv.peer.data.kicked = 1;
+                                                        conv.peer.data.can_write = { allowed: false, reason: 915 };
+                                                    }
+                                                }
+
+                                                if (window.im?.fastChats) {
+                                                    const fc = window.im.fastChats.openedChats?.find(c => Number(c.peerId) === Number(peer.id));
+                                                    if (fc) {
+                                                        fc.canWrite = false;
+                                                        fc.cantWriteReason = 915;
+                                                        fc.cantWriteText = window.im.fastChats.getCantWriteText(fc);
+                                                        window.im.fastChats.render();
+                                                    }
+                                                }
+
+                                                window.im.openTabByName("messenger");
+                                                window.im.messenger.update();
+                                            }
                                             if (peer.members) {
                                                 peer.members = null;
                                             }
@@ -1243,7 +1378,7 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                                         </div>
                                     </div>
                                 `;
-                }) : html`<div style="padding: 10px; color: #888;">${tr("loading") || "Загрузка..."}</div>`}
+                }) : (peer.members?.failed ? html`<div style="padding: 10px; color: #888;">${tr("error") || "Не удалось загрузить участников"}</div>` : html`<div style="padding: 10px; color: #888;">${tr("loading") || "Загрузка..."}</div>`)}
                         </div>
                     </div>
                 ` : ""}
@@ -1265,7 +1400,7 @@ export const PeerInfoView = ({ page, convo, togglePeerInfo }) => {
 }
 
 export const PeerInviteLinkSection = ({ peer }) => {
-    if (!peer || peer.supposed_type !== 'chat') return null;
+    if (!peer || peer.supposed_type !== 'chat' || peer.isILeft()) return null;
 
     if (!peer._inviteLinkState) {
         peer._inviteLinkState = {
@@ -1396,7 +1531,7 @@ export const PeerAttachmentsSection = ({ peer }) => {
             </div>
             <div class="peer-att-content">
                 ${isLoading ? html`
-                    <div class="peer-att-loader"><img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="..." /></div>
+                    <!--div class="peer-att-loader"><img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="..." /></div-->
                 ` : (items.length === 0 ? html`
                     <div class="peer-att-empty">${tr('no_attachments') || 'Нет вложений этого типа'}</div>
                 ` : (isGrid ? html`

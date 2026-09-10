@@ -717,12 +717,12 @@ class IMState {
     _updateCounter(new_number) {
         this.unread_counter = Number(new_number) || 0;
 
-        const bElements = document.querySelectorAll(".im_counter b");
+        const bElements = document.querySelectorAll(".imc.counter b");
         bElements.forEach(el => {
             el.innerHTML = String(this.unread_counter);
         });
 
-        const cntElements = document.querySelectorAll(".im_counter");
+        const cntElements = document.querySelectorAll(".imc.counter");
         cntElements.forEach(el => {
             if (this.unread_counter < 1) {
                 el.classList.remove("shown");
@@ -1452,6 +1452,25 @@ export class FastChats {
         this.render();
     }
 
+    getCantWriteText(chat) {
+        const peerId = Number(chat.peerId);
+        const reason = Number(chat.cantWriteReason || 0);
+
+        if (peerId >= 2000000000) {
+            if (reason === 915) return tr('cannot_write_chat_kicked');
+            if (reason === 916) return tr('cannot_write_chat_left');
+            return tr('cannot_write_chat_readonly');
+        }
+        if (peerId < 0) {
+            if (reason === 18) return tr('cannot_write_user_deleted');
+            return tr('cannot_write_group_disabled');
+        }
+        if (reason === 18) return tr('cannot_write_user_deactivated');
+        if (reason === 900) return tr('cannot_write_blacklist');
+        if (reason === 901) return tr('messages_blocked');
+        return tr('cannot_write_default');
+    }
+
     async openChat(peerId, isMinimized = false, save = true, position = null, zIndex = null) {
         this.topZIndex++;
         let chat = this.openedChats.find(c => c.peerId === peerId);
@@ -1586,6 +1605,42 @@ export class FastChats {
                 console.warn("FastChats | messages.getHistory failed (new dialog):", histErr);
                 chat.messages = [];
                 chat.hasMore = false;
+            }
+
+            try {
+                const conv = window.im?.conversations?._findConv(peerId);
+                if (conv && typeof conv.canWrite === 'function') {
+                    chat.canWrite = conv.canWrite();
+                    if (!chat.canWrite && typeof conv.getCantWriteInfo === 'function') {
+                        const info = conv.getCantWriteInfo();
+                        chat.cantWriteReason = info.reason;
+                        chat.cantWriteText = info.text;
+                    }
+                } else {
+                    const cachedPeer = window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached(peerId);
+                    if (cachedPeer && typeof cachedPeer.can === 'function') {
+                        chat.canWrite = cachedPeer.can('write');
+                        if (!chat.canWrite && typeof cachedPeer.getCantWriteInfo === 'function') {
+                            const info = cachedPeer.getCantWriteInfo();
+                            chat.cantWriteReason = info.reason;
+                            chat.cantWriteText = info.text;
+                        }
+                    }
+                }
+
+                if (chat.canWrite === undefined) {
+                    const convById = await window.OVKAPI.call('messages.getConversationsById', { peer_ids: peerId });
+                    if (convById && convById.items && convById.items[0]) {
+                        const cItem = convById.items[0];
+                        if (cItem.conversation && cItem.conversation.can_write) {
+                            chat.canWrite = !!cItem.conversation.can_write.allowed;
+                            chat.cantWriteReason = cItem.conversation.can_write.reason;
+                            chat.cantWriteText = this.getCantWriteText(chat);
+                        }
+                    }
+                }
+            } catch (eCanWrite) {
+                console.warn("FastChats | checking canWrite failed:", eCanWrite);
             }
 
             chat.isLoading = false;
@@ -1769,6 +1824,14 @@ export class FastChats {
             tempMsg.id = realId;
         } catch (e) {
             console.error("FastChats | sendMessage error:", e);
+            const errCode = Number(e?.error_code || e?.error?.error_code || 0);
+            if ([18, 900, 901, 902, 915, 916, 917].includes(errCode)) {
+                chat.canWrite = false;
+                chat.cantWriteReason = errCode;
+                chat.cantWriteText = this.getCantWriteText(chat);
+                chat.messages = chat.messages.filter(m => m.id !== tempMsg.id);
+                this.render();
+            }
         }
     }
 
@@ -1840,6 +1903,14 @@ export class FastChats {
             tempMsg.id = realId;
         } catch (e) {
             console.error("FastChats | sendSticker error:", e);
+            const errCode = Number(e?.error_code || e?.error?.error_code || 0);
+            if ([18, 900, 901, 902, 915, 916, 917].includes(errCode)) {
+                chat.canWrite = false;
+                chat.cantWriteReason = errCode;
+                chat.cantWriteText = this.getCantWriteText(chat);
+                chat.messages = chat.messages.filter(m => m.id !== tempMsg.id);
+                this.render();
+            }
         }
     }
 

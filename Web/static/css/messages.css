@@ -536,7 +536,7 @@ body:has(#im_container.at_page) .page-wrap {
 }
 
 .messenger-app--messages---message.msg-reply {
-    padding-top: 11px;
+    /*padding-top: 11px;*/
 }
 
 .messenger-app #messenger-app--down-button {
@@ -609,15 +609,19 @@ body:has(#im_container.at_page) .page-wrap {
     flex-shrink: 0;
 }
 
+.crp-entry--message---text .conv_prev_attachment_text {
+    color: var(--accent, #2b587a);
+}
+
 .messenger-app--messages---message .time {
     top: 0px;
-    opacity: 0;
     transition: 200ms opacity ease-in-out;
     font-size: 9px;
     color: var(--text-2);
     display: inline;
     height: 9px;
     margin-left: 5px;
+    float: right;
 }
 
 .im-action-msg,
@@ -879,7 +883,7 @@ body:has(#im_container.at_page) .page-wrap {
     left: unset !important;
     right: 12px !important;
     margin-right: 0px !important;
-    top: 6px;
+    top: 3px;
 }
 
 .messenger-app--messages---message.msg-hoverable:hover .actions-2,
@@ -973,6 +977,7 @@ body:has(#im_container.at_page) .page-wrap {
     opacity: 0.75;
 }
 
+
 /* Hovering directly on the star icon */
 .messenger-app--messages---message .actions-2 .star-icon:hover {
     opacity: 1 !important;
@@ -1036,7 +1041,7 @@ body:has(#im_container.at_page) .page-wrap {
 }
 
 .messenger-app--messages---message>.messenger-app--messages---message--wrap {
-    padding: 0px 60px;
+    padding: 0px 0px 0px 60px;
     display: inline-flex;
 }
 
@@ -1052,7 +1057,7 @@ body:has(#im_container.at_page) .page-wrap {
 
 .messenger-app--messages---message ._content .reply-msg-container {
     margin: 3px 0 3px 0;
-    padding: 0 0 0 7px;
+    padding: 0 35px 0 7px;
     border-left: 2px solid var(--accent, hsl(212 0% 52% / 1));
     cursor: pointer;
     border-radius: 0 2px 2px 0;
@@ -1267,14 +1272,13 @@ body:has(#im_container.at_page) .page-wrap {
 
 .messenger-app--messages---message .fwd-text,
 .fwd-modal-content .fwd-text {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--text-primary, #222);
     line-height: 1.35;
     word-break: break-word;
 }
 
 .fwd-open-modal-wrap {
-    margin-top: 5px;
     margin-bottom: 2px;
 }
 
@@ -1285,15 +1289,11 @@ body:has(#im_container.at_page) .page-wrap {
     color: var(--accent, #2a5885);
     cursor: pointer;
     text-decoration: none;
-    padding: 2px 6px;
     border-radius: 3px;
-    background: var(--light-blue-button-bg, rgba(42, 88, 133, 0.08));
-    transition: background-color 0.15s ease;
 }
 
 .fwd-open-modal-link:hover {
     text-decoration: underline;
-    background: var(--light-blue-button-hover, rgba(42, 88, 133, 0.16));
 }
 
 .fwd-modal-content {
@@ -1384,7 +1384,7 @@ body:has(#im_container.at_page) .page-wrap {
 }
 
 .messenger-app--messages---message ._content {
-    width: 400px;
+    width: 430px;
     line-height: 13.2pt;
     padding-left: 15px;
 }
@@ -1398,6 +1398,10 @@ body:has(#im_container.at_page) .page-wrap {
     width: 100%;
     height: fit-content;
     overflow: hidden;
+}
+
+.messenger-app--messages---message .text {
+    padding-right: 35px;
 }
 
 .messenger-app--messages---message ._content .attachments {
@@ -4832,4 +4836,47 @@ body:has(#im_container.at_page) .page-wrap {
 .peer-window .peer-members-section .chat-tab-2-header {
     padding-top: 7px;
     margin-top: 0px;
+}
+
+/* Cant write notice bars */
+.im-cant-write-container {
+    width: 100%;
+}
+
+.messenger-app--cant-write {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-slightly, #f7f7f7);
+    border-top: 1px solid var(--bg-slightly-border, #e7e8ec);
+    padding: 18px 24px;
+    min-height: 52px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.im-cant-write-text {
+    color: var(--nobold, #777e8c);
+    font-size: 13px;
+    line-height: 19px;
+    text-align: center;
+}
+
+.fc_cant_write_bar {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-slightly, #f5f5f5);
+    border-top: 1px solid var(--bg-slightly-border, #dbe2e8);
+    padding: 10px 14px;
+    min-height: 42px;
+    box-sizing: border-box;
+}
+
+.fc_cant_write_text {
+    color: var(--nobold, #777e8c);
+    font-size: 11px;
+    line-height: 15px;
+    text-align: center;
+    word-break: break-word;
 }

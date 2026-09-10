@@ -314,18 +314,24 @@ export const FastChatBox = ({
         })}
             </div>
 
-            <div class="fc_input_bar">
-                <img src="${currentUserAvatar || '/assets/packages/static/openvk/img/camera_50.png'}" class="fc_my_avatar" />
-                <textarea
-                    class="fc_textarea"
-                    placeholder="${tr('enter_your_message') || 'Введите Ваше сообщение...'}"
-                    value=${chat.text || ''}
-                    onInput=${(e) => onTextChange(chat.peerId, e.target.value)}
-                    onKeyDown=${(e) => onKeyDown(e, chat.peerId)}
-                    onFocus=${() => onFocus(chat.peerId)}
-                ></textarea>
-                <div class="fc_emoji_btn emoji_picker_entrypoint" title="${tr('smiles')}"></div>
-            </div>
+            ${chat.canWrite === false ? html`
+                <div class="fc_input_bar fc_cant_write_bar">
+                    <div class="fc_cant_write_text">${chat.cantWriteText || tr('cannot_write_default')}</div>
+                </div>
+            ` : html`
+                <div class="fc_input_bar">
+                    <img src="${currentUserAvatar || '/assets/packages/static/openvk/img/camera_50.png'}" class="fc_my_avatar" />
+                    <textarea
+                        class="fc_textarea"
+                        placeholder="${tr('enter_your_message') || 'Введите Ваше сообщение...'}"
+                        value=${chat.text || ''}
+                        onInput=${(e) => onTextChange(chat.peerId, e.target.value)}
+                        onKeyDown=${(e) => onKeyDown(e, chat.peerId)}
+                        onFocus=${() => onFocus(chat.peerId)}
+                    ></textarea>
+                    <div class="fc_emoji_btn emoji_picker_entrypoint" title="${tr('smiles')}"></div>
+                </div>
+            `}
         </div>
     `;
 };

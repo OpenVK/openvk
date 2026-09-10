@@ -403,6 +403,11 @@ function get_attachment_text(attachment) {
     if (!attachment || !attachment.type || attachment.type === 'link' || attachment.type === 'share') {
         return '';
     }
+    if (attachment.type === 'fwd' || attachment.type === 'fwd_messages' || attachment.type === 'forward' || attachment.type === 'forward_messages') {
+        const count = attachment.count || (Array.isArray(attachment.items) ? attachment.items.length : 1);
+        const fwdText = typeof tr === 'function' ? tr('forwarded_messages_noun', count) : ("Пересланные сообщения (" + count + ")");
+        return `<span class="conv_prev_attachment_text">${escapeHtml(fwdText)}</span>`;
+    }
     const trKey = "preview_attachment_" + attachment.type;
     const label = typeof tr === 'function' ? tr(trKey) : trKey;
     const f = (`<span class="conv_prev_attachment_text">(` + (label || attachment.type) + ")</span>").toLowerCase();

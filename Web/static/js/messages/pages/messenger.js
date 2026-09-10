@@ -450,9 +450,11 @@ export class Messenger {
         if (attachments.length > 0) { attachments_list = attachments; }
         if (reply_to) { reply_param = reply_to; }
 
-        const cleanText = text.replace(/[\s\u200b\ufeff\u00a0]/g, '');
+        const cleanText = text.replace(/[\s\u200b\ufeff\u00a0\u200c\u200d]/g, '');
         if (!cleanText) {
             text = '';
+        } else {
+            text = text.replace(/^[\s\u200b\ufeff\u00a0\u200c\u200d]+|[\s\u200b\ufeff\u00a0\u200c\u200d]+$/g, '');
         }
         if (!text && !attachments_list && !reply_param && (!this.forwarded_msg || this.forwarded_msg.length === 0)) {
             return;
@@ -854,7 +856,8 @@ export class Messenger {
 
         if (this.editMsg != null) {
             if (!cleanText && _tmp_atts.length === 0) return false;
-            this.editMsg.edit(cleanText ? rawText : '', _tmp_atts);
+            const trimmedEdit = cleanText ? rawText.replace(/^[\s\u200b\ufeff\u00a0\u200c\u200d]+|[\s\u200b\ufeff\u00a0\u200c\u200d]+$/g, '') : '';
+            this.editMsg.edit(trimmedEdit, _tmp_atts);
 
             this.cancelEdit();
             return;
@@ -1840,7 +1843,9 @@ export class MessengerPage extends IMPage {
                 window.im.openTabByName('messenger');
             } else {
                 const _c = window.im.state.getCurrentConvo();
-                await _c.peer.checkMembers();
+                if (_c?.peer && !_c.peer.isILeft()) {
+                    await _c.peer.checkMembers();
+                }
 
                 if (typeof window.im !== 'undefined' && window.im.selectTab) {
                     window.im.openTabByName('contact', false, {
@@ -2735,7 +2740,9 @@ export class ContactPage extends IMPage {
         this.getNode().addClass("page-other");
 
         const currentCorresponder = window.im.state.getCurrentConvo();
-        await currentCorresponder.peer.checkMembers();
+        if (currentCorresponder?.peer && !currentCorresponder.peer.isILeft()) {
+            await currentCorresponder.peer.checkMembers();
+        }
         let peer = null;
         if (this.options.peer == null || this.options.peer.peer == null) {
             peer = currentCorresponder;

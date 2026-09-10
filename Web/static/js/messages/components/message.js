@@ -1533,7 +1533,7 @@ export const MessageListView = ({ dayDividedChunks, convo, page }) => {
       <div class="messenger-app--messages-array">
          <div class="im_top_loader" style="display: none;"><img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="..." /></div>
          ${isLoading ? html`
-             <div id="gif_loader"></div>
+             <!--div id="gif_loader"></div-->
          ` : html`
             ${!hasMessages ? html`
                 <div class="messenger-app--no-messages">
