@@ -4828,3 +4828,45 @@ hr {
         white-space: nowrap;
     }
 }
+
+html.app_fullscreen {
+    overflow-y: hidden !important;
+}
+
+html.app_fullscreen .page_header {
+    z-index: 0;
+}
+
+html.app_fullscreen #app_dev {
+    display: none;
+}
+
+body.dimmed .dimmer {
+    z-index: 1023;
+}
+
+#ajax_audio_player {
+    z-index: 1020;
+}
+
+center.app_fullscreen {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    text-align: left;
+    top: 0;
+    left: 0;
+}
+
+.app_fullscreen #appFrame, .app_fullscreen .page_yellowheader {
+    z-index: 1021;
+}
+
+.app_fullscreen #appFrame {
+    position: relative;
+    width: 100% !important;
+    height: auto !important;
+    flex: 1;
+}
