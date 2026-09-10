@@ -21,7 +21,7 @@ final class Users extends VKAPIRequestHandler
             'gen' => 'genitive',
             'dat' => 'dative',
             'acc' => 'accusative',
-            'ins' => 'instrumental',
+            'ins' => 'ablative',
             'abl' => 'prepositional',
         ];
         $morphCase = $caseMap[strtolower($name_case)] ?? null;
@@ -71,6 +71,12 @@ final class Users extends VKAPIRequestHandler
                 ];
                 if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
                     $response[$i]->uid = $response[$i]->id;
+                    $response[$i]->sex = 0;
+                    $response[$i]->photo = "/assets/packages/static/openvk/img/camera_50.png";
+                    $response[$i]->photo_rec = "/assets/packages/static/openvk/img/camera_50.png";
+                    $response[$i]->photo_medium_rec = "/assets/packages/static/openvk/img/camera_100.png";
+                    $response[$i]->photo_50 = "/assets/packages/static/openvk/img/camera_50.png";
+                    $response[$i]->photo_100 = "/assets/packages/static/openvk/img/camera_100.png";
                 }
             } elseif ($usr->isBanned()) {
                     $firstName = $morphCase ? $usr->getMorphedName($morphCase, false, false) : $usr->getFirstName(true);
@@ -82,6 +88,15 @@ final class Users extends VKAPIRequestHandler
                         "deactivated" => "banned",
                         "ban_reason"  => $usr->getBanReason(),
                     ];
+                    if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                        $response[$i]->uid = $usr->getId();
+                        $response[$i]->sex = $usr->isFemale() ? 1 : ($usr->isNeutral() ? 0 : 2);
+                        $response[$i]->photo = "/assets/packages/static/openvk/img/camera_50.png";
+                        $response[$i]->photo_rec = "/assets/packages/static/openvk/img/camera_50.png";
+                        $response[$i]->photo_medium_rec = "/assets/packages/static/openvk/img/camera_100.png";
+                        $response[$i]->photo_50 = "/assets/packages/static/openvk/img/camera_50.png";
+                        $response[$i]->photo_100 = "/assets/packages/static/openvk/img/camera_100.png";
+                    }
                 } elseif ($usrs[$i] == null) {
 
                 } else {
@@ -98,6 +113,12 @@ final class Users extends VKAPIRequestHandler
 
                     if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
                         $response[$i]->uid = $usr->getId();
+                        $response[$i]->sex = $usr->isFemale() ? 1 : ($usr->isNeutral() ? 0 : 2);
+                        $response[$i]->photo = $usr->getAvatarUrl();
+                        $response[$i]->photo_rec = $usr->getAvatarUrl();
+                        $response[$i]->photo_medium_rec = $usr->getAvatarUrl("tiny");
+                        $response[$i]->photo_50 = $usr->getAvatarUrl();
+                        $response[$i]->photo_100 = $usr->getAvatarUrl("tiny");
                     }
 
                     $flds = explode(',', $fields);
@@ -464,11 +485,11 @@ final class Users extends VKAPIRequestHandler
                                             break;
                                         case 0:
                                         default:
-                                            $response[$i]->bdate = null;
+                                            //$response[$i]->bdate = null;
                                             break;
                                     }
                                 } else {
-                                    $response[$i]->bdate = null;
+                                    //$response[$i]->bdate = null;
                                 }
                                 break;
                             case "can_write_private_message":

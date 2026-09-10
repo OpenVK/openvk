@@ -1749,6 +1749,17 @@ class User extends RowModel
             }
         }
 
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            $res->uid              = $this->getId();
+            $res->sex              = $this->isFemale() ? 1 : ($this->isNeutral() ? 0 : 2);
+            $res->photo            = $this->getAvatarUrl('miniscule', $avatar_photo);
+            $res->photo_rec        = $this->getAvatarUrl('miniscule', $avatar_photo);
+            $res->photo_medium_rec = $this->getAvatarUrl('tiny', $avatar_photo);
+            $res->photo_50         = $this->getAvatarUrl('miniscule', $avatar_photo);
+            $res->photo_100        = $this->getAvatarUrl('tiny', $avatar_photo);
+            $res->screen_name      = $this->getShortCode() ?? "id" . $this->getId();
+        }
+
         return $res;
     }
 

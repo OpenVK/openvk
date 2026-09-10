@@ -631,7 +631,21 @@ class Club extends RowModel
                     $res->verified = (int) $this->isVerified();
                     break;
                 case 'site':
-                    $res->site = $this->getWebsite();
+                    $res->site = (string) ($this->getWebsite() ?? "");
+                    break;
+                case 'place':
+                    // Intentionally not setting place. The VK client calls
+                    // has("place") then getJSONObject("place"); setting null
+                    // makes has() return true but getJSONObject() crash.
+                    break;
+                case 'wiki_page':
+                    $res->wiki_page = "";
+                    break;
+                case 'city':
+                    $res->city = 0;
+                    break;
+                case 'country':
+                    $res->country = 1;
                     break;
                 case 'description':
                     $res->description = $this->getDescription() ?? '';
@@ -685,8 +699,17 @@ class Club extends RowModel
                     ];
                     break;
                 case 'start_date':
-                    if ($this->isEvent()) {
-                        $res->start_date = $this->getStartDate()->timestamp();
+                    if ($this->isEvent() && $this->getStartDate()) {
+                        $res->start_date = (int) $this->getStartDate()->timestamp();
+                    } else {
+                        $res->start_date = 0;
+                    }
+                    break;
+                case 'finish_date':
+                    if ($this->isEvent() && $this->getFinishDate()) {
+                        $res->finish_date = (int) $this->getFinishDate()->timestamp();
+                    } else {
+                        $res->finish_date = 0;
                     }
                     break;
                 case "can_suggest":

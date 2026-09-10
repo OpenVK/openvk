@@ -47,7 +47,7 @@ final class Newsfeed extends VKAPIRequestHandler
                     ->where("follower", $id);
         $ids   = array_map(function ($rel) {
             return $rel->target * ($rel->model === "openvk\Web\Models\Entities\User" ? 1 : -1);
-        }, iterator_to_array($subs));
+        }, iterator_to_array($subs, false));
         $ids[] = $this->getUser()->getId();
 
         $filters   = array_unique(explode(',', $filters));
@@ -325,6 +325,10 @@ final class Newsfeed extends VKAPIRequestHandler
 
         # Legacy field mapping for API < 5.0 (VK 3.x clients)
         if (VKAPI_DECL_VER_MAJOR < 5) {
+            $result['new_from']   = (string) ($next_from ?? $start_from ?? "1/" . time() . "_1");
+            $result['new_offset'] = (int) ($offset + count($final_items));
+            $result['next_from']  = $result['new_from'];
+
             foreach ($result['items'] as &$item) {
                 if (is_object($item)) {
                     if (isset($item->id)) {
@@ -484,20 +488,52 @@ final class Newsfeed extends VKAPIRequestHandler
 
         if (empty($rposts)) {
             return (object) [
-                "count" => 0,
-                "items" => [],
+                "count"      => 0,
+                "items"      => [],
+                "profiles"   => [],
+                "groups"     => [],
+                "new_from"   => "0",
+                "new_offset" => 0,
             ];
         }
 
         $response = (new Wall())->getById(implode(',', $rposts), $extended, $fields, $this->getUser());
 
-        if ($lastPost) {
+        if ($lastPost && count($rposts) >= $count) {
             $response->next_from = "{$lastPost->created}_{$lastPost->id}";
         }
+
+        $response->new_from   = (string) ($response->next_from ?? "0");
+        $response->new_offset = (int) count($response->items ?? []);
 
         foreach ($response->items as $post) {
             $post->type = "post";
             $post->source_id = $post->owner_id;
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            if (isset($response->profiles)) {
+                foreach ($response->profiles as &$p) {
+                    if (is_object($p)) {
+                        $p->uid = $p->id;
+                        $p->photo = $p->photo_50 ?? "";
+                        $p->photo_medium_rec = $p->photo_100 ?? $p->photo_50 ?? "";
+                    }
+                }
+                unset($p);
+            }
+
+            if (isset($response->groups)) {
+                foreach ($response->groups as &$g) {
+                    if (is_object($g)) {
+                        $g->gid = $g->id;
+                        $g->photo = $g->photo_50 ?? "";
+                        $g->photo_medium = $g->photo_100 ?? $g->photo_50 ?? "";
+                        $g->is_admin = $g->is_admin ?? 0;
+                    }
+                }
+                unset($g);
+            }
         }
 
         return $response;
@@ -679,12 +715,36 @@ final class Newsfeed extends VKAPIRequestHandler
     ): object {
         $this->requireUser();
 
+        if ($start_from === "0") {
+            return (object) [
+                "items"     => [],
+                "profiles"  => [],
+                "groups"    => [],
+                "new_from"  => "0",
+                "next_from" => "0",
+            ];
+        }
+
         $count  = max(1, min(100, $count));
         $offset = max(0, min(1000, $offset));
 
-        if (!empty($start_from) && is_numeric($start_from) && $offset === 0) {
-            $offset = (int) $start_from;
+        if ($start_from !== "" && $offset === 0) {
+            if (is_numeric($start_from)) {
+                $offset = max(0, (int) $start_from);
+            } elseif (strpos($start_from, '_') !== false) {
+                $parts = explode('_', $start_from);
+                if (is_numeric($parts[0])) {
+                    $offset = max(0, (int) $parts[0]);
+                }
+            } elseif (strpos($start_from, '/') !== false) {
+                $parts = explode('/', $start_from);
+                $lastPart = end($parts);
+                if (is_numeric($lastPart)) {
+                    $offset = max(0, (int) $lastPart);
+                }
+            }
         }
+        $offset = max(0, min(1000, $offset));
 
         $userId = $this->getUser()->getId();
 
@@ -694,7 +754,7 @@ final class Newsfeed extends VKAPIRequestHandler
             ->where("follower", $userId);
         $subscribedWalls = array_map(function ($rel) {
             return $rel->target * ($rel->model === "openvk\Web\Models\Entities\User" ? 1 : -1);
-        }, iterator_to_array($subs));
+        }, iterator_to_array($subs, false));
         $subscribedWalls[] = $userId;
 
         $myComments = DatabaseConnection::i()
@@ -735,10 +795,11 @@ final class Newsfeed extends VKAPIRequestHandler
 
         if (empty($allPostCandidates)) {
             return (object) [
-                "items"    => [],
-                "profiles" => [],
-                "groups"   => [],
-                "new_from" => "0",
+                "items"     => [],
+                "profiles"  => [],
+                "groups"    => [],
+                "new_from"  => "0",
+                "next_from" => "0",
             ];
         }
 
@@ -769,8 +830,7 @@ final class Newsfeed extends VKAPIRequestHandler
         usort($postRows, fn($a, $b) => $b["time"] <=> $a["time"]);
 
         $pagedPostRows = array_slice($postRows, $offset, $count);
-        $hasMore       = sizeof($postRows) > ($offset + $count);
-        $newFrom       = $hasMore ? (string) ($offset + $count) : "0";
+        $hasMore       = sizeof($postRows) > ($offset + count($pagedPostRows));
 
         $final_items    = [];
         $final_profiles = [];
@@ -879,10 +939,13 @@ final class Newsfeed extends VKAPIRequestHandler
                     "uid"              => $u->getId(),
                     "first_name"       => $u->getFirstName(),
                     "last_name"        => $u->getLastName(),
+                    "sex"              => $u->isFemale() ? 1 : ($u->isNeutral() ? 0 : 2),
                     "photo"            => $u->getAvatarURL(),
+                    "photo_rec"        => $u->getAvatarURL(),
                     "photo_50"         => $u->getAvatarURL(),
                     "photo_100"        => $u->getAvatarURL("tiny"),
                     "photo_medium_rec" => $u->getAvatarURL("tiny"),
+                    "screen_name"      => $u->getShortCode(),
                     "online"           => (int) $u->isOnline(),
                 ];
             }
@@ -921,11 +984,21 @@ final class Newsfeed extends VKAPIRequestHandler
             $g->is_admin ??= 0;
         }
 
-        return (object) [
+        $result = [
             "items"    => $final_items,
             "profiles" => array_values($final_profiles),
             "groups"   => array_values($final_groups),
-            "new_from" => (string) $newFrom,
         ];
+
+        if ($hasMore && !empty($pagedPostRows) && !empty($final_items)) {
+            $nextFrom = (string) ($offset + count($pagedPostRows));
+            $result["next_from"] = $nextFrom;
+            $result["new_from"]  = $nextFrom;
+        } else {
+            $result["new_from"]  = "0";
+            $result["next_from"] = "0";
+        }
+
+        return (object) $result;
     }
 }

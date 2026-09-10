@@ -94,21 +94,23 @@ class Album extends MediaCollection
     {
         $res = (object) [];
 
-        $res->id              = $this->getId();
-        $res->thumb_id        = !is_null($this->getCoverPhoto()) ? $this->getCoverPhoto()->getId() : '0';
-        $res->owner_id        = $this->getOwner()->getRealId();
-        $res->title           = $this->getName();
-        $res->description     = $this->getDescription();
-        $res->created         = $this->getCreationTime()->timestamp();
-        $res->updated         = $this->getEditTime() ? $this->getEditTime()->timestamp() : $res->created;
-        $res->size            = $this->size();
+        $res->id              = (int) $this->getId();
+        $res->aid             = (int) $this->getId();
+        $res->thumb_id        = !is_null($this->getCoverPhoto()) ? (int) $this->getCoverPhoto()->getId() : 0;
+        $res->owner_id        = (int) $this->getOwner()->getRealId();
+        $res->title           = (string) ($this->getName() ?? "");
+        $res->description     = (string) ($this->getDescription() ?? "");
+        $res->created         = (int) $this->getCreationTime()->timestamp();
+        $res->updated         = (int) ($this->getEditTime() ? $this->getEditTime()->timestamp() : $res->created);
+        $res->size            = (int) $this->size();
+        $res->privacy         = 0;
         $res->privacy_comment = 1;
         $res->upload_by_admins_only = 1;
         $res->comments_disabled = 0;
         $res->can_upload      = (int) $this->canBeModifiedBy($user); # thisUser недоступен в entities
-        if ($need_covers) {
-            $res->thumb_src   = $this->getCoverURL();
+        $res->thumb_src       = (string) ($this->getCoverURL() ?? "");
 
+        if ($need_covers) {
             if ($photo_sizes) {
                 $res->sizes   = !is_null($this->getCoverPhoto()) ? $this->getCoverPhoto()->getVkApiSizes() : null;
             }

@@ -267,10 +267,10 @@ final class Groups extends VKAPIRequestHandler
         }
 
         $sort_string = "follower ASC";
-        $members = array_slice(iterator_to_array($club->getFollowers(1, $count, $sort_string)), $offset, $count);
+        $members = array_slice(iterator_to_array($club->getFollowers(1, $count + $offset, $sort_string), false), $offset, $count);
 
         $obj = (object) [
-            "count" => sizeof($members),
+            "count" => $club->getFollowersCount(),
             "items" => [],
         ];
 
@@ -307,12 +307,12 @@ final class Groups extends VKAPIRequestHandler
         return $arr;
     }
 
-    public function isMember(string $group_id, int $user_id, int $extended = 0)
+    public function isMember(string $group_id, int $user_id = 0, int $extended = 0)
     {
         $this->requireUser();
 
         $input_club = (new ClubsRepo())->get(abs((int) $group_id));
-        $input_user = (new UsersRepo())->get(abs((int) $user_id));
+        $input_user = ($user_id === 0) ? $this->getUser() : (new UsersRepo())->get(abs((int) $user_id));
 
         if (!$input_club || !$input_club->canBeViewedBy($this->getUser())) {
             $this->fail(15, "Access denied");

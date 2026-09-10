@@ -55,6 +55,20 @@ final class Friends extends VKAPIRequestHandler
         ];
     }
 
+    public function getSuggestions(string $filter = "mutual", string $fields = "", int $offset = 0, int $count = 100): object|array
+    {
+        $this->requireUser();
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return [];
+        }
+
+        return (object) [
+            "count" => 0,
+            "items" => [],
+        ];
+    }
+
     public function getOnline(int $user_id = 0, int $online_mobile = 0): array
     {
         $this->requireUser();

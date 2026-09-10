@@ -15,9 +15,13 @@ use openvk\Web\Models\Repositories\Comments as CommentsRepo;
 
 final class Video extends VKAPIRequestHandler
 {
-    public function get(int $owner_id = 0, string $videos = "", string $fields = "", int $offset = 0, int $count = 30, int $extended = 0, int $video_id = 0): object|array
+    public function get(int $owner_id = 0, string $videos = "", string $fields = "", int $offset = 0, int $count = 30, int $extended = 0, int $video_id = 0, int $gid = 0): object|array
     {
         # $this->requireUser();
+
+        if ($owner_id === 0 && $gid > 0) {
+            $owner_id = -$gid;
+        }
 
         if (empty($videos) && $video_id > 0) {
             $videos = "{$owner_id}_{$video_id}";

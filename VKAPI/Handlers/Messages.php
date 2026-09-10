@@ -310,31 +310,78 @@ final class Messages extends VKAPIRequestHandler
         $attachments = array_merge($result, $objAttachments);
     }
 
+    private function sanitizeAttachmentDimensions(&$item): void
+    {
+        if (is_array($item)) {
+            foreach ($item as $k => &$v) {
+                if (($k === 'width' || $k === 'height') && is_null($v)) {
+                    $v = 0;
+                } elseif (is_array($v) || is_object($v)) {
+                    $this->sanitizeAttachmentDimensions($v);
+                }
+            }
+        } elseif (is_object($item)) {
+            foreach ($item as $k => &$v) {
+                if (($k === 'width' || $k === 'height') && is_null($v)) {
+                    $item->{$k} = 0;
+                } elseif (is_array($v) || is_object($v)) {
+                    $this->sanitizeAttachmentDimensions($v);
+                }
+            }
+        }
+    }
+
     private function sanitizeMessageAttachmentsRecursive(array &$message): void
     {
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            if (!empty($message['reply_message']) && empty($message['fwd_messages'])) {
+                $message['fwd_messages'] = [$message['reply_message']];
+                unset($message['reply_message']);
+            }
+        }
+
         if (!empty($message['attachments'])) {
             $this->replaceAttachments($message['attachments'], ["gift"]);
+            $this->sanitizeAttachmentDimensions($message['attachments']);
         } else {
             $message['attachments'] = [];
         }
 
-        if (!empty($message['fwd_messages']) && is_array($message['fwd_messages'])) {
-            foreach ($message['fwd_messages'] as &$fwd) {
+        if (!empty($message['fwd_messages']) && (is_array($message['fwd_messages']) || is_object($message['fwd_messages']))) {
+            $fwdArr = (array) $message['fwd_messages'];
+            foreach ($fwdArr as &$fwd) {
+                if (is_object($fwd)) {
+                    $fwd = (array) $fwd;
+                }
                 if (is_array($fwd)) {
-                    $fwd['mid'] = (int) ($fwd['id'] ?? 0);
-                    if (!isset($fwd['from_id'])) {
-                        $fwd['from_id'] = (int) ($fwd['user_id'] ?? 0);
-                    }
-                    $fwd['body'] = (string) ($fwd['body'] ?? $fwd['text'] ?? "");
-                    $fwd['date'] = (int) ($fwd['date'] ?? 0);
+                    $fwdUid = (int) ($fwd['uid'] ?? $fwd['from_id'] ?? $fwd['user_id'] ?? 0);
+                    $fwd['uid']        = $fwdUid;
+                    $fwd['user_id']    = $fwdUid;
+                    $fwd['from_id']    = $fwdUid;
+                    $fwd['mid']        = (int) ($fwd['mid'] ?? $fwd['id'] ?? 0);
+                    $fwd['id']         = $fwd['mid'];
+                    $fwd['body']       = (string) ($fwd['body'] ?? $fwd['text'] ?? "");
+                    $fwd['date']       = (int) ($fwd['date'] ?? 0);
+                    $fwd['read_state'] = (int) ($fwd['read_state'] ?? 0);
+                    $fwd['out']        = (int) ($fwd['out'] ?? 0);
                     $this->sanitizeMessageAttachmentsRecursive($fwd);
                 }
             }
             unset($fwd);
+            $message['fwd_messages'] = array_values($fwdArr);
         }
 
         if (!empty($message['reply_message']) && is_array($message['reply_message'])) {
             $this->sanitizeMessageAttachmentsRecursive($message['reply_message']);
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            if (empty($message['attachments'])) {
+                unset($message['attachments']);
+            }
+            if (empty($message['fwd_messages'])) {
+                unset($message['fwd_messages']);
+            }
         }
     }
 
@@ -608,6 +655,8 @@ final class Messages extends VKAPIRequestHandler
 
                 if (!$isDeleted) {
                     $this->sanitizeMessageAttachmentsRecursive($msgObj);
+                } elseif (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                    unset($msgObj['attachments'], $msgObj['fwd_messages']);
                 }
 
                 if ($chatId > 0) {
@@ -653,7 +702,7 @@ final class Messages extends VKAPIRequestHandler
                 if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
                     $msgObj['mid'] = $msgObj['id'];
                     $msgObj['uid'] = $msgObj['user_id'];
-                    if (isset($msgObj['chat_active'])) {
+                    if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 4 && isset($msgObj['chat_active'])) {
                         $msgObj['chat_active'] = is_array($msgObj['chat_active'])
                             ? implode(',', array_filter($msgObj['chat_active']))
                             : (string) $msgObj['chat_active'];
@@ -741,9 +790,13 @@ final class Messages extends VKAPIRequestHandler
         return $payload;
     }
 
-    public function getById(string $message_ids, int $preview_length = 0, int $extended = 0, string $fields = "photo_200,online"): object
+    public function getById(string $message_ids = "", int $preview_length = 0, int $extended = 0, string $fields = "photo_200,online")
     {
         $this->requireUser();
+
+        if ($message_ids === "") {
+            $message_ids = (string) ($_POST['message_ids'] ?? $_GET['message_ids'] ?? $_POST['mid'] ?? $_GET['mid'] ?? $_POST['mids'] ?? $_GET['mids'] ?? "");
+        }
 
         $params = [
             "message_ids"    => $message_ids,
@@ -780,12 +833,40 @@ final class Messages extends VKAPIRequestHandler
                         }
                     }
                 }
+
+                if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                    $mid = (int) ($item['mid'] ?? $item['id'] ?? 0);
+                    $uid = (int) ($item['uid'] ?? $item['user_id'] ?? $item['from_id'] ?? 0);
+                    $item['mid']        = $mid;
+                    $item['id']         = $mid;
+                    $item['uid']        = $uid;
+                    $item['user_id']    = $uid;
+                    $item['from_id']    = $uid;
+                    $item['body']       = (string) ($item['body'] ?? $item['text'] ?? "");
+                    $item['date']       = (int) ($item['date'] ?? 0);
+                    $item['read_state'] = (int) ($item['read_state'] ?? 0);
+                    $item['out']        = (int) ($item['out'] ?? 0);
+                    if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 4 && isset($item['chat_active'])) {
+                        $item['chat_active'] = is_array($item['chat_active'])
+                            ? implode(',', array_filter($item['chat_active']))
+                            : (string) $item['chat_active'];
+                    }
+                }
             }
             unset($item);
         }
 
         if ($extended == 1) {
             $this->hydrateExtendedData($data, $fields);
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            $items = $data['items'] ?? [];
+            $total = (int) ($data['count'] ?? count($items));
+            if ($total === 0 || empty($items)) {
+                return [0];
+            }
+            return array_merge([$total], $items);
         }
 
         return (object) $data;
@@ -985,6 +1066,12 @@ final class Messages extends VKAPIRequestHandler
         }
         if (!empty($forward_messages)) {
             $params["forward_messages"] = $forward_messages;
+        }
+        if ($lat !== null) {
+            $params["lat"] = (string) $lat;
+        }
+        if ($long !== null) {
+            $params["long"] = (string) $long;
         }
 
         return (int) $this->invoke("messages.send", $params, $group_id);
@@ -1211,7 +1298,7 @@ final class Messages extends VKAPIRequestHandler
                 $item['mid']  = (int) ($item['id'] ?? 0);
                 $item['uid']  = (int) ($item['user_id'] ?? $item['from_id'] ?? 0);
                 $item['body'] = (string) ($item['body'] ?? $item['text'] ?? "");
-                if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 4) {
                     if (isset($item['chat_active'])) {
                         $item['chat_active'] = is_array($item['chat_active'])
                             ? implode(',', array_filter($item['chat_active']))
@@ -1628,15 +1715,72 @@ final class Messages extends VKAPIRequestHandler
                 }
             }
 
-            if (!empty($fields) && !empty($chatStruct['users'])) {
+            if (!empty($chatStruct['users']) && (!empty($fields) || (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5))) {
+                $missingUserIds = [];
+                foreach ($chatStruct['users'] as $uId) {
+                    $uIdInt = (int) $uId;
+                    if ($uIdInt > 0 && !isset($userProfilesMap[$uIdInt])) {
+                        $missingUserIds[] = $uIdInt;
+                    }
+                }
+                if (!empty($missingUserIds)) {
+                    $reqFields = !empty($fields) ? $fields : "online,first_name,last_name,photo_medium_rec,photo_rec";
+                    $moreUsers = (new APIUsers())->get(implode(',', array_unique($missingUserIds)), $reqFields);
+                    foreach ($moreUsers as $uStruct) {
+                        $uID = is_array($uStruct) ? ($uStruct['id'] ?? 0) : (is_object($uStruct) ? ($uStruct->id ?? 0) : 0);
+                        if ($uID > 0) {
+                            $userProfilesMap[$uID] = $uStruct;
+                        }
+                    }
+                }
+
+                $chatAdminId = (int) ($chatStruct['admin_id'] ?? 0);
+                $memberInvitedByMap = [];
+                try {
+                    $chatRows = \Chandler\Database\DatabaseConnection::i()->getContext()
+                        ->table('openvk_im.conversation_members')
+                        ->where('internal_chat_id', (string) $localChatId)
+                        ->fetchAll();
+                    foreach ($chatRows as $row) {
+                        $memberInvitedByMap[(int) $row->user_id] = (int) ($row->invited_by ?: $chatAdminId);
+                    }
+                } catch (\Throwable $e) {
+                    // ignore
+                }
+
                 $hydratedUsers = [];
                 foreach ($chatStruct['users'] as $uId) {
                     $uIdInt = (int) $uId;
-                    if (isset($userProfilesMap[$uIdInt])) {
-                        $hydratedUsers[] = $userProfilesMap[$uIdInt];
-                    } else {
-                        $hydratedUsers[] = $uIdInt;
+                    $invitedBy = $memberInvitedByMap[$uIdInt] ?? $chatAdminId;
+                    if ($invitedBy <= 0) {
+                        $invitedBy = $uIdInt;
                     }
+
+                    if (isset($userProfilesMap[$uIdInt])) {
+                        $uObj = is_array($userProfilesMap[$uIdInt]) ? (object) $userProfilesMap[$uIdInt] : clone $userProfilesMap[$uIdInt];
+                    } else {
+                        $uObj = (object) [
+                            'id'         => $uIdInt,
+                            'uid'        => $uIdInt,
+                            'first_name' => 'DELETED',
+                            'last_name'  => '',
+                        ];
+                    }
+
+                    $uObj->uid = $uIdInt;
+                    $uObj->id = $uIdInt;
+                    $uObj->invited_by = $invitedBy;
+                    if (!isset($uObj->photo_rec)) {
+                        $uObj->photo_rec = (string) ($uObj->photo_50 ?? $uObj->photo ?? '');
+                    }
+                    if (!isset($uObj->photo_medium_rec)) {
+                        $uObj->photo_medium_rec = (string) ($uObj->photo_100 ?? $uObj->photo_200 ?? $uObj->photo_rec);
+                    }
+                    if (!isset($uObj->online)) {
+                        $uObj->online = 0;
+                    }
+
+                    $hydratedUsers[] = $uObj;
                 }
                 $chatStruct['users'] = $hydratedUsers;
             }
@@ -1704,11 +1848,15 @@ final class Messages extends VKAPIRequestHandler
         return 1;
     }
 
-    public function removeChatUser(int $peer_id = 0, int $user_id = 0, int $group_id = 0): int
+    public function removeChatUser(int $peer_id = 0, int $user_id = 0, int $group_id = 0, int $chat_id = 0): int
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
         $this->ensureBrokerActive();
+
+        if ($peer_id === 0 && $chat_id > 0) {
+            $peer_id = 2000000000 + $chat_id;
+        }
 
         if ($peer_id === 0) {
             $this->fail(100, "One of the parameters is missing: peer_id");
@@ -1837,20 +1985,31 @@ final class Messages extends VKAPIRequestHandler
         int $unread = 0,
         int $extended = 0,
         string $fields = "photo_200,online",
-        int $group_id = 0
+        int $group_id = 0,
+        int $user_id = 0,
+        int $peer_id = 0,
+        int $chat_id = 0
     ): array {
         $this->requireUser();
 
-        $filter = $unread ? "unread" : "all";
-        $fetchCount = (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) ? 200 : min(abs($count), 200);
-        $params = [
-            "offset"   => (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) ? "0" : (string) $offset,
-            "count"    => (string) $fetchCount,
-            "filter"   => $filter,
-            "extended" => (string) $extended,
-        ];
+        $resolvedSpecificPeer = $this->resolvePeer($user_id, $peer_id, $chat_id);
+        if ($resolvedSpecificPeer && $resolvedSpecificPeer > 0) {
+            $payload = $this->invoke("messages.getConversationsById", [
+                "peer_ids" => (string) $resolvedSpecificPeer,
+                "extended" => (string) $extended,
+            ], $group_id);
+        } else {
+            $filter = $unread ? "unread" : "all";
+            $fetchCount = (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) ? 200 : min(abs($count), 200);
+            $params = [
+                "offset"   => (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) ? "0" : (string) $offset,
+                "count"    => (string) $fetchCount,
+                "filter"   => $filter,
+                "extended" => (string) $extended,
+            ];
 
-        $payload = $this->invoke("messages.getConversations", $params, $group_id);
+            $payload = $this->invoke("messages.getConversations", $params, $group_id);
+        }
 
         if (empty($payload['items'])) {
             if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
@@ -1993,6 +2152,15 @@ final class Messages extends VKAPIRequestHandler
             $msgObj['mid'] = $msgObj['id'];
 
             if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                if (empty($msgObj['attachments'])) {
+                    unset($msgObj['attachments']);
+                }
+                if (empty($msgObj['fwd_messages'])) {
+                    unset($msgObj['fwd_messages']);
+                }
+            }
+
+            if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 4) {
                 if (isset($msgObj['chat_active'])) {
                     $msgObj['chat_active'] = is_array($msgObj['chat_active'])
                         ? implode(',', array_filter($msgObj['chat_active']))
@@ -2006,9 +2174,12 @@ final class Messages extends VKAPIRequestHandler
         $flatMessages = array_values($flatMessages);
 
         if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
-            $total = count($flatMessages);
-            if ($total === 0) {
+            $total = (int) ($payload['count'] ?? count($flatMessages));
+            if ($total === 0 || empty($flatMessages)) {
                 return [0];
+            }
+            if ($resolvedSpecificPeer && $resolvedSpecificPeer > 0) {
+                return array_merge([$total], $flatMessages);
             }
             $paged = array_slice($flatMessages, $offset, min(abs($count), 200));
             return array_merge([$total], $paged);
@@ -2185,6 +2356,52 @@ final class Messages extends VKAPIRequestHandler
                     }
                 }
             }
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            $formatted = [];
+            foreach ($results as $item) {
+                $type = is_object($item) ? ($item->type ?? 'profile') : ($item['type'] ?? 'profile');
+                if ($type === 'profile') {
+                    $u = is_object($item) ? clone $item : (object) $item;
+                    $uid = (int) ($u->id ?? $u->uid ?? 0);
+                    $first = (string) ($u->first_name ?? '');
+                    $last = (string) ($u->last_name ?? '');
+                    $photoRec = (string) ($u->photo_rec ?? $u->photo_50 ?? $u->photo ?? '');
+                    $photoMed = (string) ($u->photo_medium_rec ?? $u->photo_100 ?? $u->photo_200 ?? $photoRec);
+                    $online = (int) ($u->online ?? 0);
+
+                    $formatted[] = (object) [
+                        'type'             => 'profile',
+                        'uid'              => $uid,
+                        'first_name'       => $first,
+                        'last_name'        => $last,
+                        'photo_rec'        => $photoRec,
+                        'photo_medium_rec' => $photoMed,
+                        'online'           => $online,
+                        'profile'          => $u,
+                    ];
+                } elseif ($type === 'chat') {
+                    $c = is_object($item) ? (array) $item : (array) $item;
+                    $chatId = $c['chat_id'] ?? ($c['id'] ?? 0);
+                    $title = $c['title'] ?? '';
+                    $chatObj = [
+                        'type'    => 'chat',
+                        'chat_id' => (int) $chatId,
+                        'title'   => (string) $title,
+                    ];
+                    if (isset($c['users'])) {
+                        $chatObj['users'] = $c['users'];
+                    }
+                    if (isset($c['admin_id'])) {
+                        $chatObj['admin_id'] = $c['admin_id'];
+                    }
+                    $formatted[] = (object) $chatObj;
+                } else {
+                    $formatted[] = $item;
+                }
+            }
+            return $formatted;
         }
 
         return $results;

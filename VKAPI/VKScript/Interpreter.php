@@ -498,7 +498,15 @@ class Interpreter
                 ? $this->getMember($el, $node["name"])
                 : $this->getIndex($el, $this->eval($node["index"]));
             if ($val !== null) {
-                $out[] = $val;
+                if (is_array($val) && array_is_list($val)) {
+                    foreach ($val as $sub) {
+                        if ($sub !== null) {
+                            $out[] = $sub;
+                        }
+                    }
+                } else {
+                    $out[] = $val;
+                }
             }
         }
 

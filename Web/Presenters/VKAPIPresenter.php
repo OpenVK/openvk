@@ -51,14 +51,14 @@ final class VKAPIPresenter extends OpenVKPresenter
             array_unshift($payload["request_params"], [ "key" => $key, "value" => $value ]);
         }
 
-        if (VKAPI_DECL_VER !== VKAPI_OVK_APP) {
+        if (\VKAPI_DECL_VER !== \VKAPI_OVK_APP) {
             $payload = [
                 "error" => $payload,
             ];
         }
 
         $callback = $this->queryParam("callback");
-        if (VKAPI_DECL_VER !== VKAPI_OVK_APP) {
+        if (\VKAPI_DECL_VER !== \VKAPI_OVK_APP) {
             // don't exactly know why it throws 200 if there's definately an error
             header("HTTP/1.1 200 OK");
         } else {
@@ -97,6 +97,8 @@ final class VKAPIPresenter extends OpenVKPresenter
 
     public function onServerError(\Throwable $e): ?string
     {
+        error_log("VKAPI onServerError: " . $e->getMessage() . " at " . $e->getFile() . ":" . $e->getLine() . "\n" . $e->getTraceAsString());
+
         if (defined("CHANDLER_ROOT_CONF") && (CHANDLER_ROOT_CONF["debug"] ?? false)) {
             return null;
         }
@@ -450,6 +452,9 @@ final class VKAPIPresenter extends OpenVKPresenter
             'getapppermissions' => ['Account', 'getAppPermissions'],
             'getvariable'       => ['Storage', 'get'],
             'setvariable'       => ['Storage', 'set'],
+            'isgroupmember'     => ['Groups', 'isMember'],
+            'getcities'         => ['Places', 'getCityById'],
+            'getcountries'      => ['Places', 'getCountryById'],
         ];
 
         $fullMethodKey = strtolower(!empty($object) ? "$object.$method" : $method);
@@ -533,6 +538,8 @@ final class VKAPIPresenter extends OpenVKPresenter
             'cids'        => ['cid'],
             'message'     => ['msg', 'text'],
             'text'        => ['message', 'msg'],
+            'start_from'  => ['from'],
+            'from'        => ['start_from'],
         ];
 
         foreach ($route->getParameters() as $parameter) {
@@ -569,7 +576,17 @@ final class VKAPIPresenter extends OpenVKPresenter
                 if (!$type || !$type->isBuiltin() || is_null($val) || $type->getName() === "mixed") {
                     $args[] = $val;
                 } else {
-                    settype($val, $type->getName());
+                    if (is_array($val) && $type->getName() === "string") {
+                        $flat = [];
+                        array_walk_recursive($val, function ($v) use (&$flat) {
+                            if (!is_null($v) && $v !== '') {
+                                $flat[] = $v;
+                            }
+                        });
+                        $val = implode(',', array_unique($flat));
+                    } else {
+                        settype($val, $type->getName());
+                    }
                     $args[] = $val;
                 }
             } catch (\Throwable $e) {
@@ -596,7 +613,17 @@ final class VKAPIPresenter extends OpenVKPresenter
         define("VKAPI_OVK_APP", "5.9999");
         define("VKAPI_DECL_VER_MAJOR", (int) ($parts[0] ?? 5));
         define("VKAPI_DECL_VER_MINOR", (int) ($parts[1] ?? 0));
+    }
 
+    public function renderRouteSingle(string $method): void
+    {
+        $method = rtrim($method, '.');
+        if (str_contains($method, '.')) {
+            [$object, $action] = explode('.', $method, 2);
+            $this->renderRoute($object, $action);
+        } else {
+            $this->renderRoute("", $method);
+        }
     }
 
     public function renderRoute(string $object, string $method): void
@@ -977,6 +1004,9 @@ final class VKAPIPresenter extends OpenVKPresenter
         }
 
         $payload = ["response" => $res];
+        if ((is_array($res) && isset($res['fo'])) || (is_object($res) && isset($res->fo))) {
+            $payload['fo'] = is_array($res) ? $res['fo'] : $res->fo;
+        }
         if (!empty($errors)) {
             $payload["execute_errors"] = $errors;
         }

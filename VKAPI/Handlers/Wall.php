@@ -278,6 +278,10 @@ final class Wall extends VKAPIRequestHandler
         }
 
         if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            if (empty($items)) {
+                $cnt = 0;
+            }
+
             if ($extended == 1) {
                 $profiles = array_unique($profiles);
                 $groups  = array_unique($groups);
@@ -288,12 +292,19 @@ final class Wall extends VKAPIRequestHandler
                 foreach ($profiles as $prof) {
                     $user = (new UsersRepo())->get($prof);
                     if ($user) {
+                        $isDeleted = $user->isDeleted();
                         $profilesFormatted[] = (object) [
+                            "id"               => $user->getId(),
                             "uid"              => $user->getId(),
-                            "first_name"       => $user->getFirstName(),
-                            "last_name"        => $user->getLastName(),
+                            "first_name"       => $isDeleted ? "DELETED" : $user->getFirstName(),
+                            "last_name"        => $isDeleted ? "" : $user->getLastName(),
+                            "sex"              => $user->isFemale() ? 1 : ($user->isNeutral() ? 0 : 2),
                             "photo"            => $user->getAvatarUrl(),
+                            "photo_rec"        => $user->getAvatarUrl(),
                             "photo_medium_rec" => $user->getAvatarUrl("tiny"),
+                            "photo_50"         => $user->getAvatarUrl("tiny"),
+                            "photo_100"        => $user->getAvatarUrl("normal"),
+                            "screen_name"      => $user->getShortCode(),
                             "online"           => (int) $user->isOnline(),
                         ];
                     }
@@ -562,11 +573,15 @@ final class Wall extends VKAPIRequestHandler
                     $profilesFormatted[] = (object) [
                         "first_name"        => $user->getFirstName(),
                         "id"                => $user->getId(),
+                        "uid"               => $user->getId(),
                         "last_name"         => $user->getLastName(),
                         "can_access_closed" => (int) $user->canBeViewedBy($this->getUser()),
                         "is_closed"         => $user->isClosed(),
-                        "sex"               => $user->isFemale() ? 1 : 2,
+                        "sex"               => $user->isFemale() ? 1 : ($user->isNeutral() ? 0 : 2),
                         "screen_name"       => $user->getShortCode(),
+                        "photo"             => $user->getAvatarUrl(),
+                        "photo_rec"         => $user->getAvatarUrl(),
+                        "photo_medium_rec"  => $user->getAvatarUrl("tiny"),
                         "photo_50"          => $user->getAvatarUrl(),
                         "photo_100"         => $user->getAvatarUrl(),
                         "online"            => $user->isOnline(),
@@ -575,9 +590,16 @@ final class Wall extends VKAPIRequestHandler
                 } else {
                     $profilesFormatted[] = (object) [
                         "id" 		  => (int) $prof,
+                        "uid" 		  => (int) $prof,
                         "first_name"  => "DELETED",
                         "last_name"   => "",
+                        "sex"         => 0,
                         "deactivated" => "deleted",
+                        "photo"            => "/assets/packages/static/openvk/img/camera_50.png",
+                        "photo_rec"        => "/assets/packages/static/openvk/img/camera_50.png",
+                        "photo_medium_rec" => "/assets/packages/static/openvk/img/camera_100.png",
+                        "photo_50"         => "/assets/packages/static/openvk/img/camera_50.png",
+                        "photo_100"        => "/assets/packages/static/openvk/img/camera_100.png",
                     ];
                 }
             }

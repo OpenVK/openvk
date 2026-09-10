@@ -155,29 +155,31 @@ class Topic extends Postable
     {
         $res = (object) [];
 
-        $res->id         = $this->getVirtualId();
-        $res->title      = $this->getTitle();
-        $res->created    = $this->getPublicationTime()->timestamp();
+        $res->id         = (int) $this->getVirtualId();
+        $res->tid        = (int) $this->getVirtualId();
+        $res->title      = (string) ($this->getTitle() ?? "");
+        $res->created    = (int) $this->getPublicationTime()->timestamp();
 
         if ($this->getOwner() instanceof User) {
-            $res->created_by = $this->getOwner()->getId();
+            $res->created_by = (int) $this->getOwner()->getId();
         } else {
-            $res->created_by = $this->getOwner()->getId() * -1;
+            $res->created_by = (int) ($this->getOwner()->getId() * -1);
         }
 
-        $res->updated    = $this->getUpdateTime()->timestamp();
+        $res->updated    = (int) $this->getUpdateTime()->timestamp();
+        $res->updated_by = $res->created_by;
 
         if ($this->getLastComment()) {
             if ($this->getLastComment()->getOwner() instanceof User) {
-                $res->updated_by = $this->getLastComment()->getOwner()->getId();
+                $res->updated_by = (int) $this->getLastComment()->getOwner()->getId();
             } else {
-                $res->updated_by = $this->getLastComment()->getOwner()->getId() * -1;
+                $res->updated_by = (int) ($this->getLastComment()->getOwner()->getId() * -1);
             }
         }
 
         $res->is_closed  = (int) $this->isClosed();
         $res->is_fixed   = (int) $this->isPinned();
-        $res->comments   = $this->getCommentsCount();
+        $res->comments   = (int) $this->getCommentsCount();
 
         if ($preview == 1) {
             $res->first_comment = $this->getFirstComment() ? ovk_proc_strtr($this->getFirstComment()->getText(false), $preview_length) : null;

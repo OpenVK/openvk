@@ -113,6 +113,21 @@ class Photos
         ])->count("*");
     }
 
+    public function getEveryClubPhoto(Club $club, int $offset = 0, int $limit = 10): \Traversable
+    {
+        $photos = $this->photos->where([
+            "owner"     => $club->getId() * -1,
+            "deleted"   => 0,
+            "system"    => 0,
+            "private"   => 0,
+            "anonymous" => 0,
+        ])->order("id DESC");
+
+        foreach ($photos->limit($limit, $offset) as $photo) {
+            yield $this->toPhoto($photo);
+        }
+    }
+
     public function getClubPhotosCount(Club $club)
     {
         return $this->photos->where([

@@ -6,6 +6,7 @@ namespace openvk\VKAPI\Handlers;
 
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Repositories\Users as UsersRepo;
+use openvk\Web\Models\Repositories\Clubs as ClubsRepo;
 
 final class Status extends VKAPIRequestHandler
 {
@@ -16,8 +17,17 @@ final class Status extends VKAPIRequestHandler
             $user_id = $this->getUser()->getId();
         }
 
-        if ($group_id > 0) {
-            $this->fail(501, "Group statuses are not implemented");
+        if ($user_id < 0 || $group_id > 0) {
+            $clubId = $group_id > 0 ? $group_id : abs($user_id);
+            $club   = (new ClubsRepo())->get($clubId);
+
+            if (!$club || ($this->getUser() && !$club->canBeViewedBy($this->getUser()))) {
+                $this->fail(15, "Access denied");
+            }
+
+            return (object) [
+                "text" => $club->getDescription() ?? "",
+            ];
         } else {
             $user = (new UsersRepo())->get($user_id);
 
@@ -34,7 +44,7 @@ final class Status extends VKAPIRequestHandler
                 $res["audio"] = $audioStatus->toVkApiStruct();
             }
 
-            return $res;
+            return (object) $res;
         }
     }
 
@@ -44,7 +54,15 @@ final class Status extends VKAPIRequestHandler
         $this->willExecuteWriteAction();
 
         if ($group_id > 0) {
-            $this->fail(501, "Group statuses are not implemented");
+            $club = (new ClubsRepo())->get($group_id);
+            if (!$club || !$club->canBeModifiedBy($this->getUser())) {
+                $this->fail(15, "Access denied");
+            }
+
+            $club->setDescription($text);
+            $club->save();
+
+            return 1;
         } else {
             $this->getUser()->setStatus($text);
             $this->getUser()->save();
@@ -53,3 +71,4 @@ final class Status extends VKAPIRequestHandler
         }
     }
 }
+

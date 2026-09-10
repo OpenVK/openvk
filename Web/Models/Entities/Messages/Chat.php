@@ -42,7 +42,10 @@ class Chat extends RowModel
         $conv = $data["response"]["items"][0]["conversation"] ?? [];
         $chatSettings = $conv["chat_settings"] ?? [];
         $chatInfo = $data["response"]["chats"][0] ?? [];
-        $this->hydratedData = array_merge($chatInfo, $conv, $chatSettings);
+        if (!is_array($chatInfo)) {
+            $chatInfo = [];
+        }
+        $this->hydratedData = array_merge($chatInfo, is_array($conv) ? $conv : [], is_array($chatSettings) ? $chatSettings : []);
     }
 
     public function setData(array $data)

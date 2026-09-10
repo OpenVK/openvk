@@ -124,15 +124,19 @@ final class Audio extends VKAPIRequestHandler
     }
 
     // TODO stub
-    public function getRecommendations(): object
+    public function getRecommendations(): object|array
     {
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return [0];
+        }
+
         return (object) [
             "count" => 0,
             "items" => [],
         ];
     }
 
-    public function getPopular(?int $genre_id = null, ?string $genre_str = null, int $offset = 0, int $count = 100, ?string $hash = null): object
+    public function getPopular(?int $genre_id = null, ?string $genre_str = null, int $offset = 0, int $count = 100, ?string $hash = null): object|array
     {
         $this->requireUser();
         $this->validateGenre($genre_str, $genre_id);
@@ -142,7 +146,7 @@ final class Audio extends VKAPIRequestHandler
         return $this->streamToResponse($results, $offset, $count, $hash);
     }
 
-    public function getFeed(?int $genre_id = null, ?string $genre_str = null, int $offset = 0, int $count = 100, ?string $hash = null): object
+    public function getFeed(?int $genre_id = null, ?string $genre_str = null, int $offset = 0, int $count = 100, ?string $hash = null): object|array
     {
         $this->requireUser();
         $this->validateGenre($genre_str, $genre_id);
@@ -152,7 +156,7 @@ final class Audio extends VKAPIRequestHandler
         return $this->streamToResponse($results, $offset, $count, $hash);
     }
 
-    public function search(string $q, int $auto_complete = 0, int $lyrics = 0, int $performer_only = 0, int $sort = 2, int $search_own = 0, int $offset = 0, int $count = 30, ?string $hash = null): object
+    public function search(string $q, int $auto_complete = 0, int $lyrics = 0, int $performer_only = 0, int $sort = 2, int $search_own = 0, int $offset = 0, int $count = 30, ?string $hash = null): object|array
     {
         $this->requireUser();
 
@@ -245,7 +249,7 @@ final class Audio extends VKAPIRequestHandler
             }
 
             if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
-                return array_merge([sizeof($songs)], $songs);
+                return $songs;
             }
 
             $response = (object) [
@@ -368,7 +372,7 @@ final class Audio extends VKAPIRequestHandler
         }
 
         if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
-            return array_merge([sizeof($items)], $items);
+            return $items;
         }
 
         return (object) [
@@ -600,7 +604,7 @@ final class Audio extends VKAPIRequestHandler
         return $this->getById($vid, $hash)->items[0];
     }
 
-    public function getAlbums(int $owner_id = 0, int $offset = 0, int $count = 50, int $drop_private = 1): object
+    public function getAlbums(int $owner_id = 0, int $offset = 0, int $count = 50, int $drop_private = 1): object|array
     {
         $this->requireUser();
 
@@ -609,6 +613,10 @@ final class Audio extends VKAPIRequestHandler
 
         if ($owner_id > 0 && $owner_id != $this->getUser()->getId()) {
             $user = (new \openvk\Web\Models\Repositories\Users())->get($owner_id);
+
+            if (!$user) {
+                $this->fail(50, "Invalid user");
+            }
 
             if (!$user->getPrivacyPermission("audios.read", $this->getUser())) {
                 $this->fail(50, "Access to playlists denied");
@@ -628,13 +636,17 @@ final class Audio extends VKAPIRequestHandler
             $playlists[] = $playlist->toVkApiStruct($this->getUser());
         }
 
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return array_merge([sizeof($playlists)], $playlists);
+        }
+
         return (object) [
             "count" => sizeof($playlists),
             "items" => $playlists,
         ];
     }
 
-    public function searchAlbums(string $query = '', int $offset = 0, int $limit = 25, int $drop_private = 0, int $order = 0, int $from_me = 0): object
+    public function searchAlbums(string $query = '', int $offset = 0, int $limit = 25, int $drop_private = 0, int $order = 0, int $from_me = 0): object|array
     {
         $this->requireUser();
 
@@ -656,6 +668,10 @@ final class Audio extends VKAPIRequestHandler
             }
 
             $playlists[] = $playlist->toVkApiStruct($this->getUser());
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return array_merge([$search->size()], $playlists);
         }
 
         return (object) [
@@ -886,7 +902,7 @@ final class Audio extends VKAPIRequestHandler
         return (int) $album->unbookmark($this->getUser());
     }
 
-    public function getPlaylists(int $owner_id = 0, int $offset = 0, int $count = 50, int $drop_private = 1): object
+    public function getPlaylists(int $owner_id = 0, int $offset = 0, int $count = 50, int $drop_private = 1): object|array
     {
         // alias of getPlaylists
         return $this->getAlbums($owner_id, $offset, $count, $drop_private);

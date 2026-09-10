@@ -617,19 +617,28 @@ final class Photos extends VKAPIRequestHandler
         $this->requireUser();
 
         if ($owner_id < 0) {
-            $this->fail(-413, "Clubs are not supported");
-        }
+            $club = (new Clubs())->get(abs($owner_id));
+            if (!$club || !$club->canBeViewedBy($this->getUser())) {
+                $this->fail(15, "Access denied");
+            }
 
-        $user = (new UsersRepo())->get($owner_id);
-        if (!$user || !$user->getPrivacyPermission('photos.read', $this->getUser())) {
-            $this->fail(15, "Access denied");
-        }
+            $photos = (new PhotosRepo())->getEveryClubPhoto($club, $offset, $count);
+            $res = [
+                "count" => (new PhotosRepo())->getClubPhotosCount($club),
+                "items" => [],
+            ];
+        } else {
+            $user = (new UsersRepo())->get($owner_id);
+            if (!$user || !$user->getPrivacyPermission('photos.read', $this->getUser())) {
+                $this->fail(15, "Access denied");
+            }
 
-        $photos = (new PhotosRepo())->getEveryUserPhoto($user, $offset, $count);
-        $res = [
-            "count" => (new PhotosRepo())->getUserPhotosCount($user),
-            "items" => [],
-        ];
+            $photos = (new PhotosRepo())->getEveryUserPhoto($user, $offset, $count);
+            $res = [
+                "count" => (new PhotosRepo())->getUserPhotosCount($user),
+                "items" => [],
+            ];
+        }
 
         foreach ($photos as $photo) {
             if (!$photo || $photo->isDeleted()) {
@@ -652,21 +661,28 @@ final class Photos extends VKAPIRequestHandler
         return $this->getAll($oid, $extended, $offset, $count, $photo_sizes);
     }
 
-    public function getComments(int $owner_id, int $photo_id, bool $need_likes = false, int $offset = 0, int $count = 100, bool $extended = false, string $fields = "")
+    public function getComments(int $owner_id, int $photo_id = 0, bool $need_likes = false, int $offset = 0, int $count = 100, bool $extended = false, string $fields = "", string $sort = "asc", int $pid = 0)
     {
         $this->requireUser();
 
-        $photo = (new PhotosRepo())->getByOwnerAndVID($owner_id, $photo_id);
-        $comms = array_slice(iterator_to_array($photo->getComments(1, $offset + $count)), $offset);
-
+        $actualPhotoId = $photo_id ?: $pid;
+        $photo = (new PhotosRepo())->getByOwnerAndVID($owner_id, $actualPhotoId);
         if (!$photo || $photo->isDeleted() || !$photo->canBeViewedBy($this->getUser())) {
             $this->fail(15, "Access denied");
         }
 
+        $sortDirection = (strtolower($sort) === "desc") ? "DESC" : "ASC";
+        $comms = iterator_to_array($photo->getCommentsViaOffset($offset, $count, $sortDirection), false);
+        $totalCount = $photo->getCommentsCount();
+
         $res = [
-            "count" => sizeof($comms),
+            "count" => $totalCount,
             "items" => [],
         ];
+
+        if ($extended) {
+            $res["profiles"] = [];
+        }
 
         foreach ($comms as $comment) {
             $cStruct = $comment->toVkApiStruct($this->getUser(), $need_likes, $extended);
@@ -685,7 +701,7 @@ final class Photos extends VKAPIRequestHandler
         }
 
         if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
-            return array_merge([$res["count"]], $res["items"]);
+            return array_merge([$totalCount], $res["items"]);
         }
 
         return $res;
