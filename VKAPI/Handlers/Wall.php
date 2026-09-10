@@ -188,6 +188,7 @@ final class Wall extends VKAPIRequestHandler
                 "id"           => $post->getVirtualId(),
                 "from_id"      => $from_id,
                 "owner_id"     => $post->getTargetWall(),
+                "to_id"        => $post->getTargetWall(),
                 "date"         => $post->getPublicationTime()->timestamp(),
                 "post_type"    => $post->getVkApiType(),
                 "text"         => $post->getText(false),
@@ -477,6 +478,7 @@ final class Wall extends VKAPIRequestHandler
                     "id"           => $post->getVirtualId(),
                     "from_id"      => $from_id,
                     "owner_id"     => $post->getTargetWall(),
+                    "to_id"        => $post->getTargetWall(),
                     "post_id"     => $post->getVirtualId(),
                     "date"         => $post->getPublicationTime()->timestamp(),
                     "post_type"    => $post->getVkApiType(),
@@ -622,7 +624,11 @@ final class Wall extends VKAPIRequestHandler
         int $explicit = 0,
         float $lat = null,
         float $long = null,
-        string $place_name = ''
+        string $place_name = '',
+        string $services = '',
+        int $friends_only = 0,
+        int $publish_date = 0,
+        int $place_id = 0
     ): object {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -1198,17 +1204,39 @@ final class Wall extends VKAPIRequestHandler
             (new ReplyCommentNotification($replyToUser, $comment, $post, $this->user))->emit();
         }
 
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return (object) [
+                "cid" => $comment->getId(),
+            ];
+        }
+
         return (object) [
             "comment_id" => $comment->getId(),
             "parents_stack" => [],
         ];
     }
 
-    public function deleteComment(int $comment_id)
+    public function addComment(
+        int $owner_id,
+        int $post_id,
+        string $text = "",
+        string $message = "",
+        int $reply_to_cid = 0,
+        int $reply_to_comment = 0,
+        string $attachments = "",
+        int $from_group = 0
+    ) {
+        $msg = !empty($text) ? $text : $message;
+        $replyTo = $reply_to_cid ?: ($reply_to_comment ?: null);
+        return $this->createComment($owner_id, $post_id, $msg, $from_group, $attachments, $replyTo);
+    }
+
+    public function deleteComment(int $comment_id = 0, int $cid = 0, int $owner_id = 0)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
 
+        $comment_id = $comment_id ?: $cid;
         $comment = (new CommentsRepo())->get($comment_id);
         if (!$comment) {
             $this->fail(100, "One of the parameters specified was missing or invalid");

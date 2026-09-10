@@ -106,25 +106,28 @@ final class Groups extends VKAPIRequestHandler
 
 
         for ($i = 0; $i < $ic; $i++) {
-            if ($i > 500 || $clbs[$i] == 0) {
+            if ($i > 500 || empty($clbs[$i])) {
                 break;
             }
 
-            if ($clbs[$i] < 0) {
-                $this->fail(100, "ты ошибся чутка, у айди группы убери минус");
+            $rawId = trim((string) $clbs[$i]);
+            if (is_numeric($rawId)) {
+                $clubId = abs((int) $rawId);
+                $clb = $clubs->get($clubId);
+            } else {
+                $clb = $clubs->getByShortURL($rawId);
+                $clubId = $clb ? $clb->getId() : 0;
             }
 
-            $clb = $clubs->get((int) $clbs[$i]);
             if (is_null($clb)) {
                 $response[$i] = (object) [
-                    "id"          => intval($clbs[$i]),
+                    "id"          => $clubId ?: intval($rawId),
+                    "gid"         => $clubId ?: intval($rawId),
                     "name"        => "DELETED",
-                    "screen_name" => "club" . intval($clbs[$i]),
+                    "screen_name" => "club" . ($clubId ?: intval($rawId)),
                     "type"        => "undefined",
                     "description" => "This group was deleted or it doesn't exist",
                 ];
-            } elseif ($clbs[$i] == null) {
-
             } else {
                 $response[$i] = $clb->toVkApiStruct($this->user, $fields . ",photo_50,photo_100,photo_200");
             }

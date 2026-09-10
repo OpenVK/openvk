@@ -22,10 +22,11 @@ final class Auth extends VKAPIRequestHandler
         ];
     }
 
-    public function getTokenSecure(?string $nonce = null, ?int $api_id = null): array
+    public function getTokenSecure(?string $nonce = null, ?int $api_id = null, mixed $client_id = null): array
     {
         return [
-            "token" => bin2hex(random_bytes(16)),
+            "token"  => bin2hex(random_bytes(16)),
+            "secret" => bin2hex(random_bytes(8)),
         ];
     }
 
@@ -37,7 +38,8 @@ final class Auth extends VKAPIRequestHandler
         ?int $api_id = null,
         ?string $nonce = null,
         mixed $client_id = null,
-        ?string $code = null
+        ?string $code = null,
+        mixed $scope = null
     ): array {
         $login = !empty($login) ? trim($login) : (!empty($username) ? trim($username) : null);
         $password = !empty($password) ? $password : $digest;
@@ -105,10 +107,12 @@ final class Auth extends VKAPIRequestHandler
         }
 
         return [
-            "auth"   => "success",
-            "id"     => $uId,
-            "sid"    => $token->getFormattedToken(),
-            "secret" => $token->getSecret(),
+            "auth"    => "success",
+            "id"      => $uId,
+            "mid"     => $uId,
+            "user_id" => $uId,
+            "sid"     => $token->getFormattedToken(),
+            "secret"  => $token->getSecret(),
         ];
     }
 }

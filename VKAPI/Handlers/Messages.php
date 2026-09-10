@@ -592,6 +592,16 @@ final class Messages extends VKAPIRequestHandler
                     $msgObj['body'] = ovk_truncate_words($msgObj['body'], $preview_length);
                 }
 
+                if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                    $msgObj['mid'] = $msgObj['id'];
+                    $msgObj['uid'] = $msgObj['user_id'];
+                    if (isset($msgObj['chat_active'])) {
+                        $msgObj['chat_active'] = is_array($msgObj['chat_active'])
+                            ? implode(',', array_filter($msgObj['chat_active']))
+                            : (string) $msgObj['chat_active'];
+                    }
+                }
+
                 $formattedItems[] = $msgObj;
             }
 
@@ -659,6 +669,15 @@ final class Messages extends VKAPIRequestHandler
             $payload['chats'] = array_values(array_unique(array_filter($chatIDs)));
 
             $this->hydrateExtendedData($payload, $fields, $loadedChats);
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            $items = $payload['items'] ?? [];
+            $total = (int) ($payload['count'] ?? count($items));
+            if ($total === 0 || empty($items)) {
+                return [0];
+            }
+            return array_merge([$total], $items);
         }
 
         return $payload;
@@ -730,7 +749,9 @@ final class Messages extends VKAPIRequestHandler
         int $guid = 0,
         int $reply_to = 0,
         string $forward_messages = "",
-        string $forward = ""
+        string $forward = "",
+        ?float $lat = null,
+        ?float $long = null
     ) {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -1022,7 +1043,12 @@ final class Messages extends VKAPIRequestHandler
             $params["peer_id"] = (string) $resolvedId;
         }
 
-        return $this->invoke("messages.delete", $params, $group_id);
+        $res = $this->invoke("messages.delete", $params, $group_id);
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return 1;
+        }
+
+        return $res;
     }
 
     public function restore(
@@ -1119,12 +1145,32 @@ final class Messages extends VKAPIRequestHandler
                         }
                     }
                 }
+
+                $item['mid']  = (int) ($item['id'] ?? 0);
+                $item['uid']  = (int) ($item['user_id'] ?? $item['from_id'] ?? 0);
+                $item['body'] = (string) ($item['body'] ?? $item['text'] ?? "");
+                if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                    if (isset($item['chat_active'])) {
+                        $item['chat_active'] = is_array($item['chat_active'])
+                            ? implode(',', array_filter($item['chat_active']))
+                            : (string) $item['chat_active'];
+                    }
+                }
             }
             unset($item);
         }
 
         if ($extended == 1) {
             $this->hydrateExtendedData($data, $fields);
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            $items = $data['items'] ?? [];
+            $total = (int) ($data['count'] ?? count($items));
+            if ($total === 0 || empty($items)) {
+                return [0];
+            }
+            return array_merge([$total], $items);
         }
 
         return $data;
@@ -1732,9 +1778,10 @@ final class Messages extends VKAPIRequestHandler
         $this->requireUser();
 
         $filter = $unread ? "unread" : "all";
+        $fetchCount = (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) ? 200 : min(abs($count), 200);
         $params = [
-            "offset"   => (string) $offset,
-            "count"    => (string) min(abs($count), 200),
+            "offset"   => (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) ? "0" : (string) $offset,
+            "count"    => (string) $fetchCount,
             "filter"   => $filter,
             "extended" => (string) $extended,
         ];
@@ -1837,9 +1884,13 @@ final class Messages extends VKAPIRequestHandler
                 $members = $chatSettings['members'] ?? $chatSettings['users'] ?? [];
 
                 if (!$chatEntity) {
-                    $chatsRepo = new ChatRepo();
-                    $chatEntity = $chatsRepo->create($localChatId, "Chat " . $localChatId);
-                    $loadedChats[$localChatId] = $chatEntity;
+                    try {
+                        $chatsRepo = new ChatRepo();
+                        $chatEntity = $chatsRepo->create($localChatId, "Chat " . $localChatId);
+                        $loadedChats[$localChatId] = $chatEntity;
+                    } catch (\Exception $e) {
+                        $chatEntity = null;
+                    }
                 }
 
                 if ($chatEntity) {
@@ -1885,15 +1936,18 @@ final class Messages extends VKAPIRequestHandler
                 }
             }
 
-            $flatMessages[] = $msgObj;
+            $flatMessages[$peerId] = $msgObj;
         }
 
+        $flatMessages = array_values($flatMessages);
+
         if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
-            $total = (int) ($payload['count'] ?? count($flatMessages));
-            if ($total === 0 || empty($flatMessages)) {
+            $total = count($flatMessages);
+            if ($total === 0) {
                 return [0];
             }
-            return array_merge([$total], $flatMessages);
+            $paged = array_slice($flatMessages, $offset, min(abs($count), 200));
+            return array_merge([$total], $paged);
         }
 
         $result = [
@@ -2416,8 +2470,12 @@ final class Messages extends VKAPIRequestHandler
     }
 
     // Legacy alias: messages.deleteDialog (deprecated since 5.80, replaced by messages.deleteConversation)
-    public function deleteDialog(int $user_id = 0, int $peer_id = 0, int $offset = 0, int $count = 0, int $group_id = 0): int
+    public function deleteDialog(int $user_id = 0, int $peer_id = 0, int $offset = 0, int $count = 0, int $group_id = 0, int $chat_id = 0): int
     {
+        if ($chat_id > 0) {
+            $peer_id = 2000000000 + $chat_id;
+            $user_id = 0;
+        }
         return $this->deleteConversation($peer_id, $user_id, $group_id);
     }
 
@@ -2514,6 +2572,7 @@ final class Messages extends VKAPIRequestHandler
                 if (!isset($message['from_id'])) {
                     $message['from_id'] = (int) ($message['user_id'] ?? 0);
                 }
+                $message['uid'] = (int) ($message['from_id'] ?? $message['user_id'] ?? 0);
                 $message['body'] = (string) ($message['body'] ?? $message['text'] ?? "");
                 $message['read_state'] = (int) ($message['read_state'] ?? 0);
                 $message['date'] = (int) ($message['date'] ?? 0);

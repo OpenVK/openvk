@@ -432,16 +432,38 @@ final class VKAPIPresenter extends OpenVKPresenter
     private function callAPIMethod(string $object, string $method, array $params, $identity, $platform, ?bool &$hasRss = null, mixed $clientId = null)
     {
         $legacyAliases = [
-            'getprofiles'   => ['Users', 'get'],
-            'getuserinfo'   => ['Users', 'get'],
-            'getservertime' => ['Utils', 'getServerTime'],
+            'getprofiles'       => ['Users', 'get'],
+            'getuserinfo'       => ['Users', 'get'],
+            'getservertime'     => ['Utils', 'getServerTime'],
+            'getcounters'       => ['Account', 'getCounters'],
+            'getgroups'         => ['Groups', 'get'],
+            'getgroupsfull'     => ['Groups', 'get'],
+            'getfriends'        => ['Friends', 'get'],
+            'getphotos'         => ['Photos', 'get'],
+            'getaudios'         => ['Audio', 'get'],
+            'getaudio'          => ['Audio', 'get'],
+            'getmessages'       => ['Messages', 'get'],
+            'getwall'           => ['Wall', 'get'],
+            'getstatus'         => ['Status', 'get'],
+            'setstatus'         => ['Status', 'set'],
+            'getusersettings'   => ['Account', 'getAppPermissions'],
+            'getapppermissions' => ['Account', 'getAppPermissions'],
+            'getvariable'       => ['Storage', 'get'],
+            'setvariable'       => ['Storage', 'set'],
         ];
 
         $fullMethodKey = strtolower(!empty($object) ? "$object.$method" : $method);
         if (isset($legacyAliases[$fullMethodKey])) {
             [$object, $method] = $legacyAliases[$fullMethodKey];
+            if ($fullMethodKey === 'getgroupsfull') {
+                $params['extended'] = 1;
+            }
         } elseif (empty($object) && isset($legacyAliases[strtolower($method)])) {
-            [$object, $method] = $legacyAliases[strtolower($method)];
+            $aliasKey = strtolower($method);
+            [$object, $method] = $legacyAliases[$aliasKey];
+            if ($aliasKey === 'getgroupsfull') {
+                $params['extended'] = 1;
+            }
         }
 
         $object = ucfirst(strtolower($object));
@@ -503,6 +525,14 @@ final class VKAPIPresenter extends OpenVKPresenter
             'topic_id'    => ['tid'],
             'comment_id'  => ['cid'],
             'post_id'     => ['pid'],
+            'posts'       => ['post_ids', 'pids'],
+            'audios'      => ['audio_ids', 'aids'],
+            'photos'      => ['photo_ids', 'pids'],
+            'videos'      => ['video_ids', 'vids'],
+            'docs'        => ['doc_ids', 'dids'],
+            'cids'        => ['cid'],
+            'message'     => ['msg', 'text'],
+            'text'        => ['message', 'msg'],
         ];
 
         foreach ($route->getParameters() as $parameter) {
@@ -652,6 +682,7 @@ final class VKAPIPresenter extends OpenVKPresenter
                 'getprofiles'       => 'users.get',
                 'getuserinfo'       => 'users.get',
                 'getservertime'     => 'utils.getServerTime',
+                'getcounters'       => 'account.getCounters',
                 'getgroups'         => 'groups.get',
                 'getfriends'        => 'friends.get',
                 'getphotos'         => 'photos.get',

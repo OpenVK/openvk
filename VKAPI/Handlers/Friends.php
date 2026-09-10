@@ -9,7 +9,7 @@ use Chandler\Database\DatabaseConnection;
 
 final class Friends extends VKAPIRequestHandler
 {
-    public function get(int $user_id = 0, string $fields = "", int $offset = 0, int $count = 100): object
+    public function get(int $user_id = 0, string $fields = "", int $offset = 0, int $count = 100): object|array
     {
         $i = 0;
         $offset++;
@@ -40,16 +40,69 @@ final class Friends extends VKAPIRequestHandler
 
         $response = $friends;
 
-        $usersApi = new Users($this->getUser());
-
-        if (!is_null($fields)) {
+        if (!empty($fields)) {
+            $usersApi = new Users($this->getUser());
             $response = $usersApi->get(implode(',', $friends), $fields, 0, $count);
-        }  # FIXME
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return $response;
+        }
 
         return (object) [
             "count" => $users->get($user_id)->getFriendsCount(),
             "items" => $response,
         ];
+    }
+
+    public function getOnline(int $user_id = 0, int $online_mobile = 0): array
+    {
+        $this->requireUser();
+
+        $targetUser = $user_id > 0 ? (new UsersRepo())->get($user_id) : $this->getUser();
+        if (!$targetUser || $targetUser->isDeleted()) {
+            $this->fail(100, "Invalid user");
+        }
+
+        if (!$targetUser->getPrivacyPermission("friends.read", $this->getUser())) {
+            $this->fail(15, "Access denied: this user chose to hide his friends.");
+        }
+
+        $online = [];
+        foreach ($targetUser->getFriendsOnline(1, 1000) as $friend) {
+            $online[] = $friend->getId();
+        }
+
+        return $online;
+    }
+
+    public function getMutual(int $target_uid, int $source_uid = 0): array
+    {
+        $this->requireUser();
+
+        $users = new UsersRepo();
+        $source = $source_uid > 0 ? $users->get($source_uid) : $this->getUser();
+        $target = $users->get($target_uid);
+
+        if (!$source || !$target || $source->isDeleted() || $target->isDeleted()) {
+            $this->fail(100, "Invalid user");
+        }
+
+        if (!$target->getPrivacyPermission("friends.read", $this->getUser())) {
+            $this->fail(15, "Access denied: this user chose to hide his friends.");
+        }
+
+        $sourceFriends = [];
+        foreach ($source->getFriends(1, 5000) as $f) {
+            $sourceFriends[] = $f->getId();
+        }
+
+        $targetFriends = [];
+        foreach ($target->getFriends(1, 5000) as $f) {
+            $targetFriends[] = $f->getId();
+        }
+
+        return array_values(array_intersect($sourceFriends, $targetFriends));
     }
 
     public function search(string $q, int $user_id = 0, string $fields = "", int $offset = 0, int $count = 100): object
@@ -169,7 +222,7 @@ final class Friends extends VKAPIRequestHandler
         }
     }
 
-    public function delete(string $user_id): int
+    public function delete(string $user_id): object|int
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -178,9 +231,16 @@ final class Friends extends VKAPIRequestHandler
 
         $user = $users->get(intval($user_id));
 
+        if (!$user) {
+            $this->fail(100, "Invalid user");
+        }
+
         switch ($user->getSubscriptionStatus($this->getUser())) {
             case 3:
                 $user->toggleSubscription($this->getUser());
+                if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                    return (object) ["success" => 1];
+                }
                 return 1;
 
             default:
@@ -227,8 +287,16 @@ final class Friends extends VKAPIRequestHandler
         return $response;
     }
 
-    public function getRequests(string $fields = "", int $out = 0, int $offset = 0, int $count = 100, int $extended = 0, int $suggested = 0): object
-    {
+    public function getRequests(
+        string $fields = "",
+        int $out = 0,
+        int $offset = 0,
+        int $count = 100,
+        int $extended = 0,
+        int $suggested = 0,
+        int $need_messages = 0,
+        int $need_mutual = 0
+    ): object|array {
         if ($count >= 1000) {
             $this->fail(100, "One of the required parameters was not passed or is invalid.");
         }
@@ -249,6 +317,32 @@ final class Friends extends VKAPIRequestHandler
                 $followers[$i] = $follower->getId();
                 $i++;
             }
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            $legacyRequests = [];
+            foreach ($followers as $followerId) {
+                $reqObj = (object) [
+                    "uid"     => $followerId,
+                    "user_id" => $followerId,
+                ];
+
+                if ($need_messages == 1) {
+                    $reqObj->message = "";
+                }
+
+                if ($need_mutual == 1) {
+                    $mutualFriends = $this->getMutual($followerId);
+                    $reqObj->mutual = (object) [
+                        "count" => count($mutualFriends),
+                        "users" => array_slice($mutualFriends, 0, 5),
+                    ];
+                }
+
+                $legacyRequests[] = $reqObj;
+            }
+
+            return $legacyRequests;
         }
 
         $response = $followers;

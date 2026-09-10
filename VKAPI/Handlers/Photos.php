@@ -135,7 +135,7 @@ final class Photos extends VKAPIRequestHandler
         ];
     }
 
-    public function saveWallPhoto(string $photo, string $hash, int $group_id = 0, ?string $caption = null): array
+    public function saveWallPhoto(string $photo, string $hash, int $group_id = 0, ?string $caption = null, ?int $server = null, ?int $user_id = null, int $wallpost = 1): array
     {
         $this->requireUser();
         $imagePath = $this->getImagePath($photo, $hash, $uploader, $group);
@@ -363,6 +363,10 @@ final class Photos extends VKAPIRequestHandler
             $res["items"][] = $album->toVkApiStruct($this->getUser(), $need_covers, $photo_sizes);
         }
 
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return $res["items"];
+        }
+
         return $res;
     }
 
@@ -475,6 +479,11 @@ final class Photos extends VKAPIRequestHandler
 
                 $res["items"][] = $photo_entity->toVkApiStruct($photo_sizes, $extended);
             }
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            $count = (int) ($res["count"] ?? count($res["items"] ?? []));
+            return array_merge([$count], $res["items"] ?? []);
         }
 
         return $res;
@@ -629,7 +638,18 @@ final class Photos extends VKAPIRequestHandler
             $res["items"][] = $photo->toVkApiStruct($photo_sizes, $extended);
         }
 
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            $count = (int) ($res["count"] ?? count($res["items"] ?? []));
+            return array_merge([$count], $res["items"] ?? []);
+        }
+
         return $res;
+    }
+
+    public function getUserPhotos(int $owner_id = 0, int $user_id = 0, bool $extended = false, int $offset = 0, int $count = 100, bool $photo_sizes = false)
+    {
+        $oid = $owner_id ?: $user_id;
+        return $this->getAll($oid, $extended, $offset, $count, $photo_sizes);
     }
 
     public function getComments(int $owner_id, int $photo_id, bool $need_likes = false, int $offset = 0, int $count = 100, bool $extended = false, string $fields = "")
@@ -649,7 +669,14 @@ final class Photos extends VKAPIRequestHandler
         ];
 
         foreach ($comms as $comment) {
-            $res["items"][] = $comment->toVkApiStruct($this->getUser(), $need_likes, $extended);
+            $cStruct = $comment->toVkApiStruct($this->getUser(), $need_likes, $extended);
+            if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                $cStruct->cid     = $comment->getId();
+                $cStruct->from_id = $comment->getOwner()->getId();
+                $cStruct->uid     = $comment->getOwner()->getId();
+                $cStruct->message = $comment->getText(false);
+            }
+            $res["items"][] = $cStruct;
             if ($extended) {
                 if ($comment->getOwner() instanceof \openvk\Web\Models\Entities\User) {
                     $res["profiles"][] = $comment->getOwner()->toVkApiStruct();
@@ -657,7 +684,71 @@ final class Photos extends VKAPIRequestHandler
             }
         }
 
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return array_merge([$res["count"]], $res["items"]);
+        }
+
         return $res;
+    }
+
+    public function getTags(int $owner_id = 0, int $pid = 0, int $photo_id = 0): array
+    {
+        $this->requireUser();
+        return [];
+    }
+
+    public function putTag(int $owner_id, int $pid = 0, int $uid = 0, float $x = 0.0, float $y = 0.0, float $x2 = 100.0, float $y2 = 100.0, int $photo_id = 0): int
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        return 1;
+    }
+
+    public function deleteTag(int $owner_id, int $tag_id, int $pid = 0, int $photo_id = 0): int
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        return 1;
+    }
+
+    public function confirmTag(int $owner_id, int $tag_id, int $pid = 0, int $photo_id = 0): int
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        return 1;
+    }
+
+    public function addComment(
+        int $owner_id,
+        int $pid = 0,
+        int $photo_id = 0,
+        string $message = "",
+        string $text = "",
+        int $reply_to_cid = 0,
+        int $reply_to_comment = 0,
+        string $attachments = "",
+        int $from_group = 0
+    ): int {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $photoId = $pid ?: $photo_id;
+        $msg     = !empty($text) ? $text : $message;
+
+        $photo = (new PhotosRepo())->getByOwnerAndVID($owner_id, $photoId);
+        if (!$photo || $photo->isDeleted() || !$photo->canBeViewedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        $comment = new Comment();
+        $comment->setOwner($this->getUser()->getId());
+        $comment->setModel(get_class($photo));
+        $comment->setTarget($photo->getId());
+        $comment->setContent($msg);
+        $comment->setCreated(time());
+        $comment->save();
+
+        return $comment->getId();
     }
 
     public function getMessagesUploadServer(int $group_id = 0): object

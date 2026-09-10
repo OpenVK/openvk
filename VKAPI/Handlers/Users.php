@@ -51,16 +51,28 @@ final class Users extends VKAPIRequestHandler
         $usrs = array_slice($usrs, $offset * $count);
 
         for ($i = 0; $i < $ic; $i++) {
-            if ((int) $usrs[$i] != 0) {
-                $usr = $users->get((int) $usrs[$i]);
-                if (is_null($usr) || $usr->isDeleted()) {
-                    $response[$i] = (object) [
-                        "id" 		  => (int) $usrs[$i],
-                        "first_name"  => "DELETED",
-                        "last_name"   => "",
-                        "deactivated" => "deleted",
-                    ];
-                } elseif ($usr->isBanned()) {
+            $userIdentifier = trim((string) ($usrs[$i] ?? ""));
+            if ($userIdentifier === "") {
+                continue;
+            }
+
+            if (is_numeric($userIdentifier) && (int) $userIdentifier != 0) {
+                $usr = $users->get((int) $userIdentifier);
+            } else {
+                $usr = $users->getByShortURL($userIdentifier);
+            }
+
+            if (is_null($usr) || $usr->isDeleted()) {
+                $response[$i] = (object) [
+                    "id" 		  => is_numeric($userIdentifier) ? (int) $userIdentifier : 0,
+                    "first_name"  => "DELETED",
+                    "last_name"   => "",
+                    "deactivated" => "deleted",
+                ];
+                if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                    $response[$i]->uid = $response[$i]->id;
+                }
+            } elseif ($usr->isBanned()) {
                     $firstName = $morphCase ? $usr->getMorphedName($morphCase, false, false) : $usr->getFirstName(true);
                     $lastName  = $morphCase ? $usr->getMorphedName($morphCase, false, true)  : $usr->getLastName(true);
                     $response[$i] = (object) [
@@ -276,6 +288,20 @@ final class Users extends VKAPIRequestHandler
                                     ];
                                 }
                                 break;
+                            case "country":
+                                if (!$canView) {
+                                    break;
+                                }
+
+                                if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                                    $response[$i]->country = 1;
+                                } else {
+                                    $response[$i]->country = (object) [
+                                        'id' => 1,
+                                        'title' => "Россия",
+                                    ];
+                                }
+                                break;
                             case "relation":
                                 if (!$canView) {
                                     break;
@@ -476,7 +502,6 @@ final class Users extends VKAPIRequestHandler
                     }
                 }
             }
-        }
 
         return $response;
     }
@@ -610,10 +635,18 @@ final class Users extends VKAPIRequestHandler
         }
 
         if (!$array || sizeof($array) < 1) {
+            if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                return [0];
+            }
+
             return (object) [
                 "count" => 0,
                 "items" => [],
             ];
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return array_merge([$find->size()], $this->get(implode(',', $array), $fields));
         }
 
         return (object) [

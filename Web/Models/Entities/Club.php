@@ -613,6 +613,13 @@ class Club extends RowModel
         $res->is_messages_blocked = $user ? (int) $blacklist2->isBanned($this) : 0;
         $res->can_message = $res->is_messages_blocked == 0 && $res->is_messages_blocked == 0;
 
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            $res->gid          = $this->getId();
+            $res->photo        = $this->getAvatarUrl('miniscule');
+            $res->photo_medium = $this->getAvatarUrl('tiny');
+            $res->photo_big    = $this->getAvatarUrl('normal');
+        }
+
         if (!is_array($fields)) {
             $fields = explode(',', $fields);
         }

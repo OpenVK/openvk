@@ -408,4 +408,31 @@ final class Account extends VKAPIRequestHandler
             "changed" => (int) ($changes > 0),
         ];
     }
+
+    public function registerDevice(
+        string $token = "",
+        string $device_model = "",
+        string $device_year = "",
+        string $system_version = "",
+        string $settings = ""
+    ): int {
+        $this->requireUser();
+        return 1;
+    }
+
+    public function unregisterDevice(string $token = ""): int
+    {
+        $this->requireUser();
+        return 1;
+    }
+
+    public function setSilenceMode(
+        string $token = "",
+        int $time = 0,
+        int $peer_id = 0,
+        int $sound = 0
+    ): int {
+        $this->requireUser();
+        return 1;
+    }
 }

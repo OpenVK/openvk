@@ -271,4 +271,144 @@ final class Video extends VKAPIRequestHandler
             "items" => $return_items,
         ];
     }
+
+    public function getUserVideos(int $user_id = 0, int $offset = 0, int $count = 30, int $extended = 0): object|array
+    {
+        return $this->get($user_id, "", "", $offset, $count, $extended);
+    }
+
+    public function getComments(
+        int $video_id,
+        int $owner_id = 0,
+        int $need_likes = 0,
+        int $offset = 0,
+        int $count = 20,
+        string $sort = "asc"
+    ): array|object {
+        $this->requireUser();
+
+        if ($owner_id === 0) {
+            $owner_id = $this->getUser()->getId();
+        }
+
+        $video = (new VideosRepo())->getByOwnerAndVID($owner_id, $video_id);
+        if (!$video || $video->isDeleted()) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: video not found");
+        }
+
+        $commentsRepo = new CommentsRepo();
+        $comments = $commentsRepo->getCommentsByTarget($video, $offset, $count, $sort === "desc" ? "DESC" : "ASC");
+        $totalCount = $commentsRepo->getCommentsCountByTarget($video);
+
+        $formatted = [];
+        foreach ($comments as $comment) {
+            $owner = $comment->getOwner();
+            $oid = $owner->getId();
+            if ($owner instanceof Club) {
+                $oid *= -1;
+            }
+
+            $formatted[] = (object) [
+                "id"           => $comment->getId(),
+                "cid"          => $comment->getId(),
+                "from_id"      => $oid,
+                "uid"          => $oid,
+                "date"         => $comment->getPublicationTime()->timestamp(),
+                "text"         => $comment->getText(false),
+                "message"      => $comment->getText(false),
+                "reply_to_cid" => $comment->getReplyToId() ?? 0,
+                "reply_to_uid" => $comment->getReplyToComment()?->getOwner()->getId() ?? 0,
+                "likes"        => (object) [
+                    "count"      => $comment->getLikesCount(),
+                    "user_likes" => (int) $comment->hasLikeFrom($this->getUser()),
+                    "can_like"   => 1,
+                ],
+            ];
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return array_merge([$totalCount], $formatted);
+        }
+
+        return (object) [
+            "count" => $totalCount,
+            "items" => $formatted,
+        ];
+    }
+
+    public function createComment(
+        int $video_id,
+        int $owner_id = 0,
+        string $message = "",
+        string $text = "",
+        int $reply_to_cid = 0,
+        int $reply_to_comment = 0
+    ): object|int {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        if ($owner_id === 0) {
+            $owner_id = $this->getUser()->getId();
+        }
+
+        $video = (new VideosRepo())->getByOwnerAndVID($owner_id, $video_id);
+        if (!$video || $video->isDeleted()) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: video not found");
+        }
+
+        $msg = !empty($message) ? $message : $text;
+        if (empty($msg)) {
+            $this->fail(100, "Required parameter 'message' is missing");
+        }
+
+        $replyTo = $reply_to_cid ?: ($reply_to_comment ?: null);
+
+        $comment = new Comment();
+        $comment->setOwner($this->getUser()->getId());
+        $comment->setModel(get_class($video));
+        $comment->setTarget($video->getId());
+        $comment->setContent($msg);
+        $comment->setCreated(time());
+        $comment->setReply_To($replyTo);
+        $comment->save();
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return (object) [
+                "cid" => $comment->getId(),
+            ];
+        }
+
+        return (object) [
+            "comment_id" => $comment->getId(),
+        ];
+    }
+
+    public function addComment(
+        int $video_id,
+        int $owner_id = 0,
+        string $message = "",
+        string $text = "",
+        int $reply_to_cid = 0,
+        int $reply_to_comment = 0
+    ): object|int {
+        return $this->createComment($video_id, $owner_id, $message, $text, $reply_to_cid, $reply_to_comment);
+    }
+
+    public function deleteComment(
+        int $video_id = 0,
+        int $comment_id = 0,
+        int $cid = 0,
+        int $owner_id = 0
+    ): int {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $cId = $comment_id ?: $cid;
+        $comment = (new CommentsRepo())->get($cId);
+        if ($comment && $comment->canBeDeletedBy($this->getUser())) {
+            $comment->delete();
+        }
+
+        return 1;
+    }
 }

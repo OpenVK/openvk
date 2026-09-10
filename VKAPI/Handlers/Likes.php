@@ -219,6 +219,10 @@ final class Likes extends VKAPIRequestHandler
             }
         }
 
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return array_merge([$res->count], $res->items);
+        }
+
         return $res;
     }
 }

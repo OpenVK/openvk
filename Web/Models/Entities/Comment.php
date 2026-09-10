@@ -79,6 +79,10 @@ class Comment extends Post
         $res->attachments   = [];
         $res->parents_stack = [];
 
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            $res->cid = $this->getId();
+        }
+
         if ($this->getReplyToId() !== null) {
             $res->reply_to_comment = $this->getReplyToId();
         }
