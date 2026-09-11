@@ -16,21 +16,21 @@ export class SearchPage extends IMPage {
         this.total_count = null;
     }
 
-    static getPageId() { return "search";}
+    static getPageId() { return "search"; }
     shouldCloseOnExit() { return true; }
 
     async beforeRender() {
         if (this.items == null) {
             this.params = this._getParams(this.options.q, this.options.peer_id, 0, 25, this.options.date);
             
-            let items = await this.search(this.params);
+            const msgResults = await this.search(this.params);
 
             this.items = [];
-            items.items.forEach(item => {
+            (msgResults.items || []).forEach(item => {
                 this.items.push(item);
             });
 
-            this.total_count = items.count; 
+            this.total_count = msgResults.count || 0;
         }
     }
 
@@ -72,7 +72,38 @@ export class SearchPage extends IMPage {
 
     onCancel() {
         if (window.im) {
-            window.im.selectTab("conversations");
+            const myTab = (window.im.tabs || []).find(t => t.render_class === this);
+            if (myTab) {
+                myTab.close();
+            }
+
+            const targetPageId = this.options?.referrer || "conversations";
+            if (targetPageId === "contact") {
+                const peerId = this.options?.peer_id;
+                let peerObj = null;
+                if (peerId) {
+                    peerObj = window.im.conversations?._findConv(peerId) || window.im.messenger?.getChatWith(peerId);
+                    if (!peerObj && window.im.cached_profiles) {
+                        peerObj = window.im.cached_profiles._findProfile(peerId);
+                    }
+                }
+                if (!peerObj) {
+                    peerObj = window.im.state?.getCurrentConvo();
+                }
+                window.im.openTabByName("contact", false, {
+                    peer_id: peerId,
+                    peer: {
+                        peer: peerObj
+                    }
+                });
+            } else {
+                const targetTab = window.im.getTab(targetPageId) || window.im.getTab("conversations");
+                if (targetTab) {
+                    window.im.selectTab(targetTab);
+                } else {
+                    window.im.openTabByName(targetPageId || "conversations");
+                }
+            }
         }
     }
 
@@ -125,3 +156,4 @@ export class SearchPage extends IMPage {
         await this.render(this.container);
     }
 }
+

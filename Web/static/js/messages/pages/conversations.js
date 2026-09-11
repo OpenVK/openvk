@@ -55,7 +55,8 @@ export class ConversationsPage extends IMPage {
 
         imLog("Search query:", q);
         window.im.openTabByName("search", true, {
-            "q": q
+            "q": q,
+            "referrer": "conversations"
         });
     }
 

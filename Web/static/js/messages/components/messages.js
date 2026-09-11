@@ -365,6 +365,7 @@ export class ChatGeneralForm {
 
     get has_custom_avatar() {
         if (this.supposed_type !== 'chat') return true;
+        if (this.isILeft()) return false;
         if (this.data.photo_id) return true;
         const p = this.getAvatar();
         if (!p) return false;
@@ -392,6 +393,9 @@ export class ChatGeneralForm {
     }
 
     getMosaicAvatars() {
+        if (this.supposed_type === 'chat' && this.isILeft()) {
+            return [];
+        }
         const memberIds = this.members_ids;
         if (!memberIds || memberIds.length === 0) {
             return [];
@@ -415,6 +419,10 @@ export class ChatGeneralForm {
             return ChatGeneralForm.SAVED_MESSAGES_AVATAR;
         }
 
+        if (this.supposed_type === 'chat' && this.isILeft()) {
+            return ChatGeneralForm.CHAT_NO_AVATAR;
+        }
+
         let ava = null;
         switch (size) {
             case "mid":
@@ -434,7 +442,12 @@ export class ChatGeneralForm {
 
         return ava ?? '/assets/packages/static/openvk/img/camera_100.png';
     }
-    hasAvatar() { return this.data.photo_200 != null && !this.data.photo_200.includes("/assets/packages/static/openvk/img/") }
+    hasAvatar() {
+        if (this.supposed_type === 'chat' && this.isILeft()) {
+            return false;
+        }
+        return this.data.photo_200 != null && this.data.photo_200 !== "" && !this.data.photo_200.includes("/assets/packages/static/openvk/img/");
+    }
     getName(count_self = false, short = false) {
         if (count_self && this.isSavedMessages()) {
             return tr("saved_messages");
@@ -2078,7 +2091,8 @@ export class ChatMessage {
             method = "unpin";
         }
 
-        const g = window.im.state.getId();
+        const g = window.im?.state?.getId?.() || 0;
+        let resp = null;
         try {
             const params = {
                 "peer_id": this.peer_id,
@@ -2087,7 +2101,7 @@ export class ChatMessage {
             if (g < 0) {
                 params["group_id"] = Math.abs(g);
             }
-            let resp = await window.OVKAPI.call("messages." + method, params);
+            resp = await window.OVKAPI.call("messages." + method, params);
         } catch (e) {
             fastError(String(e));
             console.error(e);
@@ -2096,11 +2110,17 @@ export class ChatMessage {
 
         this.data.is_pinned = Boolean(action);
 
-        if (action) {
-            window.im.messenger.getCurrentChat()._conversation.current_pinned_message = {
-                "id": this.id,
-            };
+        const curChat = window.im?.messenger?.getCurrentChat?.() || window.im?.conversations?._findConv?.(this.peer_id);
+        if (curChat && typeof curChat.setPinnedMessage === 'function') {
+            if (action) {
+                const pinnedData = (resp && resp.response) ? resp.response : (resp && !resp.error ? resp : this.data);
+                curChat.setPinnedMessage(pinnedData);
+            } else {
+                curChat.setPinnedMessage(null);
+            }
         }
+        if (window.im?.messenger) window.im.messenger.update();
+        if (window.im?.conversations) window.im.conversations.update();
     }
 
     isRead(conv = null) {

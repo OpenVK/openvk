@@ -1696,7 +1696,21 @@ final class Messages extends VKAPIRequestHandler
             }
 
             if (isset($itemsMap[$localChatId])) {
-                $chatEntity->setData($itemsMap[$localChatId]['chat_settings'] ?? []);
+                $convData = $itemsMap[$localChatId];
+                $settings = $convData['chat_settings'] ?? [];
+                if (isset($convData['peer'])) {
+                    $settings['peer'] = $convData['peer'];
+                }
+                if (isset($convData['can_write'])) {
+                    $settings['can_write'] = $convData['can_write'];
+                }
+                if (!empty($settings['state']) && ($settings['state'] === 'left' || $settings['state'] === 'kicked')) {
+                    $settings['left'] = 1;
+                    if ($settings['state'] === 'kicked') {
+                        $settings['kicked'] = 1;
+                    }
+                }
+                $chatEntity->setData($settings);
             }
 
             $chatStruct = $chatEntity->toVkApiStruct($this->getUser());

@@ -384,8 +384,16 @@ export class InstantMessagesAndRelated {
     }
 
     selectTab(tab) {
-        if (typeof tab != "number") {
+        if (typeof tab === "string") {
+            const found = this.tabs.find(t => t.getPageId() == tab);
+            tab = found ? this.tabs.indexOf(found) : -1;
+        } else if (typeof tab !== "number") {
             tab = this.tabs.indexOf(tab);
+        }
+
+        if (tab < 0 || tab >= this.tabs.length) {
+            imLog("selectTab: invalid tab index " + tab);
+            return;
         }
 
         imLog("Selected tab " + tab);
@@ -408,6 +416,7 @@ export class InstantMessagesAndRelated {
                     item.close();
                 }
             });
+            this.selectedTabId = this.tabs.indexOf(_tab);
 
             if (_tab.isDisablesScroll()) { this.state._toggleScrollMode(true); }
 
@@ -442,6 +451,13 @@ export class InstantMessagesAndRelated {
     }
 
     async openTabByName(tab, check_existing = true, options = {}) {
+        if (options && !options.referrer) {
+            const currentTabId = this.getSelectedTabId();
+            if (currentTabId && currentTabId !== tab) {
+                options.referrer = currentTabId;
+            }
+        }
+
         let got_tab = null;
         let got_class = null;
         let already_here = null;
@@ -488,6 +504,10 @@ export class InstantMessagesAndRelated {
         }
 
         if (already_here != null) {
+            already_here.options = Object.assign({}, already_here.options, options);
+            if (already_here.render_class) {
+                already_here.render_class.options = Object.assign({}, already_here.render_class.options, options);
+            }
             if (!this.root || !this.root.isConnected) {
                 this.root = document.querySelector("#im_container");
             }
@@ -498,8 +518,8 @@ export class InstantMessagesAndRelated {
                     await already_here.render();
                 }
             }
-            if (options && options.q !== undefined && already_here.render_class && typeof already_here.render_class.onSearch === 'function') {
-                already_here.render_class.onSearch(options.q, options.date ?? null);
+            if (options && already_here.render_class && typeof already_here.render_class.onSearch === 'function') {
+                already_here.render_class.onSearch(options.q ?? "", options.date ?? null);
             }
             this.selectTab(this.tabs.indexOf(already_here));
 
@@ -520,13 +540,14 @@ export class InstantMessagesAndRelated {
                 }
                 got_tab = got_class.openTab(this.root, options);
                 if (got_tab != null) {
-                    if (this.root) got_tab.render_class.addLoadSkeleton(this.root);
+                    const skeletonTarget = got_tab.render_class.container || this.root;
+                    if (skeletonTarget) got_tab.render_class.addLoadSkeleton(skeletonTarget);
                     imLog("Opened tab class:", got_tab.render_class);
                     this.selectTab(this.addTab(got_tab));
                     try {
                         await got_tab.render();
                     } finally {
-                        if (this.root) got_tab.render_class.removeLoadSkeleton(this.root);
+                        if (skeletonTarget) got_tab.render_class.removeLoadSkeleton(skeletonTarget);
                         document.querySelectorAll("#load_skeleton").forEach(el => el.remove());
                     }
                 }
@@ -923,7 +944,7 @@ class IMState {
 
     addLoadSkeleton(container) {
         if (!container) return;
-        container.insertAdjacentHTML("beforeend", `<div id="load_skeleton" class="im_page_loader"><img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="..." /></div>`);
+        container.insertAdjacentHTML("afterbegin", `<div id="load_skeleton" class="im_page_loader"><img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="..." /></div>`);
     }
 
     removeLoadSkeleton(container) {

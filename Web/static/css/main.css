@@ -5149,7 +5149,7 @@ hr {
     height: 215px;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 6px 8px 8px 8px;
+    padding: 6px 0px 8px 8px;
     box-sizing: border-box;
     scroll-behavior: smooth;
     scrollbar-width: thin;

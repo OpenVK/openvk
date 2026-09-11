@@ -448,16 +448,23 @@ export class EventHandler {
 
         const action = _msg.data?.action || _msg.action;
         if (action) {
-            const actMid = Number(_msg.data?.action_mid || _msg.action_mid || _msg.data?.action?.member_id || 0);
+            const actionType = action.type || _msg.action_type || (typeof action === 'string' ? action : null);
+            const actMid = Number(_msg.data?.action_mid || _msg.action_mid || _msg.data?.action?.member_id || action.member_id || 0);
             const currentUserIdNum = Number(currentUserId);
+            const senderId = Number(_msg.from_id?.id || _msg.from_id || _msg.data?.from_id?.id || _msg.data?.from_id || 0);
+
             if (actMid && actMid === currentUserIdNum) {
-                const senderId = Number(_msg.from_id?.id || _msg.from_id || _msg.data?.from_id?.id || _msg.data?.from_id || 0);
-                if (action === "chat_kick_user") {
+                if (actionType === "chat_kick_user") {
                     const isLeft = senderId === currentUserIdNum;
                     const reasonCode = isLeft ? 916 : 915;
                     if (_crs.peer) {
                         _crs.peer.data.left = isLeft ? 1 : 0;
                         _crs.peer.data.kicked = isLeft ? 0 : 1;
+                        _crs.peer.data.photo_50 = "";
+                        _crs.peer.data.photo_100 = "";
+                        _crs.peer.data.photo_200 = "";
+                        _crs.peer.data.avatar_max = "";
+                        _crs.peer.data.photo_id = null;
                         _crs.peer.data.chat_settings = _crs.peer.data.chat_settings || {};
                         _crs.peer.data.chat_settings.state = isLeft ? 'left' : 'kicked';
                         _crs.peer.data.can_write = { allowed: false, reason: reasonCode };
@@ -474,10 +481,17 @@ export class EventHandler {
                             fc.canWrite = false;
                             fc.cantWriteReason = reasonCode;
                             fc.cantWriteText = this.im.fastChats.getCantWriteText(fc);
+                            fc.photo = "";
                             this.im.fastChats.render();
                         }
                     }
-                } else if (action === "chat_invite_user" || action === "chat_invite_user_by_link") {
+                    if (this.im.messenger) {
+                        this.im.messenger.update();
+                    }
+                    if (this.im.conversations) {
+                        this.im.conversations.update();
+                    }
+                } else if (actionType === "chat_invite_user" || actionType === "chat_invite_user_by_link") {
                     if (_crs.peer) {
                         _crs.peer.data.left = 0;
                         _crs.peer.data.kicked = 0;
@@ -491,6 +505,34 @@ export class EventHandler {
                             _crs._conversation.chat_settings.state = 'in';
                         }
                     }
+
+                    window.OVKAPI.call("messages.getConversationsById", { peer_ids: _msg.peer_id }).then(convById => {
+                        if (convById && convById.items && convById.items[0]?.conversation) {
+                            const cConv = convById.items[0].conversation;
+                            const s = cConv.chat_settings;
+                            if (s && _crs.peer) {
+                                _crs.peer.data.photo_50 = s.photo_50 || s.photo?.photo_50 || "";
+                                _crs.peer.data.photo_100 = s.photo_100 || s.photo?.photo_100 || "";
+                                _crs.peer.data.photo_200 = s.photo_200 || s.photo?.photo_200 || "";
+                                _crs.peer.data.avatar_max = s.avatar_max || "";
+                                _crs.peer.data.photo_id = s.photo_id || null;
+                            }
+                            if (this.im.fastChats) {
+                                const fc = this.im.fastChats.openedChats?.find(c => Number(c.peerId) === Number(_msg.peer_id));
+                                if (fc && _crs.peer) {
+                                    fc.photo = _crs.peer.getAvatar ? _crs.peer.getAvatar() : "";
+                                    this.im.fastChats.render();
+                                }
+                            }
+                            if (this.im.messenger) {
+                                this.im.messenger.update();
+                            }
+                            if (this.im.conversations) {
+                                this.im.conversations.update();
+                            }
+                        }
+                    }).catch(e => {});
+
                     if (this.im.fastChats) {
                         const fc = this.im.fastChats.openedChats?.find(c => Number(c.peerId) === Number(_msg.peer_id));
                         if (fc) {
@@ -501,9 +543,47 @@ export class EventHandler {
                         }
                     }
                 }
-                if (this.im.messenger) {
-                    this.im.messenger.update();
+            }
+
+            if (actionType === "chat_pin_message") {
+                if (_crs) {
+                    try {
+                        const convById = await window.OVKAPI.call('messages.getConversationsById', { peer_ids: _msg.peer_id });
+                        if (convById && convById.items && convById.items[0]?.conversation) {
+                            const cConv = convById.items[0].conversation;
+                            _crs._conversation = cConv;
+                            const pin = cConv.chat_settings?.pinned_message || cConv.pinned_message;
+                            _crs.setPinnedMessage(pin || null);
+                        }
+                    } catch (e) {
+                        console.warn("Error updating pinned message on pin event:", e);
+                    }
                 }
+            } else if (actionType === "chat_unpin_message") {
+                if (_crs) {
+                    _crs.setPinnedMessage(null);
+                    if (_crs._conversation) {
+                        _crs._conversation.current_pinned_message = null;
+                        _crs._conversation.pinned_message = null;
+                        if (_crs._conversation.chat_settings) {
+                            _crs._conversation.chat_settings.pinned_message = null;
+                        }
+                    }
+                    if (_crs.peer && _crs.peer.data) {
+                        _crs.peer.data.pinned_message = null;
+                        _crs.peer.data.current_pinned_message = null;
+                        if (_crs.peer.data.chat_settings) {
+                            _crs.peer.data.chat_settings.pinned_message = null;
+                        }
+                    }
+                }
+            }
+
+            if (this.im.messenger) {
+                this.im.messenger.update();
+            }
+            if (this.im.conversations) {
+                this.im.conversations.update();
             }
         }
 
@@ -592,19 +672,50 @@ export class EventHandler {
     }
 
     async ChatUpdateEvent(event) {
-        const _type = event[1];
-        const peer_id = event[2];
+        const code = Number(event[0]);
+        let peer_id = null;
+        let update_type = null;
+
+        if (code === 51) {
+            const rawChatId = Number(event[1]);
+            const CHAT_RUBICON = ChatGeneralForm.CHAT_RUBICON || 2000000000;
+            peer_id = rawChatId < CHAT_RUBICON ? CHAT_RUBICON + rawChatId : rawChatId;
+        } else if (code === 52) {
+            update_type = event[1];
+            peer_id = Number(event[2]);
+        } else {
+            peer_id = Number(event[1] || event[2]);
+        }
+
+        if (!peer_id) return;
 
         try {
             const convById = await window.OVKAPI.call('messages.getConversationsById', { peer_ids: peer_id });
             if (convById && convById.items && convById.items[0]) {
                 const cItem = convById.items[0];
-                const _crs = this.im.conversations?._findConv(peer_id);
+                const _crs = this.im.conversations?._findConv(peer_id) || await this.im.conversations._findConvFromApi(peer_id, true);
                 if (_crs) {
                     if (cItem.conversation) {
                         _crs._conversation = cItem.conversation;
                         if (cItem.conversation.can_write && _crs.peer) {
                             _crs.peer.data.can_write = cItem.conversation.can_write;
+                        }
+                        if (cItem.conversation.chat_settings) {
+                            if (_crs.peer && _crs.peer.data) {
+                                _crs.peer.data.chat_settings = cItem.conversation.chat_settings;
+                                if (cItem.conversation.chat_settings.title) {
+                                    _crs.peer.data.title = cItem.conversation.chat_settings.title;
+                                }
+                            }
+                            if (cItem.conversation.chat_settings.pinned_message) {
+                                _crs.setPinnedMessage(cItem.conversation.chat_settings.pinned_message);
+                            } else {
+                                _crs.setPinnedMessage(null);
+                            }
+                        } else if (cItem.conversation.pinned_message) {
+                            _crs.setPinnedMessage(cItem.conversation.pinned_message);
+                        } else {
+                            _crs.setPinnedMessage(null);
                         }
                     }
                 }
@@ -622,7 +733,6 @@ export class EventHandler {
             console.warn("ChatUpdateEvent error:", e);
         }
 
-        const _crs = await this.im.conversations._findConvFromApi(peer_id, true);
         if (this.im.conversations) {
             this.im.conversations.update();
         }

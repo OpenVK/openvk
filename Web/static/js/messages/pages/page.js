@@ -41,7 +41,15 @@ export class IMTab {
     }
 
     close() {
+        if (this.render_class && this.render_class.container) {
+            try {
+                this.render_class.container.remove();
+            } catch (e) {}
+        }
         window.im.tabs = window.im.tabs.filter(tab => tab != this);
+        if (window.im && typeof window.im.updateTabs === 'function') {
+            window.im.updateTabs();
+        }
     }
 
     getId() {
@@ -121,7 +129,7 @@ export class IMPage {
     addLoadSkeleton(container, remove_before = false) {
         if (!container) return;
         if (remove_before == true) { container.innerHTML = ""; }
-        container.insertAdjacentHTML("beforeend", `<div id="load_skeleton" class="im_page_loader"><img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="..." /></div>`);
+        container.insertAdjacentHTML("afterbegin", `<div id="load_skeleton" class="im_page_loader"><img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="..." /></div>`);
     }
     removeLoadSkeleton(container) { 
         try { 

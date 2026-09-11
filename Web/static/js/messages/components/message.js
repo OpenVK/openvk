@@ -1133,17 +1133,7 @@ const WallPostAttachment = ({ wall }) => {
         if (extra.type === 'audio') {
             return html`<${Attachment} msg=${null} att=${extra} />`;
         } else if (extra.type === 'doc') {
-            const doc = extra.doc;
-            const docId = doc.owner_id + '_' + doc.id + (doc.access_key ? '?key=' + doc.access_key : '');
-            return html`
-                                <div class="attachment_note attachment_doc" onClick=${(e) => e.stopPropagation()}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"></polygon><polygon points="5 0 5 3 8 3 5 0"></polygon></svg>
-                                    <div class="attachment_note_content">
-                                        <span class="attachment_note_text">${typeof tr === 'function' ? tr('document') : 'Документ'}</span>
-                                        <span class="attachment_note_name"><a href="/doc${docId}" target="_blank">${doc.title}</a></span>
-                                    </div>
-                                </div>
-                            `;
+            return html`<${DocAttachment} doc=${extra.doc} />`;
         } else {
             return html`<${CompactReplyAttachment} rep=${null} att=${extra} />`;
         }
@@ -1352,6 +1342,206 @@ export class LottieSticker extends Component {
     }
 }
 
+export function isGifDoc(doc) {
+    if (!doc) return false;
+    if (doc.type === 3) return true;
+    if (doc.ext && doc.ext.toLowerCase() === 'gif') return true;
+    if (doc.title && doc.title.toLowerCase().endsWith('.gif')) return true;
+    if (doc.name && doc.name.toLowerCase().endsWith('.gif')) return true;
+    if (doc.url && doc.url.toLowerCase().split('?')[0].endsWith('.gif')) return true;
+    return false;
+}
+
+export function formatDocSize(bytes) {
+    if (!bytes || typeof bytes !== 'number' || bytes <= 0) return '';
+    const units = ['B', 'Kb', 'Mb', 'Gb', 'Tb'];
+    const power = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+    const val = bytes / Math.pow(1024, power);
+    return Math.round(val * 100) / 100 + units[power];
+}
+
+export function getDocPreviewUrl(doc) {
+    if (!doc) return '';
+    if (doc.preview && doc.preview.photo && Array.isArray(doc.preview.photo.sizes)) {
+        const sizes = doc.preview.photo.sizes;
+        const preferred = sizes.find(s => s.type === 'm') ||
+                          sizes.find(s => s.type === 'x') ||
+                          sizes.find(s => s.type === 's') ||
+                          sizes.find(s => s.type === 'y') ||
+                          sizes[0];
+        if (preferred) {
+            return preferred.src || preferred.url || '';
+        }
+    }
+    if (doc.photo_130) return doc.photo_130;
+    if (doc.photo_604) return doc.photo_604;
+    if (doc.photo_100) return doc.photo_100;
+    return doc.url || '';
+}
+
+export class DocGifAttachment extends Component {
+    constructor(props) {
+        super(props);
+        const autoplay = Number(localStorage.getItem('ux.gif_autoplay') ?? 0) === 1;
+        this.state = {
+            playing: autoplay
+        };
+        this.elRef = null;
+        this.observer = null;
+    }
+
+    componentDidMount() {
+        if (Number(localStorage.getItem('ux.gif_autoplay') ?? 0) === 1 && typeof IntersectionObserver !== 'undefined') {
+            this.observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        this.setState({ playing: true });
+                    } else {
+                        this.setState({ playing: false });
+                    }
+                });
+            }, { threshold: 0 });
+            if (this.elRef) {
+                this.observer.observe(this.elRef);
+            }
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.observer) {
+            this.observer.disconnect();
+            this.observer = null;
+        }
+    }
+
+    togglePlay = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.setState(prev => ({ playing: !prev.playing }));
+    };
+
+    render() {
+        const { doc } = this.props;
+        if (!doc) return null;
+
+        const ids = (doc.owner_id ?? '') + '_' + (doc.id ?? '');
+        const accessKey = doc.access_key ? (doc.access_key.startsWith('?') ? doc.access_key : `?key=${doc.access_key}`) : '';
+        const href = ids ? `/doc${ids}${accessKey}` : 'javascript:void(0)';
+        const docTitle = doc.title || doc.name || 'GIF';
+        const docSize = formatDocSize(doc.size);
+        let previewUrl = getDocPreviewUrl(doc);
+        let gifUrl = doc.url || '';
+
+        if (window.location.protocol === 'https:') {
+            if (previewUrl && previewUrl.startsWith('http://')) previewUrl = previewUrl.replace(/^http:\/\//i, 'https://');
+            if (gifUrl && gifUrl.startsWith('http://')) gifUrl = gifUrl.replace(/^http:\/\//i, 'https://');
+        }
+
+        const isPlaying = this.state.playing;
+
+        return html`
+            <div class="msg-attach-w msg-attach-w-gif">
+                <a
+                    ref=${el => this.elRef = el}
+                    href=${href}
+                    class="docMainItem viewerOpener docGalleryItem embeddable ${isPlaying ? 'playing' : ''}"
+                    data-id=${ids}
+                    onClick=${this.togglePlay}
+                >
+                    <img class="docGalleryItem_main_preview" loading="lazy" src=${previewUrl || gifUrl} alt="gif preview" />
+                    <div class="play-button">
+                        <div class="play-button-ico"></div>
+                    </div>
+                    <img class="docGalleryItem_gif_preview" loading="lazy" src=${gifUrl} alt="gif photo view" />
+                    <div class="doc_bottom_panel doc_shown_by_hover doc_content info_shown">
+                        <span class="doc_bottom_panel_name noOverflow doc_name">${docTitle}</span>
+                        ${docSize ? html`<span class="doc_bottom_panel_size">${docSize}</span>` : ''}
+                    </div>
+                </a>
+            </div>
+        `;
+    }
+}
+
+export function isImageDoc(doc) {
+    if (!doc) return false;
+    if (doc.type === 4 || doc.type === 3) return true;
+    const ext = (doc.ext || '').toLowerCase();
+    if (['gif', 'png', 'jpg', 'jpeg', 'bmp', 'webp'].includes(ext)) return true;
+    const title = (doc.title || doc.name || '').toLowerCase();
+    if (/\.(gif|png|jpe?g|bmp|webp)$/i.test(title)) return true;
+    return false;
+}
+
+export const DocImageAttachment = ({ doc }) => {
+    if (!doc) return null;
+
+    const ids = (doc.owner_id ?? '') + '_' + (doc.id ?? '');
+    const accessKey = doc.access_key ? (doc.access_key.startsWith('?') ? doc.access_key : `?key=${doc.access_key}`) : '';
+    const href = ids ? `/doc${ids}${accessKey}` : (doc.url || 'javascript:void(0)');
+    const docTitle = doc.title || doc.name || (typeof tr === 'function' ? tr('document') : 'Изображение');
+    const docSize = formatDocSize(doc.size);
+    let imgUrl = getDocPreviewUrl(doc) || doc.url || '';
+
+    if (window.location.protocol === 'https:') {
+        if (imgUrl && imgUrl.startsWith('http://')) imgUrl = imgUrl.replace(/^http:\/\//i, 'https://');
+    }
+
+    const handleClick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (typeof DocsViewer !== 'undefined' && ids) {
+            DocsViewer.openById(ids + (doc.access_key ? '_' + doc.access_key : ''));
+        } else if (doc.url) {
+            window.open(doc.url, '_blank');
+        }
+    };
+
+    return html`
+        <div class="msg-attach-w msg-attach-w-doc-image">
+            <a
+                href=${href}
+                class="docMainItem viewerOpener docGalleryItem"
+                data-id=${ids + (doc.access_key ? '_' + doc.access_key : '')}
+                onClick=${handleClick}
+            >
+                <img class="docGalleryItem_main_preview" loading="lazy" src=${imgUrl} alt=${docTitle} />
+                <div class="doc_bottom_panel doc_shown_by_hover doc_content info_shown">
+                    <span class="doc_bottom_panel_name noOverflow doc_name">${docTitle}</span>
+                    ${docSize ? html`<span class="doc_bottom_panel_size">${docSize}</span>` : ''}
+                </div>
+            </a>
+        </div>
+    `;
+};
+
+export const DocAttachment = ({ doc }) => {
+    if (!doc) return null;
+    if (isGifDoc(doc)) {
+        return html`<${DocGifAttachment} doc=${doc} />`;
+    }
+    if (isImageDoc(doc)) {
+        return html`<${DocImageAttachment} doc=${doc} />`;
+    }
+    const ids = (doc.owner_id ?? '') + '_' + (doc.id ?? '');
+    const accessKey = doc.access_key ? (doc.access_key.startsWith('?') ? doc.access_key : `?key=${doc.access_key}`) : '';
+    const href = ids ? `/doc${ids}${accessKey}` : 'javascript:void(0)';
+    const docTitle = doc.title || doc.name || (typeof tr === 'function' ? tr('document') : 'Документ');
+
+    return html`
+        <div class="msg-attach-w msg-attach-w-doc">
+            <a data-id="${ids + (doc.access_key ? '_' + doc.access_key : '')}" href=${href} class="attachment_note attachment_doc">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"></polygon><polygon points="5 0 5 3 8 3 5 0"></polygon></svg>
+                <div class="docOpener attachment_note_content">
+                    <span class="attachment_note_name">
+                        <span>${docTitle}</span>
+                    </span>
+                </div>
+            </a>
+        </div>
+    `;
+};
+
 export const Attachment = ({ msg, att }) => {
     switch (att.type) {
         case 'photo':
@@ -1369,20 +1559,7 @@ export const Attachment = ({ msg, att }) => {
                     </a>
                 </div>`;
         case 'doc':
-            const ids = att.doc.owner_id + '_' + att.doc.id;
-            return html`
-                <div class="msg-attach-w msg-attach-w-doc">
-                    <a data-id="${ids + (att.doc.access_key ? "_" + att.doc.access_key : "")}" href=${'/doc' + ids + (att.doc.access_key ? "?key=" + att.doc.access_key : "")} class="attachment_note attachment_doc">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"></polygon><polygon points="5 0 5 3 8 3 5 0"></polygon></svg>
-                        <div class="docOpener attachment_note_content">
-                            <span class="attachment_note_name">
-                                <span>
-                                ${att.doc.title}
-                                </span>
-                            </span>
-                        </div>
-                    </a>
-                </div>`;
+            return html`<${DocAttachment} doc=${att.doc} />`;
         case 'audio':
             return html`<${AudioAttachment} audio=${att.audio} />`;
         case 'wall':

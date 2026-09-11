@@ -89,7 +89,7 @@ function formatSearchDate(timestamp) {
     if (isNaN(date.getTime())) return "";
     const today = new Date();
     const isToday = date.toDateString() === today.toDateString();
-    
+
     if (isToday) {
         return date.toLocaleTimeString(getAppLocale ? getAppLocale() : 'ru-RU', {
             hour: '2-digit',
@@ -143,7 +143,12 @@ function getSearchMessageSnippet(msg, query) {
             case "photo": rawText = `[${tr('attachment_photo') || 'Фотография'}]`; break;
             case "audio": rawText = `[${tr('attachment_audio') || 'Аудиозапись'}]`; break;
             case "video": rawText = `[${tr('attachment_video') || 'Видеозапись'}]`; break;
-            case "doc": rawText = `[${tr('attachment_doc') || 'Документ'}]`; break;
+            case "doc": {
+                const d = att.doc;
+                const isGif = d && (d.type === 3 || (d.ext && d.ext.toLowerCase() === 'gif') || (d.title && d.title.toLowerCase().endsWith('.gif')));
+                rawText = isGif ? '[GIF]' : `[${tr('attachment_doc') || 'Документ'}]`;
+                break;
+            }
             default: rawText = `[${tr('attachment') || 'Вложение'}]`; break;
         }
     }
@@ -255,6 +260,36 @@ export const SearchMessageItem = ({ msg, query }) => {
     `;
 };
 
+export const SearchPeerItem = ({ peer, query }) => {
+    if (!peer) return null;
+    const peerId = peer.peerId || peer.id;
+    const title = peer.title || "";
+    const highlightedTitle = highlightQuery(title, query);
+    const avatar = peer.avatar || "/assets/packages/static/openvk/img/camera_50.png";
+    const isChat = peer.type === "chat" || peerId >= 2000000000;
+    const isOnline = Boolean(peer.online);
+    const metaText = peer.meta || (isChat ? (tr('chat') || 'Беседа') : (isOnline ? (tr('online') || 'в сети') : ''));
+
+    const onClick = () => {
+        if (window.im?.messenger) {
+            window.im.messenger.selectConversationByPeerId(peerId);
+        }
+    };
+
+    return html`
+        <div class="im-search-peer-item" onClick=${onClick}>
+            <div class="im-search-peer-avatar">
+                <img src="${avatar}" alt="" />
+                ${(!isChat && isOnline) ? html`<div class="im-search-peer-online-dot"></div>` : ""}
+            </div>
+            <div class="im-search-peer-info">
+                <div class="im-search-peer-name" dangerouslySetInnerHTML=${{ __html: highlightedTitle }}></div>
+                <div class="im-search-peer-meta">${metaText}</div>
+            </div>
+        </div>
+    `;
+};
+
 export const SearchPageTemplate = ({ q, date, c, onSearch, onCancel }) => {
     const query = q || "";
     const count = c.total_count || 0;
@@ -313,14 +348,13 @@ export const SearchPageTemplate = ({ q, date, c, onSearch, onCancel }) => {
                     value="${tr('search_messages_tab') || 'Поиск'}" 
                     onClick=${handleSearchClick} 
                 />
-                <div 
-                    class="im-search-calendar-btn ${date ? 'active' : ''}" 
+                <button 
+                    type="button"
+                    class="button im-search-calendar-btn ${date ? 'active' : ''}" 
                     title="${date ? ((tr('search_by_date') || 'Поиск по дате') + ': ' + date) : (tr('search_by_date') || 'Поиск по дате')}" 
                     onClick=${handleCalendarClick}>
-                    <svg width="13" height="13" viewBox="0 0 16 16" fill="#708398">
-                        <path d="M4.5 1a.75.75 0 0 0-.75.75V3h-1.5A1.25 1.25 0 0 0 1 4.25v9.5A1.25 1.25 0 0 0 2.25 15h11.5A1.25 1.25 0 0 0 15 13.75v-9.5A1.25 1.25 0 0 0 13.75 3h-1.5V1.75a.75.75 0 0 0-1.5 0V3h-4.5V1.75A.75.75 0 0 0 5.25 1h-.75zm9 3.5v1.5H2.5V4.5h11zm-11 3h11v6.25a.25.25 0 0 1-.25.25H2.25a.25.25 0 0 1-.25-.25V7.5z"/>
-                    </svg>
-                </div>
+                    <span class="im-search-calendar-icon"></span>
+                </button>
                 <div class="im-search-cancel-btn">
                     <a onClick=${onCancel}>${tr('cancel') || 'Отмена'}</a>
                 </div>
@@ -350,16 +384,16 @@ export const FastChatsBar = ({ pinnedItems, convos }) => {
         <div>
             <div class="fastchat_items">
                 ${pinnedItems.map((item) => {
-                    const peer = item.peer;
-                    return html`
+        const peer = item.peer;
+        return html`
                     <div title="${peer.getName()}" onClick=${(e) => { window.im.fastChats.selectConversation(e, item) }} class="fastchat_item ${!item.isRead() ? "unread" : ""}">
                         <div class="fastchat_unread">+${item.unread_count}</div>
                         <div class="fastchat_close"></div>
                         <${PeerAvatar} peer=${peer} orig_ava=${false} />
                     </div>`
-                })}
+    })}
             </div>
-            <div onClick=${() => {window.im.fastChats.onEntryPointClick()}} class="fastchat_entrypoint">
+            <div onClick=${() => { window.im.fastChats.onEntryPointClick() }} class="fastchat_entrypoint">
                 <span>${convos.total_convs}</span>
             </div>
         </div>

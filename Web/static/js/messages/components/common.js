@@ -364,7 +364,11 @@ export const getReplySnippet = (msg) => {
             if (t === 'photo') text = '[' + (tr('attachment_photo') || 'Фотография') + ']';
             else if (t === 'video') text = '[' + (tr('attachment_video') || 'Видеозапись') + ']';
             else if (t === 'audio') text = '[' + (tr('attachment_audio') || 'Аудиозапись') + ']';
-            else if (t === 'doc') text = '[' + (tr('attachment_doc') || 'Документ') + ']';
+            else if (t === 'doc') {
+                const d = atts[0].doc;
+                const isGif = d && (d.type === 3 || (d.ext && d.ext.toLowerCase() === 'gif') || (d.title && d.title.toLowerCase().endsWith('.gif')));
+                text = isGif ? '[GIF]' : ('[' + (tr('attachment_doc') || 'Документ') + ']');
+            }
             else if (t === 'sticker') text = '[' + (tr('attachment_sticker') || 'Стикер') + ']';
             else text = '[' + (tr('attachment') || 'Вложение') + ']';
         }
@@ -918,7 +922,11 @@ export const TabBar = ({ tabs, activeTab, onTabSelect }) => {
 };
 
 export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
-    const peer = convo?.peer || convo;
+    let peer = convo?.peer || convo;
+    if (typeof peer === 'number' || (peer && typeof peer.hasAvatar !== 'function')) {
+        const peerId = typeof peer === 'number' ? peer : peer?.id;
+        peer = window.im.cached_profiles?._findProfile(peerId) || window.im.state?.getCurrentConvo()?.peer || new ChatGeneralForm(typeof peer === 'object' && peer !== null ? peer : { id: peerId });
+    }
     if (!peer) return null;
 
     const isChat = peer.supposed_type == "chat";
@@ -963,9 +971,11 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
             <div class="peer-info">
                 <div class="peer-avatar sliding-thing-wrapper ${!peer.hasAvatar() ? "no-avatar" : ""}">
                     <${PeerAvatar} saved_messages_ava=${false} peer=${peer} orig_ava=${true} size="big" />
+                    ${peer.hasAvatar() ? html`
                     <a onClick=${(event) => { window.OpenChatAvatar ? window.OpenChatAvatar(event, peer) : null }} class="avatar-opener sliding-thing">
                         <div class="lupa"></div>
                     </a>
+                    ` : ""}
                 </div>
                 <div class="peer-name">
                     <div class="peer-name-1">
@@ -1041,7 +1051,8 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                         <a onClick=${(e) => {
             window.im.openTabByName("search", true, {
                 "q": "",
-                "peer_id": peer.id
+                "peer_id": peer.id,
+                "referrer": window.im?.getSelectedTabId() || "contact"
             });
         }}>${tr("convo_search_messages")}</a>
                         <a onClick=${(e) => {
@@ -1066,6 +1077,23 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                                     peer.data.state = 'in';
                                     peer.data.can_write = { allowed: true };
 
+                                    try {
+                                        const convById = await window.OVKAPI.call("messages.getConversationsById", { peer_ids: peer.id });
+                                        if (convById && convById.items && convById.items[0]?.conversation) {
+                                            const cConv = convById.items[0].conversation;
+                                            const s = cConv.chat_settings;
+                                            if (s) {
+                                                peer.data.photo_50 = s.photo_50 || s.photo?.photo_50 || "";
+                                                peer.data.photo_100 = s.photo_100 || s.photo?.photo_100 || "";
+                                                peer.data.photo_200 = s.photo_200 || s.photo?.photo_200 || "";
+                                                peer.data.avatar_max = s.avatar_max || "";
+                                                peer.data.photo_id = s.photo_id || null;
+                                            }
+                                        }
+                                    } catch (errConv) {
+                                        console.warn("Could not fetch updated conv on return_to_chat:", errConv);
+                                    }
+
                                     const conv = window.im.conversations?._findConv(peer.id);
                                     if (conv) {
                                         if (conv._conversation) {
@@ -1078,6 +1106,11 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                                             conv.peer.data.left = 0;
                                             conv.peer.data.kicked = 0;
                                             conv.peer.data.can_write = { allowed: true };
+                                            conv.peer.data.photo_50 = peer.data.photo_50;
+                                            conv.peer.data.photo_100 = peer.data.photo_100;
+                                            conv.peer.data.photo_200 = peer.data.photo_200;
+                                            conv.peer.data.avatar_max = peer.data.avatar_max;
+                                            conv.peer.data.photo_id = peer.data.photo_id;
                                         }
                                     }
 
@@ -1087,12 +1120,16 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                                             fc.canWrite = true;
                                             fc.cantWriteReason = null;
                                             fc.cantWriteText = null;
+                                            fc.photo = peer.getAvatar ? peer.getAvatar() : "";
                                             window.im.fastChats.render();
                                         }
                                     }
 
                                     window.im.openTabByName("messenger");
                                     window.im.messenger.update();
+                                    if (window.im.conversations) {
+                                        window.im.conversations.update();
+                                    }
                                 } catch (err) {
                                     fastError(String(err));
                                 }
@@ -1185,6 +1222,11 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                                 });
                                 peer.data.left = 1;
                                 peer.data.kicked = 0;
+                                peer.data.photo_50 = "";
+                                peer.data.photo_100 = "";
+                                peer.data.photo_200 = "";
+                                peer.data.avatar_max = "";
+                                peer.data.photo_id = null;
                                 peer.data.chat_settings = peer.data.chat_settings || {};
                                 peer.data.chat_settings.state = 'left';
                                 peer.data.state = 'left';
@@ -1202,6 +1244,11 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                                         conv.peer.data.left = 1;
                                         conv.peer.data.kicked = 0;
                                         conv.peer.data.can_write = { allowed: false, reason: 916 };
+                                        conv.peer.data.photo_50 = "";
+                                        conv.peer.data.photo_100 = "";
+                                        conv.peer.data.photo_200 = "";
+                                        conv.peer.data.avatar_max = "";
+                                        conv.peer.data.photo_id = null;
                                     }
                                 }
 
@@ -1211,12 +1258,16 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                                         fc.canWrite = false;
                                         fc.cantWriteReason = 916;
                                         fc.cantWriteText = window.im.fastChats.getCantWriteText(fc);
+                                        fc.photo = "";
                                         window.im.fastChats.render();
                                     }
                                 }
 
                                 window.im.openTabByName("messenger");
                                 window.im.messenger.update();
+                                if (window.im.conversations) {
+                                    window.im.conversations.update();
+                                }
                             } catch (err) {
                                 fastError(String(err));
                             }

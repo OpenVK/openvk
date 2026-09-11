@@ -553,7 +553,7 @@ export class Messenger {
             <div class="pinned-message-modal-content" style="padding: 10px 0;">
                 <div style="display: flex; gap: 10px; align-items: flex-start;">
                     <a href="${senderUrl}" style="flex-shrink: 0;">
-                        <img src="${senderAva}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" />
+                        <img src="${senderAva}" style="width: 40px; height: 40px; object-fit: cover;" />
                     </a>
                     <div style="flex: 1; min-width: 0;">
                         <div style="display: flex; justify-content: space-between; align-items: baseline;">
@@ -1838,8 +1838,11 @@ export class MessengerPage extends IMPage {
         if (false) {
             window.im.selectTab('messenger');
             window.im.messenger.toggled_peer_obj = null;
-        } else {
             if (window.im.getSelectedTabId() == "contact") {
+                const contactTab = window.im.getTab("contact");
+                if (contactTab) {
+                    contactTab.close();
+                }
                 window.im.openTabByName('messenger');
             } else {
                 const _c = window.im.state.getCurrentConvo();
@@ -2736,18 +2739,31 @@ export class ContactPage extends IMPage {
     shouldCloseOnExit() { return true; }
     static getPageId() { return "contact"; }
 
-    async render(container) {
-        this.getNode().addClass("page-other");
-
+    async beforeRender(container) {
+        this.addLoadSkeleton(container, true);
         const currentCorresponder = window.im.state.getCurrentConvo();
         if (currentCorresponder?.peer && !currentCorresponder.peer.isILeft()) {
             await currentCorresponder.peer.checkMembers();
         }
-        let peer = null;
-        if (this.options.peer == null || this.options.peer.peer == null) {
-            peer = currentCorresponder;
-        } else {
-            peer = this.options.peer;
+        this.removeLoadSkeleton(container);
+    }
+
+    async render(container) {
+        this.getNode().addClass("page-other");
+
+        const currentCorresponder = window.im.state.getCurrentConvo();
+        let peer = this.options?.peer;
+        if (peer && peer.peer) {
+            peer = peer.peer;
+        }
+        if (!peer || typeof peer.hasAvatar !== 'function') {
+            const peerId = (typeof peer === 'number' ? peer : peer?.id) || this.options?.peer_id;
+            if (peerId) {
+                peer = window.im.cached_profiles?._findProfile(peerId);
+            }
+            if (!peer) {
+                peer = currentCorresponder?.peer || currentCorresponder;
+            }
         }
 
         render(html`<${PeerWindow} fromConvo=${currentCorresponder} convo=${peer} />`, container);

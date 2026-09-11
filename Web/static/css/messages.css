@@ -1452,6 +1452,68 @@ body:has(#im_container.at_page) .page-wrap {
     display: block;
 }
 
+.messenger-app--messages---message ._content .attachments .msg-attach-w-gif,
+.messenger-app--messages---message ._content .attachments .msg-attach-w-doc-image,
+.msg-attach-w-gif,
+.msg-attach-w-doc-image {
+    display: block;
+    max-width: 100%;
+    margin: 4px 0;
+}
+
+.messenger-app--messages---message ._content .attachments .msg-attach-w-gif .docGalleryItem,
+.messenger-app--messages---message ._content .attachments .msg-attach-w-doc-image .docGalleryItem,
+.msg-attach-w-gif .docGalleryItem,
+.msg-attach-w-doc-image .docGalleryItem {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 280px;
+    max-width: 100%;
+    height: 190px;
+    border-radius: 3px;
+    overflow: hidden;
+    background: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.msg-attach-w-gif .docGalleryItem .play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
+
+.msg-attach-w-gif .docGalleryItem img.docGalleryItem_main_preview,
+.msg-attach-w-gif .docGalleryItem img.docGalleryItem_gif_preview,
+.msg-attach-w-doc-image .docGalleryItem img.docGalleryItem_main_preview {
+    width: 100%;
+    height: 100%;
+}
+
+.msg-attach-w-gif .docGalleryItem img.docGalleryItem_main_preview,
+.msg-attach-w-doc-image .docGalleryItem img.docGalleryItem_main_preview {
+    object-fit: cover;
+}
+
+.msg-attach-w-gif .docGalleryItem img.docGalleryItem_gif_preview {
+    object-fit: contain;
+    display: none;
+}
+
+.msg-attach-w-gif .docGalleryItem.playing img.docGalleryItem_gif_preview {
+    display: block;
+}
+
+.msg-attach-w-gif .docGalleryItem.playing img.docGalleryItem_main_preview,
+.msg-attach-w-gif .docGalleryItem.playing .play-button,
+.msg-attach-w-gif .docGalleryItem.playing .doc_bottom_panel {
+    display: none;
+}
+
 .messenger-app--messages---message .audioEmbed.msg-attach-audio-player,
 .ovk-attachments-modal-content .audioEmbed.msg-attach-audio-player {
     max-width: 440px;
@@ -3032,27 +3094,31 @@ body:has(#im_container.at_page) .page-wrap {
 }
 
 .im-search-calendar-btn {
-    width: 24px;
+    width: 25px;
     height: 24px;
-    display: flex;
+    padding: 0;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: #fff;
-    border: 1px solid #c0cad5;
-    border-radius: 2px;
     cursor: pointer;
     box-sizing: border-box;
     flex-shrink: 0;
 }
 
-.im-search-calendar-btn:hover {
-    background: #f7f9fa;
-    border-color: #abb7c5;
+.im-search-calendar-btn .im-search-calendar-icon {
+    display: inline-block;
+    width: 24px;
+    height: 22px;
+    background: url('/assets/packages/static/openvk/img/group_icons.png') 0 -144px no-repeat;
+    transform: scale(0.65);
+    pointer-events: none;
+    filter: brightness(2);
 }
 
 .im-search-calendar-btn.active {
-    background: #e1e7ed;
-    border-color: #597da3;
+    background: #444444;
+    border-color: #333333;
+    filter: unset;
 }
 
 .im-search-cancel-btn a {
@@ -3073,13 +3139,136 @@ body:has(#im_container.at_page) .page-wrap {
     min-height: 200px;
 }
 
+.im-search-section {
+    border-bottom: 1px solid #e7e8ec;
+}
+
+.im-search-section:last-child {
+    border-bottom: none;
+}
+
+.im-search-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 15px;
+    background: #f7f9fa;
+    border-bottom: 1px solid #e7e8ec;
+}
+
+.im-search-section-title {
+    font-size: 11px;
+    font-weight: bold;
+    color: #657b92;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.im-search-section-count {
+    font-size: 11px;
+    color: #999;
+}
+
+.im-search-peers-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.im-search-peer-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 15px;
+    border-bottom: 1px solid #f0f2f5;
+    cursor: pointer;
+    transition: background-color 0.1s ease;
+}
+
+.im-search-peer-item:last-child {
+    border-bottom: none;
+}
+
+.im-search-peer-item:hover {
+    background-color: #f7f9fa;
+}
+
+.im-search-peer-avatar {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+}
+
+.im-search-peer-avatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 2px;
+    object-fit: cover;
+    display: block;
+}
+
+.im-search-peer-online-dot {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    background-color: #70b343;
+    border: 2px solid #fff;
+    border-radius: 50%;
+}
+
+.im-search-peer-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.im-search-peer-name {
+    font-size: 12px;
+    font-weight: bold;
+    color: #2b587a;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.im-search-peer-item:hover .im-search-peer-name {
+    text-decoration: underline;
+}
+
+.im-search-peer-meta {
+    font-size: 11px;
+    color: #777;
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#search-page-im .show_more {
+    width: 100%;
+    text-align: center;
+    padding: 10px 10px;
+    font-size: 13px;
+    color: #2b587a;
+    font-weight: bold;
+    background: #eef2f5;
+    cursor: pointer;
+}
+
+#search-page-im .show_more:hover {
+    background: #dee7ed;
+}
+
+#search-page-im .show_more:active {
+    background: #c2ced6;
+}
+
 .im-search-item {
     display: flex;
     gap: 12px;
-    padding: 12px 15px;
-    border-bottom: 1px solid #e7e8ec;
+    padding: 10px 50px;
     cursor: pointer;
-    transition: background-color 0.1s ease;
     text-decoration: none;
 }
 
@@ -3089,13 +3278,13 @@ body:has(#im_container.at_page) .page-wrap {
 
 .im-search-item-avatar {
     flex-shrink: 0;
-    width: 50px;
-    height: 50px;
+    width: 35px;
+    height: 35px;
 }
 
 .im-search-item-avatar img {
-    width: 50px;
-    height: 50px;
+    width: 35px;
+    height: 35px;
     border-radius: 2px;
     object-fit: cover;
     display: block;

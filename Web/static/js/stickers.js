@@ -193,6 +193,14 @@ const emojiTippy = tippy.delegate("body", {
         const allow_stickers = isStickersAllowed(that.reference);
         const bodyEl = renderEmojiGrid(allow_stickers);
         that.setContent(bodyEl);
+
+        if (allow_stickers && _cachedEmojiWrapper) {
+            loadMyStickerPacks(true).then(() => {
+                if (_cachedEmojiWrapper) {
+                    updateStickerPacksInPicker(_cachedEmojiWrapper);
+                }
+            }).catch(() => {});
+        }
     }
 });
 
@@ -960,10 +968,12 @@ async function getStickersFromPack(packId) {
 async function buyStickerpack(buyPackId) {
     try {
         const res = await window.OVKAPI.call('stickers.buy', { 'stickerpack_id': buyPackId });
+        localStorage.setItem('stickers_last_updated', String(Date.now()));
         await loadMyStickerPacks(true);
         if (_cachedEmojiWrapper) {
             updateStickerPacksInPicker(_cachedEmojiWrapper);
         }
+        window.dispatchEvent(new CustomEvent('stickers:updated', { detail: { action: 'buy', packId: buyPackId } }));
         return res;
     } catch (e) {
         fastError(tr('purchase_failed'));
@@ -1170,7 +1180,23 @@ function OpenStickerpack(pack_id) {
 
 function confirmUninstallPack(form) {
     MessageBox(tr('warning'), tr('stickers_uninstall_confirm'), [tr('yes'), tr('cancel')], [
-        () => {
+        async () => {
+            const packIdInput = form.querySelector('input[name="pack_id"]');
+            const packId = packIdInput ? Number(packIdInput.value) : null;
+            if (packId && window.API && window.API.Stickers && typeof window.API.Stickers.uninstallPack === 'function') {
+                try {
+                    await window.API.Stickers.uninstallPack(packId);
+                    localStorage.setItem('stickers_last_updated', String(Date.now()));
+                    await loadMyStickerPacks(true);
+                    if (_cachedEmojiWrapper) {
+                        updateStickerPacksInPicker(_cachedEmojiWrapper);
+                    }
+                    window.dispatchEvent(new CustomEvent('stickers:updated', { detail: { action: 'uninstall', packId } }));
+                    form.submit();
+                    return;
+                } catch (e) {}
+            }
+            localStorage.setItem('stickers_last_updated', String(Date.now()));
             form.submit();
         },
         Function.noop
@@ -1185,6 +1211,7 @@ function confirmDeletePack(form) {
             hidden.name = 'action';
             hidden.value = 'delete';
             form.appendChild(hidden);
+            localStorage.setItem('stickers_last_updated', String(Date.now()));
             form.submit();
         },
         Function.noop
@@ -1614,6 +1641,13 @@ async function openStickerPackModal(slugOrId, event) {
                     info.isPurchased = true;
 
                     updateShopPackCard(info.slug);
+
+                    localStorage.setItem('stickers_last_updated', String(Date.now()));
+                    await loadMyStickerPacks(true);
+                    if (_cachedEmojiWrapper) {
+                        updateStickerPacksInPicker(_cachedEmojiWrapper);
+                    }
+                    window.dispatchEvent(new CustomEvent('stickers:updated', { detail: { action: 'buy', packId: info.id } }));
                 } catch (err) {
                     actionBtn.disabled = false;
                     MessageBox(tr('error'), (err && err.message) ? err.message : tr('error'), [tr('ok') || 'OK'], [Function.noop]);
