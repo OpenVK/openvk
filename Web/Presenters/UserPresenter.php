@@ -903,8 +903,6 @@ final class UserPresenter extends OpenVKPresenter
 
     public function renderResetThemepack(): void
     {
-        $this->assertNoCSRF();
-
         $this->setSessionTheme(Themepacks::DEFAULT_THEME_ID);
 
         if ($this->user) {

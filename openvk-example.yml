@@ -35,6 +35,10 @@ chandler:
 
     redisUrl: "tcp://10.0.0.1:6379"
 
+    errorPages:
+        client: "Web/Presenters/templates/@error.latte"
+        server: "Web/Presenters/templates/@server-error.phtml"
+
 openvk:
     debug: true
     appearance:

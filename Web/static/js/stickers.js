@@ -1875,13 +1875,28 @@ document.addEventListener('click', (e) => {
     }
 });
 
-window.addEventListener('popstate', (e) => {
-    const u = new URL(location.href);
-    const pack = u.searchParams.get('pack');
-    if (!pack && window._activeStickerModal) {
-        window._activeStickerModal.close();
-    } else if (pack && (!window._activeStickerModal || window._activeStickerModalSlug !== pack)) {
-        openStickerPackModal(pack);
+window.reloadStickerPacks = async function () {
+    await loadMyStickerPacks(true);
+    if (_cachedEmojiWrapper) {
+        await updateStickerPacksInPicker(_cachedEmojiWrapper);
+    }
+};
+window.updateStickerPacksInPicker = updateStickerPacksInPicker;
+
+window.addEventListener('stickers:updated', async () => {
+    await loadMyStickerPacks(true);
+    if (_cachedEmojiWrapper) {
+        await updateStickerPacksInPicker(_cachedEmojiWrapper);
+    }
+});
+
+window.addEventListener('storage', (e) => {
+    if (e.key === 'stickers_last_updated' || e.key === 'recent_sticker') {
+        loadMyStickerPacks(true).then(() => {
+            if (_cachedEmojiWrapper) {
+                updateStickerPacksInPicker(_cachedEmojiWrapper);
+            }
+        }).catch(() => {});
     }
 });
 

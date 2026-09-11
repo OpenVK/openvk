@@ -6,32 +6,46 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, user-scalable=no" />
         <style>
-            @keyframes gradient {
-                0% {
-                    background-position: 0% 50%;
-                }
-
-                50% {
-                    background-position: 100% 50%;
-                }
-
-                100% {
-                    background-position: 0% 50%;
-                }
-            }
-
             body {
-                background: linear-gradient(-30deg, #2b2b2b, #f479ff);
-                color: #fff;
-                font-family: sans-serif;
+                background: #f1efed;
+                color: #545157;
+                font-family: Tahoma, Arial, Helvetica, sans-serif;
                 font-weight: 900;
-                animation: gradient 30s ease-in-out infinite;
-                background-size: 400% 400%;
             }
 
             #error {
                 width: 35rem;
                 max-width: 85vw;
+            }
+
+            .text_left {
+                font-size: 28px;
+                text-align: center;
+            }
+
+            .text_right {
+                font-size: 28px;
+                text-align: center;
+            }
+
+            .text_mini {
+                line-height: 5px;
+                font-size: 16px;
+                color: #928d97;
+            }
+
+            .text_mini_light {
+                line-height: 35px;
+                font-size: 14px;
+                color: #beb9c4;
+            }
+
+            p {
+                line-height: 25px;
+            }
+
+            a {
+                text-decoration: none;
             }
 
             main {
@@ -46,10 +60,6 @@
                     flex-direction: column;
                     justify-content: center;
                 }
-
-                main > p:first-of-type {
-                    display: none;
-                }
             }
         </style>
     </head>
@@ -58,10 +68,52 @@
         <!-- HTTP {$code}         -->
         <!-- {$msg}               -->
 
-        <main>
-            <p>{$desc}</p>
-            <a href="/"><img src="/assets/packages/static/openvk/img/oof.apng" alt="Ouch" id="error" /></a>
-            <p>{$desc}</p>
-        </main>
+        {if $code == 400}
+            <main>
+                <div class="text_left">
+                    <div class="text_mini_light">Некоректний запит</div>
+                    <div class="text_mini">Некарэктны запыт</div>
+                    <p>Bad Request</p>
+                    <div class="text_mini">Дұрыс емес сұрау</div>
+                    <div class="text_mini_light">Solicitud incorrecta</div>
+                </div>
+                <a href="/"><img src="/assets/packages/static/openvk/img/error/400.png" alt="Sowwy :c" title="Art by PELA" id="error"></a>
+                <div class="text_right">
+                    <div class="text_mini_light">請求錯誤</div>
+                    <div class="text_mini">Սխալ հարցում</div>
+                    <p>Некорректный<br>запрос</p>
+                    <div class="text_mini">Nieprawidłowe żądanie</div>
+                    <div class="text_mini_light">リクエストが間違っています</div>
+                </div>
+            </main>
+        {elseif $code == 404}
+            <main>
+                <div class="text_left">
+                    <div class="text_mini_light">Не знайдено</div>
+                    <div class="text_mini">Не знойдзена</div>
+                    <p>Not Found</p>
+                    <div class="text_mini">Табылмады</div>
+                    <div class="text_mini_light">Extraviado</div>
+                </div>
+                <a href="/"><img src="/assets/packages/static/openvk/img/error/404.png" alt="Sowwy :c" title="(art by YaeKitsu)" id="error"></a>
+                <div class="text_right">
+                    <div class="text_mini_light">未找到</div>
+                    <div class="text_mini">Չի գտնվել</div>
+                    <p>Не найдено</p>
+                    <div class="text_mini">Nie znaleziono</div>
+                    <div class="text_mini_light">見つかりません</div>
+                </div>
+            </main>
+        {else}
+            <main>
+                <div class="text_left">
+                    <p>{$desc}</p>
+                </div>
+                <a href="/"><img src="/assets/packages/static/openvk/img/oof.apng" alt="Ouch" id="error"></a>
+                <div class="text_right">
+                    <p>{$desc}</p>
+                </div>
+            </main>
+        {/if}
     </body>
 </html>
