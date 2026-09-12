@@ -17,3 +17,5 @@ data/knowledgebase/*
 
 .idea
 .php-cs-fixer.cache
+
+themepacks.old

@@ -1183,6 +1183,7 @@ final class Messages extends VKAPIRequestHandler
 
         $attachment_checked = parseAttachments($attachment, ["photo", "video", "doc", "audio", "wall", "sticker"]);
         $attachment_secure = [];
+        $formatted_attachments = [];
         $stickerCount = 0;
         $otherAttachCount = 0;
 
@@ -1198,6 +1199,7 @@ final class Messages extends VKAPIRequestHandler
 
             $stickerCount++;
             $attachment_secure[] = $stk->getAttachmentString();
+            $formatted_attachments[] = $stk->toApiAttachment($this->getUser());
         }
 
         foreach ($attachment_checked as $item) {
@@ -1215,6 +1217,7 @@ final class Messages extends VKAPIRequestHandler
             }
 
             $attachment_secure[] = $item->getAttachmentString();
+            $formatted_attachments[] = $item->toApiAttachment($this->getUser());
         }
 
         if ($stickerCount > 0) {
@@ -1252,6 +1255,10 @@ final class Messages extends VKAPIRequestHandler
             "random_id"  => (string) ($random_id ?: rand(1, 2147483647)),
             "guid"       => (string) ($guid ?: $random_id),
         ];
+
+        if (!empty($formatted_attachments)) {
+            $params["attachments_json"] = json_encode($formatted_attachments, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        }
 
         if ($user_id > 0) {
             $params["user_id"] = (string) $user_id;
