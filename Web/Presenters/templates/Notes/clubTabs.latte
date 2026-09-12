@@ -11,10 +11,10 @@
         <a href="/notes-{$club->getId()}/help">{_markup_help}</a>
     </div>
     <div n:attr="id => ($isView ? 'activetabs' : false)" class="tab">
-        <a n:attr="id => ($isView ? 'act_tab_a' : false)" href="{$pageUrl}">{_page_tab_view}</a>
+        <a n:attr="id => ($isView ? 'act_tab_a' : false)" href="{$pageUrl}">{_view_video}</a>
     </div>
     <div n:if="isset($thisUser) && $page->canBeEditedBy($thisUser)" n:attr="id => ($isEdit ? 'activetabs' : false)" class="tab">
-        <a n:attr="id => ($isEdit ? 'act_tab_a' : false)" href="{$pageUrl}/edit">{_page_tab_edit}</a>
+        <a n:attr="id => ($isEdit ? 'act_tab_a' : false)" href="{$pageUrl}/edit">{_edit}</a>
     </div>
     <div n:if="$page->keepsRevisions()" n:attr="id => ($isHistory ? 'activetabs' : false)" class="tab">
         <a n:attr="id => ($isHistory ? 'act_tab_a' : false)" href="{$pageUrl}/history">{_page_tab_history}</a>

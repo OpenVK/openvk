@@ -1558,10 +1558,7 @@
 "page_title_exists" = "A page with this title already exists.";
 "page_title_placeholder" = "Page title";
 "page_source_placeholder" = "Page text (Markdown)…";
-"page_tab_view" = "View";
-"page_tab_edit" = "Edit";
 "page_tab_history" = "History";
-"page_preview" = "Preview";
 "save_page" = "Save page";
 "page_access" = "Page access";
 "page_access_title" = "Access to this page";

@@ -6,8 +6,7 @@ namespace openvk\Web\Models\Repositories;
 
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Entities\{Note, NoteRevision, User, Club};
-use Nette\Database\Table\ActiveRow;
-use Nette\Database\Table\Selection;
+use Nette\Database\Table\{ActiveRow, Selection};
 
 class Notes
 {
@@ -75,7 +74,7 @@ class Notes
 
     public function getUserNotesCount(User $user): int
     {
-        return sizeof($this->table()->where("owner", $user->getId())->where("deleted", 0));
+        return $this->table()->where("owner", $user->getId())->where("deleted", 0)->count("*");
     }
 
     public function getClubNotes(Club $club, int $page = 1, ?int $perPage = null): \Traversable
@@ -93,10 +92,10 @@ class Notes
 
     public function getClubNotesCount(Club $club): int
     {
-        return sizeof($this->table()->where([
+        return $this->table()->where([
             "owner"   => -$club->getId(),
             "deleted" => 0,
-        ]));
+        ])->count("*");
     }
 
     public function getMainNote(Club $club): ?Note
@@ -142,7 +141,7 @@ class Notes
 
     public function getRevisionsCount(Note $note): int
     {
-        return sizeof($this->revisions()->where("note", $note->getId()));
+        return $this->revisions()->where("note", $note->getId())->count("*");
     }
 
     public function getRevision(Note $note, int $revisionId): ?NoteRevision
@@ -160,7 +159,7 @@ class Notes
             $keepIds[] = (int) $row->id;
         }
 
-        if (sizeof($keepIds) === 0) {
+        if (count($keepIds) === 0) {
             return;
         }
 

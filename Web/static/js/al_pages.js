@@ -7,7 +7,7 @@ window.OpenVKPages = (function () {
     }
 
     function previewLabel(editing) {
-        return editing ? tr("page_tab_edit") : tr("page_preview");
+        return editing ? tr("edit") : tr("note_preview");
     }
 
     function setPreviewButtons(editing) {
