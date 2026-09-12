@@ -237,23 +237,29 @@ class User extends RowModel
     {
         if ($fullName) {
             if ($startWithLastName) {
-                $name = $this->getLastName() . " " . $this->getFirstName();
+                $name = $this->getLastName(true) . " " . $this->getFirstName(true);
             } else {
-                $name = $this->getFirstName() . " " . $this->getLastName();
+                $name = $this->getFirstName(true) . " " . $this->getLastName(true);
             }
         } elseif ($startWithLastName == false) {
-            $name = $this->getFirstName();
+            $name = $this->getFirstName(true);
         } else {
-            $name = $this->getLastName();
+            $name = $this->getLastName(true);
         }
 
-        if (!preg_match("/^[А-Яа-яЁё\s-]+$/u", $name)) {
-            return $name;
-        } # name is probably not russian
+        if (preg_match("/^[А-Яа-яЁё\s-]+$/u", $name)) {
+            $inflected = inflectName($name, $case, $this->isFemale() ? Gender::FEMALE : Gender::MALE);
+            if ($inflected) {
+                $name = $inflected;
+            }
+        }
 
-        $inflected = inflectName($name, $case, $this->isFemale() ? Gender::FEMALE : Gender::MALE);
+        $tsn = tr("__transNames");
+        if ($tsn !== "@__transNames" && !empty($tsn)) {
+            return mb_convert_case(transliterator_transliterate($tsn, $name), MB_CASE_TITLE);
+        }
 
-        return $inflected ?: $name;
+        return $name;
     }
 
     public function getCanonicalName(): string

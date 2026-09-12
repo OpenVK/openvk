@@ -36,7 +36,7 @@ async function showUserDialog(event, userId) {
                     </div>
                 </div>
             </div>
-            <div style="display: flex;justify-content: space-between;">
+            <div class="modal-footer-actions">
                 <a class="udlg-goto">${tr('go_to_dialog').toLowerCase()} &rarr;</a>
 
                 <div>
@@ -104,8 +104,8 @@ function updateChatTitle(e, chat) {
         title: tr("change_chat_title"),
         close_on_buttons: false,
         body: `
-            <div style="padding: 10px 0;">
-                <input value="${escapeHtml(currentTitle)}" type="text" id="_new_chat_title" style="width: 100%; box-sizing: border-box; padding: 6px 8px; font-size: 13px;">
+            <div class="chat-title-edit-box">
+                <input value="${escapeHtml(currentTitle)}" type="text" id="_new_chat_title" class="chat-title-edit-input">
             </div>
         `,
         buttons: [tr("cancel"), tr("change")],

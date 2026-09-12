@@ -8,7 +8,7 @@ use Nette\InvalidStateException;
 use Nette\Utils\ImageException;
 use openvk\Web\Util\IMBroker;
 use openvk\Web\Models\Repositories\{Reports, Topics as TopicsRepo, Users as USRRepo, Clubs as ClubRepo, Messages as MSGRepo, Chats as ChatRepo};
-use openvk\Web\Models\Entities\{Report, Photo, Message, Club as ClubEnt};
+use openvk\Web\Models\Entities\{Report, Photo, Message, Club as ClubEnt, User as UserEnt};
 use openvk\Web\Models\Entities\Messages\Chat;
 use openvk\VKAPI\Handlers\{Users as APIUsers, Groups as APIClubs};
 use openvk\VKAPI\Utils\Uploader;
@@ -331,8 +331,193 @@ final class Messages extends VKAPIRequestHandler
         }
     }
 
+    private function trSafe(string $key, ...$args): string
+    {
+        $res = tr($key, ...$args);
+        if ($res === "@" . $key || $res === "@" . $key . "_other") {
+            return "";
+        }
+        return $res;
+    }
+
+    private function getDefaultChatTitle(int $chatId): string
+    {
+        $prefix = tr("chat");
+        if (empty($prefix) || str_starts_with($prefix, "@")) {
+            $prefix = "Chat";
+        }
+        return "$prefix $chatId";
+    }
+
+    private function formatChatActionText(array $message): ?string
+    {
+        $action = $message['action'] ?? null;
+        $actionType = null;
+        $actionMid = $message['action_mid'] ?? null;
+        $actionText = $message['action_text'] ?? null;
+
+        if (is_array($action)) {
+            $actionType = $action['type'] ?? null;
+            $actionMid  = $action['member_id'] ?? $actionMid;
+            $actionText = $action['text'] ?? $actionText;
+        } elseif (is_string($action)) {
+            $actionType = $action;
+        }
+
+        if (empty($actionType)) {
+            return null;
+        }
+
+        $fromId = (int) ($message['from_id'] ?? $message['user_id'] ?? 0);
+        $sender = $fromId > 0 ? (new USRRepo())->get($fromId) : null;
+        $gender = "neutral";
+        if ($sender instanceof UserEnt) {
+            if ($sender->isFemale()) {
+                $gender = "female";
+            } elseif (!$sender->isNeutral()) {
+                $gender = "male";
+            }
+        }
+
+        $targetName = null;
+        if (!empty($actionMid)) {
+            $targetUser = (new USRRepo())->get((int) $actionMid);
+            if ($targetUser instanceof UserEnt) {
+                $targetName = $targetUser->getCanonicalName();
+            } else {
+                $targetName = "id" . $actionMid;
+            }
+        }
+
+        $title = !is_null($actionText) ? trim((string) $actionText) : "";
+
+        switch ($actionType) {
+            case "chat_create":
+                if ($title !== "") {
+                    $out = $this->trSafe("event_chat_creation_" . $gender, $title);
+                } else {
+                    $out = $this->trSafe("event_chat_creation_no_title_" . $gender);
+                }
+                if (empty($out)) {
+                    $out = $this->trSafe("event_chat_create_impersonal");
+                }
+                return !empty($out) ? $out : (tr("event_chat_create_impersonal") ?: "Новый чат");
+
+            case "chat_title_update":
+                $out = $this->trSafe("event_chat_title_update_" . $gender, $title);
+                if (empty($out)) {
+                    $out = $this->trSafe("event_chat_title_update_impersonal");
+                }
+                return !empty($out) ? $out : (tr("event_chat_title_update_impersonal") ?: "Название беседы обновлено");
+
+            case "chat_photo_update":
+                $out = $this->trSafe("event_chat_photo_update_" . $gender);
+                if (empty($out)) {
+                    $out = $this->trSafe("event_chat_photo_update_impersonal");
+                }
+                return !empty($out) ? $out : (tr("event_chat_photo_update_impersonal") ?: "Фотография беседы обновлена");
+
+            case "chat_photo_remove":
+                $out = $this->trSafe("event_chat_photo_remove_" . $gender);
+                if (empty($out)) {
+                    $out = $this->trSafe("event_chat_photo_remove_impersonal");
+                }
+                return !empty($out) ? $out : (tr("event_chat_photo_remove_impersonal") ?: "Фотография беседы удалена");
+
+            case "chat_pin_message":
+                $out = $this->trSafe("event_chat_pin_message_" . $gender);
+                if (empty($out)) {
+                    $out = $this->trSafe("event_chat_pin_message_impersonal");
+                }
+                return !empty($out) ? $out : (tr("event_chat_pin_message_impersonal") ?: "Закреплено сообщение");
+
+            case "chat_unpin_message":
+                $out = $this->trSafe("event_chat_unpin_message_" . $gender);
+                if (empty($out)) {
+                    $out = $this->trSafe("event_chat_unpin_message_impersonal");
+                }
+                return !empty($out) ? $out : (tr("event_chat_unpin_message_impersonal") ?: "Откреплено сообщение");
+
+            case "chat_invite_user":
+                if ($actionMid && (int) $actionMid === $fromId) {
+                    $out = $this->trSafe("event_chat_invite_user_self_" . $gender);
+                } else {
+                    $out = $this->trSafe("event_chat_invite_user_" . $gender, $targetName ?? "");
+                }
+                if (empty($out)) {
+                    $out = $this->trSafe("event_chat_invite_user_impersonal");
+                }
+                return !empty($out) ? $out : (tr("event_chat_invite_user_impersonal") ?: "Приглашён участник");
+
+            case "chat_invite_user_by_link":
+                $out = $this->trSafe("event_chat_invite_user_by_link_" . $gender);
+                if (empty($out)) {
+                    $out = $this->trSafe("event_chat_invite_user_impersonal");
+                }
+                return !empty($out) ? $out : (tr("event_chat_invite_user_impersonal") ?: "Присоединился к беседе по ссылке");
+
+            case "chat_kick_user":
+                if ($actionMid && (int) $actionMid === $fromId) {
+                    $out = $this->trSafe("event_chat_kick_user_self_" . $gender);
+                } else {
+                    $out = $this->trSafe("event_chat_kick_user_" . $gender, $targetName ?? "");
+                }
+                if (empty($out)) {
+                    $out = $this->trSafe("event_chat_kick_user_impersonal");
+                }
+                return !empty($out) ? $out : (tr("event_chat_kick_user_impersonal") ?: "Участник исключён");
+
+            case "chat_moderator_add":
+                $out = $this->trSafe("event_chat_moderator_add_" . $gender, $targetName ?? "");
+                if (empty($out)) {
+                    $out = $this->trSafe("event_chat_moderator_add_impersonal");
+                }
+                return !empty($out) ? $out : (tr("event_chat_moderator_add_impersonal") ?: "Назначен администратор");
+
+            case "chat_moderator_remove":
+                $out = $this->trSafe("event_chat_moderator_remove_" . $gender, $targetName ?? "");
+                if (empty($out)) {
+                    $out = $this->trSafe("event_chat_moderator_remove_impersonal");
+                }
+                return !empty($out) ? $out : (tr("event_chat_moderator_remove_impersonal") ?: "Сняты полномочия администратора");
+
+            case "rating_up":
+                $senderName = $sender ? $sender->getCanonicalName() : "id" . $fromId;
+                $out = $this->trSafe("event_chat_user_up_your_rating_" . $gender, $senderName, (string) ($actionMid ?? ""));
+                if (empty($out)) {
+                    $out = $this->trSafe("event_chat_rating_up_impersonal");
+                }
+                return !empty($out) ? $out : "Вам повысили рейтинг";
+
+            case "coins_transfer":
+                $senderName = $sender ? $sender->getCanonicalName() : "id" . $fromId;
+                $out = $this->trSafe("event_chat_user_added_voices_" . $gender, $senderName, (string) ($actionMid ?? ""));
+                if (empty($out)) {
+                    $out = $this->trSafe("event_coins_transfer_impersonal");
+                }
+                return !empty($out) ? $out : "Вам внесли голоса";
+
+            default:
+                $out = $this->trSafe("event_" . $actionType . "_impersonal");
+                if (!empty($out)) {
+                    return $out;
+                }
+                return (string) ($message['body'] ?? $message['text'] ?? "");
+        }
+    }
+
     private function sanitizeMessageAttachmentsRecursive(array &$message): void
     {
+        if (!empty($message['action'])) {
+            $actionFormatted = $this->formatChatActionText($message);
+            if (!empty($actionFormatted)) {
+                $message['body'] = $actionFormatted;
+                if (isset($message['text'])) {
+                    $message['text'] = $actionFormatted;
+                }
+            }
+        }
+
         if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
             if (!empty($message['reply_message']) && empty($message['fwd_messages'])) {
                 $message['fwd_messages'] = [$message['reply_message']];
@@ -455,7 +640,7 @@ final class Messages extends VKAPIRequestHandler
 
                 $chatEntity = $loadedChats[$localChatId] ?? $chatsRepo->getByChatId($localChatId);
                 if (!$chatEntity) {
-                    $chatEntity = $chatsRepo->create($localChatId, "Chat " . $localChatId);
+                    $chatEntity = $chatsRepo->create($localChatId, $this->getDefaultChatTitle($localChatId));
                 }
 
                 if (!$chatEntity->hasData() && is_array($chat)) {
@@ -653,6 +838,19 @@ final class Messages extends VKAPIRequestHandler
                     $msgObj['important'] = true;
                 }
 
+                if (!empty($message['action'])) {
+                    $msgObj['action'] = $message['action'];
+                    if (!empty($message['action_mid'])) {
+                        $msgObj['action_mid'] = (int) $message['action_mid'];
+                    }
+                    if (!empty($message['action_text'])) {
+                        $msgObj['action_text'] = (string) $message['action_text'];
+                    }
+                    if (!empty($message['action_email'])) {
+                        $msgObj['action_email'] = (string) $message['action_email'];
+                    }
+                }
+
                 if (!$isDeleted) {
                     $this->sanitizeMessageAttachmentsRecursive($msgObj);
                 } elseif (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
@@ -670,7 +868,7 @@ final class Messages extends VKAPIRequestHandler
 
                     if ($chatEntity) {
                         $chatStruct = $chatEntity->toChatSettingsStruct($this->getUser());
-                        $msgObj['title'] = !empty($rawTitle) ? $rawTitle : ($chatStruct['title'] ?? ("Chat " . $chatId));
+                        $msgObj['title'] = !empty($rawTitle) ? $rawTitle : ($chatStruct['title'] ?? $this->getDefaultChatTitle($chatId));
                         $msgObj['admin_id'] = $rawAdmin ?: (int) ($chatStruct['admin_id'] ?? 0);
                         $msgObj['users_count'] = $rawCount ?: (int) ($chatStruct['members_count'] ?? 0);
                         $msgObj['chat_active'] = !empty($rawActive) ? $rawActive : ($chatStruct['active_ids'] ?? []);
@@ -688,7 +886,7 @@ final class Messages extends VKAPIRequestHandler
                             "photo_200"  => $msgObj['photo_200'],
                         ]);
                     } else {
-                        $msgObj['title'] = !empty($rawTitle) ? $rawTitle : ("Chat " . $chatId);
+                        $msgObj['title'] = !empty($rawTitle) ? $rawTitle : $this->getDefaultChatTitle($chatId);
                         $msgObj['admin_id'] = $rawAdmin;
                         $msgObj['users_count'] = $rawCount;
                         $msgObj['chat_active'] = $rawActive;
@@ -824,7 +1022,7 @@ final class Messages extends VKAPIRequestHandler
                     if ($chatObj) {
                         $chatStruct = $chatObj->toChatSettingsStruct($this->getUser());
                         if (empty($item['title'])) {
-                            $item['title'] = $chatStruct['title'] ?? ("Chat " . $cId);
+                            $item['title'] = $chatStruct['title'] ?? $this->getDefaultChatTitle($cId);
                         }
                         if (empty($item['photo_50'])) {
                             $item['photo_50'] = $chatStruct['photo_50'] ?? "";
@@ -1285,7 +1483,7 @@ final class Messages extends VKAPIRequestHandler
                     if ($chatObj) {
                         $chatStruct = $chatObj->toChatSettingsStruct($this->getUser());
                         if (empty($item['title'])) {
-                            $item['title'] = $chatStruct['title'] ?? ("Chat " . $cId);
+                            $item['title'] = $chatStruct['title'] ?? $this->getDefaultChatTitle($cId);
                         }
                         if (empty($item['photo_50'])) {
                             $item['photo_50'] = $chatStruct['photo_50'] ?? "";
@@ -1434,7 +1632,7 @@ final class Messages extends VKAPIRequestHandler
                     if ($chatObj) {
                         $chatStruct = $chatObj->toChatSettingsStruct($this->getUser());
                         if (empty($item['title'])) {
-                            $item['title'] = $chatStruct['title'] ?? ("Chat " . $cId);
+                            $item['title'] = $chatStruct['title'] ?? $this->getDefaultChatTitle($cId);
                         }
                         if (empty($item['photo_50'])) {
                             $item['photo_50'] = $chatStruct['photo_50'] ?? "";
@@ -1692,7 +1890,7 @@ final class Messages extends VKAPIRequestHandler
             $chatEntity = $chatsRepo->getByChatId($localChatId);
 
             if (!$chatEntity) {
-                $chatEntity = $chatsRepo->create($localChatId, "Chat " . $localChatId);
+                $chatEntity = $chatsRepo->create($localChatId, $this->getDefaultChatTitle($localChatId));
             }
 
             if (isset($itemsMap[$localChatId])) {
@@ -1958,7 +2156,7 @@ final class Messages extends VKAPIRequestHandler
 
                 if (!$chatEntity) {
                     $chatsRepo = new ChatRepo();
-                    $chatEntity = $chatsRepo->create($chatId, "Chat " . $chatId);
+                    $chatEntity = $chatsRepo->create($chatId, $this->getDefaultChatTitle($chatId));
                     $loadedChats[$chatId] = $chatEntity;
                 }
 
@@ -2123,7 +2321,7 @@ final class Messages extends VKAPIRequestHandler
                 if (!$chatEntity) {
                     try {
                         $chatsRepo = new ChatRepo();
-                        $chatEntity = $chatsRepo->create($localChatId, "Chat " . $localChatId);
+                        $chatEntity = $chatsRepo->create($localChatId, $this->getDefaultChatTitle($localChatId));
                         $loadedChats[$localChatId] = $chatEntity;
                     } catch (\Exception $e) {
                         $chatEntity = null;
@@ -2135,7 +2333,7 @@ final class Messages extends VKAPIRequestHandler
                         $chatEntity->setData($chatSettings);
                     }
                     $chatStruct = $chatEntity->toChatSettingsStruct($this->getUser());
-                    $msgObj['title'] = !empty($msgObj['title']) ? $msgObj['title'] : ($chatStruct['title'] ?? ("Chat " . $localChatId));
+                    $msgObj['title'] = !empty($msgObj['title']) ? $msgObj['title'] : ($chatStruct['title'] ?? $this->getDefaultChatTitle($localChatId));
                     $msgObj['admin_id'] = (int) ($chatStruct['admin_id'] ?? ($chatSettings['admin_id'] ?? 0));
                     $msgObj['users_count'] = (int) ($chatStruct['members_count'] ?? count($members));
                     $msgObj['chat_active'] = $chatStruct['active_ids'] ?? array_slice($members, 0, 10);
@@ -2153,7 +2351,7 @@ final class Messages extends VKAPIRequestHandler
                         "photo_200"  => $msgObj['photo_200'],
                     ]);
                 } else {
-                    $msgObj['title'] = !empty($msgObj['title']) ? $msgObj['title'] : ("Chat " . $localChatId);
+                    $msgObj['title'] = !empty($msgObj['title']) ? $msgObj['title'] : $this->getDefaultChatTitle($localChatId);
                     $msgObj['admin_id'] = (int) ($chatSettings['admin_id'] ?? 0);
                     $msgObj['users_count'] = count($members);
                     $msgObj['chat_active'] = array_slice($members, 0, 10);
@@ -2334,7 +2532,7 @@ final class Messages extends VKAPIRequestHandler
                     $addedChatIds[$localChatId] = true;
                     $chatEntity = $chatsRepo->getByChatId($localChatId);
                     if (!$chatEntity) {
-                        $chatEntity = $chatsRepo->create($localChatId, "Chat " . $localChatId);
+                        $chatEntity = $chatsRepo->create($localChatId, $this->getDefaultChatTitle($localChatId));
                     }
                     $chatStruct = $chatEntity->toVkApiStruct($this->getUser());
                     $chatStruct['type'] = 'chat';
@@ -2503,15 +2701,30 @@ final class Messages extends VKAPIRequestHandler
         $response = $this->invoke("messages.getConversationMembers", $params, $group_id);
 
         if ($extended) {
-            $this->hydrateExtendedData($response, "photo_50,photo_100,photo_200,online,last_seen,sex");
+            $this->hydrateExtendedData($response, "photo_50,photo_100,photo_200,online,last_seen,sex,screen_name");
         }
 
-        return [
+        $res = [
             "count"    => (int)($response['count'] ?? 0),
             "items"    => $response['items'] ?? [],
             "profiles" => $response['profiles'] ?? [],
             "groups"   => $response['groups'] ?? [],
         ];
+
+        if (!empty($response['chat_settings'])) {
+            $chatSettings = $response['chat_settings'];
+            if ($peer_id > 2000000000) {
+                $chatId = $peer_id - 2000000000;
+                $chatObj = (new ChatRepo())->getByChatId($chatId);
+                if ($chatObj) {
+                    $chatObj->setData($chatSettings);
+                    $chatSettings = $chatObj->toChatSettingsStruct($this->getUser());
+                }
+            }
+            $res['chat_settings'] = $chatSettings;
+        }
+
+        return $res;
     }
 
     public function getConversationsById(string $peer_ids = '', int $extended = 0, int $group_id = 0): array
@@ -2576,7 +2789,7 @@ final class Messages extends VKAPIRequestHandler
 
                     if (!$chatEntity) {
                         $chatsRepo = new ChatRepo();
-                        $chatEntity = $chatsRepo->create($chatId, "Chat " . $chatId);
+                        $chatEntity = $chatsRepo->create($chatId, $this->getDefaultChatTitle($chatId));
                         $loadedChats[$chatId] = $chatEntity;
                     }
 
@@ -2879,7 +3092,7 @@ final class Messages extends VKAPIRequestHandler
                 if ($isLegacy && $loadedChat && !empty($message['chat_id'])) {
                     $chatStruct = $loadedChat->toChatSettingsStruct($this->getUser());
                     if (empty($message['title'])) {
-                        $message['title'] = $chatStruct['title'] ?? ("Chat " . $message['chat_id']);
+                        $message['title'] = $chatStruct['title'] ?? $this->getDefaultChatTitle((int) $message['chat_id']);
                     }
                     if (empty($message['photo_50'])) {
                         $message['photo_50'] = $chatStruct['photo_50'] ?? "";
@@ -3594,5 +3807,108 @@ final class Messages extends VKAPIRequestHandler
         }
 
         return $res;
+    }
+
+    public function setMemberRole(int $peer_id = 0, int $user_id = 0, int $member_id = 0, string $role = "", int $chat_id = 0, int $group_id = 0): int
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        $this->ensureBrokerActive();
+
+        if ($peer_id === 0 && $chat_id > 0) {
+            $peer_id = 2000000000 + $chat_id;
+        }
+
+        if ($user_id <= 0 && $member_id > 0) {
+            $user_id = $member_id;
+        }
+
+        if (empty($role)) {
+            $role = (string) ($_GET['role'] ?? $_POST['role'] ?? '');
+        }
+        $role = strtolower(trim($role));
+
+        if ($peer_id <= 2000000000 || $user_id <= 0) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: peer_id and user_id/member_id are required");
+        }
+
+        if ($role !== 'admin' && $role !== 'member') {
+            $this->fail(100, "Invalid parameter: role must be 'admin' or 'member'");
+        }
+
+        $params = [
+            "peer_id"   => $peer_id,
+            "user_id"   => $user_id,
+            "member_id" => $user_id,
+            "role"      => $role,
+        ];
+
+        $res = $this->invoke("messages.setMemberRole", $params, $group_id);
+        return is_numeric($res) ? (int) $res : 1;
+    }
+
+    public function setChatPermissions(
+        int $peer_id = 0,
+        int $chat_id = 0,
+        string $permissions = "",
+        string $invite = "",
+        string $change_info = "",
+        string $change_pin = "",
+        string $use_mass_mentions = "",
+        string $see_invite_link = "",
+        string $change_invite_link = "",
+        string $regenerate_link = "",
+        string $call = "",
+        string $change_admins = "",
+        int $group_id = 0
+    ): int {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        $this->ensureBrokerActive();
+
+        if ($peer_id === 0 && $chat_id > 0) {
+            $peer_id = 2000000000 + $chat_id;
+        }
+
+        if ($peer_id <= 2000000000) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: peer_id must be a group chat");
+        }
+
+        $params = [
+            "peer_id" => $peer_id,
+        ];
+
+        if (!empty($permissions)) {
+            $params["permissions"] = $permissions;
+        }
+        if (!empty($invite)) {
+            $params["invite"] = $invite;
+        }
+        if (!empty($change_info)) {
+            $params["change_info"] = $change_info;
+        }
+        if (!empty($change_pin)) {
+            $params["change_pin"] = $change_pin;
+        }
+        if (!empty($use_mass_mentions)) {
+            $params["use_mass_mentions"] = $use_mass_mentions;
+        }
+        if (!empty($see_invite_link)) {
+            $params["see_invite_link"] = $see_invite_link;
+        }
+        if (!empty($change_invite_link)) {
+            $params["change_invite_link"] = $change_invite_link;
+        } elseif (!empty($regenerate_link)) {
+            $params["change_invite_link"] = $regenerate_link;
+        }
+        if (!empty($call)) {
+            $params["call"] = $call;
+        }
+        if (!empty($change_admins)) {
+            $params["change_admins"] = $change_admins;
+        }
+
+        $res = $this->invoke("messages.setChatPermissions", $params, $group_id);
+        return is_numeric($res) ? (int) $res : 1;
     }
 }

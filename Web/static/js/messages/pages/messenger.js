@@ -36,10 +36,16 @@ export class Messenger {
 
         this.toggled_peer_obj = null;
 
-        this.replyTo = null;
-        this.editMsg = null;
+        this._replyTo = null;
+        this._editMsg = null;
         this._typingStarted = null;
         this._window = null;
+
+        this.mentionActive = false;
+        this.mentionMatches = [];
+        this.mentionSelectedIndex = 0;
+        this.mentionQuery = "";
+        this.mentionTriggerPos = -1;
     }
 
     getWindow() {
@@ -533,34 +539,34 @@ export class Messenger {
         let attachmentsHtml = "";
         const atts = pinMsg.getAttachments();
         if (atts && atts.length > 0) {
-            attachmentsHtml = `<div class="attachments" style="margin-top: 8px;">`;
+            attachmentsHtml = `<div class="attachments pinned-message-attachments">`;
             for (const att of atts) {
                 if (att.photo) {
                     const src = att.photo.photo_604 || att.photo.photo_130 || att.photo.photo_75 || att.photo.link;
-                    attachmentsHtml += `<div style="margin-top:4px;"><img src="${src}" style="max-width: 100%; border-radius: 2px;" /></div>`;
+                    attachmentsHtml += `<div class="pinned-message-attachment-item"><img src="${src}" class="pinned-message-attachment-img" /></div>`;
                 } else if (att.video) {
-                    attachmentsHtml += `<div style="margin-top:4px;"><b>${tr("chat_media_video")}:</b> ${escapeHtml(att.video.title || "")}</div>`;
+                    attachmentsHtml += `<div class="pinned-message-attachment-item"><b>${tr("chat_media_video")}:</b> ${escapeHtml(att.video.title || "")}</div>`;
                 } else if (att.audio) {
-                    attachmentsHtml += `<div style="margin-top:4px;"><b>${tr("chat_media_audio")}:</b> ${escapeHtml(att.audio.artist || "")} - ${escapeHtml(att.audio.title || "")}</div>`;
+                    attachmentsHtml += `<div class="pinned-message-attachment-item"><b>${tr("chat_media_audio")}:</b> ${escapeHtml(att.audio.artist || "")} - ${escapeHtml(att.audio.title || "")}</div>`;
                 } else if (att.doc) {
-                    attachmentsHtml += `<div style="margin-top:4px;"><b>${tr("chat_media_doc")}:</b> <a href="${att.doc.url}" target="_blank">${escapeHtml(att.doc.title || "")}</a></div>`;
+                    attachmentsHtml += `<div class="pinned-message-attachment-item"><b>${tr("chat_media_doc")}:</b> <a href="${att.doc.url}" target="_blank">${escapeHtml(att.doc.title || "")}</a></div>`;
                 }
             }
             attachmentsHtml += `</div>`;
         }
 
         const bodyHtml = `
-            <div class="pinned-message-modal-content" style="padding: 10px 0;">
-                <div style="display: flex; gap: 10px; align-items: flex-start;">
-                    <a href="${senderUrl}" style="flex-shrink: 0;">
-                        <img src="${senderAva}" style="width: 40px; height: 40px; object-fit: cover;" />
+            <div class="pinned-message-modal-content">
+                <div class="pinned-message-modal-inner">
+                    <a href="${senderUrl}" class="pinned-message-sender-link">
+                        <img src="${senderAva}" class="ava pinned-message-ava" />
                     </a>
-                    <div style="flex: 1; min-width: 0;">
-                        <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                            <a href="${senderUrl}" style="font-weight: bold; color: var(--link); text-decoration: none;">${escapeHtml(senderName)}</a>
-                            <span style="color: #999; font-size: 10px;">${formattedDate}</span>
+                    <div class="pinned-message-body">
+                        <div class="pinned-message-header">
+                            <a href="${senderUrl}" class="pinned-message-author">${escapeHtml(senderName)}</a>
+                            <span class="pinned-message-date">${formattedDate}</span>
                         </div>
-                        <div class="normalText" style="margin-top: 5px; font-size: 12px; line-height: 1.4; word-break: break-word;">
+                        <div class="normalText pinned-message-text">
                             ${formattedText}
                         </div>
                         ${attachmentsHtml}
@@ -975,8 +981,34 @@ export class Messenger {
         }, 50);
     }
 
+    get replyTo() {
+        return this._replyTo || null;
+    }
+
+    set replyTo(val) {
+        if (val) {
+            this._editMsg = null;
+        }
+        this._replyTo = val;
+    }
+
+    get editMsg() {
+        return this._editMsg || null;
+    }
+
+    set editMsg(val) {
+        if (val) {
+            this._replyTo = null;
+        }
+        this._editMsg = val;
+    }
+
     isEditing() {
         return this.editMsg != null;
+    }
+
+    isReplying() {
+        return this.replyTo != null;
     }
 
     async goToMessage(msg, presetConvo = null, open_tab = true) {
@@ -1040,14 +1072,34 @@ export class MessengerPage extends IMPage {
 
         this.toggled_peer_obj = null;
 
-        this.replyTo = null;
-        this.editMsg = null;
+        this._replyTo = null;
+        this._editMsg = null;
         this._scrollTicking = false;
         this._readObserver = null;
         this._readTimer = null;
         this._pendingReadId = 0;
         this._hasBoundReadVisibility = false;
     }
+    get replyTo() {
+        return window.im?.messenger?.replyTo || this._replyTo || null;
+    }
+    set replyTo(val) {
+        if (window.im?.messenger) {
+            window.im.messenger.replyTo = val;
+        }
+        this._replyTo = val;
+    }
+
+    get editMsg() {
+        return window.im?.messenger?.editMsg || this._editMsg || null;
+    }
+    set editMsg(val) {
+        if (window.im?.messenger) {
+            window.im.messenger.editMsg = val;
+        }
+        this._editMsg = val;
+    }
+
     getCurrentChat() {
         return window.im?.messenger?.getCurrentChat?.() || this.current_chat;
     }
@@ -1162,14 +1214,19 @@ export class MessengerPage extends IMPage {
                 onKeyPress=${(e) => this.onTextareaKeyPress(e)}
                 currentDraft=${orig_messenger.currentDraft}
                 onInput=${(e) => {
-                    const val = e.target.value;
+                    const val = e.target.value !== undefined ? e.target.value : (e.target._contentEditable ? e.target._contentEditable.getText() : e.target.innerText);
                     this.currentDraft = val;
                     if (orig_messenger) orig_messenger.currentDraft = val;
+                    this.checkMentionTrigger(e.target);
                 }}
                 togglePeerInfo=${(e) => { this.togglePeerInfo() }}
                 clickOnReply=${(msg, e) => { this.clickOnReply(msg, e) }}
                 forwarded_msg=${orig_messenger.forwarded_msg}
                 onRemoveForward=${() => orig_messenger.removeForward()}
+                mentionActive=${orig_messenger.mentionActive}
+                mentionMatches=${orig_messenger.mentionMatches}
+                mentionSelectedIndex=${orig_messenger.mentionSelectedIndex}
+                onApplyMention=${(item) => this.applyMention(item)}
                 />` : ""}
             </div>
             </div>
@@ -1242,15 +1299,387 @@ export class MessengerPage extends IMPage {
         return allMsgs;
     }
 
+    getMentionCandidates(query) {
+        const currentConv = window.im.messenger.getCurrentChat();
+        if (!currentConv || !currentConv.peer) return [];
+
+        const peer = currentConv.peer;
+        const isChat = peer.supposed_type === "chat";
+        const candidates = [];
+        const q = (query || "").toLowerCase();
+        const currentUid = Number(window.openvk ? window.openvk.current_id : window.im?.state?.getId());
+
+        if (isChat) {
+            const canMass = peer.can ? (peer.can("use_mass_mentions") || peer.can("mass_mentions")) : true;
+            if (canMass) {
+                const allLabel = tr("chat_mention_all");
+                if (!q || "all".startsWith(q) || allLabel.toLowerCase().includes(q) || "все".startsWith(q) || "всем".startsWith(q)) {
+                    candidates.push({
+                        id: 0,
+                        name: allLabel,
+                        type: "all",
+                        tag: "@all",
+                        avatar: null
+                    });
+                }
+
+                const onlineLabel = tr("chat_mention_online");
+                if (!q || "online".startsWith(q) || onlineLabel.toLowerCase().includes(q) || "онлайн".startsWith(q)) {
+                    candidates.push({
+                        id: -1,
+                        name: onlineLabel,
+                        type: "online",
+                        tag: "@online",
+                        avatar: null
+                    });
+                }
+            }
+
+            let rawMembers = [];
+            if (peer.members && Array.isArray(peer.members.items) && peer.members.items.length > 0) {
+                rawMembers = peer.members.items;
+            } else if (Array.isArray(peer.members) && peer.members.length > 0) {
+                rawMembers = peer.members;
+            } else if (peer.data && Array.isArray(peer.data.members) && peer.data.members.length > 0) {
+                rawMembers = peer.data.members;
+            } else if (peer.data?.chat_settings && Array.isArray(peer.data.chat_settings.active_ids) && peer.data.chat_settings.active_ids.length > 0) {
+                rawMembers = peer.data.chat_settings.active_ids;
+            } else if (peer.data && Array.isArray(peer.data.users) && peer.data.users.length > 0) {
+                rawMembers = peer.data.users;
+            }
+
+            if (rawMembers.length === 0 && typeof peer.checkMembers === 'function' && (!peer.members || !peer.members.items || peer.members.items.length === 0)) {
+                peer.checkMembers().then(() => {
+                    const msgr = window.im?.messenger;
+                    if (msgr && msgr.mentionActive) {
+                        const c = msgr.getMentionCandidates(msgr.mentionQuery);
+                        if (c.length > 0) {
+                            msgr.mentionMatches = c;
+                            msgr.update();
+                        }
+                    }
+                }).catch(console.error);
+            }
+
+            const seenUids = new Set();
+            for (const m of rawMembers) {
+                let uid = 0;
+                let prof = null;
+                let mFirstName = "";
+                let mLastName = "";
+                let mPhoto = "";
+
+                if (typeof m === "number" || typeof m === "string") {
+                    uid = Number(m);
+                } else if (m) {
+                    uid = Number(m.member_id || m.id || m.user_id || 0);
+                    if (m.profile) prof = m.profile;
+                    if (m.first_name) mFirstName = m.first_name;
+                    if (m.last_name) mLastName = m.last_name;
+                    if (m.photo_50 || m.photo_100 || m.photo) mPhoto = m.photo_50 || m.photo_100 || m.photo;
+                }
+
+                if (!uid || uid === currentUid || seenUids.has(uid)) continue;
+                seenUids.add(uid);
+
+                let cachedProf = window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached?.(uid)
+                    || window.im?.cached_profiles?._findCachedProfileById?.(uid);
+
+                let name = "";
+                let firstName = "";
+                let avatar = "";
+
+                if (cachedProf && typeof cachedProf.getName === "function") {
+                    name = cachedProf.getName();
+                    firstName = cachedProf.first_name || (cachedProf.data && cachedProf.data.first_name) || name.split(" ")[0] || name;
+                    avatar = cachedProf.getAvatar ? cachedProf.getAvatar("min", false) : (cachedProf.data?.photo_50 || cachedProf.data?.photo_100);
+                } else if (prof) {
+                    name = `${prof.first_name || ''} ${prof.last_name || ''}`.trim() || `id${uid}`;
+                    firstName = prof.first_name || name.split(" ")[0] || name;
+                    avatar = prof.photo_50 || prof.photo_100 || (prof.getAvatar ? prof.getAvatar("min", false) : null);
+                } else if (mFirstName) {
+                    name = `${mFirstName} ${mLastName}`.trim();
+                    firstName = mFirstName;
+                    avatar = mPhoto;
+                } else {
+                    name = `id${uid}`;
+                    firstName = `id${uid}`;
+                }
+
+                let screenName = prof?.screen_name || prof?.domain || cachedProf?.screen_name || cachedProf?.domain;
+                if (!screenName && cachedProf?.data) {
+                    screenName = cachedProf.data.screen_name || cachedProf.data.domain;
+                }
+                if (!screenName && m) {
+                    screenName = m.screen_name || m.domain;
+                }
+
+                let slug = (screenName && screenName !== `id${uid}` && screenName !== `club${Math.abs(uid)}`)
+                    ? screenName
+                    : (uid > 0 ? `id${uid}` : `club${Math.abs(uid)}`);
+                let displaySlug = slug.startsWith('@') ? slug : `@${slug}`;
+
+                if (!avatar || avatar.includes("camera_c.gif")) {
+                    avatar = "/assets/packages/static/openvk/img/camera_50.png";
+                }
+
+                const matchQuery = !q ||
+                    name.toLowerCase().includes(q) ||
+                    firstName.toLowerCase().includes(q) ||
+                    slug.toLowerCase().includes(q) ||
+                    displaySlug.toLowerCase().includes(q) ||
+                    String(uid).includes(q) ||
+                    ("id" + uid).includes(q);
+
+                if (matchQuery) {
+                    candidates.push({
+                        id: uid,
+                        name: name,
+                        firstName: firstName,
+                        slug: slug,
+                        displaySlug: displaySlug,
+                        type: "user",
+                        tag: `[id${uid}|${firstName}]`,
+                        avatar: avatar
+                    });
+                }
+            }
+        } else {
+            if (peer.id > 0) {
+                const uid = Number(peer.id);
+                if (uid !== currentUid) {
+                    const name = peer.getName ? peer.getName() : (peer.name || `id${uid}`);
+                    const firstName = peer.first_name || (peer.data && peer.data.first_name) || name.split(" ")[0] || name;
+                    let avatar = peer.getAvatar ? peer.getAvatar("min", false) : (peer.data?.photo_50 || "/assets/packages/static/openvk/img/camera_50.png");
+                    if (!avatar || avatar.includes("camera_c.gif")) {
+                        avatar = "/assets/packages/static/openvk/img/camera_50.png";
+                    }
+
+                    const screenName = peer.screen_name || peer.domain || peer.data?.screen_name || peer.data?.domain;
+                    const slug = (screenName && screenName !== `id${uid}`) ? screenName : `id${uid}`;
+                    const displaySlug = slug.startsWith('@') ? slug : `@${slug}`;
+
+                    const matchQuery = !q ||
+                        name.toLowerCase().includes(q) ||
+                        firstName.toLowerCase().includes(q) ||
+                        slug.toLowerCase().includes(q) ||
+                        displaySlug.toLowerCase().includes(q) ||
+                        String(uid).includes(q) ||
+                        ("id" + uid).includes(q);
+
+                    if (matchQuery) {
+                        candidates.push({
+                            id: uid,
+                            name: name,
+                            firstName: firstName,
+                            slug: slug,
+                            displaySlug: displaySlug,
+                            type: "user",
+                            tag: `[id${uid}|${firstName}]`,
+                            avatar: avatar
+                        });
+                    }
+                }
+            }
+        }
+
+        return candidates;
+    }
+
+    checkMentionTrigger(el) {
+        if (!el) return;
+        let text = "";
+        let cursorPos = 0;
+
+        if (el.tagName && el.tagName.toLowerCase() === "textarea") {
+            text = el.value || "";
+            cursorPos = el.selectionEnd != null ? el.selectionEnd : (el.selectionStart || 0);
+        } else if (typeof el.getText === "function") {
+            text = el.getText() || "";
+            cursorPos = el.selectionEnd != null ? el.selectionEnd : (el.selectionStart != null ? el.selectionStart : text.length);
+        } else if (el._contentEditable) {
+            text = el._contentEditable.getText() || "";
+            cursorPos = el.selectionEnd != null ? el.selectionEnd : (el._contentEditable.el?.selectionEnd || text.length);
+        } else {
+            text = el.innerText || el.textContent || "";
+            cursorPos = text.length;
+        }
+
+        const textBefore = text.substring(0, cursorPos);
+        const match = textBefore.match(/(?:^|[\s(])([@*])([^\s@*]*)$/);
+
+        if (match) {
+            const symbol = match[1];
+            const symbolIdx = textBefore.length - match[2].length - 1;
+            const query = match[2];
+            const candidates = this.getMentionCandidates(query);
+            if (candidates.length > 0) {
+                const messenger = window.im?.messenger;
+                if (messenger) {
+                    messenger.mentionMatches = candidates;
+                    messenger.mentionSelectedIndex = candidates.length - 1; // листаемый снизу вверх
+                    messenger.mentionActive = true;
+                    messenger.mentionQuery = query;
+                    messenger.mentionTrigger = {
+                        symbol: symbol,
+                        symbolIdx: symbolIdx,
+                        cursorPos: cursorPos,
+                        query: query,
+                    };
+                }
+                this.update();
+                return;
+            }
+        }
+
+        this.closeMention();
+    }
+
+    closeMention() {
+        const messenger = window.im?.messenger;
+        if (messenger && messenger.mentionActive) {
+            messenger.mentionActive = false;
+            messenger.mentionMatches = [];
+            messenger.mentionSelectedIndex = 0;
+            messenger.mentionQuery = "";
+            messenger.mentionTrigger = null;
+            this.update();
+        }
+    }
+
+    applyMention(item) {
+        if (!item) return;
+
+        const el = this.container?.querySelector(".messenger-app--input---messagebox .content-editable, .messenger-app--input---messagebox textarea, #write .content-editable, #write textarea")
+            || document.querySelector(".messenger-app--input---messagebox .content-editable, .messenger-app--input---messagebox textarea, #write .content-editable, #write textarea");
+        if (!el) return;
+
+        let text = "";
+        let cursorPos = 0;
+        const isTextarea = el.tagName && el.tagName.toLowerCase() === "textarea";
+
+        if (isTextarea) {
+            text = el.value || "";
+            cursorPos = el.selectionEnd != null ? el.selectionEnd : (el.selectionStart || 0);
+        } else if (typeof el.getText === "function") {
+            text = el.getText() || "";
+            cursorPos = el.selectionEnd != null ? el.selectionEnd : text.length;
+        } else if (el._contentEditable) {
+            text = el._contentEditable.getText() || "";
+            cursorPos = el.selectionEnd != null ? el.selectionEnd : text.length;
+        } else {
+            text = el.innerText || el.textContent || "";
+            cursorPos = text.length;
+        }
+
+        const messenger = window.im?.messenger;
+        const trigger = messenger?.mentionTrigger;
+
+        let symbolIdx = -1;
+        let replaceEnd = cursorPos;
+
+        const textBefore = text.substring(0, cursorPos);
+        const match = textBefore.match(/(?:^|[\s(])([@*])([^\s@*]*)$/);
+
+        if (match) {
+            symbolIdx = textBefore.length - match[2].length - 1;
+            replaceEnd = cursorPos;
+        } else if (trigger && trigger.symbolIdx >= 0 && trigger.symbolIdx < text.length) {
+            symbolIdx = trigger.symbolIdx;
+            replaceEnd = Math.max(trigger.cursorPos, symbolIdx + (trigger.query ? trigger.query.length + 1 : 1));
+        } else {
+            const lastAt = text.lastIndexOf("@");
+            const lastStar = text.lastIndexOf("*");
+            symbolIdx = Math.max(lastAt, lastStar);
+            if (symbolIdx >= 0) {
+                replaceEnd = text.length;
+            }
+        }
+
+        if (symbolIdx >= 0 && symbolIdx <= text.length) {
+            const before = text.substring(0, symbolIdx);
+            const after = text.substring(replaceEnd);
+            const tagStr = item.tag || (item.type === 'all' ? '@all' : (item.type === 'online' ? '@online' : `[id${item.id}|${item.firstName || item.name}]`));
+            const replacement = tagStr + " ";
+            const newText = before + replacement + after;
+            const newCursorPos = before.length + replacement.length;
+
+            if (isTextarea) {
+                el.value = newText;
+                if (typeof el.setSelectionRange === "function") {
+                    el.setSelectionRange(newCursorPos, newCursorPos);
+                }
+                el.focus();
+            } else if (typeof el.setText === "function") {
+                el.setText(newText);
+                if (typeof el.editableFocus === "function") {
+                    el.editableFocus(null, true);
+                } else if (el._contentEditable && typeof el._contentEditable.editableFocus === "function") {
+                    el._contentEditable.editableFocus(null, true);
+                }
+                el.focus();
+            } else if (el._contentEditable) {
+                el._contentEditable.setText(newText);
+                if (typeof el._contentEditable.editableFocus === "function") {
+                    el._contentEditable.editableFocus(null, true);
+                }
+                el.focus();
+            } else {
+                el.innerText = newText;
+                el.focus();
+            }
+
+            this.currentDraft = newText;
+            if (messenger) {
+                messenger.currentDraft = newText;
+            }
+        }
+
+        this.closeMention();
+        this.update();
+    }
+
     onTextareaKeyPress(e) {
         const ta = e.target;
         const isCtrl = e.ctrlKey || e.metaKey;
+
+        const messenger = window.im?.messenger;
+        if (messenger && messenger.mentionActive && messenger.mentionMatches && messenger.mentionMatches.length > 0) {
+            if (e.key === "ArrowUp" || e.which === 38) {
+                e.preventDefault();
+                messenger.mentionSelectedIndex = (messenger.mentionSelectedIndex - 1 + messenger.mentionMatches.length) % messenger.mentionMatches.length;
+                this.update();
+                return false;
+            }
+            if (e.key === "ArrowDown" || e.which === 40) {
+                e.preventDefault();
+                messenger.mentionSelectedIndex = (messenger.mentionSelectedIndex + 1) % messenger.mentionMatches.length;
+                this.update();
+                return false;
+            }
+            if (e.key === "Enter" || e.which === 13 || e.key === "Tab" || e.which === 9) {
+                e.preventDefault();
+                const selected = messenger.mentionMatches[messenger.mentionSelectedIndex];
+                if (selected) {
+                    this.applyMention(selected);
+                }
+                return false;
+            }
+            if (e.key === "Escape" || e.which === 27) {
+                e.preventDefault();
+                this.closeMention();
+                return false;
+            }
+        }
 
         if (e.which === 38 || e.key === "ArrowUp") {
             const currentConv = window.im.messenger.getCurrentChat();
 
             // Ctrl + ArrowUp: циклический переход по ответам (реплаям) в истории
             if (isCtrl) {
+                if (window.im.messenger.isEditing()) {
+                    return false;
+                }
                 if (currentConv) {
                     const allMsgs = this._getChronologicalMessages(currentConv);
                     const replyable = allMsgs.filter(m => m && !m.isDeleted() && !m.isAction() && (typeof m.can !== 'function' || m.can("reply")));
@@ -1302,7 +1731,7 @@ export class MessengerPage extends IMPage {
 
             // ArrowUp: редактирование последнего сообщения
             const isEmpty = this.isInputEmpty(ta);
-            if (isEmpty && !window.im.messenger.isEditing()) {
+            if (isEmpty && !window.im.messenger.isEditing() && window.im.messenger.replyTo == null) {
                 if (currentConv) {
                     const allMsgs = this._getChronologicalMessages(currentConv);
 
@@ -1329,6 +1758,9 @@ export class MessengerPage extends IMPage {
 
         // Ctrl + ArrowDown: переход вперед по реплаям или снятие реплая
         if ((e.which === 40 || e.key === "ArrowDown") && isCtrl) {
+            if (window.im.messenger.isEditing()) {
+                return false;
+            }
             if (window.im.messenger.replyTo != null) {
                 e.preventDefault();
                 const currentConv = window.im.messenger.getCurrentChat();
@@ -1562,6 +1994,10 @@ export class MessengerPage extends IMPage {
         if (typeof msg.can === 'function' && !msg.can("edit")) { return; }
         if (typeof msg.isSpecial === 'function' && msg.isSpecial("sticker")) { return; }
 
+        if (window.im.messenger.replyTo != null) {
+            window.im.messenger.removeReply(false);
+        }
+
         window.im.messenger.editMsg = msg;
         const msgText = msg.getText ? msg.getText(true) : (msg.data?.text || "");
         if (msgText.length > 0) {
@@ -1588,8 +2024,8 @@ export class MessengerPage extends IMPage {
         const cmid = msg.data?.conversation_message_id || msg.conversation_message_id || msg.data?.local_id || msg.local_id || msg.data?.id;
 
         const cmsg = new CMessageBox({
-            title: tr("message_viewers_title") || "Просмотрели сообщение",
-            body: `<div class="message-viewers-modal-loader" style="text-align:center; padding: 25px;"><div id="gif_loader"></div></div>`,
+            title: tr("message_viewers_title"),
+            body: `<div class="message-viewers-modal-loader"><div id="gif_loader"></div></div>`,
             buttons: [tr("close")],
             callbacks: [() => { }]
         });
@@ -1607,8 +2043,8 @@ export class MessengerPage extends IMPage {
 
             if (!profiles.length && !items.length) {
                 cmsg.getNode().find(".message-viewers-modal-loader").parent().html(`
-                    <div class="message-viewers-empty" style="text-align: center; padding: 20px; color: var(--text-2ary); font-size: 13px;">
-                        ${tr("message_viewers_empty") || "Это сообщение ещё никто не прочитал"}
+                    <div class="message-viewers-empty">
+                        ${tr("message_viewers_empty")}
                     </div>
                 `);
                 return;
@@ -1629,16 +2065,16 @@ export class MessengerPage extends IMPage {
                 const isOnline = prof.online == 1;
 
                 return `
-                    <div class="message-viewer-row" style="display: flex; align-items: center; padding: 6px 10px; border-bottom: 1px solid var(--bg-slightly-border);">
-                        <a href="/id${prof.id}" target="_blank" style="position: relative; margin-right: 10px; display: inline-block;">
-                            <img src="${ava}" style="width: 36px; height: 36px; object-fit: cover; display: block;" />
+                    <div class="message-viewer-row">
+                        <a href="/id${prof.id}" target="_blank" class="message-viewer-ava-link">
+                            <img src="${ava}" class="message-viewer-ava" />
                         </a>
-                        <div style="flex: 1; min-width: 0;">
-                            <a href="/id${prof.id}" target="_blank" style="font-weight: bold; color: var(--text-primary); text-decoration: none; font-size: 12px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        <div class="message-viewer-info">
+                            <a href="/id${prof.id}" target="_blank" class="message-viewer-name">
                                 ${fullName}
                             </a>
-                            <span style="font-size: 11px; color: var(--text-2ary);">
-                                ${isOnline ? (tr('online') || 'в сети') : (tr('offline') || '')}
+                            <span class="message-viewer-time">
+                                ${isOnline ? tr('online') : tr('offline')}
                             </span>
                         </div>
                     </div>
@@ -1647,20 +2083,20 @@ export class MessengerPage extends IMPage {
 
             const isMobile = window.im?.state?.is_mobile;
 
-            const titleCount = (tr("message_viewers_count", items.length) || `Прочитали: ${items.length}`);
+            const titleCount = tr("message_viewers_count", items.length);
             cmsg.getNode().find(".message-viewers-modal-loader").parent().html(`
                 <div class="message-viewers-list-wrap">
-                    <div style="font-size: 11px; color: var(--text-2ary); padding: 4px 10px 8px; border-bottom: 1px solid var(--bg-slightly-border); font-weight: bold;">
+                    <div class="message-viewers-header">
                         ${titleCount}
                     </div>
-                    <div class="message-viewers-list" style="${isMobile ? "max-height: 280px;" : ""} overflow-y: auto;">
+                    <div class="message-viewers-list ${isMobile ? "mobile" : ""}">
                         ${usersListHtml}
                     </div>
                 </div>
             `);
         } catch (err) {
             cmsg.getNode().find(".message-viewers-modal-loader").parent().html(`
-                <div style="text-align: center; padding: 20px; color: #d00;">
+                <div class="message-viewers-error">
                     ${tr("error")}: ${escapeHtml(err?.message || "Failed to load viewers")}
                 </div>
             `);

@@ -133,6 +133,7 @@ final class VKAPIPresenter extends OpenVKPresenter
     public function onStartup(): void
     {
         parent::onStartup();
+        $this->setupApiLanguage();
 
         # idk, but in case we will ever support non-standard HTTP credential authflow
         $origin = "*";
@@ -217,7 +218,7 @@ final class VKAPIPresenter extends OpenVKPresenter
 
             $photo = $data["USER"] . "|" . $slot . "|" . $data["GROUP"];
             $this->packMessage([
-                "server" => "ephemeral",
+                "server" => (int) ($data["TIME"] ?? 1),
                 "photo"  => $photo,
                 "hash"   => hash_hmac("sha3-224", $photo, $secret),
             ]);
@@ -433,6 +434,8 @@ final class VKAPIPresenter extends OpenVKPresenter
      */
     private function callAPIMethod(string $object, string $method, array $params, $identity, $platform, ?bool &$hasRss = null, mixed $clientId = null)
     {
+        $this->setupApiLanguage($params);
+
         $legacyAliases = [
             'getprofiles'       => ['Users', 'get'],
             'getuserinfo'       => ['Users', 'get'],
@@ -515,8 +518,9 @@ final class VKAPIPresenter extends OpenVKPresenter
         $route  = new \ReflectionMethod($handler, $method);
         $args   = [];
         $paramAliases = [
-            'user_ids'    => ['uids', 'uid', 'user_id'],
-            'user_id'     => ['uid'],
+            'user_ids'    => ['uids', 'uid', 'user_id', 'member_ids'],
+            'user_id'     => ['uid', 'member_id'],
+            'member_id'   => ['user_id', 'uid'],
             'group_ids'   => ['gids', 'gid', 'group_id'],
             'group_id'    => ['gid'],
             'owner_id'    => ['oid'],
@@ -615,6 +619,68 @@ final class VKAPIPresenter extends OpenVKPresenter
         define("VKAPI_DECL_VER_MINOR", (int) ($parts[1] ?? 0));
     }
 
+    public function setupApiLanguage(mixed $langParam = null): void
+    {
+        $rawLang = null;
+        if (is_array($langParam)) {
+            $rawLang = $langParam["lang"] ?? null;
+        } elseif (is_string($langParam) || is_numeric($langParam)) {
+            $rawLang = $langParam;
+        }
+
+        if ($rawLang === null || $rawLang === "") {
+            $rawLang = $this->requestParam("lang") ?? ($_REQUEST["lang"] ?? null);
+        }
+
+        if ($rawLang === null || $rawLang === "") {
+            return;
+        }
+
+        $vkLangMap = [
+            0 => "ru",
+            1 => "uk",
+            2 => "by",
+            3 => "en",
+            4 => "es",
+            5 => "fi",
+            6 => "de",
+            7 => "it",
+        ];
+
+        if (is_numeric($rawLang) && isset($vkLangMap[(int) $rawLang])) {
+            $targetLang = $vkLangMap[(int) $rawLang];
+        } else {
+            $rawLangStr = strtolower(trim((string) $rawLang));
+            $aliases = [
+                "ua"        => "uk",
+                "be"        => "by",
+                "kz"        => "kk",
+                "zh"        => "zh-Hans",
+                "zh-cn"     => "zh-Hans",
+                "zh_cn"     => "zh-Hans",
+                "by-lat"    => "by_lat",
+                "by-latn"   => "by_lat",
+                "by_latn"   => "by_lat",
+                "kk-lat"    => "kk_lat",
+                "kk-latn"   => "kk_lat",
+                "kk_latn"   => "kk_lat",
+                "sr"        => "sr_cyr",
+                "sr-cyr"    => "sr_cyr",
+                "sr-lat"    => "sr_lat",
+                "sr-latn"   => "sr_lat",
+                "sr_latn"   => "sr_lat",
+                "ru-old"    => "ru_old",
+                "ru-sov"    => "ru_sov",
+                "ru-lat"    => "ru_lat",
+            ];
+            $targetLang = $aliases[$rawLangStr] ?? $rawLangStr;
+        }
+
+        if (file_exists(OPENVK_ROOT . "/locales/$targetLang.strings")) {
+            $GLOBALS["__ovk_api_lang"] = $targetLang;
+        }
+    }
+
     public function renderRouteSingle(string $method): void
     {
         $method = rtrim($method, '.');
@@ -644,6 +710,7 @@ final class VKAPIPresenter extends OpenVKPresenter
             $rawInput = file_get_contents("php://input");
             $jsonInput = !empty($rawInput) ? @json_decode($rawInput, true) : null;
             $requestParams = is_array($jsonInput) ? array_merge($_REQUEST, $jsonInput) : $_REQUEST;
+            $this->setupApiLanguage($requestParams);
             $res = $this->callAPIMethod($object, $method, $requestParams, $identity, $platform, $has_rss);
         } catch (APIErrorException $ex) {
             $this->fail($ex->getCode(), $ex->getMessage(), $object, $method);
@@ -675,6 +742,7 @@ final class VKAPIPresenter extends OpenVKPresenter
 
         $version = (string) ($requestParams["v"] ?? "3.0");
         $this->processVKAPIVersion($version);
+        $this->setupApiLanguage($requestParams);
 
         $format = strtolower((string) ($requestParams["format"] ?? "json"));
         $callback = $requestParams["callback"] ?? $this->queryParam("callback");
@@ -886,6 +954,8 @@ final class VKAPIPresenter extends OpenVKPresenter
     {
         $this->currentObject = "execute";
         $this->currentMethod = $procedure ?? "";
+
+        $this->setupApiLanguage();
 
         $callback = $this->queryParam("callback");
 

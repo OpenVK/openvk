@@ -767,7 +767,7 @@ final class Photos extends VKAPIRequestHandler
         return $comment->getId();
     }
 
-    public function getMessagesUploadServer(int $group_id = 0): object
+    public function getMessagesUploadServer(int $group_id = 0, int $peer_id = 0): object
     {
         $this->requireUser();
 
@@ -776,7 +776,7 @@ final class Photos extends VKAPIRequestHandler
         ];
     }
 
-    public function saveMessagesPhoto(string $photo, string $hash): array
+    public function saveMessagesPhoto(string $photo, string $hash, mixed $server = null): array
     {
         $this->requireUser();
         $imagePath = (new Uploader())->getImagePath($photo, $hash, $uploader, $group);
@@ -791,10 +791,12 @@ final class Photos extends VKAPIRequestHandler
                 "error"    => 0,
             ]);
             $photoObj->save();
-            unlink($imagePath);
         } catch (ImageException | InvalidStateException $e) {
-            unlink($imagePath);
             $this->fail(129, "Invalid image file");
+        } finally {
+            if (file_exists($imagePath)) {
+                @unlink($imagePath);
+            }
         }
 
         return [

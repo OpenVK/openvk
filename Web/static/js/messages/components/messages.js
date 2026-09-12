@@ -117,9 +117,10 @@ export class Draft {
 
 class ChatMembers {
     constructor(link) {
+        this.link = link;
         this.items = [];
         this.total_count = 0;
-        this.peer_id = link.id;
+        this.peer_id = link ? link.id : null;
         this.offset = 0;
         this.perPage = 50;
     }
@@ -131,6 +132,25 @@ class ChatMembers {
                 "extended": 1,
                 "fields": "photo_50,photo_100,online,last_seen,sex,screen_name"
             });
+            if (v.chat_settings && this.link) {
+                this.link.data = this.link.data || {};
+                this.link.data.chat_settings = {
+                    ...(this.link.data.chat_settings || {}),
+                    ...v.chat_settings
+                };
+                if (v.chat_settings.acl) {
+                    this.link.data.acl = v.chat_settings.acl;
+                }
+                if (v.chat_settings.permissions) {
+                    this.link.data.permissions = v.chat_settings.permissions;
+                }
+                if (v.chat_settings.owner_id) {
+                    this.link.data.owner_id = v.chat_settings.owner_id;
+                }
+                if (v.chat_settings.admin_ids) {
+                    this.link.data.admin_ids = v.chat_settings.admin_ids;
+                }
+            }
             if (v.profiles || v.groups) {
                 if (window.im.cached_profiles && typeof window.im.cached_profiles._moveToProfileCache === 'function') {
                     window.im.cached_profiles._moveToProfileCache(v.profiles || [], v.groups || []);
@@ -167,7 +187,7 @@ export function getChatMessageClass() {
 export class ChatGeneralForm {
     static CHAT_RUBICON = 2000000000;
     static MESSAGES_PER_PAGE = 20;
-    static BASE_FIELDS = 'photo_100,photo_200,photo_max,last_seen,online,photo_id,status,sex,can_write_private_message,can_invite,followers_count,is_messages_blocked';
+    static BASE_FIELDS = 'photo_50,photo_100,photo_200,photo_max,last_seen,online,photo_id,status,sex,can_write_private_message,can_invite,followers_count,is_messages_blocked,screen_name,domain';
     static SAVED_MESSAGES_AVATAR = "/assets/packages/static/openvk/img/im/saved_messages.png";
     static CHAT_NO_AVATAR = "/assets/packages/static/openvk/img/im/chat_meaningless.jpg";
 
@@ -225,21 +245,47 @@ export class ChatGeneralForm {
         return 'chat';
     }
 
+    getAcl() {
+        if (this.data.acl && typeof this.data.acl === 'object') return this.data.acl;
+        if (this.data.chat_settings?.acl && typeof this.data.chat_settings.acl === 'object') return this.data.chat_settings.acl;
+        if (this.data._full_conversation?.chat_settings?.acl && typeof this.data._full_conversation.chat_settings.acl === 'object') return this.data._full_conversation.chat_settings.acl;
+        return null;
+    }
+
+    getPermissions() {
+        if (this.data.permissions && typeof this.data.permissions === 'object') return this.data.permissions;
+        if (this.data.chat_settings?.permissions && typeof this.data.chat_settings.permissions === 'object') return this.data.chat_settings.permissions;
+        if (this.data._full_conversation?.chat_settings?.permissions && typeof this.data._full_conversation.chat_settings.permissions === 'object') return this.data._full_conversation.chat_settings.permissions;
+        return null;
+    }
+
+    isOwner() {
+        if (this.supposed_type !== "chat") return false;
+        const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
+        const ownerId = this.data.owner_id || this.data.chat_settings?.owner_id || this.data._full_conversation?.chat_settings?.owner_id || this.data.admin_id || this.data.chat_settings?.admin_id;
+        return Number(ownerId) === Number(currentUserId);
+    }
+
     isAdmin() {
-        if (this.supposed_type != "chat") {
+        if (this.supposed_type !== "chat") {
             return false;
         }
         const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
+        if (this.isOwner()) return true;
+        const acl = this.getAcl();
+        if (acl && acl.can_moderate) return true;
         if (this.data.admin_id === currentUserId) return true;
         if (this.data.chat_settings) {
             if (this.data.chat_settings.admin_id === currentUserId) return true;
             if (this.data.chat_settings.is_admin) return true;
-            if (Array.isArray(this.data.chat_settings.admin_ids) && this.data.chat_settings.admin_ids.includes(currentUserId)) return true;
+            if (Array.isArray(this.data.chat_settings.admin_ids) && this.data.chat_settings.admin_ids.map(Number).includes(Number(currentUserId))) return true;
         }
+        if (Array.isArray(this.data.admin_ids) && this.data.admin_ids.map(Number).includes(Number(currentUserId))) return true;
         return false;
     }
 
     can(thing, relatively_current_group = null) { // unified function
+        const acl = this.getAcl();
         switch (thing) {
             case "write": {
                 if (this.data.deactivated) return false;
@@ -267,19 +313,54 @@ export class ChatGeneralForm {
                 return true;
             }
             case "update_title":
-            case "invite_new":
             case "update_avatar":
-                return this.isAdmin() && this.supposed_type == "chat";
-            case "leave_chat":
-                return this.supposed_type == "chat" && !this.isKicked() && !this.isILeft();
-            case "return_to_chat":
-                return this.supposed_type == "chat" && this.isILeft() && !this.isKicked();
-            case "view_invite_links":
-                return this.supposed_type == "chat" && false;
-            case "pin":
-                return this.supposed_type == "chat" ? this.isAdmin() : false;
+            case "change_info":
+                if (this.supposed_type !== "chat" || this.isILeft()) return false;
+                if (acl && acl.can_change_info !== undefined) return !!acl.can_change_info;
+                return this.isAdmin();
+            case "invite_new":
             case "invite":
+                if (this.supposed_type !== "chat" || this.isILeft()) return false;
+                if (acl && acl.can_invite !== undefined) return !!acl.can_invite;
                 return (this.data.can_invite ?? 1) === 1;
+            case "leave_chat":
+                return this.supposed_type === "chat" && !this.isKicked() && !this.isILeft();
+            case "return_to_chat":
+                return this.supposed_type === "chat" && this.isILeft() && !this.isKicked();
+            case "view_invite_links":
+            case "see_invite_link":
+                if (this.supposed_type !== "chat" || this.isILeft()) return false;
+                if (acl && acl.can_see_invite_link !== undefined) return !!acl.can_see_invite_link;
+                return this.isAdmin();
+            case "change_invite_link":
+            case "regenerate_link":
+                if (this.supposed_type !== "chat" || this.isILeft()) return false;
+                if (acl && acl.can_change_invite_link !== undefined) return !!acl.can_change_invite_link;
+                return this.isOwner();
+            case "pin":
+            case "unpin":
+            case "change_pin":
+                if (this.supposed_type !== "chat" || this.isILeft()) return false;
+                if (acl && acl.can_change_pin !== undefined) return !!acl.can_change_pin;
+                return this.isAdmin();
+            case "change_admins":
+            case "promote_users":
+                if (this.supposed_type !== "chat" || this.isILeft()) return false;
+                if (acl && acl.can_promote_users !== undefined) return !!acl.can_promote_users;
+                return this.isOwner();
+            case "mass_mentions":
+            case "use_mass_mentions":
+                if (this.supposed_type !== "chat" || this.isILeft()) return false;
+                if (acl && acl.can_use_mass_mentions !== undefined) return !!acl.can_use_mass_mentions;
+                return true;
+            case "call":
+                if (this.supposed_type !== "chat" || this.isILeft()) return false;
+                if (acl && acl.can_call !== undefined) return !!acl.can_call;
+                return true;
+            case "moderate":
+                if (this.supposed_type !== "chat" || this.isILeft()) return false;
+                if (acl && acl.can_moderate !== undefined) return !!acl.can_moderate;
+                return this.isAdmin();
         }
 
         return true;
@@ -425,14 +506,17 @@ export class ChatGeneralForm {
 
         let ava = null;
         switch (size) {
+            case "min":
+                ava = this.data.photo_50 || this.data.photo_100;
+                break;
             case "mid":
-                ava = this.data.photo_100;
+                ava = this.data.photo_100 || this.data.photo_50;
                 break;
             case "big":
-                ava = this.data.photo_200;
+                ava = this.data.photo_200 || this.data.photo_100;
                 break;
             case "max":
-                ava = this.data.photo_max;
+                ava = this.data.photo_max || this.data.photo_200;
                 break;
         }
 
@@ -440,7 +524,7 @@ export class ChatGeneralForm {
             return ChatGeneralForm.CHAT_NO_AVATAR;
         }
 
-        return ava ?? '/assets/packages/static/openvk/img/camera_100.png';
+        return ava ?? '/assets/packages/static/openvk/img/camera_50.png';
     }
     hasAvatar() {
         if (this.supposed_type === 'chat' && this.isILeft()) {
@@ -603,10 +687,22 @@ export class ChatGeneralForm {
     }
 
     isMuted() {
-        const isMuteAll = localStorage.getItem("tw.im.mute_all") || "0" == "1";
-        const isMute = isMuteAll;
+        const isMuteAll = (localStorage.getItem("tw.im.mute_all") || "0") === "1";
+        if (isMuteAll) return true;
 
-        return isMuteAll;
+        const pushSettings = this.data?.push_settings || this.data?._full_conversation?.push_settings || this.data?.chat_settings?.push_settings;
+        if (pushSettings) {
+            if (pushSettings.disabled_until === -1 || pushSettings.disabled_forever) {
+                return true;
+            }
+            if (pushSettings.disabled_until > 0) {
+                return pushSettings.disabled_until > Math.floor(Date.now() / 1000);
+            }
+            if (pushSettings.no_sound === true || pushSettings.sound === 0 || pushSettings.sound === false) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // ── initial loading ──────────────────────────────────────────────
@@ -627,6 +723,7 @@ export class ChatGeneralForm {
             const chatData = (__.chats && __.chats.length > 0) ? __.chats[0] : {};
             const peerData = Object.assign({ id: id, type: 'chat' }, chatSettings, chatData);
             if (conv.can_write) peerData.can_write = conv.can_write;
+            if (conv.push_settings) peerData.push_settings = conv.push_settings;
             if (conv.pinned_message) peerData.pinned_message = conv.pinned_message;
             if (chatSettings.pinned_message) peerData.pinned_message = chatSettings.pinned_message;
             if (chatSettings.state === 'kicked' || chatData.kicked === 1 || conv.can_write?.reason === 915) {
@@ -641,16 +738,40 @@ export class ChatGeneralForm {
         } else {
             if (id > 0) {
                 const __ = await window.OVKAPI.call('users.get', { 'user_ids': id, 'fields': ChatGeneralForm.BASE_FIELDS });
-                if (__[0].first_name == "DELETED" && __[0].deactivated == "deleted") {
+                if (!__ || !__[0] || (__[0].first_name == "DELETED" && __[0].deactivated == "deleted")) {
                     return null;
                 }
-                return __[0];
+                const peerData = __[0];
+                try {
+                    const convRes = await window.OVKAPI.call('messages.getConversationsById', { 'peer_ids': id });
+                    if (convRes && convRes.items && convRes.items.length > 0) {
+                        const conv = convRes.items[0].conversation || {};
+                        if (conv.push_settings) peerData.push_settings = conv.push_settings;
+                        if (conv.can_write) peerData.can_write = conv.can_write;
+                        peerData._full_conversation = conv;
+                    }
+                } catch (e) {
+                    console.error("resolveById user getConversationsById error:", e);
+                }
+                return peerData;
             } else {
                 const __ = await window.OVKAPI.call('groups.getById', { 'group_ids': Math.abs(id), 'fields': ChatGeneralForm.BASE_FIELDS });
-                if (__[0].type == 'undefined') {
+                if (!__ || !__[0] || __[0].type == 'undefined') {
                     return null;
                 }
-                return __[0];
+                const peerData = __[0];
+                try {
+                    const convRes = await window.OVKAPI.call('messages.getConversationsById', { 'peer_ids': id });
+                    if (convRes && convRes.items && convRes.items.length > 0) {
+                        const conv = convRes.items[0].conversation || {};
+                        if (conv.push_settings) peerData.push_settings = conv.push_settings;
+                        if (conv.can_write) peerData.can_write = conv.can_write;
+                        peerData._full_conversation = conv;
+                    }
+                } catch (e) {
+                    console.error("resolveById group getConversationsById error:", e);
+                }
+                return peerData;
             }
         }
     }
@@ -1319,85 +1440,75 @@ export class ChatMessage {
         switch (type) {
             case "chat_create": {
                 const title = (act.text || "").trim();
-                return title ? tr("event_chat_creation_" + gender, title) : (tr("event_chat_creation_no_title_" + gender) || tr("event_chat_create_impersonal"));
+                return title ? tr("event_chat_creation_" + gender, title) : tr("event_chat_creation_no_title_" + gender);
             }
             case "chat_title_update": {
                 const title = (act.text || "").trim();
-                return tr("event_chat_title_update_" + gender, title) || tr("event_chat_title_update_impersonal");
+                return tr("event_chat_title_update_" + gender, title);
             }
             case "chat_photo_update":
-                return tr("event_chat_photo_update_" + gender) || tr("event_chat_photo_update_impersonal");
+                return tr("event_chat_photo_update_" + gender);
             case "chat_photo_remove":
-                return tr("event_chat_photo_remove_" + gender) || tr("event_chat_photo_remove_impersonal");
+                return tr("event_chat_photo_remove_" + gender);
             case "chat_pin_message":
-                return tr("event_chat_pin_message_" + gender) || tr("event_chat_pin_message_impersonal");
+                return tr("event_chat_pin_message_" + gender);
             case "chat_unpin_message":
-                return tr("event_chat_unpin_message_" + gender) || tr("event_chat_unpin_message_impersonal");
+                return tr("event_chat_unpin_message_" + gender);
             case "chat_invite_user": {
                 const mid = act.member_id ?? this.data.action_mid;
                 if (sender && mid == sender.id) {
-                    return tr("event_chat_invite_user_self_" + gender) || tr("event_chat_invite_user_impersonal");
+                    return tr("event_chat_invite_user_self_" + gender);
                 }
                 const targetProf = window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached ? window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(mid) : window.im?.cached_profiles?._findCachedProfileById(mid);
                 const targetName = targetProf ? targetProf.getName() : `id${mid}`;
-                return tr("event_chat_invite_user_" + gender, targetName) || tr("event_chat_invite_user_impersonal");
+                return tr("event_chat_invite_user_" + gender, targetName);
             }
             case "chat_invite_user_by_link":
-                return tr("event_chat_invite_user_by_link_" + gender) || tr("event_chat_invite_user_impersonal");
+                return tr("event_chat_invite_user_by_link_" + gender);
             case "chat_kick_user": {
                 const mid = act.member_id ?? this.data.action_mid;
                 if (sender && mid == sender.id) {
-                    return tr("event_chat_kick_user_self_" + gender) || tr("event_chat_kick_user_impersonal");
+                    return tr("event_chat_kick_user_self_" + gender);
                 }
                 const targetProf = window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached ? window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(mid) : window.im?.cached_profiles?._findCachedProfileById(mid);
                 const targetName = targetProf ? targetProf.getName() : `id${mid}`;
-                return tr("event_chat_kick_user_" + gender, targetName) || tr("event_chat_kick_user_impersonal");
+                return tr("event_chat_kick_user_" + gender, targetName);
             }
             case "chat_moderator_add": {
                 const mid = act.member_id ?? this.data.action_mid;
                 const targetProf = window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached ? window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(mid) : window.im?.cached_profiles?._findCachedProfileById(mid);
                 const targetName = targetProf ? targetProf.getName() : `id${mid}`;
-                return tr("event_chat_moderator_add_" + gender, targetName) || tr("event_chat_moderator_add_impersonal");
+                return tr("event_chat_moderator_add_" + gender, targetName);
             }
             case "chat_moderator_remove": {
                 const mid = act.member_id ?? this.data.action_mid;
                 const targetProf = window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached ? window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(mid) : window.im?.cached_profiles?._findCachedProfileById(mid);
                 const targetName = targetProf ? targetProf.getName() : `id${mid}`;
-                return tr("event_chat_moderator_remove_" + gender, targetName) || tr("event_chat_moderator_remove_impersonal");
+                return tr("event_chat_moderator_remove_" + gender, targetName);
             }
             case "rating_up":
-                return tr("event_chat_user_up_your_rating_" + gender, sender?.getName(), act.member_id) || tr("event_chat_rating_up_impersonal");
+                return tr("event_chat_user_up_your_rating_" + gender, sender?.getName(), act.member_id);
             case "coins_transfer":
-                return tr("event_chat_user_added_voices_" + gender, sender?.getName(), act.member_id) || tr("event_coins_transfer_impersonal");
+                return tr("event_chat_user_added_voices_" + gender, sender?.getName(), act.member_id);
             default:
-                return tr("event_" + type + "_impersonal") || this.data.text || "";
+                return tr("event_" + type + "_impersonal");
         }
     }
     getText(raw = false, conversation = false, with_attachments = false) {
         const baseText = this.data.text ?? this.data.body ?? "";
         if (this.data.action != null) {
-            const actionText = this.getActionText() || "";
+            let actionText = this.getActionText() || "";
             if (conversation) {
                 if (!actionText) return "";
                 const sender = this.sender;
                 const senderName = sender?.getName ? (sender.getName(false, true) || sender.getName()) : (this.data?.from_id ? "id" + this.data.from_id : "");
-                let formattedAction = "";
-                let rawAction = "";
 
-                if (senderName) {
-                    if (actionText.startsWith(senderName)) {
-                        const rest = actionText.slice(senderName.length);
-                        formattedAction = `<span class="im-action-msg"><b>${escapeHtml(senderName)}</b>${escapeHtml(rest)}</span>`;
-                        rawAction = actionText;
-                    } else {
-                        const lowerAction = actionText.charAt(0).toLowerCase() + actionText.slice(1);
-                        formattedAction = `<span class="im-action-msg"><b>${escapeHtml(senderName)}</b> ${escapeHtml(lowerAction)}</span>`;
-                        rawAction = `${senderName} ${lowerAction}`;
-                    }
-                } else {
-                    formattedAction = `<span class="im-action-msg">${escapeHtml(actionText)}</span>`;
-                    rawAction = actionText;
+                if (senderName && actionText.startsWith(senderName)) {
+                    actionText = actionText.slice(senderName.length).trim();
                 }
+
+                let formattedAction = `<span class="im-action-msg">${escapeHtml(actionText)}</span>`;
+                let rawAction = actionText;
 
                 formattedAction = formattedAction.replace(/[\r\n]+/g, ' ').replace(/\s{2,}/g, ' ').trim();
                 rawAction = rawAction.replace(/[\r\n]+/g, ' ').replace(/\s{2,}/g, ' ').trim();
@@ -1411,6 +1522,16 @@ export class ChatMessage {
         if (conversation) {
             cleanBaseText = baseText
                 .replace(/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, '$1')
+                .replace(/\[([a-zA-Z0-9_]+)(?:\|([^\]]*))?\]/g, (match, target, title) => {
+                    if (title !== undefined && title.trim().length > 0) {
+                        return title.trim();
+                    }
+                    if (target.toLowerCase() === 'all' || target.toLowerCase() === 'online') {
+                        return '@' + target.toLowerCase();
+                    }
+                    return target;
+                })
+                .replace(/[@*]([a-zA-Z0-9_]+)\s*\(([^)]+)\)/g, '$2')
                 .replace(/[\r\n]+/g, ' ')
                 .replace(/\s{2,}/g, ' ')
                 .trim();
@@ -1491,7 +1612,7 @@ export class ChatMessage {
                 if (cleanBaseText) {
                     txt = attachTxt ? (attachTxt + " " + escapeHtml(cleanBaseText)) : escapeHtml(cleanBaseText);
                 } else {
-                    txt = attachTxt || (typeof tr === "function" && tr("message_no_text") ? "(" + tr("message_no_text").toLowerCase() + ")" : "...");
+                    txt = attachTxt || ("(" + tr("message_no_text").toLowerCase() + ")");
                 }
 
                 txt = txt.replace(/<br\s*\/?>/gi, ' ').replace(/[\r\n]+/g, ' ').replace(/\s{2,}/g, ' ').trim();
@@ -1501,7 +1622,7 @@ export class ChatMessage {
             if (this.isSpecial("gift")) {
                 const msg = this.data.attachments?.[0]?.gift?.message;
                 if (!msg) {
-                    txt = "(" + (typeof tr === "function" ? tr("message_no_text") : "message without text").toLowerCase() + ")";
+                    txt = "(" + tr("message_no_text").toLowerCase() + ")";
                 } else {
                     txt = msg;
                 }
@@ -1521,8 +1642,33 @@ export class ChatMessage {
             return encode_emojis(formattedTxt);
         }
 
-        // Format markdown links [title](url) and plain URLs
+        // Format VK mentions: [id123|Name], [club123|Name], [all|Всем], [online|Онлайн], [slug|Name], @slug (Name), *slug (Name)
         let formattedTxt = txt;
+        formattedTxt = formattedTxt.replace(/\[([a-zA-Z0-9_]+)(?:\|([^\]]*))?\]/gi, (match, target, title) => {
+            const lowerTarget = target.toLowerCase();
+            const display = (title && title.trim()) ? title.trim() : target;
+            if (lowerTarget === "all" || lowerTarget === "online") {
+                return `<b class="mention mention-mass">${display.startsWith('@') ? display : '@' + display}</b>`;
+            }
+            return `<a href="/${lowerTarget}" class="mention chat-link">${display}</a>`;
+        });
+        formattedTxt = formattedTxt.replace(/[@*]([a-zA-Z0-9_]+)\s*\(([^)]+)\)/g, (match, target, title) => {
+            const lowerTarget = target.toLowerCase();
+            const display = (title && title.trim()) ? title.trim() : target;
+            if (lowerTarget === "all" || lowerTarget === "online") {
+                return `<b class="mention mention-mass">${display.startsWith('@') ? display : '@' + display}</b>`;
+            }
+            return `<a href="/${lowerTarget}" class="mention chat-link">${display}</a>`;
+        });
+        formattedTxt = formattedTxt.replace(/(^|[\s\(\[\{<]|&gt;)([@*])([a-zA-Z0-9_]+)\b/gi, (match, prefix, symbol, target) => {
+            const lowerTarget = target.toLowerCase();
+            if (lowerTarget === "all" || lowerTarget === "online") {
+                return `${prefix}<b class="mention mention-mass">@${lowerTarget}</b>`;
+            }
+            return `${prefix}<a href="/${lowerTarget}" class="mention chat-link">@${lowerTarget}</a>`;
+        });
+
+        // Format markdown links [title](url) and plain URLs
         formattedTxt = formattedTxt.replace(/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, (match, title, url) => {
             return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="chat-link">${title}</a>`;
         });
@@ -1548,6 +1694,11 @@ export class ChatMessage {
     isError() { return this.data.error_text != null; }
     isEdited() { return this.data.edited == 1 || this.data.edited == true; }
     isSending() { return Boolean(this.data?.is_sending || (this.id == null && !this.isError())); }
+    isImportant() {
+        if (!this.data) return Boolean(this.important || (this.flags & 8));
+        return Boolean(this.data.important || this.important || (this.data.flags & 8) || (this.flags & 8));
+    }
+
     isPinned() {
         if (this.id == null) return false;
         if (this.data.is_pinned == undefined) {
@@ -1881,8 +2032,8 @@ export class ChatMessage {
 
         const cmidFromLp = attachments && (attachments['conversation_message_id'] || attachments['cmid']) ? Number(attachments['conversation_message_id'] || attachments['cmid']) : 0;
         const curUid = window.openvk ? window.openvk.current_id : (im ? im.state.getId() : 0);
-        const fromId = attachments.from ? Number(attachments.from) : ((flags & 2) ? curUid : peer);
-
+        const fromId = attachments && attachments.from ? Number(attachments.from) : ((flags & 2) ? curUid : peer);
+        const isMentionedFromLp = Boolean(attachments && (attachments['mention'] == 1 || attachments['mention'] === true || attachments['is_mentioned']));
         const isStickerMsg = (new_attachments && new_attachments.some(a => a && a.type === 'sticker')) ? 1 : 0;
         const isOut = Boolean(flags & 2);
         const isUnread = Boolean(flags & 1);
@@ -1900,6 +2051,9 @@ export class ChatMessage {
             'peer_id': peer,
             'text': text,
             'attachments': new_attachments,
+            'mention': isMentionedFromLp,
+            'is_mentioned': isMentionedFromLp,
+            'extra_attachments': attachments,
             'is_sticker': isStickerMsg,
             'random_id': randomId,
             'reply_message': reply_message,
@@ -1910,9 +2064,13 @@ export class ChatMessage {
             'action_mid': action ? action.member_id : null,
             'action_text': action ? action.text : null,
         });
+        msg.mention = isMentionedFromLp;
+        msg.is_mentioned = isMentionedFromLp;
         msg.out = isOut ? 1 : 0;
         msg.read_state = isUnread ? 0 : 1;
         if (msg.data) {
+            msg.data.mention = isMentionedFromLp;
+            msg.data.is_mentioned = isMentionedFromLp;
             msg.data.out = isOut ? 1 : 0;
             msg.data.read_state = isUnread ? 0 : 1;
         }

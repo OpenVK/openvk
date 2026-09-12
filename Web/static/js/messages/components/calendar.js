@@ -157,9 +157,9 @@ export function openCalendarModal({ initialDate = null, peerId = null, onSelectD
     const peer_id = peerId || window.im?.messenger?.getCurrentChat()?.peer?.id;
 
     const modal = new CMessageBox({
-        title: (typeof tr === 'function' ? tr("day_selection") : null) || "Выбор дня",
+        title: tr("day_selection"),
         body: `<div id="ovk_calendar_modal_body"></div>`,
-        buttons: [(typeof tr === 'function' ? tr("cancel") : null) || "Отмена"],
+        buttons: [tr("cancel")],
         callbacks: [() => {}],
     });
 

@@ -32,18 +32,33 @@
             .replace(/"/g, '&quot;');
     }
 
+    const mentionRegex = /\[([a-zA-Z0-9_]+(?:\|[^\]]*)?)\]/g;
+
     function textToHtml(text) {
         if (!text) return '';
         // Normalize Windows CRLF and classic Mac CR to standard \n
         const str = String(text).replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-        // Fast-path for plain text without newlines or emoji sequences
-        if (!str.includes('\n') && !str.match(/[\uD800-\uDFFF\u2600-\u27BF]/)) {
+        // Fast-path for plain text without newlines, emoji sequences, or mention brackets
+        if (!str.includes('\n') && !str.match(/[\uD800-\uDFFF\u2600-\u27BF]/) && !str.includes('[')) {
             return escapeHtml(str);
         }
 
         const lines = str.split('\n');
         const htmlLines = lines.map(function (line) {
-            const escaped = escapeHtml(line);
+            let escaped = escapeHtml(line);
+            escaped = escaped.replace(mentionRegex, function (fullMatch, innerContent) {
+                let displayText = fullMatch;
+                if (innerContent && innerContent.includes('|')) {
+                    displayText = innerContent.substring(innerContent.indexOf('|') + 1) || innerContent;
+                } else if (innerContent) {
+                    if (innerContent === 'all' || innerContent === 'online') {
+                        displayText = '@' + innerContent;
+                    } else {
+                        displayText = innerContent;
+                    }
+                }
+                return '<span class="mention-token" contenteditable="false" data-mention="' + fullMatch + '" style="color: var(--link, #2b587a); user-select: all; cursor: default;">' + displayText + '</span>';
+            });
             return escaped.replace(emojiSeqRegex, function (emoji) {
                 let hex = getEmojiHex(emoji);
                 if (hex === '2764FE0F') hex = '2764';
@@ -66,7 +81,9 @@
                 text += n.nodeValue.replace(/\r/g, '');
             } else if (n.nodeType === Node.ELEMENT_NODE) {
                 const tag = n.tagName.toUpperCase();
-                if (tag === 'IMG') {
+                if (n.classList && (n.classList.contains('mention-token') || n.hasAttribute('data-mention'))) {
+                    text += n.getAttribute('data-mention') || n.textContent || '';
+                } else if (tag === 'IMG') {
                     if (n.classList.contains('emoji') || n.hasAttribute('alt')) {
                         text += n.getAttribute('alt') || '';
                     }
@@ -193,7 +210,7 @@
                         const preRange = document.createRange();
                         preRange.selectNodeContents(self.el);
                         preRange.setEnd(range.startContainer, range.startOffset);
-                        return preRange.toString().length;
+                        return htmlToText(preRange.cloneContents()).length;
                     },
                     configurable: true,
                 });
@@ -206,7 +223,7 @@
                         const preRange = document.createRange();
                         preRange.selectNodeContents(self.el);
                         preRange.setEnd(range.endContainer, range.endOffset);
-                        return preRange.toString().length;
+                        return htmlToText(preRange.cloneContents()).length;
                     },
                     configurable: true,
                 });
@@ -245,10 +262,18 @@
                 }
             });
 
-            // VK smart click: clicking an emoji positions the caret before or after it based on click offset
+            // VK smart click: clicking an emoji or mention positions the caret before or after it based on click offset
             this.el.addEventListener('mousedown', function (e) {
                 if (e.target && e.target.tagName === 'IMG' && (e.target.classList.contains('emoji') || e.target.hasAttribute('alt'))) {
                     self.editableFocus(e.target, e.offsetX > 8);
+                    e.preventDefault();
+                    return;
+                }
+                const mentionEl = e.target.closest ? e.target.closest('.mention-token') : null;
+                if (mentionEl) {
+                    const rect = mentionEl.getBoundingClientRect();
+                    const isAfter = (e.clientX - rect.left) > (rect.width / 2);
+                    self.editableFocus(mentionEl, isAfter);
                     e.preventDefault();
                     return;
                 }
@@ -301,6 +326,47 @@
             });
 
             this.el.addEventListener('keydown', function (e) {
+                if (e.key === 'Backspace' || e.key === 'Delete') {
+                    const sel = window.getSelection();
+                    if (sel && sel.rangeCount > 0 && sel.isCollapsed) {
+                        const range = sel.getRangeAt(0);
+                        let targetSpan = null;
+                        if (e.key === 'Backspace') {
+                            if (range.startContainer.nodeType === Node.ELEMENT_NODE && range.startOffset > 0) {
+                                const prevNode = range.startContainer.childNodes[range.startOffset - 1];
+                                if (prevNode && prevNode.classList && prevNode.classList.contains('mention-token')) {
+                                    targetSpan = prevNode;
+                                }
+                            } else if (range.startContainer.nodeType === Node.TEXT_NODE && range.startOffset === 0) {
+                                let prev = range.startContainer.previousSibling;
+                                if (prev && prev.classList && prev.classList.contains('mention-token')) {
+                                    targetSpan = prev;
+                                }
+                            }
+                        } else if (e.key === 'Delete') {
+                            if (range.startContainer.nodeType === Node.ELEMENT_NODE && range.startOffset < range.startContainer.childNodes.length) {
+                                const nextNode = range.startContainer.childNodes[range.startOffset];
+                                if (nextNode && nextNode.classList && nextNode.classList.contains('mention-token')) {
+                                    targetSpan = nextNode;
+                                }
+                            } else if (range.startContainer.nodeType === Node.TEXT_NODE && range.startOffset === range.startContainer.length) {
+                                let next = range.startContainer.nextSibling;
+                                if (next && next.classList && next.classList.contains('mention-token')) {
+                                    targetSpan = next;
+                                }
+                            }
+                        }
+                        if (targetSpan) {
+                            e.preventDefault();
+                            targetSpan.remove();
+                            self._isDirty = true;
+                            self._cachedText = null;
+                            self._scheduleSync();
+                            return;
+                        }
+                    }
+                }
+
                 if (e.key === 'Enter') {
                     const isSingleLine = self.options.singleLine
                         || self.el.getAttribute('data-single-line') === 'true'

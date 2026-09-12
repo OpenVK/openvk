@@ -122,7 +122,7 @@
 
         <div class="layout" id="page_layout"{ifset layout_style} {include layout_style}{elseif $effectiveLayoutWidth} style="width: {$effectiveLayoutWidth}"{/ifset}>
             <div id="xhead" class="dm"></div>
-            <div class="page_header p_head{if $instance_name != \OPENVK_DEFAULT_INSTANCE_NAME} page_custom_header{/if}{if $atSearch ?? false} search_expanded search_expanded_at_all{/if}">
+            <div class="page_header p_head{if $instance_name != \OPENVK_DEFAULT_INSTANCE_NAME} page_custom_header{/if}">
                 <div class="back"></div>
                 <div class="left"></div>
                 <div class="right"></div>
@@ -131,10 +131,10 @@
                     {if isset($thisUser) && !$thisUser->isDeactivated()}
                     <div id="search_box" class="header-search-box">
                         <div id="search_box_fr">
-                            <form id='search_form' action="/search" method="get">
+                            <form id='search_form_f' action="/search" method="get">
                                 <div id='search_and_one_more_wrapper'>
                                     {var $section = $_REQUEST['section'] ?? ''}
-                                    <input n:attr="value => $_REQUEST['q'] ?? NULL" onkeydown="onSearchTipKeydown(event)" oninput="onSearchBoxInput(event)" autocomplete="off" type="search" maxlength="79" name="q" placeholder="{_header_search}" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
+                                    <input onkeydown="onSearchTipKeydown(event)" oninput="onSearchBoxInput(event)" autocomplete="off" type="search" maxlength="79" name="q" placeholder="{_header_search}" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
                                     <select name="section">
                                         <option n:attr="selected => $section == 'users'" value="users">{_s_by_people}</option>
                                         <option n:attr="selected => $section == 'groups'" value="groups">{_s_by_groups}</option>

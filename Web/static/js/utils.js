@@ -366,8 +366,14 @@ function month_day_string(date) {
     // old langs
 
     if (ret.startsWith("@")) {
-        const appLocale = (window.openvk && (window.openvk.locale || window.openvk.lang)) || (typeof tr === "function" && !tr("__locale").startsWith("@") ? tr("__locale").split(";")[0].split(".")[0].replace("_", "-") : "ru-RU");
-        return date.toLocaleDateString(appLocale);
+        let rawLocale = (window.openvk && (window.openvk.locale || window.openvk.lang))
+            || (typeof tr === "function" && !tr("__locale").startsWith("@") ? tr("__locale") : "ru-RU");
+        const appLocale = String(rawLocale).split(";")[0].split(".")[0].replace(/_/g, "-") || "ru-RU";
+        try {
+            return date.toLocaleDateString(appLocale);
+        } catch (e) {
+            return date.toLocaleDateString("ru-RU");
+        }
     }
 
     return ret;

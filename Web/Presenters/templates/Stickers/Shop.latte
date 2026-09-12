@@ -18,7 +18,7 @@
         {if $banner && !empty($banner['enable']) && !empty($banner['src'])}
             <div class="stickers_shop_banner" style="margin: 0 -10px; border-bottom: 1px solid #DEDEDE; overflow: hidden;">
                 <a href="{$banner['link'] ?: '/stickers'}" style="display: block; line-height: 0;">
-                    <img src="{$banner['src']}" alt="{$banner['caption'] ?? ''}" style="width: 100%; max-width: 627px; height: auto; display: block;" />
+                    <img src="{$banner['src']}" alt="{$banner['caption'] ?? ''}" class="stickers_banner_img" />
                 </a>
             </div>
         {/if}

@@ -203,18 +203,24 @@ async function setupNotificationListener() {
 
 async function triggerMessageNotification(conv, msg, timestamp) {
     try {
-        const peer = conv.peer;
-        const sender = msg.sender;
-        const title = peer.getName();
-        const ava = peer.getAvatar();
+        const peer = conv?.peer;
+        if (!peer) return;
 
-        if (peer.id === window.openvk.current_id || sender.id === window.openvk.current_id) {
+        const currentUserId = Number(window.openvk ? window.openvk.current_id : (window.im?.state?.getId() || 0));
+        const senderId = Number(msg.sender?.id || msg.from_id?.id || msg.from_id || msg.data?.from_id?.id || msg.data?.from_id || 0);
+
+        if (senderId && currentUserId && senderId === currentUserId) {
             return;
         }
 
+        const sender = msg.sender || (window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached ? window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(senderId) : null);
+        const senderName = sender?.getName ? sender.getName() : (senderId ? `id${senderId}` : "");
+        const title = peer.getName ? peer.getName() : `id${peer.id}`;
+        const ava = peer.getAvatar ? peer.getAvatar() : "";
+
         const notif = {
             title: escapeHtml(title),
-            body: "<b>" + escapeHtml(sender.getName()) + ":</b> " + (ovk_proc_strtr(msg.getText(false, true), 95)),
+            body: "<b>" + escapeHtml(senderName) + ":</b> " + (ovk_proc_strtr(typeof msg.getText === 'function' ? msg.getText(false, true) : (msg.data?.text || msg.text || ''), 95)),
             ava: ava,
             priority: 1,
         };

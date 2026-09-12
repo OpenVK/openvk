@@ -230,6 +230,10 @@ export class Conversations {
                 window.im.cached_profiles._addProfileCache(item.peer);
             }
             if (item.peer) {
+                if (item.conversation?.push_settings) {
+                    item.peer.data = item.peer.data || {};
+                    item.peer.data.push_settings = item.conversation.push_settings;
+                }
                 if (item.conversation?.can_write) {
                     item.peer.data.can_write = item.conversation.can_write;
                 }
@@ -257,6 +261,8 @@ export class Conversations {
                 if (item.conversation?.pinned_message) {
                     item.peer.data.pinned_message = item.conversation.pinned_message;
                 }
+                item.peer.data = item.peer.data || {};
+                item.peer.data._full_conversation = item.conversation;
             }
             lists.push(new Conversation(item));
         });
@@ -378,6 +384,16 @@ export class Conversation {
         this._scroll = null;
 
         if (this.peer && this._conversation) {
+            if (this._conversation.push_settings) {
+                this.peer.data = this.peer.data || {};
+                this.peer.data.push_settings = this._conversation.push_settings;
+            }
+            if (this._conversation.can_write) {
+                this.peer.data = this.peer.data || {};
+                this.peer.data.can_write = this._conversation.can_write;
+            }
+            this.peer.data = this.peer.data || {};
+            this.peer.data._full_conversation = this._conversation;
             if (this._conversation.out_read != null) {
                 this.peer.out_read = Math.max(this.peer.out_read || 0, Number(this._conversation.out_read));
             }

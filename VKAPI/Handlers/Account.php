@@ -430,9 +430,59 @@ final class Account extends VKAPIRequestHandler
         string $token = "",
         int $time = 0,
         int $peer_id = 0,
-        int $sound = 0
+        int $sound = 1,
+        int $disabled_mentions = 0,
+        int $disabled_mass_mentions = 0
     ): int {
         $this->requireUser();
+        $this->willExecuteWriteAction();
+        $user = $this->getUser();
+
+        $params = [
+            "peer_id" => $peer_id,
+            "time" => $time,
+            "sound" => $sound,
+            "disabled_mentions" => $disabled_mentions,
+            "disabled_mass_mentions" => $disabled_mass_mentions,
+        ];
+        if (!empty($token)) {
+            $params["token"] = $token;
+        }
+
+        $res = IMBroker::i()->invokeMethod($user->getId(), "account.setSilenceMode", $params);
+        if ($res) {
+            $data = json_decode($res);
+            if (isset($data->response)) {
+                return (int) $data->response;
+            }
+        }
         return 1;
+    }
+
+    public function getPushSettings(string $token = "", int $peer_id = 0): object
+    {
+        $this->requireUser();
+        $user = $this->getUser();
+
+        $params = [];
+        if ($peer_id !== 0) {
+            $params["peer_id"] = $peer_id;
+        }
+        if (!empty($token)) {
+            $params["token"] = $token;
+        }
+
+        $res = IMBroker::i()->invokeMethod($user->getId(), "account.getPushSettings", $params);
+        if ($res) {
+            $data = json_decode($res);
+            if (isset($data->response)) {
+                return (object) $data->response;
+            }
+        }
+
+        return (object) [
+            "disabled_until" => 0,
+            "sound" => 1,
+        ];
     }
 }

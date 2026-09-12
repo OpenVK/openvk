@@ -1,8 +1,8 @@
-u(document).on('focusin click', '#search_box input[type="search"], .header-search-box input[type="search"]', (e) => {
+/*u(document).on('focusin click', '#search_box input[type="search"], .header-search-box input[type="search"]', (e) => {
     u('.page_header').addClass('search_expanded')
-})
+})*/
 
-u(document).on('focusout', '#search_box input[type="search"], .header-search-box input[type="search"]', (e) => {
+$(document).on('focusout', '#search_box input[type="search"], .header-search-box input[type="search"]', (e) => {
     if (window.openvk.at_search) {
         return
     }
@@ -12,7 +12,7 @@ u(document).on('focusout', '#search_box input[type="search"], .header-search-box
             return
         }
 
-        u('.page_header').removeClass('search_expanded')
+        //u('.page_header').removeClass('search_expanded')
         u('#searchBoxFastTips').removeClass('shown')
     }, 200)
 })

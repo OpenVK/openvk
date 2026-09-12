@@ -127,7 +127,7 @@ function bmask(int $input, array $options = []): Bitmask
 function tr(string $stringId, ...$variables): string
 {
     $localizer = Localizator::i();
-    $lang      = Session::i()->get("lang", getDefaultLanguage());
+    $lang      = getLanguage();
     if ($stringId === "__lang") {
         return $lang;
     }
@@ -192,7 +192,7 @@ function setLanguage($lg): void
 
 function getLanguage(): string
 {
-    return Session::i()->get("lang", getDefaultLanguage());
+    return $GLOBALS["__ovk_api_lang"] ?? Session::i()->get("lang", getDefaultLanguage());
 }
 
 function getLanguages(): array

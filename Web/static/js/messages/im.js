@@ -13,6 +13,7 @@ const { Friends, FriendsPage } = await es6import_Im(import.meta.url, './pages/fr
 const { SearchPage } = await es6import_Im(import.meta.url, './pages/search.js');
 const { ImportantPage } = await es6import_Im(import.meta.url, './pages/important.js');
 const { ChatInvitePreviewPage } = await es6import_Im(import.meta.url, './pages/invite.js');
+const { MaterialsPage } = await es6import_Im(import.meta.url, './pages/materials.js');
 //import { IMTab, IMPage } from './pages/page.js';
 const { IMTab, IMPage } = await es6import_Im(import.meta.url, './pages/page.js');
 //import { TabBar } from './components/common.js';
@@ -208,20 +209,20 @@ export class InstantMessagesAndRelated {
                     document.querySelectorAll("#load_skeleton").forEach(el => el.remove());
 
                     if (container) {
-                        const titleText = (typeof tr === 'function' ? tr('messages_agreement_declined_title') : null) || 'Соглашение отклонено';
-                        const descText = (typeof tr === 'function' ? tr('messages_agreement_declined') : null) || 'Вы отклонили пользовательское соглашение сообщений. Чтобы получить доступ к сообщениям, необходимо принять соглашение.';
-                        const btnText = (typeof tr === 'function' ? tr('messages_agreement_accept_btn') : null) || 'Принять соглашение';
+                        const titleText = tr('messages_agreement_declined_title');
+                        const descText = tr('messages_agreement_declined');
+                        const btnText = tr('messages_agreement_accept_btn');
 
                         container.innerHTML = `
-                            <div class="container_gray" style="margin-top: -10px;">
-                                <center style="background: white; border: #DEDEDE solid 1px; padding: 25px 20px;">
-                                    <img src="/assets/packages/static/openvk/img/oof.apng" style="width: 120px; max-width: 25%; margin-bottom: 10px;" />
-                                    <h3 style="margin: 0 0 10px; color: #333; font-size: 15px;">${escapeHtml(titleText)}</h3>
-                                    <span style="color: #707070; margin: 0 0 15px; display: block; max-width: 480px; line-height: 1.4; font-size: 13px;">
+                            <div class="container_gray messages-agreement-container">
+                                <div class="messages-agreement-box">
+                                    <img src="/assets/packages/static/openvk/img/oof.apng" class="messages-agreement-img" />
+                                    <h3 class="messages-agreement-title">${escapeHtml(titleText)}</h3>
+                                    <span class="messages-agreement-desc">
                                         ${escapeHtml(descText)}
                                     </span>
-                                    <button class="button" id="_im_accept_agreement_btn" style="margin-top: 5px;">${escapeHtml(btnText)}</button>
-                                </center>
+                                    <button class="button messages-agreement-btn" id="_im_accept_agreement_btn">${escapeHtml(btnText)}</button>
+                                </div>
                             </div>
                         `;
 
@@ -401,6 +402,9 @@ export class InstantMessagesAndRelated {
         this.state._toggleScrollMode(false);
 
         this.selectedTabId = tab;
+        if (!this.root || !this.root.isConnected) {
+            this.root = document.querySelector("#im_container");
+        }
         if (this.root) {
             this.root.querySelectorAll("#im_page_containers .im_page").forEach(item => {
                 imLog("Hide tab", item);
@@ -480,6 +484,9 @@ export class InstantMessagesAndRelated {
                 break;
             case "contact":
                 got_class = ContactPage;
+                break;
+            case "materials":
+                got_class = MaterialsPage;
                 break;
             case "search":
                 got_class = SearchPage;
@@ -808,7 +815,7 @@ class IMState {
             console.error(e);
         }
 
-        const _sel = sel_id == null ? Number(loc.searchParams.get('sel')) : sel_id;
+        const _sel = sel_id == null ? Number(loc ? loc.searchParams.get('sel') : 0) : sel_id;
         const joinByTopic = loc ? loc.searchParams.get("joinByTopic") : null;
         const joinCode = loc ? (loc.searchParams.get("join") || loc.searchParams.get("invite")) : null;
         const as = loc ? loc.searchParams.get("as") : null;
@@ -827,7 +834,7 @@ class IMState {
                 await this.link.messenger.selectConversation(_l);
 
                 const hashMatch = (loc.hash || location.hash || "").match(/#?msg-?\d+-(\d+)/);
-                const queryMsgId = loc.searchParams.get("msgid") || loc.searchParams.get("msg_id") || loc.searchParams.get("msg");
+                const queryMsgId = loc.searchParams ? (loc.searchParams.get("msgid") || loc.searchParams.get("msg_id") || loc.searchParams.get("msg")) : null;
                 const targetMsgId = hashMatch ? Number(hashMatch[1]) : (queryMsgId ? Number(queryMsgId) : null);
                 if (targetMsgId) {
                     setTimeout(() => {
@@ -977,19 +984,19 @@ class SettingsPage extends IMPage {
         container.insertAdjacentHTML("beforeend", `
             <div class="messenger-settings">
                 <div>
-                    <div style="text-align: center;">
+                    <div class="messenger-settings-title">
                         <b>OpenVK Polylogues</b>
                     </div>
                     <div>
-                        <label style="display:block;"><input id="im.modern_mode" type="checkbox">${tr("im_option_compact_mode")} (beta)</label>
-                        <label style="display:block;"><input id="viewers.photo.list" type="checkbox">${tr("im_option_photo_viewer")} (Beta)</label>
+                        <label><input id="im.modern_mode" type="checkbox">${tr("im_option_compact_mode")} (beta)</label>
+                        <label><input id="viewers.photo.list" type="checkbox">${tr("im_option_photo_viewer")} (Beta)</label>
                     </div>
                     <div>
-                        <label style="display:block;"><input id="im.mute_all" type="checkbox">${tr("im_option_mute_local")}</label>
+                        <label><input id="im.mute_all" type="checkbox">${tr("im_option_mute_local")}</label>
                     </div>
                     <div>
-                        <label style="display:block;"><input id="im.debug" type="checkbox">${tr("im_option_debug")}</label>
-                        <label style="display:block;"><input id="im.disable_lottie" type="checkbox">${tr("im_option_disable_animated_stickers")}</label>
+                        <label><input id="im.debug" type="checkbox">${tr("im_option_debug")}</label>
+                        <label><input id="im.disable_lottie" type="checkbox">${tr("im_option_disable_animated_stickers")}</label>
                         ${show_mail ? `<p><a onclick="window.im.messenger.selectConversationByPeerId(window.openvk.dev_id)">${tr("report_bug")}</a></p>` : ""}
                     </div>
                 </div>
@@ -1827,7 +1834,7 @@ export class FastChats {
             text: text,
             date: Math.floor(Date.now() / 1000),
             out: 1,
-            author_name: tr('you') || 'Вы',
+            author_name: tr('you'),
             author_photo: this.currentUserAvatar
         };
         chat.messages.push(tempMsg);
@@ -1902,7 +1909,7 @@ export class FastChats {
             text: "",
             date: Math.floor(Date.now() / 1000),
             out: 1,
-            author_name: tr('you') || 'Вы',
+            author_name: tr('you'),
             author_photo: this.currentUserAvatar,
             attachments: [{
                 type: 'sticker',
@@ -2075,7 +2082,7 @@ export class FastChats {
                 text: text,
                 date: date,
                 out: isOut ? 1 : 0,
-                author_name: isOut ? (tr('you') || 'Вы') : chat.title,
+                author_name: isOut ? tr('you') : chat.title,
                 author_photo: isOut ? this.currentUserAvatar : chat.photo,
                 attachments: (msg.data && msg.data.attachments) || msg.attachments || []
             });

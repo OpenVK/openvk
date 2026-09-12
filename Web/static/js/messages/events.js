@@ -28,6 +28,7 @@ export class EventHandler {
             63: "TypingEvent",
             64: "TypingEvent",
             80: "CounterUpdateEvent",
+            114: "NotificationSetEvent",
         };
         this._updateCounterTimeout = null;
     }
@@ -78,6 +79,11 @@ export class EventHandler {
                 } else if (found.isDeleted()) {
                     found.restore();
                 }
+                if (found.data) {
+                    found.data.flags = flags;
+                    found.data.important = (flags & 8) ? 1 : 0;
+                }
+                found.important = Boolean(flags & 8);
                 if (_crs.peer._chunks) _crs.peer._chunks._invalidateCache();
                 this.im.messenger.update();
             }
@@ -132,6 +138,13 @@ export class EventHandler {
                     if (found.data) found.data.read_state = 0;
                     found.read_state = 0;
                 }
+                if (flags & 8) {
+                    if (found.data) {
+                        found.data.important = 1;
+                        found.data.flags = (found.data.flags || 0) | 8;
+                    }
+                    found.important = true;
+                }
                 if (_crs.peer._chunks) _crs.peer._chunks._invalidateCache();
                 if (typeof _crs.getScrollPosition === 'function' && _crs.getScrollPosition()) {
                     _crs.getScrollPosition()._invalidateCache();
@@ -182,6 +195,13 @@ export class EventHandler {
                 if (flags & 1) {
                     if (found.data) found.data.read_state = 1;
                     found.read_state = 1;
+                }
+                if (flags & 8) {
+                    if (found.data) {
+                        found.data.important = 0;
+                        found.data.flags = (found.data.flags || 0) & ~8;
+                    }
+                    found.important = false;
                 }
                 if (_crs.peer._chunks) _crs.peer._chunks._invalidateCache();
                 if (typeof _crs.getScrollPosition === 'function' && _crs.getScrollPosition()) {
@@ -440,9 +460,41 @@ export class EventHandler {
             if (_msg.data) _msg.data.read_state = isSaved ? 1 : 0;
         }
         const activeChat = (this.im.messenger && typeof this.im.messenger.getCurrentChat === 'function') ? this.im.messenger.getCurrentChat() : null;
-        const isActiveChatOpen = this.im.state.is_active && activeChat && activeChat.peer && activeChat.peer.id == _msg.peer_id;
+        const rawText = (typeof _msg.getText === 'function' ? _msg.getText(true) : (_msg.data?.text || _msg.text || "")) || "";
+        const pushSettings = _crs.peer?.data?.push_settings || _crs.peer?.data?._full_conversation?.push_settings || _crs.peer?.data?.chat_settings?.push_settings;
+        const disabledMentions = Boolean(pushSettings?.disabled_mentions);
+        const disabledMassMentions = Boolean(pushSettings?.disabled_mass_mentions || pushSettings?.disabled_mentions);
 
-        if (!isSelf && !_crs.peer.isMuted()) {
+        const isUserMentionedInText = Boolean(
+            !disabledMentions && rawText && currentUserId && (
+                rawText.includes(`[id${currentUserId}|`) ||
+                rawText.includes(`[id${currentUserId}]`) ||
+                rawText.match(new RegExp(`(^|[\\s(\\[{<]|&gt;)([@*])id${currentUserId}\\b`, 'i'))
+            )
+        );
+        const isMassMentionedInText = Boolean(
+            !disabledMassMentions && rawText && (
+                rawText.includes(`[all|`) ||
+                rawText.includes(`[all]`) ||
+                rawText.includes(`[online|`) ||
+                rawText.includes(`[online]`) ||
+                rawText.match(/(^|[\s(\[{<]|&gt;)([@*])(all|online)\b/i)
+            )
+        );
+
+        const isMentioned = Boolean(
+            _msg.mention ||
+            _msg.is_mentioned ||
+            _msg.data?.mention ||
+            _msg.data?.is_mentioned ||
+            _msg.data?.attachments?.mention ||
+            _msg.attachments?.mention ||
+            (_msg.data?.attachments && Array.isArray(_msg.data.attachments) && _msg.data.attachments.some(a => a && a.type === 'mention')) ||
+            isUserMentionedInText ||
+            isMassMentionedInText
+        );
+
+        if (!isSelf && (!_crs.peer.isMuted() || isMentioned)) {
             triggerMessageNotification(_crs, _msg);
         }
 
@@ -1095,6 +1147,30 @@ export class EventHandler {
             this.updateGlobalUnreadCounter(count);
         } else {
             this.updateGlobalUnreadCounter();
+        }
+    }
+
+    async NotificationSetEvent(event) {
+        const peerId = event[1];
+        const sound = event[2];
+        const disabledUntil = event[3];
+
+        const conv = await this.im.conversations._findConvFromApi(peerId);
+        if (conv && conv.peer) {
+            conv.peer.data = conv.peer.data || {};
+            conv.peer.data.push_settings = {
+                sound: sound,
+                disabled_until: disabledUntil,
+            };
+            if (conv.peer.data.chat_settings) {
+                conv.peer.data.chat_settings.push_settings = conv.peer.data.push_settings;
+            }
+        }
+        if (this.im.conversations) {
+            this.im.conversations.update();
+        }
+        if (this.im.messenger) {
+            this.im.messenger.update();
         }
     }
 }

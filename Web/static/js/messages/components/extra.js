@@ -30,7 +30,7 @@ export const FriendsPageTemplate = ({ friends, count, referrer, onFriendClick, o
                                 </div>
                             </div>
                             ${isChatCreation || isAdd ? html`
-                                <div><input type="checkbox" checked=${isSelected(f)} style="pointer-events: none;" /></div>
+                                <div><input type="checkbox" checked=${isSelected(f)} class="friends-list-item-checkbox" /></div>
                             ` : ""}
                         </div>
                         <hr />
@@ -48,7 +48,7 @@ export const FriendsPageTemplate = ({ friends, count, referrer, onFriendClick, o
                 <div class="friends-list-side-item sticky">
                     <div>
                         <div class="chat_prev">
-                            <div style="display: flex;flex-direction: column;justify-content: center;">
+                            <div class="friends-chat-preview-title-wrap">
                                 <input type="text" id="_name" onInput=${(e) => { onTitleChangeClick(e) }} />
                                 <p id="_m_count">${tr("members_count", 1)}</p>
                             </div>
@@ -64,9 +64,9 @@ export const FriendsPageTemplate = ({ friends, count, referrer, onFriendClick, o
                 `}
                 ${isAdd && html`
                 <div class="friends-list-side-item sticky">
-                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                    <div class="friends-add-side-wrap">
                         <div class="inf">
-                            <p style="margin: 0; color: var(--text-2ary);">${tr('add_chat_members_tip_1')}</p>
+                            <p class="friends-add-tip">${tr('add_chat_members_tip_1')}</p>
                         </div>
                         <div class="friends-list-b">
                             <input onClick=${(e) => { onSubmit(e) }} class="button" type="button" value="${tr('chat_add_members')}" />
@@ -107,7 +107,7 @@ function formatSearchDate(timestamp) {
     });
 
     if (isYesterday) {
-        return (tr("yesterday") || "вчера") + " " + timeStr;
+        return tr("yesterday") + " " + timeStr;
     }
 
     const dayStr = formatDate(date, { month: '2-digit', day: '2-digit' });
@@ -140,16 +140,16 @@ function getSearchMessageSnippet(msg, query) {
         const att = msg.data.attachments[0];
         const type = att.type || (att.photo ? "photo" : (att.audio ? "audio" : (att.doc ? "doc" : "attach")));
         switch (type) {
-            case "photo": rawText = `[${tr('attachment_photo') || 'Фотография'}]`; break;
-            case "audio": rawText = `[${tr('attachment_audio') || 'Аудиозапись'}]`; break;
-            case "video": rawText = `[${tr('attachment_video') || 'Видеозапись'}]`; break;
+            case "photo": rawText = `[${tr('attachment_photo')}]`; break;
+            case "audio": rawText = `[${tr('attachment_audio')}]`; break;
+            case "video": rawText = `[${tr('attachment_video')}]`; break;
             case "doc": {
                 const d = att.doc;
                 const isGif = d && (d.type === 3 || (d.ext && d.ext.toLowerCase() === 'gif') || (d.title && d.title.toLowerCase().endsWith('.gif')));
-                rawText = isGif ? '[GIF]' : `[${tr('attachment_doc') || 'Документ'}]`;
+                rawText = isGif ? '[GIF]' : `[${tr('attachment_doc')}]`;
                 break;
             }
-            default: rawText = `[${tr('attachment') || 'Вложение'}]`; break;
+            default: rawText = `[${tr('attachment')}]`; break;
         }
     }
 
@@ -196,7 +196,7 @@ export const SearchMessageItem = ({ msg, query }) => {
         }
         if (!chatTitle) {
             const cId = peerId >= 2000000000 ? (peerId - 2000000000) : (msg.data?.chat_id || peerId);
-            chatTitle = `${tr('chat') || 'Беседа'} ${cId}`;
+            chatTitle = `${tr('chat')} ${cId}`;
         }
         const highlightedTitle = highlightQuery(chatTitle, query);
         contextNode = html`
@@ -227,7 +227,9 @@ export const SearchMessageItem = ({ msg, query }) => {
     const snippetHtml = getSearchMessageSnippet(msg, query);
 
     const onRowClick = () => {
-        if (window.im?.messenger && typeof window.im.messenger.jumpToMessage === 'function') {
+        if (window.im?.messenger && typeof window.im.messenger.goToMessage === 'function') {
+            window.im.messenger.goToMessage(msg);
+        } else if (window.im?.messenger && typeof window.im.messenger.jumpToMessage === 'function') {
             window.im.messenger.jumpToMessage(msg.id, peerId);
         } else if (window.im?.messenger) {
             window.im.messenger.selectConversationByPeerId(peerId);
@@ -250,7 +252,7 @@ export const SearchMessageItem = ({ msg, query }) => {
                         ${contextNode}
                     </div>
                     <div class="im-search-item-meta">
-                        ${isImportant ? html`<span class="im-search-star" title="${tr('important') || 'Важное'}">⭐</span>` : ""}
+                        ${isImportant ? html`<span class="im-search-star" title="${tr('important')}"></span>` : ""}
                         <span class="im-search-date">${formattedDate}</span>
                     </div>
                 </div>
@@ -268,7 +270,7 @@ export const SearchPeerItem = ({ peer, query }) => {
     const avatar = peer.avatar || "/assets/packages/static/openvk/img/camera_50.png";
     const isChat = peer.type === "chat" || peerId >= 2000000000;
     const isOnline = Boolean(peer.online);
-    const metaText = peer.meta || (isChat ? (tr('chat') || 'Беседа') : (isOnline ? (tr('online') || 'в сети') : ''));
+    const metaText = peer.meta || (isChat ? tr('chat') : (isOnline ? tr('online') : ''));
 
     const onClick = () => {
         if (window.im?.messenger) {
@@ -336,34 +338,34 @@ export const SearchPageTemplate = ({ q, date, c, onSearch, onCancel }) => {
                     <input 
                         type="text" 
                         class="search_input im-search-input" 
-                        placeholder="${tr('search_messages_tab') || 'Поиск'}" 
+                        placeholder="${tr('search_messages_tab')}" 
                         value="${query}" 
                         onKeyDown=${handleKeyDown}
                     />
-                    ${query ? html`<div class="im-search-clear" title="${tr('clear') || 'Очистить'}" onClick=${handleClear}>×</div>` : ""}
+                    ${query ? html`<div class="im-search-clear" title="${tr('clear')}" onClick=${handleClear}>×</div>` : ""}
                 </div>
                 <input 
                     type="button" 
                     class="button im-search-btn" 
-                    value="${tr('search_messages_tab') || 'Поиск'}" 
+                    value="${tr('search_messages_tab')}" 
                     onClick=${handleSearchClick} 
                 />
                 <button 
                     type="button"
                     class="button im-search-calendar-btn ${date ? 'active' : ''}" 
-                    title="${date ? ((tr('search_by_date') || 'Поиск по дате') + ': ' + date) : (tr('search_by_date') || 'Поиск по дате')}" 
+                    title="${date ? (tr('search_by_date') + ': ' + date) : tr('search_by_date')}" 
                     onClick=${handleCalendarClick}>
                     <span class="im-search-calendar-icon"></span>
                 </button>
                 <div class="im-search-cancel-btn">
-                    <a onClick=${onCancel}>${tr('cancel') || 'Отмена'}</a>
+                    <a onClick=${onCancel}>${tr('cancel')}</a>
                 </div>
             </div>
 
             <div class="im-search-results">
                 ${items.length === 0 ? html`
                     <div class="im-search-empty">
-                        ${tr('im_search_not_found') || 'По запросу ничего не найдено.'}
+                        ${tr('im_search_not_found')}
                     </div>
                 ` : items.map((msg) => html`
                     <${SearchMessageItem} msg=${msg} query=${query} />
@@ -372,7 +374,7 @@ export const SearchPageTemplate = ({ q, date, c, onSearch, onCancel }) => {
 
             ${loaded_count < count && html`
                 <div onClick=${() => c.moveOffset()} class="show_more crp-load-more">
-                    ${tr('show_next') || 'Показать следующие сообщения'}
+                    ${tr('show_next')}
                 </div>
             `}
         </div>

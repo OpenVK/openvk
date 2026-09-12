@@ -89,7 +89,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
     const isDeleted = msg.isDeleted();
     const isReplyingTo = Boolean(window.im?.messenger?.replyTo && (Number(window.im.messenger.replyTo.id) === Number(msg.id) || window.im.messenger.replyTo === msg));
     const isEditingThis = Boolean(window.im?.messenger?.editMsg && (Number(window.im.messenger.editMsg.id) === Number(msg.id) || window.im.messenger.editMsg === msg));
-    const isImportant = Boolean(msg.data?.important || (msg.data?.flags & 8));
+    const isImportant = typeof msg.isImportant === 'function' ? msg.isImportant() : Boolean(msg.data?.important || msg.important || (msg.data?.flags & 8) || (msg.flags & 8));
     const isMobile = Boolean(window.im?.state?.is_mobile || (typeof document !== 'undefined' && document.body.classList.contains('im_mobile')));
     const hasDropdown = page?.activeDropdownMsgId === msg.id;
 
@@ -190,6 +190,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
         if (isDeleted || isSearchTpl) return;
         if (typeof msg.can === 'function' && !msg.can('reply')) return;
         if (window.im?.messenger?.isForwarded?.()) return;
+        if (window.im?.messenger?.isEditing?.() || window.im?.messenger?.editMsg != null) return;
 
         if (e.target.closest('a, button, input, textarea, .actions-2, .msg-mobile-actions, .audioEmbed, .play-button, .compact_video, .reply-msg-container, .checkmark')) {
             return;
@@ -263,7 +264,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
             ${!isDeleted && (isMobile ? html`
                 <div class="msg-mobile-actions">
                     ${isImportant && html`
-                        <div class="star-icon active" title="${tr('unmark_important') || 'Важное'}"></div>
+                        <div class="star-icon active" title="${tr('unmark_important')}"></div>
                     `}
                     <div class="msg-dropdown-wrap">
                         <div 
@@ -278,7 +279,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                     page.update();
                 }
             }}
-                            title="${tr('actions') || 'Действия'}"
+                            title="${tr('actions')}"
                         >
                             <!-- Аккуратная иконка трех точек вместо текстовых символов -->
                             <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
@@ -293,11 +294,19 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                                 <div class="msg-dropdown-item" onClick=${(e) => {
                     e.stopPropagation();
                     page.activeDropdownMsgId = null;
+                    if (window.im?.messenger?.isEditing?.() || window.im?.messenger?.editMsg != null) {
+                        window.im.messenger.view?._triggerCancelEditingDialog?.(() => {
+                            window.im.messenger.replyTo = msg;
+                            window.im.messenger.update();
+                            setTimeout(() => window.im.messenger.view?.setInputSelectionToEnd?.(), 50);
+                        });
+                        return;
+                    }
                     window.im.messenger.replyTo = msg;
                     window.im.messenger.update();
                     setTimeout(() => window.im.messenger.view?.setInputSelectionToEnd?.(), 50);
                 }}>
-                                    ${tr('reply') || 'Ответить'}
+                                    ${tr('reply')}
                                 </div>
 
                                 ${msg.can("edit") && html`
@@ -306,7 +315,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                         page.activeDropdownMsgId = null;
                         window.im.messenger.view?.onEditButtonClick(e, msg);
                     }}>
-                                        ${tr('edit') || 'Редактировать'}
+                                        ${tr('edit')}
                                     </div>
                                 `}
 
@@ -316,14 +325,14 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                         page.activeDropdownMsgId = null;
                         window.im.messenger.view?.onPinButtonClick(e, msg);
                     }}>
-                                        ${msg.isPinned() ? (tr('unpin') || 'Открепить') : (tr('pin') || 'Закрепить')}
+                                        ${msg.isPinned() ? tr('unpin') : tr('pin')}
                                     </div>
                                 `}
 
                                 <div class="msg-dropdown-item" onClick=${async (e) => {
                     e.stopPropagation();
                     page.activeDropdownMsgId = null;
-                    const isImp = Boolean(msg.data?.important || (msg.data?.flags & 8));
+                    const isImp = typeof msg.isImportant === 'function' ? msg.isImportant() : Boolean(msg.data?.important || msg.important || (msg.data?.flags & 8) || (msg.flags & 8));
                     try {
                         await window.OVKAPI.call("messages.markAsImportant", {
                             message_ids: msg.id,
@@ -331,17 +340,20 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                         });
                         if (!msg.data) msg.data = {};
                         msg.data.important = isImp ? 0 : 1;
+                        msg.important = isImp ? 0 : 1;
                         if (isImp) {
                             msg.data.flags = (msg.data.flags || 0) & ~8;
+                            msg.flags = (msg.flags || 0) & ~8;
                         } else {
                             msg.data.flags = (msg.data.flags || 0) | 8;
+                            msg.flags = (msg.flags || 0) | 8;
                         }
                         window.im?.messenger?.view?.update();
                     } catch (err) {
                         console.error(err);
                     }
                 }}>
-                                    ${isImportant ? (tr('unmark_important') || 'Снять отметку') : (tr('mark_important') || 'Отметить важным')}
+                                    ${isImportant ? tr('unmark_important') : tr('mark_important')}
                                 </div>
 
                                 ${msg.can("viewers") && html`
@@ -350,7 +362,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                         page.activeDropdownMsgId = null;
                         window.im.messenger.view?.onViewersButtonClick(e, msg);
                     }}>
-                                        ${tr('message_viewers') || 'Просмотрели'}
+                                        ${tr('message_viewers')}
                                     </div>
                                 `}
 
@@ -360,7 +372,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                         page.activeDropdownMsgId = null;
                         window.im.messenger.view?.onReportButtonClick(e, msg);
                     }}>
-                                        ${tr('report') || 'Пожаловаться'}
+                                        ${tr('report')}
                                     </div>
                                 `}
                             </div>
@@ -371,7 +383,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                 <div class="actions-2">
                     <div onClick=${async (e) => {
                 e.stopPropagation();
-                const isImp = Boolean(msg.data?.important || (msg.data?.flags & 8));
+                const isImp = typeof msg.isImportant === 'function' ? msg.isImportant() : Boolean(msg.data?.important || msg.important || (msg.data?.flags & 8) || (msg.flags & 8));
                 try {
                     await window.OVKAPI.call("messages.markAsImportant", {
                         message_ids: msg.id,
@@ -379,10 +391,13 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                     });
                     if (!msg.data) msg.data = {};
                     msg.data.important = isImp ? 0 : 1;
+                    msg.important = isImp ? 0 : 1;
                     if (isImp) {
                         msg.data.flags = (msg.data.flags || 0) & ~8;
+                        msg.flags = (msg.flags || 0) & ~8;
                     } else {
                         msg.data.flags = (msg.data.flags || 0) | 8;
+                        msg.flags = (msg.flags || 0) | 8;
                     }
                     if (window.im?.messenger?.view) {
                         window.im.messenger.view.update();
@@ -390,7 +405,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                 } catch (err) {
                     console.error(err);
                 }
-            }} class="star-icon ${(msg.data?.important || (msg.data?.flags & 8)) ? 'active' : ''}" title="${(msg.data?.important || (msg.data?.flags & 8)) ? tr('unmark_important') : tr('mark_important')}"></div>
+            }} class="star-icon ${isImportant ? 'active' : ''}" title="${isImportant ? tr('unmark_important') : tr('mark_important')}"></div>
                     ${msg.can("viewers") && html`
                         <div onClick=${(e) => { window.im.messenger.view.onViewersButtonClick(e, msg) }} class="viewers-icon" title="${tr('message_viewers')}"></div>
                     `}
@@ -841,7 +856,7 @@ const CompactReplyAttachment = ({ rep, att }) => {
         }
         case 'video': {
             const videoThumb = att.video?.image?.[0]?.url || att.video?.photo_130 || att.video?.photo_320 || '';
-            const title = att.video?.title || (typeof tr === 'function' && tr('video') && !tr('video').startsWith('@') ? tr('video') : 'Видеозапись');
+            const title = att.video?.title || tr('video');
             return html`
                 <div class="reply-compact-attach reply-compact-video" title=${title} onClick=${(e) => {
                     e.stopPropagation();
@@ -856,7 +871,7 @@ const CompactReplyAttachment = ({ rep, att }) => {
         }
         case 'audio': {
             const artist = att.audio?.artist || '';
-            const title = att.audio?.title || (typeof tr === 'function' && tr('audio') && !tr('audio').startsWith('@') ? tr('audio') : 'Аудиозапись');
+            const title = att.audio?.title || tr('audio');
             const fullTitle = artist ? `${artist} — ${title}` : title;
             return html`
                 <div class="reply-compact-attach reply-compact-audio" title=${fullTitle} onClick=${(e) => {
@@ -871,7 +886,7 @@ const CompactReplyAttachment = ({ rep, att }) => {
             `;
         }
         case 'doc': {
-            const docTitle = att.doc?.title || (typeof tr === 'function' && tr('document') && !tr('document').startsWith('@') ? tr('document') : 'Документ');
+            const docTitle = att.doc?.title || tr('document');
             const ids = att.doc ? (att.doc.owner_id + '_' + att.doc.id + (att.doc.access_key ? "?key=" + att.doc.access_key : "")) : "";
             return html`
                 <a target="_blank" class="reply-compact-attach reply-compact-doc" title=${docTitle} href=${ids ? '/doc' + ids : 'javascript:void(0)'} onClick=${(e) => e.stopPropagation()}>
@@ -881,7 +896,7 @@ const CompactReplyAttachment = ({ rep, att }) => {
             `;
         }
         case 'wall': {
-            const wallTitle = typeof tr === 'function' && tr('post') && !tr('post').startsWith('@') ? tr('post') : 'Запись на стене';
+            const wallTitle = tr('post');
             return html`
                 <div class="reply-compact-attach reply-compact-wall" title=${wallTitle} onClick=${(e) => {
                     e.stopPropagation();
@@ -896,7 +911,7 @@ const CompactReplyAttachment = ({ rep, att }) => {
         }
         case 'gift': {
             const giftThumb = att.gift?.thumb_48 || att.gift?.thumb_96 || att.gift?.gift?.thumb_48 || att.gift?.gift?.thumb_96 || att.gift?.gift?.thumb_256 || '';
-            const giftTitle = typeof tr === 'function' && tr('gift') && !tr('gift').startsWith('@') ? tr('gift') : 'Подарок';
+            const giftTitle = tr('gift');
             return html`
                 <div class="reply-compact-attach reply-compact-gift" title=${giftTitle}>
                     ${giftThumb ? html`<img class="reply-compact-thumb" src=${giftThumb} alt="gift" />` : html`<span class="reply-attach-icon mono-icon mono-icon-gift"></span>`}
@@ -914,7 +929,7 @@ const CompactReplyAttachment = ({ rep, att }) => {
             `;
         }
         case 'poll': {
-            const pollQ = att.poll?.question || (typeof tr === 'function' && tr('poll') && !tr('poll').startsWith('@') ? tr('poll') : 'Опрос');
+            const pollQ = att.poll?.question || tr('poll');
             return html`
                 <div class="reply-compact-attach reply-compact-poll" title=${pollQ}>
                     <img class="reply-attach-icon reply-attach-oxygen" src="${OXYGEN_BASE}/apps/kchart.png" alt="poll" />
@@ -1479,7 +1494,7 @@ export const DocImageAttachment = ({ doc }) => {
     const ids = (doc.owner_id ?? '') + '_' + (doc.id ?? '');
     const accessKey = doc.access_key ? (doc.access_key.startsWith('?') ? doc.access_key : `?key=${doc.access_key}`) : '';
     const href = ids ? `/doc${ids}${accessKey}` : (doc.url || 'javascript:void(0)');
-    const docTitle = doc.title || doc.name || (typeof tr === 'function' ? tr('document') : 'Изображение');
+    const docTitle = doc.title || doc.name || tr('document');
     const docSize = formatDocSize(doc.size);
     let imgUrl = getDocPreviewUrl(doc) || doc.url || '';
 
@@ -1526,7 +1541,7 @@ export const DocAttachment = ({ doc }) => {
     const ids = (doc.owner_id ?? '') + '_' + (doc.id ?? '');
     const accessKey = doc.access_key ? (doc.access_key.startsWith('?') ? doc.access_key : `?key=${doc.access_key}`) : '';
     const href = ids ? `/doc${ids}${accessKey}` : 'javascript:void(0)';
-    const docTitle = doc.title || doc.name || (typeof tr === 'function' ? tr('document') : 'Документ');
+    const docTitle = doc.title || doc.name || tr('document');
 
     return html`
         <div class="msg-attach-w msg-attach-w-doc">
@@ -1756,7 +1771,7 @@ export const ForwardedModalView = ({ msg, isLoading = false }) => {
                 ${attachments && attachments.length > 0 && html`
                     <${MessageAttachments} msg=${msg} attachments=${attachments} depth=${0} />
                 `}
-                ${isLoading && html`<div class="fwd-modal-loading" style="padding: 8px; text-align: center; color: var(--text-muted, #828a99);">${tr("loading")}</div>`}
+                ${isLoading && html`<div class="fwd-modal-loading">${tr("loading")}</div>`}
                 <${ForwardedMessages} msg=${msg} depth=${0} inModal=${true} />
             </div>
         </div>

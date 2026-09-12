@@ -17,17 +17,17 @@ export const ChatInvitePreviewView = ({
 }) => {
     if (isLoading) {
         return html`
-            <div class="chat-invite-tab-wrap" style="padding: 60px 20px; text-align: center;">
+            <div class="chat-invite-tab-wrap">
                 <div id="gif_loader"></div>
-                <div style="margin-top: 10px; color: var(--nobold, #777); font-size: 13px;">${typeof tr === 'function' && tr("loading") ? tr("loading") : "Загрузка..."}</div>
+                <div class="chat-invite-loading">${typeof tr === 'function' && tr("loading") ? tr("loading") : "Загрузка..."}</div>
             </div>
         `;
     }
 
     if (error) {
         return html`
-            <div class="chat-invite-tab-wrap" style="padding: 60px 20px; text-align: center;">
-                <div style="color: #d00; font-size: 14px; margin-bottom: 12px;">${error}</div>
+            <div class="chat-invite-tab-wrap">
+                <div class="chat-invite-error">${error}</div>
                 <a class="button" onClick=${() => { window.im?.openTabByName("conversations"); }}>
                     ${typeof tr === 'function' && tr("back") ? tr("back") : "Назад"}
                 </a>
@@ -35,42 +35,42 @@ export const ChatInvitePreviewView = ({
         `;
     }
 
-    const modalTitle = (typeof tr === 'function' ? tr("chat_invite_preview_title") : null) || "Приглашение в беседу";
+    const modalTitle = tr("chat_invite_preview_title");
     const joinBtnText = isMember
-        ? ((typeof tr === 'function' ? tr("chat_invite_open_btn") : null) || "Перейти к беседе")
-        : ((typeof tr === 'function' ? (tr("chat_invite_accept_btn") || tr("chat_invite_join_btn")) : null) || "Принять приглашение");
+        ? (tr("chat_invite_open_btn"))
+        : (tr("chat_invite_accept_btn"));
 
     return html`
-        <div class="chat-invite-tab-page" style="padding: 36px 20px; max-width: 480px; margin: 0 auto; text-align: center;">
+        <div class="chat-invite-tab-page">
             <!-- Header title -->
-            <h2 style="font-size: 18px; font-weight: bold; margin: 0 0 22px; color: var(--color-text, #222); letter-spacing: -0.2px;">
+            <h2 class="chat-invite-title">
                 ${modalTitle}
             </h2>
 
             <!-- Big square chat avatar -->
-            <div class="chat-invite-avatar-box" style="margin-bottom: 16px; display: flex; justify-content: center;">
+            <div class="chat-invite-avatar-box">
                 <img
                     src="${photo}"
                     alt=""
-                    style="width: 120px; height: 120px; object-fit: cover; border: 2px solid var(--bg-slightly-border, #d3d9de); border-radius: 0; display: block; box-shadow: 0 1px 3px rgba(0,0,0,0.08);"
-                    onError=${(e) => { e.target.src = '/assets/packages/static/openvk/img/camera_200.png'; }}
+                    class="chat-invite-avatar"
+                    onError=${(e) => { e.target.onerror = null; e.target.src = '/assets/packages/static/openvk/img/camera_200.png'; }}
                 />
             </div>
 
             <!-- Chat title -->
-            <b style="font-size: 16px; color: var(--color-text, #222); display: block; margin-bottom: 4px; word-break: break-word;">
+            <b class="chat-invite-name">
                 ${title}
             </b>
 
             <!-- Members count -->
-            <div style="font-size: 12px; color: var(--nobold, #777); margin-bottom: 22px;">
+            <div class="chat-invite-members-count">
                 ${membersText}
             </div>
 
             <!-- Square avatars grid -->
             ${(profiles && profiles.length > 0) || remainingCount > 0 ? html`
-                <div class="chat-invite-grid-wrapper" style="display: flex; align-items: center; justify-content: center; margin-bottom: 28px;">
-                    <div class="chat-invite-avatars-grid" style="display: grid; grid-template-columns: repeat(${Math.min(6, (profiles ? profiles.length : 0) + (remainingCount > 0 ? 1 : 0))}, 38px); gap: 4px;">
+                <div class="chat-invite-grid-wrapper">
+                    <div class="chat-invite-avatars-grid" style="grid-template-columns: repeat(${Math.min(6, (profiles ? profiles.length : 0) + (remainingCount > 0 ? 1 : 0))}, 38px);">
                         ${(profiles || []).map(p => {
                             const pName = `${p.first_name || ''} ${p.last_name || ''}`.trim();
                             const pAvatar = p.photo_50 || p.photo_100 || '/assets/packages/static/openvk/img/camera_50.png';
@@ -79,8 +79,8 @@ export const ChatInvitePreviewView = ({
                                     src="${pAvatar}"
                                     title="${pName}"
                                     alt="${pName}"
-                                    style="width: 38px; height: 38px; object-fit: cover; border: 1px solid var(--bg-slightly-border, #d3d9de); border-radius: 0; box-sizing: border-box; display: block;"
-                                    onError=${(e) => { e.target.src = '/assets/packages/static/openvk/img/camera_50.png'; }}
+                                    class="chat-invite-member-ava"
+                                    onError=${(e) => { e.target.onerror = null; e.target.src = '/assets/packages/static/openvk/img/camera_50.png'; }}
                                 />
                             `;
                         })}
@@ -88,7 +88,6 @@ export const ChatInvitePreviewView = ({
                             <div
                                 class="chat-invite-more-badge"
                                 title="+${remainingCount}"
-                                style="width: 38px; height: 38px; background: #666; color: #fff; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; user-select: none; border-radius: 0; box-sizing: border-box; border: 1px solid var(--bg-slightly-border, #d3d9de);"
                             >
                                 +${remainingCount}
                             </div>
@@ -97,10 +96,9 @@ export const ChatInvitePreviewView = ({
                 </div>
             ` : ''}
 
-            <div style="margin-top: 10px;">
+            <div class="chat-invite-action-box">
                 <button
-                    class="button ${isJoining ? 'lagged' : ''}"
-                    style="width: 100%; max-width: 340px; padding: 9px 20px; font-size: 13px; font-weight: 500; margin: 0 auto; display: block; background-position: 0 0px;"
+                    class="button chat-invite-join-btn ${isJoining ? 'lagged' : ''}"
                     disabled=${isJoining}
                     onClick=${onJoin}
                 >
@@ -109,8 +107,8 @@ export const ChatInvitePreviewView = ({
             </div>
 
             ${isMember ? html`
-                <div style="font-size: 12px; color: #5b88bd; margin-top: 12px;">
-                    ${(typeof tr === 'function' ? tr("chat_invite_already_member") : null) || "Вы уже являетесь участником этой беседы"}
+                <div class="chat-invite-redirect-hint">
+                    ${tr("chat_invite_already_member")}
                 </div>
             ` : ''}
         </div>
@@ -127,8 +125,8 @@ export class ChatInvitePreviewPage extends IMPage {
     }
 
     static getPageId() { return "chat_invite"; }
-    getName() { return (typeof tr === 'function' ? tr("chat_invite_preview_title") : null) || "Приглашение в беседу"; }
-    getTabName() { return (typeof tr === 'function' ? tr("chat_invite_preview_title") : null) || "Приглашение в беседу"; }
+    getName() { return tr("chat_invite_preview_title"); }
+    getTabName() { return tr("chat_invite_preview_title"); }
     shouldCloseOnExit() { return true; }
     visible() { return true; }
 
@@ -140,7 +138,7 @@ export class ChatInvitePreviewPage extends IMPage {
         if (this.previewData == null && !this.error) {
             const joinCode = this.options.joinCode || this.options.code || (new URL(location.href)).searchParams.get("join") || (new URL(location.href)).searchParams.get("invite");
             if (!joinCode) {
-                this.error = (typeof tr === 'function' ? tr("join_chat_error") : null) || "Ссылка приглашения не указана.";
+                this.error = tr("join_chat_error");
                 return;
             }
 
@@ -154,11 +152,11 @@ export class ChatInvitePreviewPage extends IMPage {
                 if (res && (res.preview || res.response?.preview)) {
                     this.previewData = res.preview ? res : res.response;
                 } else {
-                    this.error = (typeof tr === 'function' ? tr("join_chat_error") : null) || "Не удалось загрузить информацию о беседе.";
+                    this.error = tr("join_chat_error");
                 }
             } catch (e) {
                 console.error("IM | getChatPreview error:", e);
-                this.error = String(e?.message || e?.error_msg || (typeof tr === 'function' ? tr("join_chat_error") : null) || "Не удалось загрузить информацию о беседе.");
+                this.error = String(e?.message || e?.error_msg || tr("join_chat_error"));
             } finally {
                 this.isLoading = false;
             }
@@ -172,7 +170,7 @@ export class ChatInvitePreviewPage extends IMPage {
         const profiles = this.previewData?.profiles || [];
         const joinCode = this.options.joinCode || this.options.code || (new URL(location.href)).searchParams.get("join") || (new URL(location.href)).searchParams.get("invite");
 
-        const title = preview?.title || (typeof tr === 'function' ? tr("chat") : null) || "Беседа";
+        const title = preview?.title || tr("chat");
         const photo = preview?.photo?.photo_200 || preview?.photo?.photo_100 || preview?.photo?.photo_50 || "/assets/packages/static/openvk/img/camera_200.png";
         const membersCount = Number(preview?.members_count || 0);
         const isMember = Boolean(preview?.is_member);
@@ -231,7 +229,7 @@ export class ChatInvitePreviewPage extends IMPage {
                 console.error("IM | joinChatByInviteLink error:", err);
                 this.isJoining = false;
                 this.update();
-                fastError(String(err?.message || err?.error_msg || (typeof tr === 'function' ? tr("join_chat_error") : null) || "Не удалось присоединиться к беседе."));
+                fastError(String(err?.message || err?.error_msg || tr("join_chat_error")));
             }
         };
 

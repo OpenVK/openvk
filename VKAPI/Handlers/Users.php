@@ -79,8 +79,8 @@ final class Users extends VKAPIRequestHandler
                     $response[$i]->photo_100 = "/assets/packages/static/openvk/img/camera_100.png";
                 }
             } elseif ($usr->isBanned()) {
-                    $firstName = $morphCase ? $usr->getMorphedName($morphCase, false, false) : $usr->getFirstName(true);
-                    $lastName  = $morphCase ? $usr->getMorphedName($morphCase, false, true)  : $usr->getLastName(true);
+                    $firstName = $morphCase ? $usr->getMorphedName($morphCase, false, false) : $usr->getFirstName();
+                    $lastName  = $morphCase ? $usr->getMorphedName($morphCase, false, true)  : $usr->getLastName();
                     $response[$i] = (object) [
                         "id"          => $usr->getId(),
                         "first_name"  => $firstName,
@@ -101,8 +101,8 @@ final class Users extends VKAPIRequestHandler
 
                 } else {
                     $canView = $usr->canBeViewedBy($this->getUser());
-                    $firstName = $morphCase ? $usr->getMorphedName($morphCase, false, false) : $usr->getFirstName(true);
-                    $lastName  = $morphCase ? $usr->getMorphedName($morphCase, false, true)  : $usr->getLastName(true);
+                    $firstName = $morphCase ? $usr->getMorphedName($morphCase, false, false) : $usr->getFirstName();
+                    $lastName  = $morphCase ? $usr->getMorphedName($morphCase, false, true)  : $usr->getLastName();
                     $response[$i] = (object) [
                         "id"                => $usr->getId(),
                         "first_name"        => $firstName,
@@ -125,11 +125,41 @@ final class Users extends VKAPIRequestHandler
                     foreach ($flds as $field) {
                         $field = trim($field);
                         switch ($field) {
+                            case "first_name_nom":
+                                $response[$i]->first_name_nom = $usr->getFirstName();
+                                break;
+                            case "last_name_nom":
+                                $response[$i]->last_name_nom = $usr->getLastName();
+                                break;
                             case "first_name_gen":
                                 $response[$i]->first_name_gen = $usr->getMorphedName("genitive", false, false);
                                 break;
                             case "last_name_gen":
                                 $response[$i]->last_name_gen = $usr->getMorphedName("genitive", false, true);
+                                break;
+                            case "first_name_dat":
+                                $response[$i]->first_name_dat = $usr->getMorphedName("dative", false, false);
+                                break;
+                            case "last_name_dat":
+                                $response[$i]->last_name_dat = $usr->getMorphedName("dative", false, true);
+                                break;
+                            case "first_name_acc":
+                                $response[$i]->first_name_acc = $usr->getMorphedName("accusative", false, false);
+                                break;
+                            case "last_name_acc":
+                                $response[$i]->last_name_acc = $usr->getMorphedName("accusative", false, true);
+                                break;
+                            case "first_name_ins":
+                                $response[$i]->first_name_ins = $usr->getMorphedName("ablative", false, false);
+                                break;
+                            case "last_name_ins":
+                                $response[$i]->last_name_ins = $usr->getMorphedName("ablative", false, true);
+                                break;
+                            case "first_name_abl":
+                                $response[$i]->first_name_abl = $usr->getMorphedName("prepositional", false, false);
+                                break;
+                            case "last_name_abl":
+                                $response[$i]->last_name_abl = $usr->getMorphedName("prepositional", false, true);
                                 break;
                             case "verified":
                                 $response[$i]->verified = (int) $usr->isVerified();

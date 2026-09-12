@@ -90,7 +90,7 @@ export class FriendsPage extends IMPage {
 
         if (this.options.referrer == "add_new") {
             if (ids.length === 0) {
-                fastError(tr("error_chat_not_enough_friends") || "Выберите хотя бы одного друга");
+                fastErrortr("error_chat_not_enough_friends");
                 toggleUnclickability(e.target, false);
                 return;
             }

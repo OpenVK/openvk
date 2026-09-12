@@ -186,7 +186,7 @@ const emojiTippy = tippy.delegate("body", {
         window._currentEmojiTrigger = that.reference;
 
         if (window.emojiData == null) {
-            that.setContent(`<div class="emoji-picker-wrap"><div class="emoji-picker-loading">${tr('loading') || 'Загрузка'}...</div></div>`);
+            that.setContent(`<div class="emoji-picker-wrap"><div class="emoji-picker-loading">${tr('loading')}...</div></div>`);
             await loadEmojiData();
         }
 
@@ -208,7 +208,7 @@ function renderEmojiGrid(with_stickers = false) {
     if (!window.emojiData) {
         const wrap = document.createElement('div');
         wrap.className = 'emoji-picker-wrap';
-        wrap.innerHTML = `<div class="emoji-picker-loading">${tr('loading') || 'Загрузка'}...</div>`;
+        wrap.innerHTML = `<div class="emoji-picker-loading">${tr('loading')}...</div>`;
         return wrap;
     }
 
@@ -235,7 +235,7 @@ function renderEmojiGrid(with_stickers = false) {
 
     // Recent group
     if (recent.length > 0) {
-        const localizedRecent = tr("emoji_group_recent") || "Недавние";
+        const localizedRecent = tr("emoji_group_recent");
         const recentItems = recent.map(smile => {
             const hex = encode_emoji(smile);
             return `<span class="emoji-picker-item emoji emoji_${hex}" data-emoji="${smile}" title="${smile}">${smile}</span>`;
@@ -290,7 +290,7 @@ function renderEmojiGrid(with_stickers = false) {
             <div class="sticker-picker-groups"></div>
         </div>
         <div class="emoji-picker-footer">
-            <div class="emoji-main-tab active" data-target="emojis" title="${tr('emoji_group_smileys_emotion') || 'Смайлы'}">
+            <div class="emoji-main-tab active" data-target="emojis" title="${tr('emoji_group_smileys_emotion')}">
                 <span class="emoji-icon"></span>
             </div>
             <div class="emoji-tabs-nav">
@@ -300,12 +300,12 @@ function renderEmojiGrid(with_stickers = false) {
                 <div class="emoji-tabs-divider" style="display: none;"></div>
                 <div class="sticker-tabs"></div>
             </div>
-            <div class="emoji-scroll-arrow" title="${tr('next') || 'Далее'}">
+            <div class="emoji-scroll-arrow" title="${tr('next')}">
                 <svg viewBox="0 0 8 12" width="5" height="9">
                     <path d="M1.5 1l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
-            <a href="/stickers" class="sticker-store-btn" title="${tr('stickers_store') || 'Магазин стикеров'}"></a>
+            <a href="/stickers" class="sticker-store-btn" title="${tr('stickers_store')}"></a>
         </div>
     `;
 
@@ -512,7 +512,7 @@ async function updateStickerPacksInPicker(wrapper) {
     let tabsHtml = '';
     if (recentStickers.length > 0) {
         tabsHtml += `
-            <div class="s-tab s-tab-recent" data-pack-id="recent" title="${tr('stickers_recent') || 'Недавние'}">
+            <div class="s-tab s-tab-recent" data-pack-id="recent" title="${tr('stickers_recent')}">
                 <span class="emoji-cat-btn-recent"></span>
             </div>
         `;
@@ -577,7 +577,7 @@ async function updateStickerPacksInPicker(wrapper) {
 
         packsHtml += `
             <div class="sticker-picker-pack" data-pack-id="recent">
-                <div class="group-title"><b>${tr('stickers_recent') || 'Недавние'}</b></div>
+                <div class="group-title"><b>${tr('stickers_recent')}</b></div>
                 <div class="sticker-picker-grid">${recentItemsHtml}</div>
             </div>
         `;
@@ -621,8 +621,8 @@ async function updateStickerPacksInPicker(wrapper) {
         packsHtml += `
             <div class="sticker-picker-pack sticker-picker-empty-pack" data-pack-id="empty">
                 <div class="sticker-picker-empty">
-                    <div class="sticker-empty-text">${tr('stickers_empty_prompt') || 'У вас пока нет стикеров'}</div>
-                    <a href="/stickers" class="button sticker-empty-btn">${tr('stickers_goto_store') || 'Магазин стикеров'}</a>
+                    <div class="sticker-empty-text">${tr('stickers_empty_prompt')}</div>
+                    <a href="/stickers" class="button sticker-empty-btn">${tr('stickers_goto_store')}</a>
                 </div>
             </div>
         `;
@@ -921,7 +921,7 @@ function updateRecentSmilesInPicker() {
         recentGroup.className = 'emoji-picker-group';
         recentGroup.dataset.group = 'recent';
         recentGroup.innerHTML = `
-            <div class="group-title"><b>${tr("emoji_group_recent") || "Недавние"}</b></div>
+            <div class="group-title"><b>${tr("emoji_group_recent")}</b></div>
             <div class="emoji-picker-group-items">${recentItemsHtml}</div>
         `;
         scrollContainer.prepend(recentGroup);
@@ -931,7 +931,7 @@ function updateRecentSmilesInPicker() {
             const btn = document.createElement('div');
             btn.className = 'emoji-cat-btn';
             btn.dataset.target = 'recent';
-            btn.title = tr('emoji_group_recent') || 'Недавние';
+            btn.title = tr('emoji_group_recent');
             btn.innerHTML = `<span class="emoji-cat-btn-recent"></span>`;
             categoryNav.prepend(btn);
         }
@@ -1220,7 +1220,7 @@ function confirmDeletePack(form) {
 
 async function withdrawStickers(id, currentBalance) {
     if (!currentBalance || currentBalance <= 0) {
-        MessageBox(tr('stickers_withdrawal'), tr('stickers_withdrawal_empty'), [tr('ok') || "OK"], [Function.noop]);
+        MessageBox(tr('stickers_withdrawal'), tr('stickers_withdrawal_empty'), [tr('ok')], [Function.noop]);
         return;
     }
 
@@ -1281,11 +1281,11 @@ async function withdrawStickers(id, currentBalance) {
                     MessageBox(
                         tr('stickers_withdraw_modal_title'),
                         tr('stickers_withdrawal_success', tr('coins', Math.round(received))),
-                        [tr('ok') || "OK"],
+                        [tr('ok')],
                         [() => location.reload()]
                     );
                 } catch (e) {
-                    MessageBox(tr('error'), (e && e.message) ? e.message : tr('error'), [tr('ok') || "OK"], [Function.noop]);
+                    MessageBox(tr('error'), (e && e.message) ? e.message : tr('error'), [tr('ok')], [Function.noop]);
                 }
             },
             () => {
@@ -1397,15 +1397,15 @@ async function openStickerPackModal(slugOrId, event) {
     const initialBody = `
         <div class="stickers_pack_modal">
             <div class="stickers_modal_loading">
-                <div class="emoji-picker-loading">${tr('loading') || 'Загрузка'}...</div>
+                <div class="emoji-picker-loading">${tr('loading')}...</div>
             </div>
         </div>
     `;
 
     const msg = new CMessageBox({
-        title: tr('stickers_pack_info_title') || 'Информация о наборе',
+        title: tr('stickers_pack_info_title'),
         body: initialBody,
-        buttons: [tr('close') || 'Закрыть'],
+        buttons: [tr('close')],
         callbacks: [() => msg.close()],
         unique_name: uniqueName
     });
@@ -1469,16 +1469,16 @@ async function openStickerPackModal(slugOrId, event) {
 
         let actionBtnHtml = '';
         if (info.isPurchased) {
-            actionBtnHtml = `<button type="button" class="button" disabled id="stickers_modal_action_btn">${tr('stickers_purchased_label') || 'Приобретён'}</button>`;
+            actionBtnHtml = `<button type="button" class="button" disabled id="stickers_modal_action_btn">${tr('stickers_purchased_label')}</button>`;
         } else if (info.isBought || info.isOwner || info.price === 0) {
-            actionBtnHtml = `<button type="button" class="button" id="stickers_modal_action_btn">${tr('add') || 'Добавить'}</button>`;
+            actionBtnHtml = `<button type="button" class="button" id="stickers_modal_action_btn">${tr('add')}</button>`;
         } else {
-            const priceText = tr('stickers_buy_pack', tr('coins', info.price)) || `Купить за ${info.price} голосов`;
+            const priceText = tr('stickers_buy_pack', tr('coins', info.price));
             actionBtnHtml = `<button type="button" class="button" id="stickers_modal_action_btn">${priceText}</button>`;
         }
 
         const copyBtnHtml = `
-            <a href="javascript:void(0)" class="stickers_modal_copy_link" id="stickers_modal_copy_btn">${tr('stickers_copy_link') || 'Скопировать ссылку'}</a>
+            <a href="javascript:void(0)" class="stickers_modal_copy_link" id="stickers_modal_copy_btn">${tr('stickers_copy_link')}</a>
         `;
 
         const count = info.count != null ? info.count : (info.stickers ? info.stickers.length : 0);
@@ -1616,7 +1616,7 @@ async function openStickerPackModal(slugOrId, event) {
                 const directUrl = window.location.origin + '/stickers/' + info.slug;
                 await copyToClipboard(directUrl);
                 const origText = copyBtn.textContent;
-                copyBtn.textContent = tr('stickers_link_copied') || 'Ссылка скопирована!';
+                copyBtn.textContent = tr('stickers_link_copied');
                 setTimeout(() => {
                     copyBtn.textContent = origText;
                 }, 2000);
@@ -1632,12 +1632,12 @@ async function openStickerPackModal(slugOrId, event) {
                 }
 
                 actionBtn.disabled = true;
-                actionBtn.textContent = tr('loading') || 'Загрузка...';
+                actionBtn.textContent = tr('loading');
 
                 try {
                     const res = await API.Stickers.buyPack(info.id);
                     actionBtn.disabled = true;
-                    actionBtn.textContent = tr('stickers_purchased_label') || 'Приобретён';
+                    actionBtn.textContent = tr('stickers_purchased_label');
                     info.isPurchased = true;
 
                     updateShopPackCard(info.slug);
@@ -1650,7 +1650,7 @@ async function openStickerPackModal(slugOrId, event) {
                     window.dispatchEvent(new CustomEvent('stickers:updated', { detail: { action: 'buy', packId: info.id } }));
                 } catch (err) {
                     actionBtn.disabled = false;
-                    MessageBox(tr('error'), (err && err.message) ? err.message : tr('error'), [tr('ok') || 'OK'], [Function.noop]);
+                    MessageBox(tr('error'), (err && err.message) ? err.message : tr('error'), [tr('ok')], [Function.noop]);
                 }
             });
         }
@@ -1825,7 +1825,7 @@ async function openStickerPackModal(slugOrId, event) {
     } catch (err) {
         if (isClosed) return;
         msg.close();
-        MessageBox(tr('error'), (err && err.message) ? err.message : tr('error'), [tr('ok') || 'OK'], [Function.noop]);
+        MessageBox(tr('error'), (err && err.message) ? err.message : tr('error'), [tr('ok')], [Function.noop]);
     }
 }
 
@@ -1838,7 +1838,7 @@ function updateShopPackCard(slug) {
             if (footer) {
                 footer.innerHTML = `
                     <span class="stickers_pack_status_purchased">
-                        ${tr('stickers_purchased_label') || 'Приобретён'}
+                        ${tr('stickers_purchased_label')}
                     </span>
                 `;
             }

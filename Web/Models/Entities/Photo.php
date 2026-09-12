@@ -311,6 +311,12 @@ class Photo extends Media
         foreach ($sizes as $id => $meta) {
             $type       = $mappings[$id] ?? $id;
             $meta->type = $type;
+            if (!isset($meta->url) && isset($meta->src)) {
+                $meta->url = $meta->src;
+            }
+            if (!isset($meta->src) && isset($meta->url)) {
+                $meta->src = $meta->url;
+            }
             $res[$type] = $meta;
         }
 
@@ -384,13 +390,13 @@ class Photo extends Media
 
         $res->id       = $res->pid = (int) $this->getVirtualId();
         $res->owner_id = $res->user_id = (int) $this->getOwner()->getId();
-        $res->aid      = $res->album_id = (int) ($album ? $album->getId() : 0);
+        $res->aid      = $res->album_id = (int) ($album ? $album->getId() : ($this->isUnlisted() ? -3 : 0));
         $dims = $this->getDimensions();
         $res->width    = (int) ($dims[0] ?? 0);
         $res->height   = (int) ($dims[1] ?? 0);
         $res->date     = $res->created = (int) $this->getPublicationTime()->timestamp();
         $res->text     = (string) ($this->getDescription() ?? "");
-        $res->access_key = $this->getAccessKey();
+        $res->access_key = (string) ($this->getAccessKey() ?? "");
 
         $res->src_small    = $res->photo_75 = $this->getURLBySizeId("miniscule");
         $res->src          = $res->photo_130 = $this->getURLBySizeId("tiny");
@@ -414,17 +420,30 @@ class Photo extends Media
                 $vkSizes = [
                     'm' => (object) [
                         'src'    => $res->src ?: $this->getURL(),
+                        'url'    => $res->src ?: $this->getURL(),
                         'width'  => (int) min(130, $w),
                         'height' => (int) min(130, $h),
                         'type'   => 'm',
                     ],
                     'x' => (object) [
                         'src'    => $res->src_big ?: $this->getURL(),
+                        'url'    => $res->src_big ?: $this->getURL(),
                         'width'  => (int) $w,
                         'height' => (int) $h,
                         'type'   => 'x',
                     ],
                 ];
+            } else {
+                foreach ($vkSizes as &$sz) {
+                    if (is_object($sz)) {
+                        if (!isset($sz->url) && isset($sz->src)) {
+                            $sz->url = $sz->src;
+                        }
+                        if (!isset($sz->src) && isset($sz->url)) {
+                            $sz->src = $sz->url;
+                        }
+                    }
+                }
             }
             $res->sizes = array_values($vkSizes);
         }
@@ -469,6 +488,12 @@ class Photo extends Media
     {
         if ($this->isDeleted() || $this->getOwner()->isDeleted()) {
             return false;
+        }
+
+        if ($this->isSystem() || $this->isUnlisted()) {
+            if ($user && $user->getId() === $this->getOwner()->getId()) {
+                return true;
+            }
         }
 
         if (!is_null($this->getAlbum())) {

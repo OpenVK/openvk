@@ -80,6 +80,10 @@ class Photos
         }
 
         if (!$photo->checkAccessKey($access_key)) {
+            if (empty($access_key) && $photo->getOwner()->getId() === $owner) {
+                return $photo;
+            }
+
             return null;
         }
 

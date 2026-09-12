@@ -192,6 +192,8 @@ openvk:
             link: "/stickers"
         bellsAndWhistles:
             testLabel: false
+        themepacks:
+            disabled: []
         defaultMobileTheme: ""
         defaultFeaturePhoneTheme: ""
         logs: true

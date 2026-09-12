@@ -6,7 +6,7 @@ import { Attachment } from './message.js';
  */
 function handleHeaderMouseDown(e, initialPosition, onFocus, onMove, onToggle) {
     if (e.button !== 0) return;
-    if (e.target.closest('.fc_head_close')) return;
+    if (e.target.closest('.fc_head_close, .fc_head_openfull, .fc_head_actions')) return;
 
     e.preventDefault();
     if (onFocus) onFocus();
@@ -59,6 +59,21 @@ function handleHeaderMouseDown(e, initialPosition, onFocus, onMove, onToggle) {
 
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
+}
+
+function handleOpenFull(e, peerId) {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    const targetUrl = '/im?sel=' + peerId;
+    if (window.im?.messenger && typeof window.im.messenger.selectConversationByPeerId === 'function' && document.querySelector('#im_container')) {
+        window.im.messenger.selectConversationByPeerId(peerId);
+    } else if (window.router && typeof window.router.route === 'function') {
+        window.router.route(targetUrl);
+    } else {
+        window.location.href = targetUrl;
+    }
 }
 
 /**
@@ -134,7 +149,7 @@ export const FastChatOnlineWindow = ({
                 <input
                     type="text"
                     class="fc_search_input"
-                    placeholder="${tr('start_typing_name') || 'Начните вводить имя...'}"
+                    placeholder="${tr('start_typing_name')}"
                     value=${searchQuery}
                     onInput=${(e) => onSearch(e.target.value)}
                     onClick=${(e) => e.stopPropagation()}
@@ -148,7 +163,7 @@ export const FastChatOnlineWindow = ({
         if (!isOnline && f.last_seen && f.last_seen.time) {
             const minsAgo = Math.floor((Date.now() / 1000 - f.last_seen.time) / 60);
             if (minsAgo < 60) {
-                statusText = tr('was_n_mins_ago', minsAgo) || `был(а) ${minsAgo} мин. назад`;
+                statusText = tr('was_n_mins_ago', minsAgo);
             }
         }
 
@@ -163,7 +178,7 @@ export const FastChatOnlineWindow = ({
 
         return html`
                         ${showDivider && html`
-                            <div class="fc_divider_row">${tr('offline_divider') || 'Не в сети'}</div>
+                            <div class="fc_divider_row">${tr('offline_divider')}</div>
                         `}
                         <div class="fc_friend_row" onClick=${() => onFriendClick(f)}>
                             <img src="${f.photo_50 || '/assets/packages/static/openvk/img/camera_50.png'}" class="fc_avatar" />
@@ -178,7 +193,7 @@ export const FastChatOnlineWindow = ({
                     `;
     }) : html`
                     <div class="fc_friends_hint">
-                        ${tr('fastchat_search_hint') || 'Введите имя и выберите пользователя, чтобы начать диалог.'}
+                        ${tr('fastchat_search_hint')}
                     </div>
                 `}
             </div>
@@ -186,8 +201,8 @@ export const FastChatOnlineWindow = ({
             ${!searchQuery && allFriends && allFriends.length > 0 && html`
                 <div class="fc_toggle_offline_btn" onClick=${onToggleShowAll}>
                     ${showAll
-                ? (tr('show_online_only', onlineCount) || `Показать только онлайн (${onlineCount})`)
-                : (tr('show_all_friends', totalCount) || `Показать всех друзей (${totalCount})`)
+                ? tr('show_online_only', onlineCount)
+                : tr('show_all_friends', totalCount)
             }
                 </div>
             `}
@@ -225,7 +240,10 @@ export const FastChatBox = ({
             >
                 <div class="fc_min_title">${chat.title}</div>
                 ${chat.unreadCount > 0 && html`<span class="fc_unread_badge">+${chat.unreadCount}</span>`}
-                <div class="fc_head_close" onClick=${(e) => { e.stopPropagation(); onClose(chat.peerId); }}></div>
+                <div class="fc_head_actions">
+                    <a href="/im?sel=${chat.peerId}" class="fc_head_openfull" title="${tr('go_to_dialog')}" onClick=${(e) => handleOpenFull(e, chat.peerId)}></a>
+                    <div class="fc_head_close" onClick=${(e) => { e.stopPropagation(); onClose(chat.peerId); }}></div>
+                </div>
             </div>
         `;
     }
@@ -248,7 +266,10 @@ export const FastChatBox = ({
                 onMouseDown=${(e) => handleHeaderMouseDown(e, chat.position, () => onFocus(chat.peerId), (pos) => onMove(chat.peerId, pos), () => onToggle(chat.peerId))}
             >
                 <div class="fc_head_title">${chat.title}</div>
-                <div class="fc_head_close" onClick=${(e) => { e.stopPropagation(); onClose(chat.peerId); }}></div>
+                <div class="fc_head_actions">
+                    <a href="/im?sel=${chat.peerId}" class="fc_head_openfull" title="${tr('go_to_dialog')}" onClick=${(e) => handleOpenFull(e, chat.peerId)}></a>
+                    <div class="fc_head_close" onClick=${(e) => { e.stopPropagation(); onClose(chat.peerId); }}></div>
+                </div>
             </div>
 
             <div class="fc_messages_list" id="fc_messages_${chat.peerId}"
@@ -260,7 +281,7 @@ export const FastChatBox = ({
                 
                 ${chat.hasMore && html`
                     <div class="fc_load_more ${chat.isLoadingOlder ? 'fc_loading' : ''}" onClick=${() => !chat.isLoadingOlder && onLoadOlder(chat.peerId)}>
-                        ${chat.isLoadingOlder ? (tr('loading') || 'Загрузка...') : (tr('show_previous_messages') || 'Показать предыдущие сообщения')}
+                        ${chat.isLoadingOlder ? tr('loading') : tr('show_previous_messages')}
                     </div>
                 `}
 
@@ -272,13 +293,13 @@ export const FastChatBox = ({
 
                 ${!chat.isLoading && messages.length === 0 && html`
                     <div class="fc_empty_history">
-                        ${tr('no_messages_in_dialog') || 'Здесь пока нет сообщений.'}
+                        ${tr('no_messages_in_dialog')}
                     </div>
                 `}
 
                 ${messages.map(msg => {
             const isOut = msg.from_id === currentUserId || msg.out === 1;
-            const authorName = isOut ? (tr('you') || 'Вы') : (msg.author_name || chat.title);
+            const authorName = isOut ? tr('you') : (msg.author_name || chat.title);
             const authorAva = isOut ? currentUserAvatar : (msg.author_photo || chat.photo);
             const timeStr = msg.time_str || (msg.date ? formatTime(msg.date, false) : '');
             const isTargetUnread = chat.firstUnreadMsgId && (Number(msg.id) === Number(chat.firstUnreadMsgId));
@@ -296,18 +317,33 @@ export const FastChatBox = ({
                                     <span class="fc_msg_author">${authorName}</span>
                                     <span class="fc_msg_time">${timeStr}</span>
                                 </div>
-                                <div class="fc_msg_text">
-                                    ${msg.text || (msg.body || '')}
-                                    ${msg.attachments && Array.isArray(msg.attachments) && msg.attachments.length > 0 && html`
-                                        <div class="fc_attachments_wrap">
-                                            ${msg.attachments.map(att => html`
-                                                <div class="fc_attachment_row" key=${att.type + (att[att.type]?.id || '')}>
-                                                    <${Attachment} msg=${msg} att=${att} />
-                                                </div>
-                                            `)}
-                                        </div>
-                                    `}
-                                </div>
+                                <div class="fc_msg_text" dangerouslySetInnerHTML=${{
+                                    __html: (typeof msg.getText === 'function') ? msg.getText(false) : (() => {
+                                        let rawT = msg.text || msg.body || '';
+                                        if (!rawT) return '';
+                                        let escaped = (typeof escapeHtml === 'function') ? escapeHtml(rawT) : String(rawT).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                                        escaped = escaped.replace(/\[([a-zA-Z0-9_]+)(?:\|([^\]]*))?\]/gi, (match, target, title) => {
+                                            const lowerTarget = target.toLowerCase();
+                                            const display = (title && title.trim()) ? title.trim() : target;
+                                            if (lowerTarget === "all" || lowerTarget === "online") {
+                                                return `<b class="mention mention-mass">${display.startsWith('@') ? display : '@' + display}</b>`;
+                                            }
+                                            return `<a href="/${lowerTarget}" class="mention chat-link">${display}</a>`;
+                                        });
+                                        if (typeof encode_emojis === 'function') escaped = encode_emojis(escaped);
+                                        if (typeof nl2br === 'function') escaped = nl2br(escaped);
+                                        return escaped;
+                                    })()
+                                }} />
+                                ${msg.attachments && Array.isArray(msg.attachments) && msg.attachments.length > 0 && html`
+                                    <div class="fc_attachments_wrap">
+                                        ${msg.attachments.map(att => html`
+                                            <div class="fc_attachment_row" key=${att.type + (att[att.type]?.id || '')}>
+                                                <${Attachment} msg=${msg} att=${att} />
+                                            </div>
+                                        `)}
+                                    </div>
+                                `}
                             </div>
                         </div>
                     `;
@@ -323,7 +359,7 @@ export const FastChatBox = ({
                     <img src="${currentUserAvatar || '/assets/packages/static/openvk/img/camera_50.png'}" class="fc_my_avatar" />
                     <textarea
                         class="fc_textarea"
-                        placeholder="${tr('enter_your_message') || 'Введите Ваше сообщение...'}"
+                        placeholder="${tr('enter_your_message')}"
                         value=${chat.text || ''}
                         onInput=${(e) => onTextChange(chat.peerId, e.target.value)}
                         onKeyDown=${(e) => onKeyDown(e, chat.peerId)}

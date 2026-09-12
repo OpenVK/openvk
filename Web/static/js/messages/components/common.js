@@ -1,6 +1,5 @@
 import { html, render } from './render.js';
 import { ChatGeneralForm } from './messages.js';
-import { openAttachmentsModal } from './attachments_modal.js';
 import { imLog } from '../logger.js';
 
 export function getAppLocale() {
@@ -70,7 +69,7 @@ export const PeerAvatar = ({ peer, className = "", loading = "lazy", saved_messa
 
     if (peer.id === window.im.state.getId()) {
         if (!saved_messages_ava && !orig_ava) {
-            return html`<div class="${className}" style="display:block;width:52px;height:52px;" onClick=${onClick}></div>`;
+            return html`<div class="${className} chat-table-avatar-empty" onClick=${onClick}></div>`;
         }
 
         if (!orig_ava) {
@@ -93,18 +92,18 @@ export const PeerAvatar = ({ peer, className = "", loading = "lazy", saved_messa
             // "object-position: left;" для парных аватарочек ^_^
             return html`
             <div class="chat_table_avatar chat_table_avatar_double ${className}" onClick=${onClick}>
-                ${cell0 ? html`<img style="object-position: left;" class="chat_table_avatar_cell" src="${cell0}" loading="${loading}" />` : ''}
-                ${cell1 ? html`<img style="object-position: right;" class="chat_table_avatar_cell" src="${cell1}" loading="${loading}" />` : ''}
+                ${cell0 ? html`<img class="chat_table_avatar_cell pos-left" src="${cell0}" loading="${loading}" />` : ''}
+                ${cell1 ? html`<img class="chat_table_avatar_cell pos-right" src="${cell1}" loading="${loading}" />` : ''}
             </div>
             `;
         }
 
         return html`
             <div class="chat_table_avatar chat_table_avatar_more3 ${className}">
-                ${cell0 ? html`<img style="height:50%;width: 50%;" class="chat_table_avatar_cell" src="${cell0}" loading="${loading}" />` : ''}
-                ${cell1 ? html`<img style="height:50%;width: 50%;" class="chat_table_avatar_cell" src="${cell1}" loading="${loading}" />` : ''}
-                ${cell2 ? html`<img style="height:50%;width: 50%;" class="chat_table_avatar_cell" src="${cell2}" loading="${loading}" />` : ''}
-                ${cell3 ? html`<img style="height:50%;width: 50%;" class="chat_table_avatar_cell" src="${cell3}" loading="${loading}" />` : ''}
+                ${cell0 ? html`<img class="chat_table_avatar_cell" src="${cell0}" loading="${loading}" />` : ''}
+                ${cell1 ? html`<img class="chat_table_avatar_cell" src="${cell1}" loading="${loading}" />` : ''}
+                ${cell2 ? html`<img class="chat_table_avatar_cell" src="${cell2}" loading="${loading}" />` : ''}
+                ${cell3 ? html`<img class="chat_table_avatar_cell" src="${cell3}" loading="${loading}" />` : ''}
             </div>
         `;
     }
@@ -180,10 +179,10 @@ export const PinnedMessageBar = ({ convo }) => {
 
     let textPreview = "";
     try {
-        if (pinMsg.data && pinMsg.data.text) {
-            textPreview = pinMsg.data.text;
-        } else if (typeof pinMsg.getText === 'function') {
-            textPreview = pinMsg.getText(true);
+        if (typeof pinMsg.getText === 'function') {
+            textPreview = pinMsg.getText(true, true);
+        } else if (pinMsg.data && pinMsg.data.text) {
+            textPreview = pinMsg.data.text.replace(/\[([a-zA-Z0-9_]+)(?:\|([^\]]*))?\]/g, (m, target, title) => (title && title.trim()) ? title.trim() : target);
         }
     } catch (e) {
         textPreview = "";
@@ -192,7 +191,7 @@ export const PinnedMessageBar = ({ convo }) => {
     if (!textPreview || textPreview.length === 0) {
         const atts = typeof pinMsg.getAttachments === 'function' ? pinMsg.getAttachments() : [];
         if (atts && atts.length > 0) {
-            textPreview = "[" + (typeof tr === 'function' ? (tr("attachment") || "Вложение") : "Вложение") + "]";
+            textPreview = "[" + (typeof tr === 'function' ? tr("attachment") : "Вложение") + "]";
         } else {
             textPreview = "...";
         }
@@ -214,8 +213,8 @@ export const PinnedMessageBar = ({ convo }) => {
         window.im.messenger.unpinMessage(convo);
     };
 
-    const titleText = (typeof tr === 'function' ? tr("pinned_message") : null) || "Закреплённое сообщение";
-    const unpinTitle = (typeof tr === 'function' ? tr("unpin_message") : null) || "Открепить сообщение";
+    const titleText = tr("pinned_message");
+    const unpinTitle = tr("unpin_message");
     const previewTrimmed = typeof ovk_proc_strtr === 'function' ? ovk_proc_strtr(String(textPreview), 65) : String(textPreview).substring(0, 65);
 
     return html`
@@ -266,7 +265,7 @@ export const ActionsBar = ({ selectedMessages, count, onDelete, onUnselect, onRe
                     <div class="message-tab"><a onClick=${onReply}>${tr("reply_to_message")}</a></div>
                 `}
                 ${count === 1 && canViewers && html`
-                    <div class="message-tab"><a onClick=${() => { if (onViewers) onViewers(firstMsg); else window.im?.messenger?.view?.onViewersButtonClick(null, firstMsg); }}>${tr("message_viewers") || "Кто прочитал"}</a></div>
+                    <div class="message-tab"><a onClick=${() => { if (onViewers) onViewers(firstMsg); else window.im?.messenger?.view?.onViewersButtonClick(null, firstMsg); }}>${tr("message_viewers")}</a></div>
                 `}
                 ${canDeleteThemAll == true && html`
                 <div class="message-tab"><a onClick=${onDelete}>${tr("delete_message")}</a></div>
@@ -347,9 +346,9 @@ export const getReplySnippet = (msg) => {
     if (!msg) return "";
     let text = "";
     if (typeof msg.getText === 'function') {
-        text = msg.getText(true) || "";
+        text = msg.getText(true, true) || "";
     } else if (msg.data?.text) {
-        text = msg.data.text;
+        text = msg.data.text.replace(/\[([a-zA-Z0-9_]+)(?:\|([^\]]*))?\]/g, (m, target, title) => (title && title.trim()) ? title.trim() : target);
     }
 
     text = text.replace(/[\r\n]+/g, ' ').trim();
@@ -361,16 +360,16 @@ export const getReplySnippet = (msg) => {
         }
         if (atts.length > 0 && atts[0]) {
             const t = atts[0].type;
-            if (t === 'photo') text = '[' + (tr('attachment_photo') || 'Фотография') + ']';
-            else if (t === 'video') text = '[' + (tr('attachment_video') || 'Видеозапись') + ']';
-            else if (t === 'audio') text = '[' + (tr('attachment_audio') || 'Аудиозапись') + ']';
+            if (t === 'photo') text = '[' + tr('attachment_photo') + ']';
+            else if (t === 'video') text = '[' + tr('attachment_video') + ']';
+            else if (t === 'audio') text = '[' + tr('attachment_audio') + ']';
             else if (t === 'doc') {
                 const d = atts[0].doc;
                 const isGif = d && (d.type === 3 || (d.ext && d.ext.toLowerCase() === 'gif') || (d.title && d.title.toLowerCase().endsWith('.gif')));
-                text = isGif ? '[GIF]' : ('[' + (tr('attachment_doc') || 'Документ') + ']');
+                text = isGif ? '[GIF]' : ('[' + tr('attachment_doc') + ']');
             }
-            else if (t === 'sticker') text = '[' + (tr('attachment_sticker') || 'Стикер') + ']';
-            else text = '[' + (tr('attachment') || 'Вложение') + ']';
+            else if (t === 'sticker') text = '[' + tr('attachment_sticker') + ']';
+            else text = '[' + tr('attachment') + ']';
         }
     }
 
@@ -528,7 +527,36 @@ if (typeof window !== 'undefined' && !window._imRecentSmilesInit) {
     });
 }
 
-export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress, currentDraft, onInput, togglePeerInfo, clickOnReply, convo, forwarded_msg, onRemoveForward }) => {
+export const MentionAutocomplete = ({ items, selectedIndex, onSelect }) => {
+    if (!items || items.length === 0) return null;
+
+    return html`
+        <div class="im-mention-autocomplete">
+            ${items.map((item, idx) => html`
+                <div
+                    class="im-mention-item ${idx === selectedIndex ? 'selected' : ''}"
+                    onMouseDown=${(e) => { e.preventDefault(); e.stopPropagation(); onSelect(item); }}
+                >
+                    ${item.avatar ? html`
+                        <img src="${item.avatar}" class="im-mention-ava" onError=${(e) => { e.target.onerror = null; e.target.src = '/assets/packages/static/openvk/img/camera_50.png'; }} />
+                    ` : html`
+                        <div class="im-mention-ava-empty"></div>
+                    `}
+                    <div class="im-mention-info">
+                        <span class="im-mention-name">${item.name}</span>
+                        ${item.type === 'all' || item.type === 'online' ? html`
+                            <span class="im-mention-type">@${item.type}</span>
+                        ` : html`
+                            <span class="im-mention-slug">${item.displaySlug || (item.slug ? (item.slug.startsWith('@') ? item.slug : '@' + item.slug) : (item.id > 0 ? `@id${item.id}` : ''))}</span>
+                        `}
+                    </div>
+                </div>
+            `)}
+        </div>
+    `;
+};
+
+export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress, currentDraft, onInput, togglePeerInfo, clickOnReply, convo, forwarded_msg, onRemoveForward, mentionActive, mentionMatches, mentionSelectedIndex, onApplyMention }) => {
     const is_editing = editMsg != null;
     const current_user = window.im.state.getOperator();
     const corresponder = window.im.state.getCurrentConvo();
@@ -558,37 +586,49 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
                 }
             }}>
                 <div class="input-reply-content">
-                    <span class="input-type">${tr("reply_to", replyTo.sender ? replyTo.sender.getName() : "")}:</span>
-                    <span class="input-reply-text">${getReplySnippet(replyTo)}</span>
+                    <div class="input-reply-title">${(() => {
+                const sName = replyTo.sender?.getName ? replyTo.sender.getName() : (replyTo.data?.from_id ? `id${replyTo.data.from_id}` : '');
+                const t = typeof tr === 'function' ? tr('reply_to_message_user', sName) : '';
+                return (t && !t.startsWith('@')) ? t : `В ответ ${sName}`;
+            })()}:</div>
+                    <div class="input-reply-text" dangerouslySetInnerHTML=${{ __html: typeof replyTo.getText === 'function' ? replyTo.getText(false, true, false) : (replyTo.data?.text || '') }} />
                 </div>
-                <span class="input-close" onClick=${(e) => {
+                <div class="input-close" onclick=${(e) => {
                 e.stopPropagation();
                 onRemoveReply();
-            }}><div class="cross"></div></span>
+            }}>×</div>
+            </div>
+        `}
+        ${canWrite && isForwarded && html`
+            <div class="input-reply input-m">
+                <div class="input-reply-content">
+                    <div class="input-reply-title">${tr('forwarded_messages_noun', forwarded_msg.length)}</div>
+                    <div class="input-reply-text">
+                        ${forwarded_msg.map((f, i) => html`
+                            <div class="input-fwd-item" key=${f.id || i}>
+                                <b>${f.sender?.getName ? f.sender.getName() : `id${f.from_id}`}:</b> ${typeof f.getText === 'function' ? f.getText(true, true) : (f.data?.text ? f.data.text.replace(/\[([a-zA-Z0-9_]+)(?:\|([^\]]*))?\]/g, (m, target, title) => (title && title.trim()) ? title.trim() : target) : (f.text || ''))}
+                            </div>
+                        `)}
+                    </div>
+                </div>
+                <div class="input-close" onclick=${(e) => {
+                e.stopPropagation();
+                onRemoveForward();
+            }}>×</div>
             </div>
         `}
         ${canWrite && editMsg && html`
-            <div class="input-edit input-m" onclick=${(e) => {
-                if (!e.target.closest('.input-close')) {
-                    clickOnReply(editMsg);
-                }
-            }}>
+            <div class="input-reply input-m">
                 <div class="input-reply-content">
                     <span class="input-type">${tr("edit_of_message")}:</span>
                     <span class="input-reply-text">${getReplySnippet(editMsg)}</span>
                 </div>
-                <span class="input-close" onClick=${(e) => {
+                <div class="input-close" onClick=${(e) => {
                 e.stopPropagation();
                 window.im.messenger.cancelEdit();
-            }}><div class="cross"></div></span>
+            }}>×</div>
             </div>
         `}
-        ${canWrite && isForwarded ? html`
-            <div class="input-forward input-m">
-                <span aria-label="link" class="input-type">${tr("forwarded_messages_noun", forwarded_msg.length)}</span>
-                <span class="input-close" onClick=${onRemoveForward}><div class="cross"></div></span>
-            </div>`
-            : ""}
         <div class="messenger-mountain" onClick=${(e) => {
             if (window.im?.messenger?.view?.scrollToEndOfChat) {
                 window.im.messenger.view.scrollToEndOfChat(e, convo);
@@ -607,6 +647,13 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
                 <div class="model_content_textarea messenger-app--input has_emoji_picker expanded-textarea" id="write">
                     <img class="ava" src=${current_user.getAvatar("mid", false)} alt=${current_user.getName()} />
                     <div class="messenger-app--input---messagebox">
+                        ${(mentionActive && mentionMatches && mentionMatches.length > 0) ? html`
+                            <${MentionAutocomplete}
+                                items=${mentionMatches}
+                                selectedIndex=${mentionSelectedIndex}
+                                onSelect=${onApplyMention}
+                            />
+                        ` : ""}
                         <div class="textareas has_emoji_picker">
                             ${(typeof window !== 'undefined' && window.ContentEditable && typeof window.ContentEditable.isSupported === 'function' && window.ContentEditable.isSupported()) ? html`
                                 <div
@@ -710,25 +757,31 @@ export const ConversationItem = ({ conv, isForward = false, page = null }) => {
     // с одной стороны по названию или аватарке и так понятно, что это беседа, но название и аватарка могут быть изменены
     const d = last_msg != null && has_activity == false;
     let last_sender_ava = "";
+    let last_sender_name = "";
     if (last_msg && last_msg.sender) {
         try {
             last_sender_ava = last_msg.sender.getAvatar("mid", false);
+            last_sender_name = last_msg.sender.getName ? last_msg.sender.getName() : (last_msg.sender.first_name ? `${last_msg.sender.first_name} ${last_msg.sender.last_name || ''}`.trim() : (last_msg.sender.name || ''));
         } catch (e) {
             console.error(e);
         }
     }
+    const isChat = peer && peer.supposed_type === "chat";
     return html`
         <div class="${cls1.join(' ')}" onClick=${() => window.im?.messenger.onConversationsClick(conv, isForward, page)}>
-        <div style="display: flex; align-items: center; flex-shrink: 0;">
+        <div class="crp-entry--main">
             <div class="crp-entry--image">
                 <${PeerAvatar} peer=${peer} orig_ava=${false} />
             </div>
             <div class="crp-entry--info">
-                <a>${ovk_proc_strtr(peer.getName(true), 30)}</a>
-                <div class="crp-entry--excess">
-                    ${peer.supposed_type == "chat" && peer.data.members_count ? html`<span>${tr("members_count", peer.data.members_count)}</span>` : ""}
-                    ${last_msg && html`<span>${last_msg.getDate(2)}</span>`}
+                <div class="crp-entry--info-wrap">
+                    <a>${ovk_proc_strtr(peer.getName(true), 30)}</a>
+                    <div class="crp-entry--excess">
+                        ${peer.supposed_type == "chat" && peer.data.members_count ? html`<span>${tr("members_count", peer.data.members_count)}</span>` : ""}
+                        ${last_msg && html`<span>${last_msg.getDate(2)}</span>`}
+                    </div>
                 </div>
+                ${peer && typeof peer.isMuted === 'function' && peer.isMuted() ? html`<span class="im-mute-indicator" title="${tr('chat_mute_notifications')}"></span>` : ""}
             </div>
         </div>
         <div class="${messageCls.join(' ')}">
@@ -736,13 +789,19 @@ export const ConversationItem = ({ conv, isForward = false, page = null }) => {
             <div class="crp-entry--message---av">
                 <img src="${last_sender_ava}" />
             </div>
-            <div class="crp-entry--message---text">
-                <span dangerouslySetInnerHTML=${{ __html: last_msg.getText(false, true, true) }} />
+            <div class="crp-entry--message---content">
+                ${isChat && last_sender_name ? html`
+                    <div class="crp-entry--message---author">${last_sender_name}</div>
+                ` : ""}
+                <div class="crp-entry--message---text">
+                    <span dangerouslySetInnerHTML=${{ __html: last_msg.getText(false, true, true) }} />
+                </div>
             </div>`}
             ${has_activity == true && html`
-                <div class="crp-entry--message---av"></div>
-                <div class="crp-entry--message---text">
-                    <span>${(conv.getActivityMsg()[0] || "")}</span>
+                <div class="crp-entry--message---content">
+                    <div class="crp-entry--message---text">
+                        <span>${(conv.getActivityMsg()[0] || "")}</span>
+                    </div>
                 </div>
             `}
         </div>
@@ -779,7 +838,7 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
                 <input class="search_input cool" type="text" placeholder="${tr('search_messages')}" onChange=${onSearch} />
             </div>
             ${!is_group ? html`
-                <input type="button" class="button excess" value="${tr('saved_messages') || 'Избранное'}" onClick=${() => {
+                <input type="button" class="button excess" value="${tr('saved_messages')}" onClick=${() => {
                     const myId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
                     if (myId) {
                         window.im.messenger.selectConversationByPeerId(myId);
@@ -1003,7 +1062,7 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                             <a
                                 class="peer-link ${isChat && canEditTitle ? 'peer-title-editable' : ''}"
                                 href=${!isChat && peer.getPageUrl ? peer.getPageUrl() : '#'}
-                                title=${isChat && canEditTitle ? (tr("change_chat_title") || "Нажмите, чтобы изменить название") : ""}
+                                title=${isChat && canEditTitle ? tr("change_chat_title") : ""}
                                 onClick=${(e) => {
                 e.preventDefault();
                 if (isChat) {
@@ -1045,101 +1104,106 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                     </div>
 
                     <div class="peer-actions-1">
-                        ${isChat && peer.can("update_avatar") ? html`
-                            <a onClick=${(e) => { window.updateChatAvatar ? window.updateChatAvatar(e, peer) : null }}>${tr("change_chat_avatar")}</a>
-                        ` : ""}
-                        <a onClick=${(e) => {
+                        <ul>
+                            ${isChat && peer.can("update_avatar") ? html`
+                                <li id="ava"><a onClick=${(e) => { window.updateChatAvatar ? window.updateChatAvatar(e, peer) : null }}>${tr("change_chat_avatar")}</a></li>
+                            ` : ""}
+                            ${isChat && (peer.can("promote_users") || peer.can("change_admins") || peer.isOwner()) ? html`
+                                <li id="rights"><a onClick=${(e) => { e.preventDefault(); openChatPermissionsModal(peer); }}>${tr("chat_permissions_settings")}</a></li>
+                            ` : ""}
+                            <li id="notify_toggle"><a onClick=${(e) => { e.preventDefault(); openChatMuteModal(peer); }}>${peer && typeof peer.isMuted === 'function' && peer.isMuted() ? tr("chat_unmute_notifications") : tr("chat_mute_notifications")}</a></li>
+                            <li id="search"><a onClick=${(e) => {
             window.im.openTabByName("search", true, {
                 "q": "",
                 "peer_id": peer.id,
                 "referrer": window.im?.getSelectedTabId() || "contact"
             });
-        }}>${tr("convo_search_messages")}</a>
-                        <a onClick=${(e) => {
+        }}>${tr("convo_search_messages")}</a></li>
+                            <li id="dm_files"><a onClick=${(e) => {
             e.preventDefault();
-            openAttachmentsModal({ peer: peer, initialType: 'photo' });
-        }}>${tr("conversation_materials") || "Материалы беседы"}</a>
-                        ${convo && typeof convo.hasPinned === 'function' && convo.hasPinned() ? html`
-                            <a onClick=${(e) => { window.im.messenger.viewPinned(e, convo); }}>${tr("chat_view_pinned_single")}</a>
-                        ` : ""}
-                        ${peer.can("return_to_chat") ? html`
-                            <a onClick=${async (e) => {
-                                e.preventDefault();
-                                try {
-                                    await window.OVKAPI.call("messages.addChatUser", {
-                                        "peer_id": peer.id,
-                                        "user_id": currentUserId
-                                    });
-                                    peer.data.left = 0;
-                                    peer.data.kicked = 0;
-                                    peer.data.chat_settings = peer.data.chat_settings || {};
-                                    peer.data.chat_settings.state = 'in';
-                                    peer.data.state = 'in';
-                                    peer.data.can_write = { allowed: true };
+            window.im.openTabByName("materials", true, { peer: peer, initialType: 'photo' });
+        }}>${tr("conversation_materials")}</a></li>
+                            ${convo && typeof convo.hasPinned === 'function' && convo.hasPinned() ? html`
+                                <li id="pinned"><a onClick=${(e) => { window.im.messenger.viewPinned(e, convo); }}>${tr("chat_view_pinned_single")}</a></li>
+                            ` : ""}
+                            ${peer.can("return_to_chat") ? html`
+                                <li id="return_to_chat"><a onClick=${async (e) => {
+                e.preventDefault();
+                try {
+                    await window.OVKAPI.call("messages.addChatUser", {
+                        "peer_id": peer.id,
+                        "user_id": currentUserId
+                    });
+                    peer.data.left = 0;
+                    peer.data.kicked = 0;
+                    peer.data.chat_settings = peer.data.chat_settings || {};
+                    peer.data.chat_settings.state = 'in';
+                    peer.data.state = 'in';
+                    peer.data.can_write = { allowed: true };
 
-                                    try {
-                                        const convById = await window.OVKAPI.call("messages.getConversationsById", { peer_ids: peer.id });
-                                        if (convById && convById.items && convById.items[0]?.conversation) {
-                                            const cConv = convById.items[0].conversation;
-                                            const s = cConv.chat_settings;
-                                            if (s) {
-                                                peer.data.photo_50 = s.photo_50 || s.photo?.photo_50 || "";
-                                                peer.data.photo_100 = s.photo_100 || s.photo?.photo_100 || "";
-                                                peer.data.photo_200 = s.photo_200 || s.photo?.photo_200 || "";
-                                                peer.data.avatar_max = s.avatar_max || "";
-                                                peer.data.photo_id = s.photo_id || null;
-                                            }
-                                        }
-                                    } catch (errConv) {
-                                        console.warn("Could not fetch updated conv on return_to_chat:", errConv);
-                                    }
+                    try {
+                        const convById = await window.OVKAPI.call("messages.getConversationsById", { peer_ids: peer.id });
+                        if (convById && convById.items && convById.items[0]?.conversation) {
+                            const cConv = convById.items[0].conversation;
+                            const s = cConv.chat_settings;
+                            if (s) {
+                                peer.data.photo_50 = s.photo_50 || s.photo?.photo_50 || "";
+                                peer.data.photo_100 = s.photo_100 || s.photo?.photo_100 || "";
+                                peer.data.photo_200 = s.photo_200 || s.photo?.photo_200 || "";
+                                peer.data.avatar_max = s.avatar_max || "";
+                                peer.data.photo_id = s.photo_id || null;
+                            }
+                        }
+                    } catch (errConv) {
+                        console.warn("Could not fetch updated conv on return_to_chat:", errConv);
+                    }
 
-                                    const conv = window.im.conversations?._findConv(peer.id);
-                                    if (conv) {
-                                        if (conv._conversation) {
-                                            conv._conversation.can_write = { allowed: true };
-                                            if (conv._conversation.chat_settings) {
-                                                conv._conversation.chat_settings.state = 'in';
-                                            }
-                                        }
-                                        if (conv.peer) {
-                                            conv.peer.data.left = 0;
-                                            conv.peer.data.kicked = 0;
-                                            conv.peer.data.can_write = { allowed: true };
-                                            conv.peer.data.photo_50 = peer.data.photo_50;
-                                            conv.peer.data.photo_100 = peer.data.photo_100;
-                                            conv.peer.data.photo_200 = peer.data.photo_200;
-                                            conv.peer.data.avatar_max = peer.data.avatar_max;
-                                            conv.peer.data.photo_id = peer.data.photo_id;
-                                        }
-                                    }
+                    const conv = window.im.conversations?._findConv(peer.id);
+                    if (conv) {
+                        if (conv._conversation) {
+                            conv._conversation.can_write = { allowed: true };
+                            if (conv._conversation.chat_settings) {
+                                conv._conversation.chat_settings.state = 'in';
+                            }
+                        }
+                        if (conv.peer) {
+                            conv.peer.data.left = 0;
+                            conv.peer.data.kicked = 0;
+                            conv.peer.data.can_write = { allowed: true };
+                            conv.peer.data.photo_50 = peer.data.photo_50;
+                            conv.peer.data.photo_100 = peer.data.photo_100;
+                            conv.peer.data.photo_200 = peer.data.photo_200;
+                            conv.peer.data.avatar_max = peer.data.avatar_max;
+                            conv.peer.data.photo_id = peer.data.photo_id;
+                        }
+                    }
 
-                                    if (window.im?.fastChats) {
-                                        const fc = window.im.fastChats.openedChats?.find(c => Number(c.peerId) === Number(peer.id));
-                                        if (fc) {
-                                            fc.canWrite = true;
-                                            fc.cantWriteReason = null;
-                                            fc.cantWriteText = null;
-                                            fc.photo = peer.getAvatar ? peer.getAvatar() : "";
-                                            window.im.fastChats.render();
-                                        }
-                                    }
+                    if (window.im?.fastChats) {
+                        const fc = window.im.fastChats.openedChats?.find(c => Number(c.peerId) === Number(peer.id));
+                        if (fc) {
+                            fc.canWrite = true;
+                            fc.cantWriteReason = null;
+                            fc.cantWriteText = null;
+                            fc.photo = peer.getAvatar ? peer.getAvatar() : "";
+                            window.im.fastChats.render();
+                        }
+                    }
 
-                                    window.im.openTabByName("messenger");
-                                    window.im.messenger.update();
-                                    if (window.im.conversations) {
-                                        window.im.conversations.update();
-                                    }
-                                } catch (err) {
-                                    fastError(String(err));
-                                }
-                            }}><b>${tr("return_to_chat")}</b></a>
-                        ` : ""}
-                        <a onClick=${(e) => {
+                    window.im.openTabByName("messenger");
+                    window.im.messenger.update();
+                    if (window.im.conversations) {
+                        window.im.conversations.update();
+                    }
+                } catch (err) {
+                    fastError(String(err));
+                }
+            }}><b>${tr("return_to_chat")}</b></a></li>
+                            ` : ""}
+                            <li id="clean"><a onClick=${(e) => {
             e.preventDefault();
             new CMessageBox({
-                title: tr("clear_history") || "Очистить историю",
-                body: tr("clear_history_confirm") || "Вы действительно хотите удалить всю историю сообщений в этом диалоге? Это действие нельзя отменить.",
+                title: tr("clear_history"),
+                body: tr("clear_history_confirm"),
                 buttons: [tr("yes"), tr("no")],
                 callbacks: [async () => {
                     try {
@@ -1169,25 +1233,26 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                     }
                 }, () => { }]
             });
-        }}>${tr("clear_history") || "Очистить историю сообщений"}</a>
-                        ${is_from_chat === true ? html`
-                            <div class="chat-actions-usr">
-                                <a><b>${tr("convo_action_kick")}</b></a>
-                            </div>
-                        ` : ""}
-                        ${(is_club_related && peer.isClubMessagesBlocked()) ? html`
-                            <div class="chat-actions-usr" onClick="${async (e) => { await peer.toggleClubMessagesBlockness(e, "enable"); }}">
-                                <a>${tr("group_allow_messages")}</a>
-                            </div>
-                        ` : ""}
-                        ${(is_club_related && !peer.isClubMessagesBlocked()) ? html`
-                            <div class="chat-actions-usr" onClick="${async (e) => { await peer.toggleClubMessagesBlockness(e, "disable"); }}">
-                                <a>${tr("group_deny_messages")}</a>
-                            </div>
-                        ` : ""}
-                        ${window.im.state.is_debug ? html`
-                            <a onClick=${(e) => { fastError(`<textarea>${JSON.stringify(peer.data, null, 4)}</textarea>`); }}>JSON</a>
-                        ` : ""}
+        }}>${tr("clear_history")}</a></li>
+                            ${is_from_chat === true ? html`
+                                <li id="kick_user" class="chat-actions-usr">
+                                    <a><b>${tr("convo_action_kick")}</b></a>
+                                </li>
+                            ` : ""}
+                            ${(is_club_related && peer.isClubMessagesBlocked()) ? html`
+                                <li id="club_allow" class="chat-actions-usr" onClick="${async (e) => { await peer.toggleClubMessagesBlockness(e, "enable"); }}">
+                                    <a>${tr("group_allow_messages")}</a>
+                                </li>
+                            ` : ""}
+                            ${(is_club_related && !peer.isClubMessagesBlocked()) ? html`
+                                <li id="club_deny" class="chat-actions-usr" onClick="${async (e) => { await peer.toggleClubMessagesBlockness(e, "disable"); }}">
+                                    <a>${tr("group_deny_messages")}</a>
+                                </li>
+                            ` : ""}
+                            ${window.im.state.is_debug ? html`
+                                <li id="debug"><a onClick=${(e) => { fastError(`<textarea>${JSON.stringify(peer.data, null, 4)}</textarea>`); }}>JSON</a></li>
+                            ` : ""}
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -1197,7 +1262,7 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                 ${peer.supposed_type == "chat" && !peer.isILeft() ? html`
                     <div class="peer-members-section">
                         <div class="chat-tab-2-header">
-                            <b>${tr("participants") || "Участники"} (${membersCount})</b>
+                            <b>${tr("participants")} (${membersCount})</b>
                             <div class="chat-header-actions">
                                 ${peer.can("invite_new") ? html`
                                     <a onClick=${(e) => {
@@ -1211,8 +1276,8 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                                     <a onClick=${(e) => {
                     e.preventDefault();
                     new CMessageBox({
-                        title: tr("leave_chat") || "Покинуть чат",
-                        body: tr("leave_chat_confirm") || "Вы действительно хотите покинуть эту беседу?",
+                        title: tr("leave_chat"),
+                        body: tr("leave_chat_confirm"),
                         buttons: [tr("yes"), tr("no")],
                         callbacks: [async () => {
                             try {
@@ -1291,16 +1356,16 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                     const isOwner = (item.is_owner === true || item.is_owner === 1 || (peer.data?.admin_id == memberId && !isModerator)) && !isModerator;
                     const isAdmin = item.is_admin === true || item.is_admin === 1 || isOwner;
                     const isSelf = memberId == currentUserId;
-                    const canKick = (item.can_kick || isChatAdmin) && !isSelf && !isOwner;
+                    const canKick = (item.can_kick !== undefined ? item.can_kick : (isChatAdmin && !isSelf && !isOwner));
                     const currentMember = (members || []).find(m => (m.member_id || m.id) == currentUserId);
-                    const isCurrentOwner = (currentMember && (currentMember.is_owner === true || currentMember.is_owner === 1)) || (peer.data?.admin_id == currentUserId && (!currentMember || !currentMember.is_moderator)) || isChatAdmin;
-                    const canManageModerator = isCurrentOwner && !isSelf && !isOwner;
+                    const isCurrentOwner = (currentMember && (currentMember.is_owner === true || currentMember.is_owner === 1)) || (peer.data?.admin_id == currentUserId && (!currentMember || !currentMember.is_moderator)) || (peer.isOwner ? peer.isOwner() : false);
+                    const canManageModerator = (peer.can("promote_users") || peer.can("change_admins") || isCurrentOwner) && !isSelf && !isOwner;
 
                     const toggleModerator = (e) => {
                         e.preventDefault();
                         const confirmBody = isModerator
-                            ? (tr("remove_moderator_confirm", escapeHtml(name)) || `Вы действительно хотите снять полномочия модератора с ${escapeHtml(name)}?`)
-                            : (tr("set_moderator_confirm", escapeHtml(name)) || `Вы действительно хотите назначить ${escapeHtml(name)} модератором этой беседы?`);
+                            ? tr("remove_moderator_confirm", escapeHtml(name))
+                            : tr("set_moderator_confirm", escapeHtml(name));
 
                         new CMessageBox({
                             title: tr("confirmation"),
@@ -1308,11 +1373,19 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                             buttons: [tr("yes"), tr("no")],
                             callbacks: [async () => {
                                 try {
-                                    const method = isModerator ? "messages.removeChatModerator" : "messages.setChatModerator";
-                                    await window.OVKAPI.call(method, {
-                                        "peer_id": peer.id,
-                                        "user_id": memberId
-                                    });
+                                    try {
+                                        await window.OVKAPI.call("messages.setMemberRole", {
+                                            "peer_id": peer.id,
+                                            "member_id": memberId,
+                                            "role": isModerator ? "member" : "admin"
+                                        });
+                                    } catch (errSetRole) {
+                                        const method = isModerator ? "messages.removeChatModerator" : "messages.setChatModerator";
+                                        await window.OVKAPI.call(method, {
+                                            "peer_id": peer.id,
+                                            "user_id": memberId
+                                        });
+                                    }
                                     if (peer.members) {
                                         peer.members = null;
                                     }
@@ -1341,7 +1414,7 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                         onlineText = memberObj.getOnlineStatusString();
                     } else if (!isClub) {
                         if (profile.online == 1) {
-                            onlineText = tr("online") || "Онлайн";
+                            onlineText = tr("online");
                         } else if (profile.last_seen && profile.last_seen.time) {
                             const d = new Date(profile.last_seen.time * 1000);
                             onlineText = d.toLocaleDateString();
@@ -1352,7 +1425,7 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                                     <div class="chat-member-item" key=${memberId}>
                                         <div class="inf">
                                             <a href=${profileUrl}>
-                                                <img class="chat-member-ava" src=${avatarSrc} onError=${(e) => { e.target.src = defaultAva; }} alt="" />
+                                                <img class="chat-member-ava" src=${avatarSrc} onError=${(e) => { e.target.onerror = null; e.target.src = defaultAva; }} alt="" />
                                             </a>
                                             <div class="chat-member-info">
                                                 <a class="chat-member-name" href=${profileUrl}>${name}</a>
@@ -1364,15 +1437,15 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                                             ${!isSelf && html`
                                                 <a class="chat-member-action-btn" onClick=${async () => {
                                 await window.im.messenger.selectConversationByPeerId(memberId);
-                            }}>${tr("write_message") || "Написать сообщение"}</a>
+                            }}>${tr("write_message")}</a>
                                             `}
                                             ${canManageModerator && html`
-                                                <a class="chat-member-action-mod ${isModerator ? 'active' : ''}" title=${isModerator ? (tr("remove_moderator") || "Снять полномочия модератора") : (tr("set_as_moderator") || "Назначить модератором")} onClick=${toggleModerator}>
+                                                <a class="chat-member-action-mod ${isModerator ? 'active' : ''}" title=${isModerator ? tr("remove_moderator") : tr("set_as_moderator")} onClick=${toggleModerator}>
                                                     <span class="chat-mod-star-icon"></span>
                                                 </a>
                                             `}
                                             ${canKick && html`
-                                                <a class="chat-member-action-kick" title=${tr("remove_from_chat") || "Исключить"} onClick=${(e) => {
+                                                <a class="chat-member-action-kick" title=${tr("remove_from_chat")} onClick=${(e) => {
                                 e.preventDefault();
                                 new CMessageBox({
                                     title: tr("confirmation"),
@@ -1429,7 +1502,7 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
                                         </div>
                                     </div>
                                 `;
-                }) : (peer.members?.failed ? html`<div style="padding: 10px; color: #888;">${tr("error") || "Не удалось загрузить участников"}</div>` : html`<div style="padding: 10px; color: #888;">${tr("loading") || "Загрузка..."}</div>`)}
+                }) : (peer.members?.failed ? html`<div class="im-members-load-error">${tr("error")}</div>` : html`<div class="im-members-loading">${tr("loading")}</div>`)}
                         </div>
                     </div>
                 ` : ""}
@@ -1451,7 +1524,7 @@ export const PeerInfoView = ({ page, convo, togglePeerInfo }) => {
 }
 
 export const PeerInviteLinkSection = ({ peer }) => {
-    if (!peer || peer.supposed_type !== 'chat' || peer.isILeft()) return null;
+    if (!peer || peer.supposed_type !== 'chat' || peer.isILeft() || (typeof peer.can === 'function' && !peer.can("see_invite_link"))) return null;
 
     if (!peer._inviteLinkState) {
         peer._inviteLinkState = {
@@ -1485,28 +1558,32 @@ export const PeerInviteLinkSection = ({ peer }) => {
     const copyInviteLink = () => {
         if (peer._inviteLinkState.link) {
             navigator.clipboard.writeText(peer._inviteLinkState.link).then(() => {
-                fastError(tr("link_copied") || "Ссылка скопирована в буфер обмена!");
+                fastErrortr("link_copied");
             }).catch(console.error);
         }
     };
 
+    const canChangeInviteLink = typeof peer.can === 'function' ? peer.can("change_invite_link") : peer.isOwner?.();
+
     return html`
         <div class="peer-invite-section">
             <div class="chat-tab-2-header">
-                <b>${tr("convo_invite_link") || "Ссылка для приглашения"}</b>
+                <b>${tr("convo_invite_link")}</b>
             </div>
             <div class="peer-invite-body">
                 ${peer._inviteLinkState.link ? html`
                     <div class="peer-invite-input-wrap">
                         <input type="text" readonly class="peer-invite-input" value="${peer._inviteLinkState.link}" onClick=${(e) => e.target.select()} />
-                        <button class="button" onClick=${copyInviteLink}>${tr("copy") || "Скопировать"}</button>
+                        <button class="button" onClick=${copyInviteLink}>${tr("copy")}</button>
                     </div>
-                    <div class="peer-invite-reset">
-                        <a onClick=${() => fetchInviteLink(1)}>${tr("reset_invite_link") || "Сбросить ссылку"}</a>
-                    </div>
+                    ${canChangeInviteLink ? html`
+                        <div class="peer-invite-reset">
+                            <a onClick=${() => fetchInviteLink(1)}>${tr("reset_invite_link")}</a>
+                        </div>
+                    ` : ""}
                 ` : html`
                     <button class="button" disabled=${peer._inviteLinkState.isLoading} onClick=${() => fetchInviteLink(0)}>
-                        ${peer._inviteLinkState.isLoading ? (tr("loading") || "Загрузка...") : (tr("get_invite_link") || "Получить ссылку для приглашения")}
+                        ${peer._inviteLinkState.isLoading ? tr("loading") : tr("get_invite_link")}
                     </button>
                 `}
             </div>
@@ -1565,26 +1642,26 @@ export const PeerAttachmentsSection = ({ peer }) => {
     return html`
         <div class="peer-attachments-section">
             <div class="chat-tab-2-header">
-                <b>${tr("attachments") || "Вложения"}</b>
+                <b>${tr("attachments")}</b>
                 <div class="chat-header-actions">
                     <a class="peer-att-open-modal-btn" onClick=${(e) => {
             e.preventDefault();
-            openAttachmentsModal({ peer: peer, initialType: currentType });
-        }}>${tr("open_all_materials") || "Показать все"}</a>
+            window.im.openTabByName("materials", true, { peer: peer, initialType: currentType });
+        }}>${tr("open_all_materials")}</a>
                 </div>
             </div>
             <div class="peer-att-tabs">
-                <a class="peer-att-tab ${currentType === 'photo' ? 'active' : ''}" onClick=${() => loadAttachments('photo')}>${tr('photos') || 'Фото'}</a>
-                <a class="peer-att-tab ${currentType === 'video' ? 'active' : ''}" onClick=${() => loadAttachments('video')}>${tr('videos') || 'Видео'}</a>
-                <a class="peer-att-tab ${currentType === 'audio' ? 'active' : ''}" onClick=${() => loadAttachments('audio')}>${tr('audios') || 'Аудио'}</a>
-                <a class="peer-att-tab ${currentType === 'doc' ? 'active' : ''}" onClick=${() => loadAttachments('doc')}>${tr('documents') || 'Файлы'}</a>
-                <a class="peer-att-tab ${currentType === 'link' ? 'active' : ''}" onClick=${() => loadAttachments('link')}>${tr('links') || 'Ссылки'}</a>
+                <a class="peer-att-tab ${currentType === 'photo' ? 'active' : ''}" onClick=${() => loadAttachments('photo')}>${tr('photos')}</a>
+                <a class="peer-att-tab ${currentType === 'video' ? 'active' : ''}" onClick=${() => loadAttachments('video')}>${tr('videos')}</a>
+                <a class="peer-att-tab ${currentType === 'audio' ? 'active' : ''}" onClick=${() => loadAttachments('audio')}>${tr('audios')}</a>
+                <a class="peer-att-tab ${currentType === 'doc' ? 'active' : ''}" onClick=${() => loadAttachments('doc')}>${tr('documents')}</a>
+                <a class="peer-att-tab ${currentType === 'link' ? 'active' : ''}" onClick=${() => loadAttachments('link')}>${tr('links')}</a>
             </div>
             <div class="peer-att-content">
                 ${isLoading ? html`
                     <!--div class="peer-att-loader"><img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="..." /></div-->
                 ` : (items.length === 0 ? html`
-                    <div class="peer-att-empty">${tr('no_attachments') || 'Нет вложений этого типа'}</div>
+                    <div class="peer-att-empty">${tr('no_attachments')}</div>
                 ` : (isGrid ? html`
                     <div class="peer-att-grid">
                         ${items.map(item => {
@@ -1612,7 +1689,7 @@ export const PeerAttachmentsSection = ({ peer }) => {
                                 `;
             }
             if (video) {
-                const thumb = video.image?.[0]?.url || video.image?.[0]?.src || video.photo_320 || video.photo_130 || video.image_url || '/assets/packages/static/openvk/img/video_placeholder.png';
+                const thumb = video.image?.[0]?.url || video.image?.[0]?.src || video.photo_320 || video.photo_130 || video.image_url || '/assets/packages/static/openvk/img/thumbnail_gone.jpg';
                 const durStr = video.duration ? (Math.floor(video.duration / 60) + ':' + ('0' + (video.duration % 60)).slice(-2)) : '';
                 return html`
                                     <div class="peer-att-grid-item video-item" onClick=${(e) => {
@@ -1620,7 +1697,7 @@ export const PeerAttachmentsSection = ({ peer }) => {
                             VideoViewer.openById(`${video.owner_id}_${video.id}`, {}, e);
                         }
                     }}>
-                                        <img src="${thumb}" alt="" />
+                                        <img src="${thumb}" alt="" onError=${(e) => { e.target.onerror = null; e.target.src = '/assets/packages/static/openvk/img/thumbnail_gone.jpg'; }} />
                                         ${durStr ? html`<span class="peer-att-video-dur">${durStr}</span>` : ''}
                                     </div>
                                 `;
@@ -1699,12 +1776,12 @@ export const ErrorConversation = ({ }) => {
 
 export const TopicConversationChat = ({ chat_id }) => {
     return html`
-    <div id="chat-topic" style="margin-top: 140px;">
+    <div id="chat-topic">
         <span class="t1">${tr("topic_going_in_chat")}</span>
         <div class="chat-topic-preview">
             <img src="{$chat->getPhotoURL("miniscule")}" alt="chat" />
             <div>
-                <b style="display: block;">{$chat->getTitle()}</b>
+                <b class="chat-topic-title">{$chat->getTitle()}</b>
                 <span>сколько-то участников</span>
             </div>
         </div>
@@ -1713,4 +1790,267 @@ export const TopicConversationChat = ({ chat_id }) => {
         </div>
     </div>
     `;
+}
+
+export function openChatPermissionsModal(peer) {
+    if (!peer || peer.supposed_type !== 'chat') return;
+
+    const modalTitle = tr('chat_permissions_settings');
+    const currentPerms = peer.getPermissions ? (peer.getPermissions() || {}) : (peer.data?.chat_settings?.permissions || {});
+
+    const permsState = {
+        invite: currentPerms.invite || 'all',
+        change_info: currentPerms.change_info || 'admin',
+        change_pin: currentPerms.change_pin || 'admin',
+        use_mass_mentions: currentPerms.use_mass_mentions || 'all',
+        see_invite_link: currentPerms.see_invite_link || 'admin',
+        change_invite_link: currentPerms.change_invite_link || 'owner',
+        change_admins: currentPerms.change_admins || 'owner',
+    };
+
+    const isOwner = peer.isOwner ? peer.isOwner() : false;
+    const canChangeAdmins = isOwner || (peer.can && peer.can("change_admins"));
+
+    const safeEsc = (s) => (typeof escapeHtml === 'function' ? escapeHtml(s) : String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'));
+
+    const modal = new CMessageBox({
+        title: modalTitle,
+        body: `
+            <div class="messagebox-content-header chat-permissions-desc">
+                ${safeEsctr("chat_permissions_desc")}
+            </div>
+            <table class="flexible_table" cellspacing="7" cellpadding="0" border="0" width="100%" align="center">
+                <tbody>
+                    <tr>
+                        <td width="55%" valign="top">
+                            <span class="nobold">${safeEsctr("chat_perm_invite")}:</span>
+                        </td>
+                        <td>
+                            <select id="_ovk_perm_invite" class="chat-perm-select">
+                                <option value="all" ${permsState.invite === 'all' ? 'selected' : ''}>${safeEsctr("chat_perm_all")}</option>
+                                <option value="admin" ${permsState.invite === 'admin' ? 'selected' : ''}>${safeEsctr("chat_perm_admin")}</option>
+                                <option value="owner" ${permsState.invite === 'owner' ? 'selected' : ''}>${safeEsctr("chat_perm_owner")}</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="55%" valign="top">
+                            <span class="nobold">${safeEsctr("chat_perm_change_info")}:</span>
+                        </td>
+                        <td>
+                            <select id="_ovk_perm_change_info" class="chat-perm-select">
+                                <option value="all" ${permsState.change_info === 'all' ? 'selected' : ''}>${safeEsctr("chat_perm_all")}</option>
+                                <option value="admin" ${permsState.change_info === 'admin' ? 'selected' : ''}>${safeEsctr("chat_perm_admin")}</option>
+                                <option value="owner" ${permsState.change_info === 'owner' ? 'selected' : ''}>${safeEsctr("chat_perm_owner")}</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="55%" valign="top">
+                            <span class="nobold">${safeEsctr("chat_perm_change_pin")}:</span>
+                        </td>
+                        <td>
+                            <select id="_ovk_perm_change_pin" class="chat-perm-select">
+                                <option value="all" ${permsState.change_pin === 'all' ? 'selected' : ''}>${safeEsctr("chat_perm_all")}</option>
+                                <option value="admin" ${permsState.change_pin === 'admin' ? 'selected' : ''}>${safeEsctr("chat_perm_admin")}</option>
+                                <option value="owner" ${permsState.change_pin === 'owner' ? 'selected' : ''}>${safeEsctr("chat_perm_owner")}</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="55%" valign="top">
+                            <span class="nobold">${safeEsctr("chat_perm_use_mass_mentions")}:</span>
+                        </td>
+                        <td>
+                            <select id="_ovk_perm_use_mass_mentions" class="chat-perm-select">
+                                <option value="all" ${permsState.use_mass_mentions === 'all' ? 'selected' : ''}>${safeEsctr("chat_perm_all")}</option>
+                                <option value="admin" ${permsState.use_mass_mentions === 'admin' ? 'selected' : ''}>${safeEsctr("chat_perm_admin")}</option>
+                                <option value="owner" ${permsState.use_mass_mentions === 'owner' ? 'selected' : ''}>${safeEsctr("chat_perm_owner")}</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="55%" valign="top">
+                            <span class="nobold">${safeEsctr("chat_perm_see_invite_link")}:</span>
+                        </td>
+                        <td>
+                            <select id="_ovk_perm_see_invite_link" class="chat-perm-select">
+                                <option value="all" ${permsState.see_invite_link === 'all' ? 'selected' : ''}>${safeEsctr("chat_perm_all")}</option>
+                                <option value="admin" ${permsState.see_invite_link === 'admin' ? 'selected' : ''}>${safeEsctr("chat_perm_admin")}</option>
+                                <option value="owner" ${permsState.see_invite_link === 'owner' ? 'selected' : ''}>${safeEsctr("chat_perm_owner")}</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="55%" valign="top">
+                            <span class="nobold">${safeEsctr("chat_perm_change_invite_link")}:</span>
+                        </td>
+                        <td>
+                            <select id="_ovk_perm_change_invite_link" class="chat-perm-select">
+                                <option value="owner" ${permsState.change_invite_link === 'owner' ? 'selected' : ''}>${safeEsctr("chat_perm_owner")}</option>
+                                <option value="admin" ${permsState.change_invite_link === 'admin' ? 'selected' : ''}>${safeEsctr("chat_perm_admin")}</option>
+                                <option value="all" ${permsState.change_invite_link === 'all' ? 'selected' : ''}>${safeEsctr("chat_perm_all")}</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="55%" valign="top">
+                            <span class="nobold">${safeEsctr("chat_perm_change_admins")}:</span>
+                        </td>
+                        <td>
+                            <select id="_ovk_perm_change_admins" class="chat-perm-select" ${!canChangeAdmins ? 'disabled' : ''}>
+                                <option value="owner" ${permsState.change_admins === 'owner' ? 'selected' : ''}>${safeEsctr("chat_perm_owner")}</option>
+                                <option value="admin" ${permsState.change_admins === 'admin' ? 'selected' : ''}>${safeEsctr("chat_perm_admin")}</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        `,
+        buttons: [tr('save'), tr('cancel')],
+        callbacks: [
+            async () => {
+                const node = modal.getNode();
+                const container = node && node.nodes ? node.nodes[0] : document;
+                const getVal = (id) => {
+                    const el = container.querySelector('#' + id);
+                    return el ? el.value : undefined;
+                };
+
+                const newPerms = {
+                    invite: getVal('_ovk_perm_invite') || permsState.invite,
+                    change_info: getVal('_ovk_perm_change_info') || permsState.change_info,
+                    change_pin: getVal('_ovk_perm_change_pin') || permsState.change_pin,
+                    use_mass_mentions: getVal('_ovk_perm_use_mass_mentions') || permsState.use_mass_mentions,
+                    see_invite_link: getVal('_ovk_perm_see_invite_link') || permsState.see_invite_link,
+                    change_invite_link: getVal('_ovk_perm_change_invite_link') || permsState.change_invite_link,
+                    change_admins: getVal('_ovk_perm_change_admins') || permsState.change_admins,
+                };
+
+                try {
+                    const res = await window.OVKAPI.call("messages.setChatPermissions", {
+                        peer_id: peer.id,
+                        ...newPerms
+                    });
+
+                    if (res) {
+                        peer.data = peer.data || {};
+                        peer.data.chat_settings = peer.data.chat_settings || {};
+                        const resPerms = res.permissions || newPerms;
+                        peer.data.permissions = resPerms;
+                        peer.data.chat_settings.permissions = resPerms;
+                        if (res.acl) {
+                            peer.data.acl = res.acl;
+                            peer.data.chat_settings.acl = res.acl;
+                        }
+                    }
+
+                    if (peer.members) {
+                        peer.members = null;
+                    }
+                    await peer.checkMembers();
+
+                    if (window.im.getTab("contact")?.render_class) {
+                        window.im.getTab("contact").render_class.update();
+                    }
+                    if (window.im.messenger) {
+                        window.im.messenger.update();
+                    }
+                } catch (e) {
+                    fastError(String(e));
+                }
+            },
+            () => { }
+        ]
+    });
+
+    const rootNode = modal.getNode();
+    if (rootNode && rootNode.nodes && rootNode.nodes[0]) {
+        rootNode.nodes[0].style.width = "480px";
+    }
+
+    return modal;
+}
+
+export function openChatMuteModal(peer) {
+    if (!peer) return;
+
+    const modalTitle = tr('chat_mute_title');
+    const isMuted = peer.isMuted ? peer.isMuted() : false;
+    const safeEsc = (s) => (typeof escapeHtml === 'function' ? escapeHtml(s) : String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'));
+
+    const modal = new CMessageBox({
+        title: modalTitle,
+        body: `
+            <table class="flexible_table" cellspacing="7" cellpadding="0" border="0" width="100%" align="center">
+                <tbody>
+                    <tr>
+                        <td width="40%" valign="top">
+                            <span class="nobold">${safeEsctr("chat_mute_notifications")}:</span>
+                        </td>
+                        <td>
+                            <select id="_ovk_mute_duration" class="chat-perm-select">
+                                ${isMuted ? `<option value="0">${safeEsctr("chat_unmute_notifications")}</option>` : ''}
+                                <option value="3600">${safeEsctr("chat_mute_1_hour")}</option>
+                                <option value="28800">${safeEsctr("chat_mute_8_hours")}</option>
+                                <option value="-1">${safeEsctr("chat_mute_forever")}</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        `,
+        buttons: [tr('save'), tr('cancel')],
+        callbacks: [
+            async () => {
+                const node = modal.getNode();
+                const container = node && node.nodes ? node.nodes[0] : document;
+                const durEl = container.querySelector('#_ovk_mute_duration');
+                const duration = durEl ? parseInt(durEl.value, 10) : 0;
+
+                try {
+                    await window.OVKAPI.call("account.setSilenceMode", {
+                        peer_id: peer.id,
+                        time: duration,
+                        sound: duration === 0 ? 1 : 0
+                    });
+
+                    peer.data = peer.data || {};
+                    peer.data.push_settings = peer.data.push_settings || {};
+                    if (duration === 0) {
+                        peer.data.push_settings.disabled_until = 0;
+                        peer.data.push_settings.sound = 1;
+                    } else if (duration === -1) {
+                        peer.data.push_settings.disabled_until = -1;
+                        peer.data.push_settings.sound = 0;
+                    } else {
+                        peer.data.push_settings.disabled_until = Math.floor(Date.now() / 1000) + duration;
+                        peer.data.push_settings.sound = 0;
+                    }
+
+                    if (window.im.getTab("contact")?.render_class) {
+                        window.im.getTab("contact").render_class.update();
+                    }
+                    if (window.im.messenger) {
+                        window.im.messenger.update();
+                    }
+                } catch (e) {
+                    fastError(String(e));
+                }
+            },
+            () => { }
+        ]
+    });
+
+    const rootNode = modal.getNode();
+    if (rootNode && rootNode.nodes && rootNode.nodes[0]) {
+        rootNode.nodes[0].style.width = "400px";
+    }
+
+    return modal;
+}
+
+if (typeof window !== 'undefined') {
+    window.openChatPermissionsModal = openChatPermissionsModal;
+    window.openChatMuteModal = openChatMuteModal;
 }

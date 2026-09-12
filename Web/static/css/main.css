@@ -3464,7 +3464,13 @@ a.poll-retract-vote {
     background: transparent;
 }
 
-.header-search-box .search_box_button {
+#search_form {
+    display: flex;
+    gap: 10px;
+    padding: 10px 10px;
+}
+
+.search_box_button {
     border: 1px solid #616161;
     border-top-color: #575757;
     border-bottom-color: #454545;
@@ -3472,12 +3478,10 @@ a.poll-retract-vote {
     color: #ffffff;
     padding: 0;
     width: 80px;
-    height: 22px;
     cursor: pointer;
     border-radius: 2px;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 1px 0 rgba(0, 0, 0, 0.1);
     text-shadow: 0 1px 0 #696969;
-    margin-left: 4px;
     font-size: 11px;
     font-weight: bold;
     outline: none;
@@ -3485,16 +3489,16 @@ a.poll-retract-vote {
     transition: background-color 0.1s ease;
 }
 
-.header-search-box .search_box_button:hover {
+.search_box_button:hover {
     background: #8b8b8b linear-gradient(180deg, #969696 0%, #7a7a7a 100%);
 }
 
-.header-search-box .search_box_button:active {
+.search_box_button:active {
     background: #949494 linear-gradient(180deg, #a8a8a8 0%, #868686 100%);
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
-.header-search-box .search_box_button span {
+.search_box_button span {
     color: #ffffff;
     font-weight: bold;
     font-size: 11px;
@@ -5978,8 +5982,10 @@ hr {
 .stickers_banner_img {
     width: 100%;
     max-width: 627px;
+    min-height: 250px;
     height: auto;
     display: block;
+    background-color: #F6F6F6;
 }
 
 .stickers_search_box {
@@ -6436,4 +6442,13 @@ hr {
     .stickers_modal_head_title {
         max-width: 260px;
     }
+}
+
+.mention-token {
+    color: var(--link, #2b587a) !important;
+    text-decoration: none;
+    cursor: default;
+    user-select: all;
+    display: inline-block;
+    vertical-align: baseline;
 }
