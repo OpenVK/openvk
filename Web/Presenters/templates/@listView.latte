@@ -27,7 +27,7 @@
                     {/ifset}
 
                     {if sizeof($data) > 0}
-                        <div class="scroll_node content" n:foreach="$data as $dat">
+                        <div class="scroll_node content" n:foreach="$data as $dat" n:attr="data-uniqueid => (is_object($dat) && method_exists($dat, 'getId') ? $dat->getId() : null)">
                             <table>
                                 <tbody n:attr="id => $table_body_id ?? NULL">
                                     <tr>

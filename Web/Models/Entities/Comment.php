@@ -79,6 +79,10 @@ class Comment extends Post
         $res->attachments   = [];
         $res->parents_stack = [];
 
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            $res->cid = $this->getId();
+        }
+
         if ($this->getReplyToId() !== null) {
             $res->reply_to_comment = $this->getReplyToId();
         }
@@ -101,7 +105,7 @@ class Comment extends Post
             }
 
             if ($attachment instanceof \openvk\Web\Models\Entities\Photo) {
-                if (VKAPI_DECL_VER_MAJOR <= 4) {
+                if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 4) {
                     $res->attachments[] = $attachment->toVkApiStruct();
                 } else {
                     $res->attachments[] = [
@@ -179,9 +183,24 @@ class Comment extends Post
         return $res;
     }
 
+    public function hasSticker(): bool
+    {
+        foreach ($this->getChildren() as $attachment) {
+            if ($attachment instanceof \openvk\Web\Models\Entities\Messages\Sticker) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function canBeEditedBy(?User $user = null): bool
     {
         if (!$user) {
+            return false;
+        }
+
+        if ($this->hasSticker()) {
             return false;
         }
 

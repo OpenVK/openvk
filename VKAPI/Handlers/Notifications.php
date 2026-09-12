@@ -34,7 +34,7 @@ final class Notifications extends VKAPIRequestHandler
         }
 
         if (!eventdb()) {
-            $this->fail(1289, "EventDB is disabled on this instance");
+            return $res;
         }
 
         $notifs = array_slice(iterator_to_array((new Notifs())->getNotificationsByUser($this->getUser(), $this->getUser()->getNotificationOffset(), (bool) $archived, 1, $offset + $count)), $offset);
@@ -53,22 +53,34 @@ final class Notifications extends VKAPIRequestHandler
         foreach (array_unique($tmpProfiles) as $id) {
             if ($id > 0) {
                 $sxModel = (new Users())->get($id);
+                if (!$sxModel) {
+                    continue;
+                }
+                $isDeleted = $sxModel->isDeleted();
                 $result  = (object) [
-                    "id"         => $sxModel->getId(),
-                    "uid"        => $sxModel->getId(),
-                    "first_name" => $sxModel->getFirstName(),
-                    "last_name"  => $sxModel->getLastName(),
-                    "photo"      => $sxModel->getAvatarUrl(),
+                    "id"               => $sxModel->getId(),
+                    "uid"              => $sxModel->getId(),
+                    "first_name"       => $isDeleted ? "DELETED" : $sxModel->getFirstName(),
+                    "last_name"        => $isDeleted ? "" : $sxModel->getLastName(),
+                    "sex"              => $sxModel->isFemale() ? 1 : ($sxModel->isNeutral() ? 0 : 2),
+                    "photo"            => $sxModel->getAvatarUrl(),
+                    "photo_rec"        => $sxModel->getAvatarUrl(),
                     "photo_medium_rec" => $sxModel->getAvatarUrl("tiny"),
-                    "photo_50"      => $sxModel->getAvatarUrl("tiny"),
-                    "photo_100"     => $sxModel->getAvatarUrl("normal"),
+                    "photo_50"         => $sxModel->getAvatarUrl("tiny"),
+                    "photo_100"        => $sxModel->getAvatarUrl("normal"),
                     "screen_name"      => $sxModel->getURL(true),
                 ];
 
                 $res->profiles[] = $result;
             } else {
                 $sxModel = (new Clubs())->get(abs($id));
+                if (!$sxModel) {
+                    continue;
+                }
                 $result  = $sxModel->toVkApiStruct($this->getUser());
+                $result->gid          = $sxModel->getId();
+                $result->photo        = $sxModel->getAvatarUrl('miniscule');
+                $result->photo_medium = $sxModel->getAvatarUrl('tiny');
 
                 $res->groups[] = $result;
             }
@@ -141,18 +153,34 @@ final class Notifications extends VKAPIRequestHandler
             }
 
             foreach (array_unique($tmpProfiles, SORT_REGULAR) as $user) {
+                if (!$user) {
+                    continue;
+                }
+                $isDeleted = $user->isDeleted();
                 $res->profiles[] = (object) [
+                    "id"               => $user->getId(),
                     "uid"              => $user->getId(),
-                    "first_name"       => $user->getFirstName(),
-                    "last_name"        => $user->getLastName(),
+                    "first_name"       => $isDeleted ? "DELETED" : $user->getFirstName(),
+                    "last_name"        => $isDeleted ? "" : $user->getLastName(),
+                    "sex"              => $user->isFemale() ? 1 : ($user->isNeutral() ? 0 : 2),
                     "photo"            => $user->getAvatarUrl(),
+                    "photo_rec"        => $user->getAvatarUrl(),
                     "photo_medium_rec" => $user->getAvatarUrl("tiny"),
+                    "photo_50"         => $user->getAvatarUrl("tiny"),
+                    "photo_100"        => $user->getAvatarUrl("normal"),
                     "screen_name"      => $user->getShortCode(),
                 ];
             }
 
             foreach (array_unique($tmpGroups, SORT_REGULAR) as $club) {
-                $res->groups[] = $club->toVkApiStruct($this->getUser());
+                if (!$club) {
+                    continue;
+                }
+                $groupStruct = $club->toVkApiStruct($this->getUser());
+                $groupStruct->gid          = $club->getId();
+                $groupStruct->photo        = $club->getAvatarUrl('miniscule');
+                $groupStruct->photo_medium = $club->getAvatarUrl('tiny');
+                $res->groups[] = $groupStruct;
             }
 
             return $res;

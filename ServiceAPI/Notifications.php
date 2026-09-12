@@ -78,6 +78,7 @@ class Notifications implements Handler
             $userModel = $notification->getModel(1);
 
             $resolve([
+                "id"       => $event['id'] ?? (string)($payload->id ?? hrtime(true)),
                 "title"    => tr("notif_" . $payload->actionCode . "_" . $payload->originModelType . "_" . $payload->targetModelType),
                 "body"     => trim(preg_replace('%(\s){2,}%', "$1", $latte->renderToString($tplId, ["notification" => $notification]))),
                 "ava"      => $userModel->getAvatarUrl(),

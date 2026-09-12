@@ -1,0 +1,439 @@
+import { html } from './render.js';
+import { formatTime } from './common.js';
+import { Attachment } from './message.js';
+/**
+ * Universal drag handler for floating fastchat windows
+ */
+function handleHeaderMouseDown(e, initialPosition, onFocus, onMove, onToggle) {
+    if (e.button !== 0) return;
+    if (e.target.closest('.fc_head_close, .fc_head_openfull, .fc_head_actions')) return;
+
+    e.preventDefault();
+    if (onFocus) onFocus();
+
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const windowEl = e.currentTarget.closest('.fc_chat_box, .fc_friends_window, .fc_tab_minimized');
+    if (!windowEl) return;
+
+    const rect = windowEl.getBoundingClientRect();
+    const curX = initialPosition && typeof initialPosition.x === 'number' ? initialPosition.x : rect.left;
+    const curY = initialPosition && typeof initialPosition.y === 'number' ? initialPosition.y : rect.top;
+
+    let hasDragged = false;
+
+    const onMouseMove = (moveEvent) => {
+        const dx = moveEvent.clientX - startX;
+        const dy = moveEvent.clientY - startY;
+
+        if (!hasDragged && (Math.abs(dx) > 3 || Math.abs(dy) > 3)) {
+            hasDragged = true;
+            document.body.classList.add("fc_dragging");
+        }
+
+        if (hasDragged) {
+            let newX = curX + dx;
+            let newY = curY + dy;
+
+            // Viewport boundary clamping
+            const maxW = window.innerWidth - (windowEl.offsetWidth || 230);
+            const maxH = window.innerHeight - (windowEl.offsetHeight || 28);
+            newX = Math.max(5, Math.min(maxW - 5, newX));
+            newY = Math.max(5, Math.min(maxH, newY));
+
+            if (onMove) {
+                onMove({ x: newX, y: newY });
+            }
+        }
+    };
+
+    const onMouseUp = () => {
+        document.removeEventListener("mousemove", onMouseMove);
+        document.removeEventListener("mouseup", onMouseUp);
+        document.body.classList.remove("fc_dragging");
+
+        if (!hasDragged && onToggle) {
+            onToggle();
+        }
+    };
+
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
+}
+
+function handleOpenFull(e, peerId) {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    const targetUrl = '/im?sel=' + peerId;
+    if (window.im?.messenger && typeof window.im.messenger.selectConversationByPeerId === 'function' && document.querySelector('#im_container')) {
+        window.im.messenger.selectConversationByPeerId(peerId);
+    } else if (window.router && typeof window.router.route === 'function') {
+        window.router.route(targetUrl);
+    } else {
+        window.location.href = targetUrl;
+    }
+}
+
+/**
+ * FastChatOnlineWindow - Floating window with friends list (VK 2012-2016 style)
+ */
+export const FastChatOnlineWindow = ({
+    isOpened,
+    friends,
+    allFriends,
+    showAll,
+    searchQuery,
+    position,
+    zIndex,
+    isFocused,
+    openedChats,
+    onSearch,
+    onFriendClick,
+    onToggle,
+    onClose,
+    onFocus,
+    onMove,
+    onToggleShowAll
+}) => {
+    const onlineCount = friends ? friends.length : 0;
+    const totalCount = allFriends ? allFriends.length : onlineCount;
+
+    let baseList = [];
+    if (searchQuery) {
+        baseList = allFriends && allFriends.length > 0 ? allFriends : (friends || []);
+    } else if (showAll) {
+        baseList = allFriends && allFriends.length > 0 ? allFriends : (friends || []);
+    } else {
+        baseList = friends || [];
+    }
+
+    const filteredFriends = baseList.filter(f => {
+        if (!searchQuery) return true;
+        const name = (f.first_name + " " + f.last_name).toLowerCase();
+        return name.includes(searchQuery.toLowerCase());
+    });
+
+    if (!isOpened) {
+        return html`
+            <div
+                class="fc_online_tab_pinned ${isFocused ? 'fc_focused' : ''}"
+                onClick=${onToggle}
+            >
+                <span class="fc_online_tab_label">${tr('friends_online_count', onlineCount)}</span>
+            </div>
+        `;
+    }
+
+    const openedStyle = position
+        ? `position: fixed; left: ${position.x}px; top: ${position.y}px; z-index: ${zIndex || 10000}; margin: 0;`
+        : `position: fixed; right: 20px; bottom: 0px; z-index: ${zIndex || 10000}; margin: 0;`;
+
+    let hasRenderedOfflineDivider = false;
+
+    return html`
+        <div
+            class="fc_friends_window ${isFocused ? 'fc_focused' : ''}"
+            style=${openedStyle}
+            onClick=${onFocus}
+        >
+            <div
+                class="fc_head"
+                onMouseDown=${(e) => handleHeaderMouseDown(e, position, onFocus, onMove, onToggle)}
+            >
+                <div class="fc_head_title">${tr('friends_online_count', onlineCount)}</div>
+                <div class="fc_head_close" onClick=${(e) => { e.stopPropagation(); onClose(); }}></div>
+            </div>
+            <div class="fc_search_wrap">
+                <input
+                    type="text"
+                    class="fc_search_input"
+                    placeholder="${tr('start_typing_name')}"
+                    value=${searchQuery}
+                    onInput=${(e) => onSearch(e.target.value)}
+                    onClick=${(e) => e.stopPropagation()}
+                />
+            </div>
+            <div class="fc_friends_list">
+                ${filteredFriends.length > 0 ? filteredFriends.map(f => {
+        const fullName = f.first_name + " " + f.last_name;
+        const isOnline = f.online === 1 || f.online === true;
+        let statusText = isOnline ? "online" : "";
+        if (!isOnline && f.last_seen && f.last_seen.time) {
+            const minsAgo = Math.floor((Date.now() / 1000 - f.last_seen.time) / 60);
+            if (minsAgo < 60) {
+                statusText = tr('was_n_mins_ago', minsAgo);
+            }
+        }
+
+        const showDivider = !searchQuery && showAll && !isOnline && !hasRenderedOfflineDivider && onlineCount > 0;
+        if (showDivider) {
+            hasRenderedOfflineDivider = true;
+        }
+
+        const opened = openedChats && openedChats.find(c => Number(c.peerId) === Number(f.id));
+        const conv = window.im?.conversations?._findConv && window.im.conversations._findConv(f.id);
+        const unreadCount = opened ? (opened.unreadCount || 0) : Number(conv?.unread_count || 0);
+
+        return html`
+                        ${showDivider && html`
+                            <div class="fc_divider_row">${tr('offline_divider')}</div>
+                        `}
+                        <div class="fc_friend_row" onClick=${() => onFriendClick(f)}>
+                            <img src="${f.photo_50 || '/assets/packages/static/openvk/img/camera_50.png'}" class="fc_avatar" />
+                            <div class="fc_info">
+                                <span class="fc_name">${fullName}</span>
+                                <span class="fc_status ${isOnline ? 'online' : ''}">${statusText}</span>
+                            </div>
+                            ${unreadCount > 0 ? html`
+                                <div class="fc_action_btn fc_unread_badge">+${unreadCount}</div>
+                            ` : null}
+                        </div>
+                    `;
+    }) : html`
+                    <div class="fc_friends_hint">
+                        ${tr('fastchat_search_hint')}
+                    </div>
+                `}
+            </div>
+
+            ${!searchQuery && allFriends && allFriends.length > 0 && html`
+                <div class="fc_toggle_offline_btn" onClick=${onToggleShowAll}>
+                    ${showAll
+                ? tr('show_online_only', onlineCount)
+                : tr('show_all_friends', totalCount)
+            }
+                </div>
+            `}
+        </div>
+    `;
+};
+
+/**
+ * FastChatBox - Active floating conversation box
+ */
+export const FastChatBox = ({
+    chat,
+    currentUserId,
+    currentUserAvatar,
+    onToggle,
+    onClose,
+    onLoadOlder,
+    onTextChange,
+    onSend,
+    onKeyDown,
+    onFocus,
+    onMove
+}) => {
+
+    if (chat.isMinimized) {
+        const minStyleStr = chat.position
+            ? `position: fixed; left: ${chat.position.x}px; bottom: 0px; z-index: ${chat.zIndex || 10000}; margin: 0;`
+            : `position: fixed; bottom: 0px; z-index: ${chat.zIndex || 10000}; margin: 0;`;
+
+        return html`
+            <div
+                class="fc_tab_minimized ${chat.isFocused ? 'fc_focused' : ''}"
+                style=${minStyleStr}
+                onMouseDown=${(e) => handleHeaderMouseDown(e, chat.position, () => onFocus(chat.peerId), (pos) => onMove(chat.peerId, pos), () => onToggle(chat.peerId))}
+            >
+                <div class="fc_min_title">${chat.title}</div>
+                ${chat.unreadCount > 0 && html`<span class="fc_unread_badge">+${chat.unreadCount}</span>`}
+                <div class="fc_head_actions">
+                    <a href="/im?sel=${chat.peerId}" class="fc_head_openfull" title="${tr('go_to_dialog')}" onClick=${(e) => handleOpenFull(e, chat.peerId)}></a>
+                    <div class="fc_head_close" onClick=${(e) => { e.stopPropagation(); onClose(chat.peerId); }}></div>
+                </div>
+            </div>
+        `;
+    }
+
+    const styleStr = chat.position
+        ? `position: fixed; left: ${chat.position.x}px; top: ${chat.position.y}px; z-index: ${chat.zIndex || 10000}; margin: 0;`
+        : `position: relative; z-index: ${chat.zIndex || 10000};`;
+
+    const messages = chat.messages || [];
+
+    return html`
+        <div
+            class="fc_chat_box ${chat.isFocused ? 'fc_focused' : ''}"
+            data-peer-id="${chat.peerId}"
+            style=${styleStr}
+            onClick=${() => onFocus(chat.peerId)}
+        >
+            <div
+                class="fc_head"
+                onMouseDown=${(e) => handleHeaderMouseDown(e, chat.position, () => onFocus(chat.peerId), (pos) => onMove(chat.peerId, pos), () => onToggle(chat.peerId))}
+            >
+                <div class="fc_head_title">${chat.title}</div>
+                <div class="fc_head_actions">
+                    <a href="/im?sel=${chat.peerId}" class="fc_head_openfull" title="${tr('go_to_dialog')}" onClick=${(e) => handleOpenFull(e, chat.peerId)}></a>
+                    <div class="fc_head_close" onClick=${(e) => { e.stopPropagation(); onClose(chat.peerId); }}></div>
+                </div>
+            </div>
+
+            <div class="fc_messages_list" id="fc_messages_${chat.peerId}"
+            onScroll=${() => {
+            if (window.im?.fastChats) {
+                window.im.fastChats.markChatAsRead(chat.peerId);
+            }
+        }}>
+                
+                ${chat.hasMore && html`
+                    <div class="fc_load_more ${chat.isLoadingOlder ? 'fc_loading' : ''}" onClick=${() => !chat.isLoadingOlder && onLoadOlder(chat.peerId)}>
+                        ${chat.isLoadingOlder ? tr('loading') : tr('show_previous_messages')}
+                    </div>
+                `}
+
+                ${chat.isLoading && messages.length === 0 && html`
+                    <div class="fc_loading_state">
+                        <img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="..." />
+                    </div>
+                `}
+
+                ${!chat.isLoading && messages.length === 0 && html`
+                    <div class="fc_empty_history">
+                        ${tr('no_messages_in_dialog')}
+                    </div>
+                `}
+
+                ${messages.map(msg => {
+            const isOut = msg.from_id === currentUserId || msg.out === 1;
+            const authorName = isOut ? tr('you') : (msg.author_name || chat.title);
+            const authorAva = isOut ? currentUserAvatar : (msg.author_photo || chat.photo);
+            const timeStr = msg.time_str || (msg.date ? formatTime(msg.date, false) : '');
+            const isTargetUnread = chat.firstUnreadMsgId && (Number(msg.id) === Number(chat.firstUnreadMsgId));
+
+            return html`
+                        ${isTargetUnread ? html`
+                            <div class="fc_unread_divider" id="fc_unread_${chat.peerId}" key=${`unread_${msg.id}`}>
+                                <span class="fc_unread_divider_text">${tr('unread_messages')}</span>
+                            </div>
+                        ` : null}
+                        <div class="fc_msg_row" data-msg-id="${msg.id}" key=${msg.id}>
+                            <img src="${authorAva || '/assets/packages/static/openvk/img/camera_50.png'}" class="fc_msg_avatar" />
+                            <div class="fc_msg_body">
+                                <div class="fc_msg_header">
+                                    <span class="fc_msg_author">${authorName}</span>
+                                    <span class="fc_msg_time">${timeStr}</span>
+                                </div>
+                                <div class="fc_msg_text" dangerouslySetInnerHTML=${{
+                                    __html: (typeof msg.getText === 'function') ? msg.getText(false) : (() => {
+                                        let rawT = msg.text || msg.body || '';
+                                        if (!rawT) return '';
+                                        let escaped = (typeof escapeHtml === 'function') ? escapeHtml(rawT) : String(rawT).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                                        escaped = escaped.replace(/\[([a-zA-Z0-9_]+)(?:\|([^\]]*))?\]/gi, (match, target, title) => {
+                                            const lowerTarget = target.toLowerCase();
+                                            const display = (title && title.trim()) ? title.trim() : target;
+                                            if (lowerTarget === "all" || lowerTarget === "online") {
+                                                return `<b class="mention mention-mass">${display.startsWith('@') ? display : '@' + display}</b>`;
+                                            }
+                                            return `<a href="/${lowerTarget}" class="mention chat-link">${display}</a>`;
+                                        });
+                                        if (typeof encode_emojis === 'function') escaped = encode_emojis(escaped);
+                                        if (typeof nl2br === 'function') escaped = nl2br(escaped);
+                                        return escaped;
+                                    })()
+                                }} />
+                                ${msg.attachments && Array.isArray(msg.attachments) && msg.attachments.length > 0 && html`
+                                    <div class="fc_attachments_wrap">
+                                        ${msg.attachments.map(att => html`
+                                            <div class="fc_attachment_row" key=${att.type + (att[att.type]?.id || '')}>
+                                                <${Attachment} msg=${msg} att=${att} />
+                                            </div>
+                                        `)}
+                                    </div>
+                                `}
+                            </div>
+                        </div>
+                    `;
+        })}
+            </div>
+
+            ${chat.canWrite === false ? html`
+                <div class="fc_input_bar fc_cant_write_bar">
+                    <div class="fc_cant_write_text">${chat.cantWriteText || tr('cannot_write_default')}</div>
+                </div>
+            ` : html`
+                <div class="fc_input_bar">
+                    <img src="${currentUserAvatar || '/assets/packages/static/openvk/img/camera_50.png'}" class="fc_my_avatar" />
+                    <textarea
+                        class="fc_textarea"
+                        placeholder="${tr('enter_your_message')}"
+                        value=${chat.text || ''}
+                        onInput=${(e) => onTextChange(chat.peerId, e.target.value)}
+                        onKeyDown=${(e) => onKeyDown(e, chat.peerId)}
+                        onFocus=${() => onFocus(chat.peerId)}
+                    ></textarea>
+                    <div class="fc_emoji_btn emoji_picker_entrypoint" title="${tr('smiles')}"></div>
+                </div>
+            `}
+        </div>
+    `;
+};
+
+/**
+ * FastChatsRoot - Root container rendered into #fastchats_container
+ */
+export const FastChatsRoot = ({
+    onlineWindow,
+    openedChats,
+    currentUserId,
+    currentUserAvatar,
+    onOnlineSearch,
+    onOnlineFriendClick,
+    onOnlineToggle,
+    onOnlineClose,
+    onOnlineFocus,
+    onOnlineMove,
+    onOnlineToggleShowAll,
+    onChatToggle,
+    onChatClose,
+    onChatLoadOlder,
+    onChatTextChange,
+    onChatSend,
+    onChatKeyDown,
+    onChatFocus,
+    onChatMove
+}) => {
+    return html`
+        ${onlineWindow && html`
+            <${FastChatOnlineWindow}
+                key="fc_online_window"
+                isOpened=${onlineWindow.isOpened}
+                friends=${onlineWindow.friends}
+                allFriends=${onlineWindow.allFriends}
+                showAll=${onlineWindow.showAll}
+                searchQuery=${onlineWindow.searchQuery}
+                position=${onlineWindow.position}
+                zIndex=${onlineWindow.zIndex}
+                isFocused=${onlineWindow.isFocused}
+                openedChats=${openedChats}
+                onSearch=${onOnlineSearch}
+                onFriendClick=${onOnlineFriendClick}
+                onToggle=${onOnlineToggle}
+                onClose=${onOnlineClose}
+                onFocus=${onOnlineFocus}
+                onMove=${onOnlineMove}
+                onToggleShowAll=${onOnlineToggleShowAll}
+            />
+        `}
+
+        ${openedChats && openedChats.map(chat => html`
+            <${FastChatBox}
+                key=${chat.peerId}
+                chat=${chat}
+                currentUserId=${currentUserId}
+                currentUserAvatar=${currentUserAvatar}
+                onToggle=${onChatToggle}
+                onClose=${onChatClose}
+                onLoadOlder=${onChatLoadOlder}
+                onTextChange=${onChatTextChange}
+                onSend=${onChatSend}
+                onKeyDown=${onChatKeyDown}
+                onFocus=${onChatFocus}
+                onMove=${onChatMove}
+            />
+        `)}
+    `;
+};

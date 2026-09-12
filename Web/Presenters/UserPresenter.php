@@ -35,25 +35,29 @@ final class UserPresenter extends OpenVKPresenter
     {
         $user = $this->users->get($id);
 
-        if (!$user || $user->isDeleted() || !$user->canBeViewedBy($this->user->identity)) {
-            if (!is_null($user) && $user->isDeactivated()) {
+        if (!$user) {
+            $this->notFound();
+        }
+
+        if ($user->isDeleted() || !$user->canBeViewedBy($this->user->identity)) {
+            if ($user->isDeactivated()) {
                 $this->template->_template = "User/deactivated.latte";
 
                 $this->template->user = $user;
-            } elseif (!is_null($user) && $user->isDeleted()) {
+            } elseif ($user->isDeleted()) {
                 $this->template->_template = "User/deleted.latte";
-            } elseif (!is_null($user) && $this->user->identity && $this->user->identity->isBlacklistedBy($user)) {
+            } elseif ($this->user->identity && $this->user->identity->isBlacklistedBy($user)) {
                 $this->template->_template = "User/blacklisted.latte";
 
                 $this->template->blacklist_status = $user->isBlacklistedBy($this->user->identity);
                 $this->template->ignore_status = $user->isIgnoredBy($this->user->identity);
                 $this->template->user = $user;
-            } elseif (!is_null($user) && $user->isBlacklistedBy($this->user->identity)) {
+            } elseif ($user->isBlacklistedBy($this->user->identity)) {
                 $this->template->_template = "User/blacklisted_pov.latte";
 
                 $this->template->ignore_status = $user->isIgnoredBy($this->user->identity);
                 $this->template->user = $user;
-            } elseif (!is_null($user) && !$user->canBeViewedBy($this->user->identity)) {
+            } elseif (!$user->canBeViewedBy($this->user->identity)) {
                 $this->template->_template = "User/private.latte";
 
                 $this->template->user = $user;
@@ -133,7 +137,7 @@ final class UserPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
 
         $user = $this->users->get($id);
-        $page = abs((int) ($this->queryParam("p") ?? 1));
+        $page = max(1, (int) ($this->queryParam("p") ?: 1));
         if (!$user) {
             $this->notFound();
         } elseif (!$user->getPrivacyPermission('friends.read', $this->user->identity ?? null)) {
@@ -173,7 +177,7 @@ final class UserPresenter extends OpenVKPresenter
             }
 
             $this->template->user = $user;
-            $this->template->page = (int) ($this->queryParam("p") ?? 1);
+            $this->template->page = max(1, (int) ($this->queryParam("p") ?: 1));
             $this->template->admin = $this->queryParam("act") == "managed";
         }
     }
@@ -193,7 +197,7 @@ final class UserPresenter extends OpenVKPresenter
             }
 
             $this->template->user = $user;
-            $this->template->page = (int) ($this->queryParam("p") ?? 1);
+            $this->template->page = max(1, (int) ($this->queryParam("p") ?: 1));
             $this->template->admin = $this->queryParam("act") == "managed";
         }
     }
@@ -678,6 +682,7 @@ final class UserPresenter extends OpenVKPresenter
                     "messages.write",
                     "audios.read",
                     "likes.read",
+                    "messages.add_to_chats",
                 ];
                 foreach ($settings as $setting) {
                     $input = $this->postParam(str_replace(".", "_", $setting));
@@ -746,6 +751,7 @@ final class UserPresenter extends OpenVKPresenter
                     "menu_aplikoj"   => "apps",
                     "menu_doxc"      => "docs",
                     "menu_feva"      => "fave",
+                    "menu_stickers"  => "stickers",
                 ];
                 foreach ($settings as $checkbox => $setting) {
                     $user->setLeftMenuItemStatus($setting, $this->checkbox($checkbox));
@@ -897,8 +903,6 @@ final class UserPresenter extends OpenVKPresenter
 
     public function renderResetThemepack(): void
     {
-        $this->assertNoCSRF();
-
         $this->setSessionTheme(Themepacks::DEFAULT_THEME_ID);
 
         if ($this->user) {

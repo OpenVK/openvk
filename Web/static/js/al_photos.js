@@ -195,3 +195,46 @@ u(document).on("paste", ".photo_upload_container", (e) => {
         u("#uploadButton").trigger("change")
     }
 })
+
+function edit_photo(event) {
+    event.preventDefault();
+
+    const details = event.target.closest(".ovk-photo-details");
+    // ну да и чт
+    // но надо запрос к апи делать
+    const desc = details.querySelector(".media-page-wrapper-description p")
+
+    const c = new CMessageBox({
+        close_on_buttons: false,
+        title: tr("edit_photo"),
+        body: `
+        <div>${tr("description")}</div>
+        <div>
+            <textarea>${escapeHtml(desc ? desc.textContent : "")}</textarea>
+        </div>
+        `,
+        buttons: [tr("save"), tr("cancel")],
+        callbacks: [async () => {
+            const texts = c.getNode().find("textarea").last();
+            const val = texts.value;
+            c.close();
+
+            let hr = event.target.getAttribute("href");
+            hr = hr.replace("/photo", "").replace("/edit", "");
+            const ids = hr.split("_");
+            await window.OVKAPI.call("photos.edit", {
+                "owner_id": ids[0],
+                "photo_id": ids[1],
+                "caption": val
+            });
+
+            if (!desc) {
+                details.querySelector(".media-page-wrapper-description").insertAdjacentHTML("afterbegin", "<p></p>")
+            }
+
+            details.querySelector(".media-page-wrapper-description p").innerHTML = escapeHtml(val);
+        }, () => {
+            c.close();
+        }]
+    })
+}

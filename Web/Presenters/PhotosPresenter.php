@@ -194,7 +194,8 @@ final class PhotosPresenter extends OpenVKPresenter
 
     public function renderPhoto(int $ownerId, int $photoId): void
     {
-        $photo = $this->photos->getByOwnerAndVID($ownerId, $photoId);
+        $key = $this->queryParam("key");
+        $photo = $this->photos->getByOwnerAndVID($ownerId, $photoId, $key);
         if (!$photo || $photo->isDeleted()) {
             $this->notFound();
         }
@@ -214,10 +215,13 @@ final class PhotosPresenter extends OpenVKPresenter
             }
         }
 
+        $this->template->sort = $this->queryParam("sort") ?? "asc";
+        $input_sort = $this->template->sort == "asc" ? "ASC" : "DESC";
+
         $this->template->photo    = $photo;
         $this->template->cCount   = $photo->getCommentsCount();
         $this->template->cPage    = (int) ($this->queryParam("p") ?? 1);
-        $this->template->comments = iterator_to_array($photo->getComments($this->template->cPage));
+        $this->template->comments = iterator_to_array($photo->getComments($this->template->cPage, null, $input_sort));
         $this->template->owner    = $photo->getOwner();
     }
 
@@ -233,18 +237,66 @@ final class PhotosPresenter extends OpenVKPresenter
         $this->renderPhoto($photo->getOwner(true)->getId(), $photo->getVirtualId());
     }
 
-    public function renderThumbnail($id, $size): void
+    public function renderThumbnail($id, $size, $ext = null): void
     {
         $photo = $this->photos->get($id);
+        $key   = $this->queryParam("key");
+
         if (!$photo || $photo->isDeleted()) {
             $this->notFound();
         }
 
-        if (!$photo->forceSize($size)) {
-            chandler_http_panic(588, "Gone", "This thumbnail cannot be generated due to server misconfiguration");
+        if (!$photo->checkAccessKey($key)) {
+            $this->notFound();
         }
 
-        $this->redirect($photo->getURLBySizeId($size), 8);
+        $normSize = Photo::normalizeSizeName($size);
+
+        try {
+            $photo->forceSize($normSize);
+        } catch (\Throwable $e) {
+        }
+
+        $path = $photo->getFilePathBySizeId($normSize);
+        if (!$path || !file_exists($path)) {
+            $path = $photo->getFileName();
+        }
+
+        if (!$path || !file_exists($path)) {
+            $fallback = OPENVK_ROOT . "/assets/packages/static/openvk/img/thumbnail_gone.jpg";
+            if (file_exists($fallback)) {
+                $path = $fallback;
+            } else {
+                $this->notFound();
+            }
+        }
+
+        header("Access-Control-Allow-Origin: *");
+        header("Accept-Ranges: bytes");
+        header("Cache-Control: public, max-age=1210000");
+        header("X-Accel-Expires: 1210000");
+
+        $etag = "W/\"" . hash_file("snefru", $path) . "\"";
+        header("ETag: $etag");
+
+        if (isset($_SERVER["HTTP_IF_NONE_MATCH"]) && trim($_SERVER["HTTP_IF_NONE_MATCH"]) === $etag) {
+            header("HTTP/1.1 304 Not Modified");
+            exit;
+        }
+
+        $mimeType = mime_content_type($path) ?: "image/jpeg";
+        $fileSize = filesize($path);
+
+        header("Content-Type: " . $mimeType);
+        header("Content-Length: " . $fileSize);
+        header("Content-Size: " . $fileSize);
+
+        if ($_SERVER['REQUEST_METHOD'] === 'HEAD') {
+            exit;
+        }
+
+        readfile($path);
+        exit;
     }
 
     public function renderEditPhoto(int $ownerId, int $photoId): void
@@ -300,6 +352,8 @@ final class PhotosPresenter extends OpenVKPresenter
         }
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $is_from_messenger = $this->postParam("is_from_messenger") == "1";
+
             if ($this->queryParam("act") == "finish") {
                 $result = json_decode($this->postParam("photos"), true);
 
@@ -339,6 +393,18 @@ final class PhotosPresenter extends OpenVKPresenter
                     $photo->setDescription("");
                     $photo->setFile($_FILES["photo_" . $i]);
                     $photo->setCreated(time());
+                    if ($is_from_messenger) {
+                        $clubId = $this->postParam("club");
+                        if ($clubId != null) {
+                            $club = (new Clubs)->get((int) $clubId);
+                            if ($club && $club->canBeModifiedBy($this->user->identity)) {
+                                $photo->setContext($club, true);
+                            }
+                        }
+
+                        $photo->setAsFromMessage();
+                    }
+
                     $photo->save();
 
                     $photos[] = [
@@ -348,6 +414,7 @@ final class PhotosPresenter extends OpenVKPresenter
                         "owner" => $photo->getOwner()->getId(),
                         "link"  => $photo->getURL(),
                         "pretty_id" => $photo->getPrettyId(),
+                        "access_key" => $photo->getAccessKey(),
                     ];
                 } catch (ISE $ex) {
                     $name = $album->getName();

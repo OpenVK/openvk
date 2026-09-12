@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace openvk\VKAPI\Handlers;
 
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
+use openvk\Web\Util\IMBroker;
 use openvk\Web\Util\Validator;
 
 final class Account extends VKAPIRequestHandler
@@ -21,6 +22,7 @@ final class Account extends VKAPIRequestHandler
             "id"                  => $user->getId(),
             "is_verified"         => $user->isVerified(),
             "verification_status" => $user->isVerified() ? 'verified' : 'unverified',
+            "can_create_stickers" => $user->canCreateStickers(),
             "last_name"           => $user->getLastName(),
             "home_town"           => $user->getHometown(),
             "status"              => $user->getStatus(),
@@ -73,7 +75,10 @@ final class Account extends VKAPIRequestHandler
     {
         $this->requireUser();
 
-        # Цiй метод є заглушка
+        $user = $this->getUser();
+        $user->setOnline(time() - 301);
+        $user->save(false);
+        IMBroker::i()->setUserOffline($user->getId(), 0);
 
         return 1;
     }
@@ -401,6 +406,83 @@ final class Account extends VKAPIRequestHandler
 
         return (object) [
             "changed" => (int) ($changes > 0),
+        ];
+    }
+
+    public function registerDevice(
+        string $token = "",
+        string $device_model = "",
+        string $device_year = "",
+        string $system_version = "",
+        string $settings = ""
+    ): int {
+        $this->requireUser();
+        return 1;
+    }
+
+    public function unregisterDevice(string $token = ""): int
+    {
+        $this->requireUser();
+        return 1;
+    }
+
+    public function setSilenceMode(
+        string $token = "",
+        int $time = 0,
+        int $peer_id = 0,
+        int $sound = 1,
+        int $disabled_mentions = 0,
+        int $disabled_mass_mentions = 0
+    ): int {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        $user = $this->getUser();
+
+        $params = [
+            "peer_id" => $peer_id,
+            "time" => $time,
+            "sound" => $sound,
+            "disabled_mentions" => $disabled_mentions,
+            "disabled_mass_mentions" => $disabled_mass_mentions,
+        ];
+        if (!empty($token)) {
+            $params["token"] = $token;
+        }
+
+        $res = IMBroker::i()->invokeMethod($user->getId(), "account.setSilenceMode", $params);
+        if ($res) {
+            $data = json_decode($res);
+            if (isset($data->response)) {
+                return (int) $data->response;
+            }
+        }
+        return 1;
+    }
+
+    public function getPushSettings(string $token = "", int $peer_id = 0): object
+    {
+        $this->requireUser();
+        $user = $this->getUser();
+
+        $params = [];
+        if ($peer_id !== 0) {
+            $params["peer_id"] = $peer_id;
+        }
+        if (!empty($token)) {
+            $params["token"] = $token;
+        }
+
+        $res = IMBroker::i()->invokeMethod($user->getId(), "account.getPushSettings", $params);
+        if ($res) {
+            $data = json_decode($res);
+            if (isset($data->response)) {
+                return (object) $data->response;
+            }
+        }
+
+        return (object) [
+            "disabled_until" => 0,
+            "sound" => 1,
         ];
     }
 }

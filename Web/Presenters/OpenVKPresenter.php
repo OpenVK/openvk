@@ -13,6 +13,7 @@ use Nette\InvalidStateException as ISE;
 use openvk\Web\Models\Entities\IP;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Repositories\{IPs, Users, APITokens, Tickets, Reports, CurrentUser, Posts};
+use openvk\Web\Util\IMBroker;
 use WhichBrowser;
 
 abstract class OpenVKPresenter extends SimplePresenter
@@ -285,9 +286,16 @@ abstract class OpenVKPresenter extends SimplePresenter
             $userValidated = 1;
             $cacheTime     = 0; # Force no cache
             if (!property_exists($this, 'silent') && $this->user->identity->onlineStatus() == 0 && !($this->user->identity->isDeleted() || $this->user->identity->isBanned())) {
+                $wasOnline = $this->user->identity->isOnline();
                 $this->user->identity->setOnline(time());
                 $this->user->identity->setClient_name(null);
                 $this->user->identity->save(false);
+
+                if (!$wasOnline) {
+                    IMBroker::i()->setUserOnline($this->user->id);
+                } else {
+                    IMBroker::i()->touchUserOnline($this->user->id);
+                }
             }
 
             $this->template->ticketAnsweredCount = (new Tickets())->getTicketsCountByUserId($this->user->id, 1);
@@ -341,7 +349,7 @@ abstract class OpenVKPresenter extends SimplePresenter
         }
 
         if (!OPENVK_ROOT_CONF["openvk"]["preferences"]["maintenanceMode"]["all"]) {
-            if ($this->presenterName && OPENVK_ROOT_CONF["openvk"]["preferences"]["maintenanceMode"][$this->presenterName]) {
+            if ($this->presenterName && (OPENVK_ROOT_CONF["openvk"]["preferences"]["maintenanceMode"][$this->presenterName] ?? false)) {
                 $this->pass("openvk!Maintenance->section", $this->presenterName);
             }
         } else {

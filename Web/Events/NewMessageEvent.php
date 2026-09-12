@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace openvk\Web\Events;
 
-use openvk\Web\Models\Entities\Message;
+use openvk\Web\Models\Entities\Messages\Message;
 use openvk\Web\Models\Repositories\Messages;
 
 class NewMessageEvent implements ILPEmitable

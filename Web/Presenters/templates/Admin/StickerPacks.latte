@@ -1,0 +1,57 @@
+{extends "@layout.latte"}
+
+{block title}
+    {_admin_stickerpacks}
+{/block}
+
+{block headingWrap}
+    <a style="float: right;" class="aui-button aui-button-primary" href="/admin/stickers/id0">
+        {_create}
+    </a>
+    
+    <h1>{_admin_stickerpacks}</h1>
+{/block}
+
+{block content}
+    <div id="spacer" style="height: 8px;"></div>
+    {if sizeof($packs) > 0}
+        <table class="aui aui-table-list">
+            <tbody>
+                <tr n:foreach="$packs as $pack">
+                    <td style="vertical-align: middle;">
+                        {$pack->getName()}
+                    </td>
+                    <td style="vertical-align: middle;">
+                        {tr("points_amount", $pack->getPrice())}
+                    </td>
+                    <td style="vertical-align: middle;">
+                        {$pack->getStickersCount()} stickers
+                    </td>
+                    <td style="vertical-align: middle;">
+                        {if $pack->isUnlisted()}
+                            <span class="aui-lozenge aui-lozenge-subtle aui-lozenge-warning">{_admin_unlisted}</span>
+                        {else}
+                            <span class="aui-lozenge aui-lozenge-subtle aui-lozenge-success">{_admin_public}</span>
+                        {/if}
+                    </td>
+                    <td style="vertical-align: middle; text-align: right;">
+                        <a class="aui-button aui-button-primary" href="/admin/stickers/id{$pack->getId()}">
+                            <span class="aui-icon aui-icon-small aui-iconfont-new-edit">{_edit}</span>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    {else}
+        <center>
+            <p>No sticker packs yet. Click the button above to create one.</p>
+        </center>
+    {/if}
+
+    <div align="right">
+        {var $isLast = ((20 * (($_GET['p'] ?? 1) - 1)) + sizeof($packs)) < $count}
+
+        <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?p={($_GET['p'] ?? 1) - 1}">&laquo;</a>
+        <a n:if="$isLast" class="aui-button" href="?p={($_GET['p'] ?? 1) + 1}">&raquo;</a>
+    </div>
+{/block}

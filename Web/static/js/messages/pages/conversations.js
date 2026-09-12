@@ -1,0 +1,716 @@
+//import { ChatMessage, ChatGeneralForm } from '../components/messages.js';
+const { ChatMessage, ChatGeneralForm } = await es6import_Im(import.meta.url, "../components/messages.js");
+//import { ConversationListView } from "../components/common.js"
+const { ConversationListView } = await es6import_Im(import.meta.url, "../components/common.js");
+//import { IMTab, IMPage } from './page.js';
+const { IMTab, IMPage } = await es6import_Im(import.meta.url, "./page.js");
+//import { html, render } from '../components/render.js';
+const { ScrollPosition } = await es6import_Im(import.meta.url, "../components/partition.js");
+const { html, render } = await es6import_Im(import.meta.url, "../components/render.js");
+const { imLog } = await es6import_Im(import.meta.url, "../logger.js");
+
+export const CONVERSATIONS_PER_PAGE = 10;
+if (typeof window !== 'undefined') {
+    window.CONVERSATIONS_PER_PAGE = CONVERSATIONS_PER_PAGE;
+}
+
+export class ConversationsPage extends IMPage {
+    static getPageId() { return "conversations"; }
+    isVisibleWhenHidden() { return true; }
+    getTabName() {
+        if (this.isForward()) {
+            return tr("messenger_tab_conversations_forward")
+        }
+
+        return tr("messenger_tab_conversations")
+    }
+    shouldCloseOnExit() { return this.container == null || this.isForward(); }
+    updateHeader(header) { header.changeByConvNumber(Number(window.im.conversations.total_convs)); }
+    _update() { this.wRender(); }
+    isForward() { return this.options.forward != null }
+
+    async beforeRender(container) {
+        if (window.im?.conversations && window.im.conversations.all_convs.length === 0 && !window.im.conversations.isLoadingMore && !window.im.conversations._hasNoMore) {
+            try {
+                await window.im.conversations.loadNext();
+            } catch (e) {
+                console.error("ConversationsPage | beforeRender loadNext failed:", e);
+            }
+        }
+    }
+
+    async loadNext(e) {
+        if (!window.im?.conversations) return;
+        if (window.im.conversations.isLoadingMore) return;
+        if (!window.im.conversations.has_more_items) return;
+
+        await window.im.conversations.loadNext();
+    }
+
+    // search
+
+    async _onMessagesSearch(e, from_tab = false) {
+        const q = String(e.target.value);
+        e.target.value = "";
+
+        imLog("Search query:", q);
+        window.im.openTabByName("search", true, {
+            "q": q,
+            "referrer": "conversations"
+        });
+    }
+
+    _chatCreationModal() {
+        window.im.openTabByName("friends", true, {
+            referrer: "chat_creation"
+        });
+    }
+
+    updUrl() {
+        const url = new URL(location.href);
+        url.searchParams.delete("sel");
+        url.searchParams.delete("joinByTopic");
+        window.im.state._pushState(url.toString());
+    }
+
+    render(container) {
+        this.getNode().addClass("page-conversations");
+        let orig_convs = window.im.conversations.convs;
+        let convs = [];
+
+        if (window.im.conversations.isShowingUnread) {
+            orig_convs.forEach(item => {
+                if (!item.isRead()) {
+                    convs.push(item);
+                }
+            });
+        } else {
+            convs = orig_convs;
+        }
+
+        if (convs.length === 0 && window.im?.conversations && !window.im.conversations.isLoadingMore && !window.im.conversations._hasNoMore) {
+            window.im.conversations.loadNext().then(() => this.update()).catch(console.error);
+        }
+
+        render(html`
+        <${ConversationListView}
+            conversations=${convs}
+            hasMore=${window.im.conversations.has_more_items}
+            isLoadingMore=${window.im.conversations.isLoadingMore}
+            onLoadMore=${(e) => this.loadNext(e)}
+            onCreateChat=${() => this._chatCreationModal()}
+            onSearch=${(e) => this._onMessagesSearch(e)}
+            isForward=${this.isForward()}
+            page=${this}
+            unreadMode=${window.im.conversations.isShowingUnread}
+        />
+        `, container);
+    }
+}
+
+export class Conversations {
+    static get CONVERSATIONS_PER_PAGE() { return CONVERSATIONS_PER_PAGE; }
+
+    constructor() {
+        this.total_convs = 0;
+        this.CONVERSATIONS_PER_PAGE = CONVERSATIONS_PER_PAGE;
+        this.isLoadingMore = false;
+        this._hasNoMore = false;
+        this.q = null;
+        this.peer_id_search = null;
+        this.all_convs = [];
+        this.isShowingUnread = false;
+    }
+
+    getWindow() { return window.im?.getTab("conversations")?.render_class || null; }
+    update() {
+        const win = this.getWindow();
+        if (win && typeof win.update === 'function') {
+            return win.update();
+        }
+        return null;
+    }
+
+    get convs() {
+        return (this.all_convs || []).filter(item => {
+            if (!item || !item.peer) return false;
+            const isGroupChat = item.peer.id >= ChatGeneralForm.CHAT_RUBICON || item.peer.supposed_type === 'chat';
+            if (isGroupChat) return true;
+
+            const hasLastMsg = Boolean(item.last_message && (item.last_message.text || item.last_message.body || item.last_message.data || item.last_message.id));
+            if (item.peer._chunks && item.peer._chunks.isMessagesInited()) {
+                return item.peer._chunks.getMessages().length > 0;
+            }
+            return hasLastMsg;
+        }).slice(0).sort((a, b) => {
+            return Number(b.last_updated) - Number(a.last_updated);
+        });
+    }
+
+    get has_more_items() {
+        if (this._hasNoMore) return false;
+        if (this.total_convs && this.all_convs && this.all_convs.length >= this.total_convs) {
+            return false;
+        }
+        return true;
+    }
+
+    get loaded_convs_count() {
+        if (!this.all_convs) return 0;
+        return this.all_convs.length;
+    }
+
+    async _resolveSel(sel) {
+        let _ = null;
+
+        try {
+            this.convs.forEach((item) => {
+                if (item.peer.id === sel) {
+                    _ = item;
+                }
+            });
+        } catch (e) {
+            console.error(e);
+        }
+
+        if (_) {
+            return _.peer;
+        }
+
+        let _n = await ChatGeneralForm.resolveById(sel);
+        if (!_n) {
+            return null;
+        }
+
+        return new ChatGeneralForm(_n);
+    }
+
+    async getConversations(offset = 0) {
+        const count = this.CONVERSATIONS_PER_PAGE || CONVERSATIONS_PER_PAGE;
+        const params = {
+            extended: 1,
+            count: count,
+            offset: offset,
+            fields: ChatGeneralForm.BASE_FIELDS,
+        };
+
+        if (window.im.state.group_id) {
+            params.group_id = Math.abs(window.im.state.group_id);
+        }
+
+        let convs = await window.OVKAPI.call('messages.getConversations', params);
+
+        const lists = [];
+
+        convs.profiles?.forEach((prof) => {
+            window.im.cached_profiles._addProfileCache(new ChatGeneralForm(prof));
+        });
+        convs.groups?.forEach((group) => {
+            window.im.cached_profiles._addProfileCache(new ChatGeneralForm(group));
+        });
+        convs.chats?.forEach((group) => {
+            window.im.cached_profiles._addProfileCache(new ChatGeneralForm(group));
+        });
+
+        const rawItems = convs?.items || [];
+        rawItems.forEach((item) => {
+            const id = item.conversation.peer.id;
+            item.peer = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(id);
+            if (!item.peer) {
+                const isChat = id >= ChatGeneralForm.CHAT_RUBICON || item.conversation?.peer?.type === 'chat';
+                const localId = isChat && id >= ChatGeneralForm.CHAT_RUBICON ? id - ChatGeneralForm.CHAT_RUBICON : id;
+                const fallbackData = {
+                    id: isChat ? localId : id,
+                    type: isChat ? 'chat' : (id < 0 ? 'club' : 'user')
+                };
+                if (item.conversation?.chat_settings) {
+                    Object.assign(fallbackData, item.conversation.chat_settings);
+                }
+                item.peer = new ChatGeneralForm(fallbackData);
+                window.im.cached_profiles._addProfileCache(item.peer);
+            }
+            if (item.peer) {
+                if (item.conversation?.push_settings) {
+                    item.peer.data = item.peer.data || {};
+                    item.peer.data.push_settings = item.conversation.push_settings;
+                }
+                if (item.conversation?.can_write) {
+                    item.peer.data.can_write = item.conversation.can_write;
+                }
+                if (item.conversation?.chat_settings?.members) {
+                    item.peer.data.members = item.conversation.chat_settings.members;
+                }
+                if (!item.peer.data.title && item.conversation?.chat_settings?.title) {
+                    item.peer.data.title = item.conversation.chat_settings.title;
+                }
+                if (item.conversation?.chat_settings?.pinned_message) {
+                    item.peer.data.pinned_message = item.conversation.chat_settings.pinned_message;
+                }
+                if (item.conversation?.chat_settings?.state) {
+                    item.peer.data.chat_settings = item.peer.data.chat_settings || {};
+                    item.peer.data.chat_settings.state = item.conversation.chat_settings.state;
+                    item.peer.data.state = item.conversation.chat_settings.state;
+                    if (item.conversation.chat_settings.state === 'kicked' || item.conversation.can_write?.reason === 915) {
+                        item.peer.data.kicked = 1;
+                        item.peer.data.left = 0;
+                    } else if (item.conversation.chat_settings.state === 'left' || item.conversation.can_write?.reason === 916) {
+                        item.peer.data.left = 1;
+                        item.peer.data.kicked = 0;
+                    }
+                }
+                if (item.conversation?.pinned_message) {
+                    item.peer.data.pinned_message = item.conversation.pinned_message;
+                }
+                item.peer.data = item.peer.data || {};
+                item.peer.data._full_conversation = item.conversation;
+            }
+            lists.push(new Conversation(item));
+        });
+
+        if (typeof convs?.count === 'number') {
+            this.total_convs = convs.count;
+        }
+
+        return lists;
+    }
+
+    _appendConvs(convs) {
+        if (!this.all_convs) {
+            this.all_convs = [];
+        }
+        if (!Array.isArray(convs)) return;
+
+        convs.forEach((item) => {
+            if (!item || !item.peer) return;
+            const existingIdx = this.all_convs.findIndex((existing) => existing?.peer?.id === item.peer.id);
+            if (existingIdx !== -1) {
+                this.all_convs[existingIdx] = item;
+            } else {
+                this.all_convs.push(item);
+            }
+        });
+    }
+
+    async loadNext(im = null) {
+        if (this.isLoadingMore) {
+            return;
+        }
+        if (this._hasNoMore && !(im && im.report_data)) {
+            return;
+        }
+
+        this.isLoadingMore = true;
+        this.update();
+        try {
+            let convs = [];
+            imLog("loadNext report_data:", im?.report_data);
+            if (im && im.report_data) {
+                convs = [await this._findConvFromApi(im.report_data.peer_id)];
+            } else {
+                const count = this.CONVERSATIONS_PER_PAGE || CONVERSATIONS_PER_PAGE;
+                const offset = this.loaded_convs_count;
+                convs = await this.getConversations(offset);
+                if (!convs || convs.length < count) {
+                    this._hasNoMore = true;
+                }
+            }
+
+            this._appendConvs(convs);
+        } catch (e) {
+            console.error("Failed to load more conversations:", e);
+        } finally {
+            this.isLoadingMore = false;
+            this.update();
+        }
+    }
+
+    _findConv(id) {
+        const found = this.all_convs.find((itm) => itm.peer && itm.peer.id == id);
+        return found || null;
+    }
+
+    async _findConvFromApi(id, check_cached = false) {
+        const existing = this._findConv(id);
+        if (existing) {
+            return existing;
+        }
+
+        let b = null;
+        if (check_cached) {
+            b = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(id);
+        }
+
+        if (!b) {
+            b = await ChatGeneralForm.resolveByIdAndReturnClass(id);
+        }
+
+        if (!b) {
+            return null;
+        }
+
+        imLog("Chat with id", id, "not in all_convs, created new Conversation from API");
+        const convPayload = { 'peer': b };
+        if (b.data && b.data._full_conversation) {
+            convPayload['conversation'] = b.data._full_conversation;
+        }
+        const c = new Conversation(convPayload);
+        this.all_convs.push(c);
+        return c;
+    }
+
+    toggleMode(mode) {
+        switch (mode) {
+            case "unread":
+                this.isShowingUnread = true;
+                this.update();
+                break;
+            case "all":
+                this.isShowingUnread = false;
+                this.update();
+                break;
+        }
+    }
+}
+
+export class Conversation {
+    constructor(conversation_item) {
+        this._conversation = conversation_item.conversation;
+        this._last_message = conversation_item.last_message ? new ChatMessage(conversation_item.last_message) : null;
+        this.peer = conversation_item.peer;
+        this.activity_updated = new Date();
+        this.current_activity = {};
+        this.draft = null;
+        this._endScrollPosition = ScrollPosition.fromEnd(this.peer);
+        this._scroll = null;
+
+        if (this.peer && this._conversation) {
+            if (this._conversation.push_settings) {
+                this.peer.data = this.peer.data || {};
+                this.peer.data.push_settings = this._conversation.push_settings;
+            }
+            if (this._conversation.can_write) {
+                this.peer.data = this.peer.data || {};
+                this.peer.data.can_write = this._conversation.can_write;
+            }
+            this.peer.data = this.peer.data || {};
+            this.peer.data._full_conversation = this._conversation;
+            if (this._conversation.out_read != null) {
+                this.peer.out_read = Math.max(this.peer.out_read || 0, Number(this._conversation.out_read));
+            }
+            if (this._conversation.in_read != null) {
+                this.peer.in_read = Math.max(this.peer.in_read || 0, Number(this._conversation.in_read));
+            }
+        }
+
+        if (this._last_message) {
+            if (this.peer) {
+                this._last_message._peer = this.peer;
+                try {
+                    this._last_message.peer = this.peer;
+                } catch (e) { }
+                if (this._last_message.data) {
+                    this._last_message.data.peer = this.peer;
+                    if (!this._last_message.data.peer_id && this.peer.id) {
+                        this._last_message.data.peer_id = this.peer.id;
+                    }
+                }
+            }
+            const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
+            const fromId = Number(this._last_message.data ? (this._last_message.data.from_id?.id || this._last_message.data.from_id) : (this._last_message.from_id || 0));
+            const isMine = Boolean((this._last_message.data && this._last_message.data.out === 1) || this._last_message.out === 1 || (fromId && currentUserId && fromId === Number(currentUserId)));
+            const outRead = Number(this.peer?.out_read || this._conversation?.out_read || 0);
+            const msgCmid = Number(this._last_message.data?.conversation_message_id || this._last_message.data?.local_id || this._last_message.conversation_message_id || 0);
+            const msgId = Number(this._last_message.data?.id || this._last_message.id || 0);
+            if (isMine && outRead > 0 && ((msgCmid > 0 && msgCmid <= outRead) || (msgId > 0 && msgId <= outRead))) {
+                if (this._last_message.data) this._last_message.data.read_state = 1;
+                this._last_message.read_state = 1;
+            }
+        }
+    }
+
+    hasScrollPosition() { return this._scroll != null; }
+    getEndScrollPosition() { return this._endScrollPosition; }
+    getScrollPosition() { return this.hasScrollPosition() ? this._scroll : this.getEndScrollPosition(); }
+    setDraft(draft) { this.draft = draft }
+    clearDraft() { this.draft = null }
+    canWrite() {
+        if (this._conversation && this._conversation.can_write !== undefined) {
+            if (typeof this._conversation.can_write === 'object' && this._conversation.can_write !== null) {
+                return !!this._conversation.can_write.allowed;
+            }
+            return !!this._conversation.can_write;
+        }
+        return this.peer ? this.peer.can("write") : true;
+    }
+    getCantWriteInfo() {
+        if (this._conversation?.can_write && typeof this._conversation.can_write === 'object') {
+            if (this._conversation.can_write.allowed === false) {
+                if (this.peer && typeof this.peer.getCantWriteInfo === 'function') {
+                    return this.peer.getCantWriteInfo();
+                }
+            }
+        }
+        return this.peer && typeof this.peer.getCantWriteInfo === 'function'
+            ? this.peer.getCantWriteInfo()
+            : { allowed: true, text: "" };
+    }
+    hasActivity() { return this.peer ? this.getActivityMsg()[1].length > 0 : false; }
+    getActivityMsg() {
+        let s = "";
+        let names = [];
+        const activity = this.current_activity ?? {};
+
+        if (this.peer && this.peer.supposed_type === "chat") {
+            const typingNames = [];
+            const audioNames = [];
+
+            Object.entries(activity).forEach(([uid, item]) => {
+                const name = item?.conv?.peer?.getName?.() || `id${uid}`;
+                if (item?.variant === "audiomessage") {
+                    audioNames.push(name);
+                } else {
+                    typingNames.push(name);
+                }
+            });
+
+            names = [...audioNames, ...typingNames];
+            const totalCount = names.length;
+
+            if (totalCount === 0) {
+                return ["", []];
+            }
+
+            if (audioNames.length > 0 && typingNames.length === 0) {
+                switch (audioNames.length) {
+                    case 1:
+                        s = tr("messenger_audiomessage_one_user", audioNames[0]);
+                        break;
+                    case 2:
+                        s = tr("messenger_audiomessage_two_users", audioNames[0], audioNames[1]);
+                        break;
+                    case 3:
+                        s = tr("messenger_audiomessage_three_users", audioNames[0], audioNames[1], audioNames[2]);
+                        break;
+                    default:
+                        s = tr("messenger_audiomessage_other", audioNames.length);
+                        break;
+                }
+            } else {
+                switch (totalCount) {
+                    case 1:
+                        s = tr("messenger_typing_one_user", names[0]);
+                        break;
+                    case 2:
+                        s = tr("messenger_typing_two_users", names[0], names[1]);
+                        break;
+                    case 3:
+                        s = tr("messenger_typing_three_users", names[0], names[1], names[2]);
+                        break;
+                    default:
+                        s = tr("messenger_typing_other", totalCount);
+                        break;
+                }
+            }
+
+            if (s) {
+                s += "...";
+            }
+        } else if (this.peer) {
+            const v = Object.values(activity);
+
+            if (v.length > 0) {
+                names.push("peer");
+                if (v[0].variant === "audiomessage") {
+                    s = tr("messenger_audiomessage_between_two");
+                } else {
+                    s = tr("messenger_typing_between_two");
+                }
+                s += "...";
+            }
+        }
+
+        return [s, names];
+    }
+    async setTyping(user_ids = [], variant = "writing") {
+        const REMOVE_TYPING_TIMEOUT = 5000;
+
+        imLog("Conversations | writing activity:", this, user_ids);
+
+        for (const item of user_ids) {
+            const val = {
+                "variant": variant,
+                "conv": await window.im.conversations._findConvFromApi(Number(item))
+            };
+
+            this.current_activity[item] = val;
+        }
+
+        window.im.messenger.update();
+
+        this.activity_updated = new Date();
+        const old = new Date(this.activity_updated);
+
+        setTimeout(() => {
+            if (this.activity_updated.getTime() == old.getTime()) {
+                imLog("Conversations | Wiped activity for", this);
+                this.current_activity = {};
+                window.im.messenger.update();
+            }
+        }, REMOVE_TYPING_TIMEOUT);
+    }
+    updateLastMessage(msg) { this.last_message = msg; }
+    get id() { return this.peer ? this.peer.id : (this._conversation?.peer?.id || 0); }
+
+    get last_message() {
+        try {
+            if (this.peer && this.peer._chunks) {
+                const msg = this.peer._chunks.getLatestMessage();
+                if (msg) {
+                    return msg;
+                }
+            }
+        } catch (e) {
+            console.error(e);
+        }
+
+        return this._last_message;
+    }
+
+    set last_message(val) {
+        this._last_message = val ? (val instanceof ChatMessage ? val : new ChatMessage(val)) : null;
+        if (this._last_message) {
+            if (this.peer) {
+                this._last_message._peer = this.peer;
+                try {
+                    this._last_message.peer = this.peer;
+                } catch (e) { }
+                if (this._last_message.data) {
+                    this._last_message.data.peer = this.peer;
+                    if (!this._last_message.data.peer_id && this.peer.id) {
+                        this._last_message.data.peer_id = this.peer.id;
+                    }
+                }
+            }
+            const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
+            const fromId = Number(this._last_message.data ? (this._last_message.data.from_id?.id || this._last_message.data.from_id) : (this._last_message.from_id || 0));
+            const isMine = Boolean((this._last_message.data && this._last_message.data.out === 1) || this._last_message.out === 1 || (fromId && currentUserId && fromId === Number(currentUserId)));
+            const outRead = Number(this.peer?.out_read || this._conversation?.out_read || 0);
+            const msgCmid = Number(this._last_message.data?.conversation_message_id || this._last_message.data?.local_id || this._last_message.conversation_message_id || 0);
+            const msgId = Number(this._last_message.data?.id || this._last_message.id || 0);
+            if (isMine && outRead > 0 && ((msgCmid > 0 && msgCmid <= outRead) || (msgId > 0 && msgId <= outRead))) {
+                if (this._last_message.data) this._last_message.data.read_state = 1;
+                this._last_message.read_state = 1;
+            }
+        }
+    }
+
+    get conversation() { return this._conversation; }
+    get last_updated() { if (!this.last_message) { return null; } else { return this.last_message.getSentTime(); } }
+    isRead() { return this.unread_count == 0; }
+
+    get unread_count() {
+        if (this._unread_count !== undefined) {
+            return this._unread_count;
+        }
+        if (this.peer && this.peer._chunks && this.peer._chunks.isMessagesInited()) {
+            return this.peer._chunks.getUnreadCount();
+        }
+
+        try {
+            return (this._conversation && this._conversation.unread_count) ? this._conversation.unread_count : 0;
+        } catch (e) {
+            return 0;
+        }
+    }
+
+    set unread_count(val) {
+        this._unread_count = Number(val) || 0;
+        if (this._conversation) {
+            this._conversation.unread_count = this._unread_count;
+        }
+    }
+
+    pushMessage(msg, conv = null, check_chunk = true) {
+        if (this.peer && this.peer._chunks) this.peer._chunks.pushNewMessage(msg, conv, check_chunk);
+    }
+
+    findMessageById(id, randomId = null) {
+        return (this.peer && this.peer._chunks) ? this.peer._chunks._findMessageById(id, randomId) : null;
+    }
+
+    getPinnedMessage() {
+        if (this._conversation) {
+            if (this._conversation.current_pinned_message) return this._conversation.current_pinned_message;
+            if (this._conversation.pinned_message) return this._conversation.pinned_message;
+            if (this._conversation.chat_settings && this._conversation.chat_settings.pinned_message) return this._conversation.chat_settings.pinned_message;
+        }
+        if (this.peer && this.peer.data) {
+            if (this.peer.data.pinned_message) return this.peer.data.pinned_message;
+            if (this.peer.data.chat_settings && this.peer.data.chat_settings.pinned_message) return this.peer.data.chat_settings.pinned_message;
+            if (this.peer.data.current_pinned_message) return this.peer.data.current_pinned_message;
+        }
+        if (this.peer && this.peer._chunks && this.peer._chunks.chunks) {
+            for (const chunk of this.peer._chunks.chunks) {
+                if (chunk && chunk.messages) {
+                    for (const m of chunk.messages) {
+                        if (m && m.data && (m.data.is_pinned == 1 || m.data.is_pinned === true)) {
+                            return m.data;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    setPinnedMessage(msgData) {
+        if (!this._conversation) this._conversation = {};
+        this._conversation.pinned_message = msgData;
+        this._conversation.current_pinned_message = msgData;
+        if (this._conversation.chat_settings) {
+            this._conversation.chat_settings.pinned_message = msgData;
+        }
+        if (this.peer && this.peer.data) {
+            this.peer.data.pinned_message = msgData;
+            this.peer.data.current_pinned_message = msgData;
+            if (this.peer.data.chat_settings) {
+                this.peer.data.chat_settings.pinned_message = msgData;
+            }
+        }
+        if (this.peer && this.peer._chunks && this.peer._chunks.chunks) {
+            for (const chunk of this.peer._chunks.chunks) {
+                if (chunk && chunk.messages) {
+                    for (const m of chunk.messages) {
+                        if (m && m.data) {
+                            if (!msgData) {
+                                m.data.is_pinned = 0;
+                            } else if (m.data.id == msgData.id || m.data.conversation_message_id == msgData.conversation_message_id) {
+                                m.data.is_pinned = 1;
+                            } else {
+                                m.data.is_pinned = 0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    getPinnedMessageObject() {
+        const pin = this.getPinnedMessage();
+        if (!pin) return null;
+        if (pin instanceof ChatMessage) return pin;
+        const msg = new ChatMessage(pin);
+        if (!msg.peer_id && this.id) msg.data.peer_id = this.id;
+        return msg;
+    }
+
+    getPinnedMessageId() {
+        const pin = this.getPinnedMessage();
+        return pin ? (pin.id || pin.conversation_message_id || null) : null;
+    }
+
+    hasPinned() {
+        return this.getPinnedMessageId() != null;
+    }
+}

@@ -1,0 +1,130 @@
+{extends "../@layout.latte"}
+
+{block title}
+    {$pack->getName()}
+{/block}
+
+{block header}
+    {_stickers}
+{/block}
+
+{block content}
+    <div class="tabs">
+        {include "Tabs.latte", act => 'shop'}
+    </div>
+
+    <div class="summaryBar display_flex_row display_flex_space_between stickers_margin_bar">
+        <div class="summary">
+            <b>{$pack->getName()}</b>
+        </div>
+        <div>
+            <a n:if="$canEdit" href="/stickers/edit/{$pack->getId()}" class="stickers_view_edit_link">{_edit}</a>
+            <a href="/stickers">{_back}</a>
+        </div>
+    </div>
+
+    {* Pack Info Banner *}
+    <div class="container_gray stickers_view_container">
+        <table class="stickers_view_table">
+            <tr>
+                <td class="stickers_view_icon_cell">
+                    {if $pack->getMainSticker()}
+                        {if $pack->getMainSticker()->getFormat($pack->getId()) === 'lottie'}
+                            <div class="stickers-lottie-container stickers_view_main_icon_lottie" data-anim-url="{$pack->getMainSticker()->getAnimationUrl($pack->getId())}" style="width: 96px; height: 96px;"></div>
+                        {else}
+                            <img src="{$pack->getMainSticker()->getImageUrl(128)}" alt="{$pack->getName()}" width="96" height="96" class="stickers_view_main_icon" />
+                        {/if}
+                    {else}
+                        <div class="stickers_view_icon_empty"></div>
+                    {/if}
+                </td>
+                <td class="stickers_view_info_cell">
+                    <div class="stickers_view_title">
+                        {$pack->getName()}
+                    </div>
+                    <div class="stickers_view_author" n:if="$pack->getAuthor() || $pack->getAuthorUrl()">
+                        {if $pack->getAuthorUrl()}
+                            <a href="{$pack->getAuthorUrl()}" target="_blank" rel="noopener noreferrer" class="stickers_view_author_link">{$pack->getAuthor() ?: $pack->getAuthorUrl()}</a>
+                        {else}
+                            {$pack->getAuthor()}
+                        {/if}
+                    </div>
+                    <div class="stickers_view_desc" n:if="$pack->getDescription()">
+                        {$pack->getDescription()|breaklines}
+                    </div>
+
+                    {* Action / Purchase button *}
+                    <div class="stickers_view_actions">
+                        {if is_null($thisUser)}
+                            {if $pack->getPrice() > 0}
+                                <a href="/login" class="button">
+                                    {tr("stickers_buy_pack", tr("coins", $pack->getPrice()))}
+                                </a>
+                            {else}
+                                <a href="/login" class="button">
+                                    {_stickers_add_pack}
+                                </a>
+                            {/if}
+                        {elseif $isPurchased}
+                            <div class="stickers_view_actions_row">
+                                <form method="POST" class="stickers_inline_form">
+                                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                                    <input type="hidden" name="action" value="uninstall" />
+                                    <button type="button" class="button" onclick="confirmUninstallPack(this.form);">
+                                        {_stickers_uninstall_pack}
+                                    </button>
+                                </form>
+                            </div>
+                        {else}
+                            <form method="POST" class="stickers_inline_form">
+                                <input type="hidden" name="hash" value="{$csrfToken}" />
+                                {if $isBought}
+                                    <button type="submit" name="action" value="install" class="button">
+                                        {_add}
+                                    </button>
+                                {elseif $pack->getPrice() > 0}
+                                    <button type="submit" name="action" value="buy" class="button">
+                                        {tr("stickers_buy_pack", tr("coins", $pack->getPrice()))}
+                                    </button>
+                                {else}
+                                    <button type="submit" name="action" value="install" class="button">
+                                        {_stickers_add_pack}
+                                    </button>
+                                {/if}
+                            </form>
+                        {/if}
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    {* Stickers Grid *}
+    <div class="stickers_view_grid_wrap">
+        <div class="stickers_view_grid_title">
+            {_stickers_upload_title} ({sizeof($stickers)}):
+        </div>
+
+        {if sizeof($stickers) > 0}
+            <div class="stickers_view_grid">
+                {foreach $stickers as $stk}
+                    <div class="stickers_view_item"
+                         title="{$stk->getEmoji() ? $stk->getEmoji() : ''}">
+                        <div class="stickers_view_item_thumb">
+                            {if $stk->getFormat($pack->getId()) === 'lottie'}
+                                <div class="stickers-lottie-container" data-anim-url="{$stk->getAnimationUrl($pack->getId())}" style="width: 64px; height: 64px;"></div>
+                            {else}
+                                <img src="{$stk->getImageUrl(128)}" class="stickers_view_item_img" alt="" />
+                            {/if}
+                        </div>
+                        <div class="normalText text stickers_view_item_emojis" n:if="$stk->getEmoji()">
+                            {$stk->getFormattedEmoji()|noescape}
+                        </div>
+                    </div>
+                {/foreach}
+            </div>
+        {else}
+            {include "../components/nothing.latte"}
+        {/if}
+    </div>
+{/block}

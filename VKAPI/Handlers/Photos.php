@@ -13,6 +13,8 @@ use openvk\Web\Models\Repositories\Videos as VideosRepo;
 use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\Repositories\Users as UsersRepo;
 use openvk\Web\Models\Repositories\Comments as CommentsRepo;
+use openvk\Web\Models\Entities\Messages\Chat;
+use openvk\VKAPI\Utils\Uploader;
 
 final class Photos extends VKAPIRequestHandler
 {
@@ -133,7 +135,7 @@ final class Photos extends VKAPIRequestHandler
         ];
     }
 
-    public function saveWallPhoto(string $photo, string $hash, int $group_id = 0, ?string $caption = null): array
+    public function saveWallPhoto(string $photo, string $hash, int $group_id = 0, ?string $caption = null, ?int $server = null, ?int $user_id = null, int $wallpost = 1): array
     {
         $this->requireUser();
         $imagePath = $this->getImagePath($photo, $hash, $uploader, $group);
@@ -361,6 +363,10 @@ final class Photos extends VKAPIRequestHandler
             $res["items"][] = $album->toVkApiStruct($this->getUser(), $need_covers, $photo_sizes);
         }
 
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return $res["items"];
+        }
+
         return $res;
     }
 
@@ -404,7 +410,7 @@ final class Photos extends VKAPIRequestHandler
 
         foreach ($photos_splitted_list as $photo_id) {
             $photo_s_id = explode("_", $photo_id);
-            $photo = (new PhotosRepo())->getByOwnerAndVID((int) $photo_s_id[0], (int) $photo_s_id[1]);
+            $photo = (new PhotosRepo())->getByOwnerAndVID((int) $photo_s_id[0], (int) $photo_s_id[1], $photo_s_id[2] ?? null);
             if (!$photo || $photo->isDeleted() || !$photo->canBeViewedBy($this->getUser())) {
                 continue;
             }
@@ -415,7 +421,7 @@ final class Photos extends VKAPIRequestHandler
         return $res;
     }
 
-    public function get(int $owner_id, string $album_id, string $photo_ids = "", bool $extended = false, bool $photo_sizes = true, int $offset = 0, int $count = 10, int $limit = null)
+    public function get(int $owner_id, string $album_id, string $photo_ids = "", bool $extended = false, bool $photo_sizes = true, int $offset = 0, int $count = 10, int $limit = null, bool $rev = false)
     {
         $this->requireUser();
 
@@ -428,7 +434,11 @@ final class Photos extends VKAPIRequestHandler
         if (empty($photo_ids)) {
 
             if ($album_id == "profile") {
-                $album = (new Albums())->getUserAvatarAlbum((new UsersRepo())->get($owner_id));
+                if ($owner_id > 0) {
+                    $album = (new Albums())->getUserAvatarAlbum((new UsersRepo())->get($owner_id));
+                } else {
+                    $album = (new Albums())->getClubAvatarAlbum((new Clubs())->get(abs($owner_id)));
+                }
             } else {
                 $album = (new Albums())->getAlbumByOwnerAndId($owner_id, intval($album_id));
             }
@@ -437,7 +447,7 @@ final class Photos extends VKAPIRequestHandler
                 $this->fail(15, "Access denied");
             }
 
-            $photos = array_slice(iterator_to_array($album->getPhotos(1, $count + $offset)), $offset);
+            $photos = array_slice(iterator_to_array($album->getPhotos(1, $count + $offset, $rev)), $offset);
             $res["count"] = $album->size();
 
             foreach ($photos as $photo) {
@@ -462,13 +472,18 @@ final class Photos extends VKAPIRequestHandler
             foreach ($photos as $photo) {
                 $id = explode("_", $photo);
 
-                $photo_entity = (new PhotosRepo())->getByOwnerAndVID((int) $id[0], (int) $id[1]);
+                $photo_entity = (new PhotosRepo())->getByOwnerAndVID((int) $id[0], (int) $id[1], $id[2] ?? null);
                 if (!$photo_entity || $photo_entity->isDeleted() || !$photo_entity->canBeViewedBy($this->getUser())) {
                     continue;
                 }
 
                 $res["items"][] = $photo_entity->toVkApiStruct($photo_sizes, $extended);
             }
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            $count = (int) ($res["count"] ?? count($res["items"] ?? []));
+            return array_merge([$count], $res["items"] ?? []);
         }
 
         return $res;
@@ -495,7 +510,7 @@ final class Photos extends VKAPIRequestHandler
         $this->requireUser();
         $this->willExecuteWriteAction();
 
-        $photo = (new PhotosRepo())->getByOwnerAndVID($owner_id, $photo_id);
+        $photo = (new PhotosRepo())->getByOwnerAndVIDUnsafe($owner_id, $photo_id);
 
         if (!$photo || $photo->isDeleted() || !$photo->canBeModifiedBy($this->getUser())) {
             $this->fail(21, "Access denied");
@@ -523,11 +538,12 @@ final class Photos extends VKAPIRequestHandler
                 return 0;
             }
 
-            $photo = (new PhotosRepo())->getByOwnerAndVID($owner_id, $photo_id);
+            $photo = (new PhotosRepo())->getByOwnerAndVIDUnsafe($owner_id, $photo_id);
             if (!$photo || $photo->isDeleted() || !$photo->canBeModifiedBy($this->getUser())) {
                 return 1;
             }
 
+            $photo->isolate();
             $photo->delete();
         } else {
             $photos_list = array_unique(explode(',', $photos));
@@ -537,11 +553,12 @@ final class Photos extends VKAPIRequestHandler
 
             foreach ($photos_list as $photo_id) {
                 $id = explode("_", $photo_id);
-                $photo = (new PhotosRepo())->getByOwnerAndVID((int) $id[0], (int) $id[1]);
+                $photo = (new PhotosRepo())->getByOwnerAndVIDUnsafe((int) $id[0], (int) $id[1]);
                 if (!$photo || $photo->isDeleted() || !$photo->canBeModifiedBy($this->getUser())) {
                     continue;
                 }
 
+                $photo->isolate();
                 $photo->delete();
             }
         }
@@ -549,7 +566,7 @@ final class Photos extends VKAPIRequestHandler
         return 1;
     }
 
-    # Поскольку комментарии едины, можно использовать метод "wall.deleteComment".
+    # use "wall.deleteComment".
     /*public function deleteComment(int $comment_id, int $owner_id = 0)
     {
         $this->requireUser();
@@ -600,19 +617,28 @@ final class Photos extends VKAPIRequestHandler
         $this->requireUser();
 
         if ($owner_id < 0) {
-            $this->fail(-413, "Clubs are not supported");
-        }
+            $club = (new Clubs())->get(abs($owner_id));
+            if (!$club || !$club->canBeViewedBy($this->getUser())) {
+                $this->fail(15, "Access denied");
+            }
 
-        $user = (new UsersRepo())->get($owner_id);
-        if (!$user || !$user->getPrivacyPermission('photos.read', $this->getUser())) {
-            $this->fail(15, "Access denied");
-        }
+            $photos = (new PhotosRepo())->getEveryClubPhoto($club, $offset, $count);
+            $res = [
+                "count" => (new PhotosRepo())->getClubPhotosCount($club),
+                "items" => [],
+            ];
+        } else {
+            $user = (new UsersRepo())->get($owner_id);
+            if (!$user || !$user->getPrivacyPermission('photos.read', $this->getUser())) {
+                $this->fail(15, "Access denied");
+            }
 
-        $photos = (new PhotosRepo())->getEveryUserPhoto($user, $offset, $count);
-        $res = [
-            "count" => (new PhotosRepo())->getUserPhotosCount($user),
-            "items" => [],
-        ];
+            $photos = (new PhotosRepo())->getEveryUserPhoto($user, $offset, $count);
+            $res = [
+                "count" => (new PhotosRepo())->getUserPhotosCount($user),
+                "items" => [],
+            ];
+        }
 
         foreach ($photos as $photo) {
             if (!$photo || $photo->isDeleted()) {
@@ -621,27 +647,52 @@ final class Photos extends VKAPIRequestHandler
             $res["items"][] = $photo->toVkApiStruct($photo_sizes, $extended);
         }
 
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            $count = (int) ($res["count"] ?? count($res["items"] ?? []));
+            return array_merge([$count], $res["items"] ?? []);
+        }
+
         return $res;
     }
 
-    public function getComments(int $owner_id, int $photo_id, bool $need_likes = false, int $offset = 0, int $count = 100, bool $extended = false, string $fields = "")
+    public function getUserPhotos(int $owner_id = 0, int $user_id = 0, bool $extended = false, int $offset = 0, int $count = 100, bool $photo_sizes = false)
+    {
+        $oid = $owner_id ?: $user_id;
+        return $this->getAll($oid, $extended, $offset, $count, $photo_sizes);
+    }
+
+    public function getComments(int $owner_id, int $photo_id = 0, bool $need_likes = false, int $offset = 0, int $count = 100, bool $extended = false, string $fields = "", string $sort = "asc", int $pid = 0)
     {
         $this->requireUser();
 
-        $photo = (new PhotosRepo())->getByOwnerAndVID($owner_id, $photo_id);
-        $comms = array_slice(iterator_to_array($photo->getComments(1, $offset + $count)), $offset);
-
+        $actualPhotoId = $photo_id ?: $pid;
+        $photo = (new PhotosRepo())->getByOwnerAndVID($owner_id, $actualPhotoId);
         if (!$photo || $photo->isDeleted() || !$photo->canBeViewedBy($this->getUser())) {
             $this->fail(15, "Access denied");
         }
 
+        $sortDirection = (strtolower($sort) === "desc") ? "DESC" : "ASC";
+        $comms = iterator_to_array($photo->getCommentsViaOffset($offset, $count, $sortDirection), false);
+        $totalCount = $photo->getCommentsCount();
+
         $res = [
-            "count" => sizeof($comms),
+            "count" => $totalCount,
             "items" => [],
         ];
 
+        if ($extended) {
+            $res["profiles"] = [];
+        }
+
         foreach ($comms as $comment) {
-            $res["items"][] = $comment->toVkApiStruct($this->getUser(), $need_likes, $extended);
+            $cStruct = $comment->toVkApiStruct($this->getUser(), $need_likes, $extended);
+            if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                $cStruct->cid     = $comment->getId();
+                $cStruct->from_id = $comment->getOwner()->getId();
+                $cStruct->uid     = $comment->getOwner()->getId();
+                $cStruct->message = $comment->getText(false);
+            }
+            $res["items"][] = $cStruct;
             if ($extended) {
                 if ($comment->getOwner() instanceof \openvk\Web\Models\Entities\User) {
                     $res["profiles"][] = $comment->getOwner()->toVkApiStruct();
@@ -649,6 +700,120 @@ final class Photos extends VKAPIRequestHandler
             }
         }
 
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return array_merge([$totalCount], $res["items"]);
+        }
+
         return $res;
+    }
+
+    public function getTags(int $owner_id = 0, int $pid = 0, int $photo_id = 0): array
+    {
+        $this->requireUser();
+        return [];
+    }
+
+    public function putTag(int $owner_id, int $pid = 0, int $uid = 0, float $x = 0.0, float $y = 0.0, float $x2 = 100.0, float $y2 = 100.0, int $photo_id = 0): int
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        return 1;
+    }
+
+    public function deleteTag(int $owner_id, int $tag_id, int $pid = 0, int $photo_id = 0): int
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        return 1;
+    }
+
+    public function confirmTag(int $owner_id, int $tag_id, int $pid = 0, int $photo_id = 0): int
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        return 1;
+    }
+
+    public function addComment(
+        int $owner_id,
+        int $pid = 0,
+        int $photo_id = 0,
+        string $message = "",
+        string $text = "",
+        int $reply_to_cid = 0,
+        int $reply_to_comment = 0,
+        string $attachments = "",
+        int $from_group = 0
+    ): int {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $photoId = $pid ?: $photo_id;
+        $msg     = !empty($text) ? $text : $message;
+
+        $photo = (new PhotosRepo())->getByOwnerAndVID($owner_id, $photoId);
+        if (!$photo || $photo->isDeleted() || !$photo->canBeViewedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        $comment = new Comment();
+        $comment->setOwner($this->getUser()->getId());
+        $comment->setModel(get_class($photo));
+        $comment->setTarget($photo->getId());
+        $comment->setContent($msg);
+        $comment->setCreated(time());
+        $comment->save();
+
+        return $comment->getId();
+    }
+
+    public function getMessagesUploadServer(int $group_id = 0, int $peer_id = 0): object
+    {
+        $this->requireUser();
+
+        return (object) [
+            "upload_url" => $this->getPhotoUploadUrl("photo", $group_id),
+        ];
+    }
+
+    public function saveMessagesPhoto(string $photo, string $hash, mixed $server = null): array
+    {
+        $this->requireUser();
+        $imagePath = (new Uploader())->getImagePath($photo, $hash, $uploader, $group);
+
+        try {
+            $photoObj = new Photo();
+            $photoObj->setOwner($this->getUser()->getId());
+            $photoObj->setCreated(time());
+            $photoObj->setAsFromMessage();
+            $photoObj->setFile([
+                "tmp_name" => $imagePath,
+                "error"    => 0,
+            ]);
+            $photoObj->save();
+        } catch (ImageException | InvalidStateException $e) {
+            $this->fail(129, "Invalid image file");
+        } finally {
+            if (file_exists($imagePath)) {
+                @unlink($imagePath);
+            }
+        }
+
+        return [
+            $photoObj->toVkApiStruct(),
+        ];
+    }
+
+    public function getChatUploadServer(int $chat_id, int $group_id = 0): object
+    {
+        $this->requireUser();
+
+        if ($chat_id <= 0) {
+            $this->fail(100, "Invalid chat_id");
+        }
+
+        return (object) [
+            "upload_url" => $this->getPhotoUploadUrl("photo", $group_id),
+        ];
     }
 }

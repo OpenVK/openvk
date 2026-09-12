@@ -18,7 +18,9 @@ class Video extends Media
     public const TYPE_UNKNOWN = -1;
 
     protected $tableName     = "videos";
+    public $shortName        = "video";
     protected $fileExtension = "mp4";
+    protected $containsContextColumns = true;
 
     protected $processingPlaceholder = "video/rendering";
 
@@ -150,18 +152,32 @@ class Video extends Media
     {
         $fromYoutube = $this->getType() == Video::TYPE_EMBED;
         $dimensions  = $this->getDimensions();
+
+        if ($fromYoutube) {
+            $files = [
+                "external" => $this->getVideoDriver()?->getURL() ?? "",
+            ];
+        } else {
+            $url = $this->getURL();
+            $files = [
+                "mp4_240" => $url,
+                "mp4_360" => $url,
+                "mp4_480" => $url . "#vkuservideo",
+            ];
+        }
+
         $res = (object) [
             "type" => "video",
             "video" => [
                 "can_comment" => 1,
-                "can_like" => 1,  // we don't h-have wikes in videos
+                "can_like" => 1,  // we h-have wikes in videos
                 "can_repost" => 1,
                 "can_subscribe" => 1,
                 "can_add_to_faves" => 0,
                 "can_add" => 0,
                 "comments" => $this->getCommentsCount(),
                 "date" => $this->getPublicationTime()->timestamp(),
-                "description" => $this->getDescription(),
+                "description" => $this->getDescription() ?? "",
                 "duration" => $this->getLength(),
                 "image" => [
                     (object) [
@@ -179,15 +195,15 @@ class Video extends Media
                 ],
                 "width" => $dimensions ? $dimensions[0] : 640,
                 "height" => $dimensions ? $dimensions[1] : 480,
-                "id" => $this->getVirtualId(),
-                "owner_id" => $this->getOwner()->getId(),
-                "user_id" => $this->getOwner()->getId(),
+                "id" => $this->getCompromiseVirtualId(),
+                "vid" => $this->getCompromiseVirtualId(),
+                "owner_id" => $this->getOwner()->getRealId(),
+                "access_key" => $this->getAccessKey(),
+                "user_id" => $this->getOwner()->getRealId(),
                 "title" => $this->getName(),
                 "is_favorite" => false,
-                "player" => !$fromYoutube ? $this->getURL() : $this->getVideoDriver()->getURL(),
-                "files" => !$fromYoutube ? [
-                    "mp4_480" => $this->getURL() . "#vkuservideo",
-                ] : [],
+                "player" => !$fromYoutube ? $this->getURL() : ($this->getVideoDriver()?->getURL() ?? ""),
+                "files" => (object) $files,
                 "added" => 0,
                 "repeat" => 0,
                 "type" => "video",
@@ -201,6 +217,15 @@ class Video extends Media
         ];
         if ($fromYoutube) {
             $res->video['platform'] = "youtube";
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            $thumb = $this->getThumbnailURL();
+            if (!str_starts_with($thumb, "http://") && !str_starts_with($thumb, "https://")) {
+                $thumb = ovk_scheme(true) . ($_SERVER['HTTP_HOST'] ?? "ovk.zazios.ru") . $thumb;
+            }
+            $res->video['image'] = $thumb;
+            $res->video['image_medium'] = $thumb;
         }
 
         if (!is_null($user)) {
@@ -218,6 +243,11 @@ class Video extends Media
         return $this->getApiStructure($user);
     }
 
+    public function toApiAttachment(User $user): object
+    {
+        return $this->getApiStructure($user);
+    }
+
     public function setLink(string $link): string
     {
         if (preg_match(file_get_contents(__DIR__ . "/../VideoDrivers/regex/youtube.txt"), $link, $matches)) {
@@ -229,8 +259,20 @@ class Video extends Media
         }
 
         $this->stateChanges("link", $pointer);
+        $this->stateChanges("access_key", bin2hex(random_bytes(9)));
 
         return $pointer;
+    }
+
+    public function setAsFromMessage(): void
+    {
+        $this->stateChanges("private", 1);
+        $this->stateChanges("unlisted", 1);
+    }
+
+    public function isPrivate(): bool
+    {
+        return (bool) $this->getRecord()->private;
     }
 
     public function isDeleted(): bool

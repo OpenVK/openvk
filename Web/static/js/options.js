@@ -6,7 +6,7 @@ class TweakOption {
     }
 
     isEnabled() {
-        const key = localStorage.getItem("tw."+this.name)
+        const key = localStorage.getItem("tw." + this.name)
         if (!key) {
             return this.enabled == true
         }
@@ -15,7 +15,7 @@ class TweakOption {
     }
 
     set(val = 1) {
-        localStorage.setItem("tw."+this.name, val)
+        localStorage.setItem("tw." + this.name, val)
     }
 
     customCSS(css) {
@@ -24,7 +24,7 @@ class TweakOption {
         }
 
         document.body.append(Object.assign(document.createElement("style"), {
-            id: "css_"+this.name,
+            id: "css_" + this.name,
             type: "text/css",
             textContent: css
         }))
@@ -39,7 +39,7 @@ function addScrollHook(func) {
             old_hook()
         }
     } else {
-        window.__scrollHook = () => {func()}
+        window.__scrollHook = () => { func() }
     }
 }
 
@@ -69,7 +69,7 @@ window.tweaks = [
             }
         `)
     }),
-    new TweakOption('profile.remove_hints', function () { this.customCSS(`.profile-hints a {display: none;}`)}),
+    new TweakOption('profile.remove_hints', function () { this.customCSS(`.profile-hints a {display: none;}`) }),
     new TweakOption('navigation.header.hoverable', function () {
         this.customCSS(`
             .page_header:not(.search_expanded_at_all) .header_navigation {
@@ -81,7 +81,7 @@ window.tweaks = [
         `)
     }),
     new TweakOption('navigation.blocks.disable_hiding', function () {
-        window.hidePanel = () => {}
+        window.hidePanel = () => { }
     }),
     new TweakOption('navigation.footer.remove_credits', function () {
         this.customCSS(`.page_footer p {display: none;}`)
@@ -96,7 +96,7 @@ window.tweaks = [
         this.customCSS(`.toTop {display: none;}`)
     }),
     new TweakOption('navigation.hide_counters', function () {
-        this.customCSS(`.linkunderline {opacity: 0.1;}`)
+        this.customCSS(`.counter {opacity: 0.1;}`)
     }),
     new TweakOption('navigation.remove_admin', function () {
         this.customCSS(`a[href='/admin'], a[href='/support/tickets'], a[href='/scumfeed'], a[href='/noSpam'] { display: none !important;}`)
@@ -120,7 +120,7 @@ window.tweaks = [
             console.log(ovk_video_id)
 
             u(item).closest(".attachment").nodes[0].insertAdjacentHTML('afterBegin', `
-                <a id="videoOpen" data-id="${ovk_video_id[1]}" style="display:flex;flex-direction:column;" target="_blank" href="https://youtu.be/${id}">
+                <a onclick="VideoViewer.openById('${ovk_video_id[1]}', {}, event)" style="display:flex;flex-direction:column;" target="_blank" href="https://youtu.be/${id}">
                     <b>YouTube Video:</b>
                     <img src="${thumbnail}">
                 </a>
@@ -188,19 +188,19 @@ window.tweaks = [
         u(`.msg a[href='/edit/verify_phone']`).closest(".msg").remove()
     }),
     new TweakOption("user.counters_as_links", function () {
-        if(u(".left_small_block .avatar_block").length > 0) {
+        if (u(".left_small_block .avatar_block").length > 0) {
             u(".left_small_block > div, .right_big_block > div").nodes.forEach(item => {
                 if (item.matches(".profile-hints, #profile_links, .avatar_block, .page_info")) {
                     return
                 }
 
                 const name = item.querySelector(".content_subtitle")
-                if (!name) {return}
+                if (!name) { return }
                 const counter = name.childNodes[0].textContent
                 const _a = name.querySelectorAll('a')
                 const link = _a[_a.length - 1].href
                 const _text = counter.trim()
-                if (!_text) {return}
+                if (!_text) { return }
 
                 u("#profile_links").append(`
                     <div id="profile_link">
@@ -229,15 +229,15 @@ window.tweaks = [
 
         const wall_compact = () => {
             u(".post").nodes.forEach(item => {
-                if (u(item).hasClass("same_author_as_previous")) {return}
-                if (u(item).hasClass("comment") && u(item).closest(".post-menu-s").length > 0) {return}
-                if (item.closest(".attachment") != null) {return}
+                if (u(item).hasClass("same_author_as_previous")) { return }
+                if (u(item).hasClass("comment") && u(item).closest(".post-menu-s").length > 0) { return }
+                if (item.closest(".attachment") != null) { return }
                 const scroll_node = item.closest(".scroll_node")
                 const prev_post = scroll_node.previousElementSibling
-                if (prev_post == null) {return}
+                if (prev_post == null) { return }
                 const author_1 = scroll_node.querySelector(".post > tbody > tr > .post-author-ava a")
                 const author_2 = prev_post.querySelector(".post > tbody > tr > .post-author-ava a")
-                if (!author_1 || !author_2) {return}
+                if (!author_1 || !author_2) { return }
                 if (author_1.href == author_2.href) {
                     u(item).addClass("same_author_as_previous")
                     u(item).find(".post-author-ava").append("<span></span>")
@@ -248,6 +248,13 @@ window.tweaks = [
 
         addScrollHook(wall_compact)
         wall_compact()
+    }),
+    new TweakOption("wall.disable_globalfeed", function () {
+        this.customCSS(`
+            .feed_switcher #ki {
+                display: none;
+            }
+        `);
     }),
     new TweakOption("wall.words_censor", function () {
         this.customCSS(`
@@ -261,17 +268,23 @@ window.tweaks = [
         function hide_posts() {
             u(".post").nodes.forEach(item => {
                 const post = u(item)
-                if (post.hasClass("hidden_because_of_word")) {return}
+                if (post.hasClass("hidden_because_of_word")) { return }
                 (window.hidden_words ?? []).forEach(word => {
                     highlightText(word, '.scroll_container', [".post-author a", ".post:not(.comment) > tbody > tr > td > .post-content > .text .really_text"])
                 })
-                if (post.find(".highlight").length > 0) {post.addClass("hidden_because_of_word")}
+                if (post.find(".highlight").length > 0) { post.addClass("hidden_because_of_word") }
             })
         }
 
         addScrollHook(hide_posts)
         hide_posts()
     }),
+    new TweakOption("im.modern_mode", function () { }),
+    new TweakOption("im.remove_warning", function () { }),
+    new TweakOption("im.debug", function () { }),
+    new TweakOption("im.verbose_logging", function () { }),
+    new TweakOption("im.24h", function () { }, true),
+    new TweakOption("viewers.photo.list", function () { }),
 ]
 
 window.openPluginSettings = () => {
@@ -282,15 +295,23 @@ window.openPluginSettings = () => {
                 <div style="display:flex;flex-direction:column;" id="plugin_settings"></div>
         `,
         buttons: ['Close'],
-        callbacks: [() => {}]
+        callbacks: [() => { }]
     })
     const settings = msg.getNode().find("#plugin_settings")
     tweaks.forEach(tweak => {
-        settings.append(`<label><input type="checkbox" ${tweak.isEnabled() ? "checked": ""}><span>${escapeHtml(tweak.name)}</span<</label>`)
+        settings.append(`<label><input type="checkbox" ${tweak.isEnabled() ? "checked" : ""}><span>${escapeHtml(tweak.name)}</span<</label>`)
     })
 
     settings.on("change", "input", (e) => {
         const _name = e.target.closest('label').querySelector("span").innerHTML
-        localStorage.setItem("tw."+_name, Number(e.target.checked))
+        const _val = Number(e.target.checked)
+        localStorage.setItem("tw." + _name, _val)
+        if (_name === "im.verbose_logging") {
+            if (_val) {
+                localStorage.setItem("im.verbose_logging", "1")
+            } else {
+                localStorage.removeItem("im.verbose_logging")
+            }
+        }
     })
 }

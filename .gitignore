@@ -9,6 +9,7 @@ tmp/*
 !tmp/themepack_artifacts/.gitkeep
 themepacks
 storage/*
+public/stickers/*
 !storage/.gitkeep
 logs/
 
@@ -16,3 +17,5 @@ data/knowledgebase/*
 
 .idea
 .php-cs-fixer.cache
+
+themepacks.old

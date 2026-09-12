@@ -24,7 +24,7 @@ use openvk\Web\Models\Repositories\Audios as AudiosRepo;
 
 final class Wall extends VKAPIRequestHandler
 {
-    public function get(int $owner_id, string $domain = "", int $offset = 0, int $count = 30, int $extended = 0, string $filter = "all", int $rss = 0): object
+    public function get(int $owner_id, string $domain = "", int $offset = 0, int $count = 30, int $extended = 0, string $filter = "all", int $rss = 0): object|array
     {
         $this->requireUser();
 
@@ -188,6 +188,7 @@ final class Wall extends VKAPIRequestHandler
                 "id"           => $post->getVirtualId(),
                 "from_id"      => $from_id,
                 "owner_id"     => $post->getTargetWall(),
+                "to_id"        => $post->getTargetWall(),
                 "date"         => $post->getPublicationTime()->timestamp(),
                 "post_type"    => $post->getVkApiType(),
                 "text"         => $post->getText(false),
@@ -216,6 +217,13 @@ final class Wall extends VKAPIRequestHandler
                     "user_reposted" => 0,
                 ],
             ];
+
+            if (!empty($repost)) {
+                $post_temp_obj->copy_owner_id = $repost[0]["owner_id"];
+                $post_temp_obj->copy_post_id  = $repost[0]["id"];
+                $post_temp_obj->copy_text     = $repost[0]["text"];
+                $post_temp_obj->copy_date     = $repost[0]["date"];
+            }
 
             if ($post->hasSource()) {
                 $post_temp_obj->copyright = $post->getVkApiCopyright();
@@ -267,6 +275,61 @@ final class Wall extends VKAPIRequestHandler
             }
 
             return $channel;
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            if (empty($items)) {
+                $cnt = 0;
+            }
+
+            if ($extended == 1) {
+                $profiles = array_unique($profiles);
+                $groups  = array_unique($groups);
+
+                $profilesFormatted = [];
+                $groupsFormatted   = [];
+
+                foreach ($profiles as $prof) {
+                    $user = (new UsersRepo())->get($prof);
+                    if ($user) {
+                        $isDeleted = $user->isDeleted();
+                        $profilesFormatted[] = (object) [
+                            "id"               => $user->getId(),
+                            "uid"              => $user->getId(),
+                            "first_name"       => $isDeleted ? "DELETED" : $user->getFirstName(),
+                            "last_name"        => $isDeleted ? "" : $user->getLastName(),
+                            "sex"              => $user->isFemale() ? 1 : ($user->isNeutral() ? 0 : 2),
+                            "photo"            => $user->getAvatarUrl(),
+                            "photo_rec"        => $user->getAvatarUrl(),
+                            "photo_medium_rec" => $user->getAvatarUrl("tiny"),
+                            "photo_50"         => $user->getAvatarUrl("tiny"),
+                            "photo_100"        => $user->getAvatarUrl("normal"),
+                            "screen_name"      => $user->getShortCode(),
+                            "online"           => (int) $user->isOnline(),
+                        ];
+                    }
+                }
+
+                foreach ($groups as $g) {
+                    $group = (new ClubsRepo())->get($g);
+                    if ($group) {
+                        $groupsFormatted[] = (object) [
+                            "gid"          => $group->getId(),
+                            "name"         => $group->getName(),
+                            "photo"        => $group->getAvatarUrl(),
+                            "photo_medium" => $group->getAvatarUrl("tiny"),
+                        ];
+                    }
+                }
+
+                return (object) [
+                    "wall"     => array_merge([$cnt], $items),
+                    "profiles" => $profilesFormatted,
+                    "groups"   => $groupsFormatted,
+                ];
+            }
+
+            return array_merge([$cnt], $items);
         }
 
         if ($extended == 1) {
@@ -426,6 +489,7 @@ final class Wall extends VKAPIRequestHandler
                     "id"           => $post->getVirtualId(),
                     "from_id"      => $from_id,
                     "owner_id"     => $post->getTargetWall(),
+                    "to_id"        => $post->getTargetWall(),
                     "post_id"     => $post->getVirtualId(),
                     "date"         => $post->getPublicationTime()->timestamp(),
                     "post_type"    => $post->getVkApiType(),
@@ -509,11 +573,15 @@ final class Wall extends VKAPIRequestHandler
                     $profilesFormatted[] = (object) [
                         "first_name"        => $user->getFirstName(),
                         "id"                => $user->getId(),
+                        "uid"               => $user->getId(),
                         "last_name"         => $user->getLastName(),
                         "can_access_closed" => (int) $user->canBeViewedBy($this->getUser()),
                         "is_closed"         => $user->isClosed(),
-                        "sex"               => $user->isFemale() ? 1 : 2,
+                        "sex"               => $user->isFemale() ? 1 : ($user->isNeutral() ? 0 : 2),
                         "screen_name"       => $user->getShortCode(),
+                        "photo"             => $user->getAvatarUrl(),
+                        "photo_rec"         => $user->getAvatarUrl(),
+                        "photo_medium_rec"  => $user->getAvatarUrl("tiny"),
                         "photo_50"          => $user->getAvatarUrl(),
                         "photo_100"         => $user->getAvatarUrl(),
                         "online"            => $user->isOnline(),
@@ -522,9 +590,16 @@ final class Wall extends VKAPIRequestHandler
                 } else {
                     $profilesFormatted[] = (object) [
                         "id" 		  => (int) $prof,
+                        "uid" 		  => (int) $prof,
                         "first_name"  => "DELETED",
                         "last_name"   => "",
+                        "sex"         => 0,
                         "deactivated" => "deleted",
+                        "photo"            => "/assets/packages/static/openvk/img/camera_50.png",
+                        "photo_rec"        => "/assets/packages/static/openvk/img/camera_50.png",
+                        "photo_medium_rec" => "/assets/packages/static/openvk/img/camera_100.png",
+                        "photo_50"         => "/assets/packages/static/openvk/img/camera_50.png",
+                        "photo_100"        => "/assets/packages/static/openvk/img/camera_100.png",
                     ];
                 }
             }
@@ -571,7 +646,11 @@ final class Wall extends VKAPIRequestHandler
         int $explicit = 0,
         float $lat = null,
         float $long = null,
-        string $place_name = ''
+        string $place_name = '',
+        string $services = '',
+        int $friends_only = 0,
+        int $publish_date = 0,
+        int $place_id = 0
     ): object {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -925,6 +1004,16 @@ final class Wall extends VKAPIRequestHandler
 
             if ($comment->getReplyToId() !== null) {
                 $item['reply_to_comment'] = $comment->getReplyToId();
+                $item['reply_to_cid']     = $comment->getReplyToId();
+                $replyComment = $comment->getReplyToComment();
+                if ($replyComment) {
+                    $item['reply_to_uid'] = $replyComment->getOwner()->getId();
+                }
+            }
+
+            if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                $item['cid'] = $comment->getId();
+                $item['uid'] = $oid;
             }
 
             if ($comment->isFromPostAuthor($post)) {
@@ -951,6 +1040,11 @@ final class Wall extends VKAPIRequestHandler
 
             $attachments = null;
             // Reset $attachments to not duplicate prikols
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            $count = (new CommentsRepo())->getCommentsCountByTarget($post);
+            return array_merge([$count], $items);
         }
 
         $response = [
@@ -1132,17 +1226,39 @@ final class Wall extends VKAPIRequestHandler
             (new ReplyCommentNotification($replyToUser, $comment, $post, $this->user))->emit();
         }
 
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return (object) [
+                "cid" => $comment->getId(),
+            ];
+        }
+
         return (object) [
             "comment_id" => $comment->getId(),
             "parents_stack" => [],
         ];
     }
 
-    public function deleteComment(int $comment_id)
+    public function addComment(
+        int $owner_id,
+        int $post_id,
+        string $text = "",
+        string $message = "",
+        int $reply_to_cid = 0,
+        int $reply_to_comment = 0,
+        string $attachments = "",
+        int $from_group = 0
+    ) {
+        $msg = !empty($text) ? $text : $message;
+        $replyTo = $reply_to_cid ?: ($reply_to_comment ?: null);
+        return $this->createComment($owner_id, $post_id, $msg, $from_group, $attachments, $replyTo);
+    }
+
+    public function deleteComment(int $comment_id = 0, int $cid = 0, int $owner_id = 0)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
 
+        $comment_id = $comment_id ?: $cid;
         $comment = (new CommentsRepo())->get($comment_id);
         if (!$comment) {
             $this->fail(100, "One of the parameters specified was missing or invalid");
@@ -1289,7 +1405,7 @@ final class Wall extends VKAPIRequestHandler
             $this->fail(102, "Invalid comment");
         }
 
-        if (!$comment->canBeEditedBy($this->getUser())) {
+        if (!$comment->canBeEditedBy($this->getUser()) || $comment->hasSticker()) {
             $this->fail(15, "Access to editing comment denied");
         }
 
@@ -1424,20 +1540,16 @@ final class Wall extends VKAPIRequestHandler
         return $posts;
     }
 
+    // из зачем это было выносить именно таким образом v__v
     private function getApiPhoto($attachment)
     {
+        $struct = $attachment->toVkApiStruct(true, false);
+        $struct->has_tags = false;
+        $struct->tags = (object) ["count" => 0, "items" => []];
+
         return [
             "type"  => "photo",
-            "photo" => [
-                "album_id" => $attachment->getAlbum() ? $attachment->getAlbum()->getId() : 0,
-                "date"     => $attachment->getPublicationTime()->timestamp(),
-                "id"       => $attachment->getVirtualId(),
-                "owner_id" => $attachment->getOwner()->getId(),
-                "sizes"    => !is_null($attachment->getVkApiSizes()) ? array_values($attachment->getVkApiSizes()) : null,
-                "text"     => "",
-                "has_tags" => false,
-                "tags" => (object) ["count" => 0, "items" => []],
-            ],
+            "photo" => $struct,
         ];
     }
 
@@ -1471,6 +1583,7 @@ final class Wall extends VKAPIRequestHandler
                 "can_share"      => true,
                 "created"        => 0,
                 "id"             => $attachment->getId(),
+                "poll_id"        => $attachment->getId(),
                 "owner_id"       => $attachment->getOwner()->getId(),
                 "question"       => $attachment->getTitle(),
                 "votes"          => $attachment->getVoterCount(),

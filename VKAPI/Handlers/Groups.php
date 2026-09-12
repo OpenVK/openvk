@@ -8,10 +8,11 @@ use openvk\Web\Models\Repositories\Clubs as ClubsRepo;
 use openvk\Web\Models\Repositories\Users as UsersRepo;
 use openvk\Web\Models\Repositories\Posts as PostsRepo;
 use openvk\Web\Models\Entities\Club;
+use openvk\Web\Models\Entities\Relationships\Blacklist;
 
 final class Groups extends VKAPIRequestHandler
 {
-    public function get(int $user_id = 0, string $fields = "", int $offset = 0, int $count = 6, bool $online = false, string $filter = "groups", int $extended = 0): object
+    public function get(int $user_id = 0, string $fields = "", int $offset = 0, int $count = 6, bool $online = false, string $filter = "groups", int $extended = 0): object|array
     {
         $this->requireUser();
 
@@ -63,6 +64,14 @@ final class Groups extends VKAPIRequestHandler
             $rClubs = [];
         }
 
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            if ($extended === 0) {
+                $gids = array_map(fn($c) => is_object($c) ? ($c->id ?? $c->gid) : $c, $rClubs);
+                return array_merge([$clbsCount], $gids);
+            }
+            return array_merge([$clbsCount], array_values($rClubs));
+        }
+
         return (object) [
             "count" => $clbsCount,
             "items" => $rClubs,
@@ -97,25 +106,28 @@ final class Groups extends VKAPIRequestHandler
 
 
         for ($i = 0; $i < $ic; $i++) {
-            if ($i > 500 || $clbs[$i] == 0) {
+            if ($i > 500 || empty($clbs[$i])) {
                 break;
             }
 
-            if ($clbs[$i] < 0) {
-                $this->fail(100, "ты ошибся чутка, у айди группы убери минус");
+            $rawId = trim((string) $clbs[$i]);
+            if (is_numeric($rawId)) {
+                $clubId = abs((int) $rawId);
+                $clb = $clubs->get($clubId);
+            } else {
+                $clb = $clubs->getByShortURL($rawId);
+                $clubId = $clb ? $clb->getId() : 0;
             }
 
-            $clb = $clubs->get((int) $clbs[$i]);
             if (is_null($clb)) {
                 $response[$i] = (object) [
-                    "id"          => intval($clbs[$i]),
+                    "id"          => $clubId ?: intval($rawId),
+                    "gid"         => $clubId ?: intval($rawId),
                     "name"        => "DELETED",
-                    "screen_name" => "club" . intval($clbs[$i]),
-                    "type"        => "group",
+                    "screen_name" => "club" . ($clubId ?: intval($rawId)),
+                    "type"        => "undefined",
                     "description" => "This group was deleted or it doesn't exist",
                 ];
-            } elseif ($clbs[$i] == null) {
-
             } else {
                 $response[$i] = $clb->toVkApiStruct($this->user, $fields . ",photo_50,photo_100,photo_200");
             }
@@ -255,10 +267,10 @@ final class Groups extends VKAPIRequestHandler
         }
 
         $sort_string = "follower ASC";
-        $members = array_slice(iterator_to_array($club->getFollowers(1, $count, $sort_string)), $offset, $count);
+        $members = array_slice(iterator_to_array($club->getFollowers(1, $count + $offset, $sort_string), false), $offset, $count);
 
         $obj = (object) [
-            "count" => sizeof($members),
+            "count" => $club->getFollowersCount(),
             "items" => [],
         ];
 
@@ -295,12 +307,12 @@ final class Groups extends VKAPIRequestHandler
         return $arr;
     }
 
-    public function isMember(string $group_id, int $user_id, int $extended = 0)
+    public function isMember(string $group_id, int $user_id = 0, int $extended = 0)
     {
         $this->requireUser();
 
         $input_club = (new ClubsRepo())->get(abs((int) $group_id));
-        $input_user = (new UsersRepo())->get(abs((int) $user_id));
+        $input_user = ($user_id === 0) ? $this->getUser() : (new UsersRepo())->get(abs((int) $user_id));
 
         if (!$input_club || !$input_club->canBeViewedBy($this->getUser())) {
             $this->fail(15, "Access denied");
@@ -322,5 +334,88 @@ final class Groups extends VKAPIRequestHandler
                 "can_recall" => 0,
             ];
         }
+    }
+
+    public function ban(int $group_id, int $owner_id, int $reason = 0, int $end_date = 0, string $comment = "", bool $comment_visible = true)
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $club = (new ClubsRepo())->get($group_id);
+        $user = (new UsersRepo())->get($owner_id);
+
+        if (!$club || !$club->canBeViewedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        if (!$club->canBeModifiedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        if (!$user || $user->isDeleted()) {
+            $this->fail(15, "Not found");
+        }
+
+        if ($user->getId() === $this->getUser()->getId()) {
+            $this->fail(15, "Access denied: cannot ban yourself");
+        }
+
+        $blacklist = new Blacklist($club);
+        $blacklist->ban($user, $comment ?? null, $end_date > 0 ? $end_date : null);
+
+        return 1;
+    }
+
+    public function unban(int $group_id, int $owner_id)
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $club = (new ClubsRepo())->get($group_id);
+        $user = (new UsersRepo())->get($owner_id);
+
+        if (!$club || !$club->canBeViewedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        if (!$club->canBeModifiedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        if (!$user || $user->isDeleted()) {
+            $this->fail(15, "Not found");
+        }
+
+        $blacklist = new Blacklist($club);
+        $blacklist->unban($user);
+
+        return 1;
+    }
+
+    public function getBanned(int $group_id, int $offset = 0, int $count = 20, string $fields = "")
+    {
+        $this->requireUser();
+
+        $club = (new ClubsRepo())->get($group_id);
+
+        if (!$club || !$club->canBeViewedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        if (!$club->canBeModifiedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        $blacklist = new Blacklist($club);
+        $result = (object) [
+            "count" => $blacklist->getBannedCount(),
+            "items" => [],
+        ];
+
+        foreach ($blacklist->getBanned($offset, $count) as $user) {
+            $result->items[] = $user->toVkApiStruct($this->getUser(), $fields);
+        }
+
+        return $result;
     }
 }

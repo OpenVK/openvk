@@ -21,6 +21,7 @@ class Gift extends RowModel
     public const PERIOD_SET_IF_NONE = 2;
 
     protected $tableName = "gifts";
+    public $shortName    = "gift";
 
     public function getName(): string
     {

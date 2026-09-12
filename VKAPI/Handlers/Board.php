@@ -10,6 +10,7 @@ use openvk\Web\Models\Repositories\Clubs as ClubsRepo;
 use openvk\Web\Models\Repositories\Photos as PhotosRepo;
 use openvk\Web\Models\Repositories\Videos as VideosRepo;
 use openvk\Web\Models\Repositories\Comments as CommentsRepo;
+use openvk\Web\Models\Repositories\Chats as ChatRepo;
 use openvk\Web\Models\Entities\{Topic, Comment, User, Photo, Video};
 
 final class Board extends VKAPIRequestHandler
@@ -57,10 +58,43 @@ final class Board extends VKAPIRequestHandler
                 $comment->save();
             }
         } catch (\Throwable $e) {
-            return $topic->getId();
+            return $topic->getVirtualId();
         }
 
-        return $topic->getId();
+        return $topic->getVirtualId();
+    }
+
+    public function addChatTopic(int $group_id, string $title)
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        if ($chat_id > 2000000000) {
+            $chat_id = $chat_id - 2000000000;
+        }
+
+        $club = (new ClubsRepo())->get($group_id);
+        if (!$club || !$club->canBeModifiedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        $chRepo = new ChatRepo();
+        $chatObj = $chRepo->createWithOriginal($this->getUser(), $title);
+
+        $flags = 0;
+        $flags |= 0b10000000;
+
+        $topic = new Topic();
+        $topic->setGroup($club->getId());
+        $topic->setOwner($this->getUser()->getId());
+        $topic->setTitle("-");
+        $topic->setCreated(time());
+        $topic->setChat_id($chatObj->getId());
+        $topic->setFlags($flags);
+
+        $topic->save();
+
+        return $topic->getVirtualId();
     }
 
     public function closeTopic(int $group_id, int $topic_id)
@@ -182,32 +216,47 @@ final class Board extends VKAPIRequestHandler
             $this->fail(5, "Not found");
         }
 
+        $items    = [];
+        $profiles = [];
+        $groups   = [];
+
+        $comments = array_slice(iterator_to_array($topic->getComments(1, $count + $offset), false), $offset);
+
+        foreach ($comments as $comment) {
+            $cStruct = $comment->toVkApiStruct($this->getUser(), $need_likes);
+            if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                $cStruct->cid = $comment->getId();
+                $cStruct->uid = $comment->getOwner()->getId();
+            }
+            $items[] = $cStruct;
+
+            $owner = $comment->getOwner();
+            if ($owner instanceof \openvk\Web\Models\Entities\User) {
+                $profiles[] = $owner->toVkApiStruct();
+            } elseif ($owner instanceof \openvk\Web\Models\Entities\Club) {
+                $groups[] = $owner->toVkApiStruct();
+            }
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            $obj = (object) [
+                "comments" => array_merge([$topic->getCommentsCount()], $items),
+                "profiles" => $profiles,
+            ];
+            if (!empty($groups)) {
+                $obj->groups = $groups;
+            }
+            return $obj;
+        }
+
         $obj = (object) [
             "count" => $topic->getCommentsCount(),
-            "items" => [],
+            "items" => $items,
         ];
 
         if ($extended) {
-            $obj->profiles = [];
-            $obj->groups = [];
-        }
-
-        $comments = array_slice(iterator_to_array($topic->getComments(1, $count + $offset)), $offset);
-
-        foreach ($comments as $comment) {
-            $obj->items[] = $comment->toVkApiStruct($this->getUser(), $need_likes);
-
-            if ($extended) {
-                $owner = $comment->getOwner();
-
-                if ($owner instanceof \openvk\Web\Models\Entities\User) {
-                    $obj->profiles[] = $owner->toVkApiStruct();
-                }
-
-                if ($owner instanceof \openvk\Web\Models\Entities\Club) {
-                    $obj->groups[] = $owner->toVkApiStruct();
-                }
-            }
+            $obj->profiles = $profiles;
+            $obj->groups   = $groups;
         }
 
         return $obj;
@@ -236,7 +285,9 @@ final class Board extends VKAPIRequestHandler
         $obj->count = (new TopicsRepo())->getClubTopicsCount($club);
         $obj->items = [];
         $obj->profiles = [];
-        $obj->can_add_topics = $club->canBeModifiedBy($this->getUser()) ? true : ($club->isEveryoneCanCreateTopics() ? true : false);
+        $canAdd = $club->canBeModifiedBy($this->getUser()) || $club->isEveryoneCanCreateTopics();
+        $obj->can_add_topics = $canAdd ? 1 : 0;
+        $obj->default_order  = 1;
 
         if (empty($topic_ids)) {
             foreach ($topics as $topic) {
@@ -252,6 +303,12 @@ final class Board extends VKAPIRequestHandler
                     $obj->items[] = $topic->toVkApiStruct($preview, $preview_length > 1 ? $preview_length : 90);
                 }
             }
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            $obj->topics = array_merge([$obj->count], $obj->items);
+        } else {
+            $obj->topics = $obj->items;
         }
 
         return $obj;

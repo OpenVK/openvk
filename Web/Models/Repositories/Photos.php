@@ -31,16 +31,63 @@ class Photos
         return self::$cache[$id] ??= $this->toPhoto($this->photos->get($id));
     }
 
-    public function getByOwnerAndVID(int $owner, int $vId): ?Photo
+    public function getByIds(array $ids = []): array
     {
-        $photo = $this->photos->where([
-            "owner"      => $owner,
-            "virtual_id" => $vId,
+        $photos = $this->photos->select('*')->where('id IN (?)', $ids);
+        $payload = [];
+
+        foreach ($photos as $photo) {
+            if ($photo->deleted == 1) {
+                continue;
+            }
+
+            $payload[] = $this->toPhoto($photo);
+        }
+
+        return $payload;
+    }
+
+    public function getByOwnerAndVIDUnsafe(int $owner, int $vId): ?Photo
+    {
+        $photo = null;
+
+        if ($owner > 0) {
+            $photo = $this->photos->where([
+                "owner"      => $owner,
+                "virtual_id" => $vId,
+            ]);
+        } else {
+            $photo = $this->photos->where([
+                "context_id"  => $owner,
+                "context_vid" => $vId,
+            ]);
+        }
+
+        $photo = $photo->where([
             "system"     => 0,
-            "private"    => 0,
             "deleted"    => 0,
         ])->fetch();
+
         return $this->toPhoto($photo);
+    }
+
+    public function getByOwnerAndVID(int $owner, int $vId, ?string $access_key = null): ?Photo
+    {
+        $photo = $this->getByOwnerAndVIDUnsafe($owner, $vId);
+
+        if (is_null($photo)) {
+            return null;
+        }
+
+        if (!$photo->checkAccessKey($access_key)) {
+            if (empty($access_key) && $photo->getOwner()->getId() === $owner) {
+                return $photo;
+            }
+
+            return null;
+        }
+
+        return $photo;
     }
 
     public function getEveryUserPhoto(User $user, int $offset = 0, int $limit = 10): \Traversable
@@ -68,6 +115,21 @@ class Photos
             "private"  => 0,
             "anonymous" => 0,
         ])->count("*");
+    }
+
+    public function getEveryClubPhoto(Club $club, int $offset = 0, int $limit = 10): \Traversable
+    {
+        $photos = $this->photos->where([
+            "owner"     => $club->getId() * -1,
+            "deleted"   => 0,
+            "system"    => 0,
+            "private"   => 0,
+            "anonymous" => 0,
+        ])->order("id DESC");
+
+        foreach ($photos->limit($limit, $offset) as $photo) {
+            yield $this->toPhoto($photo);
+        }
     }
 
     public function getClubPhotosCount(Club $club)

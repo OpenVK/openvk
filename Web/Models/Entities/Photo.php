@@ -16,7 +16,9 @@ use Nette\Utils\Image;
 class Photo extends Media
 {
     protected $tableName     = "photos";
+    public $shortName        = "photo";
     protected $fileExtension = "jpeg";
+    protected $containsContextColumns = true;
 
     public const ALLOWED_SIDE_MULTIPLIER = 7;
 
@@ -184,18 +186,20 @@ class Photo extends Media
 
         $res   = [];
         $sizes = MessagePack::unpack($sizes);
+        $keySuffix = ($this->getAccessKey() != null) ? "?key=" . $this->getAccessKey() : "";
+
         foreach ($sizes as $id => $meta) {
             if (isset($meta[3]) && !$meta[3]) {
-                $url = ovk_scheme(true) . $_SERVER["HTTP_HOST"] . "/photos/thumbnails/" . $this->getId() . "_$id.jpeg";
+                $url = ovk_scheme(true) . $_SERVER["HTTP_HOST"] . "/photos/thumbnails/" . $this->getId() . "_$id.jpeg" . $keySuffix;
                 $photoobj = [
                     "url"    => $url,
-                    "width"  => null,
-                    "height" => null,
-                    "crop"   => null,
+                    "src"    => $url,
+                    "width"  => 0,
+                    "height" => 0,
+                    "crop"   => false,
                 ];
 
                 if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR <= 5 && VKAPI_DECL_VER_MINOR < 77) {
-                    unset($photoobj['url']);
                     $photoobj['src'] = $url;
                 }
 
@@ -207,16 +211,17 @@ class Photo extends Media
             $url  = $this->getURL();
             $url  = str_replace(".$this->fileExtension", "_cropped/$id.", $url);
             $url .= ($meta[1] <= 300 || $meta[2] <= 300) ? "gif" : "jpeg";
+            $url .= $keySuffix;
 
             $photoobj = [
                 "url"    => $url,
-                "width"  => $meta[1],
-                "height" => $meta[2],
+                "src"    => $url,
+                "width"  => (int) ($meta[1] ?? 0),
+                "height" => (int) ($meta[2] ?? 0),
                 "crop"   => $meta[0],
             ];
 
             if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR <= 5 && VKAPI_DECL_VER_MINOR < 77) {
-                unset($photoobj['url']);
                 $photoobj['src'] = $url;
             }
 
@@ -224,16 +229,17 @@ class Photo extends Media
         }
 
         [$x, $y] = $this->getDimensions();
+        $uploadedUrl = $this->getURL() . $keySuffix;
         $photoobj = [
-            "url"    => $this->getURL(),
-            "width"  => $x,
-            "height" => $y,
+            "url"    => $uploadedUrl,
+            "src"    => $uploadedUrl,
+            "width"  => (int) ($x ?? 0),
+            "height" => (int) ($y ?? 0),
             "crop"   => false,
         ];
 
         if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR <= 5 && VKAPI_DECL_VER_MINOR < 77) {
-            unset($photoobj['url']);
-            $photoobj['src'] = $this->getURL();
+            $photoobj['src'] = $uploadedUrl;
         }
 
         $res["UPLOADED_MAXRES"] = (object) $photoobj;
@@ -241,11 +247,65 @@ class Photo extends Media
         return $res;
     }
 
-    public function forceSize(string $sizeName): bool
+    public static function normalizeSizeName(string|int $size): string
     {
-        $hash  = $this->getRecord()->hash;
-        $sizes = MessagePack::unpack($this->getRecord()->sizes);
-        $size  = $sizes[$sizeName] ?? false;
+        $size = strtolower(trim((string) $size));
+        $map = [
+            // VK letter codes
+            "s" => "miniscule",
+            "m" => "tiny",
+            "o" => "tinier",
+            "p" => "xsmall",
+            "q" => "small",
+            "r" => "medium",
+            "x" => "normal",
+            "y" => "large",
+            "z" => "larger",
+            "w" => "original",
+            // Dimensions
+            "75" => "miniscule",
+            "130" => "tiny",
+            "200" => "xsmall",
+            "320" => "small",
+            "510" => "medium",
+            "604" => "normal",
+            "807" => "large",
+            "1080" => "larger",
+            "1280" => "larger",
+            "2560" => "original",
+            // photo_XXX
+            "photo_75" => "miniscule",
+            "photo_130" => "tiny",
+            "photo_604" => "normal",
+            "photo_807" => "large",
+            "photo_1280" => "larger",
+            "photo_2560" => "original",
+            // src_XXX
+            "src_small" => "miniscule",
+            "src" => "tiny",
+            "src_big" => "normal",
+            "src_xbig" => "large",
+            "src_xxbig" => "larger",
+            "src_xxxbig" => "original",
+            "src_original" => "UPLOADED_MAXRES",
+            // Generic words
+            "thumb" => "small",
+            "preview" => "medium",
+            "full" => "original",
+            "max" => "UPLOADED_MAXRES",
+            "orig" => "original",
+            "raw" => "UPLOADED_MAXRES",
+        ];
+
+        return $map[$size] ?? $size;
+    }
+
+    public function forceSize(string|int $sizeName): bool
+    {
+        $sizeName = self::normalizeSizeName($sizeName);
+        $hash     = $this->getRecord()->hash;
+        $sizes    = MessagePack::unpack($this->getRecord()->sizes);
+        $size     = $sizes[$sizeName] ?? false;
         if (!$size) {
             return $size;
         }
@@ -268,9 +328,10 @@ class Photo extends Media
         }
 
         $sizeInfo = null;
-        foreach ($sizeMetas->Size as $size) {
-            if ($size["id"] == $sizeName) {
-                $sizeInfo = $size;
+        foreach ($sizeMetas->Size as $s) {
+            if ((string) $s["id"] === $sizeName || (string) $s["vkId"] === $sizeName) {
+                $sizeInfo = $s;
+                break;
             }
         }
 
@@ -285,7 +346,7 @@ class Photo extends Media
         $this->stateChanges("sizes", MessagePack::pack($sizes));
         $this->save();
 
-        return $sizes[$sizeName][3];
+        return (bool) ($sizes[$sizeName][3] ?? true);
     }
 
     public function getVkApiSizes(): ?array
@@ -309,29 +370,77 @@ class Photo extends Media
         foreach ($sizes as $id => $meta) {
             $type       = $mappings[$id] ?? $id;
             $meta->type = $type;
+            if (!isset($meta->url) && isset($meta->src)) {
+                $meta->url = $meta->src;
+            }
+            if (!isset($meta->src) && isset($meta->url)) {
+                $meta->src = $meta->url;
+            }
             $res[$type] = $meta;
         }
 
         return $res;
     }
 
-    public function getURLBySizeId(string $size): string
+    public function getURLBySizeId(string|int $size): string
     {
-        $sizes = $this->getSizes();
+        $normSize = self::normalizeSizeName($size);
+        $sizes    = $this->getSizes();
         if (!$sizes) {
             return $this->getURL();
         }
 
-        $size = $sizes[$size];
-        if (!$size) {
+        $sizeObj = $sizes[$normSize] ?? $sizes[(string) $size] ?? null;
+        if (!$sizeObj) {
             return $this->getURL();
         }
 
-        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR <= 5 && VKAPI_DECL_VER_MINOR < 77) {
-            return $size->src;
-        } else {
-            return $size->url;
+        $url = (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR <= 5 && VKAPI_DECL_VER_MINOR < 77)
+            ? ($sizeObj->src ?? $sizeObj->url ?? $this->getURL())
+            : ($sizeObj->url ?? $sizeObj->src ?? $this->getURL());
+        if ($this->getAccessKey() != null && !str_contains($url, "key=")) {
+            return $url . (str_contains($url, "?") ? "&key=" : "?key=") . $this->getAccessKey();
         }
+
+        return $url;
+    }
+
+    public function getFilePathBySizeId(string|int $size): ?string
+    {
+        $normSize = self::normalizeSizeName($size);
+        $hash     = $this->getRecord()->hash;
+        $origPath = $this->pathFromHash($hash);
+
+        if ($normSize === "UPLOADED_MAXRES") {
+            return file_exists($origPath) ? $origPath : null;
+        }
+
+        $dir = dirname($origPath) . "/{$hash}_cropped";
+        $candidates = [
+            "$dir/$normSize.jpeg",
+            "$dir/$normSize.jpg",
+            "$dir/$normSize.gif",
+            "$dir/$normSize.png",
+            "$dir/$normSize.webp",
+        ];
+
+        foreach ($candidates as $cand) {
+            if (file_exists($cand)) {
+                return $cand;
+            }
+        }
+
+        try {
+            $this->forceSize($normSize);
+            foreach ($candidates as $cand) {
+                if (file_exists($cand)) {
+                    return $cand;
+                }
+            }
+        } catch (\Throwable $e) {
+        }
+
+        return file_exists($origPath) ? $origPath : null;
     }
 
     public function getDimensions(): array
@@ -377,39 +486,75 @@ class Photo extends Media
 
         $album = $this->getAlbum();
 
-        $res->id       = $res->pid = $this->getVirtualId();
-        $res->owner_id = $res->user_id = $this->getOwner()->getId();
-        $res->aid      = $res->album_id = $album ? $album->getId() : 0;
-        $res->width    = $this->getDimensions()[0];
-        $res->height   = $this->getDimensions()[1];
-        $res->date     = $res->created = $this->getPublicationTime()->timestamp();
-        $res->text     = $this->getDescription() ?? "";
+        $res->id       = $res->pid = (int) $this->getVirtualId();
+        $res->owner_id = $res->user_id = (int) $this->getOwner()->getId();
+        $res->aid      = $res->album_id = (int) ($album ? $album->getId() : ($this->isUnlisted() ? -3 : 0));
+        $dims = $this->getDimensions();
+        $res->width    = (int) ($dims[0] ?? 0);
+        $res->height   = (int) ($dims[1] ?? 0);
+        $res->date     = $res->created = (int) $this->getPublicationTime()->timestamp();
+        $res->text     = (string) ($this->getDescription() ?? "");
+        $res->access_key = (string) ($this->getAccessKey() ?? "");
+
+        $res->src_small    = $res->photo_75 = $this->getURLBySizeId("miniscule");
+        $res->src          = $res->photo_130 = $this->getURLBySizeId("tiny");
+        $res->src_big      = $res->photo_604 = $this->getURLBySizeId("normal");
+        $res->src_xbig     = $res->photo_807 = $this->getURLBySizeId("large");
+        $res->src_xxbig    = $res->photo_1280 = $this->getURLBySizeId("larger");
+        $res->src_xxxbig   = $res->photo_2560 = $this->getURLBySizeId("original");
+        $res->src_original = $res->url = $this->getURLBySizeId("UPLOADED_MAXRES");
+        $res->orig_photo   = (object) [
+            "height" => (int) ($res->height ?? 0),
+            "width"  => (int) ($res->width ?? 0),
+            "type"   => "base",
+            "url"    => $this->getURL(),
+        ];
+
         if ($photo_sizes) {
-            $res->sizes = array_values($this->getVkApiSizes());
-            $res->src_small    = $res->photo_75 = $this->getURLBySizeId("miniscule");
-            $res->src          = $res->photo_130 = $this->getURLBySizeId("tiny");
-            $res->src_big      = $res->photo_604 = $this->getURLBySizeId("normal");
-            $res->src_xbig     = $res->photo_807 = $this->getURLBySizeId("large");
-            $res->src_xxbig    = $res->photo_1280 = $this->getURLBySizeId("larger");
-            $res->src_xxxbig   = $res->photo_2560 = $this->getURLBySizeId("original");
-            $res->src_original = $res->url = $this->getURLBySizeId("UPLOADED_MAXRES");
-            $res->orig_photo   = [
-                "height" => $res->height,
-                "width" => $res->width,
-                "type" => "base",
-                "url" => $this->getURL(),
-            ];
+            $vkSizes = $this->getVkApiSizes();
+            if (empty($vkSizes)) {
+                $w = $res->width ?: 604;
+                $h = $res->height ?: 604;
+                $vkSizes = [
+                    'm' => (object) [
+                        'src'    => $res->src ?: $this->getURL(),
+                        'url'    => $res->src ?: $this->getURL(),
+                        'width'  => (int) min(130, $w),
+                        'height' => (int) min(130, $h),
+                        'type'   => 'm',
+                    ],
+                    'x' => (object) [
+                        'src'    => $res->src_big ?: $this->getURL(),
+                        'url'    => $res->src_big ?: $this->getURL(),
+                        'width'  => (int) $w,
+                        'height' => (int) $h,
+                        'type'   => 'x',
+                    ],
+                ];
+            } else {
+                foreach ($vkSizes as &$sz) {
+                    if (is_object($sz)) {
+                        if (!isset($sz->url) && isset($sz->src)) {
+                            $sz->url = $sz->src;
+                        }
+                        if (!isset($sz->src) && isset($sz->url)) {
+                            $sz->src = $sz->url;
+                        }
+                    }
+                }
+            }
+            $res->sizes = array_values($vkSizes);
         }
 
-        if ($extended) {
-            $res->likes       = [
-                "count" => $this->getLikesCount(),
-                "user_likes" => 0,
-                "can_like" => 1,
+        if ($extended || (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5)) {
+            $res->likes       = (object) [
+                "count"       => (int) $this->getLikesCount(),
+                "user_likes"  => 0,
+                "can_like"    => 1,
                 "can_publish" => 1,
             ];
-            $res->comments    = [
-                "count" => $this->getCommentsCount(),
+            $res->comments    = (object) [
+                "count"    => (int) $this->getCommentsCount(),
                 "can_post" => 1,
             ];
             $res->can_comment = 1;
@@ -419,10 +564,34 @@ class Photo extends Media
         return $res;
     }
 
+    public function isSystem(): bool
+    {
+        return (bool) $this->getRecord()->private;
+    }
+
+    public function isPrivate(): bool
+    {
+        return (bool) $this->getRecord()->private || (bool) $this->getRecord()->unlisted;
+    }
+
+    public function toApiAttachment(?User $user = null): array
+    {
+        return [
+            "type"  => "photo",
+            "photo" => $this->toVkApiStruct(true, false),
+        ];
+    }
+
     public function canBeViewedBy(?User $user = null): bool
     {
         if ($this->isDeleted() || $this->getOwner()->isDeleted()) {
             return false;
+        }
+
+        if ($this->isSystem() || $this->isUnlisted()) {
+            if ($user && $user->getId() === $this->getOwner()->getId()) {
+                return true;
+            }
         }
 
         if (!is_null($this->getAlbum())) {
@@ -449,6 +618,12 @@ class Photo extends Media
         }
 
         return $photo;
+    }
+
+    public function setAsFromMessage(): void
+    {
+        $this->stateChanges("private", 1);
+        $this->stateChanges("unlisted", 1);
     }
 
     public function toNotifApiStruct()
