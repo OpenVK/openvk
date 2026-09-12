@@ -33,14 +33,13 @@ class Comments
         return self::$cache[$id] ??= $this->toComment($this->comments->get($id));
     }
 
-    public function getCommentsByTarget(Postable $target, int $page, ?int $perPage = null, ?string $sort = "ASC"): \Traversable
+    public function getCommentsByTarget(Postable $target, int $offset, ?int $perPage = null, ?string $sort = "ASC"): \Traversable
     {
         $comments = $this->comments->where([
             "model"   => get_class($target),
             "target"  => $target->getId(),
             "deleted" => false,
-        ])->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE)->order("created " . $sort);
-        ;
+        ])->limit($perPage ?? OPENVK_DEFAULT_PER_PAGE, $offset)->order("created " . $sort);
 
         foreach ($comments as $comment) {
             yield $this->toComment($comment);
@@ -59,6 +58,16 @@ class Comments
         foreach ($comments as $comment) {
             yield $this->toComment($comment);
         }
+    }
+
+    public function isCommentInPostable(Postable $target, int $id): bool
+    {
+        return $this->comments->where([
+            "model"   => get_class($target),
+            "target"  => $target->getId(),
+            "deleted" => false,
+            "id"      => $id,
+        ])->count("*") > 0 ? true : false;
     }
 
     public function getCommentsCountByTarget(Postable $target): int

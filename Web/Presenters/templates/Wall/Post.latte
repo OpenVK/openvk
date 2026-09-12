@@ -11,7 +11,7 @@
             {breakIf true}
         {/if}
     {/foreach}
-    <meta property="og:title" content="{_post} — {$instance_name}" />
+    <meta property="og:title" content="{_post}: {$post->getOwner()->getCanonicalName()} — {$instance_name}" />
     <meta property="og:url" content="{$baseUrl}/wall{$post->getPrettyId()}" />
     <meta n:if="!empty($postDesc)" property="og:description" content="{$postDesc}" />
     <meta n:if="!is_null($ogImageUrl)" property="og:image" content="{$ogImageUrl}" />

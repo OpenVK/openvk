@@ -108,6 +108,8 @@ final class VideosPresenter extends OpenVKPresenter
                 if ($is_ajax) {
                     $object = $video->getApiStructure();
                     $this->returnJson([
+                        'success' => true,
+                        'redirect' => '/video' . $video->getPrettyId(),
                         'payload' => $object->video,
                     ]);
                 }

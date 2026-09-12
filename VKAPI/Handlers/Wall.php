@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace openvk\VKAPI\Handlers;
 
 use openvk\Web\Models\Entities\User;
-use openvk\Web\Models\Entities\Notifications\{PostAcceptedNotification, WallPostNotification, NewSuggestedPostsNotification, RepostNotification, CommentNotification};
+use openvk\Web\Models\Entities\Notifications\{PostAcceptedNotification, WallPostNotification, ReplyCommentNotification, NewSuggestedPostsNotification, RepostNotification, CommentNotification};
 use openvk\Web\Models\Repositories\Users as UsersRepo;
 use openvk\Web\Models\Entities\Club;
 use openvk\Web\Models\Repositories\Clubs as ClubsRepo;
@@ -657,7 +657,8 @@ final class Wall extends VKAPIRequestHandler
         }
 
         $flags = 0;
-        if ($from_group == 1 && $wallOwner instanceof Club && $wallOwner->canBeModifiedBy($this->getUser())) {
+        if (($from_group == 1 || $wallOwner instanceof Club && $wallOwner->getWallType() != 1)
+            && $wallOwner instanceof Club && $wallOwner->canBeModifiedBy($this->getUser())) {
             $flags |= 0b10000000;
         }
         if ($signed == 1) {
@@ -814,7 +815,7 @@ final class Wall extends VKAPIRequestHandler
 
             $nPost->setWall($club->getRealId());
             $flags = 0;
-            if ($as_group === 1 || $signed === 1) {
+            if ($as_group === 1 || $club->getWallType() != 1) {
                 $flags |= 0b10000000;
             }
 
@@ -869,7 +870,7 @@ final class Wall extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
-        $comments = (new CommentsRepo())->getCommentsByTarget($post, $offset + 1, $count, $sort == "desc" ? "DESC" : "ASC");
+        $comments = (new CommentsRepo())->getCommentsByTarget($post, $offset, $count, $sort == "desc" ? "DESC" : "ASC");
 
         $items = [];
         $profiles = [];
@@ -921,6 +922,10 @@ final class Wall extends VKAPIRequestHandler
                     "groups_can_post"   => false,
                 ],
             ];
+
+            if ($comment->getReplyToId() !== null) {
+                $item['reply_to_comment'] = $comment->getReplyToId();
+            }
 
             if ($comment->isFromPostAuthor($post)) {
                 $item['is_from_post_author'] = true;
@@ -1058,7 +1063,7 @@ final class Wall extends VKAPIRequestHandler
         return $response;
     }
 
-    public function createComment(int $owner_id, int $post_id, string $message = "", int $from_group = 0, string $attachments = "")
+    public function createComment(int $owner_id, int $post_id, string $message = "", int $from_group = 0, string $attachments = "", int $reply_to_comment = null)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -1094,6 +1099,10 @@ final class Wall extends VKAPIRequestHandler
             $flags |= 0b10000000;
         }
 
+        if ($reply_to_comment !== null && !(new CommentsRepo())->isCommentInPostable($post, $reply_to_comment)) {
+            $this->fail(100, "Parameter 'reply_to_comment' is wrong.");
+        }
+
         try {
             $comment = new Comment();
             $comment->setOwner($this->user->getId());
@@ -1101,6 +1110,7 @@ final class Wall extends VKAPIRequestHandler
             $comment->setTarget($post->getId());
             $comment->setContent($message);
             $comment->setCreated(time());
+            $comment->setReply_To($reply_to_comment);
             $comment->setFlags($flags);
             $comment->save();
         } catch (\LengthException $ex) {
@@ -1115,6 +1125,11 @@ final class Wall extends VKAPIRequestHandler
             if (($owner = $post->getOwner()) instanceof User) {
                 (new CommentNotification($owner, $comment, $post, $this->user))->emit();
             }
+        }
+
+        $replyToUser = $comment->getReplyToComment()?->getOwner();
+        if ($replyToUser instanceof User && $replyToUser != $this->user) {
+            (new ReplyCommentNotification($replyToUser, $comment, $post, $this->user))->emit();
         }
 
         return (object) [
@@ -1221,15 +1236,19 @@ final class Wall extends VKAPIRequestHandler
         }
 
         $wallOwner = ($owner_id > 0 ? (new UsersRepo())->get($owner_id) : (new ClubsRepo())->get($owner_id * -1));
-        $flags = 0;
-        if ($from_group == 1 && $wallOwner instanceof Club && $wallOwner->canBeModifiedBy($this->getUser())) {
-            $flags |= 0b10000000;
+        $flags = $post->getFlags();
+
+        if ($from_group == 1 && $wallOwner instanceof Club && $wallOwner->canBeModifiedBy($this->getUser())
+            && ($wallOwner->getWallType() != 1 && $post->isPostedOnBehalfOfGroup())) {
+            $flags = 0b10000000;
         }
-        if ($post->isSigned() && $from_group == 1) {
-            $flags |= 0b01000000;
+
+        if ($post->isPostedOnBehalfOfGroup() && $signed == 1) {
+            $flags = 0b11000000;
         }
 
         $post->setFlags($flags);
+
         $post->save(true);
 
         if ($attachments == 'remove' || sizeof($final_attachments) > 0) {
