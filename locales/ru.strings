@@ -114,6 +114,7 @@
 "relationship_5_prefix" = "с";
 "relationship_6_prefix" = "в";
 "relationship_7_prefix" = "с";
+
 "politViews" = "Полит. взгляды";
 "politViews_0" = "Не выбраны";
 "politViews_1" = "Индифферентные";
@@ -125,6 +126,40 @@
 "politViews_7" = "Монархические";
 "politViews_8" = "Ультраконсервативные";
 "politViews_9" = "Либертарианские";
+
+"worldview" = "Мировоззрение";
+
+"mainInLife" = "Главное в жизни";
+"mainInLife_0" = "Не указано";
+"mainInLife_1" = "Семья и дети";
+"mainInLife_2" = "Карьера и деньги";
+"mainInLife_3" = "Развлечения и отдых";
+"mainInLife_4" = "Наука и исследования";
+"mainInLife_5" = "Совершенствование мира";
+"mainInLife_6" = "Саморазвитие";
+"mainInLife_7" = "Красота и искусство";
+"mainInLife_8" = "Слава и влияние";
+
+"mainInPeople" = "Главное в людях";
+"mainInPeople_0" = "Не указано";
+"mainInPeople_1" = "Ум и креативность";
+"mainInPeople_2" = "Доброта и честность";
+"mainInPeople_3" = "Красота и здоровье";
+"mainInPeople_4" = "Власть и богатство";
+"mainInPeople_5" = "Смелость и упорство";
+"mainInPeople_6" = "Юмор и жизнелюбие";
+
+"viewsOnSmoking" = "Отношение к курению";
+"viewsOnAlcohol" = "Отношение к алкоголю";
+"viewsOnSubstances_0" = "Не указано";
+"viewsOnSubstances_1" = "Резко негативное";
+"viewsOnSubstances_2" = "Негативное";
+"viewsOnSubstances_3" = "Компромиссное";
+"viewsOnSubstances_4" = "Нейтральное";
+"viewsOnSubstances_5" = "Положительное";
+
+"inspires" = "Вдохновляют";
+
 "contact_information" = "Контактная информация";
 "email" = "Электронная почта";
 "phone" = "Телефон";
@@ -135,6 +170,7 @@
 "personal_information" = "Личная информация";
 "interests" = "Интересы";
 "additional" = "Дополнительно";
+"personal" = "Жизненная позиция";
 "additional_fields_description" = "Здесь вы можете добавить дополнительную информацию о себе: ссылки на ваши социальные сети, либо же ваши интересы. Максимум можно добавить до $1 таких полей.";
 "additional_field_name" = "Название";
 "additional_field_text" = "Текст";
