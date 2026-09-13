@@ -28,6 +28,8 @@ final class Notes extends VKAPIRequestHandler
         $note->setCreated(time());
         $note->setName($title);
         $note->setSource($text);
+        // VK API clients historically send HTML (with <br>, etc.), not Markdown.
+        $note->setFormat(Note::FORMAT_HTML);
         $note->setEdited(time());
 
         $note->save();

@@ -165,4 +165,38 @@ class Notes
 
         $this->revisions()->where("note", $note->getId())->where("id NOT", $keepIds)->delete();
     }
+
+    /**
+     * Drop rendered Markdown caches for an owner so [[wiki]] links re-resolve
+     * after a target page is created, renamed, or deleted.
+     */
+    public function invalidateWikiLinkCaches(int $ownerId, ?int $exceptNoteId = null): void
+    {
+        if ($ownerId === 0) {
+            return;
+        }
+
+        $selection = $this->table()->where([
+            "owner"   => $ownerId,
+            "format"  => Note::FORMAT_MARKDOWN,
+            "deleted" => 0,
+        ]);
+        if ($exceptNoteId !== null) {
+            $selection->where("id !=", $exceptNoteId);
+        }
+
+        $ids = [];
+        foreach ($selection as $row) {
+            $ids[] = (int) $row->id;
+        }
+
+        if ($ids === []) {
+            return;
+        }
+
+        $this->table()->where("id", $ids)->update(["cached_content" => null]);
+        foreach ($ids as $id) {
+            unset(self::$cache[$id]);
+        }
+    }
 }

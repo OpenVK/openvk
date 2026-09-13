@@ -389,7 +389,7 @@ class Note extends Postable
         }
 
         if (is_null($this->getRecord())) {
-            return $this->renderHTML();
+            return self::resolvePhotoEmbeds($this->renderHTML(), $viewer);
         }
 
         $cached = $this->getRecord()->cached_content;
@@ -399,7 +399,7 @@ class Note extends Postable
             parent::save(false);
         }
 
-        return $this->renderHTML($cached);
+        return self::resolvePhotoEmbeds($this->renderHTML($cached), $viewer);
     }
 
     private function checkAccessLevel(int $level, ?User $user): bool
@@ -514,8 +514,14 @@ class Note extends Postable
 
     public function delete(bool $softly = true): void
     {
+        $ownerId = $this->getOwnerId();
+        $noteId  = $this->getId();
+
         if (!$softly) {
             parent::delete(false);
+            if ($noteId) {
+                (new Notes())->invalidateWikiLinkCaches($ownerId, $noteId);
+            }
             return;
         }
 
@@ -524,6 +530,10 @@ class Note extends Postable
             $this->changes["is_main"] = 0;
         }
         parent::save(false);
+
+        if ($noteId) {
+            (new Notes())->invalidateWikiLinkCaches($ownerId, $noteId);
+        }
     }
 
     public function save(?bool $log = false): void
@@ -583,7 +593,9 @@ class Note extends Postable
 
         parent::save($log);
 
-        if ($contentChanged && $editorId !== null && $keepRevisions) {
+        // Always record the latest editor so "updated by" works even when history is off.
+        // With keep_revisions=0 we only retain the newest row.
+        if ($contentChanged && $editorId !== null) {
             DatabaseConnection::i()->getContext()->table("note_revisions")->insert([
                 "note"    => $this->getId(),
                 "editor"  => (int) $editorId,
@@ -591,7 +603,11 @@ class Note extends Postable
                 "source"  => $revSource,
                 "created" => time(),
             ]);
-            (new Notes())->pruneRevisions($this, 50);
+            (new Notes())->pruneRevisions($this, $keepRevisions ? 50 : 1);
+        }
+
+        if (($isNew || $nameChanged) && $this->getOwnerId() !== 0) {
+            (new Notes())->invalidateWikiLinkCaches($this->getOwnerId(), $this->getId());
         }
     }
 
