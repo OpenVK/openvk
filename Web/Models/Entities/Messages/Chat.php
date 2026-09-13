@@ -39,7 +39,8 @@ class Chat extends RowModel
             return;
         }
 
-        $conv = $data["response"]["items"][0]["conversation"] ?? [];
+        $firstItem = $data["response"]["items"][0] ?? [];
+        $conv = isset($firstItem["conversation"]) ? $firstItem["conversation"] : $firstItem;
         $chatSettings = $conv["chat_settings"] ?? [];
         $chatInfo = $data["response"]["chats"][0] ?? [];
         if (!is_array($chatInfo)) {

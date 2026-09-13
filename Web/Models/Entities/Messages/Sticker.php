@@ -155,11 +155,7 @@ class Sticker extends Attachable
     public function getFormat(?int $packId = null): string
     {
         $dir = $this->getStorageDir($packId);
-        if (file_exists($dir . "sticker.svg") || file_exists($dir . "512.svg") || file_exists($dir . "128.svg")) {
-            return "svg";
-        }
-
-        if (file_exists($dir . "sticker.json") || file_exists($dir . "lottie.json")) {
+        if (file_exists($dir . "sticker.json") || file_exists($dir . "lottie.json") || file_exists($dir . "sticker.tgs")) {
             return "lottie";
         }
 
@@ -179,7 +175,7 @@ class Sticker extends Attachable
     {
         $pid = $packId ?? $this->getPackId() ?? 0;
         $format = $this->getFormat($pid);
-        $ext = ($format === "svg") ? "svg" : (($format === "lottie") ? "json" : (($format === "png") ? "png" : "webp"));
+        $ext = ($format === "png") ? "png" : "webp";
 
         return "/sticker/" . $pid . "/" . $this->getId() . "_" . $size . "." . $ext;
     }
@@ -205,6 +201,65 @@ class Sticker extends Attachable
         return file_exists("$legacyPath/128_outline.png") || file_exists("$legacyPath/256_outline.png");
     }
 
+    public function generateLottieRasterFallback(string $dir, string $jsonContent): void
+    {
+        $jsonFile = $dir . "sticker.json";
+        if (!file_exists($jsonFile) && !empty($jsonContent)) {
+            @file_put_contents($jsonFile, $jsonContent);
+        }
+
+        $renderScript = OPENVK_ROOT . "/bin/render_lottie.js";
+        if (file_exists($jsonFile) && file_exists($renderScript)) {
+            foreach ([64, 128, 256, 352, 512] as $sz) {
+                $outPng  = $dir . $sz . ".png";
+                $outWebp = $dir . $sz . ".webp";
+                @exec("node " . escapeshellarg($renderScript) . " " . escapeshellarg($jsonFile) . " " . escapeshellarg($outPng) . " " . (int)$sz . " 2>&1");
+                if (file_exists($outPng) && filesize($outPng) > 200) {
+                    try {
+                        $im = new \Imagick($outPng);
+                        $im->setImageFormat("webp");
+                        $im->setImageCompressionQuality(90);
+                        $im->writeImage($outWebp);
+                        $im->clear();
+                    } catch (\Throwable $ex) {}
+                }
+            }
+
+            if (file_exists($dir . "512.png") && filesize($dir . "512.png") > 200) {
+                return;
+            }
+        }
+
+        // Fallback: embedded bitmap assets in Lottie JSON
+        try {
+            $data = json_decode($jsonContent, true);
+            if (is_array($data) && !empty($data["assets"])) {
+                foreach ($data["assets"] as $asset) {
+                    if (!empty($asset["p"]) && str_starts_with($asset["p"], "data:image/")) {
+                        $base64 = substr($asset["p"], strpos($asset["p"], ",") + 1);
+                        $imgData = base64_decode($base64);
+                        if ($imgData) {
+                            $im = new \Imagick();
+                            $im->readImageBlob($imgData);
+                            foreach ([64, 128, 256, 352, 512] as $sz) {
+                                $copy = clone $im;
+                                $copy->resizeImage($sz, $sz, \Imagick::FILTER_LANCZOS, 1, true);
+                                $copy->setImageFormat("png");
+                                $copy->writeImage($dir . $sz . ".png");
+                                $copy->setImageFormat("webp");
+                                $copy->setImageCompressionQuality(90);
+                                $copy->writeImage($dir . $sz . ".webp");
+                                $copy->clear();
+                            }
+                            $im->clear();
+                            return;
+                        }
+                    }
+                }
+            }
+        } catch (\Throwable $ex) {}
+    }
+
     public function saveFile(string $file, ?int $packId = null, ?string $originalName = null): bool
     {
         if ($packId !== null) {
@@ -226,13 +281,9 @@ class Sticker extends Attachable
             $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
         }
 
-        // 1. Vector SVG: keep as is
+        // SVG format is not supported
         if ($mime === "image/svg+xml" || $ext === "svg") {
-            copy($file, $dir . "sticker.svg");
-            copy($file, $dir . "128.svg");
-            copy($file, $dir . "256.svg");
-            copy($file, $dir . "512.svg");
-            return true;
+            return false;
         }
 
         // 2. Lottie animation (JSON / TGS)
@@ -241,24 +292,30 @@ class Sticker extends Attachable
             $decompressed = $content ? @gzdecode($content) : false;
             if ($decompressed !== false) {
                 file_put_contents($dir . "sticker.json", $decompressed);
+                $this->generateLottieRasterFallback($dir, $decompressed);
                 return true;
             }
         }
 
         if ($mime === "application/json" || $ext === "json") {
             copy($file, $dir . "sticker.json");
+            $content = @file_get_contents($file);
+            if ($content) {
+                $this->generateLottieRasterFallback($dir, $content);
+            }
             return true;
         }
 
-        // 3. Raster image: convert to WebP in 3 sizes (128, 256, 512)
+        // 3. Raster image: convert to WebP and PNG in 3 sizes (128, 256, 512)
         try {
             $image = new \Imagick($file);
-            $image->setImageFormat("webp");
-            $image->setImageCompressionQuality(90);
-
             foreach ([128, 256, 512] as $sz) {
                 $copy = clone $image;
                 $copy->resizeImage($sz, $sz, \Imagick::FILTER_LANCZOS, 1, true);
+                $copy->setImageFormat("png");
+                $copy->writeImage($dir . $sz . ".png");
+                $copy->setImageFormat("webp");
+                $copy->setImageCompressionQuality(90);
                 $copy->writeImage($dir . $sz . ".webp");
                 $copy->clear();
             }
@@ -310,14 +367,14 @@ class Sticker extends Attachable
         }
 
         $server_url = ovk_scheme(true) . ($_SERVER["HTTP_HOST"] ?? "");
-        $pid = $packId ?? $this->getPackId() ?? 0;
+        $pid = (int) ($packId ?? $this->getPackId() ?? 0);
         $format = $this->getFormat($pid);
+        $sid = (int) $this->getId();
 
         $images = [];
         $imagesWithBackground = [];
         foreach ([64, 128, 256, 352, 512] as $sz) {
-            $imgSz = ($sz <= 128) ? 128 : (($sz <= 256) ? 256 : 512);
-            $url = $server_url . $this->getImageUrl($imgSz, $pid);
+            $url = $server_url . "/images/stickers/{$sid}/" . ($sz === 512 ? "512.png" : "{$sz}b.png");
 
             $images[] = [
                 "url"    => $url,
@@ -332,24 +389,24 @@ class Sticker extends Attachable
         }
 
         $data = [
-            "id"                     => $this->getId(),
-            "sticker_id"             => $this->getId(),
+            "id"                     => $sid,
+            "sticker_id"             => $sid,
             "product_id"             => $pid,
             "images"                 => $images,
             "images_with_background" => $imagesWithBackground,
             "is_allowed"             => $user ? $this->canBeUsedBy($user) : true,
             "emoji"                  => $this->getEmoji(),
-            "photo_64"               => $server_url . $this->getImageUrl(128, $pid),
-            "photo_128"              => $server_url . $this->getImageUrl(128, $pid),
-            "photo_256"              => $server_url . $this->getImageUrl(256, $pid),
-            "photo_352"              => $server_url . $this->getImageUrl(512, $pid),
-            "photo_512"              => $server_url . $this->getImageUrl(512, $pid),
+            "photo_64"               => $server_url . "/images/stickers/{$sid}/64b.png",
+            "photo_128"              => $server_url . "/images/stickers/{$sid}/128b.png",
+            "photo_256"              => $server_url . "/images/stickers/{$sid}/256b.png",
+            "photo_352"              => $server_url . "/images/stickers/{$sid}/352b.png",
+            "photo_512"              => $server_url . "/images/stickers/{$sid}/512.png",
             "width"                  => 512,
             "height"                 => 512,
         ];
 
         if ($format === "lottie") {
-            $animUrl = $server_url . "/sticker/" . $pid . "/" . $this->getId() . "_512.json";
+            $animUrl = $server_url . "/sticker/" . $pid . "/" . $sid . "_512.json";
             $data["animation_url"] = $animUrl;
             $data["is_animated"]   = true;
             $data["animations"]    = [

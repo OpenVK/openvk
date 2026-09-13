@@ -1520,6 +1520,17 @@ class User extends RowModel
         return $this->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(null);
     }
 
+    public function canSeeTracy(): bool
+    {
+        $cfg = OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["canSeeTracy"];
+
+        if (is_array($cfg) && in_array($this->getId(), $cfg)) {
+            return true;
+        }
+
+        return $this->isAdmin();
+    }
+
     public function isDead(): bool
     {
         return $this->onlineStatus() == 2;

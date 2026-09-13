@@ -160,7 +160,7 @@
 
             {* File input & Draft preview area *}
             <div class="stickers_upload_actions">
-                <input type="file" id="stickers_file_input" name="stickers[]" multiple accept="image/*,.svg,.json,.tgs" class="stickers_upload_file_input" />
+                <input type="file" id="stickers_file_input" name="stickers[]" multiple accept="image/png,image/jpeg,image/webp,image/gif,.json,.tgs" class="stickers_upload_file_input" />
                 <button type="button" class="button" onclick="document.getElementById('stickers_file_input').click();">
                     {_stickers_select_files}
                 </button>
@@ -206,7 +206,9 @@
 
             if (fileInput) {
                 fileInput.addEventListener('change', function(e) {
-                    var files = Array.from(e.target.files);
+                    var files = Array.from(e.target.files).filter(function(f) {
+                        return !f.name.toLowerCase().endsWith('.svg');
+                    });
                     if (!files.length) return;
 
                     draftFiles = draftFiles.concat(files);

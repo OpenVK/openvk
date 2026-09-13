@@ -125,19 +125,37 @@ final class StickersPresenter extends OpenVKPresenter
 
     public function renderServeFile($packId, $stickerId, $sizeOrFormat = 512, ?string $format = null): void
     {
-        $packId    = (int) $packId;
-        $stickerId = (int) $stickerId;
+        $packId = (int) $packId;
 
-        if (is_numeric($sizeOrFormat)) {
-            $size = (int) $sizeOrFormat;
+        if (is_string($stickerId) && (!is_numeric($stickerId) || str_contains($stickerId, '.') || str_contains($stickerId, '_'))) {
+            $filename = $stickerId;
+            $format = pathinfo($filename, PATHINFO_EXTENSION);
+            $base = pathinfo($filename, PATHINFO_FILENAME);
+            if (str_contains($base, "_")) {
+                [$sId, $sz] = explode("_", $base, 2);
+                $stickerId = (int) $sId;
+                $digits = preg_replace('/[^\d]/', '', $sz);
+                $size = !empty($digits) ? (int) $digits : 512;
+            } else {
+                $stickerId = (int) preg_replace('/[^\d]/', '', $base);
+                $size = 512;
+            }
         } else {
-            $size = 512;
-            if ($format === null && is_string($sizeOrFormat)) {
-                $format = $sizeOrFormat;
+            $stickerId = (int) $stickerId;
+            if (is_numeric($sizeOrFormat)) {
+                $size = (int) $sizeOrFormat;
+            } else {
+                $digits = preg_replace('/[^\d]/', '', (string) $sizeOrFormat);
+                $size = !empty($digits) ? (int) $digits : 512;
+                if ($format === null && is_string($sizeOrFormat)) {
+                    $format = $sizeOrFormat;
+                }
             }
         }
 
-        if ($size <= 128) {
+        if ($size <= 64) {
+            $size = 64;
+        } elseif ($size <= 128) {
             $size = 128;
         } elseif ($size <= 256) {
             $size = 256;
@@ -148,78 +166,116 @@ final class StickersPresenter extends OpenVKPresenter
         if ($packId === 0) {
             $stk = $this->stickers->get($stickerId);
             if ($stk && $stk->getPackId()) {
-                $packId = $stk->getPackId();
+                $packId = (int) $stk->getPackId();
             }
         }
 
         $dir      = OPENVK_ROOT . "/storage/stickers/$packId/$stickerId/";
         $filePath = null;
-        $mime     = "image/webp";
+        $mime     = "image/png";
 
-        // 1. Format-specific check
-        if ($format === "svg") {
-            foreach (["{$size}.svg", "512.svg", "128.svg", "sticker.svg"] as $candidate) {
-                if (file_exists($dir . $candidate)) {
-                    $filePath = $dir . $candidate;
-                    $mime     = "image/svg+xml";
-                    break;
-                }
-            }
-        } elseif ($format === "json") {
-            foreach (["sticker.json", "lottie.json"] as $candidate) {
+        $cleanFormat = $format !== null ? strtolower(trim($format)) : null;
+        if ($cleanFormat !== null && str_ends_with($cleanFormat, 'b') && strlen($cleanFormat) > 1) {
+            $cleanFormat = substr($cleanFormat, 0, -1);
+        }
+
+        // 1. If JSON (Lottie animation) specifically requested
+        if ($cleanFormat === "json") {
+            foreach (["sticker.json", "lottie.json", "{$size}.json", "512.json"] as $candidate) {
                 if (file_exists($dir . $candidate)) {
                     $filePath = $dir . $candidate;
                     $mime     = "application/json";
                     break;
                 }
             }
-        } elseif ($format === "webp") {
+        } elseif ($cleanFormat === "webp") {
             foreach (["{$size}.webp", "512.webp", "256.webp", "128.webp"] as $candidate) {
-                if (file_exists($dir . $candidate)) {
+                if (file_exists($dir . $candidate) && filesize($dir . $candidate) > 200) {
                     $filePath = $dir . $candidate;
                     $mime     = "image/webp";
                     break;
                 }
             }
-        }
-
-        // 2. Fallback if format not found or not specified: check SVG, JSON, WebP
-        if (!$filePath) {
-            if (file_exists($dir . "sticker.svg") || file_exists($dir . "{$size}.svg")) {
-                foreach (["{$size}.svg", "512.svg", "128.svg", "sticker.svg"] as $candidate) {
+            if (!$filePath) {
+                $jsonCandidate = null;
+                foreach (["sticker.json", "lottie.json", "512.json", "sticker.tgs"] as $candidate) {
                     if (file_exists($dir . $candidate)) {
-                        $filePath = $dir . $candidate;
-                        $mime     = "image/svg+xml";
+                        $jsonCandidate = $dir . $candidate;
                         break;
                     }
                 }
-            } elseif (file_exists($dir . "sticker.json") || file_exists($dir . "lottie.json")) {
-                foreach (["sticker.json", "lottie.json"] as $candidate) {
-                    if (file_exists($dir . $candidate)) {
-                        $filePath = $dir . $candidate;
-                        $mime     = "application/json";
-                        break;
-                    }
-                }
-            } else {
-                foreach (["{$size}.webp", "512.webp", "256.webp", "128.webp"] as $candidate) {
-                    if (file_exists($dir . $candidate)) {
-                        $filePath = $dir . $candidate;
+                $renderScript = OPENVK_ROOT . "/bin/render_lottie.js";
+                if ($jsonCandidate && file_exists($renderScript)) {
+                    $targetPng  = $dir . "{$size}.png";
+                    $targetWebp = $dir . "{$size}.webp";
+                    @exec("node " . escapeshellarg($renderScript) . " " . escapeshellarg($jsonCandidate) . " " . escapeshellarg($targetWebp) . " " . (int)$size . " 2>&1");
+                    if (file_exists($targetWebp) && filesize($targetWebp) > 200) {
+                        $filePath = $targetWebp;
                         $mime     = "image/webp";
+                    } elseif (file_exists($targetPng) && filesize($targetPng) > 200) {
+                        $filePath = $targetPng;
+                        $mime     = "image/png";
+                    }
+                }
+            }
+            if (!$filePath) {
+                foreach (["{$size}.png", "512.png", "256.png", "128.png"] as $candidate) {
+                    if (file_exists($dir . $candidate) && filesize($dir . $candidate) > 200) {
+                        $filePath = $dir . $candidate;
+                        $mime     = "image/png";
                         break;
                     }
                 }
             }
-        }
-
-        // 4. Legacy fallback from /public/stickers/{stickerId}/
-        if (!$filePath) {
-            $legacyDir = OPENVK_ROOT . "/public/stickers/$stickerId/";
-            foreach (["{$size}.png", "256.png", "128.png"] as $candidate) {
-                if (file_exists($legacyDir . $candidate)) {
-                    $filePath = $legacyDir . $candidate;
+        } else {
+            // Default or PNG requested: prefer valid PNG (> 200 bytes)
+            foreach (["{$size}.png", "512.png", "256.png", "128.png"] as $candidate) {
+                if (file_exists($dir . $candidate) && filesize($dir . $candidate) > 200) {
+                    $filePath = $dir . $candidate;
                     $mime     = "image/png";
                     break;
+                }
+            }
+
+            // If no valid PNG exists, try rendering from Lottie JSON or TGS via Node.js
+            if (!$filePath) {
+                $jsonCandidate = null;
+                foreach (["sticker.json", "lottie.json", "512.json", "sticker.tgs"] as $candidate) {
+                    if (file_exists($dir . $candidate)) {
+                        $jsonCandidate = $dir . $candidate;
+                        break;
+                    }
+                }
+                $renderScript = OPENVK_ROOT . "/bin/render_lottie.js";
+                if ($jsonCandidate && file_exists($renderScript)) {
+                    $targetPng = $dir . "{$size}.png";
+                    @exec("node " . escapeshellarg($renderScript) . " " . escapeshellarg($jsonCandidate) . " " . escapeshellarg($targetPng) . " " . (int)$size . " 2>&1");
+                    if (file_exists($targetPng) && filesize($targetPng) > 200) {
+                        $filePath = $targetPng;
+                        $mime     = "image/png";
+                    }
+                }
+            }
+
+            // If no PNG exists, try converting existing WebP to PNG
+            if (!$filePath) {
+                foreach (["{$size}.webp", "512.webp", "256.webp", "128.webp"] as $candidate) {
+                    if (file_exists($dir . $candidate) && filesize($dir . $candidate) > 200) {
+                        try {
+                            $im = new \Imagick($dir . $candidate);
+                            $im->setImageFormat("png");
+                            $targetPng = $dir . "{$size}.png";
+                            $im->writeImage($targetPng);
+                            $im->clear();
+                            $filePath = $targetPng;
+                            $mime     = "image/png";
+                            break;
+                        } catch (\Throwable $ex) {
+                            $filePath = $dir . $candidate;
+                            $mime     = "image/webp";
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -246,6 +302,27 @@ final class StickersPresenter extends OpenVKPresenter
         header("Content-Length: " . filesize($filePath));
         readfile($filePath);
         exit;
+    }
+
+    public function renderServeLegacyImage($stickerId, $file): void
+    {
+        $stickerId = (int) $stickerId;
+        $file      = (string) $file;
+
+        $size = 512;
+        if (preg_match('/^(\d+)/', $file, $matches)) {
+            $size = (int) $matches[1];
+        }
+
+        $format = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+        if ($format === "") {
+            $format = "png";
+        }
+
+        $sticker = $this->stickers->getSticker($stickerId);
+        $packId  = ($sticker && $sticker->getPackId()) ? (int) $sticker->getPackId() : 0;
+
+        $this->renderServeFile($packId, $stickerId, $size, $format);
     }
 
     public function renderCreatePack(): void

@@ -8,6 +8,22 @@ body.dimmed>.dimmer {
     left: 0px;
 }
 
+#pseudoError {
+    position: fixed;
+    display: none;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    background: var(--bg-page);
+}
+
+#pseudoError.shown {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    z-index: 100;
+}
+
 body.dimmed>.dimmer #clickable {
     margin: 100px;
     height: 100%;

@@ -544,6 +544,9 @@ final class VKAPIPresenter extends OpenVKPresenter
             'text'        => ['message', 'msg'],
             'start_from'  => ['from'],
             'from'        => ['start_from'],
+            'sticker_id'  => ['sticker', 'stk_id'],
+            'product_id'  => ['stickerpack_id', 'pack_id'],
+            'product_ids' => ['product_id', 'stickerpack_ids', 'pack_ids'],
         ];
 
         foreach ($route->getParameters() as $parameter) {

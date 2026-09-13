@@ -216,6 +216,20 @@ class StickerPack extends RowModel
         }
     }
 
+    public function getStickerIds(): array
+    {
+        $ids = [];
+        $rels = DB::i()->getContext()->table("stickerpack_relations")
+            ->where("stickerpack", $this->getId());
+        foreach ($rels as $rel) {
+            $stickerRec = DB::i()->getContext()->table("stickers")->get($rel->sticker);
+            if ($stickerRec && !$stickerRec->deleted) {
+                $ids[] = (int) $rel->sticker;
+            }
+        }
+        return $ids;
+    }
+
     public function getStickersCount(): int
     {
         return DB::i()->getContext()->table("stickerpack_relations")
@@ -534,20 +548,31 @@ class StickerPack extends RowModel
             $animUrl = $server_url . $mainSticker->getAnimationUrl($this->getId());
         }
 
+        $stickerIds = $this->getStickerIds();
+        $stickersArray = [];
+        foreach ($stickerIds as $sid) {
+            $stickersArray[] = [
+                "sticker_id" => (int) $sid,
+                "is_allowed" => true,
+            ];
+        }
+
         return [
-            "id"             => $this->getId(),
+            "id"             => (int) $this->getId(),
             "name"           => $this->getName(),
+            "title"          => $this->getName(),
             "description"    => $this->getDescription() ?? "",
             "slug"           => $this->getSlug(),
-            "price"          => $this->getPrice(),
-            "end_time"       => $this->getEndTime() ?? 0,
+            "price"          => (int) $this->getPrice(),
+            "end_time"       => (int) ($this->getEndTime() ?? 0),
             "purchased"      => $this->isPurchasedBy($user) ? 1 : 0,
             "photo_128"      => $mainSticker ? ($server_url . $mainSticker->getImageUrl(128)) : "",
             "photo_256"      => $mainSticker ? ($server_url . $mainSticker->getImageUrl(256)) : "",
             "is_animated"    => $isAnimated,
             "animation_url"  => $animUrl,
-            "stickers_count" => $this->getStickersCount(),
-            "stickers"       => [],
+            "stickers_count" => (int) $this->getStickersCount(),
+            "sticker_ids"    => $stickerIds,
+            "stickers"       => $stickersArray,
         ];
     }
 }

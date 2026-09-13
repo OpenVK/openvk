@@ -559,8 +559,9 @@ export class EventHandler {
                     }
 
                     window.OVKAPI.call("messages.getConversationsById", { peer_ids: _msg.peer_id }).then(convById => {
-                        if (convById && convById.items && convById.items[0]?.conversation) {
-                            const cConv = convById.items[0].conversation;
+                        const rawItem = convById?.items?.[0];
+                        const cConv = rawItem ? (rawItem.conversation || rawItem) : null;
+                        if (cConv) {
                             const s = cConv.chat_settings;
                             if (s && _crs.peer) {
                                 _crs.peer.data.photo_50 = s.photo_50 || s.photo?.photo_50 || "";
@@ -601,8 +602,9 @@ export class EventHandler {
                 if (_crs) {
                     try {
                         const convById = await window.OVKAPI.call('messages.getConversationsById', { peer_ids: _msg.peer_id });
-                        if (convById && convById.items && convById.items[0]?.conversation) {
-                            const cConv = convById.items[0].conversation;
+                        const rawItem = convById?.items?.[0];
+                        const cConv = rawItem ? (rawItem.conversation || rawItem) : null;
+                        if (cConv) {
                             _crs._conversation = cConv;
                             const pin = cConv.chat_settings?.pinned_message || cConv.pinned_message;
                             _crs.setPinnedMessage(pin || null);
@@ -745,37 +747,36 @@ export class EventHandler {
             const convById = await window.OVKAPI.call('messages.getConversationsById', { peer_ids: peer_id });
             if (convById && convById.items && convById.items[0]) {
                 const cItem = convById.items[0];
+                const conv = cItem.conversation || cItem;
                 const _crs = this.im.conversations?._findConv(peer_id) || await this.im.conversations._findConvFromApi(peer_id, true);
-                if (_crs) {
-                    if (cItem.conversation) {
-                        _crs._conversation = cItem.conversation;
-                        if (cItem.conversation.can_write && _crs.peer) {
-                            _crs.peer.data.can_write = cItem.conversation.can_write;
+                if (_crs && conv) {
+                    _crs._conversation = conv;
+                    if (conv.can_write && _crs.peer) {
+                        _crs.peer.data.can_write = conv.can_write;
+                    }
+                    if (conv.chat_settings) {
+                        if (_crs.peer && _crs.peer.data) {
+                            _crs.peer.data.chat_settings = conv.chat_settings;
+                            if (conv.chat_settings.title) {
+                                _crs.peer.data.title = conv.chat_settings.title;
+                            }
                         }
-                        if (cItem.conversation.chat_settings) {
-                            if (_crs.peer && _crs.peer.data) {
-                                _crs.peer.data.chat_settings = cItem.conversation.chat_settings;
-                                if (cItem.conversation.chat_settings.title) {
-                                    _crs.peer.data.title = cItem.conversation.chat_settings.title;
-                                }
-                            }
-                            if (cItem.conversation.chat_settings.pinned_message) {
-                                _crs.setPinnedMessage(cItem.conversation.chat_settings.pinned_message);
-                            } else {
-                                _crs.setPinnedMessage(null);
-                            }
-                        } else if (cItem.conversation.pinned_message) {
-                            _crs.setPinnedMessage(cItem.conversation.pinned_message);
+                        if (conv.chat_settings.pinned_message) {
+                            _crs.setPinnedMessage(conv.chat_settings.pinned_message);
                         } else {
                             _crs.setPinnedMessage(null);
                         }
+                    } else if (conv.pinned_message) {
+                        _crs.setPinnedMessage(conv.pinned_message);
+                    } else {
+                        _crs.setPinnedMessage(null);
                     }
                 }
                 if (this.im.fastChats) {
                     const fc = this.im.fastChats.openedChats?.find(c => Number(c.peerId) === Number(peer_id));
-                    if (fc && cItem.conversation?.can_write) {
-                        fc.canWrite = !!cItem.conversation.can_write.allowed;
-                        fc.cantWriteReason = cItem.conversation.can_write.reason;
+                    if (fc && conv?.can_write) {
+                        fc.canWrite = !!conv.can_write.allowed;
+                        fc.cantWriteReason = conv.can_write.reason;
                         fc.cantWriteText = this.im.fastChats.getCantWriteText(fc);
                         this.im.fastChats.render();
                     }

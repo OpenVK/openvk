@@ -1,3 +1,7 @@
+class InvalidPageError extends Error {}
+class AntiDDOSPageError extends Error {}
+class CaptchaError extends Error {}
+
 window.router = new class {
     constructor() {
         this.isLoadedFirstly = false;
@@ -68,8 +72,12 @@ window.router = new class {
         const page_header = u(parsed_content.querySelector('.page_header'))
         const page_footer = u(parsed_content.querySelector('.page_footer'))
         const backdrop = u(parsed_content.querySelector('#backdrop'))
+        if (!this._checkAntiddos(parsed_content)) {
+            throw new AntiDDOSPageError();
+        }
+
         if(page_body.length < 1) {
-            throw new Error('Invalid page has been loaded')
+            throw new InvalidPageError('Invalid page has been loaded')
             return
         }
 
@@ -81,6 +89,8 @@ window.router = new class {
                 script.parentNode.removeChild(script)
             }
         })
+        u('#pseudoError').html("");
+        u('#pseudoError').removeClass("shown");
         u('.page_body').html(page_body.html())
         u('.sidebar').html(sidebar.html())
         u('.page_footer').html(page_footer.html())
@@ -153,6 +163,15 @@ window.router = new class {
         scripts_to_append.forEach(append_me => {
             this.__appendScript(append_me)
         })
+    }
+
+    __appendPageUnserious(parsed_content) {
+        const body = parsed_content.querySelector("body");
+        u('#pseudoError').html(body.innerHTML);
+        u('#pseudoError').addClass("shown");
+        /*body.querySelectorAll("style").forEach(item => {
+            document.querySelector("#pseudoError").append(item);
+        });*/
     }
 
     applyTweaks() {
@@ -271,6 +290,21 @@ window.router = new class {
             url = location.origin + url
         }
 
+        const max_attempts = params["max_attempts"] || 3;
+        const attempt = params["attempt"] || 1;
+
+        if (attempt > max_attempts) {
+            const cmsg = new CMessageBox({
+                title: tr("error"),
+                body: tr("router_reconnect_error"),
+                buttons: [tr("yes"), tr("no")],
+                callbacks: [() => {
+                    window.location.assign(url);
+                }, () => {}]
+            })
+            return;
+        }
+
         if((localStorage.getItem('ux.disable_ajax_routing') ?? 0) == 1 || window.openvk.current_id == 0) {
             window.location.assign(url)
             return
@@ -316,10 +350,15 @@ window.router = new class {
             history.replaceState({'from_router': 1}, '', next_page_request.url)
         }
 
+        u('body').removeClass('ajax_request_made')
+
+        this.__appendPageSafely(parsed_content, next_page_url, params, next_page_request)
+    }
+
+    // какой ужас
+    async __appendPageSafely(parsed_content, next_page_url, params, request) {
         this.__closeMsgs()
         this.__unlinkObservers()
-
-        u('body').removeClass('ajax_request_made')
 
         try {
             this.__appendPage(parsed_content)
@@ -331,9 +370,43 @@ window.router = new class {
             await this.__integratePage()
         } catch(e) {
             console.error(e)
-            next_page_url.searchParams.delete('al', 1)
-            location.assign(next_page_url)
+            if (e instanceof InvalidPageError) {
+                next_page_url.searchParams.delete('al', 1);
+                if (parsed_content.querySelector("#openvk_error") != null) {
+                    this.__appendPageUnserious(parsed_content)
+                } else {
+                    location.assign(next_page_url);
+                }
+            }
+            if (e instanceof AntiDDOSPageError || e instanceof CaptchaError) {
+                const msg = new CMessageBox({
+                    title: "Captcha",
+                    body: `<iframe src="/admin/sandbox"></iframe>`,
+                    buttons: [tr("ok")],
+                    callbacks: [() => { }]
+                })
+                const interval = setInterval(() => {
+                    const iframe = msg.getNode().find("iframe").last();
+                    const isReady = this._checkAntiddos(iframe.contentDocument);
+
+                    if (isReady) {
+                        clearInterval(interval);
+                        msg.close();
+                        window.router.route({
+                            url: next_page_url.toString(),
+                            attempt: (params["attempt"] || 1) + 1,
+                            max_attempts: (params["max_attempts"] || 3),
+                        });
+                    }
+                }, 200)
+            }
         }
+    }
+    _checkAntiddos(node) {
+        if (node.querySelector('#anubis_version') != null) {
+            return false;
+        }
+        return true;
     }
 }
 
@@ -346,7 +419,7 @@ function isMobileAndExpanded() {
 }
 
 // Mobile theme header
-u(document).on('click', '.page_header', (e) => {
+$(document).on('click', '.page_header', (e) => {
     if (isMobile() && !e.target.closest('.link, #fast_notifications')) {
         e.preventDefault();
         e.stopPropagation();
@@ -365,7 +438,7 @@ function toDesktopVersion() {
     u("meta[name='viewport']").remove();
 }
 
-u(document).on('click', 'a', async (e) => {
+$(document).on('click', 'a', async (e) => {
     if(e.defaultPrevented) {
         console.log('AJAX | Skipping because default is prevented')
         return
@@ -425,7 +498,7 @@ u(document).on('click', 'a', async (e) => {
     })
 })
 
-u(document).on('submit', 'form', async (e) => {
+$(document).on('submit', 'form', async (e) => {
     if(e.defaultPrevented) {
         return
     }
@@ -514,14 +587,12 @@ u(document).on('submit', 'form', async (e) => {
         history.pushState({'from_router': 1}, '', __new_url)
     }
 
-    window.router.__appendPage(parsed_content)
-    window.router.__closeMsgs()
-    await window.router.__integratePage()
+    await window.router.__appendPageSafely(parsed_content, url_object, {}, form_res)
 
     u('#ajloader').removeClass('shown')
 })
 
-u('#logout_link').on('click', (e) => {
+$('#logout_link').on('click', (e) => {
     e.preventDefault()
     e.stopPropagation()
 

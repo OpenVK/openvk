@@ -69,6 +69,7 @@
         <div class="dimmer">
             <div id='clickable'></div>
         </div>
+        <div id="pseudoError"></div>
         <div class="upLeftErrors"></div>
 
         <div class="articleView">
@@ -136,15 +137,7 @@
                                     {var $section = $_REQUEST['section'] ?? ''}
                                     <input onkeydown="onSearchTipKeydown(event)" oninput="onSearchBoxInput(event)" autocomplete="off" type="search" maxlength="79" name="q" placeholder="{_header_search}" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
                                     <select name="section">
-                                        <option n:attr="selected => $section == 'users'" value="users">{_s_by_people}</option>
-                                        <option n:attr="selected => $section == 'groups'" value="groups">{_s_by_groups}</option>
-                                        <option n:attr="selected => $section == 'events'" value="events">{_s_by_events}</option>
-                                        <option n:attr="selected => $section == 'posts'" value="posts">{_s_by_posts}</option>
-                                        <option n:attr="selected => $section == 'videos'" value="videos">{_s_by_videos}</option>
-                                        <option n:attr="selected => $section == 'apps'" value="apps">{_s_by_apps}</option>
-                                        <option n:attr="selected => $section == 'audios'" value="audios">{_s_by_audios}</option>
-                                        <option n:attr="selected => $section == 'audios_playlists'" value="audios_playlists">{_s_by_audios_playlists}</option>
-                                        <option n:attr="selected => $section == 'docs'" value="docs">{_s_by_documents}</option>
+                                        <option value="main">{_s_by_people}</option>
                                     </select>
                                 </div>
                                 <button class="search_box_button">

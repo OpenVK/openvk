@@ -623,35 +623,65 @@ final class Messages extends VKAPIRequestHandler
             $payload['groups'] = [];
         }
 
-        $extendedChats = [];
-        if (!empty($payload['chats'])) {
-            $chatsRepo = new ChatRepo();
-            $currentUserId = $this->getUser() ? $this->getUser()->getId() : 0;
+        $isModern = !defined("VKAPI_DECL_VER_MAJOR") || VKAPI_DECL_VER_MAJOR > 5 || (VKAPI_DECL_VER_MAJOR === 5 && (!defined("VKAPI_DECL_VER_MINOR") || VKAPI_DECL_VER_MINOR >= 80));
 
-            foreach ($payload['chats'] as &$chat) {
-                $idVal = is_array($chat) ? ($chat['id'] ?? 0) : (int) $chat;
-
-                $globalChatId = abs($idVal);
-                $localChatId = $globalChatId > 2000000000 ? ($globalChatId - 2000000000) : $globalChatId;
-
-                if ($localChatId <= 0) {
-                    continue;
-                }
-
-                $chatEntity = $loadedChats[$localChatId] ?? $chatsRepo->getByChatId($localChatId);
-                if (!$chatEntity) {
-                    $chatEntity = $chatsRepo->create($localChatId, $this->getDefaultChatTitle($localChatId));
-                }
-
-                if (!$chatEntity->hasData() && is_array($chat)) {
-                    $chatEntity->setData($chat);
-                }
-
-                $extendedChats[] = $chatEntity->toVkApiStruct($this->getUser());
+        if ($isModern) {
+            if (!isset($payload['conversations']) || !is_array($payload['conversations'])) {
+                $payload['conversations'] = [];
             }
-        }
+            if (!empty($payload['chats']) && empty($payload['conversations'])) {
+                $chatIds = [];
+                foreach ($payload['chats'] as $c) {
+                    $cId = is_array($c) ? ($c['id'] ?? 0) : (int) $c;
+                    if ($cId > 0) {
+                        $chatIds[] = $cId > 2000000000 ? $cId : (2000000000 + $cId);
+                    }
+                }
+                if (!empty($chatIds)) {
+                    try {
+                        $convRes = $this->invoke("messages.getConversationsById", [
+                            "peer_ids" => implode(',', array_unique($chatIds)),
+                            "extended" => "0",
+                        ]);
+                        if (!empty($convRes['items'])) {
+                            $payload['conversations'] = array_map(fn($it) => $it['conversation'] ?? $it, $convRes['items']);
+                        }
+                    } catch (\Throwable $e) {}
+                }
+            }
+            unset($payload['chats']);
+        } else {
+            $extendedChats = [];
+            if (!empty($payload['chats'])) {
+                $chatsRepo = new ChatRepo();
+                $currentUserId = $this->getUser() ? $this->getUser()->getId() : 0;
 
-        $payload['chats'] = $extendedChats;
+                foreach ($payload['chats'] as &$chat) {
+                    $idVal = is_array($chat) ? ($chat['id'] ?? 0) : (int) $chat;
+
+                    $globalChatId = abs($idVal);
+                    $localChatId = $globalChatId > 2000000000 ? ($globalChatId - 2000000000) : $globalChatId;
+
+                    if ($localChatId <= 0) {
+                        continue;
+                    }
+
+                    $chatEntity = $loadedChats[$localChatId] ?? $chatsRepo->getByChatId($localChatId);
+                    if (!$chatEntity) {
+                        $chatEntity = $chatsRepo->create($localChatId, $this->getDefaultChatTitle($localChatId));
+                    }
+
+                    if (!$chatEntity->hasData() && is_array($chat)) {
+                        $chatEntity->setData($chat);
+                    }
+
+                    $extendedChats[] = $chatEntity->toVkApiStruct($this->getUser());
+                }
+            }
+
+            $payload['chats'] = $extendedChats;
+            unset($payload['conversations']);
+        }
     }
 
     // ----------------------------------
@@ -1865,10 +1895,11 @@ final class Messages extends VKAPIRequestHandler
         $itemsMap = [];
         if (!empty($imResponse['items'])) {
             foreach ($imResponse['items'] as $item) {
-                $peer = $item['conversation']['peer'] ?? null;
-                if ($peer && $peer['type'] === 'chat') {
+                $conv = $item['conversation'] ?? $item;
+                $peer = $conv['peer'] ?? null;
+                if ($peer && ($peer['type'] ?? '') === 'chat') {
                     $localId = (int) ($peer['id'] - 2000000000);
-                    $itemsMap[$localId] = $item['conversation'];
+                    $itemsMap[$localId] = $conv;
                 }
             }
         }
@@ -1934,7 +1965,7 @@ final class Messages extends VKAPIRequestHandler
                 }
             }
 
-            if (!empty($chatStruct['users']) && (!empty($fields) || (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5))) {
+            if (!empty($chatStruct['users']) && !empty($fields)) {
                 $missingUserIds = [];
                 foreach ($chatStruct['users'] as $uId) {
                     $uIdInt = (int) $uId;
@@ -2757,8 +2788,9 @@ final class Messages extends VKAPIRequestHandler
         $chatIds = [];
         if (!empty($response['items'])) {
             foreach ($response['items'] as $item) {
-                $peer = $item['conversation']['peer'] ?? null;
-                if ($peer && $peer['type'] === 'chat') {
+                $conv = $item['conversation'] ?? $item;
+                $peer = $conv['peer'] ?? null;
+                if ($peer && ($peer['type'] ?? '') === 'chat') {
                     $chatIds[] = (int) ($peer['id'] - 2000000000);
                 }
             }
@@ -2785,12 +2817,13 @@ final class Messages extends VKAPIRequestHandler
         }
 
         $currentUserId = $this->getUser()->getId();
+        $finalItems = [];
         if (!empty($response['items'])) {
-            foreach ($response['items'] as &$item) {
-                $conversation = &$item['conversation'];
-                $peer = $conversation['peer'] ?? null;
+            foreach ($response['items'] as $item) {
+                $conv = $item['conversation'] ?? $item;
+                $peer = $conv['peer'] ?? null;
 
-                if ($peer && $peer['type'] === 'chat') {
+                if ($peer && ($peer['type'] ?? '') === 'chat') {
                     $chatId = (int) ($peer['id'] - 2000000000);
                     $chatEntity = $loadedChats[$chatId] ?? null;
 
@@ -2801,27 +2834,23 @@ final class Messages extends VKAPIRequestHandler
                     }
 
                     if ($chatEntity) {
-                        if (!empty($conversation['chat_settings'])) {
-                            $chatEntity->setData($conversation['chat_settings']);
+                        if (!empty($conv['chat_settings'])) {
+                            $chatEntity->setData($conv['chat_settings']);
                         }
-                        $conversation['chat_settings'] = $chatEntity->toChatSettingsStruct($this->getUser());
+                        $conv['chat_settings'] = $chatEntity->toChatSettingsStruct($this->getUser());
                     }
                 }
 
-                if (!empty($conversation['chat_settings']['pinned_message']) && is_array($conversation['chat_settings']['pinned_message'])) {
-                    $this->sanitizeMessageAttachmentsRecursive($conversation['chat_settings']['pinned_message']);
+                if (!empty($conv['chat_settings']['pinned_message']) && is_array($conv['chat_settings']['pinned_message'])) {
+                    $this->sanitizeMessageAttachmentsRecursive($conv['chat_settings']['pinned_message']);
                 }
-                if (!empty($conversation['pinned_message']) && is_array($conversation['pinned_message'])) {
-                    $this->sanitizeMessageAttachmentsRecursive($conversation['pinned_message']);
-                }
-
-                if (!empty($item['last_message']) && is_array($item['last_message'])) {
-                    $this->sanitizeMessageAttachmentsRecursive($item['last_message']);
+                if (!empty($conv['pinned_message']) && is_array($conv['pinned_message'])) {
+                    $this->sanitizeMessageAttachmentsRecursive($conv['pinned_message']);
                 }
 
-                $this->enrichConversationCanWrite($conversation, $currentUserId);
+                $this->enrichConversationCanWrite($conv, $currentUserId);
+                $finalItems[] = $conv;
             }
-            unset($item);
         }
 
         if ($extended) {
@@ -2829,9 +2858,8 @@ final class Messages extends VKAPIRequestHandler
         }
 
         return [
-            "count"    => (int)($response['count'] ?? 0),
-            "items"    => $response['items'] ?? [],
-            "chats"    => $response['chats'] ?? [],
+            "count"    => (int)($response['count'] ?? count($finalItems)),
+            "items"    => $finalItems,
             "profiles" => $response['profiles'] ?? [],
             "groups"   => $response['groups'] ?? [],
         ];
@@ -3124,6 +3152,19 @@ final class Messages extends VKAPIRequestHandler
                 if (!empty($extGroupIDs)) {
                     $data['groups'] = array_merge($data['groups'] ?? [], $extGroupIDs);
                 }
+            }
+            $isModern = !defined("VKAPI_DECL_VER_MAJOR") || VKAPI_DECL_VER_MAJOR > 5 || (VKAPI_DECL_VER_MAJOR === 5 && (!defined("VKAPI_DECL_VER_MINOR") || VKAPI_DECL_VER_MINOR >= 80));
+            if ($isModern && empty($data['conversations']) && $resolvedPeerId > 0) {
+                try {
+                    $convRes = $this->invoke("messages.getConversationsById", [
+                        "peer_ids" => (string) $resolvedPeerId,
+                        "extended" => "0",
+                    ], $group_id);
+                    if (!empty($convRes['items'])) {
+                        $convItem = $convRes['items'][0];
+                        $data['conversations'] = [$convItem['conversation'] ?? $convItem];
+                    }
+                } catch (\Throwable $e) {}
             }
             $this->hydrateExtendedData($data, $fields);
         }

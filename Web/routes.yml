@@ -297,6 +297,18 @@ routes:
       handler: "Stickers->serveFile"
     - url: "/sticker/{num}/{num}"
       handler: "Stickers->serveFile"
+    - url: "/sticker/{num}/{?stickerFile}"
+      handler: "Stickers->serveFile"
+      placeholders:
+          stickerFile: ".++"
+    - url: "/images/stickers/{num}/backgrounds/{?bgFile}"
+      handler: "Stickers->serveLegacyImage"
+      placeholders:
+          bgFile: ".++"
+    - url: "/images/stickers/{num}/{?stickerFile}"
+      handler: "Stickers->serveLegacyImage"
+      placeholders:
+          stickerFile: ".++"
     - url: "/im"
       handler: "Messenger->index"
     - url: "/im/sel{num}"

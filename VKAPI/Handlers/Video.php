@@ -346,7 +346,9 @@ final class Video extends VKAPIRequestHandler
         string $message = "",
         string $text = "",
         int $reply_to_cid = 0,
-        int $reply_to_comment = 0
+        int $reply_to_comment = 0,
+        int $sticker_id = 0,
+        string $attachments = ""
     ): object|int {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -360,8 +362,21 @@ final class Video extends VKAPIRequestHandler
             $this->fail(100, "One of the parameters specified was missing or invalid: video not found");
         }
 
+        $sticker = null;
+        if ($sticker_id > 0) {
+            $sticker = (new \openvk\Web\Models\Repositories\Stickers())->getSticker($sticker_id);
+            if (!$sticker || $sticker->isDeleted()) {
+                $this->fail(100, "Sticker not found");
+            }
+            if (!$sticker->canBeUsedBy($this->getUser())) {
+                $this->fail(100, "Sticker is not available for you");
+            }
+            $message = "";
+            $text = "";
+        }
+
         $msg = !empty($message) ? $message : $text;
-        if (empty($msg)) {
+        if (empty($msg) && empty($attachments) && $sticker_id <= 0) {
             $this->fail(100, "Required parameter 'message' is missing");
         }
 
@@ -375,6 +390,10 @@ final class Video extends VKAPIRequestHandler
         $comment->setCreated(time());
         $comment->setReply_To($replyTo);
         $comment->save();
+
+        if ($sticker) {
+            $comment->attach($sticker);
+        }
 
         if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
             return (object) [
@@ -393,9 +412,11 @@ final class Video extends VKAPIRequestHandler
         string $message = "",
         string $text = "",
         int $reply_to_cid = 0,
-        int $reply_to_comment = 0
+        int $reply_to_comment = 0,
+        int $sticker_id = 0,
+        string $attachments = ""
     ): object|int {
-        return $this->createComment($video_id, $owner_id, $message, $text, $reply_to_cid, $reply_to_comment);
+        return $this->createComment($video_id, $owner_id, $message, $text, $reply_to_cid, $reply_to_comment, $sticker_id, $attachments);
     }
 
     public function deleteComment(

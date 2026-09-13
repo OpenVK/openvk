@@ -1001,4 +1001,11 @@ final class Newsfeed extends VKAPIRequestHandler
 
         return (object) $result;
     }
+
+    public function getLists() {
+        return (object) [
+            "count" => 0,
+            "items" => [],
+        ];
+    }
 }

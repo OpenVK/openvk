@@ -450,4 +450,28 @@ abstract class OpenVKPresenter extends SimplePresenter
             return false;
         }
     }
+
+    public function onServerError(\Throwable $e): ?string
+    {
+        try {
+            $GLOBALS["showException"] = true;
+            $GLOBALS["exception"] = $e;
+            $userId = Authenticator::i()->getUser();
+            $user = (new Users())->getByChandlerUser($userId);
+
+            if ($user && $user->canSeeTracy() ) {
+                while (ob_get_level()) {
+                    ob_end_clean();
+                }
+
+                http_response_code(500);
+                \Tracy\Debugger::getBlueScreen()->render($e);
+                exit;
+            }
+        } catch (\Throwable $e) {
+            $GLOBALS["showException"] = false;
+        }
+
+        return null;
+    }
 }

@@ -3470,6 +3470,15 @@ a.poll-retract-vote {
     padding: 10px 10px;
 }
 
+#search_form select {
+    height: 100%;
+    width: 30%;
+    position: absolute;
+    right: 0;
+    border-left: unset;
+    text-align: right;
+}
+
 .search_box_button {
     border: 1px solid #616161;
     border-top-color: #575757;

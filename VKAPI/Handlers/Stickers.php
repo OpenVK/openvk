@@ -31,7 +31,10 @@ final class Stickers extends VKAPIRequestHandler
             $data = $pack->toVkApiStruct($this->getUser());
             $stickers = [];
             foreach ($pack->getStickers(1, 100) as $sticker) {
-                $stickers[] = $sticker->toVkApiStruct($this->getUser(), $pack->getId());
+                $item = $sticker->toVkApiStruct($this->getUser(), $pack->getId());
+                $item["sticker_id"] = (int) $sticker->getId();
+                $item["is_allowed"] = true;
+                $stickers[] = $item;
             }
 
             $data["stickers"] = $stickers;
@@ -92,9 +95,14 @@ final class Stickers extends VKAPIRequestHandler
 
         $pack_item = $pack->toVkApiStruct($this->getUser());
 
+        $stickers = [];
         foreach ($pack->getStickers(1, 100) as $sticker) {
-            $pack_item["stickers"][] = $sticker->toVkApiStruct($this->getUser(), $pack->getId());
+            $item = $sticker->toVkApiStruct($this->getUser(), $pack->getId());
+            $item["sticker_id"] = (int) $sticker->getId();
+            $item["is_allowed"] = true;
+            $stickers[] = $item;
         }
+        $pack_item["stickers"] = $stickers;
 
         return (object) $pack_item;
     }
@@ -124,4 +132,43 @@ final class Stickers extends VKAPIRequestHandler
             "pack_id" => $pack->getId(),
         ];
     }
+
+    public function getProducts(
+        string $type = "stickers",
+        string $filters = "",
+        int $extended = 1,
+        int $count = 50,
+        int $offset = 0,
+        $product_ids = "",
+        int $user_id = 0
+    ): object|array {
+        return (new Store($this->getUser(), $this->getPlatform()))
+            ->getProducts($type, $filters, $extended, $count, $offset, $product_ids, $user_id);
+    }
+
+    public function getStockItems(
+        string $type = "stickers",
+        string $section = "",
+        int $extended = 1,
+        int $count = 50,
+        int $offset = 0,
+        string $merchant = ""
+    ): object|array {
+        return (new Store($this->getUser(), $this->getPlatform()))
+            ->getStockItems($type, $section, $extended, $count, $offset, $merchant);
+    }
+
+    public function getStickersKeywords(
+        int $aliases = 1,
+        int $all_products = 1,
+        int $need_stickers = 1,
+        string $stickers_hash = "",
+        string $products_hash = "",
+        int $count = 0,
+        int $user_id = 0
+    ): object {
+        return (new Store($this->getUser(), $this->getPlatform()))
+            ->getStickersKeywords($aliases, $all_products, $need_stickers, $stickers_hash, $products_hash, $count, $user_id);
+    }
 }
+

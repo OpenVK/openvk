@@ -2574,9 +2574,9 @@
     }
 
     .peer-window .peer-side .peer-info {
-        flex-direction: column;
         align-items: center;
     }
+
     .title_insignificant {
         padding: 5px 0px;
         margin: 0px 0px 7px 0px;

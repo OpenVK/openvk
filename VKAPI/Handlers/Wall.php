@@ -1157,7 +1157,7 @@ final class Wall extends VKAPIRequestHandler
         return $response;
     }
 
-    public function createComment(int $owner_id, int $post_id, string $message = "", int $from_group = 0, string $attachments = "", int $reply_to_comment = null)
+    public function createComment(int $owner_id, int $post_id, string $message = "", int $from_group = 0, string $attachments = "", int $reply_to_comment = null, int $sticker_id = 0)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -1175,7 +1175,7 @@ final class Wall extends VKAPIRequestHandler
             $club = (new ClubsRepo())->get(abs($post->getTargetWall()));
         }
 
-        $parsed_attachments  = parseAttachments($attachments, ['photo', 'video', 'note', 'audio', 'doc']);
+        $parsed_attachments  = parseAttachments($attachments, ['photo', 'video', 'note', 'audio', 'doc', 'sticker']);
         $final_attachments   = [];
         foreach ($parsed_attachments as $attachment) {
             if ($attachment && !$attachment->isDeleted() && $attachment->canBeViewedBy($this->getUser()) &&
@@ -1184,7 +1184,19 @@ final class Wall extends VKAPIRequestHandler
             }
         }
 
-        if ((empty($message) && (empty($attachments) || sizeof($final_attachments) < 1))) {
+        if ($sticker_id > 0) {
+            $stk = (new \openvk\Web\Models\Repositories\Stickers())->getSticker($sticker_id);
+            if (!$stk || $stk->isDeleted()) {
+                $this->fail(100, "Sticker not found");
+            }
+            if (!$stk->canBeUsedBy($this->getUser())) {
+                $this->fail(100, "Sticker is not available for you");
+            }
+            $final_attachments[] = $stk;
+            $message = "";
+        }
+
+        if (empty($message) && (empty($attachments) || sizeof($final_attachments) < 1) && $sticker_id <= 0) {
             $this->fail(100, "Required parameter 'message' missing.");
         }
 
@@ -1246,11 +1258,12 @@ final class Wall extends VKAPIRequestHandler
         int $reply_to_cid = 0,
         int $reply_to_comment = 0,
         string $attachments = "",
-        int $from_group = 0
+        int $from_group = 0,
+        int $sticker_id = 0
     ) {
         $msg = !empty($text) ? $text : $message;
         $replyTo = $reply_to_cid ?: ($reply_to_comment ?: null);
-        return $this->createComment($owner_id, $post_id, $msg, $from_group, $attachments, $replyTo);
+        return $this->createComment($owner_id, $post_id, $msg, $from_group, $attachments, $replyTo, $sticker_id);
     }
 
     public function deleteComment(int $comment_id = 0, int $cid = 0, int $owner_id = 0)

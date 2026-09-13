@@ -1660,9 +1660,10 @@ export class FastChats {
                     const convById = await window.OVKAPI.call('messages.getConversationsById', { peer_ids: peerId });
                     if (convById && convById.items && convById.items[0]) {
                         const cItem = convById.items[0];
-                        if (cItem.conversation && cItem.conversation.can_write) {
-                            chat.canWrite = !!cItem.conversation.can_write.allowed;
-                            chat.cantWriteReason = cItem.conversation.can_write.reason;
+                        const conv = cItem.conversation || cItem;
+                        if (conv && conv.can_write) {
+                            chat.canWrite = !!conv.can_write.allowed;
+                            chat.cantWriteReason = conv.can_write.reason;
                             chat.cantWriteText = this.getCantWriteText(chat);
                         }
                     }

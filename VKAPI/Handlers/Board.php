@@ -116,19 +116,31 @@ final class Board extends VKAPIRequestHandler
         return 1;
     }
 
-    public function createComment(int $group_id, int $topic_id, string $message = "", bool $from_group = true)
+    public function createComment(int $group_id, int $topic_id, string $message = "", bool $from_group = true, int $sticker_id = 0, string $attachments = "")
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
-
-        if (empty($message)) {
-            $this->fail(100, "Required parameter 'message' missing.");
-        }
 
         $topic = (new TopicsRepo())->getTopicById($group_id, $topic_id);
 
         if (!$topic || $topic->isDeleted() || $topic->isClosed()) {
             $this->fail(15, "Access denied");
+        }
+
+        $sticker = null;
+        if ($sticker_id > 0) {
+            $sticker = (new \openvk\Web\Models\Repositories\Stickers())->getSticker($sticker_id);
+            if (!$sticker || $sticker->isDeleted()) {
+                $this->fail(100, "Sticker not found");
+            }
+            if (!$sticker->canBeUsedBy($this->getUser())) {
+                $this->fail(100, "Sticker is not available for you");
+            }
+            $message = "";
+        }
+
+        if (empty($message) && empty($attachments) && $sticker_id <= 0) {
+            $this->fail(100, "Required parameter 'message' missing.");
         }
 
         $flags = 0;
@@ -146,6 +158,10 @@ final class Board extends VKAPIRequestHandler
         $comment->setFlags($flags);
 
         $comment->save();
+
+        if ($sticker) {
+            $comment->attach($sticker);
+        }
 
         return $comment->getId();
     }

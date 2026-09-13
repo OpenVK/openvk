@@ -586,19 +586,31 @@ final class Photos extends VKAPIRequestHandler
         return 1;
     }*/
 
-    public function createComment(int $owner_id, int $photo_id, string $message = "", bool $from_group = false)
+    public function createComment(int $owner_id, int $photo_id, string $message = "", bool $from_group = false, int $reply_to_comment = null, int $sticker_id = 0, string $attachments = "")
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
-
-        if (empty($message) && empty($attachments)) {
-            $this->fail(100, "Required parameter 'message' missing.");
-        }
 
         $photo = (new PhotosRepo())->getByOwnerAndVID($owner_id, $photo_id);
 
         if (!$photo || $photo->isDeleted() || !$photo->canBeViewedBy($this->getUser())) {
             $this->fail(15, "Access denied");
+        }
+
+        $sticker = null;
+        if ($sticker_id > 0) {
+            $sticker = (new \openvk\Web\Models\Repositories\Stickers())->getSticker($sticker_id);
+            if (!$sticker || $sticker->isDeleted()) {
+                $this->fail(100, "Sticker not found");
+            }
+            if (!$sticker->canBeUsedBy($this->getUser())) {
+                $this->fail(100, "Sticker is not available for you");
+            }
+            $message = "";
+        }
+
+        if (empty($message) && empty($attachments) && $sticker_id <= 0) {
+            $this->fail(100, "Required parameter 'message' missing.");
         }
 
         $comment = new Comment();
@@ -607,7 +619,12 @@ final class Photos extends VKAPIRequestHandler
         $comment->setTarget($photo->getId());
         $comment->setContent($message);
         $comment->setCreated(time());
+        $comment->setReply_To($reply_to_comment);
         $comment->save();
+
+        if ($sticker) {
+            $comment->attach($sticker);
+        }
 
         return $comment->getId();
     }

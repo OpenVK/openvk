@@ -5,6 +5,12 @@
         <title>An error occurred - {$instance_name}</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, user-scalable=no" />
+    </head>
+    <body id="openvk_error">
+        <!-- OpenVK ERROR REPORT: -->
+        <!-- HTTP {$code}         -->
+        <!-- {$msg}               -->
+
         <style>
             body {
                 background: #f1efed;
@@ -55,6 +61,23 @@
                 height: 97vh;
             }
 
+            #bad_request_message {
+                position: absolute;
+                padding: 0;
+                width: 110px;
+                font-size: 11px;
+                bottom: 166px;
+                right: 40px;
+                display: block;
+                transform: rotate(-1deg);
+                display: none;
+            }
+
+            #bad_request_message p {
+                margin: 0;
+                line-height: 11px;
+            }
+
             @media screen and (max-width: 768px) {
                 main {
                     flex-direction: column;
@@ -62,12 +85,6 @@
                 }
             }
         </style>
-    </head>
-    <body>
-        <!-- OpenVK ERROR REPORT: -->
-        <!-- HTTP {$code}         -->
-        <!-- {$msg}               -->
-
         {if $code == 400}
             <main>
                 <div class="text_left">
@@ -77,7 +94,12 @@
                     <div class="text_mini">Дұрыс емес сұрау</div>
                     <div class="text_mini_light">Solicitud incorrecta</div>
                 </div>
-                <a href="/"><img src="/assets/packages/static/openvk/img/error/400.png" alt="Sowwy :c" title="Art by PELA" id="error"></a>
+                <a href="/" style="position: relative;">
+                    <img src="/assets/packages/static/openvk/img/error/400.png" alt="Sowwy :c" title="Art by PELA" id="error">
+                    <div id="bad_request_message">
+                        <p>{$msg}</p>
+                    </div>
+                </a>
                 <div class="text_right">
                     <div class="text_mini_light">請求錯誤</div>
                     <div class="text_mini">Սխալ հարցում</div>

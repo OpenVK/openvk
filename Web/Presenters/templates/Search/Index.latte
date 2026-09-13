@@ -39,8 +39,9 @@
 
                 <form id="search_form" action="/search" method="get" class="searchBar">
                     <div style="display: flex;width: 100%;position: relative;">
-                        <input class="search_input" name="q" placeholder="{_header_search}" type="search" n:attr="value => $_REQUEST['q'] ?? NULL"  />
-                        <select style="height: 100%;width: 30%;position: absolute;right: 0;" name="section">
+                        <input style="padding-right: 30%;" class="search_input" name="q" placeholder="{_header_search}" type="search" n:attr="value => $_REQUEST['q'] ?? NULL"  />
+                        <select name="section">
+                            <option n:attr="selected => $section == 'main'" value="main"></option>
                             <option n:attr="selected => $section == 'users'" value="users">{_s_by_people}</option>
                             <option n:attr="selected => $section == 'groups'" value="groups">{_s_by_groups}</option>
                             <option n:attr="selected => $section == 'events'" value="events">{_s_by_events}</option>
@@ -59,7 +60,7 @@
                 </form>
 
                 <div class='summaryBar summaryBarFlex padding'>
-                    <div class='summary'>
+                    <div class="summary" n:if="$ref != 'globalfeed'">
                         <b>{tr("results", $count)}</b>
                     </div>
                     <div style="display: flex;" class="sortBar">

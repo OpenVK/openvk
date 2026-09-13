@@ -115,6 +115,18 @@ class Comment extends Post
                 }
             } elseif ($attachment instanceof \openvk\Web\Models\Entities\Video) {
                 $res->attachments[] = $attachment->toVkApiStruct($user);
+            } elseif ($attachment instanceof \openvk\Web\Models\Entities\Audio) {
+                $res->attachments[] = [
+                    'type' => 'audio',
+                    'audio' => $attachment->toVkApiStruct($user),
+                ];
+            } elseif ($attachment instanceof \openvk\Web\Models\Entities\Document) {
+                $res->attachments[] = [
+                    'type' => 'doc',
+                    'doc' => $attachment->toVkApiStruct($user),
+                ];
+            } elseif ($attachment instanceof \openvk\Web\Models\Entities\Messages\Sticker) {
+                $res->attachments[] = $attachment->toApiAttachment($user);
             }
         }
 

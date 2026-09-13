@@ -718,7 +718,8 @@ export class ChatGeneralForm {
             if (!__ || !__.items || __.items.length == 0) {
                 return null;
             }
-            const conv = __.items[0].conversation || {};
+            const rawItem = __.items[0] || {};
+            const conv = rawItem.conversation || rawItem;
             const chatSettings = conv.chat_settings || {};
             const chatData = (__.chats && __.chats.length > 0) ? __.chats[0] : {};
             const peerData = Object.assign({ id: id, type: 'chat' }, chatSettings, chatData);
@@ -745,7 +746,8 @@ export class ChatGeneralForm {
                 try {
                     const convRes = await window.OVKAPI.call('messages.getConversationsById', { 'peer_ids': id });
                     if (convRes && convRes.items && convRes.items.length > 0) {
-                        const conv = convRes.items[0].conversation || {};
+                        const rawItem = convRes.items[0] || {};
+                        const conv = rawItem.conversation || rawItem;
                         if (conv.push_settings) peerData.push_settings = conv.push_settings;
                         if (conv.can_write) peerData.can_write = conv.can_write;
                         peerData._full_conversation = conv;
@@ -763,7 +765,8 @@ export class ChatGeneralForm {
                 try {
                     const convRes = await window.OVKAPI.call('messages.getConversationsById', { 'peer_ids': id });
                     if (convRes && convRes.items && convRes.items.length > 0) {
-                        const conv = convRes.items[0].conversation || {};
+                        const rawItem = convRes.items[0] || {};
+                        const conv = rawItem.conversation || rawItem;
                         if (conv.push_settings) peerData.push_settings = conv.push_settings;
                         if (conv.can_write) peerData.can_write = conv.can_write;
                         peerData._full_conversation = conv;

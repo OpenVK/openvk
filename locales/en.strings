@@ -1833,6 +1833,15 @@
 
 "limit_exceed_exception" = "You're doing this action too often. Try again later.";
 
+/* Server error */
+
+"server_error" = "Server error";
+"server_error_desc" = "We're sorry! The server encountered an internal error and was unable to complete your request. Please try again later.";
+"error_what_do" = "What to do?";
+"error_what_do_back" = "Back to the previous page";
+"error_what_do_reset_themepack" = "Reset themepack";
+"error_what_do_desc" = "When such an error occurs, a log is automatically saved. Please report this error to the server administrator, providing the link, the last action performed, and the time of the incident.";
+
 /* Admin actions */
 
 "login_as" = "Login as $1";

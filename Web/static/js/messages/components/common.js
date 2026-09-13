@@ -1143,8 +1143,9 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
 
                     try {
                         const convById = await window.OVKAPI.call("messages.getConversationsById", { peer_ids: peer.id });
-                        if (convById && convById.items && convById.items[0]?.conversation) {
-                            const cConv = convById.items[0].conversation;
+                        const rawItem = convById?.items?.[0];
+                        const cConv = rawItem ? (rawItem.conversation || rawItem) : null;
+                        if (cConv) {
                             const s = cConv.chat_settings;
                             if (s) {
                                 peer.data.photo_50 = s.photo_50 || s.photo?.photo_50 || "";
@@ -1812,6 +1813,7 @@ export function openChatPermissionsModal(peer) {
     const canChangeAdmins = isOwner || (peer.can && peer.can("change_admins"));
 
     const safeEsc = (s) => (typeof escapeHtml === 'function' ? escapeHtml(s) : String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'));
+    const safeEsctr = (k) => safeEsc(typeof tr === 'function' ? tr(k) : k);
 
     const modal = new CMessageBox({
         title: modalTitle,
@@ -1978,6 +1980,7 @@ export function openChatMuteModal(peer) {
     const modalTitle = tr('chat_mute_title');
     const isMuted = peer.isMuted ? peer.isMuted() : false;
     const safeEsc = (s) => (typeof escapeHtml === 'function' ? escapeHtml(s) : String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'));
+    const safeEsctr = (k) => safeEsc(typeof tr === 'function' ? tr(k) : k);
 
     const modal = new CMessageBox({
         title: modalTitle,
