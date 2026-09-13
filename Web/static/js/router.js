@@ -439,12 +439,16 @@ function toDesktopVersion() {
 }
 
 $(document).on('click', 'a', async (e) => {
-    if(e.defaultPrevented) {
+    if((typeof e.isDefaultPrevented === 'function' && e.isDefaultPrevented()) || e.defaultPrevented || (e.originalEvent && e.originalEvent.defaultPrevented)) {
         console.log('AJAX | Skipping because default is prevented')
         return
     }
 
     const target = u(e.target).closest('a')
+    if(target.attr('data-no-ajax') || target.attr('data-modal')) {
+        console.log('AJAX | Skipped because data-no-ajax/data-modal')
+        return
+    }
     const dom_url = target.attr('href')
     const id = target.attr('id')
     let url = target.nodes[0].href

@@ -1850,7 +1850,7 @@
 "stickers_pack_author_placeholder" = "Имя автора";
 "stickers_pack_unlisted" = "Скрыть из каталога (доступ только по ссылке)";
 "stickers_upload_title" = "Стикеры в наборе";
-"stickers_upload_hint" = "Поддерживаются PNG, JPG, WebP, SVG и Lottie JSON. Изображения автоматически конвертируются в WebP трёх размеров (128px, 256px, 512px).";
+"stickers_upload_hint" = "Поддерживаются PNG, JPG, WebP и Lottie JSON. Изображения автоматически конвертируются в WebP трёх размеров (128px, 256px, 512px).";
 "stickers_select_files" = "Выбрать файлы";
 "stickers_cover" = "Обложка";
 "stickers_set_cover" = "Сделать обложкой";

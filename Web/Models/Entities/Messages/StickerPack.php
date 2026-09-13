@@ -326,12 +326,13 @@ class StickerPack extends RowModel
         // If previously bought or user is the author, install without deducting coins
         if ($isOwner || $isPreviousPurchase) {
             if ($existing) {
-                $existing->update(["purchased" => 1]);
+                $existing->update(["purchased" => 1, "created" => time()]);
             } else {
                 DB::i()->getContext()->table("sticker_purchases")->insert([
                     "user"        => $user->getId(),
                     "stickerpack" => $this->getId(),
                     "purchased"   => 1,
+                    "created"     => time(),
                 ]);
             }
             return true;
@@ -351,12 +352,13 @@ class StickerPack extends RowModel
         }
 
         if ($existing) {
-            $existing->update(["purchased" => 1]);
+            $existing->update(["purchased" => 1, "created" => time()]);
         } else {
             DB::i()->getContext()->table("sticker_purchases")->insert([
                 "user"        => $user->getId(),
                 "stickerpack" => $this->getId(),
                 "purchased"   => 1,
+                "created"     => time(),
             ]);
         }
 
@@ -415,12 +417,13 @@ class StickerPack extends RowModel
             ->fetch();
 
         if ($existing) {
-            $existing->update(["purchased" => 1]);
+            $existing->update(["purchased" => 1, "created" => time()]);
         } else {
             DB::i()->getContext()->table("sticker_purchases")->insert([
-                "user"       => $to->getId(),
+                "user"        => $to->getId(),
                 "stickerpack" => $this->getId(),
-                "purchased"  => 1,
+                "purchased"   => 1,
+                "created"     => time(),
             ]);
         }
     }

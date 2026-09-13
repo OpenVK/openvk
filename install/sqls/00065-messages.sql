@@ -74,7 +74,8 @@ CREATE TABLE IF NOT EXISTS `sticker_purchases` (
   `id` bigint(20) unsigned NOT NULL,
   `user` bigint(20) unsigned NOT NULL,
   `stickerpack` bigint(20) unsigned NOT NULL,
-  `purchased` tinyint(1) NOT NULL DEFAULT '1'
+  `purchased` tinyint(1) NOT NULL DEFAULT '1',
+  `created` bigint(20) unsigned NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 ALTER TABLE `stickers`
@@ -97,7 +98,8 @@ ALTER TABLE `stickerpack_relations`
 ALTER TABLE `sticker_purchases`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user` (`user`),
-  ADD KEY `stickerpack` (`stickerpack`);
+  ADD KEY `stickerpack` (`stickerpack`),
+  ADD KEY `created` (`created`);
 
 ALTER TABLE `stickers`
   MODIFY `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT;

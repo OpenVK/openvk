@@ -65,7 +65,7 @@
                 {var $isBought = in_array($pack->getId(), $boughtPackIds ?? [], true)}
                 {var $cardUrl = $act === 'author' ? ('/stickers/edit/' . $pack->getId()) : ('/stickers/' . $pack->getSlug())}
                 <div class="stickers_pack_card">
-                    <a href="{$cardUrl}" class="stickers_pack_thumb" {if $act !== 'author'}onclick="openStickerPackModal({$pack->getSlug()}, event);"{/if}>
+                    <a href="{$cardUrl}" class="stickers_pack_thumb" {if $act !== 'author'}onclick="openStickerPackModal({$pack->getSlug()}, event); return false;" data-no-ajax="1"{/if}>
                         {if $pack->getMainSticker()}
                             {if $pack->getMainSticker()->getFormat($pack->getId()) === 'lottie'}
                                 <div class="stickers_pack_thumb_lottie" data-anim-url="{$pack->getMainSticker()->getAnimationUrl($pack->getId())}"></div>
@@ -78,7 +78,7 @@
                     </a>
 
                     <div class="stickers_pack_name">
-                        <a href="{$cardUrl}" title="{$pack->getName()}" {if $act !== 'author'}onclick="openStickerPackModal({$pack->getSlug()}, event);"{/if}>{$pack->getName()}</a>
+                        <a href="{$cardUrl}" title="{$pack->getName()}" {if $act !== 'author'}onclick="openStickerPackModal({$pack->getSlug()}, event); return false;" data-no-ajax="1"{/if}>{$pack->getName()}</a>
                     </div>
 
                     <div class="stickers_pack_author" n:if="$pack->getAuthor() || $pack->getAuthorUrl()">
@@ -109,19 +109,19 @@
                             </div>
                         {else}
                             {if $isInstalled}
-                                <a href="/stickers/{$pack->getSlug()}" class="stickers_pack_status_purchased" onclick="openStickerPackModal({$pack->getSlug()}, event);">
+                                <a href="/stickers/{$pack->getSlug()}" class="stickers_pack_status_purchased" onclick="openStickerPackModal({$pack->getSlug()}, event); return false;" data-no-ajax="1">
                                     {_stickers_purchased_label}
                                 </a>
                             {elseif $isBought}
-                                <a href="/stickers/{$pack->getSlug()}" class="stickers_pack_price_free" onclick="openStickerPackModal({$pack->getSlug()}, event);">
+                                <a href="/stickers/{$pack->getSlug()}" class="stickers_pack_price_free" onclick="openStickerPackModal({$pack->getSlug()}, event); return false;" data-no-ajax="1">
                                     {_add}
                                 </a>
                             {elseif $pack->getPrice() > 0}
-                                <a href="/stickers/{$pack->getSlug()}" class="stickers_pack_price_paid" onclick="openStickerPackModal({$pack->getSlug()}, event);">
+                                <a href="/stickers/{$pack->getSlug()}" class="stickers_pack_price_paid" onclick="openStickerPackModal({$pack->getSlug()}, event); return false;" data-no-ajax="1">
                                     {tr('coins', $pack->getPrice())}
                                 </a>
                             {else}
-                                <a href="/stickers/{$pack->getSlug()}" class="stickers_pack_price_free" onclick="openStickerPackModal({$pack->getSlug()}, event);">
+                                <a href="/stickers/{$pack->getSlug()}" class="stickers_pack_price_free" onclick="openStickerPackModal({$pack->getSlug()}, event); return false;" data-no-ajax="1">
                                     {_stickers_free}
                                 </a>
                             {/if}
@@ -143,6 +143,13 @@
                 </div>
             {/foreach}
         </div>
+
+        {include "../components/paginator.latte", conf => (object) [
+            "page" => $page,
+            "count" => $packsCount,
+            "amount" => sizeof($packs),
+            "perPage" => $perPage
+        ]}
     {else}
         <div style="margin: 0 -10px -10px;">
             {include "../components/nothing.latte"}

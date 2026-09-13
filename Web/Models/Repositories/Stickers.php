@@ -80,12 +80,31 @@ class Stickers
 
     public function getPacks(int $page, ?int $perPage = null, &$count = null, ?string $section = null): \Traversable
     {
-        $packs = $this->getPacksTable()
-            ->where("deleted", false)
-            ->where("unlisted", false);
+        $section = $section ?? "popular";
 
-        if ($section === "free") {
-            $packs = $packs->where("price", 0);
+        if ($section === "all") {
+            $packs = $this->getPacksTable()
+                ->where("deleted", false)
+                ->where("unlisted", false)
+                ->order("id ASC");
+        } elseif ($section === "free") {
+            $monthAgo = time() - 30 * 86400;
+            $packs = $this->getPacksTable()
+                ->select("stickerpacks.*, COUNT(CASE WHEN :sticker_purchases.purchased IN (1, 2) AND :sticker_purchases.created >= ? THEN 1 END) AS month_purchases, COUNT(CASE WHEN :sticker_purchases.purchased IN (1, 2) THEN 1 END) AS purchases_count", $monthAgo)
+                ->where("deleted", false)
+                ->where("unlisted", false)
+                ->where("price", 0)
+                ->group("stickerpacks.id")
+                ->order("month_purchases DESC, purchases_count DESC, id DESC");
+        } else {
+            $monthAgo = time() - 30 * 86400;
+            $packs = $this->getPacksTable()
+                ->select("stickerpacks.*, COUNT(CASE WHEN :sticker_purchases.purchased IN (1, 2) AND :sticker_purchases.created >= ? THEN 1 END) AS month_purchases, COUNT(CASE WHEN :sticker_purchases.purchased IN (1, 2) THEN 1 END) AS purchases_count", $monthAgo)
+                ->where("deleted", false)
+                ->where("unlisted", false)
+                ->where("price > ?", 0)
+                ->group("stickerpacks.id")
+                ->order("month_purchases DESC, purchases_count DESC, id DESC");
         }
 
         $count = $packs->count("*");
@@ -200,6 +219,7 @@ class Stickers
     {
         $packs = $this->getPacksTable()
             ->where("deleted", false)
+            ->where("unlisted", false)
             ->where("name LIKE ?", "%$query%");
 
         foreach ($packs as $pack) {

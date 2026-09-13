@@ -52,7 +52,8 @@ final class Stickers extends VKAPIRequestHandler
         $server_url = ovk_scheme(true) . ($_SERVER["HTTP_HOST"] ?? "");
         $repo       = new StickersRepo();
 
-        $packs = $repo->getPacks(1, $count);
+        $total = 0;
+        $packs = $repo->getPacks(1, PHP_INT_MAX, $total, "all");
 
         $items = [];
         $i = 0;
@@ -62,12 +63,15 @@ final class Stickers extends VKAPIRequestHandler
                 continue;
             }
 
+            if (count($items) >= $count) {
+                break;
+            }
+
             $items[] = $pack->toVkApiStruct($this->getUser());
             $i++;
         }
 
-        $count = iterator_to_array($repo->getPacks(1, PHP_INT_MAX));
-        return $this->generateItems(sizeof($count), $items);
+        return $this->generateItems($total, $items);
     }
 
     public function getFrom(int $stickerpack_id): object

@@ -1360,10 +1360,12 @@ window._activeStickerModal = null;
 window._activeStickerModalSlug = null;
 
 async function openStickerPackModal(slugOrId, event) {
-    if (event && typeof event.preventDefault === 'function') {
-        event.preventDefault();
+    if (event) {
+        if (typeof event.preventDefault === 'function') event.preventDefault();
+        if (typeof event.stopPropagation === 'function') event.stopPropagation();
+        if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
     }
-    if (!slugOrId) return;
+    if (!slugOrId) return false;
 
     if (window._activeStickerModal && window._activeStickerModalSlug === String(slugOrId)) {
         return;

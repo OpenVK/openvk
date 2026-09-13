@@ -36,6 +36,10 @@ final class StickersPresenter extends OpenVKPresenter
         $section = (string) ($this->queryParam("section") ?? "popular");
         $q       = trim((string) ($this->queryParam("q") ?? ""));
 
+        if (!in_array($section, ["popular", "free", "all"], true)) {
+            $section = "popular";
+        }
+
         if ($act === "settings" && !$this->user->identity) {
             $this->redirect("/login");
             return;
@@ -54,12 +58,21 @@ final class StickersPresenter extends OpenVKPresenter
         }
 
         $page       = (int) ($this->queryParam("p") ?? 1);
+        if ($page < 1) {
+            $page = 1;
+        }
+
+        $perPage    = (int) ($this->queryParam("count") ?? 20);
+        if ($perPage < 1) {
+            $perPage = 20;
+        }
+
         $packsCount = 0;
         $packs      = [];
 
         if ($act === "author") {
             if ($this->user->identity) {
-                $packs = iterator_to_array($this->stickers->getCreatedPacks($this->user->identity, $page, 20, $packsCount));
+                $packs = iterator_to_array($this->stickers->getCreatedPacks($this->user->identity, $page, $perPage, $packsCount));
             }
         } elseif ($act === "settings") {
             if ($_SERVER["REQUEST_METHOD"] === "POST" && $this->postParam("action") === "uninstall") {
@@ -79,17 +92,20 @@ final class StickersPresenter extends OpenVKPresenter
             }
 
             if ($this->user->identity) {
-                $packs = iterator_to_array($this->stickers->getMyPacks($this->user->identity, $page, 20, $packsCount));
+                $packs = iterator_to_array($this->stickers->getMyPacks($this->user->identity, $page, $perPage, $packsCount));
             }
         } else {
             if ($q !== "") {
                 $packs      = iterator_to_array($this->stickers->find($q));
                 if ($section === "free") {
                     $packs = array_values(array_filter($packs, fn($p) => $p->getPrice() === 0));
+                } elseif ($section === "popular") {
+                    $packs = array_values(array_filter($packs, fn($p) => $p->getPrice() > 0));
                 }
                 $packsCount = count($packs);
+                $packs      = array_slice($packs, ($page - 1) * $perPage, $perPage);
             } else {
-                $packs = iterator_to_array($this->stickers->getPacks($page, 20, $packsCount, $section));
+                $packs = iterator_to_array($this->stickers->getPacks($page, $perPage, $packsCount, $section));
             }
         }
 
@@ -113,6 +129,7 @@ final class StickersPresenter extends OpenVKPresenter
         $this->template->section          = $section;
         $this->template->q                = $q;
         $this->template->page             = $page;
+        $this->template->perPage          = $perPage;
         $this->template->packs            = $packs;
         $this->template->packsCount       = $packsCount;
         $this->template->installedPackIds = $installedPackIds;

@@ -226,7 +226,7 @@ final class Store extends VKAPIRequestHandler
                 $items[] = $this->formatProduct($pack, (bool) $extended);
             }
         } else {
-            $allPacks = iterator_to_array($repo->getPacks(1, PHP_INT_MAX, $totalCount));
+            $allPacks = iterator_to_array($repo->getPacks(1, PHP_INT_MAX, $totalCount, "all"));
             $slice = array_slice($allPacks, $offset, $count);
             foreach ($slice as $pack) {
                 $items[] = $this->formatProduct($pack, (bool) $extended);
@@ -251,7 +251,11 @@ final class Store extends VKAPIRequestHandler
         $totalCount = 0;
         $page = (int) floor($offset / max($count, 1)) + 1;
 
-        $secParam = ($section === "free") ? "free" : null;
+        $secParam = match ($section) {
+            "free" => "free",
+            "all", "catalog" => "all",
+            default => "popular",
+        };
         $packs = iterator_to_array($repo->getPacks(1, PHP_INT_MAX, $totalCount, $secParam));
 
         $slice = array_slice($packs, $offset, $count);
