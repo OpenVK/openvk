@@ -201,6 +201,7 @@ INSERT INTO albums (id, owner, name, description, access_pragma, special_type, c
 UPDATE profiles SET notification_offset = @ts_base - @ts_hour WHERE id = 2;
 
 -- Migration history (mark all migrations as applied so upgrade command is no-op)
+-- FIXME: remove the need to update this manually every time new migration is added
 INSERT INTO ovk_upgrade_history (`level`, `timestamp`, `operator`) VALUES
 (0,  @ts_base - 365 * @ts_day, 'test-seed'),
 (1,  @ts_base - 365 * @ts_day, 'test-seed'),
@@ -267,6 +268,7 @@ INSERT INTO ovk_upgrade_history (`level`, `timestamp`, `operator`) VALUES
 (62, @ts_base - 365 * @ts_day, 'test-seed'),
 (63, @ts_base - 365 * @ts_day, 'test-seed'),
 (65, @ts_base - 365 * @ts_day, 'test-seed');
+(66, @ts_base - 365 * @ts_day, 'test-seed');
 
 -- Photos for Alice (profile id = 2, album id = 1)
 INSERT INTO photos (id, owner, virtual_id, created, edited, hash, deleted, description) VALUES
