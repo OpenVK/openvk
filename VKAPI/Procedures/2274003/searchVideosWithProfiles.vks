@@ -1,0 +1,10 @@
+return API.video.search({
+    "q": Args.q,
+    "offset": Args.offset,
+    "count": Args.count,
+    "hd": Args.hd,
+    "filters": Args.filters,
+    "adult": Args.adult,
+    "sort": Args.sort,
+    "extended": 1
+});

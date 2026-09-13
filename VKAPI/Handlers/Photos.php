@@ -327,6 +327,7 @@ final class Photos extends VKAPIRequestHandler
             if (!$owner || !$owner->canBeViewedBy($this->getUser())) {
                 $this->fail(15, "Access denied");
             }
+
             if ($owner_id > 0 && !$owner->getPrivacyPermission('photos.read', $this->getUser())) {
                 $this->fail(15, "Access denied");
             }

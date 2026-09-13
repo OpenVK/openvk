@@ -1,0 +1,5 @@
+return {
+    "catalog": [],
+    "reqs": {"count": 0, "items": [], "profiles": [], "apps": []},
+    "act": {"count": 0, "items": [], "profiles": [], "apps": []}
+};

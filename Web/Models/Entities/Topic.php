@@ -105,7 +105,7 @@ class Topic extends Postable
     {
         $res = (object) [];
 
-        $res->id         = $this->getId();
+        $res->id         = $this->getVirtualId();
         $res->title      = $this->getTitle();
         $res->created    = $this->getPublicationTime()->timestamp();
 

@@ -1,0 +1,36 @@
+var count = Args.count ? Args.count : 20;
+var offset = Args.offset ? Args.offset : 0;
+
+var members = API.groups.getMembers({
+    "group_id": Args.group_id,
+    "offset": offset,
+    "count": count,
+    "fields": Args.fields,
+    "filter": Args.filter,
+    "sort": Args.sort,
+    "q": Args.q
+});
+
+var admins = API.groups.getMembers({
+    "group_id": Args.group_id,
+    "filter": "managers",
+    "fields": "role"
+});
+
+var adminItems = admins && admins.items ? admins.items : [];
+var i = 0;
+while (i < adminItems.length) {
+    if (!adminItems[i].role) {
+        adminItems[i].role = "admin";
+    }
+    i = i + 1;
+}
+
+var group = API.groups.getById({"group_id": Args.group_id, "fields": "contacts"})[0];
+
+return {
+    "count": members && members.count ? members.count : 0,
+    "items": members && members.items ? members.items : [],
+    "admins": adminItems,
+    "contacts": group && group.contacts ? group.contacts : []
+};

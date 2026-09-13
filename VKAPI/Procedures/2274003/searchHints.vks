@@ -1,0 +1,28 @@
+var res = [];
+if (Args.q) {
+    var users = API.users.search({
+        "q": Args.q,
+        "count": Args.limit ? Args.limit : 10,
+        "fields": "photo_50,photo_100,photo_200"
+    });
+    if (users && users.items) {
+        var i = 0;
+        while (i < users.items.length) {
+            var u = users.items[i];
+            res.push({
+                "type": "profile",
+                "description": "",
+                "profile": {
+                    "id": u.id,
+                    "first_name": u.first_name,
+                    "last_name": u.last_name,
+                    "photo_rec": u.photo_50 ? u.photo_50 : "",
+                    "photo_medium_rec": u.photo_100 ? u.photo_100 : "",
+                    "online": u.online ? u.online : 0
+                }
+            });
+            i = i + 1;
+        }
+    }
+}
+return res;

@@ -1,0 +1,13 @@
+var placeId = Args.place_id ? Args.place_id : 1;
+return {
+    "place": {
+        "id": placeId,
+        "title": "Место",
+        "latitude": 0.0,
+        "longitude": 0.0,
+        "checkins": 0,
+        "address": ""
+    },
+    "user_photos": [],
+    "group": null
+};

@@ -384,10 +384,13 @@ abstract class OpenVKPresenter extends SimplePresenter
             $theme = $this->user->identity->getTheme();
         }
 
-        $this->template->theme = $theme;
-        if (!is_null($theme) && $theme->overridesTemplates()) {
+        if (!is_null($theme) && $theme->isEnabled() && $theme->overridesTemplates()) {
             $this->template->_templatePath = $theme->getBaseDir() . "/tpl";
+        } elseif (!is_null($theme) && !$theme->isEnabled()) {
+            $theme = null;
+            Session::i()->set("_sessionTheme", "ovk");
         }
+        $this->template->theme = $theme;
 
         if (!is_null(Session::i()->get("_error"))) {
             $this->template->flashMessage = json_decode(Session::i()->get("_error"));

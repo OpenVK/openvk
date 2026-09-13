@@ -1039,6 +1039,9 @@
 "playlists_club" = "Group's playlists";
 "change_cover" = "Change cover";
 "playlist_cover" = "Playlist cover";
+"add_audio_verb" = "Add audios";
+
+"add_audio_to_playlist_description" = "The &quot;Add audios&quot; button displays songs that have already been uploaded. If you want to upload new music to a playlist and automatically link it to the songs, click the &quot;Upload Audio&quot; button after creating the playlist.";
 
 "minutes_count_zero" = "Lasts no minutes";
 "minutes_count_one" = "Lasts one minute";

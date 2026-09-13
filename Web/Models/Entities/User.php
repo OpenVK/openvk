@@ -617,6 +617,10 @@ class User extends RowModel
 
     public function getPrivacyPermission(string $permission, ?User $user = null): bool
     {
+        if ($this->isDeleted() || $this->isBanned()) {
+            return false;
+        }
+
         $permStatus = $this->getPrivacySetting($permission);
         if (!$user) {
             return $permStatus === User::PRIVACY_EVERYONE;
@@ -1102,64 +1106,12 @@ class User extends RowModel
     public function getOnlinePlatform(bool $forAPI = false): ?string
     {
         $platform = $this->getRecord()->client_name;
-        if ($forAPI) {
-            switch ($platform) {
-                case 'openvk_native':
-                case 'openvk_flux_android':
-                case 'openvk_refresh_android':
-                case 'openvk_legacy_android':
-                case 'Kate Mobile':
-                case 'VK for Android':
-                    return 'android';
-                    break;
-
-                case 'openvk_native_ios':
-                case 'openvk_ios':
-                case 'openvk_legacy_ios':
-                case 'VK for iOS':
-                    return 'iphone';
-                    break;
-
-                case 'vika_touch': // кика хохотач ахахахаххахахахахах
-                case 'vk4me':
-                    return 'mobile';
-                    break;
-
-                case null:
-                    return null;
-                    break;
-
-                default:
-                    return 'api';
-                    break;
-            }
-        } else {
-            return $platform;
-        }
+        return $forAPI ? \openvk\VKAPI\ClientRegistry::getPlatformForApi($platform) : $platform;
     }
 
     public function getOnlinePlatformDetails(): array
     {
-        $clients = simplexml_load_file(OPENVK_ROOT . "/data/clients.xml");
-
-        foreach ($clients as $client) {
-            if ($client['tag'] == $this->getOnlinePlatform()) {
-                return [
-                    "tag"  => $client['tag'],
-                    "name" => $client['name'],
-                    "url"  => $client['url'],
-                    "img"  => $client['img'],
-                ];
-                break;
-            }
-        }
-
-        return [
-            "tag"  => $this->getOnlinePlatform(),
-            "name" => null,
-            "url"  => null,
-            "img"  => null,
-        ];
+        return \openvk\VKAPI\ClientRegistry::getDetails($this->getOnlinePlatform());
     }
 
     public function prefersNotToSeeRating(): bool
@@ -1586,6 +1538,10 @@ class User extends RowModel
 
             if ($user->isAdmin() && !(OPENVK_ROOT_CONF['openvk']['preferences']['blacklists']['applyToAdmins'] ?? true)) {
                 return true;
+            }
+
+            if ($this->isDeleted() || $this->isBanned()) {
+                return false;
             }
 
             if ($blacklist_check && ($this->isBlacklistedBy($user) || $user->isBlacklistedBy($this))) {

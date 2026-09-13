@@ -1,0 +1,63 @@
+var fields = Args.fields;
+if (!fields) {
+    fields = "photo_100,photo_50,exports,country,sex,status,bdate,first_name_gen,last_name_gen,verified";
+}
+
+var me = API.users.get({"fields": fields})[0];
+var counters = {
+    "friends": 0,
+    "messages": 0,
+    "photos": 0,
+    "videos": 0,
+    "groups": 0,
+    "notifications": 0,
+    "sdk": 0,
+    "app_requests": 0
+};
+
+var c = API.account.getCounters();
+if (c) {
+    if (c.friends) { counters.friends = c.friends; }
+    if (c.messages) { counters.messages = c.messages; }
+    if (c.photos) { counters.photos = c.photos; }
+    if (c.videos) { counters.videos = c.videos; }
+    if (c.groups) { counters.groups = c.groups; }
+    if (c.notifications) { counters.notifications = c.notifications; }
+}
+
+var info = {
+    "country": "RU",
+    "https_required": 0,
+    "intro": 0,
+    "lang": 0,
+    "support_url": "https://vk.com/support"
+};
+
+var newsfeed = {
+    "lists": [],
+    "sections": [],
+    "feed_type": "top",
+    "refresh_timeout_recent": 600000,
+    "refresh_timeout_top": 600000,
+    "refresh_timeout_recommended": 600000,
+    "items": [],
+    "profiles": [],
+    "groups": []
+};
+
+var t = API.utils.getServerTime();
+
+return {
+    "profile": me,
+    "info": info,
+    "counters": counters,
+    "newsfeed": newsfeed,
+    "time": t ? t : 0,
+    "allow_buy_votes": 1,
+    "ads_stop_list": [],
+    "show_html_games": 0,
+    "has_new_items": 0,
+    "use_vigo": false,
+    "vigo_connect_timeout": 1000,
+    "vigo_read_timeout": 1000
+};

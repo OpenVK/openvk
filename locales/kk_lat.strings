@@ -29,7 +29,7 @@
 "access_recovery_info" = "Qupıyasözińizdi umıtıp qaldıńız ba? Wayımdamańız, tömende derekterińizdi engizseńiz, biz sizge kiriwdi qalpına keltiriw nusqawlığın jiberemiz.";
 "access_recovery_info_2" = "Jańa qupıyasözińizdi engizińiz. Sodan keyin barlıq belsendi seanstar ayaqtalıp, kiriw tokenderi joyıladı.";
 "reset_password" = "Qupıyasözdi özgertiw";
-"2fa_code_2" = "2FA kodı";
+"2fa_code_2" = "Eki faktorlı rastaw kodı";
 "password_successfully_reset" = "Qupıyasözińiz sätti özgertildi.";
 "password_reset_email_sent" = "Eger bul pocta tirkelgen bolsa, oğan nusqaw hat keledi.";
 "password_reset_error" = "Qupıyasözdi qalpına keltiriw kezinde qate orın aldı.";
@@ -40,8 +40,8 @@
 "email_rate_limit_error" = "Bul äreketti tım jiyi orındawğa bolmaydı.";
 "email_verify_success" = "Poctańız rastaldı. Saytta köńildi waqıt ötkiziwińizge tilektespiz!";
 "registration_disabled_info" = "Äzirce jańa tirkelgi qurıwğa bolmaydı. Eger dosıńız osı saytta tirkelgen bolsa, odan caqırıw siltemesin surap körińiz.";
-"registration_closed" = "Tirkeliw jabıq";
-"invites_you_to" = "<strong>$1</strong> sizdi $2 jelisine caqıradı.";
+"registration_closed" = "Tirkeliw jabıq.";
+"invites_you_to" = "<strong>$1</strong> sizdi $2 jelisine caqıradı";
 "register_meta_desc" = "$1 jelisine tirkelińiz!";
 "register_referer_meta_title" = "$1 sizdi $2 jelisine caqıradı!";
 "register_referer_meta_desc" = "$1 jäne basqa da paydalanıwcılarmen $2 jelisinde qosılıńız!";
@@ -73,8 +73,8 @@
 "additional_information" = "Qosımca aqparat";
 "nickname" = "Laqap at";
 "online" = "Jelide";
-"was_online" = "Jelide bolğan kezi: ";
-"was_online_m" = "Jelide bolğan kezi: ";
+"was_online" = "jelide bolğan kezi:";
+"was_online_m" = "jelide bolğan kezi:";
 /* For male and female */
 
 "years_zero" = "0 jasta";
@@ -94,18 +94,18 @@
 "relationship_0" = "tańdalmağan";
 "relationship_1" = "Boydaq";
 "relationship_1_fem" = "Turmıs qurmağan";
-"relationship_2" = "Mına kisimen";
-"relationship_2_prefix" = "kezdesip jür:";
-"relationship_3" = "Mına kisige";
-"relationship_3_prefix" = "atastırılğan:";
-"relationship_4" = "Mına kisige";
-"relationship_4_prefix" = "üylengen:";
-"relationship_5" = "Mına kisimen";
-"relationship_5_prefix" = "azamattıq nekede:";
-"relationship_6" = "Mına kisige";
-"relationship_6_prefix" = "ğacıq:";
-"relationship_7" = "Mına kisimen";
-"relationship_7_prefix" = "qarım-qatınası kürdeli:";
+"relationship_2" = "Kezdesip jür";
+"relationship_2_prefix" = ",";
+"relationship_3" = "Atastırılğan";
+"relationship_3_prefix" = ",";
+"relationship_4" = "Üylengen";
+"relationship_4_prefix" = ",";
+"relationship_5" = "Azamattıq nekede";
+"relationship_5_prefix" = ",";
+"relationship_6" = "Ğacıq";
+"relationship_6_prefix" = ",";
+"relationship_7" = "Qarım-qatınası kürdeli";
+"relationship_7_prefix" = ",";
 "relationship_8" = "Belsendi izdewde";
 
 "politViews" = "Sayasıy közqarastar";
@@ -129,10 +129,10 @@
 "personal_information" = "Jeke aqparat";
 "interests" = "Müddeler";
 "additional" = "Qosımca";
-"additional_fields_description" = "Bul jerge özińiz tuwralı qosımca mälimet qosıwğa boladı. Mısalı, älewmettik jelilerdegi paraqcalarıńızğa silteme nemese qızığıwcılıqtarıńızdı jazsańız boladı. Eń köbi $1 öris qosıwğa ruqsat.";
+"additional_fields_description" = "Munda özińiz jaylı qosımca mälimet qosa alasız. Mısalı, basqa äljelilerdegi paraqcańızğa siltemeler, ne qızığıwcılıqtarıńızdı terip jazsańız boladı. Eń köbi $1 öris qosıwğa ruqsat.";
 "additional_field_name" = "Atawı";
 "additional_field_text" = "Mätini";
-"additional_field_place" = "Qay bölimge qosıw";
+"additional_field_place" = "Bölim";
 "additional_field_place_contacts" = "Baylanıs";
 "additional_field_place_interests" = "Müddeler";
 
@@ -151,7 +151,7 @@
 
 "information_about" = "Özi tuwralı";
 "updated_at" = "Jańartılğan küni: $1";
-"user_banned" = "Ökinicke oray biz <b>$1</b> attı kisiniń paraqcasın buğattawğa mäjbür boldıq.";
+"user_banned" = "Ökinicke qaray, biz <b>$1</b> attı kisiniń paraqcasın buğattawğa mäjbür boldıq.";
 "user_banned_comment" = "Moderatordıń pikiri:";
 
 "closed_page" = "Jabıq paraqca";
@@ -337,8 +337,8 @@
 "create_group" = "Top qurıw";
 "group_managers" = "Menejerler";
 "group_type" = "Toptıń tiypi";
-"group_type_open" = "Bul acıq top, yağnıy oğan ärkim kire aladı.";
-"group_type_closed" = "Bul jabıq top, oğan kiriw ücin ötinim jazıwıńız qajet.";
+"group_type_open" = "Bul acıq top. Oğan ärkim qosıla aladı.";
+"group_type_closed" = "Bul jabıq top. Oğan qosılıw ücin, ötinim jazıwıńız qajet.";
 "creator" = "Qurğan";
 "administrators" = "Äkimciler";
 "add_to_left_menu" = "Sol jaq mäzirge qosıw";
@@ -507,7 +507,7 @@
 "too_many_attachments" = "Tirkemeler tım köp.";
 
 "drag_files_here" = "Fayldardı osında süyreńiz";
-"only_images_accepted" = "\"$1\" faylı — süwret nemese beyne emes.";
+"only_images_accepted" = "\"$1\" faylı süwret emes.";
 "max_filesize" = "Fayldıń eń ülken ölcemi — $1 MB";
 
 "uploading_photos_from_computer" = "Süwretterdi kompyuterden jüktep salıw";
@@ -529,7 +529,7 @@
 "is_x_photos_other" = "Barlığı $1 süwret.";
 
 "all_photos" = "Barlıq süwret";
-"error_uploading_photo" = "Süwretti jüktep salıw sätsiz ayaqtaldı. Qate tuwralı habarlama: ";
+"error_uploading_photo" = "Süwretti jüktep salıw sätsiz ayaqtaldı";
 "too_many_photos" = "Süwretter tım köp.";
 
 "photo_x_from_y" = "$2 icindegi $1 süwret";
@@ -717,8 +717,8 @@
 "profile_deactivated_info" = "Bul paraqca joyılğan.<br/>Aqparat qoljetimsiz.";
 "share_with_friends" = "Dostarmen bölisiw";
 "end_all_sessions" = "Barlıq sessiyalardı ayaqtaw";
-"end_all_sessions_description" = "Barlıq qurılğıda $1 jelisinen cıqqıńız kelse, tömendegi tüymeni basıńız";
-"end_all_sessions_done" = "Barlıq seanstar, sonıń icinde uyalı qosımcalar ayaqtaldı";
+"end_all_sessions_description" = "Barlıq qurılğıda $1 jelisinen cıqqıńız kelse, tömendegi tüymeni basıńız.";
+"end_all_sessions_done" = "Barlıq seanstar, sonıń icinde uyalı qosımcalar ayaqtaldı.";
 "backdrop_short" = "Artqı jağı";
 "backdrop" = "Paraqcanıń artqı jağı";
 "backdrop_desc" = "Paraqca nemese toptıń artqı jağına eki süwret qoyıwğa boladı. Olar bettiń sol jäne oń jaq cetinde körsetiledi. Söytip paraqcańızdı dara ete alasız.";
@@ -893,8 +893,8 @@
 
 "audio_embed_not_found" = "Än tabılmadı";
 "audio_embed_deleted" = "Än joyılğan";
-"audio_embed_withdrawn" = "Än quqıq iyeleniwciniń talabımen öcirilgen.";
-"audio_embed_forbidden" = "Qupıyalılıq baptawları bul ändi qosıwğa ruqsat bermeydi.";
+"audio_embed_withdrawn" = "Än quqıq iyesi talabımen joyılğan";
+"audio_embed_forbidden" = "Paydalanıwcınıń qupıyalılıq baptawlarına baylanıstı bul ändi endiriwge bolmaydı.";
 "audio_embed_processing" = "Audio äli öńdelip jatır.";
 "audio_embed_processing_bait" = "Bäribir tıńdaw";
 
@@ -1109,7 +1109,7 @@
 "failed_to_tranfer_points" = "Dawıstardı awdarıw mümkin bolmadı";
 "points_transfer_successful" = "Siz <b>$1</b> dawıstı <b><a href=\"$2\">$3</a></b> attı kisige sätti awdardıńız.";
 
-"not_all_information_has_been_entered" = "Barlıq mälimetter toltırılmağan";
+"not_all_information_has_been_entered" = "Barlıq mälimetter toltırılmağan.";
 "negative_transfer_value" = "Kecirińiz, özge paydalanıwcıdan dawıs tartıp alıwğa bolmaydı.";
 "negative_tranfer_value" = "Kecirińiz, özge paydalanıwcıdan dawıs tartıp alıwğa bolmaydı.";
 "message_is_too_long" = "Habarlama tım uzın.";
@@ -2392,7 +2392,7 @@
 "archived_posts" = "Jazbalar murağatı";
 "archive_banner_title" = "Bul — jazbalar murağatı";
 "archive_banner_desc" = "Qabırğadağı jazbalardı munda tarıyh pen estelikter ücin saqtay alasız. Bul murağat tek sizge ğana körinedi.";
-"archive_action" = "Murağat";
+"archive_action" = "Murağattaw";
 "unarchive_action" = "Murağattan cığarıw";
 "post_deleted" = "Jazba joyılğan";
 "archive_all_years" = "Barlıq jıl";
@@ -2406,3 +2406,38 @@
 "archive_confirm_all" = "Osı qabırğadağı bükil jazbanı murağattaw kerek pe?";
 "archive_invalid_action" = "Jazbalar murağatına qatıstı qate äreket.";
 "with_alien_wall_posts" = "Bögde kisilerdiń qabırğalarında jazılğan jazbalardı körsetiw";
+"in_reply" = "jawap";
+"reply_to_comment" = "Pikirge jawap";
+"add_to_list_event" = "Tizimge qosıw";
+"ill_come_to_meeting" = "Qatısamın";
+"i_might_come_to_meeting" = "Qatısıwım mümkin";
+"ill_not_come_to_meeting" = "Qatıspaymın";
+"event_comers" = "Qatısatındar";
+"event_potential_comers" = "Qatısıwı mümkin";
+"create_event" = "İs-cara jasaw";
+"event_type" = "İs-cara türi";
+"event_type_open" = "Bul acıq is-cara. Oğan ärkim qatısa aladı.";
+"event_type_closed" = "Bul jabıq is-cara. Oğan qatısıw ücin, caqırıw jiberiwge ötinic beriwińiz kerek.";
+"event_host" = "Uyımdastırıwcı";
+"location" = "Mekenjay";
+"event_start_date" = "Bastalıw waqıtı";
+"event_finish_date" = "Ayaqtalıw waqıtı";
+"event_enable_finish_date" = "Ayaqtalıw waqıtın körsetiw";
+"events_list_zero" = "Siz ecbir is-caranıń mücesi emessiz";
+"events_list_one" = "Siz $1 is-caranıń mücesisiz";
+"events_list_other" = "Siz $1 is-caranıń mücesisiz";
+"search_by_events" = "İs-caralardan izdew";
+"my_events" = "İs-caralarım";
+"menu_logout_confirm" = "Cınımen cıqqıńız kele me?";
+"language_add_strings" = "Awdarma boyınca kömektesiw";
+"search_for_events" = "İs-cara izdew";
+"nt_comment_nominative" = "pikirińizdi";
+"nt_replied_yours" = "pikirińizge jawap berdi";
+"event_reminder_text" = "$1 is-carası jaqında ötedi.";
+"event_reminder_text_multiple" = "$1 is-carası jaqında ötedi.";
+"balance" = "Dawıs teńgerimi";
+"message_user_typing" = "$1 hat jazıp jatır...";
+"error_no_event_name" = "İs-caranıń atawın jäne/nemese bastalıw waqıtın engizbedińiz.";
+"admin_tab_sessions" = "Sessiyalar";
+"s_events" = "İs-caralar";
+"s_by_events" = "is-caralar boyınca";
