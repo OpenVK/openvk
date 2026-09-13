@@ -18,11 +18,13 @@ test.describe('Group wiki notes', () => {
 
   test('shows page edit form', async ({ page }) => {
     await page.goto('/note-1_1/edit');
+    await expect(page.locator('#page_source')).toBeVisible();
     await expect(page.locator('.page_body')).toHaveScreenshot('page-1_1-edit.png', { maxDiffPixels: 200 });
   });
 
   test('shows create page form', async ({ page }) => {
     await page.goto('/notes-1/create');
+    await expect(page.locator('#page_source')).toBeVisible();
     await expect(page.locator('.page_body')).toHaveScreenshot('page-create.png', { maxDiffPixels: 200 });
   });
 
