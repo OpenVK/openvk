@@ -201,9 +201,6 @@ openvk:
         news:
             show: false
             groupId: 1
-        catalogues:
-            - name: "default"
-              items: []
     telemetry:
         plausible:
             enable: false

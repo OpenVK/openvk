@@ -213,7 +213,7 @@ class Sticker extends Attachable
             foreach ([64, 128, 256, 352, 512] as $sz) {
                 $outPng  = $dir . $sz . ".png";
                 $outWebp = $dir . $sz . ".webp";
-                @exec("node " . escapeshellarg($renderScript) . " " . escapeshellarg($jsonFile) . " " . escapeshellarg($outPng) . " " . (int)$sz . " 2>&1");
+                @exec("node " . escapeshellarg($renderScript) . " " . escapeshellarg($jsonFile) . " " . escapeshellarg($outPng) . " " . (int) $sz . " 2>&1");
                 if (file_exists($outPng) && filesize($outPng) > 200) {
                     try {
                         $im = new \Imagick($outPng);
@@ -257,7 +257,9 @@ class Sticker extends Attachable
                     }
                 }
             }
-        } catch (\Throwable $ex) {}
+        } catch (\Throwable $ex) {
+
+        }
     }
 
     public function saveFile(string $file, ?int $packId = null, ?string $originalName = null): bool
@@ -268,7 +270,7 @@ class Sticker extends Attachable
 
         $dir = $this->getStorageDir($packId);
         if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
+            mkdir($dir, 0o777, true);
         }
 
         $mime = "";

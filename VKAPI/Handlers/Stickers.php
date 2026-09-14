@@ -175,4 +175,3 @@ final class Stickers extends VKAPIRequestHandler
             ->getStickersKeywords($aliases, $all_products, $need_stickers, $stickers_hash, $products_hash, $count, $user_id);
     }
 }
-

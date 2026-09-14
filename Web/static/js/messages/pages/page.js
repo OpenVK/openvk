@@ -81,6 +81,16 @@ export class IMPage {
         }
 
         await this.beforeRender(this.container);
+
+        try {
+            const tab = window.im.getSelectedTab();
+            if (tab && this.id != tab.render_class.id) {
+                console.log("IM | Tabs | throttle")
+            }
+        } catch (e) {
+            console.error(e);
+        }
+
         await this.render(this.container);
         await this.afterFirstRender(this.container);
         //document.documentElement.scroll({ top: 0 });

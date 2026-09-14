@@ -140,7 +140,7 @@ final class Messages extends VKAPIRequestHandler
                 if ($senderId > 0 && method_exists($peer, 'getPrivacyPermission')) {
                     if (!$peer->getPrivacyPermission('messages.write', $senderObj)) {
                         $existence = $this->invoke("im.checkPeerExist", [
-                            "peer_id" => $peerId
+                            "peer_id" => $peerId,
                         ]);
 
                         if (!$existence["exists"]) {
@@ -288,7 +288,7 @@ final class Messages extends VKAPIRequestHandler
                 if (!$attachment) {
                     $result[] = [
                         "type"    => "unknown",
-                        "unknown" => []
+                        "unknown" => [],
                     ];
 
                     continue;
@@ -297,7 +297,7 @@ final class Messages extends VKAPIRequestHandler
                 if (!$attachment->canBeViewedBy($this->getUser())) {
                     $result[] = [
                         "type"    => $attachment->shortName,
-                        $attachment->shortName => []
+                        $attachment->shortName => [],
                     ];
 
                     continue;
@@ -600,7 +600,7 @@ final class Messages extends VKAPIRequestHandler
      */
     private function hydrateExtendedData(array &$payload, string $fields = "photo_200,online", ?array $loadedChats = []): void
     {
-        $loadedChats = $loadedChats ?? [];
+        $loadedChats ??= $loadedChats;
         if (!empty($payload['profiles'])) {
             $userIDs = array_map(fn($u) => is_array($u) ? ($u['id'] ?? 0) : (int) $u, $payload['profiles']);
             $userIDs = array_unique(array_filter($userIDs));
@@ -646,7 +646,9 @@ final class Messages extends VKAPIRequestHandler
                         if (!empty($convRes['items'])) {
                             $payload['conversations'] = array_map(fn($it) => $it['conversation'] ?? $it, $convRes['items']);
                         }
-                    } catch (\Throwable $e) {}
+                    } catch (\Throwable $e) {
+
+                    }
                 }
             }
             unset($payload['chats']);
@@ -859,7 +861,7 @@ final class Messages extends VKAPIRequestHandler
                     "title"       => (string) ($message['title'] ?? ""),
                     "body"        => $isDeleted ? "" : $text,
                     "attachments" => $isDeleted ? [] : ($message['attachments'] ?? []),
-                    "fwd_messages"=> $isDeleted ? [] : ($message['fwd_messages'] ?? []),
+                    "fwd_messages" => $isDeleted ? [] : ($message['fwd_messages'] ?? []),
                     "emoji"       => $isDeleted ? 0 : $hasEmoji,
                     "deleted"     => $isDeleted,
                 ];
@@ -891,7 +893,7 @@ final class Messages extends VKAPIRequestHandler
                     $msgObj['chat_id'] = $chatId;
                     $chatEntity = $loadedChats[$chatId] ?? null;
 
-                    $rawActive = !empty($message['chat_active']) ? (array)$message['chat_active'] : [];
+                    $rawActive = !empty($message['chat_active']) ? (array) $message['chat_active'] : [];
                     $rawCount = (int) ($message['users_count'] ?? count($rawActive));
                     $rawAdmin = (int) ($message['admin_id'] ?? 0);
                     $rawTitle = (string) ($message['title'] ?? "");
@@ -1814,13 +1816,13 @@ final class Messages extends VKAPIRequestHandler
             $this->fail(100, "One of the parameters is missing: title");
         }*/
 
-        /*if (empty($user_ids)) {
+        if (empty($user_ids)) {
             $this->fail(100, "One of the parameters is missing: user_ids");
-        }*/
+        }
 
         $rawIds = preg_split("%, ?%", $user_ids);
         $targetUserIds = array_filter(array_map('intval', $rawIds));
-        $users = (new USRRepo)->getByIds($targetUserIds);
+        $users = (new USRRepo())->getByIds($targetUserIds);
         $currentUser = $this->getUser();
 
         foreach ($users as $usr) {
@@ -2069,7 +2071,7 @@ final class Messages extends VKAPIRequestHandler
 
         $rawIds = preg_split("%, ?%", (string) $user_id);
         $targetUserIds = array_filter(array_map('intval', $rawIds));
-        $users = (new USRRepo)->getByIds($targetUserIds);
+        $users = (new USRRepo())->getByIds($targetUserIds);
         $currentUser = $this->getUser();
 
         foreach ($users as $usr) {
@@ -2318,7 +2320,7 @@ final class Messages extends VKAPIRequestHandler
                 "title"       => (string) ($lastMsg['title'] ?? ""),
                 "body"        => $text,
                 "attachments" => $lastMsg['attachments'] ?? [],
-                "fwd_messages"=> $lastMsg['fwd_messages'] ?? [],
+                "fwd_messages" => $lastMsg['fwd_messages'] ?? [],
                 "emoji"       => $hasEmoji,
                 "deleted"     => 0,
             ];
@@ -2551,7 +2553,9 @@ final class Messages extends VKAPIRequestHandler
             }
 
             $peer = $item['conversation']['peer'] ?? null;
-            if (!$peer) continue;
+            if (!$peer) {
+                continue;
+            }
 
             $peerType = $peer['type'] ?? 'user';
             $peerId = (int) ($peer['id'] ?? 0);
@@ -2668,10 +2672,10 @@ final class Messages extends VKAPIRequestHandler
         }
 
         if ($chat_id <= 0) {
-            if (!empty($_GET['peer_id']) && (int)$_GET['peer_id'] > 2000000000) {
-                $chat_id = (int)$_GET['peer_id'] - 2000000000;
-            } elseif (!empty($_POST['peer_id']) && (int)$_POST['peer_id'] > 2000000000) {
-                $chat_id = (int)$_POST['peer_id'] - 2000000000;
+            if (!empty($_GET['peer_id']) && (int) $_GET['peer_id'] > 2000000000) {
+                $chat_id = (int) $_GET['peer_id'] - 2000000000;
+            } elseif (!empty($_POST['peer_id']) && (int) $_POST['peer_id'] > 2000000000) {
+                $chat_id = (int) $_POST['peer_id'] - 2000000000;
             }
         }
 
@@ -2743,7 +2747,7 @@ final class Messages extends VKAPIRequestHandler
         }
 
         $res = [
-            "count"    => (int)($response['count'] ?? 0),
+            "count"    => (int) ($response['count'] ?? 0),
             "items"    => $response['items'] ?? [],
             "profiles" => $response['profiles'] ?? [],
             "groups"   => $response['groups'] ?? [],
@@ -2858,7 +2862,7 @@ final class Messages extends VKAPIRequestHandler
         }
 
         return [
-            "count"    => (int)($response['count'] ?? count($finalItems)),
+            "count"    => (int) ($response['count'] ?? count($finalItems)),
             "items"    => $finalItems,
             "profiles" => $response['profiles'] ?? [],
             "groups"   => $response['groups'] ?? [],
@@ -2885,7 +2889,7 @@ final class Messages extends VKAPIRequestHandler
 
         $params = [
             "q"        => $q,
-            "extended" => "1"
+            "extended" => "1",
         ];
         $response = $this->invoke("messages.searchConversations", $params, $group_id);
 
@@ -2898,7 +2902,7 @@ final class Messages extends VKAPIRequestHandler
         foreach ($items as $item) {
             $peer = $item['conversation']['peer'] ?? null;
             if ($peer && $peer['type'] === 'user') {
-                $userIdsToCheck[] = (int)$peer['id'];
+                $userIdsToCheck[] = (int) $peer['id'];
             }
         }
 
@@ -2920,11 +2924,13 @@ final class Messages extends VKAPIRequestHandler
         $filteredItems = [];
         foreach ($items as $item) {
             $peer = $item['conversation']['peer'] ?? null;
-            if (!$peer) continue;
+            if (!$peer) {
+                continue;
+            }
 
             if ($peer['type'] === 'chat') {
                 $filteredItems[] = $item;
-            } elseif ($peer['type'] === 'user' && in_array((int)$peer['id'], $matchedUserIds, true)) {
+            } elseif ($peer['type'] === 'user' && in_array((int) $peer['id'], $matchedUserIds, true)) {
                 $filteredItems[] = $item;
             }
         }
@@ -3058,7 +3064,7 @@ final class Messages extends VKAPIRequestHandler
                 $this->fail(15, "Access denied");
             }
 
-            $report = (new Reports)->get($report_id);
+            $report = (new Reports())->get($report_id);
 
             if (!$report || $report->isDeleted()) {
                 $this->fail(-50, "Report does not exist anymore");
@@ -3164,7 +3170,9 @@ final class Messages extends VKAPIRequestHandler
                         $convItem = $convRes['items'][0];
                         $data['conversations'] = [$convItem['conversation'] ?? $convItem];
                     }
-                } catch (\Throwable $e) {}
+                } catch (\Throwable $e) {
+
+                }
             }
             $this->hydrateExtendedData($data, $fields);
         }
@@ -3244,7 +3252,7 @@ final class Messages extends VKAPIRequestHandler
                             $item['attachment'] = [
                                 "type" => $rawType,
                                 $rawType => [
-                                    "raw" => $rawStr
+                                    "raw" => $rawStr,
                                 ]
                             ];
                         }
@@ -3483,10 +3491,11 @@ final class Messages extends VKAPIRequestHandler
 
         return $data;
     }
-    
+
     public function getChatPreview(
         string $link = "",
         string $fields = "photo_50,photo_100,photo_200",
+        string $act = "chat",
         int $group_id = 0
     ): object {
         $this->requireUser();
@@ -3499,6 +3508,10 @@ final class Messages extends VKAPIRequestHandler
             "link"   => $link,
             "fields" => $fields,
         ];
+
+        if ($act == "topic") {
+
+        }
 
         $data = $this->invoke("messages.getChatPreview", $params, $group_id);
 
@@ -3530,6 +3543,7 @@ final class Messages extends VKAPIRequestHandler
 
     public function joinChatByInviteLink(
         string $link = "",
+        string $act  = "chat",
         int $group_id = 0
     ): object {
         $this->requireUser();
@@ -3712,7 +3726,7 @@ final class Messages extends VKAPIRequestHandler
         $this->requireUser();
         $this->willExecuteWriteAction();
 
-        $my_id = ($group_id ? $this->getUser()->getRealId() : $group_id);
+        $my_id = (!$group_id ? $this->getUser()->getRealId() : $group_id);
         if ($peer_id == $my_id) {
             $this->fail(12, "Can't report yourself.");
         }

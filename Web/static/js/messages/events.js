@@ -641,6 +641,7 @@ export class EventHandler {
             }
         }
 
+        const isActiveChatOpen = true;
         setTimeout(() => {
             try {
                 const found = _crs.findMessageById(_msg.id, _msg.random_id || _msg.data?.random_id);

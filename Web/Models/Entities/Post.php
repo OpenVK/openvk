@@ -392,7 +392,7 @@ class Post extends Postable
                 foreach ($layoutData->tiles as $tile) {
                     $item = $tile[2];
                     $type = ($item instanceof \openvk\Web\Models\Entities\Photo) ? "photo" : (($item instanceof \openvk\Web\Models\Entities\Video) ? "video" : "unknown");
-                    
+
                     $tilePayload = null;
                     if ($type === "photo") {
                         $tilePayload = $item->toVkApiStruct(true, false);
@@ -448,7 +448,9 @@ class Post extends Postable
 
             foreach ($this->getChildren() as $attachment) {
                 if ($attachment instanceof \openvk\Web\Models\Entities\Photo) {
-                    if ($attachment->isDeleted()) continue;
+                    if ($attachment->isDeleted()) {
+                        continue;
+                    }
                     $res->attachments[] = (object) [
                         "type"  => "photo",
                         "photo" => $attachment->toVkApiStruct(true, false),

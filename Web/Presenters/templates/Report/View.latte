@@ -24,13 +24,13 @@
                 <input type="hidden" name="hash" value="{$csrfToken}"/>
                 <input onclick="confirm_ban(event, false, true)" type="submit" name="ban" value="{_ban_user_action}" class="button">
                 <input onclick="confirm_ban(event)" n:if="$report->getContentType() !== 'user'" type="submit" name="delete" value="{_delete_content}" class="button">
-                <input onclick="confirm_ban(event, true)" type="submit" name="ignore" value="{_ignore_report}" class="button">
+                <input onclick="confirm_ban(event, true, false)" type="submit" name="ignore" value="{_ignore_report}" class="button">
             </form>
             <form n:if="$report->getContentType() == 'group'" action="/admin/reportAction{$report->getId()}" method="post">
                 <input type="hidden" name="hash" value="{$csrfToken}"/>
                 <input onclick="confirm_ban(event, false, true)" type="submit" name="banClubOwner" value="Заблокировать создателя" class="button">
                 <input onclick="confirm_ban(event)" type="submit" name="banClub" value="Заблокировать группу" class="button">
-                <input onclick="confirm_ban(event, true)" type="submit" name="ignore" value="{_ignore_report}" class="button">
+                <input onclick="confirm_ban(event, true, false)" type="submit" name="ignore" value="{_ignore_report}" class="button">
             </form>
         </center>
     </form>

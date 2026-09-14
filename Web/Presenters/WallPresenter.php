@@ -272,9 +272,8 @@ final class WallPresenter extends OpenVKPresenter
     {
         $this->assertUserLoggedIn();
 
-        $this->redirect("/search?section=posts&ref=globalfeed");
-
-        exit;
+        // $this->redirect("/search?section=posts&ref=globalfeed");
+        // exit;
 
         $page  = (int) ($_GET["p"] ?? 1);
         $pPage = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);

@@ -6,13 +6,14 @@ namespace openvk\VKAPI\Utils;
 
 use openvk\VKAPI\Exceptions\APIErrorException;
 
-class Uploader {
+class Uploader
+{
     protected function fail(int $code, string $message): never
     {
         throw new APIErrorException($message, $code);
     }
 
-    function getImagePath(string $photo, string $hash, ?string& $up = null, ?string& $group = null): string
+    public function getImagePath(string $photo, string $hash, ?string& $up = null, ?string& $group = null): string
     {
         $secret = CHANDLER_ROOT_CONF["security"]["secret"];
         if (!hash_equals(hash_hmac("sha3-224", $photo, $secret), $hash)) {

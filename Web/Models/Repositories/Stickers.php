@@ -80,7 +80,7 @@ class Stickers
 
     public function getPacks(int $page, ?int $perPage = null, &$count = null, ?string $section = null): \Traversable
     {
-        $section = $section ?? "popular";
+        $section ??= "popular";
 
         if ($section === "all") {
             $packs = $this->getPacksTable()
@@ -233,7 +233,7 @@ class Stickers
             "name"    => $name,
             "slug"    => $slug,
             "created" => $created,
-            "owner_id" => $created_by->getRealId()
+            "owner_id" => $created_by->getRealId(),
         ]);
 
         return new StickerPack($row);

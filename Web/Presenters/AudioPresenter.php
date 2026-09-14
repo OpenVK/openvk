@@ -318,13 +318,13 @@ final class AudioPresenter extends OpenVKPresenter
         }
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
-        	$isAjax = $this->postParam("ajax") == "1";
+            $isAjax = $this->postParam("ajax") == "1";
 
-         	if ($isAjax) {
-          		$this->template->_template = "Audio/player.latte";
-            	$this->template->audio = $found_audio;
-         		return;
-	        }
+            if ($isAjax) {
+                $this->template->_template = "Audio/player.latte";
+                $this->template->audio = $found_audio;
+                return;
+            }
         }
 
         $this->template->alone_audio = $found_audio;

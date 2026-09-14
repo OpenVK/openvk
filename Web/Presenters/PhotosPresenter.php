@@ -195,7 +195,7 @@ final class PhotosPresenter extends OpenVKPresenter
     public function renderPhoto(int $ownerId, int $photoId): void
     {
         $key = $this->queryParam("key");
-        $photo = $this->photos->getByOwnerAndVID($ownerId, $photoId, $key);
+        $photo = $this->photos->getByOwnerAndVID($ownerId, $photoId, $key, $this->user->id);
         if (!$photo || $photo->isDeleted()) {
             $this->notFound();
         }
@@ -396,7 +396,7 @@ final class PhotosPresenter extends OpenVKPresenter
                     if ($is_from_messenger) {
                         $clubId = $this->postParam("club");
                         if ($clubId != null) {
-                            $club = (new Clubs)->get((int) $clubId);
+                            $club = (new Clubs())->get((int) $clubId);
                             if ($club && $club->canBeModifiedBy($this->user->identity)) {
                                 $photo->setContext($club, true);
                             }

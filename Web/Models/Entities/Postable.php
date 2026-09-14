@@ -171,7 +171,7 @@ abstract class Postable extends Attachable
 
         foreach ($sel as $like) {
             $user = (new Users())->get($like->origin);
-            if ($user->isPrivateLikes() && OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["enable"]) {
+            if ($user->isPrivateLikes()) {
                 $user = (new Users())->get((int) OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["account"]);
             }
 
@@ -347,7 +347,7 @@ abstract class Postable extends Attachable
 
         try {
             $can = (int) $this->getRecord()->can_comment;
-        } catch(\Nette\MemberAccessException $e) {
+        } catch (\Nette\MemberAccessException $e) {
             return true;
         }
 

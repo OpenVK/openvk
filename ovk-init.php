@@ -356,7 +356,7 @@ function parseAttachments($attachments, array $allow_types = ['photo', 'video', 
         ],
         'wall' => [
             'repo' => 'openvk\Web\Models\Repositories\Posts',
-            'method' => 'getPostById'
+            'method' => 'getPostById',
         ],
         'gift' => [
             'repo' => 'openvk\Web\Models\Repositories\Gifts',

@@ -6,7 +6,8 @@ namespace openvk\VKAPI\Handlers;
 
 final class Captcha extends VKAPIRequestHandler
 {
-    public function force(): array {
+    public function force(): array
+    {
         return [];
     }
 }

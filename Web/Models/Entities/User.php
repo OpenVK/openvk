@@ -10,6 +10,7 @@ use openvk\Web\Themes\{Themepack, Themepacks};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{Photo, Gift, Audio};
+use openvk\Web\Models\Privacy\PrivacySettings;
 use openvk\Web\Models\Entities\Messages\{Message, Correspondence};
 use openvk\Web\Models\Repositories\{Applications, Bans, Comments, Notes, Posts, Users, Clubs, Albums, Gifts, Notifications, Videos, Photos};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
@@ -610,21 +611,7 @@ class User extends RowModel
     {
         return (int) bmask($this->getRecord()->privacy, [
             "length"   => 2,
-            "mappings" => [
-                "page.read",
-                "page.info.read",
-                "groups.read",
-                "photos.read",
-                "videos.read",
-                "notes.read",
-                "friends.read",
-                "friends.add",
-                "wall.write",
-                "messages.write",
-                "audios.read",
-                "likes.read",
-                "messages.add_to_chats",
-            ],
+            "mappings" => PrivacySettings::getPossibleSettings(),
         ])->get($id);
     }
 
@@ -1317,21 +1304,7 @@ class User extends RowModel
     {
         $this->stateChanges("privacy", bmask($this->changes["privacy"] ?? $this->getRecord()->privacy, [
             "length"   => 2,
-            "mappings" => [
-                "page.read",
-                "page.info.read",
-                "groups.read",
-                "photos.read",
-                "videos.read",
-                "notes.read",
-                "friends.read",
-                "friends.add",
-                "wall.write",
-                "messages.write",
-                "audios.read",
-                "likes.read",
-                "messages.add_to_chats",
-            ],
+            "mappings" => PrivacySettings::getPossibleSettings(),
         ])->set($id, $status)->toInteger());
     }
 
@@ -1528,7 +1501,7 @@ class User extends RowModel
             return true;
         }
 
-        return $this->isAdmin();
+        return false;
     }
 
     public function isDead(): bool

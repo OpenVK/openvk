@@ -150,6 +150,14 @@ final class ReportPresenter extends OpenVKPresenter
 
             $this->flash("succ", tr("nehay"), tr("content_is_deleted"));
         } elseif ($this->postParam("ignore")) {
+            try {
+                if ($this->postParam("ignore_reason") != null) {
+                    $report->getReportAuthor()->adminNotify($this->postParam("ignore_reason"));
+                }
+            } catch (\Throwable $e) {
+                bdump($e);
+            }
+
             $report->delete();
 
             $this->flash("succ", tr("nehay"), tr("report_is_ignored"));

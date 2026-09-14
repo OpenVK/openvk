@@ -189,7 +189,7 @@ final class Video extends VKAPIRequestHandler
         }
 
         return [
-            "success" => 1
+            "success" => 1,
         ];
     }
 

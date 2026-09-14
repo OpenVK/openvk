@@ -52,7 +52,7 @@ final class SearchPresenter extends OpenVKPresenter
             "atBottom"  => false,
             "tidy"      => true,
             "space"     => 6,
-            'pageCount' => ceil($count / $this->template->perPage),
+            'pageCount' => ceil($data[1] / $this->template->perPage),
         ];
         $this->template->extendedPaginatorConf = clone $this->template->paginatorConf;
         $this->template->extendedPaginatorConf->space = 11;

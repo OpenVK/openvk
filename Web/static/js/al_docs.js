@@ -199,14 +199,14 @@ function onUploadEntryPointClick(event) {
     showDocumentUploadDialog(null, Number(event.target.dataset.gid))
 }
 
-u(document).on('change', "#docs_page_wrapper select[name='docs_sort']", (e) => {
+$(document).on('change', "#docs_page_wrapper select[name='docs_sort']", (e) => {
     const new_url = new URL(location.href)
     new_url.searchParams.set('order', e.target.value)
 
     window.router.route(new_url.href)
 })
 
-u(document).on('click', '.docMainItem #remove_icon', async (e) => {
+$(document).on('click', '.docMainItem #remove_icon', async (e) => {
     e.preventDefault()
 
     const target  = u(e.target).closest("#remove_icon")
@@ -228,7 +228,7 @@ u(document).on('click', '.docMainItem #remove_icon', async (e) => {
     }
 })
 
-u(document).on('click', '.docMainItem #add_icon', async (e) => {
+$(document).on('click', '.docMainItem #add_icon', async (e) => {
     e.preventDefault()
 
     const target = u(e.target).closest("#add_icon")
@@ -254,7 +254,7 @@ u(document).on('click', '.docMainItem #add_icon', async (e) => {
     }
 })
 
-u(document).on('click', '.docMainItem #report_icon', (e) => {
+$(document).on('click', '.docMainItem #report_icon', (e) => {
     e.preventDefault()
 
     const target = u(e.target).closest("#report_icon")
@@ -283,7 +283,7 @@ u(document).on('click', '.docMainItem #report_icon', (e) => {
         }), Function.noop]})
 })
 
-u(document).on("click", ".docOpener, .docListViewItem a.viewerOpener, a.docGalleryItem", async (e) => {
+$(document).on("click", ".docOpener, .docListViewItem a.viewerOpener, a.docGalleryItem", async (e) => {
     e.preventDefault()
 
     // its an action
@@ -519,7 +519,7 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_arg =
 
     await docs_reciever.page(docs_reciever.stat.page + 1)
 }
-u(document).on('click', '#__documentAttachment', async (e) => {
+$(document).on('click', '#__documentAttachment', async (e) => {
     const form = u(e.target).closest('#write')
     const targ = u(e.target).closest("#__documentAttachment")
     let entity_source = "user"

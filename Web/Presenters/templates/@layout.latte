@@ -137,7 +137,7 @@
                                     {var $section = $_REQUEST['section'] ?? ''}
                                     <input onkeydown="onSearchTipKeydown(event)" oninput="onSearchBoxInput(event)" autocomplete="off" type="search" maxlength="79" name="q" placeholder="{_header_search}" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
                                     <select name="section">
-                                        <option value="main">{_s_by_people}</option>
+                                        <option value="users">{_s_by_people}</option>
                                     </select>
                                 </div>
                                 <button class="search_box_button">
@@ -454,8 +454,8 @@
                             <input id="password" type="password" name="password" required />
                             <input type="hidden" name="jReturnTo" value="{$_SERVER['REQUEST_URI']}" />
                             <input type="hidden" name="hash" value="{$csrfToken}" />
-                            <input type="submit" value="{_log_in}" class="button" style="display: inline-block; font-family: Tahoma" />
-                            <a href="/reg"><input type="button" value="{_registration}" class="button" style="font-family: Tahoma" /></a><br><br>
+                            <input type="submit" value="{_log_in}" class="button" style="display: inline-block; font-family: Tahoma; width: 100%;" />
+                            <a href="/reg"><input type="button" value="{_registration}" class="button" style="font-family: Tahoma; width: 100%;" /></a><br><br>
                             {if !\OPENVK_ROOT_CONF['openvk']['preferences']['security']['disablePasswordRestoring']}<a href="/restore">{_forgot_password}</a>{/if}
                         </form>
                     {/ifset}

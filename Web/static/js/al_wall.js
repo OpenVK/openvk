@@ -63,7 +63,7 @@ function initGraffiti(event, callback = null) {
     })
 }
 
-u(document).on('click', '.menu_toggler', (e) => {
+$(document).on('click', '.menu_toggler', (e) => {
     const post_buttons = $(e.target).closest('.post-buttons')
     const wall_attachment_menu = post_buttons.find('#wallAttachmentMenu')
     if (wall_attachment_menu.is('.hidden')) {
@@ -76,7 +76,7 @@ u(document).on('click', '.menu_toggler', (e) => {
     }
 })
 
-u(document).on("click", ".post-like-button", function (e) {
+$(document).on("click", ".post-like-button", function (e) {
     e.preventDefault();
     e.stopPropagation()
 
@@ -97,7 +97,7 @@ u(document).on("click", ".post-like-button", function (e) {
     return false;
 });
 
-u(document).on("input", "textarea", function (e) {
+$(document).on("input", "textarea", function (e) {
     var boost = 5;
     var textArea = e.target;
     textArea.style.height = "5px";
@@ -1409,14 +1409,14 @@ async function edit_video(event) {
 }
 
 // Submit on "Ctrl+Enter"
-u(document).on("keydown", "#write > form", function (event) {
+$(document).on("keydown", "#write > form", function (event) {
     if (event.ctrlKey && event.keyCode === 13) {
         u(event.target).closest('form').find(`input[type='submit']`).nodes[0].click();
     }
 });
 
 // Submit editing on "Ctrl+Enter"
-u(document).on('keydown', '.edit_menu #write', (e) => {
+$(document).on('keydown', '.edit_menu #write', (e) => {
     if (e.ctrlKey && e.keyCode === 13) {
         e.target.closest('.edit_menu').querySelector('#__edit_save').click()
     }
@@ -1504,7 +1504,7 @@ $(document).on("click", "#_photoDelete, #_videoDelete, #_anotherDelete", functio
 });
 /* @rem-pai why this func wasn't named as "#_deleteDialog"? It looks universal IMO */
 
-u(document).on("click", "#_noteDelete", function (e) {
+$(document).on("click", "#_noteDelete", function (e) {
     var formHtml = "<form id='tmpPhDelF' action='" + u(this).attr("href") + "' >";
     formHtml += "<input type='hidden' name='hash' value='" + u("meta[name=csrf]").attr("value") + "' />";
     formHtml += "</form>";
@@ -1527,7 +1527,7 @@ u(document).on("click", "#_noteDelete", function (e) {
 });
 
 // TODO REWRITE cuz its a little broken
-u(document).on("click", "#_pinGroup", async function (e) {
+$(document).on("click", "#_pinGroup", async function (e) {
     e.preventDefault();
     e.stopPropagation()
 
@@ -1584,7 +1584,7 @@ u(document).on("click", "#_pinGroup", async function (e) {
     return false;
 });
 
-u(document).handle("submit", "#_submitUserSubscriptionAction", async function (e) {
+$(document).on("submit", "#_submitUserSubscriptionAction", async function (e) {
     e.preventDefault()
     e.stopPropagation()
 
@@ -1936,8 +1936,11 @@ async function onPostEditButtonClick(e) {
 
         edit_place.html(`
             <div class='edit_menu'>
-                <form id="write">
-                    <textarea placeholder="${tr('edit')}" name="text" style="width: 100%;resize: none;overflow:hidden;" class="expanded-textarea small-textarea">${api_post.text}</textarea>
+                <form id="write" class="model_content_textarea has_emoji_picker">
+                    <div class="textareas">
+                        <textarea placeholder="${tr('edit')}" name="text" style="width: 100%;resize: none;overflow:hidden;" class="expanded-textarea small-textarea">${api_post.text}</textarea>
+                        <!--<div class="emoji_picker_entrypoint" data-stickers="0"></div>-->
+                    </div>
 
                     <div class='post-buttons'>
                         <div class="post-horizontal"></div>
@@ -2000,6 +2003,8 @@ async function onPostEditButtonClick(e) {
                     </div>
                 </form>
             </div>`)
+
+        ContentEditable.enhance(edit_place.find("#write textarea").last());
 
         if (api_post.copyright) {
             edit_place.find('.post-source').html(`
@@ -2304,7 +2309,7 @@ u(document).on("drop", '#write', function (e) {
 })
 
 // !!! PHOTO PICKER !!!
-u(document).on("click", "#__photoAttachment", async (e) => {
+$(document).on("click", "#__photoAttachment", async (e) => {
     const photos_per_page = 23
     const form = u(e.target).closest('#write')
     const club = Number(e.currentTarget.dataset.club ?? 0)
@@ -2442,7 +2447,7 @@ u(document).on("click", "#__photoAttachment", async (e) => {
     })
 })
 
-u(document).on('click', '#__videoAttachment', async (e) => {
+$(document).on('click', '#__videoAttachment', async (e) => {
     const per_page = 10
     const form = u(e.target).closest('#write')
     const msg = new CMessageBox({
@@ -2609,7 +2614,7 @@ u(document).on('click', '#__videoAttachment', async (e) => {
 
 // __audioAttachment -> al_music.js, 1318
 
-u(document).on('click', '#__notesAttachment', async (e) => {
+$(document).on('click', '#__notesAttachment', async (e) => {
     const per_page = 10
     const form = u(e.target).closest('#write')
     const msg = new CMessageBox({
@@ -2928,22 +2933,22 @@ function showFastVideoUpload(node, event) {
     __switchTab('file')
 }
 
-u(document).on('click', `.post-horizontal .upload-item .upload-delete`, (e) => {
+$(document).on('click', `.post-horizontal .upload-item .upload-delete`, (e) => {
     e.preventDefault()
     u(e.target).closest('.upload-item').remove()
 })
 
-u(document).on('click', `.vertical-attachment #small_remove_button`, (e) => {
+$(document).on('click', `.vertical-attachment #small_remove_button`, (e) => {
     e.preventDefault()
     u(e.target).closest('.vertical-attachment').remove()
 })
 
-u(document).on('click', '.post-buttons .upload-item', (e) => {
+$(document).on('click', '.post-buttons .upload-item', (e) => {
     e.preventDefault()
     e.stopPropagation()
 })
 
-u(document).on('click', '.post.post-nsfw .post-content', (e) => {
+$(document).on('click', '.post.post-nsfw .post-content', (e) => {
     e.preventDefault()
     e.stopPropagation()
 
@@ -2954,7 +2959,7 @@ u(document).on('click', '.post.post-nsfw .post-content', (e) => {
     u(e.target).closest('.post-nsfw').removeClass('post-nsfw')
 })
 
-u(document).on('focusin click', '#write', (e) => {
+$(document).on('focusin click', '#write', (e) => {
     const target = u(e.target).closest('#write')
     target.addClass('expanded-textarea')
     target.find('.post-buttons').attr('style', 'display:block')
@@ -3627,7 +3632,7 @@ if (u('.paginator:not(.paginator-at-top)').length > 0) {
     showMoreObserver.observe(u('.paginator:not(.paginator-at-top)').nodes[0])
 }
 
-u(document).on('click', '#__sourceAttacher', (e) => {
+$(document).on('click', '#__sourceAttacher', (e) => {
     MessageBox(tr('add_source'), `
         <div id='source_flex_kunteynir'>
             <span>${tr('set_source_tip')}</span>
@@ -3747,7 +3752,7 @@ function setStatusEditorShown(shown) {
     }
 }
 
-u(document).on('click', (event) => {
+$(document).on('click', (event) => {
     u('#ctx_menu').remove()
     if (u('#status_editor').length < 1) {
         return
@@ -3757,7 +3762,7 @@ u(document).on('click', (event) => {
         setStatusEditorShown(false);
 })
 
-u(document).on('click', '#page_status_text', (e) => {
+$(document).on('click', '#page_status_text', (e) => {
     setStatusEditorShown(true)
 })
 
@@ -3797,7 +3802,7 @@ const tplMapIcon = `<svg class="map_svg_icon" width="13" height="12" viewBox="0 
 <g><path d="M 1.7197917 0.0025838216 C 1.1850116 0.0049444593 0.72280427 0.4971031 0.71520182 1.0190592 C 0.70756921 1.5430869 1.7223755 3.1739665 1.7223755 3.1739665 C 1.7223755 3.1739665 2.7249195 1.5439189 2.7243815 0.99632161 C 2.7238745 0.48024825 2.2492929 0.00024648357 1.7197917 0.0025838216 z M 1.7197917 0.52606608 A 0.48526123 0.48526123 0 0 1 2.2050334 1.0113078 A 0.48526123 0.48526123 0 0 1 1.7197917 1.4965495 A 0.48526123 0.48526123 0 0 1 1.23455 1.0113078 A 0.48526123 0.48526123 0 0 1 1.7197917 0.52606608 z " /></g>
 </svg>`
 
-u(document).on('click', "#__geoAttacher", async (e) => {
+$(document).on('click', "#__geoAttacher", async (e) => {
     const form = u(e.target).closest('#write')
     const buttons = form.find('.post-buttons')
 
@@ -3910,14 +3915,14 @@ u(document).on('click', "#__geoAttacher", async (e) => {
     setTimeout(function () { map.invalidateSize() }, 100)
 })
 
-u(document).on('click', '.post-has-geo #small_remove_button', (e) => {
+$(document).on('click', '.post-has-geo #small_remove_button', (e) => {
     const form = u(e.target).closest('#write')
     const geo = form.find('.post-has-geo')
     geo.remove()
     form.find(`input[name='geo']`).nodes[0].value = ''
 })
 
-u(document).on('click', '#geo-name', (e) => {
+$(document).on('click', '#geo-name', (e) => {
     const current_value = escapeHtml(e.target.innerHTML)
     const msg = new CMessageBox({
         title: tr('change_geo_name'),
@@ -4053,7 +4058,7 @@ function openNearPosts(posts) {
     }
 }
 
-u(document).on('click', '#_bl_toggler', async (e) => {
+$(document).on('click', '#_bl_toggler', async (e) => {
     e.preventDefault()
 
     const target = u(e.target)
@@ -4094,7 +4099,7 @@ u(document).on('click', '#_bl_toggler', async (e) => {
 
 /* Additional fields */
 
-u(document).on("click", "#additional_field_append", (e) => {
+$(document).on("click", "#additional_field_append", (e) => {
     let iterator = 0
     if (u(`table[data-iterator]`).last()) {
         iterator = Number(u(`table[data-iterator]`).last().dataset.iterator) + 1
@@ -4131,7 +4136,7 @@ u(document).on("click", "#additional_field_append", (e) => {
     u(`.edit_field_container_item[data-iterator='${iterator}'] input[type="text"]`).nodes[0].focus()
 })
 
-u(document).on("click", ".edit_field_container_item #small_remove_button", (e) => {
+$(document).on("click", ".edit_field_container_item #small_remove_button", (e) => {
     let iterator = 0
     u(e.target).closest('table').remove()
     u(".edit_field_container_inserts .edit_field_container_item").nodes.forEach(node => {
@@ -4140,7 +4145,7 @@ u(document).on("click", ".edit_field_container_item #small_remove_button", (e) =
     })
 })
 
-u(document).on("submit", "#additional_fields_form", (e) => {
+$(document).on("submit", "#additional_fields_form", (e) => {
     u(`.edit_field_container_item input, .edit_field_container_item textarea`).nodes.forEach(node => {
         if (node.value == "" || node.value == " ") {
             e.preventDefault()
@@ -4177,7 +4182,7 @@ if (Number(localStorage.getItem('ux.gif_autoplay') ?? 0) == 1) {
 
 function back_textarea_to_default(node) {
     node.find(".post-horizontal, .post-vertical, .post-has-poll, .post-has-geo, .post-source").html("");
-    node.find("input[name='horizontal_attachments'],input[name='vertical_attachments'],input[name='geo']").nodes.forEach(el => {
+    node.find("input[name='horizontal_attachments'],input[name='vertical_attachments'],input[name='geo'],input[name='source'],input[name='reply_to_comment']").nodes.forEach(el => {
         el.value = '';
     });
     node.find(".post-opts input[type='checkbox']:not(input[name='as_group'])").nodes.forEach(el => {

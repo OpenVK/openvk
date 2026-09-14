@@ -7,7 +7,8 @@ namespace openvk\Web\Models\Search;
 use openvk\Web\Models\Repositories\{Users, Clubs, Posts, Videos, Applications, Audios, Documents};
 use openvk\Web\Models\Entities\User;
 
-class Catalogue {
+class Catalogue
+{
     private $user;
 
     public function __construct(User $user)
@@ -39,8 +40,8 @@ class Catalogue {
                 }
             }
 
-            $dict["users"] = (new Users)->getByIds($div[0]);
-            $dict["groups"] = (new Clubs)->getByIds($div[0]);
+            $dict["users"] = (new Users())->getByIds($div[0]);
+            $dict["groups"] = (new Clubs())->getByIds($div[0]);
         }
 
         return [(object) $dict, 1];

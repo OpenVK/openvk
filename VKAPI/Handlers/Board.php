@@ -64,12 +64,12 @@ final class Board extends VKAPIRequestHandler
         return $topic->getVirtualId();
     }
 
-    public function addChatTopic(int $group_id, string $title)
+    public function addChatTopic(int $group_id, string $title, int $chat_id = null)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
 
-        if ($chat_id > 2000000000) {
+        if ($chat_id && $chat_id > 2000000000) {
             $chat_id = $chat_id - 2000000000;
         }
 

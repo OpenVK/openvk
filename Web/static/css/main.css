@@ -685,6 +685,9 @@ body.no_footer .navigation_footer {
 
 .profile_links_important {
     padding: 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
 .profile_links_important>a,
@@ -1362,6 +1365,7 @@ h4 {
     color: #828a99;
     pointer-events: none;
     display: block;
+    height: 13px;
 }
 
 .content-editable img.emoji {

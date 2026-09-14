@@ -258,8 +258,8 @@ export class MaterialsPage extends IMPage {
             const photo = item.attachment?.photo;
             if (!photo) return null;
 
-            const thumb = (Array.isArray(photo.sizes) && photo.sizes.find(s => s.type === 'm' || s.type === 'x' || s.type === 's')?.url)
-                || (Array.isArray(photo.sizes) && photo.sizes.find(s => s.type === 'm' || s.type === 'x' || s.type === 's')?.src)
+            const thumb = (Array.isArray(photo.sizes) && photo.sizes.find(s => s.type === 's' || s.type === 'x' || s.type === 'm')?.url)
+                || (Array.isArray(photo.sizes) && photo.sizes.find(s => s.type === 's' || s.type === 'x' || s.type === 'm')?.src)
                 || photo.photo_130
                 || photo.photo_604
                 || photo.photo_75

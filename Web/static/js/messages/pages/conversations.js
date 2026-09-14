@@ -325,11 +325,13 @@ export class Conversations {
     }
 
     _findConv(id) {
-        const found = this.all_convs.find((itm) => itm.peer && itm.peer.id == id);
+        const found = this.all_convs.find((itm) => {
+            return itm.peer && itm.id == id;
+        });
         return found || null;
     }
 
-    async _findConvFromApi(id, check_cached = false) {
+    async _findConvFromApi(id, check_cached = false, push = true) {
         const existing = this._findConv(id);
         if (existing) {
             return existing;
@@ -354,7 +356,11 @@ export class Conversations {
             convPayload['conversation'] = b.data._full_conversation;
         }
         const c = new Conversation(convPayload);
-        this.all_convs.push(c);
+
+        if (push) {
+            this.all_convs.push(c);
+        }
+
         return c;
     }
 
@@ -374,6 +380,7 @@ export class Conversations {
 
 export class Conversation {
     constructor(conversation_item) {
+        //console.trace();
         this._conversation = conversation_item.conversation;
         this._last_message = conversation_item.last_message ? new ChatMessage(conversation_item.last_message) : null;
         this.peer = conversation_item.peer;
@@ -426,6 +433,7 @@ export class Conversation {
                 this._last_message.read_state = 1;
             }
         }
+        console.log(this);
     }
 
     hasScrollPosition() { return this._scroll != null; }

@@ -79,494 +79,494 @@ final class Users extends VKAPIRequestHandler
                     $response[$i]->photo_100 = "/assets/packages/static/openvk/img/camera_100.png";
                 }
             } elseif ($usr->isBanned()) {
-                    $firstName = $morphCase ? $usr->getMorphedName($morphCase, false, false) : $usr->getFirstName();
-                    $lastName  = $morphCase ? $usr->getMorphedName($morphCase, false, true)  : $usr->getLastName();
-                    $response[$i] = (object) [
-                        "id"          => $usr->getId(),
-                        "first_name"  => $firstName,
-                        "last_name"   => $lastName,
-                        "deactivated" => "banned",
-                        "ban_reason"  => $usr->getBanReason(),
-                    ];
-                    if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
-                        $response[$i]->uid = $usr->getId();
-                        $response[$i]->sex = $usr->isFemale() ? 1 : ($usr->isNeutral() ? 0 : 2);
-                        $response[$i]->photo = "/assets/packages/static/openvk/img/camera_50.png";
-                        $response[$i]->photo_rec = "/assets/packages/static/openvk/img/camera_50.png";
-                        $response[$i]->photo_medium_rec = "/assets/packages/static/openvk/img/camera_100.png";
-                        $response[$i]->photo_50 = "/assets/packages/static/openvk/img/camera_50.png";
-                        $response[$i]->photo_100 = "/assets/packages/static/openvk/img/camera_100.png";
-                    }
-                } elseif ($usrs[$i] == null) {
+                $firstName = $morphCase ? $usr->getMorphedName($morphCase, false, false) : $usr->getFirstName();
+                $lastName  = $morphCase ? $usr->getMorphedName($morphCase, false, true)  : $usr->getLastName();
+                $response[$i] = (object) [
+                    "id"          => $usr->getId(),
+                    "first_name"  => $firstName,
+                    "last_name"   => $lastName,
+                    "deactivated" => "banned",
+                    "ban_reason"  => $usr->getBanReason(),
+                ];
+                if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                    $response[$i]->uid = $usr->getId();
+                    $response[$i]->sex = $usr->isFemale() ? 1 : ($usr->isNeutral() ? 0 : 2);
+                    $response[$i]->photo = "/assets/packages/static/openvk/img/camera_50.png";
+                    $response[$i]->photo_rec = "/assets/packages/static/openvk/img/camera_50.png";
+                    $response[$i]->photo_medium_rec = "/assets/packages/static/openvk/img/camera_100.png";
+                    $response[$i]->photo_50 = "/assets/packages/static/openvk/img/camera_50.png";
+                    $response[$i]->photo_100 = "/assets/packages/static/openvk/img/camera_100.png";
+                }
+            } elseif ($usrs[$i] == null) {
 
-                } else {
-                    $canView = $usr->canBeViewedBy($this->getUser());
-                    $firstName = $morphCase ? $usr->getMorphedName($morphCase, false, false) : $usr->getFirstName();
-                    $lastName  = $morphCase ? $usr->getMorphedName($morphCase, false, true)  : $usr->getLastName();
-                    $response[$i] = (object) [
-                        "id"                => $usr->getId(),
-                        "first_name"        => $firstName,
-                        "last_name"         => $lastName,
-                        "is_closed"         => (int) $usr->isClosed(),
-                        "can_access_closed" => (int) $canView,
-                    ];
+            } else {
+                $canView = $usr->canBeViewedBy($this->getUser());
+                $firstName = $morphCase ? $usr->getMorphedName($morphCase, false, false) : $usr->getFirstName();
+                $lastName  = $morphCase ? $usr->getMorphedName($morphCase, false, true)  : $usr->getLastName();
+                $response[$i] = (object) [
+                    "id"                => $usr->getId(),
+                    "first_name"        => $firstName,
+                    "last_name"         => $lastName,
+                    "is_closed"         => (int) $usr->isClosed(),
+                    "can_access_closed" => (int) $canView,
+                ];
 
-                    if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
-                        $response[$i]->uid = $usr->getId();
-                        $response[$i]->sex = $usr->isFemale() ? 1 : ($usr->isNeutral() ? 0 : 2);
-                        $response[$i]->photo = $usr->getAvatarUrl();
-                        $response[$i]->photo_rec = $usr->getAvatarUrl();
-                        $response[$i]->photo_medium_rec = $usr->getAvatarUrl("tiny");
-                        $response[$i]->photo_50 = $usr->getAvatarUrl();
-                        $response[$i]->photo_100 = $usr->getAvatarUrl("tiny");
-                    }
+                if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                    $response[$i]->uid = $usr->getId();
+                    $response[$i]->sex = $usr->isFemale() ? 1 : ($usr->isNeutral() ? 0 : 2);
+                    $response[$i]->photo = $usr->getAvatarUrl();
+                    $response[$i]->photo_rec = $usr->getAvatarUrl();
+                    $response[$i]->photo_medium_rec = $usr->getAvatarUrl("tiny");
+                    $response[$i]->photo_50 = $usr->getAvatarUrl();
+                    $response[$i]->photo_100 = $usr->getAvatarUrl("tiny");
+                }
 
-                    $flds = explode(',', $fields);
-                    foreach ($flds as $field) {
-                        $field = trim($field);
-                        switch ($field) {
-                            case "first_name_nom":
-                                $response[$i]->first_name_nom = $usr->getFirstName();
-                                break;
-                            case "last_name_nom":
-                                $response[$i]->last_name_nom = $usr->getLastName();
-                                break;
-                            case "first_name_gen":
-                                $response[$i]->first_name_gen = $usr->getMorphedName("genitive", false, false);
-                                break;
-                            case "last_name_gen":
-                                $response[$i]->last_name_gen = $usr->getMorphedName("genitive", false, true);
-                                break;
-                            case "first_name_dat":
-                                $response[$i]->first_name_dat = $usr->getMorphedName("dative", false, false);
-                                break;
-                            case "last_name_dat":
-                                $response[$i]->last_name_dat = $usr->getMorphedName("dative", false, true);
-                                break;
-                            case "first_name_acc":
-                                $response[$i]->first_name_acc = $usr->getMorphedName("accusative", false, false);
-                                break;
-                            case "last_name_acc":
-                                $response[$i]->last_name_acc = $usr->getMorphedName("accusative", false, true);
-                                break;
-                            case "first_name_ins":
-                                $response[$i]->first_name_ins = $usr->getMorphedName("ablative", false, false);
-                                break;
-                            case "last_name_ins":
-                                $response[$i]->last_name_ins = $usr->getMorphedName("ablative", false, true);
-                                break;
-                            case "first_name_abl":
-                                $response[$i]->first_name_abl = $usr->getMorphedName("prepositional", false, false);
-                                break;
-                            case "last_name_abl":
-                                $response[$i]->last_name_abl = $usr->getMorphedName("prepositional", false, true);
-                                break;
-                            case "verified":
-                                $response[$i]->verified = (int) $usr->isVerified();
-                                break;
-                            case "sex":
-                                $response[$i]->sex = $usr->isFemale() ? 1 : ($usr->isNeutral() ? 0 : 2);
-                                break;
-                            case "has_photo":
-                                $response[$i]->has_photo = is_null($usr->getAvatarPhoto()) ? 0 : 1;
-                                break;
-                            case "photo_id":
-                                $av = $usr->getAvatarPhoto();
+                $flds = explode(',', $fields);
+                foreach ($flds as $field) {
+                    $field = trim($field);
+                    switch ($field) {
+                        case "first_name_nom":
+                            $response[$i]->first_name_nom = $usr->getFirstName();
+                            break;
+                        case "last_name_nom":
+                            $response[$i]->last_name_nom = $usr->getLastName();
+                            break;
+                        case "first_name_gen":
+                            $response[$i]->first_name_gen = $usr->getMorphedName("genitive", false, false);
+                            break;
+                        case "last_name_gen":
+                            $response[$i]->last_name_gen = $usr->getMorphedName("genitive", false, true);
+                            break;
+                        case "first_name_dat":
+                            $response[$i]->first_name_dat = $usr->getMorphedName("dative", false, false);
+                            break;
+                        case "last_name_dat":
+                            $response[$i]->last_name_dat = $usr->getMorphedName("dative", false, true);
+                            break;
+                        case "first_name_acc":
+                            $response[$i]->first_name_acc = $usr->getMorphedName("accusative", false, false);
+                            break;
+                        case "last_name_acc":
+                            $response[$i]->last_name_acc = $usr->getMorphedName("accusative", false, true);
+                            break;
+                        case "first_name_ins":
+                            $response[$i]->first_name_ins = $usr->getMorphedName("ablative", false, false);
+                            break;
+                        case "last_name_ins":
+                            $response[$i]->last_name_ins = $usr->getMorphedName("ablative", false, true);
+                            break;
+                        case "first_name_abl":
+                            $response[$i]->first_name_abl = $usr->getMorphedName("prepositional", false, false);
+                            break;
+                        case "last_name_abl":
+                            $response[$i]->last_name_abl = $usr->getMorphedName("prepositional", false, true);
+                            break;
+                        case "verified":
+                            $response[$i]->verified = (int) $usr->isVerified();
+                            break;
+                        case "sex":
+                            $response[$i]->sex = $usr->isFemale() ? 1 : ($usr->isNeutral() ? 0 : 2);
+                            break;
+                        case "has_photo":
+                            $response[$i]->has_photo = is_null($usr->getAvatarPhoto()) ? 0 : 1;
+                            break;
+                        case "photo_id":
+                            $av = $usr->getAvatarPhoto();
 
-                                if ($av != null) {
-                                    $response[$i]->photo_id = $av->getVirtualId();
-                                    $response[$i]->photo_pid = $av->getPrettyIdWithKey();
-                                } else {
-                                    $response[$i]->photo_id = null;
-                                    $response[$i]->photo_pid = null;
-                                }
+                            if ($av != null) {
+                                $response[$i]->photo_id = $av->getVirtualId();
+                                $response[$i]->photo_pid = $av->getPrettyIdWithKey();
+                            } else {
+                                $response[$i]->photo_id = null;
+                                $response[$i]->photo_pid = null;
+                            }
 
-                                break;
-                            case "photo_max_orig":
-                                $response[$i]->photo_max_orig = $usr->getAvatarURL();
-                                break;
-                            case "photo_max":
-                                $response[$i]->photo_max = $usr->getAvatarURL("original");
-                                break;
-                            case "photo":
-                            case "photo_rec":
-                            case "photo_50":
-                                $response[$i]->photo = $usr->getAvatarURL();
-                                $response[$i]->photo_rec = $usr->getAvatarURL();
-                                $response[$i]->photo_50 = $usr->getAvatarURL();
-                                break;
-                            case "photo_medium":
-                            case "photo_medium_rec":
-                            case "photo_100":
-                                $response[$i]->photo_medium = $usr->getAvatarURL("tiny");
-                                $response[$i]->photo_medium_rec = $usr->getAvatarURL("tiny");
-                                $response[$i]->photo_100 = $usr->getAvatarURL("tiny");
-                                break;
-                            case "photo_big":
-                            case "photo_200":
-                                $response[$i]->photo_big = $usr->getAvatarURL("normal");
-                                $response[$i]->photo_200 = $usr->getAvatarURL("normal");
-                                break;
-                            case "photo_200_orig": # вообще не ебу к чему эта строка ну пусть будет кек
-                                $response[$i]->photo_200_orig = $usr->getAvatarURL("normal");
-                                break;
-                            case "photo_400_orig":
-                                $response[$i]->photo_400_orig = $usr->getAvatarURL("normal");
-                                break;
+                            break;
+                        case "photo_max_orig":
+                            $response[$i]->photo_max_orig = $usr->getAvatarURL();
+                            break;
+                        case "photo_max":
+                            $response[$i]->photo_max = $usr->getAvatarURL("original");
+                            break;
+                        case "photo":
+                        case "photo_rec":
+                        case "photo_50":
+                            $response[$i]->photo = $usr->getAvatarURL();
+                            $response[$i]->photo_rec = $usr->getAvatarURL();
+                            $response[$i]->photo_50 = $usr->getAvatarURL();
+                            break;
+                        case "photo_medium":
+                        case "photo_medium_rec":
+                        case "photo_100":
+                            $response[$i]->photo_medium = $usr->getAvatarURL("tiny");
+                            $response[$i]->photo_medium_rec = $usr->getAvatarURL("tiny");
+                            $response[$i]->photo_100 = $usr->getAvatarURL("tiny");
+                            break;
+                        case "photo_big":
+                        case "photo_200":
+                            $response[$i]->photo_big = $usr->getAvatarURL("normal");
+                            $response[$i]->photo_200 = $usr->getAvatarURL("normal");
+                            break;
+                        case "photo_200_orig": # вообще не ебу к чему эта строка ну пусть будет кек
+                            $response[$i]->photo_200_orig = $usr->getAvatarURL("normal");
+                            break;
+                        case "photo_400_orig":
+                            $response[$i]->photo_400_orig = $usr->getAvatarURL("normal");
+                            break;
 
-                                # Она хочет быть выебанной видя матан
-                                # Покайфу когда ты Виет а вокруг лишь дискриминант
+                            # Она хочет быть выебанной видя матан
+                            # Покайфу когда ты Виет а вокруг лишь дискриминант
 
-                                # ору а когда я это успел написать
-                                # вова кстати не матерись в коде мамка же спалит азщазаззазщазазаззазазазх
-                            case "status":
-                                if ($usr->getStatus() != null) {
-                                    $response[$i]->status = $usr->getStatus();
-                                }
+                            # ору а когда я это успел написать
+                            # вова кстати не матерись в коде мамка же спалит азщазаззазщазазаззазазазх
+                        case "status":
+                            if ($usr->getStatus() != null) {
+                                $response[$i]->status = $usr->getStatus();
+                            }
 
-                                $audioStatus = $usr->getCurrentAudioStatus();
+                            $audioStatus = $usr->getCurrentAudioStatus();
 
-                                if ($audioStatus) {
-                                    $response[$i]->status_audio = $audioStatus->toVkApiStruct();
-                                }
+                            if ($audioStatus) {
+                                $response[$i]->status_audio = $audioStatus->toVkApiStruct();
+                            }
 
-                                break;
-                            case "nickname":
-                                if ($usr->getShortCode() != null) {
-                                    $response[$i]->nickname = $usr->getPseudo();
-                                }
-                                break;
-                            case "screen_name":
-                                if ($usr->getShortCode() != null) {
-                                    $response[$i]->screen_name = $usr->getShortCode();
-                                }
-                                break;
-                            case "friend_status":
-                                $friendStatus = $authuser ? $usr->getSubscriptionStatus($authuser) : 0;
+                            break;
+                        case "nickname":
+                            if ($usr->getShortCode() != null) {
+                                $response[$i]->nickname = $usr->getPseudo();
+                            }
+                            break;
+                        case "screen_name":
+                            if ($usr->getShortCode() != null) {
+                                $response[$i]->screen_name = $usr->getShortCode();
+                            }
+                            break;
+                        case "friend_status":
+                            $friendStatus = $authuser ? $usr->getSubscriptionStatus($authuser) : 0;
 
-                                switch ($friendStatus) {
-                                    case 3:
-                                        # NOTICE falling through
-                                    case 0:
-                                        $response[$i]->friend_status = $friendStatus;
+                            switch ($friendStatus) {
+                                case 3:
+                                    # NOTICE falling through
+                                case 0:
+                                    $response[$i]->friend_status = $friendStatus;
+                                    break;
+                                case 1:
+                                    $response[$i]->friend_status = 2;
+                                    break;
+                                case 2:
+                                    $response[$i]->friend_status = 1;
+                                    break;
+                            }
+                            break;
+                        case "last_seen":
+                            if ($usr->onlineStatus() == 0) {
+                                $platform = $usr->getOnlinePlatform(true);
+                                switch ($platform) {
+                                    case 'iphone':
+                                        $platform = 2;
                                         break;
+
+                                    case 'android':
+                                        $platform = 4;
+                                        break;
+
+                                    case 'web':
+                                    case null:
+                                        $platform = 7;
+                                        break;
+
+                                    default:
+                                        $platform = 1;
+                                        break;
+                                }
+
+                                $response[$i]->last_seen = (object) [
+                                    "platform" => $platform,
+                                    "time"     => $usr->getOnline()->timestamp(),
+                                ];
+                            }
+                            // no break
+                        case "online":
+                            if ($usr->onlineStatus() == 0) {
+                                $response[$i]->online = 1;
+
+                                $platform = $usr->getOnlinePlatform(false);
+                                if ($platform !== null) {
+                                    $response[$i]->online_mobile = 1;
+                                }
+                            }
+                            break;
+                        case "music":
+                            if (!$canView) {
+                                break;
+                            }
+
+                            $response[$i]->music = $usr->getFavoriteMusic();
+                            break;
+                        case "movies":
+                            if (!$canView) {
+                                break;
+                            }
+
+                            $response[$i]->movies = $usr->getFavoriteFilms();
+                            break;
+                        case "tv":
+                            if (!$canView) {
+                                break;
+                            }
+
+                            $response[$i]->tv = $usr->getFavoriteShows();
+                            break;
+                        case "books":
+                            if (!$canView) {
+                                break;
+                            }
+
+                            $response[$i]->books = $usr->getFavoriteBooks();
+                            break;
+                        case "city":
+                            if (!$canView) {
+                                break;
+                            }
+
+                            $cityStr = $usr->getCity();
+                            if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                                $response[$i]->city = !empty($cityStr) ? $usr->getId() : 0;
+                            } else {
+                                $response[$i]->city = (object) [
+                                    'id' => 0,
+                                    'title' => $cityStr,
+                                ];
+                            }
+                            break;
+                        case "country":
+                            if (!$canView) {
+                                break;
+                            }
+
+                            if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                                $response[$i]->country = 1;
+                            } else {
+                                $response[$i]->country = (object) [
+                                    'id' => 1,
+                                    'title' => "Россия",
+                                ];
+                            }
+                            break;
+                        case "relation":
+                            if (!$canView) {
+                                break;
+                            }
+
+                            $response[$i]->relation = $usr->getMaritalStatus();
+                            break;
+                        case "contacts":
+                            if (!$canView) {
+                                break;
+                            }
+
+                            $response[$i]->mobile_phone = $usr->getPhone() ?? "";
+                            $response[$i]->home_phone = "";
+                            break;
+                        case "education":
+                            if (!$canView) {
+                                break;
+                            }
+
+                            $response[$i]->university_name = "";
+                            $response[$i]->graduation = "";
+                            break;
+                        case "home_town":
+                            if (!$canView) {
+                                break;
+                            }
+
+                            $response[$i]->home_town = $usr->getHometown();
+                            break;
+                        case "interests":
+                            if (!$canView) {
+                                break;
+                            }
+
+                            $response[$i]->interests = $usr->getInterests();
+                            break;
+                        case "quotes":
+                            if (!$canView) {
+                                break;
+                            }
+
+                            $response[$i]->quotes = $usr->getFavoriteQuote();
+                            break;
+                        case "games":
+                            if (!$canView) {
+                                break;
+                            }
+
+                            $response[$i]->games = $usr->getFavoriteGames();
+                            break;
+                        case "email":
+                            if (!$canView) {
+                                break;
+                            }
+
+                            $response[$i]->email = $usr->getContactEmail();
+                            break;
+                        case "telegram":
+                            if (!$canView) {
+                                break;
+                            }
+
+                            $response[$i]->telegram = $usr->getTelegram();
+                            break;
+                        case "about":
+                            if (!$canView) {
+                                break;
+                            }
+
+                            $response[$i]->about = $usr->getDescription();
+                            break;
+                        case "rating":
+                            if (!$canView) {
+                                break;
+                            }
+
+                            $response[$i]->rating = $usr->getRating();
+                            break;
+                        case "counters":
+                        case "correct_counters":
+                            $response[$i]->counters = (object) [
+                                "friends" => $usr->getFriendsCount(),
+                                "photos"  => (new Photos())->getUserPhotosCount($usr),
+                                "videos"  => (new Videos())->getUserVideosCount($usr),
+                                "audios"  => (new Audios())->getUserCollectionSize($usr),
+                                "notes"   => (new Notes())->getUserNotesCount($usr),
+                                "groups"  => $usr->getClubCount(),
+                                "online_friends" => $usr->getFriendsOnlineCount(),
+                                "mutual_friends" => 0, // FIXME: not implemented
+                                "user_photos" => 0, // FIXME: not implemented
+                                "albums" => (new Albums())->getUserAlbumsCount($usr),
+                                "followers" => $usr->getFollowersCount(),
+                                "gifts" => $usr->getGiftCount(),
+                            ];
+                            break;
+                        case "guid":
+                            $response[$i]->guid = $usr->getChandlerGUID();
+                            break;
+                        case 'background':
+                            $backgrounds = $usr->getBackDropPictureURLs();
+                            $response[$i]->background = $backgrounds;
+                            break;
+                        case 'reg_date':
+                            if (!$canView) {
+                                break;
+                            }
+
+                            $response[$i]->reg_date = $usr->getRegistrationTime()->timestamp();
+                            break;
+                        case 'is_dead':
+                            $response[$i]->is_dead = $usr->isDead();
+                            break;
+                        case 'nickname':
+                            $response[$i]->nickname = $usr->getPseudo();
+                            break;
+                        case 'blacklisted_by_me':
+                            if (!$authuser) {
+                                break;
+                            }
+
+                            $response[$i]->blacklisted_by_me = (int) $usr->isBlacklistedBy($this->getUser());
+                            break;
+                        case 'blacklisted':
+                            if (!$authuser) {
+                                break;
+                            }
+
+                            $response[$i]->blacklisted = (int) $this->getUser()->isBlacklistedBy($usr);
+                            break;
+                        case "custom_fields":
+                            if (sizeof($usrs) > 1) {
+                                break;
+                            }
+
+                            $c_fields = \openvk\Web\Models\Entities\UserInfoEntities\AdditionalField::getByOwner($usr->getId());
+                            $append_array = [];
+                            foreach ($c_fields as $c_field) {
+                                $append_array[] = $c_field->toVkApiStruct();
+                            }
+
+                            $response[$i]->custom_fields = $append_array;
+                            break;
+                        case "bdate":
+                            if (!$canView) {
+                                $response[$i]->bdate = "01.01.1970";
+                                break;
+                            }
+                            $visibility = $usr->getBirthdayPrivacy();
+                            $response[$i]->bdate_visibility = $visibility;
+
+                            $birthday = $usr->getBirthday();
+                            if ($birthday) {
+                                switch ($visibility) {
                                     case 1:
-                                        $response[$i]->friend_status = 2;
+                                        $response[$i]->bdate = $birthday->format('%d.%m');
                                         break;
                                     case 2:
-                                        $response[$i]->friend_status = 1;
+                                        $response[$i]->bdate = $birthday->format('%d.%m.%Y');
+                                        break;
+                                    case 0:
+                                    default:
+                                        //$response[$i]->bdate = null;
                                         break;
                                 }
-                                break;
-                            case "last_seen":
-                                if ($usr->onlineStatus() == 0) {
-                                    $platform = $usr->getOnlinePlatform(true);
-                                    switch ($platform) {
-                                        case 'iphone':
-                                            $platform = 2;
-                                            break;
-
-                                        case 'android':
-                                            $platform = 4;
-                                            break;
-
-                                        case 'web':
-                                        case null:
-                                            $platform = 7;
-                                            break;
-
-                                        default:
-                                            $platform = 1;
-                                            break;
-                                    }
-
-                                    $response[$i]->last_seen = (object) [
-                                        "platform" => $platform,
-                                        "time"     => $usr->getOnline()->timestamp(),
-                                    ];
-                                }
-                                // no break
-                            case "online":
-                                if ($usr->onlineStatus() == 0) {
-                                    $response[$i]->online = 1;
-
-                                    $platform = $usr->getOnlinePlatform(false);
-                                    if ($platform !== null) {
-                                        $response[$i]->online_mobile = 1;
+                            } else {
+                                //$response[$i]->bdate = null;
+                            }
+                            break;
+                        case "can_write_private_message":
+                            $canWrite = 1;
+                            if ($usr->isDeleted() || $usr->isBanned()) {
+                                $canWrite = 0;
+                            } elseif ($this->getUser()) {
+                                if ($this->getUser()->getId() !== $usr->getId()) {
+                                    if ($usr->isBlacklistedBy($this->getUser()) || $this->getUser()->isBlacklistedBy($usr)) {
+                                        $canWrite = 0;
+                                    } elseif (!$usr->getPrivacyPermission("messages.write", $this->getUser())) {
+                                        $canWrite = 0;
                                     }
                                 }
-                                break;
-                            case "music":
-                                if (!$canView) {
-                                    break;
-                                }
-
-                                $response[$i]->music = $usr->getFavoriteMusic();
-                                break;
-                            case "movies":
-                                if (!$canView) {
-                                    break;
-                                }
-
-                                $response[$i]->movies = $usr->getFavoriteFilms();
-                                break;
-                            case "tv":
-                                if (!$canView) {
-                                    break;
-                                }
-
-                                $response[$i]->tv = $usr->getFavoriteShows();
-                                break;
-                            case "books":
-                                if (!$canView) {
-                                    break;
-                                }
-
-                                $response[$i]->books = $usr->getFavoriteBooks();
-                                break;
-                            case "city":
-                                if (!$canView) {
-                                    break;
-                                }
-
-                                $cityStr = $usr->getCity();
-                                if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
-                                    $response[$i]->city = !empty($cityStr) ? $usr->getId() : 0;
-                                } else {
-                                    $response[$i]->city = (object) [
-                                        'id' => 0,
-                                        'title' => $cityStr,
-                                    ];
-                                }
-                                break;
-                            case "country":
-                                if (!$canView) {
-                                    break;
-                                }
-
-                                if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
-                                    $response[$i]->country = 1;
-                                } else {
-                                    $response[$i]->country = (object) [
-                                        'id' => 1,
-                                        'title' => "Россия",
-                                    ];
-                                }
-                                break;
-                            case "relation":
-                                if (!$canView) {
-                                    break;
-                                }
-
-                                $response[$i]->relation = $usr->getMaritalStatus();
-                                break;
-                            case "contacts":
-                                if (!$canView) {
-                                    break;
-                                }
-
-                                $response[$i]->mobile_phone = $usr->getPhone() ?? "";
-                                $response[$i]->home_phone = "";
-                                break;
-                            case "education":
-                                if (!$canView) {
-                                    break;
-                                }
-
-                                $response[$i]->university_name = "";
-                                $response[$i]->graduation = "";
-                                break;
-                            case "home_town":
-                                if (!$canView) {
-                                    break;
-                                }
-
-                                $response[$i]->home_town = $usr->getHometown();
-                                break;
-                            case "interests":
-                                if (!$canView) {
-                                    break;
-                                }
-
-                                $response[$i]->interests = $usr->getInterests();
-                                break;
-                            case "quotes":
-                                if (!$canView) {
-                                    break;
-                                }
-
-                                $response[$i]->quotes = $usr->getFavoriteQuote();
-                                break;
-                            case "games":
-                                if (!$canView) {
-                                    break;
-                                }
-
-                                $response[$i]->games = $usr->getFavoriteGames();
-                                break;
-                            case "email":
-                                if (!$canView) {
-                                    break;
-                                }
-
-                                $response[$i]->email = $usr->getContactEmail();
-                                break;
-                            case "telegram":
-                                if (!$canView) {
-                                    break;
-                                }
-
-                                $response[$i]->telegram = $usr->getTelegram();
-                                break;
-                            case "about":
-                                if (!$canView) {
-                                    break;
-                                }
-
-                                $response[$i]->about = $usr->getDescription();
-                                break;
-                            case "rating":
-                                if (!$canView) {
-                                    break;
-                                }
-
-                                $response[$i]->rating = $usr->getRating();
-                                break;
-                            case "counters":
-                            case "correct_counters":
-                                $response[$i]->counters = (object) [
-                                    "friends" => $usr->getFriendsCount(),
-                                    "photos"  => (new Photos())->getUserPhotosCount($usr),
-                                    "videos"  => (new Videos())->getUserVideosCount($usr),
-                                    "audios"  => (new Audios())->getUserCollectionSize($usr),
-                                    "notes"   => (new Notes())->getUserNotesCount($usr),
-                                    "groups"  => $usr->getClubCount(),
-                                    "online_friends" => $usr->getFriendsOnlineCount(),
-                                    "mutual_friends" => 0, // FIXME: not implemented
-                                    "user_photos" => 0, // FIXME: not implemented
-                                    "albums" => (new Albums())->getUserAlbumsCount($usr),
-                                    "followers" => $usr->getFollowersCount(),
-                                    "gifts" => $usr->getGiftCount(),
-                                ];
-                                break;
-                            case "guid":
-                                $response[$i]->guid = $usr->getChandlerGUID();
-                                break;
-                            case 'background':
-                                $backgrounds = $usr->getBackDropPictureURLs();
-                                $response[$i]->background = $backgrounds;
-                                break;
-                            case 'reg_date':
-                                if (!$canView) {
-                                    break;
-                                }
-
-                                $response[$i]->reg_date = $usr->getRegistrationTime()->timestamp();
-                                break;
-                            case 'is_dead':
-                                $response[$i]->is_dead = $usr->isDead();
-                                break;
-                            case 'nickname':
-                                $response[$i]->nickname = $usr->getPseudo();
-                                break;
-                            case 'blacklisted_by_me':
-                                if (!$authuser) {
-                                    break;
-                                }
-
-                                $response[$i]->blacklisted_by_me = (int) $usr->isBlacklistedBy($this->getUser());
-                                break;
-                            case 'blacklisted':
-                                if (!$authuser) {
-                                    break;
-                                }
-
-                                $response[$i]->blacklisted = (int) $this->getUser()->isBlacklistedBy($usr);
-                                break;
-                            case "custom_fields":
-                                if (sizeof($usrs) > 1) {
-                                    break;
-                                }
-
-                                $c_fields = \openvk\Web\Models\Entities\UserInfoEntities\AdditionalField::getByOwner($usr->getId());
-                                $append_array = [];
-                                foreach ($c_fields as $c_field) {
-                                    $append_array[] = $c_field->toVkApiStruct();
-                                }
-
-                                $response[$i]->custom_fields = $append_array;
-                                break;
-                            case "bdate":
-                                if (!$canView) {
-                                    $response[$i]->bdate = "01.01.1970";
-                                    break;
-                                }
-                                $visibility = $usr->getBirthdayPrivacy();
-                                $response[$i]->bdate_visibility = $visibility;
-
-                                $birthday = $usr->getBirthday();
-                                if ($birthday) {
-                                    switch ($visibility) {
-                                        case 1:
-                                            $response[$i]->bdate = $birthday->format('%d.%m');
-                                            break;
-                                        case 2:
-                                            $response[$i]->bdate = $birthday->format('%d.%m.%Y');
-                                            break;
-                                        case 0:
-                                        default:
-                                            //$response[$i]->bdate = null;
-                                            break;
-                                    }
-                                } else {
-                                    //$response[$i]->bdate = null;
-                                }
-                                break;
-                            case "can_write_private_message":
-                                $canWrite = 1;
-                                if ($usr->isDeleted() || $usr->isBanned()) {
-                                    $canWrite = 0;
-                                } elseif ($this->getUser()) {
-                                    if ($this->getUser()->getId() !== $usr->getId()) {
-                                        if ($usr->isBlacklistedBy($this->getUser()) || $this->getUser()->isBlacklistedBy($usr)) {
-                                            $canWrite = 0;
-                                        } elseif (!$usr->getPrivacyPermission("messages.write", $this->getUser())) {
-                                            $canWrite = 0;
-                                        }
-                                    }
-                                } else {
-                                    $canWrite = 0;
-                                }
-                                $response[$i]->can_write_private_message = $canWrite;
-                                break;
-                            case "can_invite":
-                                $response[$i]->can_invite = (int) $usr->getPrivacyPermission("messages.add_to_chats", $this->getUser());
-                                break;
-                            case "can_post":
-                                $response[$i]->can_post = (int) $usr->getPrivacyPermission("wall.write", $this->getUser());
-                                break;
-                            case "can_see_all_posts":
-                                $response[$i]->can_see_all_posts = (int) $canView;
-                                break;
-                            case "can_see_audio":
-                                $response[$i]->can_see_audio = (int) ($canView && $usr->getPrivacyPermission("audios.read", $this->getUser()));
-                                break;
-                            case "can_send_friend_request":
-                                $response[$i]->can_send_friend_request = (int) ($authuser && $authuser->getId() !== $usr->getId() && $usr->getPrivacyPermission("friends.add", $authuser));
-                                break;
-                            case "is_friend":
-                                $response[$i]->is_friend = (int) ($authuser && $usr->getSubscriptionStatus($authuser) === User::SUBSCRIPTION_MUTUAL);
-                                break;
-                        }
-                    }
-
-                    if ($usr->getOnline()->timestamp() + 300 > time()) {
-                        $response[$i]->online = 1;
-                    } else {
-                        $response[$i]->online = 0;
+                            } else {
+                                $canWrite = 0;
+                            }
+                            $response[$i]->can_write_private_message = $canWrite;
+                            break;
+                        case "can_invite":
+                            $response[$i]->can_invite = (int) $usr->getPrivacyPermission("messages.add_to_chats", $this->getUser());
+                            break;
+                        case "can_post":
+                            $response[$i]->can_post = (int) $usr->getPrivacyPermission("wall.write", $this->getUser());
+                            break;
+                        case "can_see_all_posts":
+                            $response[$i]->can_see_all_posts = (int) $canView;
+                            break;
+                        case "can_see_audio":
+                            $response[$i]->can_see_audio = (int) ($canView && $usr->getPrivacyPermission("audios.read", $this->getUser()));
+                            break;
+                        case "can_send_friend_request":
+                            $response[$i]->can_send_friend_request = (int) ($authuser && $authuser->getId() !== $usr->getId() && $usr->getPrivacyPermission("friends.add", $authuser));
+                            break;
+                        case "is_friend":
+                            $response[$i]->is_friend = (int) ($authuser && $usr->getSubscriptionStatus($authuser) === User::SUBSCRIPTION_MUTUAL);
+                            break;
                     }
                 }
+
+                if ($usr->getOnline()->timestamp() + 300 > time()) {
+                    $response[$i]->online = 1;
+                } else {
+                    $response[$i]->online = 0;
+                }
             }
+        }
 
         return $response;
     }

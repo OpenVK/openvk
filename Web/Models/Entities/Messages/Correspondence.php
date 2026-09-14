@@ -204,7 +204,7 @@ class Correspondence
     public function getMessages(int $capBehavior = 1, ?int $cap = null, ?int $limit = null, ?int $padding = null, bool $reverse = false): array
     {
         $actor = $this->getActorId();
-        $limit = $limit ?? OPENVK_DEFAULT_PER_PAGE;
+        $limit ??= OPENVK_DEFAULT_PER_PAGE;
 
         $params = [
             "peer_id"          => (string) $this->getPeerId(),
@@ -314,8 +314,8 @@ class Correspondence
                 $recipient = $cand;
             }
         }
-        $senderEntity = $senderEntity ?? $this->correspondents[0];
-        $recipient    = $recipient ?? $this->correspondents[1];
+        $senderEntity ??= $this->correspondents[0];
+        $recipient ??= $this->correspondents[1];
 
         $params = [
             "peer_id"   => (string) $this->peerIdOf($recipient),

@@ -439,12 +439,13 @@ function toDesktopVersion() {
 }
 
 $(document).on('click', 'a', async (e) => {
+    console.log(e.isDefaultPrevented())
     if((typeof e.isDefaultPrevented === 'function' && e.isDefaultPrevented()) || e.defaultPrevented || (e.originalEvent && e.originalEvent.defaultPrevented)) {
         console.log('AJAX | Skipping because default is prevented')
         return
     }
 
-    const target = u(e.target).closest('a')
+    const target = u(e.target).closest('a');
     if(target.attr('data-no-ajax') || target.attr('data-modal')) {
         console.log('AJAX | Skipped because data-no-ajax/data-modal')
         return
@@ -503,7 +504,8 @@ $(document).on('click', 'a', async (e) => {
 })
 
 $(document).on('submit', 'form', async (e) => {
-    if(e.defaultPrevented) {
+    console.log("submit form ", e);
+    if(e.isDefaultPrevented()) {
         return
     }
 

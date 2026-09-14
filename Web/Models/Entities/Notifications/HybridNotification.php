@@ -18,8 +18,8 @@ abstract class HybridNotification extends Notification
         }
 
         $params = $this->getSendParams();
-        $params["peer_id"] = $this->getRecipient()->getRealId(); 
-        $params["random_id"] = (string) rand(1, 2147483647); 
+        $params["peer_id"] = $this->getRecipient()->getRealId();
+        $params["random_id"] = (string) rand(1, 2147483647);
 
         $response = $broker->invokeMethod($this->targetModel->getRealId(), $this->getSendMethod(), $params);
         if ($response === false) {
@@ -37,7 +37,7 @@ abstract class HybridNotification extends Notification
     }
 
     abstract public function getSendParams(): array;
-    
+
     public function getSendMethod(): string
     {
         return "im.sendAction";

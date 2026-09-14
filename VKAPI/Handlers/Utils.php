@@ -79,7 +79,7 @@ final class Utils extends VKAPIRequestHandler
             } else {
                 $r[] = [
                     "type" => "unknown",
-                    "unknown" => []
+                    "unknown" => [],
                 ];
             }
         }
@@ -87,7 +87,7 @@ final class Utils extends VKAPIRequestHandler
         return $r;
     }
 
-    public function resolveOffset(int $owner_id, int $id, ?int $id2 = null, string $method = "wall.get", int $perPage = 10, bool $rev = false) 
+    public function resolveOffset(int $owner_id, int $id, ?int $id2 = null, string $method = "wall.get", int $perPage = 10, bool $rev = false)
     {
         $this->requireUser();
 
@@ -128,7 +128,7 @@ final class Utils extends VKAPIRequestHandler
 
                 break;
             case "photos.get":
-                $photo = (new Photos)->getByOwnerAndVIDUnsafe($owner_id, $id);
+                $photo = (new Photos())->getByOwnerAndVIDUnsafe($owner_id, $id);
                 if (!$photo) {
                     $this->fail(100, "One of the parameters specified was missing or invalid");
                 }
@@ -167,13 +167,13 @@ final class Utils extends VKAPIRequestHandler
                     $exactOffset = $exactOffset->where([
                         "owner" => $owner_id,
                         "context_id" => null,
-                        "virtual_id < ?" => $id
+                        "virtual_id < ?" => $id,
                     ]);
                 } else {
                     $exactOffset = $exactOffset->where([
                         "context_id" => $owner_id,
                         "context_unlisted" => 0,
-                        "context_vid < ?" => $id
+                        "context_vid < ?" => $id,
                     ]);
                 }
 

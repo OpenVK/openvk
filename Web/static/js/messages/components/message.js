@@ -446,9 +446,6 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                     window.im.messenger.goToMessage(rep || { id: msg.data?.reply_to, peer_id: peerId });
                 }
             }}>
-                        <div class="reply-msg-header">
-                            ${tr("reply_to_message_user", replyAuthorName)}
-                        </div>
                         <div class="reply-msg-head">
                             <a href=${replyFromId ? `/id${replyFromId}` : "javascript:void(0)"} target="_blank" class="reply-avatar-link" onClick=${(e) => e.stopPropagation()}>
                                 <img class="reply-avatar" src=${replyAuthorAvatar} alt=${replyAuthorName} />
@@ -468,6 +465,9 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                                 ${replyAttachments.map((att) => html`<${CompactReplyAttachment} rep=${rep} att=${att} />`)}
                             </div>
                         `}
+                        <div class="reply-msg-header">
+                            ${tr("reply_to_message_user", replyAuthorName)}
+                        </div>
                     </div>
                 `}
                 ${isDeleted ? html`
@@ -807,12 +807,13 @@ export const SystemMessages = {
         const peer = msg.peer;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
+        const text = escapeHtml(msg.data?.action?.text || "");
         return html`
             <div class="messenger-special-message centred" id=${msgAnchorId} data-msg-id=${msg.id}>
                 <div>
                     <b>${msg.isMine() ? tr("event_chat_user_added_voices_self", peer.getName(), msg.data?.action?.member_id) : tr("event_chat_user_added_voices_" + gender, senderName, msg.data?.action?.member_id)}</b>
                     <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
-                    <p>«${escapeHtml(msg.data?.action?.text || "")}»</p>
+                    ${text ? html`<p>«${text}»</p>` : ""}
                 </div>
             </div>
         `;
@@ -1304,9 +1305,6 @@ export class LottieSticker extends Component {
     }
 
     loadAnim() {
-        if ((localStorage.getItem("tw.im.disable_lottie") || "0") == "1") {
-            return;
-        }
         if (this.anim) {
             try { this.anim.destroy(); } catch (e) { }
             this.anim = null;
@@ -1344,6 +1342,19 @@ export class LottieSticker extends Component {
 
     render() {
         const { stickerId, width = 128, height = 128, packId } = this.props;
+
+        if ((localStorage.getItem("tw.im.disable_lottie") || "0") == "1") {
+            return html`
+            <div 
+                class="msg-attach-w msg-attach-w-sticker msg-attach-w-lottie msg-lottie-sticker"
+                onClick=${(e) => this.handleClick(e)}
+                style="width: ${width}px; height: ${height}px; max-width: 100%; cursor: pointer;"
+            >
+                <img src="/images/stickers/${stickerId}/128.png" />
+            </div>
+            `;
+        }
+
         return html`
             <div 
                 class="msg-attach-w msg-attach-w-sticker msg-attach-w-lottie msg-lottie-sticker"

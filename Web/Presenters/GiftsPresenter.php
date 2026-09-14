@@ -32,6 +32,10 @@ final class GiftsPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
+        if (!$user->getPrivacyPermission("gifts.read", $this->user->identity)) {
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+        }
+
         $this->template->user     = $user;
         $this->template->page     = $page = (int) ($this->queryParam("p") ?? 1);
         $this->template->count    = $user->getGiftCount();
@@ -44,6 +48,10 @@ final class GiftsPresenter extends OpenVKPresenter
         $user = $this->users->get((int) ($this->queryParam("user") ?? 0));
         if (!$user) {
             $this->notFound();
+        }
+
+        if (!$user->getPrivacyPermission("gifts.read", $this->user->identity)) {
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
         $this->template->page = $page = (int) ($this->queryParam("p") ?? 1);
@@ -67,6 +75,10 @@ final class GiftsPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
+        if (!$user->getPrivacyPermission("gifts.read", $this->user->identity)) {
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+        }
+
         $this->template->page = $page = (int) ($this->queryParam("p") ?? 1);
         $gifts = $cat->getGifts($page, null, $this->template->count);
 
@@ -83,6 +95,10 @@ final class GiftsPresenter extends OpenVKPresenter
         $cat  = $this->gifts->getCat((int) ($this->queryParam("pack") ?? 0));
         if (!$user || !$cat || !$gift || !$cat->hasGift($gift)) {
             $this->flashFail("err", tr("error_when_gifting"), tr("error_no_rights_gifts"));
+        }
+
+        if (!$user->getPrivacyPermission("gifts.read", $this->user->identity)) {
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
         if (!$gift->canUse($this->user->identity)) {

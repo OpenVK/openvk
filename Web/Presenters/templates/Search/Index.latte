@@ -41,7 +41,7 @@
                     <div style="display: flex;width: 100%;position: relative;">
                         <input style="padding-right: 30%;" class="search_input" name="q" placeholder="{_header_search}" type="search" n:attr="value => $_REQUEST['q'] ?? NULL"  />
                         <select name="section">
-                            <option n:attr="selected => $section == 'main'" value="main"></option>
+                            {*<option n:attr="selected => $section == 'main'" value="main"></option>*}
                             <option n:attr="selected => $section == 'users'" value="users">{_s_by_people}</option>
                             <option n:attr="selected => $section == 'groups'" value="groups">{_s_by_groups}</option>
                             <option n:attr="selected => $section == 'events'" value="events">{_s_by_events}</option>
@@ -58,6 +58,22 @@
                         <span>{_header_search}</span>
                     </button>
                 </form>
+
+                <div class="page_wrap_content_options_list mb_tabs">
+                    {foreach ["users", "groups", "events", "posts", "videos", "apps", "audios", "audios_playlists", "docs"] as $it}
+                        <div class="mb_tab" n:attr="id => $section === $it ? 'active'">
+                            <a href="/search?section={$it}&q={urlencode($query)}">
+                                {if $it == "users"}
+                                    {tr("s_people")}
+                                {elseif $it == "docs"}
+                                    {tr("s_documents")}
+                                {else}
+                                    {tr("s_" . $it)}
+                                {/if}
+                            </a>
+                        </div>
+                    {/foreach}
+                </div>
 
                 <div class='summaryBar summaryBarFlex padding'>
                     <div class="summary" n:if="$ref != 'globalfeed'">
@@ -91,7 +107,7 @@
                 </div>
 
                 <div class='page_wrap_content' id='search_page'>
-                    <div n:class='page_wrap_content_main, scroll_container, $section == "audios" && $count > 0 ? audios_padding'>
+                    <div style="min-height: 200px;" n:class='page_wrap_content_main, scroll_container, $section == "audios" && $count > 0 ? audios_padding'>
                         {if $count > 0}
                             {if $section === 'users'}
                                 <div class='scroll_node search_content content def_row_content' n:foreach="$data as $dat">

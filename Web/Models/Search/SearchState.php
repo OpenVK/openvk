@@ -9,7 +9,9 @@ use openvk\Web\Models\Search\Catalogue;
 use openvk\Web\Models\Entities\User;
 
 class InvalidSectionError extends \RuntimeException {}
-class SearchState {
+
+class SearchState 
+{
     private string $query;
     private string $section;
     private string $order_type;
@@ -79,19 +81,20 @@ class SearchState {
 
     public function execute(int $page, int $perPage)
     {
-        if ($this->section == "main") {
+        //if ($this->section == "main") {
+        if (false) {
             $cat = new Catalogue($this->user);
 
             return $cat->search($this->query, $page);
         } else {
             $repos = [
-                "groups"   => "Groups",
-                "events"   => "Groups",
+                "groups"   => "Clubs",
+                "events"   => "Clubs",
                 "users"    => "Users",
                 "posts"    => "Posts",
                 "videos"   => "Videos",
                 "audios"   => "Audios",
-                "apps"     => "Apps",
+                "apps"     => "Applications",
                 "audios_playlists" => "Audios",
                 "docs" => "Documents",
             ];
@@ -103,18 +106,18 @@ class SearchState {
 
             $results = null;
 
-            switch ($section) {
+            switch ($this->section) {
                 case 'groups':
-                    $results  = (new Groups)->find($this->query, $this->params, ['type' => $this->order_type, 'invert' => $this->invert]);
+                    $results  = (new Clubs())->find($this->query, $this->params, ['type' => $this->order_type, 'invert' => $this->invert]);
                     break;
                 case 'events':
-                    $results  = (new Groups)->findEvents($this->query, $this->params, ['type' => $this->order_type, 'invert' => $this->invert]);
+                    $results  = (new Clubs())->findEvents($this->query, $this->params, ['type' => $this->order_type, 'invert' => $this->invert]);
                     break;
                 case 'audios_playlists':
-                    $results  = (new Audios)->findPlaylists($this->query, $this->params, ['type' => $this->order_type, 'invert' => $this->invert]);
+                    $results  = (new Audios())->findPlaylists($this->query, $this->params, ['type' => $this->order_type, 'invert' => $this->invert]);
                     break;
                 default:
-                    $name = "openvk\\Web\\Models\\Repositories\\". $repo;
+                    $name = "openvk\\Web\\Models\\Repositories\\" . $repo;
                     $results  = (new $name())->find($this->query, $this->params, ['type' => $this->order_type, 'invert' => $this->invert]);
                     break;
             }

@@ -51,7 +51,7 @@ class Topic extends Postable
             return null;
         }
 
-        $chat = (new Chats)->get($this->getRecord()->chat_id, true, $user);
+        $chat = (new Chats())->get($this->getRecord()->chat_id, true, $user);
 
         return $chat;
     }

@@ -225,7 +225,7 @@ final class StickersPresenter extends OpenVKPresenter
                 if ($jsonCandidate && file_exists($renderScript)) {
                     $targetPng  = $dir . "{$size}.png";
                     $targetWebp = $dir . "{$size}.webp";
-                    @exec("node " . escapeshellarg($renderScript) . " " . escapeshellarg($jsonCandidate) . " " . escapeshellarg($targetWebp) . " " . (int)$size . " 2>&1");
+                    @exec("node " . escapeshellarg($renderScript) . " " . escapeshellarg($jsonCandidate) . " " . escapeshellarg($targetWebp) . " " . (int) $size . " 2>&1");
                     if (file_exists($targetWebp) && filesize($targetWebp) > 200) {
                         $filePath = $targetWebp;
                         $mime     = "image/webp";
@@ -266,7 +266,7 @@ final class StickersPresenter extends OpenVKPresenter
                 $renderScript = OPENVK_ROOT . "/bin/render_lottie.js";
                 if ($jsonCandidate && file_exists($renderScript)) {
                     $targetPng = $dir . "{$size}.png";
-                    @exec("node " . escapeshellarg($renderScript) . " " . escapeshellarg($jsonCandidate) . " " . escapeshellarg($targetPng) . " " . (int)$size . " 2>&1");
+                    @exec("node " . escapeshellarg($renderScript) . " " . escapeshellarg($jsonCandidate) . " " . escapeshellarg($targetPng) . " " . (int) $size . " 2>&1");
                     if (file_exists($targetPng) && filesize($targetPng) > 200) {
                         $filePath = $targetPng;
                         $mime     = "image/png";

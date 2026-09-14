@@ -136,6 +136,7 @@ export class ChatInvitePreviewPage extends IMPage {
 
     async beforeRender() {
         if (this.previewData == null && !this.error) {
+            const act = this.options.act;
             const joinCode = this.options.joinCode || this.options.code || (new URL(location.href)).searchParams.get("join") || (new URL(location.href)).searchParams.get("invite");
             if (!joinCode) {
                 this.error = tr("join_chat_error");
@@ -146,6 +147,7 @@ export class ChatInvitePreviewPage extends IMPage {
             try {
                 const res = await window.OVKAPI.call("messages.getChatPreview", {
                     link: joinCode,
+                    act: act,
                     fields: "photo_50,photo_100,photo_200,first_name,last_name"
                 });
 

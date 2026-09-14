@@ -108,7 +108,7 @@ class Report extends RowModel
                     }
                 } else {
                     return new Message((object) [
-                        "global_id" => $this->getContentId()
+                        "global_id" => $this->getContentId(),
                     ]);
                 }
                 break;
@@ -119,7 +119,7 @@ class Report extends RowModel
 
     public function getAuthor(): RowModel
     {
-        return $this->getContentObject()->getOwner();
+        return $this->getContentObject(true)->getOwner();
     }
 
     public function getReportAuthor(): User
@@ -135,13 +135,15 @@ class Report extends RowModel
 
     public function deleteContent(string $reason = "")
     {
-        if ($this->getContentType() === "message") {
-            $obj = $this->getContentObject();
-        }
+        $obj = $this->getContentObject(true);
 
-        if (!in_array($this->getContentType(), ["message", "user"])) {
-            $pubTime = $this->getContentObject()->getPublicationTime();
-            $postId = method_exists($this->getContentObject(), "getPrettyId") ? $this->getContentObject()->getPrettyId() : $this->getContentObject()->getId();
+        if ($this->getContentType() == "user") {
+            // nothing
+        } elseif($this->getContentType() == "message") {
+            $this->getAuthor()->adminNotify("Мы удалили сообщение в диалогах, на которое кто-то пожаловался. Постарайтесь отныне не нарушать правила.");
+        } else {
+            $pubTime = $obj->getPublicationTime();
+            $postId = method_exists($obj, "getPrettyId") ? $obj->getPrettyId() : $obj->getId();
             $reasonPlaceholder = "";
             if ($reason != "") {
                 $reasonPlaceholder = " по причине " . $reason;
@@ -153,7 +155,7 @@ class Report extends RowModel
             } else {
                 $this->getAuthor()->adminNotify("Ваш контент с id $postId, который был опубликован $pubTime был удалён модераторами инстанса$reasonPlaceholder. За повторные или серьёзные нарушения вас могут заблокировать.");
             }
-            $this->getContentObject()->delete($this->getContentType() !== "app");
+            $obj->delete($this->getContentType() !== "app");
         }
 
         $this->delete();

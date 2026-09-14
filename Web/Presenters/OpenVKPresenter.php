@@ -459,7 +459,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             $userId = Authenticator::i()->getUser();
             $user = (new Users())->getByChandlerUser($userId);
 
-            if ($user && $user->canSeeTracy() ) {
+            if ($user && $user->canSeeTracy()) {
                 while (ob_get_level()) {
                     ob_end_clean();
                 }

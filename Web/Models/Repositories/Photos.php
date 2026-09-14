@@ -71,7 +71,7 @@ class Photos
         return $this->toPhoto($photo);
     }
 
-    public function getByOwnerAndVID(int $owner, int $vId, ?string $access_key = null): ?Photo
+    public function getByOwnerAndVID(int $owner, int $vId, ?string $access_key = null, int $relId = null): ?Photo
     {
         $photo = $this->getByOwnerAndVIDUnsafe($owner, $vId);
 
@@ -80,7 +80,7 @@ class Photos
         }
 
         if (!$photo->checkAccessKey($access_key)) {
-            if (empty($access_key) && $photo->getOwner()->getId() === $owner) {
+            if (empty($access_key) && $photo->getOwner()->getId() === $relId) {
                 return $photo;
             }
 

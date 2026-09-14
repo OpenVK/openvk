@@ -165,7 +165,7 @@ final class Store extends VKAPIRequestHandler
             "has_animation" => $isAnimated,
             "is_animated"   => $isAnimated,
             "animation_url" => $animUrl,
-            "stickers_count"=> count($stickerIds),
+            "stickers_count" => count($stickerIds),
             "sticker_ids"   => $stickerIds,
             "stickers"      => $stickersList,
             "previews"      => $previews,

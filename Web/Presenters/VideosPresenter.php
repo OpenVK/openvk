@@ -28,7 +28,7 @@ final class VideosPresenter extends OpenVKPresenter
         if ($id > 0) {
             $owner = $this->users->get($id);
         } else {
-            $owner = (new Clubs)->get($id * -1);
+            $owner = (new Clubs())->get($id * -1);
         }
 
         if (!$owner) {
@@ -40,8 +40,8 @@ final class VideosPresenter extends OpenVKPresenter
         }
 
         $this->template->user   = $owner;
-        $this->template->videos = (new Videos)->getByUser($owner, (int) ($this->queryParam("p") ?? 1));
-        $this->template->count  = (new Videos)->getUserVideosCount($owner);
+        $this->template->videos = (new Videos())->getByUser($owner, (int) ($this->queryParam("p") ?? 1));
+        $this->template->count  = (new Videos())->getUserVideosCount($owner);
         $this->template->paginatorConf = (object) [
             "count"   => $this->template->count,
             "page"    => (int) ($this->queryParam("p") ?? 1),
@@ -94,7 +94,7 @@ final class VideosPresenter extends OpenVKPresenter
         $group = null;
 
         if ($gid != null) {
-            $group = (new Clubs)->get((int) $gid);
+            $group = (new Clubs())->get((int) $gid);
 
             if (!$group || !$group->canUploadVideo($this->user->identity)) {
                 $this->flashFail("err", tr("error"), tr("access_denied"));
@@ -118,7 +118,7 @@ final class VideosPresenter extends OpenVKPresenter
                 if ($is_from_messenger) {
                     $clubId = $this->postParam("club");
                     if ($clubId != null) {
-                        $club = (new Clubs)->get((int) $clubId);
+                        $club = (new Clubs())->get((int) $clubId);
                         if ($club && $club->canBeModifiedBy($this->user->identity)) {
                             $video->setContext($club, true);
                         }

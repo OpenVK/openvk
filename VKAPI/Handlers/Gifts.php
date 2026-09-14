@@ -30,6 +30,10 @@ final class Gifts extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
+        if (!$user->getPrivacyPermission("gifts.read", $this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
         $gift_item = [];
         $user_gifts = array_slice(iterator_to_array($user->getGifts(1, $count)), $offset, $count);
 
@@ -72,6 +76,10 @@ final class Gifts extends VKAPIRequestHandler
         }
 
         if (!$user->canBeViewedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        if (!$user->getPrivacyPermission("gifts.read", $this->getUser())) {
             $this->fail(15, "Access denied");
         }
 

@@ -63,7 +63,7 @@ export const FriendsPageTemplate = ({ friends, count, referrer, onFriendClick, o
                 </div>
                 `}
                 ${isAdd && html`
-                <div class="friends-list-side-item sticky">
+                <div class="friends-list-side-item sticky" style="flex-direction: column;align-items: end;">
                     <div class="friends-add-side-wrap">
                         <div class="inf">
                             <p class="friends-add-tip">${tr('add_chat_members_tip_1')}</p>

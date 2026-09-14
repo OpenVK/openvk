@@ -46,7 +46,7 @@
     <span n:if="isset($thisUser) && $user->getId() == $thisUser->getId()"><b>({_this_is_you})</b></span>
 
     <!-- DEBUG: ONLINE REPORT: static {$user->getOnline()->timestamp()}s adjusted {$user->getOnline()->timestamp() + 2505600}s real {time()}s -->
-    <div n:if="$user->getOnline()->timestamp() + 2505600 > time()" style="float:right;">
+    <div n:if="$user->getPrivacyPermission('page.online.read', $thisUser) || $user->getOnline()->timestamp() + 2505600 > time()" style="float:right;">
         {if $user->isOnline()}
             <span><b>{_online}</b></span>
         {else}

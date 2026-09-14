@@ -319,10 +319,12 @@ export class ChatGeneralForm {
                 if (acl && acl.can_change_info !== undefined) return !!acl.can_change_info;
                 return this.isAdmin();
             case "invite_new":
-            case "invite":
                 if (this.supposed_type !== "chat" || this.isILeft()) return false;
                 if (acl && acl.can_invite !== undefined) return !!acl.can_invite;
-                return (this.data.can_invite ?? 1) === 1;
+                return (this.data.can_invite || 1) === 1;
+            case "invite":
+                if (acl && acl.can_invite !== undefined) return !!acl.can_invite;
+                return (this.data.can_invite || 1) === 1;
             case "leave_chat":
                 return this.supposed_type === "chat" && !this.isKicked() && !this.isILeft();
             case "return_to_chat":

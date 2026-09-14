@@ -571,7 +571,7 @@ class Photo extends Media
 
     public function isPrivate(): bool
     {
-        return (bool) $this->getRecord()->private || (bool) $this->getRecord()->unlisted;
+        return $this->getRecord()->private == 1 || $this->getRecord()->unlisted == 1;
     }
 
     public function toApiAttachment(?User $user = null): array

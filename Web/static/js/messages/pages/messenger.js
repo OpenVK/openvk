@@ -261,7 +261,7 @@ export class Messenger {
     async selectConversationByPeerId(id) {
         let convo = null;
         try {
-            convo = await window.im.conversations._findConvFromApi(id);
+            convo = await window.im.conversations._findConvFromApi(id, false, false);
 
             if (!convo) {
                 console.error("can't find convo with id", id);
@@ -2202,7 +2202,7 @@ export class MessengerPage extends IMPage {
                 const res = await window.OVKAPI.call("messages.report", {
                     "comment": text,
                     "peer_id": msg.data.peer_id,
-                    "message_id": msg.data.id,
+                    "message_id": msg.data.conversation_message_id,
                     "group_id": window.im.state.getId() > 0 ? null : Math.abs(window.im.state.getId()),
                 }, true);
 

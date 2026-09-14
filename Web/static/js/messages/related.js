@@ -8,37 +8,45 @@ async function showUserDialog(event, userId) {
             <div class="user-send-centre">
                 <div class="user-send-left">
                     <img class="udlg-avatar" src="${conv.peer.getAvatar()}" alt="" />
-                    <div class="udlg-online nobold">${conv.peer.getOnlineStatusString()}</div>
+                    <div class="udlg-online nobold"><a class="udlg-goto">${tr('go_to_dialog')}</a></div>
                 </div>
                 <div class="udlg-send-right">
                     <div>
                         <div class="udlg-info">
-                            <div class="udlg-name">${conv.peer.getName()}</div>
+                            <a class="udlg-name" href="${conv.peer.getPageUrl()}">${conv.peer.getName()}</a>
                         </div>
+                        <div class="udlg-online nobold">${conv.peer.getOnlineStatusString()}</div>
                     </div>
 
                     <div id="write" class="has_emoji_picker model_content_textarea">
                         <div class="textareas">
                             <textarea min-height: 190px; id="_text" class="udlg-textarea expanded-textarea small-textarea" placeholder="${tr('enter_message')}"></textarea>
-                            <div class="emoji_picker_entrypoint"></div>
+                            <div class="emoji_picker_entrypoint" data-stickers="0"></div>
                         </div>
 
                         <div class="post-horizontal"></div>
                         <div class="post-vertical"></div>
-                        <div class="udlg-actions">
-                            <div class="attachment-icons">
-                                <div id="__photoAttachment"></div>
-                                <div id="__videoAttachment"></div>
-                                <div id="__audioAttachment"></div>
-                                <div id="__documentAttachment"></div>
+                        <div class="udlg-actions" style="margin-top: 8px;">
+                            <div class="attachment-icons" style="display: flex;justify-content: end;">
+                                <div id="__photoAttachment">
+                                    <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
+                                </div>
+                                <div id="__videoAttachment">
+                                    <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
+                                </div>
+                                <div id="__audioAttachment">
+                                    <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/audio-ac3.png" />
+                                </div>
+                                <div id="__documentAttachment">
+                                    <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-octet-stream.png" />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer-actions">
-                <a class="udlg-goto">${tr('go_to_dialog').toLowerCase()} &rarr;</a>
-
+                <div></div>
                 <div>
                     <input type="button" class="button" id="_close" value="${tr("close")}">
                     <input type="button" class="button" id="_send_msg" value="${tr("send")}">
@@ -52,11 +60,17 @@ async function showUserDialog(event, userId) {
         custom_template: msgboxModernTemplate(tr("send_message"), html),
         close_on_buttons: false,
     });
+    ContentEditable.enhance(msg.getNode().find("#_text").last());
     msg.getNode().attr("style", "z-index: 200;");
     msg.getNode().find(".ovk-diag").attr("style", "width: 500px;");
-    msg.getNode().find(".ovk-diag-body").attr("style", "min-height: 300px;");
+    msg.getNode().find(".ovk-diag-body").attr("style", "min-height: 200px;");
     msg.getNode().find(".ovk-diag-head #_close").on("click", (e) => {
         msg.close();
+    });
+    msg.getNode().find(".udlg-goto").on("click", (e) => {
+        window.router.route({
+            url: "/im?sel=" + conv.id
+        });
     });
     msg.getNode().find("#_send_msg").on("click", async (e) => {
         const btn = e.target;

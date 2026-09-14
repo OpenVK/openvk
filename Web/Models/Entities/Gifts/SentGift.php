@@ -8,18 +8,18 @@ use Nette\Database\Table\ActiveRow;
 use openvk\Web\Models\Entities\{Gift, User};
 use openvk\Web\Util\DateTime;
 
-class SentGift 
+class SentGift
 {
     private $relation;
     public $shortName = "gift";
 
-    function __construct(ActiveRow $relation, Gift $gift)
+    public function __construct(ActiveRow $relation, Gift $gift)
     {
         $this->relation = $relation;
         $this->gift = $gift;
     }
 
-    function canBeViewedBy(?User $user = null): bool
+    public function canBeViewedBy(?User $user = null): bool
     {
         return true;
     }

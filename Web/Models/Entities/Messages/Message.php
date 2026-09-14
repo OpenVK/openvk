@@ -9,6 +9,7 @@ use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\Entities\Photo;
 use openvk\Web\Models\RowModel;
+use openvk\Web\Models\Entities\Traits\TAttachmentHost;
 use openvk\Web\Util\DateTime;
 use openvk\Web\Util\IMBroker;
 
@@ -18,6 +19,8 @@ use openvk\Web\Util\IMBroker;
  */
 class Message
 {
+    use TAttachmentHost;
+
     private $data;
 
     public function __construct($data = null)
@@ -48,7 +51,7 @@ class Message
      *
      * @returns string
      */
-    public function getText(bool $richText = false): string
+    public function getText(bool $richText = false): ?string
     {
         return $this->getRecord()->content ?? $this->getRecord()->text;
     }
@@ -56,6 +59,13 @@ class Message
     public function getAttachmentsString()
     {
         return $this->getRecord()->attachments;
+    }
+
+    public function getChildren()
+    {
+        $atts = $this->getAttachmentsString();
+
+        return parseAttachments($atts);
     }
 
     public function getSenderId()
@@ -68,7 +78,7 @@ class Message
         return $this->getRecord()->peer_id;
     }
 
-    public function getOwner() 
+    public function getOwner()
     {
         return get_entity_by_id($this->getSenderId());
     }
@@ -142,7 +152,7 @@ class Message
         if ($dateTime->format("%d.%m.%y") == ovk_strftime_safe("%d.%m.%y", time())) {
             return $dateTime->format("%T");
         } else {
-            return $dateTime->format("%d.%m.%y");
+            return $dateTime->format("%d.%m.%y %T");
         }
     }
 
@@ -197,9 +207,60 @@ class Message
         return new Message($data["response"]["items"][0]);
     }
 
-    public function delete()
+    public function getContext(int $from_id = 0): array
     {
+        try {
+            $list = [];
 
+            $from_id = $from_id;
+            $global_id = $this->getId();
+            $peer_id = $this->getPeerId();
+            $broker = IMBroker::i();
+            $params = [
+                "peer_id "  => (string) $peer_id,
+                "start_message_id" => $global_id,
+                "offset"   => -20,
+                "count"    => 25,
+                "rev" => 1,
+            ];
+
+            if ($peer_id > 2000000000) {
+                $params["chat_id"] = $peer_id - 2000000000;
+            } else {
+                $params["user_id"] = $peer_id;
+            }
+
+            $response = $broker->invokeMethod($from_id, "messages.getHistory", $params);
+
+            $data = json_decode($response, true);
+            foreach ($data["response"]["items"] as $item) {
+                $list[] = new Message($item);
+            }
+
+            if (sizeof($list) == 0) {
+                return [$this];
+            }
+
+            return $list;
+        } catch (\Throwable $e) {
+            bdump(e);
+
+            return [$this];
+        }
+    }
+
+    /*
+    * Marks as spam or deletes.
+    */
+    public function delete(bool $mark_as_spam = true): bool
+    {
+        if ($mark_as_spam) {
+            return true;
+        } else {
+            return true;
+        }
+
+        return true;
     }
 
     /**

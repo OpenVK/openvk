@@ -822,7 +822,8 @@ class IMState {
 
         if (joinCode) {
             this.link.openTabByName("chat_invite", true, {
-                joinCode: joinCode
+                joinCode: joinCode,
+                act:  loc && loc.searchParams.get("act") == "topic" ? ("topic") : "chat"
             });
             return;
         }
@@ -872,7 +873,14 @@ class IMState {
         if (this.isFastchat == false && _url.searchParams.get('sel')) {
             this._checkSel(_url);
         } else {
-            await this.link.openTabByName('conversations');
+            if (_url.searchParams.get('join')) {
+                await this.link.openTabByName("chat_invite", true, {
+                    joinCode: _url.searchParams.get('join'),
+                    act: _url.searchParams.get('act')
+                });
+            } else {
+                await this.link.openTabByName('conversations');
+            }
         }
     }
 
@@ -988,7 +996,7 @@ class SettingsPage extends IMPage {
                         <b>OpenVK Polylogues</b>
                     </div>
                     <div>
-                        <label><input id="im.modern_mode" type="checkbox">${tr("im_option_compact_mode")} (beta)</label>
+                        <label style="display: none;"><input id="im.modern_mode" type="checkbox">${tr("im_option_compact_mode")} (beta)</label>
                         <label><input id="viewers.photo.list" type="checkbox">${tr("im_option_photo_viewer")} (Beta)</label>
                     </div>
                     <div>

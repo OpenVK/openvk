@@ -8,6 +8,7 @@ use Nette\InvalidStateException;
 use openvk\Web\Util\Sms;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Entities\{Photo, Post, EmailChangeVerification};
+use openvk\Web\Models\Privacy\PrivacySettings;
 use openvk\Web\Models\Entities\Notifications\{CoinsTransferNotification, RatingUpNotification};
 use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Videos, Notes, Vouchers, EmailChangeVerifications, Audios, Faves};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
@@ -669,21 +670,7 @@ final class UserPresenter extends OpenVKPresenter
                     $this->flashFail("err", tr("error"), tr("error_shorturl_incorrect"));
                 }
             } elseif ($_GET['act'] === "privacy") {
-                $settings = [
-                    "page.read",
-                    "page.info.read",
-                    "groups.read",
-                    "photos.read",
-                    "videos.read",
-                    "notes.read",
-                    "friends.read",
-                    "friends.add",
-                    "wall.write",
-                    "messages.write",
-                    "audios.read",
-                    "likes.read",
-                    "messages.add_to_chats",
-                ];
+                $settings = PrivacySettings::getPossibleSettings();
                 foreach ($settings as $setting) {
                     $input = $this->postParam(str_replace(".", "_", $setting));
                     $user->setPrivacySetting($setting, min(3, (int) abs((int) $input ?? $user->getPrivacySetting($setting))));
@@ -1002,7 +989,7 @@ final class UserPresenter extends OpenVKPresenter
         $receiver->setRating($receiver->getRating() + $value);
         $receiver->save();
 
-        if ($this->user->id !== $receiver->getId()) {
+        if ($this->user->id !== $receiver->getId() && $receiver->canBeViewedBy($this->user->identity)) {
             (new RatingUpNotification($receiver, $this->user->identity, $value, $message))->emit();
         }
 

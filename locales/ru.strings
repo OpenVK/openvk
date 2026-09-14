@@ -765,13 +765,17 @@
 "privacy_setting_add_in_chats" = "Кто может добавлять меня в чаты";
 "privacy_setting_view_audio" = "Кому видно мои аудиозаписи";
 "privacy_setting_see_likes" = "Кому видны мои лайки";
+"privacy_setting_view_gifts" = "Кому видны мои подарки";
+"privacy_setting_see_online" = "Кто видит мой онлайн";
 "privacy_title_info" = "Информация в профиле";
 "privacy_title_content" = "Контент в профиле";
 "privacy_title_wall" = "Лента";
 "privacy_title_messages" = "Коммуникация";
 "privacy_value_anybody" = "Все желающие";
+"privacy_value_anybody_short" = "Все";
 "privacy_value_anybody_dative" = "Всем желающим";
 "privacy_value_users" = "Пользователям OpenVK";
+"privacy_value_users_nominative" = "Пользователи OpenVK";
 "privacy_value_friends" = "Друзья";
 "privacy_value_friends_dative" = "Друзьям";
 "privacy_value_only_me" = "Только я";
@@ -1408,14 +1412,14 @@
 "agent_profile" = "Карточка агента";
 
 "reported_message_display_error" = "Сообщение не может быть отображено, поскольку не найдено.";
-"reported_message_contains_1" = "Прикрепления сообщения";
-"reported_message_contains_2" = "Текст сообщения";
-"reported_message_contains_3" = "Автор сообщения — id $1, написано в диалоге с id $2.";
-"resolve_message_context" = "Выяснить контекст";
+"reported_msg_1" = "Написано в чате (относительно пожаловавшегося)";
+"reported_msg_2" = "Отправитель";
+"reported_msg_3" = "Сообщение, на которое пожаловались, выделено красным.";
 
 "confirm_report_submission" = "Это действие будет сложно отменить.";
 "confirm_report_submission_2" = "Какой будет причина удаления?";
 "confirm_report_submission_3" = "А причина бана пользователя?";
+"confirm_report_submission_4" = "Сообщить автору жалобы об игнорировании";
 
 /* Invite */
 
@@ -1670,7 +1674,7 @@
 "messages_search_count_many" = "По данному запросу найдено $1 сообщений";
 "messages_search_count_other" = "Найдено $1 сообщений";
 
-"create_topic_as_chat" = "Создать тему из чата";
+"create_topic_as_chat" = "Создать тему в чате";
 "create_topic_as_chat_desc" = "Вы можете создать тему, к которой будет прикреплён новосозданный чат. Стоит учесть, что вы будете писать от своего лица, а история сообщений будет видна новичкам.<br>Введите название для беседы:";
 "topic_going_in_chat" = "Обсуждение идёт в чате:";
 "chat_join" = "Присоединиться";
@@ -1690,7 +1694,7 @@
 "messages_agreement_1" = "Используя секцию сообщений, вы соглашаетесь с тем, что:";
 "messages_agreement_2" = "Вы согласны с <a href="/terms">правилами</a> и <a href="/privacy">политикой конфиденциальности</a> сайта.";
 "messages_agreement_3" = "Загруженные в беседе медиафайлы могут быть доступны по ссылке даже после удаления.";
-"messages_agreement_4" = "В случае жалобы на сообщение модератор может посмотреть диалог, в котором его отправили, для выяснения контекста.";
+"messages_agreement_4" = "В случае жалобы на сообщение модератор может посмотреть диалог, в котором его отправили, для выяснения контекста. Так же любое сообщение может быть переслано человеком, который находится в смежном с вами диалоге.";
 "messages_agreement_5" = "Нужно держать аккаунт в безопасности.";
 "messages_agreement_declined_title" = "Соглашение отклонено";
 "messages_agreement_declined" = "Вы отклонили пользовательское соглашение сообщений. Чтобы получить доступ к сообщениям, необходимо принять соглашение.";
@@ -1766,6 +1770,7 @@
 "event_chat_user_up_your_rating_neutral" = "$1 повысили ваш рейтинг на $2 единицы.";
 "event_chat_rating_up_impersonal" = "Вам повысили рейтинг";
 "event_chat_user_added_voices_self" = "Вы передали $1 $2 голосов.";
+"event_chat_user_added_voices_self_silent" = "Вы передали $1 $2 голосов и ничего не сказали.";
 "event_chat_user_added_voices_male" = "$1 передал вам $2 голосов.";
 "event_chat_user_added_voices_female" = "$1 передала вам $2 голосов.";
 "event_chat_user_added_voices_neutral" = "$1 передали вам $2 голосов.";
@@ -2730,7 +2735,7 @@
 /* Search */
 
 "s_params" = "Параметры поиска";
-"s_people" = "Пользователи";
+"s_people" = "Люди";
 "s_groups" = "Группы";
 "s_events" = "Встречи";
 "s_apps" = "Приложения";

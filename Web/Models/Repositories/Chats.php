@@ -64,7 +64,7 @@ class Chats
         ]);
 
         $chat = new Chat($row);
-        
+
         self::$cache[$chat->getId()] = $chat;
         self::$cacheByChatId[$chat->getChatId()] = $chat;
 

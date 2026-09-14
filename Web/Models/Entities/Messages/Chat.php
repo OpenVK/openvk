@@ -40,7 +40,7 @@ class Chat extends RowModel
         }
 
         $firstItem = $data["response"]["items"][0] ?? [];
-        $conv = isset($firstItem["conversation"]) ? $firstItem["conversation"] : $firstItem;
+        $conv = $firstItem["conversation"] ?? $firstItem;
         $chatSettings = $conv["chat_settings"] ?? [];
         $chatInfo = $data["response"]["chats"][0] ?? [];
         if (!is_array($chatInfo)) {
@@ -187,7 +187,7 @@ class Chat extends RowModel
             return array_map("intval", explode(",", $raw));
         }
 
-        return (new Photos)->getByIds(explode(",", $raw));
+        return (new Photos())->getByIds(explode(",", $raw));
     }
 
     public function getPhotoHistory(bool $ids_only = false): array
@@ -563,7 +563,7 @@ class Chat extends RowModel
             return $this->getDefaultTitle();
         }
 
-        $otherMemberIds = array_values(array_filter($memberIds, fn($id) => (int)$id !== (int)$currentUserId));
+        $otherMemberIds = array_values(array_filter($memberIds, fn($id) => (int) $id !== (int) $currentUserId));
 
         if (!empty($otherMemberIds)) {
             $usersRepo = new Users();

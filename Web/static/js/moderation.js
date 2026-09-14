@@ -58,6 +58,7 @@ function confirm_ban(event, ignore = false, ban_owner = false) {
 
     event.preventDefault();
 
+    const msg = "Мы просмотрели контент, на который вы пожаловались, и пришли к выводу, что в нём нет нарушений.";
     const orig_reason = u("#reportReason").last().textContent;
     const cmsg = new CMessageBox({
         title: tr("confirmation"),
@@ -70,11 +71,19 @@ function confirm_ban(event, ignore = false, ban_owner = false) {
         (ignore == false && ban_owner == true ? `
             <p>${tr("confirm_report_submission_3")}</p>
             <textarea id="owner_reasons"></textarea>
+        ` : "") +
+        (ignore == true ? `
+            <label>
+            <input type="checkbox" id="ignore_reasons_checkbox">
+            ${tr("confirm_report_submission_4")}
+            </label>
+            <textarea id="ignore_reasons">${msg}</textarea>
         ` : ""),
         close_on_buttons: false,
         buttons: [tr("ok"), tr("cancel")],
         callbacks: [() => {
             let ban_reason = "";
+            let ban_reason2 = "";
             if (ignore == false) {
                 ban_reason = cmsg.getNode().find("#reasons").last().value;
                 if (!ban_reason || ban_reason == "" || ban_reason.length == 0) {
@@ -89,6 +98,17 @@ function confirm_ban(event, ignore = false, ban_owner = false) {
                     console.error("empty reason");
                 } else {
                     event.target.closest("form").insertAdjacentHTML("beforeend", `<input type="hidden" name="reason_owner" value="${ban_reason2}"/>`);
+                }
+            }
+            if (ignore == true) {
+                const send_ignore_reason = cmsg.getNode().find("#ignore_reasons_checkbox").last().checked;
+                if (send_ignore_reason == true) {
+                    let ignore_reason = cmsg.getNode().find("#ignore_reasons").last().value;
+                    if (!ignore_reason || ignore_reason == "" || ignore_reason.length == 0) {
+                        console.error("empty ignore_reason");
+                    } else {
+                        event.target.closest("form").insertAdjacentHTML("beforeend", `<input type="hidden" name="ignore_reason" value="${ignore_reason}"/>`);
+                    }
                 }
             }
 

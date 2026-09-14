@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace openvk\VKAPI\Handlers;
 
 use openvk\Web\Models\Repositories\Comments as CommentsRepo;
-
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Repositories\Posts as PostsRepo;
 use openvk\Web\Models\Repositories\Photos as PhotosRepo;
@@ -358,7 +357,7 @@ final class Newsfeed extends VKAPIRequestHandler
                         $g->gid = $g->id;
                         $g->photo = $g->photo_50 ?? "";
                         $g->photo_medium = $g->photo_100 ?? $g->photo_50 ?? "";
-                        $g->is_admin = $g->is_admin ?? 0;
+                        $g->is_admin ??= 0;
                     }
                 }
                 unset($g);
@@ -529,7 +528,7 @@ final class Newsfeed extends VKAPIRequestHandler
                         $g->gid = $g->id;
                         $g->photo = $g->photo_50 ?? "";
                         $g->photo_medium = $g->photo_100 ?? $g->photo_50 ?? "";
-                        $g->is_admin = $g->is_admin ?? 0;
+                        $g->is_admin ??= 0;
                     }
                 }
                 unset($g);
@@ -1002,7 +1001,8 @@ final class Newsfeed extends VKAPIRequestHandler
         return (object) $result;
     }
 
-    public function getLists() {
+    public function getLists()
+    {
         return (object) [
             "count" => 0,
             "items" => [],

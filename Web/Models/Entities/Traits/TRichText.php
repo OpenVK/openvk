@@ -51,7 +51,7 @@ trait TRichText
                 $link = str_replace("\r", "", $matches[0]); // clears caret return that triggered <br> to be spawned
                 $rel  = $this->isAd() ? "sponsored" : "ugc";
 
-                return "<a href='/$href' rel='$rel' target='_blank'>$link</a>" . htmlentities($matches[4]);
+                return "<a href='/$href' rel='$rel' target='_blank'>" . htmlentities($link) . "</a>" . htmlentities($matches[4]);
             }),
             $text
         );
