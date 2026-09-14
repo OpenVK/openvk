@@ -451,7 +451,7 @@ abstract class OpenVKPresenter extends SimplePresenter
         }
     }
 
-    public function onServerError(\Throwable $e): ?string
+    public function onServerError(\Throwable $e, ?string $errorCode = null): ?string
     {
         try {
             $GLOBALS["showException"] = true;

@@ -318,6 +318,8 @@ export class ChatGeneralForm {
                 if (this.supposed_type !== "chat" || this.isILeft()) return false;
                 if (acl && acl.can_change_info !== undefined) return !!acl.can_change_info;
                 return this.isAdmin();
+            case "add_to_topic":
+                return this.supposed_type == "chat" && this.isAdmin();
             case "invite_new":
                 if (this.supposed_type !== "chat" || this.isILeft()) return false;
                 if (acl && acl.can_invite !== undefined) return !!acl.can_invite;
@@ -1149,7 +1151,7 @@ export class ChatGeneralForm {
         this._out_read = Math.max(this._out_read || 0, val || 0);
     }
 
-    async read(startMessageId = 0) {
+    async read(startMessageId = 0, startCmid = 0) {
         const params = {
             "peer_id": this.id,
         };
@@ -1172,20 +1174,27 @@ export class ChatGeneralForm {
             let newlyReadCount = 0;
             if (this._chunks) {
                 const latestMsg = this._chunks.getLatestMessage();
-                const latestMsgId = latestMsg ? ((latestMsg.data && (latestMsg.data.local_id || latestMsg.data.id)) || latestMsg.id || 0) : 0;
+                const latestMsgCmid = latestMsg ? Number(latestMsg.conversation_message_id || latestMsg.data?.conversation_message_id || latestMsg.data?.local_id || 0) : 0;
+                const latestMsgId = latestMsg ? Number(latestMsg.data?.id || latestMsg.id || 0) : 0;
                 const targetReadId = startMessageId > 0 ? Number(startMessageId) : Number(latestMsgId);
+                const targetCmid = startCmid > 0 ? Number(startCmid) : (targetReadId && targetReadId < 1000000 ? targetReadId : latestMsgCmid);
 
-                if (targetReadId > 0) {
-                    this.in_read = Math.max(this.in_read || 0, targetReadId);
+                if (targetCmid > 0) {
+                    this.in_read = Math.max(this.in_read || 0, targetCmid);
                 }
 
                 const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
                 this._chunks.getMessages().forEach(m => {
-                    const mId = Number(m.id || m.conversation_message_id || 0);
+                    const mCmid = Number(m.conversation_message_id || m.data?.conversation_message_id || m.data?.local_id || 0);
+                    const mId = Number(m.data?.id || m.id || 0);
                     if (m.data && m.data.from_id != currentUserId) {
-                        if (!targetReadId || (mId > 0 && mId <= targetReadId)) {
+                        const isTarget = (!targetCmid && !targetReadId)
+                            || (targetCmid > 0 && mCmid > 0 && mCmid <= targetCmid)
+                            || (targetReadId > 0 && mId > 0 && mId <= targetReadId);
+                        if (isTarget) {
                             if (m.data.read_state === 0) {
                                 m.data.read_state = 1;
+                                m.read_state = 1;
                                 newlyReadCount++;
                             }
                         }
@@ -1698,7 +1707,10 @@ export class ChatMessage {
     isReply() { return Boolean(this.data.reply_message || this.data.reply_to); }
     isError() { return this.data.error_text != null; }
     isEdited() { return this.data.edited == 1 || this.data.edited == true; }
-    isSending() { return Boolean(this.data?.is_sending || (this.id == null && !this.isError())); }
+    isSending() {
+        if (this.isDeleted()) return false;
+        return Boolean(this.data?.is_sending || (this.id == null && !this.isError()));
+    }
     isImportant() {
         if (!this.data) return Boolean(this.important || (this.flags & 8));
         return Boolean(this.data.important || this.important || (this.data.flags & 8) || (this.flags & 8));
@@ -1722,12 +1734,15 @@ export class ChatMessage {
 
     isDeleted(mode = 1) {
         // 0 - deleted by me via action, will not disappear but will leave placeholder text
-        const is_deleted_by_me = this.data.deleted_by_me == 1;
-        const is_deleted = this.data.deleted == 1;
+        // For unsent messages (id == null or id <= 0), deletion is permanent and must completely disappear
+        const is_deleted_by_me = this.data?.deleted_by_me == 1;
+        const is_deleted = this.data?.deleted == 1;
+        const isUnsent = this.id == null || !this.id || Number(this.id) <= 0;
 
         switch (mode) {
             default:
             case 0:
+                if (is_deleted && isUnsent) return true;
                 return is_deleted && !is_deleted_by_me;
             case 1:
                 return is_deleted;
@@ -1763,6 +1778,8 @@ export class ChatMessage {
 
     can(action, group) {
         if (action === "restore") {
+            const isUnsent = this.id == null || !this.id || Number(this.id) <= 0;
+            if (isUnsent) return false;
             return Boolean(this.isDeleted() && this.isMine());
         }
 
@@ -1817,16 +1834,33 @@ export class ChatMessage {
     }
 
     setDeleted(by_me = false) {
-        if (this.data._orig_text === undefined && this.data.text !== tr('message_is_deleted')) {
-            this.data._orig_text = this.data.text;
-            this.data._orig_attachments = this.data.attachments;
+        const isUnsent = this.id == null || !this.id || Number(this.id) <= 0 || this.isError() || this.isSending();
+        if (this.data) {
+            if (this.data._orig_text === undefined && this.data.text !== tr('message_is_deleted')) {
+                this.data._orig_text = this.data.text;
+                this.data._orig_attachments = this.data.attachments;
+            }
+            this.data.deleted = 1;
+            if (by_me) {
+                this.data.deleted_by_me = 1;
+            }
+            this.data.is_sending = false;
+            this.data.error_text = null;
+            this.data.resend_params = null;
+            this.data.text = tr('message_is_deleted');
+            this.data.attachments = [];
         }
-        this.data.deleted = 1;
-        if (by_me) {
-            this.data.deleted_by_me = 1;
+        if (isUnsent) {
+            try {
+                if (this.peer?._chunks && typeof this.peer._chunks.removeMessage === 'function') {
+                    this.peer._chunks.removeMessage(this);
+                }
+                const curChat = window.im?.messenger?.getCurrentChat();
+                if (curChat?.peer?._chunks && curChat.peer !== this.peer) {
+                    curChat.peer._chunks.removeMessage(this);
+                }
+            } catch (e) {}
         }
-        this.data.text = tr('message_is_deleted');
-        this.data.attachments = [];
     }
 
     restore(origText = null, origAttachments = null) {
@@ -2310,16 +2344,26 @@ export class ChatMessage {
             const isMine = Boolean((this.data && this.data.out === 1) || this.out === 1 || (fromId && currentUserId && fromId === Number(currentUserId)));
 
             if (!isMine) {
-                if (inRead > 0 && ((msgCmid > 0 && msgCmid <= inRead) || (msgId > 0 && msgId <= inRead))) {
-                    return true;
+                if (inRead > 0) {
+                    if (msgCmid > 0 && msgCmid <= inRead) {
+                        return true;
+                    }
+                    if (msgId > 0 && msgId <= inRead && inRead > 1000000) {
+                        return true;
+                    }
                 }
                 const rawUnread = conv?._conversation?.unread_count ?? conv?._unread_count;
-                if (rawUnread === 0) {
+                if (rawUnread === 0 && (inRead > 0 || (conv && conv._last_message && msgId <= Number(conv._last_message.id || 0)))) {
                     return true;
                 }
             } else {
-                if (outRead > 0 && ((msgCmid > 0 && msgCmid <= outRead) || (msgId > 0 && msgId <= outRead))) {
-                    return true;
+                if (outRead > 0) {
+                    if (msgCmid > 0 && msgCmid <= outRead) {
+                        return true;
+                    }
+                    if (msgId > 0 && msgId <= outRead && outRead > 1000000) {
+                        return true;
+                    }
                 }
                 if (peer && peer._chunks) {
                     const latest = peer._chunks.getLatestMessage();

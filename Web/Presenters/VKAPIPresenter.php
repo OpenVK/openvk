@@ -95,7 +95,7 @@ final class VKAPIPresenter extends OpenVKPresenter
         $this->fail(100, "Required parameter '$param' missing.", $object, $method);
     }
 
-    public function onServerError(\Throwable $e): ?string
+    public function onServerError(\Throwable $e, ?string $errorCode = null): ?string
     {
         error_log("VKAPI onServerError: " . $e->getMessage() . " at " . $e->getFile() . ":" . $e->getLine() . "\n" . $e->getTraceAsString());
 
@@ -124,6 +124,23 @@ final class VKAPIPresenter extends OpenVKPresenter
 
         $code    = 10;
         $message = "Internal server error: could not process request";
+
+        try {
+            $userId = Authenticator::i()->getUser();
+            $user = (new Users())->getByChandlerUser($userId);
+
+            if ($user && $user->canSeeTracy()) {
+                while (ob_get_level()) {
+                    ob_end_clean();
+                }
+
+                http_response_code(500);
+                \Tracy\Debugger::getBlueScreen()->render($e);
+                exit;
+            }
+        } catch (\Throwable $ex) {
+            
+        }
 
         $this->fail($code, $message, $object ?: "server", $method ?: "error");
 
@@ -1394,7 +1411,7 @@ final class VKAPIPresenter extends OpenVKPresenter
 
     private function packMessage($message, string $callback = null): string
     {
-        $format = $_SERVER['HTTP_X_RESPONSE_FORMAT'];
+        $format = $_SERVER['HTTP_X_RESPONSE_FORMAT'] ?? null;
         if ($format == 'msgpack') {
             header("Content-Type: application/x-msgpack");
             $packer = new Packer();

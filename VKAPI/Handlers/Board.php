@@ -64,14 +64,10 @@ final class Board extends VKAPIRequestHandler
         return $topic->getVirtualId();
     }
 
-    public function addChatTopic(int $group_id, string $title, int $chat_id = null)
+    public function addChatTopic(int $group_id, string $title, string $chat_id = null)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
-
-        if ($chat_id && $chat_id > 2000000000) {
-            $chat_id = $chat_id - 2000000000;
-        }
 
         $club = (new ClubsRepo())->get($group_id);
         if (!$club || !$club->canBeModifiedBy($this->getUser())) {
@@ -79,7 +75,39 @@ final class Board extends VKAPIRequestHandler
         }
 
         $chRepo = new ChatRepo();
-        $chatObj = $chRepo->createWithOriginal($this->getUser(), $title);
+        $chatObj = null;
+
+        if ($chat_id != null) {
+            $chat_id = (int) $chat_id;
+            if ($chat_id > 2000000000) {
+                $chat_id = $chat_id - 2000000000;
+            }
+
+            try {
+                $chatObj = $chRepo->getByChatId($chat_id);
+                $chatObj->loadData($this->getUser());
+
+                if (!$chatObj) {
+                    $this->fail(15, "Access denied: Chat not found.");
+                }
+
+                if (!$chatObj->isAdmin($this->getUser())) {
+                    $this->fail(15, "Access denied: You are not an admin in this chat.");
+                }
+
+                if ($chatObj->isLinkedToSomeExistingTopic()) {
+                    $this->fail(14, "Chat already linked to some topic");
+                }
+            } catch(\Throwable $e) {
+                $chatObj = null;
+            }
+        } else {
+            $chatObj = $chRepo->createWithOriginal($this->getUser(), $title);
+        }
+
+        if (!$chatObj) {
+            $this->fail(-5, "Invalid chat");
+        }
 
         $flags = 0;
         $flags |= 0b10000000;

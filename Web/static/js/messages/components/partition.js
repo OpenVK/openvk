@@ -67,6 +67,20 @@ export class MessageChunk {
         else this.messages.push(msg);
     }
 
+    removeMessage(msg) {
+        if (!msg) return;
+        const msgId = msg.id;
+        const msgRandomId = msg.data?.random_id || msg.random_id;
+        const msgCmid = msg.data?.conversation_message_id || msg.data?.local_id;
+        this.messages = this.messages.filter(m => {
+            if (m === msg) return false;
+            if (msgId != null && m?.id != null && (m.id == msgId || Number(m.id) === Number(msgId))) return false;
+            if (msgRandomId != null && (m?.data?.random_id == msgRandomId || m?.random_id == msgRandomId)) return false;
+            if (msgCmid != null && m?.data && (m.data.conversation_message_id == msgCmid || m.data.local_id == msgCmid)) return false;
+            return true;
+        });
+    }
+
     /** Does this chunk lexically or directly contain the given message id? */
     hasMessageId(id) {
         if (id == null) return false;
@@ -399,6 +413,20 @@ export class Chunks {
         }
         if (window.im && window.im.messenger) {
             window.im.messenger.update();
+        }
+    }
+
+    removeMessage(msg) {
+        if (!msg) return;
+        this.chunks.forEach(chunk => {
+            if (chunk && typeof chunk.removeMessage === 'function') {
+                chunk.removeMessage(msg);
+            }
+        });
+        this._invalidateCache();
+        const convToInvalidate = window.im?.conversations ? window.im.conversations._findConv(this._peer?.id) : null;
+        if (convToInvalidate && typeof convToInvalidate.getScrollPosition === 'function' && convToInvalidate.getScrollPosition()) {
+            convToInvalidate.getScrollPosition()._invalidateCache();
         }
     }
 

@@ -428,11 +428,14 @@ export class Conversation {
             const outRead = Number(this.peer?.out_read || this._conversation?.out_read || 0);
             const msgCmid = Number(this._last_message.data?.conversation_message_id || this._last_message.data?.local_id || this._last_message.conversation_message_id || 0);
             const msgId = Number(this._last_message.data?.id || this._last_message.id || 0);
-            if (isMine && outRead > 0 && ((msgCmid > 0 && msgCmid <= outRead) || (msgId > 0 && msgId <= outRead))) {
+            if (isMine && outRead > 0 && ((msgCmid > 0 && msgCmid <= outRead) || (msgId > 0 && msgId <= outRead && outRead > 1000000))) {
                 if (this._last_message.data) this._last_message.data.read_state = 1;
                 this._last_message.read_state = 1;
             }
         }
+        this._unread_count = (this._conversation && this._conversation.unread_count !== undefined)
+            ? Number(this._conversation.unread_count) || 0
+            : (conversation_item.unread_count !== undefined ? Number(conversation_item.unread_count) || 0 : undefined);
         console.log(this);
     }
 
@@ -605,7 +608,7 @@ export class Conversation {
             const outRead = Number(this.peer?.out_read || this._conversation?.out_read || 0);
             const msgCmid = Number(this._last_message.data?.conversation_message_id || this._last_message.data?.local_id || this._last_message.conversation_message_id || 0);
             const msgId = Number(this._last_message.data?.id || this._last_message.id || 0);
-            if (isMine && outRead > 0 && ((msgCmid > 0 && msgCmid <= outRead) || (msgId > 0 && msgId <= outRead))) {
+            if (isMine && outRead > 0 && ((msgCmid > 0 && msgCmid <= outRead) || (msgId > 0 && msgId <= outRead && outRead > 1000000))) {
                 if (this._last_message.data) this._last_message.data.read_state = 1;
                 this._last_message.read_state = 1;
             }
@@ -620,15 +623,14 @@ export class Conversation {
         if (this._unread_count !== undefined) {
             return this._unread_count;
         }
+        if (this._conversation && this._conversation.unread_count !== undefined) {
+            return Number(this._conversation.unread_count) || 0;
+        }
         if (this.peer && this.peer._chunks && this.peer._chunks.isMessagesInited()) {
             return this.peer._chunks.getUnreadCount();
         }
 
-        try {
-            return (this._conversation && this._conversation.unread_count) ? this._conversation.unread_count : 0;
-        } catch (e) {
-            return 0;
-        }
+        return 0;
     }
 
     set unread_count(val) {

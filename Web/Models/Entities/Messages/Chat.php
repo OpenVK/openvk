@@ -433,33 +433,9 @@ class Chat extends RowModel
         return !$this->isKicked($user);
     }
 
-    //
-    // Invitations
-    //
-
-    public function isApprovementsModeSet(): bool
+    public function getInfinityInviteLink(): string
     {
-        return false;
-    }
-
-    public function decideApprovement(bool $approve = true): bool
-    {
-        return true;
-    }
-
-    public function getInvitationLinks(): array
-    {
-        return [];
-    }
-
-    public function createInvitationLink(): bool
-    {
-        return true;
-    }
-
-    public function removeInvitationLink(): bool
-    {
-        return true;
+        return "Но такой ещё нет";
     }
 
     public function getMembersCount(): int
@@ -606,6 +582,13 @@ class Chat extends RowModel
         }
 
         return $this->getDefaultTitle();
+    }
+
+    public function isLinkedToSomeExistingTopic(): bool
+    {
+        $req = DatabaseConnection::i()->getContext()->table("topics")->where(["chat_id" => $this->getId(), "deleted" => 0]);
+
+        return $req->count() > 0;
     }
 
     public function toVkApiStruct(?User $user): array

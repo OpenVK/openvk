@@ -170,6 +170,7 @@ export class ChatInvitePreviewPage extends IMPage {
 
         const preview = this.previewData?.preview;
         const profiles = this.previewData?.profiles || [];
+        const act = this.options.act;
         const joinCode = this.options.joinCode || this.options.code || (new URL(location.href)).searchParams.get("join") || (new URL(location.href)).searchParams.get("invite");
 
         const title = preview?.title || tr("chat");
@@ -205,7 +206,8 @@ export class ChatInvitePreviewPage extends IMPage {
             try {
                 if (!isMember) {
                     const joinRes = await window.OVKAPI.call("messages.joinChatByInviteLink", {
-                        link: joinCode
+                        link: joinCode,
+                        act: act
                     });
                     const cid = joinRes?.chat_id || (joinRes?.peer_id ? (joinRes.peer_id - 2000000000) : localChatId);
                     const targetPeerId = cid > 2000000000 ? cid : (2000000000 + cid);

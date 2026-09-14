@@ -1839,13 +1839,28 @@ export class MessengerPage extends IMPage {
             const cmsg = new CMessageBox({
                 title: tr("error"),
                 body: tr("error_sending_msg") + ": <br>" + escapeHtml(msg.data.error_text),
-                buttons: [tr("msg_resend"), tr("msg_error_send_to_dev"), tr("ok")],
-                callbacks: [() => {
-                    msg.tryToResend();
-                }, async () => {
-                    await window.im.messenger.selectConversationByPeerId(window.openvk.dev_id);
-                    window.im.messenger.view.setCurrentText(msg.data.error_text);
-                }, () => { }]
+                buttons: [tr("msg_resend"), tr("delete"), tr("msg_error_send_to_dev"), tr("cancel")],
+                callbacks: [
+                    () => {
+                        msg.tryToResend();
+                    },
+                    () => {
+                        msg.setDeleted(true);
+                        const curChat = window.im?.messenger?.getCurrentChat();
+                        if (curChat?.peer?._chunks) {
+                            curChat.peer._chunks._invalidateCache();
+                        }
+                        if (typeof curChat?.getScrollPosition === 'function' && curChat.getScrollPosition()) {
+                            curChat.getScrollPosition()._invalidateCache();
+                        }
+                        this._triggerUpdate();
+                    },
+                    async () => {
+                        await window.im.messenger.selectConversationByPeerId(window.openvk.dev_id);
+                        window.im.messenger.view.setCurrentText(msg.data.error_text);
+                    },
+                    () => { }
+                ]
             });
             return;
         }
@@ -2871,8 +2886,9 @@ export class MessengerPage extends IMPage {
 
         const currentConv = this.getCurrentChat();
         const currentInRead = Number(currentConv?.peer?.in_read || currentConv?._conversation?.in_read || 0);
-        const lastMarked = Number(this._lastMarkedReadId || 0);
-        const alreadyReadBorder = Math.max(currentInRead, lastMarked);
+        const lastMarkedCmid = Number(this._lastMarkedReadCmid || 0);
+        const lastMarkedId = Number(this._lastMarkedReadId || 0);
+        const alreadyReadCmidBorder = Math.max(currentInRead, lastMarkedCmid);
 
         const unreadElements = container.querySelectorAll(".messenger-app--messages---message.unread[data-msg-id]");
         if (!unreadElements || unreadElements.length === 0) return;
@@ -2881,17 +2897,22 @@ export class MessengerPage extends IMPage {
             if (typeof document !== "undefined" && document.hidden) return;
 
             let maxVisibleUnreadId = 0;
+            let maxVisibleUnreadCmid = 0;
             entries.forEach((entry) => {
                 if (entry.isIntersecting && entry.intersectionRatio >= 0.1) {
                     const id = Number(entry.target.getAttribute("data-msg-id"));
+                    const cmid = Number(entry.target.getAttribute("data-msg-cmid")) || 0;
                     if (id && id > maxVisibleUnreadId) {
                         maxVisibleUnreadId = id;
+                    }
+                    if (cmid && cmid > maxVisibleUnreadCmid) {
+                        maxVisibleUnreadCmid = cmid;
                     }
                 }
             });
 
-            if (maxVisibleUnreadId > 0 && maxVisibleUnreadId > alreadyReadBorder) {
-                this._scheduleMarkAsRead(maxVisibleUnreadId);
+            if (maxVisibleUnreadId > 0 && (maxVisibleUnreadCmid > alreadyReadCmidBorder || maxVisibleUnreadId > lastMarkedId)) {
+                this._scheduleMarkAsRead(maxVisibleUnreadId, maxVisibleUnreadCmid);
             }
         }, {
             root: container,
@@ -2900,7 +2921,8 @@ export class MessengerPage extends IMPage {
 
         unreadElements.forEach(el => {
             const id = Number(el.getAttribute("data-msg-id"));
-            if (id > alreadyReadBorder) {
+            const cmid = Number(el.getAttribute("data-msg-cmid")) || 0;
+            if ((cmid > 0 && cmid > alreadyReadCmidBorder) || (id > 0 && id > lastMarkedId)) {
                 this._readObserver.observe(el);
             }
         });
@@ -2914,38 +2936,47 @@ export class MessengerPage extends IMPage {
 
         const currentConv = this.getCurrentChat();
         const currentInRead = Number(currentConv?.peer?.in_read || currentConv?._conversation?.in_read || 0);
-        const lastMarked = Number(this._lastMarkedReadId || 0);
-        const alreadyReadBorder = Math.max(currentInRead, lastMarked);
+        const lastMarkedCmid = Number(this._lastMarkedReadCmid || 0);
+        const lastMarkedId = Number(this._lastMarkedReadId || 0);
+        const alreadyReadCmidBorder = Math.max(currentInRead, lastMarkedCmid);
 
         const containerRect = container.getBoundingClientRect();
         const unreadElements = container.querySelectorAll(".messenger-app--messages---message.unread[data-msg-id]");
         let maxId = 0;
+        let maxCmid = 0;
 
         unreadElements.forEach(el => {
             const id = Number(el.getAttribute("data-msg-id"));
-            if (id > alreadyReadBorder) {
+            const cmid = Number(el.getAttribute("data-msg-cmid")) || 0;
+            if ((cmid > 0 && cmid > alreadyReadCmidBorder) || (id > 0 && id > lastMarkedId)) {
                 const rect = el.getBoundingClientRect();
                 if (rect.bottom >= containerRect.top + 5 && rect.top <= containerRect.bottom - 5) {
                     if (id > maxId) maxId = id;
+                    if (cmid > maxCmid) maxCmid = cmid;
                 }
             }
         });
 
         if (maxId > 0) {
-            this._scheduleMarkAsRead(maxId);
+            this._scheduleMarkAsRead(maxId, maxCmid);
         }
     }
 
-    _scheduleMarkAsRead(maxId) {
+    _scheduleMarkAsRead(maxId, maxCmid = 0) {
         const currentChat = this.getCurrentChat();
         const currentInRead = Number(currentChat?.peer?.in_read || currentChat?._conversation?.in_read || 0);
-        const alreadyMarked = Number(this._lastMarkedReadId || 0);
+        const alreadyMarkedCmid = Number(this._lastMarkedReadCmid || 0);
+        const alreadyMarkedId = Number(this._lastMarkedReadId || 0);
 
-        if (!maxId || maxId <= currentInRead || maxId <= alreadyMarked) {
+        if (maxCmid > 0 && maxCmid <= currentInRead && maxCmid <= alreadyMarkedCmid) {
+            return;
+        }
+        if (!maxId && !maxCmid) {
             return;
         }
 
-        this._pendingReadId = Math.max(this._pendingReadId || 0, maxId);
+        this._pendingReadId = Math.max(this._pendingReadId || 0, maxId || 0);
+        this._pendingReadCmid = Math.max(this._pendingReadCmid || 0, maxCmid || 0);
 
         if (this._readTimer) {
             clearTimeout(this._readTimer);
@@ -2954,18 +2985,25 @@ export class MessengerPage extends IMPage {
         this._readTimer = setTimeout(async () => {
             this._readTimer = null;
             const idToRead = this._pendingReadId;
+            const cmidToRead = this._pendingReadCmid;
             this._pendingReadId = 0;
+            this._pendingReadCmid = 0;
 
-            if (!idToRead || idToRead <= (this._lastMarkedReadId || 0)) return;
             if (typeof document !== "undefined" && document.hidden) return;
 
-            this._lastMarkedReadId = idToRead;
-            if (currentChat?.peer) {
-                currentChat.peer.in_read = Math.max(currentChat.peer.in_read || 0, idToRead);
+            this._lastMarkedReadId = Math.max(this._lastMarkedReadId || 0, idToRead);
+            if (cmidToRead > 0) {
+                this._lastMarkedReadCmid = Math.max(this._lastMarkedReadCmid || 0, cmidToRead);
+                if (currentChat?.peer) {
+                    currentChat.peer.in_read = Math.max(currentChat.peer.in_read || 0, cmidToRead);
+                }
+                if (currentChat?._conversation) {
+                    currentChat._conversation.in_read = Math.max(currentChat._conversation.in_read || 0, cmidToRead);
+                }
             }
 
             if (currentChat && currentChat.peer && typeof currentChat.peer.read === "function") {
-                await currentChat.peer.read(idToRead);
+                await currentChat.peer.read(idToRead, cmidToRead);
             }
         }, 200);
     }

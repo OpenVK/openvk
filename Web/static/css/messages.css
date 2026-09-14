@@ -914,6 +914,8 @@ body:has(#im_container.at_page) .page-wrap {
 }
 
 .messenger-app--messages---message.msg-hoverable:hover .actions-2,
+.messenger-app--messages---message.msg-error-hoverable:hover .actions-2,
+.messenger-app--messages---message.msg-error .actions-2,
 .messenger-app--messages---message.msg-important .actions-2 {
     opacity: 1;
     pointer-events: auto;
@@ -933,7 +935,12 @@ body:has(#im_container.at_page) .page-wrap {
     height: 11px;
     background: url(../img/audios_controls.png);
     background-size: 240px 78px;
-    opacity: 0.7;
+    background-position: -2px 0px;
+    opacity: 0.45;
+    transition: opacity 0.15s ease-in-out;
+    cursor: pointer;
+    pointer-events: auto;
+    flex-shrink: 0;
 }
 
 .messenger-app--messages---message .actions-2>div:not(.star-icon):hover {
@@ -980,6 +987,19 @@ body:has(#im_container.at_page) .page-wrap {
     background-size: 50px 35px !important;
     width: 11px !important;
     height: 11px !important;
+}
+
+.messenger-app--messages---message .actions-2 .delete-icon {
+    display: inline-block;
+    background: url('/assets/packages/static/openvk/img/arrows.png?v=3') -18px 0px no-repeat !important;
+    width: 11px !important;
+    height: 11px !important;
+    opacity: 0.65;
+    cursor: pointer;
+}
+
+.messenger-app--messages---message .actions-2 .delete-icon:hover {
+    opacity: 1 !important;
 }
 
 .messenger-app--messages---message .actions-2 .star-icon {
@@ -1229,44 +1249,38 @@ body:has(#im_container.at_page) .page-wrap {
     height: 11px;
 }
 
-.messenger-app--messages---message .fwd-messages-container,
-.fwd-modal-content .fwd-messages-container {
+.messenger-app--messages---message .fwd-messages-container {
     margin-top: 6px;
     padding-left: 8px;
     border-left: 2px solid var(--accent, hsl(212 0% 52% / 1));
 }
 
-.messenger-app--messages---message .fwd-message-block>.fwd-messages-container,
-.fwd-modal-content .fwd-message-block>.fwd-messages-container {
+.messenger-app--messages---message .fwd-message-block>.fwd-messages-container {
     margin-top: 5px;
     margin-bottom: 3px;
     padding-left: 8px;
 }
 
-.messenger-app--messages---message .fwd-messages-count,
-.fwd-modal-content .fwd-messages-count {
+.messenger-app--messages---message .fwd-messages-count {
     font-size: 11px;
     font-weight: 500;
     color: var(--accent, hsl(212 0% 52% / 1));
     margin-bottom: 4px;
 }
 
-.messenger-app--messages---message .fwd-message-block,
-.fwd-modal-content .fwd-message-block {
+.messenger-app--messages---message .fwd-message-block {
     margin-top: 4px;
     margin-bottom: 6px;
 }
 
-.messenger-app--messages---message .fwd-message-head,
-.fwd-modal-content .fwd-message-head {
+.messenger-app--messages---message .fwd-message-head {
     display: flex;
     align-items: center;
     gap: 6px;
     margin-bottom: 2px;
 }
 
-.messenger-app--messages---message .fwd-avatar,
-.fwd-modal-content .fwd-avatar {
+.messenger-app--messages---message .fwd-avatar {
     width: 18px;
     height: 18px;
     border-radius: 3px;
@@ -1274,33 +1288,28 @@ body:has(#im_container.at_page) .page-wrap {
     display: block;
 }
 
-.messenger-app--messages---message .fwd-author-info,
-.fwd-modal-content .fwd-author-info {
+.messenger-app--messages---message .fwd-author-info {
     display: flex;
     align-items: baseline;
     gap: 6px;
 }
 
-.messenger-app--messages---message .fwd-author-name,
-.fwd-modal-content .fwd-author-name {
+.messenger-app--messages---message .fwd-author-name {
     font-size: 11px;
     color: var(--text-primary, #222);
     text-decoration: none;
 }
 
-.messenger-app--messages---message .fwd-author-name:hover,
-.fwd-modal-content .fwd-author-name:hover {
+.messenger-app--messages---message .fwd-author-name:hover {
     text-decoration: underline;
 }
 
-.messenger-app--messages---message .fwd-date,
-.fwd-modal-content .fwd-date {
+.messenger-app--messages---message .fwd-date {
     font-size: 10px;
     color: var(--text-2ary, #828a99);
 }
 
-.messenger-app--messages---message .fwd-text,
-.fwd-modal-content .fwd-text {
+.messenger-app--messages---message .fwd-text {
     font-size: 11px;
     color: var(--text-primary, #222);
     line-height: 1.35;
@@ -1323,46 +1332,6 @@ body:has(#im_container.at_page) .page-wrap {
 
 .fwd-open-modal-link:hover {
     text-decoration: underline;
-}
-
-.fwd-modal-content {
-    font-size: 13px;
-}
-
-.fwd-modal-content .fwd-modal-root-message {
-    padding: 10px 14px;
-    background: var(--common-2, #f5f6f8);
-    border-radius: 6px;
-    border: 1px solid var(--borders-2, #e7e8ec);
-}
-
-.fwd-modal-content .fwd-modal-root-message>.fwd-message-head {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 6px;
-}
-
-.fwd-modal-content .fwd-modal-root-message>.fwd-message-head .fwd-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 4px;
-}
-
-.fwd-modal-content .fwd-modal-root-message>.fwd-message-head .fwd-author-name {
-    font-size: 13px;
-    font-weight: bold;
-    color: var(--text-primary, #222);
-}
-
-.fwd-modal-content .fwd-modal-root-message>.fwd-message-head .fwd-date {
-    font-size: 11px;
-}
-
-.fwd-modal-content .fwd-modal-root-message>.fwd-text {
-    font-size: 13px;
-    margin-top: 6px;
-    margin-bottom: 10px;
 }
 
 .messenger-app--input>.ava,
@@ -2974,6 +2943,10 @@ body:has(#im_container.at_page) .page-wrap {
     border-left: 1px solid #d6d6d642;
     padding: 17px 20px;
     box-sizing: border-box;
+}
+
+.messenger-app--tab-friends .friends-list-side a:hover { 
+    text-decoration: underline 1px;
 }
 
 .messenger-app--tab-friends .friends-list-b {
@@ -4971,6 +4944,39 @@ body:has(#im_container.at_page) .page-wrap {
 .pinned-message-attachment-img {
     max-width: 100%;
     border-radius: 2px;
+}
+
+.ovk-diag-cont.messenger-modal-cont,
+.ovk-diag-cont:has(.messenger-modal-message) {
+    width: 580px !important;
+    max-width: 95vw !important;
+}
+
+.messenger-modal-message {
+    padding: 6px 0;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.messenger-modal-message .messenger-app--messages---message {
+    margin-top: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.messenger-modal-message .messenger-app--messages---message>.messenger-app--messages---message--wrap {
+    padding: 0;
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.messenger-modal-message .messenger-app--messages---message ._content {
+    width: auto;
+    flex: 1;
+    min-width: 0;
+    padding-left: 12px;
+    box-sizing: border-box;
 }
 
 /* Message viewers modal */

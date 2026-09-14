@@ -1878,12 +1878,12 @@
 
 /* Server error */
 
-"server_error" = "Server error";
-"server_error_desc" = "We're sorry! The server encountered an internal error and was unable to complete your request. Please try again later.";
-"error_what_do" = "What to do?";
-"error_what_do_back" = "Back to the previous page";
-"error_what_do_reset_themepack" = "Reset themepack";
-"error_what_do_desc" = "When such an error occurs, a log is automatically saved. Please report this error to the server administrator, providing the link, the last action performed, and the time of the incident.";
+"server_error" = "Server Error";
+"server_error_desc" = "An unexpected error occurred on the server, and this page is temporarily unavailable. Please try refreshing it in a moment.";
+"error_what_do" = "What can you do?";
+"error_what_do_back" = "Go back";
+"error_what_do_reset_themepack" = "Reset theme pack";
+"error_what_do_desc" = "If the issue persists, please notify the administrators. Include the page link, the error ID below, and what you were trying to do.";
 
 /* Admin actions */
 
@@ -1994,6 +1994,17 @@
 "stickers_count_one" = "$1 sticker";
 "stickers_count_few" = "$1 stickers";
 "stickers_count_other" = "$1 stickers";
+"emoji_group_recent" = "Recently used";
+"emoji_group_smileys_emotion" = "Emotions";
+"emoji_group_people_body" = "People";
+"emoji_group_animals_nature" = "Animals and nature";
+"emoji_group_food_drink" = "Food and drinks";
+"emoji_group_travel_places" = "World";
+"emoji_group_activities" = "Activities";
+"emoji_group_objects" = "Objects";
+"emoji_group_symbols" = "Symbols";
+"emoji_group_flags" = "Flags";
+"buy_stickers" = "My stickers";
 "admin_banreason" = "Ban reason";
 "admin_banned" = "banned";
 "admin_gender" = "Sex";
@@ -3140,7 +3151,11 @@
 "create_chat_f" = "Create conversation";
 "create_chat_tip_1" = "You can change the conversation title at any time";
 "create_topic_as_chat" = "Create topic as chat";
-"create_topic_as_chat_desc" = "You will write from your avatar and the messages chronology will be available to everyone";
+"create_topic_as_chat_v_1" = "New chat";
+"create_topic_as_chat_v_2" = "Use existing chat";
+"create_topic_as_chat_desc" = "You will write under your avatar and the messages chronology will be visible to everyone.";
+"create_topic_as_chat_desc_2" = "Select chat";
+"create_topic_as_chat_desc_3" = "Enter chat name";
 "delete_message" = "Delete message";
 "edit_action_lr" = "Edit";
 "edit_of_message" = "Edit message";

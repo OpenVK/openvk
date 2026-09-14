@@ -222,13 +222,13 @@ export class EventHandler {
                 const fromId = Number(msg.data ? (msg.data.from_id?.id || msg.data.from_id) : (msg.from_id || 0));
                 const isMine = Boolean((msg.data && msg.data.out === 1) || msg.out === 1 || (fromId && currentUserId && fromId === Number(currentUserId)));
 
-                if (mId === Number(msgId) || mCmid === Number(msgId) || (isMine && (mId <= Number(msgId) || mCmid <= Number(msgId)))) {
+                if (mId === Number(msgId)) {
                     if (msg.data) msg.data.read_state = 1;
                     msg.read_state = 1;
                 }
-                if (isMine) {
-                    if (conv.peer) conv.peer.out_read = Math.max(conv.peer.out_read || 0, Number(msgId));
-                    if (conv._conversation) conv._conversation.out_read = Math.max(conv._conversation.out_read || 0, Number(msgId));
+                if (isMine && mCmid > 0) {
+                    if (conv.peer) conv.peer.out_read = Math.max(conv.peer.out_read || 0, mCmid);
+                    if (conv._conversation) conv._conversation.out_read = Math.max(conv._conversation.out_read || 0, mCmid);
                 }
             };
 
@@ -252,6 +252,7 @@ export class EventHandler {
     async ReadIncomeBeforeEvent(event) {
         const peerId = event[1];
         const localId = Number(event[2]);
+        const unreadRemaining = event[3] !== undefined ? Number(event[3]) : undefined;
 
         const _crs = await this.im.conversations._findConvFromApi(peerId);
         if (!_crs) return;
@@ -280,7 +281,7 @@ export class EventHandler {
             const msgId = Number((msg.data && msg.data.id) || msg.id || 0);
             const fromId = Number(msg.data ? (msg.data.from_id?.id || msg.data.from_id) : (msg.from_id || 0));
             const isMine = Boolean((msg.data && msg.data.out === 1) || msg.out === 1 || (fromId && currentUserId && fromId === Number(currentUserId)));
-            if (((msgCmid > 0 && msgCmid <= localId) || (msgId > 0 && msgId <= localId)) && !isMine) {
+            if (((msgCmid > 0 && msgCmid <= localId) || (msgId > 0 && msgId <= localId && localId > 1000000)) && !isMine) {
                 if (msg.data) msg.data.read_state = 1;
                 msg.read_state = 1;
             }
@@ -292,7 +293,7 @@ export class EventHandler {
             const msgId = Number((msg.data && msg.data.id) || msg.id || 0);
             const fromId = Number(msg.data ? (msg.data.from_id?.id || msg.data.from_id) : (msg.from_id || 0));
             const isMine = Boolean((msg.data && msg.data.out === 1) || msg.out === 1 || (fromId && currentUserId && fromId === Number(currentUserId)));
-            if (((msgCmid > 0 && msgCmid <= localId) || (msgId > 0 && msgId <= localId)) && !isMine) {
+            if (((msgCmid > 0 && msgCmid <= localId) || (msgId > 0 && msgId <= localId && localId > 1000000)) && !isMine) {
                 if (msg.data) msg.data.read_state = 1;
                 msg.read_state = 1;
             }
@@ -313,8 +314,12 @@ export class EventHandler {
 
         if (_crs) {
             let newUnread = 0;
-            if (_crs.peer && _crs.peer._chunks && typeof _crs.peer._chunks.isMessagesInited === 'function' && _crs.peer._chunks.isMessagesInited()) {
+            if (typeof unreadRemaining === 'number' && !isNaN(unreadRemaining)) {
+                newUnread = unreadRemaining;
+            } else if (_crs.peer && _crs.peer._chunks && typeof _crs.peer._chunks.isMessagesInited === 'function' && _crs.peer._chunks.isMessagesInited()) {
                 newUnread = _crs.peer._chunks.getUnreadCount();
+            } else if (_crs._conversation && typeof _crs._conversation.unread_count === 'number') {
+                newUnread = Math.max(0, _crs._conversation.unread_count - 1);
             }
             if (_crs._conversation) {
                 _crs._conversation.unread_count = newUnread;
@@ -641,7 +646,9 @@ export class EventHandler {
             }
         }
 
-        const isActiveChatOpen = true;
+        const activeChatPeerId = Number(activeChat?.peer?.id || activeChat?.id || 0);
+        const isCurrentChat = Boolean(activeChatPeerId && activeChatPeerId === Number(_msg.peer_id));
+        const isActiveChatOpen = Boolean(this.im?.state?.is_active && isCurrentChat);
         setTimeout(() => {
             try {
                 const found = _crs.findMessageById(_msg.id, _msg.random_id || _msg.data?.random_id);
@@ -673,7 +680,7 @@ export class EventHandler {
                     this.im.conversations.update();
                 }
 
-                if (this.im.state.is_active) {
+                if (this.im.state.is_active && isCurrentChat) {
                     const wasAtEnd = this.im.messenger.view ? this.im.messenger.view.isAtEnd() : false;
                     this.im.messenger.update();
                     if (wasAtEnd && this.im.messenger.view) {
@@ -685,7 +692,8 @@ export class EventHandler {
                     const wasAtEnd = this.im.messenger.view ? this.im.messenger.view.isAtEnd() : false;
                     const isWindowFocused = (typeof document === 'undefined' || !document.hidden) && (typeof document.hasFocus !== 'function' || document.hasFocus());
                     if (wasAtEnd && isWindowFocused) {
-                        _crs.peer.read();
+                        const msgCmid = Number((_msg.data && (_msg.data.conversation_message_id || _msg.data.local_id)) || _msg.conversation_message_id || 0);
+                        _crs.peer.read(_msg.id, msgCmid);
                     }
                 }
 

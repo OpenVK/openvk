@@ -189,46 +189,92 @@ window.updateChatAvatar = updateChatAvatar;
 window.OpenChatAvatar = OpenChatAvatar;
 
 function createChatTopic(group_id) {
-    const msg = new CMessageBox({
-        title: tr("create_topic_as_chat"),
-        close_on_buttons: false,
-        body: `
-        <div>
-            <p>${tr("create_topic_as_chat_desc")}</p>
-            <div>
-                <input id="name" type="text">
-            </div>
-        </div>`,
-        buttons: [tr("create"), tr("cancel")],
-        callbacks: [async () => {
-            const title = msg.getNode().find("#name").last().value;
-            if (!title || title.length == 0) { return; }
-            msg.close();
+    const params = {"group_id": group_id,};
+    async function send() {
+        CMessageBox.toggleLoader();
 
-            CMessageBox.toggleLoader();
+        let res = await window.OVKAPI.call("board.addChatTopic", params, true);
 
-            let res = await window.OVKAPI.call("board.addChatTopic", {
-                "group_id": group_id,
-                "title": title,
-            }, true);
-
-            if (res.error_msg != null) {
-                if (res.error_code == 14) {
-                    fastError(tr("chat_topic_already_attached_error"));
-                } else {
-                    fastError(String(res.error_msg));
-                }
-
-                CMessageBox.toggleLoader();
-                return;
+        if (res.error && res.error.error_msg != null) {
+            if (res.error.error_code == 14) {
+                fastError(tr("chat_topic_already_attached_error"));
+            } else {
+                fastError(String(res.error.error_msg));
             }
 
-            window.router.route("/topic" + group_id + "_" + res);
             CMessageBox.toggleLoader();
-        }, () => {
-            msg.close();
-        }]
+            return;
+        }
+
+        window.router.route("/im?join=" + group_id + "_" + res + "&act=topic");
+        CMessageBox.toggleLoader();
+    }
+
+    const msg1 = new CMessageBox({
+        title: tr("create_topic_as_chat"),
+        body: ``,
+        buttons: [tr("create_topic_as_chat_v_1"), tr("create_topic_as_chat_v_2"), tr("close")],
+        callbacks: [
+        () => {
+            const msg2 = new CMessageBox({
+                title: tr("create_topic_as_chat"),
+                close_on_buttons: false,
+                body: `
+                <div>
+                    <p>${tr("create_topic_as_chat_desc")}</p>
+                    <p>${tr("create_topic_as_chat_desc_3")}:</p>
+                    <div>
+                        <input id="name" type="text">
+                    </div>
+                </div>`,
+                buttons: [tr("create"), tr("cancel")],
+                callbacks: [() => {
+                    const title = msg2.getNode().find("#name").last().value;
+                    if (!title || title.length == 0) { return; }
+                    params["title"] = title;
+                    send();
+                    msg2.close();
+                }, () => {
+                    msg2.close();
+                }]
+            });
+        },
+        () => {
+            const msg2 = new CMessageBox({
+                title: tr("create_topic_as_chat"),
+                close_on_buttons: false,
+                body: `
+                <div>
+                    <p>${tr("create_topic_as_chat_desc")}</p>
+                    <p>${tr("create_topic_as_chat_desc_2")}:</p>
+                    <div>
+                        <select id="chat_id"></select>
+                    </div>
+                </div>`,
+                buttons: [tr("create"), tr("cancel")],
+                callbacks: [() => {
+                    const chat_id = msg2.getNode().find("#chat_id").last().value;
+                    if (!chat_id || chat_id == 0) { return; }
+                    params["chat_id"] = chat_id;
+                    params["title"] = "-";
+
+                    send();
+                    msg2.close();
+                }, () => {
+                    msg2.close();
+                }]
+            });
+            window.im.conversations.convs.forEach(item => {
+                if (item.peer && item.peer.can("add_to_topic")) {
+                    msg2.getNode().find("#chat_id").append(`
+                        <option value="${item.id}">${escapeHtml(item.peer.getName())}</option>    
+                    `);
+                }
+            });
+        },
+        () => {}],
     });
+    msg1.getNode().find(".ovk-diag-body").attr("style", "display:none;");
 }
 
 async function imSwitchCurrent() {

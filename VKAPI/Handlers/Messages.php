@@ -3510,7 +3510,21 @@ final class Messages extends VKAPIRequestHandler
         ];
 
         if ($act == "topic") {
+            $topic = (new TopicsRepo())->getTopicById((int) explode("_", $link)[0], (int) explode("_", $link)[1]);
+            if (!$topic || $topic->isDeleted() || !$topic->isChatAttached()) {
+                $this->fail(15, "Access denied");
+            }
 
+            $chat = $topic->getChat();
+            if (!$chat) {
+                $this->fail(15, "Access denied");
+            }
+            $chat->loadData($this->getUser());
+            if (!$chat->canJoin($this->getUser())) {
+                $this->fail(15, "Access denied");
+            }
+
+            $params["link"] = $chat->getInfinityInviteLink();
         }
 
         $data = $this->invoke("messages.getChatPreview", $params, $group_id);
@@ -3556,6 +3570,24 @@ final class Messages extends VKAPIRequestHandler
         $params = [
             "link" => $link,
         ];
+
+        if ($act == "topic") {
+            $topic = (new TopicsRepo())->getTopicById((int) explode("_", $link)[0], (int) explode("_", $link)[1]);
+            if (!$topic || $topic->isDeleted() || !$topic->isChatAttached()) {
+                $this->fail(15, "Access denied!");
+            }
+
+            $chat = $topic->getChat();
+            if (!$chat) {
+                $this->fail(15, "Access denied");
+            }
+            $chat->loadData($this->getUser());
+            if (!$chat->canJoin($this->getUser())) {
+                $this->fail(15, "Access denied");
+            }
+
+            $params["link"] = $chat->getInfinityInviteLink();
+        }
 
         $data = $this->invoke("messages.joinChatByInviteLink", $params, $group_id);
         return (object) $data;
@@ -3655,31 +3687,6 @@ final class Messages extends VKAPIRequestHandler
             "count" => sizeof($photos),
             "items" => array_reverse($photos),
         ];
-    }
-
-    public function joinChatByTopic(int $group_id, int $topic_id)
-    {
-        $this->requireUser();
-        $this->willExecuteWriteAction();
-
-        $topic = (new TopicsRepo())->getTopicById($group_id, $topic_id);
-        if (!$topic || $topic->isChatAttached() == false) {
-            $this->fail(15, "Access denied");
-        }
-
-        $club = $topic->getClub();
-        if (!$club || $club->isBanned()) {
-            $this->fail(15, "Access denied");
-        }
-
-        $chat = $topic->getChat();
-
-        $params = [
-            "link" => $link,
-        ];
-
-        $data = $this->invoke("messages.joinChatByInviteLink", $params, $group_id);
-        return (object) $data;
     }
 
     public function getUnreadMessages(int $group_id = 0)

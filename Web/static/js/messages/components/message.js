@@ -87,6 +87,10 @@ export const ForwardedMessages = ({ msg, depth = 0, inModal = false }) => {
 export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
     const isSearchTpl = fromSearch == "1";
     const isDeleted = msg.isDeleted();
+    const isUnsent = msg.id == null || !msg.id || Number(msg.id) <= 0;
+    if (isDeleted && isUnsent) {
+        return null;
+    }
     const isReplyingTo = Boolean(window.im?.messenger?.replyTo && (Number(window.im.messenger.replyTo.id) === Number(msg.id) || window.im.messenger.replyTo === msg));
     const isEditingThis = Boolean(window.im?.messenger?.editMsg && (Number(window.im.messenger.editMsg.id) === Number(msg.id) || window.im.messenger.editMsg === msg));
     const isImportant = typeof msg.isImportant === 'function' ? msg.isImportant() : Boolean(msg.data?.important || msg.important || (msg.data?.flags & 8) || (msg.flags & 8));
@@ -223,6 +227,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
     <div class="${cls}"
         id=${msgAnchorId}
         data-msg-id=${msg.id}
+        data-msg-cmid=${msg.conversation_message_id || (msg.data && (msg.data.conversation_message_id || msg.data.local_id)) || ''}
         onMouseDown=${(e) => {
             !isSearchTpl && !isMobile ? window.im?.messenger?.view.onMessageClick(msg, e) : null;
         }}
@@ -366,6 +371,22 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                                     </div>
                                 `}
 
+                                ${msg.isError() && html`
+                                    <div class="msg-dropdown-item" onClick=${(e) => {
+                        e.stopPropagation();
+                        page.activeDropdownMsgId = null;
+                        msg.setDeleted(true);
+                        const curChat = window.im?.messenger?.getCurrentChat();
+                        if (curChat?.peer?._chunks) curChat.peer._chunks._invalidateCache();
+                        if (typeof curChat?.getScrollPosition === 'function' && curChat.getScrollPosition()) {
+                            curChat.getScrollPosition()._invalidateCache();
+                        }
+                        window.im?.messenger?.view?._triggerUpdate ? window.im.messenger.view._triggerUpdate() : (page?.update ? page.update() : window.im?.messenger?.update());
+                    }}>
+                                        ${tr('delete')}
+                                    </div>
+                                `}
+
                                 ${msg.can("report") && html`
                                     <div class="msg-dropdown-item" onClick=${(e) => {
                         e.stopPropagation();
@@ -381,6 +402,18 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                 </div>
             ` : html`
                 <div class="actions-2">
+                    ${msg.isError() && html`
+                        <div onClick=${(e) => {
+                        e.stopPropagation();
+                        msg.setDeleted(true);
+                        const curChat = window.im?.messenger?.getCurrentChat();
+                        if (curChat?.peer?._chunks) curChat.peer._chunks._invalidateCache();
+                        if (typeof curChat?.getScrollPosition === 'function' && curChat.getScrollPosition()) {
+                            curChat.getScrollPosition()._invalidateCache();
+                        }
+                        window.im?.messenger?.view?._triggerUpdate ? window.im.messenger.view._triggerUpdate() : window.im?.messenger?.update();
+                    }} class="delete-icon cross" title="${tr('delete')}"></div>
+                    `}
                     <div onClick=${async (e) => {
                 e.stopPropagation();
                 const isImp = typeof msg.isImportant === 'function' ? msg.isImportant() : Boolean(msg.data?.important || msg.important || (msg.data?.flags & 8) || (msg.flags & 8));
@@ -1759,31 +1792,33 @@ export const ForwardedModalView = ({ msg, isLoading = false }) => {
     const fromId = msg.from_id || msg.data?.from_id || 0;
     const sender = msg.sender || msg.data?.sender || (window.im?.cached_profiles && window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(fromId));
     const authorName = sender?.getName ? sender.getName() : (fromId ? "id" + fromId : "...");
-    const authorAva = sender?.getAvatar ? sender.getAvatar("mid", false) : "/assets/packages/static/openvk/img/camera_50.png";
+    const authorAva = sender?.getAvatar ? sender.getAvatar("mid", false) : (sender?.getAvatar ? sender.getAvatar() : "/assets/packages/static/openvk/img/camera_100.png");
     const dateStr = typeof msg.getDate === "function" ? msg.getDate(0) : (msg.data?.date ? formatTime(msg.data.date, true) : (msg.date ? formatTime(msg.date, true) : ""));
     const textHtml = typeof msg.getText === "function" ? msg.getText(false) : (msg.data?.text || msg.text || "");
     const attachments = typeof msg.getAttachments === "function" ? msg.getAttachments() : (msg.data?.attachments || []);
 
     return html`
-        <div class="fwd-modal-content">
-            <div class="fwd-message-block fwd-modal-root-message">
-                <div class="fwd-message-head">
-                    <a href="/id${fromId}" target="_blank" class="fwd-avatar-link">
-                        <img class="fwd-avatar" src=${authorAva} alt=${authorName} />
+        <div class="messenger-app--messages---message" style="margin-top: 0;">
+            <div class="messenger-app--messages---message--wrap">
+                <div class="inlines _avatar">
+                    <a href="/id${fromId}" target="_blank">
+                        <img class="ava" src=${authorAva} alt=${authorName} />
                     </a>
-                    <div class="fwd-author-info">
-                        <a class="fwd-author-name" href="/id${fromId}" target="_blank">
-                            <strong>${authorName}</strong>
-                        </a>
-                        <span class="fwd-date">${dateStr}</span>
-                    </div>
                 </div>
-                <div class="fwd-text" dangerouslySetInnerHTML=${{ __html: textHtml }} />
-                ${attachments && attachments.length > 0 && html`
-                    <${MessageAttachments} msg=${msg} attachments=${attachments} depth=${0} />
-                `}
-                ${isLoading && html`<div class="fwd-modal-loading">${tr("loading")}</div>`}
-                <${ForwardedMessages} msg=${msg} depth=${0} inModal=${true} />
+                <div class="inlines _content" style="width: 100%;">
+                    <a class="_sender" href="/id${fromId}" target="_blank">
+                        <strong>${authorName}</strong>
+                    </a>
+                    <div class="time">
+                        <span>${dateStr}</span>
+                    </div>
+                    <div class="normalText" dangerouslySetInnerHTML=${{ __html: textHtml }} />
+                    ${attachments && attachments.length > 0 && html`
+                        <${MessageAttachments} msg=${msg} attachments=${attachments} depth=${0} />
+                    `}
+                    ${isLoading && html`<div style="margin-top: 8px; color: var(--nobold, #999); font-size: 11px;">${tr("loading")}</div>`}
+                    <${ForwardedMessages} msg=${msg} depth=${0} inModal=${true} />
+                </div>
             </div>
         </div>
     `;
@@ -1796,20 +1831,20 @@ export function openForwardedMessageModal(fwd) {
     const title = typeof tr === "function" && tr("message") && !tr("message").startsWith("@") ? tr("message") : "Сообщение";
     const modal = new CMessageBox({
         title: title,
-        body: `<div id="${modalId}" class="fwd-modal-body"></div>`,
-        custom_template: typeof msgboxModernTemplate === "function" ? msgboxModernTemplate(title, `<div id="${modalId}" class="fwd-modal-body"></div>`) : null,
-        close_on_buttons: false,
+        body: `<div id="${modalId}" class="messenger-modal-message"></div>`,
+        buttons: [tr("close")],
+        callbacks: [Function.noop],
+        close_on_buttons: true,
     });
 
-    modal.getNode().attr("style", "z-index: 1000;");
-    modal.getNode().find(".ovk-diag").attr("style", "width: 580px; max-width: 95vw;");
-    modal.getNode().find(".ovk-diag-body").attr("style", "max-height: 80vh; overflow-y: auto; padding: 15px;");
-    modal.getNode().find(".ovk-diag-head #_close").on("click", () => modal.close());
+    const node = modal.getNode();
+    if (node) {
+        node.addClass("messenger-modal-cont");
+    }
 
-    // Retrieve container DOM node
     const container = document.getElementById(modalId) ||
-        (modal.getNode().find("#" + modalId).nodes && modal.getNode().find("#" + modalId).nodes[0]) ||
-        (modal.getNode().find(".ovk-diag-body").nodes && modal.getNode().find(".ovk-diag-body").nodes[0]);
+        (node?.find("#" + modalId).nodes && node.find("#" + modalId).nodes[0]) ||
+        (node?.find(".ovk-diag-body").nodes && node.find(".ovk-diag-body").nodes[0]);
 
     if (!container) {
         console.error("Failed to find modal container for forwarded message");
