@@ -139,7 +139,7 @@ class Report extends RowModel
 
         if ($this->getContentType() == "user") {
             // nothing
-        } elseif($this->getContentType() == "message") {
+        } elseif ($this->getContentType() == "message") {
             $this->getAuthor()->adminNotify("Мы удалили сообщение в диалогах, на которое кто-то пожаловался. Постарайтесь отныне не нарушать правила.");
         } else {
             $pubTime = $obj->getPublicationTime();

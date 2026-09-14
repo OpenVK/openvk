@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace openvk\Web\Models\Privacy;
 
-class PrivacySettings {
-    static public function getPossibleSettings(): array
+class PrivacySettings
+{
+    public static function getPossibleSettings(): array
     {
         return [
             "page.read",

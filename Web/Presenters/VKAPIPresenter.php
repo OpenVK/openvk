@@ -139,7 +139,7 @@ final class VKAPIPresenter extends OpenVKPresenter
                 exit;
             }
         } catch (\Throwable $ex) {
-            
+
         }
 
         $this->fail($code, $message, $object ?: "server", $method ?: "error");

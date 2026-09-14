@@ -10,7 +10,7 @@ use openvk\Web\Models\Entities\User;
 
 class InvalidSectionError extends \RuntimeException {}
 
-class SearchState 
+class SearchState
 {
     private string $query;
     private string $section;

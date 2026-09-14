@@ -80,7 +80,7 @@ final class Users extends VKAPIRequestHandler
                 }
             } elseif ($usr->isBanned()) {
                 $firstName = $morphCase ? $usr->getMorphedName($morphCase, false, false) : $usr->getFirstName();
-                $lastName  = $morphCase ? $usr->getMorphedName($morphCase, false, true)  : $usr->getLastName();
+                $lastName  = $morphCase ? $usr->getMorphedName($morphCase, false, true) : $usr->getLastName();
                 $response[$i] = (object) [
                     "id"          => $usr->getId(),
                     "first_name"  => $firstName,
@@ -102,7 +102,7 @@ final class Users extends VKAPIRequestHandler
             } else {
                 $canView = $usr->canBeViewedBy($this->getUser());
                 $firstName = $morphCase ? $usr->getMorphedName($morphCase, false, false) : $usr->getFirstName();
-                $lastName  = $morphCase ? $usr->getMorphedName($morphCase, false, true)  : $usr->getLastName();
+                $lastName  = $morphCase ? $usr->getMorphedName($morphCase, false, true) : $usr->getLastName();
                 $response[$i] = (object) [
                     "id"                => $usr->getId(),
                     "first_name"        => $firstName,

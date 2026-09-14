@@ -98,7 +98,7 @@ final class Board extends VKAPIRequestHandler
                 if ($chatObj->isLinkedToSomeExistingTopic()) {
                     $this->fail(14, "Chat already linked to some topic");
                 }
-            } catch(\Throwable $e) {
+            } catch (\Throwable $e) {
                 $chatObj = null;
             }
         } else {

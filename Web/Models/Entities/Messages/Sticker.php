@@ -221,7 +221,8 @@ class Sticker extends Attachable
                         $im->setImageCompressionQuality(90);
                         $im->writeImage($outWebp);
                         $im->clear();
-                    } catch (\Throwable $ex) {}
+                    } catch (\Throwable $ex) {
+                    }
                 }
             }
 

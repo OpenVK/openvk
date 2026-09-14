@@ -2880,7 +2880,7 @@ final class Messages extends VKAPIRequestHandler
         if (empty($q)) {
             $response = $this->invoke("messages.searchConversations", ["q" => "", "extended" => $extended], $group_id);
             return [
-                "count"    => (int)($response['count'] ?? 0),
+                "count"    => (int) ($response['count'] ?? 0),
                 "items"    => $response['items'] ?? [],
                 "profiles" => $response['profiles'] ?? [],
                 "groups"   => $response['groups'] ?? [],
@@ -3253,7 +3253,7 @@ final class Messages extends VKAPIRequestHandler
                                 "type" => $rawType,
                                 $rawType => [
                                     "raw" => $rawStr,
-                                ]
+                                ],
                             ];
                         }
                     }
