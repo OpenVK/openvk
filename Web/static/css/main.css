@@ -114,22 +114,6 @@ h1 {
     background-position: -9999px -9999px !important;
 }
 
-@media only screen and (-webkit-device-pixel-ratio >=1.25),
-only screen and (resolution >=1.25dppx) {
-
-    .page_header {
-        background: url('../img/header_2x.png');
-        background-repeat: no-repeat;
-        background-position: -9999px -9999px !important;
-    }
-
-    .page_custom_header {
-        background: url('../img/header_custom_2x.png');
-        background-repeat: no-repeat;
-        background-position: -9999px -9999px !important;
-    }
-}
-
 .page_header>.back,
 .p_head>.back,
 .page_header>.left,
@@ -303,7 +287,7 @@ only screen and (resolution >=1.25dppx) {
     top: 10px;
     width: 22px;
     height: 23px;
-    background: url('/assets/packages/static/openvk/img/audios_controls.png') no-repeat scroll 0 0 transparent;
+    background: url('../img/audios_controls.png') no-repeat scroll 0 0 transparent;
     cursor: pointer;
 }
 
@@ -6464,4 +6448,35 @@ hr {
     user-select: all;
     display: inline-block;
     vertical-align: baseline;
+}
+
+@media only screen and (-webkit-device-pixel-ratio >=1.25),
+only screen and (resolution >=1.25dppx) {
+
+    .page_header {
+        background: url('../img/header_2x.png')!important;
+        background-repeat: no-repeat!important;
+        background-position: -9999px -9999px !important;
+    }
+
+    .page_custom_header {
+        background: url('../img/header_custom_2x.png')!important;
+        background-repeat: no-repeat!important;
+        background-position: -9999px -9999px !important;
+    }
+
+    #head_play_btn,
+    .musicIcon,
+    .audioStatus::before,
+    #ajax_audio_player #aj_player_close_btn, 
+    #ajax_audio_player #aj_player_play #aj_player_play_btn,
+    #ajax_audio_player #aj_player_buttons > div,
+    .messenger-app--messages---message--wrap .checkmark {
+        background-image: url('../img/audios_controls_2x.png');
+        background-size: 257px auto;
+    }
+
+    .messenger-app--messages---message .actions-2>div:not(.star-icon) {
+        background-image: url('../img/audios_controls_2x.png');
+    }
 }
