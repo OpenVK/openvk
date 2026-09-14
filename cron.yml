@@ -1,5 +1,0 @@
-jobs:
-    # Cleanup pending photo uploads older than 24 hours (runs every hour)
-    - class: openvk\CLI\CleanupPendingUploadsCommand
-      method: executeCleanup
-      interval: 3600
