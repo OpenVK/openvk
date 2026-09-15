@@ -57,7 +57,7 @@ class Comment extends Post
         return parent::getOwner($honourFlags, $real);
     }
 
-    public function canBeDeletedBy(User $user = null): bool
+    public function canBeDeletedBy(?User $user = null): bool
     {
         if (!$user) {
             return false;

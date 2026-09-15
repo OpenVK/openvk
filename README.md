@@ -41,7 +41,7 @@ See `install/automated/docker/README.md` and `install/automated/kubernetes/READM
 
 ### Installation procedure
 
-1. Install PHP 8.2 or later, web-server, Composer, and NPM.
+1. Install PHP 8.4 or later, web-server, Composer, and NPM.
 
 2. Install MySQL-compatible database.
 
