@@ -400,7 +400,7 @@ class Club extends RowModel
         }
     }
 
-    public function getSuggestedPostsCount(User $user = null)
+    public function getSuggestedPostsCount(?User $user = null)
     {
         $count = 0;
 

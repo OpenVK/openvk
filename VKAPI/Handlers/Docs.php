@@ -100,7 +100,7 @@ final class Docs extends VKAPIRequestHandler
         return 1;
     }
 
-    public function get(int $count = 30, int $offset = 0, int $type = -1, int $owner_id = null, int $return_tags = 0, int $order = 0): object
+    public function get(int $count = 30, int $offset = 0, int $type = -1, ?int $owner_id = null, int $return_tags = 0, int $order = 0): object
     {
         $this->requireUser();
         if (!$owner_id) {

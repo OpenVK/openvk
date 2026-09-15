@@ -184,16 +184,16 @@ final class Groups extends VKAPIRequestHandler
 
     public function edit(
         int $group_id,
-        string $title = null,
-        string $description = null,
-        string $screen_name = null,
-        string $website = null,
+        ?string $title = null,
+        ?string $description = null,
+        ?string $screen_name = null,
+        ?string $website = null,
         int    $wall = -1,
-        int    $topics = null,
-        int    $adminlist = null,
-        int    $topicsAboveWall = null,
-        int    $hideFromGlobalFeed = null,
-        int    $audio = null
+        ?int    $topics = null,
+        ?int    $adminlist = null,
+        ?int    $topicsAboveWall = null,
+        ?int    $hideFromGlobalFeed = null,
+        ?int    $audio = null
     ) {
         $this->requireUser();
         $this->willExecuteWriteAction();
