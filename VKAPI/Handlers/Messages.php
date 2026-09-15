@@ -382,7 +382,7 @@ final class Messages extends VKAPIRequestHandler
                     ],
                     "last_message_id" => $msg?->id ?? 0,
                     "in_read" => $msg?->id ?? 0,
-                    "out_read" => $msg?->id ?? 0d,
+                    "out_read" => $msg?->id ?? 0,
                     "sort_id" => [
                         "major_id" => 0,
                         "minor_id" => $msg?->id ?? 0, // КОНЕЧНО ЖЕ
