@@ -373,19 +373,19 @@ final class Messages extends VKAPIRequestHandler
             if ($user) {
                 $dialogue = new Correspondence($this->getUser(), $user);
                 $iterator = $dialogue->getMessages(Correspondence::CAP_BEHAVIOUR_START_MESSAGE_ID, 0, 1, 0, false);
-                $msg      = $iterator[0]->unwrap(); // шоб удобнее было
+                $msg      = $iterator[0]?->unwrap() ?? null; // шоб удобнее было
                 $output['items'][] = [
                     "peer" => [
                         "id" => $user->getId(),
                         "type" => "user",
                         "local_id" => $user->getId(),
                     ],
-                    "last_message_id" => $msg->id,
-                    "in_read" => $msg->id,
-                    "out_read" => $msg->id,
+                    "last_message_id" => $msg?->id ?? 0,
+                    "in_read" => $msg?->id ?? 0,
+                    "out_read" => $msg?->id ?? 0d,
                     "sort_id" => [
                         "major_id" => 0,
-                        "minor_id" => $msg->id, // КОНЕЧНО ЖЕ
+                        "minor_id" => $msg?->id ?? 0, // КОНЕЧНО ЖЕ
                     ],
                     "last_conversation_message_id" => $user->getId(),
                     "in_read_cmid" => $user->getId(),

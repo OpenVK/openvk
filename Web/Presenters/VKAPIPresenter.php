@@ -603,12 +603,7 @@ final class VKAPIPresenter extends OpenVKPresenter
             }
         }
 
-        if (!defined("VKAPI_DECL_VER")) {
-            $version = $this->requestParam("v") ?? ($jsonData["v"] ?? "5.9999");
-            define("VKAPI_DECL_VER", $version);
-            define("VKAPI_DECL_VER_MAJOR", intval(explode('.', $version)[0] ?? "5"));
-            define("VKAPI_DECL_VER_MINOR", intval(explode('.', $version)[1] ?? "100"));
-        }
+        $this->processVKAPIVersion();
 
         try {
             $tokens = (new \openvk\VKAPI\VKScript\Lexer($code))->tokenize();
