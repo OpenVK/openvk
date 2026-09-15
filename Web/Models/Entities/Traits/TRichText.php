@@ -36,22 +36,26 @@ trait TRichText
 
     private function formatLinks(string &$text): string
     {
+        $text = htmlentities($text);
+
         return preg_replace_callback(
             "%(([A-z]++):\/\/(\S*?\.\S*?))([\s)\[\]{},\"\'<]|\.\s|$)%",
             (function (array $matches): string {
                 $isSameDomain = str_replace("www.", "", explode("/", $matches[3], 2)[0]) == str_replace("www.", "", $_SERVER["SERVER_NAME"]);
                 if (!$isSameDomain) {
-                    $href = rawurlencode($matches[1]);
+                    $href = rawurlencode(html_entity_decode($matches[1]));
                     $href = str_replace("%26amp%3B", "%26", $href);
                     $href = 'away.php?to=' . $href;
                 } else {
                     $domainNPath = explode("/", $matches[3], 2);
                     $href = end($domainNPath);
                 }
-                $link = str_replace("\r", "", $matches[0]); // clears caret return that triggered <br> to be spawned
+                $link = str_replace("\r", "", $matches[1]); // clears caret return that triggered <br> to be spawned
                 $rel  = $this->isAd() ? "sponsored" : "ugc";
 
-                return "<a href='/$href' rel='$rel' target='_blank'>$link</a>" . htmlentities($matches[4]);
+                $terminator = htmlentities($matches[4]);
+
+                return "<a href='/$href' rel='$rel' target='_blank'>$link</a>$terminator";
             }),
             $text
         );
