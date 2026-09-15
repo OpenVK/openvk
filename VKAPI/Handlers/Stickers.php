@@ -1,0 +1,177 @@
+<?php
+
+declare(strict_types=1);
+
+namespace openvk\VKAPI\Handlers;
+
+use openvk\Web\Models\Repositories\Stickers as StickersRepo;
+
+final class Stickers extends VKAPIRequestHandler
+{
+    public function get(int $user_id = 0, int $count = 50, int $offset = 0): object
+    {
+        $this->requireUser();
+
+        if ($user_id < 1) {
+            $user_id = $this->getUser()->getId();
+        }
+
+        $server_url = ovk_scheme(true) . ($_SERVER["HTTP_HOST"] ?? "");
+        $repo       = new StickersRepo();
+        $packs      = $repo->getMyPacks($this->getUser(), 1, $count);
+
+        $items = [];
+        $i = 0;
+        foreach ($packs as $pack) {
+            if ($i < $offset) {
+                $i++;
+                continue;
+            }
+
+            $data = $pack->toVkApiStruct($this->getUser());
+            $stickers = [];
+            foreach ($pack->getStickers(1, 100) as $sticker) {
+                $item = $sticker->toVkApiStruct($this->getUser(), $pack->getId());
+                $item["sticker_id"] = (int) $sticker->getId();
+                $item["is_allowed"] = true;
+                $stickers[] = $item;
+            }
+
+            $data["stickers"] = $stickers;
+            $items[] = $data;
+            $i++;
+        }
+
+        return $this->generateItems($repo->getMyPacksCount($this->getUser()), $items);
+    }
+
+    public function getAll(int $count = 50, int $offset = 0): object
+    {
+        $this->requireUser();
+
+        $server_url = ovk_scheme(true) . ($_SERVER["HTTP_HOST"] ?? "");
+        $repo       = new StickersRepo();
+
+        $total = 0;
+        $packs = $repo->getPacks(1, PHP_INT_MAX, $total, "all");
+
+        $items = [];
+        $i = 0;
+        foreach ($packs as $pack) {
+            if ($i < $offset) {
+                $i++;
+                continue;
+            }
+
+            if (count($items) >= $count) {
+                break;
+            }
+
+            $items[] = $pack->toVkApiStruct($this->getUser());
+            $i++;
+        }
+
+        return $this->generateItems($total, $items);
+    }
+
+    public function getFrom(int $stickerpack_id): object
+    {
+        $this->requireUser();
+
+        $repo = new StickersRepo();
+        $pack = $repo->getPack($stickerpack_id);
+
+        if (!$pack) {
+            $this->fail(15, "Sticker pack not found");
+        }
+
+        if (!$pack->isAvailable()) {
+            $this->fail(15, "Sticker pack is not available");
+        }
+
+        $canAccess = !$pack->isUnlisted() || $pack->isPurchasedBy($this->getUser());
+        if (!$canAccess) {
+            $this->fail(15, "Access denied");
+        }
+
+        $server_url = ovk_scheme(true) . ($_SERVER["HTTP_HOST"] ?? "");
+        $stickers = [];
+
+        $pack_item = $pack->toVkApiStruct($this->getUser());
+
+        $stickers = [];
+        foreach ($pack->getStickers(1, 100) as $sticker) {
+            $item = $sticker->toVkApiStruct($this->getUser(), $pack->getId());
+            $item["sticker_id"] = (int) $sticker->getId();
+            $item["is_allowed"] = true;
+            $stickers[] = $item;
+        }
+        $pack_item["stickers"] = $stickers;
+
+        return (object) $pack_item;
+    }
+
+    public function buy(int $stickerpack_id): object
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $repo = new StickersRepo();
+        $pack = $repo->getPack($stickerpack_id);
+
+        if (!$pack) {
+            $this->fail(15, "Sticker pack not found");
+        }
+
+        if (!$pack->isAvailable()) {
+            $this->fail(15, "Sticker not available");
+        }
+
+        if (!$pack->buy($this->getUser())) {
+            $this->fail(15, "Cannot purchase this pack");
+        }
+
+        return (object) [
+            "success" => 1,
+            "pack_id" => $pack->getId(),
+        ];
+    }
+
+    public function getProducts(
+        string $type = "stickers",
+        string $filters = "",
+        int $extended = 1,
+        int $count = 50,
+        int $offset = 0,
+        $product_ids = "",
+        int $user_id = 0
+    ): object|array {
+        return (new Store($this->getUser(), $this->getPlatform()))
+            ->getProducts($type, $filters, $extended, $count, $offset, $product_ids, $user_id);
+    }
+
+    public function getStockItems(
+        string $type = "stickers",
+        string $section = "",
+        int $extended = 1,
+        int $count = 50,
+        int $offset = 0,
+        string $merchant = ""
+    ): object|array {
+        return (new Store($this->getUser(), $this->getPlatform()))
+            ->getStockItems($type, $section, $extended, $count, $offset, $merchant);
+    }
+
+    public function getStickersKeywords(
+        int $aliases = 1,
+        int $all_products = 1,
+        int $need_stickers = 1,
+        string $stickers_hash = "",
+        string $products_hash = "",
+        int $count = 0,
+        int $user_id = 0
+    ): object {
+        return (new Store($this->getUser(), $this->getPlatform()))
+            ->getStickersKeywords($aliases, $all_products, $need_stickers, $stickers_hash, $products_hash, $count, $user_id);
+    }
+}

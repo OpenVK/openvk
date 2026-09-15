@@ -79,6 +79,10 @@
                 <input class="toggle-large" type="checkbox" id="hide_global_feed" name="hide_global_feed" value="1" n:attr="checked => $user->HideGlobalFeed()" />
             </div>
             <div class="field-group">
+                <label for="can_create_stickers">{_admin_can_create_stickers}</label>
+                <input class="toggle-large" type="checkbox" id="can_create_stickers" name="can_create_stickers" value="1" n:attr="checked => $user->rawCanCreateStickers()" />
+            </div>
+            <div class="field-group">
                 <label for="city">{_admin_user_online}</label>
                 <select name="online" class="select">
                     <option value="0" {if $user->onlineStatus() > 2}selected{/if}>{_admin_user_online_default}</option>
@@ -167,7 +171,7 @@
         <tbody>
             <tr n:foreach="$sessions as $session">
                 <td>{$session->ip}</td>
-                <td>{php echo new WhichBrowser\Parser($session->ua)->toString()}</td>
+                <td>{(new WhichBrowser\Parser($session->ua))->toString()}</td>
                 <td>
                     <a class="aui-button aui-button-primary" href="/admin/session/delete?token={$session->token}&hash={rawurlencode($csrfToken)}">
                         <span class="aui-icon aui-icon-small aui-iconfont-trash">{_delete}</span>

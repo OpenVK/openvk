@@ -40,6 +40,12 @@ class Themepack
 
     public function isEnabled(): bool
     {
+        // OPENVK_ROOT_CONF["openvk"]["preferences"]["themepacks"]["disabled"]
+        return $this->enabled;
+    }
+
+    public function getAccentColor(): string
+    {
         return $this->enabled;
     }
 

@@ -221,7 +221,7 @@ class Notification
                 $info["type"]   = "make_you_admin";
                 $info["parent"] = $this->getModel(0)->toVkApiStruct($this->getModel(1));
                 break;
-                # Нужно доделать после мержа #935
+                # Нужно доделать после мержа #935 (не доделал кстати!)
             case 6:
                 $info["type"] = "wall_publish";
                 break;

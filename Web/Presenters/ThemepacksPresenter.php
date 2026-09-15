@@ -34,8 +34,10 @@ final class ThemepacksPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
+        $len = strlen($data);
         header("Content-Type: " . system_extension_mime_type($resource) ?? "text/plain; charset=unknown-8bit");
-        header("Content-Size: " . strlen($data));
+        header("Content-Length: " . $len);
+        header("Content-Size: " . $len);
         header("Cache-Control: public, no-transform, max-age=31536000");
         exit($data);
     }

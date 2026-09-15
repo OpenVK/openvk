@@ -52,6 +52,8 @@ final class CommentPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
 
         $repoClass = $this->models[$repo] ?? null;
+        $isAjax = $this->postParam("ajax") == "1";
+
         if (!$repoClass) {
             chandler_http_panic(400, "Bad Request", "Unexpected $repo.");
         }
@@ -63,7 +65,11 @@ final class CommentPresenter extends OpenVKPresenter
         }
 
         if (!$entity->canBeViewedBy($this->user->identity)) {
-            $this->flashFail("err", tr("error"), tr("forbidden"));
+            $this->flashFail("err", tr("error"), tr("forbidden"), 0, $isAjax);
+        }
+
+        if (!$entity->canBeCommentedBy($this->user->identity)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"), 0, $isAjax);
         }
 
         if ($entity instanceof Topic && $entity->isClosed()) {
@@ -77,11 +83,11 @@ final class CommentPresenter extends OpenVKPresenter
         }
 
         if ($entity instanceof Post && $entity->getWallOwner()->isBanned()) {
-            $this->flashFail("err", tr("error"), tr("forbidden"));
+            $this->flashFail("err", tr("error"), tr("forbidden"), 0, $isAjax);
         }
 
         if ($entity instanceof Topic && $entity->isRestricted() && !$entity->getClub()->canBeModifiedBy($this->user->identity)) {
-            $this->flashFail("err", tr("error"), tr("forbidden"));
+            $this->flashFail("err", tr("error"), tr("forbidden"), 0, $isAjax);
         }
 
         $flags = 0;
@@ -90,11 +96,11 @@ final class CommentPresenter extends OpenVKPresenter
         }
 
         $photo = null;
-        if ($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
+        if (isset($_FILES["_pic_attachment"]) && $_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
             try {
                 $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"]);
             } catch (ISE $ex) {
-                $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_when_publishing_comment_description"));
+                $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_when_publishing_comment_description"), 0, $isAjax);
             }
         }
 
@@ -103,7 +109,7 @@ final class CommentPresenter extends OpenVKPresenter
         if (!empty($this->postParam("horizontal_attachments"))) {
             $horizontal_attachments_array = array_slice(explode(",", $this->postParam("horizontal_attachments")), 0, OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"]);
             if (sizeof($horizontal_attachments_array) > 0) {
-                $horizontal_attachments = parseAttachments($horizontal_attachments_array, ['photo', 'video']);
+                $horizontal_attachments = parseAttachments($horizontal_attachments_array, ['photo', 'video', 'sticker']);
             }
         }
 
@@ -114,8 +120,33 @@ final class CommentPresenter extends OpenVKPresenter
             }
         }
 
-        if (empty($this->postParam("text")) && sizeof($horizontal_attachments) < 1 && sizeof($vertical_attachments) < 1) {
-            $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_comment_empty"));
+        $hasSticker = false;
+        $filtered_horizontal_attachments = [];
+        foreach ($horizontal_attachments as $att) {
+            if ($att instanceof \openvk\Web\Models\Entities\Messages\Sticker) {
+                if (!$att->canBeUsedBy($this->user->identity)) {
+                    continue;
+                }
+                if ($hasSticker) {
+                    continue; // only 1 sticker allowed in comments
+                }
+                $hasSticker = true;
+                $filtered_horizontal_attachments[] = $att;
+            } else {
+                $filtered_horizontal_attachments[] = $att;
+            }
+        }
+        $horizontal_attachments = $filtered_horizontal_attachments;
+
+        $rawText = (string) ($this->postParam("text") ?? "");
+        $cleanText = trim(preg_replace('/[\s\x{200b}\x{feff}\x{00a0}]+/u', ' ', $rawText));
+
+        if ($hasSticker) {
+            $cleanText = '';
+        }
+
+        if (empty($cleanText) && sizeof($horizontal_attachments) < 1 && sizeof($vertical_attachments) < 1) {
+            $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_comment_empty"), 0, $isAjax);
         }
 
         $replyTo = null;
@@ -128,17 +159,20 @@ final class CommentPresenter extends OpenVKPresenter
             $comment->setOwner($this->user->id);
             $comment->setModel(get_class($entity));
             $comment->setTarget($entity->getId());
-            $comment->setContent($this->postParam("text"));
+            $comment->setContent($hasSticker ? "" : $cleanText);
             $comment->setCreated(time());
             $comment->setReply_To($replyTo);
             $comment->setFlags($flags);
             $comment->save();
         } catch (\LengthException $ex) {
-            $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_comment_too_big"));
+            $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_comment_too_big"), 0, $isAjax);
         }
 
         foreach ($horizontal_attachments as $horizontal_attachment) {
             if (!$horizontal_attachment || $horizontal_attachment->isDeleted() || !$horizontal_attachment->canBeViewedBy($this->user->identity)) {
+                continue;
+            }
+            if ($horizontal_attachment instanceof \openvk\Web\Models\Entities\Messages\Sticker && !$horizontal_attachment->canBeUsedBy($this->user->identity)) {
                 continue;
             }
 
@@ -177,6 +211,13 @@ final class CommentPresenter extends OpenVKPresenter
             (new ReplyCommentNotification($replyToUser, $comment, $entity, $this->user->identity))->emit();
         }
 
+        if ($isAjax == "1") {
+            $this->template->comment = $comment;
+            $this->template->_template = "components/comment.latte";
+
+            return;
+        }
+
         $this->flashFail("succ", tr("comment_is_added"), tr("comment_is_added_desc"));
     }
 
@@ -186,6 +227,7 @@ final class CommentPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
 
         $comment = (new Comments())->get($id);
+        $isAjax = $_SERVER["REQUEST_METHOD"] === "POST" && $this->postParam("ajax") == "1";
         if (!$comment) {
             $this->notFound();
         }
@@ -193,14 +235,16 @@ final class CommentPresenter extends OpenVKPresenter
             $this->throwError(403, "Forbidden", tr("error_access_denied"));
         }
         if ($comment->getTarget() instanceof Post && $comment->getTarget()->getWallOwner()->isBanned()) {
-            $this->flashFail("err", tr("error"), tr("forbidden"));
+            $this->flashFail("err", tr("error"), tr("forbidden"), 0, $isAjax);
         }
 
         $comment->delete();
         $this->flashFail(
             "succ",
             tr("success"),
-            tr("comment_will_not_appear")
+            tr("comment_will_not_appear"),
+            0,
+            $isAjax
         );
     }
 }

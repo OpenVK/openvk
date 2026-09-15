@@ -1,4 +1,12 @@
+class InvalidPageError extends Error {}
+class AntiDDOSPageError extends Error {}
+class CaptchaError extends Error {}
+
 window.router = new class {
+    constructor() {
+        this.isLoadedFirstly = false;
+    }
+
     get csrf() {
         return u("meta[name=csrf]").attr("value")
     }
@@ -21,11 +29,11 @@ window.router = new class {
             _t_scr.setAttribute('integrity', script.getAttribute('integrity'))
         }
 
-        if(script.getAttribute('id')) { 
+        if(script.getAttribute('id')) {
             _t_scr.id = script.id
         }
 
-        if(script.getAttribute('type')) { 
+        if(script.getAttribute('type')) {
             _t_scr.type = script.type
         }
 
@@ -37,7 +45,7 @@ window.router = new class {
         } else {
             _t_scr.async = false
             _t_scr.textContent = script.textContent
-        }   
+        }
 
         //parent.children[idx].before(script)
         document.body.appendChild(_t_scr)
@@ -64,8 +72,12 @@ window.router = new class {
         const page_header = u(parsed_content.querySelector('.page_header'))
         const page_footer = u(parsed_content.querySelector('.page_footer'))
         const backdrop = u(parsed_content.querySelector('#backdrop'))
+        if (!this._checkAntiddos(parsed_content)) {
+            throw new AntiDDOSPageError();
+        }
+
         if(page_body.length < 1) {
-            throw new Error('Invalid page has been loaded')
+            throw new InvalidPageError('Invalid page has been loaded')
             return
         }
 
@@ -77,9 +89,32 @@ window.router = new class {
                 script.parentNode.removeChild(script)
             }
         })
+        u('#pseudoError').html("");
+        u('#pseudoError').removeClass("shown");
         u('.page_body').html(page_body.html())
         u('.sidebar').html(sidebar.html())
         u('.page_footer').html(page_footer.html())
+
+        const new_layout = parsed_content.querySelector('.layout, #page_layout')
+        const current_layout = document.querySelector('.layout, #page_layout')
+        if (current_layout && new_layout) {
+            const old_style = current_layout.getAttribute('style') || ''
+            const new_style = new_layout.getAttribute('style') || ''
+
+            if (new_layout.hasAttribute('style')) {
+                current_layout.setAttribute('style', new_layout.getAttribute('style'))
+            } else {
+                current_layout.removeAttribute('style')
+            }
+
+            if (new_layout.className) {
+                current_layout.className = new_layout.className
+            }
+
+            if (old_style !== new_style) {
+                window.dispatchEvent(new Event('resize'))
+            }
+        }
         if(backdrop.length > 0) {
             if(u('#backdrop').length == 0) {
                 u('body').append(`<div id="backdrop"></div>`)
@@ -88,7 +123,7 @@ window.router = new class {
         } else {
             u('#backdrop').remove()
         }
-        
+
         if(u('.page_header #search_box select').length > 0 && page_header.find('#search_box select').length > 0) {
             u('.page_header #search_box select').nodes[0].value = page_header.find('#search_box select').nodes[0].value
         }
@@ -106,7 +141,13 @@ window.router = new class {
                 u('.page_header').removeClass('search_expanded')
             }
         }
-        
+
+        if(page_header.hasClass('page_custom_header')) {
+            u('.page_header').addClass('page_custom_header')
+        } else {
+            u('.page_header').removeClass('page_custom_header')
+        }
+
         u("meta[name=csrf]").attr("value", u(parsed_content.querySelector('meta[name=csrf]')).attr('value'))
 
         if (isMobileAndExpanded()) {
@@ -122,6 +163,15 @@ window.router = new class {
         scripts_to_append.forEach(append_me => {
             this.__appendScript(append_me)
         })
+    }
+
+    __appendPageUnserious(parsed_content) {
+        const body = parsed_content.querySelector("body");
+        u('#pseudoError').html(body.innerHTML);
+        u('#pseudoError').addClass("shown");
+        /*body.querySelectorAll("style").forEach(item => {
+            document.querySelector("#pseudoError").append(item);
+        });*/
     }
 
     applyTweaks() {
@@ -142,7 +192,8 @@ window.router = new class {
     }
 
     async __integratePage(scrolling = null) {
-        window.temp_y_scroll = null
+        window.temp_y_scroll = null;
+        window.router.scroll_page = null;
         u('.toTop').removeClass('has_down')
         window.scrollTo(0, scrolling ?? 0)
         bsdnHydrate()
@@ -160,7 +211,15 @@ window.router = new class {
             await window.player._handlePageTransition()
         }
 
-        this.applyTweaks()
+        this.applyTweaks();
+
+        document.body.classList.remove('no_footer');
+        window.initStaticLottieStickers?.();
+
+        if (window.im) {
+            window.im.state._toggleScrollMode(false);
+            await window.im.state._resolvePosition();
+        }
 
         /*window.document.dispatchEvent(new Event("DOMContentLoaded", {
             bubbles: true,
@@ -176,6 +235,10 @@ window.router = new class {
         if(u(`div[class$="_small_block"]`).length > 0 && typeof smallBlockObserver != 'undefined') {
             smallBlockObserver.unobserve(u(`div[class$="_small_block"]`).nodes[0])
         }
+    }
+
+    isAjaxDisabled() {
+        return localStorage.getItem('ux.disable_ajax_routing') == "1";
     }
 
     checkUrl(url) {
@@ -227,6 +290,21 @@ window.router = new class {
             url = location.origin + url
         }
 
+        const max_attempts = params["max_attempts"] || 3;
+        const attempt = params["attempt"] || 1;
+
+        if (attempt > max_attempts) {
+            const cmsg = new CMessageBox({
+                title: tr("error"),
+                body: tr("router_reconnect_error"),
+                buttons: [tr("yes"), tr("no")],
+                callbacks: [() => {
+                    window.location.assign(url);
+                }, () => {}]
+            })
+            return;
+        }
+
         if((localStorage.getItem('ux.disable_ajax_routing') ?? 0) == 1 || window.openvk.current_id == 0) {
             window.location.assign(url)
             return
@@ -243,7 +321,7 @@ window.router = new class {
         } else {
             history.replaceState({'from_router': 1}, '', url)
         }
-        
+
         u('body').addClass('ajax_request_made')
 
         const parser = new DOMParser
@@ -271,11 +349,16 @@ window.router = new class {
         if(next_page_request.redirected) {
             history.replaceState({'from_router': 1}, '', next_page_request.url)
         }
-        
+
+        u('body').removeClass('ajax_request_made')
+
+        this.__appendPageSafely(parsed_content, next_page_url, params, next_page_request)
+    }
+
+    // какой ужас
+    async __appendPageSafely(parsed_content, next_page_url, params, request) {
         this.__closeMsgs()
         this.__unlinkObservers()
-        
-        u('body').removeClass('ajax_request_made')
 
         try {
             this.__appendPage(parsed_content)
@@ -287,9 +370,43 @@ window.router = new class {
             await this.__integratePage()
         } catch(e) {
             console.error(e)
-            next_page_url.searchParams.delete('al', 1)
-            location.assign(next_page_url)
+            if (e instanceof InvalidPageError) {
+                next_page_url.searchParams.delete('al', 1);
+                if (parsed_content.querySelector("#openvk_error") != null) {
+                    this.__appendPageUnserious(parsed_content)
+                } else {
+                    location.assign(next_page_url);
+                }
+            }
+            if (e instanceof AntiDDOSPageError || e instanceof CaptchaError) {
+                const msg = new CMessageBox({
+                    title: "Captcha",
+                    body: `<iframe src="/admin/sandbox"></iframe>`,
+                    buttons: [tr("ok")],
+                    callbacks: [() => { }]
+                })
+                const interval = setInterval(() => {
+                    const iframe = msg.getNode().find("iframe").last();
+                    const isReady = this._checkAntiddos(iframe.contentDocument);
+
+                    if (isReady) {
+                        clearInterval(interval);
+                        msg.close();
+                        window.router.route({
+                            url: next_page_url.toString(),
+                            attempt: (params["attempt"] || 1) + 1,
+                            max_attempts: (params["max_attempts"] || 3),
+                        });
+                    }
+                }, 200)
+            }
         }
+    }
+    _checkAntiddos(node) {
+        if (node.querySelector('#anubis_version') != null) {
+            return false;
+        }
+        return true;
     }
 }
 
@@ -302,7 +419,7 @@ function isMobileAndExpanded() {
 }
 
 // Mobile theme header
-u(document).on('click', '.page_header', (e) => {
+$(document).on('click', '.page_header', (e) => {
     if (isMobile() && !e.target.closest('.link, #fast_notifications')) {
         e.preventDefault();
         e.stopPropagation();
@@ -321,19 +438,24 @@ function toDesktopVersion() {
     u("meta[name='viewport']").remove();
 }
 
-u(document).on('click', 'a', async (e) => {
-    if(e.defaultPrevented) {
+$(document).on('click', 'a', async (e) => {
+    console.log(e.isDefaultPrevented())
+    if((typeof e.isDefaultPrevented === 'function' && e.isDefaultPrevented()) || e.defaultPrevented || (e.originalEvent && e.originalEvent.defaultPrevented)) {
         console.log('AJAX | Skipping because default is prevented')
         return
     }
-    
-    const target = u(e.target).closest('a')
+
+    const target = u(e.target).closest('a');
+    if(target.attr('data-no-ajax') || target.attr('data-modal')) {
+        console.log('AJAX | Skipped because data-no-ajax/data-modal')
+        return
+    }
     const dom_url = target.attr('href')
     const id = target.attr('id')
     let url = target.nodes[0].href
 
     if(id) {
-        if(['act_tab_a', 'ki', 'used', '_pinGroup', 'profile_link', 'minilink-friends', 'minilink-albums', 'minilink-messenger', 'minilink-groups', 'minilink-notifications'].indexOf(id) == -1) {
+        if(['act_tab_a', 'ki', 'used', '_pinGroup', 'profile_link', 'minilink-friends', 'minilink-albums', 'minilink-messenger', 'minilink-groups', 'minilink-notifications', 'head_music'].indexOf(id) == -1) {
             console.log('AJAX | Skipping cuz maybe its function call link.')
             return
         }
@@ -381,11 +503,12 @@ u(document).on('click', 'a', async (e) => {
     })
 })
 
-u(document).on('submit', 'form', async (e) => {
-    if(e.defaultPrevented) {
+$(document).on('submit', 'form', async (e) => {
+    console.log("submit form ", e);
+    if(e.isDefaultPrevented()) {
         return
     }
-  
+
     if(u('#ajloader').hasClass('shown')) {
         e.preventDefault()
         return
@@ -395,9 +518,11 @@ u(document).on('submit', 'form', async (e) => {
         return false
     }
 
-    if(e.target.closest('#write')) {
-        const target = u(e.target)
-        collect_attachments_node(target)
+    if (e.target.closest('#write')) {
+        e.preventDefault()
+        const target = u(e.target);
+        await ajax_posting(e, target);
+        return;
     }
 
     if((localStorage.getItem('ux.disable_ajax_routing') ?? 0) == 1 || window.openvk.current_id == 0) {
@@ -467,15 +592,13 @@ u(document).on('submit', 'form', async (e) => {
 
         history.pushState({'from_router': 1}, '', __new_url)
     }
-    
-    window.router.__appendPage(parsed_content)
-    window.router.__closeMsgs()
-    await window.router.__integratePage()
+
+    await window.router.__appendPageSafely(parsed_content, url_object, {}, form_res)
 
     u('#ajloader').removeClass('shown')
 })
 
-u('#logout_link').on('click', (e) => {
+$('#logout_link').on('click', (e) => {
     e.preventDefault()
     e.stopPropagation()
 
@@ -499,14 +622,31 @@ window.addEventListener('popstate', (e) => {
         return
     }*/
 
-    if(e.state != null) {
+    if (e.state != null) {
+        if (window.im) {
+            window.im.state._resolvePosition(location.href, e.state.from_messenger);
+        }
+
         window.router.route({
             url: location.href,
             push_state: false,
-        })
+        });
     }
 })
 
 window.addEventListener('DOMContentLoaded', () => {
-    window.router.applyTweaks()
+    window.router.applyTweaks();
+
+    if (window.im && window.im.state.isFastchat && !window.im.fastChats.isInserted) {
+        window.im.state._resolvePosition(null, null, true);
+    }
+
+    if (window.router.isLoadedFirstly == false) {
+        console.log("applying ?w=");
+
+        _checkViewers();
+
+        CMessageBox.toggleLoader(false);
+        window.router.isLoadedFirstly = true;
+    }
 })

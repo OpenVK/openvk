@@ -7,3 +7,20 @@
 .page_custom_header {
     background: url('../img/xheader_custom.png');
 }
+
+@media only screen and (-webkit-device-pixel-ratio >=1.25),
+only screen and (resolution >=1.25dppx) {
+
+    .page_header {
+        background: url('../img/xheader_2x.png');
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+    }
+
+    .page_custom_header {
+        background: url('../img/xheader_custom_2x.png');
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+    }
+
+}
