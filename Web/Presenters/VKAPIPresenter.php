@@ -941,7 +941,7 @@ final class VKAPIPresenter extends OpenVKPresenter
         return null;
     }
 
-    private function packMessage($message, string $callback = null): string
+    private function packMessage($message, ?string $callback = null): string
     {
         $format = $_SERVER['HTTP_X_RESPONSE_FORMAT'];
         if ($format == 'msgpack') {

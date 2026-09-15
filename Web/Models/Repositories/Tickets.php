@@ -46,7 +46,7 @@ class Tickets
         }
     }
 
-    public function getTicketsCountByUserId(int $userId, int $type = null): int
+    public function getTicketsCountByUserId(int $userId, ?int $type = null): int
     {
         if (is_null($type)) {
             return sizeof($this->tickets->where(["user_id" => $userId, "deleted" => 0]));

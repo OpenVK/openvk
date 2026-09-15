@@ -14,7 +14,7 @@ use openvk\Web\Models\Entities\{Topic, Comment, User, Photo, Video};
 
 final class Board extends VKAPIRequestHandler
 {
-    public function addTopic(int $group_id, string $title, string $text = null, bool $from_group = true)
+    public function addTopic(int $group_id, string $title, ?string $text = null, bool $from_group = true)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
