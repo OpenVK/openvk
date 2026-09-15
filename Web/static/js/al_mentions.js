@@ -22,7 +22,7 @@ var tooltipTemplate = Handlebars.compile(`
 tippy.delegate("body", {
     target: '.mention',
     theme: "light vk",
-    content: "⌛",
+    content: "<img src=\"/assets/packages/static/openvk/img/loading_mini.gif\">",
     delay: 300,
     allowHTML: true,
     interactive: true,
