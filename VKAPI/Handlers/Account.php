@@ -108,7 +108,7 @@ final class Account extends VKAPIRequestHandler
         return (object) $all_counters;
     }
 
-    public function saveProfileInfo(string $first_name = "", string $last_name = "", string $screen_name = "", int $sex = -1, int $relation = -1, string $bdate = "", int $bdate_visibility = -1, string $home_town = "", string $status = "", string $telegram = null): object
+    public function saveProfileInfo(string $first_name = "", string $last_name = "", string $screen_name = "", int $sex = -1, int $relation = -1, string $bdate = "", int $bdate_visibility = -1, string $home_town = "", string $status = "", ?string $telegram = null): object
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -361,14 +361,14 @@ final class Account extends VKAPIRequestHandler
     }
 
     public function saveInterestsInfo(
-        string $interests = null,
-        string $fav_music = null,
-        string $fav_films = null,
-        string $fav_shows = null,
-        string $fav_books = null,
-        string $fav_quote = null,
-        string $fav_games = null,
-        string $about = null,
+        ?string $interests = null,
+        ?string $fav_music = null,
+        ?string $fav_films = null,
+        ?string $fav_shows = null,
+        ?string $fav_books = null,
+        ?string $fav_quote = null,
+        ?string $fav_games = null,
+        ?string $about = null,
     ) {
         $this->requireUser();
         $this->willExecuteWriteAction();

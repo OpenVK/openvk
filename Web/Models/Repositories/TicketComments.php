@@ -39,7 +39,7 @@ class TicketComments
         return self::$cache[$id] ??= $this->toTicketComment($this->comments->get($id));
     }
 
-    public function getCountByAgent(int $agent_id, int $mark = null): int
+    public function getCountByAgent(int $agent_id, ?int $mark = null): int
     {
         $filter = ['user_id' => $agent_id, 'user_type' => 1];
         $mark && $filter['mark'] = $mark;

@@ -322,7 +322,7 @@ final class Wall extends VKAPIRequestHandler
         }
     }
 
-    public function getById(string $posts, int $extended = 0, string $fields = "", User $user = null)
+    public function getById(string $posts, int $extended = 0, string $fields = "", ?User $user = null)
     {
         if ($user == null) {
             $user = $this->getUser();
@@ -569,8 +569,8 @@ final class Wall extends VKAPIRequestHandler
         string $attachments = "",
         int $post_id = 0,
         int $explicit = 0,
-        float $lat = null,
-        float $long = null,
+        ?float $lat = null,
+        ?float $long = null,
         string $place_name = ''
     ): object {
         $this->requireUser();
@@ -1063,7 +1063,7 @@ final class Wall extends VKAPIRequestHandler
         return $response;
     }
 
-    public function createComment(int $owner_id, int $post_id, string $message = "", int $from_group = 0, string $attachments = "", int $reply_to_comment = null)
+    public function createComment(int $owner_id, int $post_id, string $message = "", int $from_group = 0, string $attachments = "", ?int $reply_to_comment = null)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -1187,7 +1187,7 @@ final class Wall extends VKAPIRequestHandler
         }
     }
 
-    public function edit(int $owner_id, int $post_id, string $message = "", string $attachments = "", string $copyright = null, int $explicit = -1, int $from_group = 0, int $signed = 0)
+    public function edit(int $owner_id, int $post_id, string $message = "", string $attachments = "", ?string $copyright = null, int $explicit = -1, int $from_group = 0, int $signed = 0)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
