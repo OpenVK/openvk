@@ -137,6 +137,39 @@
 "politViews_8" = "Ultra-Conservative";
 "politViews_9" = "Libertarian";
 
+"worldview" = "Worldview";
+
+"mainInLife" = "Personal priority";
+"mainInLife_0" = "Not specified";
+"mainInLife_1" = "Family and children";
+"mainInLife_2" = "Career and money";
+"mainInLife_3" = "Entertainment and leisure";
+"mainInLife_4" = "Science and research";
+"mainInLife_5" = "Improving the world";
+"mainInLife_6" = "Personal development";
+"mainInLife_7" = "Beauty and art";
+"mainInLife_8" = "Fame and influence";
+
+"mainInPeople" = "Important in others";
+"mainInPeople_0" = "Not specified";
+"mainInPeople_1" = "Intellect and creativity";
+"mainInPeople_2" = "Kindness and honesty";
+"mainInPeople_3" = "Health and beauty";
+"mainInPeople_4" = "Wealth and power";
+"mainInPeople_5" = "Courage and persistence";
+"mainInPeople_6" = "Humor and love for life";
+
+"viewsOnSmoking" = "Views on smoking";
+"viewsOnAlcohol" = "Views on alcohol";
+"viewsOnSubstances_0" = "Not specified";
+"viewsOnSubstances_1" = "Very negative";
+"viewsOnSubstances_2" = "Negative";
+"viewsOnSubstances_3" = "Tolerant";
+"viewsOnSubstances_4" = "Neutral";
+"viewsOnSubstances_5" = "Positive";
+
+"inspires" = "Inspired by";
+
 "contact_information" = "Contact information";
 
 "email" = "Email";
@@ -150,6 +183,7 @@
 
 "interests" = "Interests";
 "additional" = "Additional";
+"personal" = "Personal views";
 "additional_fields_description" = "There you can add additional info about you, like another profiles links or your interests. Up to a maximum of $1 such fields can be added.";
 "additional_field_name" = "Name";
 "additional_field_text" = "Text";

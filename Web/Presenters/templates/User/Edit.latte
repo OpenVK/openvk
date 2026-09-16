@@ -16,6 +16,7 @@
     {var $isAdditional = $mode === 'additional'}
     {var $isAvatar    = $mode === 'avatar'}
     {var $isBackDrop  = $mode === 'backdrop'}
+    {var $isPersonal  = $mode === 'personal'}
 
     <div n:if="$user->hasPendingNumberChange()" class="msg">
         <b>Подтверждение номера телефона</b><br/>
@@ -35,12 +36,16 @@
         <div n:attr="id => ($isAdditional ? 'activetabs' : 'ki')" class="tab">
             <a n:attr="id => ($isAdditional ? 'act_tab_a' : 'ki')" href="/edit?act=additional">{_additional}</a>
         </div>
+        <div n:attr="id => ($isPersonal ? 'activetabs' : 'ki')" class="tab">
+            <a n:attr="id => ($isPersonal ? 'act_tab_a' : 'ki')" href="/edit?act=personal">{_personal}</a>
+        </div>
         <div n:attr="id => ($isAvatar ? 'activetabs' : 'ki')" class="tab">
             <a n:attr="id => ($isAvatar ? 'act_tab_a' : 'ki')" href="/edit?act=avatar">{_avatar}</a>
         </div>
         <div n:attr="id => ($isBackDrop ? 'activetabs' : 'ki')" class="tab">
             <a n:attr="id => ($isBackDrop ? 'act_tab_a' : 'ki')" href="/edit?act=backdrop">{_backdrop_short}</a>
         </div>
+
     </div>
 
     <div class="container_gray">
@@ -127,18 +132,6 @@
                         <td>
                             <input type="text" placeholder="{_marital_status_user_id}" name="maritalstatus-user"
                                    n:attr="value => $user->getMaritalStatusUser() ? $user->getMaritalStatusUser()->getURL(true) : ''" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="120" valign="top">
-                            <span class="nobold">{_politViews}: </span>
-                        </td>
-                        <td>
-                            <select name="politViews">
-                                <option n:foreach="range(0, 9) as $i" n:attr="selected => ($user->getPoliticalViews() == $i)" value="{$i}">
-                                    {tr("politViews_" . $i)}
-                                </option>
-                            </select>
                         </td>
                     </tr>
                     <tr>
@@ -326,6 +319,101 @@
                 </tbody>
             </table>
         </form>
+
+        {elseif $isPersonal}
+
+            <h4>{_personal}</h4>
+            <form action="/edit?act=personal" method="POST" enctype="multipart/form-data">
+                <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+                    <tbody>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_politViews}: </span>
+                        </td>
+                        <td>
+                            <select name="politViews">
+                                <option n:foreach="range(0, $user::PREFERENCES_COUNTS['politViews'] - 1) as $i" n:attr="selected => ($user->getPoliticalViews() == $i)" value="{$i}">
+                                    {tr("politViews_" . $i)}
+                                </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_worldview}: </span>
+                        </td>
+                        <td>
+                            <input type="text" name="worldview" value="{$user->getWorldview()}" maxlength="256" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_mainInLife}: </span>
+                        </td>
+                        <td>
+                            <select name="mainInLife">
+                                <option n:foreach="range(0, $user::PREFERENCES_COUNTS['mainInLife'] - 1) as $i" n:attr="selected => ($user->getMainInLife() == $i)" value="{$i}">
+                                    {tr("mainInLife_" . $i)}
+                                </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_mainInPeople}: </span>
+                        </td>
+                        <td>
+                            <select name="mainInPeople">
+                                <option n:foreach="range(0, $user::PREFERENCES_COUNTS['mainInPeople'] - 1) as $i" n:attr="selected => ($user->getMainInPeople() == $i)" value="{$i}">
+                                    {tr("mainInPeople_" . $i)}
+                                </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_viewsOnSmoking}: </span>
+                        </td>
+                        <td>
+                            <select name="viewsOnSmoking">
+                                <option n:foreach="range(0, $user::PREFERENCES_COUNTS['viewsOnSubstances'] - 1) as $i" n:attr="selected => ($user->getViewsOnSmoking() == $i)" value="{$i}">
+                                    {tr("viewsOnSubstances_" . $i)}
+                                </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_viewsOnAlcohol}: </span>
+                        </td>
+                        <td>
+                            <select name="viewsOnAlcohol">
+                                <option n:foreach="range(0, $user::PREFERENCES_COUNTS['viewsOnSubstances'] - 1) as $i" n:attr="selected => ($user->getViewsOnAlcohol() == $i)" value="{$i}">
+                                    {tr("viewsOnSubstances_" . $i)}
+                                </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_inspires}: </span>
+                        </td>
+                        <td>
+                            <input type="text" name="inspires" value="{$user->getInspires()}" maxlength="256" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+
+                        </td>
+                        <td>
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input type="submit" value="{_save}" class="button" />
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
 
         {elseif $isAvatar}
 
