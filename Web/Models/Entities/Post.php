@@ -247,7 +247,7 @@ class Post extends Postable
         $this->save();
     }
 
-    public function canBePinnedBy(User $user = null): bool
+    public function canBePinnedBy(?User $user = null): bool
     {
         if (!$user) {
             return false;
@@ -262,7 +262,7 @@ class Post extends Postable
         return $this->getTargetWall() === $user->getId();
     }
 
-    public function canBeArchivedBy(User $user = null): bool
+    public function canBeArchivedBy(?User $user = null): bool
     {
         if (!$user) {
             return false;
@@ -277,7 +277,7 @@ class Post extends Postable
         return $this->getTargetWall() === $user->getId();
     }
 
-    public function canBeDeletedBy(User $user = null): bool
+    public function canBeDeletedBy(?User $user = null): bool
     {
         if (!$user) {
             return false;

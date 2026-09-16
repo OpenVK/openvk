@@ -9,7 +9,7 @@ use openvk\Web\Models\Entities\User;
 
 trait TIgnorable
 {
-    public function isIgnoredBy(User $user = null): bool
+    public function isIgnoredBy(?User $user = null): bool
     {
         if (!$user) {
             return false;

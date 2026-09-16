@@ -382,7 +382,7 @@ class Club extends RowModel
         }
     }
 
-    public function getSuggestedPostsCount(User $user = null)
+    public function getSuggestedPostsCount(?User $user = null)
     {
         $count = 0;
 
@@ -403,7 +403,7 @@ class Club extends RowModel
     {
         $rels = $this->getRecord()->related("group_coadmins.club")->page($page, 6);
         if ($ignoreHidden) {
-            $rels = $rels->where("club_pinned", false);
+            $rels = $rels->where("hidden", false);
         }
 
         foreach ($rels as $rel) {

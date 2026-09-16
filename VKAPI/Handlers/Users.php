@@ -11,7 +11,7 @@ use openvk\Web\Models\Repositories\Reports;
 
 final class Users extends VKAPIRequestHandler
 {
-    public function get(string $user_ids = "0", string $fields = "", int $offset = 0, int $count = 100, User $authuser = null /* костыль(( */): array
+    public function get(string $user_ids = "0", string $fields = "", int $offset = 0, int $count = 100, ?User $authuser = null /* костыль(( */): array
     {
         if ($authuser == null) {
             $authuser = $this->getUser();
