@@ -618,7 +618,7 @@
                 {/if}
                 <br>
                 <h4 class="user_info_h4" style="border-bottom: none; font-size: 11px; padding: 0; display: inline-block;">{_personal_information} {ifset $thisUser}{if $thisUser->getId() == $user->getId()}<a href="/edit?act=interests" class="edit_link">[ {_edit} ]</a>{/if}{/ifset}</h4>
-                {if !empty($uInfo_Tmp) || !empty($uPersonal_Tmp}
+                {if !empty($uInfo_Tmp) || !empty($uPersonal_Tmp)}
                     {$uInfo_Tmp|noescape}
                     {$uPersonal_Tmp|noescape}
                 {else}
