@@ -705,6 +705,74 @@ class User extends RowModel
         return $this->_abstractRelationCount("get-online-friends");
     }
 
+    private function mutualFriendsOf(User $user)
+    {
+        $ctx = DatabaseConnection::i()->getContext();
+        $followedByUser = $ctx->table('subscriptions')
+            ->where('follower', $user->getId())
+            ->where('model', User::class)
+            ->select('target');
+
+        return $ctx->table('subscriptions')
+            ->where('target', $user->getId())
+            ->where('model', User::class)
+            ->where('follower', $followedByUser)
+            ->select('follower');
+    }
+
+    public function getCommonFriendsQuery(User $me)
+    {
+        $ctx = DatabaseConnection::i()->getContext();
+
+        return $ctx->table('profiles')
+            ->where('id', $this->mutualFriendsOf($me))
+            ->where('id', $this->mutualFriendsOf($this));
+    }
+
+    public function getCommonFriends(User $me, int $page = 1, int $limit = 6, string $order = "online DESC"): \Traversable
+    {
+        $users = new Users();
+
+        $friends = $this->getCommonFriendsQuery($me)->limit($limit, ($page - 1) * $limit)->order($order);
+        foreach ($friends->fetchAll() as $friend) {
+            yield $users->toUser($friend);
+        }
+    }
+
+    public function getCommonFriendsCount(User $me): int
+    {
+        return $this->getCommonFriendsQuery($me)->count();
+    }
+
+    public function getRecommendedFriendsQuery()
+    {
+        $ctx = DatabaseConnection::i()->getContext();
+
+        $friends = $this->mutualFriendsOf($this);
+
+        $friendsOfFriends = $ctx->table('subscriptions')
+            ->where('follower', $friends)
+            ->where('model', User::class)
+            ->where('(follower, target) IN (SELECT target, follower FROM subscriptions WHERE model = ?)', User::class)
+            ->select('DISTINCT target');
+
+        return $ctx->table('profiles')
+            ->where('id', $friendsOfFriends)
+            ->where('id != ?', $this->getId())
+            ->where('id NOT', $friends);
+    }
+
+
+    public function getRecommendedFriends(int $page = 1, int $limit = 6, string $order = "online DESC"): \Traversable
+    {
+        $users = new Users();
+
+        $friends = $this->getRecommendedFriendsQuery()->limit($limit, ($page - 1) * $limit)->order($order);
+        foreach ($friends->fetchAll() as $friend) {
+            yield $users->toUser($friend);
+        }
+    }
+
     public function getFriendsBday(bool $today): array
     {
         $users = $this->_abstractRelationGenerator($today ? "get-bday-today" : "get-bday-tomorrow", 1, 3000);
@@ -728,7 +796,7 @@ class User extends RowModel
     {
         $sel = $this->getRecord()->related("subscriptions.follower");
         foreach ($sel->where("model", "openvk\\Web\\Models\\Entities\\Club")
-                      ->where("target IN (SELECT id FROM groups WHERE type = ? AND start_date < ? AND start_date > ?)", 2, time() + DAY, time()) as $target) {
+                     ->where("target IN (SELECT id FROM groups WHERE type = ? AND start_date < ? AND start_date > ?)", 2, time() + DAY, time()) as $target) {
             $target = (new Clubs())->get($target->target);
             if (!$target) {
                 continue;
@@ -797,8 +865,8 @@ class User extends RowModel
             }
         } else {
             $sel = $this->getRecord()
-                        ->related("subscriptions.follower")
-                        ->limit($count, $page);
+                ->related("subscriptions.follower")
+                ->limit($count, $page);
 
             if (!$andEvents) {
                 $sel = $sel->where("target IN (SELECT id FROM groups WHERE type = ?)", 1);
@@ -827,7 +895,7 @@ class User extends RowModel
         } else {
             $sel = $this->getRecord()->related("subscriptions.follower");
             $sel = $sel->where("model", "openvk\\Web\\Models\\Entities\\Club")
-                       ->where("target IN (SELECT id FROM groups WHERE type = ?)", 1);
+                ->where("target IN (SELECT id FROM groups WHERE type = ?)", 1);
 
             return sizeof($sel);
         }
@@ -919,7 +987,7 @@ class User extends RowModel
         } else {
             $sel = $this->getRecord()->related("subscriptions.follower");
             $sel = $sel->where("model", "openvk\\Web\\Models\\Entities\\Club")
-                       ->where("target IN (SELECT id FROM groups WHERE type = ?)", 2);
+                ->where("target IN (SELECT id FROM groups WHERE type = ?)", 2);
 
             return sizeof($sel);
         }
@@ -1220,9 +1288,9 @@ class User extends RowModel
         $this->save();
 
         DatabaseConnection::i()->getContext()
-                               ->table("number_verification")
-                               ->where("user", $this->getId())
-                               ->delete();
+            ->table("number_verification")
+            ->where("user", $this->getId())
+            ->delete();
 
         return true;
     }
@@ -1336,13 +1404,13 @@ class User extends RowModel
 
         if ($this->hasPendingNumberChange()) {
             DatabaseConnection::i()->getContext()
-                                   ->table("number_verification")
-                                   ->where("user", $this->getId())
-                                   ->update(["number" => $phone, "code" => $code]);
+                ->table("number_verification")
+                ->where("user", $this->getId())
+                ->update(["number" => $phone, "code" => $code]);
         } else {
             DatabaseConnection::i()->getContext()
-                                   ->table("number_verification")
-                                   ->insert(["user" => $this->getId(), "number" => $phone, "code" => $code]);
+                ->table("number_verification")
+                ->insert(["user" => $this->getId(), "number" => $phone, "code" => $code]);
         }
 
         return (string) $code;
