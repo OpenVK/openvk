@@ -36,7 +36,7 @@ class Notes implements Handler
         $resolve([
             "title"   => $note->getName(),
             "link"    => "/note" . $note->getPrettyId(),
-            "html"    => $note->getText(),
+            "html"    => $note->getText($this->user),
             "created" => (string) $note->getPublicationTime(),
             "author"  => [
                 "name" => $noteOwner->getCanonicalName(),
