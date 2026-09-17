@@ -433,9 +433,85 @@ class Chat extends RowModel
         return !$this->isKicked($user);
     }
 
-    public function getInfinityInviteLink(): string
+    public function getInfinityInviteLink($user = null): ?string
     {
-        return "Но такой ещё нет";
+        $broker = IMBroker::i();
+
+        $userId = 0;
+        if ($user instanceof User) {
+            $userId = (int) $user->getId();
+        } elseif (is_numeric($user)) {
+            $userId = (int) $user;
+        }
+
+        if (!$this->hasData()) {
+            if ($user instanceof User) {
+                $this->loadData($user);
+            } elseif ($userId > 0) {
+                $u = (new Users())->get($userId);
+                if ($u) {
+                    $this->loadData($u);
+                }
+            } else {
+                $resp = $broker->invokeMethod(0, "messages.getConversationsById", [
+                    "peer_ids" => $this->getChatGlobalId(),
+                    "extended" => 1,
+                ]);
+                if ($resp !== false) {
+                    $d = json_decode($resp, true);
+                    if (!empty($d["response"]["items"][0]["conversation"])) {
+                        $this->setData($d["response"]["items"][0]["conversation"]);
+                    }
+                }
+            }
+        }
+
+        $senderId = $userId;
+        if ($user instanceof User && $this->isAdmin($user)) {
+            $senderId = $user->getId();
+        } else {
+            $ownerId = $this->getOwnerId();
+            if ($ownerId > 0) {
+                $senderId = $ownerId;
+            } else {
+                $adminIds = $this->getAdminIds();
+                if (!empty($adminIds)) {
+                    $senderId = $adminIds[0];
+                }
+            }
+        }
+
+        if ($senderId === 0) {
+            $senderId = $userId;
+        }
+
+        $params = [
+            "peer_id"                 => $this->getChatGlobalId(),
+            "reset"                   => 0,
+            "can_see_history"         => 1,
+            "can_see_messages_before" => 1,
+            "for_topic"               => 1,
+        ];
+
+        $response = $broker->invokeMethod($senderId, "messages.getInviteLink", $params);
+        if ($response === false) {
+            return null;
+        }
+
+        $data = json_decode($response, true);
+        if (!is_array($data)) {
+            return null;
+        }
+
+        if (!empty($data["response"]["link"])) {
+            return (string) $data["response"]["link"];
+        }
+
+        if (!empty($data["link"])) {
+            return (string) $data["link"];
+        }
+
+        return null;
     }
 
     public function getMembersCount(): int
@@ -519,7 +595,7 @@ class Chat extends RowModel
         return "$prefix " . $this->getChatId();
     }
 
-    private function resolveChatTitle(int $currentUserId): string
+    public function resolveChatTitle(int $currentUserId): string
     {
         $customTitle = trim($this->getTitle());
         if (!empty($customTitle) && !self::isDefaultTitle($customTitle)) {
@@ -533,13 +609,20 @@ class Chat extends RowModel
             }
         }
 
-        $memberIds = $this->hydratedData["members"] ?? $this->hydratedData["users"] ?? null;
+        $memberIds = $this->hydratedData["members"] ?? $this->hydratedData["users"] ?? $this->hydratedData["active_ids"] ?? $this->hydratedData["chat_active"] ?? null;
 
-        if ($memberIds == null) {
+        if (is_string($memberIds)) {
+            $memberIds = explode(',', $memberIds);
+        }
+        if (is_array($memberIds)) {
+            $memberIds = array_values(array_filter(array_map('intval', $memberIds)));
+        }
+
+        if (empty($memberIds)) {
             return $this->getDefaultTitle();
         }
 
-        $otherMemberIds = array_values(array_filter($memberIds, fn($id) => (int) $id !== (int) $currentUserId));
+        $otherMemberIds = array_values(array_filter($memberIds, fn($id) => (int) $id !== (int) $currentUserId && (int) $id > 0));
 
         if (!empty($otherMemberIds)) {
             $usersRepo = new Users();
@@ -582,6 +665,11 @@ class Chat extends RowModel
         }
 
         return $this->getDefaultTitle();
+    }
+
+    public function getConstructedTitle(int $currentUserId): string
+    {
+        return $this->resolveChatTitle($currentUserId);
     }
 
     public function isLinkedToSomeExistingTopic(): bool
@@ -629,15 +717,13 @@ class Chat extends RowModel
         $payload["id"] = $this->getChatId();
         $payload["local_id"] = $this->getChatId();
 
-        if ($isMember && $photo != null) {
+        if ($photo != null) {
             $payload["photo_50"] = $photo->getURLBySizeId("miniscule");
             $payload["photo_100"] = $photo->getURLBySizeId("tiny");
             $payload["photo_200"] = $photo->getURLBySizeId("normal");
             $payload["avatar_max"] = $photo->getURLBySizeId("larger");
-        } elseif ($isMember) {
-            $payload["avatar_max"] = $payload["photo_200"] = $payload["photo_100"] = $payload["photo_50"] = $server_url . "/assets/packages/static/openvk/img/im/chat_meaningless.jpg";
         } else {
-            $payload["avatar_max"] = $payload["photo_200"] = $payload["photo_100"] = $payload["photo_50"] = "";
+            $payload["avatar_max"] = $payload["photo_200"] = $payload["photo_100"] = $payload["photo_50"] = $server_url . "/assets/packages/static/openvk/img/im/chat_meaningless.jpg";
         }
 
         $rawMembers = array_map("intval", $this->hydratedData["members"] ?? $this->hydratedData["users"] ?? []);
@@ -669,7 +755,7 @@ class Chat extends RowModel
 
         $photo = $this->getPhoto();
         $photoObj = null;
-        if ($isMember && $photo != null) {
+        if ($photo != null) {
             $photoObj = [
                 "photo_50"  => $photo->getURLBySizeId("miniscule"),
                 "photo_100" => $photo->getURLBySizeId("tiny"),
@@ -699,10 +785,10 @@ class Chat extends RowModel
             "active_ids"    => $isMember ? array_slice($rawMembers, 0, 10) : [],
             "members"       => $members,
             "users"         => $members,
-            "photo_50"      => $isMember ? ($struct["photo_50"] ?? "") : "",
-            "photo_100"     => $isMember ? ($struct["photo_100"] ?? "") : "",
-            "photo_200"     => $isMember ? ($struct["photo_200"] ?? "") : "",
-            "avatar_max"    => $isMember ? ($struct["avatar_max"] ?? "") : "",
+            "photo_50"      => $struct["photo_50"] ?? "",
+            "photo_100"     => $struct["photo_100"] ?? "",
+            "photo_200"     => $struct["photo_200"] ?? "",
+            "avatar_max"    => $struct["avatar_max"] ?? "",
             "acl"           => $struct["acl"] ?? [],
             "permissions"   => $struct["permissions"] ?? self::getDefaultPermissions(),
             "is_group_channel" => false,

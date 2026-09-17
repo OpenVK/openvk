@@ -30,7 +30,6 @@ export class EventHandler {
             80: "CounterUpdateEvent",
             114: "NotificationSetEvent",
         };
-        this._updateCounterTimeout = null;
     }
 
     async handle(event) {
@@ -97,29 +96,6 @@ export class EventHandler {
                 this.im.state._updateCounter(explicitCount);
             }
         }
-
-        if (this._updateCounterTimeout) {
-            clearTimeout(this._updateCounterTimeout);
-        }
-        this._updateCounterTimeout = setTimeout(async () => {
-            try {
-                if (this.im && this.im.state && typeof this.im.state.fetchUnreadCounter === 'function') {
-                    await this.im.state.fetchUnreadCounter();
-                } else if (window.OVKAPI) {
-                    const params = {};
-                    if (this.im?.state?.group_id != null) {
-                        params.group_id = Math.abs(this.im.state.group_id);
-                    }
-                    const res = await window.OVKAPI.call('messages.getUnreadConversations', params);
-                    const count = (res && typeof res.count === 'number') ? res.count : (typeof res === 'number' ? res : 0);
-                    if (this.im && this.im.state && typeof this.im.state._updateCounter === 'function') {
-                        this.im.state._updateCounter(count);
-                    }
-                }
-            } catch (e) {
-                console.error("Error updating global unread counter:", e);
-            }
-        }, 50);
     }
 
     async SetFlags(event) {
@@ -258,10 +234,10 @@ export class EventHandler {
         if (!_crs) return;
 
         if (_crs.peer) {
-            _crs.peer.in_read = Math.max(_crs.peer.in_read || 0, localId);
+            _crs.peer.in_read_cmid = Math.max(_crs.peer.in_read_cmid || 0, localId);
         }
         if (_crs._conversation) {
-            _crs._conversation.in_read = Math.max(_crs._conversation.in_read || 0, localId);
+            _crs._conversation.in_read_cmid = Math.max(_crs._conversation.in_read_cmid || 0, localId);
         }
 
         const getPeerMsgs = (peer) => {
@@ -278,10 +254,9 @@ export class EventHandler {
         const currentUserId = window.openvk ? window.openvk.current_id : this.im.state.getId();
         getPeerMsgs(_crs.peer).forEach(msg => {
             const msgCmid = Number((msg.data && (msg.data.conversation_message_id || msg.data.local_id)) || msg.conversation_message_id || 0);
-            const msgId = Number((msg.data && msg.data.id) || msg.id || 0);
             const fromId = Number(msg.data ? (msg.data.from_id?.id || msg.data.from_id) : (msg.from_id || 0));
             const isMine = Boolean((msg.data && msg.data.out === 1) || msg.out === 1 || (fromId && currentUserId && fromId === Number(currentUserId)));
-            if (((msgCmid > 0 && msgCmid <= localId) || (msgId > 0 && msgId <= localId && localId > 1000000)) && !isMine) {
+            if (msgCmid > 0 && msgCmid <= localId && !isMine) {
                 if (msg.data) msg.data.read_state = 1;
                 msg.read_state = 1;
             }
@@ -290,10 +265,9 @@ export class EventHandler {
         const markIncomeMsgRead = (msg) => {
             if (!msg) return;
             const msgCmid = Number((msg.data && (msg.data.conversation_message_id || msg.data.local_id)) || msg.conversation_message_id || 0);
-            const msgId = Number((msg.data && msg.data.id) || msg.id || 0);
             const fromId = Number(msg.data ? (msg.data.from_id?.id || msg.data.from_id) : (msg.from_id || 0));
             const isMine = Boolean((msg.data && msg.data.out === 1) || msg.out === 1 || (fromId && currentUserId && fromId === Number(currentUserId)));
-            if (((msgCmid > 0 && msgCmid <= localId) || (msgId > 0 && msgId <= localId && localId > 1000000)) && !isMine) {
+            if (msgCmid > 0 && msgCmid <= localId && !isMine) {
                 if (msg.data) msg.data.read_state = 1;
                 msg.read_state = 1;
             }
@@ -304,8 +278,8 @@ export class EventHandler {
         if (this.im.conversations && Array.isArray(this.im.conversations.all_convs)) {
             this.im.conversations.all_convs.forEach(conv => {
                 if (conv?.peer?.id == peerId || conv?.id == peerId) {
-                    if (conv.peer) conv.peer.in_read = Math.max(conv.peer.in_read || 0, localId);
-                    if (conv._conversation) conv._conversation.in_read = Math.max(conv._conversation.in_read || 0, localId);
+                    if (conv.peer) conv.peer.in_read_cmid = Math.max(conv.peer.in_read_cmid || 0, localId);
+                    if (conv._conversation) conv._conversation.in_read_cmid = Math.max(conv._conversation.in_read_cmid || 0, localId);
                     markIncomeMsgRead(conv._last_message);
                     markIncomeMsgRead(conv.last_message);
                 }
@@ -343,7 +317,11 @@ export class EventHandler {
             this.im.conversations.update();
         }
         if (this.im.fastChats) {
-            this.im.fastChats.update();
+            if (typeof this.im.fastChats.onReadIncome === 'function') {
+                this.im.fastChats.onReadIncome(peerId, localId, unreadRemaining);
+            } else {
+                this.im.fastChats.update();
+            }
         }
     }
 
@@ -356,10 +334,10 @@ export class EventHandler {
         if (!_crs) return;
 
         if (_crs.peer) {
-            _crs.peer.out_read = Math.max(_crs.peer.out_read || 0, localId);
+            _crs.peer.out_read_cmid = Math.max(_crs.peer.out_read_cmid || 0, localId);
         }
         if (_crs._conversation) {
-            _crs._conversation.out_read = Math.max(_crs._conversation.out_read || 0, localId);
+            _crs._conversation.out_read_cmid = Math.max(_crs._conversation.out_read_cmid || 0, localId);
         }
 
         const getPeerMsgs = (peer) => {
@@ -376,10 +354,9 @@ export class EventHandler {
         const currentUserId = window.openvk ? window.openvk.current_id : this.im.state.getId();
         getPeerMsgs(_crs.peer).forEach(msg => {
             const msgCmid = Number((msg.data && (msg.data.conversation_message_id || msg.data.local_id)) || msg.conversation_message_id || 0);
-            const msgId = Number((msg.data && msg.data.id) || msg.id || 0);
             const fromId = Number(msg.data ? (msg.data.from_id?.id || msg.data.from_id) : (msg.from_id || 0));
             const isMine = Boolean((msg.data && msg.data.out === 1) || msg.out === 1 || (fromId && currentUserId && fromId === Number(currentUserId)));
-            if (((msgCmid > 0 && msgCmid <= localId) || (msgId > 0 && msgId <= localId)) && isMine) {
+            if (msgCmid > 0 && msgCmid <= localId && isMine) {
                 if (msg.data) msg.data.read_state = 1;
                 msg.read_state = 1;
             }
@@ -388,10 +365,9 @@ export class EventHandler {
         const markMsgReadIfMatches = (msg) => {
             if (!msg) return;
             const msgCmid = Number((msg.data && (msg.data.conversation_message_id || msg.data.local_id)) || msg.conversation_message_id || 0);
-            const msgId = Number((msg.data && msg.data.id) || msg.id || 0);
             const fromId = Number(msg.data ? (msg.data.from_id?.id || msg.data.from_id) : (msg.from_id || 0));
             const isMine = Boolean((msg.data && msg.data.out === 1) || msg.out === 1 || (fromId && currentUserId && fromId === Number(currentUserId)));
-            if (((msgCmid > 0 && msgCmid <= localId) || (msgId > 0 && msgId <= localId)) && isMine) {
+            if (msgCmid > 0 && msgCmid <= localId && isMine) {
                 if (msg.data) msg.data.read_state = 1;
                 msg.read_state = 1;
             }
@@ -403,8 +379,8 @@ export class EventHandler {
         if (this.im.conversations && Array.isArray(this.im.conversations.all_convs)) {
             this.im.conversations.all_convs.forEach(conv => {
                 if (conv?.peer?.id == peerId || conv?.id == peerId) {
-                    if (conv.peer) conv.peer.out_read = Math.max(conv.peer.out_read || 0, localId);
-                    if (conv._conversation) conv._conversation.out_read = Math.max(conv._conversation.out_read || 0, localId);
+                    if (conv.peer) conv.peer.out_read_cmid = Math.max(conv.peer.out_read_cmid || 0, localId);
+                    if (conv._conversation) conv._conversation.out_read_cmid = Math.max(conv._conversation.out_read_cmid || 0, localId);
                     markMsgReadIfMatches(conv._last_message);
                     markMsgReadIfMatches(conv.last_message);
                 }
@@ -425,7 +401,11 @@ export class EventHandler {
             this.im.conversations.update();
         }
         if (this.im.fastChats) {
-            this.im.fastChats.update();
+            if (typeof this.im.fastChats.onReadOutcome === 'function') {
+                this.im.fastChats.onReadOutcome(peerId, localId);
+            } else {
+                this.im.fastChats.update();
+            }
         }
         this.updateGlobalUnreadCounter();
     }
@@ -648,7 +628,8 @@ export class EventHandler {
 
         const activeChatPeerId = Number(activeChat?.peer?.id || activeChat?.id || 0);
         const isCurrentChat = Boolean(activeChatPeerId && activeChatPeerId === Number(_msg.peer_id));
-        const isActiveChatOpen = Boolean(this.im?.state?.is_active && isCurrentChat);
+        const isMessengerMounted = Boolean(this.im?.messenger?.container && document.body.contains(this.im.messenger.container) && this.im.messenger.getMessagesContainer() && this.im.messenger.getMessagesContainer().offsetParent !== null);
+        const isActiveChatOpen = Boolean(this.im?.state?.is_active && isCurrentChat && isMessengerMounted);
         setTimeout(() => {
             try {
                 const found = _crs.findMessageById(_msg.id, _msg.random_id || _msg.data?.random_id);
@@ -680,17 +661,18 @@ export class EventHandler {
                     this.im.conversations.update();
                 }
 
+                const isWindowFocused = (typeof document === 'undefined' || !document.hidden) && (typeof document.hasFocus !== 'function' || document.hasFocus());
+
                 if (this.im.state.is_active && isCurrentChat) {
                     const wasAtEnd = this.im.messenger.view ? this.im.messenger.view.isAtEnd() : false;
                     this.im.messenger.update();
-                    if (wasAtEnd && this.im.messenger.view) {
+                    if (wasAtEnd && isWindowFocused && this.im.messenger.view) {
                         this.im.messenger.view._scrollToEnd();
                     }
                 }
 
-                if (isActiveChatOpen) {
+                if (isActiveChatOpen && !isSelf) {
                     const wasAtEnd = this.im.messenger.view ? this.im.messenger.view.isAtEnd() : false;
-                    const isWindowFocused = (typeof document === 'undefined' || !document.hidden) && (typeof document.hasFocus !== 'function' || document.hasFocus());
                     if (wasAtEnd && isWindowFocused) {
                         const msgCmid = Number((_msg.data && (_msg.data.conversation_message_id || _msg.data.local_id)) || _msg.conversation_message_id || 0);
                         _crs.peer.read(_msg.id, msgCmid);
@@ -1155,8 +1137,6 @@ export class EventHandler {
         const count = typeof event[1] === 'number' ? event[1] : Number(event[1]);
         if (!isNaN(count)) {
             this.updateGlobalUnreadCounter(count);
-        } else {
-            this.updateGlobalUnreadCounter();
         }
     }
 

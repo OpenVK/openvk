@@ -245,12 +245,6 @@ export class Messenger {
                 win._setupReadObserver();
                 win._checkVisibleUnreadImmediate();
             }
-            if (convo && convo.peer && typeof convo.peer.read === "function") {
-                const sp = convo.getScrollPosition();
-                if (!convo.peer._firstUnreadMsgId || !sp || sp.reachedNewestPosition) {
-                    convo.peer.read();
-                }
-            }
         }, 100);
 
         setTimeout(() => {
@@ -1194,6 +1188,7 @@ export class MessengerPage extends IMPage {
                 onReply=${() => this.onReplyButtonClick()}
                 onForwardClick=${() => { this.onForwardClick() }}
                 onViewers=${(msg) => { this.onViewersButtonClick(null, msg || orig_messenger.selected_messages_objs[0]) }}
+                onReport=${(msg) => { this.onReportButtonClick(null, msg || orig_messenger.selected_messages_objs[0]) }}
             />
             <div class="messenger-app messenger-layer">
                 ${initialDate ? html`
@@ -1969,13 +1964,19 @@ export class MessengerPage extends IMPage {
         this.goToMessage(msg);
     }
 
-    onReplyButtonClick() {
+    onReplyButtonClick(e = null, msg = null) {
+        if (e && e.stopPropagation) { e.stopPropagation(); }
         if (window.im.messenger.isForwarded()) { return; }
 
         const f = () => {
-            const ids = window.im.messenger.selected_messages;
-            const current_chat = window.im.messenger.getCurrentChat();
-            const m = current_chat.peer._chunks._findMessageById(ids[0]);
+            let m = msg;
+            if (!m) {
+                const ids = window.im.messenger.selected_messages;
+                const current_chat = window.im.messenger.getCurrentChat();
+                m = (ids && ids.length > 0 && current_chat?.peer?._chunks) ? current_chat.peer._chunks._findMessageById(ids[0]) : null;
+            }
+            if (!m) { return; }
+
             window.im.messenger.unselectAll();
             window.im.messenger.replyTo = m;
 
@@ -2280,6 +2281,7 @@ export class MessengerPage extends IMPage {
     }
 
     async togglePeerInfo(sender = null) {
+        console.log(sender)
         if (window.im.messenger.is_switching == true) {
             return;
         }
@@ -2295,19 +2297,19 @@ export class MessengerPage extends IMPage {
                     contactTab.close();
                 }
                 window.im.openTabByName('messenger');
-            } else {
-                const _c = window.im.state.getCurrentConvo();
-                if (_c?.peer && !_c.peer.isILeft()) {
-                    await _c.peer.checkMembers();
-                }
+            }
+        } else {
+            const _c = window.im.state.getCurrentConvo();
+            if (_c?.peer && !_c.peer.isILeft()) {
+                await _c.peer.checkMembers();
+            }
 
-                if (typeof window.im !== 'undefined' && window.im.selectTab) {
-                    window.im.openTabByName('contact', false, {
-                        peer: {
-                            "peer": sender
-                        }
-                    });
-                }
+            if (typeof window.im !== 'undefined' && window.im.selectTab) {
+                window.im.openTabByName('contact', false, {
+                    peer: {
+                        "peer": sender
+                    }
+                });
             }
         }
 
@@ -2481,6 +2483,29 @@ export class MessengerPage extends IMPage {
                     this._checkAndFillUnderflow();
                 }, 100);
             });
+            this._setupVisibilityListener();
+        }
+    }
+
+    _setupVisibilityListener() {
+        if (typeof window !== "undefined" && !this._hasBoundVisibility) {
+            this._hasBoundVisibility = true;
+            const onVisibilityChange = () => {
+                setTimeout(() => {
+                    if (typeof document !== "undefined" && !document.hidden && (typeof document.hasFocus !== "function" || document.hasFocus())) {
+                        const currentConvo = this.getCurrentChat();
+                        if (currentConvo) {
+                            if (this.isAtEnd && this.isAtEnd(150)) {
+                                this._scrollToEnd(false);
+                            }
+                            this._setupReadObserver();
+                            this._checkVisibleUnreadImmediate();
+                        }
+                    }
+                }, 50);
+            };
+            document.addEventListener("visibilitychange", onVisibilityChange);
+            window.addEventListener("focus", onVisibilityChange);
         }
     }
 
@@ -2730,7 +2755,7 @@ export class MessengerPage extends IMPage {
 
     isAtEnd(threshold = 120) {
         const el = this.getMessagesContainer();
-        if (!el) return true;
+        if (!el || el.offsetParent === null) return false;
         const scrollBottom = Math.max(0, el.scrollHeight - el.scrollTop - el.clientHeight);
         return scrollBottom <= threshold;
     }
@@ -2876,13 +2901,14 @@ export class MessengerPage extends IMPage {
     }
 
     _setupReadObserver() {
+        if (!window.im?.state?.is_active) return;
         if (this._readObserver) {
             this._readObserver.disconnect();
             this._readObserver = null;
         }
 
         const container = this.getMessagesContainer();
-        if (!container || typeof IntersectionObserver === "undefined") return;
+        if (!container || container.offsetParent === null || typeof IntersectionObserver === "undefined") return;
 
         const currentConv = this.getCurrentChat();
         const currentInRead = Number(currentConv?.peer?.in_read || currentConv?._conversation?.in_read || 0);
@@ -2894,7 +2920,7 @@ export class MessengerPage extends IMPage {
         if (!unreadElements || unreadElements.length === 0) return;
 
         this._readObserver = new IntersectionObserver((entries) => {
-            if (typeof document !== "undefined" && document.hidden) return;
+            if (typeof document !== "undefined" && (document.hidden || (typeof document.hasFocus === "function" && !document.hasFocus()))) return;
 
             let maxVisibleUnreadId = 0;
             let maxVisibleUnreadCmid = 0;
@@ -2931,8 +2957,9 @@ export class MessengerPage extends IMPage {
     }
 
     _checkVisibleUnreadImmediate() {
+        if (!window.im?.state?.is_active) return;
         const container = this.getMessagesContainer();
-        if (!container || (typeof document !== "undefined" && document.hidden)) return;
+        if (!container || container.offsetParent === null || (typeof document !== "undefined" && (document.hidden || (typeof document.hasFocus === "function" && !document.hasFocus())))) return;
 
         const currentConv = this.getCurrentChat();
         const currentInRead = Number(currentConv?.peer?.in_read || currentConv?._conversation?.in_read || 0);
@@ -2950,7 +2977,8 @@ export class MessengerPage extends IMPage {
             const cmid = Number(el.getAttribute("data-msg-cmid")) || 0;
             if ((cmid > 0 && cmid > alreadyReadCmidBorder) || (id > 0 && id > lastMarkedId)) {
                 const rect = el.getBoundingClientRect();
-                if (rect.bottom >= containerRect.top + 5 && rect.top <= containerRect.bottom - 5) {
+                const isVisible = (rect.bottom > containerRect.top && rect.top < containerRect.bottom);
+                if (isVisible) {
                     if (id > maxId) maxId = id;
                     if (cmid > maxCmid) maxCmid = cmid;
                 }
@@ -2989,7 +3017,7 @@ export class MessengerPage extends IMPage {
             this._pendingReadId = 0;
             this._pendingReadCmid = 0;
 
-            if (typeof document !== "undefined" && document.hidden) return;
+            if (typeof document !== "undefined" && (document.hidden || (typeof document.hasFocus === "function" && !document.hasFocus()))) return;
 
             this._lastMarkedReadId = Math.max(this._lastMarkedReadId || 0, idToRead);
             if (cmidToRead > 0) {

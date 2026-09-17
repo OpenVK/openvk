@@ -37,20 +37,29 @@ final class Places extends VKAPIRequestHandler
             $cityName = $user?->getCity();
             if (!empty($cityName)) {
                 $result[] = (object) [
-                    "cid"  => $cid,
-                    "name" => $cityName,
+                    "id"    => $cid,
+                    "cid"   => $cid,
+                    "title" => $cityName,
+                    "name"  => $cityName,
                 ];
             }
         }
 
         if (empty($result) && !empty($ids)) {
             $result[] = (object) [
-                "cid"  => (int) ($ids[0] ?? 0),
-                "name" => "",
+                "id"    => (int) ($ids[0] ?? 0),
+                "cid"   => (int) ($ids[0] ?? 0),
+                "title" => "",
+                "name"  => "",
             ];
         }
 
         return $result;
+    }
+
+    public function getCitiesById(mixed $cids = ""): array
+    {
+        return $this->getCityById($cids);
     }
 
     public function getCountryById(mixed $cids = ""): array
@@ -92,19 +101,28 @@ final class Places extends VKAPIRequestHandler
 
             $name = $countryNames[$cid] ?? "Россия";
             $result[] = (object) [
-                "cid"  => $cid,
-                "name" => $name,
+                "id"    => $cid,
+                "cid"   => $cid,
+                "title" => $name,
+                "name"  => $name,
             ];
         }
 
         if (empty($result) && !empty($ids)) {
             $result[] = (object) [
-                "cid"  => (int) ($ids[0] ?? 1),
-                "name" => "Россия",
+                "id"    => (int) ($ids[0] ?? 1),
+                "cid"   => (int) ($ids[0] ?? 1),
+                "title" => "Россия",
+                "name"  => "Россия",
             ];
         }
 
         return $result;
+    }
+
+    public function getCountriesById(mixed $cids = ""): array
+    {
+        return $this->getCountryById($cids);
     }
 
     public function checkin(

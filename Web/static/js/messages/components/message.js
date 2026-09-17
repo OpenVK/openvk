@@ -16,19 +16,14 @@ function hideHead(msg, index, chunk) {
 function formatReplyDate(date) {
     if (!date || !(date instanceof Date) || isNaN(date.getTime())) return "";
     const timeStr = formatTime(date, false);
-    const atStr = typeof tr === "function" && tr("time_at_sp") && !tr("time_at_sp").startsWith("@") ? tr("time_at_sp") : " в ";
+    const atStr = tr("time_at_sp");
 
     const day = date.getDate();
     const month = date.getMonth() + 1;
-    const monthTr = typeof tr === "function" ? tr("month_gen_" + month) : "";
-    if (monthTr && !monthTr.startsWith("@")) {
-        const monthStr = monthTr.toLowerCase();
-        const year = date.getFullYear();
-        return `${day} ${monthStr} ${year}${atStr}${timeStr}`;
-    }
-
-    const dateStr = formatDate(date, { day: 'numeric', month: 'long', year: 'numeric' });
-    return `${dateStr}${atStr}${timeStr}`;
+    const monthTr = tr("month_gen_" + month);
+    const monthStr = monthTr.toLowerCase();
+    const year = date.getFullYear();
+    return `${day} ${monthStr} ${year}${atStr}${timeStr}`;
 }
 
 export const ForwardedMessages = ({ msg, depth = 0, inModal = false }) => {
@@ -266,7 +261,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                 </div>
             ` : null}
 
-            ${!isDeleted && (isMobile ? html`
+            ${!isDeleted && isMobile ? html`
                 <div class="msg-mobile-actions">
                     ${isImportant && html`
                         <div class="star-icon active" title="${tr('unmark_important')}"></div>
@@ -400,64 +395,66 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                         `}
                     </div>
                 </div>
-            ` : html`
-                <div class="actions-2">
-                    ${msg.isError() && html`
-                        <div onClick=${(e) => {
-                        e.stopPropagation();
-                        msg.setDeleted(true);
-                        const curChat = window.im?.messenger?.getCurrentChat();
-                        if (curChat?.peer?._chunks) curChat.peer._chunks._invalidateCache();
-                        if (typeof curChat?.getScrollPosition === 'function' && curChat.getScrollPosition()) {
-                            curChat.getScrollPosition()._invalidateCache();
-                        }
-                        window.im?.messenger?.view?._triggerUpdate ? window.im.messenger.view._triggerUpdate() : window.im?.messenger?.update();
-                    }} class="delete-icon cross" title="${tr('delete')}"></div>
-                    `}
-                    <div onClick=${async (e) => {
-                e.stopPropagation();
-                const isImp = typeof msg.isImportant === 'function' ? msg.isImportant() : Boolean(msg.data?.important || msg.important || (msg.data?.flags & 8) || (msg.flags & 8));
-                try {
-                    await window.OVKAPI.call("messages.markAsImportant", {
-                        message_ids: msg.id,
-                        important: isImp ? 0 : 1
-                    });
-                    if (!msg.data) msg.data = {};
-                    msg.data.important = isImp ? 0 : 1;
-                    msg.important = isImp ? 0 : 1;
-                    if (isImp) {
-                        msg.data.flags = (msg.data.flags || 0) & ~8;
-                        msg.flags = (msg.flags || 0) & ~8;
-                    } else {
-                        msg.data.flags = (msg.data.flags || 0) | 8;
-                        msg.flags = (msg.flags || 0) | 8;
-                    }
-                    if (window.im?.messenger?.view) {
-                        window.im.messenger.view.update();
-                    }
-                } catch (err) {
-                    console.error(err);
-                }
-            }} class="star-icon ${isImportant ? 'active' : ''}" title="${isImportant ? tr('unmark_important') : tr('mark_important')}"></div>
-                    ${msg.can("viewers") && html`
-                        <div onClick=${(e) => { window.im.messenger.view.onViewersButtonClick(e, msg) }} class="viewers-icon" title="${tr('message_viewers')}"></div>
-                    `}
-                    ${msg.can("edit") && html`
-                        <div onClick=${(e) => { window.im.messenger.view.onEditButtonClick(e, msg) }} class="edit-icon"></div>
-                    `}
-                    ${msg.can("pin") && html`
-                        <div onClick=${(e) => { window.im.messenger.view.onPinButtonClick(e, msg) }} class="pin-icon"></div>
-                    `}
-                    ${msg.can("report") && html`
-                        <div onClick=${(e) => { window.im.messenger.view.onReportButtonClick(e, msg) }} class="report-icon"></div>
-                    `}
-                </div>
-            `)}
+            ` : null}
 
-            <div class="inlines _avatar">
+            <div onClick=${(e) => {window.im.messenger.view.onAuthorNameClick(e, msg)}} class="inlines _avatar">
                 <img class="ava" src=${msg.sender?.getAvatar ? msg.sender.getAvatar() : "/assets/packages/static/openvk/img/camera_100.png"} alt=${msg.sender?.getName ? msg.sender.getName() : ""} />
             </div>
             <div class="inlines _content">
+                <div class="msg-header-right">
+                    ${!isDeleted && !isMobile ? html`
+                        <div class="actions-2">
+                            ${msg.isError() && html`
+                                <div onClick=${(e) => {
+                                e.stopPropagation();
+                                msg.setDeleted(true);
+                                const curChat = window.im?.messenger?.getCurrentChat();
+                                if (curChat?.peer?._chunks) curChat.peer._chunks._invalidateCache();
+                                if (typeof curChat?.getScrollPosition === 'function' && curChat.getScrollPosition()) {
+                                    curChat.getScrollPosition()._invalidateCache();
+                                }
+                                window.im?.messenger?.view?._triggerUpdate ? window.im.messenger.view._triggerUpdate() : window.im?.messenger?.update();
+                            }} class="delete-icon cross" title="${tr('delete')}"></div>
+                            `}
+                            <div onClick=${async (e) => {
+                        e.stopPropagation();
+                        const isImp = typeof msg.isImportant === 'function' ? msg.isImportant() : Boolean(msg.data?.important || msg.important || (msg.data?.flags & 8) || (msg.flags & 8));
+                        try {
+                            await window.OVKAPI.call("messages.markAsImportant", {
+                                message_ids: msg.id,
+                                important: isImp ? 0 : 1
+                            });
+                            if (!msg.data) msg.data = {};
+                            msg.data.important = isImp ? 0 : 1;
+                            msg.important = isImp ? 0 : 1;
+                            if (isImp) {
+                                msg.data.flags = (msg.data.flags || 0) & ~8;
+                                msg.flags = (msg.flags || 0) & ~8;
+                            } else {
+                                msg.data.flags = (msg.data.flags || 0) | 8;
+                                msg.flags = (msg.flags || 0) | 8;
+                            }
+                            if (window.im?.messenger?.view) {
+                                window.im.messenger.view.update();
+                            }
+                        } catch (err) {
+                            console.error(err);
+                        }
+                    }} class="star-icon ${isImportant ? 'active' : ''}" title="${isImportant ? tr('unmark_important') : tr('mark_important')}"></div>
+                            ${!isSearchTpl && !msg.isAction() && (typeof msg.can !== 'function' || msg.can("reply")) && html`
+                                <div onClick=${(e) => { window.im.messenger.view.onReplyButtonClick(e, msg) }} class="reply-icon" title="${tr('reply')}"></div>
+                            `}
+                            ${msg.can("edit") && html`
+                                <div onClick=${(e) => { window.im.messenger.view.onEditButtonClick(e, msg) }} class="edit-icon" title="${tr('edit')}"></div>
+                            `}
+                        </div>
+                    ` : null}
+                    <div class="time" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>
+                        ${msg.id != null && html`
+                        <span>${isSearchTpl ? msg.getDate(2) + " " + msg.getDate(0) : msg.getDate(0)}</span>
+                        `}
+                    </div>
+                </div>
                 <a class="_sender" onClick=${(e) => {window.im.messenger.view.onAuthorNameClick(e, msg)}} href=${msg.sender?.getPageUrl ? msg.sender.getPageUrl() : "javascript:void(0)"}>
                     <strong>${msg.sender?.getName ? msg.sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...")}</strong>
                 </a>
@@ -467,11 +464,6 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                     ${tr("msg_sent_gift_" + (msg.sender?.getGender ? msg.sender.getGender() : "neutral")).toLowerCase()}:
                 ` : ""}
                 </div>` : ""}
-                <div class="time" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>
-                    ${msg.id != null && html`
-                    <span>${isSearchTpl ? msg.getDate(2) + " " + msg.getDate(0) : msg.getDate(0)}</span>
-                    `}
-                </div>
                 ${isReply && html`
                     <div class="reply-msg-container" onClick=${(e) => {
                 e.stopPropagation();
@@ -491,7 +483,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                         ${replyText ? html`
                             <div class="reply-text" dangerouslySetInnerHTML=${{ __html: replyText }} />
                         ` : (replyAttachments.length > 0 ? null : html`
-                            <div class="reply-text reply-no-text">${typeof tr === "function" && tr("message_no_text") ? "(" + tr("message_no_text").toLowerCase() + ")" : "..."}</div>
+                            <div class="reply-text reply-no-text">(${tr("message_no_text").toLowerCase()})</div>
                         `)}
                         ${replyAttachments.length > 0 && html`
                             <div class="reply-compact-attachments">
@@ -549,7 +541,7 @@ export const SystemMessages = {
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
-        const chat_title = (msg.data?.action?.text || msg.action?.text || "").trim();
+        const chat_title = (msg.data?.action?.text || msg.data?.action_text || msg.action?.text || msg.action_text || (msg.peer?.getName ? msg.peer.getName() : "") || (page?.convo?.peer?.getName ? page.convo.peer.getName() : "") || "").trim();
         let text = "";
         if (chat_title && chat_title !== "undefined") {
             text = tr("event_chat_creation_" + gender, chat_title);
@@ -612,7 +604,7 @@ export const SystemMessages = {
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
-        const title = (msg.data?.action?.text || msg.action?.text || "").trim();
+        const title = (msg.data?.action?.text || msg.data?.action_text || msg.action?.text || msg.action_text || (msg.peer?.getName ? msg.peer.getName() : "") || (page?.convo?.peer?.getName ? page.convo.peer.getName() : "") || "").trim();
         const text = tr("event_chat_title_update_" + gender, title);
         return html`
             <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
@@ -875,7 +867,7 @@ const CompactReplyAttachment = ({ rep, att }) => {
     switch (type) {
         case 'photo': {
             const photoSrc = att.photo?.photo_75 || att.photo?.photo_130 || att.photo?.sizes?.[0]?.url || att.photo?.link || att.photo?.photo_604 || '';
-            const label = typeof tr === 'function' && tr('photo') && !tr('photo').startsWith('@') ? tr('photo') : 'Фотография';
+            const label = tr('photo');
             return html`
                 <div class="reply-compact-attach reply-compact-photo" title=${label} onClick=${(e) => {
                     e.stopPropagation();
@@ -1125,7 +1117,7 @@ const WallPostAttachment = ({ wall }) => {
             ${textFormatted ? html`
                 <div class="wall-card-text">${textFormatted}</div>
             ` : (!layoutTiles.length && !layoutExtras.length ? html`
-                <div class="wall-card-text wall-card-empty">${typeof tr === 'function' ? tr('post') : 'Запись на стене'}</div>
+                <div class="wall-card-text wall-card-empty">${tr('post')}</div>
             ` : '')}
 
             ${layoutTiles.length > 0 && html`
@@ -1249,8 +1241,8 @@ export const AudioAttachment = ({ audio }) => {
                     <div class="mini_timer">
                         <span class="nobold hideOnHover" data-unformatted="${duration}">${durationFormatted}</span>
                         <div class="buttons">
-                            <div class="add-icon musicIcon hovermeicon" data-id="${audioId}" title="${typeof tr === 'function' ? tr('add') : 'Добавить'}" onClick=${(e) => { e.stopPropagation(); if (typeof __showAudioAddDialog === 'function') __showAudioAddDialog(Number(audioId)); }}></div>
-                            ${downloadUrl ? html`<a class="download-icon musicIcon" href="${downloadUrl}" download="${artist} - ${title}.mp3" title="${typeof tr === 'function' ? tr('download') : 'Скачать'}" onClick=${(e) => e.stopPropagation()}></a>` : ''}
+                            <div class="add-icon musicIcon hovermeicon" data-id="${audioId}" title="${tr('add')}" onClick=${(e) => { e.stopPropagation(); if (typeof __showAudioAddDialog === 'function') __showAudioAddDialog(Number(audioId)); }}></div>
+                            ${downloadUrl ? html`<a class="download-icon musicIcon" href="${downloadUrl}" download="${artist} - ${title}.mp3" title="${tr('download')}" onClick=${(e) => e.stopPropagation()}></a>` : ''}
                         </div>
                     </div>
                 </div>
@@ -1828,7 +1820,7 @@ export function openForwardedMessageModal(fwd) {
     if (!fwd) return;
 
     const modalId = "fwd_modal_container_" + (fwd.id || fwd.data?.id || Math.floor(Math.random() * 100000));
-    const title = typeof tr === "function" && tr("message") && !tr("message").startsWith("@") ? tr("message") : "Сообщение";
+    const title = tr("message");
     const modal = new CMessageBox({
         title: title,
         body: `<div id="${modalId}" class="messenger-modal-message"></div>`,

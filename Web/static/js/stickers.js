@@ -251,7 +251,7 @@ function renderEmojiGrid(with_stickers = false) {
 
     // Standard groups
     window.emojiData.forEach(group => {
-        const localizedGroup = tr("emoji_group_" + group.slug) || group.slug;
+        const localizedGroup = tr("emoji_group_" + group.slug);
         const itemsHtml = group.emojis.map(item => {
             return `<span class="emoji-picker-item emoji emoji_${item.hex}" data-emoji="${item.emoji}" title="${escapeHtml(item.name || '')}">${item.emoji}</span>`;
         }).join('');
@@ -275,7 +275,7 @@ function renderEmojiGrid(with_stickers = false) {
     }
 
     window.emojiData.forEach((group, idx) => {
-        const localizedGroup = tr("emoji_group_" + group.slug) || group.slug;
+        const localizedGroup = tr("emoji_group_" + group.slug);
         const isActive = !recent.length && idx === 0;
         catButtonsHtml += `
             <div class="emoji-cat-btn ${isActive ? 'active' : ''}" data-target="${group.slug}" title="${localizedGroup}">

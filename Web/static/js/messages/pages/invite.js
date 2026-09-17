@@ -19,18 +19,43 @@ export const ChatInvitePreviewView = ({
         return html`
             <div class="chat-invite-tab-wrap">
                 <div id="gif_loader"></div>
-                <div class="chat-invite-loading">${typeof tr === 'function' && tr("loading") ? tr("loading") : "Загрузка..."}</div>
+                <div class="chat-invite-loading">${tr("loading")}</div>
             </div>
         `;
     }
 
     if (error) {
+        let displayError = error;
+        if (typeof displayError === 'string' && (displayError.includes('Broker failure') || displayError.includes('invalid') || displayError.includes('expired') || displayError.includes('exist'))) {
+            displayError = tr("chat_invite_invalid_error");
+        }
+
         return html`
-            <div class="chat-invite-tab-wrap">
-                <div class="chat-invite-error">${error}</div>
-                <a class="button" onClick=${() => { window.im?.openTabByName("conversations"); }}>
-                    ${typeof tr === 'function' && tr("back") ? tr("back") : "Назад"}
-                </a>
+            <div class="chat-invite-tab-page">
+                <h2 class="chat-invite-title">
+                    ${tr("chat_invite_preview_title")}
+                </h2>
+
+                <div class="chat-invite-avatar-box">
+                    <img
+                        src="/assets/packages/static/openvk/img/camera_200.png"
+                        alt=""
+                        class="chat-invite-avatar chat-invite-avatar-expired"
+                    />
+                </div>
+
+                <div class="chat-invite-expired-text">
+                    ${displayError}
+                </div>
+
+                <div class="chat-invite-action-box">
+                    <button
+                        class="button chat-invite-join-btn"
+                        onClick=${() => { window.im?.openTabByName("conversations"); }}
+                    >
+                        ${tr("back")}
+                    </button>
+                </div>
             </div>
         `;
     }
@@ -139,7 +164,7 @@ export class ChatInvitePreviewPage extends IMPage {
             const act = this.options.act;
             const joinCode = this.options.joinCode || this.options.code || (new URL(location.href)).searchParams.get("join") || (new URL(location.href)).searchParams.get("invite");
             if (!joinCode) {
-                this.error = tr("join_chat_error");
+                this.error = tr("chat_invite_invalid_error");
                 return;
             }
 
@@ -154,11 +179,16 @@ export class ChatInvitePreviewPage extends IMPage {
                 if (res && (res.preview || res.response?.preview)) {
                     this.previewData = res.preview ? res : res.response;
                 } else {
-                    this.error = tr("join_chat_error");
+                    this.error = tr("chat_invite_invalid_error");
                 }
             } catch (e) {
                 console.error("IM | getChatPreview error:", e);
-                this.error = String(e?.message || e?.error_msg || tr("join_chat_error"));
+                const rawMsg = String(e?.message || e?.error_msg || "");
+                if (rawMsg.includes("Broker failure") || rawMsg.includes("invalid") || rawMsg.includes("expired") || rawMsg.includes("exist")) {
+                    this.error = tr("chat_invite_invalid_error");
+                } else {
+                    this.error = rawMsg || tr("chat_invite_invalid_error");
+                }
             } finally {
                 this.isLoading = false;
             }

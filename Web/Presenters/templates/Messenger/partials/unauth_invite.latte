@@ -66,12 +66,31 @@
         </div>
     </div>
 {else}
-    <div class="chat-invite-tab-wrap" style="padding: 60px 20px; text-align: center;">
-        <div style="color: #d00; font-size: 14px; margin-bottom: 16px;">
+    <div class="chat-invite-tab-page" style="padding: 36px 20px; max-width: 480px; margin: 0 auto; text-align: center;">
+        <h2 style="font-size: 18px; font-weight: bold; margin: 0 0 22px; color: var(--color-text, #222); letter-spacing: -0.2px;">
+            {tr('chat_invite_preview_title')}
+        </h2>
+
+        <div class="chat-invite-avatar-box" style="margin-bottom: 16px; display: flex; justify-content: center;">
+            <img
+                src="/assets/packages/static/openvk/img/camera_200.png"
+                alt=""
+                style="width: 120px; height: 120px; object-fit: cover; border: 2px solid var(--bg-slightly-border, #d3d9de); border-radius: 0; display: block; opacity: 0.6; filter: grayscale(1);"
+            />
+        </div>
+
+        <div style="font-size: 13px; color: var(--nobold, #777); margin: 0 auto 24px; max-width: 360px; line-height: 1.4; text-align: center;">
             {$chatPreviewError ?? tr("chat_invite_invalid_error")}
         </div>
-        <a class="button" href="/">
-            {tr("back")}
-        </a>
+
+        <div style="margin-top: 10px;">
+            <a
+                class="button"
+                href="/im"
+                style="width: 100%; max-width: 340px; padding: 9px 20px; font-size: 13px; font-weight: 500; margin: 0 auto; display: block; box-sizing: border-box; text-decoration: none; text-align: center;"
+            >
+                {tr("back")}
+            </a>
+        </div>
     </div>
 {/if}

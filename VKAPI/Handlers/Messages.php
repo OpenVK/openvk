@@ -10,6 +10,7 @@ use openvk\Web\Util\IMBroker;
 use openvk\Web\Models\Repositories\{Reports, Topics as TopicsRepo, Users as USRRepo, Clubs as ClubRepo, Messages as MSGRepo, Chats as ChatRepo};
 use openvk\Web\Models\Entities\{Report, Photo, Message, Club as ClubEnt, User as UserEnt};
 use openvk\Web\Models\Entities\Messages\Chat;
+use openvk\VKAPI\Exceptions\APIErrorException;
 use openvk\VKAPI\Handlers\{Users as APIUsers, Groups as APIClubs};
 use openvk\VKAPI\Utils\Uploader;
 use openvk\Web\Models\Entities\Relationships\Blacklist;
@@ -349,7 +350,7 @@ final class Messages extends VKAPIRequestHandler
         return "$prefix $chatId";
     }
 
-    private function formatChatActionText(array $message): ?string
+    private function formatChatActionText(array &$message): ?string
     {
         $action = $message['action'] ?? null;
         $actionType = null;
@@ -390,6 +391,46 @@ final class Messages extends VKAPIRequestHandler
         }
 
         $title = !is_null($actionText) ? trim((string) $actionText) : "";
+
+        $chatId = (int) ($message['chat_id'] ?? 0);
+        if ($chatId === 0 && !empty($message['peer_id']) && $message['peer_id'] > 2000000000) {
+            $chatId = $message['peer_id'] - 2000000000;
+        }
+
+        if ($title === "" && ($actionType === "chat_create" || $actionType === "chat_title_update")) {
+            if ($chatId > 0) {
+                $chatRepo = new ChatRepo();
+                $chatEntity = $chatRepo->getByChatId($chatId);
+                if ($chatEntity) {
+                    $rawActive = !empty($message['chat_active']) ? (array) $message['chat_active'] : [];
+                    $rawTitle = (string) ($message['title'] ?? "");
+                    $chatEntity->setData([
+                        "title"   => !empty($rawTitle) ? $rawTitle : null,
+                        "members" => $rawActive,
+                        "users"   => $rawActive,
+                    ]);
+                    $currentUid = $this->getUser() ? $this->getUser()->getId() : 0;
+                    $title = $chatEntity->resolveChatTitle($currentUid);
+                } elseif (!empty($message['title'])) {
+                    $title = (string) $message['title'];
+                } else {
+                    $title = $this->getDefaultChatTitle($chatId);
+                }
+            } elseif (!empty($message['title'])) {
+                $title = (string) $message['title'];
+            }
+            $message['action_text'] = $title;
+            if (is_array($message['action'])) {
+                $message['action']['text'] = $title;
+            }
+        } else {
+            if (!isset($message['action_text'])) {
+                $message['action_text'] = $title;
+            }
+            if (is_array($message['action']) && !isset($message['action']['text'])) {
+                $message['action']['text'] = $title;
+            }
+        }
 
         switch ($actionType) {
             case "chat_create":
@@ -762,7 +803,7 @@ final class Messages extends VKAPIRequestHandler
             unset($data['pts']);
         }
 
-        $data['unread_count'] = $this->getUser()->getUnreadMessagesCount();
+        $data['unread_count'] = $data['unread_count'] ?? $this->getUser()->getUnreadMessagesCount();
 
         return $data;
     }
@@ -870,28 +911,10 @@ final class Messages extends VKAPIRequestHandler
                     $msgObj['important'] = true;
                 }
 
-                if (!empty($message['action'])) {
-                    $msgObj['action'] = $message['action'];
-                    if (!empty($message['action_mid'])) {
-                        $msgObj['action_mid'] = (int) $message['action_mid'];
-                    }
-                    if (!empty($message['action_text'])) {
-                        $msgObj['action_text'] = (string) $message['action_text'];
-                    }
-                    if (!empty($message['action_email'])) {
-                        $msgObj['action_email'] = (string) $message['action_email'];
-                    }
-                }
-
-                if (!$isDeleted) {
-                    $this->sanitizeMessageAttachmentsRecursive($msgObj);
-                } elseif (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
-                    unset($msgObj['attachments'], $msgObj['fwd_messages']);
-                }
+                $chatEntity = ($chatId > 0 && isset($loadedChats[$chatId])) ? $loadedChats[$chatId] : null;
 
                 if ($chatId > 0) {
                     $msgObj['chat_id'] = $chatId;
-                    $chatEntity = $loadedChats[$chatId] ?? null;
 
                     $rawActive = !empty($message['chat_active']) ? (array) $message['chat_active'] : [];
                     $rawCount = (int) ($message['users_count'] ?? count($rawActive));
@@ -899,6 +922,12 @@ final class Messages extends VKAPIRequestHandler
                     $rawTitle = (string) ($message['title'] ?? "");
 
                     if ($chatEntity) {
+                        $chatEntity->setData([
+                            "title"      => !empty($rawTitle) ? $rawTitle : null,
+                            "admin_id"   => $rawAdmin,
+                            "members"    => $rawActive,
+                            "users"      => $rawActive,
+                        ]);
                         $chatStruct = $chatEntity->toChatSettingsStruct($this->getUser());
                         $msgObj['title'] = !empty($rawTitle) ? $rawTitle : ($chatStruct['title'] ?? $this->getDefaultChatTitle($chatId));
                         $msgObj['admin_id'] = $rawAdmin ?: (int) ($chatStruct['admin_id'] ?? 0);
@@ -923,6 +952,37 @@ final class Messages extends VKAPIRequestHandler
                         $msgObj['users_count'] = $rawCount;
                         $msgObj['chat_active'] = $rawActive;
                     }
+                }
+
+                if (!empty($message['action'])) {
+                    $msgObj['action'] = $message['action'];
+                    if (!empty($message['action_mid'])) {
+                        $msgObj['action_mid'] = (int) $message['action_mid'];
+                    }
+                    $actionText = (string) ($message['action_text'] ?? (is_array($message['action']) ? ($message['action']['text'] ?? '') : ''));
+                    $actionType = is_array($message['action']) ? ($message['action']['type'] ?? '') : (string) $message['action'];
+                    if ($actionText === "" && ($actionType === 'chat_create' || $actionType === 'chat_title_update')) {
+                        if ($chatEntity) {
+                            $actionText = $chatEntity->resolveChatTitle($currentUserId);
+                        } elseif (!empty($msgObj['title'])) {
+                            $actionText = $msgObj['title'];
+                        } elseif ($chatId > 0) {
+                            $actionText = $this->getDefaultChatTitle($chatId);
+                        }
+                    }
+                    $msgObj['action_text'] = $actionText;
+                    if (is_array($msgObj['action'])) {
+                        $msgObj['action']['text'] = $actionText;
+                    }
+                    if (!empty($message['action_email'])) {
+                        $msgObj['action_email'] = (string) $message['action_email'];
+                    }
+                }
+
+                if (!$isDeleted) {
+                    $this->sanitizeMessageAttachmentsRecursive($msgObj);
+                } elseif (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                    unset($msgObj['attachments'], $msgObj['fwd_messages']);
                 }
 
                 if ($preview_length > 0) {
@@ -1759,6 +1819,8 @@ final class Messages extends VKAPIRequestHandler
             $params["peer_id"] = (string) $resolvedId;
         }
 
+        $this->getUser()->updOnline($this->getPlatform());
+
         $this->invoke("messages.markAsRead", $params, $group_id);
 
         return 1;
@@ -1816,23 +1878,23 @@ final class Messages extends VKAPIRequestHandler
             $this->fail(100, "One of the parameters is missing: title");
         }*/
 
-        if (empty($user_ids)) {
-            $this->fail(100, "One of the parameters is missing: user_ids");
-        }
-
-        $rawIds = preg_split("%, ?%", $user_ids);
-        $targetUserIds = array_filter(array_map('intval', $rawIds));
-        $users = (new USRRepo())->getByIds($targetUserIds);
         $currentUser = $this->getUser();
 
-        foreach ($users as $usr) {
-            $usrid = $usr->getId();
-            if ($usrid === $currentUser->getId()) {
-                continue;
-            }
+        if (!empty($user_ids)) {
+            $rawIds = preg_split("%, ?%", $user_ids);
+            $targetUserIds = array_filter(array_map('intval', $rawIds));
+            if (!empty($targetUserIds)) {
+                $users = (new USRRepo())->getByIds($targetUserIds);
+                foreach ($users as $usr) {
+                    $usrid = $usr->getId();
+                    if ($usrid === $currentUser->getId()) {
+                        continue;
+                    }
 
-            if (!$currentUser->isFriendsWith($usr)) {
-                $this->fail(15, "Access denied: user with ID " . $usrid . " is not your friend");
+                    if (!$currentUser->isFriendsWith($usr)) {
+                        $this->fail(15, "Access denied: user with ID " . $usrid . " is not your friend");
+                    }
+                }
             }
         }
 
@@ -2329,25 +2391,7 @@ final class Messages extends VKAPIRequestHandler
                 $msgObj['important'] = true;
             }
 
-            if (!empty($lastMsg['action'])) {
-                $msgObj['action'] = $lastMsg['action'];
-                if (!empty($lastMsg['action_mid'])) {
-                    $msgObj['action_mid'] = (int) $lastMsg['action_mid'];
-                }
-                if (!empty($lastMsg['action_text'])) {
-                    $msgObj['action_text'] = (string) $lastMsg['action_text'];
-                }
-                if (!empty($lastMsg['action_email'])) {
-                    $msgObj['action_email'] = (string) $lastMsg['action_email'];
-                }
-            }
-
-            if ($preview_length > 0) {
-                $msgObj['body'] = ovk_truncate_words($msgObj['body'], $preview_length);
-            }
-
-            $this->sanitizeMessageAttachmentsRecursive($msgObj);
-
+            $chatEntity = null;
             if ($peerType === 'chat') {
                 $localChatId = $peerId > 2000000000 ? ($peerId - 2000000000) : $peerId;
                 $chatEntity = $loadedChats[$localChatId] ?? null;
@@ -2399,6 +2443,37 @@ final class Messages extends VKAPIRequestHandler
             } else {
                 $msgObj['user_id'] = $peerId;
             }
+
+            if (!empty($lastMsg['action'])) {
+                $msgObj['action'] = $lastMsg['action'];
+                if (!empty($lastMsg['action_mid'])) {
+                    $msgObj['action_mid'] = (int) $lastMsg['action_mid'];
+                }
+                $actionText = (string) ($lastMsg['action_text'] ?? (is_array($lastMsg['action']) ? ($lastMsg['action']['text'] ?? '') : ''));
+                $actionType = is_array($lastMsg['action']) ? ($lastMsg['action']['type'] ?? '') : (string) $lastMsg['action'];
+                if ($actionText === "" && ($actionType === 'chat_create' || $actionType === 'chat_title_update')) {
+                    if ($chatEntity) {
+                        $actionText = $chatEntity->resolveChatTitle($currentUserId);
+                    } elseif (!empty($msgObj['title'])) {
+                        $actionText = $msgObj['title'];
+                    } elseif (!empty($localChatId)) {
+                        $actionText = $this->getDefaultChatTitle($localChatId);
+                    }
+                }
+                $msgObj['action_text'] = $actionText;
+                if (is_array($msgObj['action'])) {
+                    $msgObj['action']['text'] = $actionText;
+                }
+                if (!empty($lastMsg['action_email'])) {
+                    $msgObj['action_email'] = (string) $lastMsg['action_email'];
+                }
+            }
+
+            if ($preview_length > 0) {
+                $msgObj['body'] = ovk_truncate_words($msgObj['body'], $preview_length);
+            }
+
+            $this->sanitizeMessageAttachmentsRecursive($msgObj);
 
             $msgObj['uid'] = $msgObj['user_id'];
             $msgObj['mid'] = $msgObj['id'];
@@ -3104,10 +3179,36 @@ final class Messages extends VKAPIRequestHandler
             $params["chat_id"] = (string) $chat_id;
         }
 
-        if ($report != null) {
-            $data = $this->invoke("messages.getHistory", $params, $group_id, $report->authorId());
-        } else {
-            $data = $this->invoke("messages.getHistory", $params, $group_id);
+        try {
+            if ($report != null) {
+                $data = $this->invoke("messages.getHistory", $params, $group_id, $report->authorId());
+            } else {
+                $data = $this->invoke("messages.getHistory", $params, $group_id);
+            }
+        } catch (APIErrorException $e) {
+            if ($resolvedPeerId <= 2000000000 && ($e->getCode() === 917 || str_contains($e->getMessage(), "exist"))) {
+                $data = [
+                    'count'  => 0,
+                    'items'  => [],
+                    'unread' => 0,
+                ];
+                if ($extended == 1) {
+                    $data['profiles'] = [];
+                    $data['groups'] = [];
+                    if ($resolvedPeerId > 0) {
+                        $data['profiles'][] = $resolvedPeerId;
+                    } elseif ($resolvedPeerId < 0) {
+                        $data['groups'][] = abs($resolvedPeerId);
+                    }
+                    $curId = $this->getUser() ? $this->getUser()->getId() : 0;
+                    if ($curId > 0) {
+                        $data['profiles'][] = $curId;
+                    }
+                    $data['conversations'] = [];
+                }
+            } else {
+                throw $e;
+            }
         }
 
         if (!empty($data['items'])) {
@@ -3226,7 +3327,22 @@ final class Messages extends VKAPIRequestHandler
             $params["photo_sizes"] = (string) $photo_sizes;
         }
 
-        $data = $this->invoke("messages.getHistoryAttachments", $params, $group_id);
+        try {
+            $data = $this->invoke("messages.getHistoryAttachments", $params, $group_id);
+        } catch (APIErrorException $e) {
+            if ($resolvedId <= 2000000000 && ($e->getCode() === 917 || str_contains($e->getMessage(), "exist"))) {
+                $data = [
+                    'items'     => [],
+                    'next_from' => '',
+                ];
+                if ($extended == 1) {
+                    $data['profiles'] = [];
+                    $data['groups'] = [];
+                }
+            } else {
+                throw $e;
+            }
+        }
 
         if (is_array($data) && !empty($data['items'])) {
             foreach ($data['items'] as &$item) {
@@ -3524,7 +3640,7 @@ final class Messages extends VKAPIRequestHandler
                 $this->fail(15, "Access denied");
             }
 
-            $params["link"] = $chat->getInfinityInviteLink();
+            $params["link"] = $chat->getInfinityInviteLink($this->getUser());
         }
 
         $data = $this->invoke("messages.getChatPreview", $params, $group_id);
@@ -3535,14 +3651,23 @@ final class Messages extends VKAPIRequestHandler
                 $chatsRepo = new ChatRepo();
                 $chatEntity = $chatsRepo->getByChatId($localChatId);
                 if ($chatEntity) {
-                    $chatStruct = $chatEntity->toChatSettingsStruct($this->getUser());
-                    $data['preview']['photo'] = [
-                        "photo_50"  => $chatStruct['photo_50'] ?? "",
-                        "photo_100" => $chatStruct['photo_100'] ?? "",
-                        "photo_200" => $chatStruct['photo_200'] ?? "",
-                    ];
-                    if (!empty($chatStruct['title'])) {
-                        $data['preview']['title'] = $chatStruct['title'];
+                    $chatPhoto = $chatEntity->getPhoto();
+                    if ($chatPhoto != null) {
+                        $data['preview']['photo'] = [
+                            "photo_50"  => $chatPhoto->getURLBySizeId("miniscule"),
+                            "photo_100" => $chatPhoto->getURLBySizeId("tiny"),
+                            "photo_200" => $chatPhoto->getURLBySizeId("normal"),
+                        ];
+                    } else {
+                        $data['preview']['photo'] = [
+                            "photo_50"  => "",
+                            "photo_100" => "",
+                            "photo_200" => "",
+                        ];
+                    }
+                    $chatTitle = $chatEntity->getTitle();
+                    if (!empty($chatTitle)) {
+                        $data['preview']['title'] = $chatTitle;
                     }
                 }
             }
@@ -3586,7 +3711,7 @@ final class Messages extends VKAPIRequestHandler
                 $this->fail(15, "Access denied");
             }
 
-            $params["link"] = $chat->getInfinityInviteLink();
+            $params["link"] = $chat->getInfinityInviteLink($this->getUser());
         }
 
         $data = $this->invoke("messages.joinChatByInviteLink", $params, $group_id);
@@ -3725,7 +3850,14 @@ final class Messages extends VKAPIRequestHandler
             "date"    => $date,
         ];
 
-        return $this->invoke("messages.getNearestMessageForDate", $params, $group_id);
+        try {
+            return $this->invoke("messages.getNearestMessageForDate", $params, $group_id);
+        } catch (APIErrorException $e) {
+            if ($resolvedId <= 2000000000 && ($e->getCode() === 917 || str_contains($e->getMessage(), "exist"))) {
+                return null;
+            }
+            throw $e;
+        }
     }
 
     public function report(int $peer_id, int $message_id, ?int $group_id = null, string $type = "spam", string $comment = "")

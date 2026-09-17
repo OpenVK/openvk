@@ -1,25 +1,68 @@
-var dlgs = API.messages.getDialogs({"offset": Args.offset, "count": Args.count});
+var dlgs = API.messages.getDialogs({
+    "offset": parseInt(Args.offset),
+    "count": parseInt(Args.count),
+    "preview_length": 60
+});
+
 var uids = [];
+var wrappedItems = [];
+
 if (dlgs && dlgs.items) {
     var i = 0;
     while (i < dlgs.items.length) {
-        var msg = dlgs.items[i].message;
+        var item = dlgs.items[i];
+        var msg = null;
+        var unread = 0;
+
+        // Если обертки message нет, используем сам item как сообщение
+        if (item.message) {
+            msg = item.message;
+            unread = item.unread;
+        } else {
+            msg = item;
+            if (item.read_state == 0 && item.out == 0) {
+                unread = 1;
+            }
+        }
+
         if (msg) {
+            wrappedItems.push({
+                "unread": unread,
+                "message": msg
+            });
+
             if (msg.user_id > 0) {
                 uids.push(msg.user_id);
             }
             if (msg.admin_id && msg.admin_id > 0) {
                 uids.push(msg.admin_id);
             }
+            if (msg.chat_active) {
+                var j = 0;
+                while (j < msg.chat_active.length && j < 6) {
+                    if (msg.chat_active[j] > 0) {
+                        uids.push(msg.chat_active[j]);
+                    }
+                    j = j + 1;
+                }
+            }
         }
         i = i + 1;
     }
 }
+
 var profiles = [];
 if (uids.length > 0) {
-    profiles = API.users.get({"user_ids": uids.join(","), "fields": "photo_50,photo_100,photo_200,online"});
+    profiles = API.users.get({
+        "user_ids": uids,
+        "fields": "photo_rec,photo_medium_rec,photo_50,photo_100,online"
+    });
 }
+
 return {
-    "a": dlgs,
+    "a": {
+        "count": dlgs.count,
+        "items": wrappedItems
+    },
     "p": profiles
 };

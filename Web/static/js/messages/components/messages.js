@@ -661,8 +661,7 @@ export class ChatGeneralForm {
         }
 
         if (!lastSeen || !lastSeen.time) {
-            const res = tr("im_write_bar_offline_unknown_" + gender, name);
-            return res.startsWith("@") ? `${name} был в сети недавно` : res;
+            return tr("im_write_bar_offline_unknown_" + gender, name);
         }
 
         const time = lastSeen.time;
@@ -677,17 +676,14 @@ export class ChatGeneralForm {
         });
 
         if (sameYear && sameMonth && date.getDate() === today.getDate()) {
-            const res = tr("im_write_bar_offline_today_" + gender, name, timeStr);
-            return res.startsWith("@") ? `${name} был в сети сегодня в ${timeStr}` : res;
+            return tr("im_write_bar_offline_today_" + gender, name, timeStr);
         }
 
         if (sameYear && sameMonth && date.getDate() === today.getDate() - 1) {
-            const res = tr("im_write_bar_offline_yesterday_" + gender, name, timeStr);
-            return res.startsWith("@") ? `${name} был в сети вчера в ${timeStr}` : res;
+            return tr("im_write_bar_offline_yesterday_" + gender, name, timeStr);
         }
 
-        const res = tr("im_write_bar_offline_other_" + gender, name, timeStr, dayStr);
-        return res.startsWith("@") ? `${name} был в сети ${dayStr} в ${timeStr}` : res;
+        return tr("im_write_bar_offline_other_" + gender, name, timeStr, dayStr);
     }
 
     isMuted() {
@@ -716,6 +712,13 @@ export class ChatGeneralForm {
             return window.im._current;
         }
 
+        if (window.im && window.im.cached_profiles) {
+            const cached = window.im.cached_profiles._findCachedProfileById(id);
+            if (cached && cached.data) {
+                return cached.data;
+            }
+        }
+
         if (id >= ChatGeneralForm.CHAT_RUBICON) {
             const __ = await window.OVKAPI.call('messages.getConversationsById', { 'peer_ids': id, 'fields': ChatGeneralForm.BASE_FIELDS, 'extended': 1 });
 
@@ -739,6 +742,9 @@ export class ChatGeneralForm {
                 peerData.kicked = 0;
             }
             peerData._full_conversation = conv;
+            if (window.im && window.im.cached_profiles) {
+                window.im.cached_profiles._addProfileCache(new ChatGeneralForm(peerData));
+            }
             return peerData;
         } else {
             if (id > 0) {
@@ -759,6 +765,9 @@ export class ChatGeneralForm {
                 } catch (e) {
                     console.error("resolveById user getConversationsById error:", e);
                 }
+                if (window.im && window.im.cached_profiles) {
+                    window.im.cached_profiles._addProfileCache(new ChatGeneralForm(peerData));
+                }
                 return peerData;
             } else {
                 const __ = await window.OVKAPI.call('groups.getById', { 'group_ids': Math.abs(id), 'fields': ChatGeneralForm.BASE_FIELDS });
@@ -778,15 +787,24 @@ export class ChatGeneralForm {
                 } catch (e) {
                     console.error("resolveById group getConversationsById error:", e);
                 }
+                if (window.im && window.im.cached_profiles) {
+                    window.im.cached_profiles._addProfileCache(new ChatGeneralForm(peerData));
+                }
                 return peerData;
             }
         }
     }
 
     static async resolveByIdAndReturnClass(id) {
+        if (window.im && window.im.cached_profiles) {
+            const cached = window.im.cached_profiles._findCachedProfileById(id);
+            if (cached) {
+                return cached;
+            }
+        }
         const c = await ChatGeneralForm.resolveById(id);
         if (c == null) return undefined;
-        return new ChatGeneralForm(c);
+        return (c instanceof ChatGeneralForm) ? c : new ChatGeneralForm(c);
     }
 
     isMessagesInited() { return this._chunks.isMessagesInited(); }
@@ -817,6 +835,14 @@ export class ChatGeneralForm {
         msg.read_state = msg.data.read_state;
         msg.peer = this;
         msg.peer_id = this.id;
+
+        const latestBeforeSend = this._chunks ? this._chunks.getLatestMessage() : null;
+        const prevCmid = latestBeforeSend ? Number(latestBeforeSend.data?.conversation_message_id || latestBeforeSend.data?.local_id || latestBeforeSend.conversation_message_id || 0) : 0;
+        if (prevCmid > 0) {
+            msg.data.conversation_message_id = prevCmid + 1;
+            msg.data.local_id = msg.data.conversation_message_id;
+            msg.conversation_message_id = msg.data.conversation_message_id;
+        }
 
         this._chunks.pushNewMessage(msg);
         if (push_callback) {
@@ -893,19 +919,16 @@ export class ChatGeneralForm {
             const resp = await window.OVKAPI.call('messages.send', datas);
             if (typeof resp === 'object' && resp !== null) {
                 msg.data.id = resp.message_id || resp.id;
-                msg.data.conversation_message_id = resp.conversation_message_id || resp.cmid;
-                msg.data.local_id = msg.data.conversation_message_id;
-            } else {
-                msg.data.id = resp;
-                const prevMsg = this._chunks ? this._chunks.getLatestMessage() : null;
-                if (prevMsg && prevMsg.data && (prevMsg.data.conversation_message_id || prevMsg.data.local_id)) {
-                    const prevCmid = prevMsg.data.conversation_message_id || prevMsg.data.local_id;
-                    msg.data.conversation_message_id = prevCmid + 1;
-                    msg.data.local_id = msg.data.conversation_message_id;
+                const respCmid = resp.conversation_message_id || resp.cmid;
+                if (respCmid) {
+                    msg.data.conversation_message_id = respCmid;
+                    msg.data.local_id = respCmid;
+                    msg.conversation_message_id = respCmid;
                 }
+            } else if (typeof resp === 'number' || typeof resp === 'string') {
+                msg.data.id = Number(resp);
             }
             msg.id = msg.data.id;
-            msg.conversation_message_id = msg.data.conversation_message_id;
             msg.data.is_sending = false;
             msg.data.out = 1;
             msg.out = 1;
@@ -1143,6 +1166,12 @@ export class ChatGeneralForm {
     set in_read(val) {
         this._in_read = Math.max(this._in_read || 0, val || 0);
     }
+    get in_read_cmid() {
+        return this._in_read_cmid || (this.data ? this.data.in_read_cmid : 0) || 0;
+    }
+    set in_read_cmid(val) {
+        this._in_read_cmid = Math.max(this._in_read_cmid || 0, val || 0);
+    }
 
     get out_read() {
         return this._out_read || (this.data ? this.data.out_read : 0) || 0;
@@ -1150,8 +1179,18 @@ export class ChatGeneralForm {
     set out_read(val) {
         this._out_read = Math.max(this._out_read || 0, val || 0);
     }
+    get out_read_cmid() {
+        return this._out_read_cmid || (this.data ? this.data.out_read_cmid : 0) || 0;
+    }
+    set out_read_cmid(val) {
+        this._out_read_cmid = Math.max(this._out_read_cmid || 0, val || 0);
+    }
 
     async read(startMessageId = 0, startCmid = 0) {
+        if (typeof document !== "undefined" && (document.hidden || (typeof document.hasFocus === "function" && !document.hasFocus()))) {
+            return;
+        }
+
         const params = {
             "peer_id": this.id,
         };
@@ -1180,7 +1219,10 @@ export class ChatGeneralForm {
                 const targetCmid = startCmid > 0 ? Number(startCmid) : (targetReadId && targetReadId < 1000000 ? targetReadId : latestMsgCmid);
 
                 if (targetCmid > 0) {
-                    this.in_read = Math.max(this.in_read || 0, targetCmid);
+                    this.in_read_cmid = Math.max(this.in_read_cmid || 0, targetCmid);
+                }
+                if (targetReadId > 0) {
+                    this.in_read = Math.max(this.in_read || 0, targetReadId);
                 }
 
                 const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
@@ -1289,6 +1331,22 @@ export class ChatMessage {
                 this.data.peer_id = 2000000000 + Number(this.data.chat_id);
             } else if (window.im?.messenger?.currentChatId) {
                 this.data.peer_id = Number(window.im.messenger.currentChatId);
+            }
+        }
+
+        if (this.data.action) {
+            if (typeof this.data.action === 'string') {
+                this.data.action = {
+                    type: this.data.action,
+                    member_id: this.data.action_mid ?? null,
+                    text: this.data.action_text ?? ""
+                };
+            }
+            if (this.data.action.text == null) {
+                this.data.action.text = this.data.action_text ?? "";
+            }
+            if (this.data.action_text == null) {
+                this.data.action_text = this.data.action.text ?? "";
             }
         }
 
@@ -1453,11 +1511,11 @@ export class ChatMessage {
 
         switch (type) {
             case "chat_create": {
-                const title = (act.text || "").trim();
+                const title = (act.text || this.data.action_text || (this.peer?.getName ? this.peer.getName() : "") || "").trim();
                 return title ? tr("event_chat_creation_" + gender, title) : tr("event_chat_creation_no_title_" + gender);
             }
             case "chat_title_update": {
-                const title = (act.text || "").trim();
+                const title = (act.text || this.data.action_text || (this.peer?.getName ? this.peer.getName() : "") || "").trim();
                 return tr("event_chat_title_update_" + gender, title);
             }
             case "chat_photo_update":
@@ -1565,7 +1623,7 @@ export class ChatMessage {
             }
             const visualAttachments = (allAtts || []).filter(a => a && a.type !== 'link' && a.type !== 'share' && a.type !== 'fwd' && a.type !== 'fwd_messages' && a.type !== 'forward' && a.type !== 'forward_messages');
             const fwdCount = (typeof this.getFwdCount === 'function') ? this.getFwdCount() : 0;
-            const fwdText = fwdCount > 0 ? (typeof tr === 'function' ? tr('forwarded_messages_noun', fwdCount) : `Пересланные сообщения (${fwdCount})`) : "";
+            const fwdText = fwdCount > 0 ? tr('forwarded_messages_noun', fwdCount) : "";
             const fwdHtml = fwdText ? `<span class="conv_prev_attachment_text">${escapeHtml(fwdText)}</span>` : "";
 
             if (with_attachments) {
@@ -1611,7 +1669,7 @@ export class ChatMessage {
                     } else if (cleanBaseText) {
                         txt += ovk_proc_strtr(escapeHtml(cleanBaseText), 100);
                     } else {
-                        txt = typeof tr === "function" && tr("message_no_text") ? "(" + tr("message_no_text").toLowerCase() + ")" : "...";
+                        txt = "(" + tr("message_no_text").toLowerCase() + ")";
                     }
                 }
             } else {
@@ -2101,7 +2159,7 @@ export class ChatMessage {
             'action': action,
             'action_type': action ? action.type : null,
             'action_mid': action ? action.member_id : null,
-            'action_text': action ? action.text : null,
+            'action_text': action ? (action.text ?? "") : "",
         });
         msg.mention = isMentionedFromLp;
         msg.is_mentioned = isMentionedFromLp;
@@ -2322,7 +2380,6 @@ export class ChatMessage {
 
     isRead(conv = null) {
         try {
-            if (this.read_state === 1 || this.read_state === true || this.data?.read_state === 1 || this.data?.read_state === true) return true;
             const currentChat = window.im?.messenger?.getCurrentChat();
             const currentChatId = currentChat?.peer?.id || (window.im?.messenger?.currentChatId ? Number(window.im.messenger.currentChatId) : 0);
             const peerId = (this.data && (this.data.peer_id || (this.data.chat_id ? 2000000000 + Number(this.data.chat_id) : 0)))
@@ -2335,35 +2392,38 @@ export class ChatMessage {
             if (peer && typeof peer.isSavedMessages === 'function' && peer.isSavedMessages()) {
                 return true;
             }
-            const outRead = Number(peer?.out_read || conv?._conversation?.out_read || conv?.conversation?.out_read || 0);
-            const inRead = Number(peer?.in_read || conv?._conversation?.in_read || conv?.conversation?.in_read || 0);
+
             const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
-            const msgCmid = Number((this.data && (this.data.conversation_message_id || this.data.local_id)) || this.conversation_message_id || 0);
-            const msgId = Number((this.data && this.data.id) || this.id || 0);
             const fromId = Number(this.data ? (this.data.from_id?.id || this.data.from_id) : (this.from_id || 0));
             const isMine = Boolean((this.data && this.data.out === 1) || this.out === 1 || (fromId && currentUserId && fromId === Number(currentUserId)));
 
+            const outReadCmid = Number(peer?.out_read_cmid || conv?._conversation?.out_read_cmid || conv?.conversation?.out_read_cmid || 0);
+            const inReadCmid = Number(peer?.in_read_cmid || conv?._conversation?.in_read_cmid || conv?.conversation?.in_read_cmid || 0);
+            const outRead = Number(peer?.out_read || conv?._conversation?.out_read || conv?.conversation?.out_read || 0);
+            const inRead = Number(peer?.in_read || conv?._conversation?.in_read || conv?.conversation?.in_read || 0);
+
+            const msgCmid = Number((this.data && (this.data.conversation_message_id || this.data.local_id)) || this.conversation_message_id || 0);
+            const msgId = Number((this.data && this.data.id) || this.id || 0);
+
             if (!isMine) {
-                if (inRead > 0) {
-                    if (msgCmid > 0 && msgCmid <= inRead) {
-                        return true;
-                    }
-                    if (msgId > 0 && msgId <= inRead && inRead > 1000000) {
-                        return true;
-                    }
+                if (msgCmid > 0 && inReadCmid > 0) {
+                    return msgCmid <= inReadCmid;
                 }
-                const rawUnread = conv?._conversation?.unread_count ?? conv?._unread_count;
-                if (rawUnread === 0 && (inRead > 0 || (conv && conv._last_message && msgId <= Number(conv._last_message.id || 0)))) {
-                    return true;
+                if (msgId > 0 && inRead > 0) {
+                    return msgId <= inRead;
+                }
+                if (msgCmid > 0 && inRead > 0 && inReadCmid === 0) {
+                    return inRead < 1000000 && msgCmid <= inRead;
                 }
             } else {
-                if (outRead > 0) {
-                    if (msgCmid > 0 && msgCmid <= outRead) {
-                        return true;
-                    }
-                    if (msgId > 0 && msgId <= outRead && outRead > 1000000) {
-                        return true;
-                    }
+                if (msgCmid > 0 && outReadCmid > 0) {
+                    return msgCmid <= outReadCmid;
+                }
+                if (msgId > 0 && outRead > 0) {
+                    return msgId <= outRead;
+                }
+                if (msgCmid > 0 && outRead > 0 && outReadCmid === 0) {
+                    return outRead < 1000000 && msgCmid <= outRead;
                 }
                 if (peer && peer._chunks) {
                     const latest = peer._chunks.getLatestMessage();
@@ -2372,10 +2432,14 @@ export class ChatMessage {
                     }
                 }
             }
+
             if (this.read_state !== undefined) {
                 return Boolean(this.read_state);
             }
-            return Boolean(this.data?.read_state);
+            if (this.data?.read_state !== undefined) {
+                return Boolean(this.data.read_state);
+            }
+            return false;
         } catch (e) {
             return false;
         }

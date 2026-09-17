@@ -454,6 +454,16 @@ abstract class OpenVKPresenter extends SimplePresenter
     public function onServerError(\Throwable $e, ?string $errorCode = null): ?string
     {
         try {
+            $str = tr("server_error");
+
+            if ($str[0] == "@") {
+                throw new \RuntimeException("Missing lang");
+            }
+        } catch (\Throwable $e) {
+            $GLOBALS["__ovk_api_lang"] = "en";
+        }
+
+        try {
             $GLOBALS["showException"] = true;
             $GLOBALS["exception"] = $e;
             $userId = Authenticator::i()->getUser();

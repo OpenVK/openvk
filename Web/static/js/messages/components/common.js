@@ -7,12 +7,10 @@ export function getAppLocale() {
         const raw = window.openvk.locale.split(';')[0].split('.')[0].replace('_', '-');
         if (raw) return raw;
     }
-    if (typeof tr === "function") {
-        const raw = tr("__locale");
-        if (raw && !raw.startsWith("@")) {
-            const tag = raw.split(";")[0].split(".")[0].replace("_", "-");
-            if (tag) return tag;
-        }
+    const raw = tr("__locale");
+    if (raw && !raw.startsWith("@")) {
+        const tag = raw.split(";")[0].split(".")[0].replace("_", "-");
+        if (tag) return tag;
     }
     if (window.openvk && window.openvk.lang) {
         return window.openvk.lang;
@@ -191,7 +189,7 @@ export const PinnedMessageBar = ({ convo }) => {
     if (!textPreview || textPreview.length === 0) {
         const atts = typeof pinMsg.getAttachments === 'function' ? pinMsg.getAttachments() : [];
         if (atts && atts.length > 0) {
-            textPreview = "[" + (typeof tr === 'function' ? tr("attachment") : "Вложение") + "]";
+            textPreview = "[" + tr("attachment") + "]";
         } else {
             textPreview = "...";
         }
@@ -234,7 +232,7 @@ export const PinnedMessageBar = ({ convo }) => {
     `;
 };
 
-export const ActionsBar = ({ selectedMessages, count, onDelete, onUnselect, onReply, onForwardClick, onViewers }) => {
+export const ActionsBar = ({ selectedMessages, count, onDelete, onUnselect, onReply, onForwardClick, onViewers, onPin, onReport }) => {
     if (count === 0) return null;
     let canDeleteThemAll = true;
     let canForward = count < 500;
@@ -250,7 +248,9 @@ export const ActionsBar = ({ selectedMessages, count, onDelete, onUnselect, onRe
 
     const firstMsg = selectedMessages && selectedMessages.length === 1 ? selectedMessages[0] : null;
     const canReply = firstMsg && (typeof firstMsg.can === "function" ? firstMsg.can("reply") : !firstMsg.isDeleted());
+    const canPin = firstMsg && (typeof firstMsg.can === "function" ? firstMsg.can("pin") : false);
     const canViewers = firstMsg && (typeof firstMsg.can === "function" ? firstMsg.can("viewers") : false);
+    const canReport = firstMsg && (typeof firstMsg.can === "function" ? firstMsg.can("report") : false);
 
     return html`
         <div class="messages--actions shown">
@@ -258,17 +258,23 @@ export const ActionsBar = ({ selectedMessages, count, onDelete, onUnselect, onRe
                 <div class="message-tab-counter message-tab"><a onClick=${onUnselect}>${tr("selected_messages", count)}</a></div>
             </div>
             <div>
-                ${canForward == true && html`
-                <div class="message-tab"><a onClick=${onForwardClick}>${tr("forward_messages")}</a></div>
-                `}
-                ${count === 1 && canReply && html`
-                    <div class="message-tab"><a onClick=${onReply}>${tr("reply_to_message")}</a></div>
+                ${count === 1 && canPin && html`
+                    <div class="message-tab"><a onClick=${() => { if (onPin) onPin(firstMsg); else window.im?.messenger?.view?.onPinButtonClick(null, firstMsg); }}>${firstMsg.isPinned() ? tr("unpin") : tr("pin")}</a></div>
                 `}
                 ${count === 1 && canViewers && html`
                     <div class="message-tab"><a onClick=${() => { if (onViewers) onViewers(firstMsg); else window.im?.messenger?.view?.onViewersButtonClick(null, firstMsg); }}>${tr("message_viewers")}</a></div>
                 `}
+                ${count === 1 && canReport && html`
+                    <div class="message-tab"><a onClick=${() => { if (onReport) onReport(firstMsg); else window.im?.messenger?.view?.onReportButtonClick(null, firstMsg); }}>${tr("report")}</a></div>
+                `}
                 ${canDeleteThemAll == true && html`
                 <div class="message-tab"><a onClick=${onDelete}>${tr("delete_message")}</a></div>
+                `}
+                ${count === 1 && canReply && html`
+                    <div class="message-tab"><a onClick=${onReply}>${tr("reply_to_message")}</a></div>
+                `}
+                ${canForward == true && html`
+                <div class="message-tab"><a onClick=${onForwardClick}>${tr("forward_messages")}</a></div>
                 `}
             </div>
         </div>
@@ -381,7 +387,7 @@ export const getReplySnippet = (msg) => {
             0
         );
         if (fwdCount > 0) {
-            text = '[' + (typeof tr === 'function' ? tr('forwarded_messages_noun', fwdCount) : `Пересланные сообщения (${fwdCount})`) + ']';
+            text = '[' + tr('forwarded_messages_noun', fwdCount) + ']';
         }
     }
 
@@ -579,44 +585,6 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
 
     return html`
     <div class="${cls.join(" ")}">
-        ${canWrite && replyTo && html`
-            <div class="input-reply input-m" onclick=${(e) => {
-                if (!e.target.closest('.input-close')) {
-                    clickOnReply(replyTo);
-                }
-            }}>
-                <div class="input-reply-content">
-                    <div class="input-reply-title">${(() => {
-                const sName = replyTo.sender?.getName ? replyTo.sender.getName() : (replyTo.data?.from_id ? `id${replyTo.data.from_id}` : '');
-                const t = typeof tr === 'function' ? tr('reply_to_message_user', sName) : '';
-                return (t && !t.startsWith('@')) ? t : `В ответ ${sName}`;
-            })()}:</div>
-                    <div class="input-reply-text" dangerouslySetInnerHTML=${{ __html: typeof replyTo.getText === 'function' ? replyTo.getText(false, true, false) : (replyTo.data?.text || '') }} />
-                </div>
-                <div class="input-close" onclick=${(e) => {
-                e.stopPropagation();
-                onRemoveReply();
-            }}>×</div>
-            </div>
-        `}
-        ${canWrite && isForwarded && html`
-            <div class="input-reply input-m">
-                <div class="input-reply-content">
-                    <div class="input-reply-title">${tr('forwarded_messages_noun', forwarded_msg.length)}</div>
-                    <div class="input-reply-text">
-                        ${forwarded_msg.map((f, i) => html`
-                            <div class="input-fwd-item" key=${f.id || i}>
-                                <b>${f.sender?.getName ? f.sender.getName() : `id${f.from_id}`}:</b> ${typeof f.getText === 'function' ? f.getText(true, true) : (f.data?.text ? f.data.text.replace(/\[([a-zA-Z0-9_]+)(?:\|([^\]]*))?\]/g, (m, target, title) => (title && title.trim()) ? title.trim() : target) : (f.text || ''))}
-                            </div>
-                        `)}
-                    </div>
-                </div>
-                <div class="input-close" onclick=${(e) => {
-                e.stopPropagation();
-                onRemoveForward();
-            }}>×</div>
-            </div>
-        `}
         ${canWrite && editMsg && html`
             <div class="input-reply input-m">
                 <div class="input-reply-content">
@@ -693,6 +661,45 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
                         </div>
                         <div class="post-horizontal"></div>
                         <div class="post-vertical"></div>
+                        <div>
+                        ${canWrite && replyTo && html`
+                            <div class="input-reply input-m input-m2" onclick=${(e) => {
+                                if (!e.target.closest('.input-close')) {
+                                    clickOnReply(replyTo);
+                                }
+                            }}>
+                                <div class="input-reply-content">
+                                    <div class="input-reply-title">${(() => {
+                                const sName = replyTo.sender?.getName ? replyTo.sender.getName() : (replyTo.data?.from_id ? `id${replyTo.data.from_id}` : '');
+                                return tr('reply_to_message_user', sName);
+                            })()}:</div>
+                                    <div class="input-reply-text" dangerouslySetInnerHTML=${{ __html: typeof replyTo.getText === 'function' ? replyTo.getText(false, true, false) : (replyTo.data?.text || '') }} />
+                                </div>
+                                <div class="input-close" onclick=${(e) => {
+                                e.stopPropagation();
+                                onRemoveReply();
+                            }}><div class="cross"></div></div>
+                            </div>
+                        `}
+                        ${canWrite && isForwarded && html`
+                            <div class="input-reply input-m input-m2">
+                                <div class="input-reply-content">
+                                    <div class="input-reply-title">${tr('forwarded_messages_noun', forwarded_msg.length)}</div>
+                                    <div class="input-reply-text">
+                                        ${forwarded_msg.map((f, i) => html`
+                                            <div class="input-fwd-item" key=${f.id || i}>
+                                                <b>${f.sender?.getName ? f.sender.getName() : `id${f.from_id}`}:</b> ${typeof f.getText === 'function' ? f.getText(true, true) : (f.data?.text ? f.data.text.replace(/\[([a-zA-Z0-9_]+)(?:\|([^\]]*))?\]/g, (m, target, title) => (title && title.trim()) ? title.trim() : target) : (f.text || ''))}
+                                            </div>
+                                        `)}
+                                    </div>
+                                </div>
+                                <div class="input-close" onclick=${(e) => {
+                                e.stopPropagation();
+                                onRemoveForward();
+                            }}><div class="cross"></div></div>
+                            </div>
+                        `}
+                        </div>
                         <div class="input--messagebox-buttons">
                             <div class="input--messagebox-left">
                                 <button class="button" onClick=${onSend}>${!is_editing ? tr('send') : tr('edit_action_lr')}</button>
@@ -1813,7 +1820,7 @@ export function openChatPermissionsModal(peer) {
     const canChangeAdmins = isOwner || (peer.can && peer.can("change_admins"));
 
     const safeEsc = (s) => (typeof escapeHtml === 'function' ? escapeHtml(s) : String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'));
-    const safeEsctr = (k) => safeEsc(typeof tr === 'function' ? tr(k) : k);
+    const safeEsctr = (k) => safeEsc(tr(k));
 
     const modal = new CMessageBox({
         title: modalTitle,
@@ -1980,7 +1987,7 @@ export function openChatMuteModal(peer) {
     const modalTitle = tr('chat_mute_title');
     const isMuted = peer.isMuted ? peer.isMuted() : false;
     const safeEsc = (s) => (typeof escapeHtml === 'function' ? escapeHtml(s) : String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'));
-    const safeEsctr = (k) => safeEsc(typeof tr === 'function' ? tr(k) : k);
+    const safeEsctr = (k) => safeEsc(tr(k));
 
     const modal = new CMessageBox({
         title: modalTitle,

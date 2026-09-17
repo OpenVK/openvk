@@ -271,7 +271,7 @@
     .page_header {
         height: 49px !important;
         width: 100vw !important;
-        background: linear-gradient(#707070, #3b3b3b);
+        background: linear-gradient(#707070, #3b3b3b) !important;
         background-position: 0 0 !important;
         display: flex;
         align-items: center;

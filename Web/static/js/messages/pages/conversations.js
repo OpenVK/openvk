@@ -208,27 +208,31 @@ export class Conversations {
         convs.groups?.forEach((group) => {
             window.im.cached_profiles._addProfileCache(new ChatGeneralForm(group));
         });
-        convs.chats?.forEach((group) => {
-            window.im.cached_profiles._addProfileCache(new ChatGeneralForm(group));
+        convs.chats?.forEach((chat) => {
+            const chatId = Number(chat.id);
+            const fullId = chatId < 2000000000 ? chatId + 2000000000 : chatId;
+            window.im.cached_profiles._addProfileCache(new ChatGeneralForm(Object.assign({ id: fullId, type: 'chat' }, chat)));
         });
 
         const rawItems = convs?.items || [];
         rawItems.forEach((item) => {
             const id = item.conversation.peer.id;
-            item.peer = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(id);
-            if (!item.peer) {
+            let peer = window.im.cached_profiles._findCachedProfileById(id);
+            if (!peer) {
                 const isChat = id >= ChatGeneralForm.CHAT_RUBICON || item.conversation?.peer?.type === 'chat';
                 const localId = isChat && id >= ChatGeneralForm.CHAT_RUBICON ? id - ChatGeneralForm.CHAT_RUBICON : id;
                 const fallbackData = {
-                    id: isChat ? localId : id,
+                    id: id,
+                    local_id: localId,
                     type: isChat ? 'chat' : (id < 0 ? 'club' : 'user')
                 };
                 if (item.conversation?.chat_settings) {
                     Object.assign(fallbackData, item.conversation.chat_settings);
                 }
-                item.peer = new ChatGeneralForm(fallbackData);
-                window.im.cached_profiles._addProfileCache(item.peer);
+                peer = new ChatGeneralForm(fallbackData);
+                window.im.cached_profiles._addProfileCache(peer);
             }
+            item.peer = peer;
             if (item.peer) {
                 if (item.conversation?.push_settings) {
                     item.peer.data = item.peer.data || {};
@@ -331,15 +335,18 @@ export class Conversations {
         return found || null;
     }
 
-    async _findConvFromApi(id, check_cached = false, push = true) {
+    async _findConvFromApi(id, check_cached = true, push = true) {
         const existing = this._findConv(id);
         if (existing) {
             return existing;
         }
 
         let b = null;
-        if (check_cached) {
-            b = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(id);
+        if (window.im && window.im.cached_profiles) {
+            b = window.im.cached_profiles._findCachedProfileById(id);
+            if (!b && check_cached) {
+                b = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(id);
+            }
         }
 
         if (!b) {
@@ -401,6 +408,12 @@ export class Conversation {
             }
             this.peer.data = this.peer.data || {};
             this.peer.data._full_conversation = this._conversation;
+            if (this._conversation.out_read_cmid != null) {
+                this.peer.out_read_cmid = Math.max(this.peer.out_read_cmid || 0, Number(this._conversation.out_read_cmid));
+            }
+            if (this._conversation.in_read_cmid != null) {
+                this.peer.in_read_cmid = Math.max(this.peer.in_read_cmid || 0, Number(this._conversation.in_read_cmid));
+            }
             if (this._conversation.out_read != null) {
                 this.peer.out_read = Math.max(this.peer.out_read || 0, Number(this._conversation.out_read));
             }
@@ -425,10 +438,19 @@ export class Conversation {
             const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
             const fromId = Number(this._last_message.data ? (this._last_message.data.from_id?.id || this._last_message.data.from_id) : (this._last_message.from_id || 0));
             const isMine = Boolean((this._last_message.data && this._last_message.data.out === 1) || this._last_message.out === 1 || (fromId && currentUserId && fromId === Number(currentUserId)));
+            const outReadCmid = Number(this.peer?.out_read_cmid || this._conversation?.out_read_cmid || 0);
             const outRead = Number(this.peer?.out_read || this._conversation?.out_read || 0);
             const msgCmid = Number(this._last_message.data?.conversation_message_id || this._last_message.data?.local_id || this._last_message.conversation_message_id || 0);
             const msgId = Number(this._last_message.data?.id || this._last_message.id || 0);
-            if (isMine && outRead > 0 && ((msgCmid > 0 && msgCmid <= outRead) || (msgId > 0 && msgId <= outRead && outRead > 1000000))) {
+            let isLastMsgRead = false;
+            if (msgCmid > 0 && outReadCmid > 0) {
+                isLastMsgRead = msgCmid <= outReadCmid;
+            } else if (msgId > 0 && outRead > 0) {
+                isLastMsgRead = msgId <= outRead;
+            } else if (msgCmid > 0 && outRead > 0 && outReadCmid === 0) {
+                isLastMsgRead = outRead < 1000000 && msgCmid <= outRead;
+            }
+            if (isMine && isLastMsgRead) {
                 if (this._last_message.data) this._last_message.data.read_state = 1;
                 this._last_message.read_state = 1;
             }
@@ -605,10 +627,19 @@ export class Conversation {
             const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
             const fromId = Number(this._last_message.data ? (this._last_message.data.from_id?.id || this._last_message.data.from_id) : (this._last_message.from_id || 0));
             const isMine = Boolean((this._last_message.data && this._last_message.data.out === 1) || this._last_message.out === 1 || (fromId && currentUserId && fromId === Number(currentUserId)));
+            const outReadCmid = Number(this.peer?.out_read_cmid || this._conversation?.out_read_cmid || 0);
             const outRead = Number(this.peer?.out_read || this._conversation?.out_read || 0);
             const msgCmid = Number(this._last_message.data?.conversation_message_id || this._last_message.data?.local_id || this._last_message.conversation_message_id || 0);
             const msgId = Number(this._last_message.data?.id || this._last_message.id || 0);
-            if (isMine && outRead > 0 && ((msgCmid > 0 && msgCmid <= outRead) || (msgId > 0 && msgId <= outRead && outRead > 1000000))) {
+            let isLastMsgRead = false;
+            if (msgCmid > 0 && outReadCmid > 0) {
+                isLastMsgRead = msgCmid <= outReadCmid;
+            } else if (msgId > 0 && outRead > 0) {
+                isLastMsgRead = msgId <= outRead;
+            } else if (msgCmid > 0 && outRead > 0 && outReadCmid === 0) {
+                isLastMsgRead = outRead < 1000000 && msgCmid <= outRead;
+            }
+            if (isMine && isLastMsgRead) {
                 if (this._last_message.data) this._last_message.data.read_state = 1;
                 this._last_message.read_state = 1;
             }

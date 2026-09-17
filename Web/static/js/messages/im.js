@@ -662,6 +662,31 @@ class IMState {
         this._mediaQuery = window.matchMedia('(max-width: 768px)');
         this._is_mobile = this._mediaQuery.matches;
         this._initMobileListener();
+
+        if (this.group_id == null && window.openvk && window.openvk.current_id > 0) {
+            this._initStorageSync();
+        }
+    }
+
+    _initStorageSync() {
+        try {
+            const cached = localStorage.getItem('im_unread_conversations_count');
+            if (cached !== null) {
+                const count = Number(cached);
+                if (!isNaN(count)) {
+                    this._updateCounter(count, false);
+                }
+            }
+        } catch (e) { }
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'im_unread_conversations_count' && this.group_id == null) {
+                const val = Number(e.newValue);
+                if (!isNaN(val) && val !== this.unread_counter) {
+                    this._updateCounter(val, false);
+                }
+            }
+        });
     }
 
     get is_mobile() {
@@ -742,45 +767,85 @@ class IMState {
         }
     }
 
-    _updateCounter(new_number) {
+    _updateCounter(new_number, syncStorage = true) {
         this.unread_counter = Number(new_number) || 0;
 
-        const bElements = document.querySelectorAll(".imc.counter b");
-        bElements.forEach(el => {
-            el.innerHTML = String(this.unread_counter);
-        });
+        if (this.group_id == null) {
+            const bElements = document.querySelectorAll(".imc.counter b");
+            bElements.forEach(el => {
+                el.innerHTML = String(this.unread_counter);
+            });
 
-        const cntElements = document.querySelectorAll(".imc.counter");
-        cntElements.forEach(el => {
-            if (this.unread_counter < 1) {
-                el.classList.remove("shown");
-                el.classList.add("zero_counter");
-            } else {
-                el.classList.add("shown");
-                el.classList.remove("zero_counter");
+            const cntElements = document.querySelectorAll(".imc.counter");
+            cntElements.forEach(el => {
+                if (this.unread_counter < 1) {
+                    el.classList.remove("shown");
+                    el.classList.add("zero_counter");
+                } else {
+                    el.classList.add("shown");
+                    el.classList.remove("zero_counter");
+                }
+            });
+
+            updateFaviconBadge(this.unread_counter);
+
+            if (syncStorage) {
+                try {
+                    localStorage.setItem('im_unread_conversations_count', String(this.unread_counter));
+                } catch (e) { }
             }
-        });
-
-        updateFaviconBadge(this.unread_counter);
+        }
     }
 
     async _loadCurrent() {
         if (this.group_id == null) {
             if (this.link.report_data) {
-                this.items.push(ChatGeneralForm.resolveById(this.link.report_data.author_id));
+                this.items.push(await ChatGeneralForm.resolveByIdAndReturnClass(this.link.report_data.author_id));
             } else {
-                let _v = await window.OVKAPI.call('users.get', {
-                    'user_ids': window.openvk.current_id,
-                    'fields': ChatGeneralForm.BASE_FIELDS,
-                });
-                this.items.push(new ChatGeneralForm(_v[0]));
+                let currentProfile = this.link.cached_profiles._findCachedProfileById(window.openvk.current_id);
+                if (!currentProfile) {
+                    try {
+                        const raw = sessionStorage.getItem('ovk_user_profile_' + window.openvk.current_id);
+                        if (raw) {
+                            const parsed = JSON.parse(raw);
+                            if (parsed && parsed.id == window.openvk.current_id) {
+                                currentProfile = new ChatGeneralForm(parsed);
+                            }
+                        }
+                    } catch (e) { }
+                }
+
+                if (!currentProfile) {
+                    let _v = await window.OVKAPI.call('users.get', {
+                        'user_ids': window.openvk.current_id,
+                        'fields': ChatGeneralForm.BASE_FIELDS,
+                    });
+                    if (_v && _v[0]) {
+                        currentProfile = new ChatGeneralForm(_v[0]);
+                        try {
+                            sessionStorage.setItem('ovk_user_profile_' + window.openvk.current_id, JSON.stringify(_v[0]));
+                        } catch (e) { }
+                    }
+                }
+
+                if (currentProfile) {
+                    this.items.push(currentProfile);
+                }
             }
         } else {
-            let _v = await window.OVKAPI.call('groups.getById', {
-                'group_ids': Math.abs(this.group_id),
-                'fields': ChatGeneralForm.BASE_FIELDS,
-            });
-            this.items.push(new ChatGeneralForm(_v[0]));
+            let groupProfile = this.link.cached_profiles._findCachedProfileById(this.group_id);
+            if (!groupProfile) {
+                let _v = await window.OVKAPI.call('groups.getById', {
+                    'group_ids': Math.abs(this.group_id),
+                    'fields': ChatGeneralForm.BASE_FIELDS,
+                });
+                if (_v && _v[0]) {
+                    groupProfile = new ChatGeneralForm(_v[0]);
+                }
+            }
+            if (groupProfile) {
+                this.items.push(groupProfile);
+            }
         }
 
         this.link.cached_profiles._addProfileCache(this.getOperator());
@@ -1091,7 +1156,11 @@ class ProfilesCache {
         }
     }
 
-    _moveToProfileCache(profiles = [], groups = [], remove_current = true) {
+    _moveToProfileCache(profiles = [], groups = [], chats = [], remove_current = true) {
+        if (typeof chats === 'boolean') {
+            remove_current = chats;
+            chats = [];
+        }
         (profiles || []).forEach((profile) => {
             if (profile && typeof profile === 'object' && profile.id != null) {
                 this._addProfileCache(new ChatGeneralForm(profile), remove_current);
@@ -1102,11 +1171,24 @@ class ProfilesCache {
                 this._addProfileCache(new ChatGeneralForm(group), remove_current);
             }
         });
+        (chats || []).forEach((chat) => {
+            if (chat && typeof chat === 'object' && chat.id != null) {
+                const chatId = Number(chat.id);
+                const fullId = chatId < 2000000000 ? chatId + 2000000000 : chatId;
+                this._addProfileCache(new ChatGeneralForm(Object.assign({ id: fullId, type: 'chat' }, chat)), remove_current);
+            }
+        });
     }
 
     _findCachedProfileById(id) {
         if (id == null) return null;
-        const similar = this.cached_profiles.filter((item) => item.id == id);
+        const numId = Number(id);
+        const similar = this.cached_profiles.filter((item) => {
+            if (item.id == id || item.id == numId) return true;
+            if (numId >= 2000000000 && item.supposed_type === 'chat' && item.id == (numId - 2000000000)) return true;
+            if (numId < 2000000000 && numId > 0 && item.supposed_type === 'chat' && (Number(item.id) + 2000000000) == numId) return true;
+            return false;
+        });
         if (similar.length == 0) return null;
         return similar[0];
     }
@@ -1120,22 +1202,52 @@ class ProfilesCache {
         const found = this._findCachedProfileById(id);
         if (found) return found;
 
-        if (id && !this._pending_fetches.has(id)) {
-            this._pending_fetches.add(id);
-            const isGroup = Number(id) < 0;
-            const apiMethod = isGroup ? 'groups.getById' : 'users.get';
-            const params = isGroup ? { group_ids: Math.abs(id), fields: 'photo_50,photo_100,online' } : { user_ids: id, fields: 'photo_50,photo_100,online,sex' };
+        const numId = Number(id);
+        if (numId && !this._pending_fetches.has(numId)) {
+            this._pending_fetches.add(numId);
 
-            window.OVKAPI.call(apiMethod, params).then(res => {
-                if (Array.isArray(res) && res.length > 0) {
-                    this._addProfileCache(new ChatGeneralForm(res[0]));
-                    if (window.im?.messenger) {
-                        window.im.messenger.update();
+            if (numId >= 2000000000) {
+                const chatId = numId - 2000000000;
+                window.OVKAPI.call('messages.getChat', { chat_id: chatId, fields: 'photo_50,photo_100' }).then(res => {
+                    if (res && typeof res === 'object') {
+                        const chatForm = new ChatGeneralForm(Object.assign({ id: numId, type: 'chat' }, res));
+                        this._addProfileCache(chatForm);
+                        if (window.im?.messenger) {
+                            window.im.messenger.update();
+                        }
                     }
-                }
-            }).catch(e => {
-                console.error("Failed to fetch profile for ID " + id, e);
-            });
+                }).catch(e => {
+                    console.error("Failed to fetch chat for ID " + numId, e);
+                }).finally(() => {
+                    this._pending_fetches.delete(numId);
+                });
+            } else if (numId < 0) {
+                window.OVKAPI.call('groups.getById', { group_ids: Math.abs(numId), fields: 'photo_50,photo_100,online' }).then(res => {
+                    if (Array.isArray(res) && res.length > 0) {
+                        this._addProfileCache(new ChatGeneralForm(res[0]));
+                        if (window.im?.messenger) {
+                            window.im.messenger.update();
+                        }
+                    }
+                }).catch(e => {
+                    console.error("Failed to fetch group for ID " + numId, e);
+                }).finally(() => {
+                    this._pending_fetches.delete(numId);
+                });
+            } else {
+                window.OVKAPI.call('users.get', { user_ids: numId, fields: 'photo_50,photo_100,online,sex' }).then(res => {
+                    if (Array.isArray(res) && res.length > 0) {
+                        this._addProfileCache(new ChatGeneralForm(res[0]));
+                        if (window.im?.messenger) {
+                            window.im.messenger.update();
+                        }
+                    }
+                }).catch(e => {
+                    console.error("Failed to fetch user for ID " + numId, e);
+                }).finally(() => {
+                    this._pending_fetches.delete(numId);
+                });
+            }
         }
 
         return null;
@@ -1184,7 +1296,7 @@ export class LongPollConnection {
     }
 
     getFirstCounter() {
-        return this.lp ? this.lp.unread_count : 0;
+        return this.lp ? (this.lp.unread_count ?? 0) : 0;
     }
 
     listen() {
@@ -1196,7 +1308,10 @@ export class LongPollConnection {
         if (!this.lp || !this.lp.server) {
             this.scheduleRetry(2000, async () => {
                 const ok = await this.create(Math.abs(this.link.state.group_id));
-                if (ok) this.listen();
+                if (ok) {
+                    this.link.state._updateCounter(this.getFirstCounter());
+                    this.listen();
+                }
             });
             return;
         }
@@ -1242,7 +1357,10 @@ export class LongPollConnection {
                 } else if (data.failed === 2 || data.failed === 3) {
                     this.scheduleRetry(1000, async () => {
                         const ok = await this.create(Math.abs(this.link.state.group_id));
-                        if (ok) this.listen();
+                        if (ok) {
+                            this.link.state._updateCounter(this.getFirstCounter());
+                            this.listen();
+                        }
                     });
                 } else {
                     this.handleError(`LP failed code: ${data.failed}`);
@@ -1367,12 +1485,22 @@ export class FastChats {
     async loadInitialData() {
         try {
             if (this.currentUserId > 0) {
-                const userRes = await window.OVKAPI.call('users.get', {
-                    user_ids: this.currentUserId,
-                    fields: 'photo_50'
-                });
-                if (userRes && userRes[0]) {
-                    this.currentUserAvatar = userRes[0].photo_50;
+                const operator = window.im?.state?.getOperator();
+                if (operator && typeof operator.getAvatar === 'function' && operator.getAvatar()) {
+                    this.currentUserAvatar = operator.getAvatar();
+                } else {
+                    const cachedUser = window.im?.cached_profiles?._findCachedProfileById(this.currentUserId);
+                    if (cachedUser && typeof cachedUser.getAvatar === 'function' && cachedUser.getAvatar()) {
+                        this.currentUserAvatar = cachedUser.getAvatar();
+                    } else {
+                        const userRes = await window.OVKAPI.call('users.get', {
+                            user_ids: this.currentUserId,
+                            fields: 'photo_50'
+                        });
+                        if (userRes && userRes[0]) {
+                            this.currentUserAvatar = userRes[0].photo_50;
+                        }
+                    }
                 }
             }
 
@@ -1571,10 +1699,12 @@ export class FastChats {
             firstUnreadMsgId: null,
             position: position,
             zIndex: zIndex || this.topZIndex,
-            isFocused: true
+            isFocused: !isMinimized
         };
-        this.openedChats.forEach(c => c.isFocused = false);
-        this.onlineWindow.isFocused = false;
+        if (!isMinimized) {
+            this.openedChats.forEach(c => c.isFocused = false);
+            this.onlineWindow.isFocused = false;
+        }
         this.openedChats.push(chat);
         this.render();
 
@@ -1583,23 +1713,37 @@ export class FastChats {
             let photo = initialPhoto;
 
             if (title === "..." || !photo) {
-                if (peerId > 0 && peerId < 2000000000) {
-                    const uRes = await window.OVKAPI.call('users.get', { user_ids: peerId, fields: 'photo_50' });
-                    if (uRes && uRes[0]) {
-                        title = uRes[0].first_name + " " + uRes[0].last_name;
-                        photo = uRes[0].photo_50;
-                    }
-                } else if (peerId < 0) {
-                    const gRes = await window.OVKAPI.call('groups.getById', { group_ids: Math.abs(peerId), fields: 'photo_50' });
-                    if (gRes && gRes[0]) {
-                        title = gRes[0].name;
-                        photo = gRes[0].photo_50;
-                    }
-                } else if (peerId >= 2000000000) {
-                    const cRes = await window.OVKAPI.call('messages.getChat', { chat_id: peerId - 2000000000, fields: 'photo_50' });
-                    if (cRes) {
-                        title = cRes.title;
-                        photo = cRes.photo_50;
+                const cached = window.im?.cached_profiles?._findCachedProfileById(peerId) || window.im?.conversations?._findConv(peerId)?.peer;
+                if (cached) {
+                    if (title === "..." && typeof cached.getTitle === 'function') title = cached.getTitle();
+                    if (!photo && typeof cached.getAvatar === 'function') photo = cached.getAvatar();
+                }
+
+                if (title === "..." || !photo) {
+                    if (peerId > 0 && peerId < 2000000000) {
+                        const uRes = await window.OVKAPI.call('users.get', { user_ids: peerId, fields: 'photo_50' });
+                        if (uRes && uRes[0]) {
+                            title = uRes[0].first_name + " " + uRes[0].last_name;
+                            photo = uRes[0].photo_50;
+                            if (window.im && window.im.cached_profiles) {
+                                window.im.cached_profiles._addProfileCache(new ChatGeneralForm(uRes[0]));
+                            }
+                        }
+                    } else if (peerId < 0) {
+                        const gRes = await window.OVKAPI.call('groups.getById', { group_ids: Math.abs(peerId), fields: 'photo_50' });
+                        if (gRes && gRes[0]) {
+                            title = gRes[0].name;
+                            photo = gRes[0].photo_50;
+                            if (window.im && window.im.cached_profiles) {
+                                window.im.cached_profiles._addProfileCache(new ChatGeneralForm(gRes[0]));
+                            }
+                        }
+                    } else if (peerId >= 2000000000) {
+                        const cRes = await window.OVKAPI.call('messages.getChat', { chat_id: peerId - 2000000000, fields: 'photo_50' });
+                        if (cRes) {
+                            title = cRes.title;
+                            photo = cRes.photo_50;
+                        }
                     }
                 }
 
@@ -1620,15 +1764,32 @@ export class FastChats {
                 if (histRes && Array.isArray(histRes.items)) {
                     chat.messages = histRes.items.reverse();
                     chat.hasMore = histRes.count > chat.messages.length;
-                    chat.unreadCount = histRes.unread || 0;
+
+                    const convObj = (histRes.conversations && histRes.conversations[0]) || conv;
+                    chat.unreadCount = Number(convObj?.unread_count ?? (histRes.unread || 0));
+
+                    const inReadCmid = Number(convObj?.in_read_cmid || 0);
+                    const inReadId = Number(convObj?.in_read || 0);
 
                     let firstUnread = null;
                     if (chat.unreadCount > 0) {
                         for (const msg of chat.messages) {
                             const isOut = msg.from_id === this.currentUserId || msg.out === 1;
-                            if (!isOut && (msg.read_state === 0 || msg.read_state === false || msg.unread === 1)) {
-                                firstUnread = msg;
-                                break;
+                            if (!isOut) {
+                                const msgCmid = Number(msg.conversation_message_id || msg.local_id || 0);
+                                const msgId = Number(msg.id || 0);
+                                let isUnread = false;
+                                if (inReadCmid > 0 && msgCmid > 0) {
+                                    isUnread = msgCmid > inReadCmid;
+                                } else if (inReadId > 0 && msgId > 0) {
+                                    isUnread = msgId > inReadId;
+                                } else {
+                                    isUnread = (msg.read_state === 0 || msg.read_state === false || msg.unread === 1);
+                                }
+                                if (isUnread) {
+                                    firstUnread = msg;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -1645,7 +1806,23 @@ export class FastChats {
 
             try {
                 const conv = window.im?.conversations?._findConv(peerId);
-                if (conv && typeof conv.canWrite === 'function') {
+                const convObj = (histRes && histRes.conversations && histRes.conversations[0]) || conv?._conversation || conv;
+
+                if (convObj && convObj.can_write !== undefined) {
+                    if (typeof convObj.can_write === 'object' && convObj.can_write !== null) {
+                        chat.canWrite = Boolean(convObj.can_write.allowed);
+                        chat.cantWriteReason = convObj.can_write.reason || 0;
+                    } else {
+                        chat.canWrite = Boolean(convObj.can_write);
+                        chat.cantWriteReason = 0;
+                    }
+                    if (!chat.canWrite) {
+                        chat.cantWriteText = this.getCantWriteText(chat);
+                    } else {
+                        chat.cantWriteReason = null;
+                        chat.cantWriteText = null;
+                    }
+                } else if (conv && typeof conv.canWrite === 'function') {
                     chat.canWrite = conv.canWrite();
                     if (!chat.canWrite && typeof conv.getCantWriteInfo === 'function') {
                         const info = conv.getCantWriteInfo();
@@ -1653,7 +1830,34 @@ export class FastChats {
                         chat.cantWriteText = info.text;
                     }
                 } else {
-                    const cachedPeer = window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached(peerId);
+                    try {
+                        const convById = await window.OVKAPI.call('messages.getConversationsById', { peer_ids: peerId });
+                        if (convById && convById.items && convById.items[0]) {
+                            const cItem = convById.items[0];
+                            const fetchedConv = cItem.conversation || cItem;
+                            if (fetchedConv && fetchedConv.can_write !== undefined) {
+                                if (typeof fetchedConv.can_write === 'object' && fetchedConv.can_write !== null) {
+                                    chat.canWrite = Boolean(fetchedConv.can_write.allowed);
+                                    chat.cantWriteReason = fetchedConv.can_write.reason || 0;
+                                } else {
+                                    chat.canWrite = Boolean(fetchedConv.can_write);
+                                    chat.cantWriteReason = 0;
+                                }
+                                if (!chat.canWrite) {
+                                    chat.cantWriteText = this.getCantWriteText(chat);
+                                } else {
+                                    chat.cantWriteReason = null;
+                                    chat.cantWriteText = null;
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        console.warn("FastChats | getConversationsById failed:", e);
+                    }
+                }
+
+                if (chat.canWrite === undefined) {
+                    const cachedPeer = window.im?.cached_profiles?._findCachedProfileById(peerId);
                     if (cachedPeer && typeof cachedPeer.can === 'function') {
                         chat.canWrite = cachedPeer.can('write');
                         if (!chat.canWrite && typeof cachedPeer.getCantWriteInfo === 'function') {
@@ -1661,19 +1865,8 @@ export class FastChats {
                             chat.cantWriteReason = info.reason;
                             chat.cantWriteText = info.text;
                         }
-                    }
-                }
-
-                if (chat.canWrite === undefined) {
-                    const convById = await window.OVKAPI.call('messages.getConversationsById', { peer_ids: peerId });
-                    if (convById && convById.items && convById.items[0]) {
-                        const cItem = convById.items[0];
-                        const conv = cItem.conversation || cItem;
-                        if (conv && conv.can_write) {
-                            chat.canWrite = !!conv.can_write.allowed;
-                            chat.cantWriteReason = conv.can_write.reason;
-                            chat.cantWriteText = this.getCantWriteText(chat);
-                        }
+                    } else {
+                        chat.canWrite = true;
                     }
                 }
             } catch (eCanWrite) {
@@ -1682,16 +1875,15 @@ export class FastChats {
 
             chat.isLoading = false;
             this.render();
-            if (save) this.saveState();
-
             if (!isMinimized) {
-                setTimeout(() => this.markChatAsRead(peerId), 300);
-                /*if (chat.firstUnreadMsgId) {
+                if (chat.firstUnreadMsgId) {
                     setTimeout(() => this.scrollToUnread(peerId), 50);
                 } else {
                     setTimeout(() => this.scrollToBottom(peerId), 50);
-                }*/
+                }
+                setTimeout(() => this.markChatAsRead(peerId), 150);
             }
+            if (save) this.saveState();
         } catch (e) {
             console.error("FastChats | openChat error:", e);
             chat.isLoading = false;
@@ -1733,13 +1925,13 @@ export class FastChats {
                     }
                 }
             }
-            chat.unreadCount = 0;
 
             if (chat.firstUnreadMsgId) {
                 setTimeout(() => this.scrollToUnread(peerId), 50);
             } else {
                 setTimeout(() => this.scrollToBottom(peerId), 50);
             }
+            setTimeout(() => this.markChatAsRead(peerId), 150);
         } else {
             if (chat.position) {
                 const newX = Math.min(window.innerWidth - minTabWidth - 10, chat.position.x + widthDiff);
@@ -2053,6 +2245,7 @@ export class FastChats {
 
         const fromId = isOut ? currentUserId : Number((msg.data && msg.data.from_id) || msg.from_id || peerId);
         const msgId = Number((msg.data && msg.data.id) || msg.id || Date.now());
+        const msgCmid = Number((msg.data && (msg.data.conversation_message_id || msg.data.local_id)) || msg.conversation_message_id || msg.local_id || 0);
         const text = (msg.data && msg.data.text) || (typeof msg.getText === 'function' ? msg.getText() : '') || msg.text || msg.body || '';
         const date = Number((msg.data && msg.data.date) || msg.date || Math.floor(Date.now() / 1000));
         const randomId = Number((msg.data && msg.data.random_id) || msg.random_id || 0);
@@ -2070,6 +2263,7 @@ export class FastChats {
 
                 if (existing) {
                     existing.id = msgId;
+                    if (msgCmid) existing.conversation_message_id = msgCmid;
                     if (randomId) existing.random_id = randomId;
                     const newAtts = (msg.data && msg.data.attachments) || msg.attachments || [];
                     if (newAtts && newAtts.length > 0 && (!existing.attachments || existing.attachments.length === 0)) {
@@ -2086,35 +2280,41 @@ export class FastChats {
 
             chat.messages.push({
                 id: msgId,
+                conversation_message_id: msgCmid,
                 from_id: fromId,
                 peer_id: peerId,
                 text: text,
                 date: date,
                 out: isOut ? 1 : 0,
+                read_state: isOut ? 1 : 0,
                 author_name: isOut ? tr('you') : chat.title,
                 author_photo: isOut ? this.currentUserAvatar : chat.photo,
                 attachments: (msg.data && msg.data.attachments) || msg.attachments || []
             });
 
-            if (!chat.isMinimized && chat.isFocused) {
-                window.OVKAPI.call('messages.markAsRead', {
-                    peer_id: peerId,
-                    start_message_id: msgId
-                }).catch(console.error);
-            } else if (!isOut) {
-                chat.unreadCount = (chat.unreadCount || 0) + 1;
+            const isWindowFocused = (typeof document === "undefined") || (!document.hidden && (typeof document.hasFocus !== "function" || document.hasFocus()));
+
+            if (!isOut) {
+                if (!chat.isMinimized && isWindowFocused) {
+                    setTimeout(() => this.markChatAsRead(peerId), 200);
+                } else {
+                    chat.unreadCount = (chat.unreadCount || 0) + 1;
+                    if (!chat.firstUnreadMsgId) {
+                        chat.firstUnreadMsgId = msgId;
+                    }
+                }
             }
 
             this.render();
             if (!chat.isMinimized) {
-                setTimeout(() => this.markChatAsRead(peerId), 200);
-                //this.scrollToBottom(peerId);
+                this.scrollToBottom(peerId);
             }
         } else if (!isOut && this.shouldBeShown()) {
             await this.openChat(peerId, true, true);
             const openedChat = this.openedChats.find(c => Number(c.peerId) === peerId);
             if (openedChat) {
-                openedChat.unreadCount = 1;
+                const conv = window.im?.conversations?._findConv(peerId);
+                openedChat.unreadCount = Math.max(1, Number(conv?.unread_count || 1));
                 this.render();
             }
         }
@@ -2128,6 +2328,46 @@ export class FastChats {
                 msg.text = text;
                 this.render();
             }
+        }
+    }
+
+    onReadIncome(peerId, localId, unreadRemaining) {
+        const chat = this.openedChats.find(c => Number(c.peerId) === Number(peerId));
+        if (chat) {
+            if (typeof unreadRemaining === 'number') {
+                chat.unreadCount = unreadRemaining;
+            } else if (chat.unreadCount > 0) {
+                chat.unreadCount = 0;
+            }
+            if (chat.unreadCount === 0) {
+                chat.firstUnreadMsgId = null;
+            }
+            if (chat.messages) {
+                chat.messages.forEach(m => {
+                    const mCmid = Number(m.conversation_message_id || m.local_id || 0);
+                    if (m.out !== 1 && mCmid > 0 && mCmid <= localId) {
+                        m.read_state = 1;
+                        if (m.data) m.data.read_state = 1;
+                    }
+                });
+            }
+            this.render();
+        }
+    }
+
+    onReadOutcome(peerId, localId) {
+        const chat = this.openedChats.find(c => Number(c.peerId) === Number(peerId));
+        if (chat) {
+            if (chat.messages) {
+                chat.messages.forEach(m => {
+                    const mCmid = Number(m.conversation_message_id || m.local_id || 0);
+                    if (m.out === 1 && mCmid > 0 && mCmid <= localId) {
+                        m.read_state = 1;
+                        if (m.data) m.data.read_state = 1;
+                    }
+                });
+            }
+            this.render();
         }
     }
 
@@ -2203,6 +2443,10 @@ export class FastChats {
     }
 
     markChatAsRead(peerId) {
+        if (typeof document !== "undefined" && (document.hidden || (typeof document.hasFocus === "function" && !document.hasFocus()))) {
+            return;
+        }
+
         const chat = this.openedChats.find(c => Number(c.peerId) === Number(peerId));
         if (!chat || chat.isMinimized) return;
 
@@ -2210,7 +2454,7 @@ export class FastChats {
         if (chat._readThrottleTimer) return;
         chat._readThrottleTimer = setTimeout(() => {
             chat._readThrottleTimer = null;
-        }, 500);
+        }, 400);
 
         const box = document.querySelector(`.fc_chat_box[data-peer-id="${peerId}"]`);
         const list = box ? box.querySelector('.fc_messages_list') : null;
@@ -2219,16 +2463,39 @@ export class FastChats {
         const listRect = list.getBoundingClientRect();
         const msgRows = list.querySelectorAll('.fc_msg_row[data-msg-id]');
         let maxVisibleId = 0;
+        let maxVisibleCmid = 0;
 
-        msgRows.forEach(row => {
-            const rect = row.getBoundingClientRect();
-            if (rect.bottom >= listRect.top && rect.top <= listRect.bottom) {
-                const id = Number(row.getAttribute('data-msg-id'));
-                if (id && !String(id).startsWith('temp_') && id > maxVisibleId) {
-                    maxVisibleId = id;
+        const isScrolledToBottom = (list.scrollHeight - list.scrollTop - list.clientHeight) < 60;
+
+        if (isScrolledToBottom && chat.messages && chat.messages.length > 0) {
+            for (let i = chat.messages.length - 1; i >= 0; i--) {
+                const m = chat.messages[i];
+                if (m && m.out !== 1 && !String(m.id).startsWith('temp_')) {
+                    maxVisibleId = Number(m.id || 0);
+                    maxVisibleCmid = Number(m.conversation_message_id || m.local_id || 0);
+                    break;
                 }
             }
-        });
+        } else {
+            msgRows.forEach(row => {
+                const rect = row.getBoundingClientRect();
+                if (rect.bottom >= listRect.top && rect.top <= listRect.bottom + 15) {
+                    const id = Number(row.getAttribute('data-msg-id'));
+                    if (id && !String(id).startsWith('temp_')) {
+                        const msgData = chat.messages ? chat.messages.find(m => Number(m.id) === id) : null;
+                        if (msgData && msgData.out !== 1) {
+                            if (id > maxVisibleId) {
+                                maxVisibleId = id;
+                            }
+                            const cmid = Number(msgData.conversation_message_id || msgData.local_id || 0);
+                            if (cmid > maxVisibleCmid) {
+                                maxVisibleCmid = cmid;
+                            }
+                        }
+                    }
+                }
+            });
+        }
 
         if (!maxVisibleId || maxVisibleId <= (chat.lastReadMarkedId || 0)) {
             return;
@@ -2242,6 +2509,32 @@ export class FastChats {
         }).then(() => {
             chat.unreadCount = 0;
             chat.firstUnreadMsgId = null;
+            if (chat.messages) {
+                chat.messages.forEach(m => {
+                    const mId = Number(m.id || 0);
+                    const mCmid = Number(m.conversation_message_id || m.local_id || 0);
+                    if (m.out !== 1 && (mId <= maxVisibleId || (maxVisibleCmid > 0 && mCmid <= maxVisibleCmid))) {
+                        m.read_state = 1;
+                        if (m.data) m.data.read_state = 1;
+                    }
+                });
+            }
+            const conv = window.im?.conversations?._findConv?.(peerId);
+            if (conv) {
+                conv.unread_count = 0;
+                if (conv._conversation) conv._conversation.unread_count = 0;
+                if (maxVisibleCmid > 0) {
+                    if (conv.peer) conv.peer.in_read_cmid = Math.max(conv.peer.in_read_cmid || 0, maxVisibleCmid);
+                    if (conv._conversation) conv._conversation.in_read_cmid = Math.max(conv._conversation.in_read_cmid || 0, maxVisibleCmid);
+                }
+                if (maxVisibleId > 0) {
+                    if (conv.peer) conv.peer.in_read = Math.max(conv.peer.in_read || 0, maxVisibleId);
+                    if (conv._conversation) conv._conversation.in_read = Math.max(conv._conversation.in_read || 0, maxVisibleId);
+                }
+            }
+            if (window.im?.events?.updateGlobalUnreadCounter) {
+                window.im.events.updateGlobalUnreadCounter();
+            }
             this.render();
         }).catch((err) => {
             imLog.error("FastChats markAsRead error:", err);
@@ -2250,7 +2543,7 @@ export class FastChats {
     }
 }
 
-// Global Esc key listener for fastchats
+// Global Esc key listener and tab visibility listener for fastchats
 if (!window._fc_esc_inited) {
     window._fc_esc_inited = true;
     document.addEventListener("keydown", (e) => {
@@ -2260,6 +2553,27 @@ if (!window._fc_esc_inited) {
             }
         }
     });
+
+    const onFcVisibilityChange = () => {
+        setTimeout(() => {
+            if (typeof document !== "undefined" && !document.hidden && (typeof document.hasFocus !== "function" || document.hasFocus())) {
+                if (window.im && window.im.fastChats && Array.isArray(window.im.fastChats.openedChats)) {
+                    window.im.fastChats.openedChats.forEach(c => {
+                        if (!c.isMinimized) {
+                            if (c._readThrottleTimer) {
+                                clearTimeout(c._readThrottleTimer);
+                                c._readThrottleTimer = null;
+                            }
+                            c.lastReadMarkedId = 0;
+                            window.im.fastChats.markChatAsRead(c.peerId);
+                        }
+                    });
+                }
+            }
+        }, 60);
+    };
+    document.addEventListener("visibilitychange", onFcVisibilityChange);
+    window.addEventListener("focus", onFcVisibilityChange);
 }
 
 export function updateFaviconBadge(count) {

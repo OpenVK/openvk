@@ -10,6 +10,11 @@ use openvk\Web\Util\Validator;
 
 final class Account extends VKAPIRequestHandler
 {
+    public function getViewerId(): int
+    {
+        return $this->getUser()->getId();
+    }
+
     public function getProfileInfo(): object
     {
         $this->requireUser();

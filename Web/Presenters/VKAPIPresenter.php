@@ -454,27 +454,32 @@ final class VKAPIPresenter extends OpenVKPresenter
         $this->setupApiLanguage($params);
 
         $legacyAliases = [
-            'getprofiles'       => ['Users', 'get'],
-            'getuserinfo'       => ['Users', 'get'],
-            'getservertime'     => ['Utils', 'getServerTime'],
-            'getcounters'       => ['Account', 'getCounters'],
-            'getgroups'         => ['Groups', 'get'],
-            'getgroupsfull'     => ['Groups', 'get'],
-            'getfriends'        => ['Friends', 'get'],
-            'getphotos'         => ['Photos', 'get'],
-            'getaudios'         => ['Audio', 'get'],
-            'getaudio'          => ['Audio', 'get'],
-            'getmessages'       => ['Messages', 'get'],
-            'getwall'           => ['Wall', 'get'],
-            'getstatus'         => ['Status', 'get'],
-            'setstatus'         => ['Status', 'set'],
-            'getusersettings'   => ['Account', 'getAppPermissions'],
-            'getapppermissions' => ['Account', 'getAppPermissions'],
-            'getvariable'       => ['Storage', 'get'],
-            'setvariable'       => ['Storage', 'set'],
-            'isgroupmember'     => ['Groups', 'isMember'],
-            'getcities'         => ['Places', 'getCityById'],
-            'getcountries'      => ['Places', 'getCountryById'],
+            'getprofiles'               => ['Users', 'get'],
+            'getuserinfo'               => ['Users', 'get'],
+            'getviewerid'               => ['Account', 'getViewerId'],
+            'getservertime'             => ['Utils', 'getServerTime'],
+            'getcounters'               => ['Account', 'getCounters'],
+            'getgroups'                 => ['Groups', 'get'],
+            'getgroupsfull'             => ['Groups', 'get'],
+            'getfriends'                => ['Friends', 'get'],
+            'getphotos'                 => ['Photos', 'get'],
+            'getaudios'                 => ['Audio', 'get'],
+            'getaudio'                  => ['Audio', 'get'],
+            'getmessages'               => ['Messages', 'get'],
+            'getwall'                   => ['Wall', 'get'],
+            'getstatus'                 => ['Status', 'get'],
+            'setstatus'                 => ['Status', 'set'],
+            'getusersettings'           => ['Account', 'getAppPermissions'],
+            'getapppermissions'         => ['Account', 'getAppPermissions'],
+            'getvariable'               => ['Storage', 'get'],
+            'setvariable'               => ['Storage', 'set'],
+            'isgroupmember'             => ['Groups', 'isMember'],
+            'getcities'                 => ['Places', 'getCityById'],
+            'getcountries'              => ['Places', 'getCountryById'],
+            'database.getcitiesbyid'    => ['Places', 'getCityById'],
+            'database.getcountriesbyid' => ['Places', 'getCountryById'],
+            'database.getcities'        => ['Places', 'getCityById'],
+            'database.getcountries'     => ['Places', 'getCountryById'],
         ];
 
         $fullMethodKey = strtolower(!empty($object) ? "$object.$method" : $method);
@@ -556,7 +561,9 @@ final class VKAPIPresenter extends OpenVKPresenter
             'photos'      => ['photo_ids', 'pids'],
             'videos'      => ['video_ids', 'vids'],
             'docs'        => ['doc_ids', 'dids'],
-            'cids'        => ['cid'],
+            'cids'        => ['city_ids', 'country_ids', 'cid', 'city_id', 'country_id'],
+            'city_ids'    => ['cids', 'cid', 'city_id'],
+            'country_ids' => ['cids', 'cid', 'country_id'],
             'message'     => ['msg', 'text'],
             'text'        => ['message', 'msg'],
             'start_from'  => ['from'],
@@ -566,6 +573,9 @@ final class VKAPIPresenter extends OpenVKPresenter
             'product_ids' => ['product_id', 'stickerpack_ids', 'pack_ids'],
         ];
 
+        $declaredParamNames = array_map(fn($p) => $p->getName(), $route->getParameters());
+        $consumedParams = [];
+
         foreach ($route->getParameters() as $parameter) {
             $paramName = $parameter->getName();
             if ($paramName == 'rss') {
@@ -573,10 +583,16 @@ final class VKAPIPresenter extends OpenVKPresenter
             }
 
             $val = $params[$paramName] ?? null;
-            if (is_null($val) && isset($paramAliases[$paramName])) {
+            if (!is_null($val)) {
+                $consumedParams[$paramName] = true;
+            } elseif (isset($paramAliases[$paramName])) {
                 foreach ($paramAliases[$paramName] as $alias) {
                     if (isset($params[$alias])) {
+                        if (in_array($alias, $declaredParamNames, true) || isset($consumedParams[$alias])) {
+                            continue;
+                        }
                         $val = $params[$alias];
+                        $consumedParams[$alias] = true;
                         break;
                     }
                 }

@@ -5,15 +5,23 @@ let isAudioUnlocked = false;
 
 function __actualPlayNotifSound(type = "notification") {
     try {
-        createjs.Sound.play(type);
+        if (typeof createjs !== "undefined" && createjs.Sound && typeof createjs.Sound.play === "function") {
+            createjs.Sound.play(type);
+        } else {
+            const audio = new Audio(`/assets/packages/static/openvk/audio/${type}.mp3`);
+            audio.play().catch(err => console.warn("Audio fallback playback error", err));
+        }
     } catch (e) {
         console.error("Notification sound playback error", e);
     }
 }
 
-u(document.body).on("click", () => {
+const unlockAudio = () => {
     isAudioUnlocked = true;
-}, { once: true });
+};
+['click', 'keydown', 'touchstart', 'pointerdown', 'focus'].forEach(evt => {
+    window.addEventListener(evt, unlockAudio, { once: true, capture: true });
+});
 
 // --- Межвкладочная синхронизация звуков и уведомлений ---
 const playedSoundIds = new Set();
@@ -47,7 +55,7 @@ const CHAT_STALE_MS = 15000;
 function updateActiveChatForTab() {
     const key = CHAT_KEY_PREFIX + TAB_ID;
     const peerId = getActiveChatPeerId();
-    if (peerId != null) {
+    if (peerId != null && isTabFocused()) {
         localStorage.setItem(key, JSON.stringify({ peer: peerId, ts: Date.now() }));
     } else {
         localStorage.removeItem(key);
@@ -213,19 +221,21 @@ async function triggerMessageNotification(conv, msg, timestamp) {
             return;
         }
 
-        const sender = msg.sender || (window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached ? window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(senderId) : null);
-        const senderName = sender?.getName ? sender.getName() : (senderId ? `id${senderId}` : "");
-        const title = peer.getName ? peer.getName() : `id${peer.id}`;
-        const ava = peer.getAvatar ? peer.getAvatar() : "";
+        const isMuted = (peer.isMuted && peer.isMuted()) || msg.data?.attachments?.muted || msg.attachments?.muted;
+        const isMentioned = Boolean(
+            msg.mention ||
+            msg.is_mentioned ||
+            msg.data?.mention ||
+            msg.data?.is_mentioned ||
+            msg.data?.attachments?.mention ||
+            msg.attachments?.mention
+        );
 
-        const notif = {
-            title: escapeHtml(title),
-            body: "<b>" + escapeHtml(senderName) + ":</b> " + (ovk_proc_strtr(typeof msg.getText === 'function' ? msg.getText(false, true) : (msg.data?.text || msg.text || ''), 95)),
-            ava: ava,
-            priority: 1,
-        };
+        if (isMuted && !isMentioned) {
+            return;
+        }
 
-        const soundId = 'msg_' + (msg.id || msg.random_id);
+        const soundId = 'msg_' + (msg.id || msg.random_id || (Date.now() + '_' + Math.random()));
         if (isChatOpenInAnyTab(peer.id)) {
             markSoundPlayed(soundId);
             if (syncChannel) {
@@ -233,25 +243,6 @@ async function triggerMessageNotification(conv, msg, timestamp) {
             }
         } else {
             playNotifSoundOnce(soundId, "newmsg");
-        }
-
-        const thisTabHasChat = getActiveChatPeerId() != null && Number(getActiveChatPeerId()) === Number(peer.id);
-        if (!thisTabHasChat && typeof NewNotification === 'function') {
-            NewNotification(
-                notif.title,
-                notif.body,
-                notif.ava,
-                () => {
-                    if (window.im?.messenger && typeof window.im.messenger.selectConversationByPeerId === 'function' && document.querySelector('#im_container')) {
-                        window.im.messenger.selectConversationByPeerId(peer.id);
-                    } else if (window.router && typeof window.router.route === 'function') {
-                        window.router.route(`/im?sel=${peer.id}`);
-                    } else {
-                        window.location.href = `/im?sel=${peer.id}`;
-                    }
-                },
-                (notif.priority || 1) * 6000
-            );
         }
     } catch (error) {
         console.error("Msg notifs | Error occurred while forming notification:", error);

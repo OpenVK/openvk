@@ -1,0 +1,22 @@
+var uid=Args.user_id;
+var profile=API.getProfiles({user_ids:uid,
+        fields: "screen_name,contacts,counters,relatives,sex,bdate,photo_max,photo_rec,photo_medium_rec,can_post,can_write_private_message,can_call,activity,online,universities,schools,can_see_all_posts,last_seen,relation,connections,interests,movies,tv,books,games,about,city,country,quotes,hometown,first_name_dat,last_name_dat,first_name_gen,last_name_gen,first_name_ins,last_name_ins,first_name_acc,last_name_acc,activities,verified,wall_default,personal,home_town,verified,blacklisted_by_me,site,music,is_favorite", relation_case:"def"})[0];
+if(profile.relatives.length+""!="" && profile.relatives.length>0){
+    profile=profile+{relatives_profiles:API.getProfiles({user_ids:profile.relatives@.id,fields:"photo_50,photo_100,sex"})};
+}
+var cities=[profile.city];
+cities=cities+profile.schools@.city+profile.universities@.city;
+profile=profile+{cities:API.database.getCitiesById({city_ids:cities})};
+var countries=[profile.country];
+countries=countries+profile.schools@.country+profile.universities@.country;
+profile=profile+{countries:API.database.getCountriesById({country_ids:countries})};
+profile=profile+{photos:API.photos.getAll({owner_id:uid,photo_sizes:1,extended:1,count:Args.photo_count})};
+profile=profile+{friend_status:API.friends.areFriends({user_ids:uid})[0].friend_status};
+profile=profile+{status:API.status.get({user_id:uid})};
+profile=profile+{gifts: API.gifts.get({user_id: uid, count: Args.gift_count})};
+if(uid==API.getViewerId()){
+    var docs=API.docs.get({count: 1}).count;
+    profile=profile+{counters: profile.counters+{docs: docs}};
+}
+API.stats.trackEvents({events: "[{\"e\": \"open_user\", \"user_ids\": ["+uid+"]}]"});
+return profile;

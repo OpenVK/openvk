@@ -71,15 +71,21 @@ class Chats
         return $chat;
     }
 
-    public function createWithOriginal($user, string $title = ""): Chat
+    public function createWithOriginal($user, string $title = ""): ?Chat
     {
         $broker = new IMBroker();
         $response = $broker->invokeMethod($user->getRealId(), "messages.createChat", [
             "title"    => $title,
-            "user_ids" => "",
+            "user_ids" => $user->getRealId(),
         ]);
-        $response = (int) $response;
-        $chat = $this->create($response, $title);
+
+        $response = json_decode($response, true);
+
+        if ($response["response"] == null) {
+            return null;
+        }
+
+        $chat = $this->create($response["response"], $title);
 
         return $chat;
     }

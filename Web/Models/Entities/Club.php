@@ -641,6 +641,9 @@ class Club extends RowModel
                 case 'wiki_page':
                     $res->wiki_page = "";
                     break;
+                case 'status':
+                    $res->status = $this->getDescription() ?? "";
+                    break;
                 case 'city':
                     $res->city = 0;
                     break;

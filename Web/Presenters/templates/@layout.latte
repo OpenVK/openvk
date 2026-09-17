@@ -162,7 +162,7 @@
                         <object n:class="$notificationsCount == 0 ? zero_counter : '' ">
                             <b>{$notificationsCount}</b>
                         </object>
-                        <object class="imc counter">
+                        <object class="imc counter zero_counter">
                             <b>0</b>
                         </object>
                     </a>
@@ -246,8 +246,8 @@
                             <a n:if="$thisUser->getLeftMenuItemStatus('messages')" href="/im" class="link my_messages">
                                 <div class="pc_v">{_my_messages}</div>
                                 <div class="mobile_v">{_mobile_messages}</div>
-                                <object type="internal/link" class="imc counter">
-                                    <b>{0}</b>
+                                <object type="internal/link" class="imc counter zero_counter">
+                                    <b>0</b>
                                 </object>
                             </a>
                             {/if}
@@ -416,7 +416,7 @@
                                 </a>
                                 {if (\OPENVK_ROOT_CONF["openvk"]["credentials"]["im"]["enable"] ?? false)}
                                 <a id="minilink-messenger" class="minilink" href="/im">
-                                    <object type="internal/link" class="imc counter">
+                                    <object type="internal/link" class="imc counter zero_counter">
                                         <div class="counter">
                                             +<b>0</b>
                                         </div>

@@ -367,7 +367,7 @@ function month_day_string(date) {
 
     if (ret.startsWith("@")) {
         let rawLocale = (window.openvk && (window.openvk.locale || window.openvk.lang))
-            || (typeof tr === "function" && !tr("__locale").startsWith("@") ? tr("__locale") : "ru-RU");
+            || tr("__locale");
         const appLocale = String(rawLocale).split(";")[0].split(".")[0].replace(/_/g, "-") || "ru-RU";
         try {
             return date.toLocaleDateString(appLocale);
@@ -411,12 +411,12 @@ function get_attachment_text(attachment) {
     }
     if (attachment.type === 'fwd' || attachment.type === 'fwd_messages' || attachment.type === 'forward' || attachment.type === 'forward_messages') {
         const count = attachment.count || (Array.isArray(attachment.items) ? attachment.items.length : 1);
-        const fwdText = typeof tr === 'function' ? tr('forwarded_messages_noun', count) : ("Пересланные сообщения (" + count + ")");
+        const fwdText = tr('forwarded_messages_noun', count);
         return `<span class="conv_prev_attachment_text">${escapeHtml(fwdText)}</span>`;
     }
     const trKey = "preview_attachment_" + attachment.type;
-    const label = typeof tr === 'function' ? tr(trKey) : trKey;
-    const f = (`<span class="conv_prev_attachment_text">(` + (label || attachment.type) + ")</span>").toLowerCase();
+    const label = tr(trKey);
+    const f = (`<span class="conv_prev_attachment_text">(` + label + ")</span>").toLowerCase();
 
     return f;
 }

@@ -161,7 +161,7 @@ function getSearchMessageSnippet(msg, query) {
             0
         );
         if (fwdCount > 0) {
-            rawText = `[${typeof tr === 'function' ? tr('forwarded_messages_noun', fwdCount) : `Пересланные сообщения (${fwdCount})`}]`;
+            rawText = `[${tr('forwarded_messages_noun', fwdCount)}]`;
         }
     }
 

@@ -59,12 +59,11 @@ final class MessengerPresenter extends OpenVKPresenter
                 $localChatId = (int) $preview['local_id'];
                 $chatEntity = (new ChatRepo())->getByChatId($localChatId);
                 if ($chatEntity) {
-                    $userEntity = $this->user->identity ?? null;
-                    $chatStruct = $chatEntity->toChatSettingsStruct($userEntity);
-                    if (!empty($chatStruct['title'])) {
-                        $chatTitle = $chatStruct['title'];
+                    $chatTitle = $chatEntity->getTitle() ?: $chatTitle;
+                    $chatPhoto = $chatEntity->getPhoto();
+                    if ($chatPhoto != null) {
+                        $photoUrl = $chatPhoto->getURLBySizeId("normal") ?: $chatPhoto->getURLBySizeId("tiny") ?: $chatPhoto->getURLBySizeId("miniscule");
                     }
-                    $photoUrl = $chatStruct['photo_200'] ?? $chatStruct['photo_100'] ?? $chatStruct['photo_50'] ?? $photoUrl;
                 }
             }
 
