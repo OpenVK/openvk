@@ -1,6 +1,51 @@
 import { html } from './render.js';
 import { formatTime } from './common.js';
 import { Attachment } from './message.js';
+
+export function formatFastChatMessageText(rawT) {
+    if (!rawT) return '';
+    let escaped = (typeof escapeHtml === 'function')
+        ? escapeHtml(rawT)
+        : String(rawT).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+    escaped = escaped.replace(/\[([^\]]+)\]\(((?:https?:\/\/|\/)[^\s\)]+)\)/g, (match, title, url) => {
+        const isExternal = /^https?:\/\//i.test(url);
+        return `<a href="${url}" ${isExternal ? 'target="_blank" rel="noopener noreferrer"' : ''} class="chat-link">${title}</a>`;
+    });
+
+    escaped = escaped.replace(/\[([a-zA-Z0-9_]+)(?:\|([^\]]*))?\]/gi, (match, target, title) => {
+        const lowerTarget = target.toLowerCase();
+        const display = (title && title.trim()) ? title.trim() : target;
+        if (lowerTarget === "all" || lowerTarget === "online") {
+            return `<b class="mention mention-mass">${display.startsWith('@') ? display : '@' + display}</b>`;
+        }
+        return `<a href="/${lowerTarget}" class="mention chat-link">${display}</a>`;
+    });
+    escaped = escaped.replace(/[@*]([a-zA-Z0-9_]+)\s*\(([^)]+)\)/g, (match, target, title) => {
+        const lowerTarget = target.toLowerCase();
+        const display = (title && title.trim()) ? title.trim() : target;
+        if (lowerTarget === "all" || lowerTarget === "online") {
+            return `<b class="mention mention-mass">${display.startsWith('@') ? display : '@' + display}</b>`;
+        }
+        return `<a href="/${lowerTarget}" class="mention chat-link">${display}</a>`;
+    });
+    escaped = escaped.replace(/(^|[\s\(\[\{<]|&gt;)([@*])([a-zA-Z0-9_]+)\b/gi, (match, prefix, symbol, target) => {
+        const lowerTarget = target.toLowerCase();
+        if (lowerTarget === "all" || lowerTarget === "online") {
+            return `${prefix}<b class="mention mention-mass">@${lowerTarget}</b>`;
+        }
+        return `${prefix}<a href="/${lowerTarget}" class="mention chat-link">@${lowerTarget}</a>`;
+    });
+
+    // Format plain URLs
+    escaped = escaped.replace(/(^|[\s\(\[\{<]|&gt;)(https?:\/\/[^\s<>"'\]\)]+)/g, (match, prefix, url) => {
+        return `${prefix}<a href="${url}" target="_blank" rel="noopener noreferrer" class="chat-link">${url}</a>`;
+    });
+
+    if (typeof encode_emojis === 'function') escaped = encode_emojis(escaped);
+    if (typeof nl2br === 'function') escaped = nl2br(escaped);
+    return escaped;
+}
 /**
  * Universal drag handler for floating fastchat windows
  */
@@ -318,22 +363,9 @@ export const FastChatBox = ({
                                     <span class="fc_msg_time">${timeStr}</span>
                                 </div>
                                 <div class="fc_msg_text" dangerouslySetInnerHTML=${{
-                                    __html: (typeof msg.getText === 'function') ? msg.getText(false) : (() => {
-                                        let rawT = msg.text || msg.body || '';
-                                        if (!rawT) return '';
-                                        let escaped = (typeof escapeHtml === 'function') ? escapeHtml(rawT) : String(rawT).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-                                        escaped = escaped.replace(/\[([a-zA-Z0-9_]+)(?:\|([^\]]*))?\]/gi, (match, target, title) => {
-                                            const lowerTarget = target.toLowerCase();
-                                            const display = (title && title.trim()) ? title.trim() : target;
-                                            if (lowerTarget === "all" || lowerTarget === "online") {
-                                                return `<b class="mention mention-mass">${display.startsWith('@') ? display : '@' + display}</b>`;
-                                            }
-                                            return `<a href="/${lowerTarget}" class="mention chat-link">${display}</a>`;
-                                        });
-                                        if (typeof encode_emojis === 'function') escaped = encode_emojis(escaped);
-                                        if (typeof nl2br === 'function') escaped = nl2br(escaped);
-                                        return escaped;
-                                    })()
+                                    __html: (typeof msg.getText === 'function')
+                                        ? msg.getText(false)
+                                        : formatFastChatMessageText(msg.text || msg.body || (msg.data && (msg.data.text || msg.data.body)) || '')
                                 }} />
                                 ${msg.attachments && Array.isArray(msg.attachments) && msg.attachments.length > 0 && html`
                                     <div class="fc_attachments_wrap">

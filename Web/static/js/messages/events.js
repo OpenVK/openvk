@@ -661,19 +661,19 @@ export class EventHandler {
                     this.im.conversations.update();
                 }
 
-                const isWindowFocused = (typeof document === 'undefined' || !document.hidden) && (typeof document.hasFocus !== 'function' || document.hasFocus());
+                const isTabVisible = this.im?.state?.is_tab_visible ?? (typeof document === 'undefined' || !document.hidden);
 
                 if (this.im.state.is_active && isCurrentChat) {
                     const wasAtEnd = this.im.messenger.view ? this.im.messenger.view.isAtEnd() : false;
                     this.im.messenger.update();
-                    if (wasAtEnd && isWindowFocused && this.im.messenger.view) {
+                    if (wasAtEnd && isTabVisible && this.im.messenger.view) {
                         this.im.messenger.view._scrollToEnd();
                     }
                 }
 
                 if (isActiveChatOpen && !isSelf) {
                     const wasAtEnd = this.im.messenger.view ? this.im.messenger.view.isAtEnd() : false;
-                    if (wasAtEnd && isWindowFocused) {
+                    if (wasAtEnd && isTabVisible) {
                         const msgCmid = Number((_msg.data && (_msg.data.conversation_message_id || _msg.data.local_id)) || _msg.conversation_message_id || 0);
                         _crs.peer.read(_msg.id, msgCmid);
                     }

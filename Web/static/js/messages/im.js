@@ -663,6 +663,10 @@ class IMState {
         this._is_mobile = this._mediaQuery.matches;
         this._initMobileListener();
 
+        this._is_hidden = typeof document !== 'undefined' ? document.hidden : false;
+        this._listeners = new Map();
+        this._initVisibilityListener();
+
         if (this.group_id == null && window.openvk && window.openvk.current_id > 0) {
             this._initStorageSync();
         }
@@ -724,6 +728,112 @@ class IMState {
         }
 
         document.body.classList.toggle('im_mobile', this._is_mobile);
+    }
+
+    on(event, callback) {
+        if (!this._listeners.has(event)) {
+            this._listeners.set(event, new Set());
+        }
+        this._listeners.get(event).add(callback);
+        return () => this.off(event, callback);
+    }
+
+    off(event, callback) {
+        if (this._listeners.has(event)) {
+            this._listeners.get(event).delete(callback);
+        }
+    }
+
+    emit(event, ...args) {
+        if (this._listeners.has(event)) {
+            this._listeners.get(event).forEach(cb => {
+                try {
+                    cb(...args);
+                } catch (e) {
+                    console.error(`[IMState] Error in listener for event "${event}":`, e);
+                }
+            });
+        }
+    }
+
+    get is_hidden() {
+        return typeof document !== 'undefined' ? document.hidden : (this._is_hidden ?? false);
+    }
+
+    get is_visible() {
+        return !this.is_hidden;
+    }
+
+    get is_tab_hidden() {
+        return this.is_hidden;
+    }
+
+    get is_tab_visible() {
+        return this.is_visible;
+    }
+
+    _initVisibilityListener() {
+        if (typeof document === 'undefined') return;
+
+        const handleVisibility = () => {
+            const wasHidden = this._is_hidden;
+            this._is_hidden = document.hidden;
+
+            imLog(`[IM] Tab visibility changed: is_hidden = ${this._is_hidden}, is_visible = ${!this._is_hidden}`);
+
+            this.emit('visibility_change', {
+                is_hidden: this._is_hidden,
+                is_visible: !this._is_hidden,
+                was_hidden: wasHidden,
+            });
+
+            try {
+                window.dispatchEvent(new CustomEvent('im:visibility_change', {
+                    detail: {
+                        is_hidden: this._is_hidden,
+                        is_visible: !this._is_hidden,
+                        was_hidden: wasHidden,
+                    }
+                }));
+            } catch (e) { }
+
+            if (!this._is_hidden) {
+                this._onTabBecameVisible();
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibility);
+    }
+
+    _onTabBecameVisible() {
+        if (this.link.fastChats && Array.isArray(this.link.fastChats.openedChats)) {
+            this.link.fastChats.openedChats.forEach(c => {
+                if (!c.isMinimized) {
+                    if (c._readThrottleTimer) {
+                        clearTimeout(c._readThrottleTimer);
+                        c._readThrottleTimer = null;
+                    }
+                    c.lastReadMarkedId = 0;
+                    this.link.fastChats.markChatAsRead(c.peerId);
+                }
+            });
+        }
+
+        if (this.link.messenger?.view) {
+            const view = this.link.messenger.view;
+            const currentConvo = typeof view.getCurrentChat === 'function' ? view.getCurrentChat() : null;
+            if (currentConvo) {
+                if (typeof view.isAtEnd === 'function' && view.isAtEnd(150)) {
+                    view._scrollToEnd(false);
+                }
+                if (typeof view._setupReadObserver === 'function') {
+                    view._setupReadObserver();
+                }
+                if (typeof view._checkVisibleUnreadImmediate === 'function') {
+                    view._checkVisibleUnreadImmediate();
+                }
+            }
+        }
     }
 
     getId() {
@@ -2292,10 +2402,10 @@ export class FastChats {
                 attachments: (msg.data && msg.data.attachments) || msg.attachments || []
             });
 
-            const isWindowFocused = (typeof document === "undefined") || (!document.hidden && (typeof document.hasFocus !== "function" || document.hasFocus()));
+            const isTabVisible = (typeof document === "undefined") || !document.hidden;
 
             if (!isOut) {
-                if (!chat.isMinimized && isWindowFocused) {
+                if (!chat.isMinimized && isTabVisible) {
                     setTimeout(() => this.markChatAsRead(peerId), 200);
                 } else {
                     chat.unreadCount = (chat.unreadCount || 0) + 1;
@@ -2309,7 +2419,7 @@ export class FastChats {
             if (!chat.isMinimized) {
                 this.scrollToBottom(peerId);
             }
-        } else if (!isOut && this.shouldBeShown()) {
+        } else if (!isOut && this.shouldBeShown() && Number(peerId) < 2000000000) {
             await this.openChat(peerId, true, true);
             const openedChat = this.openedChats.find(c => Number(c.peerId) === peerId);
             if (openedChat) {
@@ -2443,7 +2553,7 @@ export class FastChats {
     }
 
     markChatAsRead(peerId) {
-        if (typeof document !== "undefined" && (document.hidden || (typeof document.hasFocus === "function" && !document.hasFocus()))) {
+        if (typeof document !== "undefined" && document.hidden) {
             return;
         }
 
@@ -2556,7 +2666,7 @@ if (!window._fc_esc_inited) {
 
     const onFcVisibilityChange = () => {
         setTimeout(() => {
-            if (typeof document !== "undefined" && !document.hidden && (typeof document.hasFocus !== "function" || document.hasFocus())) {
+            if (typeof document !== "undefined" && !document.hidden) {
                 if (window.im && window.im.fastChats && Array.isArray(window.im.fastChats.openedChats)) {
                     window.im.fastChats.openedChats.forEach(c => {
                         if (!c.isMinimized) {

@@ -14,10 +14,14 @@ window.setBaseTitle = function (title) {
     updateTitle();
 };
 
-window.addEventListener("focus", () => {
-    counter = 0;
-    updateTitle();
-});
+const resetNotificationCounter = () => {
+    if (typeof document === "undefined" || !document.hidden) {
+        counter = 0;
+        updateTitle();
+    }
+};
+document.addEventListener("visibilitychange", resetNotificationCounter);
+window.addEventListener("focus", resetNotificationCounter);
 
 function NewNotification(title, body, avatar = null, callback = () => { }, time = 5000, count = true) {
     if (avatar != null) {
@@ -103,13 +107,9 @@ function NewNotification(title, body, avatar = null, callback = () => { }, time 
 
     function cleanupListeners() {
         document.removeEventListener("visibilitychange", onVisibilityChange);
-        window.removeEventListener("focus", onVisibilityChange);
-        window.removeEventListener("blur", onVisibilityChange);
     }
 
     document.addEventListener("visibilitychange", onVisibilityChange);
-    window.addEventListener("focus", onVisibilityChange);
-    window.addEventListener("blur", onVisibilityChange);
 
     notification.on('mouseenter', function () {
         isHovered = true;

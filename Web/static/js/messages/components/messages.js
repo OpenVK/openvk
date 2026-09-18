@@ -1187,7 +1187,7 @@ export class ChatGeneralForm {
     }
 
     async read(startMessageId = 0, startCmid = 0) {
-        if (typeof document !== "undefined" && (document.hidden || (typeof document.hasFocus === "function" && !document.hasFocus()))) {
+        if (typeof document !== "undefined" && document.hidden) {
             return;
         }
 
@@ -1593,7 +1593,7 @@ export class ChatMessage {
         let cleanBaseText = baseText;
         if (conversation) {
             cleanBaseText = baseText
-                .replace(/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, '$1')
+                .replace(/\[([^\]]+)\]\(((?:https?:\/\/|\/)[^\s\)]+)\)/g, '$1')
                 .replace(/\[([a-zA-Z0-9_]+)(?:\|([^\]]*))?\]/g, (match, target, title) => {
                     if (title !== undefined && title.trim().length > 0) {
                         return title.trim();
@@ -1714,8 +1714,15 @@ export class ChatMessage {
             return encode_emojis(formattedTxt);
         }
 
-        // Format VK mentions: [id123|Name], [club123|Name], [all|Всем], [online|Онлайн], [slug|Name], @slug (Name), *slug (Name)
         let formattedTxt = txt;
+
+        // Format markdown links [title](url) first so [word](url) isn't eaten by mentions
+        formattedTxt = formattedTxt.replace(/\[([^\]]+)\]\(((?:https?:\/\/|\/)[^\s\)]+)\)/g, (match, title, url) => {
+            const isExternal = /^https?:\/\//i.test(url);
+            return `<a href="${url}" ${isExternal ? 'target="_blank" rel="noopener noreferrer"' : ''} class="chat-link">${title}</a>`;
+        });
+
+        // Format VK mentions: [id123|Name], [club123|Name], [all|Всем], [online|Онлайн], [slug|Name], @slug (Name), *slug (Name)
         formattedTxt = formattedTxt.replace(/\[([a-zA-Z0-9_]+)(?:\|([^\]]*))?\]/gi, (match, target, title) => {
             const lowerTarget = target.toLowerCase();
             const display = (title && title.trim()) ? title.trim() : target;
@@ -1740,10 +1747,7 @@ export class ChatMessage {
             return `${prefix}<a href="/${lowerTarget}" class="mention chat-link">@${lowerTarget}</a>`;
         });
 
-        // Format markdown links [title](url) and plain URLs
-        formattedTxt = formattedTxt.replace(/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, (match, title, url) => {
-            return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="chat-link">${title}</a>`;
-        });
+        // Format plain URLs
         formattedTxt = formattedTxt.replace(/(^|[\s\(\[\{<]|&gt;)(https?:\/\/[^\s<>"'\]\)]+)/g, (match, prefix, url) => {
             return `${prefix}<a href="${url}" target="_blank" rel="noopener noreferrer" class="chat-link">${url}</a>`;
         });

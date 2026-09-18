@@ -2492,7 +2492,8 @@ export class MessengerPage extends IMPage {
             this._hasBoundVisibility = true;
             const onVisibilityChange = () => {
                 setTimeout(() => {
-                    if (typeof document !== "undefined" && !document.hidden && (typeof document.hasFocus !== "function" || document.hasFocus())) {
+                    const isVisible = window.im?.state?.is_tab_visible ?? (!document.hidden);
+                    if (isVisible) {
                         const currentConvo = this.getCurrentChat();
                         if (currentConvo) {
                             if (this.isAtEnd && this.isAtEnd(150)) {
@@ -2504,6 +2505,14 @@ export class MessengerPage extends IMPage {
                     }
                 }, 50);
             };
+            if (window.im?.state?.on) {
+                window.im.state.on('visibility_change', ({ is_visible }) => {
+                    if (is_visible) onVisibilityChange();
+                });
+            }
+            window.addEventListener("im:visibility_change", (e) => {
+                if (e.detail?.is_visible) onVisibilityChange();
+            });
             document.addEventListener("visibilitychange", onVisibilityChange);
             window.addEventListener("focus", onVisibilityChange);
         }
@@ -2920,7 +2929,7 @@ export class MessengerPage extends IMPage {
         if (!unreadElements || unreadElements.length === 0) return;
 
         this._readObserver = new IntersectionObserver((entries) => {
-            if (typeof document !== "undefined" && (document.hidden || (typeof document.hasFocus === "function" && !document.hasFocus()))) return;
+            if (window.im?.state?.is_tab_hidden ?? (typeof document !== "undefined" && document.hidden)) return;
 
             let maxVisibleUnreadId = 0;
             let maxVisibleUnreadCmid = 0;
@@ -2959,7 +2968,7 @@ export class MessengerPage extends IMPage {
     _checkVisibleUnreadImmediate() {
         if (!window.im?.state?.is_active) return;
         const container = this.getMessagesContainer();
-        if (!container || container.offsetParent === null || (typeof document !== "undefined" && (document.hidden || (typeof document.hasFocus === "function" && !document.hasFocus())))) return;
+        if (!container || container.offsetParent === null || (window.im?.state?.is_tab_hidden ?? (typeof document !== "undefined" && document.hidden))) return;
 
         const currentConv = this.getCurrentChat();
         const currentInRead = Number(currentConv?.peer?.in_read || currentConv?._conversation?.in_read || 0);
@@ -3017,7 +3026,7 @@ export class MessengerPage extends IMPage {
             this._pendingReadId = 0;
             this._pendingReadCmid = 0;
 
-            if (typeof document !== "undefined" && (document.hidden || (typeof document.hasFocus === "function" && !document.hasFocus()))) return;
+            if (window.im?.state?.is_tab_hidden ?? (typeof document !== "undefined" && document.hidden)) return;
 
             this._lastMarkedReadId = Math.max(this._lastMarkedReadId || 0, idToRead);
             if (cmidToRead > 0) {
