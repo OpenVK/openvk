@@ -160,6 +160,8 @@ window.router = new class {
             await window.player._handlePageTransition()
         }
 
+        if (u("html").hasClass("app_fullscreen")) { u("html").removeClass("app_fullscreen") }
+
         this.applyTweaks()
 
         /*window.document.dispatchEvent(new Event("DOMContentLoaded", {
