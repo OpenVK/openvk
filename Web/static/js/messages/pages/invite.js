@@ -38,7 +38,7 @@ export const ChatInvitePreviewView = ({
 
                 <div class="chat-invite-avatar-box">
                     <img
-                        src="/assets/packages/static/openvk/img/camera_200.png"
+                        src="/assets/packages/static/openvk/img/im/chat_default_200.png"
                         alt=""
                         class="chat-invite-avatar chat-invite-avatar-expired"
                     />
@@ -78,7 +78,7 @@ export const ChatInvitePreviewView = ({
                     src="${photo}"
                     alt=""
                     class="chat-invite-avatar"
-                    onError=${(e) => { e.target.onerror = null; e.target.src = '/assets/packages/static/openvk/img/camera_200.png'; }}
+                    onError=${(e) => { e.target.onerror = null; e.target.src = '/assets/packages/static/openvk/img/im/chat_default_200.png'; }}
                 />
             </div>
 
@@ -204,7 +204,7 @@ export class ChatInvitePreviewPage extends IMPage {
         const joinCode = this.options.joinCode || this.options.code || (new URL(location.href)).searchParams.get("join") || (new URL(location.href)).searchParams.get("invite");
 
         const title = preview?.title || tr("chat");
-        const photo = preview?.photo?.photo_200 || preview?.photo?.photo_100 || preview?.photo?.photo_50 || "/assets/packages/static/openvk/img/camera_200.png";
+        const photo = preview?.photo?.photo_200 || preview?.photo?.photo_100 || preview?.photo?.photo_50 || "/assets/packages/static/openvk/img/im/chat_default_200.png";
         const membersCount = Number(preview?.members_count || 0);
         const isMember = Boolean(preview?.is_member);
         const localChatId = Number(preview?.local_id || 0);

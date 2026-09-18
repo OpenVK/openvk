@@ -62,7 +62,13 @@ export function formatDate(date, options = {}) {
 
 export const PeerAvatar = ({ peer, className = "", loading = "lazy", saved_messages_ava = true, orig_ava = true, size = "mid", onClick = null }) => {
     if (!peer) {
-        return html`<img class="${className}" src="/assets/packages/static/openvk/img/im/chat_meaningless.jpg" loading="${loading}" onClick=${onClick} />`;
+        const fallback = (typeof ChatGeneralForm?.getChatDefaultAvatar === 'function')
+            ? ChatGeneralForm.getChatDefaultAvatar(size)
+            : (size === "min" ? "/assets/packages/static/openvk/img/im/chat_default_50.png" :
+               size === "big" ? "/assets/packages/static/openvk/img/im/chat_default_200.png" :
+               size === "max" ? "/assets/packages/static/openvk/img/im/chat_default_400.png" :
+               "/assets/packages/static/openvk/img/im/chat_default_100.png");
+        return html`<img class="${className}" src="${fallback}" loading="${loading}" onClick=${onClick} />`;
     }
 
     if (peer.id === window.im.state.getId()) {
@@ -83,7 +89,13 @@ export const PeerAvatar = ({ peer, className = "", loading = "lazy", saved_messa
         const cell3 = avatars[3] || null;
 
         if (avatars.length <= 1 || (!cell0 && !cell1 && !cell2 && !cell3)) {
-            return html`<img class="${className}" src="/assets/packages/static/openvk/img/im/chat_meaningless.jpg" loading="${loading}" onClick=${onClick} />`;
+            const fallback = (typeof ChatGeneralForm?.getChatDefaultAvatar === 'function')
+                ? ChatGeneralForm.getChatDefaultAvatar(size)
+                : (size === "min" ? "/assets/packages/static/openvk/img/im/chat_default_50.png" :
+                   size === "big" ? "/assets/packages/static/openvk/img/im/chat_default_200.png" :
+                   size === "max" ? "/assets/packages/static/openvk/img/im/chat_default_400.png" :
+                   "/assets/packages/static/openvk/img/im/chat_default_100.png");
+            return html`<img class="${className}" src="${fallback}" loading="${loading}" onClick=${onClick} />`;
         }
 
         if (avatars.length == 2) {

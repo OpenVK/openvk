@@ -189,7 +189,30 @@ export class ChatGeneralForm {
     static MESSAGES_PER_PAGE = 20;
     static BASE_FIELDS = 'photo_50,photo_100,photo_200,photo_max,last_seen,online,photo_id,status,sex,can_write_private_message,can_invite,followers_count,is_messages_blocked,screen_name,domain';
     static SAVED_MESSAGES_AVATAR = "/assets/packages/static/openvk/img/im/saved_messages.png";
-    static CHAT_NO_AVATAR = "/assets/packages/static/openvk/img/im/chat_meaningless.jpg";
+    static CHAT_NO_AVATAR_50 = "/assets/packages/static/openvk/img/im/chat_default_50.png";
+    static CHAT_NO_AVATAR_100 = "/assets/packages/static/openvk/img/im/chat_default_100.png";
+    static CHAT_NO_AVATAR_200 = "/assets/packages/static/openvk/img/im/chat_default_200.png";
+    static CHAT_NO_AVATAR_400 = "/assets/packages/static/openvk/img/im/chat_default_400.png";
+    static CHAT_NO_AVATAR = "/assets/packages/static/openvk/img/im/chat_default_100.png";
+
+    static getChatDefaultAvatar(size = "mid") {
+        switch (size) {
+            case "min":
+            case "50":
+                return ChatGeneralForm.CHAT_NO_AVATAR_50;
+            case "mid":
+            case "100":
+                return ChatGeneralForm.CHAT_NO_AVATAR_100;
+            case "big":
+            case "200":
+                return ChatGeneralForm.CHAT_NO_AVATAR_200;
+            case "max":
+            case "400":
+                return ChatGeneralForm.CHAT_NO_AVATAR_400;
+            default:
+                return ChatGeneralForm.CHAT_NO_AVATAR_100;
+        }
+    }
 
     constructor(item) {
         this.data = item || {};
@@ -456,7 +479,7 @@ export class ChatGeneralForm {
         if (this.data.chat_settings?.photo && typeof this.data.chat_settings.photo === 'object' && (this.data.chat_settings.photo.photo_50 || this.data.chat_settings.photo.photo_100 || this.data.chat_settings.photo.photo_200)) return true;
         const p = this.getAvatar();
         if (!p) return false;
-        if (typeof p === 'string' && (p.includes('chat_meaningless') || p.includes('camera_'))) return false;
+        if (typeof p === 'string' && (p.includes('chat_meaningless') || p.includes('chat_default') || p.includes('camera_'))) return false;
         return true;
     }
 
@@ -505,7 +528,7 @@ export class ChatGeneralForm {
         }
 
         if (this.supposed_type === 'chat' && this.isILeft()) {
-            return ChatGeneralForm.CHAT_NO_AVATAR;
+            return ChatGeneralForm.getChatDefaultAvatar(size);
         }
 
         const pObj = (this.data.photo && typeof this.data.photo === 'object') ? this.data.photo :
@@ -528,7 +551,7 @@ export class ChatGeneralForm {
         }
 
         if (!ava && this.supposed_type == "chat") {
-            return ChatGeneralForm.CHAT_NO_AVATAR;
+            return ChatGeneralForm.getChatDefaultAvatar(size);
         }
 
         return ava ?? '/assets/packages/static/openvk/img/camera_50.png';
@@ -543,7 +566,7 @@ export class ChatGeneralForm {
         if (this.data.chat_settings?.photo && typeof this.data.chat_settings.photo === 'object' && (this.data.chat_settings.photo.photo_200 || this.data.chat_settings.photo.photo_100 || this.data.chat_settings.photo.photo_50)) {
             return true;
         }
-        return this.data.photo_200 != null && this.data.photo_200 !== "" && !this.data.photo_200.includes("/assets/packages/static/openvk/img/");
+        return this.data.photo_200 != null && this.data.photo_200 !== "" && !this.data.photo_200.includes("/assets/packages/static/openvk/img/") && !this.data.photo_200.includes("chat_default") && !this.data.photo_200.includes("chat_meaningless");
     }
     getName(count_self = false, short = false) {
         if (count_self && this.isSavedMessages()) {

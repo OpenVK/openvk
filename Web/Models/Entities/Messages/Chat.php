@@ -209,11 +209,22 @@ class Chat extends RowModel
 
     public function getPhotoURL(string $size = "miniscule"): string | null
     {
-        $serverUrl = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
-
         $photo = $this->getPhoto();
         if (is_null($photo)) {
-            return "/assets/packages/static/openvk/img/im/chat_meaningless.jpg";
+            $map = [
+                "miniscule" => "50",
+                "50"        => "50",
+                "tiny"      => "100",
+                "100"       => "100",
+                "normal"    => "200",
+                "200"       => "200",
+                "larger"    => "400",
+                "original"  => "400",
+                "max"       => "400",
+                "400"       => "400",
+            ];
+            $suffix = $map[$size] ?? "50";
+            return "/assets/packages/static/openvk/img/im/chat_default_{$suffix}.png";
         }
 
         return $photo->getURLBySizeId($size);
