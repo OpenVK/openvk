@@ -452,6 +452,8 @@ export class ChatGeneralForm {
         if (this.supposed_type !== 'chat') return true;
         if (this.isILeft()) return false;
         if (this.data.photo_id) return true;
+        if (this.data.photo && typeof this.data.photo === 'object' && (this.data.photo.photo_50 || this.data.photo.photo_100 || this.data.photo.photo_200)) return true;
+        if (this.data.chat_settings?.photo && typeof this.data.chat_settings.photo === 'object' && (this.data.chat_settings.photo.photo_50 || this.data.chat_settings.photo.photo_100 || this.data.chat_settings.photo.photo_200)) return true;
         const p = this.getAvatar();
         if (!p) return false;
         if (typeof p === 'string' && (p.includes('chat_meaningless') || p.includes('camera_'))) return false;
@@ -459,20 +461,16 @@ export class ChatGeneralForm {
     }
 
     get members_ids() {
-        if (this.data.members && Array.isArray(this.data.members)) {
-            return this.data.members;
-        }
-        if (this.data.users && Array.isArray(this.data.users)) {
-            return this.data.users.map(u => typeof u === 'object' ? (u.id || u.member_id) : u);
-        }
-        if (this.data.chat_settings?.members && Array.isArray(this.data.chat_settings.members)) {
-            return this.data.chat_settings.members;
-        }
-        if (this.data.chat_settings?.active_ids && Array.isArray(this.data.chat_settings.active_ids)) {
-            return this.data.chat_settings.active_ids;
-        }
-        if (this._members && this._members.items && Array.isArray(this._members.items)) {
-            return this._members.items.map(m => m.member_id || m.id || m);
+        const raw = (this.data.active_ids && Array.isArray(this.data.active_ids) && this.data.active_ids.length > 0) ? this.data.active_ids :
+            (this.data.chat_settings?.active_ids && Array.isArray(this.data.chat_settings.active_ids) && this.data.chat_settings.active_ids.length > 0) ? this.data.chat_settings.active_ids :
+            (this.data.members && Array.isArray(this.data.members) && this.data.members.length > 0) ? this.data.members :
+            (this.data.chat_settings?.members && Array.isArray(this.data.chat_settings.members) && this.data.chat_settings.members.length > 0) ? this.data.chat_settings.members :
+            (this.data.users && Array.isArray(this.data.users) && this.data.users.length > 0) ? this.data.users :
+            (this.data.chat_settings?.users && Array.isArray(this.data.chat_settings.users) && this.data.chat_settings.users.length > 0) ? this.data.chat_settings.users :
+            (this._members && this._members.items && Array.isArray(this._members.items) && this._members.items.length > 0) ? this._members.items : [];
+
+        if (Array.isArray(raw)) {
+            return raw.map(u => typeof u === 'object' && u !== null ? (u.member_id || u.id || u.user_id) : u).filter(Boolean);
         }
         return [];
     }
@@ -489,8 +487,10 @@ export class ChatGeneralForm {
         const avatars = [];
         for (const mId of memberIds) {
             if (avatars.length >= 4) break;
-            const prof = window.im?.cached_profiles?._findCachedProfileById(mId);
-            if (prof && prof.getAvatar()) {
+            const prof = window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached
+                ? window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(mId)
+                : window.im?.cached_profiles?._findCachedProfileById(mId);
+            if (prof && typeof prof.getAvatar === 'function' && prof.getAvatar()) {
                 avatars.push(prof.getAvatar());
             } else {
                 avatars.push('/assets/packages/static/openvk/img/camera_100.png');
@@ -508,19 +508,22 @@ export class ChatGeneralForm {
             return ChatGeneralForm.CHAT_NO_AVATAR;
         }
 
+        const pObj = (this.data.photo && typeof this.data.photo === 'object') ? this.data.photo :
+                     (this.data.chat_settings?.photo && typeof this.data.chat_settings.photo === 'object') ? this.data.chat_settings.photo : null;
+
         let ava = null;
         switch (size) {
             case "min":
-                ava = this.data.photo_50 || this.data.photo_100;
+                ava = pObj?.photo_50 || this.data.photo_50 || pObj?.photo_100 || this.data.photo_100;
                 break;
             case "mid":
-                ava = this.data.photo_100 || this.data.photo_50;
+                ava = pObj?.photo_100 || this.data.photo_100 || pObj?.photo_50 || this.data.photo_50;
                 break;
             case "big":
-                ava = this.data.photo_200 || this.data.photo_100;
+                ava = pObj?.photo_200 || this.data.photo_200 || pObj?.photo_100 || this.data.photo_100;
                 break;
             case "max":
-                ava = this.data.photo_max || this.data.photo_200;
+                ava = this.data.photo_max || pObj?.photo_200 || this.data.photo_200;
                 break;
         }
 
@@ -533,6 +536,12 @@ export class ChatGeneralForm {
     hasAvatar() {
         if (this.supposed_type === 'chat' && this.isILeft()) {
             return false;
+        }
+        if (this.data.photo && typeof this.data.photo === 'object' && (this.data.photo.photo_200 || this.data.photo.photo_100 || this.data.photo.photo_50)) {
+            return true;
+        }
+        if (this.data.chat_settings?.photo && typeof this.data.chat_settings.photo === 'object' && (this.data.chat_settings.photo.photo_200 || this.data.chat_settings.photo.photo_100 || this.data.chat_settings.photo.photo_50)) {
+            return true;
         }
         return this.data.photo_200 != null && this.data.photo_200 !== "" && !this.data.photo_200.includes("/assets/packages/static/openvk/img/");
     }

@@ -641,28 +641,142 @@ final class Messages extends VKAPIRequestHandler
      */
     private function hydrateExtendedData(array &$payload, string $fields = "photo_200,online", ?array $loadedChats = []): void
     {
-        $loadedChats ??= $loadedChats;
-        if (!empty($payload['profiles'])) {
-            $userIDs = array_map(fn($u) => is_array($u) ? ($u['id'] ?? 0) : (int) $u, $payload['profiles']);
-            $userIDs = array_unique(array_filter($userIDs));
+        $loadedChats ??= [];
+        $userIDs = [];
+        $groupIDs = [];
 
-            $payload['profiles'] = !empty($userIDs)
-                ? (new APIUsers())->get(implode(',', $userIDs), $fields)
-                : [];
-        } else {
-            $payload['profiles'] = [];
+        if (!empty($payload['profiles'])) {
+            foreach ($payload['profiles'] as $u) {
+                $uid = is_array($u) ? ($u['id'] ?? 0) : (int) $u;
+                if ($uid > 0) {
+                    $userIDs[] = $uid;
+                } elseif ($uid < 0) {
+                    $groupIDs[] = abs($uid);
+                }
+            }
         }
 
         if (!empty($payload['groups'])) {
-            $groupIDs = array_map(fn($g) => abs(is_array($g) ? ($g['id'] ?? 0) : (int) $g), $payload['groups']);
-            $groupIDs = array_unique(array_filter($groupIDs));
-
-            $payload['groups'] = !empty($groupIDs)
-                ? (new APIClubs())->getById(implode(',', $groupIDs), "", $fields)
-                : [];
-        } else {
-            $payload['groups'] = [];
+            foreach ($payload['groups'] as $g) {
+                $gid = abs(is_array($g) ? ($g['id'] ?? 0) : (int) $g);
+                if ($gid > 0) {
+                    $groupIDs[] = $gid;
+                }
+            }
         }
+
+        if (!empty($payload['items']) && is_array($payload['items'])) {
+            foreach ($payload['items'] as $item) {
+                $conv = $item['conversation'] ?? $item;
+                $peer = $conv['peer'] ?? null;
+                if ($peer) {
+                    $pid = (int) ($peer['id'] ?? 0);
+                    if ($pid > 0 && ($peer['type'] ?? '') === 'user') {
+                        $userIDs[] = $pid;
+                    } elseif ($pid < 0) {
+                        $groupIDs[] = abs($pid);
+                    }
+                }
+
+                $chatSettings = $conv['chat_settings'] ?? null;
+                if ($chatSettings && is_array($chatSettings)) {
+                    $membersList = array_merge(
+                        (array) ($chatSettings['active_ids'] ?? []),
+                        (array) ($chatSettings['members'] ?? []),
+                        (array) ($chatSettings['users'] ?? [])
+                    );
+                    foreach (array_slice($membersList, 0, 10) as $mid) {
+                        $mid = (int) $mid;
+                        if ($mid > 0) {
+                            $userIDs[] = $mid;
+                        } elseif ($mid < 0) {
+                            $groupIDs[] = abs($mid);
+                        }
+                    }
+                    if (!empty($chatSettings['admin_id'])) {
+                        $aid = (int) $chatSettings['admin_id'];
+                        if ($aid > 0) $userIDs[] = $aid;
+                    }
+                    if (!empty($chatSettings['owner_id'])) {
+                        $oid = (int) $chatSettings['owner_id'];
+                        if ($oid > 0) $userIDs[] = $oid;
+                    }
+                }
+
+                $lastMsg = $item['last_message'] ?? null;
+                if ($lastMsg && is_array($lastMsg)) {
+                    $fromId = (int) ($lastMsg['from_id'] ?? 0);
+                    if ($fromId > 0) {
+                        $userIDs[] = $fromId;
+                    } elseif ($fromId < 0) {
+                        $groupIDs[] = abs($fromId);
+                    }
+                }
+            }
+        }
+
+        if (!empty($payload['conversations']) && is_array($payload['conversations'])) {
+            foreach ($payload['conversations'] as $conv) {
+                $peer = $conv['peer'] ?? null;
+                if ($peer) {
+                    $pid = (int) ($peer['id'] ?? 0);
+                    if ($pid > 0 && ($peer['type'] ?? '') === 'user') {
+                        $userIDs[] = $pid;
+                    } elseif ($pid < 0) {
+                        $groupIDs[] = abs($pid);
+                    }
+                }
+
+                $chatSettings = $conv['chat_settings'] ?? null;
+                if ($chatSettings && is_array($chatSettings)) {
+                    $membersList = array_merge(
+                        (array) ($chatSettings['active_ids'] ?? []),
+                        (array) ($chatSettings['members'] ?? []),
+                        (array) ($chatSettings['users'] ?? [])
+                    );
+                    foreach (array_slice($membersList, 0, 10) as $mid) {
+                        $mid = (int) $mid;
+                        if ($mid > 0) {
+                            $userIDs[] = $mid;
+                        } elseif ($mid < 0) {
+                            $groupIDs[] = abs($mid);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!empty($loadedChats) && is_array($loadedChats)) {
+            foreach ($loadedChats as $chatEntity) {
+                if ($chatEntity instanceof Chat) {
+                    $struct = $chatEntity->toChatSettingsStruct($this->getUser());
+                    $membersList = array_merge(
+                        (array) ($struct['active_ids'] ?? []),
+                        (array) ($struct['members'] ?? []),
+                        (array) ($struct['users'] ?? [])
+                    );
+                    foreach (array_slice($membersList, 0, 10) as $mid) {
+                        $mid = (int) $mid;
+                        if ($mid > 0) {
+                            $userIDs[] = $mid;
+                        } elseif ($mid < 0) {
+                            $groupIDs[] = abs($mid);
+                        }
+                    }
+                }
+            }
+        }
+
+        $userIDs = array_values(array_unique(array_filter($userIDs)));
+        $groupIDs = array_values(array_unique(array_filter($groupIDs)));
+
+        $payload['profiles'] = !empty($userIDs)
+            ? (new APIUsers())->get(implode(',', $userIDs), $fields)
+            : [];
+
+        $payload['groups'] = !empty($groupIDs)
+            ? (new APIClubs())->getById(implode(',', $groupIDs), "", $fields)
+            : [];
 
         $isModern = !defined("VKAPI_DECL_VER_MAJOR") || VKAPI_DECL_VER_MAJOR > 5 || (VKAPI_DECL_VER_MAJOR === 5 && (!defined("VKAPI_DECL_VER_MINOR") || VKAPI_DECL_VER_MINOR >= 80));
 
@@ -933,19 +1047,24 @@ final class Messages extends VKAPIRequestHandler
                         $msgObj['admin_id'] = $rawAdmin ?: (int) ($chatStruct['admin_id'] ?? 0);
                         $msgObj['users_count'] = $rawCount ?: (int) ($chatStruct['members_count'] ?? 0);
                         $msgObj['chat_active'] = !empty($rawActive) ? $rawActive : ($chatStruct['active_ids'] ?? []);
-                        $msgObj['photo_50'] = $chatStruct['photo_50'] ?? "";
-                        $msgObj['photo_100'] = $chatStruct['photo_100'] ?? "";
-                        $msgObj['photo_200'] = $chatStruct['photo_200'] ?? "";
+                        if (!empty($chatStruct['photo_50'])) {
+                            $msgObj['photo_50'] = $chatStruct['photo_50'];
+                            $msgObj['photo_100'] = $chatStruct['photo_100'];
+                            $msgObj['photo_200'] = $chatStruct['photo_200'];
+                        }
 
-                        $chatEntity->setData([
+                        $chatEntityData = [
                             "title"      => $msgObj['title'],
                             "admin_id"   => $msgObj['admin_id'],
                             "members"    => $msgObj['chat_active'],
                             "users"      => $msgObj['chat_active'],
-                            "photo_50"   => $msgObj['photo_50'],
-                            "photo_100"  => $msgObj['photo_100'],
-                            "photo_200"  => $msgObj['photo_200'],
-                        ]);
+                        ];
+                        if (!empty($msgObj['photo_50'])) {
+                            $chatEntityData['photo_50'] = $msgObj['photo_50'];
+                            $chatEntityData['photo_100'] = $msgObj['photo_100'];
+                            $chatEntityData['photo_200'] = $msgObj['photo_200'];
+                        }
+                        $chatEntity->setData($chatEntityData);
                     } else {
                         $msgObj['title'] = !empty($rawTitle) ? $rawTitle : $this->getDefaultChatTitle($chatId);
                         $msgObj['admin_id'] = $rawAdmin;
@@ -992,11 +1111,7 @@ final class Messages extends VKAPIRequestHandler
                 if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
                     $msgObj['mid'] = $msgObj['id'];
                     $msgObj['uid'] = $msgObj['user_id'];
-                    if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 4 && isset($msgObj['chat_active'])) {
-                        $msgObj['chat_active'] = is_array($msgObj['chat_active'])
-                            ? implode(',', array_filter($msgObj['chat_active']))
-                            : (string) $msgObj['chat_active'];
-                    }
+
                 }
 
                 $formattedItems[] = $msgObj;
@@ -1116,10 +1231,10 @@ final class Messages extends VKAPIRequestHandler
                         if (empty($item['title'])) {
                             $item['title'] = $chatStruct['title'] ?? $this->getDefaultChatTitle($cId);
                         }
-                        if (empty($item['photo_50'])) {
-                            $item['photo_50'] = $chatStruct['photo_50'] ?? "";
-                            $item['photo_100'] = $chatStruct['photo_100'] ?? "";
-                            $item['photo_200'] = $chatStruct['photo_200'] ?? "";
+                        if (empty($item['photo_50']) && !empty($chatStruct['photo_50'])) {
+                            $item['photo_50'] = $chatStruct['photo_50'];
+                            $item['photo_100'] = $chatStruct['photo_100'];
+                            $item['photo_200'] = $chatStruct['photo_200'];
                         }
                     }
                 }
@@ -1136,11 +1251,7 @@ final class Messages extends VKAPIRequestHandler
                     $item['date']       = (int) ($item['date'] ?? 0);
                     $item['read_state'] = (int) ($item['read_state'] ?? 0);
                     $item['out']        = (int) ($item['out'] ?? 0);
-                    if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 4 && isset($item['chat_active'])) {
-                        $item['chat_active'] = is_array($item['chat_active'])
-                            ? implode(',', array_filter($item['chat_active']))
-                            : (string) $item['chat_active'];
-                    }
+
                 }
             }
             unset($item);
@@ -1584,10 +1695,10 @@ final class Messages extends VKAPIRequestHandler
                         if (empty($item['title'])) {
                             $item['title'] = $chatStruct['title'] ?? $this->getDefaultChatTitle($cId);
                         }
-                        if (empty($item['photo_50'])) {
-                            $item['photo_50'] = $chatStruct['photo_50'] ?? "";
-                            $item['photo_100'] = $chatStruct['photo_100'] ?? "";
-                            $item['photo_200'] = $chatStruct['photo_200'] ?? "";
+                        if (empty($item['photo_50']) && !empty($chatStruct['photo_50'])) {
+                            $item['photo_50'] = $chatStruct['photo_50'];
+                            $item['photo_100'] = $chatStruct['photo_100'];
+                            $item['photo_200'] = $chatStruct['photo_200'];
                         }
                     }
                 }
@@ -1595,13 +1706,7 @@ final class Messages extends VKAPIRequestHandler
                 $item['mid']  = (int) ($item['id'] ?? 0);
                 $item['uid']  = (int) ($item['user_id'] ?? $item['from_id'] ?? 0);
                 $item['body'] = (string) ($item['body'] ?? $item['text'] ?? "");
-                if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 4) {
-                    if (isset($item['chat_active'])) {
-                        $item['chat_active'] = is_array($item['chat_active'])
-                            ? implode(',', array_filter($item['chat_active']))
-                            : (string) $item['chat_active'];
-                    }
-                }
+
             }
             unset($item);
         }
@@ -1733,10 +1838,10 @@ final class Messages extends VKAPIRequestHandler
                         if (empty($item['title'])) {
                             $item['title'] = $chatStruct['title'] ?? $this->getDefaultChatTitle($cId);
                         }
-                        if (empty($item['photo_50'])) {
-                            $item['photo_50'] = $chatStruct['photo_50'] ?? "";
-                            $item['photo_100'] = $chatStruct['photo_100'] ?? "";
-                            $item['photo_200'] = $chatStruct['photo_200'] ?? "";
+                        if (empty($item['photo_50']) && !empty($chatStruct['photo_50'])) {
+                            $item['photo_50'] = $chatStruct['photo_50'];
+                            $item['photo_100'] = $chatStruct['photo_100'];
+                            $item['photo_200'] = $chatStruct['photo_200'];
                         }
                     }
                 }
@@ -2421,19 +2526,24 @@ final class Messages extends VKAPIRequestHandler
                     $msgObj['admin_id'] = (int) ($chatStruct['admin_id'] ?? ($chatSettings['admin_id'] ?? 0));
                     $msgObj['users_count'] = (int) ($chatStruct['members_count'] ?? count($members));
                     $msgObj['chat_active'] = $chatStruct['active_ids'] ?? array_slice($members, 0, 10);
-                    $msgObj['photo_50'] = $chatStruct['photo_50'] ?? "";
-                    $msgObj['photo_100'] = $chatStruct['photo_100'] ?? "";
-                    $msgObj['photo_200'] = $chatStruct['photo_200'] ?? "";
+                    if (!empty($chatStruct['photo_50'])) {
+                        $msgObj['photo_50'] = $chatStruct['photo_50'];
+                        $msgObj['photo_100'] = $chatStruct['photo_100'];
+                        $msgObj['photo_200'] = $chatStruct['photo_200'];
+                    }
 
-                    $chatEntity->setData([
+                    $chatEntityData = [
                         "title"      => $msgObj['title'],
                         "admin_id"   => $msgObj['admin_id'],
                         "members"    => $msgObj['chat_active'],
                         "users"      => $msgObj['chat_active'],
-                        "photo_50"   => $msgObj['photo_50'],
-                        "photo_100"  => $msgObj['photo_100'],
-                        "photo_200"  => $msgObj['photo_200'],
-                    ]);
+                    ];
+                    if (!empty($msgObj['photo_50'])) {
+                        $chatEntityData['photo_50'] = $msgObj['photo_50'];
+                        $chatEntityData['photo_100'] = $msgObj['photo_100'];
+                        $chatEntityData['photo_200'] = $msgObj['photo_200'];
+                    }
+                    $chatEntity->setData($chatEntityData);
                 } else {
                     $msgObj['title'] = !empty($msgObj['title']) ? $msgObj['title'] : $this->getDefaultChatTitle($localChatId);
                     $msgObj['admin_id'] = (int) ($chatSettings['admin_id'] ?? 0);
@@ -2487,13 +2597,7 @@ final class Messages extends VKAPIRequestHandler
                 }
             }
 
-            if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 4) {
-                if (isset($msgObj['chat_active'])) {
-                    $msgObj['chat_active'] = is_array($msgObj['chat_active'])
-                        ? implode(',', array_filter($msgObj['chat_active']))
-                        : (string) $msgObj['chat_active'];
-                }
-            }
+
 
             $flatMessages[$peerId] = $msgObj;
         }
@@ -3236,10 +3340,10 @@ final class Messages extends VKAPIRequestHandler
                     if (empty($message['title'])) {
                         $message['title'] = $chatStruct['title'] ?? $this->getDefaultChatTitle((int) $message['chat_id']);
                     }
-                    if (empty($message['photo_50'])) {
-                        $message['photo_50'] = $chatStruct['photo_50'] ?? "";
-                        $message['photo_100'] = $chatStruct['photo_100'] ?? "";
-                        $message['photo_200'] = $chatStruct['photo_200'] ?? "";
+                    if (empty($message['photo_50']) && !empty($chatStruct['photo_50'])) {
+                        $message['photo_50'] = $chatStruct['photo_50'];
+                        $message['photo_100'] = $chatStruct['photo_100'];
+                        $message['photo_200'] = $chatStruct['photo_200'];
                     }
                 }
             }
@@ -3659,11 +3763,7 @@ final class Messages extends VKAPIRequestHandler
                             "photo_200" => $chatPhoto->getURLBySizeId("normal"),
                         ];
                     } else {
-                        $data['preview']['photo'] = [
-                            "photo_50"  => "",
-                            "photo_100" => "",
-                            "photo_200" => "",
-                        ];
+                        unset($data['preview']['photo']);
                     }
                     $chatTitle = $chatEntity->getTitle();
                     if (!empty($chatTitle)) {

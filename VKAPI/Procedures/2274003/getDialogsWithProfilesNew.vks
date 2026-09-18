@@ -6,11 +6,34 @@ var dlgs = API.messages.getDialogs({
 
 var uids = [];
 var wrappedItems = [];
+var rawItems = [];
+var totalCount = 0;
 
-if (dlgs && dlgs.items) {
+if (dlgs) {
+    if (dlgs.items) {
+        rawItems = dlgs.items;
+        totalCount = dlgs.count;
+    } else if (dlgs.length) {
+        var startIdx = 0;
+        if (typeof dlgs[0] == "number" || typeof dlgs[0] == "string") {
+            totalCount = parseInt(dlgs[0]);
+            startIdx = 1;
+        } else {
+            totalCount = dlgs.length;
+            startIdx = 0;
+        }
+        var k = startIdx;
+        while (k < dlgs.length) {
+            rawItems.push(dlgs[k]);
+            k = k + 1;
+        }
+    }
+}
+
+if (rawItems && rawItems.length > 0) {
     var i = 0;
-    while (i < dlgs.items.length) {
-        var item = dlgs.items[i];
+    while (i < rawItems.length) {
+        var item = rawItems[i];
         var msg = null;
         var unread = 0;
 
@@ -61,7 +84,7 @@ if (uids.length > 0) {
 
 return {
     "a": {
-        "count": dlgs.count,
+        "count": totalCount,
         "items": wrappedItems
     },
     "p": profiles

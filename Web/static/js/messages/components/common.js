@@ -82,12 +82,11 @@ export const PeerAvatar = ({ peer, className = "", loading = "lazy", saved_messa
         const cell2 = avatars[2] || null;
         const cell3 = avatars[3] || null;
 
-        if (avatars.length == 1 || (!cell0 && !cell1 && !cell2 && !cell3)) {
+        if (avatars.length <= 1 || (!cell0 && !cell1 && !cell2 && !cell3)) {
             return html`<img class="${className}" src="/assets/packages/static/openvk/img/im/chat_meaningless.jpg" loading="${loading}" onClick=${onClick} />`;
         }
 
         if (avatars.length == 2) {
-            // "object-position: left;" для парных аватарочек ^_^
             return html`
             <div class="chat_table_avatar chat_table_avatar_double ${className}" onClick=${onClick}>
                 ${cell0 ? html`<img class="chat_table_avatar_cell pos-left" src="${cell0}" loading="${loading}" />` : ''}
@@ -96,12 +95,24 @@ export const PeerAvatar = ({ peer, className = "", loading = "lazy", saved_messa
             `;
         }
 
+        if (avatars.length == 3) {
+            return html`
+            <div class="chat_table_avatar chat_table_avatar_third ${className}" onClick=${onClick}>
+                ${cell0 ? html`<img class="chat_table_avatar_cell third_left" src="${cell0}" loading="${loading}" />` : ''}
+                <div class="chat_table_avatar_third_right">
+                    ${cell1 ? html`<img class="chat_table_avatar_cell third_right_cell" src="${cell1}" loading="${loading}" />` : ''}
+                    ${cell2 ? html`<img class="chat_table_avatar_cell third_right_cell" src="${cell2}" loading="${loading}" />` : ''}
+                </div>
+            </div>
+            `;
+        }
+
         return html`
-            <div class="chat_table_avatar chat_table_avatar_more3 ${className}">
-                ${cell0 ? html`<img class="chat_table_avatar_cell" src="${cell0}" loading="${loading}" />` : ''}
-                ${cell1 ? html`<img class="chat_table_avatar_cell" src="${cell1}" loading="${loading}" />` : ''}
-                ${cell2 ? html`<img class="chat_table_avatar_cell" src="${cell2}" loading="${loading}" />` : ''}
-                ${cell3 ? html`<img class="chat_table_avatar_cell" src="${cell3}" loading="${loading}" />` : ''}
+            <div class="chat_table_avatar chat_table_avatar_more3 ${className}" onClick=${onClick}>
+                ${cell0 ? html`<img class="chat_table_avatar_cell quarter" src="${cell0}" loading="${loading}" />` : ''}
+                ${cell1 ? html`<img class="chat_table_avatar_cell quarter" src="${cell1}" loading="${loading}" />` : ''}
+                ${cell2 ? html`<img class="chat_table_avatar_cell quarter" src="${cell2}" loading="${loading}" />` : ''}
+                ${cell3 ? html`<img class="chat_table_avatar_cell quarter" src="${cell3}" loading="${loading}" />` : ''}
             </div>
         `;
     }

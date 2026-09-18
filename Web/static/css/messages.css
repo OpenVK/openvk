@@ -474,10 +474,14 @@ body:has(#im_container.at_page) .page-wrap {
     padding: 0;
     overflow: hidden;
     background: #e4e8ec;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: stretch;
+    box-sizing: border-box;
 }
 
 .chat_table_avatar .chat_table_avatar_cell {
-    display: inline-block;
+    display: block;
     image-rendering: pixelated;
     object-fit: cover;
     object-position: center top;
@@ -490,6 +494,7 @@ body:has(#im_container.at_page) .page-wrap {
     overflow: hidden;
     vertical-align: top;
     position: relative;
+    box-sizing: border-box;
     width: 100%;
     height: 100%;
 }
@@ -497,6 +502,48 @@ body:has(#im_container.at_page) .page-wrap {
 .chat_table_avatar.chat_table_avatar_double .chat_table_avatar_cell {
     width: 50%;
     height: 100%;
+}
+
+.chat_table_avatar .chat_table_avatar_cell.pos-left {
+    object-position: left;
+}
+
+.chat_table_avatar .chat_table_avatar_cell.pos-right {
+    object-position: right;
+}
+
+.chat_table_avatar.chat_table_avatar_third {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.chat_table_avatar.chat_table_avatar_third .chat_table_avatar_cell.third_left {
+    width: 50%;
+    height: 100%;
+    object-position: left;
+}
+
+.chat_table_avatar.chat_table_avatar_third .chat_table_avatar_third_right {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.chat_table_avatar.chat_table_avatar_third .chat_table_avatar_third_right .chat_table_avatar_cell.third_right_cell {
+    width: 100%;
+    height: 50%;
+}
+
+.chat_table_avatar.chat_table_avatar_more3 .chat_table_avatar_cell,
+.chat_table_avatar.chat_table_avatar_quad .chat_table_avatar_cell,
+.chat_table_avatar .chat_table_avatar_cell.quarter {
+    width: 50%;
+    height: 50%;
 }
 
 .crp-entry--info span,
@@ -5344,18 +5391,6 @@ body:has(#im_container.at_page) .page-wrap {
     height: 52px;
 }
 
-.chat_table_avatar .chat_table_avatar_cell.pos-left {
-    object-position: left;
-}
-
-.chat_table_avatar .chat_table_avatar_cell.pos-right {
-    object-position: right;
-}
-
-.chat_table_avatar.chat_table_avatar_quad .chat_table_avatar_cell.quarter {
-    height: 50%;
-    width: 50%;
-}
 
 .chat-title-edit-box {
     padding: 10px 0;

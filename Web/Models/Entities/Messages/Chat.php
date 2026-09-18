@@ -722,8 +722,7 @@ class Chat extends RowModel
             $payload["photo_100"] = $photo->getURLBySizeId("tiny");
             $payload["photo_200"] = $photo->getURLBySizeId("normal");
             $payload["avatar_max"] = $photo->getURLBySizeId("larger");
-        } else {
-            $payload["avatar_max"] = $payload["photo_200"] = $payload["photo_100"] = $payload["photo_50"] = $server_url . "/assets/packages/static/openvk/img/im/chat_meaningless.jpg";
+            $payload["photo_id"] = $photo->getId();
         }
 
         $rawMembers = array_map("intval", $this->hydratedData["members"] ?? $this->hydratedData["users"] ?? []);
@@ -785,10 +784,6 @@ class Chat extends RowModel
             "active_ids"    => $isMember ? array_slice($rawMembers, 0, 10) : [],
             "members"       => $members,
             "users"         => $members,
-            "photo_50"      => $struct["photo_50"] ?? "",
-            "photo_100"     => $struct["photo_100"] ?? "",
-            "photo_200"     => $struct["photo_200"] ?? "",
-            "avatar_max"    => $struct["avatar_max"] ?? "",
             "acl"           => $struct["acl"] ?? [],
             "permissions"   => $struct["permissions"] ?? self::getDefaultPermissions(),
             "is_group_channel" => false,
@@ -798,6 +793,10 @@ class Chat extends RowModel
 
         if ($photoObj !== null) {
             $chatSettings["photo"] = $photoObj;
+            $chatSettings["photo_50"] = $photoObj["photo_50"];
+            $chatSettings["photo_100"] = $photoObj["photo_100"];
+            $chatSettings["photo_200"] = $photoObj["photo_200"];
+            $chatSettings["avatar_max"] = $struct["avatar_max"] ?? $photoObj["photo_200"];
         }
 
         if (!empty($this->hydratedData["pinned_message"])) {
