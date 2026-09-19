@@ -342,7 +342,11 @@ class Club extends RowModel
 
     public function getFollowersCount(): int
     {
-        return sizeof($this->getFollowersQuery()->where('flags', 0));
+        return $this->getRecord()->related('subscriptions.target')
+            ->select('target, COUNT(DISTINCT follower) AS unique_followers')
+            ->where('flags', 0)
+            ->where('model', 'openvk\\Web\\Models\\Entities\\Club')
+            ->group('target')->fetch()->unique_followers;
     }
 
     public function getFollowers(int $page = 1, int $perPage = 6, string $sort = "target DESC"): \Traversable
