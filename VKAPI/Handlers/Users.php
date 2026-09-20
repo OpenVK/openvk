@@ -107,8 +107,8 @@ final class Users extends VKAPIRequestHandler
                     "id"                => $usr->getId(),
                     "first_name"        => $firstName,
                     "last_name"         => $lastName,
-                    "is_closed"         => (bool) $usr->isClosed(),
-                    "can_access_closed" => (bool) $canView,
+                    "is_closed"         => $this->usesBooleanClosedFlags() ? (bool) $usr->isClosed() : (int) $usr->isClosed(),
+                    "can_access_closed" => $this->usesBooleanClosedFlags() ? (bool) $canView : (int) $canView,
                 ];
                 $response[$i]->photo_base = $usr->getAvatarUrl("normal");
 
@@ -743,5 +743,24 @@ final class Users extends VKAPIRequestHandler
         $report->save();
 
         return 1;
+    }
+
+    /**
+     * Modern VK API versions (>= 5.200, e.g. the VK Messenger client) expect
+     * users.get is_closed/can_access_closed as JSON booleans, while older
+     * clients (OpenVK Legacy/Refresh/iOS, Kate/FreeKate) read them as integers.
+     * Gate the type by the requested API version to keep both working.
+     */
+    private function usesBooleanClosedFlags(): bool
+    {
+        if (!defined("VKAPI_DECL_VER_MAJOR")) {
+            return false;
+        }
+        if (VKAPI_DECL_VER_MAJOR > 5) {
+            return true;
+        }
+        return VKAPI_DECL_VER_MAJOR === 5
+            && defined("VKAPI_DECL_VER_MINOR")
+            && VKAPI_DECL_VER_MINOR >= 200;
     }
 }
