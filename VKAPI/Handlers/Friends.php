@@ -213,4 +213,78 @@ final class Friends extends VKAPIRequestHandler
             "items" => $response,
         ];
     }
+
+    public function getMutual(int $source_uid = 0, int $target_uid = 0, string $target_uids = '', string $order = '', ?int $count = null, int $offset = 0, bool $need_common_count = false): object
+    {
+        $users = new UsersRepo();
+
+        $this->requireUser();
+        if ($source_uid == 0) {
+            $source_uid = $this->getUser()->getId();
+        }
+        $source = $users->get($source_uid);
+
+        if (!$source || $source->isDeleted()) {
+            $this->fail(100, "User was deleted or banned");
+        }
+
+        $is_one = true;
+        $targets = [];
+
+        if ($target_uids != '') {
+            $target_uids = explode(',', $target_uids);
+            foreach ($target_uids as $index => $target_uid) {
+                if (!ctype_digit($target_uid)) {
+                    $this->fail(100, "One of the parameters specified was missing or invalid: target_uids[$index] not integer");
+                }
+
+                $targets[] = (int) $target_uid;
+            }
+            $is_one = false;
+        } elseif ($target_uid > 0) {
+            $targets = [
+                $target_uid,
+            ];
+        } else {
+            $this->fail(100, "One of the parameters specified was missing or invalid: target_uid is undefined");
+        }
+
+        $responses = [];
+
+        foreach ($targets as $target_uid) {
+            $response = [
+                'common_friends' => [],
+                'target_uid' => $target_uid,
+            ];
+
+            $target = $users->get($target_uid);
+            if (!$target || $target->isDeleted() || $target_uid == $source_uid) {
+                $responses[] = $response;
+                continue;
+            }
+
+            if (!$target->getPrivacyPermission("friends.read", $this->getUser())) {
+                $this->fail(30, "This profile is private");
+            }
+
+            $query = $target->getCommonFriendsQuery($source)->order($order == "random" ? "RAND()" : "id ASC");
+            if ($count > 0) {
+                $query->limit($count, $offset);
+            }
+            $friends = $query->select('id')->fetchAll();
+
+            $response ['common_friends'] = array_values(array_map(fn($friend) => $friend->id, $friends));
+            if ($need_common_count) {
+                $response['common_count'] = $query->count();
+            }
+
+            $responses[] = $response;
+        }
+
+        if ($is_one) {
+            return (object) $responses[0];
+        }
+
+        return (object) array_values($responses);
+    }
 }
