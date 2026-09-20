@@ -3532,6 +3532,13 @@ final class Messages extends VKAPIRequestHandler
             $this->hydrateExtendedData($data, $fields);
         }
 
+        if (!isset($data["items"]) || !is_array($data["items"])) {
+            $data["items"] = [];
+        }
+        if (!isset($data["next_from"]) || !is_string($data["next_from"])) {
+            $data["next_from"] = "";
+        }
+
         return (object) $data;
     }
 
