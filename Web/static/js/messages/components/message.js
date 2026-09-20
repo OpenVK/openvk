@@ -36,8 +36,8 @@ export const ForwardedMessages = ({ msg, depth = 0, inModal = false }) => {
     }
 
     return html`
+        <span class="fwd-messages-mark">${depth === 0 ? html`<div class="fwd-messages-count">${tr("forwarded_messages_noun", fwdList.length)}</div>` : null}</span>
         <div class="fwd-messages-container depth-${depth}">
-            ${depth === 0 ? html`<div class="fwd-messages-count">${tr("forwarded_messages_noun", fwdList.length)}</div>` : null}
             ${fwdList.map((fwd) => {
         const fwdSender = fwd.sender || (window.im?.cached_profiles && window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(fwd.from_id || fwd.data?.from_id));
         const fwdName = fwdSender?.getName ? fwdSender.getName() : (fwd.from_id ? "id" + fwd.from_id : "...");

@@ -173,9 +173,14 @@ export class InstantMessagesAndRelated {
         return await InstantMessagesAndRelated.insertIn(container, null, false, true, data);
     }
 
-    static async insertIn(container, as = null, fastchat = false, rewrite_tabs = true, report_data = null) {
+    static async insertIn(container, as = null, fastchat = false, rewrite_tabs = true, report_data = null, clear = true) {
         if (!container) return null;
 
+        if (clear) {
+            try {
+                container.querySelector("#im_container").remove();
+            } catch(e){}
+        }
         if (!InstantMessagesAndRelated._insertPromises) {
             InstantMessagesAndRelated._insertPromises = new Map();
         }
@@ -266,6 +271,10 @@ export class InstantMessagesAndRelated {
             await self.waitLoad();
 
             imLog("Insert in", container, "fastchat:", fastchat);
+
+            if (self.state.is_compact_mode_enabled) {
+                u("#page_layout").attr("style", "width: 831px;")
+            }
 
             if (!container.querySelector("#im_container")) {
                 const node = u(`<div id="im_container"><div id="im_page_tabs"></div><div id="im_page_containers"></div></div>`);
@@ -474,12 +483,14 @@ export class InstantMessagesAndRelated {
                 got_class = SettingsPage;
                 break;
             case "conversations":
+                this.header.setPageTitle(tr("messenger_tab_conversations"));
                 got_class = ConversationsPage;
                 break;
             case "messenger":
                 got_class = MessengerPage;
                 break;
             case "friends":
+                this.header.setPageTitle(tr("messenger_tab_friends"));
                 got_class = FriendsPage;
                 break;
             case "contact":
@@ -1155,6 +1166,10 @@ class IMState {
     isCurrentUser() {
         return this.link.usage_type == "current_user";
     }
+
+    reload() {
+        location.reload();
+    }
 }
 
 class SettingsPage extends IMPage {
@@ -1171,7 +1186,7 @@ class SettingsPage extends IMPage {
                         <b>OpenVK Polylogues</b>
                     </div>
                     <div>
-                        <label style="display: none;"><input id="im.modern_mode" type="checkbox">${tr("im_option_compact_mode")} (beta)</label>
+                        <label><input onchange="window.im.state.reload()" id="im.modern_mode" type="checkbox">${tr("im_option_compact_mode")} (beta)</label>
                         <label><input id="viewers.photo.list" type="checkbox">${tr("im_option_photo_viewer")} (Beta)</label>
                     </div>
                     <div>
@@ -1201,7 +1216,8 @@ class SettingsPage extends IMPage {
 
 class YellowHeader {
     setPageTitle(title) {
-        document.title = title;
+        console.log("IM | Upd title to ", title);
+        document.title = String(title);
     }
 
     changeYellowHeader(text, append_switch_button = true) {

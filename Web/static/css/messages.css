@@ -1151,8 +1151,8 @@ body:has(#im_container.at_page) .page-wrap {
 
 .messenger-app--messages---message ._content .reply-msg-container {
     margin: 3px 0 3px 0;
-    padding: 0 35px 0 7px;
-    border-left: 2px solid var(--accent, hsl(212 0% 52% / 1));
+    padding: 0 30px 0 15px;
+    border-left: 1px solid var(--accent, hsl(212 0% 52% / 1));
     cursor: pointer;
     border-radius: 0 2px 2px 0;
     transition: background 0.15s ease, opacity 0.15s ease;
@@ -1174,6 +1174,7 @@ body:has(#im_container.at_page) .page-wrap {
 .messenger-app--messages---message ._content .reply-msg-container .reply-msg-head {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 5px;
     margin-bottom: 2px;
     line-height: 1.2;
@@ -3465,25 +3466,31 @@ body:has(#im_container.at_page) .page-wrap {
     display: block;
 }
 
-#im_container.compact .im_page.page-conversations:not(.hidden) {
+#im_container.compact .im_page.page-conversations {
     position: absolute;
     top: -4px;
     overflow-x: hidden;
     overflow-y: hidden;
     height: 100%;
     width: 260px;
-    display: block;
+    display: block !important;
 }
 
 #im_container.compact .crp-bottom {
     width: 100%;
     flex-direction: column;
     align-items: start;
+    position: absolute;
+    bottom: 0;
+}
+
+#im_container.compact {
+    width: 667px;
 }
 
 #im_container.compact .im_page.page-other {
     right: 0;
-    width: 369px;
+    width: 408px;
     margin-left: 259px;
     border-left: 1px solid var(--brand-bg);
     overflow-y: auto;
@@ -3517,7 +3524,7 @@ body:has(#im_container.at_page) .page-wrap {
 }
 
 #im_container.compact .crp-list {
-    max-height: 80%;
+    max-height: 83%;
     overflow-x: hidden;
 }
 
@@ -3542,10 +3549,23 @@ body:has(#im_container.at_page) .page-wrap {
     vertical-align: top;
 }
 
-#im_container.compact .messenger-app,
+#im_container.compact .messenger-app {
+    width: 100%;
+    padding: 0px 0px;
+}
+
+#im_container.compact .messenger-app--messages .messenger-app--messages-array {
+    padding-top: auto;
+}
+
 #im_container.compact .messenger-app--input {
-    width: 368px;
+    width: 408px;
     padding: 10px 10px;
+}
+
+#im_container.compact .messages--peers-header-wrap .messenger-pinned-bar,
+#im_container.compact .messenger-app--messages {
+    width: 408px;
 }
 
 #im_container.compact .messenger-app--messages---message>.messenger-app--messages---message--wrap {
@@ -3559,18 +3579,15 @@ body:has(#im_container.at_page) .page-wrap {
 
 #im_container.compact .messages--actions {
     width: 369px;
-    height: 46px;
+    min-height: 46px;
+    height: auto;
     top: 40px;
     font-size: 10px;
     padding: 13px 14px;
 }
 
-#im_container.compact .messages--actions .message-tab {
-    padding: 4px 5px;
-}
-
 #im_container.compact .crp-entry--info {
-    width: 142px;
+    width: 170px;
     justify-content: flex-start;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -3578,19 +3595,23 @@ body:has(#im_container.at_page) .page-wrap {
     margin-top: -31px;
 }
 
-#im_container.compact .crp-list .crp-entry {
-    flex-direction: column;
-}
-
 #im_container.compact .crp-list .crp-entry .crp-entry--message {
     position: absolute;
+    padding: 3px 1px;
     left: 71px;
     top: 25px;
-    width: 129px;
+    width: 170px;
     height: 28px;
     overflow-y: hidden;
     display: flex;
     align-items: center;
+}
+
+#im_container.compact .crp-list .crp-entry .crp-entry--message---av {
+    margin-left: 0px;
+    width: 25px;
+    height: 25px;
+    min-width: 25px;
 }
 
 #im_container.compact .crp-list .crp-entry--message---av img {
@@ -3627,6 +3648,10 @@ body:has(#im_container.at_page) .page-wrap {
 #im_container.compact .messenger-app-end.m-selected .input-m {
     width: 368px;
     box-sizing: border-box;
+}
+
+#im_container.compact .im_floating_date_wrap {
+    top: 55px;
 }
 
 #im_container.compact .messages--peers-header-wrap {
@@ -4258,6 +4283,11 @@ body:has(#im_container.at_page) .page-wrap {
 
 #materials-page-im .materials-subtabs {
     margin-bottom: 8px;
+}
+
+#materials-page-im .materials-subtabs,
+#materials-page-im .materials-subtabs .display_flex_row {
+    flex-wrap: wrap;
 }
 
 #materials-page-im .materials-cancel-link {

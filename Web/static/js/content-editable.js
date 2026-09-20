@@ -392,6 +392,11 @@
                         return;
                     }
 
+                    if (e.ctrlKey && !self.options.submitOnEnter) {
+                        e.preventDefault();
+                        return;
+                    }
+
                     if (e.shiftKey || !self.options.submitOnEnter) {
                         e.preventDefault();
                         self.insertLineBreak();

@@ -105,6 +105,12 @@ export class Messenger {
             win._pendingReadId = 0;
         }
 
+        try {
+            window.im.header.setPageTitle(convo.peer.getName());
+        } catch (e) {
+            console.error(e);
+        }
+
         if (window.im.state.is_debug) {
             imLog("Selected conversation:", convo);
         }
@@ -2288,16 +2294,14 @@ export class MessengerPage extends IMPage {
 
         window.im.messenger.is_switching = true;
 
-        if (false) {
-            window.im.selectTab('messenger');
-            window.im.messenger.toggled_peer_obj = null;
-            if (window.im.getSelectedTabId() == "contact") {
-                const contactTab = window.im.getTab("contact");
-                if (contactTab) {
-                    contactTab.close();
-                }
-                window.im.openTabByName('messenger');
+        if (window.im.getSelectedTabId() == "contact") {
+            //window.im.selectTab('messenger');
+            //window.im.messenger.toggled_peer_obj = null;
+            const contactTab = window.im.getTab("contact");
+            if (contactTab) {
+                contactTab.close();
             }
+            window.im.openTabByName('messenger');
         } else {
             const _c = window.im.state.getCurrentConvo();
             if (_c?.peer && !_c.peer.isILeft()) {

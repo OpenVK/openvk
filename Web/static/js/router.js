@@ -504,7 +504,7 @@ $(document).on('click', 'a', async (e) => {
 })
 
 $(document).on('submit', 'form', async (e) => {
-    console.log("submit form ", e);
+    console.log("submit form ", e, e.isDefaultPrevented());
     if(e.isDefaultPrevented()) {
         return
     }

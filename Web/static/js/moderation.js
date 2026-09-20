@@ -58,7 +58,7 @@ function confirm_ban(event, ignore = false, ban_owner = false) {
 
     event.preventDefault();
 
-    const msg = "Мы просмотрели контент, на который вы пожаловались, и пришли к выводу, что в нём нет нарушений.";
+    const msg = "Мы просмотрели контент, на который вы пожаловались, и не нашли причин для удаления.";
     const orig_reason = u("#reportReason").last().textContent;
     const cmsg = new CMessageBox({
         title: tr("confirmation"),

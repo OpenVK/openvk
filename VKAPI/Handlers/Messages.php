@@ -3223,7 +3223,6 @@ final class Messages extends VKAPIRequestHandler
         int $user_id = 0,
         int $peer_id = 0,
         int $chat_id = 0,
-        int $report_id = 0,
         int $start_message_id = 0,
         int $rev = 0,
         int $extended = 0,

@@ -191,6 +191,9 @@ export class Chunks {
         this.invalidateCache = true;
         this._cachedMessages = undefined;
     }
+    getStartChunk() {
+        return this.chunks[this._latest_chunk_id];
+    }
     isMessagesInited() { return this._messagesInited; }
     getLatestChunk() {
         if (!this.chunks || this.chunks.length === 0) {
@@ -204,7 +207,7 @@ export class Chunks {
         }
         return this.chunks[0];
     }
-    getLatestMessage() { return this.getLatestChunk() ? this.getLatestChunk().latest_message : null; }
+    getLatestMessage() { return this.getStartChunk() ? this.getStartChunk().latest_message : null; }
     appendChunk(chunk, replace_actual = true) {
         let key = this._getChunkKey(chunk);
         let idx = 0;

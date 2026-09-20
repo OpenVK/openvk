@@ -43,6 +43,7 @@ openvk:
     debug: true
     appearance:
         name: "OpenVK"
+        searchPlaceholder: "@header_search"
         motd: "Yet another OpenVK instance"
 
     mirrors: # list all existing and previous domains without www. Won't work with different port

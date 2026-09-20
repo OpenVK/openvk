@@ -176,6 +176,19 @@ function tr(string $stringId, ...$variables): string
     return $output;
 }
 
+function tr_at(?string $string, string $default = ""): string
+{
+    if (!$string) {
+        return $default;
+    }
+
+    if ($string[0] == "@") {
+        return tr(substr($string, 1));
+    }
+
+    return $string ?? $default;
+}
+
 function getDefaultLanguage(): string
 {
     return OPENVK_ROOT_CONF["openvk"]["preferences"]["defaultLanguage"] ?? "ru";
