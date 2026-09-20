@@ -4564,4 +4564,9 @@ final class Messages extends VKAPIRequestHandler
             "credentials"        => $credentials,
         ];
     }
+
+    public function joinChatByTopic(int $group_id, int $topic_id): object
+    {
+        return $this->joinChatByInviteLink($group_id . "_" . $topic_id, "topic", $group_id);
+    }
 }

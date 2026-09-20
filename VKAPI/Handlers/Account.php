@@ -599,4 +599,21 @@ final class Account extends VKAPIRequestHandler
 
         return (object) ["items" => [], "is_enabled" => false];
     }
+
+    public function getToggles(): object
+    {
+        $this->requireUser();
+
+        $off = ["core_common_websocket", "core_common_websocket_api", "core_common_websocket_compress", "core_common_websocket_rate_lmt", "queue_new_subscribe"];
+        $toggles = [];
+        foreach ($off as $name) {
+            $toggles[] = (object) ["name" => $name, "enabled" => false, "value" => null];
+        }
+
+        return (object) [
+            "toggles"  => $toggles,
+            "version"  => 1,
+            "ab_tests" => [],
+        ];
+    }
 }
