@@ -524,7 +524,7 @@ final class Account extends VKAPIRequestHandler
                 "photo_100"         => $user->getAvatarURL("tiny"),
                 "photo_200"         => $user->getAvatarURL("normal"),
                 "photo_base"        => $user->getAvatarURL("normal"),
-                "has_photo"         => $user->hasAvatar() ? 1 : 0,
+                "has_photo"         => ($user->getAvatarPhoto() !== null) ? 1 : 0,
                 "screen_name"       => $user->getShortCode() ?? ("id" . $user->getId()),
                 "online"            => $user->isOnline() ? 1 : 0,
                 "verified"          => $user->isVerified() ? 1 : 0,
