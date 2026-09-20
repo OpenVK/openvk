@@ -719,6 +719,7 @@ final class VKAPIPresenter extends OpenVKPresenter
 
     public function renderRouteSingle(string $method): void
     {
+        $this->decompressRequestBody();
         $method = rtrim($method, '.');
         if (str_contains($method, '.')) {
             [$object, $action] = explode('.', $method, 2);
@@ -728,8 +729,44 @@ final class VKAPIPresenter extends OpenVKPresenter
         }
     }
 
+    private function decompressRequestBody(): void
+    {
+        if (($_SERVER["REQUEST_METHOD"] ?? "GET") !== "POST") {
+            return;
+        }
+
+        $encoding = strtolower($_SERVER["HTTP_CONTENT_ENCODING"] ?? "");
+        if (strpos($encoding, "gzip") === false) {
+            return;
+        }
+
+        $raw = @file_get_contents("php://input");
+        if ($raw === false || $raw === "") {
+            return;
+        }
+
+        $decoded = @gzdecode($raw);
+        if ($decoded === false || $decoded === null) {
+            return;
+        }
+
+        $contentType = strtolower($_SERVER["CONTENT_TYPE"] ?? "");
+        if (strpos($contentType, "application/json") !== false) {
+            $parsed = json_decode($decoded, true);
+        } else {
+            $parsed = [];
+            parse_str($decoded, $parsed);
+        }
+
+        if (is_array($parsed)) {
+            $_POST = array_merge($_POST, $parsed);
+            $_REQUEST = array_merge($_REQUEST, $parsed);
+        }
+    }
+
     public function renderRoute(string $object, string $method): void
     {
+        $this->decompressRequestBody();
         $this->currentObject = $object;
         $this->currentMethod = $method;
 
@@ -823,6 +860,7 @@ final class VKAPIPresenter extends OpenVKPresenter
 
     public function renderApiPHP(): void
     {
+        $this->decompressRequestBody();
         $rawInput = file_get_contents("php://input");
         $jsonInput = !empty($rawInput) ? @json_decode($rawInput, true) : null;
         $requestParams = is_array($jsonInput) ? array_merge($_REQUEST, $jsonInput) : $_REQUEST;
