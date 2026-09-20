@@ -1,0 +1,19 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Instantiated class openvk\\Web\\Models\\Entities\\Chat not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: Web/Models/Entities/Club.php
+
+		-
+			message: '#^Access to an undefined property openvk\\Web\\Models\\Entities\\Gifts\\SentGift\:\:\$gift\.$#'
+			identifier: property.notFound
+			count: 5
+			path: Web/Models/Entities/Gifts/SentGift.php
+
+		-
+			message: '#^Access to an undefined property openvk\\Web\\Models\\Entities\\Postable\:\:\$shortName\.$#'
+			identifier: property.notFound
+			count: 1
+			path: Web/Models/Entities/Postable.php
