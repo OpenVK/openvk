@@ -7,7 +7,7 @@ namespace openvk\VKAPI\Handlers;
 use Nette\InvalidStateException;
 use Nette\Utils\ImageException;
 use openvk\Web\Util\IMBroker;
-use openvk\Web\Models\Repositories\{Reports, Topics as TopicsRepo, Users as USRRepo, Clubs as ClubRepo, Messages as MSGRepo, Chats as ChatRepo};
+use openvk\Web\Models\Repositories\{Reports, Topics as TopicsRepo, Users as USRRepo, Clubs as ClubRepo, Messages as MSGRepo, Chats as ChatRepo, MessageFolders};
 use openvk\Web\Models\Entities\{Report, Photo, Message, Club as ClubEnt, User as UserEnt};
 use openvk\Web\Models\Entities\Messages\Chat;
 use openvk\VKAPI\Exceptions\APIErrorException;
@@ -2325,6 +2325,49 @@ final class Messages extends VKAPIRequestHandler
 
         $payload = $this->invoke("messages.getConversations", $params, $group_id);
 
+        if (is_array($payload) && !empty($payload['items']) && is_array($payload['items'])) {
+            foreach ($payload['items'] as &$conversationItem) {
+                // Clamp sort_id.major_id into the pin-bucket range [0, 1023] expected by the client.
+                if (isset($conversationItem['conversation']['sort_id']) && is_array($conversationItem['conversation']['sort_id'])) {
+                    $majorId = (int) ($conversationItem['conversation']['sort_id']['major_id'] ?? 0);
+                    $minorId = (int) ($conversationItem['conversation']['sort_id']['minor_id'] ?? 0);
+                    if ($majorId > 1023 || $majorId < 0) {
+                        $minorId = $majorId > 0 ? $majorId : $minorId;
+                        $majorId = 0;
+                    }
+                    $conversationItem['conversation']['sort_id'] = ["major_id" => $majorId, "minor_id" => $minorId];
+                }
+                // Hydrate last_message with the fields the client message parser requires.
+                if (isset($conversationItem['last_message']) && is_array($conversationItem['last_message'])) {
+                    $lastMessage = &$conversationItem['last_message'];
+                    $lastMessage['version'] = $lastMessage['version'] ?? (int) ($lastMessage['conversation_message_id'] ?? ($lastMessage['id'] ?? 1));
+                    $lastMessage['conversation_message_id'] = $lastMessage['conversation_message_id'] ?? (int) ($lastMessage['id'] ?? 0);
+                    $lastMessage['peer_id'] = $lastMessage['peer_id'] ?? (int) ($conversationItem['conversation']['peer']['id'] ?? 0);
+                    $lastMessage['out'] = $lastMessage['out'] ?? 0;
+                    if (!isset($lastMessage['attachments']) || !is_array($lastMessage['attachments'])) {
+                        $lastMessage['attachments'] = [];
+                    }
+                    if (!isset($lastMessage['fwd_messages']) || !is_array($lastMessage['fwd_messages'])) {
+                        $lastMessage['fwd_messages'] = [];
+                    }
+                    unset($lastMessage);
+                }
+            }
+            unset($conversationItem);
+
+            // When a numeric folder id is passed as the filter, restrict the list to the folder members.
+            if (is_numeric($filter)) {
+                $folder = (new MessageFolders())->get((int) $filter);
+                if ($folder && $folder->getOwnerId() === $currentUserId) {
+                    $allowedPeers = array_flip($folder->getPeerIds());
+                    $payload['items'] = array_values(array_filter($payload['items'], function ($item) use ($allowedPeers) {
+                        return isset($allowedPeers[(int) ($item['conversation']['peer']['id'] ?? 0)]);
+                    }));
+                    $payload['count'] = count($payload['items']);
+                }
+            }
+        }
+
         if (empty($payload['items'])) {
             return $payload;
         }
@@ -4284,5 +4327,90 @@ final class Messages extends VKAPIRequestHandler
         $this->requireUser();
 
         return (object) ["items" => [], "profiles" => [], "groups" => [], "contacts" => [], "anonyms" => []];
+    }
+
+    public function createFolder(string $name = "", string $type = "", string $included_peer_ids = ""): object
+    {
+        $this->requireUser();
+
+        $peers = array_filter(array_map("intval", array_filter(explode(",", $included_peer_ids), "strlen")));
+        $folder = (new MessageFolders())->create($this->getUser()->getId(), $name, $type, $peers);
+
+        return (object) ["folder_id" => $folder->getId()];
+    }
+
+    public function getFolders(int $with_peers = 0, string $fields = ""): object
+    {
+        $this->requireUser();
+
+        $items = [];
+        foreach ((new MessageFolders())->getByOwner($this->getUser()->getId()) as $folder) {
+            $items[] = $folder->toVkApiStruct();
+        }
+
+        return (object) [
+            "count"               => count($items),
+            "included_lists_info" => [],
+            "items"               => $items,
+        ];
+    }
+
+    public function updateFolder(int $folder_id = 0, string $name = "", string $add_included_peer_ids = "", string $remove_included_peer_ids = ""): int
+    {
+        $this->requireUser();
+
+        $repo = new MessageFolders();
+        $folder = $repo->get($folder_id);
+        if (!$folder || $folder->getOwnerId() !== $this->getUser()->getId()) {
+            $this->fail(100, "Folder not found");
+        }
+
+        if ($name !== "") {
+            $repo->rename($folder_id, $name);
+        }
+
+        $add = array_filter(array_map("intval", array_filter(explode(",", $add_included_peer_ids), "strlen")));
+        $remove = array_filter(array_map("intval", array_filter(explode(",", $remove_included_peer_ids), "strlen")));
+        if (!empty($add)) {
+            $repo->addPeers($folder_id, $add);
+        }
+        if (!empty($remove)) {
+            $repo->removePeers($folder_id, $remove);
+        }
+
+        return 1;
+    }
+
+    public function deleteFolder(int $folder_id = 0): int
+    {
+        $this->requireUser();
+
+        $repo = new MessageFolders();
+        $folder = $repo->get($folder_id);
+        if (!$folder || $folder->getOwnerId() !== $this->getUser()->getId()) {
+            $this->fail(100, "Folder not found");
+        }
+
+        $repo->delete($folder_id);
+
+        return 1;
+    }
+
+    public function reorderFolders(string $folder_ids = "", string $ids = ""): int
+    {
+        $this->requireUser();
+
+        $raw = $folder_ids !== "" ? $folder_ids : $ids;
+        $order = array_filter(array_map("intval", array_filter(explode(",", $raw), "strlen")));
+        (new MessageFolders())->reorder($this->getUser()->getId(), $order);
+
+        return 1;
+    }
+
+    public function getRecommendedFolders(string $fields = ""): object
+    {
+        $this->requireUser();
+
+        return (object) ["items" => []];
     }
 }
