@@ -13,12 +13,38 @@ use lfkeitel\phptotp\{Base32, Totp};
 
 final class Auth extends VKAPIRequestHandler
 {
-    public function validateAccount(): object
+    public function validateAccount(string $login = "", string $sid = ""): object
     {
-        // dummy function, always return passwd
+        $login = trim($login);
+        $isEmail = strpos($login, "@") !== false;
+        $exists = false;
+        if ($login !== "") {
+            $chUser = DB::i()->getContext()->table("ChandlerUsers")->where("login", $login)->fetch();
+            if ($chUser) {
+                $exists = true;
+            } else {
+                $profile = DB::i()->getContext()->table("profiles")->where("email", $login)->fetch();
+                $exists = (bool) $profile;
+            }
+        }
+        if ($exists) {
+            return (object) [
+                "flow_names" => ["password"],
+                "flow_name"  => "need_password",
+                "next_step"  => (object) ["verification_method" => "password"],
+                "sid"        => "1",
+                "is_email"   => $isEmail,
+                "is_phone"   => !$isEmail,
+                "login"      => $login,
+            ];
+        }
         return (object) [
-            "flow_name" => "need_password",
-            "sid" => "1",
+            "flow_names" => [],
+            "flow_name"  => "need_registration",
+            "sid"        => "1",
+            "is_email"   => $isEmail,
+            "is_phone"   => !$isEmail,
+            "login"      => $login,
         ];
     }
 
@@ -154,5 +180,19 @@ final class Auth extends VKAPIRequestHandler
         }
 
         return $items;
+    }
+
+    public function getExchangeToken(string $exchange_tokens = "", int $intermediate = 0): object
+    {
+        $this->requireUser();
+        $user = $this->getUser();
+
+        return (object) [
+            "users_exchange_tokens" => [(object) [
+                "user_id"      => $user->getId(),
+                "common_token" => bin2hex(random_bytes(24)),
+                "tier_tokens"  => [],
+            ]],
+        ];
     }
 }
