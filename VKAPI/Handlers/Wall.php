@@ -1608,4 +1608,11 @@ final class Wall extends VKAPIRequestHandler
             ],
         ];
     }
+
+    public function getSubscriptions(int $offset = 0, int $count = 20, int $extended = 0, string $fields = ""): object
+    {
+        $this->requireUser();
+
+        return (object) ["count" => 0, "items" => []];
+    }
 }

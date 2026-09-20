@@ -189,4 +189,24 @@ final class Notifications extends VKAPIRequestHandler
             $this->fail(1981, "Internal error during event processing");
         }
     }
+
+    public function getSettings(string $device_id = "", string $from = "", string $lang = ""): object
+    {
+        $this->requireUser();
+
+        return (object) [
+            "apps"     => [],
+            "groups"   => [],
+            "photos"   => [],
+            "profiles" => [],
+            "items"    => (object) [],
+        ];
+    }
+
+    public function getIgnoredSources(int $offset = 0, int $count = 0, string $fields = ""): object
+    {
+        $this->requireUser();
+
+        return (object) ["count" => 0, "items" => []];
+    }
 }
