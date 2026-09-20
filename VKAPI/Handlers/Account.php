@@ -38,6 +38,14 @@ final class Account extends VKAPIRequestHandler
             "screen_name"         => $user->getShortCode(),
             "sex"                 => $user->isFemale() ? 1 : 2,
         ];
+        $return_object->home_town        = (string) ($return_object->home_town ?? "");
+        $return_object->status           = (string) ($return_object->status ?? "");
+        $return_object->screen_name      = (string) ($return_object->screen_name ?: ("id" . $user->getId()));
+        $return_object->maiden_name      = "";
+        $return_object->country          = (object) ["id" => 1, "title" => "Россия"];
+        $return_object->city             = (object) ["id" => 1, "title" => "—"];
+        $return_object->relation_partner = null;
+        $return_object->name_request     = null;
 
         $audio_status = $user->getCurrentAudioStatus();
         if (!is_null($audio_status)) {
