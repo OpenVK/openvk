@@ -65,6 +65,7 @@ final class Account extends VKAPIRequestHandler
             "eu_user"                       => false,                                 # TODO
             "https_required"                => 1,
             "phone"                         => "",
+            "link_redirects"                => "{}",
             "intro"                         => 0,
             "community_comments"            => false,
             "is_live_streaming_enabled"     => false,
