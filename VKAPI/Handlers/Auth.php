@@ -140,7 +140,7 @@ final class Auth extends VKAPIRequestHandler
 
         $count = 1;
         if ($exchange_tokens !== "") {
-            $count = max(1, count(array_filter(explode(",", $exchange_tokens), fn ($token) => trim($token) !== "")));
+            $count = max(1, count(array_filter(explode(",", $exchange_tokens), fn($token) => trim($token) !== "")));
         }
 
         $items = [];

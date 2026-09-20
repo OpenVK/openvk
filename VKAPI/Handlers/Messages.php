@@ -2340,10 +2340,10 @@ final class Messages extends VKAPIRequestHandler
                 // Hydrate last_message with the fields the client message parser requires.
                 if (isset($conversationItem['last_message']) && is_array($conversationItem['last_message'])) {
                     $lastMessage = &$conversationItem['last_message'];
-                    $lastMessage['version'] = $lastMessage['version'] ?? (int) ($lastMessage['conversation_message_id'] ?? ($lastMessage['id'] ?? 1));
-                    $lastMessage['conversation_message_id'] = $lastMessage['conversation_message_id'] ?? (int) ($lastMessage['id'] ?? 0);
-                    $lastMessage['peer_id'] = $lastMessage['peer_id'] ?? (int) ($conversationItem['conversation']['peer']['id'] ?? 0);
-                    $lastMessage['out'] = $lastMessage['out'] ?? 0;
+                    $lastMessage['version'] ??= (int) ($lastMessage['conversation_message_id'] ?? ($lastMessage['id'] ?? 1));
+                    $lastMessage['conversation_message_id'] ??= (int) ($lastMessage['id'] ?? 0);
+                    $lastMessage['peer_id'] ??= (int) ($conversationItem['conversation']['peer']['id'] ?? 0);
+                    $lastMessage['out'] ??= 0;
                     if (!isset($lastMessage['attachments']) || !is_array($lastMessage['attachments'])) {
                         $lastMessage['attachments'] = [];
                     }
@@ -4488,10 +4488,10 @@ final class Messages extends VKAPIRequestHandler
                         if (!isset($message["fwd_messages"]) || !is_array($message["fwd_messages"])) {
                             $message["fwd_messages"] = [];
                         }
-                        $message["version"] = $message["version"] ?? (int) ($message["conversation_message_id"] ?? ($message["id"] ?? 1));
-                        $message["conversation_message_id"] = $message["conversation_message_id"] ?? (int) ($message["id"] ?? 0);
-                        $message["peer_id"] = $message["peer_id"] ?? (int) ($peer["id"] ?? 0);
-                        $message["out"] = $message["out"] ?? 0;
+                        $message["version"] ??= (int) ($message["conversation_message_id"] ?? ($message["id"] ?? 1));
+                        $message["conversation_message_id"] ??= (int) ($message["id"] ?? 0);
+                        $message["peer_id"] ??= (int) ($peer["id"] ?? 0);
+                        $message["out"] ??= 0;
                         $diffItem["message"] = [$message];
                     }
 
