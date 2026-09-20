@@ -4216,4 +4216,73 @@ final class Messages extends VKAPIRequestHandler
         $res = $this->invoke("messages.setChatPermissions", $params, $group_id);
         return is_numeric($res) ? (int) $res : 1;
     }
+
+    public function getCounters(int $filter = 0): object
+    {
+        $this->requireUser();
+
+        return (object) [
+            "messages"               => 0,
+            "messages_unread_unmuted" => 0,
+            "message_requests"       => 0,
+            "important"              => 0,
+            "unanswered"             => 0,
+            "calls"                  => 0,
+            "messages_folders"       => [(object) ["folder_id" => 0, "total_count" => 0, "unmuted_count" => 0]],
+        ];
+    }
+
+    public function getReactionsAssets(int $reactions_hash = 0, int $assets_hash = 0): object
+    {
+        $this->requireUser();
+
+        return (object) [
+            "version"         => 1,
+            "assets"          => [],
+            "override_assets" => [],
+            "reaction_ids"    => [1, 2, 3, 4, 5, 6, 7, 8],
+        ];
+    }
+
+    public function getFeatureOnboarding(string $type = "", string $key = ""): object
+    {
+        $this->requireUser();
+
+        return (object) ["onboarding_entries" => []];
+    }
+
+    public function getDiffContent(int $nested_limit = 0, int $group_id = 0): object
+    {
+        $this->requireUser();
+
+        return (object) ["items" => []];
+    }
+
+    public function getGroupsForCall(string $fields = ""): object
+    {
+        $this->requireUser();
+
+        return (object) ["count" => 0, "items" => []];
+    }
+
+    public function getRecentCalls(int $count = 20, int $start_message_id = 0, string $fields = "", int $extended = 0): object
+    {
+        $this->requireUser();
+
+        return (object) ["count" => 0, "items" => [], "profiles" => [], "groups" => []];
+    }
+
+    public function getScheduledCalls(int $count = 20, string $start_from = "", string $fields = "", int $extended = 0): object
+    {
+        $this->requireUser();
+
+        return (object) ["items" => [], "profiles" => [], "groups" => [], "has_more" => false, "next_from" => ""];
+    }
+
+    public function getCurrentCalls(string $fields = "", int $extended = 0): object
+    {
+        $this->requireUser();
+
+        return (object) ["items" => [], "profiles" => [], "groups" => [], "contacts" => [], "anonyms" => []];
+    }
 }
