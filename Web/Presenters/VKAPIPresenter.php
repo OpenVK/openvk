@@ -745,9 +745,39 @@ final class VKAPIPresenter extends OpenVKPresenter
             return;
         }
 
-        $decoded = @gzdecode($raw);
-        if ($decoded === false || $decoded === null) {
+        // Guard against decompression bombs: cap the compressed input and stream-inflate
+        // with a hard ceiling on the decompressed size, bailing out before a malicious
+        // payload is ever fully materialised in memory.
+        $maxCompressed   = 8 * 1024 * 1024;   // 8 MiB gzip input
+        $maxDecompressed = 16 * 1024 * 1024;  // 16 MiB decompressed ceiling
+        if (strlen($raw) > $maxCompressed) {
             return;
+        }
+
+        $context = inflate_init(ZLIB_ENCODING_GZIP);
+        if ($context === false) {
+            return;
+        }
+
+        $decoded = "";
+        $offset  = 0;
+        $length  = strlen($raw);
+        $step    = 8192;
+
+        while ($offset < $length) {
+            $chunk   = substr($raw, $offset, $step);
+            $offset += $step;
+            $flush   = $offset >= $length ? ZLIB_FINISH : ZLIB_NO_FLUSH;
+
+            $piece = inflate_add($context, $chunk, $flush);
+            if ($piece === false) {
+                return;
+            }
+
+            $decoded .= $piece;
+            if (strlen($decoded) > $maxDecompressed) {
+                return;
+            }
         }
 
         $contentType = strtolower($_SERVER["CONTENT_TYPE"] ?? "");
