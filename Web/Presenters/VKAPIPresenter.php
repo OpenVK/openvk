@@ -1231,7 +1231,7 @@ final class VKAPIPresenter extends OpenVKPresenter
 
     public function renderTokenLogin(): void
     {
-        if ($this->requestParam("grant_type") !== "password") {
+        if (!in_array($this->requestParam("grant_type"), ["password", "phone_confirmation_sid", "phone_confirmation"], true)) {
             $this->fail(7, "Invalid grant type", "internal", "acquireToken");
         } elseif (is_null($this->requestParam("username")) || is_null($this->requestParam("password"))) {
             $this->fail(100, "Password and username not passed", "internal", "acquireToken");
