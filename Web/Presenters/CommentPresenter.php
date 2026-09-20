@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace openvk\Web\Presenters;
 
-use openvk\Web\Models\Entities\{Comment, Notifications\MentionNotification, Notifications\ReplyCommentNotification, Photo, Video, User, Topic, Post};
+use openvk\Web\Models\Entities\{Comment, Notifications\MentionNotification, Notifications\ReplyCommentNotification, Photo, Video, User, Topic, Post, Note};
 use openvk\Web\Models\Entities\Notifications\CommentNotification;
 use openvk\Web\Models\Repositories\{Comments, Clubs, Videos, Photos, Audios};
 use Nette\InvalidStateException as ISE;
@@ -63,6 +63,10 @@ final class CommentPresenter extends OpenVKPresenter
         }
 
         if (!$entity->canBeViewedBy($this->user->identity)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
+        if ($entity instanceof Note && !$entity->canBeCommentedBy($this->user->identity)) {
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 

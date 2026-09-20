@@ -62,7 +62,7 @@
             </div>
         </div>
         <div style="margin-left: 6px; width: 535px;">
-            {$note->getText()|noescape}
+            {$note->getText($thisUser ?? null)|noescape}
         </div>
     </article>
 
@@ -87,6 +87,7 @@
             page => $cPage,
             model => "notes",
             parent => $note,
-            showTitle => false}
+            showTitle => false,
+            readOnly => !(isset($thisUser) && $note->canBeCommentedBy($thisUser))}
     </div>
 {/block}

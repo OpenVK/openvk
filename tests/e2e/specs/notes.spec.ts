@@ -18,17 +18,18 @@ test.describe('Notes', () => {
 
   test('shows create note form', async ({ page }) => {
     await page.goto('/notes/create');
+    await expect(page.locator('#page_source')).toBeVisible();
     await expect(page.locator('.page_body')).toHaveScreenshot('note-create.png', {
       maxDiffPixels: 200,
-      mask: [page.locator('.monaco-editor .scrollbar')],
     });
   });
 
   test('shows edit note page', async ({ page }) => {
     await page.goto('/note2_1/edit');
+    await expect(page.locator('#editor .monaco-editor').first()).toBeVisible();
     await expect(page.locator('.page_body')).toHaveScreenshot('note2_1-edit.png', {
       maxDiffPixels: 200,
-      mask: [page.locator('.monaco-editor .scrollbar')],
+      mask: [page.locator('#editor .monaco-editor .scrollbar')],
     });
   });
 });

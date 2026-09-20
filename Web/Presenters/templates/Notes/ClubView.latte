@@ -1,0 +1,34 @@
+{extends "../@layout.latte"}
+
+{block title}{$page->getTitle()} — {$club->getName()}{/block}
+
+{block header}
+    <a href="{$club->getURL()}">{$club->getName()}</a>
+    »
+    <a href="/notes-{$club->getId()}">{_group_pages}</a>
+    »
+    {$page->getTitle()}
+{/block}
+
+{block content}
+{include "clubTabs.latte", club => $club, page => $page, tab => $tab}
+
+<article id="userContent" class="wiki_page_content">
+    <h2 class="wiki_page_title">{$page->getTitle()}</h2>
+    <div class="wiki_page_body">
+        {$page->getText($thisUser ?? null)|noescape}
+    </div>
+</article>
+
+<div class="wiki_page_comments" style="margin: 10px 0 0; border-top: 1px solid #ddd; padding-top: 8px;">
+    {include "../components/comments.latte",
+        comments => $comments,
+        count => $cCount,
+        page => $cPage,
+        model => "notes",
+        parent => $page,
+        club => $club,
+        showTitle => true,
+        readOnly => !(isset($thisUser) && $page->canBeCommentedBy($thisUser))}
+</div>
+{/block}
