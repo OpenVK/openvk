@@ -56,6 +56,7 @@ final class Account extends VKAPIRequestHandler
             "country"                       => "CZ",                                  # TODO
             "eu_user"                       => false,                                 # TODO
             "https_required"                => 1,
+            "phone"                         => "",
             "intro"                         => 0,
             "community_comments"            => false,
             "is_live_streaming_enabled"     => false,
@@ -489,5 +490,105 @@ final class Account extends VKAPIRequestHandler
             "disabled_until" => 0,
             "sound" => 1,
         ];
+    }
+
+    public function get(string $user_ids = "", string $fields = ""): array
+    {
+        $this->requireUser();
+
+        $ids = [];
+        foreach (explode(",", $user_ids) as $rawId) {
+            $rawId = trim($rawId);
+            if ($rawId !== "" && is_numeric($rawId)) {
+                $ids[] = (int) $rawId;
+            }
+        }
+        if (empty($ids)) {
+            $ids = [$this->getUser()->getId()];
+        }
+
+        $users = new \openvk\Web\Models\Repositories\Users();
+        $out = [];
+        foreach ($ids as $userId) {
+            $user = $users->get($userId);
+            if (!$user) {
+                continue;
+            }
+            $out[] = (object) [
+                "id"                => $user->getId(),
+                "first_name"        => $user->getFirstName(),
+                "last_name"         => $user->getLastName(),
+                "is_closed"         => false,
+                "can_access_closed" => true,
+                "photo_50"          => $user->getAvatarURL("miniscule"),
+                "photo_100"         => $user->getAvatarURL("tiny"),
+                "photo_200"         => $user->getAvatarURL("normal"),
+                "photo_base"        => $user->getAvatarURL("normal"),
+                "has_photo"         => $user->hasAvatar() ? 1 : 0,
+                "screen_name"       => $user->getShortCode() ?? ("id" . $user->getId()),
+                "online"            => $user->isOnline() ? 1 : 0,
+                "verified"          => $user->isVerified() ? 1 : 0,
+                "sex"               => $user->isFemale() ? 1 : 2,
+            ];
+        }
+
+        return $out;
+    }
+
+    public function getMulti(string $fields = ""): object
+    {
+        $this->requireUser();
+
+        $user = $this->getUser();
+
+        return (object) [
+            "count" => 1,
+            "items" => [
+                (object) [
+                    "user_id"    => $user->getId(),
+                    "id"         => $user->getId(),
+                    "first_name" => $user->getFirstName(),
+                    "last_name"  => $user->getLastName(),
+                    "photo_50"   => $user->getAvatarURL("miniscule"),
+                    "photo_100"  => $user->getAvatarURL("tiny"),
+                    "photo_200"  => $user->getAvatarURL("normal"),
+                    "photo_base" => $user->getAvatarURL("normal"),
+                ],
+            ],
+        ];
+    }
+
+    public function getPrivacySettings(): object
+    {
+        $this->requireUser();
+
+        return (object) [
+            "sections"                                      => [],
+            "settings"                                      => [],
+            "supported_categories"                          => [],
+            "recommended_closed_profile_settings"           => [],
+            "story_privacy_is_deprecated_options_disabled"  => false,
+        ];
+    }
+
+    public function getContactList(int $offset = 0, int $count = 100, string $fields = ""): object
+    {
+        $this->requireUser();
+
+        return (object) ["count" => 0, "items" => []];
+    }
+
+    public function getHelpHints(string $section = "", string $app_id = "", string $fields = ""): object
+    {
+        $this->requireUser();
+
+        return (object) ["hints" => [], "items" => [], "count" => 0];
+    }
+
+    public function getBadgesSettings(): object
+    {
+        $this->requireUser();
+
+        return (object) ["items" => [], "is_enabled" => false];
     }
 }
