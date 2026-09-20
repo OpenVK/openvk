@@ -7,7 +7,7 @@ namespace openvk\VKAPI\Handlers;
 use Nette\InvalidStateException;
 use Nette\Utils\ImageException;
 use openvk\Web\Util\IMBroker;
-use openvk\Web\Models\Repositories\{Reports, Topics as TopicsRepo, Users as USRRepo, Clubs as ClubRepo, Messages as MSGRepo, Chats as ChatRepo};
+use openvk\Web\Models\Repositories\{Reports, Topics as TopicsRepo, Users as USRRepo, Clubs as ClubRepo, Messages as MSGRepo, Chats as ChatRepo, MessageFolders};
 use openvk\Web\Models\Entities\{Report, Photo, Message, Club as ClubEnt, User as UserEnt};
 use openvk\Web\Models\Entities\Messages\Chat;
 use openvk\VKAPI\Exceptions\APIErrorException;
@@ -695,11 +695,15 @@ final class Messages extends VKAPIRequestHandler
                     }
                     if (!empty($chatSettings['admin_id'])) {
                         $aid = (int) $chatSettings['admin_id'];
-                        if ($aid > 0) $userIDs[] = $aid;
+                        if ($aid > 0) {
+                            $userIDs[] = $aid;
+                        }
                     }
                     if (!empty($chatSettings['owner_id'])) {
                         $oid = (int) $chatSettings['owner_id'];
-                        if ($oid > 0) $userIDs[] = $oid;
+                        if ($oid > 0) {
+                            $userIDs[] = $oid;
+                        }
                     }
                 }
 
@@ -917,7 +921,7 @@ final class Messages extends VKAPIRequestHandler
             unset($data['pts']);
         }
 
-        $data['unread_count'] = $data['unread_count'] ?? $this->getUser()->getUnreadMessagesCount();
+        $data['unread_count'] ??= $this->getUser()->getUnreadMessagesCount();
 
         return $data;
     }
@@ -2320,6 +2324,49 @@ final class Messages extends VKAPIRequestHandler
         ];
 
         $payload = $this->invoke("messages.getConversations", $params, $group_id);
+
+        if (is_array($payload) && !empty($payload['items']) && is_array($payload['items'])) {
+            foreach ($payload['items'] as &$conversationItem) {
+                // Clamp sort_id.major_id into the pin-bucket range [0, 1023] expected by the client.
+                if (isset($conversationItem['conversation']['sort_id']) && is_array($conversationItem['conversation']['sort_id'])) {
+                    $majorId = (int) ($conversationItem['conversation']['sort_id']['major_id'] ?? 0);
+                    $minorId = (int) ($conversationItem['conversation']['sort_id']['minor_id'] ?? 0);
+                    if ($majorId > 1023 || $majorId < 0) {
+                        $minorId = $majorId > 0 ? $majorId : $minorId;
+                        $majorId = 0;
+                    }
+                    $conversationItem['conversation']['sort_id'] = ["major_id" => $majorId, "minor_id" => $minorId];
+                }
+                // Hydrate last_message with the fields the client message parser requires.
+                if (isset($conversationItem['last_message']) && is_array($conversationItem['last_message'])) {
+                    $lastMessage = &$conversationItem['last_message'];
+                    $lastMessage['version'] ??= (int) ($lastMessage['conversation_message_id'] ?? ($lastMessage['id'] ?? 1));
+                    $lastMessage['conversation_message_id'] ??= (int) ($lastMessage['id'] ?? 0);
+                    $lastMessage['peer_id'] ??= (int) ($conversationItem['conversation']['peer']['id'] ?? 0);
+                    $lastMessage['out'] ??= 0;
+                    if (!isset($lastMessage['attachments']) || !is_array($lastMessage['attachments'])) {
+                        $lastMessage['attachments'] = [];
+                    }
+                    if (!isset($lastMessage['fwd_messages']) || !is_array($lastMessage['fwd_messages'])) {
+                        $lastMessage['fwd_messages'] = [];
+                    }
+                    unset($lastMessage);
+                }
+            }
+            unset($conversationItem);
+
+            // When a numeric folder id is passed as the filter, restrict the list to the folder members.
+            if (is_numeric($filter)) {
+                $folder = (new MessageFolders())->get((int) $filter);
+                if ($folder && $folder->getOwnerId() === $currentUserId) {
+                    $allowedPeers = array_flip($folder->getPeerIds());
+                    $payload['items'] = array_values(array_filter($payload['items'], function ($item) use ($allowedPeers) {
+                        return isset($allowedPeers[(int) ($item['conversation']['peer']['id'] ?? 0)]);
+                    }));
+                    $payload['count'] = count($payload['items']);
+                }
+            }
+        }
 
         if (empty($payload['items'])) {
             return $payload;
@@ -4210,5 +4257,315 @@ final class Messages extends VKAPIRequestHandler
 
         $res = $this->invoke("messages.setChatPermissions", $params, $group_id);
         return is_numeric($res) ? (int) $res : 1;
+    }
+
+    public function getCounters(int $filter = 0): object
+    {
+        $this->requireUser();
+
+        return (object) [
+            "messages"               => 0,
+            "messages_unread_unmuted" => 0,
+            "message_requests"       => 0,
+            "important"              => 0,
+            "unanswered"             => 0,
+            "calls"                  => 0,
+            "messages_folders"       => [(object) ["folder_id" => 0, "total_count" => 0, "unmuted_count" => 0]],
+        ];
+    }
+
+    public function getReactionsAssets(int $reactions_hash = 0, int $assets_hash = 0): object
+    {
+        $this->requireUser();
+
+        return (object) [
+            "version"         => 1,
+            "assets"          => [],
+            "override_assets" => [],
+            "reaction_ids"    => [1, 2, 3, 4, 5, 6, 7, 8],
+        ];
+    }
+
+    public function getFeatureOnboarding(string $type = "", string $key = ""): object
+    {
+        $this->requireUser();
+
+        return (object) ["onboarding_entries" => []];
+    }
+
+    public function getDiffContent(int $nested_limit = 0, int $group_id = 0): object
+    {
+        $this->requireUser();
+
+        return (object) ["items" => []];
+    }
+
+    public function getGroupsForCall(string $fields = ""): object
+    {
+        $this->requireUser();
+
+        return (object) ["count" => 0, "items" => []];
+    }
+
+    public function getRecentCalls(int $count = 20, int $start_message_id = 0, string $fields = "", int $extended = 0): object
+    {
+        $this->requireUser();
+
+        return (object) ["count" => 0, "items" => [], "profiles" => [], "groups" => []];
+    }
+
+    public function getScheduledCalls(int $count = 20, string $start_from = "", string $fields = "", int $extended = 0): object
+    {
+        $this->requireUser();
+
+        return (object) ["items" => [], "profiles" => [], "groups" => [], "has_more" => false, "next_from" => ""];
+    }
+
+    public function getCurrentCalls(string $fields = "", int $extended = 0): object
+    {
+        $this->requireUser();
+
+        return (object) ["items" => [], "profiles" => [], "groups" => [], "contacts" => [], "anonyms" => []];
+    }
+
+    public function createFolder(string $name = "", string $type = "", string $included_peer_ids = ""): object
+    {
+        $this->requireUser();
+
+        $peers = array_filter(array_map("intval", array_filter(explode(",", $included_peer_ids), "strlen")));
+        $folder = (new MessageFolders())->create($this->getUser()->getId(), $name, $type, $peers);
+
+        return (object) ["folder_id" => $folder->getId()];
+    }
+
+    public function getFolders(int $with_peers = 0, string $fields = ""): object
+    {
+        $this->requireUser();
+
+        $items = [];
+        foreach ((new MessageFolders())->getByOwner($this->getUser()->getId()) as $folder) {
+            $items[] = $folder->toVkApiStruct();
+        }
+
+        return (object) [
+            "count"               => count($items),
+            "included_lists_info" => [],
+            "items"               => $items,
+        ];
+    }
+
+    public function updateFolder(int $folder_id = 0, string $name = "", string $add_included_peer_ids = "", string $remove_included_peer_ids = ""): int
+    {
+        $this->requireUser();
+
+        $repo = new MessageFolders();
+        $folder = $repo->get($folder_id);
+        if (!$folder || $folder->getOwnerId() !== $this->getUser()->getId()) {
+            $this->fail(100, "Folder not found");
+        }
+
+        if ($name !== "") {
+            $repo->rename($folder_id, $name);
+        }
+
+        $add = array_filter(array_map("intval", array_filter(explode(",", $add_included_peer_ids), "strlen")));
+        $remove = array_filter(array_map("intval", array_filter(explode(",", $remove_included_peer_ids), "strlen")));
+        if (!empty($add)) {
+            $repo->addPeers($folder_id, $add);
+        }
+        if (!empty($remove)) {
+            $repo->removePeers($folder_id, $remove);
+        }
+
+        return 1;
+    }
+
+    public function deleteFolder(int $folder_id = 0): int
+    {
+        $this->requireUser();
+
+        $repo = new MessageFolders();
+        $folder = $repo->get($folder_id);
+        if (!$folder || $folder->getOwnerId() !== $this->getUser()->getId()) {
+            $this->fail(100, "Folder not found");
+        }
+
+        $repo->delete($folder_id);
+
+        return 1;
+    }
+
+    public function reorderFolders(string $folder_ids = "", string $ids = ""): int
+    {
+        $this->requireUser();
+
+        $raw = $folder_ids !== "" ? $folder_ids : $ids;
+        $order = array_filter(array_map("intval", array_filter(explode(",", $raw), "strlen")));
+        (new MessageFolders())->reorder($this->getUser()->getId(), $order);
+
+        return 1;
+    }
+
+    public function getRecommendedFolders(string $fields = ""): object
+    {
+        $this->requireUser();
+
+        return (object) ["items" => []];
+    }
+
+    public function getDiff(int $ts = 0, int $lp_version = 0, int $events_limit = 1000, int $msgs_limit = 1000, int $max_msg_id = 0, int $fields = 0): object
+    {
+        $this->requireUser();
+
+        $now = time();
+        $user = $this->getUser();
+        $self = (object) [
+            "id"                => $user->getId(),
+            "first_name"        => $user->getFirstName(),
+            "last_name"         => $user->getLastName(),
+            "is_closed"         => false,
+            "can_access_closed" => true,
+            "photo_50"          => $user->getAvatarURL("miniscule"),
+            "photo_100"         => $user->getAvatarURL("tiny"),
+            "photo_200"         => $user->getAvatarURL("normal"),
+            "photo_base"        => $user->getAvatarURL("normal"),
+            "screen_name"       => $user->getShortCode() ?? ("id" . $user->getId()),
+            "sex"               => $user->isFemale() ? 1 : 2,
+            "online"            => 1,
+            "verified"          => $user->isVerified() ? 1 : 0,
+        ];
+
+        $profiles = [$self];
+        $conversationsInfo = [];
+
+        try {
+            $this->ensureBrokerActive();
+            $payload = $this->invoke("messages.getConversations", [
+                "count"    => 40,
+                "extended" => 1,
+                "fields"   => "photo_50,photo_100,photo_200,screen_name,online,sex,verified",
+            ], 0);
+
+            if (is_array($payload) && !empty($payload["items"])) {
+                foreach ($payload["items"] as $item) {
+                    $conversation = $item["conversation"] ?? null;
+                    if (!$conversation) {
+                        continue;
+                    }
+
+                    $peer = $conversation["peer"] ?? [];
+
+                    // Clamp sort_id.major_id into the pin-bucket range [0, 1023]; the timestamp goes to minor_id.
+                    $majorId = (int) ($conversation["sort_id"]["major_id"] ?? 0);
+                    $minorId = (int) ($conversation["sort_id"]["minor_id"] ?? 0);
+                    if ($majorId > 1023 || $majorId < 0) {
+                        $minorId = $majorId > 0 ? $majorId : $minorId;
+                        $majorId = 0;
+                    }
+                    $minorId = max(0, min($minorId, 2147483647));
+                    $conversation["sort_id"] = ["major_id" => $majorId, "minor_id" => $minorId];
+
+                    $lastCmid = $conversation["last_conversation_message_id"] ?? ($conversation["last_message_id"] ?? 0);
+                    $diffItem = [
+                        "conversation"      => $conversation,
+                        "conversation_diff" => [
+                            "peer_id"       => $peer["id"] ?? 0,
+                            "in_read_cmid"  => $conversation["in_read_cmid"] ?? 0,
+                            "out_read_cmid" => $conversation["out_read_cmid"] ?? 0,
+                            "unread_count"  => $conversation["unread_count"] ?? 0,
+                            "sort_major_id" => $conversation["sort_id"]["major_id"],
+                            "sort_minor_id" => $conversation["sort_id"]["minor_id"],
+                            "new_msgs"      => ["cmids" => $lastCmid ? [$lastCmid] : []],
+                        ],
+                    ];
+
+                    if (!empty($item["last_message"]) && is_array($item["last_message"])) {
+                        $message = $item["last_message"];
+                        if (!isset($message["attachments"]) || !is_array($message["attachments"])) {
+                            $message["attachments"] = [];
+                        }
+                        if (!isset($message["fwd_messages"]) || !is_array($message["fwd_messages"])) {
+                            $message["fwd_messages"] = [];
+                        }
+                        $message["version"] ??= (int) ($message["conversation_message_id"] ?? ($message["id"] ?? 1));
+                        $message["conversation_message_id"] ??= (int) ($message["id"] ?? 0);
+                        $message["peer_id"] ??= (int) ($peer["id"] ?? 0);
+                        $message["out"] ??= 0;
+                        $diffItem["message"] = [$message];
+                    }
+
+                    $conversationsInfo[] = $diffItem;
+                }
+            }
+
+            if (is_array($payload) && !empty($payload["profiles"])) {
+                foreach ($payload["profiles"] as $profile) {
+                    if (is_array($profile) && !isset($profile["deactivated"])) {
+                        if (!isset($profile["photo_base"])) {
+                            $profile["photo_base"] = $profile["photo_200"] ?? ($profile["photo_100"] ?? ($profile["photo_50"] ?? ""));
+                        }
+                        $profiles[] = $profile;
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+        }
+
+        $counters = (object) [
+            "messages"                         => 0,
+            "messages_unread_unmuted"          => 0,
+            "message_requests"                 => 0,
+            "important"                        => 0,
+            "unanswered"                       => 0,
+            "calls"                            => 0,
+            "business_notify"                  => 0,
+            "business_notify_all"              => 0,
+            "messages_archive"                 => 0,
+            "messages_archive_unread"          => 0,
+            "messages_archive_unread_unmuted"  => 0,
+            "messages_archive_mentions_count"  => 0,
+        ];
+
+        $lp = null;
+        try {
+            $lp = $this->getLongPollServer(0, $lp_version > 0 ? $lp_version : 19);
+        } catch (\Throwable $e) {
+            $lp = null;
+        }
+
+        if (is_array($lp) && !empty($lp["server"])) {
+            $credentials = (object) [
+                "key"                   => (string) ($lp["key"] ?? ""),
+                "ts"                    => (int) ($lp["ts"] ?? $now),
+                "server_lp"             => (string) $lp["server"],
+                "lp_server_unavailable" => false,
+            ];
+        } else {
+            $credentials = (object) [
+                "lp_server_unavailable" => true,
+                "ts"                    => $now,
+                "key"                   => "",
+                "server_lp"             => "",
+            ];
+        }
+
+        return (object) [
+            "server_time"        => $now,
+            "server_version"     => 10,
+            "invalidate_all"     => true,
+            "conversations_info" => $conversationsInfo,
+            "profiles"           => $profiles,
+            "groups"             => [],
+            "contacts"           => [],
+            "counters"           => $counters,
+            "folders"            => (object) ["count" => 0, "items" => [], "included_lists_info" => []],
+            "changed_objects"    => (object) ["items" => [], "delete_items" => [], "drop_contacts" => [], "contacts_last_update" => 0],
+            "credentials"        => $credentials,
+        ];
+    }
+
+    public function joinChatByTopic(int $group_id, int $topic_id): object
+    {
+        return $this->joinChatByInviteLink($group_id . "_" . $topic_id, "topic", $group_id);
     }
 }

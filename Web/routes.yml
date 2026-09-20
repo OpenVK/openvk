@@ -449,6 +449,10 @@ routes:
       handler: "VKAPI->tokenLogin"
     - url: "/oauth/token" # dublicate
       handler: "VKAPI->tokenLogin"
+    - url: "/get_anonym_token"
+      handler: "VKAPI->getAnonymToken"
+    - url: "/oauth/get_anonym_token"
+      handler: "VKAPI->getAnonymToken"
     - url: "/authorize"
       handler: "VKAPI->OAuthLogin"
     - url: "/2fa"

@@ -719,6 +719,7 @@ final class VKAPIPresenter extends OpenVKPresenter
 
     public function renderRouteSingle(string $method): void
     {
+        $this->decompressRequestBody();
         $method = rtrim($method, '.');
         if (str_contains($method, '.')) {
             [$object, $action] = explode('.', $method, 2);
@@ -728,8 +729,74 @@ final class VKAPIPresenter extends OpenVKPresenter
         }
     }
 
+    private function decompressRequestBody(): void
+    {
+        if (($_SERVER["REQUEST_METHOD"] ?? "GET") !== "POST") {
+            return;
+        }
+
+        $encoding = strtolower($_SERVER["HTTP_CONTENT_ENCODING"] ?? "");
+        if (strpos($encoding, "gzip") === false) {
+            return;
+        }
+
+        $raw = @file_get_contents("php://input");
+        if ($raw === false || $raw === "") {
+            return;
+        }
+
+        // Guard against decompression bombs: cap the compressed input and stream-inflate
+        // with a hard ceiling on the decompressed size, bailing out before a malicious
+        // payload is ever fully materialised in memory.
+        $maxCompressed   = 8 * 1024 * 1024;   // 8 MiB gzip input
+        $maxDecompressed = 16 * 1024 * 1024;  // 16 MiB decompressed ceiling
+        if (strlen($raw) > $maxCompressed) {
+            return;
+        }
+
+        $context = inflate_init(ZLIB_ENCODING_GZIP);
+        if ($context === false) {
+            return;
+        }
+
+        $decoded = "";
+        $offset  = 0;
+        $length  = strlen($raw);
+        $step    = 8192;
+
+        while ($offset < $length) {
+            $chunk   = substr($raw, $offset, $step);
+            $offset += $step;
+            $flush   = $offset >= $length ? ZLIB_FINISH : ZLIB_NO_FLUSH;
+
+            $piece = inflate_add($context, $chunk, $flush);
+            if ($piece === false) {
+                return;
+            }
+
+            $decoded .= $piece;
+            if (strlen($decoded) > $maxDecompressed) {
+                return;
+            }
+        }
+
+        $contentType = strtolower($_SERVER["CONTENT_TYPE"] ?? "");
+        if (strpos($contentType, "application/json") !== false) {
+            $parsed = json_decode($decoded, true);
+        } else {
+            $parsed = [];
+            parse_str($decoded, $parsed);
+        }
+
+        if (is_array($parsed)) {
+            $_POST = array_merge($_POST, $parsed);
+            $_REQUEST = array_merge($_REQUEST, $parsed);
+        }
+    }
+
     public function renderRoute(string $object, string $method): void
     {
+        $this->decompressRequestBody();
         $this->currentObject = $object;
         $this->currentMethod = $method;
 
@@ -740,6 +807,57 @@ final class VKAPIPresenter extends OpenVKPresenter
 
         $callback = $this->queryParam("callback");
         [$identity, $platform] = $this->resolveIdentity($object, $method);
+
+        // batch.call executes several API methods in a single request (used by VK Messenger clients).
+        if (strtolower($object) === "batch" && strtolower($method) === "call") {
+            $rawInputBatch = file_get_contents("php://input");
+            $jsonInputBatch = !empty($rawInputBatch) ? @json_decode($rawInputBatch, true) : null;
+            $requestParams = is_array($jsonInputBatch) ? array_merge($_REQUEST, $jsonInputBatch) : $_REQUEST;
+            $this->setupApiLanguage($requestParams);
+
+            $calls = $requestParams["requests"] ?? $requestParams["calls"] ?? $requestParams["methods"] ?? null;
+            if (is_string($calls)) {
+                $calls = json_decode($calls, true);
+            }
+
+            $responses = [];
+            if (is_array($calls)) {
+                foreach ($calls as $call) {
+                    if (!is_array($call)) {
+                        continue;
+                    }
+
+                    $callId = (string) ($call["id"] ?? "");
+                    $callMethod = ltrim((string) ($call["method"] ?? $call["name"] ?? ""), "/");
+                    $callParams = $call["params"] ?? $call["args"] ?? [];
+                    if (is_string($callParams)) {
+                        $callParams = json_decode($callParams, true) ?: [];
+                    }
+                    if (!is_array($callParams)) {
+                        $callParams = [];
+                    }
+
+                    $subObject = "";
+                    $subMethod = $callMethod;
+                    if (strpos($callMethod, ".") !== false) {
+                        [$subObject, $subMethod] = explode(".", $callMethod, 2);
+                    }
+
+                    try {
+                        $subHasRss = false;
+                        $subResult = $this->callAPIMethod($subObject, $subMethod, array_merge($requestParams, $callParams), $identity, $platform, $subHasRss);
+                        $responses[] = ["id" => $callId, "body" => ["response" => $subResult]];
+                    } catch (APIErrorException $ex) {
+                        $responses[] = ["id" => $callId, "error" => ["error_code" => $ex->getCode(), "error_msg" => $ex->getMessage()]];
+                    } catch (\Throwable $ex) {
+                        $responses[] = ["id" => $callId, "error" => ["error_code" => 1, "error_msg" => $ex->getMessage()]];
+                    }
+                }
+            }
+
+            $this->packMessage(["response" => ["responses" => $responses], "responses" => $responses], $callback);
+            return;
+        }
 
         $has_rss = false;
         try {
@@ -772,6 +890,7 @@ final class VKAPIPresenter extends OpenVKPresenter
 
     public function renderApiPHP(): void
     {
+        $this->decompressRequestBody();
         $rawInput = file_get_contents("php://input");
         $jsonInput = !empty($rawInput) ? @json_decode($rawInput, true) : null;
         $requestParams = is_array($jsonInput) ? array_merge($_REQUEST, $jsonInput) : $_REQUEST;
@@ -1142,7 +1261,7 @@ final class VKAPIPresenter extends OpenVKPresenter
 
     public function renderTokenLogin(): void
     {
-        if ($this->requestParam("grant_type") !== "password") {
+        if (!in_array($this->requestParam("grant_type"), ["password", "phone_confirmation_sid", "phone_confirmation"], true)) {
             $this->fail(7, "Invalid grant type", "internal", "acquireToken");
         } elseif (is_null($this->requestParam("username")) || is_null($this->requestParam("password"))) {
             $this->fail(100, "Password and username not passed", "internal", "acquireToken");
@@ -1451,5 +1570,12 @@ final class VKAPIPresenter extends OpenVKPresenter
     private function isMusicAvailable(int $id): bool
     {
         return (bool) !in_array($id, OPENVK_ROOT_CONF["openvk"]["preferences"]["music"]["notAvailableFor"] ?? []);
+    }
+
+    public function renderGetAnonymToken(): void
+    {
+        header("Content-Type: application/json");
+        $token = "anonym_" . bin2hex(random_bytes(24));
+        exit(json_encode(["token" => $token, "expired_at" => time() + 31536000]));
     }
 }

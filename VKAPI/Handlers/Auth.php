@@ -13,12 +13,38 @@ use lfkeitel\phptotp\{Base32, Totp};
 
 final class Auth extends VKAPIRequestHandler
 {
-    public function validateAccount(): object
+    public function validateAccount(string $login = "", string $sid = ""): object
     {
-        // dummy function, always return passwd
+        $login = trim($login);
+        $isEmail = strpos($login, "@") !== false;
+        $exists = false;
+        if ($login !== "") {
+            $chUser = DB::i()->getContext()->table("ChandlerUsers")->where("login", $login)->fetch();
+            if ($chUser) {
+                $exists = true;
+            } else {
+                $profile = DB::i()->getContext()->table("profiles")->where("email", $login)->fetch();
+                $exists = (bool) $profile;
+            }
+        }
+        if ($exists) {
+            return (object) [
+                "flow_names" => ["password"],
+                "flow_name"  => "need_password",
+                "next_step"  => (object) ["verification_method" => "password"],
+                "sid"        => "1",
+                "is_email"   => $isEmail,
+                "is_phone"   => !$isEmail,
+                "login"      => $login,
+            ];
+        }
         return (object) [
-            "flow_name" => "need_password",
-            "sid" => "1",
+            "flow_names" => [],
+            "flow_name"  => "need_registration",
+            "sid"        => "1",
+            "is_email"   => $isEmail,
+            "is_phone"   => !$isEmail,
+            "login"      => $login,
         ];
     }
 
@@ -113,6 +139,60 @@ final class Auth extends VKAPIRequestHandler
             "user_id" => $uId,
             "sid"     => $token->getFormattedToken(),
             "secret"  => $token->getSecret(),
+        ];
+    }
+
+    public function getExchangeTokensInfo(string $exchange_tokens = "", int $target_app_id = 0): array
+    {
+        $this->requireUser();
+
+        $user = $this->getUser();
+        $profile = (object) [
+            "id"                     => $user->getId(),
+            "first_name"             => (string) $user->getFirstName(),
+            "last_name"              => (string) $user->getLastName(),
+            "photo_200"              => $user->getAvatarURL("normal"),
+            "screen_name"            => (string) ($user->getShortCode() ?? ("id" . $user->getId())),
+            "phone"                  => "",
+            "email"                  => "",
+            "is_banned"              => false,
+            "is_banned_forever"      => false,
+            "is_celebrity"           => false,
+            "is_deactivated"         => false,
+            "is_verified"            => (bool) $user->isVerified(),
+            "account_security_level" => 0,
+            "age_group"              => 0,
+        ];
+
+        $count = 1;
+        if ($exchange_tokens !== "") {
+            $count = max(1, count(array_filter(explode(",", $exchange_tokens), fn($token) => trim($token) !== "")));
+        }
+
+        $items = [];
+        for ($index = 0; $index < $count; $index++) {
+            $items[] = (object) [
+                "error"                => null,
+                "notification_counter" => 0,
+                "tier"                 => 0,
+                "profile"              => $profile,
+            ];
+        }
+
+        return $items;
+    }
+
+    public function getExchangeToken(string $exchange_tokens = "", int $intermediate = 0): object
+    {
+        $this->requireUser();
+        $user = $this->getUser();
+
+        return (object) [
+            "users_exchange_tokens" => [(object) [
+                "user_id"      => $user->getId(),
+                "common_token" => bin2hex(random_bytes(24)),
+                "tier_tokens"  => [],
+            ]],
         ];
     }
 }

@@ -174,4 +174,11 @@ final class Stickers extends VKAPIRequestHandler
         return (new Store($this->getUser(), $this->getPlatform()))
             ->getStickersKeywords($aliases, $all_products, $need_stickers, $stickers_hash, $products_hash, $count, $user_id);
     }
+
+    public function getKeywordStickers(string $words = "", int $need_stickers = 1, string $aliases = ""): array
+    {
+        $this->requireUser();
+
+        return [];
+    }
 }
