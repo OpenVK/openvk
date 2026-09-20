@@ -695,11 +695,15 @@ final class Messages extends VKAPIRequestHandler
                     }
                     if (!empty($chatSettings['admin_id'])) {
                         $aid = (int) $chatSettings['admin_id'];
-                        if ($aid > 0) $userIDs[] = $aid;
+                        if ($aid > 0) {
+                            $userIDs[] = $aid;
+                        }
                     }
                     if (!empty($chatSettings['owner_id'])) {
                         $oid = (int) $chatSettings['owner_id'];
-                        if ($oid > 0) $userIDs[] = $oid;
+                        if ($oid > 0) {
+                            $userIDs[] = $oid;
+                        }
                     }
                 }
 
@@ -917,7 +921,7 @@ final class Messages extends VKAPIRequestHandler
             unset($data['pts']);
         }
 
-        $data['unread_count'] = $data['unread_count'] ?? $this->getUser()->getUnreadMessagesCount();
+        $data['unread_count'] ??= $this->getUser()->getUnreadMessagesCount();
 
         return $data;
     }
