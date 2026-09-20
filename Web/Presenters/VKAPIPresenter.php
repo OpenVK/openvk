@@ -741,6 +741,57 @@ final class VKAPIPresenter extends OpenVKPresenter
         $callback = $this->queryParam("callback");
         [$identity, $platform] = $this->resolveIdentity($object, $method);
 
+        // batch.call executes several API methods in a single request (used by VK Messenger clients).
+        if (strtolower($object) === "batch" && strtolower($method) === "call") {
+            $rawInputBatch = file_get_contents("php://input");
+            $jsonInputBatch = !empty($rawInputBatch) ? @json_decode($rawInputBatch, true) : null;
+            $requestParams = is_array($jsonInputBatch) ? array_merge($_REQUEST, $jsonInputBatch) : $_REQUEST;
+            $this->setupApiLanguage($requestParams);
+
+            $calls = $requestParams["requests"] ?? $requestParams["calls"] ?? $requestParams["methods"] ?? null;
+            if (is_string($calls)) {
+                $calls = json_decode($calls, true);
+            }
+
+            $responses = [];
+            if (is_array($calls)) {
+                foreach ($calls as $call) {
+                    if (!is_array($call)) {
+                        continue;
+                    }
+
+                    $callId = (string) ($call["id"] ?? "");
+                    $callMethod = ltrim((string) ($call["method"] ?? $call["name"] ?? ""), "/");
+                    $callParams = $call["params"] ?? $call["args"] ?? [];
+                    if (is_string($callParams)) {
+                        $callParams = json_decode($callParams, true) ?: [];
+                    }
+                    if (!is_array($callParams)) {
+                        $callParams = [];
+                    }
+
+                    $subObject = "";
+                    $subMethod = $callMethod;
+                    if (strpos($callMethod, ".") !== false) {
+                        [$subObject, $subMethod] = explode(".", $callMethod, 2);
+                    }
+
+                    try {
+                        $subHasRss = false;
+                        $subResult = $this->callAPIMethod($subObject, $subMethod, array_merge($requestParams, $callParams), $identity, $platform, $subHasRss);
+                        $responses[] = ["id" => $callId, "body" => ["response" => $subResult]];
+                    } catch (APIErrorException $ex) {
+                        $responses[] = ["id" => $callId, "error" => ["error_code" => $ex->getCode(), "error_msg" => $ex->getMessage()]];
+                    } catch (\Throwable $ex) {
+                        $responses[] = ["id" => $callId, "error" => ["error_code" => 1, "error_msg" => $ex->getMessage()]];
+                    }
+                }
+            }
+
+            $this->packMessage(["response" => ["responses" => $responses], "responses" => $responses], $callback);
+            return;
+        }
+
         $has_rss = false;
         try {
             $rawInput = file_get_contents("php://input");
