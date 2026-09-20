@@ -107,9 +107,10 @@ final class Users extends VKAPIRequestHandler
                     "id"                => $usr->getId(),
                     "first_name"        => $firstName,
                     "last_name"         => $lastName,
-                    "is_closed"         => (int) $usr->isClosed(),
-                    "can_access_closed" => (int) $canView,
+                    "is_closed"         => (bool) $usr->isClosed(),
+                    "can_access_closed" => (bool) $canView,
                 ];
+                $response[$i]->photo_base = $usr->getAvatarUrl("normal");
 
                 if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
                     $response[$i]->uid = $usr->getId();
@@ -221,7 +222,7 @@ final class Users extends VKAPIRequestHandler
                             # вова кстати не матерись в коде мамка же спалит азщазаззазщазазаззазазазх
                         case "status":
                             if ($usr->getStatus() != null) {
-                                $response[$i]->status = $usr->getStatus();
+                                $response[$i]->status = (string) ($usr->getStatus() ?? "");
                             }
 
                             $audioStatus = $usr->getCurrentAudioStatus();
@@ -301,28 +302,28 @@ final class Users extends VKAPIRequestHandler
                                 break;
                             }
 
-                            $response[$i]->music = $usr->getFavoriteMusic();
+                            $response[$i]->music = (string) ($usr->getFavoriteMusic() ?? "");
                             break;
                         case "movies":
                             if (!$canView) {
                                 break;
                             }
 
-                            $response[$i]->movies = $usr->getFavoriteFilms();
+                            $response[$i]->movies = (string) ($usr->getFavoriteFilms() ?? "");
                             break;
                         case "tv":
                             if (!$canView) {
                                 break;
                             }
 
-                            $response[$i]->tv = $usr->getFavoriteShows();
+                            $response[$i]->tv = (string) ($usr->getFavoriteShows() ?? "");
                             break;
                         case "books":
                             if (!$canView) {
                                 break;
                             }
 
-                            $response[$i]->books = $usr->getFavoriteBooks();
+                            $response[$i]->books = (string) ($usr->getFavoriteBooks() ?? "");
                             break;
                         case "city":
                             if (!$canView) {
@@ -335,7 +336,7 @@ final class Users extends VKAPIRequestHandler
                             } else {
                                 $response[$i]->city = (object) [
                                     'id' => 0,
-                                    'title' => $cityStr,
+                                    'title' => (string) ($cityStr ?? ""),
                                 ];
                             }
                             break;
@@ -381,28 +382,28 @@ final class Users extends VKAPIRequestHandler
                                 break;
                             }
 
-                            $response[$i]->home_town = $usr->getHometown();
+                            $response[$i]->home_town = (string) ($usr->getHometown() ?? "");
                             break;
                         case "interests":
                             if (!$canView) {
                                 break;
                             }
 
-                            $response[$i]->interests = $usr->getInterests();
+                            $response[$i]->interests = (string) ($usr->getInterests() ?? "");
                             break;
                         case "quotes":
                             if (!$canView) {
                                 break;
                             }
 
-                            $response[$i]->quotes = $usr->getFavoriteQuote();
+                            $response[$i]->quotes = (string) ($usr->getFavoriteQuote() ?? "");
                             break;
                         case "games":
                             if (!$canView) {
                                 break;
                             }
 
-                            $response[$i]->games = $usr->getFavoriteGames();
+                            $response[$i]->games = (string) ($usr->getFavoriteGames() ?? "");
                             break;
                         case "email":
                             if (!$canView) {
@@ -416,14 +417,14 @@ final class Users extends VKAPIRequestHandler
                                 break;
                             }
 
-                            $response[$i]->telegram = $usr->getTelegram();
+                            $response[$i]->telegram = (string) ($usr->getTelegram() ?? "");
                             break;
                         case "about":
                             if (!$canView) {
                                 break;
                             }
 
-                            $response[$i]->about = $usr->getDescription();
+                            $response[$i]->about = (string) ($usr->getDescription() ?? "");
                             break;
                         case "rating":
                             if (!$canView) {
