@@ -11,6 +11,7 @@ use openvk\Web\Models\Entities\{User, APIToken};
 use openvk\Web\Models\Repositories\{Users, APITokens};
 use lfkeitel\phptotp\{Base32, Totp};
 use WhichBrowser;
+use MessagePack\Packer;
 
 final class VKAPIPresenter extends OpenVKPresenter
 {
@@ -25,8 +26,7 @@ final class VKAPIPresenter extends OpenVKPresenter
 
     private function fail(int $code, string $message, string $object, string $method): void
     {
-        header("HTTP/1.1 400 Bad API Call");
-        header("Content-Type: application/json");
+        $this->processVKAPIVersion();
 
         $payload = [
             "error_code"     => $code,
@@ -47,7 +47,20 @@ final class VKAPIPresenter extends OpenVKPresenter
             array_unshift($payload["request_params"], [ "key" => $key, "value" => $value ]);
         }
 
-        exit(json_encode($payload));
+        if (VKAPI_DECL_VER !== VKAPI_OVK_APP) {
+            $payload = [
+                "error" => $payload,
+            ];
+        }
+
+        $callback = $this->queryParam("callback");
+        if (VKAPI_DECL_VER !== VKAPI_OVK_APP) {
+            // don't exactly know why it throws 200 if there's definately an error
+            header("HTTP/1.1 200 OK");
+        } else {
+            header("HTTP/1.1 400 Bad API Call");
+        }
+        $this->packMessage($payload, $callback);
     }
 
     private function twofaFail(int $userId, string $data): void
@@ -65,7 +78,7 @@ final class VKAPIPresenter extends OpenVKPresenter
             "validation_resend" => "nowhere",
         ];
 
-        exit(json_encode($payload));
+        $this->packMessage($payload);
     }
 
     private function badMethod(string $object, string $method): void
@@ -133,12 +146,11 @@ final class VKAPIPresenter extends OpenVKPresenter
                 $pendingInfo = $this->getPendingUploadInfo($folder, $data["USER"]);
 
                 header("HTTP/1.1 507 Insufficient Storage");
-                header("Content-Type: application/json");
-                exit(json_encode([
+                $this->packMessage([
                     "error" => "insufficient_storage",
                     "error_description" => "There are $maxFiles pending already. Please save them before uploading more :3",
                     "pending_uploads" => $pendingInfo,
-                ]));
+                ]);
             }
         }
 
@@ -165,11 +177,11 @@ final class VKAPIPresenter extends OpenVKPresenter
             header("HTTP/1.0 202 Accepted");
 
             $photo = $data["USER"] . "|" . $slot . "|" . $data["GROUP"];
-            exit(json_encode([
+            $this->packMessage([
                 "server" => "ephemeral",
                 "photo"  => $photo,
                 "hash"   => hash_hmac("sha3-224", $photo, $secret),
-            ]));
+            ]);
         }
 
         $files = [];
@@ -190,11 +202,11 @@ final class VKAPIPresenter extends OpenVKPresenter
 
                     header("HTTP/1.1 507 Insufficient Storage");
                     header("Content-Type: application/json");
-                    exit(json_encode([
+                    $this->packMessage([
                         "error" => "insufficient_storage",
                         "error_description" => "There are $maxFiles pending already. Please save them before uploading more :3",
                         "pending_uploads" => $pendingInfo,
-                    ]));
+                    ]);
                 }
             }
 
@@ -217,12 +229,12 @@ final class VKAPIPresenter extends OpenVKPresenter
         $filesManifest = json_encode($filesManifest);
         $manifestHash  = hash_hmac("sha3-224", $filesManifest, $secret);
         header("HTTP/1.0 202 Accepted");
-        exit(json_encode([
+        $this->packMessage([
             "server"      => "ephemeral",
             "photos_list" => $filesManifest,
             "album_id"    => "undefined",
             "hash"        => $manifestHash,
-        ]));
+        ]);
     }
 
     private function evictOldestPendingUploads(string $folder, string $userId, int $maxFiles, array $protectedSlots = []): int
@@ -301,10 +313,14 @@ final class VKAPIPresenter extends OpenVKPresenter
      * Resolves the calling identity (and client platform) from the request, exactly as the
      * normal API entrypoint does. On authorization problems it emits an error and exits.
      *
-     * @return array{0: ?User, 1: ?string} [identity, platform]
+     * @return array{0: ?User, 1: ?string, 2: ?int, 3: ?APIToken} [identity, platform, clientId, tokenObj]
      */
-    private function resolveIdentity(string $object, string $method): array
+    private function resolveIdentity(string $object, string $method, ?string $explicitToken = null): array
     {
+        $identity = null;
+        $platform = null;
+        $clientId = null;
+        $tokenObj = null;
         $authMechanism = $this->queryParam("auth_mechanism") ?? "token";
         if ($authMechanism === "roaming") {
             if ($this->queryParam("callback")) {
@@ -316,22 +332,32 @@ final class VKAPIPresenter extends OpenVKPresenter
             }
 
             $identity = $this->user->identity;
-            $platform = null;
         } else {
-            $identity = null;
-            $platform = null;
-            if (!is_null($this->requestParam("access_token"))) {
-                $token = (new APITokens())->getByCode($this->requestParam("access_token"));
-                if ($token) {
-                    $identity = $token->getUser();
-                    $platform = $token->getPlatform();
+            $tokenStr = $explicitToken ?? $this->requestParam("access_token");
+            if (!is_null($tokenStr)) {
+                $tokenObj = (new APITokens())->getByCode($tokenStr);
+            } else {
+                $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? null;
+                if (empty($authHeader) && function_exists('getallheaders')) {
+                    $headers = getallheaders();
+                    $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? null;
                 }
-            } elseif (!is_null($_SERVER['HTTP_AUTHORIZATION'])) {
-                $token = str_replace('Bearer ', '', $_SERVER['HTTP_AUTHORIZATION']);
-                $token = (new APITokens())->getByCode($token);
-                if ($token) {
-                    $identity = $token->getUser();
-                    $platform = $token->getPlatform();
+                if (!empty($authHeader)) {
+                    $tokenStr = str_replace('Bearer ', '', $authHeader);
+                    $tokenObj = (new APITokens())->getByCode($tokenStr);
+                }
+            }
+
+            if ($tokenObj) {
+                $identity = $tokenObj->getUser();
+                $platform = $tokenObj->getPlatform();
+                $clientId = $tokenObj->getClientId();
+
+                if (empty($clientId) && !empty($platform)) {
+                    $c = \openvk\VKAPI\ClientRegistry::resolve($platform);
+                    if ($c && !empty($c['id'])) {
+                        $clientId = $c['id'];
+                    }
                 }
             }
         }
@@ -344,7 +370,7 @@ final class VKAPIPresenter extends OpenVKPresenter
             $this->fail(7, "Access denied", $object, $method);
         }
 
-        return [$identity, $platform];
+        return [$identity, $platform, $clientId, $tokenObj];
     }
 
     /**
@@ -355,9 +381,33 @@ final class VKAPIPresenter extends OpenVKPresenter
      *
      * @param array<string, mixed> $params
      */
-    private function callAPIMethod(string $object, string $method, array $params, $identity, $platform, ?bool &$hasRss = null)
+    private function callAPIMethod(string $object, string $method, array $params, $identity, $platform, ?bool &$hasRss = null, mixed $clientId = null)
     {
-        $object       = ucfirst(strtolower($object));
+        $object = ucfirst(strtolower($object));
+        if ($object === "Execute") {
+            $funcV    = $params['func_v'] ?? null;
+            $clientP  = $params['client_name'] ?? $platform;
+            $clientI  = $params['client_id'] ?? $clientId;
+            $procPath = $this->resolveProcedurePath($method, $clientP, $clientI, $funcV);
+            if (!$procPath) {
+                throw new APIErrorException("Unknown method passed.", 3);
+            }
+
+            $code   = file_get_contents($procPath);
+            $tokens = (new \openvk\VKAPI\VKScript\Lexer($code))->tokenize();
+            $ast    = (new \openvk\VKAPI\VKScript\Parser($tokens))->parse();
+
+            $subInterpreter = new \openvk\VKAPI\VKScript\Interpreter(
+                function (string $subObj, string $subMethod, array $subParams) use ($identity, $platform, $clientId) {
+                    $hasRss = false;
+                    return $this->callAPIMethod($subObj, $subMethod, $subParams, $identity, $platform, $hasRss, $clientId);
+                },
+                $params
+            );
+
+            return $subInterpreter->run($ast);
+        }
+
         $handlerClass = "openvk\\VKAPI\\Handlers\\$object";
         if (!class_exists($handlerClass)) {
             throw new APIErrorException("Unknown method passed.", 3);
@@ -409,18 +459,29 @@ final class VKAPIPresenter extends OpenVKPresenter
             }
         }
 
-        if (!defined("VKAPI_DECL_VER")) {
-            $version = $this->requestParam("v") ?? "5.9999"; // 9999 for ovk apps
-            define("VKAPI_DECL_VER", $version);
-            define("VKAPI_DECL_VER_MAJOR", intval(explode('.', $version)[0] ?? "5"));
-            define("VKAPI_DECL_VER_MINOR", intval(explode('.', $version)[1] ?? "100"));
-        }
+        $this->processVKAPIVersion();
 
         return $handler->{$method}(...$args);
     }
 
+    public function processVKAPIVersion(): void
+    {
+        if (!defined("VKAPI_DECL_VER")) {
+            $version = $this->requestParam("v") ?? "5.9999"; // 9999 for ovk apps
+            define("VKAPI_DECL_VER", $version);
+            define("VKAPI_OVK_APP", "5.9999");
+            define("VKAPI_DECL_VER_MAJOR", intval(explode('.', $version)[0] ?? "5"));
+            define("VKAPI_DECL_VER_MINOR", intval(explode('.', $version)[1] ?? "199"));
+        }
+    }
+
     public function renderRoute(string $object, string $method): void
     {
+        if (strtolower($object) === "execute") {
+            $this->renderExecute($method);
+            return;
+        }
+
         $callback = $this->queryParam("callback");
         [$identity, $platform] = $this->resolveIdentity($object, $method);
 
@@ -441,50 +502,117 @@ final class VKAPIPresenter extends OpenVKPresenter
 
             header("Content-Type: application/rss+xml;charset=UTF-8");
         } else {
-            $result = json_encode([
+            $result = [
                 "response" => $res,
-            ]);
+            ];
 
-            if ($callback) {
-                $result = $callback . '(' . $result . ')';
-                header('Content-Type: application/javascript');
-            } else {
-                header("Content-Type: application/json");
-            }
+            $this->packMessage($result, $callback);
         }
-
-        $size = strlen($result);
-        #header("Content-Length: $size");
-
-        exit($result);
     }
 
-    public function renderExecute(): void
+    public function renderExecute(?string $procedure = null): void
     {
         $callback = $this->queryParam("callback");
-        [$identity, $platform] = $this->resolveIdentity("execute", "");
 
-        $code = $this->requestParam("code");
-        if (is_null($code)) {
-            $this->fail(100, "Required parameter 'code' missing.", "execute", "");
-        }
-
-        // Everything except the reserved keys is exposed to the script via Args.
-        $reserved = ["code", "access_token", "v", "callback", "auth_mechanism", "requestPort"];
-        $args     = [];
-        foreach ($_REQUEST as $key => $value) {
-            if (!in_array($key, $reserved, true)) {
-                $args[$key] = $value;
+        $jsonData = null;
+        $contentType = $_SERVER['CONTENT_TYPE'] ?? $_SERVER['HTTP_CONTENT_TYPE'] ?? '';
+        if (str_contains($contentType, 'application/json')) {
+            $rawInput = file_get_contents('php://input');
+            if (!empty($rawInput)) {
+                $decoded = json_decode($rawInput, true);
+                if (is_array($decoded)) {
+                    $jsonData = $decoded;
+                }
             }
         }
+
+        $explicitToken = $this->requestParam("access_token") ?? ($jsonData["access_token"] ?? null);
+        [$identity, $platform, $clientId] = $this->resolveIdentity("execute", $procedure ?? "", $explicitToken);
+
+        $reqClient = $this->requestParam("client_name") ?? ($jsonData["client_name"] ?? null);
+        $reqAppId  = $this->requestParam("client_id") ?? ($jsonData["client_id"] ?? null);
+        if (!empty($reqClient) || !empty($reqAppId)) {
+            $c = \openvk\VKAPI\ClientRegistry::resolve(!empty($reqAppId) ? $reqAppId : $reqClient);
+            if (!empty($reqClient)) {
+                $platform = $reqClient;
+            } elseif ($c && !empty($c['tag'])) {
+                $platform = $c['tag'];
+            }
+            if (!empty($reqAppId) && is_numeric($reqAppId)) {
+                $clientId = (int) $reqAppId;
+            } elseif ($c && !empty($c['id'])) {
+                $clientId = $c['id'];
+            }
+        }
+
+        if (empty($procedure)) {
+            $procedure = $this->requestParam("procedure") ?? ($jsonData["procedure"] ?? null);
+        }
+
+        $code = $this->requestParam("code") ?? ($jsonData["code"] ?? null);
+
+        if (!empty($procedure)) {
+            $funcV = $this->requestParam("func_v") ?? ($jsonData["func_v"] ?? null);
+            $procPath = $this->resolveProcedurePath($procedure, $platform, $clientId, $funcV);
+            if (!$procPath) {
+                $this->fail(3, "Unknown method passed.", "execute", $procedure);
+            }
+
+            $code = file_get_contents($procPath);
+        }
+
+        if (is_null($code)) {
+            $this->fail(100, "Required parameter 'code' missing.", "execute", $procedure ?? "");
+        }
+
+        $reserved = ["code", "access_token", "callback", "auth_mechanism", "requestPort", "procedure"];
+        $args     = [];
+
+        $castArg = function ($val) use (&$castArg) {
+            if (is_array($val)) {
+                return array_map($castArg, $val);
+            }
+            if (is_string($val)) {
+                if (preg_match('/^-?(0|[1-9]\d*)$/', $val)) {
+                    return (int) $val;
+                }
+                if (preg_match('/^-?(0|[1-9]\d*)\.\d+$/', $val)) {
+                    return (float) $val;
+                }
+                if ($val === "true") {
+                    return true;
+                }
+                if ($val === "false") {
+                    return false;
+                }
+            }
+            return $val;
+        };
+
+        if (is_array($jsonData)) {
+            foreach ($jsonData as $key => $value) {
+                if (!in_array($key, $reserved, true)) {
+                    $args[$key] = $value;
+                }
+            }
+        }
+
+        foreach ($_REQUEST as $key => $value) {
+            if (!in_array($key, $reserved, true) && !array_key_exists($key, $args)) {
+                $args[$key] = $castArg($value);
+            }
+        }
+
+        $this->processVKAPIVersion();
 
         try {
             $tokens = (new \openvk\VKAPI\VKScript\Lexer($code))->tokenize();
             $ast    = (new \openvk\VKAPI\VKScript\Parser($tokens))->parse();
 
             $interpreter = new \openvk\VKAPI\VKScript\Interpreter(
-                function (string $object, string $method, array $params) use ($identity, $platform) {
-                    return $this->callAPIMethod($object, $method, $params, $identity, $platform);
+                function (string $object, string $method, array $params) use ($identity, $platform, $clientId) {
+                    $hasRss = false;
+                    return $this->callAPIMethod($object, $method, $params, $identity, $platform, $hasRss, $clientId);
                 },
                 $args
             );
@@ -492,7 +620,7 @@ final class VKAPIPresenter extends OpenVKPresenter
             $res    = $interpreter->run($ast);
             $errors = $interpreter->getExecuteErrors();
         } catch (APIErrorException $ex) {
-            $this->fail($ex->getCode(), $ex->getMessage(), "execute", "");
+            $this->fail($ex->getCode(), $ex->getMessage(), "execute", $procedure ?? "");
         }
 
         $payload = ["response" => $res];
@@ -501,8 +629,17 @@ final class VKAPIPresenter extends OpenVKPresenter
         }
 
         $result = json_encode($payload);
+        if ($result === false) {
+            $result = "{}";
+        }
         if ($callback) {
-            $result = $callback . '(' . $result . ')';
+            if (!preg_match('/^[a-zA-Z0-9_$.]+$/', $callback)) {
+                $callback = null;
+            }
+        }
+
+        if ($callback) {
+            $result = $callback . '(' . $result . ');';
             header('Content-Type: application/javascript');
         } else {
             header("Content-Type: application/json");
@@ -541,6 +678,15 @@ final class VKAPIPresenter extends OpenVKPresenter
 
         $platform     = $this->requestParam("client_name");
         $platform   ??= $this->resolveAppIdToString($this->requestParam("client_id"));
+        $rawClientId  = $this->requestParam("client_id");
+        $rawClient    = $this->requestParam("client_name");
+        $clientInfo   = \openvk\VKAPI\ClientRegistry::resolve(!empty($rawClientId) ? $rawClientId : $rawClient);
+
+        $platform     = $rawClient;
+        if (empty($platform) && $clientInfo) {
+            $platform = $clientInfo['tag'];
+        }
+        $clientId     = !empty($rawClientId) && is_numeric($rawClientId) ? (int) $rawClientId : ($clientInfo['id'] ?? null);
 
         $code = $this->requestParam("code");
         if ($user->is2faEnabled() && !($code === (new Totp())->GenerateToken(Base32::decode($user->get2faSecret())) || $user->use2faBackupCode((int) $code))) {
@@ -572,22 +718,20 @@ final class VKAPIPresenter extends OpenVKPresenter
 
             $token = new APIToken();
             $token->setUser($user);
+            if (!empty($clientId)) {
+                $token->setClientId((int) $clientId);
+            }
             $token->setPlatform($platform ?? (new WhichBrowser\Parser(getallheaders()))->toString());
             $token->save();
         }
 
-        $payload = json_encode([
+        $this->packMessage([
             "access_token" => $token->getFormattedToken(),
             "expires_in"   => 0,
             "user_id"      => $uId,
             "is_stale"     => $tokenIsStale,
             "secret"       => "super_secret_value",
         ]);
-
-        $size = strlen($payload);
-        header("Content-Type: application/json");
-        header("Content-Length: $size");
-        exit($payload);
     }
 
     public function renderOAuthLogin()
@@ -680,6 +824,9 @@ final class VKAPIPresenter extends OpenVKPresenter
         $this->template->base64 = $base64;
         $this->template->platform = $platform;
 
+        $clientInfo = \openvk\VKAPI\ClientRegistry::resolve($platform);
+        $clientId = $clientInfo['id'] ?? null;
+
         $code = $this->requestParam("code");
         if ($user->is2faEnabled() && empty($code)) {
             // intended
@@ -688,6 +835,9 @@ final class VKAPIPresenter extends OpenVKPresenter
                 $token = new APIToken();
                 $token->setUser($user);
                 $token->setPlatform($platform ?? "api"); // since this is a browser we will just throw "api"
+                if (!empty($clientId)) {
+                    $token->setClientId((int) $clientId);
+                }
                 $token->save();
                 $this->redirect('/blank.html#access_token=' . $token->getFormattedToken() . '&expires_in=0&user_id=' . $uId);
             } else {
@@ -696,6 +846,9 @@ final class VKAPIPresenter extends OpenVKPresenter
         } else {
             $token = new APIToken();
             $token->setUser($user);
+            if (!empty($clientId)) {
+                $token->setClientId((int) $clientId);
+            }
             $token->setPlatform($platform ?? "api");
             $token->save();
             $this->redirect('/blank.html#access_token=' . $token->getFormattedToken() . '&expires_in=0&user_id=' . $uId);
@@ -704,17 +857,98 @@ final class VKAPIPresenter extends OpenVKPresenter
 
     private function resolveAppIdToString(?string $id = ""): ?string
     {
-        switch ($id) {
-            case '4083558':
-                return "VFeed";
-            case '2685278':
-                return "Kate Mobile";
-            case '3680547':
-                return "VK for iOS";
-            case '2274003':
-                return "VK for Android";
-            default:
-                return "unknown";
+        if (empty($id)) {
+            return "unknown";
+        }
+
+        $client = \openvk\VKAPI\ClientRegistry::resolve($id);
+        if ($client && !empty($client['tag'])) {
+            return $client['tag'];
+        }
+
+        return "unknown";
+    }
+
+    private function resolveProcedurePath(string $procedure, ?string $platform = null, mixed $clientId = null, mixed $funcV = null): ?string
+    {
+        if (!preg_match('/^[a-zA-Z0-9_]+$/', $procedure)) {
+            return null;
+        }
+
+        $baseDir = dirname(__DIR__, 2) . '/VKAPI/Procedures';
+        $baseReal = realpath($baseDir);
+        if (!$baseReal || !is_dir($baseReal)) {
+            return null;
+        }
+
+        $candidates = \openvk\VKAPI\ClientRegistry::getFolderCandidates($platform, $clientId);
+
+        $existingSubdirs = [];
+        foreach (scandir($baseReal) as $item) {
+            if ($item !== '.' && $item !== '..' && is_dir($baseReal . '/' . $item)) {
+                $existingSubdirs[] = $item;
+            }
+        }
+
+        $filenames = [];
+        if (!empty($funcV) && preg_match('/^[0-9]+$/', (string) $funcV)) {
+            $filenames[] = $procedure . '.v' . $funcV . '.vks';
+        }
+        $filenames[] = $procedure . '.vks';
+
+        foreach ($candidates as $candidate) {
+            $matchedDir = null;
+            $directPath = $baseReal . '/' . $candidate;
+            if (is_dir($directPath)) {
+                $matchedDir = $candidate;
+            } else {
+                foreach ($existingSubdirs as $subdir) {
+                    if (strcasecmp($subdir, $candidate) === 0 || strcasecmp(str_replace([' ', '-'], '_', $subdir), str_replace([' ', '-'], '_', $candidate)) === 0) {
+                        $matchedDir = $subdir;
+                        break;
+                    }
+                }
+            }
+
+            if ($matchedDir !== null) {
+                foreach ($filenames as $fn) {
+                    $testPath = $baseReal . '/' . $matchedDir . '/' . $fn;
+                    if (file_exists($testPath)) {
+                        $real = realpath($testPath);
+                        if ($real && str_starts_with($real, $baseReal . DIRECTORY_SEPARATOR)) {
+                            return $real;
+                        }
+                    }
+                }
+            }
+        }
+
+        foreach ($filenames as $fn) {
+            $rootPath = $baseReal . '/' . $fn;
+            if (file_exists($rootPath)) {
+                $real = realpath($rootPath);
+                if ($real && str_starts_with($real, $baseReal . DIRECTORY_SEPARATOR)) {
+                    return $real;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private function packMessage($message, ?string $callback = null): string
+    {
+        $format = $_SERVER['HTTP_X_RESPONSE_FORMAT'];
+        if ($format == 'msgpack') {
+            header("Content-Type: application/x-msgpack");
+            $packer = new Packer();
+            exit($packer->pack($message));
+        } elseif ($callback) {
+            header("Content-Type: application/javascript");
+            exit($callback . "(" . json_encode($message) . ");");
+        } else {
+            header("Content-Type: application/json");
+            exit(json_encode($message));
         }
     }
 

@@ -1,0 +1,4 @@
+return API.users.get({
+    "user_ids": Args.user_ids,
+    "fields": "online,online_mobile,online_app"
+});

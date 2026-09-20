@@ -1,0 +1,7 @@
+var dlgs = API.messages.getDialogs({"count": 1});
+if (dlgs && dlgs.items && dlgs.items.length > 0) {
+    if (dlgs.items[0].message && dlgs.items[0].message.id) {
+        return dlgs.items[0].message.id;
+    }
+}
+return 0;

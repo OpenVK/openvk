@@ -40,6 +40,10 @@ final class UserPresenter extends OpenVKPresenter
                 $this->template->_template = "User/deactivated.latte";
 
                 $this->template->user = $user;
+            } elseif (!is_null($user) && $user->isBanned()) {
+                $this->template->_template = "User/banned.latte";
+
+                $this->template->user = $user;
             } elseif (!is_null($user) && $user->isDeleted()) {
                 $this->template->_template = "User/deleted.latte";
             } elseif (!is_null($user) && $this->user->identity && $this->user->identity->isBlacklistedBy($user)) {

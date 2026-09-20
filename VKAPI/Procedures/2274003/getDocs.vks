@@ -1,0 +1,10 @@
+var docs = API.docs.get({
+    "owner_id": Args.owner_id,
+    "offset": Args.offset,
+    "count": Args.count
+});
+if (!docs) {
+    docs = {"count": 0, "items": []};
+}
+docs.can_add = 1;
+return docs;

@@ -1,0 +1,10 @@
+var fields = Args.fields;
+var start_from = Args.start_from;
+var count = Args.count;
+if (count == null) { count = 30; }
+
+return API.newsfeed.get({
+    "fields": fields,
+    "start_from": start_from,
+    "count": count
+});

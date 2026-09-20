@@ -1,0 +1,31 @@
+var reqs = API.friends.getRequests({"count": 20, "extended": 1, "need_mutual": 1});
+var uids = [];
+if (reqs && reqs.items) {
+    var i = 0;
+    while (i < reqs.items.length) {
+        uids.push(reqs.items[i].user_id);
+        i = i + 1;
+    }
+}
+var profiles = [];
+if (uids.length > 0) {
+    profiles = API.users.get({
+        "user_ids": uids.join(","),
+        "fields": "photo_50,photo_100,photo_rec,photo_medium_rec,online,university_name,graduation,city,country"
+    });
+}
+var me = API.users.get({"fields": "country"});
+var mc = {"id": 1};
+if (me && me[0] && me[0].country) {
+    mc = me[0].country;
+}
+return {
+    "f": reqs && reqs.items ? reqs.items : [],
+    "p": profiles,
+    "s": [],
+    "s_from": [],
+    "s2": [],
+    "fc": reqs && reqs.count ? reqs.count : 0,
+    "sc": 0,
+    "mc": mc
+};

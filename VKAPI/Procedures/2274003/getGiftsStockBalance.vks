@@ -1,0 +1,9 @@
+var votes = 0;
+var bal = API.account.getBalance();
+if (bal && bal.votes) {
+    votes = bal.votes;
+}
+return {
+    "balance": {"votes": votes},
+    "products": {"count": 0, "items": []}
+};

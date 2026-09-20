@@ -1,0 +1,14 @@
+var fields = "photo_50,photo_100,photo_200,photo_max,photo_rec,photo_medium_rec,sex,bdate,city,country,status,activity,verified,is_friend,friend_status,can_write_private_message,can_post,can_see_all_posts,blacklisted,blacklisted_by_me,relation,contacts,site,education,universities,schools,last_seen,counters";
+var user = API.users.get({"user_ids": Args.user_id, "fields": fields})[0];
+if (!user) {
+    return {};
+}
+if (Args.photo_count && Args.photo_count > 0) {
+    var photos = API.photos.get({"owner_id": Args.user_id, "album_id": "profile", "count": Args.photo_count, "extended": 1});
+    user.photos = photos ? (photos.items ? photos.items : photos) : [];
+}
+if (Args.gift_count && Args.gift_count > 0) {
+    var gifts = API.gifts.get({"user_id": Args.user_id, "count": Args.gift_count});
+    user.gifts = gifts ? (gifts.items ? gifts.items : gifts) : [];
+}
+return user;

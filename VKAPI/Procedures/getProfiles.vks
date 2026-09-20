@@ -1,0 +1,9 @@
+var user_ids = Args.user_ids;
+var fields = Args.fields;
+if (user_ids == null) { user_ids = "0"; }
+if (fields == null) { fields = ""; }
+
+return API.users.get({
+    "user_ids": user_ids,
+    "fields": fields
+});

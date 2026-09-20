@@ -1,0 +1,83 @@
+var c = null;
+if (Args.type == "photo") {
+    c = API.photos.getComments({
+        "owner_id": Args.owner_id,
+        "photo_id": Args.item_id,
+        "offset": Args.offset,
+        "count": Args.count,
+        "need_likes": 1
+    });
+} else if (Args.type == "video") {
+    c = {"count": 0, "items": []};
+} else {
+    c = API.wall.getComments({
+        "owner_id": Args.owner_id,
+        "post_id": Args.item_id,
+        "offset": Args.offset,
+        "count": Args.count,
+        "need_likes": 1
+    });
+}
+if (!c) {
+    c = {"count": 0, "items": []};
+}
+
+var uids = [];
+if (c.items) {
+    var i = 0;
+    while (i < c.items.length) {
+        var uid = c.items[i].from_id;
+        if (uid && uid > 0) {
+            uids.push(uid);
+        }
+        i = i + 1;
+    }
+}
+
+var p1 = [];
+if (uids.length > 0) {
+    p1 = API.users.get({
+        "user_ids": uids.join(","),
+        "fields": "photo_rec,photo_medium_rec,online"
+    });
+}
+
+var likesType = Args.type == "post" ? "post" : (Args.type == "photo" ? "photo" : "video");
+var likes = API.likes.getList({
+    "type": likesType,
+    "owner_id": Args.owner_id,
+    "item_id": Args.item_id,
+    "count": 10,
+    "extended": 1
+});
+var likesCount = 0;
+var p2u = [];
+var p2n = [];
+if (likes) {
+    likesCount = likes.count ? likes.count : 0;
+    if (likes.items) {
+        var j = 0;
+        while (j < likes.items.length) {
+            var itm = likes.items[j];
+            p2u.push(itm.id);
+            p2n.push(itm.first_name + " " + itm.last_name);
+            j = j + 1;
+        }
+    }
+}
+
+var me = API.users.get({"fields": "photo_50,photo_100"});
+var myPhoto = "";
+if (me && me.length > 0) {
+    myPhoto = me[0].photo_100 ? me[0].photo_100 : me[0].photo_50;
+}
+
+return {
+    "c": c,
+    "p1": p1,
+    "p2u": p2u,
+    "p2n": p2n,
+    "likes": likes && likes.items ? likes.items : [],
+    "likes_count": likesCount,
+    "my_photo": myPhoto
+};

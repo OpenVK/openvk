@@ -64,8 +64,6 @@
 {/block}
 
 {block content}
-    {if !$user->isBanned()}
-
     {if !$user->getPrivacyPermission('page.read', $thisUser ?? NULL)}
         <div class="msg msg_err">
             <b>{_forbidden}</b><br/>
@@ -766,9 +764,5 @@
         </script>
     </div>
 
-    {/if}
-
-    {else} {* isBanned() *}
-        {include "banned.latte"}
     {/if}
 {/block}
