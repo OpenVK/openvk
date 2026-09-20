@@ -4413,4 +4413,155 @@ final class Messages extends VKAPIRequestHandler
 
         return (object) ["items" => []];
     }
+
+    public function getDiff(int $ts = 0, int $lp_version = 0, int $events_limit = 1000, int $msgs_limit = 1000, int $max_msg_id = 0, int $fields = 0): object
+    {
+        $this->requireUser();
+
+        $now = time();
+        $user = $this->getUser();
+        $self = (object) [
+            "id"                => $user->getId(),
+            "first_name"        => $user->getFirstName(),
+            "last_name"         => $user->getLastName(),
+            "is_closed"         => false,
+            "can_access_closed" => true,
+            "photo_50"          => $user->getAvatarURL("miniscule"),
+            "photo_100"         => $user->getAvatarURL("tiny"),
+            "photo_200"         => $user->getAvatarURL("normal"),
+            "photo_base"        => $user->getAvatarURL("normal"),
+            "screen_name"       => $user->getShortCode() ?? ("id" . $user->getId()),
+            "sex"               => $user->isFemale() ? 1 : 2,
+            "online"            => 1,
+            "verified"          => $user->isVerified() ? 1 : 0,
+        ];
+
+        $profiles = [$self];
+        $conversationsInfo = [];
+
+        try {
+            $this->ensureBrokerActive();
+            $payload = $this->invoke("messages.getConversations", [
+                "count"    => 40,
+                "extended" => 1,
+                "fields"   => "photo_50,photo_100,photo_200,screen_name,online,sex,verified",
+            ], 0);
+
+            if (is_array($payload) && !empty($payload["items"])) {
+                foreach ($payload["items"] as $item) {
+                    $conversation = $item["conversation"] ?? null;
+                    if (!$conversation) {
+                        continue;
+                    }
+
+                    $peer = $conversation["peer"] ?? [];
+
+                    // Clamp sort_id.major_id into the pin-bucket range [0, 1023]; the timestamp goes to minor_id.
+                    $majorId = (int) ($conversation["sort_id"]["major_id"] ?? 0);
+                    $minorId = (int) ($conversation["sort_id"]["minor_id"] ?? 0);
+                    if ($majorId > 1023 || $majorId < 0) {
+                        $minorId = $majorId > 0 ? $majorId : $minorId;
+                        $majorId = 0;
+                    }
+                    $minorId = max(0, min($minorId, 2147483647));
+                    $conversation["sort_id"] = ["major_id" => $majorId, "minor_id" => $minorId];
+
+                    $lastCmid = $conversation["last_conversation_message_id"] ?? ($conversation["last_message_id"] ?? 0);
+                    $diffItem = [
+                        "conversation"      => $conversation,
+                        "conversation_diff" => [
+                            "peer_id"       => $peer["id"] ?? 0,
+                            "in_read_cmid"  => $conversation["in_read_cmid"] ?? 0,
+                            "out_read_cmid" => $conversation["out_read_cmid"] ?? 0,
+                            "unread_count"  => $conversation["unread_count"] ?? 0,
+                            "sort_major_id" => $conversation["sort_id"]["major_id"],
+                            "sort_minor_id" => $conversation["sort_id"]["minor_id"],
+                            "new_msgs"      => ["cmids" => $lastCmid ? [$lastCmid] : []],
+                        ],
+                    ];
+
+                    if (!empty($item["last_message"]) && is_array($item["last_message"])) {
+                        $message = $item["last_message"];
+                        if (!isset($message["attachments"]) || !is_array($message["attachments"])) {
+                            $message["attachments"] = [];
+                        }
+                        if (!isset($message["fwd_messages"]) || !is_array($message["fwd_messages"])) {
+                            $message["fwd_messages"] = [];
+                        }
+                        $message["version"] = $message["version"] ?? (int) ($message["conversation_message_id"] ?? ($message["id"] ?? 1));
+                        $message["conversation_message_id"] = $message["conversation_message_id"] ?? (int) ($message["id"] ?? 0);
+                        $message["peer_id"] = $message["peer_id"] ?? (int) ($peer["id"] ?? 0);
+                        $message["out"] = $message["out"] ?? 0;
+                        $diffItem["message"] = [$message];
+                    }
+
+                    $conversationsInfo[] = $diffItem;
+                }
+            }
+
+            if (is_array($payload) && !empty($payload["profiles"])) {
+                foreach ($payload["profiles"] as $profile) {
+                    if (is_array($profile) && !isset($profile["deactivated"])) {
+                        if (!isset($profile["photo_base"])) {
+                            $profile["photo_base"] = $profile["photo_200"] ?? ($profile["photo_100"] ?? ($profile["photo_50"] ?? ""));
+                        }
+                        $profiles[] = $profile;
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+        }
+
+        $counters = (object) [
+            "messages"                         => 0,
+            "messages_unread_unmuted"          => 0,
+            "message_requests"                 => 0,
+            "important"                        => 0,
+            "unanswered"                       => 0,
+            "calls"                            => 0,
+            "business_notify"                  => 0,
+            "business_notify_all"              => 0,
+            "messages_archive"                 => 0,
+            "messages_archive_unread"          => 0,
+            "messages_archive_unread_unmuted"  => 0,
+            "messages_archive_mentions_count"  => 0,
+        ];
+
+        $lp = null;
+        try {
+            $lp = $this->getLongPollServer(0, $lp_version > 0 ? $lp_version : 19);
+        } catch (\Throwable $e) {
+            $lp = null;
+        }
+
+        if (is_array($lp) && !empty($lp["server"])) {
+            $credentials = (object) [
+                "key"                   => (string) ($lp["key"] ?? ""),
+                "ts"                    => (int) ($lp["ts"] ?? $now),
+                "server_lp"             => (string) $lp["server"],
+                "lp_server_unavailable" => false,
+            ];
+        } else {
+            $credentials = (object) [
+                "lp_server_unavailable" => true,
+                "ts"                    => $now,
+                "key"                   => "",
+                "server_lp"             => "",
+            ];
+        }
+
+        return (object) [
+            "server_time"        => $now,
+            "server_version"     => 10,
+            "invalidate_all"     => true,
+            "conversations_info" => $conversationsInfo,
+            "profiles"           => $profiles,
+            "groups"             => [],
+            "contacts"           => [],
+            "counters"           => $counters,
+            "folders"            => (object) ["count" => 0, "items" => [], "included_lists_info" => []],
+            "changed_objects"    => (object) ["items" => [], "delete_items" => [], "drop_contacts" => [], "contacts_last_update" => 0],
+            "credentials"        => $credentials,
+        ];
+    }
 }
