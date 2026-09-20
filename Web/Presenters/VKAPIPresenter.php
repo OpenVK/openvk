@@ -1541,4 +1541,11 @@ final class VKAPIPresenter extends OpenVKPresenter
     {
         return (bool) !in_array($id, OPENVK_ROOT_CONF["openvk"]["preferences"]["music"]["notAvailableFor"] ?? []);
     }
+
+    public function renderGetAnonymToken(): void
+    {
+        header("Content-Type: application/json");
+        $token = "anonym_" . bin2hex(random_bytes(24));
+        exit(json_encode(["token" => $token, "expired_at" => time() + 31536000]));
+    }
 }
