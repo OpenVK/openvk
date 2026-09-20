@@ -115,4 +115,44 @@ final class Auth extends VKAPIRequestHandler
             "secret"  => $token->getSecret(),
         ];
     }
+
+    public function getExchangeTokensInfo(string $exchange_tokens = "", int $target_app_id = 0): array
+    {
+        $this->requireUser();
+
+        $user = $this->getUser();
+        $profile = (object) [
+            "id"                     => $user->getId(),
+            "first_name"             => (string) $user->getFirstName(),
+            "last_name"              => (string) $user->getLastName(),
+            "photo_200"              => $user->getAvatarURL("normal"),
+            "screen_name"            => (string) ($user->getShortCode() ?? ("id" . $user->getId())),
+            "phone"                  => "",
+            "email"                  => "",
+            "is_banned"              => false,
+            "is_banned_forever"      => false,
+            "is_celebrity"           => false,
+            "is_deactivated"         => false,
+            "is_verified"            => (bool) $user->isVerified(),
+            "account_security_level" => 0,
+            "age_group"              => 0,
+        ];
+
+        $count = 1;
+        if ($exchange_tokens !== "") {
+            $count = max(1, count(array_filter(explode(",", $exchange_tokens), fn ($token) => trim($token) !== "")));
+        }
+
+        $items = [];
+        for ($index = 0; $index < $count; $index++) {
+            $items[] = (object) [
+                "error"                => null,
+                "notification_counter" => 0,
+                "tier"                 => 0,
+                "profile"              => $profile,
+            ];
+        }
+
+        return $items;
+    }
 }
