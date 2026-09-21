@@ -2082,3 +2082,5 @@
 "reply_to_comment" = "Respuesta para comentar";
 "nt_replied_yours" = "respondió a su comentario";
 "balance" = "Saldo de votos";
+"add_audio_verb" = "Añadir audios";
+"add_audio_to_playlist_description" = "El botón &quot;Añadir audios&quot; muestra las canciones que ya se han subido. Si quieres subir música nueva a una lista de reproducción y vincularla automáticamente a las canciones, haz clic en el botón &quot;Subir música&quot; después de crear la lista de reproducción.";
