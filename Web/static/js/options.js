@@ -181,6 +181,12 @@ window.tweaks = [
         `)
         u("#appFrame").closest("center").addClass("app_block")
     }),
+    new TweakOption("apps.fullscreen_show_notifications", function () {
+        this.customCSS(`html.app_fullscreen .notifications_global_wrap {z-index: 1022;}`)
+    }),
+    new TweakOption("apps.fullscreen_show_ajax_player", function () {
+        this.customCSS(`html.app_fullscreen #ajax_audio_player {z-index: 1025;}`)
+    }),
     new TweakOption("wall.hide_edit_mark", function () {
         this.customCSS(`.editedMark {display: none;}`)
     }),
