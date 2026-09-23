@@ -12,7 +12,8 @@ final class Queue extends VKAPIRequestHandler
     {
         $this->requireUser();
 
-        $baseUrl = IMBroker::i()->getLongPollBaseUrl();
+        $scheme = ((($_SERVER["HTTP_X_FORWARDED_PROTO"] ?? "") === "https") || ovk_is_ssl()) ? "https://" : "http://";
+        $baseUrl = preg_replace("~^https?://~i", $scheme, str_replace("/nim", "/queue", IMBroker::i()->getLongPollBaseUrl()), 1);
         $now     = time();
 
         $ids = [];
