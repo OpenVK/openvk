@@ -392,13 +392,12 @@
                         return;
                     }
 
-                    if (e.ctrlKey && !self.options.submitOnEnter) {
-                        e.preventDefault();
-                        return;
-                    }
-
                     if (e.shiftKey || !self.options.submitOnEnter) {
                         e.preventDefault();
+                        if (e.ctrlKey) {
+                            return;
+                        }
+
                         self.insertLineBreak();
                     }
                 }

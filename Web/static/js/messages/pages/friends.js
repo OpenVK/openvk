@@ -21,6 +21,7 @@ export class FriendsPage extends IMPage {
 
     static getPageId() { return "friends"; }
     shouldCloseOnExit() { return true; }
+    updTitle() { window.im.header.setPageTitle(tr("messenger_tab_friends")); }
     isSelected(peer) {
         const id = peer?.id ?? peer;
         return this.selected_friends.some(p => (p?.id ?? p) === id);

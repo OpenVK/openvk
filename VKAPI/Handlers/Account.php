@@ -19,6 +19,7 @@ final class Account extends VKAPIRequestHandler
     {
         $this->requireUser();
         $user = $this->getUser();
+
         $return_object = (object) [
             "first_name"          => $user->getFirstName(),
             "photo_200"           => $user->getAvatarURL("normal"),
@@ -523,22 +524,7 @@ final class Account extends VKAPIRequestHandler
             if (!$user) {
                 continue;
             }
-            $out[] = (object) [
-                "id"                => $user->getId(),
-                "first_name"        => $user->getFirstName(),
-                "last_name"         => $user->getLastName(),
-                "is_closed"         => false,
-                "can_access_closed" => true,
-                "photo_50"          => $user->getAvatarURL("miniscule"),
-                "photo_100"         => $user->getAvatarURL("tiny"),
-                "photo_200"         => $user->getAvatarURL("normal"),
-                "photo_base"        => $user->getAvatarURL("normal"),
-                "has_photo"         => ($user->getAvatarPhoto() !== null) ? 1 : 0,
-                "screen_name"       => $user->getShortCode() ?? ("id" . $user->getId()),
-                "online"            => $user->isOnline() ? 1 : 0,
-                "verified"          => $user->isVerified() ? 1 : 0,
-                "sex"               => $user->isFemale() ? 1 : 2,
-            ];
+            $out[] = $user->toVkApiStruct($this->getUser(), "photo_50,photo_100,photo_base,has_photo,screen_name,verified,sex");
         }
 
         return $out;
@@ -552,18 +538,7 @@ final class Account extends VKAPIRequestHandler
 
         return (object) [
             "count" => 1,
-            "items" => [
-                (object) [
-                    "user_id"    => $user->getId(),
-                    "id"         => $user->getId(),
-                    "first_name" => $user->getFirstName(),
-                    "last_name"  => $user->getLastName(),
-                    "photo_50"   => $user->getAvatarURL("miniscule"),
-                    "photo_100"  => $user->getAvatarURL("tiny"),
-                    "photo_200"  => $user->getAvatarURL("normal"),
-                    "photo_base" => $user->getAvatarURL("normal"),
-                ],
-            ],
+            "items" => $user->toVkApiStruct($this->getUser(), "photo_50,photo_100,photo_base,has_photo"),
         ];
     }
 

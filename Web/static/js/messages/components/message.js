@@ -218,6 +218,13 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
         }, 50);
     };
 
+    const onDblClick = (e) => {
+        if (isMobile) { return; }
+        if (e.target.closest("p")) { return; }
+
+        makeReply(e);
+    }
+
     return html`
     <div class="${cls}"
         id=${msgAnchorId}
@@ -251,7 +258,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                 }
             }
         }}
-        onDblClick=${!isMobile ? makeReply : null}
+        onDblClick=${onDblClick}
         onContextMenu=${isMobile ? makeReply : null}
         >
         <div class="messenger-app--messages---message--wrap">

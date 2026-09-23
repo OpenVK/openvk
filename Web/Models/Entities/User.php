@@ -1692,6 +1692,9 @@ class User extends RowModel
                 case 'photo_max':
                     $res->photo_max = $this->getAvatarUrl('original', $avatar_photo);
                     break;
+                case "photo_base":
+                    $res->photo_base = $this->getAvatarUrl('normal', $avatar_photo);
+                    break;
                 case 'photo_id':
                     $res->photo_id = $avatar_photo ? $avatar_photo->getPrettyId() : null;
                     break;

@@ -59,6 +59,23 @@ class Themepacks implements \ArrayAccess
         }
     }
 
+    public function getThemeListOrdered(): \Traversable
+    {
+        $special = ["legacy", "midnight", "modern"];
+
+        foreach ($special as $id) {
+            $theme = $this->loadedThemepacks[$id];
+
+            yield $id => ($theme->getName(getLanguage()));
+        }
+
+        foreach ($this->loadedThemepacks as $id => $theme) {
+            if ($theme->isEnabled() && !in_array($id, $special)) {
+                yield $id => ($theme->getName(getLanguage()));
+            }
+        }
+    }
+
     public function getAllThemes(): array
     {
         return $this->loadedThemepacks;

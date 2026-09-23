@@ -13,7 +13,7 @@
 }
 
 .musicIcon {
-    background-image: url('/assets/packages/static/openvk/img/audios_controls.png?v=6');
+    background-image: var(--audio-controls);
     background-repeat: no-repeat;
     cursor: pointer;
 }
@@ -871,7 +871,7 @@
 }
 
 .audioStatus::before {
-    background-image: url('/assets/packages/static/openvk/img/audios_controls.png');
+    background-image: var(--audio-controls);
     background-repeat: no-repeat;
     width: 11px;
     height: 11px;
@@ -1033,7 +1033,7 @@
 #ajax_audio_player #aj_player_close_btn, 
 #ajax_audio_player #aj_player_play #aj_player_play_btn,
 #ajax_audio_player #aj_player_buttons > div {
-    background: url('/assets/packages/static/openvk/img/audios_controls.png?v=6');
+    background: var(--audio-controls);
     background-repeat: no-repeat;
     cursor: pointer;
 }

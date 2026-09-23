@@ -4426,21 +4426,7 @@ final class Messages extends VKAPIRequestHandler
 
         $now = time();
         $user = $this->getUser();
-        $self = (object) [
-            "id"                => $user->getId(),
-            "first_name"        => $user->getFirstName(),
-            "last_name"         => $user->getLastName(),
-            "is_closed"         => false,
-            "can_access_closed" => true,
-            "photo_50"          => $user->getAvatarURL("miniscule"),
-            "photo_100"         => $user->getAvatarURL("tiny"),
-            "photo_200"         => $user->getAvatarURL("normal"),
-            "photo_base"        => $user->getAvatarURL("normal"),
-            "screen_name"       => $user->getShortCode() ?? ("id" . $user->getId()),
-            "sex"               => $user->isFemale() ? 1 : 2,
-            "online"            => 1,
-            "verified"          => $user->isVerified() ? 1 : 0,
-        ];
+        $self = $user->toVkApiStruct($user, "photo_50,photo_100,photo_200,photo_base,online,verified,screen_name");
 
         $profiles = [$self];
         $conversationsInfo = [];
