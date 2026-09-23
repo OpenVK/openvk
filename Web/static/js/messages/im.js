@@ -394,6 +394,7 @@ export class InstantMessagesAndRelated {
     }
 
     selectTab(tab) {
+        let _tab = null;
         if (typeof tab === "string") {
             const found = this.tabs.find(t => t.getPageId() == tab);
             tab = found ? this.tabs.indexOf(found) : -1;
@@ -421,7 +422,7 @@ export class InstantMessagesAndRelated {
             });
         }
         try {
-            const _tab = this.tabs[tab];
+            _tab = this.tabs[tab];
             if (!_tab) return;
             this.tabs.forEach(item => {
                 if (_tab != item && item.shouldClose()) {
@@ -460,6 +461,12 @@ export class InstantMessagesAndRelated {
             console.error(e);
         }
 
+        try {
+            _tab.render_class.updTitle();
+        } catch (e) {
+            console.error(e);
+        }
+
         this.updateTabs();
     }
 
@@ -483,14 +490,12 @@ export class InstantMessagesAndRelated {
                 got_class = SettingsPage;
                 break;
             case "conversations":
-                this.header.setPageTitle(tr("messenger_tab_conversations"));
                 got_class = ConversationsPage;
                 break;
             case "messenger":
                 got_class = MessengerPage;
                 break;
             case "friends":
-                this.header.setPageTitle(tr("messenger_tab_friends"));
                 got_class = FriendsPage;
                 break;
             case "contact":
@@ -1100,7 +1105,7 @@ class IMState {
         imLog("_resolvePosition");
 
         if (window.openvk.current_id == 0 || window.openvk.disable_ajax == 1) {
-            return;
+            return false;
         }
 
         const n_url = new URL(url || location.href, location.origin);
@@ -1132,6 +1137,8 @@ class IMState {
                 this.removeLoadSkeleton(pageContent);
                 document.querySelectorAll("#load_skeleton").forEach(el => el.remove());
             } catch (e) { }
+
+            return true;
         } else {
             imLog("position is in fastchats");
             if (!this.link.fastChats.isInserted) {
@@ -1141,6 +1148,7 @@ class IMState {
                 this.isFastchat = true;
             }
         }
+        return false;
     }
 
     addLoadSkeleton(container) {
@@ -1217,7 +1225,7 @@ class SettingsPage extends IMPage {
 class YellowHeader {
     setPageTitle(title) {
         console.log("IM | Upd title to ", title);
-        document.title = String(title);
+        window.setBaseTitle(String(title))
     }
 
     changeYellowHeader(text, append_switch_button = true) {

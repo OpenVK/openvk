@@ -52,6 +52,7 @@ window.router = new class {
     }
 
     __clearScripts() {
+        console.log("Router | __clearScripts");
         u(`script:not([src])`).remove()
     }
 
@@ -94,6 +95,15 @@ window.router = new class {
         u('.page_body').html(page_body.html())
         u('.sidebar').html(sidebar.html())
         u('.page_footer').html(page_footer.html())
+
+        // каша какая-то
+
+        try {
+            const im = window.im_variants.getCurrent();
+            im.state._updateCounter(im.state.getUnreadCounter());
+        } catch (e) {
+            console.error(e);
+        }
 
         const new_layout = parsed_content.querySelector('.layout, #page_layout')
         const current_layout = document.querySelector('.layout, #page_layout')
@@ -331,6 +341,7 @@ window.router = new class {
             method: 'GET',
             credentials: 'same-origin',
             referrer: old_url,
+            cache: 'no-store',
             headers: {
                 'X-OpenVK-Ajax-Query': '1',
             }
@@ -623,14 +634,17 @@ window.addEventListener('popstate', (e) => {
     }*/
 
     if (e.state != null) {
+        let gone = false;
         if (window.im) {
-            window.im.state._resolvePosition(location.href, e.state.from_messenger);
+            gone = window.im.state._resolvePosition(location.href, e.state.from_messenger);
         }
 
-        window.router.route({
-            url: location.href,
-            push_state: false,
-        });
+        if (!gone) {
+            window.router.route({
+                url: location.href,
+                push_state: false,
+            });
+        }
     }
 })
 

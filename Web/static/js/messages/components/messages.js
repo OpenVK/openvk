@@ -1759,24 +1759,24 @@ export class ChatMessage {
             const lowerTarget = target.toLowerCase();
             const display = (title && title.trim()) ? title.trim() : target;
             if (lowerTarget === "all" || lowerTarget === "online") {
-                return `<b class="mention mention-mass">${display.startsWith('@') ? display : '@' + display}</b>`;
+                return `<b class="mention-common mention-mass">${display.startsWith('@') ? display : '@' + display}</b>`;
             }
-            return `<a href="/${lowerTarget}" class="mention chat-link">${display}</a>`;
+            return `<a href="/${lowerTarget}" data-resolve="1" data-mentionRef="${lowerTarget}" class="mention-common mention chat-link">${display}</a>`;
         });
         formattedTxt = formattedTxt.replace(/[@*]([a-zA-Z0-9_]+)\s*\(([^)]+)\)/g, (match, target, title) => {
             const lowerTarget = target.toLowerCase();
             const display = (title && title.trim()) ? title.trim() : target;
             if (lowerTarget === "all" || lowerTarget === "online") {
-                return `<b class="mention mention-mass">${display.startsWith('@') ? display : '@' + display}</b>`;
+                return `<b class="mention-common mention-mass">${display.startsWith('@') ? display : '@' + display}</b>`;
             }
-            return `<a href="/${lowerTarget}" class="mention chat-link">${display}</a>`;
+            return `<a href="/${lowerTarget}" data-resolve="1" data-mentionRef="${lowerTarget}" class="mention-common mention chat-link">${display}</a>`;
         });
         formattedTxt = formattedTxt.replace(/(^|[\s\(\[\{<]|&gt;)([@*])([a-zA-Z0-9_]+)\b/gi, (match, prefix, symbol, target) => {
             const lowerTarget = target.toLowerCase();
             if (lowerTarget === "all" || lowerTarget === "online") {
-                return `${prefix}<b class="mention mention-mass">@${lowerTarget}</b>`;
+                return `${prefix}<b class="mention-common mention-mass">@${lowerTarget}</b>`;
             }
-            return `${prefix}<a href="/${lowerTarget}" class="mention chat-link">@${lowerTarget}</a>`;
+            return `${prefix}<a href="/${lowerTarget}" data-resolve="1" data-mentionRef="${lowerTarget}" class="mention-common mention chat-link">@${lowerTarget}</a>`;
         });
 
         // Format plain URLs

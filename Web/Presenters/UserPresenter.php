@@ -789,7 +789,7 @@ final class UserPresenter extends OpenVKPresenter
         }
 
         $this->template->user   = $user;
-        $this->template->themes = Themepacks::i()->getThemeList();
+        $this->template->themes = Themepacks::i()->getThemeListOrdered();
     }
 
     public function renderDeactivate(): void

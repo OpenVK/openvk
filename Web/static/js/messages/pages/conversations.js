@@ -73,6 +73,8 @@ export class ConversationsPage extends IMPage {
         window.im.state._pushState(url.toString());
     }
 
+    updTitle() { window.im.header.setPageTitle(tr("messenger_tab_conversations")); }
+
     render(container) {
         this.getNode().addClass("page-conversations");
         let orig_convs = window.im.conversations.convs;
@@ -458,7 +460,6 @@ export class Conversation {
         this._unread_count = (this._conversation && this._conversation.unread_count !== undefined)
             ? Number(this._conversation.unread_count) || 0
             : (conversation_item.unread_count !== undefined ? Number(conversation_item.unread_count) || 0 : undefined);
-        console.log(this);
     }
 
     hasScrollPosition() { return this._scroll != null; }

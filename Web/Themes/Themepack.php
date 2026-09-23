@@ -16,13 +16,15 @@ class Themepack
     private $meta;
     private $home;
     private $enabled;
+    private $commonFaviconURL;
+    private $favicons;
 
     private $cssExtensions = [
         "css",
         "scss",
     ];
 
-    public function __construct(string $id, string $ver, bool $inh, bool $tpl, bool $enabled, object $meta)
+    public function __construct(string $id, string $ver, bool $inh, bool $tpl, bool $enabled, object $meta, ?string $common_favicon = null)
     {
         $this->id      = $id;
         $this->ver     = $ver;
@@ -31,6 +33,12 @@ class Themepack
         $this->meta    = $meta;
         $this->home    = OPENVK_ROOT . "/themepacks/$id";
         $this->enabled = $enabled;
+        $this->commonFaviconURL = $commonFaviconURL;
+        $this->favicons = [
+            "im" => "",
+            "audio_playing" => "",
+            "audio_stopped" => "",
+        ];
     }
 
     public function getId(): string
@@ -42,6 +50,15 @@ class Themepack
     {
         // OPENVK_ROOT_CONF["openvk"]["preferences"]["themepacks"]["disabled"]
         return $this->enabled;
+    }
+
+    public function getFaviconURL(): string
+    {
+        if ($this->commonFaviconURL != null) {
+            return $this->commonFaviconURL;
+        }
+
+        return "/assets/packages/static/openvk/img/favicon/main.ico";
     }
 
     public function getAccentColor(): string

@@ -2607,12 +2607,12 @@
         max-height: 100%;
     }
 
-    .global-alert {
+    body:not(.menu-expanded) .global-alert {
         display: none !important;
     }
 
     .menu-expanded .global-alert {
-        display: block !important;
+        display: block;
         position: relative;
         z-index: 100;
         top: 49px;

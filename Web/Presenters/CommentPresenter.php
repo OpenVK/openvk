@@ -139,7 +139,8 @@ final class CommentPresenter extends OpenVKPresenter
         $horizontal_attachments = $filtered_horizontal_attachments;
 
         $rawText = (string) ($this->postParam("text") ?? "");
-        $cleanText = trim(preg_replace('/[\s\x{200b}\x{feff}\x{00a0}]+/u', ' ', $rawText));
+        // $cleanText = trim(preg_replace('/[\s\x{200b}\x{feff}\x{00a0}]+/u', ' ', $rawText));
+        $cleanText = trim(preg_replace('/[\x{200b}\x{feff}\x{00a0}]+/u', ' ', $rawText));
 
         if ($hasSticker) {
             $cleanText = '';

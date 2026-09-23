@@ -812,7 +812,11 @@ class VideoViewer extends Viewer {
 
         if (entry.cached == null || context == "pagination") {
             try {
-                const fetcher = await fetch(this._getDetailsUrl(itemId, postfix_));
+                const fetcher = await fetch(this._getDetailsUrl(itemId, postfix_), {
+                    headers: {
+                        'X-OpenVK-Ajax-Query': '1',
+                    }
+                });
                 const fetch_r = await fetcher.text();
                 const results = new DOMParser().parseFromString(fetch_r, 'text/html');
                 const _details = results.querySelector(".ovk-vid-details");
@@ -1218,7 +1222,11 @@ class PostViewer extends Viewer {
     async _downloadPage(url, postfix = null) {
         let urls = this._getDetailsUrl(url, postfix);
 
-        const res = await fetch(urls);
+        const res = await fetch(urls, {
+            headers: {
+                'X-OpenVK-Ajax-Query': '1',
+            }
+        });
         const html = await res.text();
         const doc = new DOMParser().parseFromString(html, "text/html");
         const post = doc.querySelector('#post_page_main');

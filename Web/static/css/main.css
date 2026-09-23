@@ -23,6 +23,14 @@
     --post-head: #EEEEEE;
     --unread: #96959033;
     --unread-mark: #e5460aee;
+
+    /* assets */
+    --header-branded: url("../img/header.png");
+    --header-branded-2x: url('../img/header_2x.png');
+    --header-custom: url("../img/header_custom.png");
+    --header-custom-2x: url('../img/header_custom_2x.png');
+    --audio-controls: url('/assets/packages/static/openvk/img/audios_controls.png');
+    --audio-controls-2x: url('../img/audios_controls_2x.png');
 }
 
 html {
@@ -109,7 +117,7 @@ h1 {
     position: relative;
     width: 100%;
     height: 43px;
-    background: url('../img/header.png');
+    background: var(--header-branded);
     background-repeat: no-repeat;
     background-position: -9999px -9999px !important;
 }
@@ -191,7 +199,7 @@ h1 {
 }
 
 .page_custom_header {
-    background: url('../img/header_custom.png');
+    background: var(--header-custom);
     background-position: -9999px -9999px !important;
 }
 
@@ -6454,13 +6462,13 @@ hr {
 only screen and (resolution >=1.25dppx) {
 
     .page_header {
-        background: url('../img/header_2x.png')!important;
+        background: var(--header-branded-2x)!important;
         background-repeat: no-repeat!important;
         background-position: -9999px -9999px !important;
     }
 
     .page_custom_header {
-        background: url('../img/header_custom_2x.png')!important;
+        background: var(--header-custom-2x)!important;
         background-repeat: no-repeat!important;
         background-position: -9999px -9999px !important;
     }
@@ -6472,11 +6480,11 @@ only screen and (resolution >=1.25dppx) {
     #ajax_audio_player #aj_player_play #aj_player_play_btn,
     #ajax_audio_player #aj_player_buttons > div,
     .messenger-app--messages---message--wrap .checkmark {
-        background-image: url('../img/audios_controls_2x.png');
+        background-image: var(--audio-controls-2x);
         background-size: 257px auto;
     }
 
     .messenger-app--messages---message .actions-2>div:not(.star-icon) {
-        background-image: url('../img/audios_controls_2x.png');
+        background-image: var(--audio-controls-2x);
     }
 }

@@ -105,12 +105,6 @@ export class Messenger {
             win._pendingReadId = 0;
         }
 
-        try {
-            window.im.header.setPageTitle(convo.peer.getName());
-        } catch (e) {
-            console.error(e);
-        }
-
         if (window.im.state.is_debug) {
             imLog("Selected conversation:", convo);
         }
@@ -1122,6 +1116,13 @@ export class MessengerPage extends IMPage {
         } catch (e) { console.error(e); }
     }
     isDisablesScroll() { return true; }
+    updTitle() {
+        try {
+            window.im.header.setPageTitle(window.im.messenger.getCurrentChat().peer.getName());
+        } catch (e) {
+            console.error(e);
+        }
+    }
     _triggerUpdate() {
         if (window.im?.conversations) {
             window.im.conversations.update();

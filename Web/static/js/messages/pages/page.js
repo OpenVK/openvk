@@ -98,6 +98,7 @@ export class IMPage {
     getNode() { return u(this.container) }
     async update(options = {}) { await this.wRender(options, true); }
     updUrl() {}
+    updTitle() {}
     updateHeader(header) { header.changeByConvNumber(0); }
     isVisibleWhenHidden() { return false; }
     shouldCloseOnExit() { return this.container == null; }

@@ -7,7 +7,13 @@
             {ifset title}{$pageTitle} - {/ifset}{$instance_name}
         </title>
         <meta charset="utf-8" />
-        <link rel="shortcut icon" href="/assets/packages/static/openvk/img/favicon/main.ico" />
+
+        {if $theme}
+            <link rel="shortcut icon" href="{$theme->getFaviconURL()}" />
+        {else}
+            <link rel="shortcut icon" href="/assets/packages/static/openvk/img/favicon/main.ico" />
+        {/if}
+
         <meta name="application-name" content="{$instance_name}" />
         <meta n:ifset="$csrfToken" name="csrf" value="{$csrfToken}" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

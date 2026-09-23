@@ -33,9 +33,13 @@ tippy.delegate("body", {
     },
 
     onShow: async function(that) {
+        const resolveType = that.reference ? Number(that.reference.dataset.resolve) : 0;
         if(!that._resolvedMention) {
-            let id = Number(that.reference.dataset.mentionRef);
-            that._resolvedMention = await API.Mentions.resolve(id);
+            let id = that.reference.dataset.mentionRef || that.reference.dataset.mentionref;
+            const numberId = resolveType == 1 ? id : Number(id);
+
+            console.log(id, resolveType)
+            that._resolvedMention = await API.Mentions.resolve(numberId, resolveType);
         }
 
         let res = that._resolvedMention;
