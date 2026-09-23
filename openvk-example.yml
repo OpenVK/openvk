@@ -196,7 +196,7 @@ openvk:
             testLabel: false
         themepacks:
             disabled: []
-            onTop: ["legacy", "midnight", "openvk_modern"]
+            onTop: ["midnight", "openvk_modern"]
         defaultMobileTheme: ""
         defaultFeaturePhoneTheme: ""
         logs: true

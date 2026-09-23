@@ -25,12 +25,12 @@
     --unread-mark: #e5460aee;
 
     /* assets */
-    --header-branded: url("../img/header.png");
-    --header-branded-2x: url('../img/header_2x.png');
-    --header-custom: url("../img/header_custom.png");
-    --header-custom-2x: url('../img/header_custom_2x.png');
+    --header-branded: url("/assets/packages/static/openvk/img/header.png");
+    --header-branded-2x: url('/assets/packages/static/openvk/img/header_2x.png');
+    --header-custom: url("/assets/packages/static/openvk/img/header_custom.png");
+    --header-custom-2x: url('/assets/packages/static/openvk/img/header_custom_2x.png');
     --audio-controls: url('/assets/packages/static/openvk/img/audios_controls.png');
-    --audio-controls-2x: url('../img/audios_controls_2x.png');
+    --audio-controls-2x: url('/assets/packages/static/openvk/img/audios_controls_2x.png');
 }
 
 html {
@@ -233,60 +233,39 @@ h1 {
 
 .header_navigation {
     text-align: center;
-    line-height: 40px;
+    line-height: 20px;
     padding-right: 8px;
     text-transform: lowercase;
     float: right;
-    height: 43px;
 }
 
 .header_navigation .link {
     display: inline-block;
-    height: 40px;
-    padding: 0;
-    margin: 0;
-    vertical-align: top;
+    height: 29px;
+    padding: 10px 4px 0 7px;
+    background: url('../img/divider.png') no-repeat;
+    background-size: 1.5px 41px;
 }
 
 .page_header.search_expanded .header_navigation .header_divider_stick {
     background: unset;
 }
 
-.header_navigation .link a {
-    display: block;
-    height: 38px;
-    line-height: 40px;
-    padding: 0 10px;
+.header_navigation .link a,
+.header_navigation .link #head_music span {
     color: #D7D7D7;
     text-decoration: none;
     font-weight: bold;
-    font-size: 11px;
-    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
-    box-sizing: border-box;
-    transition: background-color 0.1s ease, color 0.1s ease;
 }
 
-#head_music span {
-    color: #D7D7D7;
-    font-weight: bold;
-    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
-    padding: 0;
+.header_navigation #head_play_btn {
+    display: none;
 }
 
-
-.header_navigation .link a:hover {
-    background-color: rgba(0, 0, 0, 0.12);
-    color: #ffffff;
-    text-decoration: none;
-}
-
-.header_navigation .link a:active {
-    background-color: rgba(0, 0, 0, 0.2);
-}
-
-.header_navigation .link a#head_music {
-    position: relative;
-    padding-right: 36px;
+.header_navigation .link a:hover,
+.header_navigation .link a:hover span {
+    text-decoration: underline;
+    color: #fff;
 }
 
 #head_play_btn {
@@ -675,55 +654,6 @@ body.no_footer .navigation_footer {
     font-family: tahoma, verdana, arial, sans-serif;
 }
 
-.profile_links_important {
-    padding: 10px 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.profile_links_important>a,
-.profile_links_important>#profile_link,
-.profile_links_important>.profile_link,
-.profile_links_important input[type="submit"] {
-    width: 100%;
-    text-align: center;
-    padding: 5px 0px;
-}
-
-#profile_links_common {
-    background: var(--brand-bg);
-    margin-bottom: 5px;
-}
-
-#profile_links_admin {
-    background: radial-gradient(transparent, var(--error-bg));
-}
-
-#profile_links_common .brand_link {
-    width: 100%;
-    text-align: center;
-    background: url(../img/button.png) #595959;
-    border: 1px solid #595959;
-    color: var(--text-rev);
-    padding: 7px 0px;
-}
-
-#profile_links_common .brand_link.brand_link_pitched {
-    background: url(../img/button.png) #595959;
-    border: 1px solid #595959;
-}
-
-#profile_links_common .brand_link:hover {
-    background: var(--brand);
-    border: 1px solid #595959;
-}
-
-#profile_links_common .brand_link:active {
-    border: 1px solid #595959;
-    background: #5a4e4e;
-}
-
 .profile_link_form {
     margin-bottom: 0;
 }
@@ -879,13 +809,13 @@ table {
     font-size: 11px;
     outline: none;
     white-space: nowrap;
-    background: url(../img/button.png) #595959;
+    background: #595959;
     background-position: 0 -16px;
     color: #fff;
-    padding: 5px 9px;
     text-shadow: 0 1px 0 #686868;
     cursor: pointer;
     text-decoration: none;
+    padding: 4px 8px 4px;
 }
 
 .button:active {
@@ -3303,11 +3233,10 @@ a.poll-retract-vote {
 }
 
 .header-search-box {
-    float: left;
-    margin-left: 145px;
-    height: 40px;
+    float: right;
+    margin-left: 0px;
+    margin-right: 13px;
     padding: 10px 0 0 5px;
-    box-sizing: border-box;
 }
 
 .page_custom_header .header-search-box {
@@ -3319,15 +3248,10 @@ a.poll-retract-vote {
     background-color: #ffffff;
     padding-left: 22px !important;
     padding-right: 6px;
-    border: 1px solid #575757;
-    border-top-color: #424242;
-    border-bottom-color: #696969;
-    border-radius: 3px;
     outline: none;
     box-sizing: border-box;
     font-size: 11px;
     color: #222;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(255, 255, 255, 0.18);
     height: 22px;
     width: 140px;
     transition: width 0.15s ease;
@@ -6456,35 +6380,4 @@ hr {
     user-select: all;
     display: inline-block;
     vertical-align: baseline;
-}
-
-@media only screen and (-webkit-device-pixel-ratio >=1.25),
-only screen and (resolution >=1.25dppx) {
-
-    .page_header {
-        background: var(--header-branded-2x)!important;
-        background-repeat: no-repeat!important;
-        background-position: -9999px -9999px !important;
-    }
-
-    .page_custom_header {
-        background: var(--header-custom-2x)!important;
-        background-repeat: no-repeat!important;
-        background-position: -9999px -9999px !important;
-    }
-
-    #head_play_btn,
-    .musicIcon,
-    .audioStatus::before,
-    #ajax_audio_player #aj_player_close_btn, 
-    #ajax_audio_player #aj_player_play #aj_player_play_btn,
-    #ajax_audio_player #aj_player_buttons > div,
-    .messenger-app--messages---message--wrap .checkmark {
-        background-image: var(--audio-controls-2x);
-        background-size: 257px auto;
-    }
-
-    .messenger-app--messages---message .actions-2>div:not(.star-icon) {
-        background-image: var(--audio-controls-2x);
-    }
 }

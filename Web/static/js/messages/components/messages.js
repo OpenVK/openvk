@@ -311,6 +311,7 @@ export class ChatGeneralForm {
         const acl = this.getAcl();
         switch (thing) {
             case "write": {
+                console.log(this)
                 if (this.data.deactivated) return false;
                 if (this.supposed_type === 'club' && typeof this.isClubMessagesBlocked === 'function' && this.isClubMessagesBlocked()) {
                     return false;
@@ -321,6 +322,9 @@ export class ChatGeneralForm {
                 if (this.supposed_type === 'chat' && this.isILeft()) {
                     return false;
                 }
+                if (this.data.can_write_private_message !== undefined && this.data.can_write_private_message !== null) {
+                    return Number(this.data.can_write_private_message) === 1;
+                }
                 if (this.data.can_write !== undefined && this.data.can_write !== null) {
                     if (typeof this.data.can_write === 'object') {
                         return !!this.data.can_write.allowed;
@@ -329,9 +333,6 @@ export class ChatGeneralForm {
                     } else if (typeof this.data.can_write === 'number') {
                         return this.data.can_write === 1;
                     }
-                }
-                if (this.data.can_write_private_message !== undefined && this.data.can_write_private_message !== null) {
-                    return Number(this.data.can_write_private_message) === 1;
                 }
                 return true;
             }
@@ -1758,10 +1759,10 @@ export class ChatMessage {
         formattedTxt = formattedTxt.replace(/\[([a-zA-Z0-9_]+)(?:\|([^\]]*))?\]/gi, (match, target, title) => {
             const lowerTarget = target.toLowerCase();
             const display = (title && title.trim()) ? title.trim() : target;
-            if (lowerTarget === "all" || lowerTarget === "online") {
+            if (lowerTarget === "all" || lowerTarget === "online" || lowerTarget === "everyone") {
                 return `<b class="mention-common mention-mass">${display.startsWith('@') ? display : '@' + display}</b>`;
             }
-            return `<a href="/${lowerTarget}" data-resolve="1" data-mentionRef="${lowerTarget}" class="mention-common mention chat-link">${display}</a>`;
+            return `<a href="/${lowerTarget}" data-resolve="1" data-mentionRef="${lowerTarget}" class="mention-common mention chat-link">${(display)}</a>`;
         });
         formattedTxt = formattedTxt.replace(/[@*]([a-zA-Z0-9_]+)\s*\(([^)]+)\)/g, (match, target, title) => {
             const lowerTarget = target.toLowerCase();
@@ -1769,19 +1770,19 @@ export class ChatMessage {
             if (lowerTarget === "all" || lowerTarget === "online") {
                 return `<b class="mention-common mention-mass">${display.startsWith('@') ? display : '@' + display}</b>`;
             }
-            return `<a href="/${lowerTarget}" data-resolve="1" data-mentionRef="${lowerTarget}" class="mention-common mention chat-link">${display}</a>`;
+            return `<a href="/${lowerTarget}" data-resolve="1" data-mentionRef="${lowerTarget}" class="mention-common mention chat-link">${(display)}</a>`;
         });
         formattedTxt = formattedTxt.replace(/(^|[\s\(\[\{<]|&gt;)([@*])([a-zA-Z0-9_]+)\b/gi, (match, prefix, symbol, target) => {
             const lowerTarget = target.toLowerCase();
             if (lowerTarget === "all" || lowerTarget === "online") {
                 return `${prefix}<b class="mention-common mention-mass">@${lowerTarget}</b>`;
             }
-            return `${prefix}<a href="/${lowerTarget}" data-resolve="1" data-mentionRef="${lowerTarget}" class="mention-common mention chat-link">@${lowerTarget}</a>`;
+            return `${prefix}<a href="/${lowerTarget}" data-resolve="1" data-mentionRef="${lowerTarget}" class="mention-common mention chat-link">@${(lowerTarget)}</a>`;
         });
 
         // Format plain URLs
         formattedTxt = formattedTxt.replace(/(^|[\s\(\[\{<]|&gt;)(https?:\/\/[^\s<>"'\]\)]+)/g, (match, prefix, url) => {
-            return `${prefix}<a href="${url}" target="_blank" rel="noopener noreferrer" class="chat-link">${url}</a>`;
+            return `${prefix}<a href="${url}" target="_blank" rel="noopener noreferrer" class="chat-link">${(url)}</a>`;
         });
 
         return encode_emojis(nl2br(formattedTxt));

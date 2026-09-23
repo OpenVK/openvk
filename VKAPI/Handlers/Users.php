@@ -527,7 +527,9 @@ final class Users extends VKAPIRequestHandler
                             $canWrite = 1;
                             if ($usr->isDeleted() || $usr->isBanned()) {
                                 $canWrite = 0;
-                            } elseif ($this->getUser()) {
+                            }
+
+                            if ($this->getUser()) {
                                 if ($this->getUser()->getId() !== $usr->getId()) {
                                     if ($usr->isBlacklistedBy($this->getUser()) || $this->getUser()->isBlacklistedBy($usr)) {
                                         $canWrite = 0;
@@ -538,6 +540,7 @@ final class Users extends VKAPIRequestHandler
                             } else {
                                 $canWrite = 0;
                             }
+
                             $response[$i]->can_write_private_message = $canWrite;
                             break;
                         case "can_invite":

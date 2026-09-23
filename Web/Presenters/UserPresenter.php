@@ -697,7 +697,7 @@ final class UserPresenter extends OpenVKPresenter
 
                 $this->flashFail("succ", tr("voucher_good"), tr("voucher_redeemed"));
             } elseif ($_GET['act'] === "interface") {
-                if (isset(Themepacks::i()[$this->postParam("style")]) || $this->postParam("style") === Themepacks::DEFAULT_THEME_ID) {
+                if (!is_null(Themepacks::i()[$this->postParam("style")]) || $this->postParam("style") === Themepacks::DEFAULT_THEME_ID) {
                     if ($this->postParam("theme_for_session") != "1") {
                         $user->setStyle($this->postParam("style"));
                     }

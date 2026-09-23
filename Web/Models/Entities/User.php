@@ -1671,6 +1671,9 @@ class User extends RowModel
         $avatar_photo  = $this->getAvatarPhoto();
         foreach ($fields as $field) {
             switch ($field) {
+                case "can_write_private_message":
+                    $res->can_write_private_message = 1;
+                    break;
                 case 'is_dead':
                     $res->is_dead = $this->isDead();
                     break;
@@ -1703,9 +1706,6 @@ class User extends RowModel
                     break;
                 case 'reg_date':
                     $res->reg_date = $this->getRegistrationTime()->timestamp();
-                    break;
-                case 'nickname':
-                    $res->nickname = $this->getPseudo();
                     break;
                 case 'nickname':
                     $res->nickname = $this->getPseudo();

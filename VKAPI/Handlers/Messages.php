@@ -775,11 +775,11 @@ final class Messages extends VKAPIRequestHandler
         $groupIDs = array_values(array_unique(array_filter($groupIDs)));
 
         $payload['profiles'] = !empty($userIDs)
-            ? (new APIUsers())->get(implode(',', $userIDs), $fields)
+            ? (new APIUsers($this->getUser()))->get(implode(',', $userIDs), $fields)
             : [];
 
         $payload['groups'] = !empty($groupIDs)
-            ? (new APIClubs())->getById(implode(',', $groupIDs), "", $fields)
+            ? (new APIClubs($this->getUser()))->getById(implode(',', $groupIDs), "", $fields)
             : [];
 
         $isModern = !defined("VKAPI_DECL_VER_MAJOR") || VKAPI_DECL_VER_MAJOR > 5 || (VKAPI_DECL_VER_MAJOR === 5 && (!defined("VKAPI_DECL_VER_MINOR") || VKAPI_DECL_VER_MINOR >= 80));

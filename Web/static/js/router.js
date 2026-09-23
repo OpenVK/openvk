@@ -623,7 +623,7 @@ $('#logout_link').on('click', (e) => {
     })
 })
 
-window.addEventListener('popstate', (e) => {
+window.addEventListener('popstate', async (e) => {
     e.preventDefault();
     /*if(window.router.prev_page_html) {
         u('.page_body').html(window.router.prev_page_html.html)
@@ -636,7 +636,7 @@ window.addEventListener('popstate', (e) => {
     if (e.state != null) {
         let gone = false;
         if (window.im) {
-            gone = window.im.state._resolvePosition(location.href, e.state.from_messenger);
+            gone = await window.im.state._resolvePosition(location.href, e.state.from_messenger);
         }
 
         if (!gone) {

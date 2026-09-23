@@ -617,7 +617,7 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
                 <div class="input-close" onClick=${(e) => {
                 e.stopPropagation();
                 window.im.messenger.cancelEdit();
-            }}>×</div>
+            }}><div class="cross"></div></div>
             </div>
         `}
         <div class="messenger-mountain" onClick=${(e) => {
