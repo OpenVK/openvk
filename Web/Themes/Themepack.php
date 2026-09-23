@@ -48,7 +48,12 @@ class Themepack
 
     public function isEnabled(): bool
     {
-        // OPENVK_ROOT_CONF["openvk"]["preferences"]["themepacks"]["disabled"]
+        $disabled = OPENVK_ROOT_CONF["openvk"]["preferences"]["themepacks"]["disabled"];
+
+        if ($disabled && in_array($this->getId(), $disabled)) {
+            return false;
+        }
+
         return $this->enabled;
     }
 

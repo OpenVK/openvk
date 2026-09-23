@@ -61,15 +61,26 @@ class Themepacks implements \ArrayAccess
 
     public function getThemeListOrdered(): \Traversable
     {
-        $special = ["legacy", "midnight", "modern"];
+        $special = OPENVK_ROOT_CONF["openvk"]["preferences"]["themepacks"]["onTop"];
 
         foreach ($special as $id) {
             $theme = $this->loadedThemepacks[$id];
 
-            yield $id => ($theme->getName(getLanguage()));
+            if ($theme) {
+                yield $id => ($theme->getName(getLanguage()));
+            }
         }
 
+        $namesOrdered = [];
+
         foreach ($this->loadedThemepacks as $id => $theme) {
+            $namesOrdered[] = $id;
+        }
+
+        sort($namesOrdered);
+
+        foreach ($namesOrdered as $id) {
+            $theme = $this->loadedThemepacks[$id];
             if ($theme->isEnabled() && !in_array($id, $special)) {
                 yield $id => ($theme->getName(getLanguage()));
             }

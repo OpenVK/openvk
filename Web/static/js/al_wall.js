@@ -3525,7 +3525,12 @@ async function __processPaginatorNextPage(page) {
     /*replace_url.searchParams.set('al', 1)
     replace_url.searchParams.set('hash', u("meta[name=csrf]").attr("value"))*/
 
-    const new_content = await fetch(replace_url.href)
+    const new_content = await fetch(replace_url.href, {
+        cache: 'no-store',
+        headers: {
+            'X-OpenVK-Ajax-Query': '1',
+        }
+    });
     const new_content_response = await new_content.text()
     const parsed_content = parser.parseFromString(new_content_response, 'text/html')
 

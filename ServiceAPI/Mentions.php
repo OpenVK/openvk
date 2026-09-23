@@ -26,6 +26,8 @@ class Mentions implements Handler
             }
 
             $id = $obj->getRealId();
+        } else {
+            $id = (int) $id;
         }
 
         if ($id > 0) {
