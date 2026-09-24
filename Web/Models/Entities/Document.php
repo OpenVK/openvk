@@ -373,7 +373,7 @@ class Document extends Media
         }
     }
 
-    public function canBeModifiedBy(User $user = null): bool
+    public function canBeModifiedBy(?User $user = null): bool
     {
         if (!$user) {
             return false;

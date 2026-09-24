@@ -27,7 +27,7 @@ class Users
         $this->aliases = $this->context->table("aliases");
     }
 
-    private function toUser(?ActiveRow $ar): ?User
+    public function toUser(?ActiveRow $ar): ?User
     {
         return is_null($ar) ? null : new User($ar);
     }

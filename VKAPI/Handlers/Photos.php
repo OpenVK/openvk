@@ -281,7 +281,7 @@ final class Photos extends VKAPIRequestHandler
         return $album->toVkApiStruct($this->getUser());
     }
 
-    public function editAlbum(int $album_id, int $owner_id, string $title = null, string $description = null, int $privacy = 0)
+    public function editAlbum(int $album_id, int $owner_id, ?string $title = null, ?string $description = null, int $privacy = 0)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -311,7 +311,7 @@ final class Photos extends VKAPIRequestHandler
         return 1;
     }
 
-    public function getAlbums(int $owner_id = null, string $album_ids = "", int $offset = 0, int $count = 100, bool $need_system = true, bool $need_covers = true, bool $photo_sizes = false)
+    public function getAlbums(?int $owner_id = null, string $album_ids = "", int $offset = 0, int $count = 100, bool $need_system = true, bool $need_covers = true, bool $photo_sizes = false)
     {
         $this->requireUser();
 
@@ -370,7 +370,7 @@ final class Photos extends VKAPIRequestHandler
         return $res;
     }
 
-    public function getAlbumsCount(int $user_id = null, int $group_id = null)
+    public function getAlbumsCount(?int $user_id = null, ?int $group_id = null)
     {
         $this->requireUser();
 
@@ -421,7 +421,7 @@ final class Photos extends VKAPIRequestHandler
         return $res;
     }
 
-    public function get(int $owner_id, string $album_id = "profile", string $photo_ids = "", bool $extended = false, bool $photo_sizes = true, int $offset = 0, int $count = 10, int $limit = null, bool $rev = false)
+    public function get(int $owner_id, string $album_id = "profile", string $photo_ids = "", bool $extended = false, bool $photo_sizes = true, int $offset = 0, int $count = 10, ?int $limit = null, bool $rev = false)
     {
         $this->requireUser();
 
@@ -524,7 +524,7 @@ final class Photos extends VKAPIRequestHandler
         return 1;
     }
 
-    public function delete(int $owner_id = null, int $photo_id = null, string $photos = null)
+    public function delete(?int $owner_id = null, ?int $photo_id = null, ?string $photos = null)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();

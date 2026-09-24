@@ -335,7 +335,7 @@ class Audio extends Media
         return true;
     }
 
-    public function listen($entity, Playlist $playlist = null): bool
+    public function listen($entity, ?Playlist $playlist = null): bool
     {
         $listensTable = DatabaseConnection::i()->getContext()->table("audio_listens");
         $lastListen   = $listensTable->where([
