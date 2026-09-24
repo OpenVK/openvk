@@ -135,7 +135,7 @@ class Videos
     public function getUserVideosCount($user): int
     {
         if ($user->getRealId() > 0) {
-            return $this->videos->where("owner", $user->getId())->where(["deleted" => 0, "unlisted" => 0, "context_id" => null])->count();
+            return $this->videos->where("owner", $user->getId())->where(["deleted" => 0, "unlisted" => 0, "context_id" => 0])->count();
         } else {
             return $this->videos->where("context_id", $user->getRealId())->where(["deleted" => 0, "unlisted" => 0, "context_unlisted" => 0])->count();
         }
