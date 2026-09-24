@@ -739,7 +739,7 @@
 "repeat_password" = "Повторите пароль";
 "avatars_style" = "Отображение аватаров";
 "style" = "Стиль";
-"openvk_themepack1" = "До октября 2026 г.";
+"openvk_themepack1" = "$1 до октября 2026 г.";
 "default" = "по умолчанию";
 "arbitrary_avatars" = "Произвольные";
 "cut" = "Квадратные";

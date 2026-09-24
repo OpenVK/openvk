@@ -17,7 +17,7 @@ class Mentions implements Handler
         $this->user = $user;
     }
 
-    public function resolve(string $id, int $isShortcode = 0, callable $resolve, callable $reject): void
+    public function resolve(string $id, int $isShortcode, callable $resolve, callable $reject): void
     {
         if ($isShortcode == 1) {
             $obj = Shortcodes::resolve($id);

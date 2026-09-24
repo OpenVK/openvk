@@ -90,35 +90,6 @@ final class Friends extends VKAPIRequestHandler
         return $online;
     }
 
-    public function getMutual(int $target_uid, int $source_uid = 0): array
-    {
-        $this->requireUser();
-
-        $users = new UsersRepo();
-        $source = $source_uid > 0 ? $users->get($source_uid) : $this->getUser();
-        $target = $users->get($target_uid);
-
-        if (!$source || !$target || $source->isDeleted() || $target->isDeleted()) {
-            $this->fail(100, "Invalid user");
-        }
-
-        if (!$target->getPrivacyPermission("friends.read", $this->getUser())) {
-            $this->fail(15, "Access denied: this user chose to hide his friends.");
-        }
-
-        $sourceFriends = [];
-        foreach ($source->getFriends(1, 5000) as $f) {
-            $sourceFriends[] = $f->getId();
-        }
-
-        $targetFriends = [];
-        foreach ($target->getFriends(1, 5000) as $f) {
-            $targetFriends[] = $f->getId();
-        }
-
-        return array_values(array_intersect($sourceFriends, $targetFriends));
-    }
-
     public function search(string $q, int $user_id = 0, string $fields = "", int $offset = 0, int $count = 100): object
     {
         $this->requireUser();

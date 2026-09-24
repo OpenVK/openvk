@@ -586,7 +586,7 @@ final class Photos extends VKAPIRequestHandler
         return 1;
     }*/
 
-    public function createComment(int $owner_id, int $photo_id, string $message = "", bool $from_group = false, int $reply_to_comment = null, int $sticker_id = 0, string $attachments = "")
+    public function createComment(int $owner_id, int $photo_id, string $message = "", bool $from_group = false, ?int $reply_to_comment = null, int $sticker_id = 0, string $attachments = "")
     {
         $this->requireUser();
         $this->willExecuteWriteAction();

@@ -64,7 +64,7 @@ final class Board extends VKAPIRequestHandler
         return $topic->getVirtualId();
     }
 
-    public function addChatTopic(int $group_id, string $title, string $chat_id = null)
+    public function addChatTopic(int $group_id, string $title, ?string $chat_id = null)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();

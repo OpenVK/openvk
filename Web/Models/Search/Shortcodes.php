@@ -10,7 +10,7 @@ use openvk\Web\Models\RowModel;
 
 class Shortcodes
 {
-    static public function resolve(string $screen_name): ?RowModel
+    public static function resolve(string $screen_name): ?RowModel
     {
         if (\Chandler\MVC\Routing\Router::i()->getMatchingRoute("/$screen_name")[0]->presenter !== "UnknownTextRouteStrategy") {
             if (substr($screen_name, 0, strlen("id")) === "id") {

@@ -15,7 +15,9 @@ function _ovk_check_environment(): void
         $problems[] = "OpenVK is updating";
     }
 
-    if (!version_compare(PHP_VERSION, "8.4.0", ">=")) {
+    $ignore_php_version = OPENVK_ROOT_CONF["openvk"]["ignorePhpVersion"];
+
+    if (!version_compare(PHP_VERSION, "8.4.0", ">=") && $ignore_php_version == false) {
         $problems[] = "Incompatible PHP version: " . PHP_VERSION . " (at least 8.4 required)";
     }
 

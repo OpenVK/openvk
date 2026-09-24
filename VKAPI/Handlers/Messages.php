@@ -3283,6 +3283,8 @@ final class Messages extends VKAPIRequestHandler
         $resolvedPeerId = null;
         $data = null;
 
+        $report_id  = 0;
+
         if ($report_id != 0) {
             $canAccessHelpdesk = $this->getUser()->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0);
             if (!$canAccessHelpdesk) {

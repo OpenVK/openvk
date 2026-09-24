@@ -41,6 +41,8 @@ chandler:
 
 openvk:
     debug: true
+    ignorePhpVersion: false
+
     appearance:
         name: "OpenVK"
         searchPlaceholder: "@header_search"

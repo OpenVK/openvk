@@ -193,7 +193,7 @@ final class Video extends VKAPIRequestHandler
         ];
     }
 
-    public function delete(int $owner_id, int $video_id, int $target_id = null)
+    public function delete(int $owner_id, int $video_id, ?int $target_id = null)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();

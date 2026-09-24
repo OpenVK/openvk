@@ -35,10 +35,12 @@ class Themepack
         $this->meta    = $meta;
         $this->home    = OPENVK_ROOT . "/themepacks/$id";
         $this->enabled = $enabled;
-        if ($manifest->commonFaviconURL) {
+
+        if ($manifest && $manifest->commonFaviconURL) {
             $this->commonFaviconURL = $manifset->commonFaviconURL;
         }
-        if ($manifest->favicons) {
+
+        if ($manifest && $manifest->favicons) {
             $this->favicons = $manifset->favicons;
         } else {
             $this->favicons = [
@@ -47,8 +49,9 @@ class Themepack
                 "audio_stopped" => "",
             ];
         }
-        $this->has_styles = $manifest->has_styles ?? false;
-        $this->styles = $manifest->styles ?? [];
+
+        $this->has_styles = $manifest && $manifest->has_styles ? $manifest->has_styles : false;
+        $this->styles = $manifest && $manifest->styles ? $manifest->styles : [];
     }
 
     public function getId(): string
@@ -189,22 +192,44 @@ class Themepack
 
 class DefaultThemepack
 {
-    public function hasStyles(): bool { return true; }
-    public function isEnabled(): bool { return true; }
-    public function overridesTemplates(): bool { return false; }
-    public function inheritDefault(): bool { return true; }
-    public function getId(): string { return "ovk"; }
-    public function getVersion(): string { return "actual"; }
-    public function getFaviconURL(): string { return "/assets/packages/static/openvk/img/favicon/main.ico"; }
-    public function hasStylesheet(): bool { return false; }
-
+    public function hasStyles(): bool
+    {
+        return true;
+    }
+    public function isEnabled(): bool
+    {
+        return true;
+    }
+    public function overridesTemplates(): bool
+    {
+        return false;
+    }
+    public function inheritDefault(): bool
+    {
+        return true;
+    }
+    public function getId(): string
+    {
+        return "ovk";
+    }
+    public function getVersion(): string
+    {
+        return "actual";
+    }
+    public function getFaviconURL(): string
+    {
+        return "/assets/packages/static/openvk/img/favicon/main.ico";
+    }
+    public function hasStylesheet(): bool
+    {
+        return false;
+    }
     public function getStyles(): array
     {
         return [
             "css/revisions/modern_controls.css"
         ];
     }
-
     public function getName(): string
     {
         return "OpenVK (" . tr("default") . ")";
@@ -213,17 +238,41 @@ class DefaultThemepack
 
 class OpenVKIn2019_2026Themepack
 {
-    public function hasStyles(): bool { return true; }
-    public function isEnabled(): bool { return true; }
-    public function overridesTemplates(): bool { return false; }
-    public function inheritDefault(): bool { return true; }
-    public function getId(): string { return "ovk1"; }
-    public function getVersion(): string { return "actual"; }
-    public function getFaviconURL(): string { return "/assets/packages/static/openvk/img/favicon/main.ico"; }
-    public function hasStylesheet(): bool { return false; }
+    public function hasStyles(): bool
+    {
+        return true;
+    }
+    public function isEnabled(): bool
+    {
+        return true;
+    }
+    public function overridesTemplates(): bool
+    {
+        return false;
+    }
+    public function inheritDefault(): bool
+    {
+        return true;
+    }
+    public function getId(): string
+    {
+        return "ovk1";
+    }
+    public function getVersion(): string
+    {
+        return "actual";
+    }
+    public function getFaviconURL(): string
+    {
+        return "/assets/packages/static/openvk/img/favicon/main.ico";
+    }
+    public function hasStylesheet(): bool
+    {
+        return false;
+    }
     public function getName(): string
     {
-        return "OpenVK " . mb_strtolower(tr("openvk_themepack1"));
+        return tr("openvk_themepack1", "OpenVK");
     }
     public function getStyles(): array
     {
@@ -233,14 +282,38 @@ class OpenVKIn2019_2026Themepack
 
 class MobileThemepack
 {
-    public function hasStyles(): bool { return false; }
-    public function isEnabled(): bool { return false; }
-    public function overridesTemplates(): bool { return false; }
-    public function inheritDefault(): bool { return true; }
-    public function getId(): string { return "mobile_ovk"; }
-    public function getVersion(): string { return "actual"; }
-    public function getFaviconURL(): string { return "/assets/packages/static/openvk/img/favicon/main.ico"; }
-    public function hasStylesheet(): bool { return false; }
+    public function hasStyles(): bool
+    {
+        return true;
+    }
+    public function isEnabled(): bool
+    {
+        return false;
+    }
+    public function overridesTemplates(): bool
+    {
+        return false;
+    }
+    public function inheritDefault(): bool
+    {
+        return true;
+    }
+    public function getId(): string
+    {
+        return "mobile_ovk";
+    }
+    public function getVersion(): string
+    {
+        return "actual";
+    }
+    public function getFaviconURL(): string
+    {
+        return "/assets/packages/static/openvk/img/favicon/main.ico";
+    }
+    public function hasStylesheet(): bool
+    {
+        return false;
+    }
     public function getName(): string
     {
         return "OpenVK Mobile";
