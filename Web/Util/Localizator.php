@@ -61,6 +61,10 @@ class Localizator
 
         $string = file_get_contents($file);
 
+        if (!$string) {
+            return [];
+        }
+
         foreach (preg_split("%;[\\r\\n]++%", $string) as $statement) {
             if ($statement == "") {
                 continue;
