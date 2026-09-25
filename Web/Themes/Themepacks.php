@@ -59,6 +59,47 @@ class Themepacks implements \ArrayAccess
         }
     }
 
+    private function getSpecialThemepacks(): array
+    {
+        return [new DefaultThemepack(), new OpenVKIn2019_2026Themepack(), new MobileThemepack()];
+    }
+
+    public function getThemeListOrdered(): \Traversable
+    {
+        $special = $this->getSpecialThemepacks();
+
+        foreach ($special as $specialStyle) {
+            if ($specialStyle->isEnabled()) {
+                yield $specialStyle->getId() => $specialStyle->getName();
+            }
+        }
+
+        $onTop = OPENVK_ROOT_CONF["openvk"]["preferences"]["themepacks"]["onTop"];
+
+        foreach ($onTop as $id) {
+            $theme = $this->loadedThemepacks[$id];
+
+            if ($theme) {
+                yield $id => ($theme->getName(getLanguage()));
+            }
+        }
+
+        $namesOrdered = [];
+
+        foreach ($this->loadedThemepacks as $id => $theme) {
+            $namesOrdered[] = $id;
+        }
+
+        sort($namesOrdered);
+
+        foreach ($namesOrdered as $id) {
+            $theme = $this->loadedThemepacks[$id];
+            if ($theme->isEnabled() && !in_array($id, $onTop)) {
+                yield $id => ($theme->getName(getLanguage()));
+            }
+        }
+    }
+
     public function getAllThemes(): array
     {
         return $this->loadedThemepacks;
@@ -73,6 +114,14 @@ class Themepacks implements \ArrayAccess
 
     public function offsetGet($offset): mixed
     {
+        $special = $this->getSpecialThemepacks();
+
+        foreach ($special as $specialTheme) {
+            if ($specialTheme->getId() == $offset) {
+                return $specialTheme;
+            }
+        }
+
         return $this->loadedThemepacks[$offset] ?? null;
     }
 
@@ -90,6 +139,8 @@ class Themepacks implements \ArrayAccess
 
     public function uninstall(string $id): bool
     {
+        return false;
+
         if (!isset($loadedThemepacks[$id])) {
             return false;
         }

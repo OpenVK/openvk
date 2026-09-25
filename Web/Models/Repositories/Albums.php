@@ -130,7 +130,7 @@ class Albums
     {
         $dbalbum = $this->context->table("album_relations")->where(["media" => $photo->getId()])->fetch();
 
-        return $dbalbum->collection ? $this->get($dbalbum->collection) : null;
+        return $dbalbum?->collection ? $this->get($dbalbum->collection) : null;
     }
 
     public function getAlbumByOwnerAndId(int $owner, int $id)

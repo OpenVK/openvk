@@ -6,8 +6,8 @@ namespace openvk\Web\Models\Repositories;
 
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\User;
-use openvk\Web\Models\Entities\Message;
-use openvk\Web\Models\Entities\Correspondence;
+use openvk\Web\Models\Entities\Messages\Message;
+use openvk\Web\Models\Entities\Messages\Correspondence;
 use Chandler\Database\DatabaseConnection;
 use Nette\Database\Table\ActiveRow;
 

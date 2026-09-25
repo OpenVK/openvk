@@ -8,6 +8,7 @@ use Nette\InvalidStateException;
 use openvk\Web\Util\Sms;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Entities\{Photo, Post, EmailChangeVerification};
+use openvk\Web\Models\Privacy\PrivacySettings;
 use openvk\Web\Models\Entities\Notifications\{CoinsTransferNotification, RatingUpNotification};
 use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Videos, Notes, Vouchers, EmailChangeVerifications, Audios, Faves};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
@@ -35,8 +36,12 @@ final class UserPresenter extends OpenVKPresenter
     {
         $user = $this->users->get($id);
 
-        if (!$user || $user->isDeleted() || !$user->canBeViewedBy($this->user->identity)) {
-            if (!is_null($user) && $user->isDeactivated()) {
+        if (!$user) {
+            $this->notFound();
+        }
+
+        if ($user->isDeleted() || !$user->canBeViewedBy($this->user->identity)) {
+            if ($user->isDeactivated()) {
                 $this->template->_template = "User/deactivated.latte";
 
                 $this->template->user = $user;
@@ -46,18 +51,18 @@ final class UserPresenter extends OpenVKPresenter
                 $this->template->user = $user;
             } elseif (!is_null($user) && $user->isDeleted()) {
                 $this->template->_template = "User/deleted.latte";
-            } elseif (!is_null($user) && $this->user->identity && $this->user->identity->isBlacklistedBy($user)) {
+            } elseif ($this->user->identity && $this->user->identity->isBlacklistedBy($user)) {
                 $this->template->_template = "User/blacklisted.latte";
 
                 $this->template->blacklist_status = $user->isBlacklistedBy($this->user->identity);
                 $this->template->ignore_status = $user->isIgnoredBy($this->user->identity);
                 $this->template->user = $user;
-            } elseif (!is_null($user) && $user->isBlacklistedBy($this->user->identity)) {
+            } elseif ($user->isBlacklistedBy($this->user->identity)) {
                 $this->template->_template = "User/blacklisted_pov.latte";
 
                 $this->template->ignore_status = $user->isIgnoredBy($this->user->identity);
                 $this->template->user = $user;
-            } elseif (!is_null($user) && !$user->canBeViewedBy($this->user->identity)) {
+            } elseif (!$user->canBeViewedBy($this->user->identity)) {
                 $this->template->_template = "User/private.latte";
 
                 $this->template->user = $user;
@@ -137,7 +142,7 @@ final class UserPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
 
         $user = $this->users->get($id);
-        $page = abs((int) ($this->queryParam("p") ?? 1));
+        $page = max(1, (int) ($this->queryParam("p") ?: 1));
         if (!$user) {
             $this->notFound();
         } elseif (!$user->getPrivacyPermission('friends.read', $this->user->identity ?? null)) {
@@ -215,7 +220,7 @@ final class UserPresenter extends OpenVKPresenter
             }
 
             $this->template->user = $user;
-            $this->template->page = (int) ($this->queryParam("p") ?? 1);
+            $this->template->page = max(1, (int) ($this->queryParam("p") ?: 1));
             $this->template->admin = $this->queryParam("act") == "managed";
         }
     }
@@ -235,7 +240,7 @@ final class UserPresenter extends OpenVKPresenter
             }
 
             $this->template->user = $user;
-            $this->template->page = (int) ($this->queryParam("p") ?? 1);
+            $this->template->page = max(1, (int) ($this->queryParam("p") ?: 1));
             $this->template->admin = $this->queryParam("act") == "managed";
         }
     }
@@ -707,20 +712,7 @@ final class UserPresenter extends OpenVKPresenter
                     $this->flashFail("err", tr("error"), tr("error_shorturl_incorrect"));
                 }
             } elseif ($_GET['act'] === "privacy") {
-                $settings = [
-                    "page.read",
-                    "page.info.read",
-                    "groups.read",
-                    "photos.read",
-                    "videos.read",
-                    "notes.read",
-                    "friends.read",
-                    "friends.add",
-                    "wall.write",
-                    "messages.write",
-                    "audios.read",
-                    "likes.read",
-                ];
+                $settings = PrivacySettings::getPossibleSettings();
                 foreach ($settings as $setting) {
                     $input = $this->postParam(str_replace(".", "_", $setting));
                     $user->setPrivacySetting($setting, min(3, (int) abs((int) $input ?? $user->getPrivacySetting($setting))));
@@ -747,7 +739,7 @@ final class UserPresenter extends OpenVKPresenter
 
                 $this->flashFail("succ", tr("voucher_good"), tr("voucher_redeemed"));
             } elseif ($_GET['act'] === "interface") {
-                if (isset(Themepacks::i()[$this->postParam("style")]) || $this->postParam("style") === Themepacks::DEFAULT_THEME_ID) {
+                if (!is_null(Themepacks::i()[$this->postParam("style")]) || $this->postParam("style") === Themepacks::DEFAULT_THEME_ID) {
                     if ($this->postParam("theme_for_session") != "1") {
                         $user->setStyle($this->postParam("style"));
                     }
@@ -788,6 +780,7 @@ final class UserPresenter extends OpenVKPresenter
                     "menu_aplikoj"   => "apps",
                     "menu_doxc"      => "docs",
                     "menu_feva"      => "fave",
+                    "menu_stickers"  => "stickers",
                 ];
                 foreach ($settings as $checkbox => $setting) {
                     $user->setLeftMenuItemStatus($setting, $this->checkbox($checkbox));
@@ -838,7 +831,7 @@ final class UserPresenter extends OpenVKPresenter
         }
 
         $this->template->user   = $user;
-        $this->template->themes = Themepacks::i()->getThemeList();
+        $this->template->themes = Themepacks::i()->getThemeListOrdered();
     }
 
     public function renderDeactivate(): void
@@ -939,8 +932,6 @@ final class UserPresenter extends OpenVKPresenter
 
     public function renderResetThemepack(): void
     {
-        $this->assertNoCSRF();
-
         $this->setSessionTheme(Themepacks::DEFAULT_THEME_ID);
 
         if ($this->user) {
@@ -1040,7 +1031,7 @@ final class UserPresenter extends OpenVKPresenter
         $receiver->setRating($receiver->getRating() + $value);
         $receiver->save();
 
-        if ($this->user->id !== $receiver->getId()) {
+        if ($this->user->id !== $receiver->getId() && $receiver->canBeViewedBy($this->user->identity)) {
             (new RatingUpNotification($receiver, $this->user->identity, $value, $message))->emit();
         }
 

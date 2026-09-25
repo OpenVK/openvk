@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace openvk\ServiceAPI;
 
 use openvk\Web\Models\Entities\User;
+use openvk\Web\Models\Search\Shortcodes;
 use openvk\Web\Models\Repositories\{Users, Clubs};
 
 class Mentions implements Handler
@@ -16,8 +17,19 @@ class Mentions implements Handler
         $this->user = $user;
     }
 
-    public function resolve(int $id, callable $resolve, callable $reject): void
+    public function resolve(string $id, int $isShortcode, callable $resolve, callable $reject): void
     {
+        if ($isShortcode == 1) {
+            $obj = Shortcodes::resolve($id);
+            if (!$obj) {
+                $reject("Not found");
+            }
+
+            $id = $obj->getRealId();
+        } else {
+            $id = (int) $id;
+        }
+
         if ($id > 0) {
             $user = (new Users())->get($id);
             if (!$user) {

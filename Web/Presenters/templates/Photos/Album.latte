@@ -15,7 +15,7 @@
 
 {block header}
     {var $isClub = ($album->getOwner() instanceof openvk\Web\Models\Entities\Club)}
-    
+
     <a href="{$album->getOwner()->getURL()}">
         {$album->getOwner()->getCanonicalName()}
     </a>
@@ -32,7 +32,7 @@
         {* TODO: Добавить склонения *}
         <b>{$album->getPhotosCount()} {_photos}</b>
     </a>
-    
+
     {if !is_null($thisUser) && $album->canBeModifiedBy($thisUser) && !$album->isCreatedBySystem()}
         &nbsp;|&nbsp;
         <a href="/photos/upload?album={$album->getPrettyId()}">{_upload_photo}</a>
@@ -50,8 +50,8 @@
                     href="/album{$album->getPrettyId()}/remove_photo/{$photo->getId()}" class="album-photo--delete">
                         &times;
                     </a>
-                    
-                    <a href="/photo{$photo->getPrettyId()}?from=album{$album->getId()}">
+
+                    <a onclick="OpenMiniature(event, {$photo->getURLBySizeId('larger')}, {$album->getPrettyId()}, {$photo->getPrettyIdWithKey()}, 'album')" href="/photo{$photo->getPrettyId()}?from=album{$album->getId()}">
                         <img class="album-photo--image" src="{$photo->getURLBySizeId('tinier')}" alt="{$photo->getDescription()}"  loading=lazy />
                     </a>
                 </div>

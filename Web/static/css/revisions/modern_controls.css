@@ -1,0 +1,161 @@
+
+@media only screen and (-webkit-device-pixel-ratio >=1.25),
+only screen and (resolution >=1.25dppx) {
+
+    .page_header {
+        background: var(--header-branded-2x)!important;
+        background-repeat: no-repeat!important;
+        background-position: -9999px -9999px !important;
+    }
+
+    .page_custom_header {
+        background: var(--header-custom-2x)!important;
+        background-repeat: no-repeat!important;
+        background-position: -9999px -9999px !important;
+    }
+
+    #head_play_btn,
+    .musicIcon,
+    .audioStatus::before,
+    #ajax_audio_player #aj_player_close_btn, 
+    #ajax_audio_player #aj_player_play #aj_player_play_btn,
+    #ajax_audio_player #aj_player_buttons > div,
+    .messenger-app--messages---message--wrap .checkmark {
+        background-image: var(--audio-controls-2x);
+        background-size: 257px auto;
+    }
+
+    .messenger-app--messages---message .actions-2>div:not(.star-icon) {
+        background-image: var(--audio-controls-2x);
+    }
+}
+
+.profile_links_important {
+    padding: 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.profile_links_important>a,
+.profile_links_important>#profile_link,
+.profile_links_important>.profile_link,
+.profile_links_important input[type="submit"] {
+    width: 100%;
+    text-align: center;
+    padding: 5px 0px;
+}
+
+#profile_links_common {
+    background: var(--brand-bg);
+    margin-bottom: 5px;
+}
+
+#profile_links_admin {
+    background: radial-gradient(transparent, var(--error-bg));
+}
+
+#profile_links_common .brand_link {
+    width: 100%;
+    text-align: center;
+    background: url(/assets/packages/static/openvk/img/button.png) #595959;
+    border: 1px solid #595959;
+    color: var(--text-rev);
+    padding: 7px 0px;
+}
+
+#profile_links_common .brand_link.brand_link_pitched {
+    background: url(../img/button.png) #595959;
+    border: 1px solid #595959;
+}
+
+#profile_links_common .brand_link:hover {
+    background: var(--brand);
+    border: 1px solid #595959;
+}
+
+#profile_links_common .brand_link:active {
+    border: 1px solid #696969;
+    background: #636262;
+}
+
+.header-search-box {
+    float: left;
+    margin-right: unset;
+    margin-left: 145px;
+    height: 40px;
+    padding: 10px 0 0 5px;
+    box-sizing: border-box;
+}
+
+#search_box input[type='search'],
+.search_input {
+    background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px;
+    background-color: #fff;
+    padding-left: 18px !important;
+}
+
+.header-search-box input[type='search'] {
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(255, 255, 255, 0.18);
+    border-radius: 3px;
+    border: 1px solid #575757;
+    border-top-color: #424242;
+    border-bottom-color: #696969;
+}
+
+.header_navigation {
+    line-height: 40px;
+    height: 43px;
+}
+
+.header_navigation .link {
+    height: 40px;
+    padding: 0;
+    margin: 0;
+    vertical-align: top;
+    background-size: unset;
+    background: unset;
+}
+
+.header_navigation .link a {
+    display: block;
+    height: 38px;
+    line-height: 40px;
+    padding: 0 10px;
+    font-size: 11px;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+    box-sizing: border-box;
+    transition: background-color 0.1s ease, color 0.1s ease;
+}
+
+#head_music span {
+    color: #D7D7D7;
+    font-weight: bold;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+    padding: 0;
+}
+
+.header_navigation #head_play_btn {
+    display: block;
+}
+
+.header_navigation .link a:hover {
+    background-color: rgba(0, 0, 0, 0.12);
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.header_navigation .link a:active {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.header_navigation .link a#head_music {
+    position: relative;
+    padding-right: 36px;
+}
+
+.button {
+    border: 1px solid #595959;
+    background: url(/assets/packages/static/openvk/img/button.png) #595959;
+    padding: 5px 9px;
+}

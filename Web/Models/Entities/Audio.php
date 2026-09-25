@@ -18,6 +18,7 @@ use openvk\Web\Models\Repositories\Audios;
 class Audio extends Media
 {
     protected $tableName     = "audios";
+    public $shortName        = "audio";
     protected $fileExtension = "mpd";
 
     # Taken from winamp :D
@@ -404,19 +405,20 @@ class Audio extends Media
     {
         $obj = (object) [];
         $obj->unique_id  = base64_encode((string) $this->getId());
-        $obj->id         = $obj->aid = $this->getVirtualId();
-        $obj->artist     = $this->getPerformer();
-        $obj->title      = $this->getTitle();
-        $obj->duration   = $this->getLength();
-        $obj->url        = false;
-        $obj->manifest   = false;
-        $obj->keys       = false;
+        $obj->id         = $obj->aid = (int) $this->getVirtualId();
+        $obj->artist     = $obj->performer = (string) ($this->getPerformer() ?? "");
+        $obj->title      = (string) ($this->getTitle() ?? "");
+        $obj->duration   = (int) $this->getLength();
+        $obj->url        = (string) ($this->getOriginalURL($forceURLExposure) ?? "");
+        $obj->manifest   = (string) ($this->getURL() ?? "");
+        $obj->keys       = $this->getKeys() ?: (object) [];
         $obj->genre_id   = $obj->genre = self::vkGenres[$this->getGenre() ?? ""] ?? 18; # return Other if no match
-        $obj->genre_str  = $this->getGenre();
-        $obj->owner_id   = $this->getOwner()->getRealId();
+        $obj->genre_str  = (string) ($this->getGenre() ?? "");
+        $obj->owner_id   = $obj->oid = (int) $this->getOwner()->getRealId();
+        $obj->global_id  = (int) $this->getId();
 
         if (!is_null($this->getLyrics())) {
-            $obj->lyrics_id = $this->getId();
+            $obj->lyrics_id = $obj->lyricsID = (int) $this->getId();
         }
 
         $album = $this->getAlbum();
@@ -431,11 +433,6 @@ class Audio extends Media
         $obj->explicit   = $this->isExplicit();
         $obj->withdrawn  = $this->isWithdrawn();
         $obj->ready      = $this->isAvailable() && !$obj->withdrawn;
-        if ($obj->ready) {
-            $obj->url      = $this->getOriginalURL($forceURLExposure);
-            $obj->manifest = $this->getURL();
-            $obj->keys     = $this->getKeys();
-        }
 
         if ($obj->editable) {
             $obj->listens = $this->getListens();
@@ -443,6 +440,15 @@ class Audio extends Media
 
         return $obj;
     }
+
+    public function toApiAttachment(User $user): object
+    {
+        return (object) [
+            "type"  => "audio",
+            "audio" => $this->toVkApiStruct($user),
+        ];
+    }
+
 
     public function setAlbum(Playlist $album): void
     {

@@ -1,27 +1,28 @@
-﻿if(typeof u == 'undefined') {
+if (typeof u == 'undefined') {
     console.error('!!! You forgot to install NPM packages !!!')
 }
 
+const _loader_link = `/assets/packages/static/openvk/img/loading_mini.gif`;
+
 function expand_comment_textarea(id) {
-    var el = document.getElementById('commentTextArea'+id);
-    var wi = document.getElementById('wall-post-input'+id);
+    var el = document.getElementById('commentTextArea' + id);
+    var wi = document.getElementById('wall-post-input' + id);
     el.style.display = "block";
     wi.focus();
 }
 
-function hidePanel(panel, count = 0)
-{
+function hidePanel(panel, count = 0) {
     if (isMobile()) {
         return;
     }
 
     $(panel).toggleClass("content_title_expanded content_title_unexpanded");
     $(panel).next('div').slideToggle(300);
-    if(count != 0){
-        if($(panel).hasClass("content_title_expanded"))
-            $(panel).html($(panel).html().replaceAll(" ("+count+")", ""));
+    if (count != 0) {
+        if ($(panel).hasClass("content_title_expanded"))
+            $(panel).html($(panel).html().replaceAll(" (" + count + ")", ""));
         else
-            $(panel).html($(panel).html() + " ("+count+")");
+            $(panel).html($(panel).html() + " (" + count + ")");
     }
 
 }
@@ -29,12 +30,12 @@ function hidePanel(panel, count = 0)
 function parseAjaxResponse(responseString) {
     try {
         const response = JSON.parse(responseString);
-        if(response.flash)
+        if (response.flash)
             NewNotification(response.flash.title, response.flash.message || "", null);
 
         return response.success || false;
-    } catch(error) {
-        if(responseString === "Хакеры? Интересно...") {
+    } catch (error) {
+        if (responseString === "Хакеры? Интересно...") {
             location.reload();
             return false;
         } else {
@@ -109,15 +110,15 @@ function showCoinsTransferDialog(coinsCount, hash) {
 }
 
 function autoTab(original, next, previous) {
-    if(original.getAttribute && original.value.length == original.getAttribute("maxlength") && next !== undefined)
+    if (original.getAttribute && original.value.length == original.getAttribute("maxlength") && next !== undefined)
         next.focus();
-    else if(original.value.length == 0 && previous !== undefined)
+    else if (original.value.length == 0 && previous !== undefined)
         previous.focus();
 }
 
 function showSupportFastAnswerDialog(answers) {
     let html = "";
-    for(const [index, answer] of Object.entries(answers)) {
+    for (const [index, answer] of Object.entries(answers)) {
         html += `
             <div class="hover-box" onclick="supportFastAnswerDialogOnClick(fastAnswers[${index}])">
                 ${answer.replace(/\n/g, "<br />")}
@@ -251,10 +252,10 @@ function showIncreaseRatingDialog(coinsCount, userUrl, hash) {
     document.querySelector("#value_input").oninput = function () {
         let value = Number(this.value);
         value = isNaN(value) ? "?" : ovk_proc_strtr(String(value), 7);
-        if(!value.endsWith("…") && value != "?")
+        if (!value.endsWith("…") && value != "?")
             value = Number(value);
 
-        if(typeof value === "number")
+        if (typeof value === "number")
             document.querySelector("#rating_price").innerHTML = tr("points_amount", value);
         else
             document.querySelector("#rating_price").innerHTML = value + " " + tr("points_amount_other").replace("$1 ", "");
@@ -269,7 +270,7 @@ function openJsSettings() {
         <tr>
             <td width="120" valign="top">
                 <span class="nobold">
-                    <input type='checkbox' data-act='localstorage_item' data-inverse="1" name='ux.disable_ajax_routing' id="ux.disable_ajax_routing" ${CURRENT_DISABLE_AJAX == 0 ? 'checked' : ''}>
+                    <input type='checkbox' onchange="tweakChange(event)" data-act='localstorage_item' data-inverse="1" name='ux.disable_ajax_routing' id="ux.disable_ajax_routing" ${CURRENT_DISABLE_AJAX == 0 ? 'checked' : ''}>
                 </span>
             </td>
             <td>
@@ -279,19 +280,19 @@ function openJsSettings() {
         <tr>
             <td width="120" valign="top">
                 <span class="nobold">
-                    <input type='checkbox' data-act='localstorage_item' name='ux.auto_scroll' id="ux.auto_scroll" ${CURRENT_AUTO_SCROLL == 1 ? 'checked' : ''}>
+                    <input type='checkbox' onchange="tweakChange(event)" data-act='localstorage_item' name='ux.auto_scroll' id="ux.auto_scroll" ${CURRENT_AUTO_SCROLL == 1 ? 'checked' : ''}>
                 </span>
             </td>
             <td>
                 <label for='ux.auto_scroll'>${tr('auto_scroll')}</label>
             </td>
-        </tr>    
+        </tr>
         <tr>
             <td width="120" valign="top"></td>
             <td>
                 <a href="javascript:openPluginSettings()">${tr('ui_settings_window')}</a>
             </td>
-        </tr>  
+        </tr>
     `)
 }
 
@@ -302,12 +303,12 @@ function saveTimezoneSettings() {
     xhr.open("POST", "/iapi/timezone", true);
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xhr.onload = (response) => {
-        if(JSON.parse(response.currentTarget.responseText).success != 0) {
+        if (JSON.parse(response.currentTarget.responseText).success != 0) {
             const msg = new CMessageBox({
                 title: tr('success'),
                 body: tr('timezone_change_success'),
                 buttons: [tr('ok')],
-                callbacks: [() => {}]
+                callbacks: [() => { }]
             })
         }
     };
@@ -323,7 +324,15 @@ $(document).on("scroll", () => {
         return;
     }
 
-    if(navigation.find("#fastLogin").length > 0) return;
+    try {
+        if (window.im && window.im.state.is_active) {
+            return;
+        }
+    } catch(e) {
+        console.error(e);
+    }
+
+    if (navigation.find("#fastLogin").length > 0) return;
 
     const scrollNavigation = (top) => {
         navigation.css("top", top + "px");
@@ -342,9 +351,9 @@ $(document).on("scroll", () => {
 
     let top = parseInt(navigation.css("top"), 10);
 
-    if(currentScrollTop > $(".sidebar").height() + 50) {
-        if(currentScrollTop < lastScrollTop) {
-            if(top !== 5) {
+    if (currentScrollTop > $(".sidebar").height() + 50) {
+        if (currentScrollTop < lastScrollTop) {
+            if (top !== 5) {
                 scrollNavigation(Math.min(5, (top + (lastScrollTop - currentScrollTop))));
             }
 
@@ -355,7 +364,7 @@ $(document).on("scroll", () => {
             }, 250);
         } else {
             let h = -navigation.height();
-            if(top <= h || top === 0) {
+            if (top <= h || top === 0) {
                 hideNavigationOutbound(h);
                 $(".floating_sidebar")[0].classList.add("show");
             } else {
@@ -365,7 +374,7 @@ $(document).on("scroll", () => {
     } else {
         removeFixedNavigation();
 
-        if($(".floating_sidebar")[0].classList.contains("show")) {
+        if ($(".floating_sidebar")[0].classList.contains("show")) {
             $(".floating_sidebar")[0].classList.remove("show");
             $(".floating_sidebar")[0].classList.add("hide_anim");
             setTimeout(() => {

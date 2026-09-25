@@ -25,9 +25,9 @@ abstract class VKAPIRequestHandler
         throw new APIErrorException($message, $code);
     }
 
-    protected function failTooOften(): never
+    protected function failTooOften(string $message = "Rate limited"): never
     {
-        $this->fail(9, "Rate limited");
+        $this->fail(9, $message);
     }
 
     protected function getUser(): ?User
@@ -78,9 +78,18 @@ abstract class VKAPIRequestHandler
 
     public function generateItems(int $count, array $items, bool $without_count = false)
     {
-        if (VKAPI_DECL_VER_MAJOR >= 5 && VKAPI_DECL_VER_MINOR < 138 && $without_count == true) {
+        if ($without_count == true) {
+            if (VKAPI_DECL_VER_MAJOR >= 5 && VKAPI_DECL_VER_MINOR >= 138) {
+                return (object) [
+                    'count' => $count,
+                    'items' => $items,
+                ];
+            }
+
             return $items;
-        } elseif (VKAPI_DECL_VER_MAJOR >= 5) {
+        }
+
+        if (VKAPI_DECL_VER_MAJOR >= 5) {
             return (object) [
                 'count' => $count,
                 'items' => $items,

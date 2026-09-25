@@ -34,7 +34,7 @@
                     </div>
                 </div>
 
-                <input n:if="$canUpload" id="upload_entry_point" class="button" type="button" value="{_upload_button}" {if isset($group)}data-gid="{$group->getId()}"{/if}>
+                <input n:if="$canUpload" onclick="onUploadEntryPointClick(event)" id="upload_entry_point" class="button" type="button" value="{_upload_button}" {if isset($group)}data-gid="{$group->getId()}"{/if}>
             </div>
         </div>
         <div n:class="docs_page_content, $is_gallery ? docs_page_gallery">
