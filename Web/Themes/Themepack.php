@@ -37,11 +37,11 @@ class Themepack
         $this->enabled = $enabled;
 
         if ($manifest && $manifest->commonFaviconURL) {
-            $this->commonFaviconURL = $manifset->commonFaviconURL;
+            $this->commonFaviconURL = $manifest->commonFaviconURL;
         }
 
         if ($manifest && $manifest->favicons) {
-            $this->favicons = $manifset->favicons;
+            $this->favicons = $manifest->favicons;
         } else {
             $this->favicons = [
                 "im" => "",
@@ -227,7 +227,7 @@ class DefaultThemepack
     public function getStyles(): array
     {
         return [
-            "css/revisions/modern_controls.css"
+            "css/revisions/modern_controls.css",
         ];
     }
     public function getName(): string
