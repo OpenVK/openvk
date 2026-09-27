@@ -6,10 +6,10 @@ ALTER TABLE `videos` ADD `private` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTE
 ALTER TABLE `photos` ADD `unlisted` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `height`;
 ALTER TABLE `photos` ADD `access_key` VARCHAR(100) NULL DEFAULT NULL AFTER `unlisted`;
 
-ALTER TABLE `photos` ADD `context_id` BIGINT(20) DEFAULT NULL AFTER `private`, ADD `context_admin` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_id`, ADD `context_unlisted` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_admin`, ADD `context_vid` BIGINT(20) UNSIGNED DEFAULT NULL AFTER `context_unlisted`;
-ALTER TABLE `videos` ADD `context_id` BIGINT(20) DEFAULT NULL AFTER `private`, ADD `context_admin` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_id`, ADD `context_unlisted` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_admin`, ADD `context_vid` BIGINT(20) UNSIGNED DEFAULT NULL AFTER `context_unlisted`;
-ALTER TABLE `documents` ADD `context_id` BIGINT(20) DEFAULT NULL AFTER `private`, ADD `context_admin` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_id`, ADD `context_unlisted` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_admin`, ADD `context_vid` BIGINT(20) UNSIGNED DEFAULT NULL AFTER `context_unlisted`;
-ALTER TABLE `audios` ADD `context_id` BIGINT(20) DEFAULT NULL AFTER `deleted`, ADD `context_admin` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_id`, ADD `context_unlisted` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_admin`, ADD `context_vid` BIGINT(20) UNSIGNED DEFAULT NULL AFTER `context_unlisted`;
+ALTER TABLE `photos` ADD `context_id` BIGINT(20) DEFAULT NULL AFTER `private`, ADD `context_admin` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_id`, ADD `context_unlisted` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_admin`, ADD `context_vid` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_unlisted`;
+ALTER TABLE `videos` ADD `context_id` BIGINT(20) DEFAULT NULL AFTER `private`, ADD `context_admin` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_id`, ADD `context_unlisted` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_admin`, ADD `context_vid` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_unlisted`;
+ALTER TABLE `documents` ADD `context_id` BIGINT(20) DEFAULT NULL AFTER `private`, ADD `context_admin` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_id`, ADD `context_unlisted` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_admin`, ADD `context_vid` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_unlisted`;
+ALTER TABLE `audios` ADD `context_id` BIGINT(20) DEFAULT NULL AFTER `deleted`, ADD `context_admin` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_id`, ADD `context_unlisted` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_admin`, ADD `context_vid` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0' AFTER `context_unlisted`;
 ALTER TABLE `audios` ADD `access_key` VARCHAR(100) NULL DEFAULT NULL AFTER `unlisted`;
 
 CREATE TABLE `chats` (
@@ -125,3 +125,23 @@ ALTER TABLE `sticker_purchases`
 
 ALTER TABLE `profiles`
   ADD `can_create_stickers` tinyint(1) NOT NULL DEFAULT '0';
+
+CREATE TABLE IF NOT EXISTS `im_message_folders` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `owner` bigint(20) unsigned NOT NULL,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `type` varchar(64) NOT NULL DEFAULT 'custom',
+  `position` int(11) NOT NULL DEFAULT '0',
+  `created` bigint(20) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `owner` (`owner`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `im_message_folder_peers` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `folder` bigint(20) unsigned NOT NULL,
+  `peer` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `folder_peer` (`folder`,`peer`),
+  KEY `folder` (`folder`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

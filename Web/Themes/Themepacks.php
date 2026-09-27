@@ -74,7 +74,7 @@ class Themepacks implements \ArrayAccess
             }
         }
 
-        $onTop = OPENVK_ROOT_CONF["openvk"]["preferences"]["themepacks"]["onTop"];
+        $onTop = OPENVK_ROOT_CONF["openvk"]["preferences"]["themepacks"]["onTop"] ?? [];
 
         foreach ($onTop as $id) {
             $theme = $this->loadedThemepacks[$id];

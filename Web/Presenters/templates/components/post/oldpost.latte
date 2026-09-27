@@ -139,8 +139,8 @@
                     {/if}
 
                     {if !($forceNoDeleteLink ?? false) && $canBeArchived}
-                        <span class="oldPostArchive" n:if="!$post->isArchived()"><a href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}">{_archive_action}</a> &nbsp;|&nbsp;</span>
-                        <span class="oldPostArchive" n:if="$post->isArchived()"><a href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}">{_unarchive_action}</a> &nbsp;|&nbsp;</span>
+                        <span class="oldPostArchive" n:if="!$post->isArchived()"><a onclick="onArchivePostButtonClick(event)" href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}">{_archive_action}</a> &nbsp;|&nbsp;</span>
+                        <span class="oldPostArchive" n:if="$post->isArchived()"><a onclick="onArchivePostButtonClick(event)" href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}">{_unarchive_action}</a> &nbsp;|&nbsp;</span>
                     {/if}
 
                     {if !($forceNoDeleteLink ?? false) && $canBeDeleted}
