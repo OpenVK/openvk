@@ -132,10 +132,8 @@ final class Messages extends VKAPIRequestHandler
             }
 
             if ($peerId > 0 && $peerId < 2000000000 && $senderId !== $peerId) {
-                if ($senderObj instanceof \openvk\Web\Models\Entities\User) {
-                    if ($peer->isBlacklistedBy($senderObj) || $senderObj->isBlacklistedBy($peer)) {
-                        $this->fail(900, "Can't send messages for users from blacklist");
-                    }
+                if ((new Blacklist($senderObj))->isBanned($peer) || (new Blacklist($peer))->isBanned($senderObj)) {
+                    $this->fail(900, "Can't send messages for users from blacklist");
                 }
 
                 if ($senderId > 0 && method_exists($peer, 'getPrivacyPermission')) {
@@ -3612,10 +3610,6 @@ final class Messages extends VKAPIRequestHandler
             $this->fail(14, "Chat not found");
         }
 
-        if (!$chat->isMember($this->getUser())) {
-            $this->fail(14, "Chat not found");
-        }
-
         if (!$chat->canChangePhoto($this->getUser())) {
             $this->fail(15, "Access denied.");
         }
@@ -3668,7 +3662,7 @@ final class Messages extends VKAPIRequestHandler
         $chatsRepo = new ChatRepo();
         $chat = $chatsRepo->getByChatId($chat_id);
 
-        if (!$chat || !$chat->isMember($this->getUser())) {
+        if (!$chat || !$chat->canChangePhoto($this->getUser())) {
             $this->fail(14, "Chat not found");
         }
 

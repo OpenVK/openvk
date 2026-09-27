@@ -31,7 +31,7 @@ final class Status extends VKAPIRequestHandler
         } else {
             $user = (new UsersRepo())->get($user_id);
 
-            if (!$user || $user->isDeleted() || ($this->getUser() && !$user->canBeViewedBy($this->getUser()))) {
+            if (!$user || $user->isDeleted() || !$user->getPrivacyPermission("page.info.read", $this->getUser())) {
                 $this->fail(15, "Invalid user");
             }
 

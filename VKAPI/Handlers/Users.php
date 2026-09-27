@@ -362,7 +362,7 @@ final class Users extends VKAPIRequestHandler
                             $response[$i]->relation = $usr->getMaritalStatus();
                             break;
                         case "contacts":
-                            if (!$canView) {
+                            if (!$usr->getPrivacyPermission("page.info.read", $authuser)) {
                                 break;
                             }
 

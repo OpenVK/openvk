@@ -119,6 +119,10 @@ class Report extends RowModel
 
     public function getAuthor(): RowModel
     {
+        if ($this->getContentType() == "user") {
+            return $this->getContentObject(true);
+        }
+
         return $this->getContentObject(true)->getOwner();
     }
 

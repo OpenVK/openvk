@@ -70,16 +70,6 @@ class Videos
                     $video = null;
                 }
             }
-
-            if (is_null($video)) {
-                try {
-                    $video = $this->videos->where([
-                        "id" => $vId,
-                    ])->fetch();
-                } catch (\Throwable $e) {
-                    $video = null;
-                }
-            }
         }
 
         if (is_null($video)) {

@@ -778,7 +778,7 @@ class VideoViewer extends Viewer {
             }
         }
         if (item) {
-            this.modal.getNode().find("#videoTitle").html(ovk_proc_strtr(item.title, 100));
+            this.modal.getNode().find("#videoTitle").html(escapeHtml(ovk_proc_strtr(item.title, 100)));
         }
     }
 

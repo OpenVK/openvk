@@ -118,6 +118,9 @@ function highlightQuery(text, query) {
     if (!text || typeof text !== "string") return text || "";
     if (!query || typeof query !== "string" || !query.trim()) return text;
 
+    text = escapeHtml(text);
+    query = escapeHtml(query);
+
     const words = query.trim().split(/\s+/).filter(w => w.length > 0);
     if (words.length === 0) return text;
 
