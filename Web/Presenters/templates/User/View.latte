@@ -420,7 +420,7 @@
                     {else}
                         <div class="page_status" style="display: flex;">
                             <div n:class="audioStatus, $thatIsThisUser ? page_status_edit_button" id="page_status_text">
-                                <a onclick="AudioViewer.openById(event, {$audioStatus->getId()})">{$audioStatus->getName()}</a>
+                                <a onclick="AudioViewer.openById(event, {$audioStatus->getPrettyIdA()})">{$audioStatus->getName()}</a>
                             </div>
                         </div>
                     {/if}

@@ -24,9 +24,6 @@ only screen and (resolution >=1.25dppx) {
     #head_play_btn,
     .musicIcon,
     .audioStatus::before,
-    #ajax_audio_player #aj_player_close_btn, 
-    #ajax_audio_player #aj_player_play #aj_player_play_btn,
-    #ajax_audio_player #aj_player_buttons > div,
     .messenger-app--messages---message--wrap .checkmark {
         background-image: var(--audio-controls-2x);
         background-size: 257px auto;

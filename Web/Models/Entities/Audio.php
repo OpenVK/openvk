@@ -374,6 +374,11 @@ class Audio extends Media
         return false;
     }
 
+    public function getPrettyIdA()
+    {
+        return $this->getOwner()->getRealId() . "_" . $this->getId();
+    }
+
     /**
      * Returns compatible with VK API 4.x, 5.x structure.
      *

@@ -938,7 +938,7 @@ class AudioViewer extends Viewer {
         const audios = await window.OVKAPI.call("audio.getById", { "audios": ids });
         this.totalItemsCount = audios.count;
 
-        audios.items.forEach(item => {
+        audios.forEach(item => {
             this._appendApiItem(item);
         });
     }
