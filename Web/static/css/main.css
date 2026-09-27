@@ -500,7 +500,7 @@ body.no_footer .navigation_footer {
     width: calc(100% - 159px);
     float: right;
     margin-right: 15px;
-    margin-top: -2px;
+    margin-top: -1px;
     font-size: 11px;
     text-align: left;
     position: relative;

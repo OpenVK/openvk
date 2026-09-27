@@ -2,6 +2,10 @@
     --header-branded: url("/assets/packages/static/openvk/img/header.png");
 }
 
+.page_body {
+    margin-top: -2px;
+}
+
 @media only screen and (-webkit-device-pixel-ratio >=1.25),
 only screen and (resolution >=1.25dppx) {
 

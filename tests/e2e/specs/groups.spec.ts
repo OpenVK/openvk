@@ -39,7 +39,7 @@ test.describe('Group wall permissions', () => {
 
     const postText = 'A visitor post on the group wall';
     const form = page.locator('form[action="/wall-1/makePost"]');
-    await form.locator('textarea[name="text"]').fill(postText);
+    await form.locator('.small-textarea').fill(postText);
     await form.locator('input[type="submit"]').click();
 
     const post = page.locator('.post').filter({ hasText: postText });
