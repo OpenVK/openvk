@@ -1,7 +1,7 @@
-/* mxas header */
+/* christmas header */
 
 .page_header {
-    background: url('../img/xheader.png');
+    background: var(--header-xmas);
 }
 
 .page_custom_header {

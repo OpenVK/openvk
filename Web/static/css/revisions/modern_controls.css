@@ -1,5 +1,6 @@
 :root {
     --header-branded: url("/assets/packages/static/openvk/img/header.png");
+    --header-xmas: url("/assets/packages/static/openvk/img/xheader.png");
 }
 
 .page_body {

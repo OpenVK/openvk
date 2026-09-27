@@ -27,6 +27,7 @@
     /* assets */
     --header-branded: url("/assets/packages/static/openvk/img/header_old.png");
     --header-branded-2x: url('/assets/packages/static/openvk/img/header_2x.png');
+    --header-xmas: url("/assets/packages/static/openvk/img/xheader_old.png");
     --header-custom: url("/assets/packages/static/openvk/img/header_custom.png");
     --header-custom-2x: url('/assets/packages/static/openvk/img/header_custom_2x.png');
     --audio-controls: url('/assets/packages/static/openvk/img/audios_controls.png');
@@ -1969,8 +1970,8 @@ body.scrolled .toTop:hover,
 
 .post-deleted {
     opacity: 1;
-    animation-name: post-deleted;
-    animation-duration: 5s;
+    /*animation-name: post-deleted;
+    animation-duration: 5s;*/
 }
 
 @keyframes post-deleted {
