@@ -143,7 +143,9 @@ class Themepack
     public function fetchResource(string $resource, bool $processCSS = false): ?string
     {
         $file = "$this->home/$resource";
-        if (!file_exists($file)) {
+        $abs_path = realpath($file);
+
+        if ($abs_path == false || !file_exists($file)) {
             return null;
         }
 

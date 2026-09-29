@@ -10,7 +10,7 @@ final class ThemepacksPresenter extends OpenVKPresenter
 {
     protected $banTolerant = true;
 
-    public function renderResource(string $themepack, string $version, string $resClass, string $resource): void
+    public function renderResource(string $themepack, $version, string $resClass, string $resource): void
     {
         if (!isset(Themepacks::i()[$themepack])) {
             $this->notFound();
