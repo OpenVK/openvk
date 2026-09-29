@@ -377,6 +377,17 @@ final class Users extends VKAPIRequestHandler
                                     $response[$i]->bdate = null;
                                 }
                                 break;
+                            case 'personal':
+                                $response[$i]->personal = (object) [
+                                    'political' => $usr->getPoliticalViews(),
+                                    'langs' => [], // FIXME: not implemented
+                                    'inspired_by' => $usr->getInspires(),
+                                    'people_main' => $usr->getMainInPeople(),
+                                    'life_main' => $usr->getMainInLife(),
+                                    'smoking' => $usr->getViewsOnSmoking(),
+                                    'alcohol' => $usr->getViewsOnAlcohol(),
+                                ];
+                                break;
                         }
                     }
 
