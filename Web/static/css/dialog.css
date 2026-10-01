@@ -939,6 +939,11 @@ body.manyMsgs .ovk-msg-all:last-of-type {
     height: 100%;
     padding: 10px 20px;
     box-sizing: border-box;
+    min-height: 40vh;
+}
+
+.ovk-post-viewer .post-content {
+    border-bottom: unset;
 }
 
 .ovk-post-viewer .collapsed_text {
@@ -1069,8 +1074,12 @@ body.manyMsgs .ovk-msg-all:last-of-type {
 
 .ovk-post-viewer #itemContentComments .item_comments .item_comments_head {
     display: block;
-    background: var(--brand-bg);
+    background: #e4e4e4;
     padding: 15px 30px;
+}
+
+.ovk-post-viewer #itemContentComments .sort_link {
+    padding: 0px 6px;
 }
 
 .ovk-post-viewer #itemContentComments .item_comments .item_comments_head h4 {

@@ -332,9 +332,40 @@ abstract class Postable extends Attachable
         return !empty($this->getRecord()?->context_id) || !empty($this->changes["context_id"]);
     }
 
+    public function isCommentsClosed(): bool
+    {
+        $can = 0;
+
+        try {
+            $can = (int) $this->getRecord()->comment_status;
+        } catch (\Nette\MemberAccessException $e) {
+            return false;
+        }
+
+        bdump($can);
+        return $can != Postable::COMMENTABLE_EVERYBODY;
+    }
+
+    public function setCommentOpenness(bool $open, bool $forFriendOnly = false): void
+    {
+        if ($open == true) {
+            $this->setComment_status(0);
+        } else {
+            $this->setComment_status(2);
+        }
+    }
+
+    public function canCloseComments(?User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        return $this->canBeModifiedBy($user);
+    }
+
     public function canBeCommentedBy(?User $user): bool
     {
-
         if (!$user) {
             return false;
         }
@@ -346,7 +377,7 @@ abstract class Postable extends Attachable
         $can = 0;
 
         try {
-            $can = (int) $this->getRecord()->can_comment;
+            $can = (int) $this->getRecord()->comment_status;
         } catch (\Nette\MemberAccessException $e) {
             return true;
         }
