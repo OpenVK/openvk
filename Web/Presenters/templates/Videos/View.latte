@@ -95,10 +95,6 @@
                                 {_delete}
                             </a>
                         </div>
-                        {if $video->canCloseComments($thisUser)}
-                            <a n:if="!$video->isCommentsClosed()" onclick="onCloseCommentsClick(event, true, {$video->getPrettyId()}, 'video')" class="profile_link" style="display:block;width:96%;">{_close_post_comments}</a>
-                            <a n:if="$video->isCommentsClosed()" onclick="onCloseCommentsClick(event, false, {$video->getPrettyId()}, 'video')" class="profile_link" style="display:block;width:96%;">{_open_post_comments}</a>
-                        {/if}
                         <a n:if="isset($thisUser)" onclick="javascript:repost({$video->getPrettyId()}, 'video')" class="profile_link" style="display:block;width:96%;">
                             {_share}
                         </a>

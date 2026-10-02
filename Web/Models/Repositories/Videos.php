@@ -41,7 +41,7 @@ class Videos
         return $this->toVideo($video);
     }
 
-    public function getByOwnerAndVID(int $owner, int $vId, ?string $access_key = null, bool $skipKey = false): ?Video
+    public function getByOwnerAndVID(int $owner, int $vId, ?string $access_key = null): ?Video
     {
         $video = null;
 
@@ -83,7 +83,7 @@ class Videos
             return null;
         }
 
-        if (!$skipKey && !$n_video->checkAccessKey($access_key)) {
+        if (!$n_video->checkAccessKey($access_key)) {
             return null;
         }
 

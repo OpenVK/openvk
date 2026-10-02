@@ -1167,7 +1167,7 @@ final class Wall extends VKAPIRequestHandler
             $this->fail(100, "Invalid post");
         }
 
-        if (!$post->canBeViewedBy($this->getUser()) || !$post->canBeCommentedBy($this->getUser())) {
+        if (!$post->canBeViewedBy($this->getUser())) {
             $this->fail(15, "Access denied");
         }
 
@@ -1551,40 +1551,6 @@ final class Wall extends VKAPIRequestHandler
         }
 
         return $posts;
-    }
-
-    public function closeComments(int $owner_id, int $post_id)
-    {
-        $this->requireUser();
-        $this->willExecuteWriteAction();
-
-        $post = (new PostsRepo())->getPostById($owner_id,  $post_id);
-
-        if (!$post || $post->isDeleted() || !$post->canCloseComments($this->getUser())) {
-            $this->fail(15, "Access denied");
-        }
-
-        $post->setCommentOpenness(false);
-        $post->save();
-
-        return 1;
-    }
-
-    public function openComments(int $owner_id, int $post_id)
-    {
-        $this->requireUser();
-        $this->willExecuteWriteAction();
-
-        $post = (new PostsRepo())->getPostById($owner_id,  $post_id);
-
-        if (!$post || $post->isDeleted() || !$post->canCloseComments($this->getUser())) {
-            $this->fail(15, "Access denied");
-        }
-
-        $post->setCommentOpenness(true);
-        $post->save();
-
-        return 1;
     }
 
     // из зачем это было выносить именно таким образом v__v

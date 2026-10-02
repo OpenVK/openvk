@@ -145,8 +145,3 @@ CREATE TABLE IF NOT EXISTS `im_message_folder_peers` (
   UNIQUE KEY `folder_peer` (`folder`,`peer`),
   KEY `folder` (`folder`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-ALTER TABLE `photos` ADD `comment_status` TINYINT UNSIGNED NOT NULL DEFAULT '0' AFTER `description`;
-ALTER TABLE `notes` ADD `comment_status` TINYINT UNSIGNED NOT NULL DEFAULT '0' AFTER `deleted`;
-ALTER TABLE `posts` ADD `comment_status` TINYINT UNSIGNED NOT NULL DEFAULT '0' AFTER `flags`;
-ALTER TABLE `videos` ADD `comment_status` TINYINT UNSIGNED NOT NULL DEFAULT '0' AFTER `deleted`;
