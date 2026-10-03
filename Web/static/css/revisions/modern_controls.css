@@ -24,15 +24,15 @@ only screen and (resolution >=1.25dppx) {
 
     #head_play_btn,
     .musicIcon,
-    .audioStatus::before,
-    .messenger-app--messages---message--wrap .checkmark {
+    .audioStatus::before/*,
+    .messenger-app--messages---message--wrap .checkmark*/ {
         background-image: var(--audio-controls-2x);
         background-size: 257px auto;
     }
 
-    .messenger-app--messages---message .actions-2>div:not(.star-icon) {
+    /*.messenger-app--messages---message .actions-2>div:not(.star-icon) {
         background-image: var(--audio-controls-2x);
-    }
+    }*/
 }
 
 .profile_links_important {

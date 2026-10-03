@@ -274,11 +274,12 @@ export const ActionsBar = ({ selectedMessages, count, onDelete, onUnselect, onRe
     const canPin = firstMsg && (typeof firstMsg.can === "function" ? firstMsg.can("pin") : false);
     const canViewers = firstMsg && (typeof firstMsg.can === "function" ? firstMsg.can("viewers") : false);
     const canReport = firstMsg && (typeof firstMsg.can === "function" ? firstMsg.can("report") : false);
+    let selectedMessagesText = tr("selected_messages", count);
 
     return html`
         <div class="messages--actions shown">
             <div>
-                <div class="message-tab-counter message-tab"><a onClick=${onUnselect}>${tr("selected_messages", count)}</a></div>
+                <div class="message-tab-counter message-tab"><a onClick=${onUnselect}>${selectedMessagesText}</a></div>
             </div>
             <div>
                 ${count === 1 && canPin && html`

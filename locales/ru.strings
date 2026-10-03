@@ -779,7 +779,7 @@
 "privacy_setting_view_audio" = "Кому видно мои аудиозаписи";
 "privacy_setting_see_likes" = "Кому видны мои лайки";
 "privacy_setting_view_gifts" = "Кому видны мои подарки";
-"privacy_setting_see_online" = "Кто видит мой онлайн";
+"privacy_setting_see_online" = "Кто видит мою неактивность";
 "privacy_title_info" = "Информация в профиле";
 "privacy_title_content" = "Контент в профиле";
 "privacy_title_wall" = "Лента";
@@ -1516,6 +1516,10 @@
 "about_peer" = "Контакт";
 "about_peer_chat" = "О чате";
 "selected_messages" = "Выбрано $1 сообщений";
+"selected_messages_one" = "Выбрано $1 сообщение";
+"selected_messages_few" = "Выбрано $1 сообщения";
+"selected_messages_many" = "Выбрано $1 сообщений";
+"selected_messages_other" = "Выбрано $1 сообщений";
 "delete_message" = "Удалить";
 "reply_to_message" = "Ответить";
 "forward_messages" = "Переслать";
@@ -1528,7 +1532,7 @@
 "conversations_show_unread" = "Только непрочитанные";
 "conversations_show_all" = "Показать все переписки";
 
-"message_deletion_one" = "Удаление сообщения";
+"message_deletion_one" = "Удаление $1 сообщения";
 "message_deletion_few" = "Удаление $1 сообщений";
 "message_deletion_many" = "Удаление $1 сообщений";
 "message_deletion_other" = "Удаление $1 сообщений";
@@ -1741,6 +1745,7 @@
 "im_option_compact_mode" = "Широкоэкранный режим";
 "im_option_debug" = "Функции отладки";
 "im_option_photo_viewer" = "Лента в просмотрщике фото";
+"im_option_skin_tones" = "Вариации эмодзи с разными цветами кожи";
 "im_option_24h_format" = "24-часовой формат времени";
 "im_option_mute_local" = "Отключить уведомления в этом браузере";
 "im_option_disable_animated_stickers" = "Отключить анимированные стикеры";

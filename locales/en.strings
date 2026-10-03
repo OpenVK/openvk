@@ -2247,7 +2247,7 @@
 "send_action_progress" = "(sending...)";
 "delete_for_me" = "Delete for me";
 "delete_for_all" = "Delete for everyone";
-"message_deletion_one" = "Delete message";
+"message_deletion_one" = "Delete $1 messages";
 "message_deletion_few" = "Deletion of $1 messages";
 "message_deletion_many" = "Deletion of $1 messages";
 "message_deletion_other" = "Deletion of $1 messages";
@@ -3013,6 +3013,7 @@
 "im_option_compact_mode" = "Compact mode";
 "im_option_debug" = "Debug mode";
 "im_option_photo_viewer" = "Photo viewer";
+"im_option_skin_tones" = "Emojis with skin tone";
 "im_option_mute_local" = "Mute notifications in this browser";
 "im_option_24h_format" = "24-hour time format";
 "im_option_disable_animated_stickers" = "Disable animated stickers";
@@ -3190,6 +3191,10 @@
 "return_to_chat" = "Return to chat";
 "search_sinister_noun" = "Search";
 "selected_messages" = "Selected messages";
+"selected_messages_one" = "Selected $1 message";
+"selected_messages_few" = "Selected $1 messages";
+"selected_messages_many" = "Selected $1 messages";
+"selected_messages_other" = "Selected $1 messages";
 "show_next" = "Show next";
 "topic_going_in_chat" = "Go to topic chat";
 "viewing_old_messages" = "To new messages";

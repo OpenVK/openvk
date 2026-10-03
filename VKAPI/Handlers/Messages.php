@@ -2343,7 +2343,8 @@ final class Messages extends VKAPIRequestHandler
                     $lastMessage['peer_id'] ??= (int) ($conversationItem['conversation']['peer']['id'] ?? 0);
                     $lastMessage['out'] ??= 0;
                     if (!isset($lastMessage['attachments']) || !is_array($lastMessage['attachments'])) {
-                        $lastMessage['attachments'] = [];
+                        // $lastMessage['attachments'] = [];
+                        $this->replaceAttachments($lastMessage['attachments']);
                     }
                     if (!isset($lastMessage['fwd_messages']) || !is_array($lastMessage['fwd_messages'])) {
                         $lastMessage['fwd_messages'] = [];

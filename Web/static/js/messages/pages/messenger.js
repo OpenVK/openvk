@@ -198,7 +198,7 @@ export class Messenger {
 
         try {
             await tab.render();
-            tab.showTab();
+            tab.showTab(null, true);
         } catch (e) { console.error(e); }
         const newId = Number(this.currentChatId);
 

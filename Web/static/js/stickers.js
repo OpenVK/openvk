@@ -252,7 +252,14 @@ function renderEmojiGrid(with_stickers = false) {
     // Standard groups
     window.emojiData.forEach(group => {
         const localizedGroup = tr("emoji_group_" + group.slug);
+        const skinTones = localStorage.getItem("tw.emoji.skin_tones") == "1";
         const itemsHtml = group.emojis.map(item => {
+            if (!skinTones) {
+                if (item.name && item.name.includes("skin tone")) {
+                    return;
+                }
+            }
+
             return `<span class="emoji-picker-item emoji emoji_${item.hex}" data-emoji="${item.emoji}" title="${escapeHtml(item.name || '')}">${item.emoji}</span>`;
         }).join('');
 

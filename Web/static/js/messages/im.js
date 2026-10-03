@@ -393,7 +393,7 @@ export class InstantMessagesAndRelated {
         `, wrap);
     }
 
-    selectTab(tab) {
+    async selectTab(tab) {
         let _tab = null;
         if (typeof tab === "string") {
             const found = this.tabs.find(t => t.getPageId() == tab);
@@ -409,6 +409,10 @@ export class InstantMessagesAndRelated {
 
         imLog("Selected tab " + tab);
 
+        let oldId = 0;
+        try {
+            oldId = this.getSelectedTab().getId();
+        } catch(e) {console.error(e);}
         this.state._toggleScrollMode(false);
 
         this.selectedTabId = tab;
@@ -446,16 +450,19 @@ export class InstantMessagesAndRelated {
                         <div class="im_page" data-id="${_tab.getId()}"></div>
                     `);
                     _tab.render_class.container = this.root.querySelector(`.im_page[data-id="${_tab.getId()}"]`);
-                    _tab.render();
+                    await _tab.render();
                 }
             } else if (b && _tab.render_class && (_tab.render_class.container !== b || !_tab.render_class.container.isConnected)) {
                 _tab.render_class.container = b;
-                _tab.render();
+                await _tab.render();
             }
 
             imLog("Show tab", _tab);
             if (this.root) {
+                console.log("IM | Diff: ", _tab.getId(), oldId)
+                //if (_tab.getId() != oldId) {
                 _tab.showTab(this.root);
+                //}
             }
         } catch (e) {
             console.error(e);
@@ -1123,6 +1130,7 @@ class IMState {
             const pageContent = document.querySelector('.page_content');
             if (pageContent) {
                 if (!pageContent.querySelector('#im_container')) {
+                    pageContent.innerHTML = "";
                     await window.im_class.insertIn(pageContent, n_url ? n_url.searchParams.get("as") : null);
                 } else {
                     const self = window.im_variants.getCurrentUser();
@@ -1196,6 +1204,7 @@ class SettingsPage extends IMPage {
                     <div>
                         <label><input onchange="window.im.state.reload()" id="im.modern_mode" type="checkbox">${tr("im_option_compact_mode")} (beta)</label>
                         <label><input id="viewers.photo.list" type="checkbox">${tr("im_option_photo_viewer")} (Beta)</label>
+                        <label><input id="emoji.skin_tones" type="checkbox">${tr("im_option_skin_tones")}</label>
                     </div>
                     <div>
                         <label><input id="im.mute_all" type="checkbox">${tr("im_option_mute_local")}</label>
@@ -1460,7 +1469,7 @@ export class LongPollConnection {
 
         let serverUrl = this.lp.server;
         if (!/^https?:\/\//i.test(serverUrl)) {
-            serverUrl = 'https://' + serverUrl;
+            serverUrl = window.location.protocol + '//' + serverUrl;
         }
 
         const connection_string = serverUrl + '?key=' + this.lp.key + '&ts=' + this.lp.ts + '&pts=' + this.lp.pts + '&mode=' + mode + '&version=' + 3;

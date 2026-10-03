@@ -25,7 +25,12 @@ export class IMTab {
         return this.isActive();
     }
 
-    showTab(root) {
+    showTab(root, check_id = false) {
+        imLog("IM | ShowTab");
+        if (check_id == true && this.getPageId() !== window.im.getSelectedTabId()) {
+            return;
+        }
+
         if (this.render_class && this.render_class.container) {
             this.render_class.container.classList.remove("hidden");
             this.render_class.showHook();
