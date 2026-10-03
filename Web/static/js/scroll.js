@@ -14,7 +14,7 @@ window.addEventListener("scroll", function (e) {
   }
 });
 
-u(".toTop").on("click", function (e) {
+$(".toTop").on("click", function (e) {
   const y_scroll = window.scrollY;
   const scroll_margin = 20;
 

@@ -5,14 +5,21 @@ declare(strict_types=1);
 namespace openvk\VKAPI\Handlers;
 
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
+use openvk\Web\Util\IMBroker;
 use openvk\Web\Util\Validator;
 
 final class Account extends VKAPIRequestHandler
 {
+    public function getViewerId(): int
+    {
+        return $this->getUser()->getId();
+    }
+
     public function getProfileInfo(): object
     {
         $this->requireUser();
         $user = $this->getUser();
+
         $return_object = (object) [
             "first_name"          => $user->getFirstName(),
             "photo_200"           => $user->getAvatarURL("normal"),
@@ -21,6 +28,7 @@ final class Account extends VKAPIRequestHandler
             "id"                  => $user->getId(),
             "is_verified"         => $user->isVerified(),
             "verification_status" => $user->isVerified() ? 'verified' : 'unverified',
+            "can_create_stickers" => $user->canCreateStickers(),
             "last_name"           => $user->getLastName(),
             "home_town"           => $user->getHometown(),
             "status"              => $user->getStatus(),
@@ -31,6 +39,14 @@ final class Account extends VKAPIRequestHandler
             "screen_name"         => $user->getShortCode(),
             "sex"                 => $user->isFemale() ? 1 : 2,
         ];
+        $return_object->home_town        = (string) ($return_object->home_town ?? "");
+        $return_object->status           = (string) ($return_object->status ?? "");
+        $return_object->screen_name      = (string) ($return_object->screen_name ?: ("id" . $user->getId()));
+        $return_object->maiden_name      = "";
+        $return_object->country          = (object) ["id" => 1, "title" => "Россия"];
+        $return_object->city             = (object) ["id" => 1, "title" => "—"];
+        $return_object->relation_partner = null;
+        $return_object->name_request     = null;
 
         $audio_status = $user->getCurrentAudioStatus();
         if (!is_null($audio_status)) {
@@ -49,6 +65,8 @@ final class Account extends VKAPIRequestHandler
             "country"                       => "CZ",                                  # TODO
             "eu_user"                       => false,                                 # TODO
             "https_required"                => 1,
+            "phone"                         => "",
+            "link_redirects"                => "{}",
             "intro"                         => 0,
             "community_comments"            => false,
             "is_live_streaming_enabled"     => false,
@@ -73,7 +91,10 @@ final class Account extends VKAPIRequestHandler
     {
         $this->requireUser();
 
-        # Цiй метод є заглушка
+        $user = $this->getUser();
+        $user->setOnline(time() - 301);
+        $user->save(false);
+        IMBroker::i()->setUserOffline($user->getId(), 0);
 
         return 1;
     }
@@ -401,6 +422,174 @@ final class Account extends VKAPIRequestHandler
 
         return (object) [
             "changed" => (int) ($changes > 0),
+        ];
+    }
+
+    public function registerDevice(
+        string $token = "",
+        string $device_model = "",
+        string $device_year = "",
+        string $system_version = "",
+        string $settings = ""
+    ): int {
+        $this->requireUser();
+        return 1;
+    }
+
+    public function unregisterDevice(string $token = ""): int
+    {
+        $this->requireUser();
+        return 1;
+    }
+
+    public function setSilenceMode(
+        string $token = "",
+        int $time = 0,
+        int $peer_id = 0,
+        int $sound = 1,
+        int $disabled_mentions = 0,
+        int $disabled_mass_mentions = 0
+    ): int {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        $user = $this->getUser();
+
+        $params = [
+            "peer_id" => $peer_id,
+            "time" => $time,
+            "sound" => $sound,
+            "disabled_mentions" => $disabled_mentions,
+            "disabled_mass_mentions" => $disabled_mass_mentions,
+        ];
+        if (!empty($token)) {
+            $params["token"] = $token;
+        }
+
+        $res = IMBroker::i()->invokeMethod($user->getId(), "account.setSilenceMode", $params);
+        if ($res) {
+            $data = json_decode($res);
+            if (isset($data->response)) {
+                return (int) $data->response;
+            }
+        }
+        return 1;
+    }
+
+    public function getPushSettings(string $token = "", int $peer_id = 0): object
+    {
+        $this->requireUser();
+        $user = $this->getUser();
+
+        $params = [];
+        if ($peer_id !== 0) {
+            $params["peer_id"] = $peer_id;
+        }
+        if (!empty($token)) {
+            $params["token"] = $token;
+        }
+
+        $res = IMBroker::i()->invokeMethod($user->getId(), "account.getPushSettings", $params);
+        if ($res) {
+            $data = json_decode($res);
+            if (isset($data->response)) {
+                return (object) $data->response;
+            }
+        }
+
+        return (object) [
+            "disabled_until" => 0,
+            "sound" => 1,
+        ];
+    }
+
+    public function get(string $user_ids = "", string $fields = ""): array
+    {
+        $this->requireUser();
+
+        $ids = [];
+        foreach (explode(",", $user_ids) as $rawId) {
+            $rawId = trim($rawId);
+            if ($rawId !== "" && is_numeric($rawId)) {
+                $ids[] = (int) $rawId;
+            }
+        }
+        if (empty($ids)) {
+            $ids = [$this->getUser()->getId()];
+        }
+
+        $users = new \openvk\Web\Models\Repositories\Users();
+        $out = [];
+        foreach ($ids as $userId) {
+            $user = $users->get($userId);
+            if (!$user) {
+                continue;
+            }
+            $out[] = $user->toVkApiStruct($this->getUser(), "photo_50,photo_100,photo_base,has_photo,screen_name,verified,sex");
+        }
+
+        return $out;
+    }
+
+    public function getMulti(string $fields = ""): object
+    {
+        $this->requireUser();
+
+        $user = $this->getUser();
+
+        return (object) [
+            "count" => 1,
+            "items" => $user->toVkApiStruct($this->getUser(), "photo_50,photo_100,photo_base,has_photo"),
+        ];
+    }
+
+    public function getPrivacySettings(): object
+    {
+        $this->requireUser();
+
+        return (object) [
+            "sections"                                      => [],
+            "settings"                                      => [],
+            "supported_categories"                          => [],
+            "recommended_closed_profile_settings"           => [],
+            "story_privacy_is_deprecated_options_disabled"  => false,
+        ];
+    }
+
+    public function getContactList(int $offset = 0, int $count = 100, string $fields = ""): object
+    {
+        $this->requireUser();
+
+        return (object) ["count" => 0, "items" => []];
+    }
+
+    public function getHelpHints(string $section = "", string $app_id = "", string $fields = ""): object
+    {
+        $this->requireUser();
+
+        return (object) ["hints" => [], "items" => [], "count" => 0];
+    }
+
+    public function getBadgesSettings(): object
+    {
+        $this->requireUser();
+
+        return (object) ["items" => [], "is_enabled" => false];
+    }
+
+    public function getToggles(): object
+    {
+        $this->requireUser();
+
+        $off = ["core_common_websocket", "core_common_websocket_api", "core_common_websocket_compress", "core_common_websocket_rate_lmt", "queue_new_subscribe"];
+        $toggles = [];
+        foreach ($off as $name) {
+            $toggles[] = (object) ["name" => $name, "enabled" => false, "value" => null];
+        }
+
+        return (object) [
+            "toggles"  => $toggles,
+            "version"  => 1,
+            "ab_tests" => [],
         ];
     }
 }

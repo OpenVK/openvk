@@ -6,7 +6,6 @@ namespace openvk\Web\Models\Entities;
 
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
-use openvk\Web\Models\Entities\{Photo, Message, Correspondence};
 use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Notifications, Managers};
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;

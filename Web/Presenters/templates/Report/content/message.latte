@@ -1,0 +1,48 @@
+{block content}
+    {if !$message}
+        {include "../components/error.latte", description => tr("reported_message_display_error")}
+    {else}
+        <style>
+            .reportedMsg {
+                outline: 5px solid #ffacac;
+            }
+        </style>
+
+        <div id="reported_msg_context">
+            <p>{_reported_msg_1}: {$message->getPeerId()}</p>
+            <p>{_reported_msg_2}: {$message->getSenderId()}</p>
+            <p>{_reported_msg_3}</p>
+
+            <hr>
+
+            {foreach $message->getContext($report->authorId()) as $item}
+                <div class="messenger-app--messages---message {if $item->getId() == $message->getId()}reportedMsg{/if}">
+                    <div class="messenger-app--messages---message--wrap">
+                        <div class="inlines _avatar">
+                            <img class="ava" src="{$item->getOwner()->getAvatarUrl()}" />
+                        </div>
+                        <div class="inlines _content post-content">
+                            <a class="_sender" target="_blank" href="{$item->getOwner()->getURL()}">
+                                <strong style="font-size: 11px;">{$item->getOwner()->getFullName()}</strong>
+                            </a>
+                            <p class="normalText text">{$item->getText()}</p>
+                            {var $attachmentsLayout = $item->getChildrenWithLayout(200)}
+                            <div n:ifcontent class="attachments attachments_b" style="height: {$attachmentsLayout->height|noescape}; width: {$attachmentsLayout->width|noescape};">
+                                <div class="attachment" n:foreach="$attachmentsLayout->tiles as $attachment" style="float: {$attachment[3]|noescape}; width: {$attachment[0]|noescape}; height: {$attachment[1]|noescape};">
+                                    {include "../../components/attachment.latte", attachment => $attachment[2], parent => $post, parentType => "post", tilesCount => sizeof($attachmentsLayout->tiles)}
+                                </div>
+                            </div>
+
+                            <div n:ifcontent class="attachments attachments_m">
+                                <div class="attachment" n:foreach="$attachmentsLayout->extras as $attachment">
+                                    {include "../../components/attachment.latte", attachment => $attachment}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="time"><span>{$item->getSendTimeHumanized()}</span></div>
+                    </div>
+                </div>
+            {/foreach}
+        </div>
+    {/if}
+{/block}

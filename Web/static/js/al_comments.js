@@ -1,4 +1,4 @@
-u(document).on("click", ".comment-reply", function(e) {
+function commentReply(e) {
     let comment   = u(e.target).closest(".post");
     let authorId  = comment.data("owner-id");
     let commentId = comment.data("comment-id");
@@ -27,4 +27,4 @@ u(document).on("click", ".comment-reply", function(e) {
         attachments.find('.post-replyto').html('')
         attachments.find(`input[name='reply_to_comment']`).attr('value', '')
     })
-});
+}

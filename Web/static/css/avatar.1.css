@@ -23,23 +23,6 @@ div.content > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth
     object-position: top;
 }
 
-.crp-entry--image > img
-{
-    width: 48px;
-    height: 48px;
-    object-fit: cover;
-    object-position: top;
-}
-
-.crp-entry--message---av > img,
-.ava
-{
-    width: 42px;
-    height: 42px;
-    object-fit: cover;
-    object-position: top;
-}
-
 .cCompactAvatars {
     width: 30px !important;
     height: 30px !important;

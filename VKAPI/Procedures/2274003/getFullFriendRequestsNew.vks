@@ -1,0 +1,17 @@
+var f={items:[]};
+var s_add_params={};
+if(Args.only_suggests+""=="1"){
+    s_add_params={offset: Args.offset, count: Args.count};
+}else{
+    f=API.friends.getRequests({need_messages: 1, need_mutual: 1, count: Args.count, offset:Args.offset});
+}
+var s=API.friends.getRequests({need_mutual: 1, count: 3, suggested: 1}+s_add_params);
+var p=API.getProfiles({user_ids: f.items@.user_id+s.items@.user_id, fields: "photo_rec,photo_medium_rec,city,country,education"});
+var from=API.getProfiles({user_ids: s.items@.from, name_case: "gen"});
+var c=API.database.getCitiesById({city_ids:p@.city});
+var cn=API.database.getCountriesById({country_ids:p@.country});
+var resp={f: f.items, fc: f.count, p: p, c:c, cn:cn, mc:API.getProfiles({fields:"country"})[0].country};
+if(Args.offset+""=="0" || Args.offset+""=="" || Args.only_suggests+""=="1"){
+    resp=resp+{s: s.items, sc: s.count, s_from: from};
+}
+return resp;

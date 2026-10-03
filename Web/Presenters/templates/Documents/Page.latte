@@ -67,7 +67,7 @@
                     {/if}
 
                     {if isset($thisUser)}
-                        <a n:if="$modifiable" class="profile_link" style="display:block;width:96%;" id="edit_icon">{_edit}</a>
+                        <a n:if="$modifiable" class="profile_link" style="display:block;width:96%;" onclick="onEditIconButtonClick(event)">{_edit}</a>
                         <a n:if="!$modifiable" class="profile_link" style="display:block;width:96%;" id="report_icon">{_report}</a>
                         <a n:if="!$copied || $copied && $copyImportance" class="profile_link" style="display:block;width:96%;" id="add_icon">{_add}</a>
                         <a n:if="$copied && !$copyImportance" class="profile_link" style="display:block;width:96%;" id="remove_icon">{_remove}</a>

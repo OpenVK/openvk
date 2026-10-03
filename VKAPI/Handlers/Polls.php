@@ -49,6 +49,7 @@ final class Polls extends VKAPIRequestHandler
             "can_share"      => 1,
             "created"        => 0,
             "id"             => $poll->getId(),
+            "poll_id"        => $poll->getId(),
             "owner_id"       => $poll->getOwner()->getId(),
             "question"       => $poll->getTitle(),
             "votes"          => $poll->getVoterCount(),
@@ -69,7 +70,7 @@ final class Polls extends VKAPIRequestHandler
         return (object) $response;
     }
 
-    public function addVote(int $poll_id, string $answer_ids = "", string $answer_id = "")
+    public function addVote(int $poll_id, string $answer_ids = "", string $answer_id = "", int $owner_id = 0)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -98,7 +99,7 @@ final class Polls extends VKAPIRequestHandler
         }
     }
 
-    public function deleteVote(int $poll_id)
+    public function deleteVote(int $poll_id, int $owner_id = 0, int $answer_id = 0)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
