@@ -93,6 +93,15 @@ function ovk_truncate_words(string $text, int $length): string
     return $sub . "…";
 }
 
+function escapeHTML(?string $string): string
+{
+    if ($string == null) {
+        return "";
+    }
+
+    return htmlspecialchars($string, ENT_DISALLOWED | ENT_XHTML);
+}
+
 function knuth_shuffle(iterable $arr, int $seed): array
 {
     $data   = is_array($arr) ? $arr : iterator_to_array($arr);
