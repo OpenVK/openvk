@@ -116,7 +116,7 @@
                         &nbsp;! {_post_is_ad}
                     </div>
                     <div n:if="$post->hasSource()" class="sourceDiv">
-                        <span>{_source}: {$post->getSource(true)|noescape}</span>
+                        <a onclick="openSource(event)" title="{$post->getSource()}" href="{$post->getSource()}">{_source}</a>
                     </div>
                     <div n:if="$post->isSigned()" class="post-signature">
                         {var $actualAuthor = $post->getOwner(false)}

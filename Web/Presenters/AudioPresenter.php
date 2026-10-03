@@ -743,7 +743,7 @@ final class AudioPresenter extends OpenVKPresenter
                     $audio->setAlbumId($album_id);
 
                     $playlist = (new Audios())->getPlaylist($album_id);
-                    if ($playlist && !$playlist->hasAudio($audio)) {
+                    if ($playlist && !$playlist->hasAudio($audio) && $playlist->canBeModifiedBy($this->user->identity)) {
                         $playlist->add($audio);
                     }
                 } else {
