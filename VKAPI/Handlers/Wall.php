@@ -24,7 +24,7 @@ use openvk\Web\Models\Repositories\Audios as AudiosRepo;
 
 final class Wall extends VKAPIRequestHandler
 {
-    public function get(int $owner_id, string $domain = "", int $offset = 0, int $count = 30, int $extended = 0, string $filter = "all", int $rss = 0): object
+    public function get(int $owner_id, string $domain = "", int $offset = 0, int $count = 30, int $extended = 0, string $filter = "all", int $rss = 0, ?int $archive_year = null): object
     {
         $this->requireUser();
 
@@ -47,7 +47,7 @@ final class Wall extends VKAPIRequestHandler
             }
         }
 
-        if (!$wallOnwer->canBeViewedBy($this->getUser())) {
+        if ($wallOnwer && !$wallOnwer->canBeViewedBy($this->getUser())) {
             $this->fail(15, "Access denied");
         } elseif (!$wallOnwer) {
             $this->fail(15, "Access denied: wall is disabled");
@@ -67,6 +67,22 @@ final class Wall extends VKAPIRequestHandler
             case "others":
                 $iteratorv = $posts->getOthersPostsFromWall($owner_id, 1, $count, $offset);
                 $cnt       = $posts->getOthersCountOnUserWall($owner_id);
+                break;
+            case "archived":
+                $canSee = false;
+
+                if ($owner_id < 0) {
+                    $canSee = $wallOnwer->canBeModifiedBy($this->getUser());
+                } else {
+                    $canSee = $owner_id == $this->getUser()->getRealId();
+                }
+
+                if (!$canSee) {
+                    $this->fail(15, "Access denied");
+                }
+
+                $iteratorv = $posts->getArchivedPostsFromWall($owner_id, 1, $count, $offset, $archive_year);
+                $cnt       = $posts->getArchivedCountOnUserWall($owner_id, $archive_year);
                 break;
             case "postponed":
                 $this->fail(42, "Postponed posts are not implemented.");
@@ -195,8 +211,8 @@ final class Wall extends VKAPIRequestHandler
                 "can_edit"     => (int) $post->canBeEditedBy($this->getUser()),
                 "can_delete"   => (int) $post->canBeDeletedBy($this->getUser()),
                 "can_pin"      => (int) $post->canBePinnedBy($this->getUser()),
-                "can_archive"  => 0, # TODO MAYBE
-                "is_archived"  => 0,
+                "can_archive"  => (int) $post->canBeArchivedBy($this->getUser()),
+                "is_archived"  => (int) $post->isArchived(),
                 "is_pinned"    => (int) $post->isPinned(),
                 "is_explicit"  => (int) $post->isExplicit(),
                 "attachments"  => $attachments,
@@ -322,6 +338,30 @@ final class Wall extends VKAPIRequestHandler
         }
     }
 
+    public function getArchiveYears(int $owner_id): array
+    {
+        $this->requireUser();
+
+        $owner = get_entity_by_id($owner_id);
+        $canSee = false;
+
+        if (!$owner) {
+            $this->fail(15, "Access denied");
+        }
+
+        if ($owner->getRealId() > 0) {
+            $canSee = $owner->getRealId() == $this->getUser()->getRealId();
+        } else {
+            $canSee = $owner->canBeModifiedBy($this->getUser());
+        }
+
+        if (!$canSee) {
+            $this->fail(15, "Access denied");
+        }
+
+        return (new PostsRepo())->getPostYearsOnWall($owner_id);
+    }
+
     public function getById(string $posts, int $extended = 0, string $fields = "", ?User $user = null)
     {
         if ($user == null) {
@@ -434,8 +474,8 @@ final class Wall extends VKAPIRequestHandler
                     "can_edit"     => $post->canBeEditedBy($this->getUser()),
                     "can_delete"   => $post->canBeDeletedBy($user),
                     "can_pin"      => $post->canBePinnedBy($user),
-                    "can_archive"  => false, # TODO MAYBE
-                    "is_archived"  => false,
+                    "can_archive"  => (int) $post->canBeArchivedBy($this->getUser()),
+                    "is_archived"  => (int) $post->isArchived(),
                     "is_pinned"    => (int) $post->isPinned(),
                     "is_explicit"  => $post->isExplicit(),
                     "post_source"  => $post->getPostSourceInfo(),
@@ -1422,6 +1462,50 @@ final class Wall extends VKAPIRequestHandler
         }
 
         return $posts;
+    }
+
+    public function archive(int $owner_id, int $post_id): int
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $post = (new PostsRepo())->getPostById($owner_id, $post_id);
+
+        if (!$post || $post->isDeleted() || !$post->canBeArchivedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        if ($post->isArchived()) {
+            return 1;
+            // $this->fail(20, "Post is already archived");
+        }
+
+        $post->setArchived(true);
+        $post->save();
+
+        return 1;
+    }
+
+    public function reveal(int $owner_id, int $post_id): int
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $post = (new PostsRepo())->getPostById($owner_id, $post_id);
+
+        if (!$post || $post->isDeleted() || !$post->canBeArchivedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        if (!$post->isArchived()) {
+            return 1;
+            // $this->fail(20, "Post is not archived");
+        }
+
+        $post->setArchived(false);
+        $post->save();
+
+        return 1;
     }
 
     private function getApiPhoto($attachment)
