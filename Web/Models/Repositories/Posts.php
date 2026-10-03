@@ -316,7 +316,7 @@ class Posts
     {
         $posts = (clone $this->posts)->where(["wall" => $user, "deleted" => 0, "archived" => 1, "suggested" => 0]);
 
-        return sizeof($this->applyYearFilter($posts, $year));
+        return $this->applyYearFilter($posts, $year)->count();
     }
 
     public function setArchivedOnWall(int $user, bool $archived, ?int $year = null): int
