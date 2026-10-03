@@ -349,7 +349,7 @@
                                 <text n:if="$showUEvents">
                                     {var $eventsHtml = ''}
                                     {foreach $uEvents as $e}
-                                        {php $eventsHtml .= '<a href="/event' . $e->getId() . '">' . $e->getName() . '</a>'}
+                                        {php $eventsHtml .= '<a href="/event' . $e->getId() . '">' . escapeHTML($e->getName()) . '</a>'}
                                         {if $uEventsCount == 2}
                                             {if $iterator->isFirst()}{php $eventsHtml .= tr("bday_and")}{/if}
                                         {elseif $uEventsCount != 1}

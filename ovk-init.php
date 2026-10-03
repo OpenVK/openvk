@@ -71,6 +71,15 @@ function ovk_proc_strtr(string $string, int $length = 0): string
     return $newString . ($string !== $newString ? "…" : ""); #if cut hasn't happened, don't append "..."
 }
 
+function escapeHTML(?string $string): string
+{
+    if ($string == null) {
+        return "";
+    }
+
+    return htmlspecialchars($string, ENT_DISALLOWED | ENT_XHTML);
+}
+
 function knuth_shuffle(iterable $arr, int $seed): array
 {
     $data   = is_array($arr) ? $arr : iterator_to_array($arr);

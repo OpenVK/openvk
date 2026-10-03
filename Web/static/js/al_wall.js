@@ -767,7 +767,7 @@ u(document).on("click", "#_pinGroup", async function(e) {
         }
     }else{
         thisButton.html(tr('remove_from_left_menu'));
-        list.nodes[0].append(u('<a href="' + groupUrl + '" class="link group_link">' + groupName + '</a>').first());
+        list.nodes[0].append(u('<a href="' + groupUrl + '" class="link group_link">' + escapeHtml(groupName) + '</a>').first());
     }
 
     // Adding the group to the left group list
@@ -968,11 +968,11 @@ async function showArticle(note_id) {
     u("body").addClass("dimmed");
     let note = await API.Notes.getNote(note_id);
     u("#articleAuthorAva").attr("src", note.author.ava);
-    u("#articleAuthorName").text(note.author.name);
+    u("#articleAuthorName").text(escapeHtml(note.author.name));
     u("#articleAuthorName").attr("href", note.author.link);
     u("#articleTime").text(note.created);
     u("#articleLink").attr("href", note.link);
-    u("#articleText").html(`<h1 class="articleView_nameHeading">${note.title}</h1>` + note.html);
+    u("#articleText").html(`<h1 class="articleView_nameHeading">${escapeHtml(note.title)}</h1>` + note.html);
     u("body").removeClass("dimmed");
     u("body").addClass("article");
 }
@@ -3126,3 +3126,10 @@ $(document).on("click", ".archive_post", function(e) {
         }
     });
 });
+
+function openSource(event) {
+    event.preventDefault();
+
+    const url = event.target.href;
+    window.open("/away.php?to=" + encodeURIComponent(url), "_blank");
+}
