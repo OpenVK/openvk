@@ -1909,11 +1909,6 @@ final class Messages extends VKAPIRequestHandler
     ) {
         $this->requireUser();
         $this->willExecuteWriteAction();
-
-        if ($peer_id === 0 && empty($message_ids) && $start_message_id === 0 && $user_id === -1 && $chat_id === -1 && empty($domain)) {
-            $this->fail(100, "One of the parameters specified was missing or invalid: peer_id, start_message_id or message_ids is required");
-        }
-
         $resolvedId = $this->resolvePeer($user_id, $peer_id, $chat_id, $domain);
 
         $params = [

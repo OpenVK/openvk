@@ -1266,12 +1266,15 @@ class SettingsPage extends IMPage {
                     <div>
                         <label><input id="im.debug" type="checkbox">${tr("im_option_debug")}</label>
                         <label><input id="im.disable_lottie" type="checkbox">${tr("im_option_disable_animated_stickers")}</label>
+                        <p style="margin-top: 10px;">
+                            <input type="button" class="button" id="im_read_all_btn" value="${tr("im_option_read_all")}" />
+                        </p>
                         ${show_mail ? `<p><a onclick="window.im.messenger.selectConversationByPeerId(window.openvk.dev_id)">${tr("report_bug")}</a></p>` : ""}
                     </div>
                 </div>
             </div>
         `);
-        container.querySelectorAll("input").forEach((item) => {
+        container.querySelectorAll("input[type=checkbox]").forEach((item) => {
             if (item.id === "im.24h") {
                 const val = localStorage.getItem("tw." + item.id);
                 item.checked = val !== null ? val === "1" : true;
@@ -1282,6 +1285,65 @@ class SettingsPage extends IMPage {
                 localStorage.setItem("tw." + e.target.id, Number(e.target.checked));
             });
         });
+
+        const readAllBtn = container.querySelector("#im_read_all_btn");
+        if (readAllBtn) {
+            readAllBtn.addEventListener("click", async (e) => {
+                const btn = e.target;
+                btn.disabled = true;
+                try {
+                    await window.OVKAPI.call("messages.markAsRead", {
+                        mark_conversation_as_read: 1
+                    });
+                    const convs = window.im?.conversations?.all_convs || [];
+                    for (const conv of convs) {
+                        conv.unread_count = 0;
+                        if (conv.last_message_id) {
+                            conv.in_read = conv.last_message_id;
+                        }
+                        if (conv.peer) {
+                            conv.peer.unread_count = 0;
+                            if (conv.last_message_id) {
+                                conv.peer.in_read = conv.last_message_id;
+                            }
+                            if (conv.peer._chunks && typeof conv.peer._chunks.getMessages === "function") {
+                                conv.peer._chunks.getMessages().forEach(m => {
+                                    if (m.data) m.data.read_state = 1;
+                                    m.read_state = 1;
+                                });
+                                if (typeof conv.peer._chunks._invalidateCache === "function") {
+                                    conv.peer._chunks._invalidateCache();
+                                }
+                            }
+                        }
+                    }
+                    if (window.im?.fastChats && Array.isArray(window.im.fastChats.openedChats)) {
+                        window.im.fastChats.openedChats.forEach(c => {
+                            c.unreadCount = 0;
+                        });
+                        if (typeof window.im.fastChats.render === "function") {
+                            window.im.fastChats.render();
+                        }
+                    }
+                    if (window.im?.state && typeof window.im.state._updateCounter === "function") {
+                        window.im.state._updateCounter(0);
+                    }
+                    if (window.im?.conversations && typeof window.im.conversations.update === "function") {
+                        window.im.conversations.update();
+                    }
+                    if (typeof makeError === "function") {
+                        makeError(tr("im_all_messages_marked_as_read"), "Green", 4000);
+                    }
+                } catch (err) {
+                    console.error("Failed to mark all as read:", err);
+                    if (typeof fastError === "function") {
+                        fastError(String(err?.message || err?.error_msg || err));
+                    }
+                } finally {
+                    btn.disabled = false;
+                }
+            });
+        }
     }
 }
 
