@@ -4644,7 +4644,7 @@ body:has(#im_container.at_page) .page-wrap {
 .im_mobile #im_container.at_page .tabs {
     padding: 10px;
     gap: 5px;
-    flex-direction: column;
+    flex-direction: row;
 }
 
 .im_mobile .im-new-interface-banner {
@@ -4668,6 +4668,7 @@ body:has(#im_container.at_page) .page-wrap {
 
 .im_mobile #spec-actions {
     align-self: flex-end;
+    height: 19px;
 }
 
 .im_mobile .messenger-app--messages .messenger-special-message {
@@ -4686,7 +4687,7 @@ body:has(#im_container.at_page) .page-wrap {
 .im_mobile .crp-list .crp-entry {
     height: unset;
     min-height: unset;
-    flex-direction: column;
+    /*flex-direction: column;*/
     align-items: start;
     gap: 5px;
 }
@@ -4695,17 +4696,21 @@ body:has(#im_container.at_page) .page-wrap {
     display: flex;
     max-width: calc(100% - 20px);
     width: unset;
-    padding-left: 18px;
+    padding-left: 6px;
 }
 
 .im_mobile .crp-list .crp-entry .crp-entry--message .crp-entry--message---text {
     align-items: start;
     margin-top: unset;
-    margin-left: 16px;
+    /*margin-left: 16px;*/
 }
 
 .im_mobile .crp-list .crp-entry .crp-entry--info span {
     font-size: 12px;
+}
+
+.im_mobile .crp-bottom--count {
+    display: none;
 }
 
 .im_mobile .crp-entry--message---av img {
@@ -4806,7 +4811,7 @@ body:has(#im_container.at_page) .page-wrap {
 }
 
 .im_mobile #conversations-top-buttons {
-    flex-direction: column;
+    flex-direction: row;
     align-items: stretch;
     gap: 5px;
 }
