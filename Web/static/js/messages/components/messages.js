@@ -895,8 +895,12 @@ export class ChatGeneralForm {
         msg.peer = this;
         msg.peer_id = this.id;
 
+        const conv = window.im?.conversations ? window.im.conversations._findConv(this.id) : null;
+        const convLast = conv ? (conv._last_message || conv.last_message) : null;
         const latestBeforeSend = this._chunks ? this._chunks.getLatestMessage() : null;
-        const prevCmid = latestBeforeSend ? Number(latestBeforeSend.data?.conversation_message_id || latestBeforeSend.data?.local_id || latestBeforeSend.conversation_message_id || 0) : 0;
+        const cmidFromConv = convLast ? Number(convLast.data?.conversation_message_id || convLast.data?.local_id || convLast.conversation_message_id || 0) : 0;
+        const cmidFromChunk = latestBeforeSend ? Number(latestBeforeSend.data?.conversation_message_id || latestBeforeSend.data?.local_id || latestBeforeSend.conversation_message_id || 0) : 0;
+        const prevCmid = Math.max(cmidFromConv, cmidFromChunk);
         if (prevCmid > 0) {
             msg.data.conversation_message_id = prevCmid + 1;
             msg.data.local_id = msg.data.conversation_message_id;
@@ -908,7 +912,6 @@ export class ChatGeneralForm {
             push_callback();
         }
 
-        const conv = window.im?.conversations ? window.im.conversations._findConv(this.id) : null;
         if (conv) {
             conv.last_message = msg;
             conv._last_message = msg;

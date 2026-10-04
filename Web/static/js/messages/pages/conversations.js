@@ -387,6 +387,36 @@ export class Conversations {
     }
 }
 
+export function isMessageNewer(msgA, msgB) {
+    if (!msgA) return false;
+    if (!msgB) return true;
+
+    const isSendingA = Boolean(msgA.is_sending || msgA.data?.is_sending);
+    const isSendingB = Boolean(msgB.is_sending || msgB.data?.is_sending);
+    if (isSendingA && !isSendingB) return true;
+    if (!isSendingA && isSendingB) return false;
+
+    const timeA = Number(msgA.data?.date || 0) || (msgA.getSentTime?.()?.getTime?.() ? Math.round(msgA.getSentTime().getTime() / 1000) : 0);
+    const timeB = Number(msgB.data?.date || 0) || (msgB.getSentTime?.()?.getTime?.() ? Math.round(msgB.getSentTime().getTime() / 1000) : 0);
+    if (timeA > 0 && timeB > 0 && timeA !== timeB) {
+        return timeA > timeB;
+    }
+
+    const cmidA = Number(msgA.data?.conversation_message_id || msgA.data?.local_id || msgA.conversation_message_id || 0);
+    const cmidB = Number(msgB.data?.conversation_message_id || msgB.data?.local_id || msgB.conversation_message_id || 0);
+    if (cmidA > 0 && cmidB > 0 && cmidA !== cmidB) {
+        return cmidA > cmidB;
+    }
+
+    const idA = Number(msgA.data?.id || msgA.id || 0);
+    const idB = Number(msgB.data?.id || msgB.id || 0);
+    if (idA > 0 && idB > 0 && idA !== idB) {
+        return idA > idB;
+    }
+
+    return false;
+}
+
 export class Conversation {
     constructor(conversation_item) {
         //console.trace();
@@ -597,10 +627,23 @@ export class Conversation {
 
     get last_message() {
         try {
-            if (this.peer && this.peer._chunks) {
-                const msg = this.peer._chunks.getLatestMessage();
-                if (msg) {
-                    return msg;
+            if (!this._last_message) {
+                if (this.peer && this.peer._chunks) {
+                    const msg = this.peer._chunks.getLatestMessage();
+                    if (msg) {
+                        return msg;
+                    }
+                }
+                return null;
+            }
+
+            const isViewingHistory = (this._scroll != null && this._scroll !== this.getEndScrollPosition()) ||
+                (this.getScrollPosition()?.reachedNewestPosition === false);
+
+            if (!isViewingHistory && this.peer && this.peer._chunks) {
+                const chunkMsg = this.peer._chunks.getLatestMessage();
+                if (chunkMsg && isMessageNewer(chunkMsg, this._last_message)) {
+                    return chunkMsg;
                 }
             }
         } catch (e) {

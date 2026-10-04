@@ -207,7 +207,10 @@ export class Chunks {
         }
         return this.chunks[0];
     }
-    getLatestMessage() { return this.getStartChunk() ? this.getStartChunk().latest_message : null; }
+    getLatestMessage() {
+        const latestChunk = this.getLatestChunk();
+        return latestChunk ? latestChunk.latest_message : null;
+    }
     appendChunk(chunk, replace_actual = true) {
         let key = this._getChunkKey(chunk);
         let idx = 0;
