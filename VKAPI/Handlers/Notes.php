@@ -113,7 +113,7 @@ final class Notes extends VKAPIRequestHandler
         return 1;
     }
 
-    public function edit(string $note_id, string $title = "", string $text = "", int $privacy = 0, int $comment_privacy = 0, string $privacy_view  = "", string $privacy_comment  = "")
+    public function edit(string $note_id, string $title = "", string $text = "", int $privacy = 0, int $comment_privacy = -1, string $privacy_view  = "", string $privacy_comment  = "")
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -134,6 +134,10 @@ final class Notes extends VKAPIRequestHandler
 
         !empty($title) ? $note->setName($title) : null;
         !empty($text) ? $note->setSource($text) : null;
+
+        if ($comment_privacy != -1) {
+            $note->setCommentOpenness($comment_privacy == 1);
+        }
 
         $note->setCached_Content(null);
         $note->setEdited(time());

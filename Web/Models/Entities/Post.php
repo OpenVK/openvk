@@ -263,6 +263,11 @@ class Post extends Postable
         return $this->getTargetWall() === $user->getId();
     }
 
+    public function canCloseComments(?User $user): bool
+    {
+        return $this->canBePinnedBy($user);
+    }
+
     public function canBeArchivedBy(?User $user = null): bool
     {
         if (!$user) {

@@ -215,6 +215,8 @@
 "write" = "Write";
 "publish" = "Publish";
 "delete" = "Delete";
+"close_post_comments" = "Close comments";
+"open_post_comments" = "Return comments";
 "comments" = "Comments";
 "share" = "Share";
 "pin" = "Pin";

@@ -162,12 +162,12 @@ final class Video extends VKAPIRequestHandler
         }
     }
 
-    public function edit(int $owner_id, int $video_id, ?string $name = null, ?string $desc = null, int $no_comments = 0, int $repeat = 0)
+    public function edit(int $owner_id, int $video_id, ?string $name = null, ?string $desc = null, int $no_comments = -1, int $repeat = 0)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
 
-        $video = (new VideosRepo())->getByOwnerAndVIDUnsafe($owner_id, $video_id);
+        $video = (new VideosRepo())->getByOwnerAndVID($owner_id, $video_id, null, true);
         $changes = 0;
 
         if (!$video || $video->isDeleted() || !$video->canBeModifiedBy($this->getUser())) {
@@ -184,7 +184,13 @@ final class Video extends VKAPIRequestHandler
             $changes += 1;
         }
 
+        if ($no_comments != -1) {
+            $video->setCommentOpenness($no_comments == 0);
+            $changes += 1;
+        }
+
         if ($changes > 0) {
+            $video->setEdited(time());
             $video->save();
         }
 

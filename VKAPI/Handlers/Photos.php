@@ -505,7 +505,7 @@ final class Photos extends VKAPIRequestHandler
         return 1;
     }
 
-    public function edit(int $owner_id, int $photo_id, string $caption = "")
+    public function edit(int $owner_id, int $photo_id, string $caption = "", int $no_comments = -1)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -518,8 +518,14 @@ final class Photos extends VKAPIRequestHandler
 
         if (!empty($caption)) {
             $photo->setDescription($caption);
-            $photo->save();
         }
+
+        if ($no_comments != -1) {
+            $photo->setCommentOpenness($no_comments == 1);
+        }
+
+        $photo->setEdited(time());
+        $photo->save();
 
         return 1;
     }
