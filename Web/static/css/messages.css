@@ -814,6 +814,11 @@ body:has(#im_container.at_page) .page-wrap {
     margin-top: 10px;
 }
 
+.messenger-app--messages .messenger-special-message.unread,
+.messenger-special-message.unread {
+    background-color: transparent !important;
+}
+
 .messenger-app--messages .messenger-special-message span {
     font-weight: bold;
     color: #959595;

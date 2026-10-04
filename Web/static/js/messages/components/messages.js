@@ -1291,13 +1291,15 @@ export class ChatGeneralForm {
                 this._chunks.getMessages().forEach(m => {
                     const mCmid = Number(m.conversation_message_id || m.data?.conversation_message_id || m.data?.local_id || 0);
                     const mId = Number(m.data?.id || m.id || 0);
-                    if (m.data && m.data.from_id != currentUserId) {
+                    const fromId = Number(m.data ? (m.data.from_id?.id || m.data.from_id) : (m.from_id || 0));
+                    const isMine = Boolean((m.data && m.data.out === 1) || m.out === 1 || (fromId && currentUserId && fromId === Number(currentUserId)));
+                    if (!isMine) {
                         const isTarget = (!targetCmid && !targetReadId)
                             || (targetCmid > 0 && mCmid > 0 && mCmid <= targetCmid)
                             || (targetReadId > 0 && mId > 0 && mId <= targetReadId);
                         if (isTarget) {
-                            if (m.data.read_state === 0) {
-                                m.data.read_state = 1;
+                            if (m.data?.read_state === 0 || m.read_state === 0 || !m.isRead()) {
+                                if (m.data) m.data.read_state = 1;
                                 m.read_state = 1;
                                 newlyReadCount++;
                             }
@@ -1313,7 +1315,9 @@ export class ChatGeneralForm {
                     if (this._chunks) {
                         const currentUserId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
                         this._chunks.getMessages().forEach(m => {
-                            if (m.data && m.data.from_id != currentUserId && m.data.read_state === 0) {
+                            const fromId = Number(m.data ? (m.data.from_id?.id || m.data.from_id) : (m.from_id || 0));
+                            const isMine = Boolean((m.data && m.data.out === 1) || m.out === 1 || (fromId && currentUserId && fromId === Number(currentUserId)));
+                            if (!isMine && (m.data?.read_state === 0 || m.read_state === 0 || !m.isRead())) {
                                 remainingUnreadInChunks++;
                             }
                         });

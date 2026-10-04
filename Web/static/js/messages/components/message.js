@@ -541,10 +541,22 @@ if (typeof window !== 'undefined' && !window._msgDropdownCloserInited) {
     });
 }
 
+function renderSpecialMessage(msg, page, content, centred = false) {
+    const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
+    const msgAnchorId = `msg${peerId}-${msg.id}`;
+    const msgCmid = msg.conversation_message_id || (msg.data && (msg.data.conversation_message_id || msg.data.local_id)) || '';
+    const unreadCls = msg.isRead() ? 'msg-read' : 'unread';
+    const cls = `messenger-app--messages---message messenger-special-message ${centred ? 'centred ' : ''}${unreadCls}`;
+
+    return html`
+        <div class="${cls}" id=${msgAnchorId} data-msg-id=${msg.id} data-msg-cmid=${msgCmid}>
+            ${content}
+        </div>
+    `;
+}
+
 export const SystemMessages = {
     "chat_create": (msg, page) => {
-        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
-        const msgAnchorId = `msg${peerId}-${msg.id}`;
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
@@ -555,164 +567,150 @@ export const SystemMessages = {
         } else {
             text = tr("event_chat_creation_no_title_" + gender);
         }
-        return html`
-            <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
-                <div>
-                    <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
-                        <strong>${senderName} </strong>
-                    </a>
-                    <span class="text">${text.toLowerCase()}</span>
-                    <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
-                </div>
+        return renderSpecialMessage(msg, page, html`
+            <div>
+                <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
+                    <strong>${senderName} </strong>
+                </a>
+                <span class="text">${text.toLowerCase()}</span>
+                <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
             </div>
-        `;
+        `);
     },
     "chat_pin_message": (msg, page) => {
-        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
-        const msgAnchorId = `msg${peerId}-${msg.id}`;
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
         const text = tr("event_chat_pin_message_" + gender);
-        return html`
-            <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
-                <div>
-                    <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
-                        <strong>${senderName} </strong>
-                    </a>
-                    <span class="text">${text.toLowerCase()}</span>
-                    <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
-                </div>
+        return renderSpecialMessage(msg, page, html`
+            <div>
+                <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
+                    <strong>${senderName} </strong>
+                </a>
+                <span class="text">${text.toLowerCase()}</span>
+                <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
             </div>
-        `;
+        `);
     },
     "chat_unpin_message": (msg, page) => {
-        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
-        const msgAnchorId = `msg${peerId}-${msg.id}`;
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
         const text = tr("event_chat_unpin_message_" + gender);
-        return html`
-            <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
-                <div>
-                    <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
-                        <strong>${senderName} </strong>
-                    </a>
-                    <span class="text">${text.toLowerCase()}</span>
-                    <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
-                </div>
+        return renderSpecialMessage(msg, page, html`
+            <div>
+                <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
+                    <strong>${senderName} </strong>
+                </a>
+                <span class="text">${text.toLowerCase()}</span>
+                <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
             </div>
-        `;
+        `);
     },
     "chat_title_update": (msg, page) => {
-        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
-        const msgAnchorId = `msg${peerId}-${msg.id}`;
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
         const title = (msg.data?.action?.text || msg.data?.action_text || msg.action?.text || msg.action_text || (msg.peer?.getName ? msg.peer.getName() : "") || (page?.convo?.peer?.getName ? page.convo.peer.getName() : "") || "").trim();
         const text = tr("event_chat_title_update_" + gender, title);
-        return html`
-            <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
-                <div>
-                    <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
-                        <strong>${senderName} </strong>
-                    </a>
-                    <span class="text">${text.toLowerCase()}</span>
-                    <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
-                </div>
+        return renderSpecialMessage(msg, page, html`
+            <div>
+                <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
+                    <strong>${senderName} </strong>
+                </a>
+                <span class="text">${text.toLowerCase()}</span>
+                <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
             </div>
-        `;
+        `);
     },
     "chat_photo_update": (msg, page) => {
-        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
-        const msgAnchorId = `msg${peerId}-${msg.id}`;
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
         const text = tr("event_chat_photo_update_" + gender);
-        return html`
-            <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
-                <div>
-                    <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
-                        <strong>${senderName} </strong>
-                    </a>
-                    <span class="text">${text.toLowerCase()}</span>
-                    <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
-                </div>
+        return renderSpecialMessage(msg, page, html`
+            <div>
+                <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
+                    <strong>${senderName} </strong>
+                </a>
+                <span class="text">${text.toLowerCase()}</span>
+                <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
             </div>
-        `;
+        `);
     },
     "chat_photo_remove": (msg, page) => {
-        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
-        const msgAnchorId = `msg${peerId}-${msg.id}`;
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
         const text = tr("event_chat_photo_remove_" + gender);
-        return html`
-            <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
-                <div>
-                    <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
-                        <strong>${senderName} </strong>
-                    </a>
-                    <span class="text">${text.toLowerCase()}</span>
-                    <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
-                </div>
+        return renderSpecialMessage(msg, page, html`
+            <div>
+                <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
+                    <strong>${senderName} </strong>
+                </a>
+                <span class="text">${text.toLowerCase()}</span>
+                <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
             </div>
-        `;
+        `);
     },
     "chat_invite_user": (msg, page) => {
-        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
-        const msgAnchorId = `msg${peerId}-${msg.id}`;
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
         const mid = msg.data?.action?.member_id ?? msg.data?.action_mid;
         if (sender && mid == sender.id) {
             const text = tr("event_chat_invite_user_self_" + gender);
-            return html`
-                <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
-                    <div>
-                        <a class="_sender" onClick=${(e) => {window.im.messenger.view.onAuthorNameClick(e, msg)}} href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
-                            <strong>${senderName} </strong>
-                        </a>
-                        <span class="text">${text.toLowerCase()}</span>
-                        <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
-                    </div>
+            return renderSpecialMessage(msg, page, html`
+                <div>
+                    <a class="_sender" onClick=${(e) => {window.im.messenger.view.onAuthorNameClick(e, msg)}} href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
+                        <strong>${senderName} </strong>
+                    </a>
+                    <span class="text">${text.toLowerCase()}</span>
+                    <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
                 </div>
-            `;
+            `);
         }
 
         const targetProf = window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached ? window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(mid) : window.im?.cached_profiles?._findCachedProfileById(mid);
         const targetName = targetProf?.getName ? targetProf.getName() : (mid ? `id${mid}` : "...");
         const verb = tr("event_chat_invite_user_verb_" + gender);
 
-        return html`
-            <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
-                <div>
-                    <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
-                        <strong>${senderName} </strong>
-                    </a>
-                    <span class="text">${verb} </span>
-                    <a class="_sender" href="/id${mid}" target="_blank">
-                        <strong>${targetName}</strong>
-                    </a>
-                    <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
-                </div>
+        return renderSpecialMessage(msg, page, html`
+            <div>
+                <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
+                    <strong>${senderName} </strong>
+                </a>
+                <span class="text">${verb} </span>
+                <a class="_sender" href="/id${mid}" target="_blank">
+                    <strong>${targetName}</strong>
+                </a>
+                <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
             </div>
-        `;
+        `);
     },
     "chat_invite_user_by_link": (msg, page) => {
-        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
-        const msgAnchorId = `msg${peerId}-${msg.id}`;
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
         const text = tr("event_chat_invite_user_by_link_" + gender);
-        return html`
-            <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
+        return renderSpecialMessage(msg, page, html`
+            <div>
+                <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
+                    <strong>${senderName} </strong>
+                </a>
+                <span class="text">${text.toLowerCase()}</span>
+                <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
+            </div>
+        `);
+    },
+    "chat_kick_user": (msg, page) => {
+        const sender = msg.sender;
+        const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
+        const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
+        const mid = msg.data?.action?.member_id ?? msg.data?.action_mid;
+        if (sender && mid == sender.id) {
+            const text = tr("event_chat_kick_user_self_" + gender);
+            return renderSpecialMessage(msg, page, html`
                 <div>
                     <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
                         <strong>${senderName} </strong>
@@ -720,53 +718,27 @@ export const SystemMessages = {
                     <span class="text">${text.toLowerCase()}</span>
                     <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
                 </div>
-            </div>
-        `;
-    },
-    "chat_kick_user": (msg, page) => {
-        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
-        const msgAnchorId = `msg${peerId}-${msg.id}`;
-        const sender = msg.sender;
-        const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
-        const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
-        const mid = msg.data?.action?.member_id ?? msg.data?.action_mid;
-        if (sender && mid == sender.id) {
-            const text = tr("event_chat_kick_user_self_" + gender);
-            return html`
-                <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
-                    <div>
-                        <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
-                            <strong>${senderName} </strong>
-                        </a>
-                        <span class="text">${text.toLowerCase()}</span>
-                        <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
-                    </div>
-                </div>
-            `;
+            `);
         }
 
         const targetProf = window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached ? window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(mid) : window.im?.cached_profiles?._findCachedProfileById(mid);
         const targetName = targetProf?.getName ? targetProf.getName() : (mid ? `id${mid}` : "...");
         const verb = tr("event_chat_kick_user_verb_" + gender);
 
-        return html`
-            <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
-                <div>
-                    <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
-                        <strong>${senderName} </strong>
-                    </a>
-                    <span class="text">${verb} </span>
-                    <a class="_sender" href="/id${mid}" target="_blank">
-                        <strong>${targetName}</strong>
-                    </a>
-                    <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
-                </div>
+        return renderSpecialMessage(msg, page, html`
+            <div>
+                <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
+                    <strong>${senderName} </strong>
+                </a>
+                <span class="text">${verb} </span>
+                <a class="_sender" href="/id${mid}" target="_blank">
+                    <strong>${targetName}</strong>
+                </a>
+                <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
             </div>
-        `;
+        `);
     },
     "chat_moderator_add": (msg, page) => {
-        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
-        const msgAnchorId = `msg${peerId}-${msg.id}`;
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
@@ -775,24 +747,20 @@ export const SystemMessages = {
         const targetName = targetProf?.getName ? targetProf.getName() : (mid ? `id${mid}` : "...");
         const verb = tr("event_chat_moderator_add_verb_" + gender);
 
-        return html`
-            <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
-                <div>
-                    <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
-                        <strong>${senderName} </strong>
-                    </a>
-                    <span class="text">${verb} </span>
-                    <a class="_sender" href="/id${mid}" target="_blank">
-                        <strong>${targetName}</strong>
-                    </a>
-                    <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
-                </div>
+        return renderSpecialMessage(msg, page, html`
+            <div>
+                <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
+                    <strong>${senderName} </strong>
+                </a>
+                <span class="text">${verb} </span>
+                <a class="_sender" href="/id${mid}" target="_blank">
+                    <strong>${targetName}</strong>
+                </a>
+                <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
             </div>
-        `;
+        `);
     },
     "chat_moderator_remove": (msg, page) => {
-        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
-        const msgAnchorId = `msg${peerId}-${msg.id}`;
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
@@ -801,67 +769,53 @@ export const SystemMessages = {
         const targetName = targetProf?.getName ? targetProf.getName() : (mid ? `id${mid}` : "...");
         const verb = tr("event_chat_moderator_remove_verb_" + gender);
 
-        return html`
-            <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
-                <div>
-                    <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
-                        <strong>${senderName} </strong>
-                    </a>
-                    <span class="text">${verb} </span>
-                    <a class="_sender" href="/id${mid}" target="_blank">
-                        <strong>${targetName}</strong>
-                    </a>
-                    <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
-                </div>
+        return renderSpecialMessage(msg, page, html`
+            <div>
+                <a class="_sender" href=${sender?.getPageUrl ? sender.getPageUrl() : "javascript:void(0)"}>
+                    <strong>${senderName} </strong>
+                </a>
+                <span class="text">${verb} </span>
+                <a class="_sender" href="/id${mid}" target="_blank">
+                    <strong>${targetName}</strong>
+                </a>
+                <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
             </div>
-        `;
+        `);
     },
     "rating_up": (msg, page) => {
-        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
-        const msgAnchorId = `msg${peerId}-${msg.id}`;
         const sender = msg.sender;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
-        return html`
-            <div class="messenger-special-message centred" id=${msgAnchorId} data-msg-id=${msg.id}>
-                <div>
-                    <b>${tr("event_chat_user_up_your_rating_" + gender, senderName, msg.data?.action?.member_id)}</b>
-                    <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
-                    <p>«${escapeHtml(msg.data?.action?.text || "")}»</p>
-                </div>
+        return renderSpecialMessage(msg, page, html`
+            <div>
+                <b>${tr("event_chat_user_up_your_rating_" + gender, senderName, msg.data?.action?.member_id)}</b>
+                <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
+                <p>«${escapeHtml(msg.data?.action?.text || "")}»</p>
             </div>
-        `;
+        `, true);
     },
     "coins_transfer": (msg, page) => {
-        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
-        const msgAnchorId = `msg${peerId}-${msg.id}`;
         const sender = msg.sender;
         const peer = msg.peer;
         const senderName = sender?.getName ? sender.getName() : (msg.data?.from_id ? "id" + msg.data.from_id : "...");
         const gender = sender && typeof sender.getGender === "function" ? sender.getGender() : "neutral";
         const text = escapeHtml(msg.data?.action?.text || "");
-        return html`
-            <div class="messenger-special-message centred" id=${msgAnchorId} data-msg-id=${msg.id}>
-                <div>
-                    <b>${msg.isMine() ? tr("event_chat_user_added_voices_self", peer.getName(), msg.data?.action?.member_id) : tr("event_chat_user_added_voices_" + gender, senderName, msg.data?.action?.member_id)}</b>
-                    <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
-                    ${text ? html`<p>«${text}»</p>` : ""}
-                </div>
+        return renderSpecialMessage(msg, page, html`
+            <div>
+                <b>${msg.isMine() ? tr("event_chat_user_added_voices_self", peer.getName(), msg.data?.action?.member_id) : tr("event_chat_user_added_voices_" + gender, senderName, msg.data?.action?.member_id)}</b>
+                <span class="date-mini" onClick=${(e) => { window.im.messenger.view.onTimeClick(e, msg) }}>${msg.getDate(0)}</span>
+                ${text ? html`<p>«${text}»</p>` : ""}
             </div>
-        `;
+        `, true);
     },
     "unknown": (msg, page) => {
-        const peerId = msg.peer_id || msg.data?.peer_id || (page?.convo?.peer?.id) || (page?.convo?.id) || (window.im?.messenger?.currentChatId) || 0;
-        const msgAnchorId = `msg${peerId}-${msg.id}`;
-        return html`
-            <div class="messenger-special-message" id=${msgAnchorId} data-msg-id=${msg.id}>
-                <div class="messenger-app--messages---message--wrap">
-                    <div class="_content">
-                        <span class="text">${msg.getText()}</span>
-                    </div>
+        return renderSpecialMessage(msg, page, html`
+            <div class="messenger-app--messages---message--wrap">
+                <div class="_content">
+                    <span class="text">${msg.getText()}</span>
                 </div>
             </div>
-        `;
+        `);
     }
 };
 

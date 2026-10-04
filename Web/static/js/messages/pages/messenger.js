@@ -2926,9 +2926,11 @@ export class MessengerPage extends IMPage {
 
         const currentConv = this.getCurrentChat();
         const currentInRead = Number(currentConv?.peer?.in_read || currentConv?._conversation?.in_read || 0);
+        const currentInReadCmid = Number(currentConv?.peer?.in_read_cmid || currentConv?._conversation?.in_read_cmid || 0);
         const lastMarkedCmid = Number(this._lastMarkedReadCmid || 0);
         const lastMarkedId = Number(this._lastMarkedReadId || 0);
-        const alreadyReadCmidBorder = Math.max(currentInRead, lastMarkedCmid);
+        const alreadyReadCmidBorder = Math.max(currentInReadCmid, lastMarkedCmid);
+        const alreadyReadIdBorder = Math.max(currentInRead, lastMarkedId);
 
         const unreadElements = container.querySelectorAll(".messenger-app--messages---message.unread[data-msg-id]");
         if (!unreadElements || unreadElements.length === 0) return;
@@ -2951,8 +2953,10 @@ export class MessengerPage extends IMPage {
                 }
             });
 
-            if (maxVisibleUnreadId > 0 && (maxVisibleUnreadCmid > alreadyReadCmidBorder || maxVisibleUnreadId > lastMarkedId)) {
-                this._scheduleMarkAsRead(maxVisibleUnreadId, maxVisibleUnreadCmid);
+            if (maxVisibleUnreadId > 0 || maxVisibleUnreadCmid > 0) {
+                if ((maxVisibleUnreadCmid > 0 && maxVisibleUnreadCmid > alreadyReadCmidBorder) || (maxVisibleUnreadId > 0 && maxVisibleUnreadId > alreadyReadIdBorder)) {
+                    this._scheduleMarkAsRead(maxVisibleUnreadId, maxVisibleUnreadCmid);
+                }
             }
         }, {
             root: container,
@@ -2962,7 +2966,7 @@ export class MessengerPage extends IMPage {
         unreadElements.forEach(el => {
             const id = Number(el.getAttribute("data-msg-id"));
             const cmid = Number(el.getAttribute("data-msg-cmid")) || 0;
-            if ((cmid > 0 && cmid > alreadyReadCmidBorder) || (id > 0 && id > lastMarkedId)) {
+            if ((cmid > 0 && cmid > alreadyReadCmidBorder) || (id > 0 && id > alreadyReadIdBorder)) {
                 this._readObserver.observe(el);
             }
         });
@@ -2977,9 +2981,11 @@ export class MessengerPage extends IMPage {
 
         const currentConv = this.getCurrentChat();
         const currentInRead = Number(currentConv?.peer?.in_read || currentConv?._conversation?.in_read || 0);
+        const currentInReadCmid = Number(currentConv?.peer?.in_read_cmid || currentConv?._conversation?.in_read_cmid || 0);
         const lastMarkedCmid = Number(this._lastMarkedReadCmid || 0);
         const lastMarkedId = Number(this._lastMarkedReadId || 0);
-        const alreadyReadCmidBorder = Math.max(currentInRead, lastMarkedCmid);
+        const alreadyReadCmidBorder = Math.max(currentInReadCmid, lastMarkedCmid);
+        const alreadyReadIdBorder = Math.max(currentInRead, lastMarkedId);
 
         const containerRect = container.getBoundingClientRect();
         const unreadElements = container.querySelectorAll(".messenger-app--messages---message.unread[data-msg-id]");
@@ -2989,7 +2995,7 @@ export class MessengerPage extends IMPage {
         unreadElements.forEach(el => {
             const id = Number(el.getAttribute("data-msg-id"));
             const cmid = Number(el.getAttribute("data-msg-cmid")) || 0;
-            if ((cmid > 0 && cmid > alreadyReadCmidBorder) || (id > 0 && id > lastMarkedId)) {
+            if ((cmid > 0 && cmid > alreadyReadCmidBorder) || (id > 0 && id > alreadyReadIdBorder)) {
                 const rect = el.getBoundingClientRect();
                 const isVisible = (rect.bottom > containerRect.top && rect.top < containerRect.bottom);
                 if (isVisible) {
@@ -2999,7 +3005,7 @@ export class MessengerPage extends IMPage {
             }
         });
 
-        if (maxId > 0) {
+        if (maxId > 0 || maxCmid > 0) {
             this._scheduleMarkAsRead(maxId, maxCmid);
         }
     }
@@ -3007,13 +3013,14 @@ export class MessengerPage extends IMPage {
     _scheduleMarkAsRead(maxId, maxCmid = 0) {
         const currentChat = this.getCurrentChat();
         const currentInRead = Number(currentChat?.peer?.in_read || currentChat?._conversation?.in_read || 0);
+        const currentInReadCmid = Number(currentChat?.peer?.in_read_cmid || currentChat?._conversation?.in_read_cmid || 0);
         const alreadyMarkedCmid = Number(this._lastMarkedReadCmid || 0);
         const alreadyMarkedId = Number(this._lastMarkedReadId || 0);
 
-        if (maxCmid > 0 && maxCmid <= currentInRead && maxCmid <= alreadyMarkedCmid) {
-            return;
-        }
-        if (!maxId && !maxCmid) {
+        const hasUnreadCmid = maxCmid > 0 && (maxCmid > currentInReadCmid || maxCmid > alreadyMarkedCmid);
+        const hasUnreadId = maxId > 0 && (maxId > currentInRead || maxId > alreadyMarkedId);
+
+        if (!hasUnreadCmid && !hasUnreadId) {
             return;
         }
 
@@ -3033,14 +3040,22 @@ export class MessengerPage extends IMPage {
 
             if (window.im?.state?.is_tab_hidden ?? (typeof document !== "undefined" && document.hidden)) return;
 
-            this._lastMarkedReadId = Math.max(this._lastMarkedReadId || 0, idToRead);
+            if (idToRead > 0) {
+                this._lastMarkedReadId = Math.max(this._lastMarkedReadId || 0, idToRead);
+                if (currentChat?.peer) {
+                    currentChat.peer.in_read = Math.max(currentChat.peer.in_read || 0, idToRead);
+                }
+                if (currentChat?._conversation) {
+                    currentChat._conversation.in_read = Math.max(currentChat._conversation.in_read || 0, idToRead);
+                }
+            }
             if (cmidToRead > 0) {
                 this._lastMarkedReadCmid = Math.max(this._lastMarkedReadCmid || 0, cmidToRead);
                 if (currentChat?.peer) {
-                    currentChat.peer.in_read = Math.max(currentChat.peer.in_read || 0, cmidToRead);
+                    currentChat.peer.in_read_cmid = Math.max(currentChat.peer.in_read_cmid || 0, cmidToRead);
                 }
                 if (currentChat?._conversation) {
-                    currentChat._conversation.in_read = Math.max(currentChat._conversation.in_read || 0, cmidToRead);
+                    currentChat._conversation.in_read_cmid = Math.max(currentChat._conversation.in_read_cmid || 0, cmidToRead);
                 }
             }
 
