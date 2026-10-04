@@ -198,16 +198,22 @@ export class ChatGeneralForm {
     static getChatDefaultAvatar(size = "mid") {
         switch (size) {
             case "min":
+            case "tiny":
+            case "small":
             case "50":
                 return ChatGeneralForm.CHAT_NO_AVATAR_50;
             case "mid":
+            case "medium":
             case "100":
                 return ChatGeneralForm.CHAT_NO_AVATAR_100;
             case "big":
+            case "large":
             case "200":
                 return ChatGeneralForm.CHAT_NO_AVATAR_200;
             case "max":
             case "400":
+            case "orig":
+            case "original":
                 return ChatGeneralForm.CHAT_NO_AVATAR_400;
             default:
                 return ChatGeneralForm.CHAT_NO_AVATAR_100;
@@ -538,17 +544,37 @@ export class ChatGeneralForm {
         let ava = null;
         switch (size) {
             case "min":
-                ava = pObj?.photo_50 || this.data.photo_50 || pObj?.photo_100 || this.data.photo_100;
+            case "tiny":
+            case "small":
+            case "50":
+                ava = pObj?.photo_50 || this.data.photo_50 || pObj?.photo_100 || this.data.photo_100 || pObj?.photo_200 || this.data.photo_200;
                 break;
             case "mid":
-                ava = pObj?.photo_100 || this.data.photo_100 || pObj?.photo_50 || this.data.photo_50;
+            case "medium":
+            case "100":
+                ava = pObj?.photo_100 || this.data.photo_100 || pObj?.photo_50 || this.data.photo_50 || pObj?.photo_200 || this.data.photo_200;
                 break;
             case "big":
-                ava = pObj?.photo_200 || this.data.photo_200 || pObj?.photo_100 || this.data.photo_100;
+            case "large":
+            case "200":
+                ava = pObj?.photo_200 || this.data.photo_200 || pObj?.photo_100 || this.data.photo_100 || pObj?.photo_50 || this.data.photo_50;
                 break;
             case "max":
-                ava = this.data.photo_max || pObj?.photo_200 || this.data.photo_200;
+            case "400":
+            case "orig":
+            case "original":
+                ava = this.data.photo_max || pObj?.photo_200 || this.data.photo_200 || pObj?.photo_100 || this.data.photo_100;
                 break;
+            default:
+                ava = pObj?.photo_100 || this.data.photo_100 || pObj?.photo_50 || this.data.photo_50 || pObj?.photo_200 || this.data.photo_200;
+                break;
+        }
+
+        if (!ava) {
+            ava = this.data.photo || this.data.avatar || this.photo || this.avatar;
+            if (typeof ava === 'object' && ava !== null) {
+                ava = ava.photo_100 || ava.photo_50 || ava.photo_200 || ava.photo_max || null;
+            }
         }
 
         if (!ava && this.supposed_type == "chat") {

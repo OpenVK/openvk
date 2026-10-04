@@ -24,10 +24,17 @@ document.addEventListener("visibilitychange", resetNotificationCounter);
 window.addEventListener("focus", resetNotificationCounter);
 
 function NewNotification(title, body, avatar = null, callback = () => { }, time = 5000, count = true) {
-    if (avatar != null) {
-        avatar = '<avatar><img src="' + avatar + '"></avatar>';
-    } else {
-        avatar = '';
+    let avatarHtml = '';
+    if (avatar != null && avatar !== '') {
+        const trimmed = String(avatar).trim();
+        if (trimmed.startsWith('<avatar')) {
+            avatarHtml = trimmed;
+        } else if (trimmed.startsWith('<div') || trimmed.startsWith('<table') || trimmed.startsWith('<img') || trimmed.startsWith('<span')) {
+            avatarHtml = '<avatar>' + trimmed + '</avatar>';
+        } else {
+            const safeSrc = (typeof escapeHtml === 'function' ? escapeHtml(trimmed) : trimmed.replace(/"/g, '&quot;'));
+            avatarHtml = '<avatar><img src="' + safeSrc + '" onerror="this.onerror=null;this.src=\'/assets/packages/static/openvk/img/camera_50.png\'"></avatar>';
+        }
     }
 
     _n_counter += 1;
@@ -40,7 +47,7 @@ function NewNotification(title, body, avatar = null, callback = () => { }, time 
             <a class="close">&times;</a> 
         </notification_title>
         <wrap>
-            ${avatar}
+            ${avatarHtml}
             <content>
                 ${body}
             </content>

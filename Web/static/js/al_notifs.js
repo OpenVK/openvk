@@ -253,6 +253,122 @@ async function setupNotificationListener() {
     }
 }
 
+function getMessageNotificationAvatar(peer, msg, isChat, senderId) {
+    const DEFAULT_USER_AVA = '/assets/packages/static/openvk/img/camera_50.png';
+    const DEFAULT_CHAT_AVA = '/assets/packages/static/openvk/img/im/chat_default_50.png';
+
+    if (isChat) {
+        // 1. Check if chat has a custom avatar
+        const hasCustom = (typeof peer.has_custom_avatar === 'boolean' && peer.has_custom_avatar) ||
+            Boolean(peer.data?.photo_id) ||
+            Boolean(peer.data?.photo && (peer.data.photo.photo_50 || peer.data.photo.photo_100 || peer.data.photo.photo_200)) ||
+            Boolean(peer.data?.chat_settings?.photo && (peer.data.chat_settings.photo.photo_50 || peer.data.chat_settings.photo.photo_100 || peer.data.chat_settings.photo.photo_200));
+
+        if (hasCustom) {
+            let customAva = null;
+            if (typeof peer.getAvatar === 'function') {
+                customAva = peer.getAvatar('mid') || peer.getAvatar('min') || peer.getAvatar();
+            }
+            if (!customAva || customAva.includes('chat_default') || customAva.includes('camera_')) {
+                customAva = peer.data?.photo?.photo_100 || peer.data?.photo?.photo_50 || peer.data?.chat_settings?.photo?.photo_100 || peer.data?.chat_settings?.photo?.photo_50 || peer.photo || peer.avatar || peer.data?.photo_50;
+            }
+            if (customAva && !customAva.includes('chat_default') && !customAva.includes('camera_')) {
+                return customAva;
+            }
+        }
+
+        // 2. Chat has no custom avatar -> compose mosaic grid
+        let mosaicAvatars = [];
+        if (typeof peer.getMosaicAvatars === 'function') {
+            mosaicAvatars = peer.getMosaicAvatars() || [];
+        }
+
+        if (!mosaicAvatars || mosaicAvatars.length === 0) {
+            const rawMembers = (peer.members_ids && peer.members_ids.length > 0) ? peer.members_ids :
+                (peer.data?.active_ids && Array.isArray(peer.data.active_ids)) ? peer.data.active_ids :
+                (peer.data?.chat_settings?.active_ids && Array.isArray(peer.data.chat_settings.active_ids)) ? peer.data.chat_settings.active_ids :
+                (peer.data?.members && Array.isArray(peer.data.members)) ? peer.data.members :
+                (peer.data?.chat_settings?.members && Array.isArray(peer.data.chat_settings.members)) ? peer.data.chat_settings.members :
+                (peer.data?.users && Array.isArray(peer.data.users)) ? peer.data.users :
+                (peer.data?.chat_settings?.users && Array.isArray(peer.data.chat_settings.users)) ? peer.data.chat_settings.users : [];
+
+            const memberIds = rawMembers.map(u => typeof u === 'object' && u !== null ? (u.member_id || u.id || u.user_id) : u).filter(Boolean);
+            if (senderId && !memberIds.includes(senderId)) {
+                memberIds.unshift(senderId);
+            }
+
+            for (const mId of memberIds) {
+                if (mosaicAvatars.length >= 4) break;
+                let profAva = null;
+                if (mId === senderId && msg.sender) {
+                    profAva = (typeof msg.sender.getAvatar === 'function' ? (msg.sender.getAvatar('mid') || msg.sender.getAvatar('min') || msg.sender.getAvatar()) : null) || msg.sender.photo_50 || msg.sender.photo_100 || msg.author_photo;
+                }
+                if (!profAva && window.im?.cached_profiles) {
+                    const prof = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached
+                        ? window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(mId)
+                        : window.im.cached_profiles._findCachedProfileById(mId);
+                    if (prof) {
+                        profAva = (typeof prof.getAvatar === 'function' ? (prof.getAvatar('mid') || prof.getAvatar('min') || prof.getAvatar()) : null) || prof.photo_50 || prof.photo_100;
+                    }
+                }
+                mosaicAvatars.push(profAva || DEFAULT_USER_AVA);
+            }
+        }
+
+        if (mosaicAvatars.length === 0) {
+            return DEFAULT_CHAT_AVA;
+        }
+
+        if (mosaicAvatars.length === 1) {
+            return mosaicAvatars[0];
+        }
+
+        if (mosaicAvatars.length === 2) {
+            return `<div class="chat_table_avatar chat_table_avatar_double">
+                <img class="chat_table_avatar_cell pos-left" src="${mosaicAvatars[0]}" onerror="this.onerror=null;this.src='${DEFAULT_USER_AVA}'" />
+                <img class="chat_table_avatar_cell pos-right" src="${mosaicAvatars[1]}" onerror="this.onerror=null;this.src='${DEFAULT_USER_AVA}'" />
+            </div>`;
+        }
+
+        if (mosaicAvatars.length === 3) {
+            return `<div class="chat_table_avatar chat_table_avatar_third">
+                <img class="chat_table_avatar_cell third_left" src="${mosaicAvatars[0]}" onerror="this.onerror=null;this.src='${DEFAULT_USER_AVA}'" />
+                <div class="chat_table_avatar_third_right">
+                    <img class="chat_table_avatar_cell third_right_cell" src="${mosaicAvatars[1]}" onerror="this.onerror=null;this.src='${DEFAULT_USER_AVA}'" />
+                    <img class="chat_table_avatar_cell third_right_cell" src="${mosaicAvatars[2]}" onerror="this.onerror=null;this.src='${DEFAULT_USER_AVA}'" />
+                </div>
+            </div>`;
+        }
+
+        return `<div class="chat_table_avatar chat_table_avatar_more3">
+            <img class="chat_table_avatar_cell quarter" src="${mosaicAvatars[0]}" onerror="this.onerror=null;this.src='${DEFAULT_USER_AVA}'" />
+            <img class="chat_table_avatar_cell quarter" src="${mosaicAvatars[1]}" onerror="this.onerror=null;this.src='${DEFAULT_USER_AVA}'" />
+            <img class="chat_table_avatar_cell quarter" src="${mosaicAvatars[2]}" onerror="this.onerror=null;this.src='${DEFAULT_USER_AVA}'" />
+            <img class="chat_table_avatar_cell quarter" src="${mosaicAvatars[3]}" onerror="this.onerror=null;this.src='${DEFAULT_USER_AVA}'" />
+        </div>`;
+    }
+
+    // Direct message / User
+    let userAva = null;
+    if (typeof peer.getAvatar === 'function') {
+        userAva = peer.getAvatar('mid') || peer.getAvatar('min') || peer.getAvatar();
+    }
+    if (!userAva && msg.sender?.getAvatar) {
+        userAva = msg.sender.getAvatar('mid') || msg.sender.getAvatar('min') || msg.sender.getAvatar();
+    }
+    if (!userAva) {
+        userAva = peer.photo || peer.avatar || peer.data?.photo_100 || peer.data?.photo_50 || msg.author_photo || msg.sender?.photo_50 || msg.sender?.photo_100;
+    }
+    if (!userAva && window.im?.cached_profiles && (senderId || peer.id)) {
+        const prof = window.im.cached_profiles._findCachedProfileById(senderId || peer.id);
+        if (prof) {
+            userAva = (typeof prof.getAvatar === 'function' ? (prof.getAvatar('mid') || prof.getAvatar('min') || prof.getAvatar()) : null) || prof.photo_50 || prof.photo_100;
+        }
+    }
+
+    return userAva || DEFAULT_USER_AVA;
+}
+
 function showMessageNotification(conv, msg) {
     try {
         if (typeof NewNotification !== 'function') return;
@@ -277,7 +393,7 @@ function showMessageNotification(conv, msg) {
             }
         }
 
-        const isChat = (typeof peer.isChat === 'function' && peer.isChat()) || (peerId >= 2000000000);
+        const isChat = (typeof peer.isChat === 'function' && peer.isChat()) || (peerId >= 2000000000) || peer.supposed_type === 'chat';
         const peerTitle = (typeof peer.getName === 'function' ? peer.getName() : null) || peer.title || peer.name || peer.data?.title || '';
 
         let title = '';
@@ -308,23 +424,7 @@ function showMessageNotification(conv, msg) {
             bodyText = `${senderName}: ${bodyText}`;
         }
 
-        let ava = null;
-        if (msg.sender?.getAvatar) {
-            ava = msg.sender.getAvatar('tiny') || msg.sender.getAvatar();
-        } else if (peer.getAvatar) {
-            ava = peer.getAvatar('tiny') || peer.getAvatar();
-        } else if (peer.photo || peer.avatar || peer.data?.photo_50) {
-            ava = peer.photo || peer.avatar || peer.data?.photo_50;
-        } else if (msg.author_photo) {
-            ava = msg.author_photo;
-        }
-
-        if (!ava && window.im?.cached_profiles && senderId) {
-            const prof = window.im.cached_profiles._findCachedProfileById(senderId);
-            if (prof?.getAvatar) {
-                ava = prof.getAvatar('tiny') || prof.getAvatar();
-            }
-        }
+        const ava = getMessageNotificationAvatar(peer, msg, isChat, senderId);
 
         const onClick = () => {
             if (!isChat && window.im?.fastChats && (!window.im?.state?.is_opened && location.pathname !== '/im')) {
