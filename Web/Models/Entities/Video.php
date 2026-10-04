@@ -222,7 +222,7 @@ class Video extends Media
         if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
             $thumb = $this->getThumbnailURL();
             if (!str_starts_with($thumb, "http://") && !str_starts_with($thumb, "https://")) {
-                $thumb = ovk_scheme(true) . ($_SERVER['HTTP_HOST'] ?? "ovk.zazios.ru") . $thumb;
+                $thumb = ovk_scheme(true) . ($_SERVER['HTTP_HOST'] ?? "openvk.org") . $thumb;
             }
             $res->video['image'] = $thumb;
             $res->video['image_medium'] = $thumb;
