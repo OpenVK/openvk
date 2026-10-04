@@ -14,6 +14,7 @@ use Chandler\Security\User as ChandlerUser;
 use Chandler\Security\Authenticator;
 use Chandler\Database\DatabaseConnection;
 use lfkeitel\phptotp\{Base32, Totp};
+use openvk\Web\Util\RateLimiter;
 
 final class AuthPresenter extends OpenVKPresenter
 {
@@ -41,10 +42,9 @@ final class AuthPresenter extends OpenVKPresenter
 
     private function ipValid(): bool
     {
-        $ip  = (new IPs())->get(CONNECTING_IP);
-        $res = $ip->rateLimit(0);
+        $res = RateLimiter::i()->limitWrite(CONNECTING_IP, null, 0);
 
-        return $res === IP::RL_RESET || $res === IP::RL_CANEXEC;
+        return $res === RateLimiter::RL_RESET || $res === RateLimiter::RL_CANEXEC;
     }
 
     public function renderRegister(): void

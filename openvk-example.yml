@@ -93,6 +93,14 @@ openvk:
                 maxViolations: 50
                 maxViolationsAge: 120
                 autoban: true
+                methods:
+                    messages.send:
+                        actions: 15
+                        time: 5
+                    messages.markAsRead:
+                        bypass: true
+                    messages.setActivity:
+                        bypass: true
                 eventsLimit:
                     enable: true
                     ignoreForAdmins: true
