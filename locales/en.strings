@@ -1533,6 +1533,9 @@
 "message_viewers_title" = "Message Viewers";
 "message_viewers_empty" = "No one has read this message yet";
 "message_viewers_count" = "Read by: $1";
+"messenger_friends_info_1" = "Invite";
+"messenger_friends_info_2" = "View subscribers";
+
 "reply_to" = "In reply to $1";
 "reply_to_msg" = "In reply to";
 "reply_to_message_user" = "in reply to $1's message";
@@ -3106,6 +3109,7 @@
 "messenger_tab_conversations" = "Conversations";
 "messenger_tab_conversations_forward" = "Select conversation";
 "messenger_tab_messenger" = "Messenger";
+"messenger_tab_friends" = "Friends";
 "messenger_tab_contact" = "Contact";
 "messenger_tab_materials" = "Conversation materials";
 "messenger_tab_settings" = "Settings";

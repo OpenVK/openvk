@@ -2291,6 +2291,29 @@ h4.gift_cat_header {
     user-select: none;
 }
 
+#wallAttachmentMenu.attachInWindow {
+    position: static;
+    min-width: unset;
+    background: unset;
+    border: unset;
+    box-shadow: unset;
+    margin: 0;
+    overflow-y: auto;
+}
+
+#wallAttachmentMenu.attachInWindow ._wrap >a {
+    padding: 14px 20px;
+    font-size: 14px;
+    gap: 19px;
+}
+
+#wallAttachmentMenu.attachInWindow>.header {
+    display: none;
+    padding: 30px 15px;
+    background-color: #eee;
+    justify-content: center;
+}
+
 #wallAttachmentMenu.up_direction {
     margin-top: -119px;
     display: flex;

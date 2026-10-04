@@ -65,7 +65,22 @@ function initGraffiti(event, callback = null) {
 
 $(document).on('click', '.menu_toggler', (e) => {
     const post_buttons = $(e.target).closest('.post-buttons')
-    const wall_attachment_menu = post_buttons.find('#wallAttachmentMenu')
+    const wall_attachment_menu = post_buttons.find('#wallAttachmentMenu');
+    const isFixed = false;
+
+    if (isFixed && isMobile()) {
+        const cmsg = new CMessageBox({
+            title: tr("attach"),
+            body: `<div class="attachInWindow" id="wallAttachmentMenu">` + wall_attachment_menu.html() + `</div>`,
+            buttons: [tr("close")],
+            callbacks: [() => {}],
+        });
+        cmsg.getNode().find("a").on("click", (e) => {
+            cmsg.close();
+        });
+        return;
+    }
+
     if (wall_attachment_menu.is('.hidden')) {
         wall_attachment_menu.css({ opacity: 0 });
         wall_attachment_menu.toggleClass('hidden').fadeTo(250, 1);
