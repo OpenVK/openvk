@@ -11,6 +11,7 @@ use openvk\Web\Util\DateTime;
 class SentGift
 {
     private $relation;
+    protected $gift;
     public $shortName = "gift";
 
     public function __construct(ActiveRow $relation, Gift $gift)

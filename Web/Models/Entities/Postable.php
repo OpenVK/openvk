@@ -28,6 +28,7 @@ abstract class Postable extends Attachable
     *
     * @var string
     */
+    public $shortName = "undefined";
     protected $upperNodeReferenceColumnName = "owner";
     protected $containsContextColumns = false;
 

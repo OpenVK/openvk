@@ -201,19 +201,6 @@ class Club extends RowModel
         return $this->isMessagesEnabled();
     }
 
-    public function getLinkedChats(): array
-    {
-        $chats = DB::i()->getContext()->table("chats")
-            ->where("group_id = ?", $this->getId());
-
-        $result = [];
-        foreach ($chats as $row) {
-            $result[] = new Chat($row);
-        }
-
-        return $result;
-    }
-
     public function isDeleted(): bool
     {
         return (bool) $this->getRecord()->deleted;
