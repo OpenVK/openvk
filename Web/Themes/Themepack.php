@@ -16,13 +16,17 @@ class Themepack
     private $meta;
     private $home;
     private $enabled;
+    private $commonFaviconURL;
+    private $favicons;
+    private $has_styles;
+    private $styles;
 
     private $cssExtensions = [
         "css",
         "scss",
     ];
 
-    public function __construct(string $id, string $ver, bool $inh, bool $tpl, bool $enabled, object $meta)
+    public function __construct(string $id, string $ver, bool $inh, bool $tpl, bool $enabled, object $meta, object $manifest)
     {
         $this->id      = $id;
         $this->ver     = $ver;
@@ -31,6 +35,23 @@ class Themepack
         $this->meta    = $meta;
         $this->home    = OPENVK_ROOT . "/themepacks/$id";
         $this->enabled = $enabled;
+
+        if ($manifest && $manifest->commonFaviconURL) {
+            $this->commonFaviconURL = $manifest->commonFaviconURL;
+        }
+
+        if ($manifest && $manifest->favicons) {
+            $this->favicons = $manifest->favicons;
+        } else {
+            $this->favicons = [
+                "im" => "",
+                "audio_playing" => "",
+                "audio_stopped" => "",
+            ];
+        }
+
+        $this->has_styles = $manifest && $manifest->has_styles ? $manifest->has_styles : false;
+        $this->styles = $manifest && $manifest->styles ? $manifest->styles : [];
     }
 
     public function getId(): string
@@ -39,6 +60,31 @@ class Themepack
     }
 
     public function isEnabled(): bool
+    {
+        $disabled = OPENVK_ROOT_CONF["openvk"]["preferences"]["themepacks"]["disabled"];
+
+        if ($disabled && in_array($this->getId(), $disabled)) {
+            return false;
+        }
+
+        return $this->enabled;
+    }
+
+    public function hasStylesheet(): bool
+    {
+        return true;
+    }
+
+    public function getFaviconURL(): string
+    {
+        if ($this->commonFaviconURL != null) {
+            return $this->commonFaviconURL;
+        }
+
+        return "/assets/packages/static/openvk/img/favicon/main.ico";
+    }
+
+    public function getAccentColor(): string
     {
         return $this->enabled;
     }
@@ -82,6 +128,16 @@ class Themepack
     public function overridesTemplates(): bool
     {
         return $this->tpl;
+    }
+
+    public function hasStyles(): bool
+    {
+        return $this->has_styles;
+    }
+
+    public function getStyles(): array
+    {
+        return [];
     }
 
     public function fetchResource(string $resource, bool $processCSS = false): ?string
@@ -128,6 +184,6 @@ class Themepack
             throw new Exceptions\IncompatibleThemeException("Theme is built for newer OVK (themeEngine" . $manifest->openvk_version . ")");
         }
 
-        return new Themepack($manifest->id, $manifest->version, (bool) ($manifest->inherit_master ?? true), (bool) ($manifest->override_templates ?? false), (bool) ($manifest->enabled ?? true), (object) $manifest->metadata);
+        return new Themepack($manifest->id, $manifest->version, (bool) ($manifest->inherit_master ?? true), (bool) ($manifest->override_templates ?? false), (bool) ($manifest->enabled ?? true), (object) $manifest->metadata, $manifest);
     }
 }

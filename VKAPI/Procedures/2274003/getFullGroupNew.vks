@@ -1,10 +1,17 @@
-var fields = "city,country,place,description,wiki_page,members_count,counters,start_date,end_date,can_post,can_see_all_posts,activity,status,contacts,links,fixed_post,verified,site,ban_info";
-var group = API.groups.getById({"group_id": Args.group_id, "fields": fields})[0];
-if (!group) {
-    return {};
+var gid=Args.group_id;
+var group=API.groups.getById({group_ids:gid,
+            fields:"city,country,place,description,wiki_page,counters,members_count,start_date,end_date,can_post,activity,site,can_see_all_posts,verified,contacts,links,is_favorite"})[0];
+if(group+""=="") return [];
+if(group.city+""!=""){
+    group=group+{city_name:API.database.getCitiesById({city_ids:group.city})[0].title};
 }
-if (Args.photo_count && Args.photo_count > 0) {
-    var photos = API.photos.get({"owner_id": -Args.group_id, "count": Args.photo_count});
-    group.photos = photos ? (photos.items ? photos.items : photos) : [];
+if(group.country+""!=""){
+    group=group+{country_name:API.database.getCountriesById({country_ids:group.country})[0].title};
 }
+group=group+{membership:API.groups.isMember({group_id:gid,extended:1})};
+group=group+{photos:API.photos.getAll({owner_id:-gid,photo_sizes:1,extended:1,count:Args.photo_count})};
+group=group+{status:API.status.get({user_id:-gid})};
+var contactIDs=group.contacts@.user_id;
+group=group+{contacts_profiles: API.users.get({user_ids: contactIDs, fields: "photo_100,photo_50"})};
+API.stats.trackEvents({events: "[{\"e\": \"open_group\", \"group_ids\": ["+gid+"]}]"});
 return group;

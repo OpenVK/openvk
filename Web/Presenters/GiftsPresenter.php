@@ -32,6 +32,10 @@ final class GiftsPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
+        if (!$user->getPrivacyPermission("gifts.read", $this->user->identity)) {
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+        }
+
         $this->template->user     = $user;
         $this->template->page     = $page = (int) ($this->queryParam("p") ?? 1);
         $this->template->count    = $user->getGiftCount();
@@ -44,6 +48,10 @@ final class GiftsPresenter extends OpenVKPresenter
         $user = $this->users->get((int) ($this->queryParam("user") ?? 0));
         if (!$user) {
             $this->notFound();
+        }
+
+        if (!$user->getPrivacyPermission("gifts.read", $this->user->identity)) {
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
         $this->template->page = $page = (int) ($this->queryParam("p") ?? 1);
@@ -67,6 +75,10 @@ final class GiftsPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
+        if (!$user->getPrivacyPermission("gifts.read", $this->user->identity)) {
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+        }
+
         $this->template->page = $page = (int) ($this->queryParam("p") ?? 1);
         $gifts = $cat->getGifts($page, null, $this->template->count);
 
@@ -83,6 +95,10 @@ final class GiftsPresenter extends OpenVKPresenter
         $cat  = $this->gifts->getCat((int) ($this->queryParam("pack") ?? 0));
         if (!$user || !$cat || !$gift || !$cat->hasGift($gift)) {
             $this->flashFail("err", tr("error_when_gifting"), tr("error_no_rights_gifts"));
+        }
+
+        if (!$user->getPrivacyPermission("gifts.read", $this->user->identity)) {
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
         if (!$gift->canUse($this->user->identity)) {
@@ -111,12 +127,13 @@ final class GiftsPresenter extends OpenVKPresenter
         }
 
         $comment      = empty($c = $this->postParam("comment")) ? null : $c;
-        $notification = new GiftNotification($user, $this->user->identity, $gift, $comment);
-        $notification->emit();
+
         $this->user->identity->setCoins($coinsLeft);
         $this->user->identity->save();
-        $user->gift($this->user->identity, $gift, $comment, !is_null($this->postParam("anonymous")));
+        $data = $user->gift($this->user->identity, $gift, $comment, !is_null($this->postParam("anonymous")));
         $gift->used();
+        $notification = new GiftNotification($user, $this->user->identity, $gift, $data->id);
+        $notification->emit();
 
         $this->flash("succ", tr("gift_sent"), tr("gift_sent_desc", $user->getFirstName(), $gift->getPrice()));
         $this->redirect($user->getURL());

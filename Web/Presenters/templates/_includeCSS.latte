@@ -11,6 +11,9 @@
             {css "css/notifications.css"}
             {css "css/avatar-edit.css"}
             {css "css/audios.css"}
+            {css "css/messages.css"}
+            {css "css/fastchats.css"}
+            {css "css/calendar.css"}
             {css "css/emoji/emoji.css"}
 
             {if $isXmas}
@@ -18,11 +21,17 @@
             {/if}
         {/if}
 
+        {if $theme->hasStyles()}
+            {foreach $theme->getStyles() as $customStyle}
+                {css $customStyle}
+            {/foreach}
+        {/if}
+
         {css "css/mobile.css"}
 
         {* remove the "n:if" if you having issues with your theme *}
 
-        <link n:if="$theme->getId() != 'mobile_ovk'" rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/stylesheet/styles.css" />
+        <link n:if="$theme->hasStylesheet()" rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/stylesheet/styles.css" />
 
         {if $isXmas}
             <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/resource/xmas.css" />
@@ -34,6 +43,9 @@
         {css "css/notifications.css"}
         {css "css/avatar-edit.css"}
         {css "css/audios.css"}
+        {css "css/messages.css"}
+        {css "css/fastchats.css"}
+        {css "css/calendar.css"}
         {css "css/mobile.css"}
         {css "css/emoji/emoji.css"}
 

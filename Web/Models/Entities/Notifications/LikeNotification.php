@@ -18,7 +18,6 @@ final class LikeNotification extends Notification
 
     public function toFeedbackStruct()
     {
-        bdump($this);
         return (object) [
             "count" => 1,
             "items" => [(object) ["from_id" => $this->targetModel->getId()]],
