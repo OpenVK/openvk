@@ -822,6 +822,7 @@ body:has(#im_container.at_page) .page-wrap {
 .messenger-app--messages .messenger-special-message span {
     font-weight: bold;
     color: #959595;
+    padding-right: 0px;
 }
 
 .messenger-app--messages .messenger-special-message.centred {
