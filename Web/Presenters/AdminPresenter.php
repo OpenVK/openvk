@@ -412,7 +412,7 @@ final class AdminPresenter extends OpenVKPresenter
         }
 
         $this->template->cat   = $cat;
-        $this->template->gifts = iterator_to_array($cat->getGifts((int) ($this->queryParam("p") ?? 1), null, $this->template->count));
+        $this->template->gifts = iterator_to_array($cat->getGifts((int) ($this->queryParam("p") ?? 1), 20, $this->template->count));
     }
 
     public function renderGift(int $id): void
