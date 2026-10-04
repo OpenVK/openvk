@@ -478,119 +478,142 @@ export class InstantMessagesAndRelated {
     }
 
     async openTabByName(tab, check_existing = true, options = {}) {
-        if (options && !options.referrer) {
-            const currentTabId = this.getSelectedTabId();
-            if (currentTabId && currentTabId !== tab) {
-                options.referrer = currentTabId;
-            }
+        if (!this._openTabPromises) {
+            this._openTabPromises = new Map();
         }
 
-        let got_tab = null;
-        let got_class = null;
-        let already_here = null;
+        let optStr = "";
+        try {
+            optStr = JSON.stringify(options || {});
+        } catch (e) {}
+        const tabKey = String(tab) + ":" + String(check_existing) + ":" + optStr;
 
-        switch (tab) {
-            default:
-                console.error("no tab with name: ", tab);
-                break;
-            case "settings":
-                got_class = SettingsPage;
-                break;
-            case "conversations":
-                got_class = ConversationsPage;
-                break;
-            case "messenger":
-                got_class = MessengerPage;
-                break;
-            case "friends":
-                got_class = FriendsPage;
-                break;
-            case "contact":
-                got_class = ContactPage;
-                break;
-            case "materials":
-                got_class = MaterialsPage;
-                break;
-            case "search":
-                got_class = SearchPage;
-                break;
-            case "chat_preview_topic":
-                got_class = ChatTopicPreviewPage;
-                break;
-            case "important":
-                got_class = ImportantPage;
-                break;
-            case "chat_invite":
-                got_class = ChatInvitePreviewPage;
-                break;
+        if (this._openTabPromises.has(tabKey) && !options?.force) {
+            imLog("openTabByName: already in flight for", tabKey);
+            return await this._openTabPromises.get(tabKey);
         }
 
-        if (check_existing == true && got_class) {
-            this.tabs.forEach(item => {
-                if (item.getPageId() == got_class.getPageId()) {
-                    already_here = item;
-                }
-            })
-        }
-
-        if (already_here != null) {
-            already_here.options = Object.assign({}, already_here.options, options);
-            if (already_here.render_class) {
-                already_here.render_class.options = Object.assign({}, already_here.render_class.options, options);
-            }
-            if (!this.root || !this.root.isConnected) {
-                this.root = document.querySelector("#im_container");
-            }
-            if (this.root && already_here.render_class) {
-                const currentInDom = this.root.querySelector(`#im_page_containers .im_page[data-id="${already_here.getId()}"]`);
-                if (!currentInDom || !already_here.render_class.container || !already_here.render_class.container.isConnected) {
-                    already_here.render_class.changeContainer(this.root);
-                    await already_here.render();
+        const openTabPromise = (async () => {
+            if (options && !options.referrer) {
+                const currentTabId = this.getSelectedTabId();
+                if (currentTabId && currentTabId !== tab) {
+                    options.referrer = currentTabId;
                 }
             }
-            if (options && already_here.render_class && typeof already_here.render_class.onSearch === 'function') {
-                already_here.render_class.onSearch(options.q ?? "", options.date ?? null);
-            }
-            this.selectTab(this.tabs.indexOf(already_here));
 
-            try {
-                if (this.root && already_here.render_class) {
-                    already_here.render_class.removeLoadSkeleton(this.root);
+            let got_tab = null;
+            let got_class = null;
+            let already_here = null;
+
+            switch (tab) {
+                default:
+                    console.error("no tab with name: ", tab);
+                    break;
+                case "settings":
+                    got_class = SettingsPage;
+                    break;
+                case "conversations":
+                    got_class = ConversationsPage;
+                    break;
+                case "messenger":
+                    got_class = MessengerPage;
+                    break;
+                case "friends":
+                    got_class = FriendsPage;
+                    break;
+                case "contact":
+                    got_class = ContactPage;
+                    break;
+                case "materials":
+                    got_class = MaterialsPage;
+                    break;
+                case "search":
+                    got_class = SearchPage;
+                    break;
+                case "chat_preview_topic":
+                    got_class = ChatTopicPreviewPage;
+                    break;
+                case "important":
+                    got_class = ImportantPage;
+                    break;
+                case "chat_invite":
+                    got_class = ChatInvitePreviewPage;
+                    break;
+            }
+
+            if (check_existing == true && got_class) {
+                this.tabs.forEach(item => {
+                    if (item.getPageId() == got_class.getPageId()) {
+                        already_here = item;
+                    }
+                })
+            }
+
+            if (already_here != null) {
+                already_here.options = Object.assign({}, already_here.options, options);
+                if (already_here.render_class) {
+                    already_here.render_class.options = Object.assign({}, already_here.render_class.options, options);
                 }
-                document.querySelectorAll("#load_skeleton").forEach(el => el.remove());
-            } catch (e) {
-                console.error(e);
-            }
-
-            return already_here;
-        } else {
-            try {
                 if (!this.root || !this.root.isConnected) {
                     this.root = document.querySelector("#im_container");
                 }
-                got_tab = got_class.openTab(this.root, options);
-                if (got_tab != null) {
-                    const skeletonTarget = got_tab.render_class.container || this.root;
-                    if (skeletonTarget) got_tab.render_class.addLoadSkeleton(skeletonTarget);
-                    imLog("Opened tab class:", got_tab.render_class);
-                    this.selectTab(this.addTab(got_tab));
-                    try {
-                        await got_tab.render();
-                    } finally {
-                        if (skeletonTarget) got_tab.render_class.removeLoadSkeleton(skeletonTarget);
-                        document.querySelectorAll("#load_skeleton").forEach(el => el.remove());
+                if (this.root && already_here.render_class) {
+                    const currentInDom = this.root.querySelector(`#im_page_containers .im_page[data-id="${already_here.getId()}"]`);
+                    if (!currentInDom || !already_here.render_class.container || !already_here.render_class.container.isConnected) {
+                        already_here.render_class.changeContainer(this.root);
+                        await already_here.render();
                     }
                 }
-            } catch (e) {
-                console.error(e);
+                if (options && already_here.render_class && typeof already_here.render_class.onSearch === 'function') {
+                    already_here.render_class.onSearch(options.q ?? "", options.date ?? null);
+                }
+                this.selectTab(this.tabs.indexOf(already_here));
+
                 try {
+                    if (this.root && already_here.render_class) {
+                        already_here.render_class.removeLoadSkeleton(this.root);
+                    }
                     document.querySelectorAll("#load_skeleton").forEach(el => el.remove());
-                } catch (err) { }
+                } catch (e) {
+                    console.error(e);
+                }
+
+                return already_here;
+            } else {
+                try {
+                    if (!this.root || !this.root.isConnected) {
+                        this.root = document.querySelector("#im_container");
+                    }
+                    got_tab = got_class.openTab(this.root, options);
+                    if (got_tab != null) {
+                        const skeletonTarget = got_tab.render_class.container || this.root;
+                        if (skeletonTarget) got_tab.render_class.addLoadSkeleton(skeletonTarget);
+                        imLog("Opened tab class:", got_tab.render_class);
+                        this.selectTab(this.addTab(got_tab));
+                        try {
+                            await got_tab.render();
+                        } finally {
+                            if (skeletonTarget) got_tab.render_class.removeLoadSkeleton(skeletonTarget);
+                            document.querySelectorAll("#load_skeleton").forEach(el => el.remove());
+                        }
+                    }
+                } catch (e) {
+                    console.error(e);
+                    try {
+                        document.querySelectorAll("#load_skeleton").forEach(el => el.remove());
+                    } catch (err) { }
+                }
+
+                return got_tab;
             }
+        })();
 
-            return got_tab;
+        this._openTabPromises.set(tabKey, openTabPromise);
+        try {
+            return await openTabPromise;
+        } finally {
+            this._openTabPromises.delete(tabKey);
         }
-
     }
 
     addTab(tab) {
@@ -1109,7 +1132,9 @@ class IMState {
     }
 
     async _resolvePosition(url = null, from_msg = false, firstLoad = false) {
-        imLog("_resolvePosition");
+        this._resolvePositionVersion = (this._resolvePositionVersion || 0) + 1;
+        const myVersion = this._resolvePositionVersion;
+        imLog("_resolvePosition", myVersion);
 
         if (window.openvk.current_id == 0 || window.openvk.disable_ajax == 1) {
             return false;
@@ -1119,8 +1144,13 @@ class IMState {
         let should_fullsize = n_url.pathname === "/im";
         if (from_msg) { should_fullsize = true; }
 
+        if (this._resolvePositionVersion !== myVersion) {
+            imLog("_resolvePosition: stale call aborted before start", myVersion);
+            return false;
+        }
+
         if (should_fullsize) {
-            imLog("position is in page");
+            imLog("position is in page", myVersion);
 
             this.isFastchat = false;
             if (this.link.fastChats) {
@@ -1130,6 +1160,10 @@ class IMState {
             const pageContent = document.querySelector('.page_content');
             if (pageContent) {
                 if (!pageContent.querySelector('#im_container')) {
+                    if (this._resolvePositionVersion !== myVersion) {
+                        imLog("_resolvePosition: stale before insertIn", myVersion);
+                        return false;
+                    }
                     pageContent.innerHTML = "";
                     await window.im_class.insertIn(pageContent, n_url ? n_url.searchParams.get("as") : null);
                 } else {
@@ -1137,9 +1171,25 @@ class IMState {
                     self.rewriteTabs(pageContent);
                 }
             }
+
+            if (this._resolvePositionVersion !== myVersion) {
+                imLog("_resolvePosition: stale after insertIn", myVersion);
+                return false;
+            }
+
+            if (!from_msg && location.pathname !== "/im") {
+                imLog("_resolvePosition: URL changed away from /im, aborting", location.pathname);
+                return false;
+            }
+
             u('body').addClass("no_footer");
 
             await this._resolveState();
+
+            if (this._resolvePositionVersion !== myVersion) {
+                imLog("_resolvePosition: stale after _resolveState", myVersion);
+                return false;
+            }
 
             try {
                 this.removeLoadSkeleton(pageContent);
@@ -1148,8 +1198,12 @@ class IMState {
 
             return true;
         } else {
-            imLog("position is in fastchats");
+            imLog("position is in fastchats", myVersion);
             if (!this.link.fastChats.isInserted) {
+                if (this._resolvePositionVersion !== myVersion) {
+                    imLog("_resolvePosition: stale before insertSelf", myVersion);
+                    return false;
+                }
                 await this.link.fastChats.insertSelf();
             } else {
                 this.link.fastChats.show();

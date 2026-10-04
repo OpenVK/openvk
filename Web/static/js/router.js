@@ -5,6 +5,8 @@ class CaptchaError extends Error {}
 window.router = new class {
     constructor() {
         this.isLoadedFirstly = false;
+        this._isNavigating = false;
+        this._navigationAbortController = null;
     }
 
     get csrf() {
@@ -324,6 +326,12 @@ window.router = new class {
             this.prev_page_html = null
         }
 
+        if (this._navigationAbortController) {
+            this._navigationAbortController.abort();
+        }
+        this._navigationAbortController = new AbortController();
+        const signal = this._navigationAbortController.signal;
+
         const push_url = params.push_state ?? true
         const next_page_url = new URL(url)
         if(push_url) {
@@ -335,35 +343,50 @@ window.router = new class {
         u('body').addClass('ajax_request_made')
 
         const parser = new DOMParser
-        // Use GET (not a custom "AJAX" method): some browsers mishandle cookies on
-        // non-standard methods, and a cookieless hit + flash() would wipe CHANDLERSESS.
-        const next_page_request = await fetch(next_page_url, {
-            method: 'GET',
-            credentials: 'same-origin',
-            referrer: old_url,
-            cache: 'no-store',
-            headers: {
-                'X-OpenVK-Ajax-Query': '1',
+        try {
+            // Use GET (not a custom "AJAX" method): some browsers mishandle cookies on
+            // non-standard methods, and a cookieless hit + flash() would wipe CHANDLERSESS.
+            const next_page_request = await fetch(next_page_url, {
+                method: 'GET',
+                credentials: 'same-origin',
+                referrer: old_url,
+                cache: 'no-store',
+                signal: signal,
+                headers: {
+                    'X-OpenVK-Ajax-Query': '1',
+                }
+            })
+
+            // Auth loss / login redirect: fall back to full navigation so we do not
+            // splice a guest login page into a still-"logged in" shell (header stays).
+            if(next_page_request.status === 401 || (next_page_request.redirected && /\/login(?:\?|$)/.test(new URL(next_page_request.url).pathname))) {
+                u('body').removeClass('ajax_request_made')
+                location.assign(next_page_request.redirected ? next_page_request.url : next_page_url)
+                return
             }
-        })
 
-        // Auth loss / login redirect: fall back to full navigation so we do not
-        // splice a guest login page into a still-"logged in" shell (header stays).
-        if(next_page_request.status === 401 || (next_page_request.redirected && /\/login(?:\?|$)/.test(new URL(next_page_request.url).pathname))) {
+            const next_page_text = await next_page_request.text()
+            const parsed_content = parser.parseFromString(next_page_text, 'text/html')
+            if(next_page_request.redirected) {
+                history.replaceState({'from_router': 1}, '', next_page_request.url)
+            }
+
             u('body').removeClass('ajax_request_made')
-            location.assign(next_page_request.redirected ? next_page_request.url : next_page_url)
-            return
+
+            await this.__appendPageSafely(parsed_content, next_page_url, params, next_page_request)
+        } catch (e) {
+            if (e.name === 'AbortError') {
+                console.log("Router | Navigation aborted by newer request");
+                u('body').removeClass('ajax_request_made');
+                return;
+            }
+            u('body').removeClass('ajax_request_made');
+            throw e;
+        } finally {
+            if (this._navigationAbortController?.signal === signal) {
+                this._navigationAbortController = null;
+            }
         }
-
-        const next_page_text = await next_page_request.text()
-        const parsed_content = parser.parseFromString(next_page_text, 'text/html')
-        if(next_page_request.redirected) {
-            history.replaceState({'from_router': 1}, '', next_page_request.url)
-        }
-
-        u('body').removeClass('ajax_request_made')
-
-        this.__appendPageSafely(parsed_content, next_page_url, params, next_page_request)
     }
 
     // какой ужас
