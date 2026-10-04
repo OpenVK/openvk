@@ -65,9 +65,10 @@ function initGraffiti(event, callback = null) {
 
 $(document).on('click', '.menu_toggler', (e) => {
     const post_buttons = $(e.target).closest('.post-buttons')
-    const wall_attachment_menu = post_buttons.find('#wallAttachmentMenu')
+    const wall_attachment_menu = post_buttons.find('#wallAttachmentMenu');
+    const isFixed = false;
 
-    if (isMobile()) {
+    if (isFixed && isMobile()) {
         const cmsg = new CMessageBox({
             title: tr("attach"),
             body: `<div class="attachInWindow" id="wallAttachmentMenu">` + wall_attachment_menu.html() + `</div>`,
