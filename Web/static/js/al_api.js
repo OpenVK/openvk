@@ -13,18 +13,45 @@ window.API = new Proxy(Object.create(null), {
 
                         xhr.onload = e => {
                             try {
-                                let resp = msgpack.decode(new Uint8Array(e.target.response));
-                                if(typeof resp.error !== "undefined")
-                                    rej(resp.error);
-                                else
-                                    resolv(resp.result);
+                                if (xhr.response && xhr.response.byteLength > 0) {
+                                    let resp = msgpack.decode(new Uint8Array(e.target.response));
+                                    if (typeof resp.error !== "undefined") {
+                                        rej(resp.error);
+                                        return;
+                                    } else if (typeof resp.result !== "undefined") {
+                                        resolv(resp.result);
+                                        return;
+                                    }
+                                }
+                                if (xhr.status >= 200 && xhr.status < 300) {
+                                    resolv(null);
+                                } else {
+                                    rej({
+                                        "code": xhr.status || -1,
+                                        "message": `HTTP Error ${xhr.status}`,
+                                    });
+                                }
                             } catch (e) {
                                 rej({
-                                    "code": -1,
-                                    "message": `Network error`,
+                                    "code": xhr.status || -1,
+                                    "message": xhr.status ? `HTTP Error ${xhr.status}` : `Network error`,
                                     "error": e
-                                })
+                                });
                             }
+                        };
+
+                        xhr.onerror = () => {
+                            rej({
+                                "code": -1,
+                                "message": "Network connection error"
+                            });
+                        };
+
+                        xhr.ontimeout = () => {
+                            rej({
+                                "code": -1,
+                                "message": "Request timeout"
+                            });
                         };
 
                         xhr.send(msgpack.encode({
