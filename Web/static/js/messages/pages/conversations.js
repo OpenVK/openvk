@@ -90,7 +90,7 @@ export class ConversationsPage extends IMPage {
             convs = orig_convs;
         }
 
-        if (convs.length === 0 && window.im?.conversations && !window.im.conversations.isLoadingMore && !window.im.conversations._hasNoMore) {
+        if (convs.length === 0 && window.im?.conversations && !window.im.conversations.isLoadingMore && !window.im.conversations._hasNoMore && window.im.conversations.all_convs.length === 0) {
             window.im.conversations.loadNext().then(() => this.update()).catch(console.error);
         }
 
@@ -314,14 +314,18 @@ export class Conversations {
                 convs = [await this._findConvFromApi(im.report_data.peer_id)];
             } else {
                 const count = this.CONVERSATIONS_PER_PAGE || CONVERSATIONS_PER_PAGE;
+                const prevCount = this.all_convs ? this.all_convs.length : 0;
                 const offset = this.loaded_convs_count;
                 convs = await this.getConversations(offset);
                 if (!convs || convs.length < count) {
                     this._hasNoMore = true;
                 }
-            }
 
-            this._appendConvs(convs);
+                this._appendConvs(convs);
+                if (this.all_convs && this.all_convs.length === prevCount) {
+                    this._hasNoMore = true;
+                }
+            }
         } catch (e) {
             console.error("Failed to load more conversations:", e);
         } finally {
