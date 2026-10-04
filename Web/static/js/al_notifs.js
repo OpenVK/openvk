@@ -215,16 +215,26 @@ function displayGlobalNotification(notif, shouldBroadcast = true) {
 }
 
 async function setupNotificationListener() {
+    if (window.__ovkNotifsListenerRunning) {
+        return;
+    }
+    window.__ovkNotifsListenerRunning = true;
+
     console.info("Notifications | Setting up notifications listener...");
 
     const POLL_INTERVAL = 10000;
-    const CHECK_MORE_INTERVAL = 250;
-    const ERROR_RETRY_INTERVAL = 60000;
+    const CHECK_MORE_INTERVAL = 1500;
+    let consecutiveErrors = 0;
     let isFirstRequest = true;
 
     while (true) {
         try {
+            if (typeof document !== 'undefined' && document.hidden) {
+                await new Promise(resolve => setTimeout(resolve, 30000));
+            }
+
             const notif = await API.Notifications.fetch();
+            consecutiveErrors = 0;
 
             if (notif) {
                 if (!isFirstRequest) {
@@ -236,18 +246,29 @@ async function setupNotificationListener() {
 
             await new Promise(resolve => setTimeout(resolve, CHECK_MORE_INTERVAL));
         } catch (rejection) {
-            if (rejection.message === "Nothing to report" || rejection.code === 1983) {
+            const errCode = rejection?.code;
+            const errMsg = String(rejection?.message || rejection || "");
+
+            if (errMsg === "Nothing to report" || errCode === 1983) {
+                consecutiveErrors = 0;
                 if (isFirstRequest) {
                     console.info("Notifications | Cursor synced. Real-time notifications enabled.");
                     isFirstRequest = false;
                 }
                 await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL));
-            } else if (rejection.message === "Disabled" || rejection.code === 1999) {
-                console.error("Notifications | Real-time notifications are disabled. Aborting RPC polling until next page load", rejection);
+            } else if (errMsg === "Disabled" || errCode === 1999) {
+                console.info("Notifications | Real-time notifications are disabled. Aborting RPC polling.");
+                window.__ovkNotifsListenerRunning = false;
+                break;
+            } else if (errMsg === "User not authorized" || errCode === 1997) {
+                console.info("Notifications | User not authorized. Aborting RPC polling.");
+                window.__ovkNotifsListenerRunning = false;
                 break;
             } else {
-                console.error("Notifications | Poll error, we'll try again in a minute...", rejection);
-                await new Promise(resolve => setTimeout(resolve, ERROR_RETRY_INTERVAL));
+                consecutiveErrors++;
+                const backoff = Math.min(60000, 5000 * Math.pow(1.5, Math.min(consecutiveErrors, 8)));
+                console.warn(`Notifications | Poll error (${errMsg}), retrying in ${Math.round(backoff / 1000)}s...`, rejection);
+                await new Promise(resolve => setTimeout(resolve, backoff));
             }
         }
     }
