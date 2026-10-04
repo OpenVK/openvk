@@ -14,6 +14,7 @@ use openvk\Web\Models\Entities\IP;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Repositories\{IPs, Users, APITokens, Tickets, Reports, CurrentUser, Posts};
 use openvk\Web\Util\IMBroker;
+use openvk\Web\Util\RateLimiter;
 use WhichBrowser;
 
 abstract class OpenVKPresenter extends SimplePresenter
@@ -152,14 +153,17 @@ abstract class OpenVKPresenter extends SimplePresenter
         }
     }
 
-    protected function willExecuteWriteAction(bool $json = false): void
+    protected function willExecuteWriteAction(string|bool $arg1 = false, string|bool $arg2 = ""): void
     {
-        $ip  = (new IPs())->get(CONNECTING_IP);
-        $res = $ip->rateLimit();
+        $json   = is_bool($arg1) ? $arg1 : (is_bool($arg2) ? $arg2 : false);
+        $method = is_string($arg1) ? $arg1 : (is_string($arg2) ? $arg2 : "");
 
-        if (!($res === IP::RL_RESET || $res === IP::RL_CANEXEC)) {
-            if ($res === IP::RL_BANNED && OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["rateLimits"]["autoban"]) {
-                $this->user->identity->ban("Account has possibly been stolen", false);
+        $userId = $this->user->id ?? ($this->user->identity ? $this->user->identity->getId() : null);
+        $res = RateLimiter::i()->limitWrite(CONNECTING_IP, $userId, 1, $method);
+
+        if (!($res === RateLimiter::RL_RESET || $res === RateLimiter::RL_CANEXEC)) {
+            if ($res === RateLimiter::RL_BANNED && OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["rateLimits"]["autoban"]) {
+                $this->user->identity?->ban("Account has possibly been stolen", false);
                 exit("Хакеры? Интересно...");
             }
 

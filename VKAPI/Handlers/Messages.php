@@ -1296,7 +1296,7 @@ final class Messages extends VKAPIRequestHandler
         ?float $long = null
     ) {
         $this->requireUser();
-        $this->willExecuteWriteAction();
+        $this->willExecuteWriteAction("messages.send");
         $this->ensureBrokerActive();
 
         if (empty($forward_messages)) {
@@ -1908,7 +1908,7 @@ final class Messages extends VKAPIRequestHandler
         int $group_id = 0
     ) {
         $this->requireUser();
-        $this->willExecuteWriteAction();
+        $this->willExecuteWriteAction("messages.markAsRead");
         $resolvedId = $this->resolvePeer($user_id, $peer_id, $chat_id, $domain);
 
         $params = [
@@ -3564,7 +3564,7 @@ final class Messages extends VKAPIRequestHandler
         int $group_id = 0
     ) {
         $this->requireUser();
-        $this->willExecuteWriteAction();
+        $this->willExecuteWriteAction("messages.setActivity");
 
         if (!in_array($type, ['typing', 'audiomessage'])) {
             $this->fail(100, "One of the parameters specified was missing or invalid: type");
