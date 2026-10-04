@@ -1749,6 +1749,8 @@
 "im_option_24h_format" = "24-часовой формат времени";
 "im_option_mute_local" = "Отключить уведомления в этом браузере";
 "im_option_disable_animated_stickers" = "Отключить анимированные стикеры";
+"im_option_read_all" = "Прочитать все сообщения";
+"im_all_messages_marked_as_read" = "Все сообщения прочитаны";
 "open_message" = "› Открыть сообщение";
 "important_messages" = "Важные сообщения";
 "no_important_messages" = "Здесь пока нет важных сообщений.";

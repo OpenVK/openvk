@@ -3017,6 +3017,8 @@
 "im_option_mute_local" = "Mute notifications in this browser";
 "im_option_24h_format" = "24-hour time format";
 "im_option_disable_animated_stickers" = "Disable animated stickers";
+"im_option_read_all" = "Mark all messages as read";
+"im_all_messages_marked_as_read" = "All messages marked as read";
 "open_message" = "Open message";
 "event_chat_invite_user_by_link_impersonal" = "A user joined the conversation via link";
 "event_chat_moderator_add_male" = "appointed $1 as administrator";
