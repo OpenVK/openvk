@@ -2004,12 +2004,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenVK/chandler.git",
-                "reference": "371a112bc561b90ca2550790c78e12fdb314fd6e"
+                "reference": "a8b536b83a8a32b3db643649dbb5d1dfc906f135"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenVK/chandler/zipball/371a112bc561b90ca2550790c78e12fdb314fd6e",
-                "reference": "371a112bc561b90ca2550790c78e12fdb314fd6e",
+                "url": "https://api.github.com/repos/OpenVK/chandler/zipball/a8b536b83a8a32b3db643649dbb5d1dfc906f135",
+                "reference": "a8b536b83a8a32b3db643649dbb5d1dfc906f135",
                 "shasum": ""
             },
             "require": {
@@ -2033,6 +2033,9 @@
                 "ext-yaml": "for faster yaml parsing"
             },
             "default-branch": true,
+            "bin": [
+                "bin/chandler-latte-lint"
+            ],
             "type": "library",
             "autoload": {
                 "files": [
@@ -2062,7 +2065,7 @@
                 "issues": "https://github.com/OpenVK/chandler/issues",
                 "source": "https://github.com/OpenVK/chandler"
             },
-            "time": "2026-09-20T13:24:08+00:00"
+            "time": "2026-10-05T23:09:50+00:00"
         },
         {
             "name": "php81_bc/strftime",
