@@ -145,7 +145,7 @@ h1 {
     right: 0;
     overflow: hidden;
     z-index: 1;
-    background-size: var(--unexpanded-header-size-fallback);
+    background-size: 791px 100%;
 }
 
 .page_header>.back::before,
@@ -157,7 +157,7 @@ h1 {
     bottom: 0;
     width: 2px;
     background-image: inherit;
-    background-size: 791px 100%;
+    background-size: var(--unexpanded-header-size-fallback);
     background-position: -300px 0;
     background-repeat: no-repeat;
     transform: scaleX(10000);
