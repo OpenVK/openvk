@@ -128,7 +128,7 @@
             {var $effectiveLayoutWidth = $effectiveLayoutWidth . 'px'}
         {/if}
 
-        <div class="layout" id="page_layout"{ifset layout_style} {include layout_style}{elseif $effectiveLayoutWidth} style="width: {$effectiveLayoutWidth}"{/ifset}>
+        <div class="layout{if $effectiveLayoutWidth} layout_expanded{/if}" id="page_layout"{ifset layout_style} {include layout_style}{elseif $effectiveLayoutWidth} style="width: {$effectiveLayoutWidth}"{/ifset}>
             <div id="xhead" class="dm"></div>
             <div class="page_header p_head{if $instance_name != \OPENVK_DEFAULT_INSTANCE_NAME} page_custom_header{/if}">
                 <div class="back"></div>
