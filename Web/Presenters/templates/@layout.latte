@@ -142,7 +142,7 @@
                             <form id='search_form_f' action="/search" method="get">
                                 <div id='search_and_one_more_wrapper'>
                                     {var $section = $_REQUEST['section'] ?? ''}
-                                    {var $searchPlaceholder = tr_at(OPENVK_ROOT_CONF['openvk']['appearance']['searchPlaceholder'], tr('header_search'))}
+                                    {var $searchPlaceholder = tr_at(\OPENVK_ROOT_CONF['openvk']['appearance']['searchPlaceholder'], tr('header_search'))}
                                     <input onkeydown="onSearchTipKeydown(event)" oninput="onSearchBoxInput(event)" autocomplete="off" type="search" maxlength="79" name="q" placeholder="{$searchPlaceholder}" title="{$searchPlaceholder} [Alt+Shift+F]" accesskey="f" />
                                     <select name="section">
                                         <option value="users">{_s_by_people}</option>
@@ -250,7 +250,7 @@
                                 <div class="pc_v">{_my_audios}</div>
                                 <div class="mobile_v">{_mobile_audios}</div>
                             </a>
-                            {if (OPENVK_ROOT_CONF["openvk"]["credentials"]["im"]["enable"] ?? false)}
+                            {if (\OPENVK_ROOT_CONF["openvk"]["credentials"]["im"]["enable"] ?? false)}
                             <a n:if="$thisUser->getLeftMenuItemStatus('messages')" href="/im" class="link my_messages">
                                 <div class="pc_v">{_my_messages}</div>
                                 <div class="mobile_v">{_mobile_messages}</div>
