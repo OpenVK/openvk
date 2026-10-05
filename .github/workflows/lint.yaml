@@ -33,3 +33,6 @@ jobs:
 
       - name: PHP CS Fixer
         run: vendor/bin/php-cs-fixer fix --dry-run --diff
+
+      - name: Latte Lint
+        run: composer run lint:latte
