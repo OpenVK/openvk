@@ -100,8 +100,7 @@ class Report extends RowModel
             case "message":
                 if ($extended == true) {
                     try {
-                        #return Message::fromGlobalId($this->getContentId(), 0);
-                        return Message::fromGlobalId($this->getContentId(), $this->authorId());
+                        return Message::fromGlobalId($this->getContentId(), 0);
                     } catch (\Throwable $e) {
                         bdump($e);
                         return null;
