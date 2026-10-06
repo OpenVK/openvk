@@ -653,4 +653,14 @@ class Post extends Postable
     {
         return null;
     }
+    
+    public function getViews(): ?int
+    {
+        $edb = eventdb();
+        if (!$edb) {
+            return null;
+        }
+
+        return $edb->getContext()->table('postViews')->where('post', $this->getId())->where('verified', 1)->count('*');
+    }
 }
