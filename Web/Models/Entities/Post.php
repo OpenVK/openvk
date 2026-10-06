@@ -653,7 +653,7 @@ class Post extends Postable
     {
         return null;
     }
-    
+
     public function getViews(): ?int
     {
         $edb = eventdb();
