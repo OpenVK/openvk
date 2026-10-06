@@ -68,9 +68,12 @@ class Message
         return parseAttachments($atts);
     }
 
-    public function getSenderId()
+    public function getSenderId(): ?int
     {
-        return $this->getRecord()->from_id;
+        $rec = $this->getRecord();
+        $id = $rec->from_id ?? $rec->sender_id ?? $rec->user_id ?? null;
+
+        return !is_null($id) ? (int) $id : null;
     }
 
     public function getPeerId()
@@ -80,7 +83,18 @@ class Message
 
     public function getOwner()
     {
-        return get_entity_by_id($this->getSenderId());
+        $senderId = $this->getSenderId();
+        if (empty($senderId)) {
+            return null;
+        }
+
+        return get_entity_by_id($senderId);
+    }
+
+    public function isDeleted(): bool
+    {
+        $rec = $this->getRecord();
+        return !empty($rec->deleted) || !empty($rec->is_deleted) || !empty($rec->deleted_at);
     }
 
     /**
@@ -212,16 +226,15 @@ class Message
         try {
             $list = [];
 
-            $from_id = $from_id;
             $global_id = $this->getId();
             $peer_id = $this->getPeerId();
             $broker = IMBroker::i();
             $params = [
-                "peer_id "  => (string) $peer_id,
-                "start_message_id" => $global_id,
-                "offset"   => -20,
-                "count"    => 25,
-                "rev" => 1,
+                "peer_id"          => (string) $peer_id,
+                "start_message_id" => (string) $global_id,
+                "offset"           => -20,
+                "count"            => 25,
+                "rev"              => 1,
             ];
 
             if ($peer_id > 2000000000) {
@@ -231,10 +244,15 @@ class Message
             }
 
             $response = $broker->invokeMethod($from_id, "messages.getHistory", $params);
+            if ($response === false) {
+                return [$this];
+            }
 
             $data = json_decode($response, true);
-            foreach ($data["response"]["items"] as $item) {
-                $list[] = new Message($item);
+            if (!empty($data["response"]["items"]) && is_array($data["response"]["items"])) {
+                foreach ($data["response"]["items"] as $item) {
+                    $list[] = new Message($item);
+                }
             }
 
             if (sizeof($list) == 0) {
@@ -243,7 +261,7 @@ class Message
 
             return $list;
         } catch (\Throwable $e) {
-            bdump(e);
+            bdump($e);
 
             return [$this];
         }

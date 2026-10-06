@@ -6,6 +6,20 @@
             .reportedMsg {
                 outline: 5px solid #ffacac;
             }
+            .deletedMsg {
+                opacity: 0.75;
+                background-color: #fff4f4;
+            }
+            .deletedBadge {
+                display: inline-block;
+                padding: 1px 5px;
+                font-size: 10px;
+                color: #fff;
+                background-color: #d9534f;
+                border-radius: 3px;
+                margin-left: 5px;
+                vertical-align: middle;
+            }
         </style>
 
         <div id="reported_msg_context">
@@ -15,16 +29,28 @@
 
             <hr>
 
-            {foreach $message->getContext($report->authorId()) as $item}
-                <div class="messenger-app--messages---message {if $item->getId() == $message->getId()}reportedMsg{/if}">
+            {foreach $message->getContext(0) as $item}
+                {var $owner = $item->getOwner()}
+                <div class="messenger-app--messages---message {if $item->getId() == $message->getId()}reportedMsg{/if} {if $item->isDeleted()}deletedMsg{/if}">
                     <div class="messenger-app--messages---message--wrap">
                         <div class="inlines _avatar">
-                            <img class="ava" src="{$item->getOwner()->getAvatarUrl()}" />
+                            {if $owner}
+                                <img class="ava" src="{$owner->getAvatarUrl()}" />
+                            {else}
+                                <div class="ava" style="background: #e1e4eb; border-radius: 50%; width: 32px; height: 32px;"></div>
+                            {/if}
                         </div>
                         <div class="inlines _content post-content">
-                            <a class="_sender" target="_blank" href="{$item->getOwner()->getURL()}">
-                                <strong style="font-size: 11px;">{$item->getOwner()->getFullName()}</strong>
-                            </a>
+                            {if $owner}
+                                <a class="_sender" target="_blank" href="{$owner->getURL()}">
+                                    <strong style="font-size: 11px;">{$owner->getFullName()}</strong>
+                                </a>
+                            {else}
+                                <strong style="font-size: 11px; color: #777;">ID: {$item->getSenderId()}</strong>
+                            {/if}
+                            {if $item->isDeleted()}
+                                <span class="deletedBadge">{_deleted}</span>
+                            {/if}
                             <p class="normalText text">{$item->getText()}</p>
                             {var $attachmentsLayout = $item->getChildrenWithLayout(200)}
                             <div n:ifcontent class="attachments attachments_b" style="height: {$attachmentsLayout->height|noescape}; width: {$attachmentsLayout->width|noescape};">
