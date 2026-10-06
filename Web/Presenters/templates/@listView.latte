@@ -13,7 +13,7 @@
             {/ifset}
 
             {ifset before_content}
-                {include before_content, x => $dat}
+                {include before_content, x => $dat ?? null}
             {/ifset}
 
             {ifset specpage}
@@ -23,7 +23,7 @@
                     {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
 
                     {ifset top}
-                        {include top, x => $dat}
+                        {include top, x => $dat ?? null}
                     {/ifset}
 
                     {if sizeof($data) > 0}
