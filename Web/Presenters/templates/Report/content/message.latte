@@ -1,6 +1,6 @@
 {block content}
     {if !$message}
-        {include "../components/error.latte", description => tr("reported_message_display_error")}
+        {include "../../components/error.latte", description => tr("reported_message_display_error")}
     {else}
         <style>
             .reportedMsg {
