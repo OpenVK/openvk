@@ -56,7 +56,7 @@ parameters:
             - Chandler\MVC\TemplateScope
         features:
             analyseLayoutFiles: true
-            phpstanCommand: "vendor/bin/phpstan analyse {dir} --no-progress --memory-limit 1G -c phpstan-latte-inner.neon"
+            phpstanCommand: "vendor/bin/phpstan analyse {dir} --no-progress --memory-limit 512M -c phpstan-latte-inner.neon"
     parallel:
         maximumNumberOfProcesses: 1
 
