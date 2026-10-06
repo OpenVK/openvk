@@ -386,9 +386,9 @@ final class VKAPIPresenter extends OpenVKPresenter
 
             if (!$this->user->identity) {
                 $this->fail(5, "User authorization failed: roaming mechanism is selected, but user is not logged in.", $object, $method);
-            }            
+            }
 
-            if (!empty($_SERVER['HTTP_REFERER']) && 
+            if (!empty($_SERVER['HTTP_REFERER']) &&
                     (!str_starts_with($_SERVER['HTTP_REFERER'], ovk_scheme(true) . $_SERVER["HTTP_HOST"] . "/") ||
                     str_starts_with($_SERVER['HTTP_REFERER'], ovk_scheme(true) . $_SERVER["HTTP_HOST"] . "/away.php"))) {
                 $this->fail(-1, "User authorization failed: roaming mechanism is not allowed when redirected from other website.", $object, $method);

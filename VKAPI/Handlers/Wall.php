@@ -244,7 +244,7 @@ final class Wall extends VKAPIRequestHandler
             $viewsCount = $post->getViews();
             if ($viewsCount !== null) {
                 $post_temp_obj->views = (object) [
-                    "count" => $viewsCount
+                    "count" => $viewsCount,
                 ];
             }
 
@@ -570,7 +570,7 @@ final class Wall extends VKAPIRequestHandler
                 $viewsCount = $post->getViews();
                 if ($viewsCount !== null) {
                     $post_temp_obj->views = (object) [
-                        "count" => $viewsCount
+                        "count" => $viewsCount,
                     ];
                 }
 
