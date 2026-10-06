@@ -734,6 +734,12 @@ final class UserPresenter extends OpenVKPresenter
                     $this->flashFail("err", tr("invalid_voucher"), tr("voucher_bad"));
                 }
 
+                try {
+                    VoteChangeInfo::sendAction($this->user->identity, null, $voucher->getCoins(), 7);
+                } catch (\Throwable $e) {
+                    bdump($e);
+                }
+
                 $user->setCoins($user->getCoins() + $voucher->getCoins());
                 $user->setRating($user->getRating() + $voucher->getRating());
                 $user->save();
@@ -1028,6 +1034,12 @@ final class UserPresenter extends OpenVKPresenter
 
         if ($this->user->identity->getCoins() < $value) {
             $this->flashFail("err", tr("failed_to_increase_rating"), tr("you_dont_have_enough_points"));
+        }
+
+        try {
+            VoteChangeInfo::sendAction($this->user->identity, $receiver, $value, 8);
+        } catch (\Throwable $e) {
+            bdump($e);
         }
 
         $this->user->identity->setCoins($this->user->identity->getCoins() - $value);

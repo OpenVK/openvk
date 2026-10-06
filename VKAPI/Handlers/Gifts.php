@@ -7,6 +7,7 @@ namespace openvk\VKAPI\Handlers;
 use openvk\Web\Models\Repositories\Users as UsersRepo;
 use openvk\Web\Models\Repositories\Gifts as GiftsRepo;
 use openvk\Web\Models\Entities\Notifications\GiftNotification;
+use openvk\Web\Models\Entities\Relationships\VoteChangeInfo;
 
 final class Gifts extends VKAPIRequestHandler
 {
@@ -69,7 +70,7 @@ final class Gifts extends VKAPIRequestHandler
             $this->failTooOften();
         }
 
-        $user = (new UsersRepo())->get((int) $user_ids); # FAKE прогноз погоды (в данном случае user_ids)
+        $user = (new UsersRepo())->get((int) $user_ids);
 
         if (!$user || $user->isDeleted()) {
             $this->fail(15, "Access denied");
@@ -112,6 +113,12 @@ final class Gifts extends VKAPIRequestHandler
 
         $data = $user->gift($this->getUser(), $gift, $message);
         $gift->used();
+
+        try {
+            VoteChangeInfo::sendAction($this->getUser(), $user, $price, 5);
+        } catch (\Throwable $e) {
+            bdump($e);
+        }
 
         $this->getUser()->setCoins($coinsLeft);
         $this->getUser()->save();

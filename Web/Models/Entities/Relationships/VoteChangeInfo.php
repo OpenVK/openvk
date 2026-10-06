@@ -12,9 +12,14 @@ use openvk\Web\Util\DateTime;
 class VoteChangeInfo extends RowModel
 {
     public const ACTION_SEND = 0;
-    public const ACTION_APP_WITHDRAW = 1;
-    public const ACTION_APP_TAXES = 2;
-    public const ACTION_STICKERS_TAXES = 3;
+    public const ACTION_APP_BUY = 1;
+    public const ACTION_APP_WITHDRAW = 2;
+    public const ACTION_STICKERS_WITHDRAW = 3;
+    public const ACTION_TON = 4;
+    public const ACTION_GIFT = 5;
+    public const ACTION_STICKERPACK_BUY = 6;
+    public const ACTION_VOUNCHER_USE = 7;
+    public const ACTION_RATING_CHANGE = 8;
 
     protected $tableName = "votes_changes";
 
@@ -90,27 +95,41 @@ class VoteChangeInfo extends RowModel
         return $payload;
     }
 
-    public static function sendAction(RowModel $from, RowModel $to, float $diff = 0.0): bool
+    public static function sendAction(RowModel $from, ?RowModel $to = null, float $diff = 0.0, ?int $action = null): bool
     {
         // Sender
 
         $out = new VoteChangeInfo();
         $out->setOwner_id($from->getRealId());
         $out->setCreated_at(time());
-        $out->setCaused_by($to->getRealId());
+
+        if ($to) {
+            $out->setCaused_by($to->getRealId());
+        }
+
         $out->setOld_value($from->getCoins());
         $out->setNew_value($from->getCoins() - $diff);
+        if ($action) {
+            $out->setAction($action);
+        }
+
         $out->save();
 
         // Receiver
 
-        $out2 = new VoteChangeInfo();
-        $out2->setOwner_id($to->getRealId());
-        $out2->setCreated_at(time());
-        $out2->setCaused_by($from->getRealId());
-        $out2->setOld_value($to->getCoins());
-        $out2->setNew_value($to->getCoins() + $diff);
-        $out2->save();
+        if ($to) {
+            $out2 = new VoteChangeInfo();
+            $out2->setOwner_id($to->getRealId());
+            $out2->setCreated_at(time());
+            $out2->setCaused_by($from->getRealId());
+            $out2->setOld_value($to->getCoins());
+            $out2->setNew_value($to->getCoins() + $diff);
+            if ($action) {
+                $out2->setAction($action);
+            }
+
+            $out2->save();
+        }
 
         return true;
     }

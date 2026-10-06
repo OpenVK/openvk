@@ -128,6 +128,12 @@ final class GiftsPresenter extends OpenVKPresenter
 
         $comment      = empty($c = $this->postParam("comment")) ? null : $c;
 
+        try {
+            VoteChangeInfo::sendAction($this->user->identity, $user, $price, 5);
+        } catch (\Throwable $e) {
+            bdump($e);
+        }
+
         $this->user->identity->setCoins($coinsLeft);
         $this->user->identity->save();
         $data = $user->gift($this->user->identity, $gift, $comment, !is_null($this->postParam("anonymous")));

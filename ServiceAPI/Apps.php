@@ -8,6 +8,7 @@ use openvk\Web\Models\Entities\APIToken;
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Repositories\APITokens;
 use openvk\Web\Models\Repositories\Applications;
+use openvk\Web\Models\Entities\Relationships\VoteChangeInfo;
 use WhichBrowser;
 
 class Apps implements Handler
@@ -71,6 +72,18 @@ class Apps implements Handler
         if ($coinsLeft < 0) {
             $reject(41, "Not enough money");
             return;
+        }
+
+        try {
+            $change = new VoteChangeInfo();
+            $change->setOwner_id($this->user->getRealId());
+            $change->setCreated_at(time());
+            $change->setOld_value($this->user->getCoins());
+            $change->setNew_value($coinsLeft);
+            $change->setAction(1);
+            $change->save();
+        } catch (\Throwable $e) {
+            bdump($e);
         }
 
         $this->user->setCoins($coinsLeft);

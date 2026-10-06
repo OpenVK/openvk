@@ -10,6 +10,7 @@ use Nette\Utils\UnknownImageFileException;
 use openvk\Web\Models\Repositories\Notes;
 use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\RowModel;
+use openvk\Web\Models\Entities\Relationships\VoteChangeInfo;
 
 class Application extends RowModel
 {
@@ -317,6 +318,13 @@ class Application extends RowModel
 
         $owner = $this->getOwner();
         $owner->setCoins($owner->getCoins() + ($balance - $tax));
+
+        try {
+            VoteChangeInfo::sendAction($owner, null, ($balance - $tax), 2);
+        } catch (\Throwable $e) {
+            bdump($e);
+        }
+
         $this->setCoins(0.0);
         $this->save();
         $owner->save();

@@ -1222,6 +1222,7 @@
 
 "vouchers" = "Vouchers";
 "have_voucher" = "Have a voucher";
+"votes_history" = "Votes history";
 "voucher_token" = "Voucher token";
 "voucher_activators" = "Users";
 "voucher_explanation" = "Enter the voucher serial number, usually found on the receipt or in the message.";
