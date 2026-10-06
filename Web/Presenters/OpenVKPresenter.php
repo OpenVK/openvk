@@ -13,6 +13,8 @@ use Nette\InvalidStateException as ISE;
 use openvk\Web\Models\Entities\IP;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Repositories\{IPs, Users, APITokens, Tickets, Reports, CurrentUser, Posts};
+use openvk\Web\Util\IMBroker;
+use openvk\Web\Util\RateLimiter;
 use WhichBrowser;
 
 abstract class OpenVKPresenter extends SimplePresenter
@@ -151,14 +153,17 @@ abstract class OpenVKPresenter extends SimplePresenter
         }
     }
 
-    protected function willExecuteWriteAction(bool $json = false): void
+    protected function willExecuteWriteAction(string|bool $arg1 = false, string|bool $arg2 = ""): void
     {
-        $ip  = (new IPs())->get(CONNECTING_IP);
-        $res = $ip->rateLimit();
+        $json   = is_bool($arg1) ? $arg1 : (is_bool($arg2) ? $arg2 : false);
+        $method = is_string($arg1) ? $arg1 : (is_string($arg2) ? $arg2 : "");
 
-        if (!($res === IP::RL_RESET || $res === IP::RL_CANEXEC)) {
-            if ($res === IP::RL_BANNED && OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["rateLimits"]["autoban"]) {
-                $this->user->identity->ban("Account has possibly been stolen", false);
+        $userId = $this->user->id ?? ($this->user->identity ? $this->user->identity->getId() : null);
+        $res = RateLimiter::i()->limitWrite(CONNECTING_IP, $userId, 1, $method);
+
+        if (!($res === RateLimiter::RL_RESET || $res === RateLimiter::RL_CANEXEC)) {
+            if ($res === RateLimiter::RL_BANNED && OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["rateLimits"]["autoban"]) {
+                $this->user->identity?->ban("Account has possibly been stolen", false);
                 exit("Хакеры? Интересно...");
             }
 
@@ -219,6 +224,7 @@ abstract class OpenVKPresenter extends SimplePresenter
         }
 
         $this->template->isXmas = intval(date('d')) >= 1 && date('m') == 12 || intval(date('d')) <= 15 && date('m') == 1 ? true : false;
+        // $this->template->isXmas = true;
         $this->template->isTimezoned = Session::i()->get("_timezoneOffset");
 
         $userValidated = 0;
@@ -285,9 +291,16 @@ abstract class OpenVKPresenter extends SimplePresenter
             $userValidated = 1;
             $cacheTime     = 0; # Force no cache
             if (!property_exists($this, 'silent') && $this->user->identity->onlineStatus() == 0 && !($this->user->identity->isDeleted() || $this->user->identity->isBanned())) {
+                $wasOnline = $this->user->identity->isOnline();
                 $this->user->identity->setOnline(time());
                 $this->user->identity->setClient_name(null);
                 $this->user->identity->save(false);
+
+                if (!$wasOnline) {
+                    IMBroker::i()->setUserOnline($this->user->id);
+                } else {
+                    IMBroker::i()->touchUserOnline($this->user->id);
+                }
             }
 
             $this->template->ticketAnsweredCount = (new Tickets())->getTicketsCountByUserId($this->user->id, 1);
@@ -341,7 +354,7 @@ abstract class OpenVKPresenter extends SimplePresenter
         }
 
         if (!OPENVK_ROOT_CONF["openvk"]["preferences"]["maintenanceMode"]["all"]) {
-            if ($this->presenterName && OPENVK_ROOT_CONF["openvk"]["preferences"]["maintenanceMode"][$this->presenterName]) {
+            if ($this->presenterName && (OPENVK_ROOT_CONF["openvk"]["preferences"]["maintenanceMode"][$this->presenterName] ?? false)) {
                 $this->pass("openvk!Maintenance->section", $this->presenterName);
             }
         } else {
@@ -352,7 +365,10 @@ abstract class OpenVKPresenter extends SimplePresenter
 
         if (isset($_SERVER['HTTP_X_OPENVK_AJAX_QUERY']) && $_SERVER['HTTP_X_OPENVK_AJAX_QUERY'] == '1' && $this->user->identity) {
             error_reporting(0);
-            header('Content-Type: text/plain; charset=UTF-8');
+            header('Cache-Control: no-cache, no-store, must-revalidate, max-age=0');
+            header('Pragma: no-cache');
+            header('Expires: 0');
+            header('Content-Type: application/json; charset=UTF-8');
         }
 
         parent::onStartup();
@@ -441,5 +457,39 @@ abstract class OpenVKPresenter extends SimplePresenter
         } else {
             return false;
         }
+    }
+
+    public function onServerError(\Throwable $e, ?string $errorCode = null): ?string
+    {
+        try {
+            $str = tr("server_error");
+
+            if ($str[0] == "@") {
+                throw new \RuntimeException("Missing lang");
+            }
+        } catch (\Throwable $e) {
+            $GLOBALS["__ovk_api_lang"] = "en";
+        }
+
+        try {
+            $GLOBALS["showException"] = true;
+            $GLOBALS["exception"] = $e;
+            $userId = Authenticator::i()->getUser();
+            $user = (new Users())->getByChandlerUser($userId);
+
+            if ($user && $user->canSeeTracy()) {
+                while (ob_get_level()) {
+                    ob_end_clean();
+                }
+
+                http_response_code(500);
+                \Tracy\Debugger::getBlueScreen()->render($e);
+                exit;
+            }
+        } catch (\Throwable $e) {
+            $GLOBALS["showException"] = false;
+        }
+
+        return null;
     }
 }

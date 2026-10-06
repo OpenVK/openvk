@@ -1,14 +1,185 @@
-createjs.Sound.registerSound("/assets/packages/static/openvk/audio/notify.mp3", "notification");
+createjs.Sound.registerSound("/assets/packages/static/openvk/audio/notification.mp3", "notification");
+createjs.Sound.registerSound("/assets/packages/static/openvk/audio/newmsg.mp3", "newmsg");
 
-function __actualPlayNotifSound() {
-    createjs.Sound.play("notification");
+let isAudioUnlocked = false;
+
+function __actualPlayNotifSound(type = "notification") {
+    try {
+        if (typeof createjs !== "undefined" && createjs.Sound && typeof createjs.Sound.play === "function") {
+            createjs.Sound.play(type);
+        } else {
+            const audio = new Audio(`/assets/packages/static/openvk/audio/${type}.mp3`);
+            audio.play().catch(err => console.warn("Audio fallback playback error", err));
+        }
+    } catch (e) {
+        console.error("Notification sound playback error", e);
+    }
 }
 
-window.playNotifSound = Function.noop;
+const unlockAudio = () => {
+    isAudioUnlocked = true;
+};
+['click', 'keydown', 'touchstart', 'pointerdown', 'focus'].forEach(evt => {
+    window.addEventListener(evt, unlockAudio, { once: true, capture: true });
+});
+
+// --- Межвкладочная синхронизация звуков и уведомлений ---
+const playedSoundIds = new Set();
+const syncChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('ovk_notifs_sync') : null;
+
+function markSoundPlayed(uniqueId) {
+    playedSoundIds.add(uniqueId);
+    setTimeout(() => playedSoundIds.delete(uniqueId), 15000);
+}
+
+function isTabVisible() {
+    return window.im?.state?.is_tab_visible ?? (typeof document !== 'undefined' && !document.hidden);
+}
+
+function getActiveChatPeerId() {
+    try {
+        if (!window.im?.state?.is_active) return null;
+        const chat = window.im?.messenger?.getCurrentChat?.();
+        return chat?.peer?.id || null;
+    } catch (e) {
+        return null;
+    }
+}
+
+function getActiveChatPeerIds() {
+    const ids = [];
+    const activeMessengerId = getActiveChatPeerId();
+    if (activeMessengerId != null) {
+        ids.push(Number(activeMessengerId));
+    }
+    if (window.im?.fastChats?.openedChats && Array.isArray(window.im.fastChats.openedChats)) {
+        window.im.fastChats.openedChats.forEach(c => {
+            if (!c.isMinimized && c.peerId != null) {
+                ids.push(Number(c.peerId));
+            }
+        });
+    }
+    return ids;
+}
+
+function isChatOpenInCurrentTab(peerId) {
+    if (peerId == null) return false;
+    const targetId = Number(peerId);
+
+    // 1. FastChat is open and NOT minimized
+    if (window.im?.fastChats?.openedChats && Array.isArray(window.im.fastChats.openedChats)) {
+        const isFastChatOpen = window.im.fastChats.openedChats.some(c => Number(c.peerId) === targetId && !c.isMinimized);
+        if (isFastChatOpen) return true;
+    }
+
+    // 2. Messenger page /im is open and this specific dialog is open
+    const isMessengerPage = location.pathname === '/im' || Boolean(window.im?.state?.is_opened);
+    if (isMessengerPage) {
+        const activeMessengerId = getActiveChatPeerId();
+        if (activeMessengerId != null && Number(activeMessengerId) === targetId) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+// --- Кросс-вкладочное подавление звука ---
+const TAB_ID = Date.now() + '_' + Math.random().toString(36).slice(2);
+const CHAT_KEY_PREFIX = 'ovk_chat_';
+const CHAT_STALE_MS = 15000;
+
+function updateActiveChatForTab() {
+    const key = CHAT_KEY_PREFIX + TAB_ID;
+    const peerIds = getActiveChatPeerIds();
+    if (peerIds.length > 0 && isTabVisible()) {
+        localStorage.setItem(key, JSON.stringify({ peers: peerIds, ts: Date.now() }));
+    } else {
+        localStorage.removeItem(key);
+    }
+}
+
+function cleanupTabChat() {
+    localStorage.removeItem(CHAT_KEY_PREFIX + TAB_ID);
+}
+
+function isChatOpenInAnyTab(peerId) {
+    if (peerId == null) return false;
+    const targetId = Number(peerId);
+    const now = Date.now();
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i);
+        if (!key || !key.startsWith(CHAT_KEY_PREFIX)) continue;
+        try {
+            const data = JSON.parse(localStorage.getItem(key));
+            if (now - data.ts > CHAT_STALE_MS) {
+                localStorage.removeItem(key);
+                continue;
+            }
+            if (Array.isArray(data.peers)) {
+                if (data.peers.map(Number).includes(targetId)) return true;
+            } else if (Number(data.peer) === targetId) {
+                return true;
+            }
+        } catch (e) { continue; }
+    }
+    return false;
+}
+
+setInterval(updateActiveChatForTab, 5000);
+updateActiveChatForTab();
+window.addEventListener('pagehide', cleanupTabChat);
+window.addEventListener('beforeunload', cleanupTabChat);
+
+window.addEventListener('focus', updateActiveChatForTab);
+window.addEventListener('visibilitychange', updateActiveChatForTab);
+window.addEventListener('im:visibility_change', updateActiveChatForTab);
+window.addEventListener('hashchange', updateActiveChatForTab);
+window.addEventListener('popstate', updateActiveChatForTab);
+
+try {
+    const imObserverTarget = document.querySelector('#im_container') || document.body;
+    const _chatObserver = new MutationObserver(() => updateActiveChatForTab());
+    _chatObserver.observe(imObserverTarget, { childList: true, subtree: true });
+} catch (e) { /* noop */ }
+
+if (syncChannel) {
+    syncChannel.onmessage = (e) => {
+        const data = e.data;
+        if (!data) return;
+
+        if (data.type === 'SOUND_PLAYED') {
+            markSoundPlayed(data.id);
+        } else if (data.type === 'SHOW_GLOBAL_NOTIF') {
+            displayGlobalNotification(data.notif, false);
+        }
+    };
+}
+
+async function playNotifSoundOnce(uniqueId, type = "notification") {
+    if (!isAudioUnlocked || !uniqueId || playedSoundIds.has(uniqueId)) {
+        return;
+    }
+
+    if (!isTabVisible()) {
+        await new Promise(r => setTimeout(r, 120 + Math.floor(Math.random() * 80)));
+        if (playedSoundIds.has(uniqueId)) return;
+    }
+
+    markSoundPlayed(uniqueId);
+    if (syncChannel) {
+        syncChannel.postMessage({ type: 'SOUND_PLAYED', id: uniqueId });
+    }
+    __actualPlayNotifSound(type);
+}
+
+window.playNotifSound = function (type = "notification") {
+    playNotifSoundOnce(Date.now() + "_" + Math.random(), type);
+};
+window.playUniqueSound = playNotifSoundOnce;
 
 function incrementNotificationsCounter() {
     document.querySelectorAll('a[href="/notifications"]').forEach(link => {
-
         let counterObject = link.querySelector('object');
 
         if (!counterObject) {
@@ -29,52 +200,313 @@ function incrementNotificationsCounter() {
     });
 }
 
+function displayGlobalNotification(notif, shouldBroadcast = true) {
+    const notifKey = 'notif_' + (notif.id || (notif.title + notif.body));
+
+    if (shouldBroadcast) {
+        playNotifSoundOnce(notifKey, "notification");
+    }
+    NewNotification(notif.title, notif.body, notif.ava, Function.noop, (notif.priority || 1) * 6000);
+    incrementNotificationsCounter();
+
+    if (shouldBroadcast && syncChannel) {
+        syncChannel.postMessage({ type: 'SHOW_GLOBAL_NOTIF', notif });
+    }
+}
+
 async function setupNotificationListener() {
-    console.info("Setting up notifications listener...");
-    
+    if (window.__ovkNotifsListenerRunning) {
+        return;
+    }
+    window.__ovkNotifsListenerRunning = true;
+
+    console.info("Notifications | Setting up notifications listener...");
+
     const POLL_INTERVAL = 10000;
-    const CHECK_MORE_INTERVAL = 250;
-    const ERROR_RETRY_INTERVAL = 60000;
+    const CHECK_MORE_INTERVAL = 1500;
+    let consecutiveErrors = 0;
     let isFirstRequest = true;
 
-    while(true) {
+    while (true) {
         try {
+            if (typeof document !== 'undefined' && document.hidden) {
+                await new Promise(resolve => setTimeout(resolve, 30000));
+            }
+
             const notif = await API.Notifications.fetch();
-            
+            consecutiveErrors = 0;
+
             if (notif) {
                 if (!isFirstRequest) {
-                    playNotifSound();
-                    console.info("New notification", notif);
-                    NewNotification(notif.title, notif.body, notif.ava, Function.noop, (notif.priority || 1) * 6000);
-                    incrementNotificationsCounter();
+                    displayGlobalNotification(notif, true);
                 } else {
-                    console.info("First request: skipping alert (syncing cursor)");
+                    console.info("Notifications | First request: skipping alert (syncing cursor)");
                 }
             }
-            
+
             await new Promise(resolve => setTimeout(resolve, CHECK_MORE_INTERVAL));
-        } catch(rejection) {
-            if (rejection.message === "Nothing to report" || rejection.code === 1983) {
+        } catch (rejection) {
+            const errCode = rejection?.code;
+            const errMsg = String(rejection?.message || rejection || "");
+
+            if (errMsg === "Nothing to report" || errCode === 1983) {
+                consecutiveErrors = 0;
                 if (isFirstRequest) {
-                    console.info("Cursor synced. Real-time notifications enabled.");
-                    isFirstRequest = false; 
-                } else {
-                    console.info("No new notifications found, sleeping for " + POLL_INTERVAL/1000 + "s...")
+                    console.info("Notifications | Cursor synced. Real-time notifications enabled.");
+                    isFirstRequest = false;
                 }
                 await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL));
-            } else if (rejection.message === "Disabled" || rejection.code === 1999) {
-                console.error("Real-time notifications are disabled. Aborting RPC polling until next page load", rejection);
+            } else if (errMsg === "Disabled" || errCode === 1999) {
+                console.info("Notifications | Real-time notifications are disabled. Aborting RPC polling.");
+                window.__ovkNotifsListenerRunning = false;
+                break;
+            } else if (errMsg === "User not authorized" || errCode === 1997) {
+                console.info("Notifications | User not authorized. Aborting RPC polling.");
+                window.__ovkNotifsListenerRunning = false;
                 break;
             } else {
-                console.error("Poll error, we'll try again in a minute...", rejection);
-                await new Promise(resolve => setTimeout(resolve, ERROR_RETRY_INTERVAL));
+                consecutiveErrors++;
+                const backoff = Math.min(60000, 5000 * Math.pow(1.5, Math.min(consecutiveErrors, 8)));
+                console.warn(`Notifications | Poll error (${errMsg}), retrying in ${Math.round(backoff / 1000)}s...`, rejection);
+                await new Promise(resolve => setTimeout(resolve, backoff));
             }
         }
     }
-};
+}
 
-(async function() {
+function getMessageNotificationAvatar(peer, msg, isChat, senderId) {
+    const DEFAULT_USER_AVA = '/assets/packages/static/openvk/img/camera_50.png';
+    const DEFAULT_CHAT_AVA = '/assets/packages/static/openvk/img/im/chat_default_50.png';
+
+    if (isChat) {
+        // 1. Check if chat has a custom avatar
+        const hasCustom = (typeof peer.has_custom_avatar === 'boolean' && peer.has_custom_avatar) ||
+            Boolean(peer.data?.photo_id) ||
+            Boolean(peer.data?.photo && (peer.data.photo.photo_50 || peer.data.photo.photo_100 || peer.data.photo.photo_200)) ||
+            Boolean(peer.data?.chat_settings?.photo && (peer.data.chat_settings.photo.photo_50 || peer.data.chat_settings.photo.photo_100 || peer.data.chat_settings.photo.photo_200));
+
+        if (hasCustom) {
+            let customAva = null;
+            if (typeof peer.getAvatar === 'function') {
+                customAva = peer.getAvatar('mid') || peer.getAvatar('min') || peer.getAvatar();
+            }
+            if (!customAva || customAva.includes('chat_default') || customAva.includes('camera_')) {
+                customAva = peer.data?.photo?.photo_100 || peer.data?.photo?.photo_50 || peer.data?.chat_settings?.photo?.photo_100 || peer.data?.chat_settings?.photo?.photo_50 || peer.photo || peer.avatar || peer.data?.photo_50;
+            }
+            if (customAva && !customAva.includes('chat_default') && !customAva.includes('camera_')) {
+                return customAva;
+            }
+        }
+
+        // 2. Chat has no custom avatar -> compose mosaic grid
+        let mosaicAvatars = [];
+        if (typeof peer.getMosaicAvatars === 'function') {
+            mosaicAvatars = peer.getMosaicAvatars() || [];
+        }
+
+        if (!mosaicAvatars || mosaicAvatars.length === 0) {
+            const rawMembers = (peer.members_ids && peer.members_ids.length > 0) ? peer.members_ids :
+                (peer.data?.active_ids && Array.isArray(peer.data.active_ids)) ? peer.data.active_ids :
+                (peer.data?.chat_settings?.active_ids && Array.isArray(peer.data.chat_settings.active_ids)) ? peer.data.chat_settings.active_ids :
+                (peer.data?.members && Array.isArray(peer.data.members)) ? peer.data.members :
+                (peer.data?.chat_settings?.members && Array.isArray(peer.data.chat_settings.members)) ? peer.data.chat_settings.members :
+                (peer.data?.users && Array.isArray(peer.data.users)) ? peer.data.users :
+                (peer.data?.chat_settings?.users && Array.isArray(peer.data.chat_settings.users)) ? peer.data.chat_settings.users : [];
+
+            const memberIds = rawMembers.map(u => typeof u === 'object' && u !== null ? (u.member_id || u.id || u.user_id) : u).filter(Boolean);
+            if (senderId && !memberIds.includes(senderId)) {
+                memberIds.unshift(senderId);
+            }
+
+            for (const mId of memberIds) {
+                if (mosaicAvatars.length >= 4) break;
+                let profAva = null;
+                if (mId === senderId && msg.sender) {
+                    profAva = (typeof msg.sender.getAvatar === 'function' ? (msg.sender.getAvatar('mid') || msg.sender.getAvatar('min') || msg.sender.getAvatar()) : null) || msg.sender.photo_50 || msg.sender.photo_100 || msg.author_photo;
+                }
+                if (!profAva && window.im?.cached_profiles) {
+                    const prof = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached
+                        ? window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(mId)
+                        : window.im.cached_profiles._findCachedProfileById(mId);
+                    if (prof) {
+                        profAva = (typeof prof.getAvatar === 'function' ? (prof.getAvatar('mid') || prof.getAvatar('min') || prof.getAvatar()) : null) || prof.photo_50 || prof.photo_100;
+                    }
+                }
+                mosaicAvatars.push(profAva || DEFAULT_USER_AVA);
+            }
+        }
+
+        if (mosaicAvatars.length === 0) {
+            return DEFAULT_CHAT_AVA;
+        }
+
+        if (mosaicAvatars.length === 1) {
+            return mosaicAvatars[0];
+        }
+
+        if (mosaicAvatars.length === 2) {
+            return `<div class="chat_table_avatar chat_table_avatar_double">
+                <img class="chat_table_avatar_cell pos-left" src="${mosaicAvatars[0]}" onerror="this.onerror=null;this.src='${DEFAULT_USER_AVA}'" />
+                <img class="chat_table_avatar_cell pos-right" src="${mosaicAvatars[1]}" onerror="this.onerror=null;this.src='${DEFAULT_USER_AVA}'" />
+            </div>`;
+        }
+
+        if (mosaicAvatars.length === 3) {
+            return `<div class="chat_table_avatar chat_table_avatar_third">
+                <img class="chat_table_avatar_cell third_left" src="${mosaicAvatars[0]}" onerror="this.onerror=null;this.src='${DEFAULT_USER_AVA}'" />
+                <div class="chat_table_avatar_third_right">
+                    <img class="chat_table_avatar_cell third_right_cell" src="${mosaicAvatars[1]}" onerror="this.onerror=null;this.src='${DEFAULT_USER_AVA}'" />
+                    <img class="chat_table_avatar_cell third_right_cell" src="${mosaicAvatars[2]}" onerror="this.onerror=null;this.src='${DEFAULT_USER_AVA}'" />
+                </div>
+            </div>`;
+        }
+
+        return `<div class="chat_table_avatar chat_table_avatar_more3">
+            <img class="chat_table_avatar_cell quarter" src="${mosaicAvatars[0]}" onerror="this.onerror=null;this.src='${DEFAULT_USER_AVA}'" />
+            <img class="chat_table_avatar_cell quarter" src="${mosaicAvatars[1]}" onerror="this.onerror=null;this.src='${DEFAULT_USER_AVA}'" />
+            <img class="chat_table_avatar_cell quarter" src="${mosaicAvatars[2]}" onerror="this.onerror=null;this.src='${DEFAULT_USER_AVA}'" />
+            <img class="chat_table_avatar_cell quarter" src="${mosaicAvatars[3]}" onerror="this.onerror=null;this.src='${DEFAULT_USER_AVA}'" />
+        </div>`;
+    }
+
+    // Direct message / User
+    let userAva = null;
+    if (typeof peer.getAvatar === 'function') {
+        userAva = peer.getAvatar('mid') || peer.getAvatar('min') || peer.getAvatar();
+    }
+    if (!userAva && msg.sender?.getAvatar) {
+        userAva = msg.sender.getAvatar('mid') || msg.sender.getAvatar('min') || msg.sender.getAvatar();
+    }
+    if (!userAva) {
+        userAva = peer.photo || peer.avatar || peer.data?.photo_100 || peer.data?.photo_50 || msg.author_photo || msg.sender?.photo_50 || msg.sender?.photo_100;
+    }
+    if (!userAva && window.im?.cached_profiles && (senderId || peer.id)) {
+        const prof = window.im.cached_profiles._findCachedProfileById(senderId || peer.id);
+        if (prof) {
+            userAva = (typeof prof.getAvatar === 'function' ? (prof.getAvatar('mid') || prof.getAvatar('min') || prof.getAvatar()) : null) || prof.photo_50 || prof.photo_100;
+        }
+    }
+
+    return userAva || DEFAULT_USER_AVA;
+}
+
+function showMessageNotification(conv, msg) {
+    try {
+        if (typeof NewNotification !== 'function') return;
+
+        const peer = conv?.peer;
+        if (!peer) return;
+
+        const peerId = Number(peer.id || 0);
+        const senderId = Number(msg.sender?.id || msg.from_id?.id || msg.from_id || msg.data?.from_id?.id || msg.data?.from_id || 0);
+
+        let senderName = '';
+        if (msg.sender?.getName) {
+            senderName = msg.sender.getName(false, true) || msg.sender.getName();
+        } else if (msg.sender?.name) {
+            senderName = msg.sender.name;
+        } else if (msg.author_name) {
+            senderName = msg.author_name;
+        } else if (window.im?.cached_profiles && senderId) {
+            const prof = window.im.cached_profiles._findCachedProfileById(senderId);
+            if (prof) {
+                senderName = prof.getName ? (prof.getName(false, true) || prof.getName()) : prof.name;
+            }
+        }
+
+        const isChat = (typeof peer.isChat === 'function' && peer.isChat()) || (peerId >= 2000000000) || peer.supposed_type === 'chat';
+        const peerTitle = (typeof peer.getName === 'function' ? peer.getName() : null) || peer.title || peer.name || peer.data?.title || '';
+
+        let title = '';
+        if (isChat) {
+            title = peerTitle || (typeof tr === 'function' ? tr('chat') : 'Беседа');
+        } else {
+            title = senderName || peerTitle || (typeof tr === 'function' ? tr('message') : 'Сообщение');
+        }
+
+        let bodyText = (typeof msg.getText === 'function' ? msg.getText(true, true) : (msg.data?.text || msg.text || msg.body || '')) || '';
+        if (!bodyText) {
+            const atts = (msg.data && msg.data.attachments) || msg.attachments || [];
+            if (atts.length > 0 && typeof get_attachment_text === 'function') {
+                bodyText = get_attachment_text(atts[0]);
+            } else if (atts.length > 0) {
+                bodyText = typeof tr === 'function' ? tr('attachment') : 'Вложение';
+            } else {
+                bodyText = typeof tr === 'function' ? tr('new_message') : 'Новое сообщение';
+            }
+        }
+
+        bodyText = String(bodyText).replace(/<[^>]*>/g, '').trim();
+        if (bodyText.length > 120) {
+            bodyText = bodyText.substring(0, 117) + '...';
+        }
+
+        if (isChat && senderName) {
+            bodyText = `${senderName}: ${bodyText}`;
+        }
+
+        const ava = getMessageNotificationAvatar(peer, msg, isChat, senderId);
+
+        const onClick = () => {
+            if (!isChat && window.im?.fastChats && (!window.im?.state?.is_opened && location.pathname !== '/im')) {
+                window.im.fastChats.openChat(peerId);
+            } else if (window.router && typeof window.router.route === 'function') {
+                window.router.route('/im?sel=' + peerId);
+            } else {
+                window.location.href = '/im?sel=' + peerId;
+            }
+        };
+
+        NewNotification(title, bodyText, ava, onClick, 5000, false);
+    } catch (e) {
+        console.error("Msg balloon notif error:", e);
+    }
+}
+
+async function triggerMessageNotification(conv, msg, timestamp) {
+    try {
+        const peer = conv?.peer;
+        if (!peer) return;
+
+        const currentUserId = Number(window.openvk ? window.openvk.current_id : (window.im?.state?.getId() || 0));
+        const senderId = Number(msg.sender?.id || msg.from_id?.id || msg.from_id || msg.data?.from_id?.id || msg.data?.from_id || 0);
+
+        if (senderId && currentUserId && senderId === currentUserId) {
+            return;
+        }
+
+        const isMuted = (peer.isMuted && peer.isMuted()) || msg.data?.attachments?.muted || msg.attachments?.muted;
+        const isMentioned = Boolean(
+            msg.mention ||
+            msg.is_mentioned ||
+            msg.data?.mention ||
+            msg.data?.is_mentioned ||
+            msg.data?.attachments?.mention ||
+            msg.attachments?.mention
+        );
+
+        if (isMuted && !isMentioned) {
+            return;
+        }
+
+        const soundId = 'msg_' + (msg.id || msg.random_id || (Date.now() + '_' + Math.random()));
+        if (isChatOpenInAnyTab(peer.id)) {
+            markSoundPlayed(soundId);
+            if (syncChannel) {
+                syncChannel.postMessage({ type: 'SOUND_PLAYED', id: soundId });
+            }
+        } else {
+            playNotifSoundOnce(soundId, "newmsg");
+        }
+
+        if (!isChatOpenInCurrentTab(peer.id)) {
+            showMessageNotification(conv, msg);
+        }
+    } catch (error) {
+        console.error("Msg notifs | Error occurred while forming notification:", error);
+    }
+}
+
+(async function () {
     await setupNotificationListener();
 })();
-
-u(document.body).on("click", () => window.playNotifSound = window.__actualPlayNotifSound);

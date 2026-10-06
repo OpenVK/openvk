@@ -34,7 +34,7 @@ class Documents
     }
 
     # By "Virtual ID" and "Absolute ID" (to not leak owner's id).
-    public function getDocumentById(int $virtual_id, int $real_id, string $access_key = null): ?Document
+    public function getDocumentById(int $virtual_id, int $real_id, ?string $access_key = null): ?Document
     {
         $doc = $this->documents->where(['virtual_id' => $virtual_id, 'id' => $real_id]);
         /*if($access_key) {

@@ -46,7 +46,7 @@
     <span n:if="isset($thisUser) && $user->getId() == $thisUser->getId()"><b>({_this_is_you})</b></span>
 
     <!-- DEBUG: ONLINE REPORT: static {$user->getOnline()->timestamp()}s adjusted {$user->getOnline()->timestamp() + 2505600}s real {time()}s -->
-    <div n:if="$user->getOnline()->timestamp() + 2505600 > time()" style="float:right;">
+    <div n:if="$user->getPrivacyPermission('page.online.read', $thisUser) || $user->getOnline()->timestamp() + 2505600 > time()" style="float:right;">
         {if $user->isOnline()}
             <span><b>{_online}</b></span>
         {else}
@@ -64,8 +64,6 @@
 {/block}
 
 {block content}
-    {if !$user->isBanned()}
-
     {if !$user->getPrivacyPermission('page.read', $thisUser ?? NULL)}
         <div class="msg msg_err">
             <b>{_forbidden}</b><br/>
@@ -85,10 +83,11 @@
 						<span>{_add_image}</span></a>
                         <a {if !$hasAvatar}style="display:none"{/if} class="_add_image hoverable set_image" id="add_image">
 						<span>{_upload_new_picture}</span></a>
+		                <a style="display:none" class="_draw_avatar hoverable set_image" onclick="uploadByGraffiti()" id="draw_image"><span>{_draw_avatar}</span></a>
                     </div>
                 </div>
             {/if}
-            <a href="{$user->getAvatarLink()|nocheck}">
+            <a {if $hasAvatar}onclick="OpenAvatar(event, {$user->getAvatarUrl('large')}, {$user->getAvatarAlbum()->getPrettyId()}, {$user->getAvatarPhoto()->getPrettyIdWithKey()})" href="{$user->getAvatarLink()|nocheck}"{/if}>
                 <img src="{$user->getAvatarUrl('normal')}"
                      alt="{$user->getCanonicalName()}"
                      id="bigAvatar"
@@ -139,7 +138,7 @@
                 {/if}
 
                 <a style="width: 194px;" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $user->getGiftCount() == 0" href="/gifts?act=pick&user={$user->getId()}" class="profile_link">{_send_gift}</a>
-                <a style="width: 194px;" n:if="$user->getPrivacyPermission('messages.write', $thisUser)" href="/im?sel={$user->getId()}" class="profile_link" rel="nofollow">{_send_message}</a>
+                <a style="width: 194px;" n:if="$user->getPrivacyPermission('messages.write', $thisUser)" onclick="showUserDialog(event, {$user->getRealId()})" href="/im?sel={$user->getId()}" class="profile_link">{_send_message}</a>
 
                 {var $subStatus = $user->getSubscriptionStatus($thisUser)}
                 {if $subStatus === 0}
@@ -176,7 +175,7 @@
                 {* 4 admins *}
                 <a n:if="$blacklist_status" id="_bl_toggler" data-val="0" data-id="{$user->getRealId()}" class="profile_link" style="display:block;width:96%;">{_bl_remove}</a>
                 <a class="profile_link" style="display:block;width:96%;" href="javascript:reportUser({$user->getId()})">{_report}</a>
-                <a n:if="!$user->isHideFromGlobalFeedEnabled()" class="profile_link" style="display:block;width:96%;" id="__ignoreSomeone" data-val='{!$ignore_status ? 1 : 0}' data-id="{$user->getId()}">
+                <a n:if="!$user->isHideFromGlobalFeedEnabled()" class="profile_link" onclick="onIgnoreSomeoneClick(event)" style="display:block;width:96%;" id="__ignoreSomeone" data-val='{!$ignore_status ? 1 : 0}' data-id="{$user->getId()}">
                     {if !$ignore_status}{_ignore_user}{else}{_unignore_user}{/if}
                 </a>
             {/if}
@@ -214,7 +213,25 @@
                 </a>
             {/if}
         </div>
-        <br />
+        <div class="fictional_profile_section" n:if="$thisUser != NULL && $thisUser->getId() != $user->getId() && $user->getPrivacyPermission('friends.read', $thisUser ?? NULL) && ($commonFriendsCount = $user->getCommonFriendsCount($thisUser)) > 0">
+            <div class="content_title_expanded" onclick="hidePanel(this, {$commonFriendsCount});">
+                {_friends_common}
+            </div>
+            <div>
+                <div class="content_subtitle">
+                    {tr("friends_common", $commonFriendsCount)}
+                    <div style="float:right;">
+                        <a href="/friends{$user->getId()}?act=common">{_all_title}</a>
+                    </div>
+                </div>
+                <div class="content_list hide_on_mobiles">
+                    {foreach $user->getCommonFriends($thisUser, 1, 6, "RAND()") as $friend}
+                        {include "Thumb.latte", user => $friend}
+                    {/foreach}
+                </div>
+            </div>
+        </div>
+        <br/>
         <div class="fictional_profile_section" n:if="$user->getFriendsCount() > 0 && $user->getPrivacyPermission('friends.read', $thisUser ?? NULL)">
             {var $friendCount = $user->getFriendsCount()}
 
@@ -229,17 +246,9 @@
                     </div>
                 </div>
                 <div class="content_list hide_on_mobiles">
-                    <div class="cl_element" n:foreach="$user->getFriends(1) as $friend">
-                        <div class="cl_avatar">
-                            <a href="{$friend->getURL()}">
-                                <img class="ava" src="{$friend->getAvatarUrl('miniscule')}" />
-                            </a>
-                        </div>
-                        <a href="{$friend->getURL()}" class="cl_name">
-                            <text class="cl_fname">{$friend->getFirstName()}</text>
-                            <text class="cl_lname">{$friend->getLastName()}</text>
-                        </a>
-                    </div>
+                    {foreach $user->getFriends(1) as $friend}
+                        {include "Thumb.latte", user => $friend}
+                    {/foreach}
                 </div>
             </div>
         </div>
@@ -257,17 +266,9 @@
                     </div>
                 </div>
                 <div class="hide_on_mobiles content_list">
-                    <div class="cl_element" n:foreach="$user->getFriendsOnline(1) as $friend">
-                        <div class="cl_avatar">
-                            <a href="{$friend->getURL()}">
-                                <img class="ava" src="{$friend->getAvatarUrl('miniscule')}" />
-                            </a>
-                        </div>
-                        <a href="{$friend->getURL()}" class="cl_name">
-                            <text class="cl_fname">{$friend->getFirstName()}</text>
-                            <text class="cl_lname">{$friend->getLastName()}</text>
-                        </a>
-                    </div>
+                    {foreach $user->getFriendsOnline(1) as $friend}
+                        {include "Thumb.latte", user => $friend}
+                    {/foreach}
                 </div>
             </div>
         </div>
@@ -311,17 +312,9 @@
                     </div>
                 </div>
                 <div class="hide_on_mobiles" style="padding: 5px;">
-                    <div class="ovk-video" n:foreach="$videos as $video">
-                        <a href="/video{$video->getPrettyId()}" class="preview" align="center" id="videoOpen" data-id="{$video->getPrettyId()}">
-                            <img
-                                src="{$video->getThumbnailURL()}"
-                                style="max-width: 170px; max-height: 127px; margin: auto;" />
-                        </a>
-                        <div>
-                            <b><a href="/video{$video->getPrettyId()}" id="videoOpen" data-id="{$video->getPrettyId()}">{ovk_proc_strtr($video->getName(), 30)}</a></b><br>
-                            <span style="font-size: 10px;">{$video->getPublicationTime()} | {_comments} ({$video->getCommentsCount()})</span>
-                        </div>
-                    </div>
+                    {foreach $videos as $video}
+                        {include "../Videos/ProfileVideo.latte", video => $video, ref => $user->getId()}
+                    {/foreach}
                 </div>
             </div>
         </div>
@@ -385,7 +378,7 @@
                         <a href="/events{$user->getId()}">{_all_title}</a>
                     </div>
                 </div>
-                <div style="padding-left: 5px;">
+                <div class="hide_on_mobiles" style="padding-left: 5px;">
                     <div style="display: inline;" n:foreach="$user->getEvents(1) as $meeting">
                         <a href="/event{$meeting->getId()}">{$meeting->getName()}</a> {if !$iterator->last}•{/if}
                     </div>
@@ -427,7 +420,7 @@
                     {else}
                         <div class="page_status" style="display: flex;">
                             <div n:class="audioStatus, $thatIsThisUser ? page_status_edit_button" id="page_status_text">
-                                <a {if !$thatIsThisUser}href="/audio0_{$audioStatus->getId()}"{/if}>{$audioStatus->getName()}</a>
+                                <a onclick="AudioViewer.openById(event, {$audioStatus->getPrettyIdA()})">{$audioStatus->getName()}</a>
                             </div>
                         </div>
                     {/if}
@@ -766,9 +759,5 @@
         </script>
     </div>
 
-    {/if}
-
-    {else} {* isBanned() *}
-        {include "banned.latte"}
     {/if}
 {/block}

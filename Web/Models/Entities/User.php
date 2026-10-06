@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
 
 use morphos\Gender;
+use openvk\Web\Util\IMBroker;
 use openvk\Web\Themes\{Themepack, Themepacks};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
-use openvk\Web\Models\Entities\{Photo, Message, Correspondence, Gift, Audio};
+use openvk\Web\Models\Entities\{Photo, Gift, Audio};
+use openvk\Web\Models\Privacy\PrivacySettings;
+use openvk\Web\Models\Entities\Messages\{Message, Correspondence};
 use openvk\Web\Models\Repositories\{Applications, Bans, Comments, Notes, Posts, Users, Clubs, Albums, Gifts, Notifications, Videos, Photos};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use Nette\Database\Table\ActiveRow;
@@ -49,8 +52,11 @@ class User extends RowModel
     protected function _abstractRelationGenerator(string $filename, int $page = 1, int $limit = 6): \Traversable
     {
         $id     = $this->getId();
+        $page   = max(1, $page);
+        $limit  = max(1, $limit);
+        $offset = ($page - 1) * $limit;
         $query  = "SELECT id FROM\n" . file_get_contents(__DIR__ . "/../sql/$filename.tsql");
-        $query .= "\n LIMIT " . $limit . " OFFSET " . (($page - 1) * $limit);
+        $query .= "\n LIMIT " . $limit . " OFFSET " . $offset;
 
         $ids = [];
         $rels = DatabaseConnection::i()->getConnection()->query($query, $id, $id);
@@ -232,23 +238,29 @@ class User extends RowModel
     {
         if ($fullName) {
             if ($startWithLastName) {
-                $name = $this->getLastName() . " " . $this->getFirstName();
+                $name = $this->getLastName(true) . " " . $this->getFirstName(true);
             } else {
-                $name = $this->getFirstName() . " " . $this->getLastName();
+                $name = $this->getFirstName(true) . " " . $this->getLastName(true);
             }
         } elseif ($startWithLastName == false) {
-            $name = $this->getFirstName();
+            $name = $this->getFirstName(true);
         } else {
-            $name = $this->getLastName();
+            $name = $this->getLastName(true);
         }
 
-        if (!preg_match("/^[А-Яа-яЁё\s-]+$/u", $name)) {
-            return $name;
-        } # name is probably not russian
+        if (preg_match("/^[А-Яа-яЁё\s-]+$/u", $name)) {
+            $inflected = inflectName($name, $case, $this->isFemale() ? Gender::FEMALE : Gender::MALE);
+            if ($inflected) {
+                $name = $inflected;
+            }
+        }
 
-        $inflected = inflectName($name, $case, $this->isFemale() ? Gender::FEMALE : Gender::MALE);
+        $tsn = tr("__transNames");
+        if ($tsn !== "@__transNames" && !empty($tsn)) {
+            return mb_convert_case(transliterator_transliterate($tsn, $name), MB_CASE_TITLE);
+        }
 
-        return $inflected ?: $name;
+        return $name;
     }
 
     public function getCanonicalName(): string
@@ -590,6 +602,7 @@ class User extends RowModel
                 "docs",
                 "fave",
                 "events",
+                "stickers",
             ],
         ])->get($id);
     }
@@ -598,20 +611,7 @@ class User extends RowModel
     {
         return (int) bmask($this->getRecord()->privacy, [
             "length"   => 2,
-            "mappings" => [
-                "page.read",
-                "page.info.read",
-                "groups.read",
-                "photos.read",
-                "videos.read",
-                "notes.read",
-                "friends.read",
-                "friends.add",
-                "wall.write",
-                "messages.write",
-                "audios.read",
-                "likes.read",
-            ],
+            "mappings" => PrivacySettings::getPossibleSettings(),
         ])->get($id);
     }
 
@@ -685,6 +685,15 @@ class User extends RowModel
         ];
     }
 
+    public function isFriendsWith(User $us): bool
+    {
+        if ($us->getRealId() === $this->getId()) {
+            return false;
+        }
+
+        return $this->getSubscriptionStatus($us) === User::SUBSCRIPTION_MUTUAL;
+    }
+
     public function getFriends(int $page = 1, int $limit = 6): \Traversable
     {
         return $this->_abstractRelationGenerator("get-friends", $page, $limit);
@@ -703,6 +712,74 @@ class User extends RowModel
     public function getFriendsOnlineCount(): int
     {
         return $this->_abstractRelationCount("get-online-friends");
+    }
+
+    private function mutualFriendsOf(User $user)
+    {
+        $ctx = DatabaseConnection::i()->getContext();
+        $followedByUser = $ctx->table('subscriptions')
+            ->where('follower', $user->getId())
+            ->where('model', User::class)
+            ->select('target');
+
+        return $ctx->table('subscriptions')
+            ->where('target', $user->getId())
+            ->where('model', User::class)
+            ->where('follower', $followedByUser)
+            ->select('follower');
+    }
+
+    public function getCommonFriendsQuery(User $me)
+    {
+        $ctx = DatabaseConnection::i()->getContext();
+
+        return $ctx->table('profiles')
+            ->where('id', $this->mutualFriendsOf($me))
+            ->where('id', $this->mutualFriendsOf($this));
+    }
+
+    public function getCommonFriends(User $me, int $page = 1, int $limit = 6, string $order = "online DESC"): \Traversable
+    {
+        $users = new Users();
+
+        $friends = $this->getCommonFriendsQuery($me)->limit($limit, ($page - 1) * $limit)->order($order);
+        foreach ($friends->fetchAll() as $friend) {
+            yield $users->toUser($friend);
+        }
+    }
+
+    public function getCommonFriendsCount(User $me): int
+    {
+        return $this->getCommonFriendsQuery($me)->count();
+    }
+
+    public function getRecommendedFriendsQuery()
+    {
+        $ctx = DatabaseConnection::i()->getContext();
+
+        $friends = $this->mutualFriendsOf($this);
+
+        $friendsOfFriends = $ctx->table('subscriptions')
+            ->where('follower', $friends)
+            ->where('model', User::class)
+            ->where('(follower, target) IN (SELECT target, follower FROM subscriptions WHERE model = ?)', User::class)
+            ->select('DISTINCT target');
+
+        return $ctx->table('profiles')
+            ->where('id', $friendsOfFriends)
+            ->where('id != ?', $this->getId())
+            ->where('id NOT', $friends);
+    }
+
+
+    public function getRecommendedFriends(int $page = 1, int $limit = 6, string $order = "online DESC"): \Traversable
+    {
+        $users = new Users();
+
+        $friends = $this->getRecommendedFriendsQuery()->limit($limit, ($page - 1) * $limit)->order($order);
+        foreach ($friends->fetchAll() as $friend) {
+            yield $users->toUser($friend);
+        }
     }
 
     public function getFriendsBday(bool $today): array
@@ -728,7 +805,7 @@ class User extends RowModel
     {
         $sel = $this->getRecord()->related("subscriptions.follower");
         foreach ($sel->where("model", "openvk\\Web\\Models\\Entities\\Club")
-                      ->where("target IN (SELECT id FROM groups WHERE type = ? AND start_date < ? AND start_date > ?)", 2, time() + DAY, time()) as $target) {
+                     ->where("target IN (SELECT id FROM groups WHERE type = ? AND start_date < ? AND start_date > ?)", 2, time() + DAY, time()) as $target) {
             $target = (new Clubs())->get($target->target);
             if (!$target) {
                 continue;
@@ -770,7 +847,25 @@ class User extends RowModel
 
     public function getUnreadMessagesCount(): int
     {
-        return sizeof(DatabaseConnection::i()->getContext()->table("messages")->where(["recipient_id" => $this->getId(), "unread" => 1]));
+
+        try {
+            $broker = IMBroker::i();
+            if (!$broker->isEnabled()) {
+                return 0;
+            }
+
+            $response = $broker->invokeMethod($this->getId(), "im.getUnreadConversations");
+            if (empty($response) || !is_string($response)) {
+                return 0;
+            }
+            $data = json_decode($response, true);
+
+            return (int) ($data['response']['count'] ?? 0);
+
+        } catch (\Exception $e) {
+            error_log("IM Broker error: " . $e->getMessage());
+            return 0;
+        }
     }
 
     public function getClubs(int $page = 1, bool $admin = false, int $count = OPENVK_DEFAULT_PER_PAGE, bool $offset = false, bool $andEvents = false): \Traversable
@@ -797,8 +892,8 @@ class User extends RowModel
             }
         } else {
             $sel = $this->getRecord()
-                        ->related("subscriptions.follower")
-                        ->limit($count, $page);
+                ->related("subscriptions.follower")
+                ->limit($count, $page);
 
             if (!$andEvents) {
                 $sel = $sel->where("target IN (SELECT id FROM groups WHERE type = ?)", 1);
@@ -827,7 +922,7 @@ class User extends RowModel
         } else {
             $sel = $this->getRecord()->related("subscriptions.follower");
             $sel = $sel->where("model", "openvk\\Web\\Models\\Entities\\Club")
-                       ->where("target IN (SELECT id FROM groups WHERE type = ?)", 1);
+                ->where("target IN (SELECT id FROM groups WHERE type = ?)", 1);
 
             return sizeof($sel);
         }
@@ -919,7 +1014,7 @@ class User extends RowModel
         } else {
             $sel = $this->getRecord()->related("subscriptions.follower");
             $sel = $sel->where("model", "openvk\\Web\\Models\\Entities\\Club")
-                       ->where("target IN (SELECT id FROM groups WHERE type = ?)", 2);
+                ->where("target IN (SELECT id FROM groups WHERE type = ?)", 2);
 
             return sizeof($sel);
         }
@@ -943,7 +1038,7 @@ class User extends RowModel
 
     public function getGifts(int $page = 1, ?int $perPage = null): \Traversable
     {
-        $gifts = $this->getRecord()->related("gift_user_relations.receiver")->order("sent DESC")->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
+        $gifts = $this->getRecord()->related("gift_user_relations.receiver")->where("deleted", 0)->order("sent DESC")->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
         foreach ($gifts as $rel) {
             yield (object) [
                 "id"      => $rel->id,
@@ -1088,6 +1183,25 @@ class User extends RowModel
         return (bool) $this->getRecord()->verified;
     }
 
+    public function canCreateStickers(): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        return (bool) ($this->getRecord()->can_create_stickers ?? false);
+    }
+
+    public function rawCanCreateStickers(): bool
+    {
+        return (bool) ($this->getRecord()->can_create_stickers ?? false);
+    }
+
+    public function setCanCreateStickers(bool|int $value): void
+    {
+        $this->stateChanges("can_create_stickers", (int) (bool) $value);
+    }
+
     public function isBanned(): bool
     {
         return !is_null($this->getBanReason());
@@ -1124,9 +1238,9 @@ class User extends RowModel
         return !is_null($this->getPendingPhoneVerification());
     }
 
-    public function gift(User $sender, Gift $gift, ?string $comment = null, bool $anonymous = false): void
+    public function gift(User $sender, Gift $gift, ?string $comment = null, bool $anonymous = false): ActiveRow
     {
-        DatabaseConnection::i()->getContext()->table("gift_user_relations")->insert([
+        return DatabaseConnection::i()->getContext()->table("gift_user_relations")->insert([
             "sender"    => $sender->getId(),
             "receiver"  => $this->getId(),
             "gift"      => $gift->getId(),
@@ -1220,9 +1334,9 @@ class User extends RowModel
         $this->save();
 
         DatabaseConnection::i()->getContext()
-                               ->table("number_verification")
-                               ->where("user", $this->getId())
-                               ->delete();
+            ->table("number_verification")
+            ->where("user", $this->getId())
+            ->delete();
 
         return true;
     }
@@ -1258,20 +1372,7 @@ class User extends RowModel
     {
         $this->stateChanges("privacy", bmask($this->changes["privacy"] ?? $this->getRecord()->privacy, [
             "length"   => 2,
-            "mappings" => [
-                "page.read",
-                "page.info.read",
-                "groups.read",
-                "photos.read",
-                "videos.read",
-                "notes.read",
-                "friends.read",
-                "friends.add",
-                "wall.write",
-                "messages.write",
-                "audios.read",
-                "likes.read",
-            ],
+            "mappings" => PrivacySettings::getPossibleSettings(),
         ])->set($id, $status)->toInteger());
     }
 
@@ -1293,6 +1394,7 @@ class User extends RowModel
                 "docs",
                 "fave",
                 "events",
+                "stickers",
             ],
         ])->set($id, (int) $status)->toInteger();
 
@@ -1336,13 +1438,13 @@ class User extends RowModel
 
         if ($this->hasPendingNumberChange()) {
             DatabaseConnection::i()->getContext()
-                                   ->table("number_verification")
-                                   ->where("user", $this->getId())
-                                   ->update(["number" => $phone, "code" => $code]);
+                ->table("number_verification")
+                ->where("user", $this->getId())
+                ->update(["number" => $phone, "code" => $code]);
         } else {
             DatabaseConnection::i()->getContext()
-                                   ->table("number_verification")
-                                   ->insert(["user" => $this->getId(), "number" => $phone, "code" => $code]);
+                ->table("number_verification")
+                ->insert(["user" => $this->getId(), "number" => $phone, "code" => $code]);
         }
 
         return (string) $code;
@@ -1361,9 +1463,16 @@ class User extends RowModel
 
     public function updOnline(string $platform): bool
     {
+        $wasOnline = $this->isOnline();
         $this->setOnline(time());
         $this->setClient_name($platform);
         $this->save(false);
+
+        if (!$wasOnline) {
+            IMBroker::i()->setUserOnline($this->getId());
+        } else {
+            IMBroker::i()->touchUserOnline($this->getId());
+        }
 
         return true;
     }
@@ -1450,6 +1559,17 @@ class User extends RowModel
     public function isAdmin(): bool
     {
         return $this->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(null);
+    }
+
+    public function canSeeTracy(): bool
+    {
+        $cfg = OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["canSeeTracy"];
+
+        if (is_array($cfg) && in_array($this->getId(), $cfg)) {
+            return true;
+        }
+
+        return false;
     }
 
     public function isDead(): bool
@@ -1619,6 +1739,9 @@ class User extends RowModel
         $avatar_photo  = $this->getAvatarPhoto();
         foreach ($fields as $field) {
             switch ($field) {
+                case "can_write_private_message":
+                    $res->can_write_private_message = 1;
+                    break;
                 case 'is_dead':
                     $res->is_dead = $this->isDead();
                     break;
@@ -1640,6 +1763,9 @@ class User extends RowModel
                 case 'photo_max':
                     $res->photo_max = $this->getAvatarUrl('original', $avatar_photo);
                     break;
+                case "photo_base":
+                    $res->photo_base = $this->getAvatarUrl('normal', $avatar_photo);
+                    break;
                 case 'photo_id':
                     $res->photo_id = $avatar_photo ? $avatar_photo->getPrettyId() : null;
                     break;
@@ -1648,9 +1774,6 @@ class User extends RowModel
                     break;
                 case 'reg_date':
                     $res->reg_date = $this->getRegistrationTime()->timestamp();
-                    break;
-                case 'nickname':
-                    $res->nickname = $this->getPseudo();
                     break;
                 case 'nickname':
                     $res->nickname = $this->getPseudo();
@@ -1685,6 +1808,17 @@ class User extends RowModel
                     $res->games = $this->getFavoriteGames();
                     break;
             }
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            $res->uid              = $this->getId();
+            $res->sex              = $this->isFemale() ? 1 : ($this->isNeutral() ? 0 : 2);
+            $res->photo            = $this->getAvatarUrl('miniscule', $avatar_photo);
+            $res->photo_rec        = $this->getAvatarUrl('miniscule', $avatar_photo);
+            $res->photo_medium_rec = $this->getAvatarUrl('tiny', $avatar_photo);
+            $res->photo_50         = $this->getAvatarUrl('miniscule', $avatar_photo);
+            $res->photo_100        = $this->getAvatarUrl('tiny', $avatar_photo);
+            $res->screen_name      = $this->getShortCode() ?? "id" . $this->getId();
         }
 
         return $res;
@@ -1822,7 +1956,7 @@ class User extends RowModel
 
         foreach ($sources as $source) {
             $entity_id = (int) $source->target ;
-            $entity = (new Users())->get($entity_id);
+            $entity = get_entity_by_id($entity_id);
             if (!$entity) {
                 continue;
             }
@@ -1850,6 +1984,14 @@ class User extends RowModel
             }
         } else {
             $counters = unpack("S" . $count_of_keys, base64_decode($ev_str, true));
+        }
+
+        if ($counters == false) {
+            $counters = [];
+
+            for ($i = 0; $i < $count_of_keys; $i++) {
+                $counters[] = 0;
+            }
         }
 
         return [

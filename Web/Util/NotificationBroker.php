@@ -17,7 +17,7 @@ class NotificationBroker
     private function __construct()
     {
         $conf = OPENVK_ROOT_CONF["openvk"]["credentials"]["notificationsBroker"];
-        $redisConf = $conf["redis"] ?? ['addr' => '127.0.0.1', 'port' => 6379]; // я люблю фоллбеки :з
+        $redisConf = OPENVK_ROOT_CONF["openvk"]["credentials"]["redis"] ?? ['addr' => '127.0.0.1', 'port' => 6379];
 
         $this->redis = new RedisClient([
             'scheme' => 'tcp',

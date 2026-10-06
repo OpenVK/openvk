@@ -1,0 +1,139 @@
+<?php
+declare(strict_types=1);
+
+$httpCode  = http_response_code() ?: 500;
+$tracyCode = $errorCode ?? (\class_exists(\Chandler\Debug\DebuggerUtils::class) ? \Chandler\Debug\DebuggerUtils::getLastErrorCode() : ($GLOBALS["tracyErrorCode"] ?? ($GLOBALS["errorCode"] ?? null)));
+$errorDate = date('d.m.Y, H:i:s');
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Server Error</title>
+
+    <style>
+        body {
+            background: #f1efed;
+            color: #545157;
+            font-family: Tahoma, Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 30px 15px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .logo img {
+            width: 300px;
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .container {
+            display: flex;
+            width: 700px;
+            max-width: 100%;
+            margin: 0 auto;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            box-sizing: border-box;
+        }
+
+        .left {
+            flex: 1;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .right {
+            width: 256px;
+            flex-shrink: 0;
+            text-align: center;
+        }
+
+        .right img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #45688e;
+            margin-bottom: 8px;
+        }
+
+        .block {
+            margin-bottom: 20px;
+        }
+
+        .meta {
+            color: #828282;
+            font-size: 11px;
+            border-top: 1px solid #dae1e8;
+            padding-top: 10px;
+        }
+
+        @media screen and (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .right {
+                display: none !important;
+            }
+
+            .left {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="logo">
+            <a href="/">
+                <img src="/assets/packages/static/openvk/img/error/openvk_tl.png" alt="OpenVK Logo" />
+            </a>
+        </div>
+
+        <div class="container">
+            <div class="left">
+                <div class="block">
+                    <div class="title"><?= tr("server_error") ?></div>
+                    <?= tr("server_error_desc") ?>
+                </div>
+
+                <div class="block">
+                    <div class="title"><?= tr("error_what_do") ?></div>
+                    <a href="javascript:history.go(-1);"><?= tr("error_what_do_back") ?></a> - <a href="/settings/reset_theme"><?= tr("error_what_do_reset_themepack") ?></a>
+                    <br><br>
+                    <?= tr("error_what_do_desc") ?>
+                </div>
+
+                <div class="meta">
+                    <i>Error code <?= (int) $httpCode ?>, <?= htmlspecialchars($errorDate, ENT_QUOTES, 'UTF-8') ?>.</i>
+                    <?php if (!empty($tracyCode)): ?>
+                        <p>Exception ID for Support: <code style="font-family:monospace;background:#e2e2e2;padding:1px 4px;border-radius:3px;"><?= htmlspecialchars($tracyCode, ENT_QUOTES, 'UTF-8') ?></code></p>
+                    <?php endif; ?>
+                    <?php if (!empty($GLOBALS["showException"]) && isset($GLOBALS["exception"])): ?>
+                        <p>Error occurred in file <?= htmlspecialchars($GLOBALS["exception"]->getFile() . ':' . $GLOBALS["exception"]->getLine(), ENT_QUOTES, 'UTF-8') ?></p>
+                    <?php endif; ?>
+                    <p><?= OPENVK_ROOT_CONF["openvk"]["appearance"]["motd"] ?></p>
+                </div>
+            </div>
+            <div class="right">
+                <img src="/assets/packages/static/openvk/img/error/server.png" alt="Error" />
+            </div>
+        </div>
+    </main>
+</body>
+</html>

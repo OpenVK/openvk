@@ -38,6 +38,7 @@ class Notifications implements Handler
 
             if (is_null($this->user)) {
                 $reject(1997, "User not authorized"); # hong kong 97 reference
+                return;
             }
 
             $userId = $this->user->getId();
@@ -63,6 +64,7 @@ class Notifications implements Handler
             $notification = $this->notifs->fromArray((array) $payload);
 
             if (!$notification) {
+                $session->set("notifs_cursor", $newCursor);
                 $reject(1982, "Server Error");
                 return;
             }
@@ -76,16 +78,25 @@ class Notifications implements Handler
             $session->set("notifs_cursor", $newCursor);
 
             $userModel = $notification->getModel(1);
+            $avatarUrl = ($userModel && is_callable([$userModel, 'getAvatarUrl']))
+                ? $userModel->getAvatarUrl()
+                : '/assets/packages/static/openvk/img/camera_50.png';
+
+            $body = '';
+            if (file_exists($tplId)) {
+                $body = trim(preg_replace('%(\s){2,}%', "$1", $latte->renderToString($tplId, ["notification" => $notification])));
+            }
 
             $resolve([
+                "id"       => $event['id'] ?? (string) ($payload->id ?? hrtime(true)),
                 "title"    => tr("notif_" . $payload->actionCode . "_" . $payload->originModelType . "_" . $payload->targetModelType),
-                "body"     => trim(preg_replace('%(\s){2,}%', "$1", $latte->renderToString($tplId, ["notification" => $notification]))),
-                "ava"      => $userModel->getAvatarUrl(),
+                "body"     => $body,
+                "ava"      => $avatarUrl,
                 "priority" => 1,
             ]);
 
-        } catch (\Exception $e) {
-            $reject(1981, "Redis Error: " . $e->getMessage());
+        } catch (\Throwable $e) {
+            $reject(1981, "Notification Error: " . $e->getMessage());
         }
     }
 }

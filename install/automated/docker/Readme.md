@@ -8,8 +8,8 @@ Note: **commands below must be run from the this directory** (`/install/automate
 ### Multi-arch (arm64, amd64)
 Base images:
 ```
-docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/openvk/openvk/php:8.2-cli ../../.. --load -f base-php-cli.Dockerfile
-docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/openvk/openvk/php:8.2-apache ../../.. --load -f base-php-apache.Dockerfile
+docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/openvk/openvk/php:8.4-cli ../../.. --load -f base-php-cli.Dockerfile
+docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/openvk/openvk/php:8.4-apache ../../.. --load -f base-php-apache.Dockerfile
 ```
 OpenVK main image:
 ```
@@ -19,8 +19,8 @@ docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/openvk/openvk/
 ### Single-arch
 Base images:
 ```
-docker build -t ghcr.io/openvk/openvk/php:8.2-cli ../../.. -f base-php-cli.Dockerfile
-docker build -t ghcr.io/openvk/openvk/php:8.2-apache ../../.. -f base-php-apache.Dockerfile
+docker build -t ghcr.io/openvk/openvk/php:8.4-cli ../../.. -f base-php-cli.Dockerfile
+docker build -t ghcr.io/openvk/openvk/php:8.4-apache ../../.. -f base-php-apache.Dockerfile
 ```
 OpenVK main image:
 ```

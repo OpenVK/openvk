@@ -317,6 +317,16 @@ final class AudioPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $isAjax = $this->postParam("ajax") == "1";
+
+            if ($isAjax) {
+                $this->template->_template = "Audio/player.latte";
+                $this->template->audio = $found_audio;
+                return;
+            }
+        }
+
         $this->template->alone_audio = $found_audio;
         $this->renderList(null, 'alone_audio');
     }
@@ -743,7 +753,7 @@ final class AudioPresenter extends OpenVKPresenter
                     $audio->setAlbumId($album_id);
 
                     $playlist = (new Audios())->getPlaylist($album_id);
-                    if ($playlist && !$playlist->hasAudio($audio)) {
+                    if ($playlist && !$playlist->hasAudio($audio) && $playlist->canBeModifiedBy($this->user->identity)) {
                         $playlist->add($audio);
                     }
                 } else {

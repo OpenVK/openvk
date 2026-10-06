@@ -1,0 +1,72 @@
+{block content}
+    {if !$message}
+        {include "../components/error.latte", description => tr("reported_message_display_error")}
+    {else}
+        <style>
+            .reportedMsg {
+                outline: 5px solid #ffacac;
+            }
+            .deletedMsg {
+                opacity: 0.75;
+                background-color: #fff4f4;
+            }
+            .deletedBadge {
+                display: inline-block;
+                font-size: 10px;
+                color: #d9534f;
+                border-radius: 3px;
+                margin-left: 5px;
+                vertical-align: middle;
+            }
+        </style>
+
+        <div id="reported_msg_context">
+            <p>{_reported_msg_1}: {$message->getPeerId()}</p>
+            <p>{_reported_msg_2}: {$message->getSenderId()}</p>
+            <p>{_reported_msg_3}</p>
+
+            <hr>
+
+            {foreach $message->getContext(0) as $item}
+                {var $owner = $item->getOwner()}
+                <div class="messenger-app--messages---message {if $item->getId() == $message->getId()}reportedMsg{/if} {if $item->isDeleted()}deletedMsg{/if}">
+                    <div class="messenger-app--messages---message--wrap">
+                        <div class="inlines _avatar">
+                            {if $owner}
+                                <img class="ava" src="{$owner->getAvatarUrl()}" />
+                            {else}
+                                <div class="ava" style="background: #e1e4eb; border-radius: 50%; width: 32px; height: 32px;"></div>
+                            {/if}
+                        </div>
+                        <div class="inlines _content post-content">
+                            {if $owner}
+                                <a class="_sender" target="_blank" href="{$owner->getURL()}">
+                                    <strong style="font-size: 11px;">{$owner->getFullName()}</strong>
+                                </a>
+                            {else}
+                                <strong style="font-size: 11px; color: #777;">ID: {$item->getSenderId()}</strong>
+                            {/if}
+                            {if $item->isDeleted()}
+                                <span class="deletedBadge">({_deleted})</span>
+                            {/if}
+                            <p class="normalText text">{$item->getText()}</p>
+                            {var $attachmentsLayout = $item->getChildrenWithLayout(200)}
+                            <div n:ifcontent class="attachments attachments_b" style="height: {$attachmentsLayout->height|noescape}; width: {$attachmentsLayout->width|noescape};">
+                                <div class="attachment" n:foreach="$attachmentsLayout->tiles as $attachment" style="float: {$attachment[3]|noescape}; width: {$attachment[0]|noescape}; height: {$attachment[1]|noescape};">
+                                    {include "../../components/attachment.latte", attachment => $attachment[2], parent => $post, parentType => "post", tilesCount => sizeof($attachmentsLayout->tiles)}
+                                </div>
+                            </div>
+
+                            <div n:ifcontent class="attachments attachments_m">
+                                <div class="attachment" n:foreach="$attachmentsLayout->extras as $attachment">
+                                    {include "../../components/attachment.latte", attachment => $attachment}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="time"><span>{$item->getSendTimeHumanized()}</span></div>
+                    </div>
+                </div>
+            {/foreach}
+        </div>
+    {/if}
+{/block}

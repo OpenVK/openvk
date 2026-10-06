@@ -8,6 +8,7 @@ use openvk\VKAPI\Exceptions\APIErrorException;
 use openvk\Web\Models\Entities\IP;
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Repositories\IPs;
+use openvk\Web\Util\RateLimiter;
 
 abstract class VKAPIRequestHandler
 {
@@ -25,9 +26,9 @@ abstract class VKAPIRequestHandler
         throw new APIErrorException($message, $code);
     }
 
-    protected function failTooOften(): never
+    protected function failTooOften(string $message = "Rate limited"): never
     {
-        $this->fail(9, "Rate limited");
+        $this->fail(9, $message);
     }
 
     protected function getUser(): ?User
@@ -52,14 +53,14 @@ abstract class VKAPIRequestHandler
         }
     }
 
-    protected function willExecuteWriteAction(): void
+    protected function willExecuteWriteAction(string $method = ""): void
     {
-        $ip  = (new IPs())->get(CONNECTING_IP);
-        $res = $ip->rateLimit();
+        $userId = $this->getUser() ? $this->getUser()->getId() : null;
+        $res = RateLimiter::i()->limitWrite(CONNECTING_IP, $userId, 1, $method);
 
-        if (!($res === IP::RL_RESET || $res === IP::RL_CANEXEC)) {
-            if ($res === IP::RL_BANNED && OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["rateLimits"]["autoban"]) {
-                $this->user->ban("User account has been suspended for breaking API terms of service", false);
+        if (!($res === RateLimiter::RL_RESET || $res === RateLimiter::RL_CANEXEC)) {
+            if ($res === RateLimiter::RL_BANNED && OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["rateLimits"]["autoban"]) {
+                $this->user?->ban("User account has been suspended for breaking API terms of service", false);
                 $this->fail(18, "User account has been suspended due to repeated violation of API rate limits.");
             }
 
@@ -78,9 +79,18 @@ abstract class VKAPIRequestHandler
 
     public function generateItems(int $count, array $items, bool $without_count = false)
     {
-        if (VKAPI_DECL_VER_MAJOR >= 5 && VKAPI_DECL_VER_MINOR < 138 && $without_count == true) {
+        if ($without_count == true) {
+            if (VKAPI_DECL_VER_MAJOR >= 5 && VKAPI_DECL_VER_MINOR >= 138) {
+                return (object) [
+                    'count' => $count,
+                    'items' => $items,
+                ];
+            }
+
             return $items;
-        } elseif (VKAPI_DECL_VER_MAJOR >= 5) {
+        }
+
+        if (VKAPI_DECL_VER_MAJOR >= 5) {
             return (object) [
                 'count' => $count,
                 'items' => $items,

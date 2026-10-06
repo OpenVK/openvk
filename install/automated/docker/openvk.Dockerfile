@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 ARG GITREPO=openvk/openvk
-FROM ghcr.io/${GITREPO}/php:8.2-cli AS builder
+FROM ghcr.io/${GITREPO}/php:8.4-cli AS builder
 
 WORKDIR /opt/openvk
 
@@ -23,7 +23,7 @@ WORKDIR /opt/openvk
 ADD . .
 
 ARG GITREPO=openvk/openvk
-FROM ghcr.io/${GITREPO}/php:8.2-apache
+FROM ghcr.io/${GITREPO}/php:8.4-apache
 
 ARG INSTALL_TEST_DEPS=
 RUN if [ -n "$INSTALL_TEST_DEPS" ]; then \
