@@ -241,6 +241,13 @@ final class Wall extends VKAPIRequestHandler
                 $post_temp_obj->copy_date     = $repost[0]["date"];
             }
 
+            $viewsCount = $post->getViews();
+            if ($viewsCount !== null) {
+                $post_temp_obj->views = (object) [
+                    "count" => $viewsCount
+                ];
+            }
+
             if ($post->hasSource()) {
                 $post_temp_obj->copyright = $post->getVkApiCopyright();
             }
@@ -559,6 +566,13 @@ final class Wall extends VKAPIRequestHandler
                         "user_reposted" => 0,
                     ],
                 ];
+
+                $viewsCount = $post->getViews();
+                if ($viewsCount !== null) {
+                    $post_temp_obj->views = (object) [
+                        "count" => $viewsCount
+                    ];
+                }
 
                 if ($post->hasSource()) {
                     $post_temp_obj->copyright = $post->getVkApiCopyright();
