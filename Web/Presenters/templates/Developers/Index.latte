@@ -1,0 +1,128 @@
+{extends "../@layout.latte"}
+
+{block layout_width}925px{/block}
+
+{block title}
+    {tr("dev_title")}
+{/block}
+
+{block header}
+    {tr("dev_title")}
+    {css "css/dev.css"}
+{/block}
+
+{block sidebar}
+    <div class="dev_sidebar_menu">
+        {define isLinkActive, $href, $current}
+            {var $cleanHref = ltrim(preg_replace('#^/?(dev/)?#', '', $href), '/')}
+            {var $cleanCurrent = ltrim(preg_replace('#^/?(dev/)?#', '', $current), '/')}
+            {$cleanHref === $cleanCurrent}
+        {/define}
+
+        {if !empty($isMethodsPage)}
+            <a href="/dev" data-do-ajax="true" class="link dev_section_link dev_back_link">
+                {tr("dsb_back_to_docs")}
+            </a>
+
+            <div class="dev_sidebar_separator"></div>
+
+            {foreach $methodsGroups as $group}
+                {var $isGroupOpen = str_starts_with($currentSection, 'methods/' . $group['id'])}
+                
+                <div class="fictional_profile_section">
+                    <div 
+                        class="{if $isGroupOpen}content_title_expanded{else}content_title_unexpanded{/if}" 
+                        onclick="hidePanel(this, 'dev_group_{$group['id']}');"
+                    >
+                        {tr($group['name'])}
+                    </div>
+                    
+                    <div id="dev_group_{$group['id']}" {if !$isGroupOpen}style="display: none;"{/if}>
+                        {foreach $group['links'] as $item}
+                            {var $isActive = ltrim(preg_replace('#^/?(dev/)?#', '', $item['href']), '/') === ltrim(preg_replace('#^/?(dev/)?#', '', $currentSection), '/')}
+                            
+                            <a 
+                                href="{$item['href']}"
+                                data-do-ajax="true"
+                                class="link dev_section_link dev_sublink {if $isActive}active dev_mlist_sel{/if}"
+                            >
+                                {$item['name']}
+                            </a>
+                        {/foreach}
+                    </div>
+                </div>
+            {/foreach}
+
+        {else}
+            {foreach $devMenu as $item}
+                {var $itemPath = trim($item['href'], '/')}
+                {var $curPath  = trim($currentSection, '/')}
+                {var $isActive = ($curPath === '' || $curPath === 'dev') 
+                    ? ($itemPath === 'dev') 
+                    : ($itemPath === $curPath || $itemPath === 'dev/' . $curPath)}
+
+                <a 
+                    href="{$item['href']}"
+                    data-do-ajax="true"
+                    class="link dev_section_{$item['type']} {if $isActive}active dev_mlist_sel{/if}"
+                >
+                    {tr($item['name'])}
+                </a>
+            {/foreach}
+        {/if}
+    </div>
+{/block}
+
+{block wrap}
+    <div class="wrap2">
+        <div class="wrap1">
+            <div class="page_wrap">
+                <div class="dev_main_head">
+                    <div class="dev_main_narrow">
+                        <div class="dev_create_app_btn"><a href="/editapp?act=create" class="button">&nbsp;&nbsp;{tr("di_new_app")}&nbsp;&nbsp;</a></div><br>
+                        <a href="/apps?act=dev">{tr("di_myapps_list")}</a>
+                    </div>
+                    <div class="dev_main_header">{tr("di_title")}</div>
+                    <div class="dev_main_desc">
+                        {tr("di_desc")|noescape}
+
+                        <div class="dev_main_sections">
+                            <a href="/dev/native" class="dev_sect dev_sect_games">
+                            <div class="dev_sect_icon"></div>
+                            {tr("di_btn_games")}
+                            </a>
+                            <a href="/dev/standalone" class="dev_sect dev_sect_standalone">
+                            <div class="dev_sect_icon"></div>
+                            {tr("di_btn_standalone")}
+                            </a>
+                            <a href="/dev/sites" class="dev_sect dev_sect_widgets">
+                            <div class="dev_sect_icon"></div>
+                            {tr("di_btn_widgets")}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="dev_main_cont">
+                    <div class="dev_parts_list fl_l">
+                        <a href="/dev/main" class="dev_part">
+                        <div class="dev_part_name">{tr("di_documentation")}</div>
+                        <div class="dev_part_desc">{tr("di_documentation_desc")}</div>
+                        </a>
+                        <a href="/support" class="dev_part">
+                        <div class="dev_part_name">{tr("di_support")}</div>
+                        <div class="dev_part_desc">{tr("di_support_desc")}</div>
+                        </a>
+                        <a href="/dev/terms" class="dev_part">
+                        <div class="dev_part_name">{tr("di_rules")}</div>
+                        <div class="dev_part_desc">{tr("di_rules_desc")}</div>
+                        </a>
+                        <a href="/dev/bugs" class="dev_part">
+                        <div class="dev_part_name">{tr("di_bugs")}</div>
+                        <div class="dev_part_desc">{tr("di_bugs_desc")}</div>
+                        </a>
+                    </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+{/block}
