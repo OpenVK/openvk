@@ -65,7 +65,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Chandler\\PHPStanLatte\\": "vendor/openvk/chandler/tools/phpstan-latte/"
+            "Chandler\\PHPStanLatte\\": "vendor/openvk/chandler/tools/phpstan-latte/",
+            "openvk\\PHPStanLatte\\": "tools/phpstan-latte/"
         }
     },
     "minimum-stability": "dev",
