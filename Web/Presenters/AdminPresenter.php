@@ -503,6 +503,7 @@ final class AdminPresenter extends OpenVKPresenter
         }
     }
 
+    /** @phpstan-latte-ignore route placeholder without a template */
     public function renderFiles(): void {}
 
     public function renderQuickBan(int $id): void
