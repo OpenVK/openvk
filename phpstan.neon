@@ -53,6 +53,8 @@ parameters:
             owner: 'int|\openvk\Web\Models\Entities\User|null'
             custom_id: 'int|string|null'
             iterator: 'iterable'
+            # @listView.latte passes the current list item into blocks as "x => $dat"
+            x: 'mixed'
         templateTypes:
             - Chandler\MVC\TemplateScope
         features:
