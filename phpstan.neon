@@ -42,6 +42,16 @@ parameters:
         maxTemplateVariants: 2
         collectedPaths:
             - vendor/openvk/chandler/chandler/MVC/SimplePresenter.php
+        globalVariables:
+            parentModule: 'string|null'
+            backdrops: 'array<int, string>|null'
+            club: '\openvk\Web\Models\Entities\Club|null'
+            title: 'string|null'
+            commentSection: 'bool|null'
+            post: '\openvk\Web\Models\Entities\Post|null'
+            owner: 'int|\openvk\Web\Models\Entities\User|null'
+            custom_id: 'int|string|null'
+            iterator: 'iterable'
         templateTypes:
             - Chandler\MVC\TemplateScope
         features:
