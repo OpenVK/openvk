@@ -666,7 +666,7 @@
                     <td width="120" valign="top" align="right"><span class="nobold">{_ui_settings_timezone}</span></td>
                     <td>
                         <select id="timezone">
-                            {foreach TIMEZONES_ARRAY as $tz}
+                            {foreach \TIMEZONES_ARRAY as $tz}
                                 <option {if intval($isTimezoned) == $tz}selected{/if} value="{$tz}">{tr('timezone-'.$tz)}</option>
                             {/foreach}
                         </select>
