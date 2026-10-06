@@ -521,7 +521,7 @@ final class Photos extends VKAPIRequestHandler
         }
 
         if ($no_comments != -1) {
-            $photo->setCommentOpenness($no_comments == 1);
+            $photo->setCommentPrivacy($no_comments == 1);
         }
 
         $photo->setEdited(time());
@@ -600,6 +600,10 @@ final class Photos extends VKAPIRequestHandler
         $photo = (new PhotosRepo())->getByOwnerAndVID($owner_id, $photo_id);
 
         if (!$photo || $photo->isDeleted() || !$photo->canBeViewedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        if (!$photo->canBeCommentedBy($this->getUser())) {
             $this->fail(15, "Access denied");
         }
 

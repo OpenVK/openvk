@@ -185,7 +185,7 @@ final class Video extends VKAPIRequestHandler
         }
 
         if ($no_comments != -1) {
-            $video->setCommentOpenness($no_comments == 0);
+            $video->setCommentPrivacy($no_comments == 0);
             $changes += 1;
         }
 
@@ -366,6 +366,9 @@ final class Video extends VKAPIRequestHandler
         $video = (new VideosRepo())->getByOwnerAndVID($owner_id, $video_id);
         if (!$video || $video->isDeleted()) {
             $this->fail(100, "One of the parameters specified was missing or invalid: video not found");
+        }
+        if (!$video->canBeCommentedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
         }
 
         $sticker = null;

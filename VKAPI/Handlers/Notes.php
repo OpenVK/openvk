@@ -57,7 +57,9 @@ final class Notes extends VKAPIRequestHandler
         if ($note->getOwner()->isDeleted()) {
             $this->fail(15, "Access denied");
         }
-
+        if (!$note->canBeCommentedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
         if (!$note->canBeViewedBy($this->getUser())) {
             $this->fail(15, "Access denied");
         }
@@ -136,7 +138,7 @@ final class Notes extends VKAPIRequestHandler
         !empty($text) ? $note->setSource($text) : null;
 
         if ($comment_privacy != -1) {
-            $note->setCommentOpenness($comment_privacy == 1);
+            $note->setCommentPrivacy($comment_privacy == 1);
         }
 
         $note->setCached_Content(null);

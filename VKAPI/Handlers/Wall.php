@@ -1207,7 +1207,7 @@ final class Wall extends VKAPIRequestHandler
             $this->fail(100, "Invalid post");
         }
 
-        if (!$post->canBeViewedBy($this->getUser())) {
+        if (!$post->canBeViewedBy($this->getUser()) || !$post->canBeCommentedBy($this->getUser())) {
             $this->fail(15, "Access denied");
         }
 
@@ -1551,7 +1551,7 @@ final class Wall extends VKAPIRequestHandler
             $this->fail(100, "One of the parameters specified was missing or invalid: post_id is undefined");
         }
 
-        if (!$post->canBeViewedBy($this->getUser()) || !$post->canBeCommentedBy($this->getUser())) {
+        if (!$post->canBeViewedBy($this->getUser())) {
             $this->fail(15, "Access denied");
         }
 
@@ -1648,7 +1648,7 @@ final class Wall extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
-        $post->setCommentOpenness(false);
+        $post->setCommentPrivacy(false);
         $post->save();
 
         return 1;
@@ -1665,7 +1665,7 @@ final class Wall extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
-        $post->setCommentOpenness(true);
+        $post->setCommentPrivacy(true);
         $post->save();
 
         return 1;

@@ -346,7 +346,8 @@ abstract class Postable extends Attachable
         return $can != Postable::COMMENTABLE_EVERYBODY;
     }
 
-    public function setCommentOpenness(bool $open, bool $forFriendOnly = false): void
+    // TODO: $forFriendOnly
+    public function setCommentPrivacy(bool $open, bool $forFriendOnly = false): void
     {
         if ($open == true) {
             $this->setComment_status(0);
