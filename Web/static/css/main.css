@@ -238,6 +238,7 @@ h1 {
     padding-right: 8px;
     text-transform: lowercase;
     float: right;
+    background: url(../img/divider.png) no-repeat right;
 }
 
 .header_navigation .link {
@@ -3261,10 +3262,6 @@ a.poll-retract-vote {
     margin-left: 0px;
     margin-right: 13px;
     padding: 10px 0 0 5px;
-}
-
-.page_custom_header .header-search-box {
-    margin-left: 175px;
 }
 
 .header-search-box input[type='search'] {
