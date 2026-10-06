@@ -1,0 +1,53 @@
+includes:
+    - vendor/efabrica/phpstan-latte/rules.neon
+
+parameters:
+    level: 0
+    paths:
+        - Web/Presenters/NotesPresenter.php
+        - Web/Presenters/OpenVKPresenter.php
+    bootstrapFiles:
+        - chandler_loader.php
+    tmpDir: tmp/phpstan-probe
+    earlyTerminatingMethodCalls:
+        Chandler\MVC\SimplePresenter:
+            - redirect
+            - terminate
+            - throwError
+            - notFound
+            - pass
+        openvk\Web\Presenters\OpenVKPresenter:
+            - flashFail
+    ignoreErrors:
+        -
+            message: '#^Cannot automatically resolve latte template from expression\.$#'
+            path: '*/chandler/MVC/SimplePresenter.php'
+    latte:
+        engineBootstrap: tools/phpstan-latte/latte.engine.php
+        tmpDir: tmp/phpstan-probe/latte
+        reportUnanalysedTemplates: true
+        maxTemplateVariants: 2
+        breakIncludeCycles: true
+        collectedPaths:
+            - vendor/openvk/chandler/chandler/MVC/SimplePresenter.php
+        globalVariables:
+            parentModule: 'string|null'
+            backdrops: 'array<int, string>|null'
+            club: '\openvk\Web\Models\Entities\Club|null'
+            title: 'string|null'
+            commentSection: 'bool|null'
+            post: '\openvk\Web\Models\Entities\Post|null'
+            owner: 'int|\openvk\Web\Models\Entities\User|null'
+            custom_id: 'int|string|null'
+            iterator: 'iterable'
+        templateTypes:
+            - Chandler\MVC\TemplateScope
+        features:
+            analyseLayoutFiles: true
+            phpstanCommand: "vendor/bin/phpstan analyse {dir} --no-progress --memory-limit 512M -c phpstan-latte-inner.neon"
+    parallel:
+        maximumNumberOfProcesses: 1
+
+services:
+    - Chandler\PHPStanLatte\ChandlerPresenterTemplateResolver
+    - Chandler\PHPStanLatte\ChandlerErrorTemplateResolver

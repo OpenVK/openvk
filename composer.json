@@ -26,7 +26,7 @@
             "@lint:latte"
         ],
         "lint:latte": "chandler-latte-lint Web/Presenters/templates Email",
-        "analyse": "phpstan analyse --memory-limit 1G"
+        "analyse": "phpstan analyse --memory-limit 2G"
     },
     "config": {
         "platform": {
