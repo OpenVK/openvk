@@ -541,6 +541,7 @@ final class AdminPresenter extends OpenVKPresenter
         return str_starts_with($ret, "/admin/gifts") ? $ret : $fallback;
     }
 
+    /** @phpstan-latte-ignore route placeholder without a template */
     public function renderFiles(): void {}
 
     public function renderQuickBan(int $id): void
