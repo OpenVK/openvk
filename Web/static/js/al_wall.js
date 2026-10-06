@@ -1722,7 +1722,7 @@ var tooltipClientNoInfoTemplate = Handlebars.compile(`
 tippy.delegate("body", {
     target: '.client_app',
     theme: "light vk",
-    content: "⌛",
+    content: "<img src=\"/assets/packages/static/openvk/img/loading_mini.gif\">",
     delay: 400,
     allowHTML: true,
     interactive: true,
@@ -1762,7 +1762,7 @@ tippy.delegate('body', {
     animation: 'up_down',
     target: `.post-like-button[data-type]:not([data-likes="0"])`,
     theme: "special vk",
-    content: "⌛",
+    content: "<img src=\"/assets/packages/static/openvk/img/loading_mini.gif\">",
     delay: 400,
     allowHTML: true,
     interactive: true,
