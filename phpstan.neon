@@ -41,7 +41,6 @@ parameters:
         reportUnanalysedTemplates: true
         maxTemplateVariants: 2
         breakIncludeCycles: true
-        resolveTypes: false
         collectedPaths:
             - vendor/openvk/chandler/chandler/MVC/SimplePresenter.php
         globalVariables:
