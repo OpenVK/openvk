@@ -7,6 +7,7 @@ namespace openvk\Web\Models\Search;
 use openvk\Web\Models\Repositories\{Users, Clubs, Posts, Videos, Applications, Audios, Documents};
 use openvk\Web\Models\Search\Catalogue;
 use openvk\Web\Models\Entities\User;
+use openvk\Web\Util\Cache;
 
 class InvalidSectionError extends \RuntimeException {}
 
@@ -123,7 +124,16 @@ class SearchState
             }
 
             $iterator = $results->page($page, $perPage);
-            $count    = $results->size();
+
+            if ($this->query === "") {
+                $count = Cache::remember(
+                    "search:count:" . $this->section . ":" . $this->order_type . ":" . (int) $this->invert . ":" . md5(serialize($this->params)),
+                    60,
+                    fn() => $results->size()
+                );
+            } else {
+                $count = $results->size();
+            }
 
             $res = iterator_to_array($iterator);
 

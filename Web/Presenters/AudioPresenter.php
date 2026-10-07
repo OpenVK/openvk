@@ -12,6 +12,7 @@ use openvk\Web\Models\Entities\Playlist;
 use openvk\Web\Models\Repositories\Audios;
 use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\Repositories\Users;
+use openvk\Web\Util\Cache;
 
 final class AudioPresenter extends OpenVKPresenter
 {
@@ -866,7 +867,16 @@ final class AudioPresenter extends OpenVKPresenter
 
                 $stream = $this->audios->find($data['query'], $params, $order);
                 $audios = $stream->page($page, 10);
-                $audiosCount = $stream->size();
+
+                if (($data['query'] ?? "") === "") {
+                    $audiosCount = Cache::remember(
+                        "audios:count:" . $order['type'] . ":" . (int) $order['invert'] . ":" . md5(serialize($params)),
+                        60,
+                        fn() => $stream->size()
+                    );
+                } else {
+                    $audiosCount = $stream->size();
+                }
                 break;
             case 'alone_audio':
                 $found_audio = $this->audios->get($ctx_id);

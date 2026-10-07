@@ -15,6 +15,7 @@ class Tickets
     private $tickets;
 
     private static $cache = [];
+    private static array $countCache = [];
 
     public function __construct()
     {
@@ -48,11 +49,17 @@ class Tickets
 
     public function getTicketsCountByUserId(int $userId, ?int $type = null): int
     {
-        if (is_null($type)) {
-            return sizeof($this->tickets->where(["user_id" => $userId, "deleted" => 0]));
-        } else {
-            return sizeof($this->tickets->where(["user_id" => $userId, "deleted" => 0, "type" => $type]));
+        $key = $userId . ":" . ($type ?? "*");
+        if (!array_key_exists($key, self::$countCache)) {
+            $filter = ["user_id" => $userId, "deleted" => 0];
+            if (!is_null($type)) {
+                $filter["type"] = $type;
+            }
+
+            self::$countCache[$key] = (int) $this->tickets->where($filter)->count("*");
         }
+
+        return self::$countCache[$key];
     }
 
     public function getRequestById(int $requestId): ?Ticket

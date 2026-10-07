@@ -13,6 +13,7 @@ class Posts
 {
     /* aggressive sql caching */
     private static $cache = [];
+    private static array $pinnedCache = [];
 
     private $context;
     private $posts;
@@ -35,14 +36,18 @@ class Posts
 
     public function getPinnedPost(int $user): ?Post
     {
-        $post = (clone $this->posts)->where([
-            "wall"     => $user,
-            "pinned"   => true,
-            "deleted"  => false,
-            "archived" => false,
-        ])->fetch();
+        if (!array_key_exists($user, self::$pinnedCache)) {
+            $post = (clone $this->posts)->where([
+                "wall"     => $user,
+                "pinned"   => true,
+                "deleted"  => false,
+                "archived" => false,
+            ])->fetch();
 
-        return $this->toPost($post);
+            self::$pinnedCache[$user] = $this->toPost($post);
+        }
+
+        return self::$pinnedCache[$user];
     }
 
     public function getPostsFromUsersWall(int $user, int $page = 1, ?int $perPage = null, ?int $offset = null): \Traversable

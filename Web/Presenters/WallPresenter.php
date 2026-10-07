@@ -305,7 +305,7 @@ final class WallPresenter extends OpenVKPresenter
         $posts = DatabaseConnection::i()->getConnection()->query("SELECT `posts`.`id` " . $queryBase . " ORDER BY `created` DESC LIMIT " . $pPage . " OFFSET " . ($page - 1) * $pPage);
         $count = Cache::remember(
             "feedcount:" . md5($queryBase),
-            60,
+            300,
             fn() => DatabaseConnection::i()->getConnection()->query("SELECT COUNT(*) " . $queryBase)->fetch()->{"COUNT(*)"}
         );
 
