@@ -6,6 +6,7 @@ namespace openvk\Web\Models\Entities;
 
 use morphos\Gender;
 use openvk\Web\Util\IMBroker;
+use openvk\Web\Util\Cache;
 use openvk\Web\Themes\{Themepack, Themepacks};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
@@ -777,29 +778,61 @@ class User extends RowModel
     {
         $users = new Users();
 
-        $friends = $this->getRecommendedFriendsQuery()->limit($limit, ($page - 1) * $limit)->order($order);
-        foreach ($friends->fetchAll() as $friend) {
-            yield $users->toUser($friend);
+        $ids = Cache::remember(
+            "recs:" . $this->getId() . ":$page:$limit:" . md5($order),
+            900,
+            function () use ($page, $limit, $order): array {
+                $ids = [];
+                foreach ($this->getRecommendedFriendsQuery()->limit($limit, ($page - 1) * $limit)->order($order)->fetchAll() as $friend) {
+                    $ids[] = (int) $friend->id;
+                }
+
+                return $ids;
+            }
+        );
+
+        foreach ($ids as $id) {
+            $user = $users->get($id);
+            if ($user) {
+                yield $user;
+            }
         }
     }
 
     public function getFriendsBday(bool $today): array
     {
-        $users = $this->_abstractRelationGenerator($today ? "get-bday-today" : "get-bday-tomorrow", 1, 3000);
-        $usersFiltered = [];
-        foreach ($users as $u) {
-            if ($u->getPrivacySetting("page.info.read") != 0) {
-                $usersFiltered[] = $u;
+        $ids = Cache::remember(
+            "bday:" . $this->getId() . ($today ? ":today" : ":tomorrow"),
+            max(60, strtotime("tomorrow") - time()),
+            function () use ($today): array {
+                $ids = [];
+                foreach ($this->_abstractRelationGenerator($today ? "get-bday-today" : "get-bday-tomorrow", 1, 3000) as $u) {
+                    if ($u->getPrivacySetting("page.info.read") != 0) {
+                        $ids[] = $u->getRealId();
+                    }
+                }
+
+                return $ids;
+            }
+        );
+
+        $users = [];
+        $repo  = new Users();
+        foreach ($ids as $id) {
+            $user = $repo->get($id);
+            if ($user) {
+                $users[] = $user;
             }
         }
 
-        if (sizeof($usersFiltered) > 0) {
-            return [
-                "isToday" => $today,
-                "users" => $usersFiltered,
-            ];
+        if (sizeof($users) == 0) {
+            return [];
         }
-        return [];
+
+        return [
+            "isToday" => $today,
+            "users"   => $users,
+        ];
     }
 
     public function getUpcomingEvents(): \Traversable
