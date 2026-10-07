@@ -81,6 +81,20 @@ To call any API method, send a GET or POST request to:
 * **[audio.isLagtrain](/dev/methods/audio/isLagtrain)** — Checks if audio track is Lagtrain.
 * **[audio.subscribeToQueue](/dev/methods/audio/subscribeToQueue)** — Playback queue subscription stub.
 
+## board
+
+* **[board.getTopics](/dev/methods/board/getTopics)** — Returns topics in a community discussion board.
+* **[board.getComments](/dev/methods/board/getComments)** — Returns comments in a topic.
+* **[board.addTopic](/dev/methods/board/addTopic)** — Creates a new topic in community discussions.
+* **[board.addChatTopic](/dev/methods/board/addChatTopic)** — Creates a topic linked to a group chat.
+* **[board.createComment](/dev/methods/board/createComment)** — Adds a comment to a topic.
+* **[board.editTopic](/dev/methods/board/editTopic)** — Edits a topic title.
+* **[board.closeTopic](/dev/methods/board/closeTopic)** — Closes a topic.
+* **[board.openTopic](/dev/methods/board/openTopic)** — Re-opens a topic.
+* **[board.fixTopic](/dev/methods/board/fixTopic)** — Pins a topic.
+* **[board.unfixTopic](/dev/methods/board/unfixTopic)** — Unpins a topic.
+* **[board.deleteTopic](/dev/methods/board/deleteTopic)** — Deletes a topic.
+
 ## users
 
 * **[users.get](/dev/methods/users/get)** — Returns user profiles.

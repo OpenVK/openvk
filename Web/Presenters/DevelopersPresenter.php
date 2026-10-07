@@ -141,6 +141,23 @@ final class DevelopersPresenter extends OpenVKPresenter
                     ],
                 ],
                 [
+                    "id"    => "board",
+                    "name"  => "dsb_m_board",
+                    "links" => [
+                        ["name" => "getTopics",       "href" => "/dev/methods/board/getTopics"],
+                        ["name" => "getComments",     "href" => "/dev/methods/board/getComments"],
+                        ["name" => "addTopic",        "href" => "/dev/methods/board/addTopic"],
+                        ["name" => "addChatTopic",    "href" => "/dev/methods/board/addChatTopic"],
+                        ["name" => "createComment",   "href" => "/dev/methods/board/createComment"],
+                        ["name" => "editTopic",       "href" => "/dev/methods/board/editTopic"],
+                        ["name" => "closeTopic",      "href" => "/dev/methods/board/closeTopic"],
+                        ["name" => "openTopic",       "href" => "/dev/methods/board/openTopic"],
+                        ["name" => "fixTopic",        "href" => "/dev/methods/board/fixTopic"],
+                        ["name" => "unfixTopic",      "href" => "/dev/methods/board/unfixTopic"],
+                        ["name" => "deleteTopic",     "href" => "/dev/methods/board/deleteTopic"],
+                    ],
+                ],
+                [
                     "id"    => "users",
                     "name"  => "dsb_m_users",
                     "links" => [

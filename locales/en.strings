@@ -1341,6 +1341,7 @@
 "dsb_m_activity" = "Activity";
 "dsb_m_apps" = "Apps";
 "dsb_m_audio" = "Audio";
+"dsb_m_board" = "Discussions";
 "dsb_models" = "Models";
 "dsb_standalone" = "Standalone";
 "dsb_sites" = "Sites and Widgets";

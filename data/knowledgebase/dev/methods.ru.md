@@ -81,6 +81,20 @@ OpenVK-KB-Heading: Список методов API
 * **[audio.isLagtrain](/dev/methods/audio/isLagtrain)** — проверяет, является ли аудиозапись треком Lagtrain.
 * **[audio.subscribeToQueue](/dev/methods/audio/subscribeToQueue)** — заглушка подписки на очередь воспроизведения.
 
+## board
+
+* **[board.getTopics](/dev/methods/board/getTopics)** — возвращает список обсуждений сообщества.
+* **[board.getComments](/dev/methods/board/getComments)** — возвращает список комментариев в теме обсуждения.
+* **[board.addTopic](/dev/methods/board/addTopic)** — создает новую тему в обсуждениях сообщества.
+* **[board.addChatTopic](/dev/methods/board/addChatTopic)** — создает тему в обсуждениях, привязанную к групповому чату.
+* **[board.createComment](/dev/methods/board/createComment)** — добавляет новый комментарий в обсуждение.
+* **[board.editTopic](/dev/methods/board/editTopic)** — редактирует заголовок обсуждения.
+* **[board.closeTopic](/dev/methods/board/closeTopic)** — закрывает тему обсуждения.
+* **[board.openTopic](/dev/methods/board/openTopic)** — открывает тему обсуждения.
+* **[board.fixTopic](/dev/methods/board/fixTopic)** — закрепляет тему в обсуждениях.
+* **[board.unfixTopic](/dev/methods/board/unfixTopic)** — открепляет тему в обсуждениях.
+* **[board.deleteTopic](/dev/methods/board/deleteTopic)** — удаляет тему обсуждения.
+
 ## users
 
 * **[users.get](/dev/methods/users/get)** — возвращает расширенную информацию о пользователях.
