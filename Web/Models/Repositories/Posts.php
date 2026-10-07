@@ -176,8 +176,11 @@ class Posts
 
     public function find(string $query = "", array $params = [], array $order = ['type' => 'id', 'invert' => false]): Util\EntityStream
     {
-        $query = "%$query%";
-        $result = $this->posts->where("content LIKE ?", $query)->where("deleted", 0)->where("suggested", 0)->where("archived", 0);
+        $result = $this->posts->where("deleted", 0)->where("suggested", 0)->where("archived", 0);
+        if ($query !== "") {
+            $result->where("MATCH (content) AGAINST (? IN NATURAL LANGUAGE MODE)", $query);
+        }
+
         $order_str = 'id';
 
         switch ($order['type']) {

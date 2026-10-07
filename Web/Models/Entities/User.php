@@ -6,10 +6,12 @@ namespace openvk\Web\Models\Entities;
 
 use morphos\Gender;
 use openvk\Web\Util\IMBroker;
+use openvk\Web\Util\Cache;
 use openvk\Web\Themes\{Themepack, Themepacks};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{Photo, Gift, Audio};
+use openvk\Web\Models\Entities\Relationships\Blacklist;
 use openvk\Web\Models\Privacy\PrivacySettings;
 use openvk\Web\Models\Entities\Messages\{Message, Correspondence};
 use openvk\Web\Models\Repositories\{Applications, Bans, Comments, Notes, Posts, Users, Clubs, Albums, Gifts, Notifications, Videos, Photos};
@@ -776,29 +778,61 @@ class User extends RowModel
     {
         $users = new Users();
 
-        $friends = $this->getRecommendedFriendsQuery()->limit($limit, ($page - 1) * $limit)->order($order);
-        foreach ($friends->fetchAll() as $friend) {
-            yield $users->toUser($friend);
+        $ids = Cache::remember(
+            "recs:" . $this->getId() . ":$page:$limit:" . md5($order),
+            900,
+            function () use ($page, $limit, $order): array {
+                $ids = [];
+                foreach ($this->getRecommendedFriendsQuery()->limit($limit, ($page - 1) * $limit)->order($order)->fetchAll() as $friend) {
+                    $ids[] = (int) $friend->id;
+                }
+
+                return $ids;
+            }
+        );
+
+        foreach ($ids as $id) {
+            $user = $users->get($id);
+            if ($user) {
+                yield $user;
+            }
         }
     }
 
     public function getFriendsBday(bool $today): array
     {
-        $users = $this->_abstractRelationGenerator($today ? "get-bday-today" : "get-bday-tomorrow", 1, 3000);
-        $usersFiltered = [];
-        foreach ($users as $u) {
-            if ($u->getPrivacySetting("page.info.read") != 0) {
-                $usersFiltered[] = $u;
+        $ids = Cache::remember(
+            "bday:" . $this->getId() . ($today ? ":today" : ":tomorrow"),
+            max(60, strtotime("tomorrow") - time()),
+            function () use ($today): array {
+                $ids = [];
+                foreach ($this->_abstractRelationGenerator($today ? "get-bday-today" : "get-bday-tomorrow", 1, 3000) as $u) {
+                    if ($u->getPrivacySetting("page.info.read") != 0) {
+                        $ids[] = $u->getRealId();
+                    }
+                }
+
+                return $ids;
+            }
+        );
+
+        $users = [];
+        $repo  = new Users();
+        foreach ($ids as $id) {
+            $user = $repo->get($id);
+            if ($user) {
+                $users[] = $user;
             }
         }
 
-        if (sizeof($usersFiltered) > 0) {
-            return [
-                "isToday" => $today,
-                "users" => $usersFiltered,
-            ];
+        if (sizeof($users) == 0) {
+            return [];
         }
-        return [];
+
+        return [
+            "isToday" => $today,
+            "users"   => $users,
+        ];
     }
 
     public function getUpcomingEvents(): \Traversable
@@ -1906,14 +1940,7 @@ class User extends RowModel
             return false;
         }
 
-        $ctx  = DatabaseConnection::i()->getContext();
-        $data = [
-            "author" => $user->getId(),
-            "target" => $this->getRealId(),
-        ];
-
-        $sub = $ctx->table("blacklist_relations")->where($data);
-        return $sub->count('*') > 0;
+        return Blacklist::isRelated($user->getId(), $this->getRealId());
     }
 
     public function addToBlacklist(?User $user)
@@ -1936,6 +1963,8 @@ class User extends RowModel
             "target"   => $user->getId(),
         ])->delete();
 
+        Blacklist::forgetRelations($this->getRealId(), $user->getRealId());
+
         return true;
     }
 
@@ -1945,6 +1974,8 @@ class User extends RowModel
             "author" => $this->getRealId(),
             "target" => $user->getRealId(),
         ])->delete();
+
+        Blacklist::forgetRelations($this->getRealId(), $user->getRealId());
 
         return true;
     }
