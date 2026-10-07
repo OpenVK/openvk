@@ -176,6 +176,25 @@ final class DevelopersPresenter extends OpenVKPresenter
                     ],
                 ],
                 [
+                    "id"    => "friends",
+                    "name"  => "dsb_m_friends",
+                    "links" => [
+                        ["name" => "get",            "href" => "/dev/methods/friends/get"],
+                        ["name" => "getOnline",      "href" => "/dev/methods/friends/getOnline"],
+                        ["name" => "getMutual",      "href" => "/dev/methods/friends/getMutual"],
+                        ["name" => "getRequests",    "href" => "/dev/methods/friends/getRequests"],
+                        ["name" => "getSuggestions", "href" => "/dev/methods/friends/getSuggestions"],
+                        ["name" => "search",         "href" => "/dev/methods/friends/search"],
+                        ["name" => "areFriends",     "href" => "/dev/methods/friends/areFriends"],
+                        ["name" => "add",            "href" => "/dev/methods/friends/add"],
+                        ["name" => "delete",         "href" => "/dev/methods/friends/delete"],
+                        ["name" => "edit",           "href" => "/dev/methods/friends/edit"],
+                        ["name" => "getLists",       "href" => "/dev/methods/friends/getLists"],
+                        ["name" => "editList",       "href" => "/dev/methods/friends/editList"],
+                        ["name" => "deleteList",     "href" => "/dev/methods/friends/deleteList"],
+                    ],
+                ],
+                [
                     "id"    => "users",
                     "name"  => "dsb_m_users",
                     "links" => [

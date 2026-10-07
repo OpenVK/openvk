@@ -1317,6 +1317,8 @@
 "dsb_m_audio" = "Аудио";
 "dsb_m_board" = "Обсуждения";
 "dsb_m_docs" = "Документы";
+"dsb_m_friends" = "Друзья";
+"dsb_m_users" = "Пользователи";
 "dsb_models" = "Модели";
 "dsb_standalone" = "Standalone";
 "dsb_sites" = "Сайты и виджеты";

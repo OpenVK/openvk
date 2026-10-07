@@ -1343,6 +1343,8 @@
 "dsb_m_audio" = "Audio";
 "dsb_m_board" = "Discussions";
 "dsb_m_docs" = "Documents";
+"dsb_m_friends" = "Friends";
+"dsb_m_users" = "Users";
 "dsb_models" = "Models";
 "dsb_standalone" = "Standalone";
 "dsb_sites" = "Sites and Widgets";

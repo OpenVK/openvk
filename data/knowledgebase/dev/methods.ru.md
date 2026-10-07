@@ -110,6 +110,22 @@ OpenVK-KB-Heading: Список методов API
 * **[docs.getWallUploadServer](/dev/methods/docs/getWallUploadServer)** — возвращает адрес сервера для загрузки документов на стену.
 * **[docs.save](/dev/methods/docs/save)** — сохраняет документ после загрузки.
 
+## friends
+
+* **[friends.get](/dev/methods/friends/get)** — возвращает список идентификаторов друзей пользователя или подробную информацию о них.
+* **[friends.getOnline](/dev/methods/friends/getOnline)** — возвращает список идентификаторов друзей пользователя, которые сейчас находятся на сайте (онлайн).
+* **[friends.getMutual](/dev/methods/friends/getMutual)** — возвращает список общих друзей между пользователями.
+* **[friends.getRequests](/dev/methods/friends/getRequests)** — возвращает список заявок на добавление в друзья (входящих или исходящих).
+* **[friends.getSuggestions](/dev/methods/friends/getSuggestions)** — возвращает список рекомендуемых друзей (заглушка).
+* **[friends.search](/dev/methods/friends/search)** — осуществляет поиск по списку друзей пользователя.
+* **[friends.areFriends](/dev/methods/friends/areFriends)** — возвращает статус дружбы с указанными пользователями.
+* **[friends.add](/dev/methods/friends/add)** — отправляет заявку на добавление в друзья или одобряет входящую заявку.
+* **[friends.delete](/dev/methods/friends/delete)** — удаляет пользователя из списка друзей или отклоняет заявку.
+* **[friends.edit](/dev/methods/friends/edit)** — редактирует списки друга (заглушка).
+* **[friends.getLists](/dev/methods/friends/getLists)** — возвращает список списков друзей (заглушка).
+* **[friends.editList](/dev/methods/friends/editList)** — редактирует список друзей (заглушка).
+* **[friends.deleteList](/dev/methods/friends/deleteList)** — удаляет список друзей (заглушка).
+
 ## users
 
 * **[users.get](/dev/methods/users/get)** — возвращает расширенную информацию о пользователях.

@@ -110,6 +110,22 @@ To call any API method, send a GET or POST request to:
 * **[docs.getWallUploadServer](/dev/methods/docs/getWallUploadServer)** — Returns wall document upload server address.
 * **[docs.save](/dev/methods/docs/save)** — Saves an uploaded document.
 
+## friends
+
+* **[friends.get](/dev/methods/friends/get)** — Returns a list of user friend IDs or detailed user profiles.
+* **[friends.getOnline](/dev/methods/friends/getOnline)** — Returns a list of IDs of friends who are currently online.
+* **[friends.getMutual](/dev/methods/friends/getMutual)** — Returns a list of mutual friends between users.
+* **[friends.getRequests](/dev/methods/friends/getRequests)** — Returns a list of incoming or outgoing friend requests.
+* **[friends.getSuggestions](/dev/methods/friends/getSuggestions)** — Returns a list of friend suggestions (stub).
+* **[friends.search](/dev/methods/friends/search)** — Searches through a user's friends list.
+* **[friends.areFriends](/dev/methods/friends/areFriends)** — Returns friendship status with the specified users.
+* **[friends.add](/dev/methods/friends/add)** — Sends a friend request or approves an incoming request.
+* **[friends.delete](/dev/methods/friends/delete)** — Removes a user from friends or declines a request.
+* **[friends.edit](/dev/methods/friends/edit)** — Edits friend lists of a friend (stub).
+* **[friends.getLists](/dev/methods/friends/getLists)** — Returns friend lists (stub).
+* **[friends.editList](/dev/methods/friends/editList)** — Edits a friend list (stub).
+* **[friends.deleteList](/dev/methods/friends/deleteList)** — Deletes a friend list (stub).
+
 ## users
 
 * **[users.get](/dev/methods/users/get)** — Returns user profiles.
