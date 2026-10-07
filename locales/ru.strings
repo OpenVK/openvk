@@ -1319,6 +1319,7 @@
 "dsb_m_docs" = "Документы";
 "dsb_m_friends" = "Друзья";
 "dsb_m_gifts" = "Подарки";
+"dsb_m_groups" = "Сообщества";
 "dsb_m_users" = "Пользователи";
 "dsb_models" = "Модели";
 "dsb_standalone" = "Standalone";

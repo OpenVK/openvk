@@ -134,6 +134,21 @@ To call any API method, send a GET or POST request to:
 * **[gifts.getCategories](/dev/methods/gifts/getCategories)** — Returns the list of gift catalog categories.
 * **[gifts.getGiftsInCategory](/dev/methods/gifts/getGiftsInCategory)** — Returns gifts available in a specific catalog category.
 
+## groups
+
+* **[groups.get](/dev/methods/groups/get)** — Returns a list of communities for a user.
+* **[groups.getById](/dev/methods/groups/getById)** — Returns information about communities by IDs or short names.
+* **[groups.search](/dev/methods/groups/search)** — Searches for communities on the platform.
+* **[groups.join](/dev/methods/groups/join)** — Joins a group or subscribes to a public page.
+* **[groups.leave](/dev/methods/groups/leave)** — Leaves a group or unsubscribes from a public page.
+* **[groups.edit](/dev/methods/groups/edit)** — Edits main settings and parameters of a community.
+* **[groups.getMembers](/dev/methods/groups/getMembers)** — Returns the list of community members (followers).
+* **[groups.getSettings](/dev/methods/groups/getSettings)** — Returns current settings and access levels of community sections.
+* **[groups.isMember](/dev/methods/groups/isMember)** — Checks whether a user is a member of a community.
+* **[groups.ban](/dev/methods/groups/ban)** — Adds a user to the community blacklist.
+* **[groups.unban](/dev/methods/groups/unban)** — Removes a user from the community blacklist.
+* **[groups.getBanned](/dev/methods/groups/getBanned)** — Returns the list of users in the community blacklist.
+
 ## users
 
 * **[users.get](/dev/methods/users/get)** — Returns user profiles.

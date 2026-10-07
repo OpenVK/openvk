@@ -206,6 +206,24 @@ final class DevelopersPresenter extends OpenVKPresenter
                     ],
                 ],
                 [
+                    "id"    => "groups",
+                    "name"  => "dsb_m_groups",
+                    "links" => [
+                        ["name" => "get",         "href" => "/dev/methods/groups/get"],
+                        ["name" => "getById",     "href" => "/dev/methods/groups/getById"],
+                        ["name" => "search",      "href" => "/dev/methods/groups/search"],
+                        ["name" => "join",        "href" => "/dev/methods/groups/join"],
+                        ["name" => "leave",       "href" => "/dev/methods/groups/leave"],
+                        ["name" => "edit",        "href" => "/dev/methods/groups/edit"],
+                        ["name" => "getMembers",  "href" => "/dev/methods/groups/getMembers"],
+                        ["name" => "getSettings", "href" => "/dev/methods/groups/getSettings"],
+                        ["name" => "isMember",    "href" => "/dev/methods/groups/isMember"],
+                        ["name" => "ban",         "href" => "/dev/methods/groups/ban"],
+                        ["name" => "unban",       "href" => "/dev/methods/groups/unban"],
+                        ["name" => "getBanned",   "href" => "/dev/methods/groups/getBanned"],
+                    ],
+                ],
+                [
                     "id"    => "users",
                     "name"  => "dsb_m_users",
                     "links" => [

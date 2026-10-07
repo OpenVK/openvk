@@ -134,6 +134,21 @@ OpenVK-KB-Heading: Список методов API
 * **[gifts.getCategories](/dev/methods/gifts/getCategories)** — возвращает список категорий каталога подарков.
 * **[gifts.getGiftsInCategory](/dev/methods/gifts/getGiftsInCategory)** — возвращает список подарков в указанной категории каталога.
 
+## groups
+
+* **[groups.get](/dev/methods/groups/get)** — возвращает список сообществ пользователя.
+* **[groups.getById](/dev/methods/groups/getById)** — возвращает подробную информацию о сообществах по их идентификаторам или коротким именам.
+* **[groups.search](/dev/methods/groups/search)** — осуществляет поиск по сообществам платформы.
+* **[groups.join](/dev/methods/groups/join)** — вступает в сообщество или подписывается на публичную страницу.
+* **[groups.leave](/dev/methods/groups/leave)** — покидает сообщество или отписывается от публичной страницы.
+* **[groups.edit](/dev/methods/groups/edit)** — редактирует основные настройки и параметры сообщества.
+* **[groups.getMembers](/dev/methods/groups/getMembers)** — возвращает список участников (подписчиков) сообщества.
+* **[groups.getSettings](/dev/methods/groups/getSettings)** — возвращает текущие настройки и уровни доступа разделов сообщества.
+* **[groups.isMember](/dev/methods/groups/isMember)** — проверяет, является ли пользователь участником сообщества.
+* **[groups.ban](/dev/methods/groups/ban)** — добавляет пользователя в черный список сообщества.
+* **[groups.unban](/dev/methods/groups/unban)** — удаляет пользователя из черного списка сообщества.
+* **[groups.getBanned](/dev/methods/groups/getBanned)** — возвращает список пользователей, находящихся в черном списке сообщества.
+
 ## users
 
 * **[users.get](/dev/methods/users/get)** — возвращает расширенную информацию о пользователях.
