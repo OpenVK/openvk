@@ -787,7 +787,7 @@
 "privacy_value_anybody" = "Все желающие";
 "privacy_value_anybody_short" = "Все";
 "privacy_value_anybody_dative" = "Всем желающим";
-"privacy_value_users" = "Пользователям OpenVK";
+"privacy_value_users" = "Пользователи инстанса";
 "privacy_value_users_nominative" = "Пользователи OpenVK";
 "privacy_value_friends" = "Друзья";
 "privacy_value_friends_dative" = "Друзьям";
@@ -3223,3 +3223,6 @@
 "chat_mention_online" = "Участники онлайн";
 
 "router_reconnect_error" = "Не удалось загрузить страницу после нескольких попыток. Попробовать открыть её напрямую?";
+"reported_message_contains_2" = "Текст сообщения";
+"reported_message_contains_3" = "Автор сообщения — id $1, написанный в чате с id $2.";
+"messenger_friends_info" = "Список друзей";
