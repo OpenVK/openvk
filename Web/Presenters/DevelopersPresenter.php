@@ -195,6 +195,17 @@ final class DevelopersPresenter extends OpenVKPresenter
                     ],
                 ],
                 [
+                    "id"    => "gifts",
+                    "name"  => "dsb_m_gifts",
+                    "links" => [
+                        ["name" => "get",               "href" => "/dev/methods/gifts/get"],
+                        ["name" => "send",              "href" => "/dev/methods/gifts/send"],
+                        ["name" => "delete",            "href" => "/dev/methods/gifts/delete"],
+                        ["name" => "getCategories",     "href" => "/dev/methods/gifts/getCategories"],
+                        ["name" => "getGiftsInCategory", "href" => "/dev/methods/gifts/getGiftsInCategory"],
+                    ],
+                ],
+                [
                     "id"    => "users",
                     "name"  => "dsb_m_users",
                     "links" => [

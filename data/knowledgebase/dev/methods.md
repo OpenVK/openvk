@@ -126,6 +126,14 @@ To call any API method, send a GET or POST request to:
 * **[friends.editList](/dev/methods/friends/editList)** — Edits a friend list (stub).
 * **[friends.deleteList](/dev/methods/friends/deleteList)** — Deletes a friend list (stub).
 
+## gifts
+
+* **[gifts.get](/dev/methods/gifts/get)** — Returns a list of gifts received by a user.
+* **[gifts.send](/dev/methods/gifts/send)** — Sends a gift to a user for votes (coins).
+* **[gifts.delete](/dev/methods/gifts/delete)** — Deletes a sent gift.
+* **[gifts.getCategories](/dev/methods/gifts/getCategories)** — Returns the list of gift catalog categories.
+* **[gifts.getGiftsInCategory](/dev/methods/gifts/getGiftsInCategory)** — Returns gifts available in a specific catalog category.
+
 ## users
 
 * **[users.get](/dev/methods/users/get)** — Returns user profiles.

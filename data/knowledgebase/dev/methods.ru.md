@@ -126,6 +126,14 @@ OpenVK-KB-Heading: Список методов API
 * **[friends.editList](/dev/methods/friends/editList)** — редактирует список друзей (заглушка).
 * **[friends.deleteList](/dev/methods/friends/deleteList)** — удаляет список друзей (заглушка).
 
+## gifts
+
+* **[gifts.get](/dev/methods/gifts/get)** — возвращает список полученных пользователем подарков.
+* **[gifts.send](/dev/methods/gifts/send)** — отправляет подарок пользователю за голоса (монеты).
+* **[gifts.delete](/dev/methods/gifts/delete)** — удаляет отправленный подарок.
+* **[gifts.getCategories](/dev/methods/gifts/getCategories)** — возвращает список категорий каталога подарков.
+* **[gifts.getGiftsInCategory](/dev/methods/gifts/getGiftsInCategory)** — возвращает список подарков в указанной категории каталога.
+
 ## users
 
 * **[users.get](/dev/methods/users/get)** — возвращает расширенную информацию о пользователях.
