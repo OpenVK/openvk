@@ -13,6 +13,8 @@ class Bans
     private $context;
     private $bans;
 
+    private static array $cache = [];
+
     public function __construct()
     {
         $this->context = DB::i()->getContext();
@@ -26,7 +28,11 @@ class Bans
 
     public function get(int $id): ?Ban
     {
-        return $this->toBan($this->bans->get($id));
+        if (!array_key_exists($id, self::$cache)) {
+            self::$cache[$id] = $this->toBan($this->bans->get($id));
+        }
+
+        return self::$cache[$id];
     }
 
     public function getByUser(int $user_id): \Traversable

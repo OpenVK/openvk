@@ -14,10 +14,36 @@ class Blacklist
     private $entity;
     private $context;
 
+    private static array $relations = [];
+
     public function __construct(RowModel $entity)
     {
         $this->entity  = $entity;
         $this->context = DatabaseConnection::i()->getContext();
+    }
+
+    private static function fetchRelations(int $author, int $target): array
+    {
+        $key = "$author:$target";
+        if (!array_key_exists($key, self::$relations)) {
+            self::$relations[$key] = DatabaseConnection::i()
+                ->getContext()
+                ->table("blacklist_relations")
+                ->where(["author" => $author, "target" => $target])
+                ->fetchAll();
+        }
+
+        return self::$relations[$key];
+    }
+
+    public static function forgetRelations(int $author, int $target): void
+    {
+        unset(self::$relations["$author:$target"]);
+    }
+
+    public static function isRelated(int $author, int $target): bool
+    {
+        return sizeof(self::fetchRelations($author, $target)) > 0;
     }
 
     public function getEntity(): RowModel
@@ -31,12 +57,7 @@ class Blacklist
             return false;
         }
 
-        $relations = $this->context->table("blacklist_relations")->where([
-            "author" => $this->entity->getRealId(),
-            "target" => $entity2->getRealId(),
-        ]);
-
-        foreach ($relations as $rel) {
+        foreach (self::fetchRelations($this->entity->getRealId(), $entity2->getRealId()) as $rel) {
             if ($rel->until === null || ((int) $rel->until > time())) {
                 return true;
             }
@@ -56,6 +77,8 @@ class Blacklist
             "reason"  => $reason,
             "until"   => $until,
         ]);
+
+        self::forgetRelations($this->entity->getRealId(), $user->getRealId());
     }
 
     public function unban(RowModel $user): void
@@ -64,6 +87,8 @@ class Blacklist
             "author" => $this->entity->getRealId(),
             "target" => $user->getRealId(),
         ])->delete();
+
+        self::forgetRelations($this->entity->getRealId(), $user->getRealId());
     }
 
     public function getBanned(int $offset = 0, int $limit = 20)

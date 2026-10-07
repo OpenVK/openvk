@@ -10,6 +10,7 @@ use openvk\Web\Themes\{Themepack, Themepacks};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{Photo, Gift, Audio};
+use openvk\Web\Models\Entities\Relationships\Blacklist;
 use openvk\Web\Models\Privacy\PrivacySettings;
 use openvk\Web\Models\Entities\Messages\{Message, Correspondence};
 use openvk\Web\Models\Repositories\{Applications, Bans, Comments, Notes, Posts, Users, Clubs, Albums, Gifts, Notifications, Videos, Photos};
@@ -1906,14 +1907,7 @@ class User extends RowModel
             return false;
         }
 
-        $ctx  = DatabaseConnection::i()->getContext();
-        $data = [
-            "author" => $user->getId(),
-            "target" => $this->getRealId(),
-        ];
-
-        $sub = $ctx->table("blacklist_relations")->where($data);
-        return $sub->count('*') > 0;
+        return Blacklist::isRelated($user->getId(), $this->getRealId());
     }
 
     public function addToBlacklist(?User $user)
@@ -1936,6 +1930,8 @@ class User extends RowModel
             "target"   => $user->getId(),
         ])->delete();
 
+        Blacklist::forgetRelations($this->getRealId(), $user->getRealId());
+
         return true;
     }
 
@@ -1945,6 +1941,8 @@ class User extends RowModel
             "author" => $this->getRealId(),
             "target" => $user->getRealId(),
         ])->delete();
+
+        Blacklist::forgetRelations($this->getRealId(), $user->getRealId());
 
         return true;
     }
