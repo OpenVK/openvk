@@ -34,6 +34,15 @@ OpenVK-KB-Heading: Список методов API
 * **[account.getBadgesSettings](/dev/methods/account/getBadgesSettings)** — возвращает настройки значков приложения.
 * **[account.getToggles](/dev/methods/account/getToggles)** — возвращает состояние переключателей функций (feature toggles).
 
+## activity
+
+* **[activity.online](/dev/methods/activity/online)** — помечает текущего пользователя как online с указанием платформы.
+
+## apps
+
+* **[apps.getMiniAppsCatalog](/dev/methods/apps/getMiniAppsCatalog)** — возвращает каталог мини-приложений.
+* **[apps.getMiniAppsCatalogSearch](/dev/methods/apps/getMiniAppsCatalogSearch)** — поиск по каталогу мини-приложений.
+
 ## audio
 
 * **[audio.get](/dev/methods/audio/get)** — возвращает список аудиозаписей пользователя или сообщества.

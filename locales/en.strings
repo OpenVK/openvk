@@ -1338,6 +1338,8 @@
 "dsb_methods" = "Methods";
 "dsb_back_to_docs" = "Back to Docs";
 "dsb_m_account" = "Account";
+"dsb_m_activity" = "Activity";
+"dsb_m_apps" = "Apps";
 "dsb_m_audio" = "Audio";
 "dsb_m_users" = "Users";
 "dsb_models" = "Models";

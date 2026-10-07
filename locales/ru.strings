@@ -1312,6 +1312,8 @@
 "dsb_methods" = "Методы";
 "dsb_back_to_docs" = "К документации";
 "dsb_m_account" = "Аккаунт";
+"dsb_m_activity" = "Активность";
+"dsb_m_apps" = "Приложения";
 "dsb_m_audio" = "Аудио";
 "dsb_m_users" = "Пользователи";
 "dsb_models" = "Модели";

@@ -63,20 +63,35 @@ final class DevelopersPresenter extends OpenVKPresenter
                     ],
                 ],
                 [
+                    "id"    => "activity",
+                    "name"  => "dsb_m_activity",
+                    "links" => [
+                        ["name" => "online",                     "href" => "/dev/methods/activity/online"],
+                    ],
+                ],
+                [
+                    "id"    => "apps",
+                    "name"  => "dsb_m_apps",
+                    "links" => [
+                        ["name" => "getMiniAppsCatalog",         "href" => "/dev/methods/apps/getMiniAppsCatalog"],
+                        ["name" => "getMiniAppsCatalogSearch",   "href" => "/dev/methods/apps/getMiniAppsCatalogSearch"],
+                    ],
+                ],
+                [
                     "id"    => "audio",
                     "name"  => "dsb_m_audio",
                     "links" => [
-                        ["name" => "audio.get",              "href" => "/dev/methods/audio/get"],
-                        ["name" => "audio.search",           "href" => "/dev/methods/audio/search"],
-                        ["name" => "audio.add",              "href" => "/dev/methods/audio/add"],
+                        ["name" => "get",              "href" => "/dev/methods/audio/get"],
+                        ["name" => "search",           "href" => "/dev/methods/audio/search"],
+                        ["name" => "add",              "href" => "/dev/methods/audio/add"],
                     ],
                 ],
                 [
                     "id"    => "users",
                     "name"  => "dsb_m_users",
                     "links" => [
-                        ["name" => "users.get",              "href" => "/dev/methods/users/get"],
-                        ["name" => "users.search",           "href" => "/dev/methods/users/search"],
+                        ["name" => "get",              "href" => "/dev/methods/users/get"],
+                        ["name" => "search",           "href" => "/dev/methods/users/search"],
                     ],
                 ],
             ];

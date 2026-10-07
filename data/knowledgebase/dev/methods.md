@@ -34,6 +34,15 @@ To execute any method, send a GET or POST request to:
 * **[account.getBadgesSettings](/dev/methods/account/getBadgesSettings)** — returns badge configuration.
 * **[account.getToggles](/dev/methods/account/getToggles)** — returns active feature toggles.
 
+## activity
+
+* **[activity.online](/dev/methods/activity/online)** — marks the current user as online.
+
+## apps
+
+* **[apps.getMiniAppsCatalog](/dev/methods/apps/getMiniAppsCatalog)** — returns the mini apps catalog.
+* **[apps.getMiniAppsCatalogSearch](/dev/methods/apps/getMiniAppsCatalogSearch)** — searches the mini apps catalog.
+
 ## audio
 
 * **[audio.get](/dev/methods/audio/get)** — returns a list of audio files of a user or community.
