@@ -158,6 +158,24 @@ final class DevelopersPresenter extends OpenVKPresenter
                     ],
                 ],
                 [
+                    "id"    => "docs",
+                    "name"  => "dsb_m_docs",
+                    "links" => [
+                        ["name" => "get",                 "href" => "/dev/methods/docs/get"],
+                        ["name" => "getById",             "href" => "/dev/methods/docs/getById"],
+                        ["name" => "getTypes",            "href" => "/dev/methods/docs/getTypes"],
+                        ["name" => "getTags",             "href" => "/dev/methods/docs/getTags"],
+                        ["name" => "search",              "href" => "/dev/methods/docs/search"],
+                        ["name" => "add",                 "href" => "/dev/methods/docs/add"],
+                        ["name" => "delete",              "href" => "/dev/methods/docs/delete"],
+                        ["name" => "restore",             "href" => "/dev/methods/docs/restore"],
+                        ["name" => "edit",                "href" => "/dev/methods/docs/edit"],
+                        ["name" => "getUploadServer",     "href" => "/dev/methods/docs/getUploadServer"],
+                        ["name" => "getWallUploadServer", "href" => "/dev/methods/docs/getWallUploadServer"],
+                        ["name" => "save",                "href" => "/dev/methods/docs/save"],
+                    ],
+                ],
+                [
                     "id"    => "users",
                     "name"  => "dsb_m_users",
                     "links" => [

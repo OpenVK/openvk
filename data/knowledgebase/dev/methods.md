@@ -95,6 +95,21 @@ To call any API method, send a GET or POST request to:
 * **[board.unfixTopic](/dev/methods/board/unfixTopic)** — Unpins a topic.
 * **[board.deleteTopic](/dev/methods/board/deleteTopic)** — Deletes a topic.
 
+## docs
+
+* **[docs.get](/dev/methods/docs/get)** — Returns documents of a user or community.
+* **[docs.getById](/dev/methods/docs/getById)** — Returns information about documents by IDs.
+* **[docs.getTypes](/dev/methods/docs/getTypes)** — Returns document type categories and file counts.
+* **[docs.getTags](/dev/methods/docs/getTags)** — Returns tags used in user documents.
+* **[docs.search](/dev/methods/docs/search)** — Searches documents.
+* **[docs.add](/dev/methods/docs/add)** — Copies a document to the user collection.
+* **[docs.edit](/dev/methods/docs/edit)** — Edits document metadata.
+* **[docs.delete](/dev/methods/docs/delete)** — Deletes a document.
+* **[docs.restore](/dev/methods/docs/restore)** — Restores a deleted document.
+* **[docs.getUploadServer](/dev/methods/docs/getUploadServer)** — Returns document upload server address.
+* **[docs.getWallUploadServer](/dev/methods/docs/getWallUploadServer)** — Returns wall document upload server address.
+* **[docs.save](/dev/methods/docs/save)** — Saves an uploaded document.
+
 ## users
 
 * **[users.get](/dev/methods/users/get)** — Returns user profiles.

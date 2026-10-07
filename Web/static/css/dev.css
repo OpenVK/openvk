@@ -252,10 +252,8 @@
     background-color: #f5f5f5;
 }
 
-.dev_page_cont table th:nth-child(1),
-.dev_page_cont table td:nth-child(1),
-.dev_page_cont table th:nth-child(2),
-.dev_page_cont table td:nth-child(2) {
+.dev_page_cont table th:not(:last-child),
+.dev_page_cont table td:not(:last-child) {
   white-space: nowrap;
 }
 

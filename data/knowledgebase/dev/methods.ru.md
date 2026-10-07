@@ -95,6 +95,21 @@ OpenVK-KB-Heading: Список методов API
 * **[board.unfixTopic](/dev/methods/board/unfixTopic)** — открепляет тему в обсуждениях.
 * **[board.deleteTopic](/dev/methods/board/deleteTopic)** — удаляет тему обсуждения.
 
+## docs
+
+* **[docs.get](/dev/methods/docs/get)** — возвращает список документов пользователя или сообщества.
+* **[docs.getById](/dev/methods/docs/getById)** — возвращает информацию о документах по их идентификаторам.
+* **[docs.getTypes](/dev/methods/docs/getTypes)** — возвращает категории типов документов и счетчики файлов.
+* **[docs.getTags](/dev/methods/docs/getTags)** — возвращает список тегов документов.
+* **[docs.search](/dev/methods/docs/search)** — осуществляет поиск по документам.
+* **[docs.add](/dev/methods/docs/add)** — копирует документ в коллекцию пользователя.
+* **[docs.edit](/dev/methods/docs/edit)** — редактирует метаданные документа.
+* **[docs.delete](/dev/methods/docs/delete)** — удаляет документ.
+* **[docs.restore](/dev/methods/docs/restore)** — восстанавливает удаленный документ.
+* **[docs.getUploadServer](/dev/methods/docs/getUploadServer)** — возвращает адрес сервера для загрузки документов.
+* **[docs.getWallUploadServer](/dev/methods/docs/getWallUploadServer)** — возвращает адрес сервера для загрузки документов на стену.
+* **[docs.save](/dev/methods/docs/save)** — сохраняет документ после загрузки.
+
 ## users
 
 * **[users.get](/dev/methods/users/get)** — возвращает расширенную информацию о пользователях.
