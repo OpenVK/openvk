@@ -1315,8 +1315,11 @@
 "dsb_m_activity" = "Активность";
 "dsb_m_apps" = "Приложения";
 "dsb_m_audio" = "Аудио";
-"dsb_m_users" = "Пользователи";
 "dsb_models" = "Модели";
+"dsb_standalone" = "Standalone";
+"dsb_sites" = "Сайты и виджеты";
+"dsb_native" = "Приложения";
+"dsb_bugs" = "Баг-трекер";
 
 /* Apps */
 "app" = "Приложение";

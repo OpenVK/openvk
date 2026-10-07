@@ -5,6 +5,14 @@ OpenVK-KB-Heading: Список методов API
 Для вызова любого метода необходимо отправить GET или POST запрос по адресу:
 `https://{domain}/method/{method_name}`
 
+---
+
+## execute
+
+* **[execute](/dev/methods/execute)** — универсальный метод для выполнения пакета API-вызовов и алгоритмов на языке VKScript за один HTTP-запрос.
+
+---
+
 ## account
 
 * **[account.ban](/dev/methods/account/ban)** — добавляет пользователя в черный список.
@@ -46,8 +54,32 @@ OpenVK-KB-Heading: Список методов API
 ## audio
 
 * **[audio.get](/dev/methods/audio/get)** — возвращает список аудиозаписей пользователя или сообщества.
-* **[audio.search](/dev/methods/audio/search)** — возвращает результаты поиска по аудиозаписям.
-* **[audio.add](/dev/methods/audio/add)** — копирует аудиозапись на страницу пользователя или сообщества.
+* **[audio.getById](/dev/methods/audio/getById)** — возвращает информацию об аудиозаписях по их идентификаторам.
+* **[audio.search](/dev/methods/audio/search)** — осуществляет поиск по аудиозаписям.
+* **[audio.getCount](/dev/methods/audio/getCount)** — возвращает количество аудиозаписей пользователя или сообщества.
+* **[audio.getPopular](/dev/methods/audio/getPopular)** — возвращает список популярных аудиозаписей.
+* **[audio.getFeed](/dev/methods/audio/getFeed)** — возвращает ленту недавно загруженных аудиозаписей.
+* **[audio.getLyrics](/dev/methods/audio/getLyrics)** — возвращает текст песни по ее идентификатору.
+* **[audio.add](/dev/methods/audio/add)** — копирует аудиозапись в коллекцию текущего пользователя или сообщества.
+* **[audio.delete](/dev/methods/audio/delete)** — удаляет аудиозапись из коллекции пользователя или сообщества.
+* **[audio.restore](/dev/methods/audio/restore)** — восстанавливает удаленную аудиозапись.
+* **[audio.edit](/dev/methods/audio/edit)** — редактирует метаданные аудиозаписи.
+* **[audio.setBroadcast](/dev/methods/audio/setBroadcast)** — транслирует текущую аудиозапись в статус.
+* **[audio.getBroadcastList](/dev/methods/audio/getBroadcastList)** — возвращает список друзей или сообществ, транслирующих музыку в статус.
+* **[audio.beacon](/dev/methods/audio/beacon)** — фиксирует факт прослушивания трека.
+* **[audio.getAlbums](/dev/methods/audio/getAlbums)** — возвращает список плейлистов пользователя или сообщества.
+* **[audio.getPlaylistById](/dev/methods/audio/getPlaylistById)** — возвращает информацию о плейлисте по ID.
+* **[audio.searchAlbums](/dev/methods/audio/searchAlbums)** — выполняет поиск по плейлистам.
+* **[audio.addAlbum](/dev/methods/audio/addAlbum)** — создает новый плейлист.
+* **[audio.editAlbum](/dev/methods/audio/editAlbum)** — редактирует название и описание плейлиста.
+* **[audio.deleteAlbum](/dev/methods/audio/deleteAlbum)** — удаляет плейлист.
+* **[audio.moveToAlbum](/dev/methods/audio/moveToAlbum)** — добавляет аудиозаписи в плейлист или привязывает к альбому.
+* **[audio.removeFromAlbum](/dev/methods/audio/removeFromAlbum)** — удаляет аудиозаписи из плейлиста.
+* **[audio.bookmarkAlbum](/dev/methods/audio/bookmarkAlbum)** — сохраняет плейлист в закладки.
+* **[audio.unBookmarkAlbum](/dev/methods/audio/unBookmarkAlbum)** — удаляет плейлист из закладок.
+* **[audio.getRecommendations](/dev/methods/audio/getRecommendations)** — возвращает рекомендации аудиозаписей.
+* **[audio.isLagtrain](/dev/methods/audio/isLagtrain)** — проверяет, является ли аудиозапись треком Lagtrain.
+* **[audio.subscribeToQueue](/dev/methods/audio/subscribeToQueue)** — заглушка подписки на очередь воспроизведения.
 
 ## users
 

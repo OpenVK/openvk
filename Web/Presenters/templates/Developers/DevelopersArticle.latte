@@ -24,6 +24,15 @@
 
             <div class="dev_sidebar_separator"></div>
 
+            <a 
+                href="/dev/methods/execute"
+                data-do-ajax="true"
+                class="link dev_section_link {if $currentSection === 'methods/execute'}active dev_mlist_sel{/if}"
+                style="font-weight: bold; margin-bottom: 6px;"
+            >
+                execute
+            </a>
+
             {foreach $methodsGroups as $group}
                 {var $isGroupOpen = str_starts_with($currentSection, 'methods/' . $group['id'])}
                 

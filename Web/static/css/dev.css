@@ -267,6 +267,7 @@
     margin: 15px 0;
     overflow-x: auto;
     font-family: monaco, courier, "lucida console", monospace;
+    max-width: 710px;
 }
 
 .dev_page_cont pre code {
