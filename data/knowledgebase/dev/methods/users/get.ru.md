@@ -31,7 +31,7 @@ OpenVK-KB-Heading: users.get
             "first_name": "Павел",
             "last_name": "Дуров",
             "screen_name": "durov",
-            "photo_200": "https://ovk.to/assets/packages/static/openvk/img/camera_200.png",
+            "photo_200": "https://openvk.instance/assets/packages/static/openvk/img/camera_200.png",
             "online": 1
         }
     ]

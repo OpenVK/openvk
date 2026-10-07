@@ -100,7 +100,7 @@
 
 .dev_sect:hover {
     text-decoration: none;
-    background: #fafafc;
+    background: #fff;
     margin-top: -8px;
     -webkit-box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);
     -moz-box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);
@@ -252,6 +252,13 @@
     background-color: #f5f5f5;
 }
 
+.dev_page_cont table th:nth-child(1),
+.dev_page_cont table td:nth-child(1),
+.dev_page_cont table th:nth-child(2),
+.dev_page_cont table td:nth-child(2) {
+  white-space: nowrap;
+}
+
 .dev_page_cont pre {
     background-color: #f7f8fa;
     border: 1px solid #e7e8ec;
@@ -279,9 +286,36 @@
     font-size: 12px;
 }
 
-.dev_sublink {
-    padding-left: 15px !important;
+.dev_page_cont h1,
+.dev_page_cont h2,
+.dev_page_cont h3,
+.dev_page_cont h4,
+.dev_page_cont h5,
+.dev_page_cont h6 {
+    border-bottom: 1px solid #696969;
+    color: #696969;
 }
+.dev_page_cont h2 {
+    border-bottom-width: 2px;
+    padding-bottom: 3px;
+}
+.dev_page_cont h1 {
+    border-bottom-width: 2px;
+    padding-bottom: 5px;
+}
+.dev_page_cont h5,
+.dev_page_cont h6 {
+    border-bottom: none;
+}
+
+.dev_page_cont blockquote {
+    border-left: 4px solid #696969;
+    padding-left: 10px;
+    color: #404040;
+    margin: 15px 0;
+}
+
+/* Sidebar */
 
 .dev_sidebar_separator {
     height: 1px;
@@ -296,7 +330,8 @@
 }
 
 .dev_sublink {
-    padding-left: 12px;
+    padding: 2px 5px !important;
+    padding-left: 15px !important;
     font-family: monospace, Tahoma, sans-serif;
     font-size: 11px;
 }

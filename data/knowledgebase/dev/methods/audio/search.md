@@ -34,7 +34,7 @@ Returns an object with `count` (total number of results) and `items` (array of a
                 "artist": "Rick Astley",
                 "title": "Never Gonna Give You Up",
                 "duration": 213,
-                "url": "https://ovk.to/storage/audio/1_1.mp3"
+                "url": "https://openvk.instance/storage/audio/1_1.mp3"
             }
         ]
     }

@@ -17,7 +17,7 @@ To call any API method, send a GET or POST request to:
 
 ## Tips & Notes
 
-* Base API URL: `https://ovk.to/method/`
+* Base API URL: `https://openvk.instance/method/`
 * If a method is not yet covered in this documentation, refer to the official specification at https://dev.vk.com/ru/method
 * To specify a community (group), pass its ID as a negative number.
 

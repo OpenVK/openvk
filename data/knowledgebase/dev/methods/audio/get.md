@@ -44,7 +44,7 @@ Each audio object contains:
                 "artist": "Rick Astley",
                 "title": "Never Gonna Give You Up",
                 "duration": 213,
-                "url": "https://ovk.to/storage/audio/1_1.mp3"
+                "url": "https://openvk.instance/storage/audio/1_1.mp3"
             },
             {
                 "id": 2,
@@ -52,7 +52,7 @@ Each audio object contains:
                 "artist": "Darude",
                 "title": "Sandstorm",
                 "duration": 225,
-                "url": "https://ovk.to/storage/audio/1_2.mp3"
+                "url": "https://openvk.instance/storage/audio/1_2.mp3"
             }
         ]
     }

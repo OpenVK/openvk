@@ -31,7 +31,7 @@ Returns an array of user objects. Each basic user object contains:
             "first_name": "Pavel",
             "last_name": "Durov",
             "screen_name": "durov",
-            "photo_200": "https://ovk.to/assets/packages/static/openvk/img/camera_200.png",
+            "photo_200": "https://openvk.instance/assets/packages/static/openvk/img/camera_200.png",
             "online": 1
         }
     ]
