@@ -28,6 +28,32 @@ final class DevelopersPresenter extends OpenVKPresenter
         $isMethodsPage = ($name === 'methods' || str_starts_with($name, 'methods/'));
         $this->template->isMethodsPage = $isMethodsPage;
 
+        $isModelsPage = ($name === 'models' || str_starts_with($name, 'models/'));
+        $this->template->isModelsPage = $isModelsPage;
+
+        if ($isModelsPage) {
+            $this->template->modelsList = [
+                ["name" => "user",         "href" => "/dev/models/user"],
+                ["name" => "group",        "href" => "/dev/models/group"],
+                ["name" => "chat",         "href" => "/dev/models/chat"],
+                ["name" => "conversation", "href" => "/dev/models/conversation"],
+                ["name" => "message",      "href" => "/dev/models/message"],
+                ["name" => "post",         "href" => "/dev/models/post"],
+                ["name" => "comment",      "href" => "/dev/models/comment"],
+                ["name" => "photo",        "href" => "/dev/models/photo"],
+                ["name" => "audio",        "href" => "/dev/models/audio"],
+                ["name" => "video",        "href" => "/dev/models/video"],
+                ["name" => "doc",          "href" => "/dev/models/doc"],
+                ["name" => "topic",        "href" => "/dev/models/topic"],
+                ["name" => "poll",         "href" => "/dev/models/poll"],
+                ["name" => "note",         "href" => "/dev/models/note"],
+                ["name" => "album",        "href" => "/dev/models/album"],
+                ["name" => "playlist",     "href" => "/dev/models/playlist"],
+                ["name" => "sticker",      "href" => "/dev/models/sticker"],
+                ["name" => "gift",         "href" => "/dev/models/gift"],
+            ];
+        }
+
         if ($isMethodsPage) {
             $this->template->methodsGroups = [
                 [

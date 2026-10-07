@@ -50,6 +50,24 @@
                     </div>
                 </div>
             {/foreach}
+        {elseif !empty($isModelsPage)}
+            <a href="/dev" data-do-ajax="true" class="link dev_section_link dev_back_link">
+                {tr("dsb_back_to_docs")}
+            </a>
+
+            <div class="dev_sidebar_separator"></div>
+
+            {foreach $modelsList as $item}
+                {var $isActive = ltrim(preg_replace('#^/?(dev/)?#', '', $item['href']), '/') === ltrim(preg_replace('#^/?(dev/)?#', '', $currentSection), '/')}
+                
+                <a 
+                    href="{$item['href']}"
+                    data-do-ajax="true"
+                    class="link dev_section_link dev_sublink {if $isActive}active dev_mlist_sel{/if}"
+                >
+                    {$item['name']}
+                </a>
+            {/foreach}
 
         {else}
             {foreach $devMenu as $item}
