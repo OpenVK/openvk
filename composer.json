@@ -2,21 +2,8 @@
     "name": "openvk/openvk",
     "repositories": [
         {
-            "type": "path",
-            "url": "/opt/chandler",
-            "options": {
-                "symlink": true,
-                "versions": {
-                    "openvk/chandler": "dev-master"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "/opt/phpstan-latte",
-            "options": {
-                "symlink": true
-            }
+            "type": "vcs",
+            "url": "https://github.com/OpenVK/phpstan-latte"
         }
     ],
     "scripts": {
@@ -35,7 +22,7 @@
     },
     "require": {
         "php": "~8.4",
-        "openvk/chandler": "dev-master",
+        "openvk/chandler": "dev-phpstan-latte",
         "whichbrowser/parser": "dev-master",
         "james-heinrich/getid3": "^1.9@dev",
         "rybakit/msgpack": "^0.10.0",
@@ -75,6 +62,6 @@
         "friendsofphp/php-cs-fixer": "^3.68",
         "phpstan/phpstan": "^2.1",
         "fakerphp/faker": "^1.24",
-        "efabrica/phpstan-latte": "^0.20.1"
+        "efabrica/phpstan-latte": "dev-latte-3.1-support"
     }
 }
