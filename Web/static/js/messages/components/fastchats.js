@@ -348,6 +348,31 @@ export const FastChatBox = ({
             const authorAva = isOut ? currentUserAvatar : (msg.author_photo || chat.photo);
             const timeStr = msg.time_str || (msg.date ? formatTime(msg.date, false) : '');
             const isTargetUnread = chat.firstUnreadMsgId && (Number(msg.id) === Number(chat.firstUnreadMsgId));
+            const isGift = (typeof msg.isSpecial === 'function' && msg.isSpecial('gift')) ||
+                (Array.isArray(msg.attachments) && msg.attachments.some(a => a && a.type === 'gift')) ||
+                (Array.isArray(msg.data?.attachments) && msg.data.attachments.some(a => a && a.type === 'gift'));
+
+            const senderGender = msg.sender?.getGender ? msg.sender.getGender() : (msg.sender?.sex === 1 ? 'female' : (msg.sender?.sex === 2 ? 'male' : 'neutral'));
+            const attachmentsList = (Array.isArray(msg.attachments) ? msg.attachments : (Array.isArray(msg.data?.attachments) ? msg.data.attachments : []));
+
+            const replyMessage = msg.reply_message || msg.data?.reply_message || null;
+            let replyAuthorName = "...";
+            let replyAuthorAvatar = "/assets/packages/static/openvk/img/camera_50.png";
+            let replyFromId = null;
+            let replyText = "";
+            if (replyMessage) {
+                replyFromId = replyMessage.from_id || replyMessage.data?.from_id;
+                const replySender = replyMessage.sender || (window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached(replyFromId));
+                if (replySender && typeof replySender.getName === 'function') {
+                    replyAuthorName = replySender.getName();
+                    replyAuthorAvatar = typeof replySender.getAvatar === 'function' ? replySender.getAvatar('mid', false) : replyAuthorAvatar;
+                } else if (replyFromId) {
+                    replyAuthorName = "id" + replyFromId;
+                }
+                replyText = replyMessage.text || replyMessage.body || (typeof replyMessage.getText === 'function' ? replyMessage.getText(false) : '');
+            }
+
+            const fwdMessages = msg.fwd_messages || msg.data?.fwd_messages || (typeof msg.getFwdMessages === 'function' ? msg.getFwdMessages() : null);
 
             return html`
                         ${isTargetUnread ? html`
@@ -355,27 +380,71 @@ export const FastChatBox = ({
                                 <span class="fc_unread_divider_text">${tr('unread_messages')}</span>
                             </div>
                         ` : null}
-                        <div class="fc_msg_row" data-msg-id="${msg.id}" key=${msg.id}>
+                        <div class="fc_msg_row ${isGift ? 'msg-gift' : ''}" data-msg-id="${msg.id}" key=${msg.id}>
                             <img src="${authorAva || '/assets/packages/static/openvk/img/camera_50.png'}" class="fc_msg_avatar" />
                             <div class="fc_msg_body">
                                 <div class="fc_msg_header">
                                     <span class="fc_msg_author">${authorName}</span>
                                     <span class="fc_msg_time">${timeStr}</span>
                                 </div>
+                                ${isGift ? html`
+                                    <div class="fc_msg_postfix">
+                                        ${tr("msg_sent_gift_" + senderGender).toLowerCase()}:
+                                    </div>
+                                ` : null}
+                                ${replyMessage ? html`
+                                    <div class="reply-msg-container">
+                                        <div class="reply-msg-head">
+                                            <img class="reply-avatar" src=${replyAuthorAvatar} alt=${replyAuthorName} />
+                                            <span class="reply-author-name">${replyAuthorName}</span>
+                                        </div>
+                                        <div class="reply-text">${replyText ? replyText : tr("attachment")}</div>
+                                    </div>
+                                ` : null}
                                 <div class="fc_msg_text" dangerouslySetInnerHTML=${{
                                     __html: (typeof msg.getText === 'function')
                                         ? msg.getText(false)
                                         : formatFastChatMessageText(msg.text || msg.body || (msg.data && (msg.data.text || msg.data.body)) || '')
                                 }} />
-                                ${msg.attachments && Array.isArray(msg.attachments) && msg.attachments.length > 0 && html`
+                                ${fwdMessages && fwdMessages.length > 0 ? html`
+                                    <div class="fwd-messages-container">
+                                        ${fwdMessages.map((fwd, fIdx) => {
+                                            const fwdFromId = fwd.from_id || fwd.data?.from_id;
+                                            const fwdSender = fwd.sender || (window.im?.cached_profiles?._findCachedProfileByIdEvenIfNotCached(fwdFromId));
+                                            const fwdName = fwdSender?.getName ? fwdSender.getName() : (fwdFromId ? "id" + fwdFromId : "...");
+                                            const fwdAva = fwdSender?.getAvatar ? fwdSender.getAvatar("mid", false) : "/assets/packages/static/openvk/img/camera_50.png";
+                                            const fwdText = fwd.text || fwd.body || (typeof fwd.getText === 'function' ? fwd.getText(false) : '');
+                                            const fwdAtts = fwd.attachments || fwd.data?.attachments || [];
+                                            return html`
+                                                <div class="fwd-message-block" key=${fIdx}>
+                                                    <div class="fwd-message-head">
+                                                        <img class="fwd-avatar" src=${fwdAva} alt=${fwdName} />
+                                                        <span class="fwd-author-name">${fwdName}</span>
+                                                    </div>
+                                                    ${fwdText ? html`<div class="fwd-text">${fwdText}</div>` : null}
+                                                    ${fwdAtts.length > 0 ? html`
+                                                        <div class="fc_attachments_wrap">
+                                                            ${fwdAtts.map(att => html`
+                                                                <div class="fc_attachment_row" key=${att.type + (att[att.type]?.id || '')}>
+                                                                    <${Attachment} msg=${fwd} att=${att} />
+                                                                </div>
+                                                            `)}
+                                                        </div>
+                                                    ` : null}
+                                                </div>
+                                            `;
+                                        })}
+                                    </div>
+                                ` : null}
+                                ${attachmentsList && attachmentsList.length > 0 ? html`
                                     <div class="fc_attachments_wrap">
-                                        ${msg.attachments.map(att => html`
+                                        ${attachmentsList.map(att => html`
                                             <div class="fc_attachment_row" key=${att.type + (att[att.type]?.id || '')}>
                                                 <${Attachment} msg=${msg} att=${att} />
                                             </div>
                                         `)}
                                     </div>
-                                `}
+                                ` : null}
                             </div>
                         </div>
                     `;

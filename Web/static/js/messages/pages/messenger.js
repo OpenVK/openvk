@@ -2015,7 +2015,7 @@ export class MessengerPage extends IMPage {
     onEditButtonClick(e, msg) {
         if (!msg || window.im.messenger.isForwarded()) { return; }
         if (typeof msg.can === 'function' && !msg.can("edit")) { return; }
-        if (typeof msg.isSpecial === 'function' && msg.isSpecial("sticker")) { return; }
+        if (typeof msg.isSpecial === 'function' && (msg.isSpecial("sticker") || msg.isSpecial("gift"))) { return; }
 
         if (window.im.messenger.replyTo != null) {
             window.im.messenger.removeReply(false);

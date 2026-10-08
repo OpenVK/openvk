@@ -281,7 +281,7 @@ final class Messages extends VKAPIRequestHandler
 
         $result = [];
         if (!empty($strAttachments)) {
-            $parsed = parseAttachments($strAttachments, array_merge(['photo', 'video', 'audio', 'doc', 'poll', 'wall', 'sticker'], $allowedAdditional));
+            $parsed = parseAttachments($strAttachments, array_merge(['photo', 'video', 'audio', 'doc', 'poll', 'wall', 'sticker', 'gift'], $allowedAdditional));
 
             foreach ($parsed as $attachment) {
                 if (!$attachment) {
@@ -1386,6 +1386,10 @@ final class Messages extends VKAPIRequestHandler
             $this->fail(100, "One of the parameters specified was missing or invalid: no recipient");
         }
 
+        if (preg_match('/(?:^|,)gift-?\d+_\d+/i', $attachment)) {
+            $this->fail(100, "Sending gift attachments directly is not allowed");
+        }
+
         $attachment_checked = parseAttachments($attachment, ["photo", "video", "doc", "audio", "wall", "sticker"]);
         $attachment_secure = [];
         $formatted_attachments = [];
@@ -1509,30 +1513,38 @@ final class Messages extends VKAPIRequestHandler
             $this->fail(936, "There is no peer with this id");
         }
 
-        // Forbid editing messages that have a sticker
+        // Forbid editing messages that have a sticker or gift
         $msgData = $this->invoke("messages.getById", [
             "message_ids" => (string) $message_id,
         ]);
         if (!empty($msgData['items'][0])) {
             $msgItem = $msgData['items'][0];
-            $hasExistingSticker = false;
+            $hasForbidden = false;
+            $forbiddenType = '';
             if (!empty($msgItem['attachments'])) {
                 foreach ((array) $msgItem['attachments'] as $att) {
-                    if (is_string($att) && str_starts_with($att, 'sticker')) {
-                        $hasExistingSticker = true;
+                    if (is_string($att) && (str_starts_with($att, 'sticker') || str_starts_with($att, 'gift'))) {
+                        $hasForbidden = true;
+                        $forbiddenType = str_starts_with($att, 'sticker') ? 'sticker' : 'gift';
                         break;
-                    } elseif (is_array($att) && ($att['type'] ?? '') === 'sticker') {
-                        $hasExistingSticker = true;
+                    } elseif (is_array($att) && in_array($att['type'] ?? '', ['sticker', 'gift'])) {
+                        $hasForbidden = true;
+                        $forbiddenType = $att['type'];
                         break;
-                    } elseif (is_object($att) && ($att->type ?? '') === 'sticker') {
-                        $hasExistingSticker = true;
+                    } elseif (is_object($att) && in_array($att->type ?? '', ['sticker', 'gift'])) {
+                        $hasForbidden = true;
+                        $forbiddenType = $att->type;
                         break;
                     }
                 }
             }
-            if ($hasExistingSticker) {
-                $this->fail(920, "Can't edit message with sticker");
+            if ($hasForbidden) {
+                $this->fail(920, "Can't edit message with " . $forbiddenType);
             }
+        }
+
+        if (preg_match('/(?:^|,)gift-?\d+_\d+/i', $attachment)) {
+            $this->fail(100, "Gift attachments cannot be attached via edit");
         }
 
         $attachment_checked = parseAttachments($attachment, ["photo", "video", "doc", "audio", "wall", "sticker"]);

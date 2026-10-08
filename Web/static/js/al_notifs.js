@@ -425,14 +425,24 @@ function showMessageNotification(conv, msg) {
         }
 
         let bodyText = (typeof msg.getText === 'function' ? msg.getText(true, true) : (msg.data?.text || msg.text || msg.body || '')) || '';
-        if (!bodyText) {
+        const isGiftMsg = (typeof msg.isSpecial === 'function' && msg.isSpecial('gift')) ||
+            (Array.isArray(msg.data?.attachments) && msg.data.attachments.some(a => a && a.type === 'gift')) ||
+            (Array.isArray(msg.attachments) && msg.attachments.some(a => a && a.type === 'gift'));
+
+        if (isGiftMsg) {
+            const allAtts = (msg.data && msg.data.attachments) || msg.attachments || [];
+            const giftObj = (Array.isArray(allAtts) ? allAtts.find(a => a && a.type === 'gift') : null) || allAtts[0];
+            const giftMsg = giftObj?.gift?.message;
+            const giftLabel = "(" + tr('preview_attachment_gift') + ")";
+            bodyText = giftMsg ? `${giftLabel}: ${giftMsg}` : giftLabel;
+        } else if (!bodyText) {
             const atts = (msg.data && msg.data.attachments) || msg.attachments || [];
             if (atts.length > 0 && typeof get_attachment_text === 'function') {
                 bodyText = get_attachment_text(atts[0]);
             } else if (atts.length > 0) {
-                bodyText = typeof tr === 'function' ? tr('attachment') : 'Вложение';
+                bodyText = tr('attachment');
             } else {
-                bodyText = typeof tr === 'function' ? tr('new_message') : 'Новое сообщение';
+                bodyText = tr('new_message');
             }
         }
 

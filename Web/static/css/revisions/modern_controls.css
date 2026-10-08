@@ -111,6 +111,7 @@ only screen and (resolution >=1.25dppx) {
 .header_navigation {
     line-height: 40px;
     height: 43px;
+    background: unset;
 }
 
 .header_navigation .link {

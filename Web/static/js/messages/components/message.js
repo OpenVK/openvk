@@ -107,6 +107,7 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
         msg.isReply() ? 'msg-reply' : '',
         msg.isPinned() ? 'msg-pinned' : '',
         isImportant ? 'msg-important' : '',
+        msg.isSpecial("gift") ? 'msg-gift' : '',
         (isSearchTpl) ? 'msg-searched' : (msg.isError() ? "msg-error-hoverable" : 'msg-hoverable'),
         msg.isRead() ? 'msg-read' : 'unread',
     ].filter(Boolean).join(' ');
