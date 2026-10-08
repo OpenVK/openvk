@@ -578,7 +578,7 @@ class Photo extends Media
     {
         return [
             "type"  => "photo",
-            "photo" => $this->toVkApiStruct(true, false),
+            "photo" => $this->toVkApiStruct($user, true, false),
         ];
     }
 

@@ -29,15 +29,13 @@ function endSuggestAction(new_count, post_node) {
 
 // "Опубликовать запись"
 $(document).on("click", "#publish_post", async (e) => {
-    let id = Number(e.currentTarget.dataset.id)
-    let post;
+    let id = Number(e.target.dataset.id)
     let body = `
         <textarea id="pooblish" style="max-height:500px;resize:vertical;min-height:54px;"></textarea>
         <label><input type="checkbox" id="signatr" checked>${tr("add_signature")}</label>
     `
 
     MessageBox(tr("publishing_suggested_post"), body, [tr("publish"), tr("cancel")], [(async () => {
-        let id = Number(e.currentTarget.dataset.id)
         let post;
 
         let formData = new FormData()
@@ -50,9 +48,9 @@ $(document).on("click", "#publish_post", async (e) => {
             hooks: {
                 beforeRequest: [
                     (_request) => {
-                        e.currentTarget.classList.add("loaded")
-                        e.currentTarget.setAttribute("value", "")
-                        e.currentTarget.setAttribute("id", "")
+                        e.target.classList.add("loaded")
+                        e.target.setAttribute("value", "")
+                        e.target.setAttribute("id", "")
                     }
                 ],
                 afterResponse: [
@@ -61,14 +59,14 @@ $(document).on("click", "#publish_post", async (e) => {
 
                         if(json.success) {
                             NewNotification(tr("suggestion_succefully_published"), tr("suggestion_press_to_go"), null, () => {window.location.assign("/wall" + json.id)});
-                            endSuggestAction(json.new_count, e.currentTarget.closest("table"))
+                            endSuggestAction(json.new_count, e.target.closest("table"))
                         } else {
                             MessageBox(tr("error"), json.flash.message, [tr("ok")], [Function.noop]);
                         }
 
-                        e.currentTarget.setAttribute("value", tr("publish_suggested"))
-                        e.currentTarget.classList.remove("loaded")
-                        e.currentTarget.setAttribute("id", "publish_post")
+                        e.target.setAttribute("value", tr("publish_suggested"))
+                        e.target.classList.remove("loaded")
+                        e.target.setAttribute("id", "publish_post")
                     }
                 ]
             },
@@ -92,9 +90,9 @@ $(document).on("click", "#decline_post", async (e) => {
         hooks: {
             beforeRequest: [
                 (_request) => {
-                    e.currentTarget.classList.add("loaded")
-                    e.currentTarget.setAttribute("value", "")
-                    e.currentTarget.setAttribute("id", "")
+                    e.target.classList.add("loaded")
+                    e.target.setAttribute("value", "")
+                    e.target.setAttribute("id", "")
                 }
             ],
             afterResponse: [
@@ -102,14 +100,14 @@ $(document).on("click", "#decline_post", async (e) => {
                     json = await response.json()
 
                     if(json.success) {
-                        endSuggestAction(json.new_count, e.currentTarget.closest("table"))
+                        endSuggestAction(json.new_count, e.target.closest("table"))
                     } else {
                         MessageBox(tr("error"), json.flash.message, [tr("ok")], [Function.noop]);
                     }
 
-                    e.currentTarget.setAttribute("value", tr("decline_suggested"))
-                    e.currentTarget.setAttribute("id", "decline_post")
-                    e.currentTarget.classList.remove("loaded")
+                    e.target.setAttribute("value", tr("decline_suggested"))
+                    e.target.setAttribute("id", "decline_post")
+                    e.target.classList.remove("loaded")
                 }
             ]
         },
