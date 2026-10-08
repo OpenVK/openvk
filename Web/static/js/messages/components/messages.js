@@ -1768,7 +1768,7 @@ export class ChatMessage {
         } else {
             if (this.isSpecial("gift")) {
                 const msg = this.data.attachments?.[0]?.gift?.message || (Array.isArray(this.data.attachments) ? this.data.attachments.find(a => a && a.type === 'gift')?.gift?.message : null);
-                txt = msg ? msg : "";
+                txt = msg ? escapeHtml(msg) : "";
             }
         }
 
