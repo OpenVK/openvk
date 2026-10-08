@@ -1,7 +1,10 @@
 {ifset $thisUser}
     {if $thisUser->getNsfwTolerance() < 2}
+        {css "css/nsfw-posts.css"}
+    {/if}
+{else}
     {css "css/nsfw-posts.css"}
-{/if}
+{/ifset}
 
 {if $theme !== NULL}
     {if $theme->inheritDefault()}
