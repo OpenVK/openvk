@@ -325,6 +325,32 @@ To call any API method, send a GET or POST request to:
 * **[status.get](/dev/methods/status/get)** — Returns current text/audio status of a user or community description.
 * **[status.set](/dev/methods/status/set)** — Updates user status or community description.
 
+## [stickers](/dev/methods/stickers)
+
+* **[stickers.get](/dev/methods/stickers/get)** — Returns active sticker packs of the current user.
+* **[stickers.getAll](/dev/methods/stickers/getAll)** — Returns all available sticker packs from the catalog.
+* **[stickers.getFrom](/dev/methods/stickers/getFrom)** — Returns detailed information about a specific sticker pack and its stickers.
+* **[stickers.buy](/dev/methods/stickers/buy)** — Purchases or activates a sticker pack.
+* **[stickers.getProducts](/dev/methods/stickers/getProducts)** — Returns sticker products with filtering (alias for store.getProducts).
+* **[stickers.getStockItems](/dev/methods/stickers/getStockItems)** — Returns showcase catalog sticker items (alias for store.getStockItems).
+* **[stickers.getStickersKeywords](/dev/methods/stickers/getStickersKeywords)** — Returns sticker keyword and emoji suggestions dictionary (alias for store.getStickersKeywords).
+* **[stickers.getKeywordStickers](/dev/methods/stickers/getKeywordStickers)** — Returns stickers by keywords.
+
+## [store](/dev/methods/store)
+
+* **[store.getProducts](/dev/methods/store/getProducts)** — Returns a list of products (sticker packs) filtered by purchase and active status.
+* **[store.getStockItems](/dev/methods/store/getStockItems)** — Returns showcase store items (popular, free, all).
+* **[store.getStickersKeywords](/dev/methods/store/getStickersKeywords)** — Returns dictionary mapping emojis and keywords to stickers.
+* **[store.buy](/dev/methods/store/buy)** — Purchases a product (sticker pack) using user coins.
+* **[store.activateProduct](/dev/methods/store/activateProduct)** — Activates a product (adds to quick access in sticker keyboard).
+* **[store.deactivateProduct](/dev/methods/store/deactivateProduct)** — Deactivates a product (hides from quick access).
+* **[store.getFavoriteStickers](/dev/methods/store/getFavoriteStickers)** — Returns user's favorite stickers.
+* **[store.addFavoriteSticker](/dev/methods/store/addFavoriteSticker)** — Adds a sticker to favorites.
+* **[store.removeFavoriteSticker](/dev/methods/store/removeFavoriteSticker)** — Removes a sticker from favorites.
+* **[store.getRecentStickers](/dev/methods/store/getRecentStickers)** — Returns recently used stickers.
+* **[store.addRecentSticker](/dev/methods/store/addRecentSticker)** — Adds a sticker to recent list.
+* **[store.clearRecentStickers](/dev/methods/store/clearRecentStickers)** — Clears recent stickers history.
+
 ## [users](/dev/methods/users)
 
 * **[users.get](/dev/methods/users/get)** — Returns user profiles.

@@ -445,6 +445,38 @@ final class DevelopersPresenter extends OpenVKPresenter
                     ],
                 ],
                 [
+                    "id"    => "stickers",
+                    "name"  => "dsb_m_stickers",
+                    "links" => [
+                        ["name" => "buy",                  "href" => "/dev/methods/stickers/buy"],
+                        ["name" => "get",                  "href" => "/dev/methods/stickers/get"],
+                        ["name" => "getAll",               "href" => "/dev/methods/stickers/getAll"],
+                        ["name" => "getFrom",              "href" => "/dev/methods/stickers/getFrom"],
+                        ["name" => "getKeywordStickers",   "href" => "/dev/methods/stickers/getKeywordStickers"],
+                        ["name" => "getProducts",          "href" => "/dev/methods/stickers/getProducts"],
+                        ["name" => "getStickersKeywords",  "href" => "/dev/methods/stickers/getStickersKeywords"],
+                        ["name" => "getStockItems",        "href" => "/dev/methods/stickers/getStockItems"],
+                    ],
+                ],
+                [
+                    "id"    => "store",
+                    "name"  => "dsb_m_store",
+                    "links" => [
+                        ["name" => "activateProduct",       "href" => "/dev/methods/store/activateProduct"],
+                        ["name" => "addFavoriteSticker",    "href" => "/dev/methods/store/addFavoriteSticker"],
+                        ["name" => "addRecentSticker",      "href" => "/dev/methods/store/addRecentSticker"],
+                        ["name" => "buy",                   "href" => "/dev/methods/store/buy"],
+                        ["name" => "clearRecentStickers",   "href" => "/dev/methods/store/clearRecentStickers"],
+                        ["name" => "deactivateProduct",     "href" => "/dev/methods/store/deactivateProduct"],
+                        ["name" => "getFavoriteStickers",   "href" => "/dev/methods/store/getFavoriteStickers"],
+                        ["name" => "getProducts",           "href" => "/dev/methods/store/getProducts"],
+                        ["name" => "getRecentStickers",     "href" => "/dev/methods/store/getRecentStickers"],
+                        ["name" => "getStickersKeywords",   "href" => "/dev/methods/store/getStickersKeywords"],
+                        ["name" => "getStockItems",         "href" => "/dev/methods/store/getStockItems"],
+                        ["name" => "removeFavoriteSticker", "href" => "/dev/methods/store/removeFavoriteSticker"],
+                    ],
+                ],
+                [
                     "id"    => "users",
                     "name"  => "dsb_m_users",
                     "links" => [

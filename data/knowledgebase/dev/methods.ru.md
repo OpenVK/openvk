@@ -325,6 +325,32 @@ OpenVK-KB-Heading: Список методов API
 * **[status.get](/dev/methods/status/get)** — возвращает текущий текстовый и музыкальный статус пользователя или описание сообщества.
 * **[status.set](/dev/methods/status/set)** — устанавливает новый текстовый статус пользователя или описание сообщества.
 
+## [stickers](/dev/methods/stickers)
+
+* **[stickers.get](/dev/methods/stickers/get)** — возвращает список активных стикерпаков текущего пользователя.
+* **[stickers.getAll](/dev/methods/stickers/getAll)** — возвращает список всех доступных в каталоге стикерпаков.
+* **[stickers.getFrom](/dev/methods/stickers/getFrom)** — возвращает подробную информацию о конкретном стикерпаке и его стикерах.
+* **[stickers.buy](/dev/methods/stickers/buy)** — приобретает или активирует указанный стикерпак.
+* **[stickers.getProducts](/dev/methods/stickers/getProducts)** — возвращает список товаров-стикерпаков с фильтрацией (псевдоним для store.getProducts).
+* **[stickers.getStockItems](/dev/methods/stickers/getStockItems)** — возвращает список товаров витрины стикеров (псевдоним для store.getStockItems).
+* **[stickers.getStickersKeywords](/dev/methods/stickers/getStickersKeywords)** — возвращает словарь подсказок стикеров по эмодзи и словам (псевдоним для store.getStickersKeywords).
+* **[stickers.getKeywordStickers](/dev/methods/stickers/getKeywordStickers)** — возвращает список стикеров по ключевым словам.
+
+## [store](/dev/methods/store)
+
+* **[store.getProducts](/dev/methods/store/getProducts)** — возвращает список товаров (стикерпаков) с фильтрацией по статусу покупки и активности.
+* **[store.getStockItems](/dev/methods/store/getStockItems)** — возвращает витрину товаров магазина (популярные, бесплатные, все).
+* **[store.getStickersKeywords](/dev/methods/store/getStickersKeywords)** — возвращает словарь сопоставления эмодзи и ключевых слов со стикерами.
+* **[store.buy](/dev/methods/store/buy)** — приобретает товар (стикерпак) за монеты с баланса пользователя.
+* **[store.activateProduct](/dev/methods/store/activateProduct)** — активирует товар (добавляет в быстрый доступ на клавиатуре).
+* **[store.deactivateProduct](/dev/methods/store/deactivateProduct)** — деактивирует товар (скрывает из быстрого доступа).
+* **[store.getFavoriteStickers](/dev/methods/store/getFavoriteStickers)** — возвращает список избранных стикеров пользователя.
+* **[store.addFavoriteSticker](/dev/methods/store/addFavoriteSticker)** — добавляет стикер в избранное.
+* **[store.removeFavoriteSticker](/dev/methods/store/removeFavoriteSticker)** — удаляет стикер из избранного.
+* **[store.getRecentStickers](/dev/methods/store/getRecentStickers)** — возвращает список недавно использованных стикеров.
+* **[store.addRecentSticker](/dev/methods/store/addRecentSticker)** — добавляет стикер в недавние.
+* **[store.clearRecentStickers](/dev/methods/store/clearRecentStickers)** — очищает список недавно использованных стикеров.
+
 ## [users](/dev/methods/users)
 
 * **[users.get](/dev/methods/users/get)** — возвращает расширенную информацию о пользователях.
