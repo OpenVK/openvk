@@ -397,11 +397,51 @@ final class DevelopersPresenter extends OpenVKPresenter
                     ],
                 ],
                 [
+                    "id"    => "polls",
+                    "name"  => "dsb_m_polls",
+                    "links" => [
+                        ["name" => "addVote",    "href" => "/dev/methods/polls/addVote"],
+                        ["name" => "create",     "href" => "/dev/methods/polls/create"],
+                        ["name" => "deleteVote", "href" => "/dev/methods/polls/deleteVote"],
+                        ["name" => "getById",    "href" => "/dev/methods/polls/getById"],
+                        ["name" => "getVoters",  "href" => "/dev/methods/polls/getVoters"],
+                    ],
+                ],
+                [
                     "id"    => "queue",
                     "name"  => "dsb_m_queue",
                     "links" => [
                         ["name" => "subscribe",   "href" => "/dev/methods/queue/subscribe"],
                         ["name" => "unsubscribe", "href" => "/dev/methods/queue/unsubscribe"],
+                    ],
+                ],
+                [
+                    "id"    => "reports",
+                    "name"  => "dsb_m_reports",
+                    "links" => [
+                        ["name" => "add", "href" => "/dev/methods/reports/add"],
+                    ],
+                ],
+                [
+                    "id"    => "search",
+                    "name"  => "dsb_m_search",
+                    "links" => [
+                        ["name" => "getHints", "href" => "/dev/methods/search/getHints"],
+                    ],
+                ],
+                [
+                    "id"    => "stats",
+                    "name"  => "dsb_m_stats",
+                    "links" => [
+                        ["name" => "trackEvents", "href" => "/dev/methods/stats/trackEvents"],
+                    ],
+                ],
+                [
+                    "id"    => "status",
+                    "name"  => "dsb_m_status",
+                    "links" => [
+                        ["name" => "get", "href" => "/dev/methods/status/get"],
+                        ["name" => "set", "href" => "/dev/methods/status/set"],
                     ],
                 ],
                 [

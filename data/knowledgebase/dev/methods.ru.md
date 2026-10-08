@@ -295,10 +295,35 @@ OpenVK-KB-Heading: Список методов API
 * **[places.checkin](/dev/methods/places/checkin)** — создает новую отметку местоположения (чекин).
 * **[places.getCheckins](/dev/methods/places/getCheckins)** — возвращает список чекинов по географическим координатам.
 
+## [polls](/dev/methods/polls)
+
+* **[polls.create](/dev/methods/polls/create)** — создает новый опрос.
+* **[polls.getById](/dev/methods/polls/getById)** — возвращает подробную информацию об опросе по его идентификатору.
+* **[polls.addVote](/dev/methods/polls/addVote)** — отдает голос текущего пользователя за вариант(ы) ответа в опросе.
+* **[polls.deleteVote](/dev/methods/polls/deleteVote)** — отзывает голос текущего пользователя в опросе.
+* **[polls.getVoters](/dev/methods/polls/getVoters)** — возвращает список пользователей, проголосовавших за указанный вариант ответа.
+
 ## [queue](/dev/methods/queue)
 
 * **[queue.subscribe](/dev/methods/queue/subscribe)** — оформляет подписку на одну или несколько очередей событий.
 * **[queue.unsubscribe](/dev/methods/queue/unsubscribe)** — отписывает клиента от очередей событий.
+
+## [reports](/dev/methods/reports)
+
+* **[reports.add](/dev/methods/reports/add)** — отправляет жалобу модераторам платформы на объект контента или пользователя.
+
+## [search](/dev/methods/search)
+
+* **[search.getHints](/dev/methods/search/getHints)** — возвращает поисковые подсказки для быстрого перехода к пользователям и сообществам.
+
+## [stats](/dev/methods/stats)
+
+* **[stats.trackEvents](/dev/methods/stats/trackEvents)** — передает статистические события от приложений и клиентов.
+
+## [status](/dev/methods/status)
+
+* **[status.get](/dev/methods/status/get)** — возвращает текущий текстовый и музыкальный статус пользователя или описание сообщества.
+* **[status.set](/dev/methods/status/set)** — устанавливает новый текстовый статус пользователя или описание сообщества.
 
 ## [users](/dev/methods/users)
 

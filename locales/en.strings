@@ -1355,7 +1355,12 @@
 "dsb_m_pay" = "Payments";
 "dsb_m_photos" = "Photos";
 "dsb_m_places" = "Places";
+"dsb_m_polls" = "Polls";
 "dsb_m_queue" = "Event Queues";
+"dsb_m_reports" = "Reports";
+"dsb_m_search" = "Search";
+"dsb_m_stats" = "Statistics";
+"dsb_m_status" = "Status";
 "dsb_m_users" = "Users";
 "dsb_m_ovk" = "OpenVK";
 "dsb_models" = "Models";

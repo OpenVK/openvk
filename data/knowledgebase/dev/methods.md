@@ -295,10 +295,35 @@ To call any API method, send a GET or POST request to:
 * **[places.checkin](/dev/methods/places/checkin)** — Creates a new location check-in.
 * **[places.getCheckins](/dev/methods/places/getCheckins)** — Returns a list of check-ins by geographic coordinates.
 
+## [polls](/dev/methods/polls)
+
+* **[polls.create](/dev/methods/polls/create)** — Creates a new poll.
+* **[polls.getById](/dev/methods/polls/getById)** — Returns detailed information about a poll by its ID.
+* **[polls.addVote](/dev/methods/polls/addVote)** — Casts the current user's vote for option(s) in a poll.
+* **[polls.deleteVote](/dev/methods/polls/deleteVote)** — Revokes the current user's vote in a poll.
+* **[polls.getVoters](/dev/methods/polls/getVoters)** — Returns a list of voters for a specific poll option.
+
 ## [queue](/dev/methods/queue)
 
 * **[queue.subscribe](/dev/methods/queue/subscribe)** — Subscribes the client to one or more event queues.
 * **[queue.unsubscribe](/dev/methods/queue/unsubscribe)** — Unsubscribes the client from event queues.
+
+## [reports](/dev/methods/reports)
+
+* **[reports.add](/dev/methods/reports/add)** — Submits a report against content or a user to moderators.
+
+## [search](/dev/methods/search)
+
+* **[search.getHints](/dev/methods/search/getHints)** — Returns search hints for quick navigation to users and communities.
+
+## [stats](/dev/methods/stats)
+
+* **[stats.trackEvents](/dev/methods/stats/trackEvents)** — Submits analytics events from applications and clients.
+
+## [status](/dev/methods/status)
+
+* **[status.get](/dev/methods/status/get)** — Returns current text/audio status of a user or community description.
+* **[status.set](/dev/methods/status/set)** — Updates user status or community description.
 
 ## [users](/dev/methods/users)
 

@@ -1329,7 +1329,12 @@
 "dsb_m_pay" = "Платежи";
 "dsb_m_photos" = "Фотографии";
 "dsb_m_places" = "Места";
+"dsb_m_polls" = "Опросы";
 "dsb_m_queue" = "Очереди событий";
+"dsb_m_reports" = "Жалобы";
+"dsb_m_search" = "Поиск";
+"dsb_m_stats" = "Статистика";
+"dsb_m_status" = "Статус";
 "dsb_m_users" = "Пользователи";
 "dsb_m_ovk" = "OpenVK";
 "dsb_models" = "Модели";
