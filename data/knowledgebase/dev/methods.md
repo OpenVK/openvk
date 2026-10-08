@@ -354,7 +354,9 @@ To call any API method, send a GET or POST request to:
 ## [users](/dev/methods/users)
 
 * **[users.get](/dev/methods/users/get)** — Returns user profiles.
+* **[users.getFollowers](/dev/methods/users/getFollowers)** — Returns a list of a user's followers.
 * **[users.search](/dev/methods/users/search)** — Searches for users.
+* **[users.report](/dev/methods/users/report)** — Reports a user profile for violations.
 
 ## [utils](/dev/methods/utils)
 
@@ -375,6 +377,29 @@ To call any API method, send a GET or POST request to:
 * **[video.createComment](/dev/methods/video/createComment)** — Creates a new comment on a video.
 * **[video.addComment](/dev/methods/video/addComment)** — Adds a new comment on a video (alias for video.createComment).
 * **[video.deleteComment](/dev/methods/video/deleteComment)** — Deletes a comment on a video.
+
+## [wall](/dev/methods/wall)
+
+* **[wall.get](/dev/methods/wall/get)** — Returns a list of posts from a user or community wall.
+* **[wall.getArchiveYears](/dev/methods/wall/getArchiveYears)** — Returns a list of years for which archived posts exist.
+* **[wall.getById](/dev/methods/wall/getById)** — Returns post objects by their identifiers.
+* **[wall.post](/dev/methods/wall/post)** — Publishes a new post on a user or community wall.
+* **[wall.repost](/dev/methods/wall/repost)** — Reposts an object (wall post, photo, video) to a user or community wall.
+* **[wall.getComments](/dev/methods/wall/getComments)** — Returns comments on a wall post.
+* **[wall.getComment](/dev/methods/wall/getComment)** — Returns detailed information about a specific comment.
+* **[wall.createComment](/dev/methods/wall/createComment)** — Creates a new comment on a wall post.
+* **[wall.addComment](/dev/methods/wall/addComment)** — Adds a comment to a wall post (alias for wall.createComment).
+* **[wall.deleteComment](/dev/methods/wall/deleteComment)** — Deletes a comment from a wall post.
+* **[wall.delete](/dev/methods/wall/delete)** — Deletes a post from a wall.
+* **[wall.edit](/dev/methods/wall/edit)** — Edits a post on a wall.
+* **[wall.editComment](/dev/methods/wall/editComment)** — Edits a comment on a wall post.
+* **[wall.checkCopyrightLink](/dev/methods/wall/checkCopyrightLink)** — Validates a copyright source link.
+* **[wall.pin](/dev/methods/wall/pin)** — Pins a post to the top of a wall.
+* **[wall.unpin](/dev/methods/wall/unpin)** — Unpins a post on a wall.
+* **[wall.getNearby](/dev/methods/wall/getNearby)** — Returns geo-tagged posts located near a specified post.
+* **[wall.archive](/dev/methods/wall/archive)** — Archives a wall post.
+* **[wall.reveal](/dev/methods/wall/reveal)** — Unarchives and restores a post to the wall.
+* **[wall.getSubscriptions](/dev/methods/wall/getSubscriptions)** — Returns subscriptions to wall updates.
 
 ## [ovk](/dev/methods/ovk)
 

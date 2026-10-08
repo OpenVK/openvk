@@ -1340,6 +1340,7 @@
 "dsb_m_users" = "Пользователи";
 "dsb_m_utils" = "Утилиты";
 "dsb_m_video" = "Видеозаписи";
+"dsb_m_wall" = "Стена";
 "dsb_m_ovk" = "OpenVK";
 "dsb_models" = "Модели";
 "dsb_standalone" = "Standalone";

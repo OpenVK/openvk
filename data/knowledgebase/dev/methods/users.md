@@ -1,9 +1,12 @@
-OpenVK-KB-Heading: users methods
+OpenVK-KB-Heading: users Methods
 
-# users methods
+# users Methods
 
-The **users** section contains methods for retrieving user profile data and searching users.
+The **users** section provides methods for retrieving user profile details, fetching followers, searching the user database, and filing user reports.
 
-### Method List
-* **[users.get](/dev/methods/users/get)** — returns extended user profile information.
-* **[users.search](/dev/methods/users/search)** — searches for users based on criteria.
+## Method List
+
+* **[users.get](/dev/methods/users/get)** — returns user profile information.
+* **[users.getFollowers](/dev/methods/users/getFollowers)** — returns a list of a user's followers.
+* **[users.search](/dev/methods/users/search)** — searches for users based on multiple criteria.
+* **[users.report](/dev/methods/users/report)** — reports a user profile for violations.

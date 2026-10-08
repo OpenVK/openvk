@@ -1366,6 +1366,7 @@
 "dsb_m_users" = "Users";
 "dsb_m_utils" = "Utilities";
 "dsb_m_video" = "Videos";
+"dsb_m_wall" = "Wall";
 "dsb_m_ovk" = "OpenVK";
 "dsb_models" = "Models";
 "dsb_standalone" = "Standalone";
