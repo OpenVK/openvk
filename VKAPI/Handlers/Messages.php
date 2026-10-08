@@ -281,7 +281,7 @@ final class Messages extends VKAPIRequestHandler
 
         $result = [];
         if (!empty($strAttachments)) {
-            $parsed = parseAttachments($strAttachments, array_merge(['photo', 'video', 'audio', 'doc', 'poll', 'wall', 'sticker'], $allowedAdditional));
+            $parsed = parseAttachments($strAttachments, array_merge(['photo', 'video', 'audio', 'doc', 'poll', 'wall', 'sticker', 'gift'], $allowedAdditional));
 
             foreach ($parsed as $attachment) {
                 if (!$attachment) {
@@ -1386,6 +1386,10 @@ final class Messages extends VKAPIRequestHandler
             $this->fail(100, "One of the parameters specified was missing or invalid: no recipient");
         }
 
+        if (preg_match('/(?:^|,)gift-?\d+_\d+/i', $attachment)) {
+            $this->fail(100, "Sending gift attachments directly is not allowed");
+        }
+
         $attachment_checked = parseAttachments($attachment, ["photo", "video", "doc", "audio", "wall", "sticker"]);
         $attachment_secure = [];
         $formatted_attachments = [];
@@ -1533,6 +1537,10 @@ final class Messages extends VKAPIRequestHandler
             if ($hasExistingSticker) {
                 $this->fail(920, "Can't edit message with sticker");
             }
+        }
+
+        if (preg_match('/(?:^|,)gift-?\d+_\d+/i', $attachment)) {
+            $this->fail(100, "Gift attachments cannot be attached via edit");
         }
 
         $attachment_checked = parseAttachments($attachment, ["photo", "video", "doc", "audio", "wall", "sticker"]);
