@@ -251,6 +251,25 @@ OpenVK-KB-Heading: Список методов API
 * **[notifications.getSettings](/dev/methods/notifications/getSettings)** — возвращает настройки уведомлений пользователя (заглушка).
 * **[notifications.getIgnoredSources](/dev/methods/notifications/getIgnoredSources)** — возвращает список источников, скрытых из уведомлений (заглушка).
 
+## [pay](/dev/methods/pay)
+
+* **[pay.getIdByMarketingId](/dev/methods/pay/getIdByMarketingId)** — расшифровывает маркетинговый идентификатор и возвращает числовой идентификатор.
+* **[pay.verifyOrder](/dev/methods/pay/verifyOrder)** — проверяет цифровую подпись и корректность оформления платежного заказа приложения.
+
+## [places](/dev/methods/places)
+
+* **[places.getCityById](/dev/methods/places/getCityById)** — возвращает информацию о городах по их идентификаторам.
+* **[places.getCitiesById](/dev/methods/places/getCitiesById)** — возвращает информацию о городах по идентификаторам (псевдоним для places.getCityById).
+* **[places.getCountryById](/dev/methods/places/getCountryById)** — возвращает информацию о странах по их идентификаторам.
+* **[places.getCountriesById](/dev/methods/places/getCountriesById)** — возвращает информацию о странах по идентификаторам (псевдоним для places.getCountryById).
+* **[places.checkin](/dev/methods/places/checkin)** — создает новую отметку местоположения (чекин).
+* **[places.getCheckins](/dev/methods/places/getCheckins)** — возвращает список чекинов по географическим координатам.
+
+## [queue](/dev/methods/queue)
+
+* **[queue.subscribe](/dev/methods/queue/subscribe)** — оформляет подписку на одну или несколько очередей событий.
+* **[queue.unsubscribe](/dev/methods/queue/unsubscribe)** — отписывает клиента от очередей событий.
+
 ## [users](/dev/methods/users)
 
 * **[users.get](/dev/methods/users/get)** — возвращает расширенную информацию о пользователях.

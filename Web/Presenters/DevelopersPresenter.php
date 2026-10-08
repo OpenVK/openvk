@@ -344,6 +344,34 @@ final class DevelopersPresenter extends OpenVKPresenter
                     ],
                 ],
                 [
+                    "id"    => "pay",
+                    "name"  => "dsb_m_pay",
+                    "links" => [
+                        ["name" => "getIdByMarketingId", "href" => "/dev/methods/pay/getIdByMarketingId"],
+                        ["name" => "verifyOrder",        "href" => "/dev/methods/pay/verifyOrder"],
+                    ],
+                ],
+                [
+                    "id"    => "places",
+                    "name"  => "dsb_m_places",
+                    "links" => [
+                        ["name" => "checkin",          "href" => "/dev/methods/places/checkin"],
+                        ["name" => "getCitiesById",    "href" => "/dev/methods/places/getCitiesById"],
+                        ["name" => "getCityById",      "href" => "/dev/methods/places/getCityById"],
+                        ["name" => "getCountriesById", "href" => "/dev/methods/places/getCountriesById"],
+                        ["name" => "getCountryById",   "href" => "/dev/methods/places/getCountryById"],
+                        ["name" => "getCheckins",      "href" => "/dev/methods/places/getCheckins"],
+                    ],
+                ],
+                [
+                    "id"    => "queue",
+                    "name"  => "dsb_m_queue",
+                    "links" => [
+                        ["name" => "subscribe",   "href" => "/dev/methods/queue/subscribe"],
+                        ["name" => "unsubscribe", "href" => "/dev/methods/queue/unsubscribe"],
+                    ],
+                ],
+                [
                     "id"    => "users",
                     "name"  => "dsb_m_users",
                     "links" => [

@@ -1352,6 +1352,9 @@
 "dsb_m_newsfeed" = "Newsfeed";
 "dsb_m_notes" = "Notes";
 "dsb_m_notifications" = "Notifications";
+"dsb_m_pay" = "Payments";
+"dsb_m_places" = "Places";
+"dsb_m_queue" = "Event Queues";
 "dsb_m_users" = "Users";
 "dsb_m_ovk" = "OpenVK";
 "dsb_models" = "Models";

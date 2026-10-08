@@ -251,6 +251,25 @@ To call any API method, send a GET or POST request to:
 * **[notifications.getSettings](/dev/methods/notifications/getSettings)** — Returns notification settings (stub).
 * **[notifications.getIgnoredSources](/dev/methods/notifications/getIgnoredSources)** — Returns ignored notification sources (stub).
 
+## [pay](/dev/methods/pay)
+
+* **[pay.getIdByMarketingId](/dev/methods/pay/getIdByMarketingId)** — Decodes a signed marketing identifier and returns its numeric ID.
+* **[pay.verifyOrder](/dev/methods/pay/verifyOrder)** — Verifies the cryptographic signature and validity of an application payment order.
+
+## [places](/dev/methods/places)
+
+* **[places.getCityById](/dev/methods/places/getCityById)** — Returns city information by identifiers.
+* **[places.getCitiesById](/dev/methods/places/getCitiesById)** — Returns city information by identifiers (alias for places.getCityById).
+* **[places.getCountryById](/dev/methods/places/getCountryById)** — Returns country information by identifiers.
+* **[places.getCountriesById](/dev/methods/places/getCountriesById)** — Returns country information by identifiers (alias for places.getCountryById).
+* **[places.checkin](/dev/methods/places/checkin)** — Creates a new location check-in.
+* **[places.getCheckins](/dev/methods/places/getCheckins)** — Returns a list of check-ins by geographic coordinates.
+
+## [queue](/dev/methods/queue)
+
+* **[queue.subscribe](/dev/methods/queue/subscribe)** — Subscribes the client to one or more event queues.
+* **[queue.unsubscribe](/dev/methods/queue/unsubscribe)** — Unsubscribes the client from event queues.
+
 ## [users](/dev/methods/users)
 
 * **[users.get](/dev/methods/users/get)** — Returns user profiles.
