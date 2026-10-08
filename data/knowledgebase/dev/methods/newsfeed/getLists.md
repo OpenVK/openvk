@@ -4,8 +4,7 @@ OpenVK-KB-Heading: newsfeed.getLists
 
 Returns custom newsfeed lists of the current user.
 
-> [!NOTE]
-> In the current version of OpenVK, this method is a stub for client compatibility and returns an empty list.
+> **Note:** In the current version of OpenVK, this method is a stub for client compatibility and returns an empty list.
 
 ### Authorization
 This method does not strictly require authorization.

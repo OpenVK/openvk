@@ -232,6 +232,25 @@ To call any API method, send a GET or POST request to:
 * **[newsfeed.deleteBan](/dev/methods/newsfeed/deleteBan)** — Restores posts from specified users or communities in the newsfeed.
 * **[newsfeed.getLists](/dev/methods/newsfeed/getLists)** — Returns custom newsfeed lists (stub).
 
+## [notes](/dev/methods/notes)
+
+* **[notes.add](/dev/methods/notes/add)** — Creates a new note for the current user.
+* **[notes.edit](/dev/methods/notes/edit)** — Edits an existing note of the current user.
+* **[notes.delete](/dev/methods/notes/delete)** — Deletes a note belonging to the current user.
+* **[notes.get](/dev/methods/notes/get)** — Returns a list of notes for a specified user.
+* **[notes.getById](/dev/methods/notes/getById)** — Returns detailed information about a note by its identifier.
+* **[notes.getComments](/dev/methods/notes/getComments)** — Returns comments on a note.
+* **[notes.createComment](/dev/methods/notes/createComment)** — Adds a new comment to a note.
+* **[notes.addComment](/dev/methods/notes/addComment)** — Adds a comment to a note (alias for notes.createComment).
+
+## [notifications](/dev/methods/notifications)
+
+* **[notifications.get](/dev/methods/notifications/get)** — Returns a list of notifications for the current user.
+* **[notifications.markAsViewed](/dev/methods/notifications/markAsViewed)** — Resets the unviewed notification counter.
+* **[notifications.fetch](/dev/methods/notifications/fetch)** — Polls new notification events from the event broker.
+* **[notifications.getSettings](/dev/methods/notifications/getSettings)** — Returns notification settings (stub).
+* **[notifications.getIgnoredSources](/dev/methods/notifications/getIgnoredSources)** — Returns ignored notification sources (stub).
+
 ## [users](/dev/methods/users)
 
 * **[users.get](/dev/methods/users/get)** — Returns user profiles.

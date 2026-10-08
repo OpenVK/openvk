@@ -319,6 +319,31 @@ final class DevelopersPresenter extends OpenVKPresenter
                     ],
                 ],
                 [
+                    "id"    => "notes",
+                    "name"  => "dsb_m_notes",
+                    "links" => [
+                        ["name" => "add",           "href" => "/dev/methods/notes/add"],
+                        ["name" => "addComment",    "href" => "/dev/methods/notes/addComment"],
+                        ["name" => "createComment", "href" => "/dev/methods/notes/createComment"],
+                        ["name" => "delete",        "href" => "/dev/methods/notes/delete"],
+                        ["name" => "edit",          "href" => "/dev/methods/notes/edit"],
+                        ["name" => "get",           "href" => "/dev/methods/notes/get"],
+                        ["name" => "getById",       "href" => "/dev/methods/notes/getById"],
+                        ["name" => "getComments",   "href" => "/dev/methods/notes/getComments"],
+                    ],
+                ],
+                [
+                    "id"    => "notifications",
+                    "name"  => "dsb_m_notifications",
+                    "links" => [
+                        ["name" => "fetch",             "href" => "/dev/methods/notifications/fetch"],
+                        ["name" => "get",               "href" => "/dev/methods/notifications/get"],
+                        ["name" => "getIgnoredSources", "href" => "/dev/methods/notifications/getIgnoredSources"],
+                        ["name" => "getSettings",       "href" => "/dev/methods/notifications/getSettings"],
+                        ["name" => "markAsViewed",      "href" => "/dev/methods/notifications/markAsViewed"],
+                    ],
+                ],
+                [
                     "id"    => "users",
                     "name"  => "dsb_m_users",
                     "links" => [

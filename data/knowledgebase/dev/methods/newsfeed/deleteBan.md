@@ -14,8 +14,7 @@ This method requires user authorization (`access_token`). Executes a write actio
 | `user_ids` | string | Comma-separated list of user IDs. |
 | `group_ids` | string | Comma-separated list of community IDs. |
 
-> [!NOTE]
-> The total number of IDs in a single request cannot exceed 10.
+> **Important:** The total number of IDs in a single request cannot exceed 10.
 
 ### Result
 

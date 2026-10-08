@@ -14,8 +14,7 @@ This method requires user authorization (`access_token`). Executes a write actio
 | `user_ids` | string | Comma-separated list of user IDs (positive numbers). |
 | `group_ids` | string | Comma-separated list of community IDs (positive numbers). |
 
-> [!NOTE]
-> The total number of IDs in a single request cannot exceed 10. The total number of ignored sources is bounded by server configuration (default 50).
+> **Important:** The total number of IDs in a single request cannot exceed 10. The total number of ignored sources is bounded by server configuration (default 50).
 
 ### Result
 

@@ -1324,6 +1324,8 @@
 "dsb_m_likes" = "Отметки «Мне нравится»";
 "dsb_m_messages" = "Сообщения";
 "dsb_m_newsfeed" = "Новости";
+"dsb_m_notes" = "Заметки";
+"dsb_m_notifications" = "Уведомления";
 "dsb_m_users" = "Пользователи";
 "dsb_models" = "Модели";
 "dsb_standalone" = "Standalone";

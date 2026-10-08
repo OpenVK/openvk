@@ -232,6 +232,25 @@ OpenVK-KB-Heading: Список методов API
 * **[newsfeed.deleteBan](/dev/methods/newsfeed/deleteBan)** — восстанавливает отображение публикаций указанных пользователей или сообществ в ленте новостей.
 * **[newsfeed.getLists](/dev/methods/newsfeed/getLists)** — возвращает пользовательские списки новостей (заглушка).
 
+## [notes](/dev/methods/notes)
+
+* **[notes.add](/dev/methods/notes/add)** — создает новую заметку у текущего пользователя.
+* **[notes.edit](/dev/methods/notes/edit)** — редактирует существующую заметку текущего пользователя.
+* **[notes.delete](/dev/methods/notes/delete)** — удаляет заметку текущего пользователя.
+* **[notes.get](/dev/methods/notes/get)** — возвращает список заметок указанного пользователя.
+* **[notes.getById](/dev/methods/notes/getById)** — возвращает подробную информацию о заметке по её идентификатору.
+* **[notes.getComments](/dev/methods/notes/getComments)** — возвращает список комментариев к заметке.
+* **[notes.createComment](/dev/methods/notes/createComment)** — добавляет новый комментарий к заметке.
+* **[notes.addComment](/dev/methods/notes/addComment)** — добавляет комментарий к заметке (псевдоним для notes.createComment).
+
+## [notifications](/dev/methods/notifications)
+
+* **[notifications.get](/dev/methods/notifications/get)** — возвращает список уведомлений текущего пользователя.
+* **[notifications.markAsViewed](/dev/methods/notifications/markAsViewed)** — сбрасывает счетчик непросмотренных уведомлений.
+* **[notifications.fetch](/dev/methods/notifications/fetch)** — получает порцию новых событий уведомлений через брокер событий.
+* **[notifications.getSettings](/dev/methods/notifications/getSettings)** — возвращает настройки уведомлений пользователя (заглушка).
+* **[notifications.getIgnoredSources](/dev/methods/notifications/getIgnoredSources)** — возвращает список источников, скрытых из уведомлений (заглушка).
+
 ## [users](/dev/methods/users)
 
 * **[users.get](/dev/methods/users/get)** — возвращает расширенную информацию о пользователях.

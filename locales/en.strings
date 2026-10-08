@@ -1350,6 +1350,8 @@
 "dsb_m_likes" = "Likes";
 "dsb_m_messages" = "Messages";
 "dsb_m_newsfeed" = "Newsfeed";
+"dsb_m_notes" = "Notes";
+"dsb_m_notifications" = "Notifications";
 "dsb_m_users" = "Users";
 "dsb_models" = "Models";
 "dsb_standalone" = "Standalone";
