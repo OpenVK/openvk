@@ -1402,7 +1402,7 @@ body:has(#im_container.at_page) .page-wrap {
 
 .messenger-app--messages---message.msg-selected {
     cursor: not-allowed;
-    background: var(--bg-selected-mid);
+    background: var(--bg-selected-mid) !important;
 }
 
 .messenger-app--messages---message.msg-error {
@@ -1873,6 +1873,9 @@ body:has(#im_container.at_page) .page-wrap {
 
 .messenger-app--messages---message .msg-attach-w-gift img {
     width: 200px;
+    border-radius: 2px;
+    background: white;
+    box-shadow: 0 0px 4px -1px #00000040;
 }
 
 .messenger-app--messages---message .msg-postfix {
@@ -2240,6 +2243,10 @@ body:has(#im_container.at_page) .page-wrap {
 .messenger-app--messages---message.msg-replying-to {
     background: rgba(81, 129, 184, 0.12) !important;
     box-shadow: inset 3px 0 0 var(--brand, #5181b8);
+}
+
+.messenger-app--messages---message.msg-gift {
+    background: rgba(184, 157, 81, 0.12);
 }
 
 .messenger-app--messages---message.msg-editing-this {

@@ -1715,6 +1715,15 @@ export class ChatMessage {
                                 txt += get_attachment_text(c);
                             }
                             break;
+                        case "gift":
+                            const giftMsg = c.gift?.message;
+                            const giftLabel = get_attachment_text(c);
+                            if (giftMsg) {
+                                txt += giftLabel + " " + ovk_proc_strtr(escapeHtml(giftMsg), 100);
+                            } else {
+                                txt += giftLabel;
+                            }
+                            break;
                         default:
                             txt += get_attachment_text(c);
                             break;
@@ -1758,12 +1767,8 @@ export class ChatMessage {
             }
         } else {
             if (this.isSpecial("gift")) {
-                const msg = this.data.attachments?.[0]?.gift?.message;
-                if (!msg) {
-                    txt = "(" + tr("message_no_text").toLowerCase() + ")";
-                } else {
-                    txt = msg;
-                }
+                const msg = this.data.attachments?.[0]?.gift?.message || (Array.isArray(this.data.attachments) ? this.data.attachments.find(a => a && a.type === 'gift')?.gift?.message : null);
+                txt = msg ? msg : "";
             }
         }
 
@@ -1935,7 +1940,7 @@ export class ChatMessage {
             case "forward":
                 return true;
             case "edit":
-                if (this.isAction() == true || this.isSpecial("sticker") == true) {
+                if (this.isAction() == true || this.isSpecial("sticker") == true || this.isSpecial("gift") == true) {
                     return false;
                 }
 
