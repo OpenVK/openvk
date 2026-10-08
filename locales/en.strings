@@ -1364,6 +1364,8 @@
 "dsb_m_stickers" = "Stickers";
 "dsb_m_store" = "Store";
 "dsb_m_users" = "Users";
+"dsb_m_utils" = "Utilities";
+"dsb_m_video" = "Videos";
 "dsb_m_ovk" = "OpenVK";
 "dsb_models" = "Models";
 "dsb_standalone" = "Standalone";

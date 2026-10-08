@@ -484,6 +484,32 @@ final class DevelopersPresenter extends OpenVKPresenter
                         ["name" => "search",           "href" => "/dev/methods/users/search"],
                     ],
                 ],
+                [
+                    "id"    => "utils",
+                    "name"  => "dsb_m_utils",
+                    "links" => [
+                        ["name" => "getServerTime",      "href" => "/dev/methods/utils/getServerTime"],
+                        ["name" => "resolveAttachments", "href" => "/dev/methods/utils/resolveAttachments"],
+                        ["name" => "resolveGuid",        "href" => "/dev/methods/utils/resolveGuid"],
+                        ["name" => "resolveOffset",      "href" => "/dev/methods/utils/resolveOffset"],
+                        ["name" => "resolveScreenName",  "href" => "/dev/methods/utils/resolveScreenName"],
+                    ],
+                ],
+                [
+                    "id"    => "video",
+                    "name"  => "dsb_m_video",
+                    "links" => [
+                        ["name" => "addComment",         "href" => "/dev/methods/video/addComment"],
+                        ["name" => "createComment",      "href" => "/dev/methods/video/createComment"],
+                        ["name" => "delete",             "href" => "/dev/methods/video/delete"],
+                        ["name" => "deleteComment",      "href" => "/dev/methods/video/deleteComment"],
+                        ["name" => "edit",               "href" => "/dev/methods/video/edit"],
+                        ["name" => "get",                "href" => "/dev/methods/video/get"],
+                        ["name" => "getComments",        "href" => "/dev/methods/video/getComments"],
+                        ["name" => "getUserVideos",      "href" => "/dev/methods/video/getUserVideos"],
+                        ["name" => "search",             "href" => "/dev/methods/video/search"],
+                    ],
+                ],
                 // OpenVK-specific methods are intentionally placed at the end to separate them from official VK API methods
                 [
                     "id"    => "ovk",

@@ -356,6 +356,26 @@ OpenVK-KB-Heading: Список методов API
 * **[users.get](/dev/methods/users/get)** — возвращает расширенную информацию о пользователях.
 * **[users.search](/dev/methods/users/search)** — возвращает список пользователей в соответствии с заданным критерием поиска.
 
+## [utils](/dev/methods/utils)
+
+* **[utils.getServerTime](/dev/methods/utils/getServerTime)** — возвращает текущее время сервера в формате unixtime.
+* **[utils.resolveScreenName](/dev/methods/utils/resolveScreenName)** — определяет тип объекта (пользователь или сообщество) и его идентификатор по короткому имени.
+* **[utils.resolveGuid](/dev/methods/utils/resolveGuid)** — возвращает информацию о пользователе по его глобальному идентификатору (GUID).
+* **[utils.resolveAttachments](/dev/methods/utils/resolveAttachments)** — разбирает строку с перечислением медиавложений в структуры объектов API.
+* **[utils.resolveOffset](/dev/methods/utils/resolveOffset)** — вычисляет смещение (offset) для перехода к конкретному элементу (записи, фотографии или видео).
+
+## [video](/dev/methods/video)
+
+* **[video.get](/dev/methods/video/get)** — возвращает список видеозаписей пользователя или сообщества либо информацию о конкретных видеозаписях.
+* **[video.edit](/dev/methods/video/edit)** — редактирует название и описание видеозаписи.
+* **[video.delete](/dev/methods/video/delete)** — удаляет видеозапись.
+* **[video.search](/dev/methods/video/search)** — осуществляет поиск по видеозаписям платформы.
+* **[video.getUserVideos](/dev/methods/video/getUserVideos)** — возвращает список видеозаписей указанного пользователя.
+* **[video.getComments](/dev/methods/video/getComments)** — возвращает список комментариев к видеозаписи.
+* **[video.createComment](/dev/methods/video/createComment)** — создает новый комментарий к видеозаписи.
+* **[video.addComment](/dev/methods/video/addComment)** — добавляет новый комментарий к видеозаписи (псевдоним для video.createComment).
+* **[video.deleteComment](/dev/methods/video/deleteComment)** — удаляет комментарий к видеозаписи.
+
 ## [ovk](/dev/methods/ovk)
 
 * **[ovk.aboutInstance](/dev/methods/ovk/aboutInstance)** — возвращает подробную информацию, статистику, список администраторов и популярных сообществ текущего инстанса OpenVK.

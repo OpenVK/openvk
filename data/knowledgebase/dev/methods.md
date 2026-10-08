@@ -356,6 +356,26 @@ To call any API method, send a GET or POST request to:
 * **[users.get](/dev/methods/users/get)** — Returns user profiles.
 * **[users.search](/dev/methods/users/search)** — Searches for users.
 
+## [utils](/dev/methods/utils)
+
+* **[utils.getServerTime](/dev/methods/utils/getServerTime)** — Returns current server time in unixtime format.
+* **[utils.resolveScreenName](/dev/methods/utils/resolveScreenName)** — Resolves object type (user or group) and identifier by screen name or short URL.
+* **[utils.resolveGuid](/dev/methods/utils/resolveGuid)** — Returns user information by Chandler user GUID.
+* **[utils.resolveAttachments](/dev/methods/utils/resolveAttachments)** — Parses attachment strings into API attachment structures.
+* **[utils.resolveOffset](/dev/methods/utils/resolveOffset)** — Calculates pagination offset required to jump directly to a target item (post, photo, or video).
+
+## [video](/dev/methods/video)
+
+* **[video.get](/dev/methods/video/get)** — Returns a list of videos for a user/community or detailed information about specified videos.
+* **[video.edit](/dev/methods/video/edit)** — Edits video title and description.
+* **[video.delete](/dev/methods/video/delete)** — Deletes a video.
+* **[video.search](/dev/methods/video/search)** — Searches for videos on the platform.
+* **[video.getUserVideos](/dev/methods/video/getUserVideos)** — Returns a list of videos for a specified user.
+* **[video.getComments](/dev/methods/video/getComments)** — Returns comments on a video.
+* **[video.createComment](/dev/methods/video/createComment)** — Creates a new comment on a video.
+* **[video.addComment](/dev/methods/video/addComment)** — Adds a new comment on a video (alias for video.createComment).
+* **[video.deleteComment](/dev/methods/video/deleteComment)** — Deletes a comment on a video.
+
 ## [ovk](/dev/methods/ovk)
 
 * **[ovk.aboutInstance](/dev/methods/ovk/aboutInstance)** — Returns detailed information, statistics, administrators, and popular communities of the current OpenVK instance.
