@@ -415,7 +415,7 @@ final class Photos extends VKAPIRequestHandler
                 continue;
             }
 
-            $res[] = $photo->toVkApiStruct($photo_sizes, $extended);
+            $res[] = $photo->toVkApiStruct($this->getUser(), $photo_sizes, $extended);
         }
 
         return $res;
@@ -455,7 +455,7 @@ final class Photos extends VKAPIRequestHandler
                     continue;
                 }
 
-                $res["items"][] = $photo->toVkApiStruct($photo_sizes, $extended);
+                $res["items"][] = $photo->toVkApiStruct($this->getUser(), $photo_sizes, $extended);
             }
 
         } else {
@@ -477,7 +477,7 @@ final class Photos extends VKAPIRequestHandler
                     continue;
                 }
 
-                $res["items"][] = $photo_entity->toVkApiStruct($photo_sizes, $extended);
+                $res["items"][] = $photo_entity->toVkApiStruct($this->getUser(), $photo_sizes, $extended);
             }
         }
 
@@ -521,7 +521,7 @@ final class Photos extends VKAPIRequestHandler
         }
 
         if ($no_comments != -1) {
-            $photo->setCommentPrivacy($no_comments == 1);
+            $photo->setCommentPrivacy($no_comments == 0);
         }
 
         $photo->setEdited(time());
@@ -671,7 +671,7 @@ final class Photos extends VKAPIRequestHandler
             if (!$photo || $photo->isDeleted()) {
                 continue;
             }
-            $res["items"][] = $photo->toVkApiStruct($photo_sizes, $extended);
+            $res["items"][] = $photo->toVkApiStruct($this->getUser(), $photo_sizes, $extended);
         }
 
         if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
@@ -827,7 +827,7 @@ final class Photos extends VKAPIRequestHandler
         }
 
         return [
-            $photoObj->toVkApiStruct(),
+            $photoObj->toVkApiStruct($this->getUser()),
         ];
     }
 

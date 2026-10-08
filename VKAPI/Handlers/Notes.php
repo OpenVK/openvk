@@ -138,7 +138,7 @@ final class Notes extends VKAPIRequestHandler
         !empty($text) ? $note->setSource($text) : null;
 
         if ($comment_privacy != -1) {
-            $note->setCommentPrivacy($comment_privacy == 1);
+            $note->setCommentPrivacy($comment_privacy == 0);
         }
 
         $note->setCached_Content(null);
@@ -181,7 +181,7 @@ final class Notes extends VKAPIRequestHandler
                     continue;
                 }
 
-                $notes_return_object->items[] = $note->toVkApiStruct();
+                $notes_return_object->items[] = $note->toVkApiStruct($this->getUser());
             }
         } else {
             $notes_splitted = explode(',', $note_ids);
@@ -191,7 +191,7 @@ final class Notes extends VKAPIRequestHandler
                 $note = (new NotesRepo())->getNoteById($user_id, $note_id);
 
                 if ($note && !$note->isDeleted()) {
-                    $notes_return_object->items[] = $note->toVkApiStruct();
+                    $notes_return_object->items[] = $note->toVkApiStruct($this->getUser());
                 }
             }
         }
@@ -229,7 +229,7 @@ final class Notes extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
-        return $note->toVkApiStruct();
+        return $note->toVkApiStruct($this->getUser());
     }
 
     public function getComments(int $note_id, int $owner_id, int $sort = 1, int $offset = 0, int $count = 100)

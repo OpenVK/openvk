@@ -130,11 +130,11 @@ final class Wall extends VKAPIRequestHandler
                     $attachments[] = $attachment->getApiStructure($this->getUser());
                 } elseif ($attachment instanceof \openvk\Web\Models\Entities\Note) {
                     if (VKAPI_DECL_VER === '4.100') {
-                        $attachments[] = $attachment->toVkApiStruct();
+                        $attachments[] = $attachment->toVkApiStruct($this->getUser());
                     } else {
                         $attachments[] = [
                             'type' => 'note',
-                            'note' => $attachment->toVkApiStruct(),
+                            'note' => $attachment->toVkApiStruct($this->getUser()),
                         ];
                     }
                 } elseif ($attachment instanceof \openvk\Web\Models\Entities\Audio) {
@@ -220,7 +220,7 @@ final class Wall extends VKAPIRequestHandler
                 "post_source"  => $post->getPostSourceInfo(),
                 "comments"     => (object) [
                     "count"    => $post->getCommentsCount(),
-                    "can_post" => 1,
+                    "can_post" => (int) $post->canBeCommentedBy($this->getUser()),
                 ],
                 "likes" => (object) [
                     "count"       => $post->getLikesCount(),
@@ -546,7 +546,7 @@ final class Wall extends VKAPIRequestHandler
                     "attachments"  => $attachments,
                     "comments"     => (object) [
                         "count"    => $post->getCommentsCount(),
-                        "can_post" => 1,
+                        "can_post" => (int) $post->canBeCommentedBy($this->getUser()),
                     ],
                     "likes" => (object) [
                         "count"       => $post->getLikesCount(),
@@ -1674,7 +1674,7 @@ final class Wall extends VKAPIRequestHandler
     // из зачем это было выносить именно таким образом v__v
     private function getApiPhoto($attachment)
     {
-        $struct = $attachment->toVkApiStruct(true, false);
+        $struct = $attachment->toVkApiStruct($this->getUser(), true, false);
         $struct->has_tags = false;
         $struct->tags = (object) ["count" => 0, "items" => []];
 

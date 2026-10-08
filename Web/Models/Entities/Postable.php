@@ -367,7 +367,6 @@ abstract class Postable extends Attachable
 
     public function canBeCommentedBy(?User $user): bool
     {
-
         if (!$user) {
             return false;
         }
