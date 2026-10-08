@@ -132,3 +132,6 @@ openvk:
             stream:
                 maxlen: 1000         # Maximum notifications in memory at once
                 prefix: "ovk_notifs"
+        im:
+            enable: true
+            server_url: "http://127.0.0.1:8420"

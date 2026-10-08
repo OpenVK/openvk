@@ -48,8 +48,10 @@ if ( "$ans" != "y" && "$ans" != "Y" && "$ans" != "yes" && "$ans" != "YES") then
 endif
 
 # Install required packages
-pkg install -y git nginx php84 node24 npm-node24 mariadb118-server go126 redis php84-composer mod_php84 php84-gd php84-mbstring php84-iconv php84-sodium php84-calendar php84-curl php84-brotli php84-zip php84-ctype php84-dom php84-fileinfo php84-pdo_mysql php84-sqlite3 php84-pdo_sqlite php84-sockets php84-tokenizer php84-opcache php84-posix php84-pecl-yaml php84-phar php84-filter php84-zlib php84-session php84-simplexml php84-pecl-imagick php84-xml
+pkg install -y git nginx php84 node24 npm-node24 mariadb118-server go126 redis php84-composer mod_php84 php84-gd php84-mbstring php84-iconv php84-sodium php84-calendar php84-curl php84-brotli php84-zip php84-ctype php84-dom php84-fileinfo php84-pdo_mysql php84-sqlite3 php84-pdo_sqlite php84-sockets php84-tokenizer php84-opcache php84-posix php84-pecl-yaml php84-phar php84-filter php84-zlib php84-session php84-simplexml php84-xmlreader php84-pecl-imagick php84-xml
 rehash # upd exports
+
+mkdir /opt
 
 # Install OpenVK
 cd /opt
@@ -95,8 +97,8 @@ sed -i'' -e 's:DB_PASS=root:DB_PASS=justMonika:' /opt/openvk-im/.env
 sed -i'' -e 's:APP_PORT=8080:APP_PORT=8420:' /opt/openvk-im/.env
 sed -i'' -e 's:SECRET_KEY = "key":SECRET_KEY="'`openssl rand -base64 52 | tr -dc 'A-Za-z0-9' | head -c 64`'":' /opt/openvk-im/.env
 
-go mod download
-go run main.go db create
+go126 mod download
+go126 run main.go db create
 
 cp /opt/openvk/install/automated/freebsd-15/openvk_im /usr/local/etc/rc.d/openvk_im
 chmod 755 /usr/local/etc/rc.d/openvk_im
