@@ -463,7 +463,7 @@ final class Wall extends VKAPIRequestHandler
                     } elseif ($attachment instanceof \openvk\Web\Models\Entities\Note) {
                         $attachments[] = [
                             'type' => 'note',
-                            'note' => $attachment->toVkApiStruct(),
+                            'note' => $attachment->toVkApiStruct($this->getUser()),
                         ];
                     } elseif ($attachment instanceof \openvk\Web\Models\Entities\Audio) {
                         $attachments[] = [
@@ -1008,7 +1008,7 @@ final class Wall extends VKAPIRequestHandler
                 if ($attachment instanceof \openvk\Web\Models\Entities\Photo) {
                     $attachments[] = $this->getApiPhoto($attachment);
                 } elseif ($attachment instanceof \openvk\Web\Models\Entities\Note) {
-                    $attachments[] = $attachment->toVkApiStruct();
+                    $attachments[] = $attachment->toVkApiStruct($this->getUser());
                 } elseif ($attachment instanceof \openvk\Web\Models\Entities\Audio) {
                     $attachments[] = [
                         "type"  => "audio",
@@ -1091,7 +1091,7 @@ final class Wall extends VKAPIRequestHandler
             "count"               => (new CommentsRepo())->getCommentsCountByTarget($post),
             "items"               => $items,
             "current_level_count" => (new CommentsRepo())->getCommentsCountByTarget($post),
-            "can_post"            => true,
+            "can_post"            => (int) $post->canBeCommentedBy($this->getUser()),
             "show_reply_button"   => true,
             "groups_can_post"     => false,
         ];
@@ -1133,7 +1133,7 @@ final class Wall extends VKAPIRequestHandler
             } elseif ($attachment instanceof \openvk\Web\Models\Entities\Note) {
                 $attachments[] = [
                     'type' => 'note',
-                    'note' => $attachment->toVkApiStruct(),
+                    'note' => $attachment->toVkApiStruct($this->getUser()),
                 ];
             } elseif ($attachment instanceof \openvk\Web\Models\Entities\Audio) {
                 $attachments[] = [

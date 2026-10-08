@@ -230,7 +230,7 @@ final class Newsfeed extends VKAPIRequestHandler
 
             $memberStructs = [];
             foreach (array_slice($visibleMembers, 0, 5) as $photo) {
-                $memberStructs[] = $photo->toVkApiStruct(true, (bool) $extended);
+                $memberStructs[] = $photo->toVkApiStruct($this->getUser(), true, (bool) $extended);
             }
 
             $struct = (object) [

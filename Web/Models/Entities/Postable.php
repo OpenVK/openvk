@@ -388,7 +388,7 @@ abstract class Postable extends Attachable
         }
 
         if ($can == Postable::COMMENTABLE_FRIENDS) {
-            return true;
+            return $user->isFriendsWith($this->getOwner());
         }
 
         if ($can == Postable::COMMENTABLE_ONLY_ME) {

@@ -511,6 +511,7 @@ final class Photos extends VKAPIRequestHandler
         $this->willExecuteWriteAction();
 
         $photo = (new PhotosRepo())->getByOwnerAndVIDUnsafe($owner_id, $photo_id);
+        $changes = 0;
 
         if (!$photo || $photo->isDeleted() || !$photo->canBeModifiedBy($this->getUser())) {
             $this->fail(21, "Access denied");
@@ -518,14 +519,18 @@ final class Photos extends VKAPIRequestHandler
 
         if (!empty($caption)) {
             $photo->setDescription($caption);
+            $changes += 1;
         }
 
         if ($no_comments != -1) {
             $photo->setCommentPrivacy($no_comments == 0);
+            $changes += 1;
         }
 
-        $photo->setEdited(time());
-        $photo->save();
+        if ($changes > 0) {
+            $photo->setEdited(time());
+            $photo->save();
+        }
 
         return 1;
     }
