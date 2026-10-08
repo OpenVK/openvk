@@ -317,12 +317,12 @@
     text-decoration: none;
 }
 
-.dev_page_cont h1:hover a,
-.dev_page_cont h2:hover a,
-.dev_page_cont h3:hover a,
-.dev_page_cont h4:hover a,
-.dev_page_cont h5:hover a,
-.dev_page_cont h6:hover a {
+.dev_page_cont h1 a:hover,
+.dev_page_cont h2 a:hover,
+.dev_page_cont h3 a:hover,
+.dev_page_cont h4 a:hover,
+.dev_page_cont h5 a:hover,
+.dev_page_cont h6 a:hover {
     color: #999;
 }
 

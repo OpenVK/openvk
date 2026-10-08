@@ -1320,6 +1320,10 @@
 "dsb_m_friends" = "Друзья";
 "dsb_m_gifts" = "Подарки";
 "dsb_m_groups" = "Сообщества";
+"dsb_m_internal" = "Служебные";
+"dsb_m_likes" = "Отметки «Мне нравится»";
+"dsb_m_messages" = "Сообщения";
+"dsb_m_newsfeed" = "Новости";
 "dsb_m_users" = "Пользователи";
 "dsb_models" = "Модели";
 "dsb_standalone" = "Standalone";

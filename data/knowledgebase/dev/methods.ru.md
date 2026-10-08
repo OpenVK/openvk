@@ -219,6 +219,19 @@ OpenVK-KB-Heading: Список методов API
 * **[messages.getMessageViewers](/dev/methods/messages/getMessageViewers)** — возвращает список прочитавших сообщение.
 * **[messages.report](/dev/methods/messages/report)** — отправляет жалобу на спам/нарушение в сообщении.
 
+## [newsfeed](/dev/methods/newsfeed)
+
+* **[newsfeed.get](/dev/methods/newsfeed/get)** — возвращает список записей, фотографий и видеозаписей из ленты новостей текущего пользователя.
+* **[newsfeed.getGlobal](/dev/methods/newsfeed/getGlobal)** — возвращает глобальную ленту всех публичных записей платформы или RSS-поток.
+* **[newsfeed.getRecommended](/dev/methods/newsfeed/getRecommended)** — возвращает список рекомендуемых записей (псевдоним для newsfeed.getGlobal).
+* **[newsfeed.search](/dev/methods/newsfeed/search)** — осуществляет поиск по записям в ленте новостей.
+* **[newsfeed.getByType](/dev/methods/newsfeed/getByType)** — возвращает новости по указанному типу ленты.
+* **[newsfeed.getComments](/dev/methods/newsfeed/getComments)** — возвращает записи с последними комментариями в отслеживаемых обсуждениях и стенах.
+* **[newsfeed.getBanned](/dev/methods/newsfeed/getBanned)** — возвращает список пользователей и сообществ, скрытых из ленты новостей.
+* **[newsfeed.addBan](/dev/methods/newsfeed/addBan)** — скрывает публикации указанных пользователей или сообществ из ленты новостей.
+* **[newsfeed.deleteBan](/dev/methods/newsfeed/deleteBan)** — восстанавливает отображение публикаций указанных пользователей или сообществ в ленте новостей.
+* **[newsfeed.getLists](/dev/methods/newsfeed/getLists)** — возвращает пользовательские списки новостей (заглушка).
+
 ## [users](/dev/methods/users)
 
 * **[users.get](/dev/methods/users/get)** — возвращает расширенную информацию о пользователях.

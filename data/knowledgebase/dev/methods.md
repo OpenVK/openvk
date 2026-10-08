@@ -219,6 +219,19 @@ To call any API method, send a GET or POST request to:
 * **[messages.getMessageViewers](/dev/methods/messages/getMessageViewers)** — Returns viewers of a message.
 * **[messages.report](/dev/methods/messages/report)** — Reports a message as spam/abuse.
 
+## [newsfeed](/dev/methods/newsfeed)
+
+* **[newsfeed.get](/dev/methods/newsfeed/get)** — Returns posts, photos, and videos for the current user's newsfeed.
+* **[newsfeed.getGlobal](/dev/methods/newsfeed/getGlobal)** — Returns global feed of all public posts across the platform or an RSS feed.
+* **[newsfeed.getRecommended](/dev/methods/newsfeed/getRecommended)** — Returns recommended posts (alias to newsfeed.getGlobal).
+* **[newsfeed.search](/dev/methods/newsfeed/search)** — Searches posts in the newsfeed.
+* **[newsfeed.getByType](/dev/methods/newsfeed/getByType)** — Returns newsfeed items by specified feed type.
+* **[newsfeed.getComments](/dev/methods/newsfeed/getComments)** — Returns posts with recent comments from followed walls and discussions.
+* **[newsfeed.getBanned](/dev/methods/newsfeed/getBanned)** — Returns the list of users and communities hidden from the newsfeed.
+* **[newsfeed.addBan](/dev/methods/newsfeed/addBan)** — Hides posts from specified users or communities in the newsfeed.
+* **[newsfeed.deleteBan](/dev/methods/newsfeed/deleteBan)** — Restores posts from specified users or communities in the newsfeed.
+* **[newsfeed.getLists](/dev/methods/newsfeed/getLists)** — Returns custom newsfeed lists (stub).
+
 ## [users](/dev/methods/users)
 
 * **[users.get](/dev/methods/users/get)** — Returns user profiles.
