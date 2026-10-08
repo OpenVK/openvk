@@ -409,6 +409,8 @@
 "subscriptions" = "Subscriptions";
 "join_community" = "Join community";
 "leave_community" = "Leave community";
+"clubs_sumbit_request" = "Send a request";
+"clubs_cancel_request" = "Cancel request";
 "check_community" = "View community";
 "view_group_messages" = "Group Messages";
 "add_to_list_event" = "Add to list";

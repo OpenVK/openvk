@@ -299,6 +299,8 @@
 "subscriptions" = "Suscripciones";
 "join_community" = "Unirse a la comunidad";
 "leave_community" = "Salir de la comunidad";
+"clubs_sumbit_request" = "Enviar petición";
+"clubs_cancel_request" = "Cancelar petición";
 "check_community" = "Ver comunidad";
 "min_6_community" = "El nombre del grupo debe tener al menos 6 caracteres";
 "participants" = "Participantes";

@@ -165,6 +165,7 @@
         </div>
     </div>
 
+    {if $club->canBeViewedBy($thisUser)}
     <div class="fictional_profile_section" n:if="($thisUser && $audiosCount > 0) || ($thisUser && $club->canUploadAudio($thisUser))">
         <div class="content_title_expanded" onclick="hidePanel(this, {$audiosCount});">
             {_audios}
@@ -196,6 +197,7 @@
     </div>
 
     {presenter "openvk!Wall->wallEmbedded", -$club->getId()}
+    {/if}
 
     <script n:if="isset($thisUser) && $club->getWallType() == 2 && !$club->canBeModifiedBy($thisUser)">
         document.querySelector("textarea").setAttribute("placeholder", tr("suggest_new"))
@@ -225,26 +227,44 @@
     <div n:ifset="$thisUser" id="profile_links">
         <div class="profile_links_important" id="profile_links_common">
             {if $club->getSubscriptionStatus($thisUser) == false}
-                <form action="/setSub/club" method="post">
-                    <input type="hidden" name="act" value="add" />
-                    <input type="hidden" name="id"  value="{$club->getId()}" />
-                    <input type="hidden" name="hash" value="{$csrfToken}" />
-                    {if $club->isEvent() && !$club->isEventOver()}
-                        <input type="submit" class="brand_link brand_link_pitched subscribe_button" id="profile_link" value="{_ill_come_to_meeting}" />
-                    {elseif $club->isEvent() && $club->isEventOver()}
-                        <input type="submit" class="brand_link brand_link_pitched subscribe_button" id="profile_link" value="{_add_to_list_event}" />
+                {if $club->isClosed() && !$club->isPrivate()}
+                    {if $club->isJoinRequestSent($thisUser)}
+                        <form action="/setSub/club" method="post">
+                            <input type="hidden" name="act" value="rem" />
+                            <input type="hidden" name="id"  value="{$club->getId()}" />
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input type="submit" id="profile_link" value="{_clubs_cancel_request}" />
+                        </form>
                     {else}
-                        <input type="submit" class="brand_link subscribe_button" id="profile_link" value="{_join_community}" />
-                    {/if}
-                </form>
-                {if $club->isEvent() && !$club->isEventOver()}
-                    <form action="/setSub/club" method="post">
+                        <form action="/setSub/club" method="post">
                         <input type="hidden" name="act" value="add" />
-                        <input type="hidden" name="flag" value="1" />
                         <input type="hidden" name="id"  value="{$club->getId()}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
-                        <input type="submit" class="brand_link subscribe_button" id="profile_link" value="{_i_might_come_to_meeting}" />
+                        <input type="submit" id="profile_link" value="{_clubs_sumbit_request}" />
                     </form>
+                    {/if}
+                {else}
+                    <form action="/setSub/club" method="post">
+                        <input type="hidden" name="act" value="add" />
+                        <input type="hidden" name="id"  value="{$club->getId()}" />
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        {if $club->isEvent() && !$club->isEventOver()}
+                            <input type="submit" id="profile_link" value="{_ill_come_to_meeting}" />
+                        {elseif $club->isEvent() && $club->isEventOver()}
+                            <input type="submit" id="profile_link" value="{_add_to_list_event}" />
+                        {else}
+                            <input type="submit" id="profile_link" value="{_join_community}" />
+                        {/if}
+                    </form>
+                    {if $club->isEvent() && !$club->isEventOver()}
+                        <form action="/setSub/club" method="post">
+                            <input type="hidden" name="act" value="add" />
+                            <input type="hidden" name="flag" value="1" />
+                            <input type="hidden" name="id"  value="{$club->getId()}" />
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input type="submit" id="profile_link" value="{_i_might_come_to_meeting}" />
+                        </form>
+                    {/if}
                 {/if}
             {else}
                 <form action="/setSub/club" method="post">
@@ -376,6 +396,7 @@
             </div>
         </div>
     </div>
+    {if $club->canBeViewedBy($this->user)}
     <div class="fictional_profile_section" n:if="$albumsCount > 0 || ($thisUser && $club->canBeModifiedBy($thisUser))">
         <div class="content_title_expanded" onclick="hidePanel(this, {$albumsCount});">
             {_albums}
@@ -478,6 +499,7 @@
             </div>
         </div>
     </div>
+    {/if}
 </div>
 </div>
 
