@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c42b75b8770105cbd8edba6c41601ab2",
+    "content-hash": "78dfbbf89ae93b056dc58efb93140409",
     "packages": [
         {
             "name": "al/emoji-detector",
@@ -2001,16 +2001,10 @@
         {
             "name": "openvk/chandler",
             "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/OpenVK/chandler.git",
-                "reference": "a8b536b83a8a32b3db643649dbb5d1dfc906f135"
-            },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/OpenVK/chandler/zipball/a8b536b83a8a32b3db643649dbb5d1dfc906f135",
-                "reference": "a8b536b83a8a32b3db643649dbb5d1dfc906f135",
-                "shasum": ""
+                "type": "path",
+                "url": "/opt/chandler",
+                "reference": "a4dd9419907e4bb1ab6befceea0f6027e77c723b"
             },
             "require": {
                 "firebase/php-jwt": "^7.1",
@@ -2026,18 +2020,24 @@
                 "wildbit/postmark-php": "^7.0"
             },
             "require-dev": {
+                "efabrica/phpstan-latte": "^0.20.1",
                 "friendsofphp/php-cs-fixer": "^3.90",
                 "phpstan/phpstan": "^2.2"
             },
             "suggest": {
                 "ext-yaml": "for faster yaml parsing"
             },
-            "default-branch": true,
             "bin": [
                 "bin/chandler-latte-lint"
             ],
             "type": "library",
             "autoload": {
+                "psr-4": {
+                    "Chandler\\": "chandler/"
+                },
+                "classmap": [
+                    "chandler/Bootstrap.php"
+                ],
                 "files": [
                     "chandler/procedural/yaml.php",
                     "chandler/procedural/panic.php",
@@ -2045,15 +2045,27 @@
                     "chandler/procedural/mimes.php",
                     "chandler/procedural/escape_url.php",
                     "chandler/procedural/captcha.php"
-                ],
-                "psr-4": {
-                    "Chandler\\": "chandler/"
-                },
-                "classmap": [
-                    "chandler/Bootstrap.php"
                 ]
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Chandler\\PHPStanLatte\\": "tools/phpstan-latte/"
+                }
+            },
+            "scripts": {
+                "fix": [
+                    "php-cs-fixer fix"
+                ],
+                "lint": [
+                    "php-cs-fixer fix --dry-run --diff --verbose"
+                ],
+                "analyse": [
+                    "phpstan analyse --no-progress"
+                ],
+                "analyse:examples": [
+                    "phpstan analyse --no-progress -c phpstan.examples.neon"
+                ]
+            },
             "license": [
                 "ISC"
             ],
@@ -2062,10 +2074,12 @@
                 "framework"
             ],
             "support": {
-                "issues": "https://github.com/OpenVK/chandler/issues",
                 "source": "https://github.com/OpenVK/chandler"
             },
-            "time": "2026-10-05T23:09:50+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": false
+            }
         },
         {
             "name": "php81_bc/strftime",
@@ -2109,16 +2123,16 @@
         },
         {
             "name": "predis/predis",
-            "version": "v3.6.1",
+            "version": "v3.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/predis/predis.git",
-                "reference": "e2db96312ecf57a01a3477bf192d1ebc0ad7e9fb"
+                "reference": "4d91f3b08a60c3bacc2afbd8dc41724559b7626a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/predis/predis/zipball/e2db96312ecf57a01a3477bf192d1ebc0ad7e9fb",
-                "reference": "e2db96312ecf57a01a3477bf192d1ebc0ad7e9fb",
+                "url": "https://api.github.com/repos/predis/predis/zipball/4d91f3b08a60c3bacc2afbd8dc41724559b7626a",
+                "reference": "4d91f3b08a60c3bacc2afbd8dc41724559b7626a",
                 "shasum": ""
             },
             "require": {
@@ -2160,7 +2174,7 @@
             ],
             "support": {
                 "issues": "https://github.com/predis/predis/issues",
-                "source": "https://github.com/predis/predis/tree/v3.6.1"
+                "source": "https://github.com/predis/predis/tree/v3.7.0"
             },
             "funding": [
                 {
@@ -2168,7 +2182,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-09-17T20:41:00+00:00"
+            "time": "2026-10-08T16:46:04+00:00"
         },
         {
             "name": "psr/cache",
@@ -4750,6 +4764,62 @@
             "time": "2024-05-06T16:37:16+00:00"
         },
         {
+            "name": "efabrica/phpstan-latte",
+            "version": "0.20.1",
+            "dist": {
+                "type": "path",
+                "url": "/opt/phpstan-latte",
+                "reference": "23cf7a9299c71a595a6ea8ee308e7344e68b280d"
+            },
+            "require": {
+                "ext-json": "*",
+                "latte/latte": "^2.11.6 | ^3.0.25",
+                "nette/finder": "^2.5|^3.0",
+                "nette/utils": "^3.2|^4.1",
+                "php": ">=7.4 <8.6",
+                "phpstan/phpdoc-parser": "^2.3.0",
+                "phpstan/phpstan": "^2.1.33",
+                "phpstan/phpstan-nette": "^2.0.7"
+            },
+            "require-dev": {
+                "efabrica/coding-standard": "^0.8",
+                "nette/application": "^3.1.11",
+                "nette/forms": "^3.1.12",
+                "nikic/php-parser": "^5.7.0",
+                "phpstan/phpstan-strict-rules": "^2.0.7",
+                "phpunit/phpunit": "^9.6.31",
+                "spaze/phpstan-disallowed-calls": "^2.11|^3.0|^4.7"
+            },
+            "type": "library",
+            "extra": {
+                "phpstan": {
+                    "includes": [
+                        "rules.neon"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Efabrica\\PHPStanLatte\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Efabrica\\PHPStanLatte\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "keywords": [
+                "static analysis"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": false
+            }
+        },
+        {
             "name": "ergebnis/agent-detector",
             "version": "1.2.0",
             "source": {
@@ -5095,12 +5165,113 @@
             "time": "2026-09-22T09:54:55+00:00"
         },
         {
-            "name": "phpstan/phpstan",
-            "version": "2.2.16",
+            "name": "nette/finder",
+            "version": "v3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nette/finder.git",
+                "reference": "027395c638637de95c8e9fad49a7c51249404ed2"
+            },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/46a6d9060e5a7763adfcc21ebcb8b504ebdbcb92",
-                "reference": "46a6d9060e5a7763adfcc21ebcb8b504ebdbcb92",
+                "url": "https://api.github.com/repos/nette/finder/zipball/027395c638637de95c8e9fad49a7c51249404ed2",
+                "reference": "027395c638637de95c8e9fad49a7c51249404ed2",
+                "shasum": ""
+            },
+            "require": {
+                "nette/utils": "^4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause",
+                "GPL-2.0-only",
+                "GPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "David Grudl",
+                    "homepage": "https://davidgrudl.com"
+                },
+                {
+                    "name": "Nette Community",
+                    "homepage": "https://nette.org/contributors"
+                }
+            ],
+            "description": "🔍 Nette Finder: find files and directories with an intuitive API.",
+            "homepage": "https://nette.org",
+            "keywords": [
+                "filesystem",
+                "glob",
+                "iterator",
+                "nette"
+            ],
+            "support": {
+                "issues": "https://github.com/nette/finder/issues",
+                "source": "https://github.com/nette/finder/tree/v3.0.0"
+            },
+            "abandoned": true,
+            "time": "2022-12-14T17:05:54+00:00"
+        },
+        {
+            "name": "phpstan/phpdoc-parser",
+            "version": "2.3.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpstan/phpdoc-parser.git",
+                "reference": "1427af4647235b4a73b13940b1f1258d3584f36e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/1427af4647235b4a73b13940b1f1258d3584f36e",
+                "reference": "1427af4647235b4a73b13940b1f1258d3584f36e",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "doctrine/annotations": "^2.0",
+                "nikic/php-parser": "^5.3.0",
+                "php-parallel-lint/php-parallel-lint": "^1.2",
+                "phpstan/extension-installer": "^1.0",
+                "phpstan/phpstan": "^2.0",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpstan/phpstan-strict-rules": "^2.0",
+                "phpunit/phpunit": "^9.6",
+                "symfony/process": "^5.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PHPStan\\PhpDocParser\\": [
+                        "src/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHPDoc parser with support for nullable, intersection and generic types",
+            "support": {
+                "issues": "https://github.com/phpstan/phpdoc-parser/issues",
+                "source": "https://github.com/phpstan/phpdoc-parser/tree/2.3.6"
+            },
+            "time": "2026-09-27T20:07:45+00:00"
+        },
+        {
+            "name": "phpstan/phpstan",
+            "version": "2.3.1",
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/6155239b488e95d26d1ebd95c6b4bb294d7f09db",
+                "reference": "6155239b488e95d26d1ebd95c6b4bb294d7f09db",
                 "shasum": ""
             },
             "require": {
@@ -5156,7 +5327,70 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-09-25T09:31:51+00:00"
+            "time": "2026-10-08T21:09:11+00:00"
+        },
+        {
+            "name": "phpstan/phpstan-nette",
+            "version": "2.0.12",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpstan/phpstan-nette.git",
+                "reference": "2c104f121b9db65407112069ef4fd43799c9ba0c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpstan/phpstan-nette/zipball/2c104f121b9db65407112069ef4fd43799c9ba0c",
+                "reference": "2c104f121b9db65407112069ef4fd43799c9ba0c",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4 || ^8.0",
+                "phpstan/phpstan": "^2.2.3"
+            },
+            "conflict": {
+                "nette/application": "<2.3.0",
+                "nette/component-model": "<2.3.0",
+                "nette/di": "<2.3.0",
+                "nette/forms": "<2.3.0",
+                "nette/http": "<2.3.0",
+                "nette/utils": "<2.3.0"
+            },
+            "require-dev": {
+                "nette/application": "^3.0",
+                "nette/di": "^3.0",
+                "nette/forms": "^3.0",
+                "nette/utils": "^2.3.0 || ^3.0.0 || ^4.0",
+                "php-parallel-lint/php-parallel-lint": "^1.2",
+                "phpstan/phpstan-deprecation-rules": "^2.0",
+                "phpstan/phpstan-phpunit": "^2.0.8",
+                "phpstan/phpstan-strict-rules": "^2.0",
+                "phpunit/phpunit": "^9.6",
+                "shipmonk/name-collision-detector": "^2.1"
+            },
+            "type": "phpstan-extension",
+            "extra": {
+                "phpstan": {
+                    "includes": [
+                        "extension.neon",
+                        "rules.neon"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "PHPStan\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Nette Framework class reflection extension for PHPStan",
+            "support": {
+                "issues": "https://github.com/phpstan/phpstan-nette/issues",
+                "source": "https://github.com/phpstan/phpstan-nette/tree/2.0.12"
+            },
+            "time": "2026-07-02T10:28:46+00:00"
         },
         {
             "name": "react/cache",
