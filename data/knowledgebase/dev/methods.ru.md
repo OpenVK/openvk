@@ -149,6 +149,18 @@ OpenVK-KB-Heading: Список методов API
 * **[groups.unban](/dev/methods/groups/unban)** — удаляет пользователя из черного списка сообщества.
 * **[groups.getBanned](/dev/methods/groups/getBanned)** — возвращает список пользователей, находящихся в черном списке сообщества.
 
+## internal
+
+* **[internal.getNotifications](/dev/methods/internal/getNotifications)** — возвращает системные уведомления для старых мобильных клиентов (заглушка).
+* **[internal.giveMeException](/dev/methods/internal/giveMeException)** — вызывает тестовое исключение для проверки обработки ошибок.
+
+## likes
+
+* **[likes.add](/dev/methods/likes/add)** — добавляет отметку «Мне нравится» к указанному объекту.
+* **[likes.delete](/dev/methods/likes/delete)** — удаляет отметку «Мне нравится» с указанного объекта.
+* **[likes.isLiked](/dev/methods/likes/isLiked)** — проверяет, находится ли объект в списке «Мне нравится» указанного пользователя.
+* **[likes.getList](/dev/methods/likes/getList)** — возвращает список идентификаторов или профилей пользователей, поставивших отметку «Мне нравится».
+
 ## users
 
 * **[users.get](/dev/methods/users/get)** — возвращает расширенную информацию о пользователях.

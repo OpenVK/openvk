@@ -149,6 +149,18 @@ To call any API method, send a GET or POST request to:
 * **[groups.unban](/dev/methods/groups/unban)** — Removes a user from the community blacklist.
 * **[groups.getBanned](/dev/methods/groups/getBanned)** — Returns the list of users in the community blacklist.
 
+## internal
+
+* **[internal.getNotifications](/dev/methods/internal/getNotifications)** — Returns legacy mobile client service notifications (stub).
+* **[internal.giveMeException](/dev/methods/internal/giveMeException)** — Triggers a test runtime exception.
+
+## likes
+
+* **[likes.add](/dev/methods/likes/add)** — Adds a "Like" reaction to the specified object.
+* **[likes.delete](/dev/methods/likes/delete)** — Removes a "Like" reaction from the specified object.
+* **[likes.isLiked](/dev/methods/likes/isLiked)** — Checks whether the specified object is in the user's liked list.
+* **[likes.getList](/dev/methods/likes/getList)** — Returns a list of IDs or profiles of users who liked the object.
+
 ## users
 
 * **[users.get](/dev/methods/users/get)** — Returns user profiles.
