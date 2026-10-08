@@ -65,12 +65,6 @@ parameters:
             analyseLayoutFiles: true
             phpstanCommand: "vendor/bin/phpstan analyse {dir} --no-progress --memory-limit 512M -c phpstan-latte-inner.neon"
 
-    excludePaths:
-        analyse:
-            # dead templates without any reference (candidates for deletion)
-            - Web/Presenters/templates/@CanonicalListView.latte
-            - Web/Presenters/templates/@MilkshakeListView.latte
-            - Web/Presenters/templates/components/photo.latte
     parallel:
         maximumNumberOfProcesses: 1
 
