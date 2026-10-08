@@ -65,7 +65,7 @@
                 {var $isBought = in_array($pack->getId(), $boughtPackIds ?? [], true)}
                 {var $cardUrl = $act === 'author' ? ('/stickers/edit/' . $pack->getId()) : ('/stickers/' . $pack->getSlug())}
                 <div class="stickers_pack_card">
-                    <a href="{$cardUrl}" class="stickers_pack_thumb" {if $act !== 'author'}onclick="openStickerPackModal({$pack->getSlug()}, event); return false;" data-no-ajax="1"{/if}>
+                    <a href="{$cardUrl}" class="stickers_pack_thumb" {if $act !== 'author'}onclick="openStickerPackModal({$pack->getSlug()}, event); return false;"{/if} data-no-ajax="1">
                         {if $pack->getMainSticker()}
                             {if $pack->getMainSticker()->getFormat($pack->getId()) === 'lottie'}
                                 <div class="stickers_pack_thumb_lottie" data-anim-url="{$pack->getMainSticker()->getAnimationUrl($pack->getId())}"></div>
@@ -78,7 +78,7 @@
                     </a>
 
                     <div class="stickers_pack_name">
-                        <a href="{$cardUrl}" title="{$pack->getName()}" {if $act !== 'author'}onclick="openStickerPackModal({$pack->getSlug()}, event); return false;" data-no-ajax="1"{/if}>{$pack->getName()}</a>
+                        <a href="{$cardUrl}" title="{$pack->getName()}" {if $act !== 'author'}onclick="openStickerPackModal({$pack->getSlug()}, event); return false;"{/if} data-no-ajax="1">{$pack->getName()}</a>
                     </div>
 
                     <div class="stickers_pack_author" n:if="$pack->getAuthor() || $pack->getAuthorUrl()">
@@ -97,7 +97,7 @@
                     <div class="stickers_pack_footer">
                         {if $act === 'author'}
                             <div>
-                                <a href="{$cardUrl}" class="stickers_pack_price_paid">
+                                <a href="{$cardUrl}" class="stickers_pack_price_paid" data-no-ajax="1">
                                     {_edit}
                                 </a>
                             </div>
