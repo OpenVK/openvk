@@ -7,13 +7,13 @@ OpenVK-KB-Heading: Список методов API
 
 ---
 
-## execute
+## [execute](/dev/methods/execute)
 
 * **[execute](/dev/methods/execute)** — универсальный метод для выполнения пакета API-вызовов и алгоритмов на языке VKScript за один HTTP-запрос.
 
 ---
 
-## account
+## [account](/dev/methods/account)
 
 * **[account.ban](/dev/methods/account/ban)** — добавляет пользователя в черный список.
 * **[account.unban](/dev/methods/account/unban)** — удаляет пользователя из черного списка.
@@ -42,16 +42,16 @@ OpenVK-KB-Heading: Список методов API
 * **[account.getBadgesSettings](/dev/methods/account/getBadgesSettings)** — возвращает настройки значков приложения.
 * **[account.getToggles](/dev/methods/account/getToggles)** — возвращает состояние переключателей функций (feature toggles).
 
-## activity
+## [activity](/dev/methods/activity)
 
 * **[activity.online](/dev/methods/activity/online)** — помечает текущего пользователя как online с указанием платформы.
 
-## apps
+## [apps](/dev/methods/apps)
 
 * **[apps.getMiniAppsCatalog](/dev/methods/apps/getMiniAppsCatalog)** — возвращает каталог мини-приложений.
 * **[apps.getMiniAppsCatalogSearch](/dev/methods/apps/getMiniAppsCatalogSearch)** — поиск по каталогу мини-приложений.
 
-## audio
+## [audio](/dev/methods/audio)
 
 * **[audio.get](/dev/methods/audio/get)** — возвращает список аудиозаписей пользователя или сообщества.
 * **[audio.getById](/dev/methods/audio/getById)** — возвращает информацию об аудиозаписях по их идентификаторам.
@@ -81,7 +81,7 @@ OpenVK-KB-Heading: Список методов API
 * **[audio.isLagtrain](/dev/methods/audio/isLagtrain)** — проверяет, является ли аудиозапись треком Lagtrain.
 * **[audio.subscribeToQueue](/dev/methods/audio/subscribeToQueue)** — заглушка подписки на очередь воспроизведения.
 
-## board
+## [board](/dev/methods/board)
 
 * **[board.getTopics](/dev/methods/board/getTopics)** — возвращает список обсуждений сообщества.
 * **[board.getComments](/dev/methods/board/getComments)** — возвращает список комментариев в теме обсуждения.
@@ -95,7 +95,7 @@ OpenVK-KB-Heading: Список методов API
 * **[board.unfixTopic](/dev/methods/board/unfixTopic)** — открепляет тему в обсуждениях.
 * **[board.deleteTopic](/dev/methods/board/deleteTopic)** — удаляет тему обсуждения.
 
-## docs
+## [docs](/dev/methods/docs)
 
 * **[docs.get](/dev/methods/docs/get)** — возвращает список документов пользователя или сообщества.
 * **[docs.getById](/dev/methods/docs/getById)** — возвращает информацию о документах по их идентификаторам.
@@ -110,7 +110,7 @@ OpenVK-KB-Heading: Список методов API
 * **[docs.getWallUploadServer](/dev/methods/docs/getWallUploadServer)** — возвращает адрес сервера для загрузки документов на стену.
 * **[docs.save](/dev/methods/docs/save)** — сохраняет документ после загрузки.
 
-## friends
+## [friends](/dev/methods/friends)
 
 * **[friends.get](/dev/methods/friends/get)** — возвращает список идентификаторов друзей пользователя или подробную информацию о них.
 * **[friends.getOnline](/dev/methods/friends/getOnline)** — возвращает список идентификаторов друзей пользователя, которые сейчас находятся на сайте (онлайн).
@@ -126,7 +126,7 @@ OpenVK-KB-Heading: Список методов API
 * **[friends.editList](/dev/methods/friends/editList)** — редактирует список друзей (заглушка).
 * **[friends.deleteList](/dev/methods/friends/deleteList)** — удаляет список друзей (заглушка).
 
-## gifts
+## [gifts](/dev/methods/gifts)
 
 * **[gifts.get](/dev/methods/gifts/get)** — возвращает список полученных пользователем подарков.
 * **[gifts.send](/dev/methods/gifts/send)** — отправляет подарок пользователю за голоса (монеты).
@@ -134,7 +134,7 @@ OpenVK-KB-Heading: Список методов API
 * **[gifts.getCategories](/dev/methods/gifts/getCategories)** — возвращает список категорий каталога подарков.
 * **[gifts.getGiftsInCategory](/dev/methods/gifts/getGiftsInCategory)** — возвращает список подарков в указанной категории каталога.
 
-## groups
+## [groups](/dev/methods/groups)
 
 * **[groups.get](/dev/methods/groups/get)** — возвращает список сообществ пользователя.
 * **[groups.getById](/dev/methods/groups/getById)** — возвращает подробную информацию о сообществах по их идентификаторам или коротким именам.
@@ -149,19 +149,77 @@ OpenVK-KB-Heading: Список методов API
 * **[groups.unban](/dev/methods/groups/unban)** — удаляет пользователя из черного списка сообщества.
 * **[groups.getBanned](/dev/methods/groups/getBanned)** — возвращает список пользователей, находящихся в черном списке сообщества.
 
-## internal
+## [internal](/dev/methods/internal)
 
 * **[internal.getNotifications](/dev/methods/internal/getNotifications)** — возвращает системные уведомления для старых мобильных клиентов (заглушка).
 * **[internal.giveMeException](/dev/methods/internal/giveMeException)** — вызывает тестовое исключение для проверки обработки ошибок.
 
-## likes
+## [likes](/dev/methods/likes)
 
 * **[likes.add](/dev/methods/likes/add)** — добавляет отметку «Мне нравится» к указанному объекту.
 * **[likes.delete](/dev/methods/likes/delete)** — удаляет отметку «Мне нравится» с указанного объекта.
 * **[likes.isLiked](/dev/methods/likes/isLiked)** — проверяет, находится ли объект в списке «Мне нравится» указанного пользователя.
 * **[likes.getList](/dev/methods/likes/getList)** — возвращает список идентификаторов или профилей пользователей, поставивших отметку «Мне нравится».
 
-## users
+## [messages](/dev/methods/messages)
+
+* **[messages.send](/dev/methods/messages/send)** — отправляет сообщение, вложение или стикер.
+* **[messages.edit](/dev/methods/messages/edit)** — редактирует отправленное сообщение.
+* **[messages.delete](/dev/methods/messages/delete)** — удаляет сообщения.
+* **[messages.restore](/dev/methods/messages/restore)** — восстанавливает удаленное сообщение.
+* **[messages.get](/dev/methods/messages/get)** — возвращает список входящих/исходящих сообщений.
+* **[messages.getById](/dev/methods/messages/getById)** — возвращает сообщения по идентификаторам.
+* **[messages.getByConversationMessageId](/dev/methods/messages/getByConversationMessageId)** — возвращает сообщения по локальным ID беседы.
+* **[messages.getHistory](/dev/methods/messages/getHistory)** — возвращает историю сообщений диалога или беседы.
+* **[messages.getHistoryAttachments](/dev/methods/messages/getHistoryAttachments)** — возвращает медиавложения из истории переписки.
+* **[messages.getImportantMessages](/dev/methods/messages/getImportantMessages)** — возвращает список важных сообщений.
+* **[messages.markAsRead](/dev/methods/messages/markAsRead)** — помечает сообщения как прочитанные.
+* **[messages.markAsImportant](/dev/methods/messages/markAsImportant)** — помечает сообщения как важные.
+* **[messages.pin](/dev/methods/messages/pin)** — закрепляет сообщение в беседе.
+* **[messages.unpin](/dev/methods/messages/unpin)** — открепляет сообщение.
+* **[messages.search](/dev/methods/messages/search)** — осуществляет поиск по тексту сообщений.
+* **[messages.getConversations](/dev/methods/messages/getConversations)** — возвращает список бесед в современном формате (v >= 5.80).
+* **[messages.getConversationsById](/dev/methods/messages/getConversationsById)** — возвращает беседы по их peer_id.
+* **[messages.searchConversations](/dev/methods/messages/searchConversations)** — осуществляет поиск по беседам.
+* **[messages.getConversationMembers](/dev/methods/messages/getConversationMembers)** — возвращает участников беседы.
+* **[messages.deleteConversation](/dev/methods/messages/deleteConversation)** — удаляет всю переписку в беседе.
+* **[messages.markAsImportantConversation](/dev/methods/messages/markAsImportantConversation)** — помечает беседу как важную.
+* **[messages.markAsAnsweredConversation](/dev/methods/messages/markAsAnsweredConversation)** — помечает беседу как отвеченную.
+* **[messages.getDialogs](/dev/methods/messages/getDialogs)** — возвращает список диалогов (устаревший метод).
+* **[messages.searchDialogs](/dev/methods/messages/searchDialogs)** — осуществляет поиск по диалогам (устаревший метод).
+* **[messages.deleteDialog](/dev/methods/messages/deleteDialog)** — удаляет диалог (устаревший метод).
+* **[messages.createChat](/dev/methods/messages/createChat)** — создает новую групповую беседу (чат).
+* **[messages.getChat](/dev/methods/messages/getChat)** — возвращает информацию о групповой беседе.
+* **[messages.getChatUsers](/dev/methods/messages/getChatUsers)** — возвращает список участников беседы.
+* **[messages.addChatUser](/dev/methods/messages/addChatUser)** — добавляет пользователя в беседу.
+* **[messages.removeChatUser](/dev/methods/messages/removeChatUser)** — исключает пользователя из беседы.
+* **[messages.editChat](/dev/methods/messages/editChat)** — изменяет название беседы.
+* **[messages.setChatPhoto](/dev/methods/messages/setChatPhoto)** — устанавливает обложку беседы.
+* **[messages.deleteChatPhoto](/dev/methods/messages/deleteChatPhoto)** — удаляет обложку беседы.
+* **[messages.getInviteLink](/dev/methods/messages/getInviteLink)** — возвращает ссылку-приглашение в беседу.
+* **[messages.getChatPreview](/dev/methods/messages/getChatPreview)** — возвращает информацию о беседе по ссылке-приглашению.
+* **[messages.joinChatByInviteLink](/dev/methods/messages/joinChatByInviteLink)** — вступает в беседу по ссылке-приглашению.
+* **[messages.joinChatByTopic](/dev/methods/messages/joinChatByTopic)** — вступает в беседу, привязанную к теме обсуждений.
+* **[messages.setMemberRole](/dev/methods/messages/setMemberRole)** — назначает роль участнику беседы.
+* **[messages.setChatPermissions](/dev/methods/messages/setChatPermissions)** — настраивает права действий в беседе.
+* **[messages.getLongPollServer](/dev/methods/messages/getLongPollServer)** — возвращает параметры подключения к LongPoll.
+* **[messages.getLongPollHistory](/dev/methods/messages/getLongPollHistory)** — возвращает историю событий LongPoll.
+* **[messages.getDiff](/dev/methods/messages/getDiff)** — возвращает дифференциальную синхронизацию для клиентов.
+* **[messages.setActivity](/dev/methods/messages/setActivity)** — передает статус набора текста или записи голоса.
+* **[messages.getLastActivity](/dev/methods/messages/getLastActivity)** — возвращает время последней активности пользователя.
+* **[messages.allowMessagesFromGroup](/dev/methods/messages/allowMessagesFromGroup)** — разрешает отправку сообщений от сообщества.
+* **[messages.denyMessagesFromGroup](/dev/methods/messages/denyMessagesFromGroup)** — запрещает отправку сообщений от сообщества.
+* **[messages.isMessagesFromGroupAllowed](/dev/methods/messages/isMessagesFromGroupAllowed)** — проверяет разрешение на сообщения от сообщества.
+* **[messages.createFolder](/dev/methods/messages/createFolder)** — создает папку диалогов.
+* **[messages.getFolders](/dev/methods/messages/getFolders)** — возвращает список папок диалогов.
+* **[messages.updateFolder](/dev/methods/messages/updateFolder)** — обновляет параметры папки диалогов.
+* **[messages.deleteFolder](/dev/methods/messages/deleteFolder)** — удаляет папку диалогов.
+* **[messages.reorderFolders](/dev/methods/messages/reorderFolders)** — изменяет порядок папок.
+* **[messages.getCounters](/dev/methods/messages/getCounters)** — возвращает счетчики сообщений.
+* **[messages.getMessageViewers](/dev/methods/messages/getMessageViewers)** — возвращает список прочитавших сообщение.
+* **[messages.report](/dev/methods/messages/report)** — отправляет жалобу на спам/нарушение в сообщении.
+
+## [users](/dev/methods/users)
 
 * **[users.get](/dev/methods/users/get)** — возвращает расширенную информацию о пользователях.
 * **[users.search](/dev/methods/users/search)** — возвращает список пользователей в соответствии с заданным критерием поиска.

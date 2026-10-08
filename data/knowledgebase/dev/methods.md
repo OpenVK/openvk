@@ -7,13 +7,13 @@ To call any API method, send a GET or POST request to:
 
 ---
 
-## execute
+## [execute](/dev/methods/execute)
 
 * **[execute](/dev/methods/execute)** — Universal method for batch API executions and running VKScript algorithms in a single HTTP request.
 
 ---
 
-## account
+## [account](/dev/methods/account)
 
 * **[account.ban](/dev/methods/account/ban)** — Adds a user to the blacklist.
 * **[account.unban](/dev/methods/account/unban)** — Removes a user from the blacklist.
@@ -42,16 +42,16 @@ To call any API method, send a GET or POST request to:
 * **[account.getBadgesSettings](/dev/methods/account/getBadgesSettings)** — Returns app badges settings.
 * **[account.getToggles](/dev/methods/account/getToggles)** — Returns feature toggles state.
 
-## activity
+## [activity](/dev/methods/activity)
 
 * **[activity.online](/dev/methods/activity/online)** — Sets online activity with platform indicator.
 
-## apps
+## [apps](/dev/methods/apps)
 
 * **[apps.getMiniAppsCatalog](/dev/methods/apps/getMiniAppsCatalog)** — Returns mini-apps catalog.
 * **[apps.getMiniAppsCatalogSearch](/dev/methods/apps/getMiniAppsCatalogSearch)** — Searches mini-apps catalog.
 
-## audio
+## [audio](/dev/methods/audio)
 
 * **[audio.get](/dev/methods/audio/get)** — Returns audio files of a user or community.
 * **[audio.getById](/dev/methods/audio/getById)** — Returns information about audio files by their IDs.
@@ -81,7 +81,7 @@ To call any API method, send a GET or POST request to:
 * **[audio.isLagtrain](/dev/methods/audio/isLagtrain)** — Checks if audio track is Lagtrain.
 * **[audio.subscribeToQueue](/dev/methods/audio/subscribeToQueue)** — Playback queue subscription stub.
 
-## board
+## [board](/dev/methods/board)
 
 * **[board.getTopics](/dev/methods/board/getTopics)** — Returns topics in a community discussion board.
 * **[board.getComments](/dev/methods/board/getComments)** — Returns comments in a topic.
@@ -95,7 +95,7 @@ To call any API method, send a GET or POST request to:
 * **[board.unfixTopic](/dev/methods/board/unfixTopic)** — Unpins a topic.
 * **[board.deleteTopic](/dev/methods/board/deleteTopic)** — Deletes a topic.
 
-## docs
+## [docs](/dev/methods/docs)
 
 * **[docs.get](/dev/methods/docs/get)** — Returns documents of a user or community.
 * **[docs.getById](/dev/methods/docs/getById)** — Returns information about documents by IDs.
@@ -110,7 +110,7 @@ To call any API method, send a GET or POST request to:
 * **[docs.getWallUploadServer](/dev/methods/docs/getWallUploadServer)** — Returns wall document upload server address.
 * **[docs.save](/dev/methods/docs/save)** — Saves an uploaded document.
 
-## friends
+## [friends](/dev/methods/friends)
 
 * **[friends.get](/dev/methods/friends/get)** — Returns a list of user friend IDs or detailed user profiles.
 * **[friends.getOnline](/dev/methods/friends/getOnline)** — Returns a list of IDs of friends who are currently online.
@@ -126,7 +126,7 @@ To call any API method, send a GET or POST request to:
 * **[friends.editList](/dev/methods/friends/editList)** — Edits a friend list (stub).
 * **[friends.deleteList](/dev/methods/friends/deleteList)** — Deletes a friend list (stub).
 
-## gifts
+## [gifts](/dev/methods/gifts)
 
 * **[gifts.get](/dev/methods/gifts/get)** — Returns a list of gifts received by a user.
 * **[gifts.send](/dev/methods/gifts/send)** — Sends a gift to a user for votes (coins).
@@ -134,7 +134,7 @@ To call any API method, send a GET or POST request to:
 * **[gifts.getCategories](/dev/methods/gifts/getCategories)** — Returns the list of gift catalog categories.
 * **[gifts.getGiftsInCategory](/dev/methods/gifts/getGiftsInCategory)** — Returns gifts available in a specific catalog category.
 
-## groups
+## [groups](/dev/methods/groups)
 
 * **[groups.get](/dev/methods/groups/get)** — Returns a list of communities for a user.
 * **[groups.getById](/dev/methods/groups/getById)** — Returns information about communities by IDs or short names.
@@ -149,19 +149,77 @@ To call any API method, send a GET or POST request to:
 * **[groups.unban](/dev/methods/groups/unban)** — Removes a user from the community blacklist.
 * **[groups.getBanned](/dev/methods/groups/getBanned)** — Returns the list of users in the community blacklist.
 
-## internal
+## [internal](/dev/methods/internal)
 
 * **[internal.getNotifications](/dev/methods/internal/getNotifications)** — Returns legacy mobile client service notifications (stub).
 * **[internal.giveMeException](/dev/methods/internal/giveMeException)** — Triggers a test runtime exception.
 
-## likes
+## [likes](/dev/methods/likes)
 
 * **[likes.add](/dev/methods/likes/add)** — Adds a "Like" reaction to the specified object.
 * **[likes.delete](/dev/methods/likes/delete)** — Removes a "Like" reaction from the specified object.
 * **[likes.isLiked](/dev/methods/likes/isLiked)** — Checks whether the specified object is in the user's liked list.
 * **[likes.getList](/dev/methods/likes/getList)** — Returns a list of IDs or profiles of users who liked the object.
 
-## users
+## [messages](/dev/methods/messages)
+
+* **[messages.send](/dev/methods/messages/send)** — Sends a message, attachment, or sticker.
+* **[messages.edit](/dev/methods/messages/edit)** — Edits a sent message.
+* **[messages.delete](/dev/methods/messages/delete)** — Deletes messages.
+* **[messages.restore](/dev/methods/messages/restore)** — Restores a deleted message.
+* **[messages.get](/dev/methods/messages/get)** — Returns incoming/outgoing messages list.
+* **[messages.getById](/dev/methods/messages/getById)** — Returns messages by IDs.
+* **[messages.getByConversationMessageId](/dev/methods/messages/getByConversationMessageId)** — Returns messages by conversation message IDs.
+* **[messages.getHistory](/dev/methods/messages/getHistory)** — Returns message history for a peer or chat.
+* **[messages.getHistoryAttachments](/dev/methods/messages/getHistoryAttachments)** — Returns media attachments from history.
+* **[messages.getImportantMessages](/dev/methods/messages/getImportantMessages)** — Returns important messages.
+* **[messages.markAsRead](/dev/methods/messages/markAsRead)** — Marks messages as read.
+* **[messages.markAsImportant](/dev/methods/messages/markAsImportant)** — Marks messages as important.
+* **[messages.pin](/dev/methods/messages/pin)** — Pins a message in a conversation.
+* **[messages.unpin](/dev/methods/messages/unpin)** — Unpins a message.
+* **[messages.search](/dev/methods/messages/search)** — Searches messages by query string.
+* **[messages.getConversations](/dev/methods/messages/getConversations)** — Returns modern conversations list (v >= 5.80).
+* **[messages.getConversationsById](/dev/methods/messages/getConversationsById)** — Returns conversation objects by peer IDs.
+* **[messages.searchConversations](/dev/methods/messages/searchConversations)** — Searches conversations.
+* **[messages.getConversationMembers](/dev/methods/messages/getConversationMembers)** — Returns conversation members.
+* **[messages.deleteConversation](/dev/methods/messages/deleteConversation)** — Deletes conversation history.
+* **[messages.markAsImportantConversation](/dev/methods/messages/markAsImportantConversation)** — Marks conversation as important.
+* **[messages.markAsAnsweredConversation](/dev/methods/messages/markAsAnsweredConversation)** — Marks conversation as answered.
+* **[messages.getDialogs](/dev/methods/messages/getDialogs)** — Returns dialogues list (legacy).
+* **[messages.searchDialogs](/dev/methods/messages/searchDialogs)** — Searches dialogues (legacy).
+* **[messages.deleteDialog](/dev/methods/messages/deleteDialog)** — Deletes a dialogue (legacy).
+* **[messages.createChat](/dev/methods/messages/createChat)** — Creates a multi-user chat.
+* **[messages.getChat](/dev/methods/messages/getChat)** — Returns multi-user chat information.
+* **[messages.getChatUsers](/dev/methods/messages/getChatUsers)** — Returns list of chat members.
+* **[messages.addChatUser](/dev/methods/messages/addChatUser)** — Adds a user to a chat.
+* **[messages.removeChatUser](/dev/methods/messages/removeChatUser)** — Removes a user from a chat.
+* **[messages.editChat](/dev/methods/messages/editChat)** — Renames a multi-user chat.
+* **[messages.setChatPhoto](/dev/methods/messages/setChatPhoto)** — Sets chat avatar photo.
+* **[messages.deleteChatPhoto](/dev/methods/messages/deleteChatPhoto)** — Deletes chat avatar photo.
+* **[messages.getInviteLink](/dev/methods/messages/getInviteLink)** — Returns invite link for a chat.
+* **[messages.getChatPreview](/dev/methods/messages/getChatPreview)** — Returns preview for an invite link.
+* **[messages.joinChatByInviteLink](/dev/methods/messages/joinChatByInviteLink)** — Joins a chat via invite link.
+* **[messages.joinChatByTopic](/dev/methods/messages/joinChatByTopic)** — Joins a discussion-linked chat.
+* **[messages.setMemberRole](/dev/methods/messages/setMemberRole)** — Sets role of a chat member.
+* **[messages.setChatPermissions](/dev/methods/messages/setChatPermissions)** — Sets chat permissions.
+* **[messages.getLongPollServer](/dev/methods/messages/getLongPollServer)** — Returns LongPoll server parameters.
+* **[messages.getLongPollHistory](/dev/methods/messages/getLongPollHistory)** — Returns LongPoll history events.
+* **[messages.getDiff](/dev/methods/messages/getDiff)** — Returns state diff for messenger clients.
+* **[messages.setActivity](/dev/methods/messages/setActivity)** — Sends typing/voice recording status.
+* **[messages.getLastActivity](/dev/methods/messages/getLastActivity)** — Returns user's last activity timestamp.
+* **[messages.allowMessagesFromGroup](/dev/methods/messages/allowMessagesFromGroup)** — Allows messages from community.
+* **[messages.denyMessagesFromGroup](/dev/methods/messages/denyMessagesFromGroup)** — Denies messages from community.
+* **[messages.isMessagesFromGroupAllowed](/dev/methods/messages/isMessagesFromGroupAllowed)** — Checks if community messages are allowed.
+* **[messages.createFolder](/dev/methods/messages/createFolder)** — Creates a chat folder.
+* **[messages.getFolders](/dev/methods/messages/getFolders)** — Returns list of chat folders.
+* **[messages.updateFolder](/dev/methods/messages/updateFolder)** — Updates a chat folder.
+* **[messages.deleteFolder](/dev/methods/messages/deleteFolder)** — Deletes a chat folder.
+* **[messages.reorderFolders](/dev/methods/messages/reorderFolders)** — Reorders chat folders.
+* **[messages.getCounters](/dev/methods/messages/getCounters)** — Returns unread message counters.
+* **[messages.getMessageViewers](/dev/methods/messages/getMessageViewers)** — Returns viewers of a message.
+* **[messages.report](/dev/methods/messages/report)** — Reports a message as spam/abuse.
+
+## [users](/dev/methods/users)
 
 * **[users.get](/dev/methods/users/get)** — Returns user profiles.
 * **[users.search](/dev/methods/users/search)** — Searches for users.
