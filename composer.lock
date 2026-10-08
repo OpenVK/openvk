@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "78dfbbf89ae93b056dc58efb93140409",
+    "content-hash": "5dd0e634bec8f11ce74f5d81a1b73007",
     "packages": [
         {
             "name": "al/emoji-detector",
@@ -2000,11 +2000,17 @@
         },
         {
             "name": "openvk/chandler",
-            "version": "dev-master",
+            "version": "dev-phpstan-latte",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/OpenVK/chandler.git",
+                "reference": "f9ddcc3954c5b6babb8e3f8f9fa3f4f65fcf5c7e"
+            },
             "dist": {
-                "type": "path",
-                "url": "/opt/chandler",
-                "reference": "a4dd9419907e4bb1ab6befceea0f6027e77c723b"
+                "type": "zip",
+                "url": "https://api.github.com/repos/OpenVK/chandler/zipball/f9ddcc3954c5b6babb8e3f8f9fa3f4f65fcf5c7e",
+                "reference": "f9ddcc3954c5b6babb8e3f8f9fa3f4f65fcf5c7e",
+                "shasum": ""
             },
             "require": {
                 "firebase/php-jwt": "^7.1",
@@ -2020,7 +2026,7 @@
                 "wildbit/postmark-php": "^7.0"
             },
             "require-dev": {
-                "efabrica/phpstan-latte": "^0.20.1",
+                "efabrica/phpstan-latte": "dev-latte-3.1-support",
                 "friendsofphp/php-cs-fixer": "^3.90",
                 "phpstan/phpstan": "^2.2"
             },
@@ -2032,12 +2038,6 @@
             ],
             "type": "library",
             "autoload": {
-                "psr-4": {
-                    "Chandler\\": "chandler/"
-                },
-                "classmap": [
-                    "chandler/Bootstrap.php"
-                ],
                 "files": [
                     "chandler/procedural/yaml.php",
                     "chandler/procedural/panic.php",
@@ -2045,27 +2045,15 @@
                     "chandler/procedural/mimes.php",
                     "chandler/procedural/escape_url.php",
                     "chandler/procedural/captcha.php"
-                ]
-            },
-            "autoload-dev": {
+                ],
                 "psr-4": {
-                    "Chandler\\PHPStanLatte\\": "tools/phpstan-latte/"
-                }
-            },
-            "scripts": {
-                "fix": [
-                    "php-cs-fixer fix"
-                ],
-                "lint": [
-                    "php-cs-fixer fix --dry-run --diff --verbose"
-                ],
-                "analyse": [
-                    "phpstan analyse --no-progress"
-                ],
-                "analyse:examples": [
-                    "phpstan analyse --no-progress -c phpstan.examples.neon"
+                    "Chandler\\": "chandler/"
+                },
+                "classmap": [
+                    "chandler/Bootstrap.php"
                 ]
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "ISC"
             ],
@@ -2074,12 +2062,10 @@
                 "framework"
             ],
             "support": {
+                "issues": "https://github.com/OpenVK/chandler/issues",
                 "source": "https://github.com/OpenVK/chandler"
             },
-            "transport-options": {
-                "symlink": true,
-                "relative": false
-            }
+            "time": "2026-10-08T22:10:46+00:00"
         },
         {
             "name": "php81_bc/strftime",
@@ -4765,11 +4751,17 @@
         },
         {
             "name": "efabrica/phpstan-latte",
-            "version": "0.20.1",
-            "dist": {
-                "type": "path",
-                "url": "/opt/phpstan-latte",
+            "version": "dev-latte-3.1-support",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/OpenVK/phpstan-latte.git",
                 "reference": "23cf7a9299c71a595a6ea8ee308e7344e68b280d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/OpenVK/phpstan-latte/zipball/23cf7a9299c71a595a6ea8ee308e7344e68b280d",
+                "reference": "23cf7a9299c71a595a6ea8ee308e7344e68b280d",
+                "shasum": ""
             },
             "require": {
                 "ext-json": "*",
@@ -4814,10 +4806,10 @@
             "keywords": [
                 "static analysis"
             ],
-            "transport-options": {
-                "symlink": true,
-                "relative": false
-            }
+            "support": {
+                "source": "https://github.com/OpenVK/phpstan-latte/tree/latte-3.1-support"
+            },
+            "time": "2026-10-06T13:18:08+00:00"
         },
         {
             "name": "ergebnis/agent-detector",
@@ -6433,6 +6425,7 @@
     "stability-flags": {
         "al/emoji-detector": 20,
         "bhaktaraz/php-rss-generator": 20,
+        "efabrica/phpstan-latte": 20,
         "erusev/parsedown": 20,
         "ezyang/htmlpurifier": 20,
         "james-heinrich/getid3": 20,
