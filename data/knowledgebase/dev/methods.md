@@ -256,6 +256,36 @@ To call any API method, send a GET or POST request to:
 * **[pay.getIdByMarketingId](/dev/methods/pay/getIdByMarketingId)** — Decodes a signed marketing identifier and returns its numeric ID.
 * **[pay.verifyOrder](/dev/methods/pay/verifyOrder)** — Verifies the cryptographic signature and validity of an application payment order.
 
+## [photos](/dev/methods/photos)
+
+* **[photos.createAlbum](/dev/methods/photos/createAlbum)** — Creates an empty photo album.
+* **[photos.editAlbum](/dev/methods/photos/editAlbum)** — Edits the title and description of a photo album.
+* **[photos.getAlbums](/dev/methods/photos/getAlbums)** — Returns a list of photo albums of a user or community.
+* **[photos.getAlbumsCount](/dev/methods/photos/getAlbumsCount)** — Returns the number of photo albums of a user or community.
+* **[photos.deleteAlbum](/dev/methods/photos/deleteAlbum)** — Deletes a photo album.
+* **[photos.get](/dev/methods/photos/get)** — Returns photos from an album or by IDs.
+* **[photos.getById](/dev/methods/photos/getById)** — Returns information about photos by their IDs.
+* **[photos.getAll](/dev/methods/photos/getAll)** — Returns all photos of a user or community in reverse chronological order.
+* **[photos.getUserPhotos](/dev/methods/photos/getUserPhotos)** — Returns all photos of a user (alias for photos.getAll).
+* **[photos.edit](/dev/methods/photos/edit)** — Edits a photo's caption.
+* **[photos.delete](/dev/methods/photos/delete)** — Deletes one or more photos.
+* **[photos.getUploadServer](/dev/methods/photos/getUploadServer)** — Returns the upload URL for uploading photos to an album.
+* **[photos.save](/dev/methods/photos/save)** — Saves photos after successful upload to an album.
+* **[photos.getOwnerPhotoUploadServer](/dev/methods/photos/getOwnerPhotoUploadServer)** — Returns the upload URL for uploading a profile or community main photo.
+* **[photos.saveOwnerPhoto](/dev/methods/photos/saveOwnerPhoto)** — Saves a profile or community main photo after uploading.
+* **[photos.getWallUploadServer](/dev/methods/photos/getWallUploadServer)** — Returns the upload URL for uploading photos to a wall.
+* **[photos.saveWallPhoto](/dev/methods/photos/saveWallPhoto)** — Saves a photo for publishing on a wall.
+* **[photos.getMessagesUploadServer](/dev/methods/photos/getMessagesUploadServer)** — Returns the upload URL for uploading photos to a private message.
+* **[photos.saveMessagesPhoto](/dev/methods/photos/saveMessagesPhoto)** — Saves a photo for sending in a private message.
+* **[photos.getChatUploadServer](/dev/methods/photos/getChatUploadServer)** — Returns the upload URL for uploading a group chat photo.
+* **[photos.getComments](/dev/methods/photos/getComments)** — Returns a list of comments on a photo.
+* **[photos.createComment](/dev/methods/photos/createComment)** — Adds a new comment to a photo.
+* **[photos.addComment](/dev/methods/photos/addComment)** — Adds a comment to a photo (alias for photos.createComment).
+* **[photos.getTags](/dev/methods/photos/getTags)** — Returns a list of tags on a photo.
+* **[photos.putTag](/dev/methods/photos/putTag)** — Adds a user tag on a photo.
+* **[photos.deleteTag](/dev/methods/photos/deleteTag)** — Deletes a tag from a photo.
+* **[photos.confirmTag](/dev/methods/photos/confirmTag)** — Confirms a tag on a photo.
+
 ## [places](/dev/methods/places)
 
 * **[places.getCityById](/dev/methods/places/getCityById)** — Returns city information by identifiers.
