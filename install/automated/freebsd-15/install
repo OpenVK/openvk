@@ -32,6 +32,12 @@ if ($osVer !~ "15.*") then
     exit 201
 endif
 
+set ifRoot = `id -c`
+if ($ifRoot != "root") then
+    echo "Fatal Error: You should run this installation as root."
+    exit 202
+endif
+
 # Ask, just in case
 echo -n "This script will install OpenVK on your FreeBSD machine. It's recommended to run it in FreeBSD Jail via bastille or similar tool. Continue? (y/n)"
 set ans = $<
@@ -42,7 +48,7 @@ if ( "$ans" != "y" && "$ans" != "Y" && "$ans" != "yes" && "$ans" != "YES") then
 endif
 
 # Install required packages
-pkg install -y git nginx php83 node24 npm-node24 mariadb118-server php83-composer mod_php83 php83-gd php83-mbstring php83-iconv php83-sodium php83-calendar php83-curl php83-brotli php83-zip php83-ctype php83-dom php83-fileinfo php83-pdo_mysql php83-sqlite3 php83-pdo_sqlite php83-sockets php83-tokenizer php83-opcache php83-posix php83-pecl-yaml php83-phar php83-filter php83-zlib php83-session php83-simplexml php83-pecl-imagick php83-xml
+pkg install -y git nginx php84 node24 npm-node24 mariadb118-server go126 redis php84-composer mod_php84 php84-gd php84-mbstring php84-iconv php84-sodium php84-calendar php84-curl php84-brotli php84-zip php84-ctype php84-dom php84-fileinfo php84-pdo_mysql php84-sqlite3 php84-pdo_sqlite php84-sockets php84-tokenizer php84-opcache php84-posix php84-pecl-yaml php84-phar php84-filter php84-zlib php84-session php84-simplexml php84-pecl-imagick php84-xml
 rehash # upd exports
 
 # Install OpenVK
@@ -64,6 +70,10 @@ chmod -R 777 /opt/openvk
 sysrc mysql_enable="yes"
 service mysql-server start
 
+# Enable redis
+sysrc redis_enable="yes"
+service redis start
+
 cd /opt/openvk
 mysql < install/automated/common/mk_db.sql
 mysql -p'justMonika' openvk < vendor/openvk/chandler/install/init-db.sql
@@ -74,6 +84,24 @@ cd install/sqls
 foreach migration (*.sql)
     mysql -p'justMonika' openvk < $migration
 end
+
+# Install OpenVK-IM
+cd /opt
+git clone https://github.com/openvk/openvk-im
+cd openvk-im
+cp .env.example .env
+sed -i'' -e 's:DB_USER=root:DB_USER=openvk:' /opt/openvk-im/.env
+sed -i'' -e 's:DB_PASS=root:DB_PASS=justMonika:' /opt/openvk-im/.env
+sed -i'' -e 's:APP_PORT=8080:APP_PORT=8420:' /opt/openvk-im/.env
+sed -i'' -e 's:SECRET_KEY = "key":SECRET_KEY="'`openssl rand -base64 52 | tr -dc 'A-Za-z0-9' | head -c 64`'":' /opt/openvk-im/.env
+
+go mod download
+go run main.go db create
+
+cp /opt/openvk/install/automated/freebsd-15/openvk_im /usr/local/etc/rc.d/openvk_im
+chmod 755 /usr/local/etc/rc.d/openvk_im
+sysrc openvk_im_enable="YES"
+service openvk_im start
 
 # NGINX
 sysrc php_fpm_enable="YES"

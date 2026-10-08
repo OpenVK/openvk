@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# PROVIDE: openvk_im
+# REQUIRE: DAEMON NETWORKING
+
+. /etc/rc.subr
+
+name="openvk_im"
+rcvar="openvk_im_enable"
+
+service_user="root"
+service_dir="/opt/openvk-im"
+
+pidfile="/var/run/${name}.pid"
+command="/usr/sbin/daemon"
+command_args="-r -f -p ${pidfile} -workdir ${service_dir} -u ${service_user} /usr/ports/lang/go run main.go"
+
+load_rc_config $name
+run_rc_command "$1"
