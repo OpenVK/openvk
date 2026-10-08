@@ -235,6 +235,12 @@ class Club extends RowModel
     public function isPrivate(): bool
     {
         return $this->getRecord()->closed === static::PRIVATE;
+        return $this->getRecord()->closed !== static::OPEN;
+    }
+
+    public function isPrivate(): bool
+    {
+        return $this->getRecord()->closed === static::PRIVATE;
     }
 
     public function isVerified(): bool
@@ -290,7 +296,7 @@ class Club extends RowModel
             "follower" => $user->getId(),
             "target"   => $this->getId(),
             "model"    => static::class,
-            "flags"    => 0,
+            "flags"    => 0
         ])->count("*") === 1;
         ;
     }
@@ -301,7 +307,7 @@ class Club extends RowModel
                 "follower" => $user->getId(),
                 "target"   => $this->getId(),
                 "model"    => static::class,
-                "flags"    => 1,
+                "flags"    => 1
             ])->count("*") === 1;
         } else {
             return false;
@@ -378,12 +384,15 @@ class Club extends RowModel
         ])->fetch());
 
         return $subbed && ($this->isClosed() ? $this->isSubscriptionAccepted($user) : true);
+        return $subbed && ($this->isClosed() ? $this->isSubscriptionAccepted($user) : true);
     }
 
+    public function getFollowersQuery(string $sort = "follower ASC"): ?GroupedSelection
     public function getFollowersQuery(string $sort = "follower ASC"): ?GroupedSelection
     {
         $query = $this->getRecord()->related("subscriptions.target");
 
+        if ($this->getOpennesStatus() !== static::PRIVATE) {
         if ($this->getOpennesStatus() !== static::PRIVATE) {
             $query = $query->where("model", "openvk\\Web\\Models\\Entities\\Club")->order($sort);
         } else {
@@ -560,14 +569,12 @@ class Club extends RowModel
                 return false;
             }
 
-            if (!$this->isClosed()) {
+            if ($this->isClosed() && $this->getSubscriptionStatus($user)) {
                 return true;
             }
 
-            if ($this->isClosed() && $this->getSubscriptionStatus($user)) {
+            if (!$this->isClosed()) {
                 return true;
-            } else {
-                return false;
             }
         } else {
             if ($this->isClosed()) {
