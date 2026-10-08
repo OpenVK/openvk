@@ -109,7 +109,15 @@ class Themepacks implements \ArrayAccess
 
     public function offsetExists($offset): bool
     {
-        return $offset === Themepacks::DEFAULT_THEME_ID ? false : isset($this->loadedThemepacks[$offset]);
+        $special = $this->getSpecialThemepacks();
+
+        foreach ($special as $specialTheme) {
+            if ($specialTheme->getId() === $offset) {
+                return true;
+            }
+        }
+
+        return isset($this->loadedThemepacks[$offset]);
     }
 
     public function offsetGet($offset): mixed

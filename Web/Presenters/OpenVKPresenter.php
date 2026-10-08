@@ -398,6 +398,8 @@ abstract class OpenVKPresenter extends SimplePresenter
             $theme = Themepacks::i()[$this->requestParam("themePreview")];
         } elseif ($this->user !== null && $this->user->identity !== null && $this->user->identity->getTheme()) {
             $theme = $this->user->identity->getTheme();
+        } else {
+            $theme = Themepacks::i()[Themepacks::DEFAULT_THEME_ID];
         }
 
         if (!is_null($theme) && $theme->isEnabled() && $theme->overridesTemplates()) {

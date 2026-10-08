@@ -1,42 +1,10 @@
 {ifset $thisUser}
     {if $thisUser->getNsfwTolerance() < 2}
-        {css "css/nsfw-posts.css"}
-    {/if}
+    {css "css/nsfw-posts.css"}
+{/if}
 
-    {if $theme !== NULL}
-        {if $theme->inheritDefault()}
-            {css "css/main.css"}
-            {css "css/bsdn.css"}
-            {css "css/dialog.css"}
-            {css "css/notifications.css"}
-            {css "css/avatar-edit.css"}
-            {css "css/audios.css"}
-            {css "css/messages.css"}
-            {css "css/fastchats.css"}
-            {css "css/calendar.css"}
-            {css "css/emoji/emoji.css"}
-
-            {if $isXmas}
-                {css "css/xmas.css"}
-            {/if}
-        {/if}
-
-        {if $theme->hasStyles()}
-            {foreach $theme->getStyles() as $customStyle}
-                {css $customStyle}
-            {/foreach}
-        {/if}
-
-        {css "css/mobile.css"}
-
-        {* remove the "n:if" if you having issues with your theme *}
-
-        <link n:if="$theme->hasStylesheet()" rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/stylesheet/styles.css" />
-
-        {if $isXmas}
-            <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/resource/xmas.css" />
-        {/if}
-    {else}
+{if $theme !== NULL}
+    {if $theme->inheritDefault()}
         {css "css/main.css"}
         {css "css/bsdn.css"}
         {css "css/dialog.css"}
@@ -46,7 +14,6 @@
         {css "css/messages.css"}
         {css "css/fastchats.css"}
         {css "css/calendar.css"}
-        {css "css/mobile.css"}
         {css "css/emoji/emoji.css"}
 
         {if $isXmas}
@@ -54,6 +21,40 @@
         {/if}
     {/if}
 
+    {if $theme->hasStyles()}
+        {foreach $theme->getStyles() as $customStyle}
+            {css $customStyle}
+        {/foreach}
+    {/if}
+
+    {css "css/mobile.css"}
+
+    {* remove the "n:if" if you having issues with your theme *}
+
+    <link n:if="$theme->hasStylesheet()" rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/stylesheet/styles.css" />
+
+    {if $isXmas}
+        <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/resource/xmas.css" />
+    {/if}
+{else}
+    {css "css/main.css"}
+    {css "css/bsdn.css"}
+    {css "css/dialog.css"}
+    {css "css/notifications.css"}
+    {css "css/avatar-edit.css"}
+    {css "css/audios.css"}
+    {css "css/messages.css"}
+    {css "css/fastchats.css"}
+    {css "css/calendar.css"}
+    {css "css/mobile.css"}
+    {css "css/emoji/emoji.css"}
+
+    {if $isXmas}
+        {css "css/xmas.css"}
+    {/if}
+{/if}
+
+{ifset $thisUser}
     {if $thisUser->getStyleAvatar() == 1}
         {css "css/avatar.1.css"}
     {/if}
@@ -64,18 +65,5 @@
 
     {if $thisUser->hasMicroblogEnabled() == 1}
         {css "css/microblog.css"}
-    {/if}
-{else}
-    {css "css/main.css"}
-    {css "css/bsdn.css"}
-    {css "css/dialog.css"}
-    {css "css/nsfw-posts.css"}
-    {css "css/notifications.css"}
-    {css "css/audios.css"}
-    {css "css/mobile.css"}
-    {css "css/emoji/emoji.css"}
-
-    {if $isXmas}
-        {css "css/xmas.css"}
     {/if}
 {/ifset}
