@@ -255,3 +255,12 @@ To call any API method, send a GET or POST request to:
 
 * **[users.get](/dev/methods/users/get)** — Returns user profiles.
 * **[users.search](/dev/methods/users/search)** — Searches for users.
+
+## [ovk](/dev/methods/ovk)
+
+* **[ovk.aboutInstance](/dev/methods/ovk/aboutInstance)** — Returns detailed information, statistics, administrators, and popular communities of the current OpenVK instance.
+* **[ovk.version](/dev/methods/ovk/version)** — Returns current OpenVK engine version string.
+* **[ovk.test](/dev/methods/ovk/test)** — Tests API connectivity, authorization status, and protocol version.
+* **[ovk.getMirrors](/dev/methods/ovk/getMirrors)** — Returns configured domain mirrors for the instance.
+* **[ovk.chickenWings](/dev/methods/ovk/chickenWings)** — Engine easter egg.
+* **[ovk.nuggets](/dev/methods/ovk/nuggets)** — Engine easter egg.

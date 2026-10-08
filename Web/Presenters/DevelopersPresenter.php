@@ -351,6 +351,19 @@ final class DevelopersPresenter extends OpenVKPresenter
                         ["name" => "search",           "href" => "/dev/methods/users/search"],
                     ],
                 ],
+                // OpenVK-specific methods are intentionally placed at the end to separate them from official VK API methods
+                [
+                    "id"    => "ovk",
+                    "name"  => "dsb_m_ovk",
+                    "links" => [
+                        ["name" => "aboutInstance", "href" => "/dev/methods/ovk/aboutInstance"],
+                        ["name" => "chickenWings",  "href" => "/dev/methods/ovk/chickenWings"],
+                        ["name" => "getMirrors",    "href" => "/dev/methods/ovk/getMirrors"],
+                        ["name" => "nuggets",       "href" => "/dev/methods/ovk/nuggets"],
+                        ["name" => "test",          "href" => "/dev/methods/ovk/test"],
+                        ["name" => "version",       "href" => "/dev/methods/ovk/version"],
+                    ],
+                ],
             ];
         }
     }

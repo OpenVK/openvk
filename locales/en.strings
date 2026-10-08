@@ -1353,6 +1353,7 @@
 "dsb_m_notes" = "Notes";
 "dsb_m_notifications" = "Notifications";
 "dsb_m_users" = "Users";
+"dsb_m_ovk" = "OpenVK";
 "dsb_models" = "Models";
 "dsb_standalone" = "Standalone";
 "dsb_sites" = "Sites and Widgets";

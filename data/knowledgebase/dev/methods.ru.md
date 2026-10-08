@@ -255,3 +255,12 @@ OpenVK-KB-Heading: Список методов API
 
 * **[users.get](/dev/methods/users/get)** — возвращает расширенную информацию о пользователях.
 * **[users.search](/dev/methods/users/search)** — возвращает список пользователей в соответствии с заданным критерием поиска.
+
+## [ovk](/dev/methods/ovk)
+
+* **[ovk.aboutInstance](/dev/methods/ovk/aboutInstance)** — возвращает подробную информацию, статистику, список администраторов и популярных сообществ текущего инстанса OpenVK.
+* **[ovk.version](/dev/methods/ovk/version)** — возвращает текущую версию движка OpenVK.
+* **[ovk.test](/dev/methods/ovk/test)** — проверяет работоспособность API, статус авторизации и версию протокола.
+* **[ovk.getMirrors](/dev/methods/ovk/getMirrors)** — возвращает список настроенных доменных зеркал инстанса.
+* **[ovk.chickenWings](/dev/methods/ovk/chickenWings)** — пасхалка движка.
+* **[ovk.nuggets](/dev/methods/ovk/nuggets)** — пасхалка движка.
