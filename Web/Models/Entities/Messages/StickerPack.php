@@ -269,6 +269,42 @@ class StickerPack extends RowModel
             ->count("*") > 0;
     }
 
+    public function getPurchasesCount(): int
+    {
+        return DB::i()->getContext()->table("sticker_purchases")
+            ->where("stickerpack", $this->getId())
+            ->where("purchased IN (1, 2)")
+            ->count("*");
+    }
+
+    public function getInstallStats(int $days = 90): array
+    {
+        $since = strtotime("-" . ($days - 1) . " day midnight");
+
+        $rows = DB::i()->getConnection()->query(
+            "SELECT DATE_FORMAT(FROM_UNIXTIME(created), '%Y-%m-%d') AS `day`, COUNT(*) AS `cnt`
+             FROM `sticker_purchases`
+             WHERE `stickerpack` = ? AND `created` >= ? AND `purchased` IN (1, 2)
+             GROUP BY `day`",
+            $this->getId(),
+            $since
+        )->fetchPairs("day", "cnt");
+
+        $x = [];
+        $y = [];
+
+        for ($i = $days - 1; $i >= 0; $i--) {
+            $dayStr = date("Y-m-d", strtotime("-$i day midnight"));
+            $x[] = $dayStr;
+            $y[] = isset($rows[$dayStr]) ? (int) $rows[$dayStr] : 0;
+        }
+
+        return [
+            "x" => $x,
+            "y" => $y,
+        ];
+    }
+
     public function hasBoughtBy(?User $user): bool
     {
         if (!$user) {

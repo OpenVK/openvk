@@ -611,6 +611,8 @@ final class StickersPresenter extends OpenVKPresenter
         $this->template->existingStickers = iterator_to_array($pack->getStickers(-1));
         $this->template->act              = "author";
         $this->template->withdrawTax      = (float) (OPENVK_ROOT_CONF["openvk"]["preferences"]["stickers"]["withdrawTax"] ?? 0);
+        $this->template->installStats     = $pack->getInstallStats(90);
+        $this->template->totalInstalls    = $pack->getPurchasesCount();
     }
 
     public function renderViewPack($slug): void

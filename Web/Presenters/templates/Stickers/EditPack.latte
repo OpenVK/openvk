@@ -23,26 +23,142 @@
     <div class="container_gray stickers_edit_container">
         {if !$isNew && $pack}
             <div class="stickers_balance_box">
-                <div>
-                    <div class="stickers_balance_label">{_stickers_pack_balance}</div>
-                    <div class="stickers_balance_val">
-                        {tr('coins', (int) round($pack->getBalance()))}
-                    </div>
-                    <div class="stickers_balance_hint">
-                        {tr("stickers_balance", (int) round($pack->getBalance()))|noescape}
-                        {if $pack->getBalance() > 0}
-                            (<a href="javascript:withdrawStickers({$pack->getId()}, {$pack->getBalance()})">{_stickers_withdrawal_q}</a>)
-                        {/if}
-                    </div>
-                </div>
-                {if $pack->getBalance() > 0}
+                <div class="stickers_balance_top">
                     <div>
-                        <button type="button" class="button" onclick="withdrawStickers({$pack->getId()}, {$pack->getBalance()});">
-                            {_stickers_withdraw_btn}
-                        </button>
+                        <div class="stickers_balance_label">{_stickers_pack_balance}</div>
+                        <div class="stickers_balance_val">
+                            {tr('coins', (int) round($pack->getBalance()))}
+                        </div>
+                        <div class="stickers_balance_hint">
+                            {tr("stickers_balance", (int) round($pack->getBalance()))|noescape}
+                            {if $pack->getBalance() > 0}
+                                (<a href="javascript:withdrawStickers({$pack->getId()}, {$pack->getBalance()})">{_stickers_withdrawal_q}</a>)
+                            {/if}
+                        </div>
                     </div>
-                {/if}
+                    {if $pack->getBalance() > 0}
+                        <div>
+                            <button type="button" class="button" onclick="withdrawStickers({$pack->getId()}, {$pack->getBalance()});">
+                                {_stickers_withdraw_btn}
+                            </button>
+                        </div>
+                    {/if}
+                </div>
+
+                <div class="stickers_stats_wrapper">
+                    <div class="stickers_stats_header">
+                        <div class="stickers_stats_title_row">
+                            <span class="stickers_stats_title">{_stickers_install_stats}</span>
+                            <div class="stickers_period_switcher" id="stickerPeriodSwitcher">
+                                <a href="javascript:void(0)" class="stickers_period_link active" data-period="14">{_stickers_period_14d}</a>
+                                <a href="javascript:void(0)" class="stickers_period_link" data-period="30">{_stickers_period_30d}</a>
+                                <a href="javascript:void(0)" class="stickers_period_link" data-period="90">{_stickers_period_90d}</a>
+                            </div>
+                        </div>
+                        <div class="stickers_stats_total">
+                            {_stickers_total_installs}: <b>{$totalInstalls}</b>
+                        </div>
+                    </div>
+                    <div id="stickerInstallsChart" class="stickers_chart_container"></div>
+                </div>
             </div>
+
+            <style>
+                .modebar-container {
+                    display: none !important;
+                }
+            </style>
+            {script "js/node_modules/plotly.js-dist/plotly.js"}
+            
+            <script>
+                (function() {
+                    var rawStats = {$installStats};
+                    var chartElem = document.querySelector('#stickerInstallsChart');
+                    if (!rawStats || !rawStats.x || !rawStats.y || !chartElem) {
+                        return;
+                    }
+
+                    function renderPlot(days) {
+                        var xSlice = rawStats.x.slice(-days);
+                        var ySlice = rawStats.y.slice(-days);
+                        var maxY = Math.max.apply(null, ySlice.concat([0]));
+
+                        var textArray = [];
+                        for (var i = 0; i < ySlice.length; i++) {
+                            textArray.push(tr('stickers_installs_count', ySlice[i]));
+                        }
+
+                        var trace = {
+                            x: xSlice,
+                            y: ySlice,
+                            text: textArray,
+                            type: 'scatter',
+                            mode: 'lines+markers',
+                            line: {
+                                shape: 'spline',
+                                smoothing: 0.8,
+                                color: '#597da3',
+                                width: 2
+                            },
+                            marker: {
+                                size: days > 30 ? 3 : 5,
+                                color: '#597da3'
+                            },
+                            fill: 'tozeroy',
+                            fillcolor: 'rgba(89, 125, 163, 0.12)',
+                            hoverinfo: 'x+text',
+                            hovertemplate: '%{' + 'x|%d.%m}<br><b>%{' + 'text}</b><extra></extra>'
+                        };
+
+                        var layout = {
+                            margin: { t: 8, r: 15, b: 24, l: 30 },
+                            showlegend: false,
+                            paper_bgcolor: 'rgba(0,0,0,0)',
+                            plot_bgcolor: 'rgba(0,0,0,0)',
+                            xaxis: {
+                                type: 'date',
+                                tickformat: '%d.%m',
+                                tickfont: { size: 10, color: '#777' },
+                                showgrid: false,
+                                zeroline: false
+                            },
+                            yaxis: {
+                                tickfont: { size: 10, color: '#777' },
+                                rangemode: 'tozero',
+                                zeroline: true,
+                                zerolinecolor: '#e7ecf0',
+                                gridcolor: '#f0f2f5',
+                                dtick: maxY <= 4 ? 1 : undefined
+                            }
+                        };
+
+                        Plotly.react(chartElem, [trace], layout, {
+                            displayModeBar: false,
+                            responsive: true
+                        });
+                    }
+
+                    // Default period: 14 days
+                    renderPlot(14);
+
+                    var switcher = document.getElementById('stickerPeriodSwitcher');
+                    if (switcher) {
+                        switcher.addEventListener('click', function(e) {
+                            var target = e.target.closest('.stickers_period_link');
+                            if (!target) return;
+                            e.preventDefault();
+
+                            switcher.querySelectorAll('.stickers_period_link').forEach(function(el) {
+                                el.classList.remove('active');
+                            });
+                            target.classList.add('active');
+
+                            var days = parseInt(target.getAttribute('data-period'), 10) || 14;
+                            renderPlot(days);
+                        });
+                    }
+                })();
+            </script>
         {/if}
 
         <form id="packForm" method="POST" enctype="multipart/form-data" action="{if $isNew}/stickers/new{else}/stickers/edit/{$pack->getId()}{/if}">
