@@ -1180,9 +1180,17 @@ final class Wall extends VKAPIRequestHandler
             $profiles[] = $comment->getOwner()->getId();
         }
 
+        $canPost = 0;
+
+        try {
+            $canPost = (int) $comment->getTarget()->canBeCommentedBy($this->getUser());
+        } catch (\Throwable $e) {
+            bdump($e);
+        }
+
         $response = [
             "items"               => [$item],
-            "can_post"            => true,
+            "can_post"            => $canPost,
             "show_reply_button"   => true,
             "groups_can_post"     => false,
         ];

@@ -175,7 +175,7 @@ final class Photos extends VKAPIRequestHandler
         }
 
         return [
-            $photo->toVkApiStruct(),
+            $photo->toVkApiStruct($this->getUser()),
         ];
     }
 

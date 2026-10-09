@@ -878,10 +878,18 @@ final class Newsfeed extends VKAPIRequestHandler
                 ];
             }
 
+            $canPost = 1;
+
+            try {
+                $canPost = (int) $post->canBeCommentedBy($this->getUser());
+            } catch (\Throwable $e) {
+                bdump($e);
+            }
+
             $commentsCount = $commentsRepo->getCommentsCountByTarget($post);
             $item->comments = (object) [
                 "count"    => $commentsCount,
-                "can_post" => 1,
+                "can_post" => $canPost,
                 "list"     => $commentsList,
             ];
 
