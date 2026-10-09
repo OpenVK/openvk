@@ -652,6 +652,23 @@ final class StickersPresenter extends OpenVKPresenter
             } elseif ($action === "uninstall") {
                 $pack->uninstall($this->user->identity);
                 $this->flash("succ", tr("stickers"), tr("stickers_pack_uninstalled"));
+            } elseif ($action === "gift") {
+                $targetUserId = (int) ($this->postParam("user_id") ?? 0);
+                $message      = (string) ($this->postParam("message") ?? "");
+                $anonymous    = !empty($this->postParam("anonymous"));
+
+                $targetUser = $this->users->get($targetUserId);
+                if (!$targetUser || $targetUser->isDeleted()) {
+                    $this->flashFail("err", tr("error"), tr("error_user_not_exists"));
+                } elseif ($targetUser->getId() === $this->user->identity->getId()) {
+                    $this->flashFail("err", tr("error"), tr("stickers_gift_self_error"));
+                } elseif ($pack->hasBoughtBy($targetUser)) {
+                    $this->flashFail("err", tr("error"), tr("stickers_gift_already_owned"));
+                } elseif ($pack->giftTo($this->user->identity, $targetUser, $message !== "" ? $message : null, $anonymous)) {
+                    $this->flash("succ", tr("stickers"), tr("stickers_gift_success"));
+                } else {
+                    $this->flashFail("err", tr("error"), tr("stickers_not_enough_coins"));
+                }
             }
 
             $this->redirect("/stickers?act=shop&section=popular&pack=" . $pack->getSlug());

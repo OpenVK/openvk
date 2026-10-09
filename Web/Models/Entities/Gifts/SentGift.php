@@ -49,10 +49,11 @@ class SentGift
             "date"      => (new DateTime($relation->sent))->timestamp(),
             "privacy"   => $relation->anonymous == 1 ? 1 : 0,
             "gift"      => [
-                "id"          => $this->gift->getId(),
-                "thumb_256"   => $server_url . $this->gift->getImage(2),
-                "thumb_96"    => $server_url . $this->gift->getImage(2),
-                "thumb_48"    => $server_url . $this->gift->getImage(2),
+                "id"                  => $this->gift->getId(),
+                "stickers_product_id" => $this->gift->getStickersProductId(),
+                "thumb_256"           => $server_url . $this->gift->getImage(2),
+                "thumb_96"            => $server_url . $this->gift->getImage(2),
+                "thumb_48"            => $server_url . $this->gift->getImage(2),
             ],
         ];
     }

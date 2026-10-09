@@ -676,7 +676,12 @@ function initStickerPickerHoldPreview(wrapper) {
         wrapper.classList.add('is-sticker-holding');
 
         previewEl = document.createElement('div');
-        previewEl.className = 'stickers_hold_preview_wrap';
+        previewEl.className = 'stickers_hold_preview_wrap is-loading';
+        previewEl.innerHTML = `
+            <div class="stickers_hold_preview_spinner">
+                <img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="" />
+            </div>
+        `;
 
         if (animUrl && window.lottie) {
             const lottieWrap = document.createElement('div');
@@ -694,12 +699,42 @@ function initStickerPickerHoldPreview(wrapper) {
                     autoplay: true,
                     path: animUrl
                 });
+                currentAnim.addEventListener('DOMLoaded', () => {
+                    previewEl?.classList.remove('is-loading');
+                });
+                currentAnim.addEventListener('data_ready', () => {
+                    previewEl?.classList.remove('is-loading');
+                });
             } catch (err) {
                 console.error("Lottie preview error:", err);
+                previewEl?.classList.remove('is-loading');
             }
         } else {
-            previewEl.innerHTML = `<img src="${url512}" alt="preview" />`;
+            const imgEl = document.createElement('img');
+            imgEl.alt = "preview";
+            imgEl.style.display = 'none';
+            previewEl.appendChild(imgEl);
             document.body.appendChild(previewEl);
+
+            const tempImg = new Image();
+            tempImg.onload = () => {
+                if (previewEl && activeItem === item) {
+                    imgEl.src = url512;
+                    imgEl.style.display = 'block';
+                    previewEl.classList.remove('is-loading');
+                }
+            };
+            tempImg.onerror = () => {
+                if (previewEl && activeItem === item) {
+                    previewEl.classList.remove('is-loading');
+                }
+            };
+            tempImg.src = url512;
+            if (tempImg.complete) {
+                imgEl.src = url512;
+                imgEl.style.display = 'block';
+                previewEl.classList.remove('is-loading');
+            }
         }
     }
 
@@ -733,7 +768,7 @@ function initStickerPickerHoldPreview(wrapper) {
         }, 220);
     });
 
-    wrapper.addEventListener('mousemove', (e) => {
+    document.addEventListener('mousemove', (e) => {
         if (!previewEl) return;
         const item = document.elementFromPoint(e.clientX, e.clientY)?.closest('.sticker-picker-item');
         if (item && item !== activeItem) {
@@ -1366,6 +1401,229 @@ async function withdrawStickers(id, currentBalance) {
 window._activeStickerModal = null;
 window._activeStickerModalSlug = null;
 
+async function openGiftStickerPackDialog(packInfo) {
+    if (!packInfo.isAuthorized) {
+        window.location.href = '/login?return_to=' + encodeURIComponent(window.location.pathname + window.location.search);
+        return;
+    }
+
+    const price = packInfo.price || 0;
+    const priceFormatted = price > 0 ? tr('coins', price) : tr('stickers_free');
+
+    const body = `
+        <div class="stickers_gift_dialog_body">
+            <div style="margin-bottom: 12px;">
+                <label style="display: block; font-weight: bold; margin-bottom: 5px;">${tr('stickers_gift_recipient_label')}:</label>
+                <div style="position: relative;">
+                    <input type="text" id="stickers_gift_user_input" class="search_input" style="width: 100%; box-sizing: border-box;" placeholder="${tr('stickers_gift_recipient_placeholder')}" autocomplete="off" />
+                    <div id="stickers_gift_user_suggestions" class="stickers_gift_suggestions" style="display: none;"></div>
+                </div>
+                <input type="hidden" id="stickers_gift_user_id" value="" />
+                <div id="stickers_gift_selected_user" style="display: none; margin-top: 6px; padding: 6px 10px; background: #eef2f5; border-radius: 3px; align-items: center; justify-content: space-between;">
+                    <span id="stickers_gift_selected_user_name" style="font-weight: 500; font-size: 13px; color: #2b587a;"></span>
+                    <a href="javascript:void(0)" id="stickers_gift_clear_user" style="color: #888; text-decoration: none; font-size: 14px; font-weight: bold; margin-left: 8px;">✕</a>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 12px;">
+                <label style="display: block; font-weight: bold; margin-bottom: 5px;">${tr('stickers_gift_message_label')}:</label>
+                <textarea id="stickers_gift_comment" style="width: 100%; box-sizing: border-box; resize: vertical; height: 60px;" placeholder="${tr('stickers_gift_message_placeholder')}"></textarea>
+            </div>
+
+            <div style="margin-bottom: 12px;">
+                <label style="cursor: pointer; user-select: none;">
+                    <input type="checkbox" id="stickers_gift_anonymous" /> ${tr('stickers_gift_anonymous')}
+                </label>
+            </div>
+
+            <div style="color: #666; font-size: 12px; margin-top: 4px;">
+                ${tr('price')}: <b>${priceFormatted}</b>
+            </div>
+        </div>
+    `;
+
+    let giftMsg = null;
+
+    giftMsg = new CMessageBox({
+        title: tr('stickers_gift_title') + ' «' + escapeHtml(packInfo.name) + '»',
+        body: body,
+        buttons: [tr('send_gift'), tr('cancel')],
+        close_on_buttons: false,
+        callbacks: [
+            async () => {
+                let targetUserId = parseInt(userIdInput?.value, 10);
+                if (!targetUserId || isNaN(targetUserId) || targetUserId <= 0) {
+                    const rawVal = userInput?.value?.trim() || '';
+                    const idMatch = rawVal.match(/^(?:https?:\/\/[^\/]+\/)?(?:id)?(\d+)$/i);
+                    if (idMatch) {
+                        targetUserId = parseInt(idMatch[1], 10);
+                    }
+                }
+
+                if (!targetUserId || isNaN(targetUserId) || targetUserId <= 0) {
+                    MessageBox(tr('error'), tr('stickers_gift_select_recipient_err'), [tr('ok')], [Function.noop]);
+                    return;
+                }
+
+                const comment = gNode.find('#stickers_gift_comment').nodes[0]?.value || '';
+                const anonymous = Boolean(gNode.find('#stickers_gift_anonymous').nodes[0]?.checked);
+
+                const sendBtn = gNode.find('.ovk-diag-action button').nodes[0];
+                if (sendBtn) {
+                    sendBtn.disabled = true;
+                    sendBtn.textContent = tr('loading');
+                }
+
+                try {
+                    const res = await API.Stickers.giftPack(packInfo.id, targetUserId, comment, anonymous);
+                    giftMsg.close();
+                    MessageBox(tr('success'), res?.message || tr('stickers_gift_success'), [tr('ok')], [Function.noop]);
+                } catch (err) {
+                    if (sendBtn) {
+                        sendBtn.disabled = false;
+                        sendBtn.textContent = tr('send_gift');
+                    }
+                    MessageBox(tr('error'), (err && err.message) ? err.message : tr('error'), [tr('ok')], [Function.noop]);
+                }
+            },
+            () => giftMsg.close()
+        ]
+    });
+
+    const gNode = giftMsg.getNode();
+    const gHead = gNode.find('.ovk-diag-head');
+    if (gHead.nodes[0] && !gHead.find('.stickers_modal_close_cross').nodes.length) {
+        gHead.append(u('<a href="javascript:void(0)" class="stickers_modal_close_cross"></a>'));
+        gHead.find('.stickers_modal_close_cross').on('click', (e) => {
+            e.preventDefault();
+            giftMsg.close();
+        });
+    }
+
+    const userInput = gNode.find('#stickers_gift_user_input').nodes[0];
+    const userSugg = gNode.find('#stickers_gift_user_suggestions').nodes[0];
+    const userIdInput = gNode.find('#stickers_gift_user_id').nodes[0];
+    const selectedUserWrap = gNode.find('#stickers_gift_selected_user').nodes[0];
+    const selectedUserName = gNode.find('#stickers_gift_selected_user_name').nodes[0];
+    const clearUserBtn = gNode.find('#stickers_gift_clear_user').nodes[0];
+
+    if (clearUserBtn) {
+        clearUserBtn.addEventListener('click', () => {
+            userIdInput.value = '';
+            selectedUserWrap.style.display = 'none';
+            userInput.value = '';
+            userInput.style.display = 'block';
+            userInput.focus();
+        });
+    }
+
+    let friendsCache = null;
+
+    async function loadFriends() {
+        if (friendsCache) return friendsCache;
+        try {
+            if (window.OVKAPI && typeof window.OVKAPI.call === 'function') {
+                const res = await window.OVKAPI.call('friends.get', {
+                    fields: 'first_name,last_name,photo_50',
+                    order: 'hints'
+                });
+                if (res && res.items) {
+                    friendsCache = res.items;
+                    return friendsCache;
+                }
+            }
+        } catch (e) {}
+        friendsCache = [];
+        return friendsCache;
+    }
+
+    function selectUser(user) {
+        userIdInput.value = user.id;
+        const name = (user.first_name || '') + ' ' + (user.last_name || '');
+        selectedUserName.textContent = name.trim() || ('id' + user.id);
+        selectedUserWrap.style.display = 'flex';
+        userInput.style.display = 'none';
+        userSugg.style.display = 'none';
+    }
+
+    async function renderSuggestions(query = '') {
+        const q = query.trim().toLowerCase();
+        const friends = await loadFriends();
+
+        let filtered = friends;
+        if (q) {
+            filtered = friends.filter(f => {
+                const fn = (f.first_name || '').toLowerCase();
+                const ln = (f.last_name || '').toLowerCase();
+                const full = `${fn} ${ln}`;
+                return fn.includes(q) || ln.includes(q) || full.includes(q) || String(f.id).includes(q);
+            });
+        }
+
+        if (filtered.length === 0) {
+            const idMatch = q.match(/^(?:https?:\/\/[^\/]+\/)?(?:id)?(\d+)$/i);
+            if (idMatch) {
+                const uId = parseInt(idMatch[1], 10);
+                if (uId > 0) {
+                    userSugg.innerHTML = `
+                        <div class="stickers_gift_suggestion_item" data-user-id="${uId}" data-user-name="id${uId}">
+                            <div class="stickers_gift_suggestion_name">id${uId} (${tr('select')})</div>
+                        </div>
+                    `;
+                    userSugg.style.display = 'block';
+                    attachSuggestionClicks();
+                    return;
+                }
+            }
+            userSugg.style.display = 'none';
+            return;
+        }
+
+        userSugg.innerHTML = filtered.slice(0, 10).map(f => {
+            const photo = f.photo_50 || f.photo || '/assets/packages/static/openvk/img/camera_50.png';
+            const name = escapeHtml(`${f.first_name || ''} ${f.last_name || ''}`.trim() || `id${f.id}`);
+            return `
+                <div class="stickers_gift_suggestion_item" data-user-id="${f.id}" data-user-name="${name}">
+                    <img src="${escapeHtml(photo)}" class="stickers_gift_suggestion_avatar" alt="" />
+                    <div class="stickers_gift_suggestion_name">${name}</div>
+                </div>
+            `;
+        }).join('');
+        userSugg.style.display = 'block';
+        attachSuggestionClicks();
+    }
+
+    function attachSuggestionClicks() {
+        userSugg.querySelectorAll('.stickers_gift_suggestion_item').forEach(item => {
+            item.addEventListener('click', () => {
+                const uid = parseInt(item.dataset.userId, 10);
+                const name = item.dataset.userName || '';
+                selectUser({ id: uid, first_name: name, last_name: '' });
+            });
+        });
+    }
+
+    const onDocClick = (e) => {
+        if (userInput && userSugg && !userInput.contains(e.target) && !userSugg.contains(e.target)) {
+            userSugg.style.display = 'none';
+        }
+    };
+    document.addEventListener('click', onDocClick);
+
+    const origClose = giftMsg.close.bind(giftMsg);
+    giftMsg.close = function() {
+        document.removeEventListener('click', onDocClick);
+        origClose();
+    };
+
+    if (userInput) {
+        userInput.addEventListener('focus', () => renderSuggestions(userInput.value));
+        userInput.addEventListener('input', () => renderSuggestions(userInput.value));
+    }
+}
+
+window.openGiftStickerPackDialog = openGiftStickerPackDialog;
+
 async function openStickerPackModal(slugOrId, event) {
     if (event) {
         if (typeof event.preventDefault === 'function') event.preventDefault();
@@ -1486,6 +1744,8 @@ async function openStickerPackModal(slugOrId, event) {
             actionBtnHtml = `<button type="button" class="button" id="stickers_modal_action_btn">${priceText}</button>`;
         }
 
+        const giftBtnHtml = `<button type="button" class="button button_light stickers_modal_gift_btn" id="stickers_modal_gift_btn">${tr('stickers_gift_btn')}</button>`;
+
         const copyBtnHtml = `
             <a href="javascript:void(0)" class="stickers_modal_copy_link" id="stickers_modal_copy_btn">${tr('stickers_copy_link')}</a>
         `;
@@ -1525,6 +1785,7 @@ async function openStickerPackModal(slugOrId, event) {
                         ${info.description ? `<div class="stickers_modal_desc">${escapeHtml(info.description)}</div>` : ''}
                         <div class="stickers_modal_actions">
                             ${actionBtnHtml}
+                            ${giftBtnHtml}
                         </div>
                     </div>
                 </div>
@@ -1664,21 +1925,44 @@ async function openStickerPackModal(slugOrId, event) {
             });
         }
 
+        const giftBtn = node.find('#stickers_modal_gift_btn').nodes[0];
+        if (giftBtn) {
+            giftBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                openGiftStickerPackDialog(info);
+            });
+        }
+
         let previewWrap = document.getElementById('stickers_hold_preview');
         if (!previewWrap) {
             previewWrap = document.createElement('div');
             previewWrap.id = 'stickers_hold_preview';
             previewWrap.className = 'stickers_hold_preview_wrap';
             previewWrap.style.display = 'none';
-            previewWrap.innerHTML = '<img id="stickers_hold_preview_img" alt="" draggable="false" />';
+            previewWrap.innerHTML = `
+                <div class="stickers_hold_preview_spinner">
+                    <img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="" />
+                </div>
+                <img id="stickers_hold_preview_img" alt="" draggable="false" />
+            `;
             document.body.appendChild(previewWrap);
+        } else if (!previewWrap.querySelector('.stickers_hold_preview_spinner')) {
+            const spinner = document.createElement('div');
+            spinner.className = 'stickers_hold_preview_spinner';
+            spinner.innerHTML = '<img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="" />';
+            previewWrap.insertBefore(spinner, previewWrap.firstChild);
         }
+
         const previewImg = document.getElementById('stickers_hold_preview_img');
         let isHolding = false;
         let modalCurrentAnim = null;
+        let currentPreviewUrl = null;
 
         function showPreview(url512) {
             if (!url512 || !previewWrap) return;
+            if (currentPreviewUrl === url512 && isHolding) return;
+            currentPreviewUrl = url512;
+
             if (modalCurrentAnim) {
                 try { modalCurrentAnim.destroy(); } catch (e) { }
                 modalCurrentAnim = null;
@@ -1686,6 +1970,7 @@ async function openStickerPackModal(slugOrId, event) {
 
             const isJson = url512.endsWith('.json');
             if (isJson && window.lottie) {
+                previewWrap.classList.add('is-loading');
                 if (previewImg) previewImg.style.display = 'none';
                 let lottieWrap = previewWrap.querySelector('.stickers_hold_lottie_anim');
                 if (!lottieWrap) {
@@ -1703,13 +1988,45 @@ async function openStickerPackModal(slugOrId, event) {
                         autoplay: true,
                         path: url512
                     });
-                } catch (e) { }
+                    modalCurrentAnim.addEventListener('DOMLoaded', () => {
+                        if (currentPreviewUrl === url512) {
+                            previewWrap.classList.remove('is-loading');
+                        }
+                    });
+                    modalCurrentAnim.addEventListener('data_ready', () => {
+                        if (currentPreviewUrl === url512) {
+                            previewWrap.classList.remove('is-loading');
+                        }
+                    });
+                } catch (e) {
+                    previewWrap.classList.remove('is-loading');
+                }
             } else {
                 const lottieWrap = previewWrap.querySelector('.stickers_hold_lottie_anim');
                 if (lottieWrap) lottieWrap.style.display = 'none';
                 if (previewImg) {
-                    previewImg.style.display = 'block';
-                    previewImg.src = url512;
+                    previewWrap.classList.add('is-loading');
+                    previewImg.style.display = 'none';
+
+                    const tempImg = new Image();
+                    tempImg.onload = () => {
+                        if (currentPreviewUrl === url512 && isHolding) {
+                            previewImg.src = url512;
+                            previewImg.style.display = 'block';
+                            previewWrap.classList.remove('is-loading');
+                        }
+                    };
+                    tempImg.onerror = () => {
+                        if (currentPreviewUrl === url512 && isHolding) {
+                            previewWrap.classList.remove('is-loading');
+                        }
+                    };
+                    tempImg.src = url512;
+                    if (tempImg.complete) {
+                        previewImg.src = url512;
+                        previewImg.style.display = 'block';
+                        previewWrap.classList.remove('is-loading');
+                    }
                 }
             }
 
@@ -1721,11 +2038,13 @@ async function openStickerPackModal(slugOrId, event) {
         function hidePreview() {
             if (!isHolding) return;
             isHolding = false;
+            currentPreviewUrl = null;
             if (modalCurrentAnim) {
                 try { modalCurrentAnim.destroy(); } catch (e) { }
                 modalCurrentAnim = null;
             }
             if (previewWrap) {
+                previewWrap.classList.remove('is-loading');
                 previewWrap.style.display = 'none';
                 const lottieWrap = previewWrap.querySelector('.stickers_hold_lottie_anim');
                 if (lottieWrap) {
@@ -1755,7 +2074,7 @@ async function openStickerPackModal(slugOrId, event) {
                 if (!isHolding) return;
                 const el = document.elementFromPoint(e.clientX, e.clientY);
                 const item = el ? el.closest('.stickers_modal_item') : null;
-                if (item && item.dataset.url512 && previewImg && previewImg.src !== item.dataset.url512) {
+                if (item && item.dataset.url512) {
                     showPreview(item.dataset.url512);
                 }
             };

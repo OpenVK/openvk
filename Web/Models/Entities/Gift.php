@@ -161,6 +161,17 @@ class Gift extends RowModel
         }
     }
 
+    public function getStickersProductId(): ?int
+    {
+        $id = $this->getRecord()->stickers_product_id;
+        return is_null($id) ? null : (int) $id;
+    }
+
+    public function setStickersProductId(?int $id): void
+    {
+        $this->stateChanges("stickers_product_id", $id);
+    }
+
     public function delete(bool $softly = true): void
     {
         $this->getRecord()->related("gift_relations.gift")->delete();
@@ -168,3 +179,4 @@ class Gift extends RowModel
         parent::delete($softly);
     }
 }
+

@@ -6415,10 +6415,13 @@ hr {
     opacity: 0.25;
     filter: brightness(0.85);
     transition: opacity 0.12s ease, filter 0.12s ease;
-    pointer-events: none;
 }
 
-/* 512px preview centered on screen */
+.stickers_hold_preview_wrap,
+.stickers_hold_preview_wrap * {
+    pointer-events: none !important;
+}
+
 .stickers_hold_preview_wrap {
     position: fixed;
     top: 50%;
@@ -6428,7 +6431,34 @@ hr {
     display: flex;
     align-items: center;
     justify-content: center;
-    pointer-events: none;
+}
+
+.stickers_hold_preview_spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.65);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.stickers_hold_preview_spinner img {
+    display: block;
+    width: auto !important;
+    height: auto !important;
+    max-width: none !important;
+    max-height: none !important;
+    filter: none !important;
+    animation: none !important;
+}
+
+.stickers_hold_preview_wrap.is-loading .stickers_hold_preview_spinner {
+    display: flex;
 }
 
 .stickers_hold_preview_wrap img {
@@ -6484,3 +6514,57 @@ hr {
     display: inline-block;
     vertical-align: baseline;
 }
+
+/* Stickers Gift Dialog Styles */
+.stickers_gift_dialog_body {
+    padding: 6px 0;
+}
+
+.stickers_gift_suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 100060;
+    max-height: 180px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 0 0 3px 3px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.stickers_gift_suggestion_item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.stickers_gift_suggestion_item:hover {
+    background: #eef2f5;
+}
+
+.stickers_gift_suggestion_avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.stickers_gift_suggestion_name {
+    font-size: 12px;
+    color: #2b587a;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.stickers_modal_gift_btn {
+    margin-left: 0;
+}
+

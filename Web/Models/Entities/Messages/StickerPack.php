@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace openvk\Web\Models\Entities\Messages;
 
 use Chandler\Database\DatabaseConnection as DB;
+use Nette\Database\Table\ActiveRow;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\User;
+use openvk\Web\Models\Entities\Gift;
+use openvk\Web\Models\Entities\Notifications\GiftNotification;
 use openvk\Web\Models\Repositories\Users;
 
 class StickerPack extends RowModel
@@ -433,18 +436,84 @@ class StickerPack extends RowModel
         return true;
     }
 
-    public function giftTo(User $from, User $to): void
+    public function getOrCreateGift(): Gift
     {
+        $giftRow = DB::i()->getContext()->table("gifts")
+            ->where("stickers_product_id", $this->getId())
+            ->where("deleted", 0)
+            ->fetch();
+
+        if ($giftRow) {
+            return new Gift($giftRow);
+        }
+
+        $imageBlob = "";
+        $mainSticker = $this->getMainSticker();
+        if ($mainSticker) {
+            $dir = OPENVK_ROOT . "/storage/stickers/" . $this->getId() . "/" . $mainSticker->getId() . "/";
+            foreach (["512.png", "256.png", "128.png", "512.webp"] as $cand) {
+                if (file_exists($dir . $cand) && filesize($dir . $cand) > 200) {
+                    if (str_ends_with($cand, ".webp")) {
+                        try {
+                            $im = new \Imagick($dir . $cand);
+                            $im->setImageFormat("png");
+                            $imageBlob = $im->getImageBlob();
+                            $im->clear();
+                        } catch (\Throwable $e) {
+                        }
+                    } else {
+                        $imageBlob = file_get_contents($dir . $cand);
+                    }
+                    break;
+                }
+            }
+        }
+
+        if (empty($imageBlob)) {
+            try {
+                $im = new \Imagick();
+                $im->newImage(512, 512, new \ImagickPixel('transparent'), 'png');
+                $imageBlob = $im->getImageBlob();
+                $im->clear();
+            } catch (\Throwable $e) {
+                $imageBlob = base64_decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=");
+            }
+        }
+
+        $row = DB::i()->getContext()->table("gifts")->insert([
+            "internal_name"       => "Стикеры: " . $this->getName(),
+            "price"               => $this->getPrice(),
+            "usages"              => 0,
+            "image"               => $imageBlob,
+            "updated"             => time(),
+            "stickers_product_id" => $this->getId(),
+            "deleted"             => 0,
+        ]);
+
+        return new Gift($row);
+    }
+
+    public function giftTo(User $from, User $to, ?string $comment = null, bool $anonymous = false): ?ActiveRow
+    {
+        if (!$this->isAvailable()) {
+            return null;
+        }
+
+        if ($this->hasBoughtBy($to)) {
+            return null;
+        }
+
         $price = $this->getPrice();
         $coins = $from->getCoins();
 
         if ($price > 0 && $coins < $price) {
-            return;
+            return null;
         }
 
         if ($price > 0) {
             $from->setCoins($coins - $price);
             $from->save();
+            $this->addCoins((float) $price);
         }
 
         $existing = DB::i()->getContext()->table("sticker_purchases")
@@ -462,6 +531,15 @@ class StickerPack extends RowModel
                 "created"     => time(),
             ]);
         }
+
+        $gift = $this->getOrCreateGift();
+        $data = $to->gift($from, $gift, $comment, $anonymous);
+        $gift->used();
+
+        $notification = new GiftNotification($to, $from, $gift, $data->id);
+        $notification->emit();
+
+        return $data;
     }
 
     public function setName(string $name): void
