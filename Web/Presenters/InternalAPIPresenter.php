@@ -41,6 +41,11 @@ final class InternalAPIPresenter extends OpenVKPresenter
             header("HTTP/1.1 405 Method Not Allowed");
             exit("ты дебил это точка апи");
         }
+
+        # the user's session authorizes every call (payments too), so it must come from an OpenVK page
+        if ($this->isCrossSiteRequest()) {
+            $this->fail(-32000, "Cross-site requests are not allowed");
+        }
         try {
             $input = (object) MessagePack::unpack(file_get_contents("php://input"));
         } catch (\Throwable $ex) {
