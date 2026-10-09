@@ -54,8 +54,8 @@ attachments=photo1_12,audio1_10&access_token=YOUR_ACCESS_TOKEN&v=5.138
             "audio": {
                 "id": 10,
                 "owner_id": 1,
-                "artist": "Виктор Цой",
-                "title": "Группа крови",
+                "artist": "Даниил Мысливец",
+                "title": "Данилкинс вами недоволен!",
                 "duration": 285,
                 "url": "https://openvk.instance/audio/1_10.mp3"
             }

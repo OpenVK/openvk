@@ -22,6 +22,7 @@ Returns an object containing:
 * `items` (array) — array of sticker pack objects.
 
 Each sticker pack object contains:
+
 | Field | Type | Description |
 | --- | --- | --- |
 | `id` | integer | Sticker pack ID. |
@@ -63,10 +64,10 @@ count=20&access_token=YOUR_ACCESS_TOKEN&v=5.138
         "items": [
             {
                 "id": 1,
-                "name": "Peach the Cat",
-                "title": "Peach the Cat",
-                "description": "Cute ginger cat",
-                "slug": "peach",
+                "name": "Posya",
+                "title": "Posya",
+                "description": "Possum stickers",
+                "slug": "hornypossum",
                 "price": 0,
                 "end_time": 0,
                 "purchased": 1,

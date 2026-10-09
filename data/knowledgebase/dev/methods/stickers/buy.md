@@ -16,6 +16,7 @@ Requires user authorization (`access_token`).
 ### Result
 
 Returns an object containing:
+
 | Field | Type | Description |
 | --- | --- | --- |
 | `success` | integer | Always `1` on successful purchase/activation. |

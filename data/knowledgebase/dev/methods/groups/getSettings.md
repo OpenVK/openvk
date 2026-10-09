@@ -16,6 +16,7 @@ This method requires user authorization (`access_token`) with community administ
 ### Result
 
 Returns an object containing community settings:
+
 | Field | Type | Description |
 | --- | --- | --- |
 | `title` | string | Community title. |

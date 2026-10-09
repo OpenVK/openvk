@@ -46,8 +46,8 @@ user_id=1&access_token=YOUR_ACCESS_TOKEN&v=5.138
         "audio": {
             "id": 10,
             "owner_id": 1,
-            "artist": "Виктор Цой",
-            "title": "Группа крови",
+            "artist": "Даниил Мысливец",
+            "title": "Пятница",
             "duration": 285,
             "url": "https://openvk.instance/audio/1_10.mp3"
         }

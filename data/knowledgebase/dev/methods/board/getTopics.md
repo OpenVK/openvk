@@ -29,6 +29,7 @@ For API versions 5.0 and higher, returns an object containing:
 * `topics` (array) — array of topic objects (for backward compatibility).
 
 Each topic object includes:
+
 | Field | Type | Description |
 | --- | --- | --- |
 | `id` | integer | Topic identifier inside the community (virtual ID). |

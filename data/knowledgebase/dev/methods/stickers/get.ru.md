@@ -22,6 +22,7 @@ OpenVK-KB-Heading: stickers.get
 * `items` (array) — массив объектов стикерпаков.
 
 Каждый объект стикерпака содержит:
+
 | Поле | Тип | Описание |
 | --- | --- | --- |
 | `id` | integer | Идентификатор стикерпака. |
@@ -63,10 +64,10 @@ count=20&access_token=YOUR_ACCESS_TOKEN&v=5.138
         "items": [
             {
                 "id": 1,
-                "name": "Котик Персик",
-                "title": "Котик Персик",
-                "description": "Милый рыжий кот",
-                "slug": "peach",
+                "name": "Пося",
+                "title": "Пося",
+                "description": "Не кусается :p",
+                "slug": "hornypossum",
                 "price": 0,
                 "end_time": 0,
                 "purchased": 1,

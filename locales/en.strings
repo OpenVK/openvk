@@ -1327,8 +1327,8 @@
 "di_documentation_desc" = "An overview of OpenVK platform features: app authorization, server and client API methods, building apps, and website integration.";
 "di_support" = "Support";
 "di_support_desc" = "Platform-related assistance: support contact channels, app catalog submission, and platform status.";
-"di_rules" = "Platform Guidelines";
-"di_rules_desc" = "Guidelines for publishing apps on the OpenVK platform, in-app advertising, and processing user payments.";
+"di_openvk" = "OpenVK Engine";
+"di_openvk_desc" = "Main information about the development and deployment of your own OpenVK server.";
 "di_bugs" = "Bug Tracker";
 "di_bugs_desc" = "A tool for reporting issues with the platform API and documentation.";
 
@@ -1372,6 +1372,13 @@
 "dsb_standalone" = "Standalone";
 "dsb_sites" = "Sites and Widgets";
 "dsb_native" = "Apps and Clients";
+"dsb_openvk" = "OpenVK Engine";
+"dsb_ovk_intro" = "Introduction";
+"dsb_ovk_contribute" = "Contributing";
+"dsb_ovk_tutorials" = "Tutorials";
+"dsb_ovk_tut_quickstart" = "Quick Start";
+"dsb_ovk_chandler" = "Chandler Framework";
+"dsb_ovk_ch_overview" = "Architecture Overview";
 "dsb_bugs" = "Bug Tracker";
 
 

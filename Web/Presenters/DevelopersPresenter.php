@@ -26,6 +26,7 @@ final class DevelopersPresenter extends OpenVKPresenter
             ["name" => "dsb_standalone", "href" => "/dev/standalone", "type" => "link"],
             ["name" => "dsb_sites",      "href" => "/dev/sites",      "type" => "link"],
             ["name" => "dsb_native",     "href" => "/dev/native",     "type" => "link"],
+            ["name" => "dsb_openvk",     "href" => "/dev/openvk",     "type" => "link"],
             ["name" => "dsb_bugs",       "href" => "/dev/bugs",       "type" => "link"],
         ];
 
@@ -34,6 +35,33 @@ final class DevelopersPresenter extends OpenVKPresenter
 
         $isModelsPage = ($name === 'models' || str_starts_with($name, 'models/'));
         $this->template->isModelsPage = $isModelsPage;
+
+        $isOpenvkPage = ($name === 'openvk' || str_starts_with($name, 'openvk/'));
+        $this->template->isOpenvkPage = $isOpenvkPage;
+
+        if ($isOpenvkPage) {
+            $this->template->openvkDirectLinks = [
+                ["name" => "dsb_ovk_intro",      "href" => "/dev/openvk"],
+                ["name" => "dsb_ovk_contribute", "href" => "/dev/openvk/contribute"],
+            ];
+
+            $this->template->openvkGroups = [
+                [
+                    "id"    => "tutorials",
+                    "name"  => "dsb_ovk_tutorials",
+                    "links" => [
+                        ["name" => "dsb_ovk_tut_quickstart", "href" => "/dev/openvk/tutorials/quickstart"],
+                    ],
+                ],
+                [
+                    "id"    => "chandler",
+                    "name"  => "dsb_ovk_chandler",
+                    "links" => [
+                        ["name" => "dsb_ovk_ch_overview", "href" => "/dev/openvk/chandler/overview"],
+                    ],
+                ],
+            ];
+        }
 
         if ($isModelsPage) {
             $this->template->modelsList = [

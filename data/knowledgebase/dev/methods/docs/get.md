@@ -27,6 +27,7 @@ For API versions 5.0 and higher, returns an object containing:
 For API versions prior to 5.0, returns an array formatted as `[count, doc1, doc2, ...]`.
 
 Each document object contains:
+
 | Field | Type | Description |
 | --- | --- | --- |
 | `id` | integer | Document identifier. |
