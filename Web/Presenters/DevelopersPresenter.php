@@ -14,7 +14,8 @@ final class DevelopersPresenter extends OpenVKPresenter
     protected $deactivationTolerant = true;
     protected $presenterName = "dev";
 
-    private function getList(string $name): void {
+    private function getList(string $name): void
+    {
         $name = ltrim($name, '/');
 
         $this->template->devMenu = [
@@ -583,7 +584,8 @@ final class DevelopersPresenter extends OpenVKPresenter
         }
     }
 
-    public function renderIndex(): void {
+    public function renderIndex(): void
+    {
         $this->template->currentSection = "";
         $this->getList("");
     }
