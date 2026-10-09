@@ -31,6 +31,12 @@ function toQueryString(obj, prefix) {
     return str.join("&");
 }
 
+function reply(event, message) {
+    // opaque origin ("null") can't be a postMessage target
+    let origin = window.appStrict ? window.appOrigin : (event.origin === "null" ? "*" : event.origin);
+    event.source.postMessage(message, origin);
+}
+
 function handleWallPostRequest(event) {
     let mBoxContent = `
         <b>${tr("app")} <i>${window.appTitle}</i> ${tr("appjs_wall_post_desc")}:</b><br/>
@@ -40,21 +46,21 @@ function handleWallPostRequest(event) {
     MessageBox(tr("appjs_wall_post"), mBoxContent, [tr("appjs_act_allow"), tr("appjs_act_disallow")], [
         async () => {
             let id = await API.Wall.newStatus(event.data.text);
-            event.source.postMessage({
+            reply(event, {
                 transaction: event.data.transaction,
                 ok: true,
                 post: {
                     id: id,
                     text: event.data.text
                 }
-            }, '*');
+            });
         },
         () => {
-            event.source.postMessage({
+            reply(event, {
                 transaction: event.data.transaction,
                 ok: false,
                 error: "User cancelled action"
-            }, '*');
+            });
         }
     ]);
 }
@@ -62,11 +68,11 @@ function handleWallPostRequest(event) {
 async function handleVkApiRequest(event) {
     let method = event.data.method;
     if(!/^[a-z]+\.[a-z0-9]+$/.test(method)) {
-        event.source.postMessage({
+        reply(event, {
             transaction: event.data.transaction,
             ok: false,
             error: "API Method name is invalid"
-        }, '*');
+        });
         return;
     }
 
@@ -76,11 +82,11 @@ async function handleVkApiRequest(event) {
 
     if(!window.appPerms.includes(domain)) {
         if(typeof perms[domain] === "undefined") {
-            event.source.postMessage({
+            reply(event, {
                 transaction: event.data.transaction,
                 ok: false,
                 error: "This API method is not supported"
-            }, '*');
+            });
             return;
         }
 
@@ -107,11 +113,11 @@ async function handleVkApiRequest(event) {
         }));
 
         if(!allowed) {
-            event.source.postMessage({
+            reply(event, {
                 transaction: event.data.transaction,
                 ok: false,
                 error: "No permission to use this method"
-            }, '*');
+            });
             return;
         }
     }
@@ -119,29 +125,29 @@ async function handleVkApiRequest(event) {
     let params      = toQueryString(event.data.params);
     let apiResponse = await (await fetch("/method/" + method + "?auth_mechanism=roaming&" + params)).json();
     if(typeof apiResponse.error_code !== "undefined") {
-        event.source.postMessage({
+        reply(event, {
             transaction: event.data.transaction,
             ok: false,
             error: apiResponse.error_code + ": " + apiResponse.error_msg
-        }, '*');
+        });
         return;
     }
 
-    event.source.postMessage({
+    reply(event, {
         transaction: event.data.transaction,
         ok: true,
         response: apiResponse.response
-    }, '*');
+    });
 }
 
 function handlePayment(event) {
     let payload = event.data;
     if(payload.outSum < 0) {
-        event.source.postMessage({
+        reply(event, {
             transaction: payload.transaction,
             ok: false,
             error: "negative sum"
-        }, '*');
+        });
         
         return;
     }
@@ -155,35 +161,38 @@ function handlePayment(event) {
         [tr("appjs_payment_confirm"), tr("cancel")],
         [
             async () => {
-                let sign;
+                let result;
                 try {
-                    sign = await API.Apps.pay(window.appId, payload.outSum);
+                    if(payload.orderId == null)
+                        result = { signature: await API.Apps.pay(window.appId, payload.outSum) };
+                    else
+                        result = { orderId: payload.orderId, ...(await API.Apps.payOrder(window.appId, payload.outSum, String(payload.orderId))) };
                 } catch(e) {
-                    MessageBox(tr("error"), tr("appjs_err_funds"), ["OK"], [Function.noop]);
+                    MessageBox(tr("error"), e.code === 41 ? tr("appjs_err_funds") : escapeHtml(String(e.message)), ["OK"], [Function.noop]);
 
-                    event.source.postMessage({
+                    reply(event, {
                         transaction: payload.transaction,
                         ok: false,
                         error: "Payment error[" + e.code + "]: " + e.message
-                    }, '*');
+                    });
 
                     return;
                 }
 
-                event.source.postMessage({
+                reply(event, {
                     transaction: payload.transaction,
                     ok: true,
                     outSum: payload.outSum,
                     description: payload.description,
-                    signature: sign
-                }, '*');
+                    ...result
+                });
             },
             () => {
-                event.source.postMessage({
+                reply(event, {
                     transaction: payload.transaction,
                     ok: false,
                     error: "User cancelled payment"
-                }, '*');
+                });
             }
         ]
     )
@@ -191,6 +200,9 @@ function handlePayment(event) {
 
 async function onNewMessage(event) {
     if(event.source !== appFrame.contentWindow)
+        return;
+
+    if(window.appStrict && event.origin !== window.appOrigin)
         return;
 
     let payload = event.data;
@@ -208,19 +220,19 @@ async function onNewMessage(event) {
             break;
 
         case "UserInfoRequest":
-            event.source.postMessage({
+            reply(event, {
                 transaction: payload.transaction,
                 ok: true,
                 user: await API.Apps.getUserInfo()
-            }, '*');
+            });
             break;
 
         default:
-            event.source.postMessage({
+            reply(event, {
                 transaction: payload.transaction,
                 ok: false,
                 error: "Unknown query type"
-            }, '*');
+            });
     }
 }
 

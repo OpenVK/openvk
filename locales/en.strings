@@ -1333,6 +1333,13 @@
 "app_news" = "A news note";
 "app_state" = "Status";
 "app_enabled" = "Enabled";
+"app_strict" = "Strict mode";
+"app_strict_desc" = "Signed launch parameters, origin-locked bridge";
+"app_strict_hint" = "The bridge will only accept messages from <b>$1</b>. If your address redirects elsewhere, use the final URL.";
+"app_secret" = "Secret key";
+"app_secret_show" = "Show";
+"app_secret_regenerate" = "Regenerate";
+"app_secret_hint" = "After regenerating, update the key in your backend. Launches and receipts are signed with the new key immediately.";
 "app_creation_hint_url" = "Specify the exact address in the URL, including the scheme (https), port (80), and required request parameters.";
 "app_creation_hint_iframe" = "Your application will open in an iframe.";
 "app_balance" = "Your application has <b>$1</b> votes credited to it.";
@@ -1376,6 +1383,7 @@
 "app_err_forbidden_desc" = "This application does not belong to you.";
 "app_err_url" = "Incorrect Address";
 "app_err_url_desc" = "The address of the application did not pass the check; make sure it is correct.";
+"app_err_strict_url_desc" = "In strict mode the address must start with https:// and must not contain ovk_* parameters.";
 "app_err_ava" = "Unable to Upload an Avatar";
 "app_err_ava_desc" = "Avatar is too big or incorrect: general error #$res.";
 "app_err_note" = "Failed to Attach a News Note";

@@ -31,7 +31,8 @@ final class AppsPresenter extends OpenVKPresenter
         $this->template->name   = $app->getName();
         $this->template->desc   = $app->getDescription();
         $this->template->origin = $app->getOrigin();
-        $this->template->url    = $app->getURL();
+        $this->template->strict = $app->isStrict();
+        $this->template->url    = $app->isStrict() ? $app->getLaunchURL($this->user->identity) : $app->getURL();
         $this->template->owner  = $app->getOwner();
         $this->template->news   = $app->getNote();
         $this->template->perms  = $app->getPermissions($this->user->identity);
@@ -79,10 +80,21 @@ final class AppsPresenter extends OpenVKPresenter
                 $app->delete();
                 $this->redirect("/apps?act=dev");
                 return;
+            } elseif ($this->postParam("regenerate_secret")) {
+                $app->regenerateSecret();
+                $this->redirect("/editapp?act=edit&app=" . $app->getId()); # will exit here
             }
 
             if (!filter_var($this->postParam("url"), FILTER_VALIDATE_URL)) {
                 $this->flashFail("err", tr("app_err_url"), tr("app_err_url_desc"));
+            }
+
+            # launch params are appended to the address, so it can't have its own ovk_* keys (decoded: ovk%5Fx is ovk_x too)
+            $strict = $this->postParam("strict") === "on";
+            parse_str((string) parse_url($this->postParam("url"), PHP_URL_QUERY), $query);
+            $hasOvkKeys = sizeof(array_filter(array_keys($query), fn($key) => str_starts_with(strtolower((string) $key), "ovk_"))) > 0;
+            if ($strict && (!str_starts_with($this->postParam("url"), "https://") || $hasOvkKeys)) {
+                $this->flashFail("err", tr("app_err_url"), tr("app_err_strict_url_desc"));
             }
 
             if (isset($_FILES["ava"]) && $_FILES["ava"]["size"] > 0) {
@@ -102,6 +114,7 @@ final class AppsPresenter extends OpenVKPresenter
             $app->setName($this->postParam("name"));
             $app->setDescription($this->postParam("desc"));
             $app->setAddress($this->postParam("url"));
+            $app->setStrict($strict);
             if ($this->postParam("enable") === "on") {
                 $app->enable();
             } else {
@@ -119,6 +132,8 @@ final class AppsPresenter extends OpenVKPresenter
             $this->template->coins  = $app->getBalance();
             $this->template->origin = $app->getOrigin();
             $this->template->url    = $app->getURL();
+            $this->template->strict = $app->isStrict();
+            $this->template->secret = $app->getSecret();
             $this->template->note   = $app->getNoteLink();
             $this->template->users  = $app->getUsersCount();
             $this->template->on     = $app->isEnabled();
