@@ -39,7 +39,7 @@ function reply(event, message) {
 
 function handleWallPostRequest(event) {
     let mBoxContent = `
-        <b>${tr("app")} <i>${window.appTitle}</i> ${tr("appjs_wall_post_desc")}:</b><br/>
+        <b>${tr("app")} <i>${escapeHtml(window.appTitle)}</i> ${tr("appjs_wall_post_desc")}:</b><br/>
         <p style="padding: 8px; border: 1px solid gray;">${escapeHtml(event.data.text)}</p>
     `;
 
@@ -95,7 +95,7 @@ async function handleVkApiRequest(event) {
         await (new Promise(r => {
             MessageBox(
                 tr("appjs_act_request"),
-                `<p>${tr("app")} <b>${window.appTitle}</b> ${tr("appjs_act_requests")} <b>${dInfo[0]}</b>. ${tr("appjs_act_can")} <b>${dInfo[1]}</b>.`,
+                `<p>${tr("app")} <b>${escapeHtml(window.appTitle)}</b> ${tr("appjs_act_requests")} <b>${dInfo[0]}</b>. ${tr("appjs_act_can")} <b>${dInfo[1]}</b>.`,
                 [tr("appjs_act_allow"), tr("appjs_act_disallow")],
                 [
                     () => {
@@ -155,8 +155,8 @@ function handlePayment(event) {
     MessageBox(
         tr("appjs_payment"),
         `
-            <p>${tr("appjs_payment_intro")} <b>${window.appTitle}</b>.<br/>${tr("appjs_order_items")}: <b>${payload.description}</b></p>
-            <p>${tr("appjs_payment_total")}: <big><b>${payload.outSum}</b></big> ${tr("points_count")}.
+            <p>${tr("appjs_payment_intro")} <b>${escapeHtml(window.appTitle)}</b>.<br/>${tr("appjs_order_items")}: <b>${escapeHtml(String(payload.description))}</b></p>
+            <p>${tr("appjs_payment_total")}: <big><b>${escapeHtml(String(payload.outSum))}</b></big> ${tr("points_count")}.
         `,
         [tr("appjs_payment_confirm"), tr("cancel")],
         [
