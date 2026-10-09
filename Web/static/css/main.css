@@ -5804,6 +5804,88 @@ hr {
     margin-top: 3px;
 }
 
+.stickers_balance_top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.stickers_stats_wrapper {
+    width: 100%;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #e7ecf0;
+}
+
+.stickers_stats_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.stickers_stats_title_row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.stickers_stats_title {
+    font-size: 11px;
+    font-weight: bold;
+    color: #45688e;
+}
+
+.stickers_period_switcher {
+    display: inline-flex;
+    align-items: center;
+    background: #edf0f3;
+    border-radius: 3px;
+    padding: 2px;
+    gap: 2px;
+}
+
+.stickers_period_link {
+    font-size: 11px;
+    padding: 2px 7px;
+    color: #55677d;
+    text-decoration: none;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.stickers_period_link:hover {
+    color: #2a5885;
+    text-decoration: none;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.stickers_period_link.active {
+    background: #597da3;
+    color: #fff;
+    font-weight: bold;
+    cursor: default;
+}
+
+.stickers_stats_total {
+    font-size: 11px;
+    color: #777;
+}
+
+.stickers_stats_total b {
+    color: #2a5885;
+}
+
+.stickers_chart_container {
+    width: 100%;
+    height: 160px;
+}
+
 /* Stickers Form Controls */
 
 .stickers_input_text {
