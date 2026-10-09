@@ -4574,3 +4574,7 @@ function openSource(event) {
     const url = event.target.href;
     window.open("/away.php?to=" + encodeURIComponent(url), "_blank");
 }
+
+function showVotesHistory(event) {
+
+}

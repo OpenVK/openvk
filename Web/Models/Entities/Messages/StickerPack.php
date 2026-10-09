@@ -185,6 +185,13 @@ class StickerPack extends RowModel
         }
 
         $owner->setCoins($owner->getCoins() + $received);
+
+        try {
+            VoteChangeInfo::sendAction($owner, null, $received, 3);
+        } catch (\Throwable $e) {
+            bdump($e);
+        }
+
         $this->setCoins($balance - $amount);
         $this->save();
         $owner->save();
@@ -346,6 +353,12 @@ class StickerPack extends RowModel
         }
 
         if ($price > 0) {
+            try {
+                VoteChangeInfo::sendAction($owner, null, $price * -1, 6);
+            } catch (\Throwable $e) {
+                bdump($e);
+            }
+
             $user->setCoins($coins - $price);
             $user->save();
             $this->addCoins((float) $price);
@@ -407,6 +420,12 @@ class StickerPack extends RowModel
         }
 
         if ($price > 0) {
+            try {
+                VoteChangeInfo::sendAction($from, $to, $price * -1, 7);
+            } catch (\Throwable $e) {
+                bdump($e);
+            }
+
             $from->setCoins($coins - $price);
             $from->save();
         }

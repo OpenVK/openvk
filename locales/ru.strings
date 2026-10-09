@@ -1205,6 +1205,7 @@
 "you_still_have_x_points" = "У Вас <b>$1</b> неиспользованных голосов.";
 "vouchers" = "Ваучеры";
 "have_voucher" = "Есть ваучер";
+"votes_history" = "История голосов";
 "voucher_token" = "Код ваучера";
 "voucher_activators" = "Воспользовавшиеся";
 "voucher_explanation" = "Введите серийный номер ваучера. Обычно он указан в чеке или в сообщении.";

@@ -13,6 +13,7 @@ use openvk\Web\Models\Entities\Notifications\{CoinsTransferNotification, RatingU
 use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Videos, Notes, Vouchers, EmailChangeVerifications, Audios, Faves};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use openvk\Web\Util\Validator;
+use openvk\Web\Models\Entities\Relationships\VoteChangeInfo;
 use Chandler\Security\Authenticator;
 use lfkeitel\phptotp\{Base32, Totp};
 use chillerlan\QRCode\{QRCode, QROptions};
@@ -733,6 +734,12 @@ final class UserPresenter extends OpenVKPresenter
                     $this->flashFail("err", tr("invalid_voucher"), tr("voucher_bad"));
                 }
 
+                try {
+                    VoteChangeInfo::sendAction($this->user->identity, null, $voucher->getCoins(), 7);
+                } catch (\Throwable $e) {
+                    bdump($e);
+                }
+
                 $user->setCoins($user->getCoins() + $voucher->getCoins());
                 $user->setRating($user->getRating() + $voucher->getRating());
                 $user->save();
@@ -979,6 +986,10 @@ final class UserPresenter extends OpenVKPresenter
         }
 
         if ($this->user->id !== $receiver->getId()) {
+            $oldCoinsValue = $this->user->identity->getCoins();
+
+            VoteChangeInfo::sendAction($this->user->identity, $receiver, $value);
+
             $this->user->identity->setCoins($this->user->identity->getCoins() - $value);
             $this->user->identity->save();
 
@@ -1023,6 +1034,12 @@ final class UserPresenter extends OpenVKPresenter
 
         if ($this->user->identity->getCoins() < $value) {
             $this->flashFail("err", tr("failed_to_increase_rating"), tr("you_dont_have_enough_points"));
+        }
+
+        try {
+            VoteChangeInfo::sendAction($this->user->identity, $receiver, $value, 8);
+        } catch (\Throwable $e) {
+            bdump($e);
         }
 
         $this->user->identity->setCoins($this->user->identity->getCoins() - $value);

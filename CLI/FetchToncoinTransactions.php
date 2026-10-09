@@ -11,6 +11,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use openvk\Web\Models\Entities\Relationships\VoteChangeInfo;
 
 define("NANOTON", 1000000000);
 
@@ -97,6 +98,19 @@ class FetchToncoinTransactions extends Command
                     $header->writeln("Well, that's a donation. Thanks! XD");
                 } else {
                     $value = ($transfer["in_msg"]["value"] / NANOTON) / OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["rate"];
+
+                    try {
+                        $change = new VoteChangeInfo();
+                        $change->setOwner_id($user->getRealId());
+                        $change->setCreated_at(time());
+                        $change->setOld_value($user->getCoins());
+                        $change->setNew_value($user->getCoins() + $value);
+                        $change->setAction(4);
+                        $change->save();
+                    } catch (\Throwable $e) {
+                        $header->writeln("Error when creating history entry.");
+                    }
+
                     $user->setCoins($user->getCoins() + $value);
                     $user->save();
                     (new CoinsTransferNotification($user, (new Users())->get(OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["adminAccount"]), (int) $value, "Via TON cryptocurrency"))->emit();
