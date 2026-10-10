@@ -385,7 +385,6 @@ function parseAttachments($attachments, array $allow_types = ['photo', 'video', 
         'gift' => [
             'repo' => 'openvk\Web\Models\Repositories\Gifts',
             'method' => 'getSentGiftById',
-            'onlyId' => true,
         ],
         'sticker' => [
             'repo'   => 'openvk\Web\Models\Repositories\Stickers',

@@ -25,6 +25,11 @@ class SentGift
         return true;
     }
 
+    public function getAttachmentString(): string
+    {
+        return "gift" . $this->relation->receiver . "_" . $this->relation->id;
+    }
+
     public function toApiAttachment(User $user): object
     {
         return (object) [

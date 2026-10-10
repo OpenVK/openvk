@@ -18,6 +18,10 @@ final class ThemepacksPresenter extends OpenVKPresenter
             $theme = Themepacks::i()[$themepack];
         }
 
+        if (!($theme instanceof \openvk\Web\Themes\Themepack)) {
+            $this->notFound();
+        }
+
         if ($resClass === "resource") {
             $data = $theme->fetchStaticResource(chandler_escape_url($resource));
         } elseif ($resClass === "stylesheet") {

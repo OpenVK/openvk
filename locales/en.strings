@@ -2056,6 +2056,16 @@
 "stickers_pack_uninstalled" = "Pack removed from your stickers";
 "stickers_pack_balance" = "Pack balance";
 "stickers_balance" = "Your sticker pack has <b>$1</b> votes credited to it.";
+"stickers_install_stats" = "Installation dynamics";
+"stickers_total_installs" = "Total installs";
+"stickers_installs_count" = "$1 installs";
+"stickers_installs_count_zero" = "0 installs";
+"stickers_installs_count_one" = "$1 install";
+"stickers_installs_count_few" = "$1 installs";
+"stickers_installs_count_other" = "$1 installs";
+"stickers_period_14d" = "14 days";
+"stickers_period_30d" = "30 days";
+"stickers_period_90d" = "90 days";
 "stickers_withdrawal_q" = "withdraw?";
 "stickers_withdrawal" = "Withdraw";
 "stickers_withdrawal_prompt" = "How many votes would you like to withdraw to your account? (maximum $1)";

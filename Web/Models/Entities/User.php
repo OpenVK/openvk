@@ -94,7 +94,7 @@ class User extends RowModel
         return $this->getRecord()->style;
     }
 
-    public function getTheme(): ?Themepack
+    public function getTheme(): ?object
     {
         return Themepacks::i()[$this->getStyle()] ?? null;
     }
