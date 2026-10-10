@@ -40,6 +40,7 @@ class SecurityFilter extends HTMLPurifier_Filter
 class Note extends Postable
 {
     protected $tableName = "notes";
+    public $shortName  = "note";
 
     protected function renderHTML(?string $content = null): string
     {
@@ -130,6 +131,11 @@ class Note extends Postable
     public function getName(): string
     {
         return $this->getRecord()->name;
+    }
+
+    public function getPageURL(): string
+    {
+        return "/note" . $this->getPrettyId();
     }
 
     public function getPreview(int $length = 25): string

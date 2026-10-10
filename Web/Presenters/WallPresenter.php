@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace openvk\Web\Presenters;
 
 use openvk\Web\Models\Exceptions\TooMuchOptionsException;
-use openvk\Web\Models\Entities\{Poll, Post, Photo, Video, Club, User, Audio};
+use openvk\Web\Models\Entities\{Poll, Post, Photo, Video, Club, User, Audio, Comment};
 use openvk\Web\Models\Entities\Notifications\{MentionNotification, RepostNotification, WallPostNotification, PostAcceptedNotification, NewSuggestedPostsNotification};
 use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums, Notes, Videos, Comments, Photos, Audios};
 use openvk\Web\Util\Cache;
@@ -204,7 +204,14 @@ final class WallPresenter extends OpenVKPresenter
         $page  = max((int) ($_GET["p"] ?? 1), 0);
         $perPage = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);
         $section = $this->queryParam("section") ?? "local_posts";
+
+        if ($section == "fave") {
+            $this->redirect("/fave");
+            return;
+        }
+
         $isGlobal = $section == "global";
+        $posts = [];
 
         $feed = new Feed($this->user->identity, $isGlobal, null);
 
@@ -218,14 +225,47 @@ final class WallPresenter extends OpenVKPresenter
         if ($types[$section] != null) {
             $feedType = $types[$section][0];
             $feedClass = $types[$section][1];
+            $this->template->isAnother = true;
         }
 
-        $posts = $feed->fetchFeed($returnBanned, $withAlienWallPosts, $keepNsfwSettings, $feedType, [null, null, null, null, ($page - 1) * $perPage, $perPage]);
+        switch ($section) {
+            case "comments":
+                $posts = $feed->fetchComments();
+
+                $feedType = "comment";
+                $feedClass = null;
+
+                break;
+            default:
+                $posts = $feed->fetchFeed($returnBanned, $withAlienWallPosts, $keepNsfwSettings, $feedType, [null, null, null, null, ($page - 1) * $perPage, $perPage]);
+                break;
+        }
+
+        $iterator = $posts->page((int) ($_GET["p"] ?? 1), $perPage);
+        $count = $iterator->count();
+
+        // building target + comment on it
+        if ($section == "comments") {
+            $tmpIterator = [];
+
+            foreach ($iterator as $item) {
+                try {
+                    $item = new Comment($item);
+                    $target = $item->getTarget();
+
+                    $tmpIterator[] = [$target, $item, $target->shortName];
+                } catch (\Throwable $e) {
+                    bdump($e);
+                }
+            }
+
+            $iterator = $tmpIterator;
+        }
 
         $this->template->paginatorConf = (object) [
-            "count"   => sizeof($posts),
+            "count"   => $posts->count("*"),
             "page"    => $page,
-            "amount"  => $posts->page($page, $perPage)->count(),
+            "amount"  => $count,
             "perPage" => $perPage,
             "tidy"    => false,
             "atTop"   => false,
@@ -234,13 +274,18 @@ final class WallPresenter extends OpenVKPresenter
         $this->template->posts = [];
         $this->template->isGlobal = $isGlobal;
         $this->template->feedType = $feedType;
-        $this->template->availSections = [["local_posts", tr("my_news")], ["global", tr("all_news")]];
-        $this->template->availLocalSections = [["local_posts", tr("new_posts")], ["photos", tr("att_tab_photos")], ["videos", tr("videos")], ["audios", tr("audios")]];
-        
+        $this->template->showMediaTabs = !$isGlobal && $section != "comments";
+        $this->template->availSections = [["local_posts", tr("my_news")], ["global", tr("all_news")], ["comments", tr("comments")]];
+        $this->template->availLocalSections = [["local_posts", tr("new_posts")], ["photos", tr("att_tab_photos")], ["videos", tr("videos")], ["audios", tr("audios")], ["fave", tr("bookmarks_tab")]];
+
         $classPath = "\\openvk\\Web\\Models\\Entities\\" . $feedClass;
 
-        foreach ($posts->page((int) ($_GET["p"] ?? 1), $perPage) as $post) {
-            $this->template->posts[] = new $classPath($post);
+        foreach ($iterator as $post) {
+            if ($feedClass) {
+                $this->template->posts[] = new $classPath($post);
+            } else {
+                $this->template->posts[] = $post;
+            }
         }
     }
 

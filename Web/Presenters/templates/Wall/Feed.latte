@@ -7,19 +7,20 @@
 
 {block content}
 
-    <div class="mb_tabs" style="margin: -10px -10px 0px -10px;display: flex;justify-content: space-between;">
+    <div class="mb_tabs" style="margin: -10px -10px 0px -10px;display: flex;justify-content: space-between;align-items: center;">
         <div>
             {foreach $availSections as $tab}
-                <div n:attr="id => ($tab[0] == 'global' ? $isGlobal : !$isGlobal ? 'active' : '')" class="mb_tab">
+                <div n:attr="id => ($tab[0] == $section || ($tab[0] == 'local_posts' && $isAnother) ? 'active' : '')" class="mb_tab">
                     <a href="/feed?section={$tab[0]}">{$tab[1]}</a>
                 </div>
             {/foreach}
         </div>
 
-        <a href='#' onclick="onFeedSettingsClick(event)" id="__feed_settings_link" class="side_link" data-pagescount='{ceil($paginatorConf->count / $paginatorConf->perPage)}'>{_feed_settings}</a>
+        <a n:if="$section != 'comments'" href='#' onclick="onFeedSettingsClick(event)" id="__feed_settings_link" class="side_link" data-pagescount='{ceil($paginatorConf->count / $paginatorConf->perPage)}'>{_feed_settings}</a>
+        <a n:if="$section == 'comments'" href='/search?section=posts&from_me=1'>{_own_posts_tab}</a>
     </div>
 
-    <div n:if="!$isGlobal" class="mb_tabs" style="margin: 0px -10px;">
+    <div n:if="$showMediaTabs" class="mb_tabs" style="margin: 0px -10px;">
         {foreach $availLocalSections as $tab}
             <div n:attr="id => ($section == $tab[0] ? 'active' : '')" class="mb_tab">
                 <a href="/feed?section={$tab[0]}">{$tab[1]}</a>
@@ -50,6 +51,27 @@
             {if $feedType == "audio"}
                 <div class="scroll_node" data-uniqueid="{$post->getPrettyId()}">
                     {include "../Audio/player.latte", audio => $post}
+                </div>
+            {/if}
+            {if $feedType == "comment"}
+                <div class="scroll_node comment_list_item" data-uniqueid="{$post[1]->getPrettyId()}">
+                    <div class="comment_target">
+                        {if $post[2] == "wall"}
+                            {include "../components/post.latte", commentSection => false, post => $post[0]}
+                        {else}
+                            <div class="comment_target_pseudo">
+                                <div>
+                                    <img src="{$post[0]->getOwner()->getAvatarURL('miniscule')}" />
+                                </div>
+                                <div>
+                                    <a href="{$post[0]->getPageURL()}"><b>{tr("post_target_" . $post[2])}</b></a>
+                                </div>
+                            </div>
+                        {/if}
+                    </div>
+                    <div class="comment_target_c">
+                        {include "../components/comment.latte", comment => $post[1], correctLink => true, noEdit => true, no_reply_button => true}
+                    </div>
                 </div>
             {/if}
         {/foreach}

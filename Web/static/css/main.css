@@ -6492,3 +6492,25 @@ hr {
 .feed_container {
     margin-top: 10px;
 }
+
+.comment_list_item .comment_target_c {
+    padding-left: 55px;
+}
+
+.comment_list_item {
+    border-bottom: 1px #ddd solid;
+    margin-bottom: 10px;
+}
+
+.comment_list_item .comment_target_pseudo {
+    display: grid;
+    grid-template-columns: 0fr 1fr;
+    gap: 10px;
+}
+
+.comment_list_item .comment_target_pseudo img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    object-position: top;
+}

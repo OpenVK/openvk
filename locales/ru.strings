@@ -689,7 +689,7 @@
 "my_feedback" = "Мои Ответы";
 "my_settings" = "Мои Настройки";
 "bookmarks" = "Закладки";
-"bookmarks_tab" = "Понравившиеся записи";
+"bookmarks_tab" = "Понравившееся";
 "own_posts_tab" = "Написанные мной записи";
 "bug_tracker" = "Баг-трекер";
 
@@ -3227,3 +3227,8 @@
 
 "catalogues" = "Каталоги";
 "new_posts" = "Посты";
+
+"post_target_note" = "Заметка";
+"post_target_photo" = "Фото";
+"post_target_topic" = "Обсуждение";
+"post_target_video" = "Видеозапись";

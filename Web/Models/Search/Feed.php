@@ -193,8 +193,16 @@ class Feed
         return $payload;
     }
 
-    public function fetchWall()
+    public function fetchComments()
     {
+        $comments = DatabaseConnection::i()
+            ->getContext()
+            ->table("comments")
+            // ->select("target")
+            // ->where("model", "openvk\\Web\\Models\\Entities\\Post")
+            ->where("owner", $this->owner->getRealId())
+            ->where("deleted", 0);
 
+        return $comments;
     }
 }
