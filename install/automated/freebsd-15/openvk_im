@@ -12,8 +12,7 @@ service_user="root"
 service_dir="/opt/openvk-im"
 
 pidfile="/var/run/${name}.pid"
-command="/usr/sbin/daemon"
-command_args="-r -f -p ${pidfile} -workdir ${service_dir} -u ${service_user} /usr/local/bin/go126 run main.go"
+command="/usr/local/bin/go126 run main.go"
 
 load_rc_config $name
 run_rc_command "$1"
