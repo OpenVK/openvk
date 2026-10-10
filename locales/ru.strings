@@ -1316,6 +1316,11 @@
 "app_creation_hint_iframe" = "Ваше приложение будет открыто в iframe.";
 "app_balance" = "На счету вашего приложения <b>$1</b> голосов.";
 "app_users" = "Вашим приложением пользуются <b>$1</b> человек.";
+"app_installs_zero" = "Нет установок";
+"app_installs_one" = "$1 установка";
+"app_installs_few" = "$1 установки";
+"app_installs_many" = "$1 установок";
+"app_installs_other" = "$1 установок";
 "app_withdrawal_q" = "вывести?";
 "app_withdrawal" = "Вывод средств";
 "app_withdrawal_empty" = "Не удалось вывести пустоту, извините.";
@@ -2811,6 +2816,7 @@
 "s_order_invert" = "Инвертировать";
 "s_order_by_reg_date" = "По дате регистрации";
 "s_order_by_creation_date" = "По дате создания";
+"s_order_by_installs" = "По числу установок";
 "s_order_by_publishing_date" = "По дате публикации";
 "s_order_by_upload_date" = "По дате загрузки";
 

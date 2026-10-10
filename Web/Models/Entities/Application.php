@@ -200,8 +200,7 @@ class Application extends RowModel
 
     public function getUsersCount(): int
     {
-        $cx = DatabaseConnection::i()->getContext();
-        return sizeof($cx->table("app_users")->where("app", $this->getId()));
+        return (int) $this->getRecord()->installs;
     }
 
     public function getInstallationEntry(User $user): ?array
@@ -349,22 +348,41 @@ class Application extends RowModel
 
     public function install(User $user): void
     {
-        if (!$this->getInstallationEntry($user)) {
-            $cx = DatabaseConnection::i()->getContext();
-            $cx->table("app_users")->insert([
-                "app"  => $this->getId(),
-                "user" => $user->getId(),
-            ]);
-        }
+        $this->changeInstalls($user, true);
     }
 
     public function uninstall(User $user): void
     {
-        $cx = DatabaseConnection::i()->getContext();
-        $cx->table("app_users")->where([
-            "app"  => $this->getId(),
-            "user" => $user->getId(),
-        ])->delete();
+        $this->changeInstalls($user, false);
+    }
+
+    /**
+     * Adds or removes the user's app_users row and keeps apps.installs in step, in one transaction.
+     * The counter only changes if the row really did.
+     */
+    private function changeInstalls(User $user, bool $install): void
+    {
+        $db = DatabaseConnection::i()->getContext();
+        $db->beginTransaction();
+        try {
+            if ($install) {
+                # IGNORE: opening the app in two tabs at once installs it once
+                $changed = $db->query("INSERT IGNORE INTO app_users (app, user) VALUES (?, ?)", $this->getId(), $user->getId())->getRowCount();
+                $counter = "UPDATE apps SET installs = installs + 1 WHERE id = ?";
+            } else {
+                $changed = $db->query("DELETE FROM app_users WHERE app = ? AND user = ?", $this->getId(), $user->getId())->getRowCount();
+                $counter = "UPDATE apps SET installs = GREATEST(installs, 1) - 1 WHERE id = ?";
+            }
+
+            if ($changed > 0) {
+                $db->query($counter, $this->getId());
+            }
+
+            $db->commit();
+        } catch (\Throwable $e) {
+            $db->rollBack();
+            throw $e;
+        }
     }
 
     /**

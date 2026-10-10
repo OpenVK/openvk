@@ -83,7 +83,7 @@
                         <label n:if="$order != 'rating'">
                             <input type="checkbox" name="invert" value="1" form="search_form" n:attr="checked => $invert == '1'">
                         </label>
-                        <select name="order" form="search_form" data-default='id'>
+                        <select name="order" form="search_form" data-default="{$section == 'apps' ? 'installs' : 'id'}">
                             {if $section == "users"}
                                 <option value="id" n:attr="selected => $order == 'id'">{_s_order_by_reg_date}</option>
                                 
@@ -94,6 +94,9 @@
                                 <option value="id" n:attr="selected => $order == 'id'">{_s_order_by_publishing_date}</option>
                             {elseif $section == "audios"}
                                 <option value="id" n:attr="selected => $order == 'id'">{_s_order_by_upload_date}</option>
+                            {elseif $section == "apps"}
+                                <option value="installs" n:attr="selected => $order == 'installs'">{_s_order_by_installs}</option>
+                                <option value="id" n:attr="selected => $order == 'id'">{_s_order_by_creation_date}</option>
                             {else}
                                 <option value="id" n:attr="selected => $order == 'id'">{_s_order_by_creation_date}</option>
                             {/if}
@@ -357,7 +360,8 @@
                                                     </a><br/>
                                                     <span style='margin-left: 2px;' data-highlight='_appDesc'>
                                                         {$dat->getDescription() ?? '(' . tr("none") . ')'}
-                                                    </span>
+                                                    </span><br/>
+                                                    <span style='margin-left: 2px; color: #777;'>{tr("app_installs", $dat->getUsersCount())}</span>
                                                 </td>
                                             </tr>
                                         </tbody>

@@ -1344,6 +1344,9 @@
 "app_creation_hint_iframe" = "Your application will open in an iframe.";
 "app_balance" = "Your application has <b>$1</b> votes credited to it.";
 "app_users" = "Your application is being used by <b>$1</b> people.";
+"app_installs_zero" = "No installs";
+"app_installs_one" = "$1 install";
+"app_installs_other" = "$1 installs";
 "app_withdrawal_q" = "Do you want to withdraw?";
 "app_withdrawal" = "Withdraw";
 "app_withdrawal_empty" = "Sorry, withdrawal of emptiness is not possible.";
@@ -2656,6 +2659,7 @@
 "s_order_invert" = "Invert";
 "s_order_by_reg_date" = "By reg date";
 "s_order_by_creation_date" = "By creation date";
+"s_order_by_installs" = "By installs";
 "s_order_by_publishing_date" = "By publication date";
 "s_order_by_upload_date" = "By upload date";
 

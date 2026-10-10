@@ -37,7 +37,7 @@ class Applications
     public function getList(int $page = 1, ?int $perPage = null): \Traversable
     {
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
-        $apps    = $this->apps->where(["enabled" => 1, "deleted" => 0])->page($page, $perPage);
+        $apps    = $this->apps->where(["enabled" => 1, "deleted" => 0])->order("installs DESC, id DESC")->page($page, $perPage);
         foreach ($apps as $app) {
             yield new Application($app);
         }
@@ -85,6 +85,9 @@ class Applications
         switch ($order['type']) {
             case 'id':
                 $order_str = 'id ' . ($order['invert'] ? 'ASC' : 'DESC');
+                break;
+            case 'installs':
+                $order_str = 'installs ' . ($order['invert'] ? 'ASC' : 'DESC') . ', id DESC';
                 break;
         }
 
