@@ -108,23 +108,25 @@
                                 {/if}
                             </div>
                         {else}
-                            {if $isInstalled}
-                                <a href="/stickers/{$pack->getSlug()}" class="stickers_pack_status_purchased" onclick="openStickerPackModal({$pack->getSlug()}, event); return false;" data-no-ajax="1">
-                                    {_stickers_purchased_label}
-                                </a>
-                            {elseif $isBought}
-                                <a href="/stickers/{$pack->getSlug()}" class="stickers_pack_price_free" onclick="openStickerPackModal({$pack->getSlug()}, event); return false;" data-no-ajax="1">
-                                    {_add}
-                                </a>
-                            {elseif $pack->getPrice() > 0}
-                                <a href="/stickers/{$pack->getSlug()}" class="stickers_pack_price_paid" onclick="openStickerPackModal({$pack->getSlug()}, event); return false;" data-no-ajax="1">
-                                    {tr('coins', $pack->getPrice())}
-                                </a>
-                            {else}
-                                <a href="/stickers/{$pack->getSlug()}" class="stickers_pack_price_free" onclick="openStickerPackModal({$pack->getSlug()}, event); return false;" data-no-ajax="1">
-                                    {_stickers_free}
-                                </a>
-                            {/if}
+                            <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px;">
+                                {if $isInstalled}
+                                    <a href="/stickers/{$pack->getSlug()}" class="stickers_pack_status_purchased" onclick="openStickerPackModal({$pack->getSlug()}, event); return false;" data-no-ajax="1">
+                                        {_stickers_purchased_label}
+                                    </a>
+                                {elseif $isBought}
+                                    <a href="/stickers/{$pack->getSlug()}" class="stickers_pack_price_free" onclick="openStickerPackModal({$pack->getSlug()}, event); return false;" data-no-ajax="1">
+                                        {_add}
+                                    </a>
+                                {elseif $pack->getPrice() > 0}
+                                    <a href="/stickers/{$pack->getSlug()}" class="stickers_pack_price_paid" onclick="openStickerPackModal({$pack->getSlug()}, event); return false;" data-no-ajax="1">
+                                        {tr('coins', $pack->getPrice())}
+                                    </a>
+                                {else}
+                                    <a href="/stickers/{$pack->getSlug()}" class="stickers_pack_price_free" onclick="openStickerPackModal({$pack->getSlug()}, event); return false;" data-no-ajax="1">
+                                        {_stickers_free}
+                                    </a>
+                                {/if}
+                            </div>
                         {/if}
 
                         {if $act === 'settings'}

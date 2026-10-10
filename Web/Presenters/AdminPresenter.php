@@ -931,11 +931,25 @@ final class AdminPresenter extends OpenVKPresenter
         $this->template->form->main_sticker = $pack->getMainSticker();
         $this->template->form->gift_sticker = $pack->getGiftSticker();
 
-        $this->template->pack = $pack;
+        $this->template->pack           = $pack;
+        $this->template->gift           = $pack->getGift();
+        $this->template->giftStickerIds = $pack->getGiftStickerIds();
 
         $page = (int) ($this->queryParam("sp") ?? 1);
         $this->template->stickers = iterator_to_array($pack->getStickers($page, null, $this->template->stickerCount));
         $this->template->stickerCount = $pack->getStickersCount();
+
+        if ($this->queryParam("act") === "regenerate_gift") {
+            $this->assertNoCSRF();
+            try {
+                $pack->regenerateGiftImage();
+                $this->flash("succ", tr("stickers_gift_regenerated"), "");
+            } catch (\Throwable $e) {
+                $this->flashFail("err", tr("error"), $e->getMessage());
+            }
+            $this->redirect("/admin/stickers/id" . $pack->getId());
+            return;
+        }
 
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {
             return;
@@ -956,7 +970,28 @@ final class AdminPresenter extends OpenVKPresenter
         $endTime = $this->postParam("end_time");
         $pack->setEndTime(!empty($endTime) ? (int) $endTime : null);
 
+        $chosenCoverId = (int) ($this->postParam("main_sticker_id") ?? 0);
+        if ($chosenCoverId > 0) {
+            $stk = $this->stickers->get($chosenCoverId);
+            if ($stk && (int) $stk->getPackId() === $pack->getId()) {
+                $pack->setMainSticker($stk);
+            }
+        }
+
+        $giftStickers = $_POST["gift_stickers"] ?? null;
+        if (is_array($giftStickers)) {
+            $giftStickers = array_slice(array_values(array_filter(array_map("intval", $giftStickers))), 0, 3);
+            $pack->setGiftStickerIds($giftStickers);
+        }
+
         $pack->save();
+
+        if ($pack->getMainSticker() || $pack->getStickersCount() > 0) {
+            try {
+                $pack->regenerateGiftImage();
+            } catch (\Throwable $e) {
+            }
+        }
 
         $this->flash("succ", tr("admin_stickerpack_saved"), tr("admin_stickerpack_saved_desc"));
         $this->redirect("/admin/stickers/id" . $pack->getId());

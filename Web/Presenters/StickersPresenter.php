@@ -598,8 +598,21 @@ final class StickersPresenter extends OpenVKPresenter
                 }
             }
 
+            $giftStickers = $_POST["gift_stickers"] ?? [];
+            $giftStickers = is_array($giftStickers) ? array_map("intval", $giftStickers) : [];
+            $giftStickers = array_values(array_filter($giftStickers, fn($stkId) => !in_array($stkId, $deleteStickers, true)));
+            $giftStickers = array_slice($giftStickers, 0, 3);
+            $pack->setGiftStickerIds($giftStickers);
+
             $pack->save();
             $this->stickers->clearCache($pack->getId());
+
+            if ($pack->getMainSticker()) {
+                try {
+                    $pack->regenerateGiftImage();
+                } catch (\Throwable $e) {
+                }
+            }
 
             $this->flash("succ", tr("admin_stickerpack_saved"), tr("stickers_pack_saved"));
             $this->redirect("/stickers/edit/" . $pack->getId());
@@ -609,6 +622,8 @@ final class StickersPresenter extends OpenVKPresenter
         $this->template->pack             = $pack;
         $this->template->isNew            = false;
         $this->template->existingStickers = iterator_to_array($pack->getStickers(-1));
+        $this->template->gift             = $pack->getGift();
+        $this->template->giftStickerIds   = $pack->getGiftStickerIds();
         $this->template->act              = "author";
         $this->template->withdrawTax      = (float) (OPENVK_ROOT_CONF["openvk"]["preferences"]["stickers"]["withdrawTax"] ?? 0);
         $this->template->installStats     = $pack->getInstallStats(90);
@@ -652,6 +667,25 @@ final class StickersPresenter extends OpenVKPresenter
             } elseif ($action === "uninstall") {
                 $pack->uninstall($this->user->identity);
                 $this->flash("succ", tr("stickers"), tr("stickers_pack_uninstalled"));
+            } elseif ($action === "gift") {
+                $targetUserId = (int) ($this->postParam("user_id") ?? 0);
+                $message      = (string) ($this->postParam("message") ?? "");
+                $anonymous    = !empty($this->postParam("anonymous"));
+
+                $targetUser = $this->users->get($targetUserId);
+                if (!$targetUser || $targetUser->isDeleted()) {
+                    $this->flashFail("err", tr("error"), tr("error_user_not_exists"));
+                } elseif ($targetUser->getId() === $this->user->identity->getId()) {
+                    $this->flashFail("err", tr("error"), tr("stickers_gift_self_error"));
+                } elseif ($pack->getPrice() <= 0) {
+                    $this->flashFail("err", tr("error"), tr("stickers_gift_free_prohibited"));
+                } elseif ($pack->hasBoughtBy($targetUser)) {
+                    $this->flashFail("err", tr("error"), tr("stickers_gift_already_owned"));
+                } elseif ($pack->giftTo($this->user->identity, $targetUser, $message !== "" ? $message : null, $anonymous)) {
+                    $this->flash("succ", tr("stickers"), tr("stickers_gift_success"));
+                } else {
+                    $this->flashFail("err", tr("error"), tr("stickers_not_enough_coins"));
+                }
             }
 
             $this->redirect("/stickers?act=shop&section=popular&pack=" . $pack->getSlug());

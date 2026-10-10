@@ -11,95 +11,70 @@ use openvk\Web\Models\Repositories\Users as UsersRepo;
 
 final class Store extends VKAPIRequestHandler
 {
-    // Thanks gemini xd
-    private static array $emojiKeywords = [
-        "👋" => ["привет", "хай", "здравствуй", "здравствуйте", "ку", "салют", "йоу", "hello", "hi", "hey", "пока", "до свидания", "бай", "bye", "прощай"],
-        "🤝" => ["привет", "договорились", "согласен", "по рукам", "друг", "уважение", "deal"],
-        "🙋" => ["я", "привет", "здесь", "тут", "вопрос", "можно"],
+    private static ?array $emojiKeywords = null;
 
-        "😀" => ["улыбка", "смайл", "радость", "весело", "позитив", "smile", "happy"],
-        "😃" => ["улыбка", "радость", "ура", "класс", "счастье"],
-        "😄" => ["хаха", "смех", "смешно", "хех", "haha", "lol"],
-        "😁" => ["ыыы", "улыбка", "доволен", "хихи", "ура"],
-        "😆" => ["лол", "ржу", "смех", "хаха", "ахаха", "lol", "rofl"],
-        "😅" => ["хех", "пот", "бывает", "упс", "неловко", "фух"],
-        "😂" => ["слезы от смеха", "ржунимагу", "смешно", "хахаха", "ахахах", "lol", "lmao", "rofl"],
-        "🤣" => ["пацталом", "ор", "ору", "ор выше гор", "rofl", "lol"],
-        "😊" => ["мило", "улыбаюсь", "спасибо", "приятно", "милота", "cute", "blush"],
-        "😇" => ["ангел", "святой", "я хороший", "невинен", "паинька", "angel"],
-        "😉" => ["подмигивание", "миг", "намек", "секрет", "wink"],
-        "😋" => ["вкусно", "ням", "аппетитно", "нямням", "tasty", "yummy"],
-        "😛" => ["бебе", "язык", "дразню", "шалость"],
-        "😜" => ["подмигнул", "дразнюсь", "дурачусь", "прикол"],
-        "🤪" => ["безумие", "сумасшедший", "крейзи", "угараю", "crazy"],
+    public static function getEmojiKeywords(): array
+    {
+        if (self::$emojiKeywords !== null) {
+            return self::$emojiKeywords;
+        }
 
-        "❤️" => ["люблю", "любовь", "сердце", "сердечко", "обожаю", "чмок", "love", "heart"],
-        "💖" => ["любовь", "блеск", "сердечко", "мило", "love"],
-        "💕" => ["два сердца", "влюблен", "чувства", "люблю"],
-        "😍" => ["влюблен", "красота", "красотка", "обожаю", "прелесть", "восторг", "love", "in love"],
-        "😘" => ["целую", "чмок", "поцелуй", "люблю тебя", "kiss", "muah"],
-        "🥰" => ["обожаю", "нежность", "умиление", "милота", "люблю"],
-        "😻" => ["кот", "котик", "влюблен", "мило"],
-        "💋" => ["поцелуй", "губы", "чмок", "kiss"],
+        $root = defined("OPENVK_ROOT") ? OPENVK_ROOT : dirname(__DIR__, 2);
+        $tsvPath = $root . "/data/emoji-keywords.tsv";
+        $cacheDir = $root . "/tmp/cache";
+        $cachePath = $cacheDir . "/emoji-keywords.php";
 
-        "😢" => ["грустно", "плачу", "печаль", "слеза", "жаль", "тоска", "sad", "cry"],
-        "😭" => ["рыдаю", "слезы", "плач", "истерика", "обидно", "за что", "печально", "cry", "sob"],
-        "🥺" => ["пожалуйста", "ну пожалуйста", "умоляю", "прости", "милый взгляд", "please"],
-        "😞" => ["разочарование", "грусть", "эх", "увы", "эхх"],
-        "😔" => ["печаль", "подавлен", "сожалею", "тоска"],
-        "😩" => ["устал", "хватит", "надоело", "тяжело", "нет сил"],
-        "😫" => ["сил нет", "устал", "сложно", "ужас"],
+        if (file_exists($cachePath) && file_exists($tsvPath) && filemtime($cachePath) >= filemtime($tsvPath)) {
+            $cached = @include $cachePath;
+            if (is_array($cached)) {
+                self::$emojiKeywords = $cached;
+                return self::$emojiKeywords;
+            }
+        }
 
-        "👍" => ["класс", "заебись", "супер", "отлично", "топ", "молодец", "красава", "плюс", "да", "ок", "хорошо", "согласен", "круто", "good", "cool", "like", "ok"],
-        "👎" => ["дизлайк", "плохо", "отстой", "против", "фу", "не нравится", "bad", "dislike"],
-        "👌" => ["ок", "окей", "идеально", "порядок", "все ок", "ok", "okay", "perfect"],
-        "✌️" => ["мир", "победа", "два", "йоу", "peace"],
-        "🤞" => ["удачи", "надеюсь", "скрестил пальцы", "хоть бы"],
-        "👏" => ["браво", "аплодисменты", "хлопаю", "молодцы", "clap", "bravo"],
-        "🙌" => ["ура", "слава богу", "празднуем", "руки вверх"],
-        "🙏" => ["спасибо", "пожалуйста", "благодарю", "молю", "прости", "поклон", "спасибки", "thanks", "thank you", "please"],
-        "💪" => ["сила", "мощь", "спорт", "сильный", "могу", "strong", "power"],
-        "🔥" => ["огонь", "жара", "топ", "пушка", "бомба", "горячо", "fire", "hot", "lit"],
-        "💯" => ["сотка", "на все сто", "факт", "база", "правда", "100"],
+        $map = [];
+        if (file_exists($tsvPath)) {
+            $lines = file($tsvPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
+            foreach ($lines as $line) {
+                $line = trim($line);
+                if ($line === "" || str_starts_with($line, "#")) {
+                    continue;
+                }
 
-        "😡" => ["злость", "злой", "ярость", "бесит", "гнев", "раздражает", "angry"],
-        "🤬" => ["мат", "бесит", "ненавижу", "черт", "капец", "пипец", "rage"],
-        "👿" => ["демон", "черт", "злодей", "дьявол", "evil"],
-        "💩" => ["какашка", "говно", "хрень", "фигня", "мусор", "shit", "poop"],
-        "🤮" => ["тошнит", "блевать", "гадость", "фуу", "отвратительно", "sick"],
+                $colonPos = mb_strpos($line, ":");
+                if ($colonPos === false) {
+                    continue;
+                }
 
-        // Thinking & Confusion
-        "🤔" => ["хм", "думаю", "мысли", "задумался", "вопрос", "странно", "почему", "think", "hmm"],
-        "🧐" => ["внимательно", "изучаю", "опа", "хмм", "интересно"],
-        "🤨" => ["подозрительно", "сомневаюсь", "серьезно", "неужели", "чего"],
-        "🤷" => ["не знаю", "хз", "без понятия", "пожимаю плечами", "idk", "shrug"],
-        "😶" => ["молчу", "без слов", "тишина", "нет слов", "silent"],
-        "🤐" => ["рот на замок", "молчу", "секрет", "тихо"],
+                $emoji = trim(mb_substr($line, 0, $colonPos));
+                $rawKw = trim(mb_substr($line, $colonPos + 1));
+                if ($emoji === "" || $rawKw === "") {
+                    continue;
+                }
 
-        // Surprise & Fear
-        "😱" => ["шок", "ужас", "кошмар", "страшно", "боюсь", "офигеть", "ого", "shock", "omg"],
-        "😨" => ["страх", "боязнь", "жутко", "ой"],
-        "😳" => ["смущение", "неловко", "ого", "ничего себе", "в шоке", "blush", "wow"],
-        "🤯" => ["взрыв мозга", "офигеть", "мозг взорван", "mind blown"],
+                $kws = array_values(array_filter(array_map("trim", explode(",", $rawKw)), fn($k) => $k !== ""));
+                if (!empty($kws)) {
+                    $map[$emoji] = $kws;
+                }
+            }
+        }
 
-        // Sleep & Rest
-        "😴" => ["спать", "спокойной ночи", "сон", "сонный", "баиньки", "доброй ночи", "sleep", "goodnight"],
-        "🥱" => ["зеваю", "скучно", "спать охота", "устал"],
-        "💤" => ["сплю", "храп", "сон", "zzz"],
+        $lines = [];
+        foreach ($map as $emoji => $kws) {
+            $encodedEmoji = json_encode($emoji, JSON_UNESCAPED_UNICODE);
+            $encodedKws = json_encode(array_values($kws), JSON_UNESCAPED_UNICODE);
+            $lines[] = "    {$encodedEmoji} => {$encodedKws}";
+        }
 
-        // Celebration
-        "🎉" => ["праздник", "поздравляю", "ура", "пати", "вечеринка", "днюха", "congrats", "party"],
-        "🥳" => ["празднуем", "ураа", "тусовка", "с днем рождения", "пати", "party", "happy birthday"],
-        "🎂" => ["торт", "день рождения", "днюха", "с др", "birthday", "cake"],
-        "🎁" => ["подарок", "презент", "сюрприз", "gift", "present"],
-        "🍾" => ["шампанское", "бухаем", "праздник", "выпьем", "champagne"],
-        "🍺" => ["пиво", "пивас", "бар", "по пиву", "beer"],
-        "☕" => ["кофе", "чай", "утро", "доброе утро", "кофеек", "coffee", "tea"],
+        $code = "<?php\n\ndeclare(strict_types=1);\n\n// Auto-generated from emoji-keywords.tsv - do not edit directly\nreturn [\n" . implode(",\n", $lines) . ",\n];\n";
+        if (!is_dir($cacheDir)) {
+            @mkdir($cacheDir, 0o777, true);
+        }
+        @file_put_contents($cachePath, $code, LOCK_EX);
 
-        // Money & Cool
-        "😎" => ["крутой", "чилл", "стиль", "четко", "cool"],
-        "🤑" => ["деньги", "богач", "бабло", "кэш", "прибыль", "money", "rich"],
-    ];
+        self::$emojiKeywords = $map;
+        return self::$emojiKeywords;
+    }
 
     private function formatProduct(StickerPack $pack, bool $extended = true): array
     {
@@ -140,6 +115,18 @@ final class Store extends VKAPIRequestHandler
         $price = (int) $pack->getPrice();
         $priceStr = $price > 0 ? "{$price} " . tr("coins") : "Бесплатно";
 
+        $gift = $pack->getGift();
+        $giftData = null;
+        if ($gift) {
+            $giftData = [
+                "id"                  => (int) $gift->getId(),
+                "stickers_product_id" => (int) $pack->getId(),
+                "thumb_256"           => $server_url . "/images/gift/" . $gift->getId() . "/256.png",
+                "thumb_96"            => $server_url . "/images/gift/" . $gift->getId() . "/96.png",
+                "thumb_48"            => $server_url . "/images/gift/" . $gift->getId() . "/48.png",
+            ];
+        }
+
         return [
             "id"            => (int) $pack->getId(),
             "type"          => "stickers",
@@ -169,6 +156,7 @@ final class Store extends VKAPIRequestHandler
             "sticker_ids"   => $stickerIds,
             "stickers"      => $stickersList,
             "previews"      => $previews,
+            "gift"          => $giftData,
         ];
     }
 
@@ -344,8 +332,9 @@ final class Store extends VKAPIRequestHandler
                         $wordMap[$eChar][] = $sid;
                     }
 
-                    if ($aliases === 1 && isset(self::$emojiKeywords[$eChar])) {
-                        foreach (self::$emojiKeywords[$eChar] as $kw) {
+                    $emojiKwMap = self::getEmojiKeywords();
+                    if ($aliases === 1 && isset($emojiKwMap[$eChar])) {
+                        foreach ($emojiKwMap[$eChar] as $kw) {
                             $kw = mb_strtolower(trim($kw));
                             if (!isset($wordMap[$kw])) {
                                 $wordMap[$kw] = [];
