@@ -952,6 +952,26 @@ final class Newsfeed extends VKAPIRequestHandler
         return (object) $result;
     }
 
+    public function createList(string $title)
+    {
+
+    }
+
+    public function editList(int $list_id)
+    {
+
+    }
+
+    public function deleteList(string $title)
+    {
+
+    }
+
+    public function toggleListSubscription(int $list_id)
+    {
+
+    }
+
     public function getLists()
     {
         return (object) [
