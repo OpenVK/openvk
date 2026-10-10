@@ -6484,3 +6484,11 @@ hr {
     display: inline-block;
     vertical-align: baseline;
 }
+
+#catalogues_list .catalogue_item {
+    display: block;
+}
+
+.feed_container {
+    margin-top: 10px;
+}

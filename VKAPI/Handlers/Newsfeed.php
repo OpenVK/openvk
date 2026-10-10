@@ -12,6 +12,7 @@ use openvk\Web\Models\Repositories\Videos as VideosRepo;
 use openvk\Web\Models\Repositories\Users as UsersRepo;
 use openvk\Web\Models\Repositories\Clubs as ClubsRepo;
 use openvk\Web\Models\Entities\User;
+use openvk\Web\Models\Search\Feed;
 use openvk\VKAPI\Handlers\Wall;
 
 final class Newsfeed extends VKAPIRequestHandler
@@ -26,7 +27,7 @@ final class Newsfeed extends VKAPIRequestHandler
         return [PHP_INT_MAX, PHP_INT_MAX];
     }
 
-    public function get(string $fields = "", string $start_from = "", int $start_time = 0, int $end_time = 0, int $offset = 0, int $count = 30, int $extended = 1, int $forGodSakePleaseDoNotReportAboutMyOnlineActivity = 0, int $with_alien_wall_posts = 0, string $filters = 'post')
+    public function get(string $fields = "", string $start_from = "", int $start_time = 0, int $end_time = 0, int $offset = 0, int $count = 30, int $extended = 1, int $forGodSakePleaseDoNotReportAboutMyOnlineActivity = 0, int $with_alien_wall_posts = 0, string $filters = 'post', int $return_banned = 0, int $return_nsfw = 0)
     {
         $this->requireUser();
 
@@ -39,15 +40,7 @@ final class Newsfeed extends VKAPIRequestHandler
 
         [$cursorTime, $cursorId] = $this->parseCursor($start_from);
 
-        $id    = $this->getUser()->getId();
-        $subs  = DatabaseConnection::i()
-                    ->getContext()
-                    ->table("subscriptions")
-                    ->where("follower", $id);
-        $ids   = array_map(function ($rel) {
-            return $rel->target * ($rel->model === "openvk\Web\Models\Entities\User" ? 1 : -1);
-        }, iterator_to_array($subs, false));
-        $ids[] = $this->getUser()->getId();
+        $feed = new Feed($this->getUser(), false, null);
 
         $filters   = array_unique(explode(',', $filters));
         $fetchCap  = $offset + $count;
@@ -58,22 +51,11 @@ final class Newsfeed extends VKAPIRequestHandler
         $candidates = [];
 
         if (in_array('post', $filters)) {
-            $posts = DatabaseConnection::i()
-                    ->getContext()
-                    ->table("posts")
-                    ->select("id, created")
-                    ->where("wall IN (?)", $ids)
-                    ->where("deleted", 0)
-                    ->where("suggested", 0)
-                    ->where("archived", 0)
+            $posts = $feed->fetchFeed($return_banned === 0, $with_alien_wall_posts === 1, $return_nsfw === 0);
+            $posts = $posts
                     ->where("created < ? OR (created = ? AND id < ?)", $cursorTime, $cursorTime, $cursorId)
                     ->where("? <= created", $startTime)
-                    ->where("? >= created", $endTime)
-                    ->order("created DESC, id DESC");
-
-            if ($with_alien_wall_posts == 0) {
-                $posts->where("(`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`)");
-            }
+                    ->where("? >= created", $endTime);
 
             foreach ($posts->limit($fetchCap) as $post) {
                 $candidates[] = ['type' => 'post', 'id' => $post->id, 'created' => $post->created];
@@ -84,19 +66,12 @@ final class Newsfeed extends VKAPIRequestHandler
             # deeper cap: grouping below can collapse many rows into one item
             $photoFetchCap = min(500, $fetchCap * 5);
 
-            $photos = DatabaseConnection::i()
-                    ->getContext()
-                    ->table("photos")
-                    ->select("id, created, owner")
-                    ->where("owner IN (?)", $ids)
-                    ->where("deleted", 0)
-                    ->where("system", 0)
-                    ->where("private", 0)
+            $photos = $feed->fetchFeed($return_banned === 0, $with_alien_wall_posts === 1, $return_nsfw === 0, "photo");
+            $photos = $photos
                     ->where("created < ? OR (created = ? AND id < ?)", $cursorTime, $cursorTime, $cursorId)
                     ->where("? <= created", $startTime)
                     ->where("? >= created", $endTime)
-                    ->where("EXISTS (SELECT 1 FROM `album_relations` `ar` INNER JOIN `albums` `al` ON `al`.`id` = `ar`.`collection` WHERE `ar`.`media` = `photos`.`id` AND `al`.`special_type` = 0)")
-                    ->order("created DESC, id DESC");
+                    ->where("EXISTS (SELECT 1 FROM `album_relations` `ar` INNER JOIN `albums` `al` ON `al`.`id` = `ar`.`collection` WHERE `ar`.`media` = `photos`.`id` AND `al`.`special_type` = 0)");
 
             # grouped by (source, UTC day): flat items don't render in real VK
             # clients (Kate Mobile confirmed) — they require photos:{count,items}.
@@ -134,16 +109,11 @@ final class Newsfeed extends VKAPIRequestHandler
         }
 
         if (in_array('video', $filters)) {
-            $videos = DatabaseConnection::i()
-                    ->getContext()
-                    ->table("videos")
-                    ->select("id, created, owner")
-                    ->where("owner IN (?)", $ids)
-                    ->where("deleted", 0)
+            $videos = $feed->fetchFeed($return_banned === 0, $with_alien_wall_posts === 1, $return_nsfw === 0, "video");
+            $videos = $videos
                     ->where("created < ? OR (created = ? AND id < ?)", $cursorTime, $cursorTime, $cursorId)
                     ->where("? <= created", $startTime)
-                    ->where("? >= created", $endTime)
-                    ->order("created DESC, id DESC");
+                    ->where("? >= created", $endTime);
 
             foreach ($videos->limit($fetchCap) as $video) {
                 $candidates[] = ['type' => 'video', 'id' => $video->id, 'created' => $video->created, 'owner' => (int) $video->owner];
@@ -367,51 +337,30 @@ final class Newsfeed extends VKAPIRequestHandler
         return $result;
     }
 
-    public function getGlobal(string $fields = "", string $start_from = "", int $start_time = 0, int $end_time = 0, int $offset = 0, int $count = 30, int $extended = 1, int $rss = 0, int $return_banned = 0, int $with_alien_wall_posts = 0)
+    public function getGlobal(string $fields = "", string $start_from = "", int $start_time = 0, int $end_time = 0, int $offset = 0, int $count = 30, int $extended = 1, int $rss = 0, int $return_banned = 0, int $with_alien_wall_posts = 0, int $return_nsfw = 0)
     {
         $this->requireUser();
 
-        [$cursorTime, $cursorId] = $this->parseCursor($start_from);
+        $cursor = $this->parseCursor($start_from);
 
-        $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) LEFT JOIN `profiles` ON LEAST(`posts`.`wall`, 0) = 0 AND `profiles`.`id` = ABS(`posts`.`wall`)";
-        $queryBase .= " WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND (`profiles`.`profile_type` = 0 OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0 AND `posts`.`archived` = 0";
+        $cursor[] = empty($start_time) ? 0 : $start_time;
+        $cursor[] = empty($end_time) ? PHP_INT_MAX : $end_time;
+        $cursor[] = $offset;
+        $cursor[] = $count;
 
-        if ($with_alien_wall_posts == 0) {
-            $queryBase .= " AND ((`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`))";
-        }
-
-        if ($this->getUser()->getNsfwTolerance() === User::NSFW_INTOLERANT) {
-            $queryBase .= " AND `nsfw` = 0";
-        }
-
-        if ($return_banned == 0) {
-            $ignored_sources_ids = $this->getUser()->getIgnoredSources(0, OPENVK_ROOT_CONF['openvk']['preferences']['newsfeed']['ignoredSourcesLimit'] ?? 50, true);
-
-            if (sizeof($ignored_sources_ids) > 0) {
-                $imploded_ids = implode("', '", $ignored_sources_ids);
-                $queryBase .= " AND `posts`.`wall` NOT IN ('$imploded_ids')";
-            }
-        }
-
-        $start_time = empty($start_time) ? 0 : $start_time;
-        $end_time = empty($end_time) ? PHP_INT_MAX : $end_time;
-
-        $cursorFilter = " AND (`posts`.`created` < {$cursorTime} OR (`posts`.`created` = {$cursorTime} AND `posts`.`id` < {$cursorId}))";
-
-        $posts = DatabaseConnection::i()->getConnection()->query(
-            "SELECT `posts`.`id`, `posts`.`created` " . $queryBase .
-            $cursorFilter .
-            " AND " . $start_time . " <= `posts`.`created` AND `posts`.`created` <= " . $end_time .
-            " ORDER BY `created` DESC, `id` DESC LIMIT " . $count . " OFFSET " . $offset
-        );
+        $feed = new Feed($this->getUser(), true, null);
+        $posts = $feed->fetchFeed($return_banned === 0, $with_alien_wall_posts === 0, $return_nsfw === 0, "post", $cursor);
 
         $rposts = [];
         $lastPost = null;
+
         if ($rss == 1) {
+            $feed = new \Bhaktaraz\RSSGenerator\Feed();
             $channel = new \Bhaktaraz\RSSGenerator\Channel();
             $channel->title("Global Feed — " . OPENVK_ROOT_CONF['openvk']['appearance']['name'])
             ->description('OVK Global feed')
-            ->url(ovk_scheme(true) . $_SERVER["HTTP_HOST"] . "/feed/all");
+            ->url(ovk_scheme(true) . $_SERVER["HTTP_HOST"] . "/feed/all")
+            ->appendTo($feed);
 
             foreach ($posts as $item) {
                 $post   = (new PostsRepo())->get($item->id);
@@ -423,11 +372,13 @@ final class Newsfeed extends VKAPIRequestHandler
                 $output->appendTo($channel);
             }
 
-            return $channel;
+            header('Content-Type: application/rss+xml; charset=utf-8');
+
+            exit((string) $feed);
         }
 
         foreach ($posts as $post) {
-            $rposts[] = (new PostsRepo())->get($post->id)->getPrettyId();
+            $rposts[] = $post->wall . "_" . $post->virtual_id;
             $lastPost = $post;
         }
 

@@ -7,53 +7,57 @@
 
 {block content}
 
-    <div class="tabs feed_switcher">
-        <div n:attr="id => (isset($globalFeed) ? 'ki' : 'activetabs')" class="tab">
-            <a n:attr="id => (isset($globalFeed) ? 'ki' : 'act_tab_a')" href="/feed">{_my_news}</a>
-        </div>
-        <div n:attr="id => (isset($globalFeed) ? 'activetabs' : 'ki')" class="tab">
-            <a n:attr="id => (isset($globalFeed) ? 'act_tab_a' : 'ki')" href="/feed/all">{_all_news}</a>
+    <div class="mb_tabs" style="margin: -10px -10px 0px -10px;display: flex;justify-content: space-between;">
+        <div>
+            {foreach $availSections as $tab}
+                <div n:attr="id => ($tab[0] == 'global' ? $isGlobal : !$isGlobal ? 'active' : '')" class="mb_tab">
+                    <a href="/feed?section={$tab[0]}">{$tab[1]}</a>
+                </div>
+            {/foreach}
         </div>
 
         <a href='#' onclick="onFeedSettingsClick(event)" id="__feed_settings_link" class="side_link" data-pagescount='{ceil($paginatorConf->count / $paginatorConf->perPage)}'>{_feed_settings}</a>
     </div>
 
-    <div n:class="postFeedWrapper, $thisUser->hasMicroblogEnabled() ? postFeedWrapperMicroblog">
+    <div n:if="!$isGlobal" class="mb_tabs" style="margin: 0px -10px;">
+        {foreach $availLocalSections as $tab}
+            <div n:attr="id => ($section == $tab[0] ? 'active' : '')" class="mb_tab">
+                <a href="/feed?section={$tab[0]}">{$tab[1]}</a>
+            </div>
+        {/foreach}
+    </div>
+
+    <div n:if="$isGlobal || $section == 'local_posts'" n:class="postFeedWrapper, $thisUser->hasMicroblogEnabled() ? postFeedWrapperMicroblog">
         {include "../components/textArea.latte", route => "/wall" . $thisUser->getId() . "/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true}
     </div>
-    
-    <div class='scroll_container'>
-        <div class='scroll_node' n:foreach='$posts as $post' data-uniqueid="{$post->getPrettyId()}">
-            <a name="postGarter={$post->getId()}"></a>
-            {include "../components/post.latte", post => $post, onWallOf => true, commentSection => true, bigWall => true}
-        </div>
+
+    <div n:class='scroll_container, feed_container, ($feedType == "photo" && $paginatorConf->count > 0) ? album-flex'>
+        {foreach $posts as $post}
+            {if $feedType == "post"}
+                <div class="scroll_node" data-uniqueid="{$post->getPrettyId()}">
+                    <a name="postGarter={$post->getId()}"></a>
+                    {include "../components/post.latte", post => $post, onWallOf => true, commentSection => true, bigWall => true}
+                </div>
+            {/if}
+            {if $feedType == "photo"}
+                {include "../Photos/photo_node.latte", photo => $post}
+            {/if}
+            {if $feedType == "video"}
+                <div class="scroll_node" data-uniqueid="{$post->getPrettyId()}">
+                    {include "../components/video.latte", video => $post}
+                </div>
+            {/if}
+            {if $feedType == "audio"}
+                <div class="scroll_node" data-uniqueid="{$post->getPrettyId()}">
+                    {include "../Audio/player.latte", audio => $post}
+                </div>
+            {/if}
+        {/foreach}
     </div>
 
     <div class="postFeedBottom">
         <div class="postFeedPaginator">
             {include "../components/paginator.latte", conf => $paginatorConf}
         </div>
-        <div class="postFeedPageSelect">
-            {_posts_per_page}:
-            <br />
-            <select id="pageSelect">
-                <option value="1">1</option>
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="30">30</option>
-                <option value="40">40</option>
-                <option value="50">50</option>
-            </select>
-        </div>
     </div>
-
-    <script>
-        u("#pageSelect").nodes[0].value = {$paginatorConf->perPage};
-        
-        u("#pageSelect").on("change", function(e) {
-            let url = "?" + {http_build_query(array_merge($_GET, ['posts' => '__padding']))};
-            window.location.assign(url.replace("__padding", e.target.value));
-        });
-    </script>
 {/block}
