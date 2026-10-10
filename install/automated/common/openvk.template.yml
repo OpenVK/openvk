@@ -128,6 +128,7 @@ openvk:
             redis:
                 addr: "127.0.0.1"
                 port: 6379
+                socket: "/var/run/redis/redis.sock"
                 password: ""
             stream:
                 maxlen: 1000         # Maximum notifications in memory at once

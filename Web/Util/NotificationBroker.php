@@ -17,14 +17,22 @@ class NotificationBroker
     private function __construct()
     {
         $conf = OPENVK_ROOT_CONF["openvk"]["credentials"]["notificationsBroker"];
-        $redisConf = OPENVK_ROOT_CONF["openvk"]["credentials"]["redis"] ?? ['addr' => '127.0.0.1', 'port' => 6379];
+        $redisConf = OPENVK_ROOT_CONF["openvk"]["credentials"]["redis"];
 
-        $this->redis = new RedisClient([
-            'scheme' => 'tcp',
-            'host'   => $redisConf["addr"],
-            'port'   => (int) $redisConf["port"],
-            'password' => $redisConf["password"] ?? null,
-        ]);
+        if (empty($redisConf["socket"])) {
+            $this->redis = new RedisClient([
+                'scheme' => 'tcp',
+                'host'   => $redisConf["addr"],
+                'port'   => (int) $redisConf["port"],
+                'password' => $redisConf["password"] ?? null,
+            ]);
+        } else if (!empty($redisConf["socket"])) {
+            $this->redis = new RedisClient([
+                'scheme' => 'unix',
+                'path'   => $redisConf["socket"]
+            ]);
+        }
+
         $this->streamPrefix = ($conf["stream"]["prefix"] ?? "ovk_notifs") . ":";
         $this->maxlen = (int) ($conf["stream"]["maxlen"] ?? 1000);
     }
