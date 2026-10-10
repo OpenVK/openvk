@@ -72,6 +72,10 @@ chmod -R 777 /opt/openvk
 sysrc mysql_enable="yes"
 service mysql-server start
 
+# Enable unix sockets in Redis
+echo "unixsocket /var/run/redis/redis.sock" >> /usr/local/etc/redis.conf
+echo "unixsocketperm 777" >> /usr/local/etc/redis.conf
+
 # Enable redis
 sysrc redis_enable="yes"
 service redis start
@@ -100,6 +104,8 @@ sed -i'' -e 's:SECRET_KEY = "key":SECRET_KEY="'`openssl rand -base64 52 | tr -dc
 
 go126 mod download
 go126 run main.go db create
+go126 build -o openvk-im .
+
 
 cp /opt/openvk/install/automated/freebsd-15/openvk_im /usr/local/etc/rc.d/openvk_im
 chmod 755 /usr/local/etc/rc.d/openvk_im
@@ -120,4 +126,12 @@ echo "~================ OpenVK is Installed! ================~"
 echo "               Use it: http://localhost:80/             "
 echo "  Default login: admin@localhost.localdomain6           "
 echo "       Password: admin                                  "
+echo "~============= Maintaining instructions ===============~"
+echo "  Updating OpenVK:                                      " 
+echo "    just run 'git pull --autostash'                     "
+echo "    in /opt/openvk directory, then './openvkcli upgrade'"
+echo "  Updating OpenVK IM microservice:                      "
+echo "    run 'git pull', then 'go126 build -o openvk-im .',  "
+echo "    in /opt/openvk-im directory,                        "
+echo "    restart service: 'service openvk-im restart'        "
 echo "~======================================================~"

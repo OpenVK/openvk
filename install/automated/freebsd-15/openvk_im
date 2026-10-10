@@ -2,17 +2,22 @@
 
 # PROVIDE: openvk_im
 # REQUIRE: DAEMON NETWORKING
+# KEYWORD: shutdown
 
 . /etc/rc.subr
 
 name="openvk_im"
 rcvar="openvk_im_enable"
 
-service_user="root"
-service_dir="/opt/openvk-im"
+load_rc_config $name
+
+[ -z "$openvk_im_enable"] && openvk_im_enable="NO"
+: ${openvk_im_chdir:="/opt/openvk-im"}
+: ${openvk_im_bin:="/opt/openvk-im/openvk-im"}
+: ${openvk_im_log:="/var/log/openvk_im.log"}
 
 pidfile="/var/run/${name}.pid"
-command="/usr/local/bin/go126 run main.go"
+command="/usr/sbin/daemon"
+command_args="-P ${pidfile} -r -o ${openvk_im_log} ${openvk_im_bin}"
 
-load_rc_config $name
 run_rc_command "$1"
