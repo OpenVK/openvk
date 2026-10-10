@@ -51,9 +51,9 @@ class SentGift
             "gift"      => [
                 "id"                  => $this->gift->getId(),
                 "stickers_product_id" => $this->gift->getStickersProductId(),
-                "thumb_256"           => $server_url . $this->gift->getImage(2),
-                "thumb_96"            => $server_url . $this->gift->getImage(2),
-                "thumb_48"            => $server_url . $this->gift->getImage(2),
+                "thumb_256"           => $server_url . "/images/gift/" . $this->gift->getId() . "/256.png",
+                "thumb_96"            => $server_url . "/images/gift/" . $this->gift->getId() . "/96.png",
+                "thumb_48"            => $server_url . "/images/gift/" . $this->gift->getId() . "/48.png",
             ],
         ];
     }

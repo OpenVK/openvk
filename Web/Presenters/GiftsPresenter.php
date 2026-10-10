@@ -6,6 +6,9 @@ namespace openvk\Web\Presenters;
 
 use openvk\Web\Models\Repositories\{Gifts, Users};
 use openvk\Web\Models\Entities\Notifications\GiftNotification;
+use openvk\Web\Models\Entities\Gift;
+use openvk\Web\Models\Entities\Messages\StickerPack;
+use Chandler\Database\DatabaseConnection as DB;
 
 final class GiftsPresenter extends OpenVKPresenter
 {
@@ -164,7 +167,24 @@ final class GiftsPresenter extends OpenVKPresenter
 
     public function renderGiftImage(int $id, int $timestamp): void
     {
+        $id = (int) $id;
         $gift = $this->gifts->get($id);
+        if (!$gift) {
+            $giftRow = DB::i()->getContext()->table("gifts")
+                ->where("stickers_product_id", $id)
+                ->where("deleted", 0)
+                ->fetch();
+            if ($giftRow) {
+                $gift = new \openvk\Web\Models\Entities\Gift($giftRow);
+            } else {
+                $packRow = DB::i()->getContext()->table("stickerpacks")->get($id);
+                if ($packRow) {
+                    $pack = new \openvk\Web\Models\Entities\Messages\StickerPack($packRow);
+                    $gift = $pack->getOrCreateGift();
+                }
+            }
+        }
+
         if (!$gift) {
             $this->notFound();
         }
@@ -174,6 +194,73 @@ final class GiftsPresenter extends OpenVKPresenter
         header("Content-Length: " . strlen($image));
         header("Content-Type: image/png");
         exit($image);
+    }
+
+    public function renderServeLegacyImage(int $id, ?string $giftFile = null): void
+    {
+        $id = (int) $id;
+        $gift = $this->gifts->get($id);
+
+        // If not found by gift id, try finding gift by stickers_product_id
+        if (!$gift) {
+            $giftRow = DB::i()->getContext()->table("gifts")
+                ->where("stickers_product_id", $id)
+                ->where("deleted", 0)
+                ->fetch();
+            if ($giftRow) {
+                $gift = new \openvk\Web\Models\Entities\Gift($giftRow);
+            } else {
+                $packRow = DB::i()->getContext()->table("stickerpacks")->get($id);
+                if ($packRow) {
+                    $pack = new \openvk\Web\Models\Entities\Messages\StickerPack($packRow);
+                    $gift = $pack->getOrCreateGift();
+                }
+            }
+        }
+
+        if (!$gift) {
+            $this->notFound();
+        }
+
+        $imageBlob = $gift->getImage();
+        if (empty($imageBlob)) {
+            $this->notFound();
+        }
+
+        $size = 256;
+        if ($giftFile !== null) {
+            $digits = preg_replace('/[^\d]/', '', $giftFile);
+            if (!empty($digits)) {
+                $size = (int) $digits;
+            }
+        }
+
+        if ($size > 256) {
+            $size = 512;
+        } elseif ($size > 96) {
+            $size = 256;
+        } elseif ($size > 48) {
+            $size = 96;
+        } else {
+            $size = 48;
+        }
+
+        if ($size !== 512 && class_exists(\Imagick::class)) {
+            try {
+                $im = new \Imagick();
+                $im->readImageBlob($imageBlob);
+                $im->resizeImage($size, $size, \Imagick::FILTER_LANCZOS, 1, true);
+                $im->setImageFormat("png");
+                $imageBlob = $im->getImageBlob();
+                $im->destroy();
+            } catch (\Throwable $e) {
+            }
+        }
+
+        header("Cache-Control: public, max-age=86400, no-transform");
+        header("Content-Length: " . strlen($imageBlob));
+        header("Content-Type: image/png");
+        exit($imageBlob);
     }
 
     public function onStartup(): void

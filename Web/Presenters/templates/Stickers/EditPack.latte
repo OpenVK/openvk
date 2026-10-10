@@ -265,12 +265,54 @@
                                 <input type="radio" name="main_sticker_id" value="{$stk->getId()}" {if $pack->getMainSticker() && $pack->getMainSticker()->getId() === $stk->getId()}checked{/if} />
                                 {_stickers_cover}
                             </label>
+                            <label class="existing_sticker_label_gift">
+                                <input type="checkbox" name="gift_stickers[]" value="{$stk->getId()}" class="sticker-gift-checkbox" {if in_array($stk->getId(), $giftStickerIds ?? [], true)}checked{/if} />
+                                {_stickers_gift_bg_sticker}
+                            </label>
                             <label class="existing_sticker_label_delete">
                                 <input type="checkbox" name="delete_stickers[]" value="{$stk->getId()}" onchange="toggleStickerDelete(this, 'stk_card_{$stk->getId()}')" />
                                 {_stickers_delete_sticker}
                             </label>
                         </div>
                     {/foreach}
+                </div>
+            {/if}
+
+            {if !$isNew && $pack && sizeof($existingStickers) > 0}
+                <hr class="stickers_divider" />
+                <div class="stickers_section_title">
+                    {_stickers_gift_box_title}
+                </div>
+                <div class="stickers_section_hint">
+                    {_stickers_gift_box_hint}
+                </div>
+
+                <div class="stickers_gift_preview_block">
+                    <div class="stickers_gift_preview_thumb_wrap">
+                        {if $gift}
+                            <img src="{$gift->getImage(2)}" alt="{_stickers_gift_box_title}" class="stickers_gift_preview_img" />
+                        {elseif $pack->getMainSticker()}
+                            <img src="{$pack->getMainSticker()->getImageUrl(256)}" alt="{_stickers_gift_box_title}" class="stickers_gift_preview_img" />
+                        {else}
+                            <div class="stickers_modal_cover_placeholder" style="width: 140px; height: 140px;"></div>
+                        {/if}
+                    </div>
+                    <div class="stickers_gift_preview_info">
+                        <div class="stickers_gift_preview_slots_title">
+                            <b>{_stickers_gift_composition}:</b>
+                        </div>
+                        <div class="stickers_gift_preview_slot_item">
+                            <span class="nobold">{_stickers_gift_front_slot}:</span>
+                            <b id="gift_front_sticker_name">{$pack->getMainSticker() ? ($pack->getMainSticker()->getEmoji() ? $pack->getMainSticker()->getEmoji() . ' ' : '') . '#' . $pack->getMainSticker()->getId() : tr('stickers_cover')}</b>
+                        </div>
+                        <div class="stickers_gift_preview_slot_item">
+                            <span class="nobold">{_stickers_gift_back_slots}:</span>
+                            <span id="gift_selected_count">{sizeof($giftStickerIds ?? [])} / 3</span>
+                        </div>
+                        <div class="stickers_gift_preview_note">
+                            {_stickers_gift_save_note}
+                        </div>
+                    </div>
                 </div>
             {/if}
 
@@ -312,6 +354,49 @@
             var draftsContainer = document.getElementById('drafts_container');
             var draftCounter = document.getElementById('draft_counter');
             var isNewPack = {if $isNew}true{else}false{/if};
+
+            function updateGiftCounter() {
+                var cbs = document.querySelectorAll('.sticker-gift-checkbox:checked');
+                var countEl = document.getElementById('gift_selected_count');
+                if (countEl) {
+                    countEl.textContent = cbs.length + ' / 3';
+                }
+            }
+
+            document.querySelectorAll('.sticker-gift-checkbox').forEach(function(cb) {
+                cb.addEventListener('change', function() {
+                    var checked = document.querySelectorAll('.sticker-gift-checkbox:checked');
+                    if (checked.length > 3) {
+                        this.checked = false;
+                        if (typeof MessageBox === 'function') {
+                            MessageBox(tr('error'), tr('stickers_gift_max_3_err'), [tr('ok')], [Function.noop]);
+                        } else {
+                            alert(tr('stickers_gift_max_3_err'));
+                        }
+                    }
+                    updateGiftCounter();
+                });
+            });
+
+            document.querySelectorAll('input[name="main_sticker_id"]').forEach(function(radio) {
+                radio.addEventListener('change', function() {
+                    if (this.checked) {
+                        var card = this.closest('.existing_sticker_card');
+                        if (card) {
+                            var giftCb = card.querySelector('.sticker-gift-checkbox');
+                            if (giftCb && giftCb.checked) {
+                                giftCb.checked = false;
+                                updateGiftCounter();
+                            }
+                            var emojiText = card.querySelector('.sticker-emoji-input') ? card.querySelector('.sticker-emoji-input').value.trim() : '';
+                            var frontNameEl = document.getElementById('gift_front_sticker_name');
+                            if (frontNameEl) {
+                                frontNameEl.textContent = (emojiText ? emojiText + ' ' : '') + '#' + this.value;
+                            }
+                        }
+                    }
+                });
+            });
 
             window.toggleStickerDelete = function(cb, cardId) {
                 var card = document.getElementById(cardId);

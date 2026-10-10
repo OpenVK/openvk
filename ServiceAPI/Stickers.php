@@ -151,6 +151,11 @@ class Stickers implements Handler
 
         $coverIsLottie = $cover && ($cover->getFormat($pack->getId()) === "lottie");
 
+        $gift = null;
+        try {
+            $gift = $pack->getOrCreateGift();
+        } catch (\Throwable $e) {}
+
         $resolve([
             "id"                => $pack->getId(),
             "name"              => $pack->getName(),
@@ -160,6 +165,7 @@ class Stickers implements Handler
             "author"            => $pack->getAuthor() ?? "",
             "author_url"        => $pack->getAuthorUrl() ?? "",
             "cover_url"         => $cover ? $cover->getImageUrl(512, $pack->getId()) : null,
+            "gift_img_url"      => $gift ? ("/images/gift/" . $gift->getId() . "/256.png") : ("/images/gift/" . $pack->getId() . "/256.png"),
             "cover_is_animated" => $coverIsLottie,
             "cover_anim_url"    => $coverIsLottie ? $cover->getAnimationUrl($pack->getId()) : null,
             "is_animated"       => ($pack->getFormat() === "lottie"),
@@ -273,7 +279,12 @@ class Stickers implements Handler
         }
 
         $price = $pack->getPrice();
-        if ($price > 0 && $this->user->getCoins() < $price) {
+        if ($price <= 0) {
+            $reject(15, tr("stickers_gift_free_prohibited"));
+            return;
+        }
+
+        if ($this->user->getCoins() < $price) {
             $reject(15, tr("stickers_not_enough_coins"));
             return;
         }
