@@ -27,6 +27,12 @@ function hidePanel(panel, count = 0) {
 
 }
 
+function devToggleGroup(panel) {
+    var $panel = $(panel);
+    $panel.toggleClass("content_title_expanded content_title_unexpanded");
+    $panel.next(".dev_sidebar_group_items").slideToggle(200);
+}
+
 function parseAjaxResponse(responseString) {
     try {
         const response = JSON.parse(responseString);

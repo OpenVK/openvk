@@ -24,15 +24,15 @@
         {foreach $methodsGroups as $group}
             {var $isGroupOpen = str_starts_with($currentSection, 'methods/' . $group['id'])}
             
-            <div class="fictional_profile_section">
+            <div class="dev_sidebar_group">
                 <div 
-                    class="{if $isGroupOpen}content_title_expanded{else}content_title_unexpanded{/if}" 
-                    onclick="hidePanel(this);"
+                    class="dev_sidebar_group_title content_title_{if $isGroupOpen}expanded{else}unexpanded{/if}" 
+                    onclick="devToggleGroup(this);"
                 >
                     {tr($group['name'])}
                 </div>
                 
-                <div id="dev_group_{$group['id']}" {if !$isGroupOpen}style="display: none;"{/if}>
+                <div id="dev_group_{$group['id']}" class="dev_sidebar_group_items" {if !$isGroupOpen}style="display: none;"{/if}>
                     {foreach $group['links'] as $item}
                         {var $isActive = ltrim(preg_replace('#^/?(dev/)?#', '', $item['href']), '/') === ltrim(preg_replace('#^/?(dev/)?#', '', $currentSection), '/')}
                         
@@ -88,15 +88,15 @@
         {foreach $openvkGroups as $group}
             {var $isGroupOpen = str_starts_with($currentSection, 'openvk/' . $group['id'])}
             
-            <div class="fictional_profile_section">
+            <div class="dev_sidebar_group">
                 <div 
-                    class="{if $isGroupOpen}content_title_expanded{else}content_title_unexpanded{/if}" 
-                    onclick="hidePanel(this);"
+                    class="dev_sidebar_group_title content_title_{if $isGroupOpen}expanded{else}unexpanded{/if}" 
+                    onclick="devToggleGroup(this);"
                 >
                     {tr($group['name'])}
                 </div>
                 
-                <div id="dev_group_{$group['id']}" {if !$isGroupOpen}style="display: none;"{/if}>
+                <div id="dev_group_{$group['id']}" class="dev_sidebar_group_items" {if !$isGroupOpen}style="display: none;"{/if}>
                     {foreach $group['links'] as $item}
                         {var $isActive = ltrim(preg_replace('#^/?(dev/)?#', '', $item['href']), '/') === ltrim(preg_replace('#^/?(dev/)?#', '', $currentSection), '/')}
                         
