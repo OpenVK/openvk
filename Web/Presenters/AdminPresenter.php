@@ -989,7 +989,8 @@ final class AdminPresenter extends OpenVKPresenter
         if ($pack->getMainSticker() || $pack->getStickersCount() > 0) {
             try {
                 $pack->regenerateGiftImage();
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+            }
         }
 
         $this->flash("succ", tr("admin_stickerpack_saved"), tr("admin_stickerpack_saved_desc"));

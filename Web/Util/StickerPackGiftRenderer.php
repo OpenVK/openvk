@@ -138,7 +138,9 @@ class StickerPackGiftRenderer
                 if (in_array($cid, $allIds, true) && !in_array($cid, $back, true)) {
                     $back[] = $cid;
                 }
-                if (count($back) >= 3) break;
+                if (count($back) >= 3) {
+                    break;
+                }
             }
         }
 
@@ -148,7 +150,9 @@ class StickerPackGiftRenderer
                 if ($id !== $cover && !in_array($id, $back, true)) {
                     $back[] = $id;
                 }
-                if (count($back) >= 3) break;
+                if (count($back) >= 3) {
+                    break;
+                }
             }
         }
 
@@ -158,7 +162,9 @@ class StickerPackGiftRenderer
                 if (!in_array($id, $back, true)) {
                     $back[] = $id;
                 }
-                if (count($back) >= 3) break;
+                if (count($back) >= 3) {
+                    break;
+                }
             }
         }
 

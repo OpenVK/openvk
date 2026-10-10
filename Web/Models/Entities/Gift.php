@@ -179,4 +179,3 @@ class Gift extends RowModel
         parent::delete($softly);
     }
 }
-

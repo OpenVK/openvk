@@ -154,7 +154,8 @@ class Stickers implements Handler
         $gift = null;
         try {
             $gift = $pack->getOrCreateGift();
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+        }
 
         $resolve([
             "id"                => $pack->getId(),

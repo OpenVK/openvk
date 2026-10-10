@@ -68,7 +68,7 @@ final class Store extends VKAPIRequestHandler
 
         $code = "<?php\n\ndeclare(strict_types=1);\n\n// Auto-generated from emoji-keywords.tsv - do not edit directly\nreturn [\n" . implode(",\n", $lines) . ",\n];\n";
         if (!is_dir($cacheDir)) {
-            @mkdir($cacheDir, 0777, true);
+            @mkdir($cacheDir, 0o777, true);
         }
         @file_put_contents($cachePath, $code, LOCK_EX);
 
