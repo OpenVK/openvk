@@ -221,252 +221,254 @@
 
             <div class="sidebar">
                 <div class="navigation">
-                    {ifset $thisUser}
-                        {if !$thisUser->isBanned() XOR !$thisUser->isActivated() XOR $thisUser->isDeactivated()}
-                            <a href="/edit" class="link edit-button">{_edit_button}</a>
-                            <a href="{$thisUser->getURL()}" id="myPagePreview" class="link my_page mobiles_only">
-                                <img src="{$thisUser->getAvatarURL()}">
-                                <span>{$thisUser->getCanonicalName()}</span>
-                            </a>
-                            <a href="{$thisUser->getURL()}" class="link my_page" title="{_my_page} [Alt+Shift+.]" accesskey=".">{_my_page}</a>
-                            <a href="/friends{$thisUser->getId()}" class="link my_friends">
-                                <div class="pc_v">{_my_friends}</div>
-                                <div class="mobile_v">{_mobile_friends}</div>
-                                <object type="internal/link" n:if="$thisUser->getRequestsCount() > 0">
-                                    <a href="/friends{$thisUser->getId()}?act=incoming" class="counter shown">
-                                       <b>{$thisUser->getRequestsCount()}</b>
-                                    </a>
-                                </object>
-                            </a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('photos')" href="/albums{$thisUser->getId()}" class="link my_photos">
-                                <div class="pc_v">{_my_photos}</div>
-                                <div class="mobile_v">{_mobile_photos}</div>
-                            </a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('videos')" href="/videos{$thisUser->getId()}" class="link my_videos">
-                                <div class="pc_v">{_my_videos}</div>
-                                <div class="mobile_v">{_mobile_videos}</div>
-                            </a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('audios')" href="/audios{$thisUser->getId()}" class="link my_audios">
-                                <div class="pc_v">{_my_audios}</div>
-                                <div class="mobile_v">{_mobile_audios}</div>
-                            </a>
-                            {if (\OPENVK_ROOT_CONF["openvk"]["credentials"]["im"]["enable"] ?? false)}
-                            <a n:if="$thisUser->getLeftMenuItemStatus('messages')" href="/im" class="link my_messages">
-                                <div class="pc_v">{_my_messages}</div>
-                                <div class="mobile_v">{_mobile_messages}</div>
-                                <object type="internal/link" class="imc counter zero_counter">
-                                    <b>0</b>
-                                </object>
-                            </a>
-                            {/if}
-                            <a n:if="$thisUser->getLeftMenuItemStatus('notes')" href="/notes{$thisUser->getId()}" class="link my_notes">
-                                <div class="pc_v">{_my_notes}</div>
-                                <div class="mobile_v">{_mobile_notes}</div>
-                            </a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('groups')" href="/groups{$thisUser->getId()}" class="link my_groups">
-                                <div class="pc_v">{_my_groups}</div>
-                                <div class="mobile_v">{_mobile_groups}</div>
-                            </a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('events')" href="/events{$thisUser->getId()}" class="link my_groups">
-                                <div class="pc_v">{_my_events}</div>
-                                <div class="mobile_v">{_meetings}</div>
-                            </a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('news')" href="/feed" class="link my_feed" title="{_my_feed} [Alt+Shift+,]" accesskey=",">
-                                <div class="pc_v">{_my_feed}</div>
-                                <div class="mobile_v">{_news}</div>
-                            </a>
-                            <a href="/notifications" class="link my_feedback" title="{_my_feedback} [Alt+Shift+N]" accesskey="n">
-                                <div class="pc_v">{_my_feedback}</div>
-                                <div class="mobile_v">{_feedback}</div>
-                                <object type="internal/link" class="counter shown" n:if="$notificationsCount > 0">
-                                    <b>{$notificationsCount}</b>
-                                </object>
-                            </a>
-                            <a href="/settings" class="link my_settings">
-                                <div class="pc_v">{_my_settings}</div>
-                                <div class="mobile_v">{_mobile_settings}</div>
-                            </a>
-
-                            {if $thisUser->getLeftMenuItemStatus('docs') || $thisUser->getLeftMenuItemStatus('apps')}
-                                <div class="menu_divider"></div>
-                                <a n:if="$thisUser->getLeftMenuItemStatus('apps')" href="/apps?act=installed" class="link my_apps">{_apps}</a>
-                                <a n:if="$thisUser->getLeftMenuItemStatus('stickers')" href="/stickers" class="link my_stickers">{_stickers_store}</a>
-                                <a n:if="$thisUser->getLeftMenuItemStatus('docs')" href="/docs" class="link my_documents">{_my_documents}</a>
-                                {*<a n:if="$thisUser->getLeftMenuItemStatus('fave')" href="/fave" class="link my_bookmarks">{_bookmarks_tab}</a>*}
-                            {/if}
-
-                            {var $canAccessAdminPanel = $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
-                            {var $canAccessHelpdesk   = $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
-                            {var $canAccessReports    = $thisUser->getChandlerUser()->can("admin")->model('openvk\Web\Models\Entities\Report')->whichBelongsTo(0)}
-                            {var $canAccessNsp        = $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\Ban')->whichBelongsTo(0)}
-
-                            {var $menuLinksAvaiable   = sizeof(\OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0 && $thisUser->getLeftMenuItemStatus('links')}
-                            <div n:if="$canAccessAdminPanel || $canAccessHelpdesk || $canAccessReports || $canAccessNsp || $menuLinksAvaiable" class="menu_divider"></div>
-                            <a href="/admin" class="link my_admin" n:if="$canAccessAdminPanel" title="{_admin} [Alt+Shift+A]" accesskey="a" rel="nofollow">{_admin}</a>
-                            <a href="/support/tickets" class="link my_support" n:if="$canAccessHelpdesk">{_helpdesk}
-                                {if $helpdeskTicketNotAnsweredCount > 0}
-                                    <div class="navigation_counter">
-                                    (<b>{$helpdeskTicketNotAnsweredCount}</b>)
-                                    </div>
-                                {/if}
-                            </a>
-                            <a n:if="$canAccessReports" href="/scumfeed" class="link my_reports" rel="nofollow">{tr("reports")}
-                                {if $reportNotAnsweredCount > 0}
-                                    <div class="navigation_counter">
-                                    (<b>{$reportNotAnsweredCount}</b>)
-                                    </div>
-                                {/if}
-                            </a>
-                            <a n:if="$canAccessNsp" href="/noSpam" class="link my_spam" rel="nofollow">
-                                noSpam
-                            </a>
-                        <a
-                          n:if="$thisUser->getLeftMenuItemStatus('links')"
-                          n:foreach="\OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links'] as $menuItem"
-                          href="{$menuItem['url']}"
-                          target="_blank"
-                          class="link custom_instance_link">
-                            {strpos($menuItem["name"], "@") === 0 ? tr(substr($menuItem["name"], 1)) : $menuItem["name"]}
-                        </a>
-                            <div id="_groupListPinnedGroups">
-                                <div n:if="$thisUser->getPinnedClubCount() > 0" class="menu_divider"></div>
-
-                                <a n:foreach="$thisUser->getPinnedClubs() as $pinnedclub" href="{$pinnedclub->getURL()}" class="link group_link pinned_club">
-                                    {ovk_proc_strtr($pinnedclub->getName(), 14)}
-
-                                    <object type="internal/link" class="counter shown" style="white-space: normal;" id="sug{$pinnedclub->getId()}" n:if="$pinnedclub->getSuggestedPostsCount($thisUser) > 0 && $pinnedclub->getWallType() == 2">
-                                        <a href="/club{$pinnedclub->getId()}/suggested" class="counter shown">
-                                            <b>{$pinnedclub->getSuggestedPostsCount($thisUser)}</b>
+                    {block sidebar}
+                        {ifset $thisUser}
+                            {if !$thisUser->isBanned() XOR !$thisUser->isActivated() XOR $thisUser->isDeactivated()}
+                                <a href="/edit" class="link edit-button">{_edit_button}</a>
+                                <a href="{$thisUser->getURL()}" id="myPagePreview" class="link my_page mobiles_only">
+                                    <img src="{$thisUser->getAvatarURL()}">
+                                    <span>{$thisUser->getCanonicalName()}</span>
+                                </a>
+                                <a href="{$thisUser->getURL()}" class="link my_page" title="{_my_page} [Alt+Shift+.]" accesskey=".">{_my_page}</a>
+                                <a href="/friends{$thisUser->getId()}" class="link my_friends">
+                                    <div class="pc_v">{_my_friends}</div>
+                                    <div class="mobile_v">{_mobile_friends}</div>
+                                    <object type="internal/link" n:if="$thisUser->getRequestsCount() > 0">
+                                        <a href="/friends{$thisUser->getId()}?act=incoming" class="counter shown">
+                                           <b>{$thisUser->getRequestsCount()}</b>
                                         </a>
                                     </object>
                                 </a>
-                            </div>
-
-                            <a href="/search" class="link less_accent_link search_link mobiles_only">{_header_search}</a>
-                            <a href="javascript:toDesktopVersion()" class="link less_accent_link fullsize mobiles_only">{_mobile_desktop_version}</a>
-                            <a href="/invite" class="link less_accent_link invite_link mobiles_only">{_invite}</a>
-                            <a href="/support" class="link less_accent_link support_link mobiles_only">{_menu_support}</a>
-                            <a href="/settings?act=finance" class="link less_accent_link finances_link mobiles_only">{_points}</a>
-                            <a href="/logout?hash={urlencode($csrfToken)}" id="logout_link" class="link less_accent_link logout mobiles_only">{_menu_logout}</a>
-
-                            <div class="navigation_infos" id="news" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['news']['show']">
-                                <b>{_news} </b>
-                                <hr size="1">
-                                <text>{$newsText}...</text>
-                                <br><br>
-                                <a href="{$newsLink}">{_news_more}</a>
-                            </div>
-
-                            <div class="navigation_infos" id="bday" n:if="$showBday || $showUEvents">
-                                <b>{_bday_reminder}</b>
-                                <hr size="1">
-                                <text n:if="$showBday">
-                                    {var $bdayListHtml = ''}
-                                    {foreach $bdayUsers as $u}
-                                        {php $bdayListHtml .= '<a href="/id' . $u->getId() . '">' . $u->getMorphedName(startWithLastName: false) . '</a>'}
-                                        {if $bdayCount == 2}
-                                            {if $iterator->isFirst()}{php $bdayListHtml .= tr("bday_and")}{/if}
-                                        {elseif $bdayCount != 1}
-                                            {if $iterator->isLast(2) and !$iterator->isLast()}
-                                                {php $bdayListHtml .= tr("bday_and")}
-                                            {elseif !$iterator->isLast()}
-                                                {php $bdayListHtml .= ', '}
-                                            {/if}
-                                        {/if}
-                                    {/foreach}
-                                    {tr("bday_reminder_text", $isBdayToday ? tr("bday_today") : tr("bday_tomorrow"), $bdayListHtml)|noescape}
-                                </text>
-                                <text n:if="$showUEvents">
-                                    {var $eventsHtml = ''}
-                                    {foreach $uEvents as $e}
-                                        {php $eventsHtml .= '<a href="/event' . $e->getId() . '">' . escapeHTML($e->getName()) . '</a>'}
-                                        {if $uEventsCount == 2}
-                                            {if $iterator->isFirst()}{php $eventsHtml .= tr("bday_and")}{/if}
-                                        {elseif $uEventsCount != 1}
-                                            {if $iterator->isLast(2) and !$iterator->isLast()}
-                                                {php $eventsHtml .= tr("bday_and")}
-                                            {elseif !$iterator->isLast()}
-                                                {php $eventsHtml .= ', '}
-                                            {/if}
-                                        {/if}
-                                    {/foreach}
-
-                                    {if $uEventsCount == 1}
-                                        {tr("event_reminder_text", $eventsHtml)|noescape}
-                                    {else}
-                                        {tr("event_reminder_text_multiple", $eventsHtml)|noescape}
-                                    {/if}
-                                </text>
-                            </div>
-
-                            <div class="navigation_infos" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $thisUser->getCoins() != 0" id="votesBalance">
-                                {tr("you_still_have_x_points", $thisUser->getCoins())|noescape}
-                                <br /><br />
-
-                                <a href="/settings?act=finance">{_top_up_your_account} &#xbb;</a>
-                            </div>
-
-                            <a class="psa-poster-url" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable'] && $thisUser->getLeftMenuItemStatus('poster')" href="{php echo \OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['link']}" >
-                                <img src="{php echo \OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['src']}" alt="{php echo \OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['caption']}" class="psa-poster" style="max-width: 100%; margin-top: 10px;" />
-                            </a>
-
-                            <div class="floating_sidebar">
-                                <a id="minilink-friends" class="minilink" href="/friends{$thisUser->getId()}">
-                                    <object type="internal/link" class="counter shown" n:if="$thisUser->getRequestsCount() > 0">
-                                        <div class="counter">
-                                            +{$thisUser->getRequestsCount()}
-                                        </div>
-                                    </object>
-                                    <img src="/assets/packages/static/openvk/img/friends.svg">
+                                <a n:if="$thisUser->getLeftMenuItemStatus('photos')" href="/albums{$thisUser->getId()}" class="link my_photos">
+                                    <div class="pc_v">{_my_photos}</div>
+                                    <div class="mobile_v">{_mobile_photos}</div>
                                 </a>
-                                <a id="minilink-albums" class="minilink" href="/albums{$thisUser->getId()}">
-                                    <img src="/assets/packages/static/openvk/img/photos.svg">
+                                <a n:if="$thisUser->getLeftMenuItemStatus('videos')" href="/videos{$thisUser->getId()}" class="link my_videos">
+                                    <div class="pc_v">{_my_videos}</div>
+                                    <div class="mobile_v">{_mobile_videos}</div>
+                                </a>
+                                <a n:if="$thisUser->getLeftMenuItemStatus('audios')" href="/audios{$thisUser->getId()}" class="link my_audios">
+                                    <div class="pc_v">{_my_audios}</div>
+                                    <div class="mobile_v">{_mobile_audios}</div>
                                 </a>
                                 {if (\OPENVK_ROOT_CONF["openvk"]["credentials"]["im"]["enable"] ?? false)}
-                                <a id="minilink-messenger" class="minilink" href="/im">
+                                <a n:if="$thisUser->getLeftMenuItemStatus('messages')" href="/im" class="link my_messages">
+                                    <div class="pc_v">{_my_messages}</div>
+                                    <div class="mobile_v">{_mobile_messages}</div>
                                     <object type="internal/link" class="imc counter zero_counter">
-                                        <div class="counter">
-                                            +<b>0</b>
-                                        </div>
+                                        <b>0</b>
                                     </object>
-                                    <img src="/assets/packages/static/openvk/img/messages.svg">
                                 </a>
                                 {/if}
-                                <a id="minilink-groups" class="minilink" href="/groups{$thisUser->getId()}">
-                                    <img src="/assets/packages/static/openvk/img/groups.svg">
+                                <a n:if="$thisUser->getLeftMenuItemStatus('notes')" href="/notes{$thisUser->getId()}" class="link my_notes">
+                                    <div class="pc_v">{_my_notes}</div>
+                                    <div class="mobile_v">{_mobile_notes}</div>
                                 </a>
-                                <a id="minilink-notifications" class="minilink" href="/notifications">
+                                <a n:if="$thisUser->getLeftMenuItemStatus('groups')" href="/groups{$thisUser->getId()}" class="link my_groups">
+                                    <div class="pc_v">{_my_groups}</div>
+                                    <div class="mobile_v">{_mobile_groups}</div>
+                                </a>
+                                <a n:if="$thisUser->getLeftMenuItemStatus('events')" href="/events{$thisUser->getId()}" class="link my_groups">
+                                    <div class="pc_v">{_my_events}</div>
+                                    <div class="mobile_v">{_meetings}</div>
+                                </a>
+                                <a n:if="$thisUser->getLeftMenuItemStatus('news')" href="/feed" class="link my_feed" title="{_my_feed} [Alt+Shift+,]" accesskey=",">
+                                    <div class="pc_v">{_my_feed}</div>
+                                    <div class="mobile_v">{_news}</div>
+                                </a>
+                                <a href="/notifications" class="link my_feedback" title="{_my_feedback} [Alt+Shift+N]" accesskey="n">
+                                    <div class="pc_v">{_my_feedback}</div>
+                                    <div class="mobile_v">{_feedback}</div>
                                     <object type="internal/link" class="counter shown" n:if="$notificationsCount > 0">
-                                        <div class="counter">
-                                            +{$notificationsCount}
-                                        </div>
+                                        <b>{$notificationsCount}</b>
                                     </object>
-                                    <img src="/assets/packages/static/openvk/img/feedback.svg">
                                 </a>
-                            </div>
-                        {elseif !$thisUser->isActivated()}
-                            <a href="/logout?hash={urlencode($csrfToken)}" class="link">{_menu_logout}</a>
-                        {else}
-                            <a href="/support" class="link">{_menu_support}
-                                {if $ticketAnsweredCount > 0}
-                                    (<b>{$ticketAnsweredCount}</b>)
+                                <a href="/settings" class="link my_settings">
+                                    <div class="pc_v">{_my_settings}</div>
+                                    <div class="mobile_v">{_mobile_settings}</div>
+                                </a>
+
+                                {if $thisUser->getLeftMenuItemStatus('docs') || $thisUser->getLeftMenuItemStatus('apps')}
+                                    <div class="menu_divider"></div>
+                                    <a n:if="$thisUser->getLeftMenuItemStatus('apps')" href="/apps?act=installed" class="link my_apps">{_apps}</a>
+                                    <a n:if="$thisUser->getLeftMenuItemStatus('stickers')" href="/stickers" class="link my_stickers">{_stickers_store}</a>
+                                    <a n:if="$thisUser->getLeftMenuItemStatus('docs')" href="/docs" class="link my_documents">{_my_documents}</a>
+                                    {*<a n:if="$thisUser->getLeftMenuItemStatus('fave')" href="/fave" class="link my_bookmarks">{_bookmarks_tab}</a>*}
                                 {/if}
-                            </a>
-                            <a href="/logout?hash={urlencode($csrfToken)}" class="link">{_menu_logout}</a>
-                        {/if}
-                    {else}
-                        <form id="fastLogin" action="/login" method="POST" enctype="multipart/form-data">
-                            <label for="login"><span>{_email}:</span></label>
-                            <input id="login" type="text" name="login" required />
-                            <label for="password"><span>{_password}:</span></label>
-                            <input id="password" type="password" name="password" required />
-                            <input type="hidden" name="jReturnTo" value="{$_SERVER['REQUEST_URI']}" />
-                            <input type="hidden" name="hash" value="{$csrfToken}" />
-                            <input type="submit" value="{_log_in}" class="button" style="display: inline-block; font-family: Tahoma; width: 100%;" />
-                            <a href="/reg"><input type="button" value="{_registration}" class="button" style="font-family: Tahoma; width: 100%;" /></a><br><br>
-                            {if !\OPENVK_ROOT_CONF['openvk']['preferences']['security']['disablePasswordRestoring']}<a href="/restore">{_forgot_password}</a>{/if}
-                        </form>
-                    {/ifset}
+
+                                {var $canAccessAdminPanel = $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+                                {var $canAccessHelpdesk   = $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
+                                {var $canAccessReports    = $thisUser->getChandlerUser()->can("admin")->model('openvk\Web\Models\Entities\Report')->whichBelongsTo(0)}
+                                {var $canAccessNsp        = $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\Ban')->whichBelongsTo(0)}
+
+                                {var $menuLinksAvaiable   = sizeof(\OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0 && $thisUser->getLeftMenuItemStatus('links')}
+                                <div n:if="$canAccessAdminPanel || $canAccessHelpdesk || $canAccessReports || $canAccessNsp || $menuLinksAvaiable" class="menu_divider"></div>
+                                <a href="/admin" class="link my_admin" n:if="$canAccessAdminPanel" title="{_admin} [Alt+Shift+A]" accesskey="a" rel="nofollow">{_admin}</a>
+                                <a href="/support/tickets" class="link my_support" n:if="$canAccessHelpdesk">{_helpdesk}
+                                    {if $helpdeskTicketNotAnsweredCount > 0}
+                                        <div class="navigation_counter">
+                                        (<b>{$helpdeskTicketNotAnsweredCount}</b>)
+                                        </div>
+                                    {/if}
+                                </a>
+                                <a n:if="$canAccessReports" href="/scumfeed" class="link my_reports" rel="nofollow">{tr("reports")}
+                                    {if $reportNotAnsweredCount > 0}
+                                        <div class="navigation_counter">
+                                        (<b>{$reportNotAnsweredCount}</b>)
+                                        </div>
+                                    {/if}
+                                </a>
+                                <a n:if="$canAccessNsp" href="/noSpam" class="link my_spam" rel="nofollow">
+                                    noSpam
+                                </a>
+                                <a
+                                  n:if="$thisUser->getLeftMenuItemStatus('links')"
+                                  n:foreach="\OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links'] as $menuItem"
+                                  href="{$menuItem['url']}"
+                                  target="_blank"
+                                  class="link custom_instance_link">
+                                    {strpos($menuItem["name"], "@") === 0 ? tr(substr($menuItem["name"], 1)) : $menuItem["name"]}
+                                </a>
+                                <div id="_groupListPinnedGroups">
+                                    <div n:if="$thisUser->getPinnedClubCount() > 0" class="menu_divider"></div>
+
+                                    <a n:foreach="$thisUser->getPinnedClubs() as $pinnedclub" href="{$pinnedclub->getURL()}" class="link group_link pinned_club">
+                                        {ovk_proc_strtr($pinnedclub->getName(), 14)}
+
+                                        <object type="internal/link" class="counter shown" style="white-space: normal;" id="sug{$pinnedclub->getId()}" n:if="$pinnedclub->getSuggestedPostsCount($thisUser) > 0 && $pinnedclub->getWallType() == 2">
+                                            <a href="/club{$pinnedclub->getId()}/suggested" class="counter shown">
+                                                <b>{$pinnedclub->getSuggestedPostsCount($thisUser)}</b>
+                                            </a>
+                                        </object>
+                                    </a>
+                                </div>
+
+                                <a href="/search" class="link less_accent_link search_link mobiles_only">{_header_search}</a>
+                                <a href="javascript:toDesktopVersion()" class="link less_accent_link fullsize mobiles_only">{_mobile_desktop_version}</a>
+                                <a href="/invite" class="link less_accent_link invite_link mobiles_only">{_invite}</a>
+                                <a href="/support" class="link less_accent_link support_link mobiles_only">{_menu_support}</a>
+                                <a href="/settings?act=finance" class="link less_accent_link finances_link mobiles_only">{_points}</a>
+                                <a href="/logout?hash={urlencode($csrfToken)}" id="logout_link" class="link less_accent_link logout mobiles_only">{_menu_logout}</a>
+
+                                <div class="navigation_infos" id="news" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['news']['show']">
+                                    <b>{_news} </b>
+                                    <hr size="1">
+                                    <text>{$newsText}...</text>
+                                    <br><br>
+                                    <a href="{$newsLink}">{_news_more}</a>
+                                </div>
+
+                                <div class="navigation_infos" id="bday" n:if="$showBday || $showUEvents">
+                                    <b>{_bday_reminder}</b>
+                                    <hr size="1">
+                                    <text n:if="$showBday">
+                                        {var $bdayListHtml = ''}
+                                        {foreach $bdayUsers as $u}
+                                            {php $bdayListHtml .= '<a href="/id' . $u->getId() . '">' . $u->getMorphedName(startWithLastName: false) . '</a>'}
+                                            {if $bdayCount == 2}
+                                                {if $iterator->isFirst()}{php $bdayListHtml .= tr("bday_and")}{/if}
+                                            {elseif $bdayCount != 1}
+                                                {if $iterator->isLast(2) and !$iterator->isLast()}
+                                                    {php $bdayListHtml .= tr("bday_and")}
+                                                {elseif !$iterator->isLast()}
+                                                    {php $bdayListHtml .= ', '}
+                                                {/if}
+                                            {/if}
+                                        {/foreach}
+                                        {tr("bday_reminder_text", $isBdayToday ? tr("bday_today") : tr("bday_tomorrow"), $bdayListHtml)|noescape}
+                                    </text>
+                                    <text n:if="$showUEvents">
+                                        {var $eventsHtml = ''}
+                                        {foreach $uEvents as $e}
+                                            {php $eventsHtml .= '<a href="/event' . $e->getId() . '">' . escapeHTML($e->getName()) . '</a>'}
+                                            {if $uEventsCount == 2}
+                                                {if $iterator->isFirst()}{php $eventsHtml .= tr("bday_and")}{/if}
+                                            {elseif $uEventsCount != 1}
+                                                {if $iterator->isLast(2) and !$iterator->isLast()}
+                                                    {php $eventsHtml .= tr("bday_and")}
+                                                {elseif !$iterator->isLast()}
+                                                    {php $eventsHtml .= ', '}
+                                                {/if}
+                                            {/if}
+                                        {/foreach}
+
+                                        {if $uEventsCount == 1}
+                                            {tr("event_reminder_text", $eventsHtml)|noescape}
+                                        {else}
+                                            {tr("event_reminder_text_multiple", $eventsHtml)|noescape}
+                                        {/if}
+                                    </text>
+                                </div>
+
+                                <div class="navigation_infos" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $thisUser->getCoins() != 0" id="votesBalance">
+                                    {tr("you_still_have_x_points", $thisUser->getCoins())|noescape}
+                                    <br /><br />
+
+                                    <a href="/settings?act=finance">{_top_up_your_account} &#xbb;</a>
+                                </div>
+
+                                <a class="psa-poster-url" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable'] && $thisUser->getLeftMenuItemStatus('poster')" href="{php echo \OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['link']}" >
+                                    <img src="{php echo \OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['src']}" alt="{php echo \OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['caption']}" class="psa-poster" style="max-width: 100%; margin-top: 10px;" />
+                                </a>
+
+                                <div class="floating_sidebar">
+                                    <a id="minilink-friends" class="minilink" href="/friends{$thisUser->getId()}">
+                                        <object type="internal/link" class="counter shown" n:if="$thisUser->getRequestsCount() > 0">
+                                            <div class="counter">
+                                                +{$thisUser->getRequestsCount()}
+                                            </div>
+                                        </object>
+                                        <img src="/assets/packages/static/openvk/img/friends.svg">
+                                    </a>
+                                    <a id="minilink-albums" class="minilink" href="/albums{$thisUser->getId()}">
+                                        <img src="/assets/packages/static/openvk/img/photos.svg">
+                                    </a>
+                                    {if (\OPENVK_ROOT_CONF["openvk"]["credentials"]["im"]["enable"] ?? false)}
+                                    <a id="minilink-messenger" class="minilink" href="/im">
+                                        <object type="internal/link" class="imc counter zero_counter">
+                                            <div class="counter">
+                                                +<b>0</b>
+                                            </div>
+                                        </object>
+                                        <img src="/assets/packages/static/openvk/img/messages.svg">
+                                    </a>
+                                    {/if}
+                                    <a id="minilink-groups" class="minilink" href="/groups{$thisUser->getId()}">
+                                        <img src="/assets/packages/static/openvk/img/groups.svg">
+                                    </a>
+                                    <a id="minilink-notifications" class="minilink" href="/notifications">
+                                        <object type="internal/link" class="counter shown" n:if="$notificationsCount > 0">
+                                            <div class="counter">
+                                                +{$notificationsCount}
+                                            </div>
+                                        </object>
+                                        <img src="/assets/packages/static/openvk/img/feedback.svg">
+                                    </a>
+                                </div>
+                            {elseif !$thisUser->isActivated()}
+                                <a href="/logout?hash={urlencode($csrfToken)}" class="link">{_menu_logout}</a>
+                            {else}
+                                <a href="/support" class="link">{_menu_support}
+                                    {if $ticketAnsweredCount > 0}
+                                        (<b>{$ticketAnsweredCount}</b>)
+                                    {/if}
+                                </a>
+                                <a href="/logout?hash={urlencode($csrfToken)}" class="link">{_menu_logout}</a>
+                            {/if}
+                        {else}
+                            <form id="fastLogin" action="/login" method="POST" enctype="multipart/form-data">
+                                <label for="login"><span>{_email}:</span></label>
+                                <input id="login" type="text" name="login" required />
+                                <label for="password"><span>{_password}:</span></label>
+                                <input id="password" type="password" name="password" required />
+                                <input type="hidden" name="jReturnTo" value="{$_SERVER['REQUEST_URI']}" />
+                                <input type="hidden" name="hash" value="{$csrfToken}" />
+                                <input type="submit" value="{_log_in}" class="button" style="display: inline-block; font-family: Tahoma; width: 100%;" />
+                                <a href="/reg"><input type="button" value="{_registration}" class="button" style="font-family: Tahoma; width: 100%;" /></a><br><br>
+                                {if !\OPENVK_ROOT_CONF['openvk']['preferences']['security']['disablePasswordRestoring']}<a href="/restore">{_forgot_password}</a>{/if}
+                            </form>
+                        {/ifset}
+                    {/block}
                     </div>
                 </div>
 
@@ -513,7 +515,7 @@
                 <a href="/terms" class="link">{_footer_rules}</a>
                 <a href="/blog" class="link">{_footer_blog}</a>
                 <a href="/support" class="link">{_footer_help}</a>
-                <a href="/dev" target="_blank" class="link">{_footer_developers}</a>
+                <a href="/dev" class="link">{_footer_developers}</a>
                 <a href="/privacy" class="link">{_footer_privacy}</a>
             </div>
             <p class="navigation_centrize">

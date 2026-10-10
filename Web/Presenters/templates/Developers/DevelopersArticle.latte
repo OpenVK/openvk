@@ -1,0 +1,26 @@
+{extends "../@layout.latte"}
+
+{block layout_width}925px{/block}
+
+{block title}{$heading}{/block}
+
+{block header}
+    {$heading}
+	{css "css/dev.css"}
+{/block}
+
+{block sidebar}
+    {include "Sidebar.latte"}
+{/block}
+
+{block wrap}
+<div class="wrap2">
+	<div class="wrap1">
+		<div class="dev_wrap">
+			<div class="dev_page_cont">
+				{$content|noescape}
+			</div>
+		</div>
+	</div>
+</div>
+{/block}

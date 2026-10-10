@@ -1313,6 +1313,75 @@
 "users_gifts" = "Gifts";
 "sent" = "Sent";
 
+/* Developers */
+
+"dev_title" = "Developers";
+"di_new_app" = "Create App";
+"di_myapps_list" = "My Apps »";
+"di_title" = "App Development";
+"di_desc" = "<p><b>OpenVK</b> is an open social platform inspired by the simplicity of the classic web.</p><p>We believe that an API should be accessible to everyone, completely free, and transparent. Build your own clients, write bots, contribute to the platform core, or deploy your own instance.</p>";
+"di_btn_games" = "Games and Apps on OpenVK";
+"di_btn_standalone" = "Mobile / Standalone Apps";
+"di_btn_widgets" = "OAuth and Website Widgets";
+"di_documentation" = "Platform Documentation";
+"di_documentation_desc" = "An overview of OpenVK platform features: app authorization, server and client API methods, building apps, and website integration.";
+"di_support" = "Support";
+"di_support_desc" = "Platform-related assistance: support contact channels, app catalog submission, and platform status.";
+"di_openvk" = "OpenVK Engine";
+"di_openvk_desc" = "Main information about the development and deployment of your own OpenVK server.";
+"di_bugs" = "Bug Tracker";
+"di_bugs_desc" = "A tool for reporting issues with the platform API and documentation.";
+
+"dsb_back" = "Back to Site";
+"dsb_intro" = "Introduction";
+"dsb_main" = "API Overview";
+"dsb_methods" = "Methods";
+"dsb_back_to_docs" = "Back to Docs";
+"dsb_m_account" = "Account";
+"dsb_m_activity" = "Activity";
+"dsb_m_apps" = "Apps";
+"dsb_m_audio" = "Audio";
+"dsb_m_board" = "Discussions";
+"dsb_m_docs" = "Documents";
+"dsb_m_friends" = "Friends";
+"dsb_m_gifts" = "Gifts";
+"dsb_m_groups" = "Communities";
+"dsb_m_internal" = "Internal";
+"dsb_m_likes" = "Likes";
+"dsb_m_messages" = "Messages";
+"dsb_m_newsfeed" = "Newsfeed";
+"dsb_m_notes" = "Notes";
+"dsb_m_notifications" = "Notifications";
+"dsb_m_pay" = "Payments";
+"dsb_m_photos" = "Photos";
+"dsb_m_places" = "Places";
+"dsb_m_polls" = "Polls";
+"dsb_m_queue" = "Event Queues";
+"dsb_m_reports" = "Reports";
+"dsb_m_search" = "Search";
+"dsb_m_stats" = "Statistics";
+"dsb_m_status" = "Status";
+"dsb_m_stickers" = "Stickers";
+"dsb_m_store" = "Store";
+"dsb_m_users" = "Users";
+"dsb_m_utils" = "Utilities";
+"dsb_m_video" = "Videos";
+"dsb_m_wall" = "Wall";
+"dsb_m_ovk" = "OpenVK";
+"dsb_models" = "Models";
+"dsb_standalone" = "Standalone";
+"dsb_sites" = "Sites and Widgets";
+"dsb_native" = "Apps and Clients";
+"dsb_openvk" = "OpenVK Engine";
+"dsb_ovk_intro" = "Introduction";
+"dsb_ovk_contribute" = "Contributing";
+"dsb_ovk_tutorials" = "Tutorials";
+"dsb_ovk_tut_quickstart" = "Quick Start";
+"dsb_ovk_chandler" = "Chandler Framework";
+"dsb_ovk_ch_overview" = "Architecture Overview";
+"dsb_bugs" = "Bug Tracker";
+
+
 /* Apps */
 "app" = "Application";
 "apps" = "Applications";
