@@ -1959,7 +1959,7 @@
 "stickers_pack_unlisted" = "Hide from catalog (link only)";
 "stickers_upload_title" = "Stickers in Pack";
 "stickers_upload_hint" = "Supported formats: PNG, JPG, WebP, SVG, and Lottie JSON. Images are automatically converted to WebP in 3 sizes (128px, 256px, 512px).";
-"stickers_select_files" = "Select Files";
+"stickers_select_files" = "Upload new stickers";
 "stickers_cover" = "Cover";
 "stickers_set_cover" = "Set as cover";
 "stickers_emoji_placeholder" = "Emoji";
@@ -2036,7 +2036,7 @@
 "stickers_gift_box_title" = "Gift sticker pack";
 "stickers_gift_box_hint" = "This is how your sticker pack looks when sent as a gift. The cover sticker is always in the front, and up to 3 chosen background stickers are in the back.";
 "stickers_gift_composition" = "Gift composition";
-"stickers_gift_front_slot" = "Front";
+"stickers_gift_front_slot" = "Front: cover sticker";
 "stickers_gift_back_slots" = "Back (up to 3)";
 "stickers_gift_save_note" = "The gift image is automatically regenerated when you save changes.";
 "stickers_gift_max_3_err" = "You can select at most 3 stickers for the gift background.";
