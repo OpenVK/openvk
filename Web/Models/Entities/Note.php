@@ -167,7 +167,7 @@ class Note extends Postable
         return $this->getOwner()->getPrivacyPermission('notes.read', $user) && $this->getOwner()->canBeViewedBy($user);
     }
 
-    public function toVkApiStruct(): object
+    public function toVkApiStruct(?User $user = null): object
     {
         $res = (object) [];
 
@@ -177,6 +177,7 @@ class Note extends Postable
         $res->text          = $this->getText();
         $res->date          = $this->getPublicationTime()->timestamp();
         $res->comments      = $this->getCommentsCount();
+        $res->can_comment   = (int) $this->canBeCommentedBy($user);
         $res->view_url      = "/note" . $this->getOwner()->getId() . "_" . $this->getVirtualId();
 
         return $res;

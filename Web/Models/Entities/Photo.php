@@ -480,7 +480,7 @@ class Photo extends Media
         return $album;
     }
 
-    public function toVkApiStruct(bool $photo_sizes = true, bool $extended = false): object
+    public function toVkApiStruct(?User $user = null, bool $photo_sizes = true, bool $extended = false): object
     {
         $res = (object) [];
 
@@ -555,9 +555,9 @@ class Photo extends Media
             ];
             $res->comments    = (object) [
                 "count"    => (int) $this->getCommentsCount(),
-                "can_post" => 1,
+                "can_post" => (int) $this->canBeCommentedBy($user),
             ];
-            $res->can_comment = 1;
+            $res->can_comment = $res->comments->can_post;
             $res->can_repost  = 1;
         }
 
@@ -578,7 +578,7 @@ class Photo extends Media
     {
         return [
             "type"  => "photo",
-            "photo" => $this->toVkApiStruct(true, false),
+            "photo" => $this->toVkApiStruct($user, true, false),
         ];
     }
 

@@ -32,6 +32,12 @@
     --header-custom-2x: url('/assets/packages/static/openvk/img/header_custom_2x.png');
     --audio-controls: url('/assets/packages/static/openvk/img/audios_controls.png');
     --audio-controls-2x: url('/assets/packages/static/openvk/img/audios_controls_2x.png');
+    --expanded-header-fallback: var(--header-branded);
+    --unexpanded-header-size-fallback: 791px 100%;
+
+    /* mobile */
+    --mobile-header: linear-gradient(#707070, #3b3b3b);
+    --mobile-header-active: linear-gradient(#3b3b3b, #595959);
 }
 
 html {
@@ -143,6 +149,7 @@ h1 {
     right: 0;
     overflow: hidden;
     z-index: 1;
+    background-size: 791px 100%;
 }
 
 .page_header>.back::before,
@@ -154,11 +161,19 @@ h1 {
     bottom: 0;
     width: 2px;
     background-image: inherit;
-    background-size: 791px 100%;
+    background-size: var(--unexpanded-header-size-fallback);
     background-position: -300px 0;
     background-repeat: no-repeat;
     transform: scaleX(10000);
     transform-origin: 0 0;
+}
+
+.layout_expanded .page_header>.back,
+.layout_expanded .p_head>.back {
+    background-image: unset;
+    background: var(--expanded-header-fallback);
+    background-size: 791px 100%;
+    margin-top: -2px;
 }
 
 .page_header>.left,

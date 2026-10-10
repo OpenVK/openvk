@@ -3962,7 +3962,7 @@ final class Messages extends VKAPIRequestHandler
 
         $photos = [];
         foreach ($chat->getAvatarsHistory() as $photo) {
-            $photos[] = $photo->toVkApiStruct(true);
+            $photos[] = $photo->toVkApiStruct($this->getUser(), true);
         }
 
         return (object) [

@@ -263,6 +263,11 @@ class Post extends Postable
         return $this->getTargetWall() === $user->getId();
     }
 
+    public function canCloseComments(?User $user): bool
+    {
+        return $this->canBePinnedBy($user);
+    }
+
     public function canBeArchivedBy(?User $user = null): bool
     {
         if (!$user) {
@@ -395,7 +400,7 @@ class Post extends Postable
 
                     $tilePayload = null;
                     if ($type === "photo") {
-                        $tilePayload = $item->toVkApiStruct(true, false);
+                        $tilePayload = $item->toVkApiStruct($user, true, false);
                     } elseif ($type === "video") {
                         $vStruct = $item->toVkApiStruct($user);
                         $tilePayload = is_object($vStruct) && isset($vStruct->video) ? (object) $vStruct->video : (is_array($vStruct) && isset($vStruct['video']) ? (object) $vStruct['video'] : $vStruct);
@@ -453,7 +458,7 @@ class Post extends Postable
                     }
                     $res->attachments[] = (object) [
                         "type"  => "photo",
-                        "photo" => $attachment->toVkApiStruct(true, false),
+                        "photo" => $attachment->toVkApiStruct($user, true, false),
                     ];
                 } elseif ($attachment instanceof \openvk\Web\Models\Entities\Video) {
                     $vStruct = $attachment->toVkApiStruct($user);

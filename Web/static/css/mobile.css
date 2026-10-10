@@ -271,7 +271,7 @@
     .page_header {
         height: 49px !important;
         width: 100vw !important;
-        background: linear-gradient(#707070, #3b3b3b) !important;
+        background: var(--mobile-header) !important;
         background-position: 0 0 !important;
         display: flex;
         align-items: center;
@@ -328,7 +328,7 @@
     }
 
     .page_header:active {
-        background: linear-gradient(#3b3b3b, #595959);
+        background: var(--mobile-header-active);
     }
 
     .page_body {
@@ -408,8 +408,12 @@
         /*margin-left: -33px;*/
     }
 
-    .navigation .link object {
+    .navigation .link object,
+    .navigation .link object a {
         background-color: #abadae;
+    }
+
+    .navigation .link object {
         padding: 2px 6px;
         border-radius: 3px;
     }

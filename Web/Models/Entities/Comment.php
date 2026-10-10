@@ -106,11 +106,11 @@ class Comment extends Post
 
             if ($attachment instanceof \openvk\Web\Models\Entities\Photo) {
                 if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 4) {
-                    $res->attachments[] = $attachment->toVkApiStruct();
+                    $res->attachments[] = $attachment->toVkApiStruct($user);
                 } else {
                     $res->attachments[] = [
                         'type' => 'photo',
-                        'photo' => $attachment->toVkApiStruct(),
+                        'photo' => $attachment->toVkApiStruct($user),
                     ];
                 }
             } elseif ($attachment instanceof \openvk\Web\Models\Entities\Video) {

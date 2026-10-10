@@ -130,11 +130,11 @@ final class Wall extends VKAPIRequestHandler
                     $attachments[] = $attachment->getApiStructure($this->getUser());
                 } elseif ($attachment instanceof \openvk\Web\Models\Entities\Note) {
                     if (VKAPI_DECL_VER === '4.100') {
-                        $attachments[] = $attachment->toVkApiStruct();
+                        $attachments[] = $attachment->toVkApiStruct($this->getUser());
                     } else {
                         $attachments[] = [
                             'type' => 'note',
-                            'note' => $attachment->toVkApiStruct(),
+                            'note' => $attachment->toVkApiStruct($this->getUser()),
                         ];
                     }
                 } elseif ($attachment instanceof \openvk\Web\Models\Entities\Audio) {
@@ -220,7 +220,7 @@ final class Wall extends VKAPIRequestHandler
                 "post_source"  => $post->getPostSourceInfo(),
                 "comments"     => (object) [
                     "count"    => $post->getCommentsCount(),
-                    "can_post" => 1,
+                    "can_post" => (int) $post->canBeCommentedBy($this->getUser()),
                 ],
                 "likes" => (object) [
                     "count"       => $post->getLikesCount(),
@@ -470,7 +470,7 @@ final class Wall extends VKAPIRequestHandler
                     } elseif ($attachment instanceof \openvk\Web\Models\Entities\Note) {
                         $attachments[] = [
                             'type' => 'note',
-                            'note' => $attachment->toVkApiStruct(),
+                            'note' => $attachment->toVkApiStruct($this->getUser()),
                         ];
                     } elseif ($attachment instanceof \openvk\Web\Models\Entities\Audio) {
                         $attachments[] = [
@@ -553,7 +553,7 @@ final class Wall extends VKAPIRequestHandler
                     "attachments"  => $attachments,
                     "comments"     => (object) [
                         "count"    => $post->getCommentsCount(),
-                        "can_post" => 1,
+                        "can_post" => (int) $post->canBeCommentedBy($this->getUser()),
                     ],
                     "likes" => (object) [
                         "count"       => $post->getLikesCount(),
@@ -1022,7 +1022,7 @@ final class Wall extends VKAPIRequestHandler
                 if ($attachment instanceof \openvk\Web\Models\Entities\Photo) {
                     $attachments[] = $this->getApiPhoto($attachment);
                 } elseif ($attachment instanceof \openvk\Web\Models\Entities\Note) {
-                    $attachments[] = $attachment->toVkApiStruct();
+                    $attachments[] = $attachment->toVkApiStruct($this->getUser());
                 } elseif ($attachment instanceof \openvk\Web\Models\Entities\Audio) {
                     $attachments[] = [
                         "type"  => "audio",
@@ -1105,7 +1105,7 @@ final class Wall extends VKAPIRequestHandler
             "count"               => (new CommentsRepo())->getCommentsCountByTarget($post),
             "items"               => $items,
             "current_level_count" => (new CommentsRepo())->getCommentsCountByTarget($post),
-            "can_post"            => true,
+            "can_post"            => (int) $post->canBeCommentedBy($this->getUser()),
             "show_reply_button"   => true,
             "groups_can_post"     => false,
         ];
@@ -1147,7 +1147,7 @@ final class Wall extends VKAPIRequestHandler
             } elseif ($attachment instanceof \openvk\Web\Models\Entities\Note) {
                 $attachments[] = [
                     'type' => 'note',
-                    'note' => $attachment->toVkApiStruct(),
+                    'note' => $attachment->toVkApiStruct($this->getUser()),
                 ];
             } elseif ($attachment instanceof \openvk\Web\Models\Entities\Audio) {
                 $attachments[] = [
@@ -1194,9 +1194,17 @@ final class Wall extends VKAPIRequestHandler
             $profiles[] = $comment->getOwner()->getId();
         }
 
+        $canPost = 0;
+
+        try {
+            $canPost = (int) $comment->getTarget()->canBeCommentedBy($this->getUser());
+        } catch (\Throwable $e) {
+            bdump($e);
+        }
+
         $response = [
             "items"               => [$item],
-            "can_post"            => true,
+            "can_post"            => $canPost,
             "show_reply_button"   => true,
             "groups_can_post"     => false,
         ];
@@ -1221,7 +1229,7 @@ final class Wall extends VKAPIRequestHandler
             $this->fail(100, "Invalid post");
         }
 
-        if (!$post->canBeViewedBy($this->getUser())) {
+        if (!$post->canBeViewedBy($this->getUser()) || !$post->canBeCommentedBy($this->getUser())) {
             $this->fail(15, "Access denied");
         }
 
@@ -1651,10 +1659,44 @@ final class Wall extends VKAPIRequestHandler
         return 1;
     }
 
+    public function closeComments(int $owner_id, int $post_id)
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $post = (new PostsRepo())->getPostById($owner_id, $post_id);
+
+        if (!$post || $post->isDeleted() || !$post->canCloseComments($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        $post->setCommentPrivacy(false);
+        $post->save();
+
+        return 1;
+    }
+
+    public function openComments(int $owner_id, int $post_id)
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $post = (new PostsRepo())->getPostById($owner_id, $post_id);
+
+        if (!$post || $post->isDeleted() || !$post->canCloseComments($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        $post->setCommentPrivacy(true);
+        $post->save();
+
+        return 1;
+    }
+
     // из зачем это было выносить именно таким образом v__v
     private function getApiPhoto($attachment)
     {
-        $struct = $attachment->toVkApiStruct(true, false);
+        $struct = $attachment->toVkApiStruct($this->getUser(), true, false);
         $struct->has_tags = false;
         $struct->tags = (object) ["count" => 0, "items" => []];
 
