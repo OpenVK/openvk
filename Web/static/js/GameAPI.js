@@ -7,8 +7,9 @@ VKAPI._makeRequest = function(type, params) {
         request["@type"]    = type;
         request.transaction = uuid;
 
+        let origin   = document.referrer.split("/").slice(0, 3).join("/");
         let listener = e => {
-            if (e.source !== window.parent)
+            if (e.source !== window.parent || e.origin !== origin)
                 return;
 
             if (e.data.transaction !== uuid)
@@ -23,10 +24,19 @@ VKAPI._makeRequest = function(type, params) {
             window.removeEventListener("message", listener);
         };
 
-        let origin = document.referrer.split("/").slice(0, 3).join("/");
         window.addEventListener("message", listener);
         window.parent.postMessage(request, origin);
     });
+}
+
+VKAPI.getLaunchParams = function() {
+    let params = {};
+    new URLSearchParams(location.search).forEach((value, key) => {
+        if (key.startsWith("ovk_"))
+            params[key] = value;
+    });
+
+    return params;
 }
 
 VKAPI.getUser = function() {
@@ -50,5 +60,13 @@ VKAPI.buy = function(price, item) {
     return VKAPI._makeRequest("PaymentRequest", {
         outSum: price,
         description: item
+    });
+}
+
+VKAPI.buyOrder = function(price, item, orderId) {
+    return VKAPI._makeRequest("PaymentRequest", {
+        outSum: price,
+        description: item,
+        orderId: orderId
     });
 }
