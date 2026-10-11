@@ -357,35 +357,38 @@ $(document).on("scroll", () => {
 
     let top = parseInt(navigation.css("top"), 10);
 
-    if (currentScrollTop > $(".sidebar").height() + 50) {
-        if (currentScrollTop < lastScrollTop) {
-            if (top !== 5) {
-                scrollNavigation(Math.min(5, (top + (lastScrollTop - currentScrollTop))));
-            }
+    let floating_sidebar = $(".floating_sidebar")[0]
 
-            $(".floating_sidebar")[0].classList.remove("show");
-            $(".floating_sidebar")[0].classList.add("hide_anim");
-            setTimeout(() => {
-                $(".floating_sidebar")[0].classList.remove("hide_anim");
-            }, 250);
-        } else {
-            let h = -navigation.height();
-            if (top <= h || top === 0) {
-                hideNavigationOutbound(h);
-                $(".floating_sidebar")[0].classList.add("show");
+    if (floating_sidebar) {
+        if (currentScrollTop > $(".sidebar").height() + 50) {
+            if (currentScrollTop < lastScrollTop) {
+                if (top !== 5) {
+                    scrollNavigation(Math.min(5, (top + (lastScrollTop - currentScrollTop))));
+                }
+                floating_sidebar.classList.remove("show");
+                floating_sidebar.classList.add("hide_anim");
+                setTimeout(() => {
+                    floating_sidebar.classList.remove("hide_anim");
+                }, 250);
             } else {
-                scrollNavigation((top - (currentScrollTop - lastScrollTop)));
+                let h = -navigation.height();
+                if (top <= h || top === 0) {
+                    hideNavigationOutbound(h);
+                    floating_sidebar.classList.add("show");
+                } else {
+                    scrollNavigation((top - (currentScrollTop - lastScrollTop)));
+                }
             }
-        }
-    } else {
-        removeFixedNavigation();
+        } else {
+            removeFixedNavigation();
 
-        if ($(".floating_sidebar")[0].classList.contains("show")) {
-            $(".floating_sidebar")[0].classList.remove("show");
-            $(".floating_sidebar")[0].classList.add("hide_anim");
-            setTimeout(() => {
-                $(".floating_sidebar")[0].classList.remove("hide_anim");
-            }, 250);
+            if (floating_sidebar.classList.contains("show")) {
+                floating_sidebar.classList.remove("show");
+                floating_sidebar.classList.add("hide_anim");
+                setTimeout(() => {
+                    floating_sidebar.classList.remove("hide_anim");
+                }, 250);
+            }
         }
     }
 
