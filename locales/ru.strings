@@ -3226,7 +3226,8 @@
 /* Catalogues */
 
 "catalogues" = "Каталоги";
-"new_posts" = "Посты";
+"new_posts" = "Лента";
+"new_posts_global" = "Глобальная лента";
 
 "post_target_note" = "Заметка";
 "post_target_photo" = "Фото";

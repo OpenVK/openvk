@@ -2,16 +2,17 @@
 {block title}{_feed}{/block}
 
 {block header}
-    {_feed}
+    {_my_feed}
 {/block}
 
 {block content}
 
-    <div class="mb_tabs" style="margin: -10px -10px 0px -10px;display: flex;justify-content: space-between;align-items: center;">
+    <div class="tabs" style="display: flex;justify-content: space-between;align-items: center;">
         <div>
             {foreach $availSections as $tab}
-                <div n:attr="id => ($tab[0] == $section || ($tab[0] == 'local_posts' && $isAnother) ? 'active' : '')" class="mb_tab">
-                    <a href="/feed?section={$tab[0]}">{$tab[1]}</a>
+                {var $isSel = $tab[0] == $section || ($tab[0] == 'local_posts' && $isAnother) || ($tab[0] == 'local_posts' && $list)}
+                <div n:attr="id => ($isSel ? 'activetabs' : 'ki')" class="tab">
+                    <a n:attr="id => ($isSel ? 'act_tab_a' : 'ki')" href="/feed?section={$tab[0]}">{$tab[1]}</a>
                 </div>
             {/foreach}
         </div>
@@ -22,8 +23,14 @@
 
     <div n:if="$showMediaTabs" class="mb_tabs" style="margin: 0px -10px;">
         {foreach $availLocalSections as $tab}
-            <div n:attr="id => ($section == $tab[0] ? 'active' : '')" class="mb_tab">
+            <div n:attr="id => (($section == $tab[0] && !$list) ? 'active' : '')" class="mb_tab">
                 <a href="/feed?section={$tab[0]}">{$tab[1]}</a>
+            </div>
+        {/foreach}
+
+        {foreach $feedLists as $item}
+            <div n:attr="id => ($list && $item->getId() == $list ? 'active' : '')" class="mb_tab">
+                <a href="/feed?list={$item->getId()}">{$item->getTitle()}</a>
             </div>
         {/foreach}
     </div>

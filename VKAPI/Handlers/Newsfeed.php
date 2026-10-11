@@ -13,6 +13,7 @@ use openvk\Web\Models\Repositories\Users as UsersRepo;
 use openvk\Web\Models\Repositories\Clubs as ClubsRepo;
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Search\Feed;
+use openvk\Web\Models\Search\CustomFeeds;
 use openvk\VKAPI\Handlers\Wall;
 
 final class Newsfeed extends VKAPIRequestHandler
@@ -952,31 +953,144 @@ final class Newsfeed extends VKAPIRequestHandler
         return (object) $result;
     }
 
-    public function createList(string $title)
+    public function saveList(?string $title = null, ?int $list_id = null, ?int $no_reposts = null, ?string $source_ids = null)
     {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
 
+        $list = null;
+        $changes = 0;
+
+        if ($list_id != null) {
+            $list = CustomFeeds::getById($list_id);
+        } else {
+            $list = CustomFeeds::addNew();
+            $list->setOwner($this->getUser()->getRealId());
+
+            $changes = 1;
+        }
+
+        if (!$list || $list->isDeleted() || !$list->canBeEditedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+        if (!$list->isCustomFeed()) {
+            $this->fail(15, "Access denied");
+        }
+
+        if ($title && iconv_strlen($title) > 0) {
+            $list->setTitle($title);
+            $changes += 1;
+        }
+
+        if ($changes > 0) {
+            $list->save();
+        }
+
+        if ($source_ids) {
+            try {
+                $list->clear();
+                $entities = get_entities(explode(",", $source_ids));
+
+                foreach ($entities as $item) {
+                    $list->addItem($item);
+                }
+            } catch (\Throwable $e) {
+                $this->fail(10, "Invalid source_ids.");
+            }
+        }
+
+        if (!$list_id && !$list->isImported($this->getUser())) {
+            $list->toggleImport($this->getUser(), true);
+        }
+
+        return $list->getId();
     }
 
-    public function editList(int $list_id)
+    public function deleteList(int $list_id)
     {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
 
+        $list = CustomFeeds::getById($list_id);
+
+        if (!$list || $list->isDeleted() || !$list->canBeEditedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        if (!$list->isCustomFeed()) {
+            $this->fail(15, "Access denied");
+        }
+
+        $list->isolate();
+        $list->delete();
+
+        return 1;
     }
 
-    public function deleteList(string $title)
+    public function toggleListSubscription(int $list_id, ?int $group_id = null, int $add = 1)
     {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
 
+        $list = CustomFeeds::getById($list_id);
+        $isAdded = $list->isImported($this->getUser());
+
+        if (!$list || $list->isDeleted() || !$list->canBeViewedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        if (!$list->isCustomFeed()) {
+            $this->fail(15, "Access denied");
+        }
+
+        if ($add === 1 && !$isAdded) {
+            $list->toggleImport($this->getUser(), true);
+        }
+
+        if ($add === 0 && $isAdded) {
+            $list->toggleImport($this->getUser(), false);
+        }
+
+        return 1;
     }
 
-    public function toggleListSubscription(int $list_id)
+    public function getLists(int $extended = 0): object
     {
-
-    }
-
-    public function getLists()
-    {
-        return (object) [
-            "count" => 0,
+        $lists = iterator_to_array(CustomFeeds::get($this->getUser()));
+        $payload = (object) [
+            "count" => sizeof($lists),
             "items" => [],
         ];
+
+        foreach ($lists as $item) {
+            $payload->items[] = $item->toVkApiStructOfFeed($this->getUser());
+        }
+
+        if ($extended === 1) {
+            $ownerIds = [];
+            $payload->profiles = [];
+            $payload->groups = [];
+
+            foreach ($payload->items as $item) {
+                $source_ids = $item->source_ids;
+
+                foreach ($source_ids as $item2) {
+                    $ownerIds[] = $item2;
+                }
+            }
+
+            $ownerIds = array_unique($ownerIds);
+            $owners = get_entities($ownerIds);
+
+            foreach ($owners as $item) {
+                if ($item->getRealId() > 0) {
+                    $payload->profiles[] = $item->toVkApiStruct($this->getUser());
+                } else {
+                    $payload->groups[] = $item->toVkApiStruct($this->getUser());
+                }
+            }
+        }
+
+        return $payload;
     }
 }

@@ -9,6 +9,7 @@ use Nette\Database\Table\Selection;
 use openvk\Web\Models\Repositories\{Users, Clubs, Posts};
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Entities\RowModel;
+use openvk\Web\Models\Search\Catalogue;
 use openvk\Web\Util\Cache;
 use Bhaktaraz\RSSGenerator\Feed as RSSFeed;
 use Bhaktaraz\RSSGenerator\Item;
@@ -38,15 +39,22 @@ class Feed
         return new Feed($owner, $global);
     }
 
-    protected function getSubsIds(bool $keep_ignored = true)
+    protected function getSubsIds(bool $keep_ignored = true, ?Catalogue $list = null)
     {
-        $subs = DatabaseConnection::i()
+        $ids = [];
+        if ($list != null) {
+            foreach ($list->fetch($this->owner, 1, 10000, false, [5, 18]) as $item) {
+                $ids[] = $item->getRealId();
+            }
+        } else {
+            $subs = DatabaseConnection::i()
                 ->getContext()
                 ->table("subscriptions")
-                ->where("follower", $owner_id);
-        $ids   = array_map(function ($rel) {
-            return $rel->target * ($rel->model === "openvk\Web\Models\Entities\User" ? 1 : -1);
-        }, iterator_to_array($subs));
+                ->where("follower", $this->owner->getRealId());
+            $ids  = array_map(function ($rel) {
+                return $rel->target * ($rel->model === "openvk\Web\Models\Entities\User" ? 1 : -1);
+            }, iterator_to_array($subs));
+        }
 
         if ($keep_ignored == false) {
             $ignored_sources_ids = $this->owner->getIgnoredSources(
@@ -57,12 +65,14 @@ class Feed
             $ids = array_diff($ids, $ignored_sources_ids);
         }
 
-        $ids[] = $this->owner->getRealId();
+        if (!$list) {
+            $ids[] = $this->owner->getRealId();
+        }
 
         return $ids;
     }
 
-    public function fetchFeed(bool $keep_ignored = true, bool $alien_posts = true, bool $keep_nsfw_settings = true, string $filter = "post", ?array $cursor = null): Selection
+    public function fetchFeed(bool $keep_ignored = true, bool $alien_posts = true, bool $keep_nsfw_settings = true, string $filter = "post", ?array $cursor = null, ?Catalogue $list = null): Selection
     {
         $payload = null;
 
@@ -122,8 +132,9 @@ class Feed
                     ->where("id IN (?)", $ids)
                     ->order("`created` DESC, `id` DESC");
         } else {
-            $ids = $this->getSubsIds($keep_ignored);
+            $ids = $this->getSubsIds($keep_ignored, $list);
 
+            bdump( $ids);
             if ($filter === "post") {
                 $payload = DatabaseConnection::i()
                     ->getContext()

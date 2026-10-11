@@ -10,6 +10,7 @@ use openvk\Web\Models\Entities\Notifications\{MentionNotification, RepostNotific
 use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums, Notes, Videos, Comments, Photos, Audios};
 use openvk\Web\Util\Cache;
 use openvk\Web\Models\Search\Feed;
+use openvk\Web\Models\Search\CustomFeeds;
 use Chandler\Database\DatabaseConnection;
 use Nette\InvalidStateException as ISE;
 
@@ -211,6 +212,8 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         $isGlobal = $section == "global";
+        $feedType = "post";
+        $feedClass = 'Post';
         $posts = [];
 
         $feed = new Feed($this->user->identity, $isGlobal, null);
@@ -218,8 +221,16 @@ final class WallPresenter extends OpenVKPresenter
         $withAlienWallPosts = ((int) $this->getWithAlienWallPostsPreference()) === 0;
         $returnBanned = ((int) $this->queryParam('return_banned')) == 0;
         $keepNsfwSettings = ((int) $this->queryParam('return_nsfw')) == 0;
-        $feedType = "post";
-        $feedClass = 'Post';
+        $listId = ((int) $this->queryParam('list'));
+        $list = null;
+
+        if ($listId) {
+            $list = CustomFeeds::getById($listId);
+            if (!$list || $list->isDeleted() || !$list->isCustomFeed() || !$list->canBeViewedBy($this->user->identity)) {
+                $this->notFound();
+            }
+        }
+
         $types = ["photos" => ["photo", 'Photo'], "videos" => ["video", 'Video'], "audios" => ["audio", 'Audio']];
 
         if ($types[$section] != null) {
@@ -237,7 +248,8 @@ final class WallPresenter extends OpenVKPresenter
 
                 break;
             default:
-                $posts = $feed->fetchFeed($returnBanned, $withAlienWallPosts, $keepNsfwSettings, $feedType, [null, null, null, null, ($page - 1) * $perPage, $perPage]);
+                $posts = $feed->fetchFeed($returnBanned, $withAlienWallPosts, $keepNsfwSettings, $feedType, [null, null, null, null, ($page - 1) * $perPage, $perPage], $list);
+
                 break;
         }
 
@@ -274,9 +286,11 @@ final class WallPresenter extends OpenVKPresenter
         $this->template->posts = [];
         $this->template->isGlobal = $isGlobal;
         $this->template->feedType = $feedType;
-        $this->template->showMediaTabs = !$isGlobal && $section != "comments";
-        $this->template->availSections = [["local_posts", tr("my_news")], ["global", tr("all_news")], ["comments", tr("comments")]];
-        $this->template->availLocalSections = [["local_posts", tr("new_posts")], ["photos", tr("att_tab_photos")], ["videos", tr("videos")], ["audios", tr("audios")], ["fave", tr("bookmarks_tab")]];
+        $this->template->showMediaTabs = $section != "comments";
+        $this->template->availSections = [["local_posts", tr("news")], ["comments", tr("comments")]];
+        $this->template->availLocalSections = [["local_posts", tr("new_posts")], ["global", tr("new_posts_global")], ["photos", tr("att_tab_photos")], ["videos", tr("videos")], ["audios", tr("audios")]];//, ["fave", tr("bookmarks_tab")]];
+        $this->template->feedLists = CustomFeeds::get($this->user->identity);
+        $this->template->list = $listId;
 
         $classPath = "\\openvk\\Web\\Models\\Entities\\" . $feedClass;
 
