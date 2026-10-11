@@ -28,7 +28,7 @@ final class Newsfeed extends VKAPIRequestHandler
         return [PHP_INT_MAX, PHP_INT_MAX];
     }
 
-    public function get(string $fields = "", string $start_from = "", int $start_time = 0, int $end_time = 0, int $offset = 0, int $count = 30, int $extended = 1, int $forGodSakePleaseDoNotReportAboutMyOnlineActivity = 0, int $with_alien_wall_posts = 0, string $filters = 'post', int $return_banned = 0, int $return_nsfw = 0)
+    public function get(string $fields = "", string $start_from = "", int $start_time = 0, int $end_time = 0, int $offset = 0, int $count = 30, int $extended = 1, int $forGodSakePleaseDoNotReportAboutMyOnlineActivity = 0, int $with_alien_wall_posts = 0, string $filters = 'post', int $return_banned = 0, int $return_nsfw = 0, ?int $list_id = null)
     {
         $this->requireUser();
 
@@ -42,6 +42,15 @@ final class Newsfeed extends VKAPIRequestHandler
         [$cursorTime, $cursorId] = $this->parseCursor($start_from);
 
         $feed = new Feed($this->getUser(), false, null);
+        $list = null;
+
+        if ($list_id) {
+            $list = CustomFeeds::getById($list_id);
+
+            if (!$list || $list->isDeleted() || !$list->isCustomFeed() || !$list->canBeViewedBy($this->getUser())) {
+                $this->fail(15, "Access denied");
+            }
+        }
 
         $filters   = array_unique(explode(',', $filters));
         $fetchCap  = $offset + $count;
@@ -52,7 +61,7 @@ final class Newsfeed extends VKAPIRequestHandler
         $candidates = [];
 
         if (in_array('post', $filters)) {
-            $posts = $feed->fetchFeed($return_banned === 0, $with_alien_wall_posts === 1, $return_nsfw === 0);
+            $posts = $feed->fetchFeed($return_banned === 0, $with_alien_wall_posts === 1, $return_nsfw === 0, "post", null, $list);
             $posts = $posts
                     ->where("created < ? OR (created = ? AND id < ?)", $cursorTime, $cursorTime, $cursorId)
                     ->where("? <= created", $startTime)
@@ -67,7 +76,7 @@ final class Newsfeed extends VKAPIRequestHandler
             # deeper cap: grouping below can collapse many rows into one item
             $photoFetchCap = min(500, $fetchCap * 5);
 
-            $photos = $feed->fetchFeed($return_banned === 0, $with_alien_wall_posts === 1, $return_nsfw === 0, "photo");
+            $photos = $feed->fetchFeed($return_banned === 0, $with_alien_wall_posts === 1, $return_nsfw === 0, "photo", null, $list);
             $photos = $photos
                     ->where("created < ? OR (created = ? AND id < ?)", $cursorTime, $cursorTime, $cursorId)
                     ->where("? <= created", $startTime)
@@ -110,7 +119,7 @@ final class Newsfeed extends VKAPIRequestHandler
         }
 
         if (in_array('video', $filters)) {
-            $videos = $feed->fetchFeed($return_banned === 0, $with_alien_wall_posts === 1, $return_nsfw === 0, "video");
+            $videos = $feed->fetchFeed($return_banned === 0, $with_alien_wall_posts === 1, $return_nsfw === 0, "video", null, $list);
             $videos = $videos
                     ->where("created < ? OR (created = ? AND id < ?)", $cursorTime, $cursorTime, $cursorId)
                     ->where("? <= created", $startTime)

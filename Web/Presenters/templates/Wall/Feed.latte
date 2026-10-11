@@ -7,8 +7,8 @@
 
 {block content}
 
-    <div class="tabs" style="display: flex;justify-content: space-between;align-items: center;">
-        <div>
+    <div class="tabs">
+        <div style="display: inline-block;">
             {foreach $availSections as $tab}
                 {var $isSel = $tab[0] == $section || ($tab[0] == 'local_posts' && $isAnother) || ($tab[0] == 'local_posts' && $list)}
                 <div n:attr="id => ($isSel ? 'activetabs' : 'ki')" class="tab">
@@ -18,7 +18,7 @@
         </div>
 
         <a n:if="$section != 'comments'" href='#' onclick="onFeedSettingsClick(event)" id="__feed_settings_link" class="side_link" data-pagescount='{ceil($paginatorConf->count / $paginatorConf->perPage)}'>{_feed_settings}</a>
-        <a n:if="$section == 'comments'" href='/search?section=posts&from_me=1'>{_own_posts_tab}</a>
+        <a class="side_link" n:if="$section == 'comments'" href='/search?section=posts&from_me=1'>{_own_posts_tab}</a>
     </div>
 
     <div n:if="$showMediaTabs" class="mb_tabs" style="margin: 0px -10px;">

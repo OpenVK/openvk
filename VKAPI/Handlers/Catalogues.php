@@ -26,24 +26,6 @@ final class Catalogues extends VKAPIRequestHandler
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
-
-        $catalogue = new Catalogue();
-        $catalogue->setTitle($name);
-        $catalogue->setCreated(time());
-        $catalogue->setOwner($this->getUser()->getRealId());
-        $catalogue->setOwner_visible(0);
-
-        if ($private === 0) {
-            $catalogue->setPrivate(0);
-        }
-
-        if ($this->getUser()->isAdmin()) {
-            $catalogue->setIs_admin(1);            
-        }
-
-        $catalogue->save();
-
-        return $catalogue->getId();
     }
 
     public function edit()
