@@ -433,6 +433,24 @@ class User extends RowModel
         return $this->getRecord()->marital_status;
     }
 
+    // very dirty hack
+    public function getMaritalStatusForAPI(): int
+    {
+        $status = $this->getMaritalStatus();
+        switch ($status) {
+            case 5:
+                return 8;
+            case 6:
+                return 7; // six seveeeeeen
+            case 7:
+                return 5;
+            case 8:
+                return 6;
+            default:
+                return $status;
+        }
+    }
+
     public function getLocalizedMaritalStatus(?bool $prefix = false): string
     {
         $status = $this->getMaritalStatus();

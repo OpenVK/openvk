@@ -359,7 +359,14 @@ final class Users extends VKAPIRequestHandler
                                 break;
                             }
 
-                            $response[$i]->relation = $usr->getMaritalStatus();
+                            $response[$i]->relation = $usr->getMaritalStatusForAPI();
+
+                            $related_user = $usr->getMaritalStatusUser();
+                            if ($related_user !== null) {
+                                $response[$i]->relation_partner_id = $related_user->getId();
+                                $response[$i]->relation_partner_first_name = $related_user->getFirstName();
+                                $response[$i]->relation_partner_last_name = $related_user->getLastName();
+                            }
                             break;
                         case "contacts":
                             if (!$usr->getPrivacyPermission("page.info.read", $authuser)) {
