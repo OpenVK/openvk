@@ -504,8 +504,12 @@ class Club extends RowModel
         ])->delete();
     }
 
-    public function canBeModifiedBy(User $user): bool
+    public function canBeModifiedBy(?User $user): bool
     {
+        if ($user === null) {
+            return false;
+        }
+
         $id = $user->getId();
         if ($this->getOwner()->getId() === $id) {
             return true;
