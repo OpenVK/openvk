@@ -328,9 +328,6 @@ export class ChatGeneralForm {
                 if (this.supposed_type === 'chat' && this.isILeft()) {
                     return false;
                 }
-                if (this.data.can_write_private_message !== undefined && this.data.can_write_private_message !== null) {
-                    return Number(this.data.can_write_private_message) === 1;
-                }
                 if (this.data.can_write !== undefined && this.data.can_write !== null) {
                     if (typeof this.data.can_write === 'object') {
                         return !!this.data.can_write.allowed;
@@ -339,6 +336,9 @@ export class ChatGeneralForm {
                     } else if (typeof this.data.can_write === 'number') {
                         return this.data.can_write === 1;
                     }
+                }
+                if (this.data.can_write_private_message !== undefined && this.data.can_write_private_message !== null) {
+                    return Number(this.data.can_write_private_message) === 1;
                 }
                 return true;
             }

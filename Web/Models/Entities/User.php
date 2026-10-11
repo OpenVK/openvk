@@ -920,6 +920,38 @@ class User extends RowModel
         }
     }
 
+    public function hasActiveDialogueWith(?User $user, bool $requirePeerMessage = true): bool
+    {
+        if (!$user || $user->getId() === $this->getId()) {
+            return false;
+        }
+
+        try {
+            $broker = IMBroker::i();
+            if (!$broker->isEnabled()) {
+                return false;
+            }
+
+            $params = [
+                "peer_id" => $this->getId(),
+            ];
+            if ($requirePeerMessage) {
+                $params["from_peer"] = 1;
+            }
+
+            $response = $broker->invokeMethod($user->getId(), "im.checkPeerExist", $params);
+
+            if (empty($response) || !is_string($response)) {
+                return false;
+            }
+
+            $data = json_decode($response, true);
+            return !empty($data['response']['exists']) || !empty($data['response']['peer_has_written']);
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
     public function getClubs(int $page = 1, bool $admin = false, int $count = OPENVK_DEFAULT_PER_PAGE, bool $offset = false, bool $andEvents = false): \Traversable
     {
         if (!$offset) {
