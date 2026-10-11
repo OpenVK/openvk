@@ -541,7 +541,7 @@ final class Users extends VKAPIRequestHandler
                                     if ($usr->isBlacklistedBy($this->getUser()) || $this->getUser()->isBlacklistedBy($usr)) {
                                         $canWrite = 0;
                                     } elseif (!$usr->getPrivacyPermission("messages.write", $this->getUser())) {
-                                        $canWrite = 0;
+                                        $canWrite = $usr->hasActiveDialogueWith($this->getUser()) ? 1 : 0;
                                     }
                                 }
                             } else {
