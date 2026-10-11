@@ -39,3 +39,6 @@ Content-Type: application/x-www-form-urlencoded
 
 ts=1696680000&pts=450&access_token=YOUR_ACCESS_TOKEN&v=5.138
 ```
+
+> **See also:** Comprehensive guide covering event types, history codes, and message object variations (modern vs legacy) is available at **[User Long Poll API](/dev/methods/messages/longpoll)**.
+

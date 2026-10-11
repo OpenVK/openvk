@@ -63,6 +63,7 @@ OpenVK-KB-Heading: Методы секции messages
 * **[messages.setChatPermissions](/dev/methods/messages/setChatPermissions)** — настраивает права доступа на действия в беседе.
 
 ### Real-Time и LongPoll
+* **[User Long Poll API](/dev/methods/messages/longpoll)** — руководство по подключению, протоколам v1/v2/v3 и событиям Long Poll в реальном времени.
 * **[messages.getLongPollServer](/dev/methods/messages/getLongPollServer)** — возвращает адрес и ключи подключения к LongPoll серверу.
 * **[messages.getLongPollHistory](/dev/methods/messages/getLongPollHistory)** — возвращает историю событий из LongPoll.
 * **[messages.getDiff](/dev/methods/messages/getDiff)** — возвращает синхронизацию состояния мессенджера (дифф) для официальных клиентов.

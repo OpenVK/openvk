@@ -44,3 +44,6 @@ need_pts=1&lp_version=3&access_token=YOUR_ACCESS_TOKEN&v=5.138
     }
 }
 ```
+
+> **См. также:** Подробное руководство по подключению, кодам ошибок и версиям протокола (v1, v2, v3) доступно в разделе **[User Long Poll API](/dev/methods/messages/longpoll)**.
+

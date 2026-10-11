@@ -63,6 +63,7 @@ The **messages** section contains API methods for working with direct messages, 
 * **[messages.setChatPermissions](/dev/methods/messages/setChatPermissions)** — sets permissions for chat actions.
 
 ### Real-Time & LongPoll
+* **[User Long Poll API](/dev/methods/messages/longpoll)** — guide on connection, protocols v1/v2/v3, and real-time events.
 * **[messages.getLongPollServer](/dev/methods/messages/getLongPollServer)** — returns LongPoll server parameters for real-time updates.
 * **[messages.getLongPollHistory](/dev/methods/messages/getLongPollHistory)** — returns events from LongPoll history.
 * **[messages.getDiff](/dev/methods/messages/getDiff)** — returns synchronized state diff for official messenger clients.

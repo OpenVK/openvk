@@ -274,6 +274,7 @@ final class DevelopersPresenter extends OpenVKPresenter
                     "id"    => "messages",
                     "name"  => "dsb_m_messages",
                     "links" => [
+                        ["name" => "User Longpoll API",           "href" => "/dev/methods/messages/longpoll"],
                         ["name" => "addChatUser",                 "href" => "/dev/methods/messages/addChatUser"],
                         ["name" => "allowMessagesFromGroup",      "href" => "/dev/methods/messages/allowMessagesFromGroup"],
                         ["name" => "createChat",                  "href" => "/dev/methods/messages/createChat"],
