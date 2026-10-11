@@ -97,4 +97,27 @@ class CleanupPendingUploadsCommand extends Command
 
         return round($bytes, 2) . ' ' . $units[$pow];
     }
+
+    /**
+     * Entrypoint for Chandler Cron execution.
+     */
+    public function executeCleanup(): void
+    {
+        $photoFolder = __DIR__ . "/../tmp/api-storage/photos";
+        if (!is_dir($photoFolder)) {
+            return;
+        }
+
+        $cutoffTime = time() - (24 * 3600);
+        $files = glob($photoFolder . "/*_*.oct");
+        if ($files === false) {
+            return;
+        }
+
+        foreach ($files as $file) {
+            if (filemtime($file) < $cutoffTime) {
+                @unlink($file);
+            }
+        }
+    }
 }

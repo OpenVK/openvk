@@ -74,7 +74,19 @@ final class Notes extends VKAPIRequestHandler
         $comment->setCreated(time());
         $comment->save();
 
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return (object) [
+                "cid" => $comment->getId(),
+            ];
+        }
+
         return $comment->getId();
+    }
+
+    public function addComment(int $note_id, int $owner_id, string $message = "", string $text = "", string $attachments = "")
+    {
+        $msg = !empty($message) ? $message : $text;
+        return $this->createComment($note_id, $owner_id, $msg, $attachments);
     }
 
     public function delete(int $note_id)
@@ -178,6 +190,10 @@ final class Notes extends VKAPIRequestHandler
             }
         }
 
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return array_merge([$notes_return_object->count], $notes_return_object->items);
+        }
+
         return $notes_return_object;
     }
 
@@ -243,6 +259,10 @@ final class Notes extends VKAPIRequestHandler
 
         foreach ($comments as $comment) {
             $arr->items[] = $comment->toVkApiStruct($this->getUser(), false, false, $note);
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return array_merge([$note->getCommentsCount()], $arr->items);
         }
 
         return $arr;

@@ -22,7 +22,7 @@ var tooltipTemplate = Handlebars.compile(`
 tippy.delegate("body", {
     target: '.mention',
     theme: "light vk",
-    content: "⌛",
+    content: "<img src=\"/assets/packages/static/openvk/img/loading_mini.gif\">",
     delay: 300,
     allowHTML: true,
     interactive: true,
@@ -33,9 +33,12 @@ tippy.delegate("body", {
     },
 
     onShow: async function(that) {
+        let resolveType = that.reference ? Number(that.reference.dataset.resolve || 2) : 0;
         if(!that._resolvedMention) {
-            let id = Number(that.reference.dataset.mentionRef);
-            that._resolvedMention = await API.Mentions.resolve(id);
+            let id = that.reference.dataset.mentionRef || that.reference.dataset.mentionref;
+            const numberId = id;
+
+            that._resolvedMention = await API.Mentions.resolve(numberId, resolveType);
         }
 
         let res = that._resolvedMention;

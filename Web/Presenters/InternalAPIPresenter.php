@@ -43,7 +43,7 @@ final class InternalAPIPresenter extends OpenVKPresenter
         }
         try {
             $input = (object) MessagePack::unpack(file_get_contents("php://input"));
-        } catch (\Exception $ex) {
+        } catch (\Throwable $ex) {
             $this->fail(-32700, "Parse error");
         }
 
@@ -78,7 +78,7 @@ final class InternalAPIPresenter extends OpenVKPresenter
             $handler->{$method}(...$params);
         } catch (\TypeError $te) {
             $this->fail(-32602, "Invalid params");
-        } catch (\Exception $ex) {
+        } catch (\Throwable $ex) {
             $this->fail(-32603, "Uncaught " . get_class($ex));
         }
     }

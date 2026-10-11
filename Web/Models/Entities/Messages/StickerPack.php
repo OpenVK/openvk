@@ -1,0 +1,792 @@
+<?php
+
+declare(strict_types=1);
+
+namespace openvk\Web\Models\Entities\Messages;
+
+use Chandler\Database\DatabaseConnection as DB;
+use Nette\Database\Table\ActiveRow;
+use openvk\Web\Models\RowModel;
+use openvk\Web\Models\Entities\User;
+use openvk\Web\Models\Entities\Gift;
+use openvk\Web\Models\Entities\Notifications\GiftNotification;
+use openvk\Web\Models\Repositories\Users;
+use openvk\Web\Util\StickerPackGiftRenderer;
+
+class StickerPack extends RowModel
+{
+    protected $tableName = "stickerpacks";
+
+    public function getName(): string
+    {
+        return $this->getRecord()->name;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->getRecord()->description;
+    }
+
+    public function getMainSticker(): ?Sticker
+    {
+        $mainId = $this->getRecord()->main_sticker_id;
+        if (!$mainId) {
+            $first = DB::i()->getContext()->table("stickerpack_relations")
+                ->where("stickerpack", $this->getId())
+                ->order("id ASC")
+                ->fetch();
+            if (!$first) {
+                return null;
+            }
+            $mainId = $first->sticker;
+        }
+
+        $row = DB::i()->getContext()->table("stickers")->get($mainId);
+        if (!$row || $row->deleted) {
+            return null;
+        }
+
+        $s = new Sticker($row);
+        $s->setPackId($this->getId());
+        return $s;
+    }
+
+    public function canEdit(?\openvk\Web\Models\Entities\User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        return $this->getOwnerId() === $user->getId() && $user->canCreateStickers();
+    }
+
+    public function getFormat(): string
+    {
+        $main = $this->getMainSticker();
+        return $main ? $main->getFormat($this->getId()) : "webp";
+    }
+
+    public function getSlug(): string
+    {
+        return $this->getRecord()->slug;
+    }
+
+    public function getPrice(): int
+    {
+        return (int) $this->getRecord()->price;
+    }
+
+    public function getEndTime(): ?int
+    {
+        $time = $this->getRecord()->end_time;
+        return is_null($time) ? null : (int) $time;
+    }
+
+    public function isUnlisted(): bool
+    {
+        return (bool) $this->getRecord()->unlisted;
+    }
+
+    public function getGiftSticker(): ?Sticker
+    {
+        $giftId = $this->getRecord()->gift_sticker_id;
+        if (!$giftId) {
+            return null;
+        }
+
+        return new Sticker(DB::i()->getContext()->table("stickers")->get($giftId));
+    }
+
+    public function getAuthor(): ?string
+    {
+        return $this->getRecord()->author;
+    }
+
+    public function getAuthorId(): ?string
+    {
+        return $this->getRecord()->author_id;
+    }
+
+    public function getAuthorUrl(): ?string
+    {
+        return $this->getRecord()->author_url;
+    }
+
+    public function getAuthorIds(): array
+    {
+        $csv = $this->getRecord()->author_id;
+        if (empty($csv)) {
+            return [];
+        }
+
+        return array_map("intval", explode(",", $csv));
+    }
+
+    public function getOwnerId(): ?int
+    {
+        $id = $this->getRecord()->owner_id;
+        return is_null($id) ? null : (int) $id;
+    }
+
+    public function getOwner(): ?User
+    {
+        $ownerId = $this->getOwnerId();
+        if (!$ownerId) {
+            return null;
+        }
+
+        return (new Users())->get($ownerId);
+    }
+
+    public function getBalance(): float
+    {
+        return (float) ($this->getRecord()->coins ?? 0.0);
+    }
+
+    public function getCoins(): float
+    {
+        return $this->getBalance();
+    }
+
+    public function setCoins(float $coins): void
+    {
+        $this->stateChanges("coins", $coins);
+    }
+
+    public function addCoins(float $coins): float
+    {
+        $res = $this->getBalance() + $coins;
+        $this->setCoins($res);
+        $this->save();
+
+        return $res;
+    }
+
+    public function withdrawCoins(?float $amount = null): float
+    {
+        $balance = $this->getBalance();
+        if ($balance <= 0) {
+            return 0.0;
+        }
+
+        if ($amount === null) {
+            $amount = $balance;
+        } elseif ($amount <= 0 || $amount > $balance) {
+            return 0.0;
+        }
+
+        $taxPercent = (float) (OPENVK_ROOT_CONF["openvk"]["preferences"]["stickers"]["withdrawTax"] ?? 0);
+        $tax        = ($amount / 100) * $taxPercent;
+        $received   = $amount - $tax;
+
+        $owner = $this->getOwner();
+        if (!$owner) {
+            return 0.0;
+        }
+
+        $owner->setCoins($owner->getCoins() + $received);
+        $this->setCoins($balance - $amount);
+        $this->save();
+        $owner->save();
+
+        return $received;
+    }
+
+    public function getCreated(): int
+    {
+        return (int) $this->getRecord()->created;
+    }
+
+    public function getStickers(int $page = 1, ?int $perPage = null): \Traversable
+    {
+        $rels = DB::i()->getContext()->table("stickerpack_relations")
+            ->where("stickerpack", $this->getId());
+
+        if ($page !== -1) {
+            $rels = $rels->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
+        }
+
+        foreach ($rels as $rel) {
+            $stickerRec = DB::i()->getContext()->table("stickers")->get($rel->sticker);
+            if ($stickerRec && !$stickerRec->deleted) {
+                $s = new Sticker($stickerRec);
+                $s->setPackId($this->getId());
+                yield $s;
+            }
+        }
+    }
+
+    public function getStickerIds(): array
+    {
+        $ids = [];
+        $rels = DB::i()->getContext()->table("stickerpack_relations")
+            ->where("stickerpack", $this->getId());
+        foreach ($rels as $rel) {
+            $stickerRec = DB::i()->getContext()->table("stickers")->get($rel->sticker);
+            if ($stickerRec && !$stickerRec->deleted) {
+                $ids[] = (int) $rel->sticker;
+            }
+        }
+        return $ids;
+    }
+
+    public function getStickersCount(): int
+    {
+        return DB::i()->getContext()->table("stickerpack_relations")
+            ->where("stickerpack", $this->getId())
+            ->count("*");
+    }
+
+    public function isDeleted(): bool
+    {
+        return (bool) $this->getRecord()->deleted;
+    }
+
+    public function isAvailable(): bool
+    {
+        if ($this->isDeleted()) {
+            return false;
+        }
+
+        $endTime = $this->getEndTime();
+        if (!is_null($endTime) && $endTime < time()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function isPurchasedBy(?User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        return DB::i()->getContext()->table("sticker_purchases")
+            ->where("user", $user->getId())
+            ->where("stickerpack", $this->getId())
+            ->where("purchased", 1)
+            ->count("*") > 0;
+    }
+
+    public function getPurchasesCount(): int
+    {
+        return DB::i()->getContext()->table("sticker_purchases")
+            ->where("stickerpack", $this->getId())
+            ->where("purchased IN (1, 2)")
+            ->count("*");
+    }
+
+    public function getInstallStats(int $days = 90): array
+    {
+        $since = strtotime("-" . ($days - 1) . " day midnight");
+
+        $rows = DB::i()->getConnection()->query(
+            "SELECT DATE_FORMAT(FROM_UNIXTIME(created), '%Y-%m-%d') AS `day`, COUNT(*) AS `cnt`
+             FROM `sticker_purchases`
+             WHERE `stickerpack` = ? AND `created` >= ? AND `purchased` IN (1, 2)
+             GROUP BY `day`",
+            $this->getId(),
+            $since
+        )->fetchPairs("day", "cnt");
+
+        $x = [];
+        $y = [];
+
+        for ($i = $days - 1; $i >= 0; $i--) {
+            $dayStr = date("Y-m-d", strtotime("-$i day midnight"));
+            $x[] = $dayStr;
+            $y[] = isset($rows[$dayStr]) ? (int) $rows[$dayStr] : 0;
+        }
+
+        return [
+            "x" => $x,
+            "y" => $y,
+        ];
+    }
+
+    public function hasBoughtBy(?User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        if ($this->getOwner() && $this->getOwner()->getId() === $user->getId()) {
+            return true;
+        }
+
+        $row = DB::i()->getContext()->table("sticker_purchases")
+            ->where("user", $user->getId())
+            ->where("stickerpack", $this->getId())
+            ->fetch();
+
+        if ($row && in_array((int) $row->purchased, [1, 2], true)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getPurchaseStatus(User $user): int
+    {
+        $row = DB::i()->getContext()->table("sticker_purchases")
+            ->where("user", $user->getId())
+            ->where("stickerpack", $this->getId())
+            ->fetch();
+
+        if (!$row) {
+            return 0;
+        }
+
+        return (int) $row->purchased;
+    }
+
+    public function buy(User $user): bool
+    {
+        if (!$this->isAvailable()) {
+            return false;
+        }
+
+        $existing = DB::i()->getContext()->table("sticker_purchases")
+            ->where("user", $user->getId())
+            ->where("stickerpack", $this->getId())
+            ->fetch();
+
+        if ($existing && (int) $existing->purchased === 1) {
+            return false;
+        }
+
+        $isOwner = $this->getOwner() && $this->getOwner()->getId() === $user->getId();
+        $isPreviousPurchase = $existing && (int) $existing->purchased === 2;
+
+        // If previously bought or user is the author, install without deducting coins
+        if ($isOwner || $isPreviousPurchase) {
+            if ($existing) {
+                $existing->update(["purchased" => 1, "created" => time()]);
+            } else {
+                DB::i()->getContext()->table("sticker_purchases")->insert([
+                    "user"        => $user->getId(),
+                    "stickerpack" => $this->getId(),
+                    "purchased"   => 1,
+                    "created"     => time(),
+                ]);
+            }
+            return true;
+        }
+
+        $price = $this->getPrice();
+        $coins = $user->getCoins();
+
+        if ($price > 0 && $coins < $price) {
+            return false;
+        }
+
+        if ($price > 0) {
+            $user->setCoins($coins - $price);
+            $user->save();
+            $this->addCoins((float) $price);
+        }
+
+        if ($existing) {
+            $existing->update(["purchased" => 1, "created" => time()]);
+        } else {
+            DB::i()->getContext()->table("sticker_purchases")->insert([
+                "user"        => $user->getId(),
+                "stickerpack" => $this->getId(),
+                "purchased"   => 1,
+                "created"     => time(),
+            ]);
+        }
+
+        return true;
+    }
+
+    public function hideFromQuickAccess(User $user): void
+    {
+        $existing = DB::i()->getContext()->table("sticker_purchases")
+            ->where("user", $user->getId())
+            ->where("stickerpack", $this->getId())
+            ->fetch();
+
+        if ($existing && (int) $existing->purchased === 1) {
+            $existing->update(["purchased" => 2]);
+        }
+    }
+
+    public function uninstall(User $user): bool
+    {
+        $existing = DB::i()->getContext()->table("sticker_purchases")
+            ->where("user", $user->getId())
+            ->where("stickerpack", $this->getId())
+            ->fetch();
+
+        if (!$existing) {
+            return false;
+        }
+
+        if ($this->getPrice() > 0 || ($this->getOwner() && $this->getOwner()->getId() === $user->getId())) {
+            $existing->update(["purchased" => 2]);
+        } else {
+            $existing->delete();
+        }
+
+        return true;
+    }
+
+    public function getGiftStickerIds(): array
+    {
+        $raw = $this->getRecord()->gift_stickers ?? null;
+        if (!$raw) {
+            return [];
+        }
+
+        if (str_starts_with((string) $raw, "[")) {
+            $decoded = json_decode((string) $raw, true);
+            if (is_array($decoded)) {
+                return array_values(array_filter(array_map("intval", $decoded)));
+            }
+        }
+
+        $parts = explode(",", (string) $raw);
+        return array_values(array_filter(array_map("intval", $parts)));
+    }
+
+    public function setGiftStickerIds(?array $ids): void
+    {
+        if (empty($ids)) {
+            $this->stateChanges("gift_stickers", null);
+            return;
+        }
+
+        $clean = array_values(array_unique(array_filter(array_map("intval", $ids))));
+        $this->stateChanges("gift_stickers", !empty($clean) ? json_encode($clean) : null);
+    }
+
+    public function getGiftCompositeStickerIds(): array
+    {
+        $coverId = $this->getMainSticker() ? $this->getMainSticker()->getId() : null;
+        $chosenBack = $this->getGiftStickerIds();
+
+        return StickerPackGiftRenderer::resolvePackStickerIds($this->getId(), $coverId, $chosenBack);
+    }
+
+    public function getGift(): ?Gift
+    {
+        $giftRow = DB::i()->getContext()->table("gifts")
+            ->where("stickers_product_id", $this->getId())
+            ->where("deleted", 0)
+            ->fetch();
+
+        return $giftRow ? new Gift($giftRow) : null;
+    }
+
+    /**
+     * Generates a composite giftbox image PNG blob for this stickerpack.
+     *
+     * @param array<int>|null $stickerIds
+     * @return string
+     */
+    public function generateGiftImageBlob(?array $stickerIds = null): string
+    {
+        if ($stickerIds === null || empty($stickerIds)) {
+            $stickerIds = $this->getGiftCompositeStickerIds();
+        }
+
+        try {
+            return StickerPackGiftRenderer::renderBlob($this->getId(), $stickerIds);
+        } catch (\Throwable $e) {
+            // Fallback to main sticker or any available sticker in the pack
+            $mainSticker = $this->getMainSticker();
+            if ($mainSticker) {
+                $dir = OPENVK_ROOT . "/storage/stickers/" . $this->getId() . "/" . $mainSticker->getId() . "/";
+                foreach (["512.png", "256.png", "128.png", "512.webp"] as $cand) {
+                    if (file_exists($dir . $cand) && filesize($dir . $cand) > 100) {
+                        return file_get_contents($dir . $cand);
+                    }
+                }
+            }
+
+            $packDir = OPENVK_ROOT . "/storage/stickers/" . $this->getId() . "/";
+            if (is_dir($packDir)) {
+                $entries = scandir($packDir);
+                foreach ($entries as $entry) {
+                    if ($entry !== "." && $entry !== ".." && is_numeric($entry)) {
+                        $stkDir = $packDir . $entry . "/";
+                        foreach (["512.png", "256.png", "128.png", "512.webp"] as $cand) {
+                            if (file_exists($stkDir . $cand) && filesize($stkDir . $cand) > 100) {
+                                return file_get_contents($stkDir . $cand);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return base64_decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=");
+        }
+    }
+
+    public function regenerateGiftImage(?array $stickerIds = null): ?Gift
+    {
+        $giftRow = DB::i()->getContext()->table("gifts")
+            ->where("stickers_product_id", $this->getId())
+            ->where("deleted", 0)
+            ->fetch();
+
+        $imageBlob = $this->generateGiftImageBlob($stickerIds);
+
+        if ($giftRow) {
+            $giftRow->update([
+                "image"   => $imageBlob,
+                "price"   => $this->getPrice(),
+                "updated" => time(),
+            ]);
+            return new Gift($giftRow);
+        }
+
+        $row = DB::i()->getContext()->table("gifts")->insert([
+            "internal_name"       => "Стикеры: " . $this->getName(),
+            "price"               => $this->getPrice(),
+            "usages"              => 0,
+            "image"               => $imageBlob,
+            "updated"             => time(),
+            "stickers_product_id" => $this->getId(),
+            "deleted"             => 0,
+        ]);
+
+        return new Gift($row);
+    }
+
+    public function getOrCreateGift(): Gift
+    {
+        $giftRow = DB::i()->getContext()->table("gifts")
+            ->where("stickers_product_id", $this->getId())
+            ->where("deleted", 0)
+            ->fetch();
+
+        if ($giftRow) {
+            return new Gift($giftRow);
+        }
+
+        $imageBlob = $this->generateGiftImageBlob();
+
+        $row = DB::i()->getContext()->table("gifts")->insert([
+            "internal_name"       => "Стикеры: " . $this->getName(),
+            "price"               => $this->getPrice(),
+            "usages"              => 0,
+            "image"               => $imageBlob,
+            "updated"             => time(),
+            "stickers_product_id" => $this->getId(),
+            "deleted"             => 0,
+        ]);
+
+        return new Gift($row);
+    }
+
+    public function giftTo(User $from, User $to, ?string $comment = null, bool $anonymous = false): ?ActiveRow
+    {
+        if (!$this->isAvailable()) {
+            return null;
+        }
+
+        if ($this->getPrice() <= 0) {
+            return null;
+        }
+
+        if ($this->hasBoughtBy($to)) {
+            return null;
+        }
+
+        $price = $this->getPrice();
+        $coins = $from->getCoins();
+
+        if ($price > 0 && $coins < $price) {
+            return null;
+        }
+
+        if ($price > 0) {
+            $from->setCoins($coins - $price);
+            $from->save();
+            $this->addCoins((float) $price);
+        }
+
+        $existing = DB::i()->getContext()->table("sticker_purchases")
+            ->where("user", $to->getId())
+            ->where("stickerpack", $this->getId())
+            ->fetch();
+
+        if ($existing) {
+            $existing->update(["purchased" => 1, "created" => time()]);
+        } else {
+            DB::i()->getContext()->table("sticker_purchases")->insert([
+                "user"        => $to->getId(),
+                "stickerpack" => $this->getId(),
+                "purchased"   => 1,
+                "created"     => time(),
+            ]);
+        }
+
+        $gift = $this->getOrCreateGift();
+        $data = $to->gift($from, $gift, $comment, $anonymous);
+        $gift->used();
+
+        $notification = new GiftNotification($to, $from, $gift, $data->id);
+        $notification->emit();
+
+        return $data;
+    }
+
+    public function setName(string $name): void
+    {
+        $this->stateChanges("name", $name);
+    }
+
+    public function setDescription(?string $description): void
+    {
+        $this->stateChanges("description", $description);
+    }
+
+    public function setMainSticker(?Sticker $sticker): void
+    {
+        $this->stateChanges("main_sticker_id", $sticker ? $sticker->getId() : null);
+    }
+
+    public function setSlug(string $slug): void
+    {
+        $this->stateChanges("slug", $slug);
+    }
+
+    public function setPrice(int $price): void
+    {
+        $this->stateChanges("price", $price);
+    }
+
+    public function setEndTime(?int $endTime): void
+    {
+        $this->stateChanges("end_time", $endTime);
+    }
+
+    public function setUnlisted(bool $unlisted): void
+    {
+        $this->stateChanges("unlisted", (int) $unlisted);
+    }
+
+    public function setAuthor(?string $author): void
+    {
+        $this->stateChanges("author", $author);
+    }
+
+    public function setAuthorId(?string $authorId): void
+    {
+        $this->stateChanges("author_id", $authorId);
+    }
+
+    public function setAuthorUrl(?string $authorUrl): void
+    {
+        $this->stateChanges("author_url", $authorUrl);
+    }
+
+    public function setOwnerId(?int $ownerId): void
+    {
+        $this->stateChanges("owner_id", $ownerId);
+    }
+
+    public function setGiftSticker(?Sticker $sticker): void
+    {
+        $this->stateChanges("gift_sticker_id", $sticker ? $sticker->getId() : null);
+    }
+
+    public function setCreated(int $created): void
+    {
+        $this->stateChanges("created", $created);
+    }
+
+    public function addSticker(Sticker $sticker): void
+    {
+        $exists = DB::i()->getContext()->table("stickerpack_relations")
+            ->where("stickerpack", $this->getId())
+            ->where("sticker", $sticker->getId())
+            ->count("*");
+
+        if ($exists > 0) {
+            return;
+        }
+
+        DB::i()->getContext()->table("stickerpack_relations")->insert([
+            "stickerpack" => $this->getId(),
+            "sticker"     => $sticker->getId(),
+        ]);
+    }
+
+    public function removeSticker(Sticker $sticker): void
+    {
+        DB::i()->getContext()->table("stickerpack_relations")
+            ->where("stickerpack", $this->getId())
+            ->where("sticker", $sticker->getId())
+            ->delete();
+    }
+
+    public function delete(bool $softly = true): void
+    {
+        $dir = OPENVK_ROOT . "/storage/stickers/" . $this->getId();
+        if (is_dir($dir)) {
+            $items = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS),
+                \RecursiveIteratorIterator::CHILD_FIRST
+            );
+            foreach ($items as $item) {
+                $item->isDir() ? @rmdir($item->getRealPath()) : @unlink($item->getRealPath());
+            }
+            @rmdir($dir);
+        }
+
+        DB::i()->getContext()->table("stickerpack_relations")
+            ->where("stickerpack", $this->getId())
+            ->delete();
+
+        parent::delete($softly);
+    }
+
+    public function toVkApiStruct(?User $user): array
+    {
+        $server_url = ovk_scheme(true) . ($_SERVER["HTTP_HOST"] ?? "");
+        $mainSticker = $this->getMainSticker();
+
+        $isAnimated = false;
+        $animUrl = null;
+        if ($mainSticker && $mainSticker->getFormat($this->getId()) === "lottie") {
+            $isAnimated = true;
+            $animUrl = $server_url . $mainSticker->getAnimationUrl($this->getId());
+        }
+
+        $stickerIds = $this->getStickerIds();
+        $stickersArray = [];
+        foreach ($stickerIds as $sid) {
+            $stickersArray[] = [
+                "sticker_id" => (int) $sid,
+                "is_allowed" => true,
+            ];
+        }
+
+        return [
+            "id"             => (int) $this->getId(),
+            "name"           => $this->getName(),
+            "title"          => $this->getName(),
+            "description"    => $this->getDescription() ?? "",
+            "slug"           => $this->getSlug(),
+            "price"          => (int) $this->getPrice(),
+            "end_time"       => (int) ($this->getEndTime() ?? 0),
+            "purchased"      => $this->isPurchasedBy($user) ? 1 : 0,
+            "photo_128"      => $mainSticker ? ($server_url . $mainSticker->getImageUrl(128)) : "",
+            "photo_256"      => $mainSticker ? ($server_url . $mainSticker->getImageUrl(256)) : "",
+            "is_animated"    => $isAnimated,
+            "animation_url"  => $animUrl,
+            "stickers_count" => (int) $this->getStickersCount(),
+            "sticker_ids"    => $stickerIds,
+            "stickers"       => $stickersArray,
+        ];
+    }
+}

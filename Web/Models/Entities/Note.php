@@ -171,7 +171,7 @@ class Note extends Postable
     {
         $res = (object) [];
 
-        $res->id            = $this->getVirtualId();
+        $res->id            = $res->nid = $this->getVirtualId();
         $res->owner_id      = $this->getOwner()->getId();
         $res->title         = $this->getName();
         $res->text          = $this->getText();

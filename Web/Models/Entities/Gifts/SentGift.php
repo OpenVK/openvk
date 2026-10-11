@@ -1,0 +1,67 @@
+<?php
+
+declare(strict_types=1);
+
+namespace openvk\Web\Models\Entities\Gifts;
+
+use Nette\Database\Table\ActiveRow;
+use openvk\Web\Models\Entities\{Gift, User};
+use openvk\Web\Util\DateTime;
+
+class SentGift
+{
+    private $relation;
+    protected $gift;
+    public $shortName = "gift";
+
+    public function __construct(ActiveRow $relation, Gift $gift)
+    {
+        $this->relation = $relation;
+        $this->gift = $gift;
+    }
+
+    public function canBeViewedBy(?User $user = null): bool
+    {
+        return true;
+    }
+
+    public function getAttachmentString(): string
+    {
+        return "gift" . $this->relation->receiver . "_" . $this->relation->id;
+    }
+
+    public function toApiAttachment(User $user): object
+    {
+        return (object) [
+            "type"  => "gift",
+            "gift" => $this->toVkApiStruct($user),
+        ];
+    }
+
+    public function toVkApiStruct(User $user): object
+    {
+        $server_url = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
+        $relation = $this->relation;
+
+        return (object) [
+            "id"        => $relation->id,
+            "message"   => $relation->comment == null ? "" : $relation->comment,
+            "date"      => (new DateTime($relation->sent))->timestamp(),
+            "privacy"   => $relation->anonymous == 1 ? 1 : 0,
+            "gift"      => [
+                "id"                  => $this->gift->getId(),
+                "stickers_product_id" => $this->gift->getStickersProductId(),
+                "thumb_256"           => $server_url . "/images/gift/" . $this->gift->getId() . "/256.png",
+                "thumb_96"            => $server_url . "/images/gift/" . $this->gift->getId() . "/96.png",
+                "thumb_48"            => $server_url . "/images/gift/" . $this->gift->getId() . "/48.png",
+            ],
+        ];
+    }
+
+    public function delete()
+    {
+        $this->relation->update([
+            "deleted" => 1,
+        ]);
+    }
+}

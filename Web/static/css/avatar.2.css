@@ -35,8 +35,8 @@ div.content > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth
 
 .crp-entry--image > img
 {
-    width: 64px;
-    height: 64px;
+    width: 48px;
+    height: 48px;
     object-fit: cover;
     border-radius: 100px;
 }
@@ -44,10 +44,14 @@ div.content > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth
 .crp-entry--message---av > img,
 .ava
 {
-    width: 46px;
-    height: 46px;
+    width: 32px;
+    height: 32px;
     object-fit: cover;
     border-radius: 100px;
+}
+
+.messenger-app--messages---message .ava {
+    border-radius: 50%;
 }
 
 .messenger-app--messages---message:hover

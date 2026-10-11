@@ -2,10 +2,10 @@
 {block title}{_upload_video}{/block}
 
 {block header}
-    <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a>
+    <a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a>
     »
-    <a href="/videos{$thisUser->getId()}">{_videos}</a>
-    » 
+    <a href="/videos{$owner->getRealId()}">{_videos}</a>
+    »
     {_upload_video}
 {/block}
 
@@ -40,7 +40,7 @@
             <td width="120" valign="top"></td>
             <td>
                 <input type="hidden" name="hash" value="{$csrfToken}" />
-                <input type="submit" class="button" name="submit" id="uploadVideo" value="{_upload_button}" />
+                <input type="submit" class="button" name="submit" onclick="onUploadVideoClick(event)" id="uploadVideo" value="{_upload_button}" />
             </td>
           </tr>
           <tr id="percentage" style="visibility: collapse;">

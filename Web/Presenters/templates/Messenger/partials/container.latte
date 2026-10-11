@@ -1,0 +1,31 @@
+<div id="load_skeleton" class="im_page_loader">
+    <img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="..." />
+</div>
+
+<script>
+    function loadPage() {
+        const n_url = new URL(location.href);
+
+        if (window.im_class == null) {
+            const o_url = new URL(location.href);
+            return setTimeout(() => {
+                if (window.imLog) window.imLog("Delay init");
+                if (o_url.href == n_url.href) {
+                    this.loadPage();
+                }
+            }, 1000);
+        }
+
+        if (!document.querySelector('.page_content #im_container')) {
+            window.im_class.insertIn(document.querySelector('.page_content'), n_url.searchParams.get("as"));
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", (e) => {
+        loadPage();
+    });
+
+    if (window.im_class != null) {
+        loadPage();
+    }
+</script>

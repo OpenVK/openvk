@@ -2,7 +2,11 @@
     "name": "openvk/openvk",
     "scripts": {
         "fix": "php-cs-fixer fix",
-        "lint": "php-cs-fixer fix --dry-run --diff --verbose",
+        "lint": [
+            "php-cs-fixer fix --dry-run --diff --verbose",
+            "@lint:latte"
+        ],
+        "lint:latte": "chandler-latte-lint Web/Presenters/templates Email",
         "analyse": "phpstan analyse --memory-limit 1G"
     },
     "config": {

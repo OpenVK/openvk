@@ -1,0 +1,15 @@
+{if $act == "incoming"}
+    {_incoming_req}
+{elseif $act == "outcoming"}
+    {_outcoming_req}
+{elseif $act == "followers"}
+    {_followers}
+{elseif $act == "online"}
+    {_friends_online}
+{elseif $act == "common"}
+    {_friends_common}
+{elseif $act == "recommended"}
+    {_friends_recommended}
+{else}
+    {_friends}
+{/if}

@@ -30,6 +30,10 @@ final class Gifts extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
+        if (!$user->getPrivacyPermission("gifts.read", $this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
         $gift_item = [];
         $user_gifts = array_slice(iterator_to_array($user->getGifts(1, $count)), $offset, $count);
 
@@ -41,10 +45,11 @@ final class Gifts extends VKAPIRequestHandler
                 "date"      => $gift->sent->timestamp(),
                 "privacy"   => $gift->anon == true ? 1 : 0,
                 "gift"      => [
-                    "id"          => $gift->gift->getId(),
-                    "thumb_256"   => $server_url . $gift->gift->getImage(2),
-                    "thumb_96"    => $server_url . $gift->gift->getImage(2),
-                    "thumb_48"    => $server_url . $gift->gift->getImage(2),
+                    "id"                  => $gift->gift->getId(),
+                    "stickers_product_id" => $gift->gift->getStickersProductId(),
+                    "thumb_256"           => $server_url . "/images/gift/" . $gift->gift->getId() . "/256.png",
+                    "thumb_96"            => $server_url . "/images/gift/" . $gift->gift->getId() . "/96.png",
+                    "thumb_48"            => $server_url . "/images/gift/" . $gift->gift->getId() . "/48.png",
                 ],
             ];
         }
@@ -75,6 +80,10 @@ final class Gifts extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
+        if (!$user->getPrivacyPermission("gifts.read", $this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
         $gift  = (new GiftsRepo())->get($gift_id);
 
         if (!$gift) {
@@ -102,13 +111,13 @@ final class Gifts extends VKAPIRequestHandler
             ];
         }
 
-        $user->gift($this->getUser(), $gift, $message);
+        $data = $user->gift($this->getUser(), $gift, $message, $privacy > 0);
         $gift->used();
 
         $this->getUser()->setCoins($coinsLeft);
         $this->getUser()->save();
 
-        $notification = new GiftNotification($user, $this->getUser(), $gift, $message);
+        $notification = new GiftNotification($user, $this->getUser(), $gift, $data->id);
         $notification->emit();
 
         return (object)
@@ -117,6 +126,26 @@ final class Gifts extends VKAPIRequestHandler
             "user_ids"        => $user_ids,
             "withdraw_votes"  => $price,
         ];
+    }
+
+    public function delete(int $gift_id)
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        if (!OPENVK_ROOT_CONF['openvk']['preferences']['commerce']) {
+            $this->fail(-105, "Commerce is disabled on this instance");
+        }
+
+        $gift = (new GiftsRepo())->getSentGiftById($this->getUser()->getRealId(), $gift_id);
+
+        if (!$gift) {
+            $this->fail(15, "Invalid gift");
+        }
+
+        $gift->delete();
+
+        return 1;
     }
 
     public function getCategories(bool $extended = false, int $page = 1)
