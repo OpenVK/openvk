@@ -29,12 +29,9 @@ body.dimmed>.dimmer #clickable {
     height: 100%;
 }
 
-body.manyMsgs .ovk-msg-all {
-    display: none;
-}
-
-body.manyMsgs .ovk-msg-all:last-of-type {
-    display: block !important;
+.ovk-msg-all.msgbox-stacked-hidden,
+body.manyMsgs .ovk-msg-all.msgbox-stacked-hidden {
+    display: none !important;
 }
 
 .ovk-diag-cont {

@@ -6,6 +6,8 @@ namespace openvk\ServiceAPI;
 
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Repositories\Stickers as StickersRepo;
+use openvk\Web\Models\Repositories\Users as UsersRepo;
+use openvk\Web\Util\EventRateLimiter;
 
 class Stickers implements Handler
 {
@@ -149,6 +151,12 @@ class Stickers implements Handler
 
         $coverIsLottie = $cover && ($cover->getFormat($pack->getId()) === "lottie");
 
+        $gift = null;
+        try {
+            $gift = $pack->getOrCreateGift();
+        } catch (\Throwable $e) {
+        }
+
         $resolve([
             "id"                => $pack->getId(),
             "name"              => $pack->getName(),
@@ -158,6 +166,7 @@ class Stickers implements Handler
             "author"            => $pack->getAuthor() ?? "",
             "author_url"        => $pack->getAuthorUrl() ?? "",
             "cover_url"         => $cover ? $cover->getImageUrl(512, $pack->getId()) : null,
+            "gift_img_url"      => $gift ? ("/images/gift/" . $gift->getId() . "/256.png") : ("/images/gift/" . $pack->getId() . "/256.png"),
             "cover_is_animated" => $coverIsLottie,
             "cover_anim_url"    => $coverIsLottie ? $cover->getAnimationUrl($pack->getId()) : null,
             "is_animated"       => ($pack->getFormat() === "lottie"),
@@ -221,5 +230,76 @@ class Stickers implements Handler
             "status"  => "uninstalled",
             "message" => tr("stickers_pack_uninstalled"),
         ]);
+    }
+
+    public function giftPack(int $packId, int $targetUserId, string $message = "", bool $anonymous = false, ?callable $resolve = null, ?callable $reject = null): void
+    {
+        $resolve ??= fn() => null;
+        $reject  ??= fn() => null;
+
+        if (!$this->user) {
+            $reject(15, tr("stickers_not_authorized"));
+            return;
+        }
+
+        if (EventRateLimiter::i()->tryToLimit($this->user, "gifts.send")) {
+            $reject(15, tr("limit_exceed_exception"));
+            return;
+        }
+
+        if ($targetUserId === $this->user->getId()) {
+            $reject(15, tr("stickers_gift_self_error"));
+            return;
+        }
+
+        $targetUser = (new UsersRepo())->get($targetUserId);
+        if (!$targetUser || $targetUser->isDeleted()) {
+            $reject(15, tr("error_user_not_exists"));
+            return;
+        }
+
+        if (!$targetUser->canBeViewedBy($this->user)) {
+            $reject(15, tr("forbidden"));
+            return;
+        }
+
+        if (!$targetUser->getPrivacyPermission("gifts.read", $this->user)) {
+            $reject(15, tr("forbidden"));
+            return;
+        }
+
+        $pack = $this->stickers->getPack($packId);
+        if (!$pack || $pack->isDeleted() || !$pack->isAvailable()) {
+            $reject(15, "Sticker pack not found");
+            return;
+        }
+
+        if ($pack->hasBoughtBy($targetUser)) {
+            $reject(15, tr("stickers_gift_already_owned"));
+            return;
+        }
+
+        $price = $pack->getPrice();
+        if ($price <= 0) {
+            $reject(15, tr("stickers_gift_free_prohibited"));
+            return;
+        }
+
+        if ($this->user->getCoins() < $price) {
+            $reject(15, tr("stickers_not_enough_coins"));
+            return;
+        }
+
+        $comment = trim($message);
+        $res = $pack->giftTo($this->user, $targetUser, $comment !== "" ? $comment : null, $anonymous);
+        if ($res) {
+            $resolve([
+                "status"    => "success",
+                "message"   => tr("stickers_gift_success"),
+                "userCoins" => $this->user->getCoins(),
+            ]);
+        } else {
+            $reject(15, tr("error_when_gifting"));
+        }
     }
 }

@@ -337,6 +337,18 @@ routes:
       handler: "Away->away"
     - url: "/away.php/{num}"
       handler: "Away->view"
+    - url: "/images/gift/{num}/{?giftFile}"
+      handler: "Gifts->serveLegacyImage"
+      placeholders:
+          giftFile: ".++"
+    - url: "/images/gifts/{num}/{?giftFile}"
+      handler: "Gifts->serveLegacyImage"
+      placeholders:
+          giftFile: ".++"
+    - url: "/gift/{num}/{?giftFile}"
+      handler: "Gifts->serveLegacyImage"
+      placeholders:
+          giftFile: ".++"
     - url: "/gift{num}_{num}.png"
       handler: "Gifts->giftImage"
     - url: "/gifts{num}"

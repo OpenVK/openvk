@@ -5746,6 +5746,7 @@ hr {
 .stickers_edit_container {
     margin: 0 -10px -10px;
     padding: 15px;
+    padding-bottom: 40px;
 }
 
 .stickers_inline_form {
@@ -6415,10 +6416,13 @@ hr {
     opacity: 0.25;
     filter: brightness(0.85);
     transition: opacity 0.12s ease, filter 0.12s ease;
-    pointer-events: none;
 }
 
-/* 512px preview centered on screen */
+.stickers_hold_preview_wrap,
+.stickers_hold_preview_wrap * {
+    pointer-events: none !important;
+}
+
 .stickers_hold_preview_wrap {
     position: fixed;
     top: 50%;
@@ -6428,7 +6432,34 @@ hr {
     display: flex;
     align-items: center;
     justify-content: center;
-    pointer-events: none;
+}
+
+.stickers_hold_preview_spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.65);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.stickers_hold_preview_spinner img {
+    display: block;
+    width: auto !important;
+    height: auto !important;
+    max-width: none !important;
+    max-height: none !important;
+    filter: none !important;
+    animation: none !important;
+}
+
+.stickers_hold_preview_wrap.is-loading .stickers_hold_preview_spinner {
+    display: flex;
 }
 
 .stickers_hold_preview_wrap img {
@@ -6483,4 +6514,267 @@ hr {
     user-select: all;
     display: inline-block;
     vertical-align: baseline;
+}
+
+/* Stickers Gift Dialog Styles */
+.stickers_gift_dialog_body {
+    padding: 6px 0;
+}
+
+.stickers_gift_suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 100060;
+    max-height: 180px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 0 0 3px 3px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.stickers_gift_suggestion_item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 5px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.stickers_gift_suggestion_item:hover {
+    background: #f2f2f2;
+}
+
+.stickers_gift_suggestion_avatar {
+    width: 24px;
+    height: 24px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.stickers_gift_suggestion_name {
+    font-size: 11px;
+    color: #2b587a;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.stickers_modal_gift_btn {
+    margin-left: 0;
+}
+
+.stickers_pack_gift_link {
+    font-size: 11px;
+    color: #828a99;
+    text-decoration: none;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.stickers_pack_gift_link:hover {
+    color: #2b587a;
+    text-decoration: underline;
+}
+
+/* Studio Gift Preview & Selector */
+.existing_sticker_label_gift {
+    display: block;
+    font-size: 11px;
+    color: #555;
+    margin-top: 3px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.existing_sticker_label_gift input[type="checkbox"] {
+    vertical-align: middle;
+    margin: 0 3px 0 0;
+}
+
+.stickers_gift_preview_block {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: #fafafa;
+    border: 1px solid #e1e4e8;
+    border-radius: 4px;
+    padding: 16px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.stickers_gift_preview_thumb_wrap {
+    position: relative;
+    flex-shrink: 0;
+    width: 140px;
+    height: 140px;
+    background: #fff;
+    border: 1px solid #dce1e6;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.stickers_gift_loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.stickers_gift_preview_actions {
+    margin-top: 10px;
+}
+
+.stickers_gift_preview_img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.stickers_gift_preview_info {
+    flex-grow: 1;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.stickers_gift_preview_slots_title {
+    font-size: 13px;
+    margin-bottom: 8px;
+    color: #2b587a;
+}
+
+.stickers_gift_preview_slot_item {
+    margin-bottom: 4px;
+    color: #333;
+}
+
+.stickers_gift_preview_note {
+    margin-top: 8px;
+    font-size: 11px;
+    color: #777;
+}
+
+@media (max-width: 580px) {
+    .stickers_gift_preview_block {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+.stickers_gift_selector_box {
+    position: relative;
+    border: 1px solid #C0CAD5;
+    background: #fff;
+    min-height: 24px;
+    padding: 2px 20px 2px 2px;
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 3px;
+    cursor: text;
+}
+
+.stickers_gift_tokens_list {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 3px;
+}
+
+.stickers_gift_token {
+    background: #5c82ab;
+    color: #fff !important;
+    font-size: 11px;
+    font-weight: bold !important;
+    padding: 1px 5px 2px 5px;
+    border-radius: 2px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    line-height: 15px;
+    user-select: none;
+}
+
+.stickers_gift_token span {
+    color: #fff !important;
+    font-size: 11px;
+    font-weight: bold !important;
+}
+
+.stickers_gift_token_remove {
+    color: #c4d7ec;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    line-height: 1;
+}
+
+.stickers_gift_token_remove:hover {
+    color: #fff;
+}
+
+.stickers_gift_input {
+    border: none !important;
+    outline: none !important;
+    background: transparent;
+    font-size: 11px;
+    color: #222;
+    flex: 1 1 50px;
+    min-width: 40px;
+    padding: 2px 2px;
+    margin: 0;
+    font-family: inherit;
+    line-height: 15px;
+}
+
+.stickers_gift_selector_box.is-empty .stickers_gift_input {
+    background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 1px center;
+    padding-left: 18px;
+}
+
+.stickers_gift_selector_arrow {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 3.5px solid transparent;
+    border-right: 3.5px solid transparent;
+    border-top: 4.5px solid #828a99;
+    pointer-events: none;
+}
+
+.stickers_gift_top_preview {
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.stickers_gift_preview_image {
+    max-width: 256px;
+    max-height: 200px;
+    min-height: 100px;
+    display: block;
+    margin: 0 auto 8px auto;
+}
+
+.ovk-diag-cont:has(.stickers_gift_dialog_body) .ovk-diag,
+.ovk-diag-cont:has(.stickers_gift_dialog_body) .ovk-diag-body {
+    overflow: visible;
 }

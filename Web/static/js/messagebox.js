@@ -50,8 +50,23 @@ class CMessageBox {
     _checkCount() {
         if (window.messagebox_stack.length > 1) {
             u("body").addClass("manyMsgs");
+            window.messagebox_stack.forEach((msg, idx) => {
+                if (idx === window.messagebox_stack.length - 1) {
+                    if (!msg.hidden) {
+                        msg.getNode().removeClass('msgbox-stacked-hidden');
+                    }
+                } else {
+                    msg.getNode().addClass('msgbox-stacked-hidden');
+                }
+            });
         } else {
             u("body").removeClass("manyMsgs");
+            if (window.messagebox_stack.length === 1) {
+                const msg = window.messagebox_stack[0];
+                if (!msg.hidden) {
+                    msg.getNode().removeClass('msgbox-stacked-hidden');
+                }
+            }
         }
     }
 

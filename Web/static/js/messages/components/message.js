@@ -1577,12 +1577,26 @@ export const Attachment = ({ msg, att }) => {
             return html`<${AudioAttachment} audio=${att.audio} />`;
         case 'wall':
             return html`<${WallPostAttachment} wall=${att.wall} />`;
-        case "gift":
+        case "gift": {
+            const giftData = att.gift?.gift || att.gift || {};
+            const thumb = giftData.thumb_256 || giftData.thumb_96 || giftData.thumb_48 || '';
+            const stickerPackId = giftData.stickers_product_id;
             return html`
-                <div class="msg-attach-w msg-attach-w-gift">
-                    <img src="${att.gift.gift.thumb_256}" />
+                <div 
+                    class="msg-attach-w msg-attach-w-gift"
+                    style="${stickerPackId ? 'cursor: pointer;' : ''}"
+                    onClick=${(e) => {
+                        if (stickerPackId && typeof window.openStickerPackModal === 'function') {
+                            e.stopPropagation();
+                            window.openStickerPackModal(stickerPackId, e);
+                        }
+                    }}
+                    title="${stickerPackId ? tr('stickers_view_pack') : ''}"
+                >
+                    <img src="${thumb}" alt="gift" />
                 </div>
             `;
+        }
         case "sticker": {
             let stk = att.sticker || {};
             let sId = stk.sticker_id || stk.id;
