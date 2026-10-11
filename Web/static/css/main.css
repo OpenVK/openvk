@@ -2184,8 +2184,8 @@ h4.gift_cat_header {
 }
 
 .gift_grid {
-    width: calc(100% + 16px);
-    margin: 0 -8px;
+    width: calc(100% + 20px);
+    margin: 0 -10px;
     display: flex;
     flex-wrap: wrap;
 }
