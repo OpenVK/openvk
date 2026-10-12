@@ -166,7 +166,6 @@ body:has(#im_container.at_page) .sidebar::-webkit-scrollbar-thumb:hover {
 }
 
 body:has(#im_container.at_page) .navigation {
-    position: static !important;
     top: auto !important;
 }
 
