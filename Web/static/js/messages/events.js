@@ -81,6 +81,7 @@ export class EventHandler {
                 if (found.data) {
                     found.data.flags = flags;
                     found.data.important = (flags & 8) ? 1 : 0;
+                    found.data.deleted_by_admin = (flags & 2048) ? 1 : 0;
                 }
                 found.important = Boolean(flags & 8);
                 if (_crs.peer._chunks) _crs.peer._chunks._invalidateCache();
@@ -120,6 +121,12 @@ export class EventHandler {
                         found.data.flags = (found.data.flags || 0) | 8;
                     }
                     found.important = true;
+                }
+                if (flags & 2048) {
+                    if (found.data) {
+                        found.data.deleted_by_admin = 1;
+                        found.data.flags = (found.data.flags || 0) | 2048;
+                    }
                 }
                 if (_crs.peer._chunks) _crs.peer._chunks._invalidateCache();
                 if (typeof _crs.getScrollPosition === 'function' && _crs.getScrollPosition()) {
@@ -178,6 +185,12 @@ export class EventHandler {
                         found.data.flags = (found.data.flags || 0) & ~8;
                     }
                     found.important = false;
+                }
+                if (flags & 2048) {
+                    if (found.data) {
+                        found.data.deleted_by_admin = 0;
+                        found.data.flags = (found.data.flags || 0) & ~2048;
+                    }
                 }
                 if (_crs.peer._chunks) _crs.peer._chunks._invalidateCache();
                 if (typeof _crs.getScrollPosition === 'function' && _crs.getScrollPosition()) {

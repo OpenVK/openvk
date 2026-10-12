@@ -845,7 +845,7 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
     const is_group = window.im.state.is_group;
     const total_convs = window.im.conversations ? Number(window.im.conversations.total_convs || conversations.length) : conversations.length;
     const isCompact = Boolean(window.im?.state?.is_compact_mode_enabled);
-    const sep = isCompact ? html`<br />` : html` |<span> </span>`;
+    const sep = html` |<span> </span>`;
 
     let rafId = null;
     const handleScroll = (e) => {
@@ -918,25 +918,42 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
                 ${total_convs > 0 ? tr("conversations_count_title", total_convs) : ""}
             </div>
             <div class="crp-bottom--actions">
-                ${isForward ? html`
-                    <a onClick=${() => { window.im.messenger.onConversationsClick(window.openvk.current_id, isForward, page); }}>${tr("saved_messages")}</a>
+                ${isCompact ? html`
+                    ${isForward ? html`
+                        <a class="crp-bottom--icon icon-saved" title="${tr("saved_messages")}" onClick=${() => { window.im.messenger.onConversationsClick(window.openvk.current_id, isForward, page); }}></a>
+                    ` : html`
+                        ${!unreadMode ? html`
+                            <a class="crp-bottom--icon icon-unread" title="${tr("conversations_show_unread")}" onClick=${() => { window.im.conversations.toggleMode("unread") }}></a>
+                        ` : html`
+                            <a class="crp-bottom--icon icon-all" title="${tr("conversations_show_all")}" onClick=${() => { window.im.conversations.toggleMode("all") }}></a>
+                        `}
+                        ${!is_group ? html`
+                            <a class="crp-bottom--icon icon-saved" title="${tr("saved_messages")}" onClick=${() => {
+                                const myId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
+                                if (myId) {
+                                    window.im.messenger.selectConversationByPeerId(myId);
+                                }
+                            }}></a>
+                        ` : ""}
+                        <a class="crp-bottom--icon icon-settings" title="${tr("messenger_tab_settings")}" onClick=${() => { window.im.openTabByName("settings") }}></a>
+                        <a class="crp-bottom--icon icon-switch" title="${tr("messenger_switch_current")}" onClick=${(event) => { imSwitchCurrent(event) }}></a>
+                        ${!is_group ? html`
+                            <a class="crp-bottom--icon icon-important" title="${tr("important_messages")}" onClick=${() => { window.im.openTabByName("important") }}></a>
+                        ` : ""}
+                    `}
                 ` : html`
-                ${!unreadMode ? html`
-                    <a onClick=${() => { window.im.conversations.toggleMode("unread") }}>${tr("conversations_show_unread")}</a>
-                ` : html`
-                    <a onClick=${() => { window.im.conversations.toggleMode("all") }}>${tr("conversations_show_all")}</a>
-                `}
-                ${(!is_group && isCompact) ? html`
-                    ${sep}<a onClick=${() => {
-                        const myId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
-                        if (myId) {
-                            window.im.messenger.selectConversationByPeerId(myId);
-                        }
-                    }}>${tr("saved_messages")}</a>
-                ` : ""}
-                ${sep}<a onclick=${() => { window.im.openTabByName("settings") }}>${tr("messenger_tab_settings")}</a>
-                ${sep}<a onClick=${(event) => { imSwitchCurrent(event) }}>${tr("messenger_switch_current")}</a>
-                ${!is_group ? html`${sep}<a onClick=${() => { window.im.openTabByName("important") }}>${tr("important_messages")}</a>` : ""}
+                    ${isForward ? html`
+                        <a onClick=${() => { window.im.messenger.onConversationsClick(window.openvk.current_id, isForward, page); }}>${tr("saved_messages")}</a>
+                    ` : html`
+                        ${!unreadMode ? html`
+                            <a onClick=${() => { window.im.conversations.toggleMode("unread") }}>${tr("conversations_show_unread")}</a>
+                        ` : html`
+                            <a onClick=${() => { window.im.conversations.toggleMode("all") }}>${tr("conversations_show_all")}</a>
+                        `}
+                        ${sep}<a onclick=${() => { window.im.openTabByName("settings") }}>${tr("messenger_tab_settings")}</a>
+                        ${sep}<a onClick=${(event) => { imSwitchCurrent(event) }}>${tr("messenger_switch_current")}</a>
+                        ${!is_group ? html`${sep}<a onClick=${() => { window.im.openTabByName("important") }}>${tr("important_messages")}</a>` : ""}
+                    `}
                 `}
             </div>
         </div>

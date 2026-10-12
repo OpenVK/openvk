@@ -1502,6 +1502,7 @@
 "messenger_tab_important" = "Помеченные важными сообщения";
 "messenger_switch_current" = "Переключиться";
 "message_is_deleted" = "Сообщение удалено";
+"message_is_deleted_by_admin" = "Сообщение удалено администратором";
 "restore" = "Восстановить";
 "message_viewers" = "Кто прочитал";
 "message_viewers_title" = "Просмотрели сообщение";
@@ -1548,7 +1549,7 @@
 "conversations_count_title_many" = "$1 переписок";
 "conversations_count_title_other" = "$1 переписок";
 "zero_conversations_error" = "У вас нет переписок.";
-"zero_unread_conversations_error" = "Все переписки прочитаны.";
+"zero_unread_conversations_error" = "Все переписки прочитаны. ヽ(・∀・)ﾉ";
 "zero_conversations_error_club" = "В группу ещё никто не писал.";
 "conversations_load_error" = "Не удалось загрузить беседы. Проверьте соединение с сервером.";
 

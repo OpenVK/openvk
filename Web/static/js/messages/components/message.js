@@ -515,8 +515,8 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                 `}
                 ${isDeleted ? html`
                     <p class="normalText text msg-deleted-content">
-                        <span class="msg-deleted-label">${tr('message_is_deleted')}</span>
-                        ${(typeof msg.can === 'function' ? msg.can('restore') : msg.isMine()) && html`
+                        <span class="msg-deleted-label">${msg.isDeletedByAdmin?.() ? tr('message_is_deleted_by_admin') : tr('message_is_deleted')}</span>
+                        ${(typeof msg.can === 'function' ? msg.can('restore') : (!msg.isDeletedByAdmin?.() && msg.isMine())) && html`
                             <a class="msg-restore-btn" onClick=${(e) => { window.im.messenger.view.onRestoreMessageClick(msg, e) }}>${tr('restore')}</a>
                         `}
                     </p>

@@ -372,6 +372,47 @@ body:has(#im_container.at_page) .page-wrap {
     display: inline-block;
 }
 
+.crp-bottom--actions .crp-bottom--icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    background-image: url(../img/im/bottom_icons.png);
+    background-repeat: no-repeat;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.15s ease;
+    flex-shrink: 0;
+}
+
+.crp-bottom--actions .crp-bottom--icon:hover {
+    opacity: 1;
+}
+
+.crp-bottom--actions .crp-bottom--icon.icon-unread {
+    background-position: 0 0;
+}
+
+.crp-bottom--actions .crp-bottom--icon.icon-all {
+    background-position: -16px 0;
+}
+
+.crp-bottom--actions .crp-bottom--icon.icon-saved {
+    background-position: -32px 0;
+}
+
+.crp-bottom--actions .crp-bottom--icon.icon-settings {
+    background-position: -48px 0;
+}
+
+.crp-bottom--actions .crp-bottom--icon.icon-switch {
+    background-position: -64px 0;
+}
+
+.crp-bottom--actions .crp-bottom--icon.icon-important {
+    background-position: -80px 0;
+}
+
 .crp-bottom--count {
     color: var(--nobold, #777);
     font-size: 11px;
@@ -3500,6 +3541,10 @@ body:has(#im_container.at_page) .page-wrap {
 
 /* compact mode */
 
+#im_container.compact .attachmentMenu {
+    padding-right: 15px;
+}
+
 #im_container.compact .im_page.page-other:not(.hidden) {
     display: block;
 }
@@ -3518,13 +3563,30 @@ body:has(#im_container.at_page) .page-wrap {
 #im_container.compact .crp-bottom {
     width: 100%;
     flex-direction: column;
-    align-items: start;
+    align-items: stretch;
     position: absolute;
     bottom: 0;
+    padding: 7px 12px;
+    box-sizing: border-box;
+}
+
+#im_container.compact .crp-bottom--count {
+    color: var(--nobold, #777);
+    font-size: 11px;
+    margin-bottom: 6px;
+    text-align: center;
+}
+
+#im_container.compact .crp-bottom--count:empty {
+    display: none;
 }
 
 #im_container.compact .crp-bottom--actions {
     margin-left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
 }
 
 #im_container.compact {

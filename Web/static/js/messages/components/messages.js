@@ -1891,6 +1891,13 @@ export class ChatMessage {
         }
     }
 
+    isDeletedByAdmin() {
+        return Boolean(
+            this.data?.deleted_by_admin == 1 ||
+            ((this.data?.flags || 0) & 2048)
+        );
+    }
+
     isSpecial(like) {
         if (like == null) {
             return this.isAction();
@@ -1922,7 +1929,14 @@ export class ChatMessage {
         if (action === "restore") {
             const isUnsent = this.id == null || !this.id || Number(this.id) <= 0;
             if (isUnsent) return false;
-            return Boolean(this.isDeleted() && this.isMine());
+            if (!this.isDeleted()) return false;
+
+            const isChatAdmin = this.peer && typeof this.peer.isAdmin === 'function' ? this.peer.isAdmin() : false;
+            if (this.isDeletedByAdmin()) {
+                return isChatAdmin;
+            }
+
+            return Boolean(this.isMine() || isChatAdmin);
         }
 
         if (this.isDeleted()) {
@@ -2008,6 +2022,10 @@ export class ChatMessage {
     restore(origText = null, origAttachments = null) {
         this.data.deleted = 0;
         this.data.deleted_by_me = 0;
+        this.data.deleted_by_admin = 0;
+        if (this.data.flags) {
+            this.data.flags = this.data.flags & ~2048;
+        }
         this.data.text = origText !== null ? origText : (this.data._orig_text !== undefined ? this.data._orig_text : "");
         this.data.attachments = origAttachments !== null ? origAttachments : (this.data._orig_attachments !== undefined ? this.data._orig_attachments : []);
     }
