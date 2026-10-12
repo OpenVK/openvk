@@ -753,6 +753,23 @@ class IMState {
             if (wasMobile !== this._is_mobile) {
                 imLog(`[IM] Viewport switched: is_mobile = ${this._is_mobile}`);
 
+                const imContainer = document.getElementById("im_container");
+                if (imContainer) {
+                    if (this._is_mobile) {
+                        imContainer.classList.remove("compact");
+                        const pageLayout = document.getElementById("page_layout");
+                        if (pageLayout && pageLayout.style.width === "968px") {
+                            pageLayout.style.width = "";
+                        }
+                    } else if (localStorage.getItem("tw.im.modern_mode") === "1") {
+                        imContainer.classList.add("compact");
+                        const pageLayout = document.getElementById("page_layout");
+                        if (pageLayout) {
+                            pageLayout.style.width = "968px";
+                        }
+                    }
+                }
+
                 if (this.link.fastChats) {
                     if (this._is_mobile) {
                         this.link.fastChats.hide();
@@ -889,7 +906,12 @@ class IMState {
             return window.openvk.current_id;
         }
     }
-    get is_compact_mode_enabled() { return localStorage.getItem("tw.im.modern_mode") === "1"; }
+    get is_compact_mode_enabled() {
+        if (this.is_mobile) {
+            return false;
+        }
+        return localStorage.getItem("tw.im.modern_mode") === "1";
+    }
     get is_debug() { return localStorage.getItem("tw.im.debug") === "1"; }
     get is_opened() { return location.pathname == "/im"; }
     get is_active() {
