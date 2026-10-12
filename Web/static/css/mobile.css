@@ -437,8 +437,11 @@
         margin: unset !important;
         margin-top: unset !important;
         margin-bottom: unset !important;
-        width: 100% !important;
-        height: 100%;
+        width: 100vW !important;
+        height: 100vH !important;
+        top: 0;
+        left: 0;
+        position: absolute;
     }
 
     .ovk-diag-cont {
