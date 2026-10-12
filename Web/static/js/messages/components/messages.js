@@ -167,6 +167,15 @@ class ChatMembers {
                     profile: profile
                 });
             });
+            this.items.sort((a, b) => {
+                const rankA = (a.is_owner ? 0 : (a.is_admin || a.is_moderator ? 1 : 2));
+                const rankB = (b.is_owner ? 0 : (b.is_admin || b.is_moderator ? 1 : 2));
+                if (rankA !== rankB) return rankA - rankB;
+                const dateA = a.join_date || 0;
+                const dateB = b.join_date || 0;
+                if (dateA !== dateB) return dateA - dateB;
+                return (a.member_id || 0) - (b.member_id || 0);
+            });
             this.offset = (v.items || []).length;
         } catch (e) {
             this.failed = true;

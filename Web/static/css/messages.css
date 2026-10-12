@@ -3748,6 +3748,8 @@ body:has(#im_container.at_page) .page-wrap {
 
 #im_container.compact .peer-window .peer-back {
     display: block;
+    margin-bottom: 5px;
+    width: fit-content;
 }
 
 #im_container.compact .messages--peers-header-peer-name {

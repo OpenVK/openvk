@@ -1076,7 +1076,7 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
 
     return html`
     <div class="peer-window">
-        <div class="peer-back" onClick=${(e) => { window.im.messenger.view.togglePeerInfo() }}>${tr("back")}</div>
+        <input type="button" class="peer-back button" onClick=${(e) => { window.im.messenger.view.togglePeerInfo() }} value="${tr("back")}"/>
         <div class="peer-side">
             <div class="peer-info">
                 <div class="peer-avatar sliding-thing-wrapper ${!peer.hasAvatar() ? "no-avatar" : ""}">

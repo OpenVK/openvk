@@ -1693,15 +1693,20 @@ u(document).on("paste", ".vouncher_input", function (event) {
 var tooltipClientTemplate = Handlebars.compile(`
     <table>
         <tr>
+            {{#if img}}
             <td width="54" valign="top">
                 <img src="{{img}}" width="54" />
             </td>
             <td width="1"></td>
+            {{/if}}
             <td width="150" valign="top">
                 <text>
                     {{app_tr}}: <b>{{name}}</b>
-                </text><br/>
-                <a href="{{url}}">${tr("learn_more")}</a>
+                </text>
+                {{#if url}}
+                <br/>
+                <a href="{{url}}" target="_blank">${tr("learn_more")}</a>
+                {{/if}}
             </td>
         </tr>
     </table>
@@ -1713,7 +1718,7 @@ var tooltipClientNoInfoTemplate = Handlebars.compile(`
             <td width="150" valign="top">
                 <text>
                     {{app_tr}}: <b>{{name}}</b>
-                </text><br/>
+                </text>
             </td>
         </tr>
     </table>
@@ -1738,7 +1743,14 @@ tippy.delegate("body", {
         let client_url = that.reference.dataset.appUrl;
         let client_img = that.reference.dataset.appImg;
 
-        if (client_name != undefined) {
+        if (client_url && (client_url === 'undefined' || client_url === 'null' || !client_url.trim())) {
+            client_url = null;
+        }
+        if (client_img && (client_img === 'undefined' || client_img === 'null' || !client_img.trim())) {
+            client_img = null;
+        }
+
+        if (client_name != undefined && client_name !== '') {
             let res = {
                 'name': client_name,
                 'url': client_url,
