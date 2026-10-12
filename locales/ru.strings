@@ -1550,6 +1550,7 @@
 "zero_conversations_error" = "У вас нет переписок.";
 "zero_unread_conversations_error" = "Все переписки прочитаны.";
 "zero_conversations_error_club" = "В группу ещё никто не писал.";
+"conversations_load_error" = "Не удалось загрузить беседы. Проверьте соединение с сервером.";
 
 "conversation_title_user" = "Переписка с $1";
 "conversation_title_club" = "Переписка с сообществом";

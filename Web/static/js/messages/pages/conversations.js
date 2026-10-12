@@ -49,12 +49,18 @@ export class ConversationsPage extends IMPage {
     }
 
     async beforeRender(container) {
-        if (window.im?.conversations && window.im.conversations.all_convs.length === 0 && !window.im.conversations.isLoadingMore && !window.im.conversations._hasNoMore) {
+        if (window.im?.conversations && window.im.conversations.all_convs.length === 0 && !window.im.conversations.isLoadingMore && !window.im.conversations._hasNoMore && !window.im.conversations.hasError) {
             try {
                 await window.im.conversations.loadNext();
             } catch (e) {
                 console.error("ConversationsPage | beforeRender loadNext failed:", e);
             }
+        }
+    }
+
+    retryLoad() {
+        if (window.im?.conversations) {
+            window.im.conversations.retryLoad().then(() => this.update()).catch(console.error);
         }
     }
 
@@ -109,15 +115,13 @@ export class ConversationsPage extends IMPage {
             convs = orig_convs;
         }
 
-        if (convs.length === 0 && window.im?.conversations && !window.im.conversations.isLoadingMore && !window.im.conversations._hasNoMore && window.im.conversations.all_convs.length === 0) {
-            window.im.conversations.loadNext().then(() => this.update()).catch(console.error);
-        }
-
         render(html`
         <${ConversationListView}
             conversations=${convs}
             hasMore=${window.im.conversations.has_more_items}
             isLoadingMore=${window.im.conversations.isLoadingMore}
+            hasError=${window.im.conversations.hasError}
+            onRetry=${() => this.retryLoad()}
             onLoadMore=${(e) => this.loadNext(e)}
             onCreateChat=${() => this._chatCreationModal()}
             onSearch=${(e) => this._onMessagesSearch(e)}
@@ -137,6 +141,9 @@ export class Conversations {
         this.CONVERSATIONS_PER_PAGE = CONVERSATIONS_PER_PAGE;
         this.isLoadingMore = false;
         this._hasNoMore = false;
+        this.hasError = false;
+        this.lastError = null;
+        this.lastErrorTime = 0;
         this.q = null;
         this.peer_id_search = null;
         this.all_convs = [];
@@ -169,6 +176,7 @@ export class Conversations {
     }
 
     get has_more_items() {
+        if (this.hasError) return false;
         if (this._hasNoMore) return false;
         if (this.total_convs && this.all_convs && this.all_convs.length >= this.total_convs) {
             return false;
@@ -316,11 +324,22 @@ export class Conversations {
         });
     }
 
+    retryLoad() {
+        this.hasError = false;
+        this.lastError = null;
+        this.lastErrorTime = 0;
+        this._hasNoMore = false;
+        return this.loadNext({ force: true });
+    }
+
     async loadNext(im = null) {
         if (this.isLoadingMore) {
             return;
         }
-        if (this._hasNoMore && !(im && im.report_data)) {
+        if (this._hasNoMore && !(im && (im.report_data || im.force))) {
+            return;
+        }
+        if (this.hasError && !(im && im.force) && (Date.now() - this.lastErrorTime < 5000)) {
             return;
         }
 
@@ -336,6 +355,8 @@ export class Conversations {
                 const prevCount = this.all_convs ? this.all_convs.length : 0;
                 const offset = this.loaded_convs_count;
                 convs = await this.getConversations(offset);
+                this.hasError = false;
+                this.lastError = null;
                 if (!convs || convs.length < count) {
                     this._hasNoMore = true;
                 }
@@ -347,6 +368,10 @@ export class Conversations {
             }
         } catch (e) {
             console.error("Failed to load more conversations:", e);
+            this.hasError = true;
+            this.lastError = e;
+            this.lastErrorTime = Date.now();
+            this._hasNoMore = true;
         } finally {
             this.isLoadingMore = false;
             this.update();

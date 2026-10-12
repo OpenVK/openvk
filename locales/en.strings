@@ -3181,6 +3181,7 @@
 "zero_conversations_error" = "No conversations found";
 "zero_conversations_error_club" = "No community messages";
 "zero_unread_conversations_error" = "No unread conversations";
+"conversations_load_error" = "Failed to load conversations. Check server connection.";
 "conversations_count_title_one" = "$1 conversation";
 "conversations_count_title_few" = "$1 conversations";
 "conversations_count_title_many" = "$1 conversations";

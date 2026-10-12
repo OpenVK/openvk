@@ -841,7 +841,7 @@ export const ConversationItem = ({ conv, isForward = false, page = null }) => {
     `;
 };
 
-export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCreateChat, onSearch, isForward, page, unreadMode, isLoadingMore }) => {
+export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCreateChat, onSearch, isForward, page, unreadMode, isLoadingMore, hasError, onRetry }) => {
     const is_group = window.im.state.is_group;
     const total_convs = window.im.conversations ? Number(window.im.conversations.total_convs || conversations.length) : conversations.length;
     const isCompact = Boolean(window.im?.state?.is_compact_mode_enabled);
@@ -854,7 +854,7 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
         if (!target) return;
         rafId = requestAnimationFrame(() => {
             rafId = null;
-            if (!hasMore || isLoadingMore || window.im?.conversations?.isLoadingMore) return;
+            if (!hasMore || isLoadingMore || window.im?.conversations?.isLoadingMore || hasError) return;
             const remaining = target.scrollHeight - target.scrollTop - target.clientHeight;
             if (remaining <= 250) {
                 if (typeof onLoadMore === 'function') {
@@ -896,7 +896,7 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
         </div>
         <div class="crp-list" onScroll=${handleScroll} ref=${(el) => {
             if (!el) return;
-            if (hasMore && !isLoadingMore && !window.im?.conversations?.isLoadingMore) {
+            if (conversations.length > 0 && !hasError && hasMore && !isLoadingMore && !window.im?.conversations?.isLoadingMore) {
                 if (el.scrollHeight <= el.clientHeight) {
                     if (typeof onLoadMore === 'function') {
                         onLoadMore();
@@ -904,8 +904,8 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
                 }
             }
         }}>
-            ${conversations.length > 0 ? conversations.map((conv) => html`<${ConversationItem} key=${conv.peer ? conv.peer.id : (conv.id || conv._conversation?.peer?.id)} conv=${conv} isForward=${isForward} page=${page} />`) : (!isLoadingMore ? html`<${ConversationsListError} unreadMode=${unreadMode} is_group=${is_group} />` : "")}
-            ${(hasMore || isLoadingMore) && html`
+            ${conversations.length > 0 ? conversations.map((conv) => html`<${ConversationItem} key=${conv.peer ? conv.peer.id : (conv.id || conv._conversation?.peer?.id)} conv=${conv} isForward=${isForward} page=${page} />`) : (!isLoadingMore ? html`<${ConversationsListError} unreadMode=${unreadMode} is_group=${is_group} hasError=${hasError} onRetry=${onRetry} />` : "")}
+            ${(hasMore || isLoadingMore) && !hasError && html`
             <div class="crp-lazy-loader ${isLoadingMore ? 'loading' : 'idle'}">
                 ${isLoadingMore ? html`
                     <img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="..." />
@@ -1806,17 +1806,29 @@ export const PeerAttachmentsSection = ({ peer }) => {
     `;
 };
 
-export const ConversationsListError = ({ unreadMode, is_group }) => {
+export const ConversationsListError = ({ unreadMode, is_group, hasError = false, onRetry = null }) => {
     let text = tr("zero_conversations_error");
-    if (unreadMode) { text = tr("zero_unread_conversations_error"); }
-    if (is_group) { text = tr("zero_conversations_error_club"); }
+    if (hasError) {
+        text = tr("conversations_load_error") && !tr("conversations_load_error").startsWith("@")
+            ? tr("conversations_load_error")
+            : "Не удалось загрузить беседы. Проверьте соединение с сервером.";
+    } else if (unreadMode) {
+        text = tr("zero_unread_conversations_error");
+    } else if (is_group) {
+        text = tr("zero_conversations_error_club");
+    }
 
     return html`
         <div class="conversations_error_page">
             <span>${text}</span>
+            ${hasError && onRetry ? html`
+                <div style="margin-top: 12px;">
+                    <button class="button" onClick=${onRetry}>${tr("msg_resend") && !tr("msg_resend").startsWith("@") ? tr("msg_resend") : "Повторить"}</button>
+                </div>
+            ` : ""}
         </div>
-    `
-}
+    `;
+};
 
 export const EmptyConversation = ({ isForward = false }) => {
     const hintText = isForward
