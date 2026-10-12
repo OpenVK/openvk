@@ -45,10 +45,11 @@ final class Gifts extends VKAPIRequestHandler
                 "date"      => $gift->sent->timestamp(),
                 "privacy"   => $gift->anon == true ? 1 : 0,
                 "gift"      => [
-                    "id"          => $gift->gift->getId(),
-                    "thumb_256"   => $server_url . $gift->gift->getImage(2),
-                    "thumb_96"    => $server_url . $gift->gift->getImage(2),
-                    "thumb_48"    => $server_url . $gift->gift->getImage(2),
+                    "id"                  => $gift->gift->getId(),
+                    "stickers_product_id" => $gift->gift->getStickersProductId(),
+                    "thumb_256"           => $server_url . "/images/gift/" . $gift->gift->getId() . "/256.png",
+                    "thumb_96"            => $server_url . "/images/gift/" . $gift->gift->getId() . "/96.png",
+                    "thumb_48"            => $server_url . "/images/gift/" . $gift->gift->getId() . "/48.png",
                 ],
             ];
         }
@@ -110,7 +111,7 @@ final class Gifts extends VKAPIRequestHandler
             ];
         }
 
-        $data = $user->gift($this->getUser(), $gift, $message);
+        $data = $user->gift($this->getUser(), $gift, $message, $privacy > 0);
         $gift->used();
 
         $this->getUser()->setCoins($coinsLeft);

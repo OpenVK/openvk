@@ -433,6 +433,24 @@ class User extends RowModel
         return $this->getRecord()->marital_status;
     }
 
+    // very dirty hack
+    public function getMaritalStatusForAPI(): int
+    {
+        $status = $this->getMaritalStatus();
+        switch ($status) {
+            case 5:
+                return 8;
+            case 6:
+                return 7; // six seveeeeeen
+            case 7:
+                return 5;
+            case 8:
+                return 6;
+            default:
+                return $status;
+        }
+    }
+
     public function getLocalizedMaritalStatus(?bool $prefix = false): string
     {
         $status = $this->getMaritalStatus();
@@ -899,6 +917,38 @@ class User extends RowModel
         } catch (\Exception $e) {
             error_log("IM Broker error: " . $e->getMessage());
             return 0;
+        }
+    }
+
+    public function hasActiveDialogueWith(?User $user, bool $requirePeerMessage = true): bool
+    {
+        if (!$user || $user->getId() === $this->getId()) {
+            return false;
+        }
+
+        try {
+            $broker = IMBroker::i();
+            if (!$broker->isEnabled()) {
+                return false;
+            }
+
+            $params = [
+                "peer_id" => $this->getId(),
+            ];
+            if ($requirePeerMessage) {
+                $params["from_peer"] = 1;
+            }
+
+            $response = $broker->invokeMethod($user->getId(), "im.checkPeerExist", $params);
+
+            if (empty($response) || !is_string($response)) {
+                return false;
+            }
+
+            $data = json_decode($response, true);
+            return !empty($data['response']['exists']) || !empty($data['response']['peer_has_written']);
+        } catch (\Throwable $e) {
+            return false;
         }
     }
 

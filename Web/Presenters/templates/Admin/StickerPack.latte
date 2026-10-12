@@ -110,6 +110,29 @@
 
     <hr />
 
+    <h3>{_admin_stickers_gift_preview}</h3>
+    <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 20px; background: #f7f9fa; border: 1px solid #dfe1e6; border-radius: 4px; padding: 15px;">
+        <div style="flex-shrink: 0;">
+            {if $gift}
+                <img src="{$gift->getImage(2)}" alt="Gift preview" style="width: 128px; height: 128px; object-fit: contain; border-radius: 6px; background: #fff; border: 1px solid #ebecf0;" />
+            {elseif $pack->getMainSticker()}
+                <img src="{$pack->getMainSticker()->getImageUrl(256)}" alt="Gift preview" style="width: 128px; height: 128px; object-fit: contain; border-radius: 6px; background: #fff; border: 1px solid #ebecf0;" />
+            {else}
+                <div style="width: 128px; height: 128px; background: #ebecf0; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #6b778c;">No gift</div>
+            {/if}
+        </div>
+        <div>
+            <p style="margin: 0 0 8px 0;"><b>{_stickers_gift_composition}:</b></p>
+            <p style="margin: 0 0 4px 0;">{_stickers_gift_front_slot}: <b>{$pack->getMainSticker() ? ($pack->getMainSticker()->getEmoji() ? $pack->getMainSticker()->getEmoji() . ' ' : '') . '#' . $pack->getMainSticker()->getId() : 'None'}</b></p>
+            <p style="margin: 0 0 12px 0;">{_stickers_gift_back_slots}: <b>{sizeof($giftStickerIds ?? [])} / 3</b></p>
+            <a class="aui-button aui-button-compact" href="/admin/stickers/id{$pack->getId()}?act=regenerate_gift&hash={$csrfToken}">
+                {_admin_stickers_regenerate_gift}
+            </a>
+        </div>
+    </div>
+
+    <hr />
+
     <h3>Stickers in this pack</h3>
 
     <form class="aui" method="POST" enctype="multipart/form-data" action="/admin/stickers/id{$pack->getId()}/addSticker">

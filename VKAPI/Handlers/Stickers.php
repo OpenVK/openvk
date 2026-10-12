@@ -137,6 +137,73 @@ final class Stickers extends VKAPIRequestHandler
         ];
     }
 
+    public function gift(int $stickerpack_id, int $user_id, string $message = "", int $privacy = 0): object
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        if (!OPENVK_ROOT_CONF['openvk']['preferences']['commerce']) {
+            $this->fail(-105, "Commerce is disabled on this instance");
+        }
+
+        if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->getUser(), "gifts.send", false)) {
+            $this->failTooOften();
+        }
+
+        if ($user_id === $this->getUser()->getId()) {
+            $this->fail(15, "Cannot gift to yourself");
+        }
+
+        $user = (new \openvk\Web\Models\Repositories\Users())->get($user_id);
+        if (!$user || $user->isDeleted()) {
+            $this->fail(15, "Access denied");
+        }
+
+        if (!$user->canBeViewedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        if (!$user->getPrivacyPermission("gifts.read", $this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        $repo = new StickersRepo();
+        $pack = $repo->getPack($stickerpack_id);
+
+        if (!$pack || !$pack->isAvailable()) {
+            $this->fail(15, "Sticker pack not found");
+        }
+
+        if ($pack->hasBoughtBy($user)) {
+            return (object) [
+                "success"  => 0,
+                "user_id"  => $user_id,
+                "error"    => "User already has this sticker pack",
+            ];
+        }
+
+        $price = $pack->getPrice();
+        if ($price > 0 && $this->getUser()->getCoins() < $price) {
+            return (object) [
+                "success"  => 0,
+                "user_id"  => $user_id,
+                "error"    => "You don't have enough voices",
+            ];
+        }
+
+        $data = $pack->giftTo($this->getUser(), $user, $message !== "" ? $message : null, $privacy === 1);
+        if (!$data) {
+            $this->fail(15, "Cannot gift this pack");
+        }
+
+        return (object) [
+            "success"        => 1,
+            "user_id"        => $user_id,
+            "withdraw_votes" => $price,
+            "pack_id"        => $pack->getId(),
+        ];
+    }
+
     public function getProducts(
         string $type = "stickers",
         string $filters = "",

@@ -676,7 +676,12 @@ function initStickerPickerHoldPreview(wrapper) {
         wrapper.classList.add('is-sticker-holding');
 
         previewEl = document.createElement('div');
-        previewEl.className = 'stickers_hold_preview_wrap';
+        previewEl.className = 'stickers_hold_preview_wrap is-loading';
+        previewEl.innerHTML = `
+            <div class="stickers_hold_preview_spinner">
+                <img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="" />
+            </div>
+        `;
 
         if (animUrl && window.lottie) {
             const lottieWrap = document.createElement('div');
@@ -694,12 +699,42 @@ function initStickerPickerHoldPreview(wrapper) {
                     autoplay: true,
                     path: animUrl
                 });
+                currentAnim.addEventListener('DOMLoaded', () => {
+                    previewEl?.classList.remove('is-loading');
+                });
+                currentAnim.addEventListener('data_ready', () => {
+                    previewEl?.classList.remove('is-loading');
+                });
             } catch (err) {
                 console.error("Lottie preview error:", err);
+                previewEl?.classList.remove('is-loading');
             }
         } else {
-            previewEl.innerHTML = `<img src="${url512}" alt="preview" />`;
+            const imgEl = document.createElement('img');
+            imgEl.alt = "preview";
+            imgEl.style.display = 'none';
+            previewEl.appendChild(imgEl);
             document.body.appendChild(previewEl);
+
+            const tempImg = new Image();
+            tempImg.onload = () => {
+                if (previewEl && activeItem === item) {
+                    imgEl.src = url512;
+                    imgEl.style.display = 'block';
+                    previewEl.classList.remove('is-loading');
+                }
+            };
+            tempImg.onerror = () => {
+                if (previewEl && activeItem === item) {
+                    previewEl.classList.remove('is-loading');
+                }
+            };
+            tempImg.src = url512;
+            if (tempImg.complete) {
+                imgEl.src = url512;
+                imgEl.style.display = 'block';
+                previewEl.classList.remove('is-loading');
+            }
         }
     }
 
@@ -733,7 +768,7 @@ function initStickerPickerHoldPreview(wrapper) {
         }, 220);
     });
 
-    wrapper.addEventListener('mousemove', (e) => {
+    document.addEventListener('mousemove', (e) => {
         if (!previewEl) return;
         const item = document.elementFromPoint(e.clientX, e.clientY)?.closest('.sticker-picker-item');
         if (item && item !== activeItem) {
@@ -1366,6 +1401,18 @@ async function withdrawStickers(id, currentBalance) {
 window._activeStickerModal = null;
 window._activeStickerModalSlug = null;
 
+async function openGiftStickerPackDialog(packInfo, recipient) {
+    if (typeof window.openGiftDialog === 'function') {
+        return window.openGiftDialog({
+            type: 'stickerpack',
+            pack: packInfo,
+            recipient: recipient
+        });
+    }
+}
+
+window.openGiftStickerPackDialog = openGiftStickerPackDialog;
+
 async function openStickerPackModal(slugOrId, event) {
     if (event) {
         if (typeof event.preventDefault === 'function') event.preventDefault();
@@ -1486,6 +1533,10 @@ async function openStickerPackModal(slugOrId, event) {
             actionBtnHtml = `<button type="button" class="button" id="stickers_modal_action_btn">${priceText}</button>`;
         }
 
+        const giftBtnHtml = (info.price > 0)
+            ? `<button type="button" class="button button_light stickers_modal_gift_btn" id="stickers_modal_gift_btn">${tr('stickers_gift_btn')}</button>`
+            : '';
+
         const copyBtnHtml = `
             <a href="javascript:void(0)" class="stickers_modal_copy_link" id="stickers_modal_copy_btn">${tr('stickers_copy_link')}</a>
         `;
@@ -1525,6 +1576,7 @@ async function openStickerPackModal(slugOrId, event) {
                         ${info.description ? `<div class="stickers_modal_desc">${escapeHtml(info.description)}</div>` : ''}
                         <div class="stickers_modal_actions">
                             ${actionBtnHtml}
+                            ${giftBtnHtml}
                         </div>
                     </div>
                 </div>
@@ -1664,21 +1716,44 @@ async function openStickerPackModal(slugOrId, event) {
             });
         }
 
+        const giftBtn = node.find('#stickers_modal_gift_btn').nodes[0];
+        if (giftBtn) {
+            giftBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                openGiftStickerPackDialog(info);
+            });
+        }
+
         let previewWrap = document.getElementById('stickers_hold_preview');
         if (!previewWrap) {
             previewWrap = document.createElement('div');
             previewWrap.id = 'stickers_hold_preview';
             previewWrap.className = 'stickers_hold_preview_wrap';
             previewWrap.style.display = 'none';
-            previewWrap.innerHTML = '<img id="stickers_hold_preview_img" alt="" draggable="false" />';
+            previewWrap.innerHTML = `
+                <div class="stickers_hold_preview_spinner">
+                    <img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="" />
+                </div>
+                <img id="stickers_hold_preview_img" alt="" draggable="false" />
+            `;
             document.body.appendChild(previewWrap);
+        } else if (!previewWrap.querySelector('.stickers_hold_preview_spinner')) {
+            const spinner = document.createElement('div');
+            spinner.className = 'stickers_hold_preview_spinner';
+            spinner.innerHTML = '<img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="" />';
+            previewWrap.insertBefore(spinner, previewWrap.firstChild);
         }
+
         const previewImg = document.getElementById('stickers_hold_preview_img');
         let isHolding = false;
         let modalCurrentAnim = null;
+        let currentPreviewUrl = null;
 
         function showPreview(url512) {
             if (!url512 || !previewWrap) return;
+            if (currentPreviewUrl === url512 && isHolding) return;
+            currentPreviewUrl = url512;
+
             if (modalCurrentAnim) {
                 try { modalCurrentAnim.destroy(); } catch (e) { }
                 modalCurrentAnim = null;
@@ -1686,6 +1761,7 @@ async function openStickerPackModal(slugOrId, event) {
 
             const isJson = url512.endsWith('.json');
             if (isJson && window.lottie) {
+                previewWrap.classList.add('is-loading');
                 if (previewImg) previewImg.style.display = 'none';
                 let lottieWrap = previewWrap.querySelector('.stickers_hold_lottie_anim');
                 if (!lottieWrap) {
@@ -1703,13 +1779,45 @@ async function openStickerPackModal(slugOrId, event) {
                         autoplay: true,
                         path: url512
                     });
-                } catch (e) { }
+                    modalCurrentAnim.addEventListener('DOMLoaded', () => {
+                        if (currentPreviewUrl === url512) {
+                            previewWrap.classList.remove('is-loading');
+                        }
+                    });
+                    modalCurrentAnim.addEventListener('data_ready', () => {
+                        if (currentPreviewUrl === url512) {
+                            previewWrap.classList.remove('is-loading');
+                        }
+                    });
+                } catch (e) {
+                    previewWrap.classList.remove('is-loading');
+                }
             } else {
                 const lottieWrap = previewWrap.querySelector('.stickers_hold_lottie_anim');
                 if (lottieWrap) lottieWrap.style.display = 'none';
                 if (previewImg) {
-                    previewImg.style.display = 'block';
-                    previewImg.src = url512;
+                    previewWrap.classList.add('is-loading');
+                    previewImg.style.display = 'none';
+
+                    const tempImg = new Image();
+                    tempImg.onload = () => {
+                        if (currentPreviewUrl === url512 && isHolding) {
+                            previewImg.src = url512;
+                            previewImg.style.display = 'block';
+                            previewWrap.classList.remove('is-loading');
+                        }
+                    };
+                    tempImg.onerror = () => {
+                        if (currentPreviewUrl === url512 && isHolding) {
+                            previewWrap.classList.remove('is-loading');
+                        }
+                    };
+                    tempImg.src = url512;
+                    if (tempImg.complete) {
+                        previewImg.src = url512;
+                        previewImg.style.display = 'block';
+                        previewWrap.classList.remove('is-loading');
+                    }
                 }
             }
 
@@ -1721,11 +1829,13 @@ async function openStickerPackModal(slugOrId, event) {
         function hidePreview() {
             if (!isHolding) return;
             isHolding = false;
+            currentPreviewUrl = null;
             if (modalCurrentAnim) {
                 try { modalCurrentAnim.destroy(); } catch (e) { }
                 modalCurrentAnim = null;
             }
             if (previewWrap) {
+                previewWrap.classList.remove('is-loading');
                 previewWrap.style.display = 'none';
                 const lottieWrap = previewWrap.querySelector('.stickers_hold_lottie_anim');
                 if (lottieWrap) {
@@ -1755,7 +1865,7 @@ async function openStickerPackModal(slugOrId, event) {
                 if (!isHolding) return;
                 const el = document.elementFromPoint(e.clientX, e.clientY);
                 const item = el ? el.closest('.stickers_modal_item') : null;
-                if (item && item.dataset.url512 && previewImg && previewImg.src !== item.dataset.url512) {
+                if (item && item.dataset.url512) {
                     showPreview(item.dataset.url512);
                 }
             };

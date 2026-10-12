@@ -139,18 +139,13 @@ final class Messages extends VKAPIRequestHandler
                 if ($senderId > 0 && method_exists($peer, 'getPrivacyPermission')) {
                     if (!$peer->getPrivacyPermission('messages.write', $senderObj)) {
                         $existence = $this->invoke("im.checkPeerExist", [
-                            "peer_id" => $peerId,
+                            "peer_id"   => $peerId,
+                            "from_peer" => 1,
                         ]);
 
-                        if (!$existence["exists"]) {
+                        if (empty($existence["exists"]) && empty($existence["peer_has_written"])) {
                             $this->fail(901, "Can't send messages by user privacy settings");
                         }
-                    }
-
-                    $relation = $peer->getSubscriptionStatus($this->getUser());
-
-                    if (($relation == 0 || $relation == 1) && \openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->getUser(), "messages.notfriends")) {
-                        $this->failTooOften("Limit exceed");
                     }
                 }
             }
@@ -178,7 +173,16 @@ final class Messages extends VKAPIRequestHandler
                 } elseif ($this->getUser() && ($peerUser->isBlacklistedBy($this->getUser()) || $this->getUser()->isBlacklistedBy($peerUser))) {
                     $conversation['can_write'] = ['allowed' => false, 'reason' => 900];
                 } elseif ($this->getUser() && !$peerUser->getPrivacyPermission('messages.write', $this->getUser())) {
-                    $conversation['can_write'] = ['allowed' => false, 'reason' => 901];
+                    $existence = $this->invoke("im.checkPeerExist", [
+                        "peer_id"   => $pId,
+                        "from_peer" => 1,
+                    ]);
+
+                    if (!empty($existence["exists"]) || !empty($existence["peer_has_written"])) {
+                        $conversation['can_write'] = ['allowed' => true];
+                    } else {
+                        $conversation['can_write'] = ['allowed' => false, 'reason' => 901];
+                    }
                 } else {
                     $conversation['can_write'] = ['allowed' => true];
                 }
@@ -3962,7 +3966,7 @@ final class Messages extends VKAPIRequestHandler
 
         $photos = [];
         foreach ($chat->getAvatarsHistory() as $photo) {
-            $photos[] = $photo->toVkApiStruct(true);
+            $photos[] = $photo->toVkApiStruct($this->getUser(), true);
         }
 
         return (object) [

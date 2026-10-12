@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace openvk\Web\Models\Entities\Messages;
 
 use Chandler\Database\DatabaseConnection as DB;
+use Nette\Database\Table\ActiveRow;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\User;
+use openvk\Web\Models\Entities\Gift;
+use openvk\Web\Models\Entities\Notifications\GiftNotification;
 use openvk\Web\Models\Repositories\Users;
+use openvk\Web\Util\StickerPackGiftRenderer;
 
 class StickerPack extends RowModel
 {
@@ -433,18 +437,180 @@ class StickerPack extends RowModel
         return true;
     }
 
-    public function giftTo(User $from, User $to): void
+    public function getGiftStickerIds(): array
     {
+        $raw = $this->getRecord()->gift_stickers ?? null;
+        if (!$raw) {
+            return [];
+        }
+
+        if (str_starts_with((string) $raw, "[")) {
+            $decoded = json_decode((string) $raw, true);
+            if (is_array($decoded)) {
+                return array_values(array_filter(array_map("intval", $decoded)));
+            }
+        }
+
+        $parts = explode(",", (string) $raw);
+        return array_values(array_filter(array_map("intval", $parts)));
+    }
+
+    public function setGiftStickerIds(?array $ids): void
+    {
+        if (empty($ids)) {
+            $this->stateChanges("gift_stickers", null);
+            return;
+        }
+
+        $clean = array_values(array_unique(array_filter(array_map("intval", $ids))));
+        $this->stateChanges("gift_stickers", !empty($clean) ? json_encode($clean) : null);
+    }
+
+    public function getGiftCompositeStickerIds(): array
+    {
+        $coverId = $this->getMainSticker() ? $this->getMainSticker()->getId() : null;
+        $chosenBack = $this->getGiftStickerIds();
+
+        return StickerPackGiftRenderer::resolvePackStickerIds($this->getId(), $coverId, $chosenBack);
+    }
+
+    public function getGift(): ?Gift
+    {
+        $giftRow = DB::i()->getContext()->table("gifts")
+            ->where("stickers_product_id", $this->getId())
+            ->where("deleted", 0)
+            ->fetch();
+
+        return $giftRow ? new Gift($giftRow) : null;
+    }
+
+    /**
+     * Generates a composite giftbox image PNG blob for this stickerpack.
+     *
+     * @param array<int>|null $stickerIds
+     * @return string
+     */
+    public function generateGiftImageBlob(?array $stickerIds = null): string
+    {
+        if ($stickerIds === null || empty($stickerIds)) {
+            $stickerIds = $this->getGiftCompositeStickerIds();
+        }
+
+        try {
+            return StickerPackGiftRenderer::renderBlob($this->getId(), $stickerIds);
+        } catch (\Throwable $e) {
+            // Fallback to main sticker or any available sticker in the pack
+            $mainSticker = $this->getMainSticker();
+            if ($mainSticker) {
+                $dir = OPENVK_ROOT . "/storage/stickers/" . $this->getId() . "/" . $mainSticker->getId() . "/";
+                foreach (["512.png", "256.png", "128.png", "512.webp"] as $cand) {
+                    if (file_exists($dir . $cand) && filesize($dir . $cand) > 100) {
+                        return file_get_contents($dir . $cand);
+                    }
+                }
+            }
+
+            $packDir = OPENVK_ROOT . "/storage/stickers/" . $this->getId() . "/";
+            if (is_dir($packDir)) {
+                $entries = scandir($packDir);
+                foreach ($entries as $entry) {
+                    if ($entry !== "." && $entry !== ".." && is_numeric($entry)) {
+                        $stkDir = $packDir . $entry . "/";
+                        foreach (["512.png", "256.png", "128.png", "512.webp"] as $cand) {
+                            if (file_exists($stkDir . $cand) && filesize($stkDir . $cand) > 100) {
+                                return file_get_contents($stkDir . $cand);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return base64_decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=");
+        }
+    }
+
+    public function regenerateGiftImage(?array $stickerIds = null): ?Gift
+    {
+        $giftRow = DB::i()->getContext()->table("gifts")
+            ->where("stickers_product_id", $this->getId())
+            ->where("deleted", 0)
+            ->fetch();
+
+        $imageBlob = $this->generateGiftImageBlob($stickerIds);
+
+        if ($giftRow) {
+            $giftRow->update([
+                "image"   => $imageBlob,
+                "price"   => $this->getPrice(),
+                "updated" => time(),
+            ]);
+            return new Gift($giftRow);
+        }
+
+        $row = DB::i()->getContext()->table("gifts")->insert([
+            "internal_name"       => "Стикеры: " . $this->getName(),
+            "price"               => $this->getPrice(),
+            "usages"              => 0,
+            "image"               => $imageBlob,
+            "updated"             => time(),
+            "stickers_product_id" => $this->getId(),
+            "deleted"             => 0,
+        ]);
+
+        return new Gift($row);
+    }
+
+    public function getOrCreateGift(): Gift
+    {
+        $giftRow = DB::i()->getContext()->table("gifts")
+            ->where("stickers_product_id", $this->getId())
+            ->where("deleted", 0)
+            ->fetch();
+
+        if ($giftRow) {
+            return new Gift($giftRow);
+        }
+
+        $imageBlob = $this->generateGiftImageBlob();
+
+        $row = DB::i()->getContext()->table("gifts")->insert([
+            "internal_name"       => "Стикеры: " . $this->getName(),
+            "price"               => $this->getPrice(),
+            "usages"              => 0,
+            "image"               => $imageBlob,
+            "updated"             => time(),
+            "stickers_product_id" => $this->getId(),
+            "deleted"             => 0,
+        ]);
+
+        return new Gift($row);
+    }
+
+    public function giftTo(User $from, User $to, ?string $comment = null, bool $anonymous = false): ?ActiveRow
+    {
+        if (!$this->isAvailable()) {
+            return null;
+        }
+
+        if ($this->getPrice() <= 0) {
+            return null;
+        }
+
+        if ($this->hasBoughtBy($to)) {
+            return null;
+        }
+
         $price = $this->getPrice();
         $coins = $from->getCoins();
 
         if ($price > 0 && $coins < $price) {
-            return;
+            return null;
         }
 
         if ($price > 0) {
             $from->setCoins($coins - $price);
             $from->save();
+            $this->addCoins((float) $price);
         }
 
         $existing = DB::i()->getContext()->table("sticker_purchases")
@@ -462,6 +628,15 @@ class StickerPack extends RowModel
                 "created"     => time(),
             ]);
         }
+
+        $gift = $this->getOrCreateGift();
+        $data = $to->gift($from, $gift, $comment, $anonymous);
+        $gift->used();
+
+        $notification = new GiftNotification($to, $from, $gift, $data->id);
+        $notification->emit();
+
+        return $data;
     }
 
     public function setName(string $name): void

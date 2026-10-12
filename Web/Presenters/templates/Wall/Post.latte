@@ -72,6 +72,11 @@
             {/if}
         {/if}
 
+        {if $post->canCloseComments($thisUser)}
+            <a n:if="!$post->isCommentsClosed()" onclick="onCloseCommentsClick(event, true, {$post->getPrettyId()}, 'wall')" class="profile_link" style="display:block;width:96%;">{_close_post_comments}</a>
+            <a n:if="$post->isCommentsClosed()" onclick="onCloseCommentsClick(event, false, {$post->getPrettyId()}, 'wall')" class="profile_link" style="display:block;width:96%;">{_open_post_comments}</a>
+        {/if}
+
         <a n:if="$canDelete ?? false" id="_ajaxDelete" class="profile_link" style="display:block;width:96%;" href="/wall{$post->getPrettyId()}/delete">{_delete}</a>
         <a
             n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL) AND $post->getEditTime()"

@@ -4574,3 +4574,56 @@ function openSource(event) {
     const url = event.target.href;
     window.open("/away.php?to=" + encodeURIComponent(url), "_blank");
 }
+
+async function onCloseCommentsClick(event, close, id, type) {
+    event.target.classList.add("lagged");
+    const pars = ["wall.closeComments", "wall.openComments", {}];
+
+    if (event.target.dataset.close != null) {
+        close = Number(event.target.dataset.close) == 1;
+    }
+
+    if (type == "wall") {
+        pars[2] = {
+            "owner_id": id.split("_")[0],
+            "post_id": id.split("_")[1],
+        };
+    }
+
+    if (type == "video") {
+        pars[0] = "video.edit";
+        pars[1] = "video.edit";
+        pars[2] = {
+            "owner_id": id.split("_")[0],
+            "video_id": id.split("_")[1],
+            "no_comments": Number(close),
+        };
+    }
+
+    if (type == "note") {
+        pars[0] = "notes.edit";
+        pars[1] = "notes.edit";
+        pars[2] = {
+            "owner_id": id.split("_")[0],
+            "note_id": id.split("_")[1],
+            "comment_privacy": Number(close),
+        };
+    }
+
+    try {
+        if (close == true) {
+            await window.OVKAPI.call(pars[0], pars[2]);
+            event.target.innerHTML = tr("open_post_comments");
+            event.target.dataset.close = 0;
+        } else {
+            await window.OVKAPI.call(pars[1], pars[2])
+            event.target.innerHTML = tr("close_post_comments");
+            event.target.dataset.close = 1;
+        }
+    } catch(e) {
+        console.error(e);
+        fastError(e.message);
+    }
+
+    event.target.classList.remove("lagged");
+}

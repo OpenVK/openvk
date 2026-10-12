@@ -30,6 +30,26 @@ only screen and (resolution >=1.25dppx) {
         background-size: 257px auto;
     }
 
+    .audioEntry .buttons .download-icon {
+        background-position: -136px -71px;
+    }
+
+    .audioEntry .buttons .report-icon {
+        background-position: -51px -70px;
+    }
+
+    .audioEntry.nowPlaying .buttons .musicIcon.remove-icon {
+        background-position: -108px -70px;
+    }
+
+    .audioEntry.nowPlaying .buttons .musicIcon.download-icon {
+        background-position: -151px -71px;
+    }
+
+    .audioEntry.nowPlaying .buttons .musicIcon.report-icon {
+        background-position: -66px -70px;
+    }
+
     /*.messenger-app--messages---message .actions-2>div:not(.star-icon) {
         background-image: var(--audio-controls-2x);
     }*/
