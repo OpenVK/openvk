@@ -912,10 +912,11 @@ export class EventHandler {
             this.im.fastChats.setUserOnline(userId, true);
         }
 
-        if (window.im?.cached_profiles) {
-            const prof = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached
-                ? window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(userId)
-                : window.im.cached_profiles._findCachedProfileById(userId);
+        const targetProfiles = this.im?.cached_profiles || window.im?.cached_profiles;
+        if (targetProfiles) {
+            const prof = targetProfiles._findCachedProfileByIdEvenIfNotCached
+                ? targetProfiles._findCachedProfileByIdEvenIfNotCached(userId)
+                : targetProfiles._findCachedProfileById(userId);
             if (prof) {
                 prof.online = 1;
                 if (prof.data) {
@@ -924,8 +925,8 @@ export class EventHandler {
                     prof.data.last_seen.time = now;
                 }
             }
-            if (Array.isArray(window.im.cached_profiles.cached_profiles)) {
-                for (const p of window.im.cached_profiles.cached_profiles) {
+            if (Array.isArray(targetProfiles.cached_profiles)) {
+                for (const p of targetProfiles.cached_profiles) {
                     if (p && Number(p.id) === userId) {
                         p.online = 1;
                         if (p.data) {
@@ -994,8 +995,9 @@ export class EventHandler {
             }
         }
 
-        if (window.im && typeof window.im.updateTabs === 'function') {
-            window.im.updateTabs();
+        const imInstance = this.im || window.im;
+        if (imInstance && typeof imInstance.updateTabs === 'function') {
+            imInstance.updateTabs();
         }
     }
 
@@ -1007,10 +1009,11 @@ export class EventHandler {
             this.im.fastChats.setUserOnline(userId, false);
         }
 
-        if (window.im?.cached_profiles) {
-            const prof = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached
-                ? window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(userId)
-                : window.im.cached_profiles._findCachedProfileById(userId);
+        const targetProfiles = this.im?.cached_profiles || window.im?.cached_profiles;
+        if (targetProfiles) {
+            const prof = targetProfiles._findCachedProfileByIdEvenIfNotCached
+                ? targetProfiles._findCachedProfileByIdEvenIfNotCached(userId)
+                : targetProfiles._findCachedProfileById(userId);
             if (prof) {
                 prof.online = 0;
                 if (prof.data) {
@@ -1018,8 +1021,8 @@ export class EventHandler {
                     prof.data.last_seen = { time: time };
                 }
             }
-            if (Array.isArray(window.im.cached_profiles.cached_profiles)) {
-                for (const p of window.im.cached_profiles.cached_profiles) {
+            if (Array.isArray(targetProfiles.cached_profiles)) {
+                for (const p of targetProfiles.cached_profiles) {
                     if (p && Number(p.id) === userId) {
                         p.online = 0;
                         if (p.data) {
@@ -1083,8 +1086,8 @@ export class EventHandler {
             }
         }
 
-        if (window.im && typeof window.im.updateTabs === 'function') {
-            window.im.updateTabs();
+        if (imInstance && typeof imInstance.updateTabs === 'function') {
+            imInstance.updateTabs();
         }
     }
 

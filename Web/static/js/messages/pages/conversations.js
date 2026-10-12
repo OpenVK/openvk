@@ -136,7 +136,8 @@ export class ConversationsPage extends IMPage {
 export class Conversations {
     static get CONVERSATIONS_PER_PAGE() { return CONVERSATIONS_PER_PAGE; }
 
-    constructor() {
+    constructor(im = null) {
+        this.im = im;
         this.total_convs = 0;
         this.CONVERSATIONS_PER_PAGE = CONVERSATIONS_PER_PAGE;
         this.isLoadingMore = false;
@@ -147,6 +148,19 @@ export class Conversations {
         this.q = null;
         this.peer_id_search = null;
         this.all_convs = [];
+        this.isShowingUnread = false;
+    }
+
+    reset() {
+        this.all_convs = [];
+        this.total_convs = 0;
+        this.isLoadingMore = false;
+        this._hasNoMore = false;
+        this.hasError = false;
+        this.lastError = null;
+        this.lastErrorTime = 0;
+        this.q = null;
+        this.peer_id_search = null;
         this.isShowingUnread = false;
     }
 
@@ -223,30 +237,34 @@ export class Conversations {
             fields: ChatGeneralForm.BASE_FIELDS,
         };
 
-        if (window.im.state.group_id) {
-            params.group_id = Math.abs(window.im.state.group_id);
+        const currentIm = this.im || window.im;
+        if (currentIm?.state?.group_id) {
+            params.group_id = Math.abs(currentIm.state.group_id);
         }
 
         let convs = await window.OVKAPI.call('messages.getConversations', params);
 
         const lists = [];
+        const profilesCache = currentIm?.cached_profiles || window.im?.cached_profiles;
 
-        convs.profiles?.forEach((prof) => {
-            window.im.cached_profiles._addProfileCache(new ChatGeneralForm(prof));
-        });
-        convs.groups?.forEach((group) => {
-            window.im.cached_profiles._addProfileCache(new ChatGeneralForm(group));
-        });
-        convs.chats?.forEach((chat) => {
-            const chatId = Number(chat.id);
-            const fullId = chatId < 2000000000 ? chatId + 2000000000 : chatId;
-            window.im.cached_profiles._addProfileCache(new ChatGeneralForm(Object.assign({ id: fullId, type: 'chat' }, chat)));
-        });
+        if (profilesCache) {
+            convs.profiles?.forEach((prof) => {
+                profilesCache._addProfileCache(new ChatGeneralForm(prof));
+            });
+            convs.groups?.forEach((group) => {
+                profilesCache._addProfileCache(new ChatGeneralForm(group));
+            });
+            convs.chats?.forEach((chat) => {
+                const chatId = Number(chat.id);
+                const fullId = chatId < 2000000000 ? chatId + 2000000000 : chatId;
+                profilesCache._addProfileCache(new ChatGeneralForm(Object.assign({ id: fullId, type: 'chat' }, chat)));
+            });
+        }
 
         const rawItems = convs?.items || [];
         rawItems.forEach((item) => {
             const id = item.conversation.peer.id;
-            let peer = window.im.cached_profiles._findCachedProfileById(id);
+            let peer = profilesCache ? profilesCache._findCachedProfileById(id) : window.im?.cached_profiles?._findCachedProfileById(id);
             if (!peer) {
                 const isChat = id >= ChatGeneralForm.CHAT_RUBICON || item.conversation?.peer?.type === 'chat';
                 const localId = isChat && id >= ChatGeneralForm.CHAT_RUBICON ? id - ChatGeneralForm.CHAT_RUBICON : id;

@@ -56,8 +56,8 @@ export class InstantMessagesAndRelated {
         this.log = imLog;
         this.isReady = false;
         this.is_initing = false;
-        this.conversations = new Conversations();
-        this.messenger = new Messenger();
+        this.conversations = new Conversations(this);
+        this.messenger = new Messenger(this);
         this.friends = new Friends();
 
         this.fastChats = new FastChats();
@@ -173,13 +173,20 @@ export class InstantMessagesAndRelated {
         return await InstantMessagesAndRelated.insertIn(container, null, false, true, data);
     }
 
-    static async insertIn(container, as = null, fastchat = false, rewrite_tabs = true, report_data = null, clear = true) {
+    static async insertIn(container, as = null, fastchat = false, rewrite_tabs = true, report_data = null, clear = true, force_switch = false) {
         if (!container) return null;
 
         if (clear) {
             try {
-                container.querySelector("#im_container").remove();
+                container.querySelector("#im_container")?.remove();
             } catch(e){}
+            if (!fastchat && !container.querySelector("#load_skeleton")) {
+                container.insertAdjacentHTML("afterbegin", `
+                    <div id="load_skeleton" class="im_page_loader">
+                        <img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="..." />
+                    </div>
+                `);
+            }
         }
         if (!InstantMessagesAndRelated._insertPromises) {
             InstantMessagesAndRelated._insertPromises = new Map();
@@ -199,8 +206,46 @@ export class InstantMessagesAndRelated {
                 return null;
             }
 
-            let self = window.im_variants.getCurrentUser();
+            const prevVariant = window.im;
+            const prevGroupId = prevVariant?.state?.group_id != null ? Number(prevVariant.state.group_id) : null;
+            const targetGroupId = as != null ? Number(as) : null;
+            const isAccountSwitch = force_switch || (prevVariant != null && prevGroupId !== targetGroupId);
+
+            let self = as != null ? window.im_variants.getForGroup(Number(as)) : window.im_variants.getCurrentUser();
             const b = new URL(location.href);
+
+            if (isAccountSwitch) {
+                imLog("IM | Account switch detected from", prevGroupId, "to", targetGroupId);
+
+                if (prevVariant && prevVariant !== self && typeof prevVariant.clearDialogsCache === 'function') {
+                    prevVariant.clearDialogsCache();
+                }
+
+                if (self && typeof self.clearDialogsCache === 'function') {
+                    self.clearDialogsCache();
+                }
+
+                b.searchParams.delete("sel");
+                b.searchParams.delete("joinByTopic");
+                b.searchParams.delete("join");
+                b.searchParams.delete("invite");
+                b.searchParams.delete("act");
+                b.searchParams.delete("msgid");
+                b.searchParams.delete("msg_id");
+                b.searchParams.delete("msg");
+
+                if (as != null) {
+                    b.searchParams.set("as", String(as));
+                } else {
+                    b.searchParams.delete("as");
+                }
+
+                if (!fastchat) {
+                    try {
+                        history.replaceState({ 'from_messenger': 1 }, null, b.toString());
+                    } catch (e) { }
+                }
+            }
 
             if (!isImWarningRemoved() && report_data == null) {
                 if (fastchat) {
@@ -255,7 +300,6 @@ export class InstantMessagesAndRelated {
 
             if (as != null) {
                 imLog("?as= detected", as);
-                self = window.im_variants.getForGroup(Number(as));
                 window.im_variants.set(self);
                 if (!self.isReady) { await self.init(); }
 
@@ -639,6 +683,66 @@ export class InstantMessagesAndRelated {
     }
     getTabs() { return this.tabs.map(t => t.id); }
     getTab(id) { return this.tabs.find(t => t.getPageId() == id); }
+
+    clearDialogsCache() {
+        imLog("IM | Clearing dialogs and chats cache for operator:", this.state?.group_id);
+
+        if (this.lp && typeof this.lp.stop === 'function') {
+            try {
+                this.lp.stop();
+            } catch (e) {
+                console.error("Failed to stop LP:", e);
+            }
+        }
+
+        if (this.conversations && typeof this.conversations.reset === 'function') {
+            this.conversations.reset();
+        }
+
+        if (this.cached_profiles && typeof this.cached_profiles.clear === 'function') {
+            this.cached_profiles.clear();
+        }
+
+        if (this.messenger && typeof this.messenger.reset === 'function') {
+            this.messenger.reset();
+        }
+
+        this.clearTabsForSwitch();
+
+        this.isReady = false;
+        this.is_initing = false;
+    }
+
+    clearTabsForSwitch() {
+        if (!Array.isArray(this.tabs)) return;
+        const toClose = this.tabs.filter(t => {
+            const pageId = typeof t.getPageId === 'function' ? t.getPageId() : t.id;
+            if (pageId === "conversations") return false;
+            if (this.state?.is_compact_mode_enabled && pageId === "messenger") return false;
+            return true;
+        });
+
+        toClose.forEach(t => {
+            try {
+                if (t.render_class && typeof t.render_class.reset === 'function') {
+                    t.render_class.reset();
+                }
+                if (t.render_class?.container) {
+                    t.render_class.container.remove();
+                }
+            } catch (e) {}
+        });
+
+        this.tabs = this.tabs.filter(t => !toClose.includes(t));
+
+        const messengerTab = this.tabs.find(t => (typeof t.getPageId === 'function' ? t.getPageId() : t.id) === "messenger");
+        if (messengerTab && messengerTab.render_class && typeof messengerTab.render_class.reset === 'function') {
+            messengerTab.render_class.reset();
+        }
+
+        this.selectedTabId = 0;
+        this.updateTabs();
+    }
 }
 
 class IMVariants {
@@ -1052,6 +1156,9 @@ class IMState {
             localStorage.setItem('im_pinned_groups_unread_counts', JSON.stringify(this.pinned_groups_counters));
         } catch (e) { }
         this.renderPinnedGroupsCounters();
+        if (window.im?.conversations && typeof window.im.conversations.update === "function") {
+            window.im.conversations.update();
+        }
     }
 
     setPinnedGroupCounter(groupId, count) {
@@ -1062,28 +1169,79 @@ class IMState {
             localStorage.setItem('im_pinned_groups_unread_counts', JSON.stringify(this.pinned_groups_counters));
         } catch (e) { }
         this.renderPinnedGroupsCounters();
+        if (window.im?.conversations && typeof window.im.conversations.update === "function") {
+            window.im.conversations.update();
+        }
     }
 
     getPinnedGroupsCounters() {
         return this.pinned_groups_counters || {};
     }
 
+    getOtherUnreadGroupsCount() {
+        const userState = window.im_variants?.getCurrentUser()?.state || this;
+        const counts = userState.pinned_groups_counters || this.pinned_groups_counters || {};
+        const activeGid = this.group_id != null ? String(Math.abs(this.group_id)) : null;
+
+        let count = 0;
+        for (const [gid, unread] of Object.entries(counts)) {
+            if (activeGid && String(gid) === activeGid) continue;
+            if (Number(unread) > 0) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    async loadEditableGroupIds() {
+        if (this._editable_group_ids && this._editable_group_ids.length > 0) {
+            return this._editable_group_ids;
+        }
+
+        try {
+            const cached = localStorage.getItem('im_editable_group_ids');
+            if (cached) {
+                this._editable_group_ids = JSON.parse(cached);
+            }
+        } catch (e) { }
+
+        try {
+            const res = await window.OVKAPI.call('messages.getEditableGroups', { count: 100 });
+            if (res && res.items) {
+                this._editable_group_ids = res.items.map(g => String(g.id));
+                try {
+                    localStorage.setItem('im_editable_group_ids', JSON.stringify(this._editable_group_ids));
+                } catch (e) { }
+            }
+        } catch (e) {
+            console.error("IM | Failed to load editable groups:", e);
+        }
+
+        return this._editable_group_ids || [];
+    }
+
     async updatePinnedGroupsCounters() {
         if (!window.OVKAPI) return;
 
-        const pinnedLinks = document.querySelectorAll("#_groupListPinnedGroups a.pinned_club");
-        if (pinnedLinks.length === 0) return;
+        const groupIdsSet = new Set();
 
-        const groupIds = [];
+        const pinnedLinks = document.querySelectorAll("#_groupListPinnedGroups a.pinned_club");
         pinnedLinks.forEach(link => {
             const href = link.getAttribute("href") || "";
             const m = href.match(/\/(?:club|public|event)(\d+)/);
             if (m) {
-                groupIds.push(m[1]);
+                groupIdsSet.add(m[1]);
             }
         });
 
-        if (groupIds.length === 0) return;
+        try {
+            const editableIds = await this.loadEditableGroupIds();
+            editableIds.forEach(id => groupIdsSet.add(String(id)));
+        } catch (e) { }
+
+        if (groupIdsSet.size === 0) return;
+
+        const groupIds = Array.from(groupIdsSet);
 
         try {
             const res = await window.OVKAPI.call('messages.getUnreadConversations', {
@@ -1099,6 +1257,8 @@ class IMState {
     }
 
     async _loadCurrent() {
+        this.items = [];
+        this.item_index = 0;
         if (this.group_id == null) {
             if (this.link.report_data) {
                 this.items.push(await ChatGeneralForm.resolveByIdAndReturnClass(this.link.report_data.author_id));
@@ -1310,15 +1470,18 @@ class IMState {
 
             const pageContent = document.querySelector('.page_content');
             if (pageContent) {
-                if (!pageContent.querySelector('#im_container')) {
+                const targetAs = n_url ? n_url.searchParams.get("as") : null;
+                const currentGroupId = window.im?.state?.group_id != null ? String(window.im.state.group_id) : null;
+                const asChanged = (targetAs || null) !== (currentGroupId || null);
+                if (!pageContent.querySelector('#im_container') || asChanged) {
                     if (this._resolvePositionVersion !== myVersion) {
                         imLog("_resolvePosition: stale before insertIn", myVersion);
                         return false;
                     }
                     pageContent.innerHTML = "";
-                    await window.im_class.insertIn(pageContent, n_url ? n_url.searchParams.get("as") : null);
+                    await window.im_class.insertIn(pageContent, targetAs, false, true, null, true, asChanged);
                 } else {
-                    const self = window.im_variants.getCurrentUser();
+                    const self = window.im || window.im_variants.getCurrentUser();
                     self.rewriteTabs(pageContent);
                 }
             }
@@ -1550,6 +1713,20 @@ class ProfilesCache {
     constructor() {
         this.cached_profiles = [];
         this._pending_fetches = new Set();
+    }
+
+    clear() {
+        if (Array.isArray(this.cached_profiles)) {
+            this.cached_profiles.forEach(p => {
+                if (p && typeof p.reset === 'function') {
+                    p.reset();
+                } else if (p && p._chunks && typeof p._chunks.reset === 'function') {
+                    p._chunks.reset();
+                }
+            });
+        }
+        this.cached_profiles = [];
+        this._pending_fetches.clear();
     }
 
     _addProfileCache(profile, remove_current = true) {

@@ -465,8 +465,18 @@ body:has(#im_container.at_page) .page-wrap {
     background-position: -64px 0;
 }
 
+.crp-bottom--actions .crp-bottom--icon.icon-switch.has-unread,
+.crp-bottom--actions .crp-bottom--icon.icon-switch.unread {
+    background-position: -96px 0;
+}
+
 .crp-bottom--actions .crp-bottom--icon.icon-important {
     background-position: -80px 0;
+}
+
+.crp-bottom--switch-badge {
+    color: inherit;
+    font-weight: normal;
 }
 
 .crp-bottom--count {

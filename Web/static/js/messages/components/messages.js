@@ -241,6 +241,16 @@ export class ChatGeneralForm {
         }
     }
 
+    reset() {
+        if (this._chunks && typeof this._chunks.reset === 'function') {
+            this._chunks.reset();
+        }
+        this._messages_inited = false;
+        this.pinned_message_chunks = [];
+        this.members = null;
+        this._firstUnreadMsgId = null;
+    }
+
     get online() {
         if (this._online !== undefined) return this._online;
         return this.data ? this.data.online : undefined;

@@ -846,6 +846,7 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
     const total_convs = window.im.conversations ? Number(window.im.conversations.total_convs || conversations.length) : conversations.length;
     const isCompact = Boolean(window.im?.state?.is_compact_mode_enabled);
     const sep = html` |<span> </span>`;
+    const otherUnreadGroups = typeof window.im?.state?.getOtherUnreadGroupsCount === "function" ? window.im.state.getOtherUnreadGroupsCount() : 0;
 
     let rafId = null;
     const handleScroll = (e) => {
@@ -936,7 +937,7 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
                             }}></a>
                         ` : ""}
                         <a class="crp-bottom--icon icon-settings" title="${tr("messenger_tab_settings")}" onClick=${() => { window.im.openTabByName("settings") }}></a>
-                        <a class="crp-bottom--icon icon-switch" title="${tr("messenger_switch_current")}" onClick=${(event) => { imSwitchCurrent(event) }}></a>
+                        <a class="crp-bottom--icon icon-switch${otherUnreadGroups > 0 ? ' has-unread' : ''}" title="${tr("messenger_switch_current")}" onClick=${(event) => { imSwitchCurrent(event) }}></a>
                         ${!is_group ? html`
                             <a class="crp-bottom--icon icon-important" title="${tr("important_messages")}" onClick=${() => { window.im.openTabByName("important") }}></a>
                         ` : ""}
@@ -951,7 +952,7 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
                             <a onClick=${() => { window.im.conversations.toggleMode("all") }}>${tr("conversations_show_all")}</a>
                         `}
                         ${sep}<a onclick=${() => { window.im.openTabByName("settings") }}>${tr("messenger_tab_settings")}</a>
-                        ${sep}<a onClick=${(event) => { imSwitchCurrent(event) }}>${tr("messenger_switch_current")}</a>
+                        ${sep}<a onClick=${(event) => { imSwitchCurrent(event) }}>${tr("messenger_switch_current")}${otherUnreadGroups > 0 ? html`<span class="crp-bottom--switch-badge"> (${otherUnreadGroups})</span>` : ""}</a>
                         ${!is_group ? html`${sep}<a onClick=${() => { window.im.openTabByName("important") }}>${tr("important_messages")}</a>` : ""}
                     `}
                 `}

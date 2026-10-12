@@ -17,7 +17,8 @@ export class Messenger {
     static MESSAGE_CHUNK_LENGTH = 1000;
     static MESSAGE_SEND_INTERVAL = 1000;
 
-    constructor() {
+    constructor(im = null) {
+        this.im = im;
         this.is_showing_profile = false;
         this.is_loading = false;
         this.had_more_one_tab = false;
@@ -46,6 +47,31 @@ export class Messenger {
         this.mentionSelectedIndex = 0;
         this.mentionQuery = "";
         this.mentionTriggerPos = -1;
+    }
+
+    reset() {
+        this.opened_tabs = [];
+        this.currentChatId = null;
+        this.selected_messages = [];
+        this.currentDraft = '';
+        this.prevDraft = null;
+        this.prevAtts_1 = null;
+        this.prevAtts_2 = null;
+        this.drafts = {};
+        this.scrolls = {};
+        this._replyTo = null;
+        this._editMsg = null;
+        this._typingStarted = null;
+        this.toggled_peer_obj = null;
+        this.mentionActive = false;
+        this.mentionMatches = [];
+        this.mentionSelectedIndex = 0;
+        this.mentionQuery = "";
+        this.mentionTriggerPos = -1;
+        const win = this.getWindow();
+        if (win && typeof win.reset === 'function') {
+            win.reset();
+        }
     }
 
     getWindow() {
@@ -1104,6 +1130,31 @@ export class MessengerPage extends IMPage {
         this._readTimer = null;
         this._pendingReadId = 0;
         this._hasBoundReadVisibility = false;
+    }
+
+    reset() {
+        this.opened_tabs = [];
+        this.current_chat = null;
+        this.selected_messages = [];
+        this._replyTo = null;
+        this._editMsg = null;
+        this.toggled_peer_obj = null;
+        if (this._readObserver) {
+            try { this._readObserver.disconnect(); } catch (e) {}
+            this._readObserver = null;
+        }
+        if (this._readTimer) {
+            clearTimeout(this._readTimer);
+            this._readTimer = null;
+        }
+        this._pendingReadId = 0;
+        this.currentDraft = '';
+        this.messagesListBlock = null;
+        if (this.container) {
+            try {
+                this.container.innerHTML = '';
+            } catch (e) {}
+        }
     }
     get replyTo() {
         return window.im?.messenger?.replyTo || this._replyTo || null;

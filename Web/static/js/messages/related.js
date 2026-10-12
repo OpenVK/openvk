@@ -350,7 +350,7 @@ async function imSwitchCurrent() {
         const eid = Number(e.target.closest(".entity_vertical_list_item").dataset.id);
         msg.close();
 
-        await window.im_class.insertIn(container, eid > 0 ? null : eid);
+        await window.im_class.insertIn(container, eid > 0 ? null : eid, false, true, null, true, true);
     })
 }
 
