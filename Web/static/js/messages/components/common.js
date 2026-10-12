@@ -1586,7 +1586,7 @@ export const PeerInfoView = ({ page, convo, togglePeerInfo }) => {
 
     return html`
         <div onClick=${(e) => { togglePeerInfo() }} class="messages--peers-header-peer-name">
-            <img class="ava" src="${peer.getAvatar()}" />
+            <${PeerAvatar} peer=${peer} className="ava" orig_ava=${false} size="min" />
             <span>${peer.getName()}</span>
         </div>
     `;

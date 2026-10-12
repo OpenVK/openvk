@@ -3188,9 +3188,13 @@ body:has(#im_container.at_page) .page-wrap {
 .messages--peers-header-peer-name .ava {
     width: 30px;
     height: 30px;
+    min-width: 30px;
+    min-height: 30px;
     object-fit: cover;
     object-position: top;
     border-radius: 2px;
+    flex-shrink: 0;
+    overflow: hidden;
 }
 
 .messages--peers-header-peer-name span {
