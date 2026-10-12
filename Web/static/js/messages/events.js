@@ -93,8 +93,18 @@ export class EventHandler {
 
     updateGlobalUnreadCounter(explicitCount = null) {
         if (typeof explicitCount === 'number' && !isNaN(explicitCount)) {
-            if (this.im && this.im.state && typeof this.im.state._updateCounter === 'function') {
-                this.im.state._updateCounter(explicitCount);
+            if (this.im && this.im.state) {
+                if (this.im.state.group_id == null) {
+                    if (typeof this.im.state._updateCounter === 'function') {
+                        this.im.state._updateCounter(explicitCount);
+                    }
+                } else {
+                    const gid = Math.abs(this.im.state.group_id);
+                    const userState = window.im_variants?.getCurrentUser()?.state || window.im?.state;
+                    if (userState && typeof userState.setPinnedGroupCounter === 'function') {
+                        userState.setPinnedGroupCounter(gid, explicitCount);
+                    }
+                }
             }
         }
     }

@@ -713,9 +713,37 @@ class IMState {
         this._listeners = new Map();
         this._initVisibilityListener();
 
+        this.pinned_groups_counters = {};
+
         if (this.group_id == null && window.openvk && window.openvk.current_id > 0) {
             this._initStorageSync();
+            this._initPinnedGroupsStorageSync();
         }
+    }
+
+    _initPinnedGroupsStorageSync() {
+        try {
+            const cached = localStorage.getItem('im_pinned_groups_unread_counts');
+            if (cached) {
+                this.pinned_groups_counters = JSON.parse(cached) || {};
+                this.renderPinnedGroupsCounters();
+            }
+        } catch (e) { }
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'im_pinned_groups_unread_counts' && this.group_id == null) {
+                try {
+                    this.pinned_groups_counters = JSON.parse(e.newValue) || {};
+                    this.renderPinnedGroupsCounters();
+                } catch (err) { }
+            }
+        });
+
+        window.addEventListener('focus', () => {
+            if (this.group_id == null) {
+                this.updatePinnedGroupsCounters();
+            }
+        });
     }
 
     _initStorageSync() {
@@ -972,6 +1000,101 @@ class IMState {
                     localStorage.setItem('im_unread_conversations_count', String(this.unread_counter));
                 } catch (e) { }
             }
+        }
+    }
+
+    renderPinnedGroupsCounters() {
+        const pinnedLinks = document.querySelectorAll("#_groupListPinnedGroups a.pinned_club");
+        if (pinnedLinks.length === 0) return;
+
+        pinnedLinks.forEach(link => {
+            const href = link.getAttribute("href") || "";
+            const m = href.match(/\/(?:club|public|event)(\d+)/);
+            if (!m) return;
+            const gid = m[1];
+            const count = Number(this.pinned_groups_counters?.[gid] || 0);
+
+            let obj = link.querySelector(".im_group_counter");
+            if (count > 0) {
+                if (!obj) {
+                    obj = document.createElement("object");
+                    obj.type = "internal/link";
+                    obj.className = "imc counter shown im_group_counter";
+                    obj.style.whiteSpace = "normal";
+                    obj.innerHTML = `<a href="/im?as=-${gid}"><b>${count}</b></a>`;
+                    obj.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        if (window.router && !window.router.isAjaxDisabled()) {
+                            e.preventDefault();
+                            window.router.route({ url: `/im?as=-${gid}` });
+                        }
+                    });
+                    link.appendChild(obj);
+                } else {
+                    const b = obj.querySelector("b");
+                    if (b) {
+                        b.textContent = String(count);
+                    } else {
+                        obj.innerHTML = `<a href="/im?as=-${gid}"><b>${count}</b></a>`;
+                    }
+                    obj.className = "imc counter shown im_group_counter";
+                }
+            } else if (obj) {
+                obj.remove();
+            }
+        });
+    }
+
+    setPinnedGroupsCounters(counts) {
+        if (!counts || typeof counts !== 'object') return;
+        this.pinned_groups_counters = { ...(this.pinned_groups_counters || {}), ...counts };
+        try {
+            localStorage.setItem('im_pinned_groups_unread_counts', JSON.stringify(this.pinned_groups_counters));
+        } catch (e) { }
+        this.renderPinnedGroupsCounters();
+    }
+
+    setPinnedGroupCounter(groupId, count) {
+        if (!groupId) return;
+        this.pinned_groups_counters = this.pinned_groups_counters || {};
+        this.pinned_groups_counters[String(groupId)] = Number(count) || 0;
+        try {
+            localStorage.setItem('im_pinned_groups_unread_counts', JSON.stringify(this.pinned_groups_counters));
+        } catch (e) { }
+        this.renderPinnedGroupsCounters();
+    }
+
+    getPinnedGroupsCounters() {
+        return this.pinned_groups_counters || {};
+    }
+
+    async updatePinnedGroupsCounters() {
+        if (!window.OVKAPI) return;
+
+        const pinnedLinks = document.querySelectorAll("#_groupListPinnedGroups a.pinned_club");
+        if (pinnedLinks.length === 0) return;
+
+        const groupIds = [];
+        pinnedLinks.forEach(link => {
+            const href = link.getAttribute("href") || "";
+            const m = href.match(/\/(?:club|public|event)(\d+)/);
+            if (m) {
+                groupIds.push(m[1]);
+            }
+        });
+
+        if (groupIds.length === 0) return;
+
+        try {
+            const res = await window.OVKAPI.call('messages.getUnreadConversations', {
+                group_ids: groupIds.join(",")
+            });
+
+            if (res && res.counts) {
+                this.setPinnedGroupsCounters(res.counts);
+            }
+        } catch (e) {
+            console.error("IM | Failed to fetch pinned groups unread counters:", e);
         }
     }
 
@@ -2897,6 +3020,10 @@ export function updateFaviconBadge(count) {
     }
 
     await window.im.init();
+
+    if (window.im?.state && typeof window.im.state.updatePinnedGroupsCounters === "function") {
+        window.im.state.updatePinnedGroupsCounters();
+    }
 
     if (!window.im.state.is_opened && window.router && !window.router.isAjaxDisabled()) {
         window.im.state._resolvePosition(null);

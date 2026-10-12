@@ -5687,3 +5687,25 @@ body:has(#im_container.at_page) .page-wrap {
 #im_container.compact .im_page.page-conversations {
     display: block !important;
 }
+
+.unread-in-list {
+    display: inline-block !important;
+    width: fit-content;
+    background: #e65119;
+    color: #ffffff;
+    padding: 1px 7px;
+    border-radius: 2px;
+    margin-top: -1px;
+    margin-left: 2px;
+    font-weight: bold;
+}
+
+.im_group_counter a {
+    color: inherit;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.pinned_club .im_group_counter {
+    margin-right: 3px;
+}
