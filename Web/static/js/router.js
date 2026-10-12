@@ -452,8 +452,13 @@ function isMobileAndExpanded() {
     return isMobile() && document.body.classList.contains('menu-expanded');
 }
 
+function toDesktopVersion() {
+    u("link[href^='/assets/packages/static/openvk/css/mobile.css']").remove();
+    u("meta[name='viewport']").remove();
+}
+
 // Mobile theme header
-$(document).on('click', '.page_header', (e) => {
+$('.page_header').on('click', async (e) => {
     if (isMobile() && !e.target.closest('.link, #fast_notifications')) {
         e.preventDefault();
         e.stopPropagation();
@@ -466,11 +471,6 @@ $(document).on('click', '.page_header', (e) => {
         }
     }
 })
-
-function toDesktopVersion() {
-    u("link[href^='/assets/packages/static/openvk/css/mobile.css']").remove();
-    u("meta[name='viewport']").remove();
-}
 
 $(document).on('click', 'a', async (e) => {
     console.log(e.isDefaultPrevented())

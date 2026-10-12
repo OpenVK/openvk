@@ -198,7 +198,8 @@
     {presenter "openvk!Wall->wallEmbedded", -$club->getId()}
 
     <script n:if="isset($thisUser) && $club->getWallType() == 2 && !$club->canBeModifiedBy($thisUser)">
-        document.querySelector("textarea").setAttribute("placeholder", tr("suggest_new"))
+        document.querySelector("textarea").setAttribute("placeholder", tr("suggest_new"));
+        document.querySelector("textarea").setAttribute("data-suggest", "1");
     </script>
 </div>
 <div class="right_small_block">
