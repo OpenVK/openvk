@@ -116,8 +116,58 @@ body:has(#im_container.compact) #page_layout {
     width: 968px;
 }
 
+html:has(#im_container.at_page) {
+    overflow-y: hidden !important;
+    height: 100vh !important;
+}
+
 body:has(#im_container.at_page) {
-    overflow-y: hidden;
+    overflow-y: hidden !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+}
+
+body:has(#im_container.at_page) #page_layout {
+    height: 100vh;
+    max-height: 100vh;
+    box-sizing: border-box;
+}
+
+body:has(#im_container.at_page) .page_body {
+    height: calc(100vh - 43px);
+    max-height: calc(100vh - 43px);
+}
+
+body:has(#im_container.at_page) .sidebar {
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+body:has(#im_container.at_page) .sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+body:has(#im_container.at_page) .sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+body:has(#im_container.at_page) .sidebar::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+}
+
+body:has(#im_container.at_page) .sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.35);
+}
+
+body:has(#im_container.at_page) .navigation {
+    position: static !important;
+    top: auto !important;
 }
 
 body:has(#im_container.at_page) .page_yellowheader {
@@ -178,6 +228,11 @@ body:has(#im_container.at_page) .page-wrap {
     overflow-x: hidden !important;
     scrollbar-width: thin;
     scrollbar-color: #717171b3 #f0f1f2;
+}
+
+#im_container.at_page .im_page.page-other:has(#chat-page),
+#im_container.compact .im_page.page-other:has(#chat-page) {
+    overflow-y: hidden !important;
 }
 
 #im_container.at_page .im_page.page-other::-webkit-scrollbar,
@@ -324,6 +379,7 @@ body:has(#im_container.at_page) .page-wrap {
     flex: 1 1 auto;
     min-height: 0;
     overflow-y: auto;
+    overscroll-behavior: contain;
     scrollbar-width: thin;
     scrollbar-color: #717171b3 #fff;
     margin-right: 2px;
@@ -847,6 +903,7 @@ body:has(#im_container.at_page) .page-wrap {
     overflow-x: hidden;
     overflow-anchor: none;
     position: relative;
+    overscroll-behavior: contain;
     scrollbar-width: thin;
     scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
     margin-right: 2px;
@@ -2144,6 +2201,7 @@ body:has(#im_container.at_page) .page-wrap {
     background: linear-gradient(180deg, var(--bg-slightly), var(--bg-slightly-2));
     border-top: 1px solid var(--bg-slightly-border);
     padding: 10px 60px;
+    flex-shrink: 0;
 }
 
 .messenger-app--input .input--messagebox-buttons {
