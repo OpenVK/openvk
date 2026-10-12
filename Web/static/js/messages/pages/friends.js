@@ -159,6 +159,28 @@ export class FriendsPage extends IMPage {
             this.selected_friends = [];
             this.has_inited = true;
         }
+
+        if (this.options?.referrer === "add_new" && this.options?.convo_id) {
+            try {
+                const convoId = this.options.convo_id;
+                let chatPeer = window.im?.conversations?._findConv(convoId)?.peer
+                    || (window.im?.state?.getCurrentConvo()?.peer?.id === convoId ? window.im.state.getCurrentConvo().peer : null);
+
+                if (chatPeer && chatPeer.members?.items?.length) {
+                    this.existing_member_ids = new Set(chatPeer.members.items.map(m => Number(m.member_id || m.id)));
+                } else {
+                    const res = await window.OVKAPI.call("messages.getConversationMembers", {
+                        peer_id: convoId
+                    });
+                    if (res && res.items) {
+                        this.existing_member_ids = new Set(res.items.map(m => Number(m.member_id || m.id)));
+                    }
+                }
+            } catch (err) {
+                console.warn("IM | Could not fetch chat members for invite filter:", err);
+            }
+        }
+
         if (this.friends_class.inited == false) {
             await this.friends_class.loadFriends();
             this.friends_class.inited = true;
@@ -169,10 +191,18 @@ export class FriendsPage extends IMPage {
         const ref = this.options.referrer;
         this.getNode().addClass("page-other");
 
+        let friendsList = this.friends_class.items;
+        let totalCount = this.friends_class.total_count;
+
+        if (ref === "add_new" && this.existing_member_ids instanceof Set) {
+            friendsList = friendsList.filter(f => !this.existing_member_ids.has(Number(f?.id ?? f)));
+            totalCount = friendsList.length;
+        }
+
         render(html`
         <${FriendsPageTemplate}
-            friends=${this.friends_class.items}
-            count=${this.friends_class.total_count}
+            friends=${friendsList}
+            count=${totalCount}
             referrer=${ref}
             onFriendClick=${(e, peer) => this.onFriendClick(e, peer)}
             onSubmit=${(e) => this.onCreateChat(e)}
