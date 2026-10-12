@@ -3056,6 +3056,8 @@
 "msg_error_send_to_dev" = "Tell developer";
 "msg_resend" = "Resend";
 "group_messages" = "Community messages";
+"im_empty_dialog_hint" = "To start messaging, select a conversation or group chat on the left";
+"im_forward_dialog_hint" = "You're almost there! Select a conversation on the left to forward the message from the chat";
 "im_option_compact_mode" = "Compact mode";
 "im_option_debug" = "Debug mode";
 "im_option_photo_viewer" = "Photo viewer";

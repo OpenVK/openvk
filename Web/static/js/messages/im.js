@@ -272,8 +272,8 @@ export class InstantMessagesAndRelated {
 
             imLog("Insert in", container, "fastchat:", fastchat);
 
-            if (self.state.is_compact_mode_enabled) {
-                u("#page_layout").attr("style", "width: 831px;")
+            if (!fastchat && self.state.is_compact_mode_enabled) {
+                u("#page_layout").attr("style", "width: 968px;")
             }
 
             if (!container.querySelector("#im_container")) {
@@ -1067,6 +1067,12 @@ class IMState {
                 return _l;
             } else {
                 console.error('No peer with this id!', sel_id);
+            }
+        } else if (!this.isFastchat && this.is_compact_mode_enabled) {
+            try {
+                await this.link.openTabByName("messenger");
+            } catch (e) {
+                console.error(e);
             }
         }
 

@@ -28,6 +28,25 @@ export class ConversationsPage extends IMPage {
     updateHeader(header) { header.changeByConvNumber(Number(window.im.conversations.total_convs)); }
     _update() { this.wRender(); }
     isForward() { return this.options.forward != null }
+    onCancelForward() {
+        this.options.forward = null;
+        if (this.tab) {
+            this.tab.options.forward = null;
+        }
+        if (window.im?.messenger) {
+            window.im.messenger.unselectAll();
+        }
+        if (window.im?.state?.is_compact_mode_enabled) {
+            this.update();
+            const messengerTab = window.im?.tabs?.find(t => t.getPageId() === "messenger");
+            if (messengerTab && messengerTab.render_class) {
+                messengerTab.render_class.update();
+            }
+        } else {
+            this.tab?.close();
+            window.im?.openTabByName("messenger");
+        }
+    }
 
     async beforeRender(container) {
         if (window.im?.conversations && window.im.conversations.all_convs.length === 0 && !window.im.conversations.isLoadingMore && !window.im.conversations._hasNoMore) {
