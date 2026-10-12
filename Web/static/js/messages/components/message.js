@@ -231,9 +231,6 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
         id=${msgAnchorId}
         data-msg-id=${msg.id}
         data-msg-cmid=${msg.conversation_message_id || (msg.data && (msg.data.conversation_message_id || msg.data.local_id)) || ''}
-        onMouseDown=${(e) => {
-            !isSearchTpl && !isMobile ? window.im?.messenger?.view.onMessageClick(msg, e) : null;
-        }}
         onClick=${(e) => {
             if (isSearchTpl) {
                 window.im.messenger.goToMessage(msg);
@@ -247,6 +244,13 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                     page.activeDropdownMsgId = null;
                     page.update();
                 }
+                const selection = window.getSelection();
+                if (selection && selection.toString().trim().length > 0) {
+                    return;
+                }
+                if (e.detail > 1) {
+                    return;
+                }
                 e.preventDefault();
                 if (page && typeof page.toggleMessageSelection === 'function') {
                     page.toggleMessageSelection(msg, e);
@@ -256,6 +260,12 @@ export const MessageBubble = ({ msg, index, chunk, page, fromSearch }) => {
                     } else {
                         window.im.messenger.selectMessage(msg);
                     }
+                }
+            } else {
+                if (page && typeof page.onMessageClick === 'function') {
+                    page.onMessageClick(msg, e);
+                } else if (window.im?.messenger?.view?.onMessageClick) {
+                    window.im.messenger.view.onMessageClick(msg, e);
                 }
             }
         }}

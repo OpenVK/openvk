@@ -880,6 +880,7 @@ body:has(#im_container.at_page) .page-wrap {
 .messenger-app--messages---message:hover .time,
 .messenger-app--messages---message.msg-searched .time {
     opacity: 1;
+    pointer-events: auto;
 }
 
 .messenger-app--messages---message.msg-searched .click-territory {
@@ -942,6 +943,7 @@ body:has(#im_container.at_page) .page-wrap {
     position: absolute;
     left: 58px;
     opacity: 0;
+    pointer-events: none;
 }
 
 .messenger-app--messages---message--wrap .checkmark {
@@ -959,6 +961,7 @@ body:has(#im_container.at_page) .page-wrap {
     left: 0;
     opacity: 0;
     transition: 200ms opacity;
+    z-index: 2;
 }
 
 .messenger-app--messages---message .actions-2 {
@@ -1404,7 +1407,7 @@ body:has(#im_container.at_page) .page-wrap {
 }
 
 .messenger-app--messages---message.msg-selected {
-    cursor: not-allowed;
+    cursor: pointer;
     background: var(--bg-selected-mid) !important;
 }
 
@@ -1423,14 +1426,17 @@ body:has(#im_container.at_page) .page-wrap {
     background: magenta;
 }
 
-#im_container.compact .messenger-app--messages---message:not(.same-author) .checkmark,
-#im_container.compact .messenger-app--messages---message:not(.same-author) .error-checkmark {
-    margin-top: 40px;
+#im_container.compact .messenger-app--messages---message .click-territory {
+    display: none !important;
 }
 
 #im_container.compact .messenger-app--messages---message ._avatar {
     position: relative;
     z-index: 1;
+}
+
+#im_container.compact .messenger-app--messages---message.same-author .time {
+    display: none;
 }
 
 

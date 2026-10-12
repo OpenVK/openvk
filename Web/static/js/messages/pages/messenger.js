@@ -1922,17 +1922,24 @@ export class MessengerPage extends IMPage {
             return;
         }
 
-        if (e.buttons !== 1 || e.type == 'mousemove') return;
-        if (window.im.messenger.replyTo != null) return;
-        if (window.im.messenger.selected_messages_count == 0 && !e.target.closest(".click-territory")) {
+        if (e.button !== undefined && e.button !== 0) return;
+        if (window.im?.messenger?.replyTo != null) return;
+
+        // Skip interactive elements
+        if (e.target.closest('a, button, input, textarea, ._avatar, .actions-2, .msg-dropdown-wrap, .msg-dropdown-btn, .msg-dropdown-menu, .audioEmbed, .play-button, .compact_video, .reply-msg-container, .star-icon, .delete-icon, .reply-icon, .edit-icon, .msg-restore-btn, .time')) {
             return;
         }
 
-        const target = e.target;
-        if (!target.matches('.text, .time span') || window.im.messenger.selected_messages.length > 0) {
-            e.preventDefault();
-            this.toggleMessageSelection(msg, e);
+        // If the user selected text with mouse or double-clicked, don't toggle message selection
+        const selection = window.getSelection();
+        if (selection && selection.toString().trim().length > 0) {
+            return;
         }
+        if (e.detail > 1) {
+            return;
+        }
+
+        this.toggleMessageSelection(msg, e);
     }
 
     async goToMessage(msg, presetConvo) {
