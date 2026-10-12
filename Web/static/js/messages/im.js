@@ -408,6 +408,11 @@ export class InstantMessagesAndRelated {
                 console.error(e);
             }
         });
+
+        if (this.tabs.length > 0) {
+            const activeIdx = (this.selectedTabId >= 0 && this.selectedTabId < this.tabs.length) ? this.selectedTabId : 0;
+            this.selectTab(activeIdx);
+        }
     }
 
     updateTabs() {
@@ -513,6 +518,9 @@ export class InstantMessagesAndRelated {
                 const messengerTab = this.tabs.find(t => t.getPageId() === "messenger");
                 if (messengerTab && messengerTab.render_class && messengerTab.render_class.container) {
                     messengerTab.render_class.container.classList.remove("hidden");
+                    if (typeof messengerTab.render_class.showHook === "function") {
+                        messengerTab.render_class.showHook();
+                    }
                 }
             }
         } catch (e) {
@@ -821,6 +829,7 @@ class IMState {
         this._initMobileListener();
 
         this._is_hidden = typeof document !== 'undefined' ? document.hidden : false;
+        this._is_focused = typeof document !== 'undefined' ? (typeof document.hasFocus === 'function' ? document.hasFocus() : true) : true;
         this._listeners = new Map();
         this._initVisibilityListener();
 
@@ -962,49 +971,62 @@ class IMState {
         return typeof document !== 'undefined' ? document.hidden : (this._is_hidden ?? false);
     }
 
+    get is_focused() {
+        return typeof document !== 'undefined' ? (typeof document.hasFocus === 'function' ? document.hasFocus() : (this._is_focused ?? true)) : (this._is_focused ?? true);
+    }
+
     get is_visible() {
         return !this.is_hidden;
     }
 
     get is_tab_hidden() {
-        return this.is_hidden;
+        return this.is_hidden || !this.is_focused;
     }
 
     get is_tab_visible() {
-        return this.is_visible;
+        return this.is_visible && this.is_focused;
     }
 
     _initVisibilityListener() {
         if (typeof document === 'undefined') return;
 
-        const handleVisibility = () => {
+        const updateVisibilityAndFocus = () => {
             const wasHidden = this._is_hidden;
+            const wasFocused = this._is_focused;
             this._is_hidden = document.hidden;
+            this._is_focused = typeof document.hasFocus === 'function' ? document.hasFocus() : true;
 
-            imLog(`[IM] Tab visibility changed: is_hidden = ${this._is_hidden}, is_visible = ${!this._is_hidden}`);
+            const isCurrentlyActive = !this._is_hidden && this._is_focused;
+            const wasPreviouslyActive = !wasHidden && wasFocused;
+
+            imLog(`[IM] Visibility/focus changed: is_hidden = ${this._is_hidden}, is_focused = ${this._is_focused}, active = ${isCurrentlyActive}`);
 
             this.emit('visibility_change', {
-                is_hidden: this._is_hidden,
-                is_visible: !this._is_hidden,
-                was_hidden: wasHidden,
+                is_hidden: !isCurrentlyActive,
+                is_visible: isCurrentlyActive,
+                was_hidden: !wasPreviouslyActive,
             });
 
             try {
                 window.dispatchEvent(new CustomEvent('im:visibility_change', {
                     detail: {
-                        is_hidden: this._is_hidden,
-                        is_visible: !this._is_hidden,
-                        was_hidden: wasHidden,
+                        is_hidden: !isCurrentlyActive,
+                        is_visible: isCurrentlyActive,
+                        was_hidden: !wasPreviouslyActive,
                     }
                 }));
             } catch (e) { }
 
-            if (!this._is_hidden) {
+            if (isCurrentlyActive && !wasPreviouslyActive) {
                 this._onTabBecameVisible();
             }
         };
 
-        document.addEventListener('visibilitychange', handleVisibility);
+        document.addEventListener('visibilitychange', updateVisibilityAndFocus);
+        if (typeof window !== 'undefined') {
+            window.addEventListener('focus', updateVisibilityAndFocus);
+            window.addEventListener('blur', updateVisibilityAndFocus);
+        }
     }
 
     _onTabBecameVisible() {
@@ -1025,14 +1047,19 @@ class IMState {
             const view = this.link.messenger.view;
             const currentConvo = typeof view.getCurrentChat === 'function' ? view.getCurrentChat() : null;
             if (currentConvo) {
-                if (typeof view.isAtEnd === 'function' && view.isAtEnd(150)) {
-                    view._scrollToEnd(false);
-                }
-                if (typeof view._setupReadObserver === 'function') {
-                    view._setupReadObserver();
-                }
-                if (typeof view._checkVisibleUnreadImmediate === 'function') {
-                    view._checkVisibleUnreadImmediate();
+                if (typeof view.onTabFocusOrVisible === 'function') {
+                    view.onTabFocusOrVisible();
+                } else {
+                    if (view._wasAtEndBeforeBackground || (typeof view.isAtEnd === 'function' && view.isAtEnd(150))) {
+                        view._scrollToEnd(false);
+                        view._wasAtEndBeforeBackground = false;
+                    }
+                    if (typeof view._setupReadObserver === 'function') {
+                        view._setupReadObserver();
+                    }
+                    if (typeof view._checkVisibleUnreadImmediate === 'function') {
+                        view._checkVisibleUnreadImmediate();
+                    }
                 }
             }
         }
@@ -1056,6 +1083,9 @@ class IMState {
     get is_active() {
         try {
             if (!this.is_opened || !window.im) return false;
+            if (this.is_compact_mode_enabled) {
+                return true;
+            }
             return window.im.getSelectedTabId() === "messenger";
         } catch (e) {
             return false;
@@ -3047,7 +3077,7 @@ export class FastChats {
     }
 
     markChatAsRead(peerId) {
-        if (typeof document !== "undefined" && document.hidden) {
+        if (typeof document !== "undefined" && (document.hidden || (typeof document.hasFocus === "function" && !document.hasFocus()))) {
             return;
         }
 
@@ -3160,7 +3190,7 @@ if (!window._fc_esc_inited) {
 
     const onFcVisibilityChange = () => {
         setTimeout(() => {
-            if (typeof document !== "undefined" && !document.hidden) {
+            if (typeof document !== "undefined" && !document.hidden && (typeof document.hasFocus === "function" ? document.hasFocus() : true)) {
                 if (window.im && window.im.fastChats && Array.isArray(window.im.fastChats.openedChats)) {
                     window.im.fastChats.openedChats.forEach(c => {
                         if (!c.isMinimized) {

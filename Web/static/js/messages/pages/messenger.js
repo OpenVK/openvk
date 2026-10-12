@@ -1185,9 +1185,28 @@ export class MessengerPage extends IMPage {
             if (!v) {
                 return;
             }
+
+            if (v.peer && !v.peer._firstUnreadMsgId && (Number(v.unread_count || v._conversation?.unread_count || 0) > 0 || (typeof v.isRead === 'function' && !v.isRead()))) {
+                const sp = v.getScrollPosition();
+                const dayChunks = sp?.getDayDividedMessages?.() || [];
+                for (const chunk of dayChunks) {
+                    for (const msg of chunk.messages) {
+                        if (msg && !msg.isMine() && !msg.isRead()) {
+                            v.peer._firstUnreadMsgId = msg.id || msg.conversation_message_id;
+                            break;
+                        }
+                    }
+                    if (v.peer._firstUnreadMsgId) break;
+                }
+            }
+
             if (v.peer && v.peer._firstUnreadMsgId) {
                 this.scrollToUnread();
-            } else if (v.draft && (v.draft.scroll != null || v.draft.anchorMsgId != null || v.draft.isAtEnd)) {
+            } else if (this._wasAtEndBeforeBackground || (v.draft && v.draft.isAtEnd)) {
+                this._clearUnreadSpacing();
+                this._scrollToEnd(false);
+                this._wasAtEndBeforeBackground = false;
+            } else if (v.draft && (v.draft.scroll != null || v.draft.anchorMsgId != null)) {
                 this._clearUnreadSpacing();
                 v.draft.loadScroll(this);
             } else {
@@ -1197,7 +1216,10 @@ export class MessengerPage extends IMPage {
             this.updateMountainButton();
             this._setupReadObserver();
             this._setupResizeListener();
-            setTimeout(() => this._checkAndFillUnderflow(), 150);
+            setTimeout(() => {
+                this._checkVisibleUnreadImmediate();
+                this._checkAndFillUnderflow();
+            }, 150);
         } catch (e) { console.error(e); }
     }
     isDisablesScroll() { return true; }
@@ -2618,22 +2640,44 @@ export class MessengerPage extends IMPage {
         }
     }
 
+    onTabFocusOrVisible() {
+        const isVisible = window.im?.state?.is_tab_visible ?? (!document.hidden && (typeof document.hasFocus === 'function' ? document.hasFocus() : true));
+        if (isVisible) {
+            const currentConvo = this.getCurrentChat();
+            if (currentConvo) {
+                const hasUnread = Number(currentConvo.unread_count || currentConvo._conversation?.unread_count || 0) > 0 || (typeof currentConvo.isRead === 'function' && !currentConvo.isRead());
+                if (hasUnread && !currentConvo.peer?._firstUnreadMsgId) {
+                    const sp = currentConvo.getScrollPosition();
+                    const dayChunks = sp?.getDayDividedMessages?.() || [];
+                    for (const chunk of dayChunks) {
+                        for (const msg of chunk.messages) {
+                            if (msg && !msg.isMine() && !msg.isRead()) {
+                                currentConvo.peer._firstUnreadMsgId = msg.id || msg.conversation_message_id;
+                                break;
+                            }
+                        }
+                        if (currentConvo.peer?._firstUnreadMsgId) break;
+                    }
+                }
+
+                if (currentConvo.peer?._firstUnreadMsgId) {
+                    this.scrollToUnread();
+                } else if (this._wasAtEndBeforeBackground || (typeof this.isAtEnd === 'function' && this.isAtEnd(150))) {
+                    this._scrollToEnd(false);
+                    this._wasAtEndBeforeBackground = false;
+                }
+                this._setupReadObserver();
+                this._checkVisibleUnreadImmediate();
+            }
+        }
+    }
+
     _setupVisibilityListener() {
         if (typeof window !== "undefined" && !this._hasBoundVisibility) {
             this._hasBoundVisibility = true;
             const onVisibilityChange = () => {
                 setTimeout(() => {
-                    const isVisible = window.im?.state?.is_tab_visible ?? (!document.hidden);
-                    if (isVisible) {
-                        const currentConvo = this.getCurrentChat();
-                        if (currentConvo) {
-                            if (this.isAtEnd && this.isAtEnd(150)) {
-                                this._scrollToEnd(false);
-                            }
-                            this._setupReadObserver();
-                            this._checkVisibleUnreadImmediate();
-                        }
-                    }
+                    this.onTabFocusOrVisible();
                 }, 50);
             };
             if (window.im?.state?.on) {

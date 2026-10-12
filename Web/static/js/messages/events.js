@@ -322,6 +322,13 @@ export class EventHandler {
                 _crs._conversation.unread_count = newUnread;
             }
             _crs.unread_count = newUnread;
+
+            if (newUnread === 0 && _crs.peer) {
+                _crs.peer._firstUnreadMsgId = null;
+                if (this.im.messenger?.view && typeof this.im.messenger.view._clearUnreadSpacing === 'function') {
+                    this.im.messenger.view._clearUnreadSpacing();
+                }
+            }
         }
 
         if (_crs.peer && _crs.peer._chunks) {
@@ -671,6 +678,9 @@ export class EventHandler {
                     if (_crs._conversation) {
                         _crs._conversation.unread_count = _crs.unread_count;
                     }
+                    if (_crs.peer && !_crs.peer._firstUnreadMsgId) {
+                        _crs.peer._firstUnreadMsgId = _msg.id || _msg.conversation_message_id;
+                    }
                 }
 
                 if (this.im.conversations && this.im.conversations.all_convs) {
@@ -684,13 +694,17 @@ export class EventHandler {
                     this.im.conversations.update();
                 }
 
-                const isTabVisible = this.im?.state?.is_tab_visible ?? (typeof document === 'undefined' || !document.hidden);
+                const isTabVisible = this.im?.state?.is_tab_visible ?? (typeof document === 'undefined' || (!document.hidden && (typeof document.hasFocus === 'function' ? document.hasFocus() : true)));
 
                 if (this.im.state.is_active && isCurrentChat) {
                     const wasAtEnd = this.im.messenger.view ? this.im.messenger.view.isAtEnd() : false;
                     this.im.messenger.update();
-                    if (wasAtEnd && isTabVisible && this.im.messenger.view) {
-                        this.im.messenger.view._scrollToEnd();
+                    if (wasAtEnd) {
+                        if (isTabVisible && this.im.messenger.view) {
+                            this.im.messenger.view._scrollToEnd();
+                        } else if (this.im.messenger.view) {
+                            this.im.messenger.view._wasAtEndBeforeBackground = true;
+                        }
                     }
                 }
 
@@ -699,6 +713,10 @@ export class EventHandler {
                     if (wasAtEnd && isTabVisible) {
                         const msgCmid = Number((_msg.data && (_msg.data.conversation_message_id || _msg.data.local_id)) || _msg.conversation_message_id || 0);
                         _crs.peer.read(_msg.id, msgCmid);
+                    } else if (this.im.messenger.view && !isTabVisible) {
+                        if (!_crs.peer._firstUnreadMsgId) {
+                            _crs.peer._firstUnreadMsgId = _msg.id || _msg.conversation_message_id;
+                        }
                     }
                 }
 
