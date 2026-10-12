@@ -508,6 +508,13 @@ export class InstantMessagesAndRelated {
                 _tab.showTab(this.root);
                 //}
             }
+
+            if (this.state.is_compact_mode_enabled && _tab.getPageId() === "conversations") {
+                const messengerTab = this.tabs.find(t => t.getPageId() === "messenger");
+                if (messengerTab && messengerTab.render_class && messengerTab.render_class.container) {
+                    messengerTab.render_class.container.classList.remove("hidden");
+                }
+            }
         } catch (e) {
             console.error(e);
         }
@@ -1335,16 +1342,18 @@ class IMState {
             return;
         }
 
-        try {
-            await this.link.openTabByName("conversations");
-        } catch (e) {
-            console.error(e);
-        }
-
         const _sel = sel_id == null ? Number(loc ? loc.searchParams.get('sel') : 0) : sel_id;
         const joinByTopic = loc ? loc.searchParams.get("joinByTopic") : null;
         const joinCode = loc ? (loc.searchParams.get("join") || loc.searchParams.get("invite")) : null;
         const as = loc ? loc.searchParams.get("as") : null;
+
+        try {
+            if (!this.link.getTab("conversations") || (!this.is_compact_mode_enabled && !_sel && !joinCode)) {
+                await this.link.openTabByName("conversations");
+            }
+        } catch (e) {
+            console.error(e);
+        }
 
         if (joinCode) {
             this.link.openTabByName("chat_invite", true, {
@@ -1375,7 +1384,13 @@ class IMState {
             }
         } else if (!this.isFastchat && this.is_compact_mode_enabled) {
             try {
-                await this.link.openTabByName("messenger");
+                if (this.link.messenger) {
+                    this.link.messenger.currentChatId = null;
+                }
+                const messengerTab = await this.link.openTabByName("messenger");
+                if (messengerTab && messengerTab.render_class) {
+                    await messengerTab.render();
+                }
             } catch (e) {
                 console.error(e);
             }
@@ -1397,22 +1412,17 @@ class IMState {
             return;
         }
 
+        if (url === location.href) {
+            return;
+        }
+
         history.pushState({ 'from_messenger': 1 }, null, url);
     }
 
     async _resolveState() {
         const _url = new URL(location.href);
-        if (this.isFastchat == false && _url.searchParams.get('sel')) {
-            this._checkSel(_url);
-        } else {
-            if (_url.searchParams.get('join')) {
-                await this.link.openTabByName("chat_invite", true, {
-                    joinCode: _url.searchParams.get('join'),
-                    act: _url.searchParams.get('act')
-                });
-            } else {
-                await this.link.openTabByName('conversations');
-            }
+        if (!this.isFastchat) {
+            await this._checkSel(_url);
         }
     }
 
@@ -1483,6 +1493,13 @@ class IMState {
                 } else {
                     const self = window.im || window.im_variants.getCurrentUser();
                     self.rewriteTabs(pageContent);
+                    if (!this.isFastchat && this.is_compact_mode_enabled) {
+                        const imContainer = document.querySelector("#im_container");
+                        if (imContainer) {
+                            imContainer.classList.add("compact");
+                        }
+                        u("#page_layout").attr("style", "width: 968px;");
+                    }
                 }
             }
 
