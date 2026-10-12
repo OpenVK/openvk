@@ -17,7 +17,8 @@ export class Messenger {
     static MESSAGE_CHUNK_LENGTH = 1000;
     static MESSAGE_SEND_INTERVAL = 1000;
 
-    constructor() {
+    constructor(im = null) {
+        this.im = im;
         this.is_showing_profile = false;
         this.is_loading = false;
         this.had_more_one_tab = false;
@@ -46,6 +47,31 @@ export class Messenger {
         this.mentionSelectedIndex = 0;
         this.mentionQuery = "";
         this.mentionTriggerPos = -1;
+    }
+
+    reset() {
+        this.opened_tabs = [];
+        this.currentChatId = null;
+        this.selected_messages = [];
+        this.currentDraft = '';
+        this.prevDraft = null;
+        this.prevAtts_1 = null;
+        this.prevAtts_2 = null;
+        this.drafts = {};
+        this.scrolls = {};
+        this._replyTo = null;
+        this._editMsg = null;
+        this._typingStarted = null;
+        this.toggled_peer_obj = null;
+        this.mentionActive = false;
+        this.mentionMatches = [];
+        this.mentionSelectedIndex = 0;
+        this.mentionQuery = "";
+        this.mentionTriggerPos = -1;
+        const win = this.getWindow();
+        if (win && typeof win.reset === 'function') {
+            win.reset();
+        }
     }
 
     getWindow() {
@@ -385,7 +411,15 @@ export class Messenger {
                 if (window.im.updateTabs) {
                     window.im.updateTabs();
                 }
-                await window.im.openTabByName("conversations");
+                if (window.im.state?.is_compact_mode_enabled) {
+                    await window.im.openTabByName("messenger");
+                    const messengerTab = window.im.tabs?.find(t => t.getPageId() === "messenger");
+                    if (messengerTab && messengerTab.render_class) {
+                        messengerTab.render_class.update();
+                    }
+                } else {
+                    await window.im.openTabByName("conversations");
+                }
             }
             return;
         }
@@ -660,6 +694,16 @@ export class Messenger {
 
     unselectAll() {
         this.selected_messages = [];
+        if (window.im?.state?.is_compact_mode_enabled) {
+            const convTab = window.im.tabs?.find(t => t.getPageId() === "conversations");
+            if (convTab && convTab.options?.forward) {
+                convTab.options.forward = null;
+                if (convTab.render_class) {
+                    convTab.render_class.options.forward = null;
+                    convTab.render_class.update();
+                }
+            }
+        }
         this.update();
     }
 
@@ -1022,7 +1066,17 @@ export class Messenger {
     async onConversationsClick(convo, isForward = false, page = null) {
         this.forwarded_msg = null;
         if (isForward) {
-            await this.selectConversation(convo, false, true, page.options.forward)
+            const fwdList = page?.options?.forward;
+            if (page) {
+                page.options.forward = null;
+                if (page.tab) page.tab.options.forward = null;
+                page.update();
+                if (!window.im?.state?.is_compact_mode_enabled && page.tab) {
+                    page.tab.close();
+                }
+            }
+            this.unselectAll();
+            await this.selectConversation(convo, false, true, fwdList);
         } else {
             this.selectConversation(convo, false);
         }
@@ -1046,7 +1100,10 @@ export class Messenger {
 export class MessengerPage extends IMPage {
     static getPageId() { return "messenger"; }
     isVisibleWhenHidden() { return true; }
-    shouldCloseOnExit() { return window.im.messenger.opened_tabs.length == 0; }
+    shouldCloseOnExit() {
+        if (window.im?.state?.is_compact_mode_enabled) return false;
+        return window.im.messenger.opened_tabs.length == 0;
+    }
 
     constructor() {
         super();
@@ -1074,6 +1131,31 @@ export class MessengerPage extends IMPage {
         this._pendingReadId = 0;
         this._hasBoundReadVisibility = false;
     }
+
+    reset() {
+        this.opened_tabs = [];
+        this.current_chat = null;
+        this.selected_messages = [];
+        this._replyTo = null;
+        this._editMsg = null;
+        this.toggled_peer_obj = null;
+        if (this._readObserver) {
+            try { this._readObserver.disconnect(); } catch (e) {}
+            this._readObserver = null;
+        }
+        if (this._readTimer) {
+            clearTimeout(this._readTimer);
+            this._readTimer = null;
+        }
+        this._pendingReadId = 0;
+        this.currentDraft = '';
+        this.messagesListBlock = null;
+        if (this.container) {
+            try {
+                this.container.innerHTML = '';
+            } catch (e) {}
+        }
+    }
     get replyTo() {
         return window.im?.messenger?.replyTo || this._replyTo || null;
     }
@@ -1100,9 +1182,31 @@ export class MessengerPage extends IMPage {
     showHook() {
         try {
             const v = window.im?.messenger?.getCurrentChat();
-            if (v && v.peer && v.peer._firstUnreadMsgId) {
+            if (!v) {
+                return;
+            }
+
+            if (v.peer && !v.peer._firstUnreadMsgId && (Number(v.unread_count || v._conversation?.unread_count || 0) > 0 || (typeof v.isRead === 'function' && !v.isRead()))) {
+                const sp = v.getScrollPosition();
+                const dayChunks = sp?.getDayDividedMessages?.() || [];
+                for (const chunk of dayChunks) {
+                    for (const msg of chunk.messages) {
+                        if (msg && !msg.isMine() && !msg.isRead()) {
+                            v.peer._firstUnreadMsgId = msg.id || msg.conversation_message_id;
+                            break;
+                        }
+                    }
+                    if (v.peer._firstUnreadMsgId) break;
+                }
+            }
+
+            if (v.peer && v.peer._firstUnreadMsgId) {
                 this.scrollToUnread();
-            } else if (v && v.draft && (v.draft.scroll != null || v.draft.anchorMsgId != null || v.draft.isAtEnd)) {
+            } else if (this._wasAtEndBeforeBackground || (v.draft && v.draft.isAtEnd)) {
+                this._clearUnreadSpacing();
+                this._scrollToEnd(false);
+                this._wasAtEndBeforeBackground = false;
+            } else if (v.draft && (v.draft.scroll != null || v.draft.anchorMsgId != null)) {
                 this._clearUnreadSpacing();
                 v.draft.loadScroll(this);
             } else {
@@ -1112,15 +1216,31 @@ export class MessengerPage extends IMPage {
             this.updateMountainButton();
             this._setupReadObserver();
             this._setupResizeListener();
-            setTimeout(() => this._checkAndFillUnderflow(), 150);
+            setTimeout(() => {
+                this._checkVisibleUnreadImmediate();
+                this._checkAndFillUnderflow();
+            }, 150);
         } catch (e) { console.error(e); }
     }
     isDisablesScroll() { return true; }
     updTitle() {
         try {
-            window.im.header.setPageTitle(window.im.messenger.getCurrentChat().peer.getName());
+            const cur = window.im?.messenger?.getCurrentChat();
+            if (cur && cur.peer) {
+                window.im.header.setPageTitle(cur.peer.getName());
+            }
         } catch (e) {
             console.error(e);
+        }
+    }
+    updateHeader(header) {
+        const cur = window.im?.messenger?.getCurrentChat();
+        if (cur && cur.peer) {
+            header?.changeByConvNumber?.(1);
+        } else if (window.im?.conversations) {
+            header?.changeByConvNumber?.(Number(window.im.conversations.total_convs || 0));
+        } else {
+            header?.changeByConvNumber?.(0);
         }
     }
     _triggerUpdate() {
@@ -1161,9 +1281,17 @@ export class MessengerPage extends IMPage {
             return;
         };
 
+        const convTab = window.im?.tabs?.find(t => t.getPageId() === "conversations");
+        const isForwarding = Boolean(convTab?.options?.forward && convTab.options.forward.length > 0);
+
+        if (isForwarding) {
+            render(html`<${ErrorConversation} isForward=${true} />`, root);
+            return;
+        }
+
         const currentConv = orig_messenger.getCurrentChat();
         if (!currentConv) {
-            render(html`<${ErrorConversation} />`, root)
+            render(html`<${ErrorConversation} isForward=${false} />`, root);
             return;
         }
 
@@ -1867,17 +1995,24 @@ export class MessengerPage extends IMPage {
             return;
         }
 
-        if (e.buttons !== 1 || e.type == 'mousemove') return;
-        if (window.im.messenger.replyTo != null) return;
-        if (window.im.messenger.selected_messages_count == 0 && !e.target.closest(".click-territory")) {
+        if (e.button !== undefined && e.button !== 0) return;
+        if (window.im?.messenger?.replyTo != null) return;
+
+        // Skip interactive elements
+        if (e.target.closest('a, button, input, textarea, ._avatar, .actions-2, .msg-dropdown-wrap, .msg-dropdown-btn, .msg-dropdown-menu, .audioEmbed, .play-button, .compact_video, .reply-msg-container, .star-icon, .delete-icon, .reply-icon, .edit-icon, .msg-restore-btn, .time')) {
             return;
         }
 
-        const target = e.target;
-        if (!target.matches('.text, .time span') || window.im.messenger.selected_messages.length > 0) {
-            e.preventDefault();
-            this.toggleMessageSelection(msg, e);
+        // If the user selected text with mouse or double-clicked, don't toggle message selection
+        const selection = window.getSelection();
+        if (selection && selection.toString().trim().length > 0) {
+            return;
         }
+        if (e.detail > 1) {
+            return;
+        }
+
+        this.toggleMessageSelection(msg, e);
     }
 
     async goToMessage(msg, presetConvo) {
@@ -2004,7 +2139,20 @@ export class MessengerPage extends IMPage {
         const forwards = [];
         window.im.messenger.selected_messages_objs.forEach(item => {
             forwards.push(item);
-        })
+        });
+
+        if (window.im?.state?.is_compact_mode_enabled) {
+            const convTab = window.im.tabs?.find(t => t.getPageId() === "conversations");
+            if (convTab) {
+                convTab.options = Object.assign({}, convTab.options, { forward: forwards });
+                if (convTab.render_class) {
+                    convTab.render_class.options = Object.assign({}, convTab.render_class.options, { forward: forwards });
+                    convTab.render_class.update();
+                }
+                this.update();
+                return;
+            }
+        }
 
         window.im.openTabByName("conversations", false, {
             "forward": forwards
@@ -2492,22 +2640,44 @@ export class MessengerPage extends IMPage {
         }
     }
 
+    onTabFocusOrVisible() {
+        const isVisible = window.im?.state?.is_tab_visible ?? (!document.hidden && (typeof document.hasFocus === 'function' ? document.hasFocus() : true));
+        if (isVisible) {
+            const currentConvo = this.getCurrentChat();
+            if (currentConvo) {
+                const hasUnread = Number(currentConvo.unread_count || currentConvo._conversation?.unread_count || 0) > 0 || (typeof currentConvo.isRead === 'function' && !currentConvo.isRead());
+                if (hasUnread && !currentConvo.peer?._firstUnreadMsgId) {
+                    const sp = currentConvo.getScrollPosition();
+                    const dayChunks = sp?.getDayDividedMessages?.() || [];
+                    for (const chunk of dayChunks) {
+                        for (const msg of chunk.messages) {
+                            if (msg && !msg.isMine() && !msg.isRead()) {
+                                currentConvo.peer._firstUnreadMsgId = msg.id || msg.conversation_message_id;
+                                break;
+                            }
+                        }
+                        if (currentConvo.peer?._firstUnreadMsgId) break;
+                    }
+                }
+
+                if (currentConvo.peer?._firstUnreadMsgId) {
+                    this.scrollToUnread();
+                } else if (this._wasAtEndBeforeBackground || (typeof this.isAtEnd === 'function' && this.isAtEnd(150))) {
+                    this._scrollToEnd(false);
+                    this._wasAtEndBeforeBackground = false;
+                }
+                this._setupReadObserver();
+                this._checkVisibleUnreadImmediate();
+            }
+        }
+    }
+
     _setupVisibilityListener() {
         if (typeof window !== "undefined" && !this._hasBoundVisibility) {
             this._hasBoundVisibility = true;
             const onVisibilityChange = () => {
                 setTimeout(() => {
-                    const isVisible = window.im?.state?.is_tab_visible ?? (!document.hidden);
-                    if (isVisible) {
-                        const currentConvo = this.getCurrentChat();
-                        if (currentConvo) {
-                            if (this.isAtEnd && this.isAtEnd(150)) {
-                                this._scrollToEnd(false);
-                            }
-                            this._setupReadObserver();
-                            this._checkVisibleUnreadImmediate();
-                        }
-                    }
+                    this.onTabFocusOrVisible();
                 }, 50);
             };
             if (window.im?.state?.on) {

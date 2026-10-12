@@ -277,12 +277,20 @@ function createChatTopic(group_id) {
     msg1.getNode().find(".ovk-diag-body").attr("style", "display:none;");
 }
 
+async function loadEditableGroupsWithMessages() {
+    if (!window.openvk.writeableClubsWithMessages) {
+        window.openvk.writeableClubsWithMessages = await window.OVKAPI.call('messages.getEditableGroups', { count: 100 });
+    }
+
+    return window.openvk.writeableClubsWithMessages;
+}
+
 async function imSwitchCurrent() {
     CMessageBox.toggleLoader(true);
 
     const container = document.querySelector('.page_content');
     const c = window.im_variants.getCurrentUser().state.getOperator();
-    const groups = await loadEditableGroups();
+    const groups = await loadEditableGroupsWithMessages();
 
     CMessageBox.toggleLoader(false);
 
@@ -294,14 +302,34 @@ async function imSwitchCurrent() {
         body: "-"
     });
 
-    function makeItem(item) {
+    let unreadMap = {};
+    if (groups && groups.items && groups.items.length > 0) {
+        try {
+            const gids = groups.items.map(g => g.id).join(",");
+            const res = await window.OVKAPI.call('messages.getUnreadConversations', { group_ids: gids });
+            if (res && res.counts) {
+                unreadMap = res.counts;
+                const userState = window.im_variants?.getCurrentUser()?.state || window.im?.state;
+                if (userState && typeof userState.setPinnedGroupsCounters === "function") {
+                    userState.setPinnedGroupsCounters(res.counts);
+                }
+            }
+        } catch (e) {
+            console.error("Failed to load group unread counts for switch dialog:", e);
+        }
+    }
+
+    const userUnread = window.im?.state?.unread_counter || 0;
+
+    function makeItem(item, unread = 0) {
+        const unreadBadge = unread > 0 ? ` <span class="unread-in-list">${unread}</span>` : '';
         msg.getNode().find("#_switch_list").append(`
         <div data-id="${item.id}" class="entity_vertical_list_item scroll_node">
             <div class="first_column">
                 <a href="${item.getPageUrl()}" class="avatar"><img src="${item.getAvatar()}"></a>
                 <div class="info">
                     <b class="noOverflow">
-                        <a href="${item.getPageUrl()}">${escapeHtml(item.getName())}</a>
+                        <a href="${item.getPageUrl()}">${escapeHtml(item.getName())}</a>${unreadBadge}
                     </b>
                 </div>
             </div>
@@ -310,9 +338,10 @@ async function imSwitchCurrent() {
 
     msg.getNode().find(".ovk-diag").attr("style", "width: 300px;");
 
-    makeItem(c);
+    makeItem(c, userUnread);
     groups.items.forEach(item => {
-        makeItem(window.im._toCGF(item));
+        const uCount = Number(unreadMap[item.id] || unreadMap[String(item.id)] || 0);
+        makeItem(window.im._toCGF(item), uCount);
     });
     msg.getNode().find("#_close").on("click", (e) => { msg.close(); })
     msg.getNode().find("#_switch_list").on("click", ".entity_vertical_list_item", async (e) => {
@@ -321,7 +350,7 @@ async function imSwitchCurrent() {
         const eid = Number(e.target.closest(".entity_vertical_list_item").dataset.id);
         msg.close();
 
-        await window.im_class.insertIn(container, eid > 0 ? null : eid);
+        await window.im_class.insertIn(container, eid > 0 ? null : eid, false, true, null, true, true);
     })
 }
 

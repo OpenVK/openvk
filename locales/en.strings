@@ -1530,6 +1530,7 @@
 "messages_error_1" = "Message not delivered";
 "messages_error_1_description" = "There was a general error in sending this message...";
 "message_is_deleted" = "Message deleted";
+"message_is_deleted_by_admin" = "Message deleted by administrator";
 "restore" = "Restore";
 "message_viewers" = "Who read this";
 "message_viewers_title" = "Message Viewers";
@@ -3056,6 +3057,8 @@
 "msg_error_send_to_dev" = "Tell developer";
 "msg_resend" = "Resend";
 "group_messages" = "Community messages";
+"im_empty_dialog_hint" = "To start messaging, select a conversation or group chat on the left";
+"im_forward_dialog_hint" = "You're almost there! Select a conversation on the left to forward the message from the chat";
 "im_option_compact_mode" = "Compact mode";
 "im_option_debug" = "Debug mode";
 "im_option_photo_viewer" = "Photo viewer";
@@ -3178,7 +3181,8 @@
 "messenger_audiomessage_other" = "$1 are recording voice message";
 "zero_conversations_error" = "No conversations found";
 "zero_conversations_error_club" = "No community messages";
-"zero_unread_conversations_error" = "No unread conversations";
+"zero_unread_conversations_error" = "No unread conversations. ヽ(・∀・)ﾉ";
+"conversations_load_error" = "Failed to load conversations. Check server connection.";
 "conversations_count_title_one" = "$1 conversation";
 "conversations_count_title_few" = "$1 conversations";
 "conversations_count_title_many" = "$1 conversations";

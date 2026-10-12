@@ -12,21 +12,25 @@ use openvk\Web\Models\Entities\Relationships\Blacklist;
 
 final class Groups extends VKAPIRequestHandler
 {
-    public function get(int $user_id = 0, string $fields = "", int $offset = 0, int $count = 6, bool $online = false, string $filter = "groups", int $extended = 0): object|array
+    public function get(int $user_id = 0, string $fields = "", int $offset = 0, int $count = 6, bool $online = false, string $filter = "groups", int $extended = 0, bool $messages_enabled = false): object|array
     {
         $this->requireUser();
 
+        $filters    = array_map('trim', explode(',', $filter));
+        $isAdmin    = in_array('admin', $filters, true);
+        $isMessages = $messages_enabled || in_array('messages', $filters, true) || in_array('messages_enabled', $filters, true);
+
         # InfoApp fix
-        if ($filter == "admin" && ($user_id != 0 && $user_id != $this->getUser()->getId())) {
+        if ($isAdmin && ($user_id != 0 && $user_id != $this->getUser()->getId())) {
             $this->fail(15, 'Access denied: filter admin is available only for current user');
         }
 
         $clbs = [];
         if ($user_id == 0) {
-            foreach ($this->getUser()->getClubs($offset, $filter == "admin", $count, true, true) as $club) {
+            foreach ($this->getUser()->getClubs($offset, $isAdmin, $count, true, true, $isMessages) as $club) {
                 $clbs[] = $club;
             }
-            $clbsCount = $this->getUser()->getClubCount($filter == "admin", true);
+            $clbsCount = $this->getUser()->getClubCount($isAdmin, true, $isMessages);
         } else {
             $users = new UsersRepo();
             $user  = $users->get($user_id);
@@ -39,11 +43,11 @@ final class Groups extends VKAPIRequestHandler
                 $this->fail(260, "Access to the groups list is denied due to the user's privacy settings");
             }
 
-            foreach ($user->getClubs($offset, $filter == "admin", $count, true, true) as $club) {
+            foreach ($user->getClubs($offset, $isAdmin, $count, true, true, $isMessages) as $club) {
                 $clbs[] = $club;
             }
 
-            $clbsCount = $user->getClubCount($filter == "admin", true);
+            $clbsCount = $user->getClubCount($isAdmin, true, $isMessages);
         }
 
         $rClubs = [];
@@ -76,6 +80,11 @@ final class Groups extends VKAPIRequestHandler
             "count" => $clbsCount,
             "items" => $rClubs,
         ];
+    }
+
+    public function getConversationsGroups(string $fields = "", int $offset = 0, int $count = 100): object|array
+    {
+        return $this->get(0, $fields, $offset, $count, false, "admin,messages", 0, true);
     }
 
     public function getById(string $group_ids = "", string $group_id = "", string $fields = "", int $offset = 0, int $count = 500): ?array

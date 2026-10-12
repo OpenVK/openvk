@@ -118,6 +118,7 @@ h1 {
 #page_layout {
     width: 791px;
     margin: 0 auto;
+    transition: width 0.2s ease;
 }
 
 .page_header {
