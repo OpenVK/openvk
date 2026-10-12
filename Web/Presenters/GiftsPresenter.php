@@ -49,12 +49,16 @@ final class GiftsPresenter extends OpenVKPresenter
     public function renderGiftMenu(): void
     {
         $user = $this->users->get((int) ($this->queryParam("user") ?? 0));
-        if (!$user) {
+        if (!$user || $user->isDeleted()) {
             $this->notFound();
         }
 
-        if (!$user->getPrivacyPermission("gifts.read", $this->user->identity)) {
+        if (!$user->canBeViewedBy($this->user->identity ?? null)) {
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+        }
+
+        if (!$user->getPrivacyPermission("gifts.send", $this->user->identity)) {
+            $this->flashFail("err", tr("error_when_gifting"), tr("error_gifts_send_privacy"));
         }
 
         $this->template->page = $page = (int) ($this->queryParam("p") ?? 1);
@@ -74,12 +78,12 @@ final class GiftsPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error_when_gifting"), tr("error_user_not_exists"));
         }
 
-        if (!$user->canBeViewedBy($this->user->identity)) {
+        if (!$user->canBeViewedBy($this->user->identity ?? null)) {
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
-        if (!$user->getPrivacyPermission("gifts.read", $this->user->identity)) {
-            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+        if (!$user->getPrivacyPermission("gifts.send", $this->user->identity)) {
+            $this->flashFail("err", tr("error_when_gifting"), tr("error_gifts_send_privacy"));
         }
 
         $this->template->page = $page = (int) ($this->queryParam("p") ?? 1);
@@ -100,16 +104,16 @@ final class GiftsPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error_when_gifting"), tr("error_no_rights_gifts"));
         }
 
-        if (!$user->getPrivacyPermission("gifts.read", $this->user->identity)) {
+        if (!$user->canBeViewedBy($this->user->identity ?? null)) {
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+        }
+
+        if (!$user->getPrivacyPermission("gifts.send", $this->user->identity)) {
+            $this->flashFail("err", tr("error_when_gifting"), tr("error_gifts_send_privacy"));
         }
 
         if (!$gift->canUse($this->user->identity)) {
             $this->flashFail("err", tr("error_when_gifting"), tr("error_no_more_gifts"));
-        }
-
-        if (!$user->canBeViewedBy($this->user->identity ?? null)) {
-            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
         $coinsLeft = $this->user->identity->getCoins() - $gift->getPrice();
