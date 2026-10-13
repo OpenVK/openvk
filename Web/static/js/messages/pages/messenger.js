@@ -116,7 +116,9 @@ export class Messenger {
         if (this.getWindow()) {
             const win = this.getWindow();
             win._lastMarkedReadId = 0;
+            win._lastMarkedReadCmid = 0;
             win._pendingReadId = 0;
+            win._pendingReadCmid = 0;
             if (typeof win._clearUnreadSpacing === 'function') {
                 win._clearUnreadSpacing();
             }
@@ -128,7 +130,6 @@ export class Messenger {
                 clearTimeout(win._readTimer);
                 win._readTimer = null;
             }
-            win._pendingReadId = 0;
         }
 
         if (window.im.state.is_debug) {
@@ -311,6 +312,10 @@ export class Messenger {
                 win.is_loading = false;
                 win._scrollTicking = false;
                 win.currentVisibleDate = null;
+                win._lastMarkedReadId = 0;
+                win._lastMarkedReadCmid = 0;
+                win._pendingReadId = 0;
+                win._pendingReadCmid = 0;
             }
         } catch (e) {
             console.error(e);
@@ -1078,7 +1083,7 @@ export class Messenger {
             this.unselectAll();
             await this.selectConversation(convo, false, true, fwdList);
         } else {
-            this.selectConversation(convo, false);
+            await this.selectConversation(convo, false);
         }
     }
 
@@ -2641,7 +2646,7 @@ export class MessengerPage extends IMPage {
     }
 
     onTabFocusOrVisible() {
-        const isVisible = window.im?.state?.is_tab_visible ?? (!document.hidden && (typeof document.hasFocus === 'function' ? document.hasFocus() : true));
+        const isVisible = typeof document === 'undefined' || !document.hidden;
         if (isVisible) {
             const currentConvo = this.getCurrentChat();
             if (currentConvo) {
@@ -2664,10 +2669,13 @@ export class MessengerPage extends IMPage {
                     this.scrollToUnread();
                 } else if (this._wasAtEndBeforeBackground || (typeof this.isAtEnd === 'function' && this.isAtEnd(150))) {
                     this._scrollToEnd(false);
-                    this._wasAtEndBeforeBackground = false;
                 }
+                this._wasAtEndBeforeBackground = false;
                 this._setupReadObserver();
                 this._checkVisibleUnreadImmediate();
+                if (this._pendingReadId > 0 || this._pendingReadCmid > 0) {
+                    this._scheduleMarkAsRead(this._pendingReadId, this._pendingReadCmid);
+                }
             }
         }
     }
@@ -3084,8 +3092,18 @@ export class MessengerPage extends IMPage {
         });
     }
 
+    _isMessengerVisible() {
+        if (!location.pathname.startsWith('/im')) return false;
+        const container = this.getMessagesContainer();
+        if (!container || !document.body.contains(container)) return false;
+        if (container.offsetParent === null) return false;
+        const pageEl = this.container || container.closest('.im_page');
+        if (pageEl && pageEl.classList.contains('hidden')) return false;
+        return true;
+    }
+
     _setupReadObserver() {
-        if (!window.im?.state?.is_active) return;
+        if (!this._isMessengerVisible()) return;
         if (this._readObserver) {
             this._readObserver.disconnect();
             this._readObserver = null;
@@ -3106,7 +3124,7 @@ export class MessengerPage extends IMPage {
         if (!unreadElements || unreadElements.length === 0) return;
 
         this._readObserver = new IntersectionObserver((entries) => {
-            if (window.im?.state?.is_tab_hidden ?? (typeof document !== "undefined" && document.hidden)) return;
+            if (typeof document !== "undefined" && document.hidden) return;
 
             let maxVisibleUnreadId = 0;
             let maxVisibleUnreadCmid = 0;
@@ -3145,9 +3163,9 @@ export class MessengerPage extends IMPage {
     }
 
     _checkVisibleUnreadImmediate() {
-        if (!window.im?.state?.is_active) return;
+        if (!this._isMessengerVisible()) return;
         const container = this.getMessagesContainer();
-        if (!container || container.offsetParent === null || (window.im?.state?.is_tab_hidden ?? (typeof document !== "undefined" && document.hidden))) return;
+        if (!container || container.offsetParent === null || (typeof document !== "undefined" && document.hidden)) return;
 
         const currentConv = this.getCurrentChat();
         const currentInRead = Number(currentConv?.peer?.in_read || currentConv?._conversation?.in_read || 0);
@@ -3203,12 +3221,14 @@ export class MessengerPage extends IMPage {
 
         this._readTimer = setTimeout(async () => {
             this._readTimer = null;
+            if (typeof document !== "undefined" && document.hidden) {
+                return;
+            }
+
             const idToRead = this._pendingReadId;
             const cmidToRead = this._pendingReadCmid;
             this._pendingReadId = 0;
             this._pendingReadCmid = 0;
-
-            if (window.im?.state?.is_tab_hidden ?? (typeof document !== "undefined" && document.hidden)) return;
 
             if (idToRead > 0) {
                 this._lastMarkedReadId = Math.max(this._lastMarkedReadId || 0, idToRead);

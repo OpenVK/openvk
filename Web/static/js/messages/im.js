@@ -626,7 +626,7 @@ export class InstantMessagesAndRelated {
                 if (options && already_here.render_class && typeof already_here.render_class.onSearch === 'function') {
                     already_here.render_class.onSearch(options.q ?? "", options.date ?? null);
                 }
-                this.selectTab(this.tabs.indexOf(already_here));
+                await this.selectTab(this.tabs.indexOf(already_here));
 
                 try {
                     if (this.root && already_here.render_class) {
@@ -648,7 +648,7 @@ export class InstantMessagesAndRelated {
                         const skeletonTarget = got_tab.render_class.container || this.root;
                         if (skeletonTarget) got_tab.render_class.addLoadSkeleton(skeletonTarget);
                         imLog("Opened tab class:", got_tab.render_class);
-                        this.selectTab(this.addTab(got_tab));
+                        await this.selectTab(this.addTab(got_tab));
                         try {
                             await got_tab.render();
                         } finally {
