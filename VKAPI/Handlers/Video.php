@@ -39,11 +39,11 @@ final class Video extends VKAPIRequestHandler
             $items = [];
 
             foreach ($vids as $vid) {
-                $cleanVid = preg_replace('/^video/', '', trim($vid));
-                $id       = explode("_", $cleanVid);
-
-                $video = (new VideosRepo())->getByOwnerAndVID(intval($id[0]), intval($id[1] ?? 0), $id[2] ?? null);
-                if ($video && !$video->isDeleted()) {
+                $cleanVid   = preg_replace('/^video/', '', trim($vid));
+                $id         = explode("_", $cleanVid);
+                $access_key = $id[2] ?? null;
+                $video      = (new VideosRepo())->getByOwnerAndVID(intval($id[0]), intval($id[1] ?? 0), $access_key);
+                if ($video && !$video->isDeleted() && $video->canBeViewedBy($this->getUser(), $access_key)) {
                     $out_video = $video->getApiStructure($this->getUser())->video;
                     $items[] = $out_video;
                     if ($out_video['owner_id']) {

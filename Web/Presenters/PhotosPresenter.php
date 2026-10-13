@@ -200,7 +200,7 @@ final class PhotosPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
-        if (!$photo->canBeViewedBy($this->user->identity)) {
+        if (!$photo->canBeViewedBy($this->user->identity, $key)) {
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
