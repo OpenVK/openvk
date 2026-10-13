@@ -691,7 +691,7 @@
 "my_feedback" = "Мои Ответы";
 "my_settings" = "Мои Настройки";
 "bookmarks" = "Закладки";
-"bookmarks_tab" = "Понравившиеся записи";
+"bookmarks_tab" = "Понравившееся";
 "own_posts_tab" = "Написанные мной записи";
 "bug_tracker" = "Баг-трекер";
 
@@ -3259,3 +3259,14 @@
 "chat_mention_online" = "Участники онлайн";
 
 "router_reconnect_error" = "Не удалось загрузить страницу после нескольких попыток. Попробовать открыть её напрямую?";
+
+/* Catalogues */
+
+"catalogues" = "Каталоги";
+"new_posts" = "Лента";
+"new_posts_global" = "Глобальная лента";
+
+"post_target_note" = "Заметка";
+"post_target_photo" = "Фото";
+"post_target_topic" = "Обсуждение";
+"post_target_video" = "Видеозапись";

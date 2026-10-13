@@ -497,6 +497,8 @@ routes:
       handler: "About->tour"
     - url: "/fave"
       handler: "User->fave"
+    - url: "/catalogues"
+      handler: "Catalogues->index"
     - url: "/{?shortCode}"
       handler: "UnknownTextRouteStrategy->delegate"
       placeholders:

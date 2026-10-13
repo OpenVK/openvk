@@ -1,0 +1,18 @@
+{extends "../@layout.latte"}
+
+{block title}{_catalogues}{/block}
+
+{block header}
+    {_catalogues}
+{/block}
+
+{block content}
+    <div>
+        <a href="/catalogues?act=new">{_create}</a>
+    </div>
+    <hr />
+    <div id="catalogues_list">
+        <a class="catalogue_item" href="/fave">{_bookmarks_tab}</a>
+        <a class="catalogue_item" href="/search?section=posts&from_me=1">{_own_posts_tab}</a>
+    </div>
+{/block}

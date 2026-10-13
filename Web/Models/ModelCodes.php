@@ -1,0 +1,34 @@
+<?php
+
+declare(strict_types=1);
+
+namespace openvk\Web\Models;
+
+class ModelCodes
+{
+    public static function get(): array
+    {
+        return [
+            "openvk\\Web\\Models\\Entities\\Album" => 2,
+            "openvk\\Web\\Models\\Entities\\Attachable" => 3,
+            "openvk\\Web\\Models\\Entities\\Audio" => 4,
+            "openvk\\Web\\Models\\Entities\\Club" => 5,
+            "openvk\\Web\\Models\\Entities\\Comment" => 6,
+            "openvk\\Web\\Models\\Entities\\Correspondence" => 7,
+            "openvk\\Web\\Models\\Entities\\Media" => 8,
+            "openvk\\Web\\Models\\Entities\\Message" => 9,
+            "openvk\\Web\\Models\\Entities\\Note" => 10,
+            "openvk\\Web\\Models\\Entities\\Notification" => 11,
+            "openvk\\Web\\Models\\Entities\\PasswordReset" => 12,
+            "openvk\\Web\\Models\\Entities\\Photo" => 13,
+            "openvk\\Web\\Models\\Entities\\Post" => 14,
+            "openvk\\Web\\Models\\Entities\\Postable" => 15,
+            "openvk\\Web\\Models\\Entities\\Ticket" => 16,
+            "openvk\\Web\\Models\\Entities\\TicketComment" => 17,
+            "openvk\\Web\\Models\\Entities\\User" => 18,
+            "openvk\\Web\\Models\\Entities\\Video" => 19,
+            "openvk\\Web\\Models\\Entities\\Gift" => 20,
+            "openvk\\Web\\Models\\Entities\\Topic" => 21
+        ];
+    }
+}
