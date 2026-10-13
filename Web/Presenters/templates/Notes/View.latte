@@ -68,16 +68,30 @@
 
     <div class="note_footer" style="margin: 10px 10px 0;">
         <div class="comments_count">
-            {if sizeof($comments) > 0}
-                {_comments} ({$note->getCommentsCount()})
-            {else}
-                {_no_comments}
-            {/if}
-            <span n:if="isset($thisUser) && $thisUser->getId() === $note->getOwner()->getId()">&nbsp;|&nbsp;
-                <a id="_noteDelete" href="/note{$note->getOwner()->getId()}_{$note->getId()}/delete">{_delete}</a>
-                &nbsp;|&nbsp;
-                <a href="/note{$note->getOwner()->getId()}_{$note->getVirtualId()}/edit" rel='nofollow'>{_edit}</a>
-            </span>
+            <div style="display: flex;align-items: center;gap: 5px;">
+                {if !($forceNoLike ?? false)}
+                    <div class="like_wrap tidy">
+                        {var $liked = $note->hasLikeFrom($thisUser)}
+                        {var $likesCount = $note->getLikesCount()}
+                        <a class="post-like-button" data-type="note" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$note->getPrettyId()}">
+                            <div class="heart" id="{if $liked}liked{/if}"></div>
+                            <span class="likeCnt">{if $likesCount > 0}{$likesCount}{/if}</span>
+                        </a>
+                    </div>
+                {/if}
+                <div>
+                    {if sizeof($comments) > 0}
+                        {_comments} ({$note->getCommentsCount()})
+                    {else}
+                        {_no_comments}
+                    {/if}
+                    <span n:if="isset($thisUser) && $thisUser->getId() === $note->getOwner()->getId()">&nbsp;|&nbsp;
+                        <a id="_noteDelete" href="/note{$note->getOwner()->getId()}_{$note->getId()}/delete">{_delete}</a>
+                        &nbsp;|&nbsp;
+                        <a href="/note{$note->getOwner()->getId()}_{$note->getVirtualId()}/edit" rel='nofollow'>{_edit}</a>
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
     <div style="margin: 6px 10px 10px;border-top: 1px solid #ddd;">

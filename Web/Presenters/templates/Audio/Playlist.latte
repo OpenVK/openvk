@@ -56,6 +56,25 @@
             {/if}
 
             <div class="profile_links" n:if="isset($thisUser)">
+                <div style="display: flex;gap: 2px;align-items: center;">
+                    {if !($forceNoLike ?? false)}
+                        <div class="like_wrap tidy">
+                            {var $liked = $playlist->hasLikeFrom($thisUser)}
+                            {var $likesCount = $playlist->getLikesCount()}
+                            <a class="post-like-button" data-type="audio_playlist" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$playlist->getPrettyId()}">
+                                <div class="heart" id="{if $liked}liked{/if}"></div>
+                                <span class="likeCnt">{if $likesCount > 0}{$likesCount}{/if}</span>
+                            </a>
+                        </div>
+                    {/if}
+
+                    <a class="profile_link" n:if="$act === 'audios'" href="?act=comments">
+                        {_comments} ({$cCount})
+                    </a>
+                    <a class="profile_link" n:if="$act === 'comments'" href="?act=audios">
+                        {_audios}
+                    </a>
+                </div>
                 <a class="profile_link" href="/player/upload?playlist={$playlist->getId()}" n:if="$canEdit">{_upload_audio}</a>
                 <a class="profile_link" href="/playlist{$playlist->getPrettyId()}/edit" n:if="$canEdit">{_edit_playlist}</a>
                 <a class="profile_link" id="bookmarkPlaylist" data-id="{$playlist->getId()}" n:if="!$isBookmarked">{_bookmark}</a>
@@ -76,7 +95,7 @@
                     <hr>
                 </div>
             </div>
-            <div class="audiosContainer scroll_container infContainer" style="margin-top: 14px;">
+            <div n:if="$act === 'audios'" class="audiosContainer scroll_container infContainer" style="margin-top: 14px;">
                 {if $count < 1}
                     {_empty_playlist}
                 {else}  
@@ -94,6 +113,15 @@
                         "tidy"    => false
                     ]}
                 {/if}
+            </div>
+            <div n:if="$act === 'comments'" class="scroll_container infContainer">
+                {include "../components/comments.latte",
+                        comments => $comments,
+                        count => $cCount,
+                        page => $page,
+                        model => "audio_playlists",
+                        parent => $playlist,
+                        sort => $sort}
             </div>
         </div>
     </div>

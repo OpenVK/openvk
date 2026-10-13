@@ -210,7 +210,11 @@ abstract class Postable extends Attachable
 
     public function isAnonymous(): bool
     {
-        return (bool) $this->getRecord()->anonymous;
+        try {
+            return (bool) $this->getRecord()->anonymous;
+        } catch (\Nette\MemberAccessException $e) {
+            return false;
+        }
     }
 
     public function makeNotUnlisted(): void

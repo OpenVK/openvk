@@ -3,3 +3,4 @@ CREATE TABLE `catalogues_relations` (`id` BIGINT NOT NULL AUTO_INCREMENT , `ord`
 CREATE TABLE `catalogues_imports` (`id` BIGINT NOT NULL AUTO_INCREMENT , `catalogue` INT NOT NULL , `owner` INT NOT NULL , `ord` BIGINT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
 ALTER TABLE `catalogues` ADD `subtype` TINYINT UNSIGNED NOT NULL DEFAULT '0' AFTER `is_admin`;
 ALTER TABLE `catalogues` ADD `editable_to` TEXT NULL DEFAULT NULL AFTER `visible_to`;
+ALTER TABLE `playlists` ADD `comment_status` TINYINT UNSIGNED NOT NULL DEFAULT '0' AFTER `unlisted`;

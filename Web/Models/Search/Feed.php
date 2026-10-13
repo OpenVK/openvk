@@ -134,7 +134,6 @@ class Feed
         } else {
             $ids = $this->getSubsIds($keep_ignored, $list);
 
-            bdump( $ids);
             if ($filter === "post") {
                 $payload = DatabaseConnection::i()
                     ->getContext()
@@ -174,6 +173,15 @@ class Feed
                     ->where("owner IN (?)", $ids)
                     ->where("deleted", 0)
                     ->where("unlisted", 0)
+                    ->order("created DESC, id DESC");
+            }
+            if ($filter === "note") {
+                $payload = DatabaseConnection::i()
+                    ->getContext()
+                    ->table("notes")
+                    // ->select("id, created, owner")
+                    ->where("owner IN (?)", $ids)
+                    ->where("deleted", 0)
                     ->order("created DESC, id DESC");
             }
             if ($filter === "audio") {

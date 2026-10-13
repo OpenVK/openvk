@@ -60,6 +60,11 @@
                     {include "../Audio/player.latte", audio => $post}
                 </div>
             {/if}
+            {if $feedType == "note"}
+                <div class="scroll_node" data-uniqueid="{$post->getPrettyId()}">
+                    {include "../Notes/listItem.latte", note => $post, owner => $post->getOwner()}
+                </div>
+            {/if}
             {if $feedType == "comment"}
                 <div class="scroll_node comment_list_item" data-uniqueid="{$post[1]->getPrettyId()}">
                     <div class="comment_target">

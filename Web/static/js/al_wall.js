@@ -95,14 +95,24 @@ $(document).on("click", ".post-like-button", function (e) {
     e.preventDefault();
     e.stopPropagation()
 
-    var thisBtn = u(this).first();
-    var link = u(this).attr("href");
-    var heart = u(".heart", thisBtn);
-    var counter = u(".likeCnt", thisBtn);
-    var likes = counter.text() === "" ? 0 : counter.text();
-    var isLiked = heart.attr("id") === 'liked';
+    const thisBtn = u(this).first();
+    const link = u(this).attr("href");
+    const entity = u(this).attr("data-type");
+    const eid = u(this).attr("data-id");
+    const heart = u(".heart", thisBtn);
+    const counter = u(".likeCnt", thisBtn);
+    const likes = counter.text() === "" ? 0 : counter.text();
+    const isLiked = heart.attr("id") === 'liked';
+    const method = isLiked ? "likes.delete" : "likes.add";
 
-    ky.post(link)
+    window.OVKAPI.call(method, {
+        "type": entity,
+        "owner_id": eid.split("_")[0],
+        "item_id": eid.split("_")[1],
+    });
+
+    /*ky.post(link)*/
+
     heart.attr("id", isLiked ? '' : 'liked');
     counter.text(parseInt(likes) + (isLiked ? -1 : 1));
     if (counter.text() === "0") {
@@ -1906,6 +1916,9 @@ class LikersWindow {
 }
 
 async function showArticle(note_id) {
+    window.router.route("/note" + note_id);
+    return;
+
     u("body").addClass("dimmed");
     let note = await API.Notes.getNote(note_id);
     u("#articleAuthorAva").attr("src", note.author.ava);

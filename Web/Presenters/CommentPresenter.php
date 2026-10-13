@@ -18,6 +18,7 @@ final class CommentPresenter extends OpenVKPresenter
         "videos"  => "openvk\\Web\\Models\\Repositories\\Videos",
         "notes"   => "openvk\\Web\\Models\\Repositories\\Notes",
         "topics"  => "openvk\\Web\\Models\\Repositories\\Topics",
+        "audio_playlists"  => "openvk\\Web\\Models\\Repositories\\Audios",
     ];
 
     public function renderLike(int $id): void
@@ -46,20 +47,27 @@ final class CommentPresenter extends OpenVKPresenter
         $this->redirect($_SERVER["HTTP_REFERER"]);
     }
 
-    public function renderMakeComment(string $repo, int $eId): void
+    public function renderMakeComment(string $repoName, int $eId): void
     {
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
 
-        $repoClass = $this->models[$repo] ?? null;
+        $repoClass = $this->models[$repoName] ?? null;
         $isAjax = $this->postParam("ajax") == "1";
 
         if (!$repoClass) {
-            chandler_http_panic(400, "Bad Request", "Unexpected $repo.");
+            chandler_http_panic(400, "Bad Request", "Unexpected $repoName.");
         }
 
         $repo   = new $repoClass();
-        $entity = $repo->get($eId);
+        $entity = null;
+
+        if ($repoName === "audio_playlists") {
+            $entity = $repo->getPlaylist($eId);
+        } else {
+            $entity = $repo->get($eId);
+        }
+
         if (!$entity) {
             $this->notFound();
         }

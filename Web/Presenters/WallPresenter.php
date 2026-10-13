@@ -231,7 +231,7 @@ final class WallPresenter extends OpenVKPresenter
             }
         }
 
-        $types = ["photos" => ["photo", 'Photo'], "videos" => ["video", 'Video'], "audios" => ["audio", 'Audio']];
+        $types = ["photos" => ["photo", 'Photo'], "videos" => ["video", 'Video'], "audios" => ["audio", 'Audio'], "notes" => ["note", 'Note']];
 
         if ($types[$section] != null) {
             $feedType = $types[$section][0];
@@ -288,7 +288,7 @@ final class WallPresenter extends OpenVKPresenter
         $this->template->feedType = $feedType;
         $this->template->showMediaTabs = $section != "comments";
         $this->template->availSections = [["local_posts", tr("news")], ["comments", tr("comments")]];
-        $this->template->availLocalSections = [["local_posts", tr("new_posts")], ["global", tr("new_posts_global")], ["photos", tr("att_tab_photos")], ["videos", tr("videos")], ["audios", tr("audios")]];//, ["fave", tr("bookmarks_tab")]];
+        $this->template->availLocalSections = [["local_posts", tr("new_posts")], ["global", tr("new_posts_global")], ["photos", tr("att_tab_photos")], ["videos", tr("videos")], ["audios", tr("audios")], ["notes", tr("notes")]];//, ["fave", tr("bookmarks_tab")]];
         $this->template->feedLists = CustomFeeds::get($this->user->identity);
         $this->template->list = $listId;
 

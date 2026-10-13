@@ -578,21 +578,34 @@ final class AudioPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         $playlist = $this->audios->getPlaylistByOwnerAndVID($owner_id, $virtual_id);
         $page = (int) ($this->queryParam("p") ?? 1);
+        $act = $this->queryParam("act");
         if (!$playlist || $playlist->isDeleted()) {
             $this->notFound();
         }
 
         $this->template->playlist = $playlist;
+        $this->template->count = $playlist->size();
         $this->template->page = $page;
         $this->template->cover = $playlist->getCoverPhoto();
         $this->template->cover_url = $this->template->cover ? $this->template->cover->getURL() : "/assets/packages/static/openvk/img/song.jpg";
-        $this->template->audios = iterator_to_array($playlist->fetch($page, 10));
         $this->template->ownerId = $owner_id;
         $this->template->owner = $playlist->getOwner();
         $this->template->isBookmarked = $this->user->identity && $playlist->isBookmarkedBy($this->user->identity);
         $this->template->isMy = $this->user->identity &&  $playlist->getOwner()->getId() === $this->user->id;
         $this->template->canEdit = $this->user->identity && $playlist->canBeModifiedBy($this->user->identity);
-        $this->template->count = $playlist->size();
+        $this->template->cCount = $playlist->getCommentsCount();
+
+        if ($act === "comments") {
+            $this->template->sort = $this->queryParam("sort") ?? "asc";
+
+            $input_sort = $this->template->sort == "asc" ? "ASC" : "DESC";
+
+            $this->template->act = "comments";
+            $this->template->comments = iterator_to_array($playlist->getComments($page, null, $input_sort));
+        } else {
+            $this->template->act = "audios";
+            $this->template->audios = iterator_to_array($playlist->fetch($page, 10));
+        }
     }
 
     public function renderAction(int $audio_id): void
