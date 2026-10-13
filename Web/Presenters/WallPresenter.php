@@ -203,7 +203,7 @@ final class WallPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
 
         $page  = max((int) ($_GET["p"] ?? 1), 0);
-        $perPage = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);
+        $perPage = 10;
         $section = $this->queryParam("section") ?? "local_posts";
 
         if ($section == "fave") {

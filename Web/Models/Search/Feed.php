@@ -39,12 +39,33 @@ class Feed
         return new Feed($owner, $global);
     }
 
-    protected function getSubsIds(bool $keep_ignored = true, ?Catalogue $list = null)
+    private function checkPrivacy($user, string $filter = "post")
+    {
+        switch ($filter) {
+            case "post":
+                return true;
+            case "photo":
+                return $user->getPrivacyPermission("photos.read", $this->owner);
+            case "video":
+                return $user->getPrivacyPermission("videos.read", $this->owner);
+            case "audio":
+                return $user->getPrivacyPermission("audios.read", $this->owner);
+            case "note":
+                return $user->getPrivacyPermission("notes.read", $this->owner);
+        }
+
+        return true;
+    }
+
+    protected function getSubsIds(bool $keep_ignored = true, ?Catalogue $list = null, string $filter = "post")
     {
         $ids = [];
+
         if ($list != null) {
             foreach ($list->fetch($this->owner, 1, 10000, false, [5, 18]) as $item) {
-                $ids[] = $item->getRealId();
+                if ($this->checkPrivacy($item, $filter)) {
+                    $ids[] = $item->getRealId();
+                }
             }
         } else {
             $subs = DatabaseConnection::i()
@@ -69,7 +90,17 @@ class Feed
             $ids[] = $this->owner->getRealId();
         }
 
-        return $ids;
+        // too many sql requests...
+        $entities = get_entities($ids, false);
+        $cIds = [];
+
+        foreach ($entities as $entry) {
+            if ($this->checkPrivacy($entry, $filter)) {
+                $cIds[] = $entry->getRealId();
+            }
+        }
+
+        return $cIds;
     }
 
     public function fetchFeed(bool $keep_ignored = true, bool $alien_posts = true, bool $keep_nsfw_settings = true, string $filter = "post", ?array $cursor = null, ?Catalogue $list = null): Selection
@@ -132,7 +163,7 @@ class Feed
                     ->where("id IN (?)", $ids)
                     ->order("`created` DESC, `id` DESC");
         } else {
-            $ids = $this->getSubsIds($keep_ignored, $list);
+            $ids = $this->getSubsIds($keep_ignored, $list, $filter);
 
             if ($filter === "post") {
                 $payload = DatabaseConnection::i()
@@ -153,7 +184,7 @@ class Feed
                     $payload->where("nsfw", 0);
                 }
             }
-            if ($filter === "photo") {
+            if (!$list && $filter === "photo") {
                 $payload = DatabaseConnection::i()
                         ->getContext()
                         ->table("photos")
@@ -165,7 +196,7 @@ class Feed
                         ->where("unlisted", 0)
                         ->order("created DESC, id DESC");
             }
-            if ($filter === "video") {
+            if (!$list && $filter === "video") {
                 $payload = DatabaseConnection::i()
                     ->getContext()
                     ->table("videos")
@@ -175,7 +206,7 @@ class Feed
                     ->where("unlisted", 0)
                     ->order("created DESC, id DESC");
             }
-            if ($filter === "note") {
+            if (!$list && $filter === "note") {
                 $payload = DatabaseConnection::i()
                     ->getContext()
                     ->table("notes")
@@ -184,7 +215,7 @@ class Feed
                     ->where("deleted", 0)
                     ->order("created DESC, id DESC");
             }
-            if ($filter === "audio") {
+            if (!$list && $filter === "audio") {
                 $relations = DatabaseConnection::i()
                     ->getContext()
                     ->table("audio_relations")

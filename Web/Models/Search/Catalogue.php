@@ -19,7 +19,7 @@ class Catalogue extends RowModel
 
     public function getSubtype(): int
     {
-        return $this->getRecord()->subtype ?? $this->changes["subtype"];
+        return $this->getRecord()->subtype ?? $this->changes["subtype"] ?? 0;
     }
     public function getTitle(): string
     {
