@@ -2321,6 +2321,7 @@
 "admin_giftsets_create" = "Создать набор подарков";
 "admin_giftsets_title" = "Внутреннее название набора, которое будет использоваться, если не удаётся найти название на языке пользователя.";
 "admin_giftsets_description" = "Внутреннее описание набора, которое будет использоваться, если не удаётся найти название на языке пользователя.";
+"admin_giftsets_unlisted" = "Скрыть набор из каталога (Unlisted)";
 "admin_price_free" = "бесплатный";
 "admin_voucher_rating" = "Рейтинг";
 "admin_voucher_serial" = "Серийный номер";
@@ -2360,6 +2361,12 @@
 
 "admin_gift_moved_successfully" = "Подарок успешно перемещён";
 "admin_gift_moved_to_recycle" = "Теперь подарок находится в <b>корзине</b>.";
+"admin_gift_deleted" = "В корзине";
+"admin_gift_delete_confirm" = "Вы уверены, что хотите переместить этот подарок в корзину?";
+"admin_gift_restored_successfully" = "Подарок успешно восстановлен";
+"admin_gift_restored_from_recycle" = "Подарок был восстановлен из <b>корзины</b>.";
+"admin_gift_move_to_recycle" = "Переместить в корзину";
+"admin_gift_restore_from_recycle" = "Восстановить из корзины";
 "admin_original_file" = "Оригинальный файл";
 "admin_audio_length" = "Длина";
 "admin_cover_id" = "Обложка (ID фото)";

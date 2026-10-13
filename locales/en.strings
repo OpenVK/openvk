@@ -2108,6 +2108,7 @@
 "admin_giftsets_create" = "Create a gift set";
 "admin_giftsets_title" = "The internal name of the set, which will be used if no name can be found in the user's language.";
 "admin_giftsets_description" = "The internal description of the set, which will be used if no name can be found in the user's language.";
+"admin_giftsets_unlisted" = "Hide set from catalog (Unlisted)";
 "admin_price_free" = "free";
 "admin_voucher_rating" = "Rating";
 "admin_voucher_serial" = "Serial number";
@@ -2150,6 +2151,12 @@
 
 "admin_gift_moved_successfully" = "Gift moved successfully";
 "admin_gift_moved_to_recycle" = "This gift was moved to <b>Recycle Bin</b>.";
+"admin_gift_deleted" = "In recycle bin";
+"admin_gift_delete_confirm" = "Are you sure you want to move this gift to the recycle bin?";
+"admin_gift_restored_successfully" = "Gift restored successfully";
+"admin_gift_restored_from_recycle" = "This gift was restored from <b>Recycle Bin</b>.";
+"admin_gift_move_to_recycle" = "Move to recycle bin";
+"admin_gift_restore_from_recycle" = "Restore from recycle bin";
 "admin_original_file" = "Original file";
 "admin_audio_length" = "Length";
 "admin_cover_id" = "Cover (photo ID)";

@@ -21,6 +21,9 @@
                     <td style="vertical-align: middle;">
                         <span class="aui-icon aui-icon-small aui-iconfont-folder-filled">{$cat->getName()}</span>
                         {$cat->getName()}
+                        <span n:if="$cat->isUnlisted()" class="aui-lozenge aui-lozenge-subtle aui-lozenge-moved">
+                            {_admin_unlisted}
+                        </span>
                     </td>
                     <td style="vertical-align: middle;">
                         {ovk_proc_strtr($cat->getDescription(), 128)}

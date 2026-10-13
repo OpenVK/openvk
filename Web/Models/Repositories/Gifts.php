@@ -46,19 +46,27 @@ class Gifts
         return self::$cache_category[$id] ??= $this->toGiftCategory($this->cats->get($id));
     }
 
-    public function getCategories(int $page, ?int $perPage = null, &$count = nullptr): \Traversable
+    public function getCategories(int $page, ?int $perPage = null, &$count = nullptr, bool $includeUnlisted = false): \Traversable
     {
-        $cats  = $this->cats->where("deleted", false);
-        $count = $cats->count();
+        $cats = $this->cats->where("deleted", false);
+        if (!$includeUnlisted) {
+            $cats = $cats->where("unlisted", false);
+        }
+
+        $count = $cats->count('*');
         $cats  = $cats->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
         foreach ($cats as $cat) {
             yield new GiftCategory($cat);
         }
     }
 
-    public function getCategoriesCount(): int
+    public function getCategoriesCount(bool $includeUnlisted = false): int
     {
-        $cats  = $this->cats->where("deleted", false);
+        $cats = $this->cats->where("deleted", false);
+        if (!$includeUnlisted) {
+            $cats = $cats->where("unlisted", false);
+        }
+
         return $cats->count('*');
     }
 

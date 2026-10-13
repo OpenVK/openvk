@@ -70,7 +70,7 @@ final class GiftsPresenter extends OpenVKPresenter
     {
         $user = $this->users->get((int) ($this->queryParam("user") ?? 0));
         $cat  = $this->gifts->getCat((int) ($this->queryParam("pack") ?? 0));
-        if (!$user || !$cat) {
+        if (!$user || !$cat || $cat->isUnlisted()) {
             $this->flashFail("err", tr("error_when_gifting"), tr("error_user_not_exists"));
         }
 
@@ -96,7 +96,7 @@ final class GiftsPresenter extends OpenVKPresenter
         $user = $this->users->get((int) ($this->queryParam("user") ?? 0));
         $gift = $this->gifts->get((int) ($this->queryParam("elid") ?? 0));
         $cat  = $this->gifts->getCat((int) ($this->queryParam("pack") ?? 0));
-        if (!$user || !$cat || !$gift || !$cat->hasGift($gift)) {
+        if (!$user || !$cat || !$gift || $cat->isUnlisted() || $gift->isDeleted() || !$cat->hasGift($gift)) {
             $this->flashFail("err", tr("error_when_gifting"), tr("error_no_rights_gifts"));
         }
 

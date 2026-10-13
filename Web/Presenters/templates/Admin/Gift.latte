@@ -76,12 +76,24 @@
             </div>
         </fieldset>
 
+        <div n:if="$form->id !== 0" class="field-group">
+            <label>{_status}</label>
+            <span n:if="!$form->deleted" class="aui-lozenge aui-lozenge-subtle aui-lozenge-success">{_active}</span>
+            <span n:if="$form->deleted" class="aui-lozenge aui-lozenge-subtle aui-lozenge-error">{_admin_gift_deleted}</span>
+            <div class="description">
+                <a n:if="!$form->deleted" href="/admin/gifts/id{$form->id}?act=delete&hash={$csrfToken}" onclick="return confirm({_admin_gift_delete_confirm});">{_admin_gift_move_to_recycle}</a>
+                <a n:if="$form->deleted" href="/admin/gifts/id{$form->id}?act=restore&hash={$csrfToken}">{_admin_gift_restore_from_recycle}</a>
+            </div>
+        </div>
+
         <input n:if="$form->id === 0" type="hidden" name="_cat" value="{$_GET['cat'] ?? 1}" />
 
         <div class="buttons-container">
             <div class="buttons">
                 <input type="hidden" name="hash" value="{$csrfToken}" />
                 <input class="aui-button aui-button-primary submit" type="submit" value="{_save}">
+                <a n:if="$form->id !== 0 && !$form->deleted" class="aui-button aui-button-subtle" href="/admin/gifts/id{$form->id}?act=delete&hash={$csrfToken}" onclick="return confirm({_admin_gift_delete_confirm});">{_delete}</a>
+                <a n:if="$form->id !== 0 && $form->deleted" class="aui-button aui-button-subtle" href="/admin/gifts/id{$form->id}?act=restore&hash={$csrfToken}">{_restore}</a>
             </div>
         </div>
     </form>

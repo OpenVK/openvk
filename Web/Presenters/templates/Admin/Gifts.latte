@@ -34,6 +34,9 @@
                         <span n:if="$gift->isFree()" class="aui-lozenge aui-lozenge-subtle aui-lozenge-success">
                             {_admin_price_free}
                         </span>
+                        <span n:if="$gift->isDeleted()" class="aui-lozenge aui-lozenge-subtle aui-lozenge-error">
+                            {_admin_gift_deleted}
+                        </span>
                     </td>
                     <td style="vertical-align: middle;">
                         {tr("points_amount", $gift->getPrice())}
@@ -58,7 +61,13 @@
                     </td>
                     <td style="vertical-align: middle; text-align: right;">
                         <a class="aui-button aui-button-primary" href="/admin/gifts/id{$gift->getId()}">
-                            <span class="aui-icon aui-icon-small aui-iconfont-new-edit">Редактировать</span>
+                            <span class="aui-icon aui-icon-small aui-iconfont-new-edit">{_edit}</span>
+                        </a>
+                        <a n:if="!$gift->isDeleted()" class="aui-button aui-button-subtle" href="/admin/gifts/id{$gift->getId()}?act=delete&hash={$csrfToken}" onclick="return confirm({_admin_gift_delete_confirm});" title="{_delete}">
+                            <span class="aui-icon aui-icon-small aui-iconfont-delete">{_delete}</span>
+                        </a>
+                        <a n:if="$gift->isDeleted()" class="aui-button aui-button-subtle" href="/admin/gifts/id{$gift->getId()}?act=restore&hash={$csrfToken}" title="{_restore}">
+                            <span class="aui-icon aui-icon-small aui-iconfont-undo">{_restore}</span>
                         </a>
                     </td>
                 </tr>

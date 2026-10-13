@@ -338,7 +338,7 @@ final class AdminPresenter extends OpenVKPresenter
         $this->warnIfNoCommerce();
 
         $this->template->act        = $this->queryParam("act") ?? "list";
-        $this->template->categories = iterator_to_array($this->gifts->getCategories((int) ($this->queryParam("p") ?? 1), null, $this->template->count));
+        $this->template->categories = iterator_to_array($this->gifts->getCategories((int) ($this->queryParam("p") ?? 1), null, $this->template->count, true));
     }
 
     public function renderGiftCategory(string $slug, int $id): void
@@ -359,8 +359,10 @@ final class AdminPresenter extends OpenVKPresenter
             $cat = new GiftCategory();
         }
 
+        $this->template->cat  = $cat;
         $this->template->form = (object) [];
         $this->template->form->id        = $id;
+        $this->template->form->unlisted  = $gen ? false : $cat->isUnlisted();
         $this->template->form->languages = [];
         foreach (getLanguages() as $language) {
             $language = (object) $language;
@@ -384,6 +386,7 @@ final class AdminPresenter extends OpenVKPresenter
             $cat->save();
         }
 
+        $cat->setUnlisted(!empty($this->postParam("unlisted")));
         $cat->setName("_", $this->postParam("name_master"));
         $cat->setDescription("_", $this->postParam("description_master"));
         foreach (getLanguages() as $language) {
@@ -396,6 +399,7 @@ final class AdminPresenter extends OpenVKPresenter
                 $cat->setDescription($code, $this->postParam("description_$code"));
             }
         }
+        $cat->save();
 
         $this->redirect("/admin/gifts/" . $cat->getSlug() . "." . $cat->getId() . ".meta");
     }
@@ -412,7 +416,7 @@ final class AdminPresenter extends OpenVKPresenter
         }
 
         $this->template->cat   = $cat;
-        $this->template->gifts = iterator_to_array($cat->getGifts((int) ($this->queryParam("p") ?? 1), 20, $this->template->count));
+        $this->template->gifts = iterator_to_array($cat->getGifts((int) ($this->queryParam("p") ?? 1), 20, $this->template->count, true));
     }
 
     public function renderGift(int $id): void
@@ -430,6 +434,18 @@ final class AdminPresenter extends OpenVKPresenter
 
                 $gift->delete();
                 $this->flashFail("succ", tr("admin_gift_moved_successfully"), tr("admin_gift_moved_to_recycle"));
+                $this->redirect("/admin/gifts/id" . $gift->getId());
+                break;
+            case "restore":
+            case "undelete":
+                $this->assertNoCSRF();
+                if (!$gift) {
+                    $this->notFound();
+                }
+
+                $gift->undelete();
+                $this->flash("succ", tr("admin_gift_restored_successfully"), tr("admin_gift_restored_from_recycle"));
+                $this->redirect("/admin/gifts/id" . $gift->getId());
                 break;
             case "copy":
             case "move":
@@ -462,13 +478,15 @@ final class AdminPresenter extends OpenVKPresenter
                     $gift = new Gift();
                 }
 
+                $this->template->gift = $gift;
                 $this->template->form = (object) [];
-                $this->template->form->id     = $id;
-                $this->template->form->name   = $gen ? "New Gift (1)" : $gift->getName();
-                $this->template->form->price  = $gen ? 0 : $gift->getPrice();
-                $this->template->form->usages = $gen ? 0 : $gift->getUsages();
-                $this->template->form->limit  = $gen ? -1 : ($gift->getLimit() === INF ? -1 : $gift->getLimit());
-                $this->template->form->pic    = $gen ? null : $gift->getImage(Gift::IMAGE_URL);
+                $this->template->form->id      = $id;
+                $this->template->form->deleted = $gen ? false : $gift->isDeleted();
+                $this->template->form->name    = $gen ? "New Gift (1)" : $gift->getName();
+                $this->template->form->price   = $gen ? 0 : $gift->getPrice();
+                $this->template->form->usages  = $gen ? 0 : $gift->getUsages();
+                $this->template->form->limit   = $gen ? -1 : ($gift->getLimit() === INF ? -1 : $gift->getLimit());
+                $this->template->form->pic     = $gen ? null : $gift->getImage(Gift::IMAGE_URL);
 
                 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
                     return;

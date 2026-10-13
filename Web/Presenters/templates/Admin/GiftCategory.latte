@@ -38,6 +38,14 @@
                 <input class="text long-field" type="text" id="description_master" name="description_master" value="{$form->languages['master']->description}" />
                 <div class="description">{_admin_giftsets_description}</div>
             </div>
+            <fieldset class="group">
+                <legend></legend>
+                <div class="checkbox" resolved="">
+                    <input class="checkbox" type="checkbox" name="unlisted" id="unlisted" n:attr="checked => $form->unlisted" />
+                    <span class="aui-form-glyph"></span>
+                    <label for="unlisted">{_admin_giftsets_unlisted}</label>
+                </div>
+            </fieldset>
         </fieldset>
         
         <h3>{_admin_langsettings}</h3>

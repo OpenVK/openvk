@@ -86,17 +86,36 @@ class GiftCategory extends RowModel
         return $loc->description;
     }
 
-    public function getGifts(int $page = -1, ?int $perPage = null, &$count = nullptr): \Traversable
+    public function getGifts(int $page = -1, ?int $perPage = null, &$count = nullptr, bool $includeDeleted = false): \Traversable
     {
         $gifts = $this->getRecord()->related("gift_relations.category");
+        if (!$includeDeleted) {
+            $gifts = $gifts->where("gift.deleted", 0);
+        }
+
         if ($page !== -1) {
-            $count = $gifts->count();
+            $count = $gifts->count('*');
             $gifts = $gifts->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
         }
 
         foreach ($gifts as $rel) {
-            yield (new Gifts())->get($rel->gift);
+            $gift = (new Gifts())->get($rel->gift);
+            if (!$includeDeleted && (!$gift || $gift->isDeleted())) {
+                continue;
+            }
+
+            yield $gift;
         }
+    }
+
+    public function isUnlisted(): bool
+    {
+        return (bool) $this->getRecord()->unlisted;
+    }
+
+    public function setUnlisted(bool $unlisted): void
+    {
+        $this->stateChanges("unlisted", (int) $unlisted);
     }
 
     public function isMagical(): bool

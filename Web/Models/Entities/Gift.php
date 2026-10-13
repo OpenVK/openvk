@@ -92,6 +92,10 @@ class Gift extends RowModel
 
     public function canUse(User $user): bool
     {
+        if ($this->isDeleted()) {
+            return false;
+        }
+
         return $this->getUsagesLeft($user) > 0;
     }
 
@@ -174,8 +178,20 @@ class Gift extends RowModel
 
     public function delete(bool $softly = true): void
     {
-        $this->getRecord()->related("gift_relations.gift")->delete();
+        if (!$softly) {
+            $this->getRecord()->related("gift_relations.gift")->delete();
+        }
 
         parent::delete($softly);
+        if ($softly) {
+            $this->record = $this->getTable()->get($this->getId());
+        }
+    }
+
+    public function undelete(): void
+    {
+        parent::undelete();
+        $this->record = $this->getTable()->get($this->getId());
     }
 }
+
