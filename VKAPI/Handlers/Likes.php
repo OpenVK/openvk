@@ -69,13 +69,13 @@ final class Likes extends VKAPIRequestHandler
 
         $postable = $this->getEntity($type, $owner_id, $item_id);
 
-        if (is_null($postable) || $postable->isDeleted()) {
+        if (is_null($postable)) {
             $this->fail(100, "One of the parameters specified was missing or invalid: object not found");
         }
 
-        if (!$postable->canBeViewedBy($this->getUser() ?? null)) {
+        /*if (!$postable->canBeViewedBy($this->getUser() ?? null)) {
             $this->fail(2, "Access to postable denied");
-        }
+        }*/
 
         if (!is_null($postable)) {
             $postable->setLike(false, $this->getUser());

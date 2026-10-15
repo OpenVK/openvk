@@ -222,4 +222,53 @@ class Catalogue extends RowModel
 
         return $payload;
     }
+
+    public static function getImported(?User $user, ?int $subtype = null)
+    {
+        $sub = DatabaseConnection::i()
+            ->getContext()
+            ->table("catalogues_imports")
+            ->select("catalogue")
+            ->where("owner", $user->getRealId())
+            ->order("ord DESC");
+
+        $ids = [];
+
+        foreach ($sub as $item) {
+            $ids[] = $item->catalogue;
+        }
+
+        $select = DatabaseConnection::i()
+            ->getContext()
+            ->table("catalogues")
+            ->where("id IN (?)", $ids)
+            ->where("deleted", 0)
+            ->order("id ASC");
+
+        if ($subtype) {
+            $select = $select->where("subtype", $subtype);
+        }
+
+        foreach ($select as $item) {
+            yield new Catalogue($item);
+        }
+    }
+
+    public static function getOwn(?User $user, ?int $subtype = null)
+    {
+        $select = DatabaseConnection::i()
+            ->getContext()
+            ->table("catalogues")
+            ->where("owner", $user->getRealId())
+            ->where("deleted", 0)
+            ->order("id ASC");
+
+        if ($subtype) {
+            $select = $select->where("subtype", $subtype);
+        }
+
+        foreach ($select as $item) {
+            yield new Catalogue($item);
+        }
+    }
 }

@@ -20,13 +20,14 @@ class SearchState
     public array $params;
     private $user;
 
-    public function __construct(User $user, string $query, string $section, string $order_type, bool $invert = false)
+    public function __construct(User $user, string $query, string $section, string $order_type, bool $invert = false, bool $catalogueOnEmptyQuery = false)
     {
         $this->user = $user;
         $this->query = $query;
         $this->section = $section;
         $this->order_type = $order_type;
         $this->invert = $invert;
+        $this->catalogueOnEmptyQuery = $catalogueOnEmptyQuery;
         $this->params = [];
     }
 
@@ -83,10 +84,13 @@ class SearchState
     public function execute(int $page, int $perPage)
     {
         //if ($this->section == "main") {
-        if (false) {
-            $cat = new Catalogue($this->user);
+        $isEmpty = ctype_space($this->query);
 
-            return $cat->search($this->query, $page);
+        if (false) {
+            //$cat = new Catalogue($this->user);
+
+            //return $cat->search($this->query, $page);
+            return [];
         } else {
             $repos = [
                 "groups"   => "Clubs",

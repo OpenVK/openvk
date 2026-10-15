@@ -7,12 +7,21 @@
 {/block}
 
 {block content}
-    <div>
-        <a href="/catalogues?act=new">{_create}</a>
+    <div class="tabs">
+        {foreach $acts as $tab}
+            <div n:attr="id => ($tab[0] == $act ? 'activetabs' : 'ki')" class="tab">
+                <a n:attr="id => ($tab[0] == $act ? 'act_tab_a' : 'ki')" href="/catalogues?act={$tab[0]}">{$tab[1]}</a>
+            </div>
+        {/foreach}
     </div>
-    <hr />
     <div id="catalogues_list">
-        <a class="catalogue_item" href="/fave">{_bookmarks_tab}</a>
-        <a class="catalogue_item" href="/search?section=posts&from_me=1">{_own_posts_tab}</a>
+        <ul>
+            <li><a class="catalogue_item" href="/fave">{_bookmarks_tab}</a></li>
+            <li><a class="catalogue_item" href="/search?section=posts&from_me=1">{_own_posts_tab}</a></li>
+
+        {foreach $catalogues as $item}
+            <li><a class="catalogue_item" href="/fave">{$item->getTitle()}</a></li>
+        {/foreach}
+        </ul>
     </div>
 {/block}

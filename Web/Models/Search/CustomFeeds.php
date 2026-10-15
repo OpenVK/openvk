@@ -12,29 +12,10 @@ class CustomFeeds
 {
     public static function get(?User $user)
     {
-        $sub = DatabaseConnection::i()
-            ->getContext()
-            ->table("catalogues_imports")
-            ->select("catalogue")
-            ->where("owner", $user->getRealId())
-            ->order("ord DESC");
+        $items = Catalogue::getImported($user, 1);
 
-        $ids = [];
-
-        foreach ($sub as $item) {
-            $ids[] = $item->catalogue;
-        }
-
-        $select = DatabaseConnection::i()
-            ->getContext()
-            ->table("catalogues")
-            ->where("id IN (?)", $ids)
-            ->where("deleted", 0)
-            ->where("subtype", 1)
-            ->order("id ASC");
-
-        foreach ($select as $item) {
-            yield new Catalogue($item);
+        foreach ($items as $item) {
+            yield $item;
         }
     }
 
