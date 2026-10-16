@@ -69,6 +69,15 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
+                            <span class="nobold">{_app_strict}: </span>
+                        </td>
+                        <td>
+                            <input type="checkbox" name="strict" n:attr="checked => ($strict ?? true)" /> {_app_strict_desc}
+                            <p n:if="!$create" class="nobold">{tr("app_strict_hint", htmlspecialchars($origin))|noescape}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
                             <span class="nobold">{_app_state}: </span>
                         </td>
                         <td>
@@ -93,6 +102,37 @@
         </form>
         <br/>
 
+        {if !$create}
+            <h4>{_app_secret}</h4>
+            <form method="POST">
+                <table class="flexible_table" cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+                    <tbody>
+                        <tr>
+                            <td width="120" valign="top">
+                                <span class="nobold">{_app_secret}: </span>
+                            </td>
+                            <td>
+                                <input type="password" id="app_secret" value="{$secret}" readonly />
+                                <a onclick="$('#app_secret').attr('type', 'text')">{_app_secret_show}</a>
+                                <p class="nobold">{_app_secret_hint}</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+
+                            </td>
+                            <td>
+                                <input type="hidden" name="hash" value="{$csrfToken}" />
+                                <input type="hidden" name="regenerate_secret" value="1" />
+                                <input type="submit" value="{_app_secret_regenerate}" class="button" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+            <br/>
+        {/if}
+
         <h4>{_additional_information}</h4>
         <div>
             <ul style="color: unset;">
@@ -115,7 +155,7 @@
 
                 MessageBox(tr("warning"), tr("app_delete_modal_desc"), [tr("cancel"), tr("confirm_m")], [Function.noop, () => {
                     $("input[name='delete_app']").val(1);
-                    $("form").submit();
+                    $("#delete_app").closest("form").submit();
                 }]);
             })
         {/if}

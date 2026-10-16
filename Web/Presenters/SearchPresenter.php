@@ -16,7 +16,7 @@ final class SearchPresenter extends OpenVKPresenter
 
         $query     = $this->queryParam("q") ?? "";
         $section   = $this->queryParam("section") ?? "users";
-        $order     = $this->queryParam("order") ?? "id";
+        $order     = $this->queryParam("order") ?? ($section === "apps" ? "installs" : "id");
         $invert    = (int) ($this->queryParam("invert") ?? 0) == 1;
         $page      = (int) ($this->queryParam("p") ?? 1);
 

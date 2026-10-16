@@ -394,6 +394,11 @@ final class VKAPIPresenter extends OpenVKPresenter
                 $this->fail(-1, "User authorization failed: roaming mechanism is not allowed when redirected from other website.", $object, $method);
             }
 
+            # Referer can be stripped by the attacker, Sec-Fetch-* can't
+            if ($this->isCrossSiteRequest()) {
+                $this->fail(-1, "User authorization failed: roaming mechanism is only allowed for requests from OpenVK pages.", $object, $method);
+            }
+
             $identity = $this->user->identity;
         } else {
             $tokenStr = $explicitToken ?? $this->requestParam("access_token") ?? $this->requestParam("sid");

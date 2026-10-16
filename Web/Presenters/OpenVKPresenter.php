@@ -146,6 +146,19 @@ abstract class OpenVKPresenter extends SimplePresenter
         }
     }
 
+    /**
+     * True for a request another site started, or a navigation (a link, a form, a typed URL).
+     * Browsers set Sec-Fetch-* themselves and pages can't change them, unlike Referer, which can be stripped.
+     * OpenVK's own pages call the cookie-authenticated APIs (roaming, /rpc) with fetch() from the same origin.
+     */
+    protected function isCrossSiteRequest(): bool
+    {
+        $fetchSite = $_SERVER["HTTP_SEC_FETCH_SITE"] ?? null;
+        $fetchMode = $_SERVER["HTTP_SEC_FETCH_MODE"] ?? null;
+
+        return $fetchSite === "cross-site" || $fetchSite === "same-site" || $fetchMode === "navigate";
+    }
+
     protected function assertCaptchaCheckPassed(): void
     {
         if (!check_captcha()) {

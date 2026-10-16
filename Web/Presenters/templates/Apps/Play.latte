@@ -23,7 +23,7 @@
 
 {block content}
     <center>
-        <iframe id="appFrame" referrerpolicy="unsafe-url" frameBorder="0" src="{$url}" height="600" width="600"
+        <iframe id="appFrame" referrerpolicy="unsafe-url" frameBorder="0" height="600" width="600"
             sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-downloads-without-user-activation"></iframe>
     </center>
 
@@ -45,6 +45,18 @@
         window.appTitle  = {$name};
         window.appPerms  = {$perms};
         window.appOrigin = {$origin};
+        window.appStrict = {$strict};
+
+        // the part of the link after # (/app12#room_5) goes to the app as its own #, e.g. for invites.
+        // The address is set once, here: a strict-mode launch link works only once, so it must not load twice
+        {
+            let src = {$url};
+            if (location.hash.length > 1) {
+                src = src.split("#")[0] + location.hash;
+            }
+
+            appFrame.src = src;
+        }
     </script>
 
     {script "js/al_games.js"}

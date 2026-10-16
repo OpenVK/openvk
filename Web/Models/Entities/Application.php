@@ -124,18 +124,83 @@ class Application extends RowModel
     public function getOrigin(): string
     {
         $parsed = parse_url($this->getURL());
+        $scheme = strtolower($parsed["scheme"] ?? "https");
+        $origin = $scheme . "://" . strtolower($parsed["host"] ?? "127.0.0.1");
 
-        return (
-            ($parsed["scheme"] ?? "https") . "://"
-            . ($parsed["host"] ?? "127.0.0.1") . ":"
-            . ($parsed["port"] ?? "443")
-        );
+        # must match browser's event.origin, which omits default ports
+        $port = $parsed["port"] ?? null;
+        if (!is_null($port) && $port !== ($scheme === "http" ? 80 : 443)) {
+            $origin .= ":$port";
+        }
+
+        return $origin;
+    }
+
+    public function isStrict(): bool
+    {
+        return (bool) $this->getRecord()->strict;
+    }
+
+    public function getSecret(): string
+    {
+        $secret = $this->getRecord()->secret;
+        if (is_null($secret)) {
+            # conditional update, so concurrent requests can't end up with different secrets
+            $cx = DatabaseConnection::i()->getContext();
+            $cx->table("apps")->where(["id" => $this->getId(), "secret" => null])->update(["secret" => $this->generateSecret()]);
+            $secret = $cx->table("apps")->get($this->getId())->secret;
+        }
+
+        return $secret;
+    }
+
+    public function regenerateSecret(): void
+    {
+        $this->stateChanges("secret", $this->generateSecret());
+        $this->save();
+    }
+
+    private function generateSecret(): string
+    {
+        return $this->base64url(random_bytes(32));
+    }
+
+    private function base64url(string $bytes): string
+    {
+        return rtrim(strtr(base64_encode($bytes), "+/", "-_"), "=");
+    }
+
+    /**
+     * Adds ovk_sign to the ovk_* params. Keys and values must only contain [A-Za-z0-9._-].
+     */
+    public function signParams(array $params): array
+    {
+        ksort($params, SORT_STRING);
+        $canonical = implode("&", array_map(fn($k, $v) => "$k=$v", array_keys($params), $params));
+        $sign      = hash_hmac("sha256", $canonical, $this->getSecret(), true);
+
+        return $params + ["ovk_sign" => $this->base64url($sign)];
+    }
+
+    public function getLaunchURL(User $user): string
+    {
+        $params = $this->signParams([
+            "ovk_app_id"    => (string) $this->getId(),
+            "ovk_user_id"   => (string) $user->getId(),
+            "ovk_ts"        => (string) time(),
+            "ovk_launch_id" => bin2hex(random_bytes(16)),
+            "ovk_type"      => "launch",
+        ]);
+
+        [$url, $fragment] = array_pad(explode("#", $this->getURL(), 2), 2, null);
+        $url .= (str_contains($url, "?") ? "&" : "?") . http_build_query($params);
+
+        return is_null($fragment) ? $url : "$url#$fragment";
     }
 
     public function getUsersCount(): int
     {
-        $cx = DatabaseConnection::i()->getContext();
-        return sizeof($cx->table("app_users")->where("app", $this->getId()));
+        return (int) $this->getRecord()->installs;
     }
 
     public function getInstallationEntry(User $user): ?array
@@ -283,43 +348,67 @@ class Application extends RowModel
 
     public function install(User $user): void
     {
-        if (!$this->getInstallationEntry($user)) {
-            $cx = DatabaseConnection::i()->getContext();
-            $cx->table("app_users")->insert([
-                "app"  => $this->getId(),
-                "user" => $user->getId(),
-            ]);
-        }
+        $this->changeInstalls($user, true);
     }
 
     public function uninstall(User $user): void
     {
-        $cx = DatabaseConnection::i()->getContext();
-        $cx->table("app_users")->where([
-            "app"  => $this->getId(),
-            "user" => $user->getId(),
-        ])->delete();
+        $this->changeInstalls($user, false);
     }
 
-    public function addCoins(float $coins): float
+    /**
+     * Adds or removes the user's app_users row and keeps apps.installs in step, in one transaction.
+     * The counter only changes if the row really did.
+     */
+    private function changeInstalls(User $user, bool $install): void
     {
-        $res = $this->getBalance() + $coins;
-        $this->stateChanges("coins", $res);
-        $this->save();
+        $db = DatabaseConnection::i()->getContext();
+        $db->beginTransaction();
+        try {
+            if ($install) {
+                # IGNORE: opening the app in two tabs at once installs it once
+                $changed = $db->query("INSERT IGNORE INTO app_users (app, user) VALUES (?, ?)", $this->getId(), $user->getId())->getRowCount();
+                $counter = "UPDATE apps SET installs = installs + 1 WHERE id = ?";
+            } else {
+                $changed = $db->query("DELETE FROM app_users WHERE app = ? AND user = ?", $this->getId(), $user->getId())->getRowCount();
+                $counter = "UPDATE apps SET installs = GREATEST(installs, 1) - 1 WHERE id = ?";
+            }
 
-        return $res;
+            if ($changed > 0) {
+                $db->query($counter, $this->getId());
+            }
+
+            $db->commit();
+        } catch (\Throwable $e) {
+            $db->rollBack();
+            throw $e;
+        }
     }
 
-    public function withdrawCoins(): void
+    /**
+     * Moves the app's balance, minus the tax, to its owner. Returns the amount taken from the app.
+     * The balance is locked and emptied in one transaction, so a payment arriving meanwhile isn't lost.
+     */
+    public function withdrawCoins(): float
     {
-        $balance = $this->getBalance();
-        $tax     = ($balance / 100) * OPENVK_ROOT_CONF["openvk"]["preferences"]["apps"]["withdrawTax"];
+        $db = DatabaseConnection::i()->getContext();
+        $db->beginTransaction();
+        try {
+            # the user's balance before the app's, in the same order as payments: an owner paying their own app
+            # while withdrawing must not deadlock
+            $db->query("SELECT coins FROM profiles WHERE id = ? FOR UPDATE", $this->getOwner()->getId());
+            $balance = (float) $db->query("SELECT coins FROM apps WHERE id = ? FOR UPDATE", $this->getId())->fetchField();
+            $tax     = ($balance / 100) * OPENVK_ROOT_CONF["openvk"]["preferences"]["apps"]["withdrawTax"];
 
-        $owner = $this->getOwner();
-        $owner->setCoins($owner->getCoins() + ($balance - $tax));
-        $this->setCoins(0.0);
-        $this->save();
-        $owner->save();
+            $db->query("UPDATE apps SET coins = 0 WHERE id = ?", $this->getId());
+            $db->query("UPDATE profiles SET coins = coins + ? WHERE id = ?", $balance - $tax, $this->getOwner()->getId());
+            $db->commit();
+        } catch (\Throwable $e) {
+            $db->rollBack();
+            throw $e;
+        }
+
+        return $balance;
     }
 
     public function delete(bool $softly = true): void
