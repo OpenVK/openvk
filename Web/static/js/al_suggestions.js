@@ -29,46 +29,45 @@ function endSuggestAction(new_count, post_node) {
 
 // "Опубликовать запись"
 $(document).on("click", "#publish_post", async (e) => {
-    let id = Number(e.currentTarget.dataset.id)
-    let post;
+    let button = e.currentTarget;
+    let postTable = button.closest("table") || button.closest(".post");
+    let id = Number(button.dataset.id);
+    let initialText = postTable?.querySelector(".really_text")?.dataset?.text ?? "";
     let body = `
         <textarea id="pooblish" style="max-height:500px;resize:vertical;min-height:54px;"></textarea>
         <label><input type="checkbox" id="signatr" checked>${tr("add_signature")}</label>
     `
 
     MessageBox(tr("publishing_suggested_post"), body, [tr("publish"), tr("cancel")], [(async () => {
-        let id = Number(e.currentTarget.dataset.id)
-        let post;
-
         let formData = new FormData()
         formData.append("id", id)
-        formData.append("sign", document.getElementById("signatr").checked ? 1 : 0)
-        formData.append("new_content", document.getElementById("pooblish").value)
+        formData.append("sign", document.getElementById("signatr")?.checked ? 1 : 0)
+        formData.append("new_content", document.getElementById("pooblish")?.value ?? "")
         formData.append("hash", u("meta[name=csrf]").attr("value"))
 
         ky.post("/wall/accept", {
             hooks: {
                 beforeRequest: [
                     (_request) => {
-                        e.currentTarget.classList.add("loaded")
-                        e.currentTarget.setAttribute("value", "")
-                        e.currentTarget.setAttribute("id", "")
+                        button.classList.add("loaded")
+                        button.setAttribute("value", "")
+                        button.setAttribute("id", "")
                     }
                 ],
                 afterResponse: [
                     async (_request, _options, response) => {
-                        json = await response.json()
+                        let json = await response.json()
 
                         if(json.success) {
                             NewNotification(tr("suggestion_succefully_published"), tr("suggestion_press_to_go"), null, () => {window.location.assign("/wall" + json.id)});
-                            endSuggestAction(json.new_count, e.currentTarget.closest("table"))
+                            endSuggestAction(json.new_count, postTable)
                         } else {
                             MessageBox(tr("error"), json.flash.message, [tr("ok")], [Function.noop]);
                         }
 
-                        e.currentTarget.setAttribute("value", tr("publish_suggested"))
-                        e.currentTarget.classList.remove("loaded")
-                        e.currentTarget.setAttribute("id", "publish_post")
+                        button.setAttribute("value", tr("publish_suggested"))
+                        button.classList.remove("loaded")
+                        button.setAttribute("id", "publish_post")
                     }
                 ]
             },
@@ -76,13 +75,21 @@ $(document).on("click", "#publish_post", async (e) => {
         })
     }), Function.noop]);
 
-    document.getElementById("pooblish").innerHTML = e.currentTarget.closest("table").querySelector(".really_text").dataset.text
-    document.querySelector(".ovk-diag-body").style.padding = "9px";
+    let pooblish = document.getElementById("pooblish");
+    if (pooblish) {
+        pooblish.value = initialText;
+    }
+    let diagBody = document.querySelector(".ovk-diag-body");
+    if (diagBody) {
+        diagBody.style.padding = "9px";
+    }
 })
 
 // "Отклонить"
 $(document).on("click", "#decline_post", async (e) => {
-    let id = Number(e.currentTarget.dataset.id)
+    let button = e.currentTarget;
+    let postTable = button.closest("table") || button.closest(".post");
+    let id = Number(button.dataset.id)
 
     let formData = new FormData()
     formData.append("id", id)
@@ -92,24 +99,24 @@ $(document).on("click", "#decline_post", async (e) => {
         hooks: {
             beforeRequest: [
                 (_request) => {
-                    e.currentTarget.classList.add("loaded")
-                    e.currentTarget.setAttribute("value", "")
-                    e.currentTarget.setAttribute("id", "")
+                    button.classList.add("loaded")
+                    button.setAttribute("value", "")
+                    button.setAttribute("id", "")
                 }
             ],
             afterResponse: [
                 async (_request, _options, response) => {
-                    json = await response.json()
+                    let json = await response.json()
 
                     if(json.success) {
-                        endSuggestAction(json.new_count, e.currentTarget.closest("table"))
+                        endSuggestAction(json.new_count, postTable)
                     } else {
                         MessageBox(tr("error"), json.flash.message, [tr("ok")], [Function.noop]);
                     }
 
-                    e.currentTarget.setAttribute("value", tr("decline_suggested"))
-                    e.currentTarget.setAttribute("id", "decline_post")
-                    e.currentTarget.classList.remove("loaded")
+                    button.setAttribute("value", tr("decline_suggested"))
+                    button.setAttribute("id", "decline_post")
+                    button.classList.remove("loaded")
                 }
             ]
         },

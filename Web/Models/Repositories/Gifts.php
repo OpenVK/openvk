@@ -6,6 +6,7 @@ namespace openvk\Web\Models\Repositories;
 
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Entities\{Gift, GiftCategory};
+use openvk\Web\Models\Entities\Gifts\SentGift;
 use Nette\Database\Table\ActiveRow;
 
 class Gifts
@@ -59,5 +60,23 @@ class Gifts
     {
         $cats  = $this->cats->where("deleted", false);
         return $cats->count('*');
+    }
+
+    public function getSentGiftById(int $owner_id, int $id): ?SentGift
+    {
+        $rels = $this->context->table("gift_user_relations");
+        $data = $rels->select("*")->where([
+            "receiver" => $owner_id,
+            "id" => $id,
+        ])->fetch();
+
+        if (!$data) {
+            return null;
+        }
+
+        $origGift = $this->get($data->gift);
+        $sentGift = new SentGift($data, $origGift);
+
+        return $sentGift;
     }
 }

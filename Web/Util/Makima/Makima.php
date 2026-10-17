@@ -229,7 +229,7 @@ class Makima
 
                     $confDiff = abs($confH - $maxHeight);
                     if (sizeof($config) > 1) {
-                        if ($config[0] > $config[1] || sizeof($config) >= 2 && $config[1] > $config[2]) {
+                        if ($config[0] > $config[1] || (sizeof($config) >= 3 && $config[1] > $config[2])) {
                             $confDiff *= 1.1;
                         }
                     }

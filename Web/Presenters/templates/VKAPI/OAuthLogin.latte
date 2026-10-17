@@ -23,6 +23,7 @@
                 <div class="section">
                     <div class="oauth_main">
                         {_app},
+                        <b>
                         {if is_null($origin)}
                             {tr("identifies_itself_as", $clientName)}{else}
                         {tr("located_at_url", $origin)}{/if}</b>, {_wants_your_token}.
@@ -30,7 +31,7 @@
                         <br><br>
                         
                         <div class="faq_card">
-                            <div id="faq_content"><p><b>{_app_will_have_access_to}</b><br>
+                            <div id="faq_content"><p><b>{_app_will_have_access_to}</b><br></p>
                             {php $perms_array = explode(', ', tr('oauth_scope_all'))}
                             <ul class="list_prevs" n:foreach="$perms_array as $perm">
                                 <li>{$perm|noescape}</li>  
@@ -98,6 +99,10 @@
             });
             //]]>
         </script>
+
+            </div>
+        </div>
+    </div>
 
 </body>
 

@@ -7,12 +7,14 @@ namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\{IP, User, PasswordReset, EmailVerification};
 use openvk\Web\Models\Repositories\{Bans, IPs, Users, Restores, Verifications};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
+use openvk\Web\Util\IMBroker;
 use openvk\Web\Util\Validator;
 use Chandler\Session\Session;
 use Chandler\Security\User as ChandlerUser;
 use Chandler\Security\Authenticator;
 use Chandler\Database\DatabaseConnection;
 use lfkeitel\phptotp\{Base32, Totp};
+use openvk\Web\Util\RateLimiter;
 
 final class AuthPresenter extends OpenVKPresenter
 {
@@ -40,10 +42,9 @@ final class AuthPresenter extends OpenVKPresenter
 
     private function ipValid(): bool
     {
-        $ip  = (new IPs())->get(CONNECTING_IP);
-        $res = $ip->rateLimit(0);
+        $res = RateLimiter::i()->limitWrite(CONNECTING_IP, null, 0);
 
-        return $res === IP::RL_RESET || $res === IP::RL_CANEXEC;
+        return $res === RateLimiter::RL_RESET || $res === RateLimiter::RL_CANEXEC;
     }
 
     public function renderRegister(): void
@@ -174,8 +175,12 @@ final class AuthPresenter extends OpenVKPresenter
             }
 
             $this->authenticator->authenticate($chUser->getId());
-            $this->redirect("/id" . $user->getId());
-            $user->save();
+
+            if (OPENVK_ROOT_CONF['openvk']['preferences']['registration']['redirectAfter'] == null) {
+                $this->redirect("/id" . $user->getId());
+            } else {
+                $this->redirect(OPENVK_ROOT_CONF['openvk']['preferences']['registration']['redirectAfter']);
+            }
         }
     }
 
@@ -252,6 +257,12 @@ final class AuthPresenter extends OpenVKPresenter
     {
         $this->assertUserLoggedIn();
         $this->assertNoCSRF();
+        if ($this->user && $this->user->id) {
+            $user = $this->user->identity;
+            $user->setOnline(time() - 301);
+            $user->save(false);
+            IMBroker::i()->setUserOffline($this->user->id, 0);
+        }
         $this->authenticator->logout();
         Session::i()->set("_su", null);
 

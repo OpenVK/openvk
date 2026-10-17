@@ -57,7 +57,9 @@ final class Notes extends VKAPIRequestHandler
         if ($note->getOwner()->isDeleted()) {
             $this->fail(15, "Access denied");
         }
-
+        if (!$note->canBeCommentedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
         if (!$note->canBeViewedBy($this->getUser())) {
             $this->fail(15, "Access denied");
         }
@@ -74,7 +76,19 @@ final class Notes extends VKAPIRequestHandler
         $comment->setCreated(time());
         $comment->save();
 
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return (object) [
+                "cid" => $comment->getId(),
+            ];
+        }
+
         return $comment->getId();
+    }
+
+    public function addComment(int $note_id, int $owner_id, string $message = "", string $text = "", string $attachments = "")
+    {
+        $msg = !empty($message) ? $message : $text;
+        return $this->createComment($note_id, $owner_id, $msg, $attachments);
     }
 
     public function delete(int $note_id)
@@ -101,7 +115,7 @@ final class Notes extends VKAPIRequestHandler
         return 1;
     }
 
-    public function edit(string $note_id, string $title = "", string $text = "", int $privacy = 0, int $comment_privacy = 0, string $privacy_view  = "", string $privacy_comment  = "")
+    public function edit(string $note_id, string $title = "", string $text = "", int $privacy = 0, int $comment_privacy = -1, string $privacy_view  = "", string $privacy_comment  = "")
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -122,6 +136,10 @@ final class Notes extends VKAPIRequestHandler
 
         !empty($title) ? $note->setName($title) : null;
         !empty($text) ? $note->setSource($text) : null;
+
+        if ($comment_privacy != -1) {
+            $note->setCommentPrivacy($comment_privacy == 0);
+        }
 
         $note->setCached_Content(null);
         $note->setEdited(time());
@@ -163,7 +181,7 @@ final class Notes extends VKAPIRequestHandler
                     continue;
                 }
 
-                $notes_return_object->items[] = $note->toVkApiStruct();
+                $notes_return_object->items[] = $note->toVkApiStruct($this->getUser());
             }
         } else {
             $notes_splitted = explode(',', $note_ids);
@@ -173,9 +191,13 @@ final class Notes extends VKAPIRequestHandler
                 $note = (new NotesRepo())->getNoteById($user_id, $note_id);
 
                 if ($note && !$note->isDeleted()) {
-                    $notes_return_object->items[] = $note->toVkApiStruct();
+                    $notes_return_object->items[] = $note->toVkApiStruct($this->getUser());
                 }
             }
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return array_merge([$notes_return_object->count], $notes_return_object->items);
         }
 
         return $notes_return_object;
@@ -207,7 +229,7 @@ final class Notes extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
-        return $note->toVkApiStruct();
+        return $note->toVkApiStruct($this->getUser());
     }
 
     public function getComments(int $note_id, int $owner_id, int $sort = 1, int $offset = 0, int $count = 100)
@@ -243,6 +265,10 @@ final class Notes extends VKAPIRequestHandler
 
         foreach ($comments as $comment) {
             $arr->items[] = $comment->toVkApiStruct($this->getUser(), false, false, $note);
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return array_merge([$note->getCommentsCount()], $arr->items);
         }
 
         return $arr;

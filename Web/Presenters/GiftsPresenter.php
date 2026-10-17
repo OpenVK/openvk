@@ -6,6 +6,9 @@ namespace openvk\Web\Presenters;
 
 use openvk\Web\Models\Repositories\{Gifts, Users};
 use openvk\Web\Models\Entities\Notifications\GiftNotification;
+use openvk\Web\Models\Entities\Gift;
+use openvk\Web\Models\Entities\Messages\StickerPack;
+use Chandler\Database\DatabaseConnection as DB;
 
 final class GiftsPresenter extends OpenVKPresenter
 {
@@ -32,6 +35,10 @@ final class GiftsPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
+        if (!$user->getPrivacyPermission("gifts.read", $this->user->identity)) {
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+        }
+
         $this->template->user     = $user;
         $this->template->page     = $page = (int) ($this->queryParam("p") ?? 1);
         $this->template->count    = $user->getGiftCount();
@@ -44,6 +51,10 @@ final class GiftsPresenter extends OpenVKPresenter
         $user = $this->users->get((int) ($this->queryParam("user") ?? 0));
         if (!$user) {
             $this->notFound();
+        }
+
+        if (!$user->getPrivacyPermission("gifts.read", $this->user->identity)) {
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
         $this->template->page = $page = (int) ($this->queryParam("p") ?? 1);
@@ -67,6 +78,10 @@ final class GiftsPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
+        if (!$user->getPrivacyPermission("gifts.read", $this->user->identity)) {
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+        }
+
         $this->template->page = $page = (int) ($this->queryParam("p") ?? 1);
         $gifts = $cat->getGifts($page, null, $this->template->count);
 
@@ -83,6 +98,10 @@ final class GiftsPresenter extends OpenVKPresenter
         $cat  = $this->gifts->getCat((int) ($this->queryParam("pack") ?? 0));
         if (!$user || !$cat || !$gift || !$cat->hasGift($gift)) {
             $this->flashFail("err", tr("error_when_gifting"), tr("error_no_rights_gifts"));
+        }
+
+        if (!$user->getPrivacyPermission("gifts.read", $this->user->identity)) {
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
         if (!$gift->canUse($this->user->identity)) {
@@ -111,12 +130,13 @@ final class GiftsPresenter extends OpenVKPresenter
         }
 
         $comment      = empty($c = $this->postParam("comment")) ? null : $c;
-        $notification = new GiftNotification($user, $this->user->identity, $gift, $comment);
-        $notification->emit();
+
         $this->user->identity->setCoins($coinsLeft);
         $this->user->identity->save();
-        $user->gift($this->user->identity, $gift, $comment, !is_null($this->postParam("anonymous")));
+        $data = $user->gift($this->user->identity, $gift, $comment, !is_null($this->postParam("anonymous")));
         $gift->used();
+        $notification = new GiftNotification($user, $this->user->identity, $gift, $data->id);
+        $notification->emit();
 
         $this->flash("succ", tr("gift_sent"), tr("gift_sent_desc", $user->getFirstName(), $gift->getPrice()));
         $this->redirect($user->getURL());
@@ -147,7 +167,24 @@ final class GiftsPresenter extends OpenVKPresenter
 
     public function renderGiftImage(int $id, int $timestamp): void
     {
+        $id = (int) $id;
         $gift = $this->gifts->get($id);
+        if (!$gift) {
+            $giftRow = DB::i()->getContext()->table("gifts")
+                ->where("stickers_product_id", $id)
+                ->where("deleted", 0)
+                ->fetch();
+            if ($giftRow) {
+                $gift = new \openvk\Web\Models\Entities\Gift($giftRow);
+            } else {
+                $packRow = DB::i()->getContext()->table("stickerpacks")->get($id);
+                if ($packRow) {
+                    $pack = new \openvk\Web\Models\Entities\Messages\StickerPack($packRow);
+                    $gift = $pack->getOrCreateGift();
+                }
+            }
+        }
+
         if (!$gift) {
             $this->notFound();
         }
@@ -157,6 +194,73 @@ final class GiftsPresenter extends OpenVKPresenter
         header("Content-Length: " . strlen($image));
         header("Content-Type: image/png");
         exit($image);
+    }
+
+    public function renderServeLegacyImage(int $id, ?string $giftFile = null): void
+    {
+        $id = (int) $id;
+        $gift = $this->gifts->get($id);
+
+        // If not found by gift id, try finding gift by stickers_product_id
+        if (!$gift) {
+            $giftRow = DB::i()->getContext()->table("gifts")
+                ->where("stickers_product_id", $id)
+                ->where("deleted", 0)
+                ->fetch();
+            if ($giftRow) {
+                $gift = new \openvk\Web\Models\Entities\Gift($giftRow);
+            } else {
+                $packRow = DB::i()->getContext()->table("stickerpacks")->get($id);
+                if ($packRow) {
+                    $pack = new \openvk\Web\Models\Entities\Messages\StickerPack($packRow);
+                    $gift = $pack->getOrCreateGift();
+                }
+            }
+        }
+
+        if (!$gift) {
+            $this->notFound();
+        }
+
+        $imageBlob = $gift->getImage();
+        if (empty($imageBlob)) {
+            $this->notFound();
+        }
+
+        $size = 256;
+        if ($giftFile !== null) {
+            $digits = preg_replace('/[^\d]/', '', $giftFile);
+            if (!empty($digits)) {
+                $size = (int) $digits;
+            }
+        }
+
+        if ($size > 256) {
+            $size = 512;
+        } elseif ($size > 96) {
+            $size = 256;
+        } elseif ($size > 48) {
+            $size = 96;
+        } else {
+            $size = 48;
+        }
+
+        if ($size !== 512 && class_exists(\Imagick::class)) {
+            try {
+                $im = new \Imagick();
+                $im->readImageBlob($imageBlob);
+                $im->resizeImage($size, $size, \Imagick::FILTER_LANCZOS, 1, true);
+                $im->setImageFormat("png");
+                $imageBlob = $im->getImageBlob();
+                $im->destroy();
+            } catch (\Throwable $e) {
+            }
+        }
+
+        header("Cache-Control: public, max-age=86400, no-transform");
+        header("Content-Length: " . strlen($imageBlob));
+        header("Content-Type: image/png");
+        exit($imageBlob);
     }
 
     public function onStartup(): void

@@ -36,11 +36,15 @@ final class Audio extends VKAPIRequestHandler
         return $audioObj;
     }
 
-    private function streamToResponse(EntityStream $es, int $offset, int $count, ?string $hash = null): object
+    private function streamToResponse(EntityStream $es, int $offset, int $count, ?string $hash = null): object|array
     {
         $items = [];
         foreach ($es->offsetLimit($offset, $count) as $audio) {
             $items[] = $this->toSafeAudioStruct($audio, $hash);
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return array_merge([sizeof($items)], $items);
         }
 
         return (object) [
@@ -91,20 +95,19 @@ final class Audio extends VKAPIRequestHandler
         $this->requireUser();
 
         $audioIds = array_unique(explode(",", $audios));
-        if (sizeof($audioIds) === 1) {
-            $audio = $this->audioFromAnyId($audioIds[0]);
-
-            return $this->generateItems(1, [$this->toSafeAudioStruct($audio, $hash, (bool) $need_user)], true);
-        } elseif (sizeof($audioIds) > 6000) {
+        if (sizeof($audioIds) > 6000) {
             $this->fail(1980, "Can't get more than 6000 audios at once");
         }
 
-        $audios = [];
+        $items = [];
         foreach ($audioIds as $id) {
-            $audios[] = $this->getById($id, $hash)->items[0];
+            $audio = $this->audioFromAnyId($id);
+            if ($audio) {
+                $items[] = $this->toSafeAudioStruct($audio, $hash, (bool) $need_user);
+            }
         }
 
-        return $this->generateItems(sizeof($audios), $audios, true);
+        return $this->generateItems(sizeof($items), $items, true);
     }
 
     public function isLagtrain(string $audio_id): int
@@ -121,15 +124,19 @@ final class Audio extends VKAPIRequestHandler
     }
 
     // TODO stub
-    public function getRecommendations(): object
+    public function getRecommendations(): object|array
     {
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return [0];
+        }
+
         return (object) [
             "count" => 0,
             "items" => [],
         ];
     }
 
-    public function getPopular(?int $genre_id = null, ?string $genre_str = null, int $offset = 0, int $count = 100, ?string $hash = null): object
+    public function getPopular(?int $genre_id = null, ?string $genre_str = null, int $offset = 0, int $count = 100, ?string $hash = null): object|array
     {
         $this->requireUser();
         $this->validateGenre($genre_str, $genre_id);
@@ -139,7 +146,7 @@ final class Audio extends VKAPIRequestHandler
         return $this->streamToResponse($results, $offset, $count, $hash);
     }
 
-    public function getFeed(?int $genre_id = null, ?string $genre_str = null, int $offset = 0, int $count = 100, ?string $hash = null): object
+    public function getFeed(?int $genre_id = null, ?string $genre_str = null, int $offset = 0, int $count = 100, ?string $hash = null): object|array
     {
         $this->requireUser();
         $this->validateGenre($genre_str, $genre_id);
@@ -149,7 +156,7 @@ final class Audio extends VKAPIRequestHandler
         return $this->streamToResponse($results, $offset, $count, $hash);
     }
 
-    public function search(string $q, int $auto_complete = 0, int $lyrics = 0, int $performer_only = 0, int $sort = 2, int $search_own = 0, int $offset = 0, int $count = 30, ?string $hash = null): object
+    public function search(string $q, int $auto_complete = 0, int $lyrics = 0, int $performer_only = 0, int $sort = 2, int $search_own = 0, int $offset = 0, int $count = 30, ?string $hash = null): object|array
     {
         $this->requireUser();
 
@@ -198,7 +205,7 @@ final class Audio extends VKAPIRequestHandler
         return (new Audios())->getUserCollectionSize($user);
     }
 
-    public function get(int $owner_id = 0, int $album_id = 0, string $audio_ids = '', int $need_user = 1, int $offset = 0, int $count = 100, int $uploaded_only = 0, int $need_seed = 0, ?string $shuffle_seed = null, int $shuffle = 0, ?string $hash = null): object
+    public function get(int $owner_id = 0, int $album_id = 0, string $audio_ids = '', int $need_user = 1, int $offset = 0, int $count = 100, int $uploaded_only = 0, int $need_seed = 0, ?string $shuffle_seed = null, int $shuffle = 0, ?string $hash = null): object|array
     {
         $this->requireUser();
 
@@ -239,6 +246,10 @@ final class Audio extends VKAPIRequestHandler
 
             foreach ($list as $song) {
                 $songs[] = $this->toSafeAudioStruct($song, $hash, $need_user == 1);
+            }
+
+            if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+                return $songs;
             }
 
             $response = (object) [
@@ -307,7 +318,9 @@ final class Audio extends VKAPIRequestHandler
                 }
 
                 $obj = $this->getById(substr($audio_q, 1), $hash, $need_user);
-                $obj->shuffle_seed = $shuffleSeedStr;
+                if (is_object($obj)) {
+                    $obj->shuffle_seed = $shuffleSeedStr;
+                }
 
                 return $obj;
             }
@@ -332,7 +345,9 @@ final class Audio extends VKAPIRequestHandler
             }
 
             $obj = $this->getById(substr($audio_q, 1), $hash, $need_user);
-            $obj->shuffle_seed = $shuffleSeedStr;
+            if (is_object($obj)) {
+                $obj->shuffle_seed = $shuffleSeedStr;
+            }
 
             return $obj;
         }
@@ -354,6 +369,10 @@ final class Audio extends VKAPIRequestHandler
         $audios = (new Audios())->getByEntityID($owner_id, $offset, $count);
         foreach ($audios as $audio) {
             $items[] = $this->toSafeAudioStruct($audio, $hash, $need_user == 1);
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return $items;
         }
 
         return (object) [
@@ -585,7 +604,7 @@ final class Audio extends VKAPIRequestHandler
         return $this->getById($vid, $hash)->items[0];
     }
 
-    public function getAlbums(int $owner_id = 0, int $offset = 0, int $count = 50, int $drop_private = 1): object
+    public function getAlbums(int $owner_id = 0, int $offset = 0, int $count = 50, int $drop_private = 1): object|array
     {
         $this->requireUser();
 
@@ -594,6 +613,10 @@ final class Audio extends VKAPIRequestHandler
 
         if ($owner_id > 0 && $owner_id != $this->getUser()->getId()) {
             $user = (new \openvk\Web\Models\Repositories\Users())->get($owner_id);
+
+            if (!$user) {
+                $this->fail(50, "Invalid user");
+            }
 
             if (!$user->getPrivacyPermission("audios.read", $this->getUser())) {
                 $this->fail(50, "Access to playlists denied");
@@ -613,13 +636,17 @@ final class Audio extends VKAPIRequestHandler
             $playlists[] = $playlist->toVkApiStruct($this->getUser());
         }
 
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return array_merge([sizeof($playlists)], $playlists);
+        }
+
         return (object) [
             "count" => sizeof($playlists),
             "items" => $playlists,
         ];
     }
 
-    public function searchAlbums(string $query = '', int $offset = 0, int $limit = 25, int $drop_private = 0, int $order = 0, int $from_me = 0): object
+    public function searchAlbums(string $query = '', int $offset = 0, int $limit = 25, int $drop_private = 0, int $order = 0, int $from_me = 0): object|array
     {
         $this->requireUser();
 
@@ -641,6 +668,10 @@ final class Audio extends VKAPIRequestHandler
             }
 
             $playlists[] = $playlist->toVkApiStruct($this->getUser());
+        }
+
+        if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
+            return array_merge([$search->size()], $playlists);
         }
 
         return (object) [
@@ -871,7 +902,7 @@ final class Audio extends VKAPIRequestHandler
         return (int) $album->unbookmark($this->getUser());
     }
 
-    public function getPlaylists(int $owner_id = 0, int $offset = 0, int $count = 50, int $drop_private = 1): object
+    public function getPlaylists(int $owner_id = 0, int $offset = 0, int $count = 50, int $drop_private = 1): object|array
     {
         // alias of getPlaylists
         return $this->getAlbums($owner_id, $offset, $count, $drop_private);

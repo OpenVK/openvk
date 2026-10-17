@@ -21,6 +21,7 @@ class Gift extends RowModel
     public const PERIOD_SET_IF_NONE = 2;
 
     protected $tableName = "gifts";
+    public $shortName    = "gift";
 
     public function getName(): string
     {
@@ -158,6 +159,17 @@ class Gift extends RowModel
 
                 break;
         }
+    }
+
+    public function getStickersProductId(): ?int
+    {
+        $id = $this->getRecord()->stickers_product_id;
+        return is_null($id) ? null : (int) $id;
+    }
+
+    public function setStickersProductId(?int $id): void
+    {
+        $this->stateChanges("stickers_product_id", $id);
     }
 
     public function delete(bool $softly = true): void

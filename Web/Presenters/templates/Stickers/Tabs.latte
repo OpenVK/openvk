@@ -1,0 +1,13 @@
+<div n:attr="id => ($act === 'shop' ? 'activetabs' : 'ki')" class="tab">
+    <a n:attr="id => ($act === 'shop' ? 'act_tab_a' : 'ki')" href="/stickers">{_stickers_store}</a>
+</div>
+
+<div n:if="!is_null($thisUser)" n:attr="id => ($act === 'settings' ? 'activetabs' : 'ki')" class="tab">
+    <a n:attr="id => ($act === 'settings' ? 'act_tab_a' : 'ki')" href="/stickers?act=settings">{_stickers_manage}</a>
+</div>
+
+<div n:if="!is_null($thisUser) && $thisUser->canCreateStickers()" n:attr="id => ($act === 'author' ? 'activetabs' : 'ki')" class="tab">
+    <a n:attr="id => ($act === 'author' ? 'act_tab_a' : 'ki')" href="/stickers?act=author">{_stickers_tab_author}</a>
+</div>
+
+<a n:if="!is_null($thisUser)" href="/im" class="side_link">{_stickers_dialogs}</a>

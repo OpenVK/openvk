@@ -73,6 +73,8 @@
                                     &nbsp;
                                     <a n:if="$thisUser->getId() == $user->getId()" href="/gifts?act=pick&user={$dat->sender->getId()}">{_gift_back}</a>
                                 {/if}
+                                &nbsp;
+                                <a n:if="$thisUser->getId() == $user->getId()" onclick="delete_gift(event, {$dat->id})">{_delete}</a>
                             </div>
                         </td>
                     </tr>
