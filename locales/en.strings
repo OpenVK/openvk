@@ -1798,6 +1798,7 @@
 "error_when_gifting" = "Failed to gift";
 "error_user_not_exists" = "User or pack does not exist.";
 "error_no_rights_gifts" = "Failed to check rights on gift.";
+"error_gift_unavailable" = "This gift or set is no longer available.";
 "error_no_more_gifts" = "You no longer have such gifts.";
 "error_no_money" = "Shout out to a beggar.";
 
@@ -3332,6 +3333,10 @@
 "admin_overview_posts_few" = "Posts";
 "admin_overview_videos_few" = "Videos";
 "admin_public" = "Public";
+"admin_hide_from_catalog" = "Hide from catalog";
+"admin_hidden_from_catalog" = "Hidden from the catalog";
+"admin_return_to_catalog" = "Return to catalog";
+"admin_returned_to_catalog" = "Returned to the catalog";
 "admin_sticker_added" = "Sticker added";
 "admin_sticker_added_desc" = "The sticker has been successfully added to the pack.";
 "admin_sticker_deleted" = "Sticker deleted";

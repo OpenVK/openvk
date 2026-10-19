@@ -86,7 +86,7 @@ final class Gifts extends VKAPIRequestHandler
 
         $gift  = (new GiftsRepo())->get($gift_id);
 
-        if (!$gift) {
+        if (!$gift || !$gift->isAvailable()) {
             $this->fail(15, "Invalid gift");
         }
 
@@ -196,7 +196,7 @@ final class Gifts extends VKAPIRequestHandler
 
         $gift_category = (new GiftsRepo())->getCat($id);
 
-        if (!$gift_category) {
+        if (!$gift_category || $gift_category->isUnlisted()) {
             $this->fail(15, "Category not found");
         }
 

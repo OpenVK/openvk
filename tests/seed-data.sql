@@ -367,24 +367,32 @@ INSERT INTO support_names (agent, name) VALUES
 INSERT INTO coin_vouchers (id, coins, rating, token, usages_left, deleted) VALUES
 (1, 100, 50, 'TESTVOUCHER12345', 5, 0);
 
--- Gift categories
-INSERT INTO gift_categories (id, autoquery, deleted) VALUES
-(1, 'popular', 0),
-(2, 'new', 0);
+-- Gift categories (category 3 is delisted)
+INSERT INTO gift_categories (id, autoquery, deleted, unlisted) VALUES
+(1, 'popular', 0, 0),
+(2, 'new', 0, 0),
+(3, 'archived', 0, 1);
 
 INSERT INTO gift_categories_locales (id, category, language, name, description) VALUES
 (1, 1, 'en', 'Popular Gifts', 'Most popular gifts on the platform'),
-(2, 2, 'en', 'New Arrivals', 'Recently added gifts');
+(2, 2, 'en', 'New Arrivals', 'Recently added gifts'),
+(3, 3, 'en', 'Archived Gifts', 'Old archived gifts');
 
--- Gifts
-INSERT INTO gifts (id, internal_name, price, usages, image, `limit`, limit_period, updated, deleted) VALUES
-(1, 'Red Rose', 10, 0, X'', NULL, NULL, @ts_base, 0),
-(2, 'Chocolate Box', 25, 0, X'', 100, @ts_day * 30, @ts_base, 0);
+-- Gifts (gifts 3 and 5 are delisted)
+INSERT INTO gifts (id, internal_name, price, usages, image, `limit`, limit_period, updated, deleted, unlisted) VALUES
+(1, 'Red Rose', 10, 0, X'', NULL, NULL, @ts_base, 0, 0),
+(2, 'Chocolate Box', 25, 0, X'', 100, @ts_day * 30, @ts_base, 0, 0),
+(3, 'Delisted Rose', 10, 0, X'', NULL, NULL, @ts_base, 0, 1),
+(4, 'Archived Bauble', 15, 0, X'', NULL, NULL, @ts_base, 0, 0),
+(5, 'Toggle Test Gift', 10, 0, X'', NULL, NULL, @ts_base, 0, 1);
 
 -- Gift category relations
 INSERT INTO gift_relations (id, gift, category) VALUES
 (1, 1, 1),
-(2, 2, 1);
+(2, 2, 1),
+(3, 3, 1),
+(4, 4, 3),
+(5, 5, 1);
 
 -- Sent gift: Bob sends a rose to Alice
 INSERT INTO gift_user_relations (id, gift, sender, receiver, comment, anonymous, sent) VALUES
