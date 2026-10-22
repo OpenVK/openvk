@@ -3741,7 +3741,7 @@ body:has(#im_container.at_page) .page-wrap {
 }
 
 #im_container.compact .crp-list {
-    max-height: 83%;
+    max-height: calc(100% - 94px);
     overflow-x: hidden;
 }
 
