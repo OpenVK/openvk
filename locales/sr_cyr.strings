@@ -221,7 +221,7 @@
 /* Menus */
 
 "edit_button" = "уред.";
-"my_page" = "Моја Страница";
+"my_page" = "Моја страница";
 "my_friends" = "Моји другови";
 "my_photos" = "Моје слике";
 "my_videos" = "Моје видео";
@@ -830,7 +830,7 @@
 "something" = "Нешто";
 "supports_xhtml" = "од (X)HTML-а је подржано.";
 "aw_legacy_ui" = "Стари интерфејс";
-"my_audios" = "Моја Музика";
+"my_audios" = "Моја музика";
 "my_events" = "Моји догађаји";
 "bookmarks" = "Обележивачи";
 "bookmarks_tab" = "Омиљено";
@@ -1089,3 +1089,4 @@
 "audio_successfully_uploaded" = "Аудио-запис је успешно отпремљен и тренутно је у обради.";
 "broadcast_audio" = "Емитуј аудио-запис у статус";
 "sure_delete_playlist" = "Да ли сте сигурни да желите да обришете ову плејлисту?";
+"header_music" = "музика";
