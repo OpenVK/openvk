@@ -1976,8 +1976,8 @@ class User extends RowModel
     public function getIgnoredSources(int $offset = 0, int $limit = 10, bool $onlyIds = false)
     {
         $userId = $this->getId();
-        $cacheKey = "ignored_sources:{$userId}:{$offset}:{$limit}:".($onlyIds ? '1' : '0');
-        $cached = \openvk\Web\Util\Cache::remember($cacheKey, 600, function() use ($userId, $offset, $limit, $onlyIds) {
+        $cacheKey = "ignored_sources:{$userId}:{$offset}:{$limit}:" . ($onlyIds ? '1' : '0');
+        $cached = \openvk\Web\Util\Cache::remember($cacheKey, 600, function () use ($userId, $offset, $limit, $onlyIds) {
             $sources = DatabaseConnection::i()->getContext()->table("ignored_sources")->where("owner", $userId)->limit($limit, $offset)->order('id DESC');
             $output_array = [];
 
