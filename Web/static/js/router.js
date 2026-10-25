@@ -107,6 +107,15 @@ window.router = new class {
             console.error(e);
         }
 
+        try {
+            const userIm = window.im_variants?.getCurrentUser() || window.im;
+            if (userIm?.state && typeof userIm.state.renderPinnedGroupsCounters === "function") {
+                userIm.state.renderPinnedGroupsCounters();
+            }
+        } catch (e) {
+            console.error(e);
+        }
+
         const new_layout = parsed_content.querySelector('.layout, #page_layout')
         const current_layout = document.querySelector('.layout, #page_layout')
         if (current_layout && new_layout) {

@@ -167,6 +167,15 @@ class ChatMembers {
                     profile: profile
                 });
             });
+            this.items.sort((a, b) => {
+                const rankA = (a.is_owner ? 0 : (a.is_admin || a.is_moderator ? 1 : 2));
+                const rankB = (b.is_owner ? 0 : (b.is_admin || b.is_moderator ? 1 : 2));
+                if (rankA !== rankB) return rankA - rankB;
+                const dateA = a.join_date || 0;
+                const dateB = b.join_date || 0;
+                if (dateA !== dateB) return dateA - dateB;
+                return (a.member_id || 0) - (b.member_id || 0);
+            });
             this.offset = (v.items || []).length;
         } catch (e) {
             this.failed = true;
@@ -230,6 +239,16 @@ export class ChatGeneralForm {
         if (this.data.online !== undefined) {
             this._online = this.data.online;
         }
+    }
+
+    reset() {
+        if (this._chunks && typeof this._chunks.reset === 'function') {
+            this._chunks.reset();
+        }
+        this._messages_inited = false;
+        this.pinned_message_chunks = [];
+        this.members = null;
+        this._firstUnreadMsgId = null;
     }
 
     get online() {
@@ -1882,6 +1901,13 @@ export class ChatMessage {
         }
     }
 
+    isDeletedByAdmin() {
+        return Boolean(
+            this.data?.deleted_by_admin == 1 ||
+            ((this.data?.flags || 0) & 2048)
+        );
+    }
+
     isSpecial(like) {
         if (like == null) {
             return this.isAction();
@@ -1913,7 +1939,14 @@ export class ChatMessage {
         if (action === "restore") {
             const isUnsent = this.id == null || !this.id || Number(this.id) <= 0;
             if (isUnsent) return false;
-            return Boolean(this.isDeleted() && this.isMine());
+            if (!this.isDeleted()) return false;
+
+            const isChatAdmin = this.peer && typeof this.peer.isAdmin === 'function' ? this.peer.isAdmin() : false;
+            if (this.isDeletedByAdmin()) {
+                return isChatAdmin;
+            }
+
+            return Boolean(this.isMine() || isChatAdmin);
         }
 
         if (this.isDeleted()) {
@@ -1999,6 +2032,10 @@ export class ChatMessage {
     restore(origText = null, origAttachments = null) {
         this.data.deleted = 0;
         this.data.deleted_by_me = 0;
+        this.data.deleted_by_admin = 0;
+        if (this.data.flags) {
+            this.data.flags = this.data.flags & ~2048;
+        }
         this.data.text = origText !== null ? origText : (this.data._orig_text !== undefined ? this.data._orig_text : "");
         this.data.attachments = origAttachments !== null ? origAttachments : (this.data._orig_attachments !== undefined ? this.data._orig_attachments : []);
     }

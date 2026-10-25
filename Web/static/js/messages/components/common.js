@@ -841,9 +841,12 @@ export const ConversationItem = ({ conv, isForward = false, page = null }) => {
     `;
 };
 
-export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCreateChat, onSearch, isForward, page, unreadMode, isLoadingMore }) => {
+export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCreateChat, onSearch, isForward, page, unreadMode, isLoadingMore, hasError, onRetry }) => {
     const is_group = window.im.state.is_group;
     const total_convs = window.im.conversations ? Number(window.im.conversations.total_convs || conversations.length) : conversations.length;
+    const isCompact = Boolean(window.im?.state?.is_compact_mode_enabled);
+    const sep = html` |<span> </span>`;
+    const otherUnreadGroups = typeof window.im?.state?.getOtherUnreadGroupsCount === "function" ? window.im.state.getOtherUnreadGroupsCount() : 0;
 
     let rafId = null;
     const handleScroll = (e) => {
@@ -852,7 +855,7 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
         if (!target) return;
         rafId = requestAnimationFrame(() => {
             rafId = null;
-            if (!hasMore || isLoadingMore || window.im?.conversations?.isLoadingMore) return;
+            if (!hasMore || isLoadingMore || window.im?.conversations?.isLoadingMore || hasError) return;
             const remaining = target.scrollHeight - target.scrollTop - target.clientHeight;
             if (remaining <= 250) {
                 if (typeof onLoadMore === 'function') {
@@ -879,12 +882,22 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
             ` : ""}
             ` : html`
             <b>${tr("forward_messages_msg")}</b>
-            <a>${tr("cancel")}</a>
+            <a href="javascript:void(0)" class="pointer" onClick=${(e) => {
+                e.preventDefault();
+                if (page && typeof page.onCancelForward === 'function') {
+                    page.onCancelForward();
+                } else if (window.im?.conversations) {
+                    const convPage = window.im.tabs?.find(t => t.getPageId() === "conversations")?.render_class;
+                    if (convPage && typeof convPage.onCancelForward === 'function') {
+                        convPage.onCancelForward();
+                    }
+                }
+            }}>${tr("cancel")}</a>
             `}
         </div>
         <div class="crp-list" onScroll=${handleScroll} ref=${(el) => {
             if (!el) return;
-            if (hasMore && !isLoadingMore && !window.im?.conversations?.isLoadingMore) {
+            if (conversations.length > 0 && !hasError && hasMore && !isLoadingMore && !window.im?.conversations?.isLoadingMore) {
                 if (el.scrollHeight <= el.clientHeight) {
                     if (typeof onLoadMore === 'function') {
                         onLoadMore();
@@ -892,8 +905,8 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
                 }
             }
         }}>
-            ${conversations.length > 0 ? conversations.map((conv) => html`<${ConversationItem} key=${conv.peer ? conv.peer.id : (conv.id || conv._conversation?.peer?.id)} conv=${conv} isForward=${isForward} page=${page} />`) : (!isLoadingMore ? html`<${ConversationsListError} unreadMode=${unreadMode} is_group=${is_group} />` : "")}
-            ${(hasMore || isLoadingMore) && html`
+            ${conversations.length > 0 ? conversations.map((conv) => html`<${ConversationItem} key=${conv.peer ? conv.peer.id : (conv.id || conv._conversation?.peer?.id)} conv=${conv} isForward=${isForward} page=${page} />`) : (!isLoadingMore ? html`<${ConversationsListError} unreadMode=${unreadMode} is_group=${is_group} hasError=${hasError} onRetry=${onRetry} />` : "")}
+            ${(hasMore || isLoadingMore) && !hasError && html`
             <div class="crp-lazy-loader ${isLoadingMore ? 'loading' : 'idle'}">
                 ${isLoadingMore ? html`
                     <img src="/assets/packages/static/openvk/img/loading_mini.gif" alt="..." />
@@ -906,17 +919,42 @@ export const ConversationListView = ({ conversations, hasMore, onLoadMore, onCre
                 ${total_convs > 0 ? tr("conversations_count_title", total_convs) : ""}
             </div>
             <div class="crp-bottom--actions">
-                ${isForward ? html`
-                    <a onClick=${() => { window.im.messenger.onConversationsClick(window.openvk.current_id, isForward, page); }}>${tr("saved_messages")}</a>
+                ${isCompact ? html`
+                    ${isForward ? html`
+                        <a class="crp-bottom--icon icon-saved" title="${tr("saved_messages")}" onClick=${() => { window.im.messenger.onConversationsClick(window.openvk.current_id, isForward, page); }}></a>
+                    ` : html`
+                        ${!unreadMode ? html`
+                            <a class="crp-bottom--icon icon-unread" title="${tr("conversations_show_unread")}" onClick=${() => { window.im.conversations.toggleMode("unread") }}></a>
+                        ` : html`
+                            <a class="crp-bottom--icon icon-all" title="${tr("conversations_show_all")}" onClick=${() => { window.im.conversations.toggleMode("all") }}></a>
+                        `}
+                        ${!is_group ? html`
+                            <a class="crp-bottom--icon icon-saved" title="${tr("saved_messages")}" onClick=${() => {
+                                const myId = window.openvk ? window.openvk.current_id : window.im?.state?.getId();
+                                if (myId) {
+                                    window.im.messenger.selectConversationByPeerId(myId);
+                                }
+                            }}></a>
+                        ` : ""}
+                        <a class="crp-bottom--icon icon-settings" title="${tr("messenger_tab_settings")}" onClick=${() => { window.im.openTabByName("settings") }}></a>
+                        <a class="crp-bottom--icon icon-switch${otherUnreadGroups > 0 ? ' has-unread' : ''}" title="${tr("messenger_switch_current")}" onClick=${(event) => { imSwitchCurrent(event) }}></a>
+                        ${!is_group ? html`
+                            <a class="crp-bottom--icon icon-important" title="${tr("important_messages")}" onClick=${() => { window.im.openTabByName("important") }}></a>
+                        ` : ""}
+                    `}
                 ` : html`
-                ${!unreadMode ? html`
-                    <a onClick=${() => { window.im.conversations.toggleMode("unread") }}>${tr("conversations_show_unread")}</a> |<span> </span>
-                ` : html`
-                    <a onClick=${() => { window.im.conversations.toggleMode("all") }}>${tr("conversations_show_all")}</a> |<span> </span>
-                `}
-                <a onclick=${() => { window.im.openTabByName("settings") }}>${tr("messenger_tab_settings")}</a> |<span> </span>
-                <a onClick=${(event) => { imSwitchCurrent(event) }}>${tr("messenger_switch_current")}</a>
-                ${!is_group ? html` |<span> </span><a onClick=${() => { window.im.openTabByName("important") }}>${tr("important_messages")}</a>` : ""}
+                    ${isForward ? html`
+                        <a onClick=${() => { window.im.messenger.onConversationsClick(window.openvk.current_id, isForward, page); }}>${tr("saved_messages")}</a>
+                    ` : html`
+                        ${!unreadMode ? html`
+                            <a onClick=${() => { window.im.conversations.toggleMode("unread") }}>${tr("conversations_show_unread")}</a>
+                        ` : html`
+                            <a onClick=${() => { window.im.conversations.toggleMode("all") }}>${tr("conversations_show_all")}</a>
+                        `}
+                        ${sep}<a onclick=${() => { window.im.openTabByName("settings") }}>${tr("messenger_tab_settings")}</a>
+                        ${sep}<a onClick=${(event) => { imSwitchCurrent(event) }}>${tr("messenger_switch_current")}${otherUnreadGroups > 0 ? html`<span class="crp-bottom--switch-badge"> (${otherUnreadGroups})</span>` : ""}</a>
+                        ${!is_group ? html`${sep}<a onClick=${() => { window.im.openTabByName("important") }}>${tr("important_messages")}</a>` : ""}
+                    `}
                 `}
             </div>
         </div>
@@ -1056,7 +1094,7 @@ export const PeerWindow = ({ fromConvo, convo, togglePeerInfo }) => {
 
     return html`
     <div class="peer-window">
-        <div class="peer-back" onClick=${(e) => { window.im.messenger.view.togglePeerInfo() }}>${tr("back")}</div>
+        <input type="button" class="peer-back button" onClick=${(e) => { window.im.messenger.view.togglePeerInfo() }} value="${tr("back")}"/>
         <div class="peer-side">
             <div class="peer-info">
                 <div class="peer-avatar sliding-thing-wrapper ${!peer.hasAvatar() ? "no-avatar" : ""}">
@@ -1549,7 +1587,7 @@ export const PeerInfoView = ({ page, convo, togglePeerInfo }) => {
 
     return html`
         <div onClick=${(e) => { togglePeerInfo() }} class="messages--peers-header-peer-name">
-            <img class="ava" src="${peer.getAvatar()}" />
+            <${PeerAvatar} peer=${peer} className="ava" orig_ava=${false} size="min" />
             <span>${peer.getName()}</span>
         </div>
     `;
@@ -1786,25 +1824,53 @@ export const PeerAttachmentsSection = ({ peer }) => {
     `;
 };
 
-export const ConversationsListError = ({ unreadMode, is_group }) => {
+export const ConversationsListError = ({ unreadMode, is_group, hasError = false, onRetry = null }) => {
     let text = tr("zero_conversations_error");
-    if (unreadMode) { text = tr("zero_unread_conversations_error"); }
-    if (is_group) { text = tr("zero_conversations_error_club"); }
+    if (hasError) {
+        text = tr("conversations_load_error") && !tr("conversations_load_error").startsWith("@")
+            ? tr("conversations_load_error")
+            : "Не удалось загрузить беседы. Проверьте соединение с сервером.";
+    } else if (unreadMode) {
+        text = tr("zero_unread_conversations_error");
+    } else if (is_group) {
+        text = tr("zero_conversations_error_club");
+    }
 
     return html`
         <div class="conversations_error_page">
             <span>${text}</span>
+            ${hasError && onRetry ? html`
+                <div style="margin-top: 12px;">
+                    <button class="button" onClick=${onRetry}>${tr("msg_resend") && !tr("msg_resend").startsWith("@") ? tr("msg_resend") : "Повторить"}</button>
+                </div>
+            ` : ""}
         </div>
-    `
-}
+    `;
+};
 
-export const ErrorConversation = ({ }) => {
+export const EmptyConversation = ({ isForward = false }) => {
+    const hintText = isForward
+        ? (tr("im_forward_dialog_hint") && !tr("im_forward_dialog_hint").startsWith("@")
+            ? tr("im_forward_dialog_hint")
+            : "Вы почти у цели! Выберите диалог слева, которому Вы хотите переслать сообщение из чата")
+        : (tr("im_empty_dialog_hint") && !tr("im_empty_dialog_hint").startsWith("@")
+            ? tr("im_empty_dialog_hint")
+            : "Чтобы начать общение, выберите диалог или групповой чат слева");
+
+    const imgSrc = isForward
+        ? "/assets/packages/static/openvk/img/im/reply_diag.png"
+        : "/assets/packages/static/openvk/img/im/empty_diag.png";
+
     return html`
-        <div>
-            <span>Select a convo</span>
+        <div class="im-empty-conversation ${isForward ? 'is-forward' : ''}">
+            <div class="im-empty-conversation--content">
+                <img src="${imgSrc}" class="im-empty-conversation--image" alt="" />
+                <div class="im-empty-conversation--text">${hintText}</div>
+            </div>
         </div>
-    `
-}
+    `;
+};
+export const ErrorConversation = EmptyConversation;
 
 export const TopicConversationChat = ({ chat_id }) => {
     return html`

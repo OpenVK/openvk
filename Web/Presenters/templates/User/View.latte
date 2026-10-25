@@ -137,7 +137,7 @@
                     </a>
                 {/if}
 
-                <a style="width: 194px;" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $user->getGiftCount() == 0" href="/gifts?act=pick&user={$user->getId()}" class="profile_link">{_send_gift}</a>
+                <a style="width: 194px;" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && ($user->getGiftCount() == 0 || !$user->getPrivacyPermission('gifts.read', $thisUser ?? NULL)) && $user->getPrivacyPermission('gifts.send', $thisUser ?? NULL)" href="/gifts?act=pick&user={$user->getId()}" class="profile_link">{_send_gift}</a>
                 <a style="width: 194px;" n:if="$user->getPrivacyPermission('messages.write', $thisUser) || ($thisUser && $user->hasActiveDialogueWith($thisUser))" onclick="showUserDialog(event, {$user->getRealId()})" href="/im?sel={$user->getId()}" class="profile_link">{_send_message}</a>
 
                 {var $subStatus = $user->getSubscriptionStatus($thisUser)}
@@ -629,7 +629,7 @@
             </div>
         </div>
 
-        <div class="fictional_profile_section" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && ($giftCount = $user->getGiftCount()) > 0">
+        <div class="fictional_profile_section" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && ($giftCount = $user->getGiftCount()) > 0 && $user->getPrivacyPermission('gifts.read', $thisUser ?? NULL)">
             <div class="content_title_expanded" onclick="hidePanel(this, {$giftCount});">
                 {_gifts}
             </div>
@@ -637,7 +637,7 @@
                 <div class="content_subtitle">
                     {tr("gifts", $giftCount)}
                     <div style="float:right;">
-                        {if \OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && !is_null($thisUser)}
+                        {if \OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && !is_null($thisUser) && $user->getPrivacyPermission('gifts.send', $thisUser)}
                             <a href="/gifts?act=pick&user={$user->getId()}">{_send_gift}</a> |
                         {/if}
                         <a href="/gifts{$user->getId()}">{_all_title}</a>

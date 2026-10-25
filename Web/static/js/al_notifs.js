@@ -185,16 +185,18 @@ function incrementNotificationsCounter() {
         if (!counterObject) {
             counterObject = document.createElement('object');
             counterObject.type = 'internal/link';
-            counterObject.innerHTML = ' (<b>1</b>)';
+            counterObject.className = 'counter shown';
+            counterObject.innerHTML = ' <b>1</b>';
             link.appendChild(counterObject);
         } else {
             counterObject.classList.remove('zero_counter');
+            counterObject.classList.add('counter', 'shown');
             const bTag = counterObject.querySelector('b');
             if (bTag) {
                 let currentCount = parseInt(bTag.textContent) || 0;
                 bTag.textContent = currentCount + 1;
             } else {
-                counterObject.innerHTML = ' (<b>1</b>)';
+                counterObject.innerHTML = ' <b>1</b>';
             }
         }
     });

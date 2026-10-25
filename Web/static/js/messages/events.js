@@ -81,6 +81,7 @@ export class EventHandler {
                 if (found.data) {
                     found.data.flags = flags;
                     found.data.important = (flags & 8) ? 1 : 0;
+                    found.data.deleted_by_admin = (flags & 2048) ? 1 : 0;
                 }
                 found.important = Boolean(flags & 8);
                 if (_crs.peer._chunks) _crs.peer._chunks._invalidateCache();
@@ -92,8 +93,18 @@ export class EventHandler {
 
     updateGlobalUnreadCounter(explicitCount = null) {
         if (typeof explicitCount === 'number' && !isNaN(explicitCount)) {
-            if (this.im && this.im.state && typeof this.im.state._updateCounter === 'function') {
-                this.im.state._updateCounter(explicitCount);
+            if (this.im && this.im.state) {
+                if (this.im.state.group_id == null) {
+                    if (typeof this.im.state._updateCounter === 'function') {
+                        this.im.state._updateCounter(explicitCount);
+                    }
+                } else {
+                    const gid = Math.abs(this.im.state.group_id);
+                    const userState = window.im_variants?.getCurrentUser()?.state || window.im?.state;
+                    if (userState && typeof userState.setPinnedGroupCounter === 'function') {
+                        userState.setPinnedGroupCounter(gid, explicitCount);
+                    }
+                }
             }
         }
     }
@@ -120,6 +131,12 @@ export class EventHandler {
                         found.data.flags = (found.data.flags || 0) | 8;
                     }
                     found.important = true;
+                }
+                if (flags & 2048) {
+                    if (found.data) {
+                        found.data.deleted_by_admin = 1;
+                        found.data.flags = (found.data.flags || 0) | 2048;
+                    }
                 }
                 if (_crs.peer._chunks) _crs.peer._chunks._invalidateCache();
                 if (typeof _crs.getScrollPosition === 'function' && _crs.getScrollPosition()) {
@@ -178,6 +195,12 @@ export class EventHandler {
                         found.data.flags = (found.data.flags || 0) & ~8;
                     }
                     found.important = false;
+                }
+                if (flags & 2048) {
+                    if (found.data) {
+                        found.data.deleted_by_admin = 0;
+                        found.data.flags = (found.data.flags || 0) & ~2048;
+                    }
                 }
                 if (_crs.peer._chunks) _crs.peer._chunks._invalidateCache();
                 if (typeof _crs.getScrollPosition === 'function' && _crs.getScrollPosition()) {
@@ -299,6 +322,13 @@ export class EventHandler {
                 _crs._conversation.unread_count = newUnread;
             }
             _crs.unread_count = newUnread;
+
+            if (newUnread === 0 && _crs.peer) {
+                _crs.peer._firstUnreadMsgId = null;
+                if (this.im.messenger?.view && typeof this.im.messenger.view._clearUnreadSpacing === 'function') {
+                    this.im.messenger.view._clearUnreadSpacing();
+                }
+            }
         }
 
         if (_crs.peer && _crs.peer._chunks) {
@@ -632,6 +662,13 @@ export class EventHandler {
         const isActiveChatOpen = Boolean(this.im?.state?.is_active && isCurrentChat && isMessengerMounted);
         setTimeout(() => {
             try {
+                const wasAtEnd = Boolean(
+                    isCurrentChat &&
+                    this.im?.messenger?.view &&
+                    typeof this.im.messenger.view.isAtEnd === 'function' &&
+                    this.im.messenger.view.isAtEnd(150)
+                );
+
                 const found = _crs.findMessageById(_msg.id, _msg.random_id || _msg.data?.random_id);
 
                 if (found == null) {
@@ -648,6 +685,9 @@ export class EventHandler {
                     if (_crs._conversation) {
                         _crs._conversation.unread_count = _crs.unread_count;
                     }
+                    if (_crs.peer && !_crs.peer._firstUnreadMsgId) {
+                        _crs.peer._firstUnreadMsgId = _msg.id || _msg.conversation_message_id;
+                    }
                 }
 
                 if (this.im.conversations && this.im.conversations.all_convs) {
@@ -661,21 +701,30 @@ export class EventHandler {
                     this.im.conversations.update();
                 }
 
-                const isTabVisible = this.im?.state?.is_tab_visible ?? (typeof document === 'undefined' || !document.hidden);
+                const isTabVisible = typeof document === 'undefined' || !document.hidden;
 
-                if (this.im.state.is_active && isCurrentChat) {
-                    const wasAtEnd = this.im.messenger.view ? this.im.messenger.view.isAtEnd() : false;
+                if (isActiveChatOpen || (this.im?.state?.is_active && isCurrentChat)) {
                     this.im.messenger.update();
-                    if (wasAtEnd && isTabVisible && this.im.messenger.view) {
-                        this.im.messenger.view._scrollToEnd();
+                    if (wasAtEnd || isSelf) {
+                        if (isTabVisible && this.im.messenger.view) {
+                            this.im.messenger.view._scrollToEnd();
+                            requestAnimationFrame(() => {
+                                this.im.messenger.view?._scrollToEnd?.();
+                            });
+                        } else if (this.im.messenger.view) {
+                            this.im.messenger.view._wasAtEndBeforeBackground = true;
+                        }
                     }
                 }
 
                 if (isActiveChatOpen && !isSelf) {
-                    const wasAtEnd = this.im.messenger.view ? this.im.messenger.view.isAtEnd() : false;
                     if (wasAtEnd && isTabVisible) {
                         const msgCmid = Number((_msg.data && (_msg.data.conversation_message_id || _msg.data.local_id)) || _msg.conversation_message_id || 0);
                         _crs.peer.read(_msg.id, msgCmid);
+                    } else if (this.im.messenger.view && !isTabVisible) {
+                        if (!_crs.peer._firstUnreadMsgId) {
+                            _crs.peer._firstUnreadMsgId = _msg.id || _msg.conversation_message_id;
+                        }
                     }
                 }
 
@@ -889,10 +938,11 @@ export class EventHandler {
             this.im.fastChats.setUserOnline(userId, true);
         }
 
-        if (window.im?.cached_profiles) {
-            const prof = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached
-                ? window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(userId)
-                : window.im.cached_profiles._findCachedProfileById(userId);
+        const targetProfiles = this.im?.cached_profiles || window.im?.cached_profiles;
+        if (targetProfiles) {
+            const prof = targetProfiles._findCachedProfileByIdEvenIfNotCached
+                ? targetProfiles._findCachedProfileByIdEvenIfNotCached(userId)
+                : targetProfiles._findCachedProfileById(userId);
             if (prof) {
                 prof.online = 1;
                 if (prof.data) {
@@ -901,8 +951,8 @@ export class EventHandler {
                     prof.data.last_seen.time = now;
                 }
             }
-            if (Array.isArray(window.im.cached_profiles.cached_profiles)) {
-                for (const p of window.im.cached_profiles.cached_profiles) {
+            if (Array.isArray(targetProfiles.cached_profiles)) {
+                for (const p of targetProfiles.cached_profiles) {
                     if (p && Number(p.id) === userId) {
                         p.online = 1;
                         if (p.data) {
@@ -971,8 +1021,9 @@ export class EventHandler {
             }
         }
 
-        if (window.im && typeof window.im.updateTabs === 'function') {
-            window.im.updateTabs();
+        const imInstance = this.im || window.im;
+        if (imInstance && typeof imInstance.updateTabs === 'function') {
+            imInstance.updateTabs();
         }
     }
 
@@ -984,10 +1035,11 @@ export class EventHandler {
             this.im.fastChats.setUserOnline(userId, false);
         }
 
-        if (window.im?.cached_profiles) {
-            const prof = window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached
-                ? window.im.cached_profiles._findCachedProfileByIdEvenIfNotCached(userId)
-                : window.im.cached_profiles._findCachedProfileById(userId);
+        const targetProfiles = this.im?.cached_profiles || window.im?.cached_profiles;
+        if (targetProfiles) {
+            const prof = targetProfiles._findCachedProfileByIdEvenIfNotCached
+                ? targetProfiles._findCachedProfileByIdEvenIfNotCached(userId)
+                : targetProfiles._findCachedProfileById(userId);
             if (prof) {
                 prof.online = 0;
                 if (prof.data) {
@@ -995,8 +1047,8 @@ export class EventHandler {
                     prof.data.last_seen = { time: time };
                 }
             }
-            if (Array.isArray(window.im.cached_profiles.cached_profiles)) {
-                for (const p of window.im.cached_profiles.cached_profiles) {
+            if (Array.isArray(targetProfiles.cached_profiles)) {
+                for (const p of targetProfiles.cached_profiles) {
                     if (p && Number(p.id) === userId) {
                         p.online = 0;
                         if (p.data) {
@@ -1060,8 +1112,9 @@ export class EventHandler {
             }
         }
 
-        if (window.im && typeof window.im.updateTabs === 'function') {
-            window.im.updateTabs();
+        const imInstance = this.im || window.im;
+        if (imInstance && typeof imInstance.updateTabs === 'function') {
+            imInstance.updateTabs();
         }
     }
 

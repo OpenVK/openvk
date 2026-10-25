@@ -118,6 +118,7 @@ h1 {
 #page_layout {
     width: 791px;
     margin: 0 auto;
+    transition: width 0.2s ease;
 }
 
 .page_header {
@@ -2199,8 +2200,8 @@ h4.gift_cat_header {
 }
 
 .gift_grid {
-    width: calc(100% + 16px);
-    margin: 0 -8px;
+    width: calc(100% + 20px);
+    margin: 0 -10px;
     display: flex;
     flex-wrap: wrap;
 }
