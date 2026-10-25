@@ -225,6 +225,8 @@ final class WallPresenter extends OpenVKPresenter
         $list = null;
 
         if ($listId) {
+            $this->notFound();
+
             $list = CustomFeeds::getById($listId);
             if (!$list || $list->isDeleted() || !$list->isCustomFeed() || !$list->canBeViewedBy($this->user->identity)) {
                 $this->notFound();
@@ -289,7 +291,8 @@ final class WallPresenter extends OpenVKPresenter
         $this->template->showMediaTabs = $section != "comments";
         $this->template->availSections = [["local_posts", tr("news")], ["comments", tr("comments")]];
         $this->template->availLocalSections = [["local_posts", tr("new_posts")], ["global", tr("new_posts_global")], ["photos", tr("att_tab_photos")], ["videos", tr("videos")], ["audios", tr("audios")], ["notes", tr("notes")]];//, ["fave", tr("bookmarks_tab")]];
-        $this->template->feedLists = CustomFeeds::get($this->user->identity);
+        // $this->template->feedLists = CustomFeeds::get($this->user->identity);
+        $this->template->feedLists = [];
         $this->template->list = $listId;
 
         $classPath = "\\openvk\\Web\\Models\\Entities\\" . $feedClass;

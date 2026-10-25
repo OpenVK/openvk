@@ -972,6 +972,8 @@ final class Newsfeed extends VKAPIRequestHandler
 
     public function saveList(?string $title = null, ?int $list_id = null, ?int $no_reposts = null, ?string $source_ids = null)
     {
+        return 1;
+
         $this->requireUser();
         $this->willExecuteWriteAction();
 
@@ -1025,6 +1027,8 @@ final class Newsfeed extends VKAPIRequestHandler
 
     public function deleteList(int $list_id)
     {
+        return 1;
+
         $this->requireUser();
         $this->willExecuteWriteAction();
 
@@ -1046,6 +1050,8 @@ final class Newsfeed extends VKAPIRequestHandler
 
     public function toggleListSubscription(int $list_id, ?int $group_id = null, int $add = 1)
     {
+        return 1;
+
         $this->requireUser();
         $this->willExecuteWriteAction();
 
@@ -1073,11 +1079,14 @@ final class Newsfeed extends VKAPIRequestHandler
 
     public function getLists(int $extended = 0): object
     {
-        $lists = iterator_to_array(CustomFeeds::get($this->getUser()));
         $payload = (object) [
-            "count" => sizeof($lists),
+            "count" => 0,
             "items" => [],
         ];
+        return $payload;
+
+        $lists = iterator_to_array(CustomFeeds::get($this->getUser()));
+        $payload->count = sizeof($lists);
 
         foreach ($lists as $item) {
             $payload->items[] = $item->toVkApiStructOfFeed($this->getUser());
