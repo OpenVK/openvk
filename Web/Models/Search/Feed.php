@@ -244,7 +244,7 @@ class Feed
                     ->where("id IN (?)", $audioIds)
                     ->where("deleted", 0)
                     ->where("unlisted", 0)
-                    ->order("FIELD(id, ". implode(",", $audioIds) .")");
+                    ->order("FIELD(id, " . implode(",", $audioIds) .")");
             }
         }
 
