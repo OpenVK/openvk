@@ -12,6 +12,8 @@ class CustomFeeds
 {
     public static function get(?User $user)
     {
+        return null;
+
         $items = Catalogue::getImported($user, 1);
 
         foreach ($items as $item) {
@@ -21,6 +23,8 @@ class CustomFeeds
 
     public static function getById(int $list_id): ?Catalogue
     {
+        return null;
+
         $sub = DatabaseConnection::i()
             ->getContext()
             ->table("catalogues")
