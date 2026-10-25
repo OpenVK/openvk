@@ -31,7 +31,7 @@ final class PhotosPresenter extends OpenVKPresenter
             if (!$user) {
                 $this->notFound();
             }
-            if (!$user->getPrivacyPermission('photos.read', $this->user->identity ?? null)) {
+            if (!$user->canBeViewedBy($this->user->identity) || !$user->getPrivacyPermission('photos.read', $this->user->identity ?? null)) {
                 $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
             }
 
@@ -46,6 +46,9 @@ final class PhotosPresenter extends OpenVKPresenter
             $club = (new Clubs())->get(abs($owner));
             if (!$club) {
                 $this->notFound();
+            }
+            if (!$club->canBeViewedBy($this->user->identity)) {
+                $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
             }
             $this->template->albums  = $this->albums->getClubAlbums($club, (int) ($this->queryParam("p") ?? 1));
             $this->template->count   = $this->albums->getClubAlbumsCount($club);
@@ -200,7 +203,7 @@ final class PhotosPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
-        if (!$photo->canBeViewedBy($this->user->identity)) {
+        if (!$photo->canBeViewedBy($this->user->identity, $key)) {
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
@@ -246,7 +249,7 @@ final class PhotosPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
-        if (!$photo->checkAccessKey($key)) {
+        if (!$photo->canBeViewedBy($this->user->identity, $key)) {
             $this->notFound();
         }
 

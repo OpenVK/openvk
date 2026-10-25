@@ -31,6 +31,11 @@ abstract class Postable extends Attachable
     public $shortName = "undefined";
     protected $upperNodeReferenceColumnName = "owner";
     protected $containsContextColumns = false;
+    /**
+     * Indicates whether access to this entity was authorized via a valid access key.
+     * When true, canBeViewedBy() allows viewing even if the owner's profile is private.
+     */
+    protected bool $accessKeyProvided = false;
 
     public const COMMENTABLE_EVERYBODY = 0;
     public const COMMENTABLE_FRIENDS = 1;
@@ -180,6 +185,27 @@ abstract class Postable extends Attachable
         }
     }
 
+    public function isAccessKeyProvided(): bool
+    {
+        return $this->accessKeyProvided;
+    }
+
+    public function setAccessKeyProvided(bool $provided = true): static
+    {
+        $this->accessKeyProvided = $provided;
+        return $this;
+    }
+
+    public function isValidAccessKey(?string $access_key): bool
+    {
+        $realKey = $this->getAccessKey();
+        if ($access_key === null || $access_key === "" || $realKey === null || $realKey === "") {
+            return false;
+        }
+
+        return hash_equals((string) $realKey, (string) $access_key);
+    }
+
     public function getAccessKey(): ?string
     {
         return $this->getRecord()->access_key;
@@ -187,7 +213,8 @@ abstract class Postable extends Attachable
 
     public function checkAccessKey(?string $access_key): bool
     {
-        if ($this->getAccessKey() === $access_key) {
+        if ($this->isValidAccessKey($access_key)) {
+            $this->setAccessKeyProvided(true);
             return true;
         }
 
