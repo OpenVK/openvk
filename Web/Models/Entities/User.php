@@ -641,15 +641,17 @@ class User extends RowModel
             return false;
         }
 
-        $permStatus = $this->getPrivacySetting($permission);
-        if (!$user) {
-            return $permStatus === User::PRIVACY_EVERYONE;
-        } elseif ($user->getId() === $this->getId()) {
+        if ($user && $user->getId() === $this->getId()) {
             return true;
         }
 
-        if (/*$permission != "messages.write" && */!$this->canBeViewedBy($user, true)) {
+        if (!$this->canBeViewedBy($user, true)) {
             return false;
+        }
+
+        $permStatus = $this->getPrivacySetting($permission);
+        if (!$user) {
+            return $permStatus === User::PRIVACY_EVERYONE;
         }
 
         switch ($permStatus) {
@@ -1758,19 +1760,19 @@ class User extends RowModel
 
     public function canBeViewedBy(?User $user = null, bool $blacklist_check = true): bool
     {
+        if ($user && $this->getId() == $user->getId()) {
+            return true;
+        }
+
+        if ($user && $user->isAdmin() && !(OPENVK_ROOT_CONF['openvk']['preferences']['blacklists']['applyToAdmins'] ?? true)) {
+            return true;
+        }
+
+        if ($this->isDeleted() || $this->isBanned()) {
+            return false;
+        }
+
         if (!is_null($user)) {
-            if ($this->getId() == $user->getId()) {
-                return true;
-            }
-
-            if ($user->isAdmin() && !(OPENVK_ROOT_CONF['openvk']['preferences']['blacklists']['applyToAdmins'] ?? true)) {
-                return true;
-            }
-
-            if ($this->isDeleted() || $this->isBanned()) {
-                return false;
-            }
-
             if ($blacklist_check && ($this->isBlacklistedBy($user) || $user->isBlacklistedBy($this))) {
                 return false;
             }
@@ -1778,26 +1780,16 @@ class User extends RowModel
             if ($this->getProfileType() == 0) {
                 return true;
             } else {
-                if ($user->getSubscriptionStatus($this) == User::SUBSCRIPTION_MUTUAL) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return $user->getSubscriptionStatus($this) == User::SUBSCRIPTION_MUTUAL;
             }
 
         } else {
             if ($this->getProfileType() == 0) {
-                if ($this->getPrivacySetting("page.read") == 3) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return $this->getPrivacySetting("page.read") == 3;
             } else {
                 return false;
             }
         }
-
-        return true;
     }
 
     public function isClosed(): bool
