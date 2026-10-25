@@ -781,6 +781,7 @@
 "privacy_setting_view_audio" = "Кому видно мои аудиозаписи";
 "privacy_setting_see_likes" = "Кому видны мои лайки";
 "privacy_setting_view_gifts" = "Кому видны мои подарки";
+"privacy_setting_send_gifts" = "Кто может отправлять мне подарки";
 "privacy_setting_see_online" = "Кто видит мою неактивность";
 "privacy_title_info" = "Информация в профиле";
 "privacy_title_content" = "Контент в профиле";
@@ -2153,6 +2154,7 @@
 "error_gift_unavailable" = "Подарок или набор снят с витрины.";
 "error_no_more_gifts" = "У вас больше не осталось таких подарков.";
 "error_no_money" = "Ору нищ не пук.";
+"error_gifts_send_privacy" = "Пользователь ограничил круг лиц, которые могут присылать ему подарки.";
 
 "gift_sent" = "Подарок отправлен";
 "gift_sent_desc" = "Вы отправили подарок <b>$1</b> за $2 голосов";

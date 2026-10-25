@@ -807,6 +807,7 @@
 "privacy_setting_view_audio" = "Who can see my audios";
 "privacy_setting_see_likes" = "Who can see my likes";
 "privacy_setting_view_gifts" = "Who can see my gifts";
+"privacy_setting_send_gifts" = "Who can send me gifts";
 "privacy_setting_see_online" = "Who can see my inactiviy time";
 "privacy_title_info" = "Profile info";
 "privacy_title_content" = "Profile content";
@@ -1801,6 +1802,7 @@
 "error_gift_unavailable" = "This gift or set is no longer available.";
 "error_no_more_gifts" = "You no longer have such gifts.";
 "error_no_money" = "Shout out to a beggar.";
+"error_gifts_send_privacy" = "This user restricted who can send them gifts.";
 
 "gift_sent" = "Gift sent";
 "gift_sent_desc" = "You sent a gift to $1 for $2 votes";
