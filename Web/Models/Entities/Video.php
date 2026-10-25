@@ -400,6 +400,14 @@ class Video extends Media
             return true;
         }
 
+        if ($this->isPrivate() || $this->isUnlisted()) {
+            if ($user && $user->getId() === $this->getOwner()->getId()) {
+                return true;
+            }
+
+            return false;
+        }
+
         if (get_class($this->getOwner()) == "openvk\\Web\\Models\\Entities\\User") {
             return $this->getOwner()->canBeViewedBy($user) && $this->getOwner()->getPrivacyPermission('videos.read', $user);
         } else {

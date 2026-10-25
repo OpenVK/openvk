@@ -104,7 +104,7 @@ final class Video extends VKAPIRequestHandler
                 $this->fail(14, "Invalid user");
             }
 
-            if ($user->getRealId() > 0 && !$user->getPrivacyPermission('videos.read', $this->getUser())) {
+            if (!$user->canBeViewedBy($this->getUser()) || ($user->getRealId() > 0 && !$user->getPrivacyPermission('videos.read', $this->getUser()))) {
                 $this->fail(21, "This user chose to hide his videos.");
             }
 

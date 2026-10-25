@@ -601,6 +601,8 @@ class Photo extends Media
             if ($user && $user->getId() === $this->getOwner()->getId()) {
                 return true;
             }
+
+            return false;
         }
 
         if (!is_null($this->getAlbum())) {

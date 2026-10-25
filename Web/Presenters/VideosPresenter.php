@@ -35,7 +35,7 @@ final class VideosPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
-        if ($owner->getRealId() > 0 && !$owner->getPrivacyPermission('videos.read', $this->user->identity ?? null)) {
+        if (!$owner->canBeViewedBy($this->user->identity) || ($owner->getRealId() > 0 && !$owner->getPrivacyPermission('videos.read', $this->user->identity ?? null))) {
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
