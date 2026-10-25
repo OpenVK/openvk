@@ -118,7 +118,7 @@ class Feed
                 $queryBase .= " AND ((`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`))";
             }
 
-            if ($keepNsfwSettings === true && $this->owner->getNsfwTolerance() === User::NSFW_INTOLERANT) {
+            if ($keep_nsfw_settings === true && $this->owner->getNsfwTolerance() === User::NSFW_INTOLERANT) {
                 $queryBase .= " AND `nsfw` = 0";
             }
 
@@ -141,8 +141,9 @@ class Feed
                 fn() => DatabaseConnection::i()->getConnection()->query("SELECT COUNT(*) " . $queryBase)->fetch()->{"COUNT(*)"}
             );
 
+            $startFromFilter = "";
             if ($start_time != null) {
-                $startFromFilter = " AND " . $start_time . " <= `posts`.`created` AND `posts`.`created` <= " . $end_time;
+                $startFromFilter = " AND " . (int) $start_time . " <= `posts`.`created` AND `posts`.`created` <= " . (int) $end_time;
             }
 
             $posts = DatabaseConnection::i()->getConnection()->query(
@@ -180,7 +181,7 @@ class Feed
                     $payload->where("(`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`)");
                 }
 
-                if ($keepNsfwSettings === true && $this->owner->getNsfwTolerance() === User::NSFW_INTOLERANT) {
+                if ($keep_nsfw_settings === true && $this->owner->getNsfwTolerance() === User::NSFW_INTOLERANT) {
                     $payload->where("nsfw", 0);
                 }
             }
@@ -236,7 +237,7 @@ class Feed
                     ->where("id IN (?)", $audioIds)
                     ->where("deleted", 0)
                     ->where("unlisted", 0)
-                    ->order("created DESC, id DESC");
+                    ->order("FIELD(id, ". implode(",", $audioIds) .")");
             }
         }
 

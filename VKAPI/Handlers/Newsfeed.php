@@ -353,8 +353,8 @@ final class Newsfeed extends VKAPIRequestHandler
 
         $cursor = $this->parseCursor($start_from);
 
-        $cursor[] = empty($start_time) ? 0 : $start_time;
-        $cursor[] = empty($end_time) ? PHP_INT_MAX : $end_time;
+        $cursor[] = empty($start_time) ? 0 : (int) $start_time;
+        $cursor[] = empty($end_time) ? PHP_INT_MAX : (int) $end_time;
         $cursor[] = $offset;
         $cursor[] = $count;
 
