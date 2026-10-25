@@ -2150,6 +2150,7 @@
 "error_when_gifting" = "Не удалось подарить";
 "error_user_not_exists" = "Пользователь или набор не существуют.";
 "error_no_rights_gifts" = "Не удалось подтвердить права на подарок.";
+"error_gift_unavailable" = "Подарок или набор снят с витрины.";
 "error_no_more_gifts" = "У вас больше не осталось таких подарков.";
 "error_no_money" = "Ору нищ не пук.";
 
@@ -3264,6 +3265,10 @@
 
 "access_denied" = "Доступ запрещён";
 "admin_public" = "Публичный";
+"admin_hide_from_catalog" = "Скрыть из каталога";
+"admin_hidden_from_catalog" = "Скрыто из каталога";
+"admin_return_to_catalog" = "Вернуть в каталог";
+"admin_returned_to_catalog" = "Возвращено в каталог";
 "admin_sticker_added" = "Стикер добавлен";
 "admin_sticker_added_desc" = "Стикер был успешно добавлен в набор.";
 "admin_sticker_deleted" = "Стикер удалён";

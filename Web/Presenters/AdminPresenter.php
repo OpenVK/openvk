@@ -338,7 +338,7 @@ final class AdminPresenter extends OpenVKPresenter
         $this->warnIfNoCommerce();
 
         $this->template->act        = $this->queryParam("act") ?? "list";
-        $this->template->categories = iterator_to_array($this->gifts->getCategories((int) ($this->queryParam("p") ?? 1), null, $this->template->count));
+        $this->template->categories = iterator_to_array($this->gifts->getCategories((int) ($this->queryParam("p") ?? 1), null, $this->template->count, true));
     }
 
     public function renderGiftCategory(string $slug, int $id): void
@@ -359,8 +359,22 @@ final class AdminPresenter extends OpenVKPresenter
             $cat = new GiftCategory();
         }
 
+        if ($this->queryParam("act") === "toggle") {
+            $this->assertNoCSRF();
+            if ($gen) {
+                $this->notFound();
+            }
+
+            $cat->setUnlisted(!$cat->isUnlisted());
+            $cat->save();
+
+            $this->flash("succ", tr($cat->isUnlisted() ? "admin_hidden_from_catalog" : "admin_returned_to_catalog"));
+            $this->redirect($this->giftsReturnPath("/admin/gifts/" . $cat->getSlug() . "." . $cat->getId() . ".meta"));
+        }
+
         $this->template->form = (object) [];
-        $this->template->form->id        = $id;
+        $this->template->form->id       = $id;
+        $this->template->form->unlisted = $gen ? false : $cat->isUnlisted();
         $this->template->form->languages = [];
         foreach (getLanguages() as $language) {
             $language = (object) $language;
@@ -397,6 +411,9 @@ final class AdminPresenter extends OpenVKPresenter
             }
         }
 
+        $cat->setUnlisted(!is_null($this->postParam("unlisted")));
+        $cat->save();
+
         $this->redirect("/admin/gifts/" . $cat->getSlug() . "." . $cat->getId() . ".meta");
     }
 
@@ -412,7 +429,7 @@ final class AdminPresenter extends OpenVKPresenter
         }
 
         $this->template->cat   = $cat;
-        $this->template->gifts = iterator_to_array($cat->getGifts((int) ($this->queryParam("p") ?? 1), 20, $this->template->count));
+        $this->template->gifts = iterator_to_array($cat->getGifts((int) ($this->queryParam("p") ?? 1), 20, $this->template->count, true));
     }
 
     public function renderGift(int $id): void
@@ -430,6 +447,18 @@ final class AdminPresenter extends OpenVKPresenter
 
                 $gift->delete();
                 $this->flashFail("succ", tr("admin_gift_moved_successfully"), tr("admin_gift_moved_to_recycle"));
+                break;
+            case "toggle":
+                $this->assertNoCSRF();
+                if (!$gift) {
+                    $this->notFound();
+                }
+
+                $gift->setUnlisted(!$gift->isUnlisted());
+                $gift->save();
+
+                $this->flash("succ", tr($gift->isUnlisted() ? "admin_hidden_from_catalog" : "admin_returned_to_catalog"));
+                $this->redirect($this->giftsReturnPath("/admin/gifts/id" . $gift->getId()));
                 break;
             case "copy":
             case "move":
@@ -463,12 +492,13 @@ final class AdminPresenter extends OpenVKPresenter
                 }
 
                 $this->template->form = (object) [];
-                $this->template->form->id     = $id;
-                $this->template->form->name   = $gen ? "New Gift (1)" : $gift->getName();
-                $this->template->form->price  = $gen ? 0 : $gift->getPrice();
-                $this->template->form->usages = $gen ? 0 : $gift->getUsages();
-                $this->template->form->limit  = $gen ? -1 : ($gift->getLimit() === INF ? -1 : $gift->getLimit());
-                $this->template->form->pic    = $gen ? null : $gift->getImage(Gift::IMAGE_URL);
+                $this->template->form->id       = $id;
+                $this->template->form->name     = $gen ? "New Gift (1)" : $gift->getName();
+                $this->template->form->price    = $gen ? 0 : $gift->getPrice();
+                $this->template->form->usages   = $gen ? 0 : $gift->getUsages();
+                $this->template->form->limit    = $gen ? -1 : ($gift->getLimit() === INF ? -1 : $gift->getLimit());
+                $this->template->form->pic      = $gen ? null : $gift->getImage(Gift::IMAGE_URL);
+                $this->template->form->unlisted = $gen ? false : $gift->isUnlisted();
 
                 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
                     return;
@@ -481,6 +511,7 @@ final class AdminPresenter extends OpenVKPresenter
                 $gift->setName($this->postParam("name"));
                 $gift->setPrice((int) $this->postParam("price"));
                 $gift->setUsages((int) $this->postParam("usages"));
+                $gift->setUnlisted(!is_null($this->postParam("unlisted")));
                 if (isset($_FILES["pic"]) && $_FILES["pic"]["error"] === UPLOAD_ERR_OK) {
                     if (!$gift->setImage($_FILES["pic"]["tmp_name"])) {
                         $this->flashFail("err", tr("error_when_saving_gift"), tr("error_when_saving_gift_bad_image"));
@@ -501,6 +532,13 @@ final class AdminPresenter extends OpenVKPresenter
 
                 $this->redirect("/admin/gifts/id" . $gift->getId());
         }
+    }
+
+    private function giftsReturnPath(string $fallback): string
+    {
+        $ret = (string) ($this->queryParam("ret") ?? "");
+
+        return str_starts_with($ret, "/admin/gifts") ? $ret : $fallback;
     }
 
     public function renderFiles(): void {}
