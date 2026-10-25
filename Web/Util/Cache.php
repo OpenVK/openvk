@@ -88,4 +88,35 @@ class Cache
 
         return $value;
     }
+
+    public static function forget(string $key): void
+    {
+        $redis = self::redis();
+        if (!$redis) {
+            return;
+        }
+
+        try {
+            $redis->del(self::PREFIX . $key);
+        } catch (Throwable $e) {
+            // best-effort
+        }
+    }
+
+    public static function forgetPattern(string $pattern): void
+    {
+        $redis = self::redis();
+        if (!$redis) {
+            return;
+        }
+
+        try {
+            $keys = $redis->keys(self::PREFIX . $pattern);
+            if (!empty($keys)) {
+                $redis->del($keys);
+            }
+        } catch (Throwable $e) {
+            // best-effort
+        }
+    }
 }

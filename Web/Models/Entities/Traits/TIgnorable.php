@@ -32,6 +32,11 @@ trait TIgnorable
             "source" => $this->getRealId(),
         ]);
 
+        try {
+            \openvk\Web\Util\Cache::forgetPattern("ignored_sources:{$for_user->getId()}:*");
+        } catch (\Throwable $e) {
+        }
+
         return true;
     }
 
@@ -41,6 +46,11 @@ trait TIgnorable
             "owner"  => $for_user->getId(),
             "source" => $this->getRealId(),
         ])->delete();
+
+        try {
+            \openvk\Web\Util\Cache::forgetPattern("ignored_sources:{$for_user->getId()}:*");
+        } catch (\Throwable $e) {
+        }
 
         return true;
     }

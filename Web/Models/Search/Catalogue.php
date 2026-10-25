@@ -11,7 +11,7 @@ use openvk\Web\Models\RowModel;
 
 class Catalogue extends RowModel
 {
-    protected $tableName= "catalogues";
+    protected $tableName = "catalogues";
     private $user;
 
     public const SUBTYPE_NONE = 0;
@@ -25,7 +25,7 @@ class Catalogue extends RowModel
     {
         return $this->getRecord()->title ?? $this->changes["title"];
     }
-    public function isCustomFeed(): bool 
+    public function isCustomFeed(): bool
     {
         return $this->getSubtype() == 1;
     }

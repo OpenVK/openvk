@@ -28,7 +28,7 @@ class ModelCodes
             "openvk\\Web\\Models\\Entities\\User" => 18,
             "openvk\\Web\\Models\\Entities\\Video" => 19,
             "openvk\\Web\\Models\\Entities\\Gift" => 20,
-            "openvk\\Web\\Models\\Entities\\Topic" => 21
+            "openvk\\Web\\Models\\Entities\\Topic" => 21,
         ];
     }
 }

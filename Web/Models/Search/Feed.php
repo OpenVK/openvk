@@ -59,48 +59,55 @@ class Feed
 
     protected function getSubsIds(bool $keep_ignored = true, ?Catalogue $list = null, string $filter = "post")
     {
-        $ids = [];
+        $ownerId = $this->owner->getRealId();
+        $listId  = $list ? $list->getId() : 0;
+        $cacheKey = "feed_subs_ids:{$ownerId}:{$listId}:{$filter}:".($keep_ignored ? '1' : '0');
+        $cached = \openvk\Web\Util\Cache::remember($cacheKey, 600, function() use ($keep_ignored, $list, $filter) {
+            $ids = [];
 
-        if ($list != null) {
-            foreach ($list->fetch($this->owner, 1, 10000, false, [5, 18]) as $item) {
-                if ($this->checkPrivacy($item, $filter)) {
-                    $ids[] = $item->getRealId();
+            if ($list != null) {
+                foreach ($list->fetch($this->owner, 1, 10000, false, [5, 18]) as $item) {
+                    if ($this->checkPrivacy($item, $filter)) {
+                        $ids[] = $item->getRealId();
+                    }
+                }
+            } else {
+                $subs = DatabaseConnection::i()
+                    ->getContext()
+                    ->table("subscriptions")
+                    ->where("follower", $this->owner->getRealId());
+                $ids  = array_map(function ($rel) {
+                    return $rel->target * ($rel->model === "openvk\Web\Models\Entities\User" ? 1 : -1);
+                }, iterator_to_array($subs));
+            }
+
+            if ($keep_ignored == false) {
+                $ignored_sources_ids = $this->owner->getIgnoredSources(
+                    0,
+                    OPENVK_ROOT_CONF['openvk']['preferences']['newsfeed']['ignoredSourcesLimit'] ?? 50,
+                    true
+                );
+                $ids = array_diff($ids, $ignored_sources_ids);
+            }
+
+            if (!$list) {
+                $ids[] = $this->owner->getRealId();
+            }
+
+            // too many sql requests...
+            $entities = get_entities($ids, false);
+            $cIds = [];
+
+            foreach ($entities as $entry) {
+                if ($this->checkPrivacy($entry, $filter)) {
+                    $cIds[] = $entry->getRealId();
                 }
             }
-        } else {
-            $subs = DatabaseConnection::i()
-                ->getContext()
-                ->table("subscriptions")
-                ->where("follower", $this->owner->getRealId());
-            $ids  = array_map(function ($rel) {
-                return $rel->target * ($rel->model === "openvk\Web\Models\Entities\User" ? 1 : -1);
-            }, iterator_to_array($subs));
-        }
 
-        if ($keep_ignored == false) {
-            $ignored_sources_ids = $this->owner->getIgnoredSources(
-                0,
-                OPENVK_ROOT_CONF['openvk']['preferences']['newsfeed']['ignoredSourcesLimit'] ?? 50,
-                true
-            );
-            $ids = array_diff($ids, $ignored_sources_ids);
-        }
+            return $cIds;
+        });
 
-        if (!$list) {
-            $ids[] = $this->owner->getRealId();
-        }
-
-        // too many sql requests...
-        $entities = get_entities($ids, false);
-        $cIds = [];
-
-        foreach ($entities as $entry) {
-            if ($this->checkPrivacy($entry, $filter)) {
-                $cIds[] = $entry->getRealId();
-            }
-        }
-
-        return $cIds;
+        return $cached;
     }
 
     public function fetchFeed(bool $keep_ignored = true, bool $alien_posts = true, bool $keep_nsfw_settings = true, string $filter = "post", ?array $cursor = null, ?Catalogue $list = null): Selection
