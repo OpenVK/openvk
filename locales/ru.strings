@@ -3264,3 +3264,4 @@
 "reported_message_contains_3" = "Автор сообщения — id $1, написанный в чате с id $2.";
 "messenger_friends_info" = "Список друзей";
 "reported_message_contains_1" = "Вложение в сообщениях";
+"resolve_message_context" = "Устранить контекст";
