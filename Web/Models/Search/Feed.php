@@ -33,7 +33,7 @@ class Feed
         $owner = get_entity_by_id($owner_id);
 
         if (!$owner) {
-            throw new \FatalError("Not found local feed owner");
+            throw new Error("Not found local feed owner");
         }
 
         return new Feed($owner, $global);

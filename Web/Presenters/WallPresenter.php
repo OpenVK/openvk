@@ -295,10 +295,10 @@ final class WallPresenter extends OpenVKPresenter
         $this->template->feedLists = [];
         $this->template->list = $listId;
 
-        $classPath = "\\openvk\\Web\\Models\\Entities\\" . $feedClass;
-
         foreach ($iterator as $post) {
-            if ($feedClass) {
+            if ($feedClass != null) {
+                $classPath = "\\openvk\\Web\\Models\\Entities\\" . $feedClass;
+
                 $this->template->posts[] = new $classPath($post);
             } else {
                 $this->template->posts[] = $post;

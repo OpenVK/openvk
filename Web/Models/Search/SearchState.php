@@ -17,6 +17,7 @@ class SearchState
     private string $section;
     private string $order_type;
     private bool $invert;
+    private bool $catalogueOnEmptyQuery;
     public array $params;
     private $user;
 

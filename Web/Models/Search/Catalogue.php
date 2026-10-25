@@ -107,7 +107,6 @@ class Catalogue extends RowModel
             "catalogue" => $this->getId(),
             "model"     => $modelCode,
             "item"      => $item->getId(),
-            "ord"       => $order,
         ]);
         $sub->delete();
 
