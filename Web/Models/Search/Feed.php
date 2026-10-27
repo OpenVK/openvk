@@ -33,7 +33,7 @@ class Feed
         $owner = get_entity_by_id($owner_id);
 
         if (!$owner) {
-            throw new Error("Not found local feed owner");
+            throw new \Error("Not found local feed owner");
         }
 
         return new Feed($owner, $global);
@@ -61,8 +61,8 @@ class Feed
     {
         $ownerId = $this->owner->getRealId();
         $listId  = $list ? $list->getId() : 0;
-        $cacheKey = "feed_subs_ids:{$ownerId}:{$listId}:{$filter}:".($keep_ignored ? '1' : '0');
-        $cached = \openvk\Web\Util\Cache::remember($cacheKey, 600, function() use ($keep_ignored, $list, $filter) {
+        $cacheKey = "feed_subs_ids:{$ownerId}:{$listId}:{$filter}:" . ($keep_ignored ? '1' : '0');
+        $cached = \openvk\Web\Util\Cache::remember($cacheKey, 600, function () use ($keep_ignored, $list, $filter) {
             $ids = [];
 
             if ($list != null) {
