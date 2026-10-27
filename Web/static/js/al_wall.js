@@ -2185,8 +2185,19 @@ async function onPostEditButtonClick(e) {
 }
 
 async function __uploadToTextarea(file, textareaNode, is_from_messenger = false) {
+    let is_unlisted = false;
+    let club_id = null;
     if (textareaNode.closest(".messenger-layer").length > 0) {
         is_from_messenger = true;
+    }
+
+    if (textareaNode.closest(".textarea_comments").length > 0) {
+        is_unlisted = true;
+    }
+
+    if (textareaNode.closest(".textarea_club").length > 0) {
+        is_unlisted = true;
+        club_id = textareaNode.closest(".textarea_club").last().dataset.id;
     }
 
     console.log("Upload | Photo upload, ", textareaNode.closest(".messenger-layer"), is_from_messenger)
@@ -2219,12 +2230,18 @@ async function __uploadToTextarea(file, textareaNode, is_from_messenger = false)
     form_data.append("hash", u("meta[name=csrf]").attr("value"))
 
     if (is_from_messenger == true) {
-        form_data.append("is_from_messenger", "1");
-        const u = window.im_variants.getCompromise();
-
-        if (u.state.getOperator().supposed_type == "club") {
-            form_data.append("club", Math.abs(u.state.getOperator().id));
+        const us = window.im_variants.getCompromise();
+        if (us.state.getOperator().supposed_type == "club") {
+            form_data.append("club", Math.abs(us.state.getOperator().id));
         }
+    }
+
+    if (is_unlisted == true || is_from_messenger == true) {
+        form_data.append("is_from_messenger", "1");
+    }
+
+    if (club_id != null) {
+        form_data.append('club', Math.abs(club_id));
     }
 
     if (filetype == 'photo') {
