@@ -3308,6 +3308,17 @@
 
 "router_reconnect_error" = "Tried to connect to this page multiple times and got error. Go to the page manually?";
 
+/* Catalogues */
+
+"catalogues" = "Catalogues";
+"new_posts" = "Feed";
+"new_posts_global" = "Global feed";
+
+"post_target_note" = "Note";
+"post_target_photo" = "Photo";
+"post_target_topic" = "Group s topic";
+"post_target_video" = "Video";
+"toggle_comments_checkbox" = "Enable comments";
 
 /* Synchronization & Codebase Coverage Keys */
 

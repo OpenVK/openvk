@@ -316,9 +316,4 @@ class Playlist extends MediaCollection
     {
         return (bool) $this->getRecord()->unlisted;
     }
-
-    public function isCommentsClosed(): bool
-    {
-        return $this->getRecord()->comment_status === 1;
-    }
 }

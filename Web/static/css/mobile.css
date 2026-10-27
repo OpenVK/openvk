@@ -1678,6 +1678,11 @@
 
     .PE_playlistEditPage {
         flex-direction: column;
+        margin-bottom: 30px;
+    }
+
+    .PE_end {
+        margin-top: 25px;
     }
 
     .PE_playlistEditPage .PE_playlistInfo {

@@ -523,6 +523,7 @@ final class AudioPresenter extends OpenVKPresenter
         $title = $this->postParam("title");
         $description = $this->postParam("description");
         $is_unlisted = (int) $this->postParam('is_unlisted');
+        $can_comment = (int) $this->postParam('can_comment');
         $new_audios = !empty($this->postParam("audios")) ? explode(",", rtrim($this->postParam("audios"), ",")) : null;
 
         if (empty($title) || iconv_strlen($title) < 1) {
@@ -534,6 +535,7 @@ final class AudioPresenter extends OpenVKPresenter
         $playlist->setEdited(time());
         $playlist->resetLength();
         $playlist->setUnlisted((bool) $is_unlisted);
+        $playlist->setCommentPrivacy((bool) $can_comment);
 
         if ($_FILES["cover"]["error"] === UPLOAD_ERR_OK) {
             if (!str_starts_with($_FILES["cover"]["type"], "image")) {
