@@ -463,14 +463,6 @@ abstract class OpenVKPresenter extends SimplePresenter
 
     public function onServerError(\Throwable $e, ?string $errorCode = null): ?string
     {
-        while (ob_get_level()) {
-            ob_end_clean();
-        }
-
-        http_response_code(500);
-        \Tracy\Debugger::getBlueScreen()->render($e);
-        exit;
-
         try {
             $str = tr("server_error");
 
