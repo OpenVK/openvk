@@ -99,6 +99,10 @@ class Feed
             $cIds = [];
 
             foreach ($entities as $entry) {
+                if (!$entry) {
+                    continue;
+                }
+
                 if ($this->checkPrivacy($entry, $filter)) {
                     $cIds[] = $entry->getRealId();
                 }

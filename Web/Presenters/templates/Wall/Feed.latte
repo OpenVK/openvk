@@ -48,7 +48,7 @@
                 </div>
             {/if}
             {if $feedType == "photo"}
-                {include "../Photos/photo_node.latte", photo => $post}
+                {include "../Photos/photo_node.latte", photo => $post, viewer_type => "feed"}
             {/if}
             {if $feedType == "video"}
                 <div class="scroll_node" data-uniqueid="{$post->getPrettyId()}">
