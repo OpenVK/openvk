@@ -153,8 +153,8 @@
             <div align="right">
                 {var $isLast = ((20 * (($_GET['p'] ?? 1) - 1)) + $amount) < $count}
 
-                <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?p={($_GET['p'] ?? 1) - 1}">«</a>
-                <a n:if="$isLast" class="aui-button" href="?p={($_GET['p'] ?? 1) + 1}">»</a>
+                <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?{http_build_query(array_merge($_GET, ['p' => ($_GET['p'] ?? 1) - 1]), 'k', '&', \PHP_QUERY_RFC3986)}">«</a>
+                <a n:if="$isLast" class="aui-button" href="?{http_build_query(array_merge($_GET, ['p' => ($_GET['p'] ?? 1) + 1]), 'k', '&', \PHP_QUERY_RFC3986)}">»</a>
             </div>
         </div>
     {/if}

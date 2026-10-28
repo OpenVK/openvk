@@ -366,7 +366,9 @@ class Club extends RowModel
         if ($this->getOpennesStatus() === static::OPEN) {
             $query = $query->where("model", "openvk\\Web\\Models\\Entities\\Club")->order($sort);
         } else {
-            return false;
+            // Closed clubs do not expose followers; keep the return type and
+            // let callers work with an empty selection instead of false.
+            $query = $query->where("1=0");
         }
 
         return $query->group("follower");

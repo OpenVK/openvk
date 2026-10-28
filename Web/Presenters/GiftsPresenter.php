@@ -96,8 +96,8 @@ final class GiftsPresenter extends OpenVKPresenter
 
         $this->template->user      = $user;
         $this->template->cat       = $cat;
-        $this->template->count     = $count;
         $this->template->gifts     = iterator_to_array($gifts);
+        $this->template->count     = $count;
         $this->template->_template = "Gifts/Pick.latte";
     }
 

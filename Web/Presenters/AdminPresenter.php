@@ -251,8 +251,13 @@ final class AdminPresenter extends OpenVKPresenter
 
         $this->template->club = $club;
 
-        $this->template->followers = $this->template->club->getFollowers((int) ($this->queryParam("p") ?? 1), 20);
-        $this->template->count     = $this->template->club->getFollowersCount();
+        if ($this->template->mode === "followers") {
+            $this->template->followers = $this->template->club->getFollowers((int) ($this->queryParam("p") ?? 1), 20);
+            $this->template->count     = $this->template->club->getFollowersCount();
+        } else {
+            $this->template->followers = [];
+            $this->template->count     = 0;
+        }
 
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {
             return;
