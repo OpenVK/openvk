@@ -40,6 +40,8 @@ parameters:
         engineBootstrap: tools/phpstan-latte/latte.engine.php
         tmpDir: tmp/phpstan-latte
         reportUnanalysedTemplates: true
+        # Kept low on purpose: @layout alone has 129 variants (one per presenter).
+        # The "Skipped N variant(s)" warnings are expected and intentional.
         maxTemplateVariants: 2
         breakIncludeCycles: true
         collectedPaths:
