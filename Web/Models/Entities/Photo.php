@@ -636,7 +636,7 @@ class Photo extends Media
         $res = (object) [];
 
         $res->id        = $this->getCompromiseVirtualId();
-        $res->owner_id  = $this->getOwner()->getId();
+        $res->owner_id  = $this->getOwner()->getRealId();
         $res->aid       = 0;
         $res->src       = $this->getURLBySizeId("tiny");
         $res->src_big   = $this->getURLBySizeId("normal");

@@ -3320,6 +3320,7 @@
 "post_target_photo" = "Photo";
 "post_target_topic" = "Group s topic";
 "post_target_video" = "Video";
+"post_target_playlist" = "Playlist";
 "toggle_comments_checkbox" = "Enable comments";
 
 /* Synchronization & Codebase Coverage Keys */

@@ -9,5 +9,5 @@ use openvk\Web\Models\Repositories\Repository;
 class Playlists extends Repository
 {
     protected $tableName = "playlists";
-    protected $modelName = "playlist";
+    protected $modelName = "Playlist";
 }
