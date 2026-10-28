@@ -62,6 +62,6 @@
         "friendsofphp/php-cs-fixer": "^3.68",
         "phpstan/phpstan": "^2.1",
         "fakerphp/faker": "^1.24",
-        "efabrica/phpstan-latte": "dev-main"
+        "efabrica/phpstan-latte": "^0.21"
     }
 }

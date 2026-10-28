@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4c2351105f8ecf65b48c3ada38c8caf4",
+    "content-hash": "c8efac649f9c79bfa2637c0638aa54ae",
     "packages": [
         {
             "name": "al/emoji-detector",
@@ -4736,16 +4736,16 @@
         },
         {
             "name": "efabrica/phpstan-latte",
-            "version": "dev-main",
+            "version": "0.21.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenVK/phpstan-latte.git",
-                "reference": "4b436b8f0d7a128869efdce3b630c5662319c91a"
+                "reference": "c43ec38f9c26c43c36e0b939fce21d8a3594074f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenVK/phpstan-latte/zipball/4b436b8f0d7a128869efdce3b630c5662319c91a",
-                "reference": "4b436b8f0d7a128869efdce3b630c5662319c91a",
+                "url": "https://api.github.com/repos/OpenVK/phpstan-latte/zipball/c43ec38f9c26c43c36e0b939fce21d8a3594074f",
+                "reference": "c43ec38f9c26c43c36e0b939fce21d8a3594074f",
                 "shasum": ""
             },
             "require": {
@@ -4769,7 +4769,6 @@
                 "phpunit/phpunit": "^9.6.31",
                 "spaze/phpstan-disallowed-calls": "^2.11|^3.0|^4.7"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "phpstan": {
@@ -4795,9 +4794,9 @@
                 "static analysis"
             ],
             "support": {
-                "source": "https://github.com/OpenVK/phpstan-latte/tree/main"
+                "source": "https://github.com/OpenVK/phpstan-latte/tree/0.21.0"
             },
-            "time": "2026-10-28T09:08:02+00:00"
+            "time": "2026-10-28T11:56:23+00:00"
         },
         {
             "name": "ergebnis/agent-detector",
@@ -5200,16 +5199,16 @@
         },
         {
             "name": "phpstan/phpdoc-parser",
-            "version": "2.3.9",
+            "version": "2.3.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpdoc-parser.git",
-                "reference": "2c122d2f890ae4b9e6ede898a9ac36b2c07e2a17"
+                "reference": "c9fb3e1560c6a33eca59c9a2fcb4d9925445a0a4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/2c122d2f890ae4b9e6ede898a9ac36b2c07e2a17",
-                "reference": "2c122d2f890ae4b9e6ede898a9ac36b2c07e2a17",
+                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/c9fb3e1560c6a33eca59c9a2fcb4d9925445a0a4",
+                "reference": "c9fb3e1560c6a33eca59c9a2fcb4d9925445a0a4",
                 "shasum": ""
             },
             "require": {
@@ -5241,9 +5240,9 @@
             "description": "PHPDoc parser with support for nullable, intersection and generic types",
             "support": {
                 "issues": "https://github.com/phpstan/phpdoc-parser/issues",
-                "source": "https://github.com/phpstan/phpdoc-parser/tree/2.3.9"
+                "source": "https://github.com/phpstan/phpdoc-parser/tree/2.3.11"
             },
-            "time": "2026-10-27T22:32:31+00:00"
+            "time": "2026-10-28T10:46:50+00:00"
         },
         {
             "name": "phpstan/phpstan",
@@ -6413,7 +6412,6 @@
     "stability-flags": {
         "al/emoji-detector": 20,
         "bhaktaraz/php-rss-generator": 20,
-        "efabrica/phpstan-latte": 20,
         "erusev/parsedown": 20,
         "ezyang/htmlpurifier": 20,
         "james-heinrich/getid3": 20,
