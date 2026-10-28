@@ -13,6 +13,7 @@ use Efabrica\PHPStanLatte\Template\Template;
 use Efabrica\PHPStanLatte\Template\TemplateContext;
 use Efabrica\PHPStanLatte\Template\Variable;
 use PHPStan\Type\ObjectType;
+
 use function str_contains;
 
 /**

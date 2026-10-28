@@ -6,6 +6,7 @@ namespace openvk\PHPStanLatte;
 
 use Chandler\MVC\SimplePresenter;
 use Latte\Essential\TranslatorExtension;
+
 use function class_exists;
 use function define;
 use function defined;
