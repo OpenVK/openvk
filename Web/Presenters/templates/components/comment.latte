@@ -37,7 +37,7 @@
 
                         <div n:ifcontent class="attachments attachments_m">
                             <div class="attachment" n:foreach="$attachmentsLayout->extras as $attachment">
-                                {include "attachment.latte", attachment => $attachment, post => $comment}
+                                {include "attachment.latte", attachment => $attachment, parent => $comment, parentType => "comment", tilesCount => 1}
                             </div>
                         </div>
                     </div>

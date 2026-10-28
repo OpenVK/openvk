@@ -53,13 +53,13 @@
                             {var $attachmentsLayout = $item->getChildrenWithLayout(200)}
                             <div n:ifcontent class="attachments attachments_b" style="height: {$attachmentsLayout->height|noescape}; width: {$attachmentsLayout->width|noescape};">
                                 <div class="attachment" n:foreach="$attachmentsLayout->tiles as $attachment" style="float: {$attachment[3]|noescape}; width: {$attachment[0]|noescape}; height: {$attachment[1]|noescape};">
-                                    {include "../../components/attachment.latte", attachment => $attachment[2], parent => $post, parentType => "post", tilesCount => sizeof($attachmentsLayout->tiles)}
+                                    {include "../../components/attachment.latte", attachment => $attachment[2], parent => null, parentType => null, tilesCount => sizeof($attachmentsLayout->tiles)}
                                 </div>
                             </div>
 
                             <div n:ifcontent class="attachments attachments_m">
                                 <div class="attachment" n:foreach="$attachmentsLayout->extras as $attachment">
-                                    {include "../../components/attachment.latte", attachment => $attachment}
+                                    {include "../../components/attachment.latte", attachment => $attachment, parent => null, parentType => null, tilesCount => 1}
                                 </div>
                             </div>
                         </div>

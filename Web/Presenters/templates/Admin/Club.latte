@@ -110,6 +110,7 @@
 
     {if $isFollowers}
         {var $followers  = iterator_to_array($followers)}
+        {var $amount     = sizeof($followers)}
 
         <div class="aui-tabs horizontal-tabs">
             <nav class="aui-navgroup aui-navgroup-horizontal">

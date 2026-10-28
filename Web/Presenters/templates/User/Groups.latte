@@ -1,6 +1,5 @@
 {extends "../@listView.latte"}
 {var $iterator = $user->getClubs($page, $admin)}
-{var $count    = $user->getClubCount($admin)}
 
 {block noscroll}{/block}
 {block title}

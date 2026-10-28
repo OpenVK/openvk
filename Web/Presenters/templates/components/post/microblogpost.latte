@@ -98,7 +98,7 @@
 
                         <div n:ifcontent class="attachments attachments_m">
                             <div class="attachment" n:foreach="$attachmentsLayout->extras as $attachment">
-                                {include "../attachment.latte", attachment => $attachment, post => $post}
+                                {include "../attachment.latte", attachment => $attachment, parent => $post, parentType => "post", tilesCount => 1}
                             </div>
                         </div>
                     </div>
@@ -160,7 +160,7 @@
                 <div n:if="!($forceNoCommentsLink ?? false) && $commentSection == true && $compact == false" class="post-menu-s">
                     <a n:if="$commentsCount > 3" href="/wall{$post->getPrettyId()}" class="expand_button" onclick="PostViewer.openById(event, {$post->getPrettyIdWithKey()})">{_view_other_comments} ({$commentsCount - 3})</a>
                     {foreach $comments as $comment}
-                        {include "../comment.latte", comment => $comment, $compact => true}
+                        {include "../comment.latte", comment => $comment, compact => true}
                     {/foreach}
                     <div n:ifset="$thisUser" id="commentTextArea{$commentTextAreaId}" n:attr="style => ($commentsCount == 0 ? 'display: none;')" class="commentsTextFieldWrap">
                         {var $commentsURL = "/al_comments/create/posts/" . $post->getId()}
