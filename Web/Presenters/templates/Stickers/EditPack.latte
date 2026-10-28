@@ -9,6 +9,9 @@
 {/block}
 
 {block content}
+    {var $totalInstalls = $totalInstalls ?? 0}
+    {var $installStats = $installStats ?? null}
+    {var $gift = $gift ?? null}
     <div class="tabs">
         {include "Tabs.latte", act => 'author'}
     </div>

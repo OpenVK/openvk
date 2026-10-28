@@ -1,4 +1,5 @@
 {block ViewContent}
+    {var $appsSoftDeleting = $appsSoftDeleting ?? false}
     <div class="container_gray" style="margin-top: 16px; margin-bottom: 16px; max-width: 100%;">
         {if $type == "post"}
             {include "../components/post/oldpost.latte",
