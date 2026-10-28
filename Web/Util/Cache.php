@@ -111,9 +111,19 @@ class Cache
         }
 
         try {
-            $keys = $redis->keys(self::PREFIX . $pattern);
-            if (!empty($keys)) {
-                $redis->del($keys);
+            $prefix = self::PREFIX . $pattern;
+            $iterator = null;
+            while (($keys = $redis->scan($iterator, $prefix, 100)) !== false) {
+                if (!empty($keys)) {
+                    try {
+                        $redis->unlink($keys);
+                    } catch (Throwable $e) {
+                        $redis->del($keys);
+                    }
+                }
+                if ($iterator === 0 || $iterator === null) {
+                    break;
+                }
             }
         } catch (Throwable $e) {
             // best-effort
