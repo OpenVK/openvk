@@ -20,7 +20,9 @@
         {elseif $type == "note"}
             {include "./content/note.latte", note => $object}
         {elseif $type == "app"}
-            {include "./content/app.latte", app => $object}
+            {if $object}
+                {include "./content/app.latte", app => $object}
+            {/if}
         {elseif $type == "audio"}
             {include "../Audio/player.latte", audio => $object}
         {elseif $type == "doc"}
