@@ -8,7 +8,6 @@ use Chandler\Database\DatabaseConnection;
 use Nette\Database\Table\Selection;
 use openvk\Web\Models\Repositories\{Users, Clubs, Posts};
 use openvk\Web\Models\Entities\User;
-use openvk\Web\Models\Search\Catalogue;
 use openvk\Web\Util\Cache;
 use Bhaktaraz\RSSGenerator\Feed as RSSFeed;
 use Bhaktaraz\RSSGenerator\Item;
@@ -58,7 +57,7 @@ class Feed
         return true;
     }
 
-    protected function getSubsIds(bool $keep_ignored = true, ?Catalogue $list = null, string $filter = "post")
+    protected function getSubsIds(bool $keep_ignored = true, $list = null, string $filter = "post")
     {
         $ownerId = $this->owner->getRealId();
         $listId  = $list ? $list->getId() : 0;
@@ -128,7 +127,7 @@ class Feed
         );
     }
 
-    public function fetchFeed(bool $keep_ignored = true, bool $alien_posts = true, bool $keep_nsfw_settings = true, string $filter = "post", ?array $cursor = null, ?Catalogue $list = null): Selection
+    public function fetchFeed(bool $keep_ignored = true, bool $alien_posts = true, bool $keep_nsfw_settings = true, string $filter = "post", ?array $cursor = null, $list = null): Selection
     {
         $payload = null;
 

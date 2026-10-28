@@ -12,35 +12,15 @@ class CustomFeeds
     public static function get(?User $user)
     {
         return null;
-
-        $items = Catalogue::getImported($user, 1);
-
-        foreach ($items as $item) {
-            yield $item;
-        }
     }
 
     public static function getById(int $list_id)
     {
         return null;
-
-        $sub = DatabaseConnection::i()
-            ->getContext()
-            ->table("catalogues")
-            ->where("id", $list_id);
-
-        if (!$sub) {
-            return null;
-        }
-
-        return new Catalogue($sub->fetch());
     }
 
     public static function addNew()
     {
-        $cat = new Catalogue();
-        $cat->setSubtype(1);
-
-        return $cat;
+        return null;
     }
 }
