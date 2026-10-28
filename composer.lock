@@ -2004,12 +2004,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenVK/chandler.git",
-                "reference": "41518f7266c50544b8ef71a97fb1671a084aa35f"
+                "reference": "44ec1fdd9a56acca6c672933ae2e5ad3abb342e1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenVK/chandler/zipball/41518f7266c50544b8ef71a97fb1671a084aa35f",
-                "reference": "41518f7266c50544b8ef71a97fb1671a084aa35f",
+                "url": "https://api.github.com/repos/OpenVK/chandler/zipball/44ec1fdd9a56acca6c672933ae2e5ad3abb342e1",
+                "reference": "44ec1fdd9a56acca6c672933ae2e5ad3abb342e1",
                 "shasum": ""
             },
             "require": {
@@ -2047,7 +2047,8 @@
                     "chandler/procedural/captcha.php"
                 ],
                 "psr-4": {
-                    "Chandler\\": "chandler/"
+                    "Chandler\\": "chandler/",
+                    "Chandler\\PHPStanLatte\\": "tools/phpstan-latte/"
                 },
                 "classmap": [
                     "chandler/Bootstrap.php"
@@ -2065,7 +2066,7 @@
                 "issues": "https://github.com/OpenVK/chandler/issues",
                 "source": "https://github.com/OpenVK/chandler"
             },
-            "time": "2026-10-28T16:18:30+00:00"
+            "time": "2026-10-28T16:49:19+00:00"
         },
         {
             "name": "php81_bc/strftime",
