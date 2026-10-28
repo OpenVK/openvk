@@ -2004,12 +2004,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenVK/chandler.git",
-                "reference": "f80c673b9e507394d771978bc92fc404d2e85f08"
+                "reference": "41518f7266c50544b8ef71a97fb1671a084aa35f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenVK/chandler/zipball/f80c673b9e507394d771978bc92fc404d2e85f08",
-                "reference": "f80c673b9e507394d771978bc92fc404d2e85f08",
+                "url": "https://api.github.com/repos/OpenVK/chandler/zipball/41518f7266c50544b8ef71a97fb1671a084aa35f",
+                "reference": "41518f7266c50544b8ef71a97fb1671a084aa35f",
                 "shasum": ""
             },
             "require": {
@@ -2065,7 +2065,7 @@
                 "issues": "https://github.com/OpenVK/chandler/issues",
                 "source": "https://github.com/OpenVK/chandler"
             },
-            "time": "2026-10-28T13:59:22+00:00"
+            "time": "2026-10-28T16:18:30+00:00"
         },
         {
             "name": "php81_bc/strftime",
