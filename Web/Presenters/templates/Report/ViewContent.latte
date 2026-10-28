@@ -1,5 +1,4 @@
 {block ViewContent}
-    {var $appsSoftDeleting = $appsSoftDeleting ?? false}
     <div class="container_gray" style="margin-top: 16px; margin-bottom: 16px; max-width: 100%;">
         {if $type == "post"}
             {include "../components/post/oldpost.latte",
@@ -21,9 +20,7 @@
         {elseif $type == "note"}
             {include "./content/note.latte", note => $object}
         {elseif $type == "app"}
-            {if $appsSoftDeleting}
-                {include "./content/app.latte", app => $object}
-            {/if}
+            {include "./content/app.latte", app => $object}
         {elseif $type == "audio"}
             {include "../Audio/player.latte", audio => $object}
         {elseif $type == "doc"}
