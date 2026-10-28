@@ -1988,12 +1988,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenVK/chandler.git",
-                "reference": "06b42ea0b0c0a85f2649bf8af2fdfd9a5330618c"
+                "reference": "2aec0adc92d1ecad63975ae56c34f42e9476992f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenVK/chandler/zipball/06b42ea0b0c0a85f2649bf8af2fdfd9a5330618c",
-                "reference": "06b42ea0b0c0a85f2649bf8af2fdfd9a5330618c",
+                "url": "https://api.github.com/repos/OpenVK/chandler/zipball/2aec0adc92d1ecad63975ae56c34f42e9476992f",
+                "reference": "2aec0adc92d1ecad63975ae56c34f42e9476992f",
                 "shasum": ""
             },
             "require": {
@@ -2010,7 +2010,7 @@
                 "wildbit/postmark-php": "^7.0"
             },
             "require-dev": {
-                "efabrica/phpstan-latte": "dev-latte-3.1-support",
+                "efabrica/phpstan-latte": "^0.21",
                 "friendsofphp/php-cs-fixer": "^3.90",
                 "phpstan/phpstan": "^2.2"
             },
@@ -2049,7 +2049,7 @@
                 "issues": "https://github.com/OpenVK/chandler/issues",
                 "source": "https://github.com/OpenVK/chandler"
             },
-            "time": "2026-10-28T09:59:10+00:00"
+            "time": "2026-10-28T12:02:18+00:00"
         },
         {
             "name": "php81_bc/strftime",
@@ -3672,16 +3672,16 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.43.0",
+            "version": "v1.43.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "4d5d331bf731e0aedbc6b2f5e61135b7b7996a72"
+                "reference": "122889ed24dc000165bcbfd77ec412f15cbdfc6a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/4d5d331bf731e0aedbc6b2f5e61135b7b7996a72",
-                "reference": "4d5d331bf731e0aedbc6b2f5e61135b7b7996a72",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/122889ed24dc000165bcbfd77ec412f15cbdfc6a",
+                "reference": "122889ed24dc000165bcbfd77ec412f15cbdfc6a",
                 "shasum": ""
             },
             "require": {
@@ -3733,7 +3733,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.43.0"
+                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.43.3"
             },
             "funding": [
                 {
@@ -3753,7 +3753,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-09-24T15:19:04+00:00"
+            "time": "2026-10-28T09:35:49+00:00"
         },
         {
             "name": "symfony/polyfill-php80",
