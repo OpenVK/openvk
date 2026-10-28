@@ -764,4 +764,13 @@ class Club extends RowModel
     {
         return !is_null($this->getRecord()->finish_date) ? new DateTime($this->getRecord()->finish_date) : null;
     }
+
+    public function getPrivacyPermission(string $permission, ?User $user = null): bool
+    {
+        if ($this->isDeleted() || $this->isBanned()) {
+            return false;
+        }
+
+        return true;
+    }
 }

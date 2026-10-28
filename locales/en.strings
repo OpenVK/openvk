@@ -1175,6 +1175,7 @@
 "nt_note_instrumental" = "note";
 "nt_photo_instrumental" = "photo";
 "nt_topic_instrumental" = "topic";
+"nt_playlist_instrumental" = "playlist";
 
 "nt_you_were_mentioned_u" = "You were mentioned by user";
 "nt_you_were_mentioned_g" = "You were mentioned by group";
@@ -2961,6 +2962,7 @@
 "faves_comments_empty_tip" = "There will be comments liked by you.";
 "faves_photos_empty_tip" = "There will be photos liked by you.";
 "faves_videos_empty_tip" = "There will be videos liked by you.";
+"faves_notes_empty_tip" = "There will be notes liked by you.";
 "faves_zero" = "No bookmarks";
 "faves_one" = "One bookmark";
 "faves_few" = "$1 bookmarks";
@@ -3308,6 +3310,18 @@
 
 "router_reconnect_error" = "Tried to connect to this page multiple times and got error. Go to the page manually?";
 
+/* Catalogues */
+
+"catalogues" = "Catalogues";
+"new_posts" = "Feed";
+"new_posts_global" = "Global feed";
+
+"post_target_note" = "Note";
+"post_target_photo" = "Photo";
+"post_target_topic" = "Group s topic";
+"post_target_video" = "Video";
+"post_target_playlist" = "Playlist";
+"toggle_comments_checkbox" = "Enable comments";
 
 /* Synchronization & Codebase Coverage Keys */
 

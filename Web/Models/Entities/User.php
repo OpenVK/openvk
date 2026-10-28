@@ -1975,28 +1975,53 @@ class User extends RowModel
 
     public function getIgnoredSources(int $offset = 0, int $limit = 10, bool $onlyIds = false)
     {
-        $sources = DatabaseConnection::i()->getContext()->table("ignored_sources")->where("owner", $this->getId())->limit($limit, $offset)->order('id DESC');
+        $userId = $this->getId();
+
+        if ($onlyIds) {
+            $cacheKey = "ignored_sources_ids:{$userId}:{$offset}:{$limit}";
+            $cachedIds = \openvk\Web\Util\Cache::remember($cacheKey, 600, function () use ($userId, $offset, $limit) {
+                $sources = DatabaseConnection::i()->getContext()->table("ignored_sources")->where("owner", $userId)->limit($limit, $offset)->order('id DESC');
+                $output_array = [];
+
+                foreach ($sources as $source) {
+                    $output_array[] = (int) $source->source;
+                }
+
+                return $output_array;
+            });
+
+            return $cachedIds;
+        }
+
+        $cacheKey = "ignored_sources_ids:{$userId}:{$offset}:{$limit}";
+        $cachedIds = \openvk\Web\Util\Cache::remember($cacheKey, 600, function () use ($userId, $offset, $limit) {
+            $sources = DatabaseConnection::i()->getContext()->table("ignored_sources")->where("owner", $userId)->limit($limit, $offset)->order('id DESC');
+            $output_array = [];
+
+            foreach ($sources as $source) {
+                $output_array[] = (int) $source->source;
+            }
+
+            return $output_array;
+        });
+
         $output_array = [];
 
-        foreach ($sources as $source) {
-            if ($onlyIds) {
-                $output_array[] = (int) $source->source;
+        foreach ($cachedIds as $ignored_source_id) {
+            $ignored_source_id = (int) $ignored_source_id;
+            $ignored_source_model = null;
+
+            if ($ignored_source_id > 0) {
+                $ignored_source_model = (new \openvk\Web\Models\Repositories\Users())->get($ignored_source_id);
             } else {
-                $ignored_source_model = null;
-                $ignored_source_id = (int) $source->source;
-
-                if ($ignored_source_id > 0) {
-                    $ignored_source_model = (new Users())->get($ignored_source_id);
-                } else {
-                    $ignored_source_model = (new Clubs())->get(abs($ignored_source_id));
-                }
-
-                if (!$ignored_source_model) {
-                    continue;
-                }
-
-                $output_array[] = $ignored_source_model;
+                $ignored_source_model = (new \openvk\Web\Models\Repositories\Clubs())->get(abs($ignored_source_id));
             }
+
+            if (!$ignored_source_model) {
+                continue;
+            }
+
+            $output_array[] = $ignored_source_model;
         }
 
         return $output_array;

@@ -5,6 +5,7 @@ use Chandler\Database\DatabaseConnection;
 use Chandler\Session\Session;
 use openvk\Web\Util\Localizator;
 use openvk\Web\Util\Bitmask;
+use openvk\Web\Models\ModelCodes;
 
 use function PHP81_BC\strftime;
 
@@ -459,7 +460,7 @@ function get_entity_by_id(int $id)
     return (new openvk\Web\Models\Repositories\Clubs())->get(abs($id));
 }
 
-function get_entities(array $ids = []): array
+function get_entities(array $ids = [], bool $auto = true): array
 {
     $main_result = [];
     $users = [];
@@ -476,16 +477,28 @@ function get_entities(array $ids = []): array
     }
 
     if (sizeof($users) > 0) {
-        $users_tmp = (new openvk\Web\Models\Repositories\Users())->getByIds($users);
-        foreach ($users_tmp as $user) {
-            $main_result[] = $user;
+        if ($auto == true) {
+            $users_tmp = (new openvk\Web\Models\Repositories\Users())->getByIds($users);
+            foreach ($users_tmp as $user) {
+                $main_result[] = $user;
+            }
+        } else {
+            foreach ($users as $user) {
+                $main_result[] = (new openvk\Web\Models\Repositories\Users())->get($user);
+            }
         }
     }
 
     if (sizeof($clubs) > 0) {
-        $clubs_tmp = (new openvk\Web\Models\Repositories\Clubs())->getByIds($clubs);
-        foreach ($clubs_tmp as $club) {
-            $main_result[] = $club;
+        if ($auto == true) {
+            $clubs_tmp = (new openvk\Web\Models\Repositories\Clubs())->getByIds($clubs);
+            foreach ($clubs_tmp as $club) {
+                $main_result[] = $club;
+            }
+        } else {
+            foreach ($clubs as $club) {
+                $main_result[] = (new openvk\Web\Models\Repositories\Clubs())->get($club);
+            }
         }
     }
 
@@ -552,6 +565,19 @@ function readable_filesize($bytes, $precision = 2): string
 function downloadable_name(string $text): string
 {
     return preg_replace('/[\\/:*?"<>|]/', '_', str_replace(' ', '_', $text));
+}
+
+function modelCode(mixed $item)
+{
+    $codes = ModelCodes::get();
+
+    if (gettype($item) == "string" || gettype($item) == "integer") {
+        return array_flip($codes)[(int) $item];
+    }
+
+    $classPath = get_class($item);
+
+    return $codes[$classPath];
 }
 
 return (function () {

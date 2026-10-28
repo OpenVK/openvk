@@ -486,8 +486,13 @@ class Photo extends Media
 
         $album = $this->getAlbum();
 
-        $res->id       = $res->pid = (int) $this->getVirtualId();
-        $res->owner_id = $res->user_id = (int) $this->getOwner()->getId();
+        $res->id       = $res->pid = (int) $this->getCompromiseVirtualId();
+        $res->owner_id = $res->user_id = (int) $this->getOwner()->getRealId();
+
+        if ($this->isUnderContextAndFromAdmin()) {
+            $res->user_id = $this->getOwner(true)->getRealId();
+        }
+
         $res->aid      = $res->album_id = (int) ($album ? $album->getId() : ($this->isUnlisted() ? -3 : 0));
         $dims = $this->getDimensions();
         $res->width    = (int) ($dims[0] ?? 0);
@@ -630,8 +635,8 @@ class Photo extends Media
     {
         $res = (object) [];
 
-        $res->id        = $this->getVirtualId();
-        $res->owner_id  = $this->getOwner()->getId();
+        $res->id        = $this->getCompromiseVirtualId();
+        $res->owner_id  = $this->getOwner()->getRealId();
         $res->aid       = 0;
         $res->src       = $this->getURLBySizeId("tiny");
         $res->src_big   = $this->getURLBySizeId("normal");

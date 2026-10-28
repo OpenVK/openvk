@@ -691,7 +691,7 @@
 "my_feedback" = "Мои Ответы";
 "my_settings" = "Мои Настройки";
 "bookmarks" = "Закладки";
-"bookmarks_tab" = "Понравившиеся записи";
+"bookmarks_tab" = "Понравившееся";
 "own_posts_tab" = "Написанные мной записи";
 "bug_tracker" = "Баг-трекер";
 
@@ -1128,6 +1128,7 @@
 "nt_note_instrumental" = "заметкой";
 "nt_photo_instrumental" = "фотографией";
 "nt_topic_instrumental" = "темой";
+"nt_playlist_instrumental" = "плейлистом";
 
 "nt_you_were_mentioned_u" = "Вас упомянул пользователь";
 "nt_you_were_mentioned_g" = "Вас упомянуло сообщество";
@@ -3119,6 +3120,7 @@
 "faves_comments_empty_tip" = "Здесь будут отображаться понравившиеся Вам комментарии.";
 "faves_photos_empty_tip" = "Здесь будут отображаться понравившиеся Вам фотографии.";
 "faves_videos_empty_tip" = "Здесь будут отображаться понравившиеся Вам видео.";
+"faves_notes_empty_tip" = "Здесь будут отображаться понравившиеся Вам заметки.";
 "faves_zero" = "Ни одной закладки";
 "faves_one" = "$1 закладка";
 "faves_few" = "$1 закладки";
@@ -3262,6 +3264,19 @@
 "chat_mention_online" = "Участники онлайн";
 
 "router_reconnect_error" = "Не удалось загрузить страницу после нескольких попыток. Попробовать открыть её напрямую?";
+
+/* Catalogues */
+
+"catalogues" = "Каталоги";
+"new_posts" = "Лента";
+"new_posts_global" = "Все новости";
+
+"post_target_note" = "Заметка";
+"post_target_photo" = "Фото";
+"post_target_topic" = "Обсуждение";
+"post_target_video" = "Видеозапись";
+"post_target_playlist" = "Плейлист";
+"toggle_comments_checkbox" = "Разрешить комментирование";
 
 /* Synchronization & Codebase Coverage Keys */
 

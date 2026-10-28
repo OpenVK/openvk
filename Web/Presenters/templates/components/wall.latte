@@ -10,7 +10,7 @@
     <div class="insertThere" id="wall_block_posts"></div>
     <div id="underHeader">
         <div n:if="$canPost" class="content_subtitle">
-            {include "../components/textArea.latte", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true, docs => true}
+            {include "../components/textArea.latte", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true, docs => true, uploadOwner => $club ?? $thisUser}
         </div>
 
         <div class="content scroll_container">

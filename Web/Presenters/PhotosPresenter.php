@@ -393,15 +393,16 @@ final class PhotosPresenter extends OpenVKPresenter
                     $photo->setDescription("");
                     $photo->setFile($_FILES["photo_" . $i]);
                     $photo->setCreated(time());
-                    if ($is_from_messenger) {
-                        $clubId = $this->postParam("club");
-                        if ($clubId != null) {
-                            $club = (new Clubs())->get((int) $clubId);
-                            if ($club && $club->canBeModifiedBy($this->user->identity)) {
-                                $photo->setContext($club, true);
-                            }
-                        }
 
+                    $clubId = $this->postParam("club");
+                    if ($clubId != null) {
+                        $club = (new Clubs())->get((int) $clubId);
+                        if ($club) {
+                            $photo->setContext($club, $club->canBeModifiedBy($this->user->identity));
+                        }
+                    }
+
+                    if ($is_from_messenger) {
                         $photo->setAsFromMessage();
                     }
 

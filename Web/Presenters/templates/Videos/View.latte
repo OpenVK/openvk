@@ -78,13 +78,7 @@
                             parent => $video}
                 </div>
                 <div class='media-page-wrapper-actions'>
-                    <a href="{$user->getURL()}" class='media-page-author-block'>
-                        <img class='cCompactAvatars' src="{$user->getAvatarURL('miniscule')}">
-
-                        <div class='media-page-author-block-name'>
-                            <b>{$user->getCanonicalName()}</b>
-                        </div>
-                    </a>
+                    {include "../components/postable/postable_mark.latte", owner => $video->getOwner(), item => $video}
 
                     <div>
                         <div n:if="isset($thisUser) && $video->canBeModifiedBy($thisUser)">

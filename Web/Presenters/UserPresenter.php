@@ -1099,6 +1099,12 @@ final class UserPresenter extends OpenVKPresenter
                 $count = (new Faves())->fetchLikesSectionCount($this->user->identity, 'Video');
                 $display_section = "videos";
                 break;
+            case 'note':
+            case 'notes':
+                $data = (new Faves())->fetchLikesSection($this->user->identity, 'Note', $page);
+                $count = (new Faves())->fetchLikesSectionCount($this->user->identity, 'Note');
+                $display_section = "notes";
+                break;
         }
 
         $this->template->data = iterator_to_array($data);

@@ -1678,6 +1678,11 @@
 
     .PE_playlistEditPage {
         flex-direction: column;
+        margin-bottom: 30px;
+    }
+
+    .PE_end {
+        margin-top: 25px;
     }
 
     .PE_playlistEditPage .PE_playlistInfo {
@@ -2627,6 +2632,11 @@
 
     .im_mobile #im_container, .im_mobile .messenger-app, .im_mobile .chat-window {
         height: calc(100vh - 108px); 
+    }
+
+    .ovk-modern-msg #likers #items {
+        display: flex;
+        flex-wrap: wrap;
     }
 }
 
