@@ -2198,7 +2198,7 @@ async function __uploadToTextarea(file, textareaNode, is_from_messenger = false)
 
     if (textareaNode.closest(".textarea_club").length > 0) {
         is_unlisted = true;
-        club_id = textareaNode.closest(".textarea_club").last().dataset.id;
+        club_id = textareaNode.closest(".textarea_club").last().dataset.oid;
     }
 
     console.log("Upload | Photo upload, ", textareaNode.closest(".messenger-layer"), is_from_messenger)

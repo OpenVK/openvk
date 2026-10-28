@@ -235,7 +235,7 @@ final class WallPresenter extends OpenVKPresenter
             }
         }
 
-        $types = ["photos" => ["photo", 'Photo'], "videos" => ["video", 'Video'], "audios" => ["audio", 'Audio'], "notes" => ["note", 'Note'], "playlists" => ["playlist", "Playlist"]];
+        $types = ["photos" => ["photo", 'Photo'], "videos" => ["video", 'Video'], "audios" => ["audio", 'Audio'], "notes" => ["note", 'Note']];
 
         if (isset($types[$section])) {
             $feedType = $types[$section][0];
@@ -261,8 +261,8 @@ final class WallPresenter extends OpenVKPresenter
             $iterator = $posts;
             $count = $feed->getGlobalFeedCountCached();
         } else {
+            $count = $posts->count();
             $iterator = $posts->page((int) ($_GET["p"] ?? 1), $perPage);
-            $count = $iterator->count();
         }
 
         // building target + comment on it

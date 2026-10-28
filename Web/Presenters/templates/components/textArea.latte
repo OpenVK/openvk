@@ -5,7 +5,7 @@
 {* default variables *}
 {var $anonHide = $anonHide ?? false}
 
-<div id="write" n:class='has_emoji_picker, model_content_textarea, $is_comments ? textarea_comments, $club ? textarea_club' style="padding: 5px 0;" data-id="{isset($owner) ? (gettype($owner) == 'integer' ? $owner : $owner->getRealId())}">
+<div id="write" n:class='has_emoji_picker, model_content_textarea, $is_comments ? textarea_comments, $club ? textarea_club' style="padding: 5px 0;" data-id="{isset($owner) ? (gettype($owner) == 'integer' ? $owner : $owner->getRealId())}" data-oid="{isset($uploadOwner) ? (gettype($uploadOwner) == 'integer' ? $uploadOwner : $uploadOwner->getRealId())}">
     <form action="{$route}" method="post" enctype="multipart/form-data" style="margin:0;">
         <div class="textareas">
             {include "content-editable.latte",

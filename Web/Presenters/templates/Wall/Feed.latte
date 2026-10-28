@@ -36,7 +36,7 @@
     </div>
 
     <div n:if="$isGlobal || $section == 'local_posts'" n:class="postFeedWrapper, $thisUser->hasMicroblogEnabled() ? postFeedWrapperMicroblog">
-        {include "../components/textArea.latte", route => "/wall" . $thisUser->getId() . "/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true, owner => $thisUser}
+        {include "../components/textArea.latte", route => "/wall" . $thisUser->getId() . "/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true, uploadOwner => $thisUser}
     </div>
 
     <div n:class='scroll_container, feed_container, ($feedType == "photo" && $paginatorConf->count > 0) ? album-flex'>

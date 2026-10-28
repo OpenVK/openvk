@@ -1128,6 +1128,7 @@
 "nt_note_instrumental" = "заметкой";
 "nt_photo_instrumental" = "фотографией";
 "nt_topic_instrumental" = "темой";
+"nt_playlist_instrumental" = "плейлистом";
 
 "nt_you_were_mentioned_u" = "Вас упомянул пользователь";
 "nt_you_were_mentioned_g" = "Вас упомянуло сообщество";
@@ -3119,6 +3120,7 @@
 "faves_comments_empty_tip" = "Здесь будут отображаться понравившиеся Вам комментарии.";
 "faves_photos_empty_tip" = "Здесь будут отображаться понравившиеся Вам фотографии.";
 "faves_videos_empty_tip" = "Здесь будут отображаться понравившиеся Вам видео.";
+"faves_notes_empty_tip" = "Здесь будут отображаться понравившиеся Вам заметки.";
 "faves_zero" = "Ни одной закладки";
 "faves_one" = "$1 закладка";
 "faves_few" = "$1 закладки";

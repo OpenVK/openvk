@@ -37,6 +37,11 @@ class Playlist extends MediaCollection
         $this->importTable = DatabaseConnection::i()->getContext()->table("playlist_imports");
     }
 
+    public function isPrivate(): bool
+    {
+        return false;
+    }
+
     public function getCoverURL(string $size = "normal"): ?string
     {
         $photo = (new Photos())->get((int) $this->getRecord()->cover_photo_id);

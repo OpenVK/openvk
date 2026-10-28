@@ -20,6 +20,7 @@ class ModelCodes
             "openvk\\Web\\Models\\Entities\\Note" => 10,
             "openvk\\Web\\Models\\Entities\\Notification" => 11,
             "openvk\\Web\\Models\\Entities\\PasswordReset" => 12,
+            "openvk\\Web\\Models\\Entities\\Playlist" => 22,
             "openvk\\Web\\Models\\Entities\\Photo" => 13,
             "openvk\\Web\\Models\\Entities\\Post" => 14,
             "openvk\\Web\\Models\\Entities\\Postable" => 15,
