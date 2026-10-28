@@ -6,6 +6,7 @@ parameters:
     paths:
         - bin
         - CLI
+        - Email
         - ServiceAPI
         - VKAPI
         - Web
@@ -71,5 +72,6 @@ parameters:
 services:
     - Chandler\PHPStanLatte\ChandlerPresenterTemplateResolver
     - Chandler\PHPStanLatte\ChandlerErrorTemplateResolver
+    - openvk\PHPStanLatte\EmailTemplateResolver
     - openvk\PHPStanLatte\NotificationTemplateResolver
 
