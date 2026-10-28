@@ -35,7 +35,7 @@
             </div>
 
             <div n:if="$canPost && $type == 'all'" class="content_subtitle">
-                {include "../components/textArea.latte", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true}
+                {include "../components/textArea.latte", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true, owner => $club ?? $thisUser}
             </div>
             <div n:if="$type == 'search'" class="content_subtitle">
                 <form action="/wall{$owner}?type=search" method="get" enctype="multipart/form-data" class="wall_search">

@@ -205,6 +205,8 @@ final class WallPresenter extends OpenVKPresenter
         $page  = max((int) ($_GET["p"] ?? 1), 0);
         $perPage = 10;
         $section = $this->queryParam("section") ?? "local_posts";
+        $iterator = null;
+        $count = 0;
 
         if ($section == "fave") {
             $this->redirect("/fave");
@@ -218,9 +220,9 @@ final class WallPresenter extends OpenVKPresenter
 
         $feed = new Feed($this->user->identity, $isGlobal, null);
 
-        $withAlienWallPosts = ((int) $this->getWithAlienWallPostsPreference()) === 0;
-        $returnBanned = ((int) $this->queryParam('return_banned')) == 0;
-        $keepNsfwSettings = ((int) $this->queryParam('return_nsfw')) == 0;
+        $withAlienWallPosts = (int) $this->getWithAlienWallPostsPreference();
+        $returnBanned = (int) $this->queryParam('return_banned');
+        $keepNsfwSettings = (int) $this->queryParam('return_nsfw');
         $listId = ((int) $this->queryParam('list'));
         $list = null;
 
@@ -233,9 +235,9 @@ final class WallPresenter extends OpenVKPresenter
             }
         }
 
-        $types = ["photos" => ["photo", 'Photo'], "videos" => ["video", 'Video'], "audios" => ["audio", 'Audio'], "notes" => ["note", 'Note']];
+        $types = ["photos" => ["photo", 'Photo'], "videos" => ["video", 'Video'], "audios" => ["audio", 'Audio'], "notes" => ["note", 'Note'], "playlists" => ["playlist", "Playlist"]];
 
-        if ($types[$section] != null) {
+        if (isset($types[$section])) {
             $feedType = $types[$section][0];
             $feedClass = $types[$section][1];
             $this->template->isAnother = true;
@@ -250,13 +252,18 @@ final class WallPresenter extends OpenVKPresenter
 
                 break;
             default:
-                $posts = $feed->fetchFeed($returnBanned, $withAlienWallPosts, $keepNsfwSettings, $feedType, [null, null, null, null, ($page - 1) * $perPage, $perPage], $list);
+                $posts = $feed->fetchFeed($returnBanned === 0, $withAlienWallPosts === 1, $keepNsfwSettings === 0, $feedType, [null, null, null, null, ($page - 1) * $perPage, $perPage], $list);
 
                 break;
         }
 
-        $iterator = $posts->page((int) ($_GET["p"] ?? 1), $perPage);
-        $count = $iterator->count();
+        if ($isGlobal) {
+            $iterator = $posts;
+            $count = $feed->getGlobalFeedCountCached();
+        } else {
+            $iterator = $posts->page((int) ($_GET["p"] ?? 1), $perPage);
+            $count = $iterator->count();
+        }
 
         // building target + comment on it
         if ($section == "comments") {
@@ -277,7 +284,7 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         $this->template->paginatorConf = (object) [
-            "count"   => $posts->count("*"),
+            "count"   => $count,
             "page"    => $page,
             "amount"  => $count,
             "perPage" => $perPage,

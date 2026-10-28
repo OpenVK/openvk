@@ -31,6 +31,7 @@ abstract class Postable extends Attachable
     public $shortName = "undefined";
     protected $upperNodeReferenceColumnName = "owner";
     protected $containsContextColumns = false;
+    protected $hasVirtualIdColumns = true;
 
     public const COMMENTABLE_EVERYBODY = 0;
     public const COMMENTABLE_FRIENDS = 1;
@@ -79,8 +80,17 @@ abstract class Postable extends Attachable
         return (new Clubs())->get($oid * -1);
     }
 
+    public function isUnderContextAndFromAdmin()
+    {
+        return $this->getRecord()->context_admin == 1;
+    }
+
     public function getVirtualId(): int
     {
+        if ($this->hasVirtualIdColumns === false) {
+            return $this->getId();
+        }
+
         return $this->getRecord()->virtual_id;
     }
 
@@ -291,13 +301,17 @@ abstract class Postable extends Attachable
                 $this->stateChanges("created", time());
             }
 
-            $this->stateChanges("virtual_id", $pCount + 1);
+            if ($this->hasVirtualIdColumns === true) {
+                $this->stateChanges("virtual_id", $pCount + 1);
+            }
 
             if ($this->hasContext()) {
                 $vid_contextual = $this->getContextId();
                 $vCount = $this->getTable()->where("context_id", $vid_contextual)->count();
 
-                $this->stateChanges("context_vid", $vCount + 1);
+                if ($this->hasVirtualIdColumns === true) {
+                    $this->stateChanges("context_vid", $vCount + 1);
+                }
             }
         } /*else {
             $this->stateChanges("edited", time());

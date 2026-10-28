@@ -126,14 +126,6 @@ async function onFeedSettingsClick(e) {
                         <tbody>
                             <tr>
                                 <td width="120" valign="top">
-                                    <span class="nobold">${tr('posts_per_page')}</span>
-                                </td>
-                                <td>
-                                    <select id="pageSelect"></select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td width="120" valign="top">
                                     <span class="nobold">${tr('start_from_page')}</span>
                                 </td>
                                 <td>
@@ -172,7 +164,7 @@ async function onFeedSettingsClick(e) {
                 `)
 
                 u(`#_feed_settings_container #__content input[type='button']`).on('click', (e) => {
-                    const INPUT_PAGES_COUNT = parseInt(u('#_feed_settings_container #__content #pageSelect').nodes[0].selectedOptions[0].value ?? '10')
+                    const INPUT_PAGES_COUNT = 10;
                     const INPUT_PAGE        = parseInt(u('#_feed_settings_container #__content #pageNumber').nodes[0].value ?? '1')
                     const INPUT_IGNORED     = Number(u('#_feed_settings_container #__content #showIgnored').nodes[0].checked ?? false)
                     const INPUT_ALIEN_POSTS = Number(u('#_feed_settings_container #__content #alienPosts').nodes[0].checked ?? false)
@@ -202,12 +194,6 @@ async function onFeedSettingsClick(e) {
                     }
                     
                     window.router.route(FINAL_URL.href)
-                })
-                
-                COUNT.forEach(item => {
-                    u('#_feed_settings_container #pageSelect').append(`
-                        <option value="${item}" ${item == CURRENT_PERPAGE ? 'selected' : ''}>${item}</option>
-                    `)
                 })
 
                 break

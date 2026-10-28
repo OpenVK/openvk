@@ -397,8 +397,8 @@ final class PhotosPresenter extends OpenVKPresenter
                     $clubId = $this->postParam("club");
                     if ($clubId != null) {
                         $club = (new Clubs())->get((int) $clubId);
-                        if ($club && $club->canBeModifiedBy($this->user->identity)) {
-                            $photo->setContext($club, true);
+                        if ($club) {
+                            $photo->setContext($club, $club->canBeModifiedBy($this->user->identity));
                         }
                     }
 

@@ -384,6 +384,7 @@ final class GroupPresenter extends OpenVKPresenter
                     $photo->setFile($_FILES["ava"]);
                     $photo->setCreated(time());
                     $photo->setAnonymous($anon);
+                    $photo->setContext($club, true);
                     $photo->save();
 
                     (new Albums())->getClubAvatarAlbum($club)->addPhoto($photo);
@@ -433,6 +434,7 @@ final class GroupPresenter extends OpenVKPresenter
                 $photo->setFile($_FILES["blob"]);
                 $photo->setCreated(time());
                 $photo->setAnonymous($anon);
+                $photo->setContext($club, true);
                 $photo->save();
 
                 (new Albums())->getClubAvatarAlbum($club)->addPhoto($photo);

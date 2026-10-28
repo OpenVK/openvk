@@ -1981,10 +1981,11 @@ async function onPostEditButtonClick(e) {
 
         const api_req = await window.OVKAPI.call(`wall.${type == 'post' ? 'getById' : 'getComment'}`, params)
         const api_post = api_req.items[0]
+        const wall_id = api_post.owner_id;
 
         edit_place.html(`
             <div class='edit_menu'>
-                <form id="write" class="model_content_textarea has_emoji_picker">
+                <form id="write" class="model_content_textarea has_emoji_picker ${type == "post" ? "" : "textarea_comments"} ${wall_id < 0 ? "textarea_club" : ""}" data-owner="${wall_id}">
                     <div class="textareas">
                         <textarea placeholder="${tr('edit')}" name="text" style="width: 100%;resize: none;overflow:hidden;" class="expanded-textarea small-textarea">${api_post.text}</textarea>
                         <!--<div class="emoji_picker_entrypoint" data-stickers="0"></div>-->
@@ -3293,9 +3294,21 @@ function OpenAvatarUpdateDialogue(group = null, chat = null, aspectRatio = NaN, 
         (function () {
             u("#tmpPhDelF").remove();
         }),
-    ], true);
+    ], true, "avatar_upload_step1");
 
     msg.getNode().attr("style", "width: 600px;");
+
+    try {
+        msg.getNode().last().addEventListener("paste", (e) => {
+            if (e.clipboardData.files.length === 1) {
+                msg.getNode().find("#avatarUpload input").last().files = e.clipboardData.files;
+                msg.getNode().find("#avatarUpload input").trigger("change");
+            }
+        })
+    } catch (e) {
+        console.error(e);
+    }
+
     document.querySelector(".ovk-diag-body").style.padding = "13px"
 
     $("#avatarUpload input").on("change", (ev) => {

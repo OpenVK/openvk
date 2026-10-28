@@ -24,7 +24,7 @@
                 <div style="display: flex;align-items: center;gap: 5px;">
                     {if !($forceNoLike ?? false)}
                         <div class="like_wrap tidy">
-                            {var $liked = $note->hasLikeFrom($thisUser)}
+                            {var $liked = $thisUser && $note->hasLikeFrom($thisUser)}
                             {var $likesCount = $note->getLikesCount()}
                             <a class="post-like-button" data-type="note" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$note->getPrettyId()}">
                                 <div class="heart" id="{if $liked}liked{/if}"></div>

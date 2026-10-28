@@ -478,7 +478,7 @@ function get_entities(array $ids = [], bool $auto = true): array
 
     if (sizeof($users) > 0) {
         if ($auto == true) {
-            $users = (new openvk\Web\Models\Repositories\Users())->getByIds($users);
+            $users_tmp = (new openvk\Web\Models\Repositories\Users())->getByIds($users);
             foreach ($users_tmp as $user) {
                 $main_result[] = $user;
             }

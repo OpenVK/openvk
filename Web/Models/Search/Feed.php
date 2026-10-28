@@ -8,7 +8,6 @@ use Chandler\Database\DatabaseConnection;
 use Nette\Database\Table\Selection;
 use openvk\Web\Models\Repositories\{Users, Clubs, Posts};
 use openvk\Web\Models\Entities\User;
-use openvk\Web\Models\Entities\RowModel;
 use openvk\Web\Models\Search\Catalogue;
 use openvk\Web\Util\Cache;
 use Bhaktaraz\RSSGenerator\Feed as RSSFeed;
@@ -20,12 +19,14 @@ class Feed
     private $owner;
     private $global;
     private $wall;
+    private $tmp_queryBase;
 
     public function __construct(User $owner, bool $global = false, $wall = null)
     {
         $this->owner = $owner;
         $this->global = $global;
         $this->wall = $wall;
+        $this->tmp_queryBase = null;
     }
 
     public static function get(int $owner_id, bool $global = false)
@@ -95,7 +96,7 @@ class Feed
             }
 
             // too many sql requests...
-            $entities = get_entities($ids, false);
+            $entities = get_entities($ids);
             $cIds = [];
 
             foreach ($entities as $entry) {
@@ -112,6 +113,19 @@ class Feed
         });
 
         return $cached;
+    }
+
+    public function getGlobalFeedCountCached(?string $queryBase = null): int
+    {
+        if ($queryBase) {
+            $this->tmp_queryBase = $queryBase;
+        }
+
+        return Cache::remember(
+            "feedcount:" . md5($this->tmp_queryBase),
+            300,
+            fn() => DatabaseConnection::i()->getConnection()->query("SELECT COUNT(*) " . $queryBase)->fetch()->{"COUNT(*)"}
+        );
     }
 
     public function fetchFeed(bool $keep_ignored = true, bool $alien_posts = true, bool $keep_nsfw_settings = true, string $filter = "post", ?array $cursor = null, ?Catalogue $list = null): Selection
@@ -146,11 +160,7 @@ class Feed
                 $cursorFilter = " AND (`posts`.`created` < {$cursorTime} OR (`posts`.`created` = {$cursorTime} AND `posts`.`id` < {$cursorId}))";
             }
 
-            $countCached = Cache::remember(
-                "feedcount:" . md5($queryBase),
-                300,
-                fn() => DatabaseConnection::i()->getConnection()->query("SELECT COUNT(*) " . $queryBase)->fetch()->{"COUNT(*)"}
-            );
+            $this->getGlobalFeedCountCached($queryBase);
 
             $startFromFilter = "";
             if ($start_time != null) {
@@ -247,8 +257,11 @@ class Feed
                      // ->select("id, created, owner")
                     ->where("id IN (?)", $audioIds)
                     ->where("deleted", 0)
-                    ->where("unlisted", 0)
-                    ->order("FIELD(id, " . implode(",", $audioIds) . ")");
+                    ->where("unlisted", 0);
+
+                if (sizeof($audioIds) > 0) {
+                    $payload = $payload->order("FIELD(id, " . implode(",", $audioIds) . ")");
+                }
             }
         }
 
@@ -263,7 +276,8 @@ class Feed
             // ->select("target")
             // ->where("model", "openvk\\Web\\Models\\Entities\\Post")
             ->where("owner", $this->owner->getRealId())
-            ->where("deleted", 0);
+            ->where("deleted", 0)
+            ->order("id DESC");
 
         return $comments;
     }

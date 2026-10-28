@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace openvk\Web\Models\Search;
 
-use openvk\Web\Models\Search\Catalogue;
 use openvk\Web\Models\Entities\User;
 use Chandler\Database\DatabaseConnection;
 
@@ -21,7 +20,7 @@ class CustomFeeds
         }
     }
 
-    public static function getById(int $list_id): ?Catalogue
+    public static function getById(int $list_id)
     {
         return null;
 
@@ -37,7 +36,7 @@ class CustomFeeds
         return new Catalogue($sub->fetch());
     }
 
-    public static function addNew(): Catalogue
+    public static function addNew()
     {
         $cat = new Catalogue();
         $cat->setSubtype(1);

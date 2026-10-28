@@ -488,6 +488,11 @@ class Photo extends Media
 
         $res->id       = $res->pid = (int) $this->getCompromiseVirtualId();
         $res->owner_id = $res->user_id = (int) $this->getOwner()->getRealId();
+
+        if ($this->isUnderContextAndFromAdmin()) {
+            $res->user_id = $this->getOwner(true)->getRealId();
+        }
+
         $res->aid      = $res->album_id = (int) ($album ? $album->getId() : ($this->isUnlisted() ? -3 : 0));
         $dims = $this->getDimensions();
         $res->width    = (int) ($dims[0] ?? 0);

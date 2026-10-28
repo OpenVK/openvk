@@ -597,7 +597,7 @@ final class AudioPresenter extends OpenVKPresenter
         $this->template->canEdit = $this->user->identity && $playlist->canBeModifiedBy($this->user->identity);
         $this->template->cCount = $playlist->getCommentsCount();
 
-        if ($act === "comments") {
+        if ($act === "comments" || $this->queryParam("sort") != null) {
             $this->template->sort = $this->queryParam("sort") ?? "asc";
 
             $input_sort = $this->template->sort == "asc" ? "ASC" : "DESC";
