@@ -252,7 +252,7 @@ final class WallPresenter extends OpenVKPresenter
 
                 break;
             default:
-                $posts = $feed->fetchFeed($returnBanned === 0, $withAlienWallPosts === 1, $keepNsfwSettings === 0, $feedType, [null, null, null, null, ($page - 1) * $perPage, $perPage], $list);
+                $posts = $feed->fetchFeed($returnBanned === 1, $withAlienWallPosts === 1, $keepNsfwSettings === 0, $feedType, [null, null, null, null, ($page - 1) * $perPage, $perPage], $list);
 
                 break;
         }

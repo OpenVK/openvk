@@ -61,7 +61,7 @@ final class Newsfeed extends VKAPIRequestHandler
         $candidates = [];
 
         if (in_array('post', $filters)) {
-            $posts = $feed->fetchFeed($return_banned === 0, $with_alien_wall_posts === 1, $return_nsfw === 0, "post", null, $list);
+            $posts = $feed->fetchFeed($return_banned != 0, $with_alien_wall_posts != 0, $return_nsfw === 0, "post", null, $list);
             $posts = $posts
                     ->where("created < ? OR (created = ? AND id < ?)", $cursorTime, $cursorTime, $cursorId)
                     ->where("? <= created", $startTime)
@@ -76,7 +76,7 @@ final class Newsfeed extends VKAPIRequestHandler
             # deeper cap: grouping below can collapse many rows into one item
             $photoFetchCap = min(500, $fetchCap * 5);
 
-            $photos = $feed->fetchFeed($return_banned === 0, $with_alien_wall_posts === 1, $return_nsfw === 0, "photo", null, $list);
+            $photos = $feed->fetchFeed($return_banned != 0, $with_alien_wall_posts != 0, $return_nsfw === 0, "photo", null, $list);
             $photos = $photos
                     ->where("created < ? OR (created = ? AND id < ?)", $cursorTime, $cursorTime, $cursorId)
                     ->where("? <= created", $startTime)
@@ -119,7 +119,7 @@ final class Newsfeed extends VKAPIRequestHandler
         }
 
         if (in_array('video', $filters)) {
-            $videos = $feed->fetchFeed($return_banned === 0, $with_alien_wall_posts === 1, $return_nsfw === 0, "video", null, $list);
+            $videos = $feed->fetchFeed($return_banned != 0, $with_alien_wall_posts != 0, $return_nsfw === 0, "video", null, $list);
             $videos = $videos
                     ->where("created < ? OR (created = ? AND id < ?)", $cursorTime, $cursorTime, $cursorId)
                     ->where("? <= created", $startTime)
@@ -359,7 +359,7 @@ final class Newsfeed extends VKAPIRequestHandler
         $cursor[] = $count;
 
         $feed = new Feed($this->getUser(), true, null);
-        $posts = $feed->fetchFeed($return_banned === 0, $with_alien_wall_posts === 0, $return_nsfw === 0, "post", $cursor);
+        $posts = $feed->fetchFeed($return_banned != 0, $with_alien_wall_posts != 0, $return_nsfw === 0, "post", $cursor);
 
         $rposts = [];
         $lastPost = null;

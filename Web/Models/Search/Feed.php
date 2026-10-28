@@ -82,7 +82,7 @@ class Feed
                 }, iterator_to_array($subs));
             }
 
-            if ($keep_ignored == false) {
+            if (!$keep_ignored) {
                 $ignored_sources_ids = $this->owner->getIgnoredSources(
                     0,
                     OPENVK_ROOT_CONF['openvk']['preferences']['newsfeed']['ignoredSourcesLimit'] ?? 50,
@@ -147,7 +147,7 @@ class Feed
                 $queryBase .= " AND `nsfw` = 0";
             }
 
-            if ($keep_ignored == false) {
+            if (!$keep_ignored) {
                 $ignored_sources_ids = $this->owner->getIgnoredSources(0, OPENVK_ROOT_CONF['openvk']['preferences']['newsfeed']['ignoredSourcesLimit'] ?? 50, true);
 
                 if (sizeof($ignored_sources_ids) > 0) {
@@ -238,30 +238,43 @@ class Feed
                     ->order("created DESC, id DESC");
             }
             if (!$list && $filter === "audio") {
-                $relations = DatabaseConnection::i()
-                    ->getContext()
-                    ->table("audio_relations")
-                    ->select("entity, audio, index")
-                    ->where("entity IN (?)", $ids)
-                    ->order("index DESC");
+                if (empty($ids)) {
+                    $payload = DatabaseConnection::i()->getContext()->table("audios")->where("id", 0);
+                    return $payload;
+                }
 
-                $audioIds = [];
+                $ownerId = $this->owner->getRealId();
+                $cacheKey = "feed_audio_ids:{$ownerId}:" . md5(implode(",", $ids));
+                $audioIds = \openvk\Web\Util\Cache::remember($cacheKey, 600, function () use ($ids) {
+                    $relations = DatabaseConnection::i()
+                        ->getContext()
+                        ->table("audio_relations")
+                        ->select("entity, audio, index")
+                        ->where("entity IN (?)", $ids)
+                        ->order("index DESC")
+                        ->limit(500);
 
-                foreach ($relations as $item) {
-                    $audioIds[] = $item->audio;
+                    $audioIds = [];
+
+                    foreach ($relations as $item) {
+                        $audioIds[] = (int) $item->audio;
+                    }
+
+                    return array_values(array_unique($audioIds));
+                });
+
+                if (empty($audioIds)) {
+                    $payload = DatabaseConnection::i()->getContext()->table("audios")->where("id", 0);
+                    return $payload;
                 }
 
                 $payload = DatabaseConnection::i()
                     ->getContext()
                     ->table("audios")
-                     // ->select("id, created, owner")
                     ->where("id IN (?)", $audioIds)
                     ->where("deleted", 0)
-                    ->where("unlisted", 0);
-
-                if (sizeof($audioIds) > 0) {
-                    $payload = $payload->order("FIELD(id, " . implode(",", $audioIds) . ")");
-                }
+                    ->where("unlisted", 0)
+                    ->order("FIELD(id, " . implode(",", $audioIds) . ")");
             }
         }
 

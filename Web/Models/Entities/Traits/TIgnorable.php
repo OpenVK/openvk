@@ -33,7 +33,9 @@ trait TIgnorable
         ]);
 
         try {
-            \openvk\Web\Util\Cache::forgetPattern("ignored_sources:{$for_user->getId()}:*");
+            \openvk\Web\Util\Cache::forgetPattern("ignored_sources_ids:{$for_user->getId()}:*");
+            \openvk\Web\Util\Cache::forgetPattern("feed_subs_ids:{$for_user->getRealId()}:*");
+            \openvk\Web\Util\Cache::forgetPattern("feed_subs_ids:{$for_user->getId()}:*");
         } catch (\Throwable $e) {
         }
 
@@ -48,7 +50,9 @@ trait TIgnorable
         ])->delete();
 
         try {
-            \openvk\Web\Util\Cache::forgetPattern("ignored_sources:{$for_user->getId()}:*");
+            \openvk\Web\Util\Cache::forgetPattern("ignored_sources_ids:{$for_user->getId()}:*");
+            \openvk\Web\Util\Cache::forgetPattern("feed_subs_ids:{$for_user->getRealId()}:*");
+            \openvk\Web\Util\Cache::forgetPattern("feed_subs_ids:{$for_user->getId()}:*");
         } catch (\Throwable $e) {
         }
 
