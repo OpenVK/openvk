@@ -7,6 +7,9 @@ namespace openvk\Web\Presenters;
 use Chandler\Database\Log;
 use Chandler\Database\Logs;
 use openvk\Web\Models\Entities\{Voucher, Gift, GiftCategory, User, BannedLink};
+use openvk\Web\Models\Entities\Relationships\Geoban;
+use openvk\Web\Models\ModelCodes;
+use openvk\Web\Models\Repositories\Geobans;
 use openvk\Web\Models\Repositories\{Audios,
     ChandlerGroups,
     Stickers,
@@ -688,6 +691,96 @@ final class AdminPresenter extends OpenVKPresenter
         $link->delete(false);
 
         $this->redirect("/admin/bannedLinks");
+    }
+
+    public function renderGeoblocks(): void
+    {
+        $this->template->geoblocks = (new Geobans())->getList((int) ($this->queryParam("p") ?? 1));
+    }
+
+    public function renderGeoblock(int $id): void
+    {
+        $models = [];
+        foreach (ModelCodes::get() as $class => $code) {
+            $models[$code] = substr($class, (int) strrpos($class, "\\") + 1);
+        }
+        ksort($models);
+
+        $this->template->models = $models;
+        $this->template->form   = (object) [];
+
+        if ($id === 0) {
+            $this->template->form->id        = 0;
+            $this->template->form->modelCode = null;
+            $this->template->form->modelId   = null;
+            $this->template->form->reason    = null;
+            $this->template->form->time      = null;
+            $this->template->form->places    = "";
+        } else {
+            $geoban = (new Geobans())->get($id);
+            if (!$geoban) {
+                $this->notFound();
+            }
+
+            $this->template->form->id        = $geoban->getId();
+            $this->template->form->modelCode = $geoban->getModelCode();
+            $this->template->form->modelId   = $geoban->getModelId();
+            $this->template->form->reason    = $geoban->getReason();
+            $this->template->form->time      = $geoban->getTime();
+            $this->template->form->places    = $geoban->getPlacesRaw();
+        }
+
+        if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+            return;
+        }
+
+        $modelCode = (int) $this->postParam("modelCode");
+        $modelId   = $this->parseModelId($this->postParam("modelId"));
+
+        if (!in_array($modelCode, array_values(ModelCodes::get()), true) || $modelId <= 0) {
+            $this->flashFail("err", tr("error"), tr("admin_geoblock_invalid_target"));
+
+            return;
+        }
+
+        $geoban = (new Geobans())->get($id) ?? new Geoban();
+        $geoban->setModelCode($modelCode);
+        $geoban->setModelId($modelId);
+        $geoban->setReason($this->postParam("reason") ?: null);
+        $geoban->setTime($this->postParam("time") ?: null);
+        $geoban->setPlaces($this->postParam("places") ?: "");
+
+        if ($id === 0) {
+            $geoban->setOwner($this->user->identity);
+        }
+
+        $geoban->save();
+
+        $this->redirect("/admin/geoblock/id" . $geoban->getId());
+    }
+
+    public function renderDeleteGeoblock(int $id): void
+    {
+        $geoban = (new Geobans())->get($id);
+
+        if (!$geoban) {
+            $this->flashFail("err", tr("error"), tr("admin_geoblock_not_found"));
+        }
+
+        $geoban->delete(false);
+
+        $this->redirect("/admin/geoblocks");
+    }
+
+    private function parseModelId(?string $raw): int
+    {
+        $raw = trim((string) $raw);
+        if (str_contains($raw, "_")) {
+            $parts = explode("_", $raw);
+            $raw   = (string) end($parts);
+        }
+
+        return (int) $raw;
     }
 
     public function renderBansHistory(int $user_id): void

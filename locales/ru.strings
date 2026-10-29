@@ -2363,6 +2363,21 @@
 "admin_banned_link_not_specified" = "Ссылка не указана";
 "admin_banned_link_not_found" = "Ссылка не найдена";
 
+"admin_geoblocks" = "Геоблокировки";
+"admin_geoblock" = "Геоблокировка";
+"admin_geoblock_model" = "Тип сущности";
+"admin_geoblock_model_select" = "Выберите тип сущности";
+"admin_geoblock_model_id" = "ID сущности";
+"admin_geoblock_model_id_description" = "Числовой ID или ID через подчёркивание, например 123 или 123_456";
+"admin_geoblock_places" = "Страны";
+"admin_geoblock_places_description" = "Список двухбуквенных кодов стран через запятую, где действует блокировка, например RU, BY, KZ";
+"admin_geoblock_reason" = "Причина";
+"admin_geoblock_time" = "Дата обращения";
+"admin_geoblock_time_description" = "Произвольная строка с датой обращения";
+"admin_geoblock_initiator" = "Инициатор";
+"admin_geoblock_invalid_target" = "Некорректный тип сущности или ID";
+"admin_geoblock_not_found" = "Геоблокировка не найдена";
+
 "admin_gift_moved_successfully" = "Подарок успешно перемещён";
 "admin_gift_moved_to_recycle" = "Теперь подарок находится в <b>корзине</b>.";
 "admin_original_file" = "Оригинальный файл";

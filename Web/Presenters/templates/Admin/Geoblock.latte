@@ -1,0 +1,62 @@
+{extends "@layout.latte"}
+
+{block title}
+    {_admin_geoblock}
+{/block}
+
+{block heading}
+    {_admin_geoblock} #{$form->id ?? "undefined"}
+{/block}
+
+{block content}
+<div style="margin: 8px -8px;" class="aui-tabs horizontal-tabs">
+    <ul class="tabs-menu">
+        <li class="menu-item active-tab">
+            <a href="#info">{_admin_geoblock}</a>
+        </li>
+    </ul>
+    <div class="tabs-pane active-pane" id="info">
+        <form class="aui" method="POST">
+            <div class="field-group">
+                <label for="id">ID</label>
+                <input class="text long-field" type="number" id="id" name="id" disabled value="{$form->id}" />
+            </div>
+            <div class="field-group">
+                <label for="modelCode">{_admin_geoblock_model}</label>
+                <select class="select" id="modelCode" name="modelCode">
+                    <option value="" {if $form->modelCode === null}selected{/if} disabled>{_admin_geoblock_model_select}</option>
+                    <option n:foreach="$models as $code => $name" value="{$code}" {if $form->modelCode == $code}selected{/if}>
+                        {$name} ({$code})
+                    </option>
+                </select>
+            </div>
+            <div class="field-group">
+                <label for="modelId">{_admin_geoblock_model_id}</label>
+                <input class="text long-field" type="text" id="modelId" name="modelId" value="{$form->modelId}" />
+                <div class="description">{_admin_geoblock_model_id_description}</div>
+            </div>
+            <div class="field-group">
+                <label for="places">{_admin_geoblock_places}</label>
+                <input class="text long-field" type="text" id="places" name="places" value="{$form->places}" />
+                <div class="description">{_admin_geoblock_places_description}</div>
+            </div>
+            <div class="field-group">
+                <label for="reason">{_admin_geoblock_reason}</label>
+                <input class="text long-field" type="text" id="reason" name="reason" value="{$form->reason}" />
+            </div>
+            <div class="field-group">
+                <label for="time">{_admin_geoblock_time}</label>
+                <input class="text long-field" type="text" id="time" name="time" value="{$form->time}" />
+                <div class="description">{_admin_geoblock_time_description}</div>
+            </div>
+            <div class="buttons-container">
+                <div class="buttons">
+                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                    <input class="aui-button aui-button-primary submit" type="submit" value="{_save}">
+                    <a n:if="$form->id != 0" class="aui-button aui-button-secondary" href="/admin/geoblock/id{$form->id}/delete">{_delete}</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{/block}
