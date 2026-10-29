@@ -78,13 +78,7 @@
                             parent => $video}
                 </div>
                 <div class='media-page-wrapper-actions'>
-                    <a href="{$user->getURL()}" class='media-page-author-block'>
-                        <img class='cCompactAvatars' src="{$user->getAvatarURL('miniscule')}">
-
-                        <div class='media-page-author-block-name'>
-                            <b>{$user->getCanonicalName()}</b>
-                        </div>
-                    </a>
+                    {include "../components/postable/postable_mark.latte", owner => $video->getOwner(), item => $video}
 
                     <div>
                         <div n:if="isset($thisUser) && $video->canBeModifiedBy($thisUser)">
@@ -95,6 +89,10 @@
                                 {_delete}
                             </a>
                         </div>
+                        {if $video->canCloseComments($thisUser)}
+                            <a n:if="!$video->isCommentsClosed()" onclick="onCloseCommentsClick(event, true, {$video->getPrettyId()}, 'video')" class="profile_link" style="display:block;width:96%;">{_close_post_comments}</a>
+                            <a n:if="$video->isCommentsClosed()" onclick="onCloseCommentsClick(event, false, {$video->getPrettyId()}, 'video')" class="profile_link" style="display:block;width:96%;">{_open_post_comments}</a>
+                        {/if}
                         <a n:if="isset($thisUser)" onclick="javascript:repost({$video->getPrettyId()}, 'video')" class="profile_link" style="display:block;width:96%;">
                             {_share}
                         </a>

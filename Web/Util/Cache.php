@@ -88,4 +88,45 @@ class Cache
 
         return $value;
     }
+
+    public static function forget(string $key): void
+    {
+        $redis = self::redis();
+        if (!$redis) {
+            return;
+        }
+
+        try {
+            $redis->del(self::PREFIX . $key);
+        } catch (Throwable $e) {
+            // best-effort
+        }
+    }
+
+    public static function forgetPattern(string $pattern): void
+    {
+        $redis = self::redis();
+        if (!$redis) {
+            return;
+        }
+
+        try {
+            $prefix = self::PREFIX . $pattern;
+            $iterator = null;
+            while (($keys = $redis->scan($iterator, $prefix, 100)) !== false) {
+                if (!empty($keys)) {
+                    try {
+                        $redis->unlink($keys);
+                    } catch (Throwable $e) {
+                        $redis->del($keys);
+                    }
+                }
+                if ($iterator === 0 || $iterator === null) {
+                    break;
+                }
+            }
+        } catch (Throwable $e) {
+            // best-effort
+        }
+    }
 }

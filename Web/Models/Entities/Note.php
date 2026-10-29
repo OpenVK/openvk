@@ -40,6 +40,7 @@ class SecurityFilter extends HTMLPurifier_Filter
 class Note extends Postable
 {
     protected $tableName = "notes";
+    public $shortName  = "note";
 
     protected function renderHTML(?string $content = null): string
     {
@@ -132,6 +133,11 @@ class Note extends Postable
         return $this->getRecord()->name;
     }
 
+    public function getPageURL(): string
+    {
+        return "/note" . $this->getPrettyId();
+    }
+
     public function getPreview(int $length = 25): string
     {
         return ovk_proc_strtr(strip_tags($this->getRecord()->source), $length);
@@ -167,7 +173,7 @@ class Note extends Postable
         return $this->getOwner()->getPrivacyPermission('notes.read', $user) && $this->getOwner()->canBeViewedBy($user);
     }
 
-    public function toVkApiStruct(): object
+    public function toVkApiStruct(?User $user = null): object
     {
         $res = (object) [];
 
@@ -177,6 +183,7 @@ class Note extends Postable
         $res->text          = $this->getText();
         $res->date          = $this->getPublicationTime()->timestamp();
         $res->comments      = $this->getCommentsCount();
+        $res->can_comment   = (int) $this->canBeCommentedBy($user);
         $res->view_url      = "/note" . $this->getOwner()->getId() . "_" . $this->getVirtualId();
 
         return $res;

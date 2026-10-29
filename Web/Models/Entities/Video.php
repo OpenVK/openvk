@@ -169,7 +169,7 @@ class Video extends Media
         $res = (object) [
             "type" => "video",
             "video" => [
-                "can_comment" => 1,
+                "can_comment" => (int) $this->canBeCommentedBy($user),
                 "can_like" => 1,  // we h-have wikes in videos
                 "can_repost" => 1,
                 "can_subscribe" => 1,

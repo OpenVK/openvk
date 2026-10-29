@@ -183,6 +183,14 @@ export class Chunks {
         this.chunks.push(new MessageChunk([], true, 20, "start"));
         this.invalidateCache = false;
     }
+    reset() {
+        this.chunks = [new MessageChunk([], true, 20, "start")];
+        this._map = new Map();
+        this._messagesInited = false;
+        this._latest_chunk_id = 0;
+        this.invalidateCache = true;
+        this._cachedMessages = undefined;
+    }
     _getChunkKey(chunk) {
         const range = chunk?.id_range;
         return range ? `${range.first}:${range.last}` : null;

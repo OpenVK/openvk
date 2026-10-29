@@ -105,7 +105,7 @@
                             <a>{$post->getGeo()->name ?? tr("admin_open")}</a>
                         </div>
                     </div>
-                    <div n:if="$suggestion ?? false && $canBePinned" class="suggestionControls" style="margin-bottom: 7px;">
+                    <div n:if="($suggestion ?? false) && $canBePinned" class="suggestionControls" style="margin-bottom: 7px;">
                         <input type="button" class="button" id="publish_post" data-id="{$post->getId()}" value="{_publish_suggested}">
                         <input type="button" class="button" id="decline_post" data-id="{$post->getId()}" value="{_decline_suggested}">
                     </div>

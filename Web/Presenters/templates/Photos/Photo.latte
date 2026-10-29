@@ -67,13 +67,8 @@
                     {include "../components/comments.latte", comments => $comments, count => $cCount, page => $cPage, model => "photos", parent => $photo, custom_id => 999}
                 </div>
                 <div class='media-page-wrapper-actions'>
-                    <a href="{$owner->getURL()}" class='media-page-author-block'>
-                        <img class='cCompactAvatars' src="{$owner->getAvatarURL('miniscule')}">
+                    {include "../components/postable/postable_mark.latte", owner => $owner, item => $photo}
 
-                        <div class='media-page-author-block-name'>
-                            <b>{$owner->getCanonicalName()}</b>
-                        </div>
-                    </a>
                     <div n:if="isset($thisUser) && $thisUser->getId() === $photo->getOwner()->getId()">
                         <a onclick="edit_photo(event)" href="/photo{$photo->getPrettyId()}/edit" class="profile_link" style="display:block;width:96%;">{_edit}</a>
                         <a id="_photoDelete" href="/photo{$photo->getPrettyId()}/delete" class="profile_link" style="display:block;width:96%;">{_delete}</a>

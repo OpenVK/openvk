@@ -20,7 +20,7 @@ final class SearchPresenter extends OpenVKPresenter
         $invert    = (int) ($this->queryParam("invert") ?? 0) == 1;
         $page      = (int) ($this->queryParam("p") ?? 1);
 
-        $state = new SearchState($this->user->identity, $query, $section, $order, $invert);
+        $state = new SearchState($this->user->identity, $query, $section, $order, $invert, true);
         $state->buildParamsFromRequest($_REQUEST);
         $data = null;
 

@@ -49,7 +49,7 @@ class GiftCategory extends RowModel
 
     public function getThumbnailURL(): string
     {
-        $primeGift = iterator_to_array($this->getGifts(1, 1))[0];
+        $primeGift = iterator_to_array($this->getGifts(1, 1))[0] ?? null;
         $serverUrl = ovk_scheme(true) . $_SERVER["SERVER_NAME"];
         if (!$primeGift) {
             return "$serverUrl/assets/packages/static/openvk/img/camera_200.png";
@@ -86,9 +86,13 @@ class GiftCategory extends RowModel
         return $loc->description;
     }
 
-    public function getGifts(int $page = -1, ?int $perPage = null, &$count = nullptr): \Traversable
+    public function getGifts(int $page = -1, ?int $perPage = null, &$count = nullptr, bool $includeUnlisted = false): \Traversable
     {
         $gifts = $this->getRecord()->related("gift_relations.category");
+        if (!$includeUnlisted) {
+            $gifts = $gifts->where("gift.unlisted", false);
+        }
+
         if ($page !== -1) {
             $count = $gifts->count();
             $gifts = $gifts->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
@@ -102,6 +106,16 @@ class GiftCategory extends RowModel
     public function isMagical(): bool
     {
         return !is_null($this->getRecord()->autoquery);
+    }
+
+    public function isUnlisted(): bool
+    {
+        return (bool) $this->getRecord()->unlisted;
+    }
+
+    public function setUnlisted(bool $unlisted = true): void
+    {
+        $this->stateChanges("unlisted", (int) $unlisted);
     }
 
     public function hasGift(Gift $gift): bool

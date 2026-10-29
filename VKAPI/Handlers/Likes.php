@@ -10,39 +10,42 @@ use openvk\Web\Models\Repositories\Comments as CommentsRepo;
 use openvk\Web\Models\Repositories\Videos as VideosRepo;
 use openvk\Web\Models\Repositories\Photos as PhotosRepo;
 use openvk\Web\Models\Repositories\Notes as NotesRepo;
+use openvk\Web\Models\Repositories\Audios as AudiosRepo;
 
 final class Likes extends VKAPIRequestHandler
 {
+    private function getEntity(string $type, int $owner_id, int $item_id)
+    {
+        switch ($type) {
+            case "post":
+                $post = (new PostsRepo())->getPostById($owner_id, $item_id);
+                return $post;
+            case "comment":
+                $comment = (new CommentsRepo())->get($item_id);
+                return $comment;
+            case "video":
+                $video = (new VideosRepo())->getByOwnerAndVID($owner_id, $item_id);
+                return $video;
+            case "photo":
+                $photo = (new PhotosRepo())->getByOwnerAndVID($owner_id, $item_id);
+                return $photo;
+            case "note":
+                $note = (new NotesRepo())->getNoteById($owner_id, $item_id);
+                return $note;
+            case "audio_playlist":
+                $audioplaylist = (new AudiosRepo())->getPlaylistByOwnerAndVID($owner_id, $item_id);
+                return $audioplaylist;
+            default:
+                $this->fail(100, "One of the parameters specified was missing or invalid: incorrect type");
+        }
+    }
+
     public function add(string $type, int $owner_id, int $item_id): object
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
 
-        $postable = null;
-        switch ($type) {
-            case "post":
-                $post = (new PostsRepo())->getPostById($owner_id, $item_id);
-                $postable = $post;
-                break;
-            case "comment":
-                $comment = (new CommentsRepo())->get($item_id);
-                $postable = $comment;
-                break;
-            case "video":
-                $video = (new VideosRepo())->getByOwnerAndVID($owner_id, $item_id);
-                $postable = $video;
-                break;
-            case "photo":
-                $photo = (new PhotosRepo())->getByOwnerAndVID($owner_id, $item_id);
-                $postable = $photo;
-                break;
-            case "note":
-                $note = (new NotesRepo())->getNoteById($owner_id, $item_id);
-                $postable = $note;
-                break;
-            default:
-                $this->fail(100, "One of the parameters specified was missing or invalid: incorrect type");
-        }
+        $postable = $this->getEntity($type, $owner_id, $item_id);
 
         if (is_null($postable) || $postable->isDeleted()) {
             $this->fail(100, "One of the parameters specified was missing or invalid: object not found");
@@ -64,39 +67,15 @@ final class Likes extends VKAPIRequestHandler
         $this->requireUser();
         $this->willExecuteWriteAction();
 
-        $postable = null;
-        switch ($type) {
-            case "post":
-                $post = (new PostsRepo())->getPostById($owner_id, $item_id);
-                $postable = $post;
-                break;
-            case "comment":
-                $comment = (new CommentsRepo())->get($item_id);
-                $postable = $comment;
-                break;
-            case "video":
-                $video = (new VideosRepo())->getByOwnerAndVID($owner_id, $item_id);
-                $postable = $video;
-                break;
-            case "photo":
-                $photo = (new PhotosRepo())->getByOwnerAndVID($owner_id, $item_id);
-                $postable = $photo;
-                break;
-            case "note":
-                $note = (new NotesRepo())->getNoteById($owner_id, $item_id);
-                $postable = $note;
-                break;
-            default:
-                $this->fail(100, "One of the parameters specified was missing or invalid: incorrect type");
-        }
+        $postable = $this->getEntity($type, $owner_id, $item_id);
 
-        if (is_null($postable) || $postable->isDeleted()) {
+        if (is_null($postable)) {
             $this->fail(100, "One of the parameters specified was missing or invalid: object not found");
         }
 
-        if (!$postable->canBeViewedBy($this->getUser() ?? null)) {
+        /*if (!$postable->canBeViewedBy($this->getUser() ?? null)) {
             $this->fail(2, "Access to postable denied");
-        }
+        }*/
 
         if (!is_null($postable)) {
             $postable->setLike(false, $this->getUser());
@@ -128,31 +107,7 @@ final class Likes extends VKAPIRequestHandler
             ];
         }
 
-        $postable = null;
-        switch ($type) {
-            case "post":
-                $post = (new PostsRepo())->getPostById($owner_id, $item_id);
-                $postable = $post;
-                break;
-            case "comment":
-                $comment = (new CommentsRepo())->get($item_id);
-                $postable = $comment;
-                break;
-            case "video":
-                $video = (new VideosRepo())->getByOwnerAndVID($owner_id, $item_id);
-                $postable = $video;
-                break;
-            case "photo":
-                $photo = (new PhotosRepo())->getByOwnerAndVID($owner_id, $item_id);
-                $postable = $photo;
-                break;
-            case "note":
-                $note = (new NotesRepo())->getNoteById($owner_id, $item_id);
-                $postable = $note;
-                break;
-            default:
-                $this->fail(100, "One of the parameters specified was missing or invalid: incorrect type");
-        }
+        $postable = $this->getEntity($type, $owner_id, $item_id);
 
         if (is_null($postable) || $postable->isDeleted()) {
             $this->fail(100, "One of the parameters specified was missing or invalid: object not found");
@@ -172,25 +127,7 @@ final class Likes extends VKAPIRequestHandler
     {
         $this->requireUser();
 
-        $object = null;
-
-        switch ($type) {
-            case "post":
-                $object = (new PostsRepo())->getPostById($owner_id, $item_id);
-                break;
-            case "comment":
-                $object = (new CommentsRepo())->get($item_id);
-                break;
-            case "photo":
-                $object = (new PhotosRepo())->getByOwnerAndVID($owner_id, $item_id);
-                break;
-            case "video":
-                $object = (new VideosRepo())->getByOwnerAndVID($owner_id, $item_id);
-                break;
-            default:
-                $this->fail(58, "Invalid type");
-                break;
-        }
+        $object = $this->getEntity($type, $owner_id, $item_id);
 
         if (!$object || $object->isDeleted()) {
             $this->fail(56, "Invalid postable");

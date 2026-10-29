@@ -480,14 +480,19 @@ class Photo extends Media
         return $album;
     }
 
-    public function toVkApiStruct(bool $photo_sizes = true, bool $extended = false): object
+    public function toVkApiStruct(?User $user = null, bool $photo_sizes = true, bool $extended = false): object
     {
         $res = (object) [];
 
         $album = $this->getAlbum();
 
-        $res->id       = $res->pid = (int) $this->getVirtualId();
-        $res->owner_id = $res->user_id = (int) $this->getOwner()->getId();
+        $res->id       = $res->pid = (int) $this->getCompromiseVirtualId();
+        $res->owner_id = $res->user_id = (int) $this->getOwner()->getRealId();
+
+        if ($this->isUnderContextAndFromAdmin()) {
+            $res->user_id = $this->getOwner(true)->getRealId();
+        }
+
         $res->aid      = $res->album_id = (int) ($album ? $album->getId() : ($this->isUnlisted() ? -3 : 0));
         $dims = $this->getDimensions();
         $res->width    = (int) ($dims[0] ?? 0);
@@ -555,9 +560,9 @@ class Photo extends Media
             ];
             $res->comments    = (object) [
                 "count"    => (int) $this->getCommentsCount(),
-                "can_post" => 1,
+                "can_post" => (int) $this->canBeCommentedBy($user),
             ];
-            $res->can_comment = 1;
+            $res->can_comment = $res->comments->can_post;
             $res->can_repost  = 1;
         }
 
@@ -578,7 +583,7 @@ class Photo extends Media
     {
         return [
             "type"  => "photo",
-            "photo" => $this->toVkApiStruct(true, false),
+            "photo" => $this->toVkApiStruct($user, true, false),
         ];
     }
 
@@ -630,8 +635,8 @@ class Photo extends Media
     {
         $res = (object) [];
 
-        $res->id        = $this->getVirtualId();
-        $res->owner_id  = $this->getOwner()->getId();
+        $res->id        = $this->getCompromiseVirtualId();
+        $res->owner_id  = $this->getOwner()->getRealId();
         $res->aid       = 0;
         $res->src       = $this->getURLBySizeId("tiny");
         $res->src_big   = $this->getURLBySizeId("normal");

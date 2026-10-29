@@ -3966,7 +3966,7 @@ final class Messages extends VKAPIRequestHandler
 
         $photos = [];
         foreach ($chat->getAvatarsHistory() as $photo) {
-            $photos[] = $photo->toVkApiStruct(true);
+            $photos[] = $photo->toVkApiStruct($this->getUser(), true);
         }
 
         return (object) [
@@ -3982,11 +3982,16 @@ final class Messages extends VKAPIRequestHandler
         return $this->invoke("im.getUnreadMessages", [], $group_id);
     }
 
-    public function getUnreadConversations(int $group_id = 0)
+    public function getUnreadConversations(int $group_id = 0, ?string $group_ids = null)
     {
         $this->requireUser();
 
-        return $this->invoke("im.getUnreadConversations", [], $group_id);
+        $params = [];
+        if (!empty($group_ids)) {
+            $params["group_ids"] = $group_ids;
+        }
+
+        return $this->invoke("im.getUnreadConversations", $params, $group_id);
     }
 
     public function getMe(int $group_id = 0)
@@ -4320,6 +4325,21 @@ final class Messages extends VKAPIRequestHandler
         $this->requireUser();
 
         return (object) ["count" => 0, "items" => []];
+    }
+
+    public function getEditableGroups(string $fields = "", int $offset = 0, int $count = 100): object
+    {
+        $this->requireUser();
+
+        $groupsHandler = new APIClubs($this->getUser(), $this->getPlatform());
+        $res = $groupsHandler->get(0, $fields, $offset, $count, false, "admin,messages", 0, true);
+
+        return is_object($res) ? $res : (object) ["count" => 0, "items" => []];
+    }
+
+    public function getManagedGroups(string $fields = "", int $offset = 0, int $count = 100): object
+    {
+        return $this->getEditableGroups($fields, $offset, $count);
     }
 
     public function getRecentCalls(int $count = 20, int $start_message_id = 0, string $fields = "", int $extended = 0): object

@@ -31,6 +31,7 @@ abstract class Postable extends Attachable
     public $shortName = "undefined";
     protected $upperNodeReferenceColumnName = "owner";
     protected $containsContextColumns = false;
+    protected $hasVirtualIdColumns = true;
 
     public const COMMENTABLE_EVERYBODY = 0;
     public const COMMENTABLE_FRIENDS = 1;
@@ -79,8 +80,17 @@ abstract class Postable extends Attachable
         return (new Clubs())->get($oid * -1);
     }
 
+    public function isUnderContextAndFromAdmin()
+    {
+        return $this->getRecord()->context_admin == 1;
+    }
+
     public function getVirtualId(): int
     {
+        if ($this->hasVirtualIdColumns === false) {
+            return $this->getId();
+        }
+
         return $this->getRecord()->virtual_id;
     }
 
@@ -210,7 +220,11 @@ abstract class Postable extends Attachable
 
     public function isAnonymous(): bool
     {
-        return (bool) $this->getRecord()->anonymous;
+        try {
+            return (bool) $this->getRecord()->anonymous;
+        } catch (\Nette\MemberAccessException $e) {
+            return false;
+        }
     }
 
     public function makeNotUnlisted(): void
@@ -287,13 +301,17 @@ abstract class Postable extends Attachable
                 $this->stateChanges("created", time());
             }
 
-            $this->stateChanges("virtual_id", $pCount + 1);
+            if ($this->hasVirtualIdColumns === true) {
+                $this->stateChanges("virtual_id", $pCount + 1);
+            }
 
             if ($this->hasContext()) {
                 $vid_contextual = $this->getContextId();
                 $vCount = $this->getTable()->where("context_id", $vid_contextual)->count();
 
-                $this->stateChanges("context_vid", $vCount + 1);
+                if ($this->hasVirtualIdColumns === true) {
+                    $this->stateChanges("context_vid", $vCount + 1);
+                }
             }
         } /*else {
             $this->stateChanges("edited", time());
@@ -333,9 +351,40 @@ abstract class Postable extends Attachable
         return !empty($this->getRecord()?->context_id) || !empty($this->changes["context_id"]);
     }
 
+    public function isCommentsClosed(): bool
+    {
+        $can = 0;
+
+        try {
+            $can = (int) $this->getRecord()->comment_status;
+        } catch (\Nette\MemberAccessException $e) {
+            return false;
+        }
+
+        return $can != Postable::COMMENTABLE_EVERYBODY;
+    }
+
+    // TODO: $forFriendOnly
+    public function setCommentPrivacy(bool $open, bool $forFriendOnly = false): void
+    {
+        if ($open == true) {
+            $this->setComment_status(0);
+        } else {
+            $this->setComment_status(2);
+        }
+    }
+
+    public function canCloseComments(?User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        return $this->canBeModifiedBy($user);
+    }
+
     public function canBeCommentedBy(?User $user): bool
     {
-
         if (!$user) {
             return false;
         }
@@ -347,7 +396,7 @@ abstract class Postable extends Attachable
         $can = 0;
 
         try {
-            $can = (int) $this->getRecord()->can_comment;
+            $can = (int) $this->getRecord()->comment_status;
         } catch (\Nette\MemberAccessException $e) {
             return true;
         }
@@ -357,6 +406,12 @@ abstract class Postable extends Attachable
         }
 
         if ($can == Postable::COMMENTABLE_FRIENDS) {
+            $owner = $this->getOwner();
+
+            if ($owner->getRealId() > 0) {
+                return $user->isFriendsWith($owner);
+            }
+
             return true;
         }
 

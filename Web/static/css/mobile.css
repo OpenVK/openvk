@@ -271,7 +271,7 @@
     .page_header {
         height: 49px !important;
         width: 100vw !important;
-        background: linear-gradient(#707070, #3b3b3b) !important;
+        background: var(--mobile-header) !important;
         background-position: 0 0 !important;
         display: flex;
         align-items: center;
@@ -328,7 +328,7 @@
     }
 
     .page_header:active {
-        background: linear-gradient(#3b3b3b, #595959);
+        background: var(--mobile-header-active);
     }
 
     .page_body {
@@ -408,8 +408,12 @@
         /*margin-left: -33px;*/
     }
 
-    .navigation .link object {
+    .navigation .link object,
+    .navigation .link object a {
         background-color: #abadae;
+    }
+
+    .navigation .link object {
         padding: 2px 6px;
         border-radius: 3px;
     }
@@ -433,8 +437,11 @@
         margin: unset !important;
         margin-top: unset !important;
         margin-bottom: unset !important;
-        width: 100% !important;
-        height: 100%;
+        width: 100vW !important;
+        height: 100dvh !important;
+        top: 0;
+        left: 0;
+        position: absolute;
     }
 
     .ovk-diag-cont {
@@ -1671,6 +1678,11 @@
 
     .PE_playlistEditPage {
         flex-direction: column;
+        margin-bottom: 30px;
+    }
+
+    .PE_end {
+        margin-top: 25px;
     }
 
     .PE_playlistEditPage .PE_playlistInfo {
@@ -2616,6 +2628,15 @@
         position: relative;
         z-index: 100;
         top: 49px;
+    }
+
+    .im_mobile #im_container, .im_mobile .messenger-app, .im_mobile .chat-window {
+        height: calc(100vh - 108px); 
+    }
+
+    .ovk-modern-msg #likers #items {
+        display: flex;
+        flex-wrap: wrap;
     }
 }
 

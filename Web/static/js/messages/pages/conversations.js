@@ -28,14 +28,39 @@ export class ConversationsPage extends IMPage {
     updateHeader(header) { header.changeByConvNumber(Number(window.im.conversations.total_convs)); }
     _update() { this.wRender(); }
     isForward() { return this.options.forward != null }
+    onCancelForward() {
+        this.options.forward = null;
+        if (this.tab) {
+            this.tab.options.forward = null;
+        }
+        if (window.im?.messenger) {
+            window.im.messenger.unselectAll();
+        }
+        if (window.im?.state?.is_compact_mode_enabled) {
+            this.update();
+            const messengerTab = window.im?.tabs?.find(t => t.getPageId() === "messenger");
+            if (messengerTab && messengerTab.render_class) {
+                messengerTab.render_class.update();
+            }
+        } else {
+            this.tab?.close();
+            window.im?.openTabByName("messenger");
+        }
+    }
 
     async beforeRender(container) {
-        if (window.im?.conversations && window.im.conversations.all_convs.length === 0 && !window.im.conversations.isLoadingMore && !window.im.conversations._hasNoMore) {
+        if (window.im?.conversations && window.im.conversations.all_convs.length === 0 && !window.im.conversations.isLoadingMore && !window.im.conversations._hasNoMore && !window.im.conversations.hasError) {
             try {
                 await window.im.conversations.loadNext();
             } catch (e) {
                 console.error("ConversationsPage | beforeRender loadNext failed:", e);
             }
+        }
+    }
+
+    retryLoad() {
+        if (window.im?.conversations) {
+            window.im.conversations.retryLoad().then(() => this.update()).catch(console.error);
         }
     }
 
@@ -90,15 +115,13 @@ export class ConversationsPage extends IMPage {
             convs = orig_convs;
         }
 
-        if (convs.length === 0 && window.im?.conversations && !window.im.conversations.isLoadingMore && !window.im.conversations._hasNoMore && window.im.conversations.all_convs.length === 0) {
-            window.im.conversations.loadNext().then(() => this.update()).catch(console.error);
-        }
-
         render(html`
         <${ConversationListView}
             conversations=${convs}
             hasMore=${window.im.conversations.has_more_items}
             isLoadingMore=${window.im.conversations.isLoadingMore}
+            hasError=${window.im.conversations.hasError}
+            onRetry=${() => this.retryLoad()}
             onLoadMore=${(e) => this.loadNext(e)}
             onCreateChat=${() => this._chatCreationModal()}
             onSearch=${(e) => this._onMessagesSearch(e)}
@@ -113,14 +136,31 @@ export class ConversationsPage extends IMPage {
 export class Conversations {
     static get CONVERSATIONS_PER_PAGE() { return CONVERSATIONS_PER_PAGE; }
 
-    constructor() {
+    constructor(im = null) {
+        this.im = im;
         this.total_convs = 0;
         this.CONVERSATIONS_PER_PAGE = CONVERSATIONS_PER_PAGE;
         this.isLoadingMore = false;
         this._hasNoMore = false;
+        this.hasError = false;
+        this.lastError = null;
+        this.lastErrorTime = 0;
         this.q = null;
         this.peer_id_search = null;
         this.all_convs = [];
+        this.isShowingUnread = false;
+    }
+
+    reset() {
+        this.all_convs = [];
+        this.total_convs = 0;
+        this.isLoadingMore = false;
+        this._hasNoMore = false;
+        this.hasError = false;
+        this.lastError = null;
+        this.lastErrorTime = 0;
+        this.q = null;
+        this.peer_id_search = null;
         this.isShowingUnread = false;
     }
 
@@ -150,6 +190,7 @@ export class Conversations {
     }
 
     get has_more_items() {
+        if (this.hasError) return false;
         if (this._hasNoMore) return false;
         if (this.total_convs && this.all_convs && this.all_convs.length >= this.total_convs) {
             return false;
@@ -196,30 +237,34 @@ export class Conversations {
             fields: ChatGeneralForm.BASE_FIELDS,
         };
 
-        if (window.im.state.group_id) {
-            params.group_id = Math.abs(window.im.state.group_id);
+        const currentIm = this.im || window.im;
+        if (currentIm?.state?.group_id) {
+            params.group_id = Math.abs(currentIm.state.group_id);
         }
 
         let convs = await window.OVKAPI.call('messages.getConversations', params);
 
         const lists = [];
+        const profilesCache = currentIm?.cached_profiles || window.im?.cached_profiles;
 
-        convs.profiles?.forEach((prof) => {
-            window.im.cached_profiles._addProfileCache(new ChatGeneralForm(prof));
-        });
-        convs.groups?.forEach((group) => {
-            window.im.cached_profiles._addProfileCache(new ChatGeneralForm(group));
-        });
-        convs.chats?.forEach((chat) => {
-            const chatId = Number(chat.id);
-            const fullId = chatId < 2000000000 ? chatId + 2000000000 : chatId;
-            window.im.cached_profiles._addProfileCache(new ChatGeneralForm(Object.assign({ id: fullId, type: 'chat' }, chat)));
-        });
+        if (profilesCache) {
+            convs.profiles?.forEach((prof) => {
+                profilesCache._addProfileCache(new ChatGeneralForm(prof));
+            });
+            convs.groups?.forEach((group) => {
+                profilesCache._addProfileCache(new ChatGeneralForm(group));
+            });
+            convs.chats?.forEach((chat) => {
+                const chatId = Number(chat.id);
+                const fullId = chatId < 2000000000 ? chatId + 2000000000 : chatId;
+                profilesCache._addProfileCache(new ChatGeneralForm(Object.assign({ id: fullId, type: 'chat' }, chat)));
+            });
+        }
 
         const rawItems = convs?.items || [];
         rawItems.forEach((item) => {
             const id = item.conversation.peer.id;
-            let peer = window.im.cached_profiles._findCachedProfileById(id);
+            let peer = profilesCache ? profilesCache._findCachedProfileById(id) : window.im?.cached_profiles?._findCachedProfileById(id);
             if (!peer) {
                 const isChat = id >= ChatGeneralForm.CHAT_RUBICON || item.conversation?.peer?.type === 'chat';
                 const localId = isChat && id >= ChatGeneralForm.CHAT_RUBICON ? id - ChatGeneralForm.CHAT_RUBICON : id;
@@ -297,11 +342,22 @@ export class Conversations {
         });
     }
 
+    retryLoad() {
+        this.hasError = false;
+        this.lastError = null;
+        this.lastErrorTime = 0;
+        this._hasNoMore = false;
+        return this.loadNext({ force: true });
+    }
+
     async loadNext(im = null) {
         if (this.isLoadingMore) {
             return;
         }
-        if (this._hasNoMore && !(im && im.report_data)) {
+        if (this._hasNoMore && !(im && (im.report_data || im.force))) {
+            return;
+        }
+        if (this.hasError && !(im && im.force) && (Date.now() - this.lastErrorTime < 5000)) {
             return;
         }
 
@@ -317,6 +373,8 @@ export class Conversations {
                 const prevCount = this.all_convs ? this.all_convs.length : 0;
                 const offset = this.loaded_convs_count;
                 convs = await this.getConversations(offset);
+                this.hasError = false;
+                this.lastError = null;
                 if (!convs || convs.length < count) {
                     this._hasNoMore = true;
                 }
@@ -328,6 +386,10 @@ export class Conversations {
             }
         } catch (e) {
             console.error("Failed to load more conversations:", e);
+            this.hasError = true;
+            this.lastError = e;
+            this.lastErrorTime = Date.now();
+            this._hasNoMore = true;
         } finally {
             this.isLoadingMore = false;
             this.update();

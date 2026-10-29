@@ -952,7 +952,7 @@ class User extends RowModel
         }
     }
 
-    public function getClubs(int $page = 1, bool $admin = false, int $count = OPENVK_DEFAULT_PER_PAGE, bool $offset = false, bool $andEvents = false): \Traversable
+    public function getClubs(int $page = 1, bool $admin = false, int $count = OPENVK_DEFAULT_PER_PAGE, bool $offset = false, bool $andEvents = false, bool $messagesEnabled = false): \Traversable
     {
         if (!$offset) {
             $page = ($page - 1) * $count;
@@ -960,9 +960,16 @@ class User extends RowModel
 
         if ($admin) {
             $id     = $this->getId();
-            $query  = "SELECT `id` FROM `groups` WHERE `owner` = ? ";
-            $query .= $andEvents ? "" : "AND `type` = 1 ";
-            $query .= "UNION SELECT `club` as `id` FROM `group_coadmins` WHERE `user` = ?";
+            $query  = "SELECT `g`.`id` FROM `groups` AS `g` WHERE `g`.`owner` = ? ";
+            $query .= $andEvents ? "" : "AND `g`.`type` = 1 ";
+            if ($messagesEnabled) {
+                $query .= "AND `g`.`is_messages_enabled` = 1 AND `g`.`deleted` = 0 AND `g`.`block_reason` IS NULL ";
+            }
+            $query .= "UNION SELECT `g`.`id` FROM `group_coadmins` AS `gc` JOIN `groups` AS `g` ON `g`.`id` = `gc`.`club` WHERE `gc`.`user` = ? ";
+            $query .= $andEvents ? "" : "AND `g`.`type` = 1 ";
+            if ($messagesEnabled) {
+                $query .= "AND `g`.`is_messages_enabled` = 1 AND `g`.`deleted` = 0 AND `g`.`block_reason` IS NULL ";
+            }
             $query .= " LIMIT " . $count . " OFFSET " . $page;
 
             $sel = DatabaseConnection::i()->getConnection()->query($query, $id, $id);
@@ -983,6 +990,10 @@ class User extends RowModel
                 $sel = $sel->where("target IN (SELECT id FROM groups WHERE type = ?)", 1);
             }
 
+            if ($messagesEnabled) {
+                $sel = $sel->where("target IN (SELECT id FROM groups WHERE is_messages_enabled = 1 AND deleted = 0 AND block_reason IS NULL)");
+            }
+
             foreach ($sel->where("model", "openvk\\Web\\Models\\Entities\\Club") as $target) {
                 $target = (new Clubs())->get($target->target);
                 if (!$target) {
@@ -994,19 +1005,31 @@ class User extends RowModel
         }
     }
 
-    public function getClubCount(bool $admin = false, bool $andEvents = false): int
+    public function getClubCount(bool $admin = false, bool $andEvents = false, bool $messagesEnabled = false): int
     {
         if ($admin) {
             $id    = $this->getId();
-            $query = "SELECT COUNT(*) AS `cnt` FROM (SELECT `id` FROM `groups` WHERE `owner` = ? ";
-            $query .= $andEvents ? "" : "AND `type` = 1 ";
-            $query .= "UNION SELECT `club` as `id` FROM `group_coadmins` WHERE `user` = ?) u0;";
+            $query = "SELECT COUNT(*) AS `cnt` FROM (SELECT `g`.`id` FROM `groups` AS `g` WHERE `g`.`owner` = ? ";
+            $query .= $andEvents ? "" : "AND `g`.`type` = 1 ";
+            if ($messagesEnabled) {
+                $query .= "AND `g`.`is_messages_enabled` = 1 AND `g`.`deleted` = 0 AND `g`.`block_reason` IS NULL ";
+            }
+            $query .= "UNION SELECT `g`.`id` FROM `group_coadmins` AS `gc` JOIN `groups` AS `g` ON `g`.`id` = `gc`.`club` WHERE `gc`.`user` = ? ";
+            $query .= $andEvents ? "" : "AND `g`.`type` = 1 ";
+            if ($messagesEnabled) {
+                $query .= "AND `g`.`is_messages_enabled` = 1 AND `g`.`deleted` = 0 AND `g`.`block_reason` IS NULL ";
+            }
+            $query .= ") u0;";
 
             return (int) DatabaseConnection::i()->getConnection()->query($query, $id, $id)->fetch()->cnt;
         } else {
             $sel = $this->getRecord()->related("subscriptions.follower");
             $sel = $sel->where("model", "openvk\\Web\\Models\\Entities\\Club")
                 ->where("target IN (SELECT id FROM groups WHERE type = ?)", 1);
+
+            if ($messagesEnabled) {
+                $sel = $sel->where("target IN (SELECT id FROM groups WHERE is_messages_enabled = 1 AND deleted = 0 AND block_reason IS NULL)");
+            }
 
             return sizeof($sel);
         }
@@ -1952,28 +1975,53 @@ class User extends RowModel
 
     public function getIgnoredSources(int $offset = 0, int $limit = 10, bool $onlyIds = false)
     {
-        $sources = DatabaseConnection::i()->getContext()->table("ignored_sources")->where("owner", $this->getId())->limit($limit, $offset)->order('id DESC');
+        $userId = $this->getId();
+
+        if ($onlyIds) {
+            $cacheKey = "ignored_sources_ids:{$userId}:{$offset}:{$limit}";
+            $cachedIds = \openvk\Web\Util\Cache::remember($cacheKey, 600, function () use ($userId, $offset, $limit) {
+                $sources = DatabaseConnection::i()->getContext()->table("ignored_sources")->where("owner", $userId)->limit($limit, $offset)->order('id DESC');
+                $output_array = [];
+
+                foreach ($sources as $source) {
+                    $output_array[] = (int) $source->source;
+                }
+
+                return $output_array;
+            });
+
+            return $cachedIds;
+        }
+
+        $cacheKey = "ignored_sources_ids:{$userId}:{$offset}:{$limit}";
+        $cachedIds = \openvk\Web\Util\Cache::remember($cacheKey, 600, function () use ($userId, $offset, $limit) {
+            $sources = DatabaseConnection::i()->getContext()->table("ignored_sources")->where("owner", $userId)->limit($limit, $offset)->order('id DESC');
+            $output_array = [];
+
+            foreach ($sources as $source) {
+                $output_array[] = (int) $source->source;
+            }
+
+            return $output_array;
+        });
+
         $output_array = [];
 
-        foreach ($sources as $source) {
-            if ($onlyIds) {
-                $output_array[] = (int) $source->source;
+        foreach ($cachedIds as $ignored_source_id) {
+            $ignored_source_id = (int) $ignored_source_id;
+            $ignored_source_model = null;
+
+            if ($ignored_source_id > 0) {
+                $ignored_source_model = (new \openvk\Web\Models\Repositories\Users())->get($ignored_source_id);
             } else {
-                $ignored_source_model = null;
-                $ignored_source_id = (int) $source->source;
-
-                if ($ignored_source_id > 0) {
-                    $ignored_source_model = (new Users())->get($ignored_source_id);
-                } else {
-                    $ignored_source_model = (new Clubs())->get(abs($ignored_source_id));
-                }
-
-                if (!$ignored_source_model) {
-                    continue;
-                }
-
-                $output_array[] = $ignored_source_model;
+                $ignored_source_model = (new \openvk\Web\Models\Repositories\Clubs())->get(abs($ignored_source_id));
             }
+
+            if (!$ignored_source_model) {
+                continue;
+            }
+
+            $output_array[] = $ignored_source_model;
         }
 
         return $output_array;

@@ -107,6 +107,15 @@ window.router = new class {
             console.error(e);
         }
 
+        try {
+            const userIm = window.im_variants?.getCurrentUser() || window.im;
+            if (userIm?.state && typeof userIm.state.renderPinnedGroupsCounters === "function") {
+                userIm.state.renderPinnedGroupsCounters();
+            }
+        } catch (e) {
+            console.error(e);
+        }
+
         const new_layout = parsed_content.querySelector('.layout, #page_layout')
         const current_layout = document.querySelector('.layout, #page_layout')
         if (current_layout && new_layout) {
@@ -452,8 +461,13 @@ function isMobileAndExpanded() {
     return isMobile() && document.body.classList.contains('menu-expanded');
 }
 
+function toDesktopVersion() {
+    u("link[href^='/assets/packages/static/openvk/css/mobile.css']").remove();
+    u("meta[name='viewport']").remove();
+}
+
 // Mobile theme header
-$(document).on('click', '.page_header', (e) => {
+$('.page_header').on('click', async (e) => {
     if (isMobile() && !e.target.closest('.link, #fast_notifications')) {
         e.preventDefault();
         e.stopPropagation();
@@ -466,11 +480,6 @@ $(document).on('click', '.page_header', (e) => {
         }
     }
 })
-
-function toDesktopVersion() {
-    u("link[href^='/assets/packages/static/openvk/css/mobile.css']").remove();
-    u("meta[name='viewport']").remove();
-}
 
 $(document).on('click', 'a', async (e) => {
     console.log(e.isDefaultPrevented())

@@ -175,7 +175,7 @@ final class Photos extends VKAPIRequestHandler
         }
 
         return [
-            $photo->toVkApiStruct(),
+            $photo->toVkApiStruct($this->getUser()),
         ];
     }
 
@@ -415,7 +415,7 @@ final class Photos extends VKAPIRequestHandler
                 continue;
             }
 
-            $res[] = $photo->toVkApiStruct($photo_sizes, $extended);
+            $res[] = $photo->toVkApiStruct($this->getUser(), $photo_sizes, $extended);
         }
 
         return $res;
@@ -455,7 +455,7 @@ final class Photos extends VKAPIRequestHandler
                     continue;
                 }
 
-                $res["items"][] = $photo->toVkApiStruct($photo_sizes, $extended);
+                $res["items"][] = $photo->toVkApiStruct($this->getUser(), $photo_sizes, $extended);
             }
 
         } else {
@@ -477,7 +477,7 @@ final class Photos extends VKAPIRequestHandler
                     continue;
                 }
 
-                $res["items"][] = $photo_entity->toVkApiStruct($photo_sizes, $extended);
+                $res["items"][] = $photo_entity->toVkApiStruct($this->getUser(), $photo_sizes, $extended);
             }
         }
 
@@ -505,12 +505,13 @@ final class Photos extends VKAPIRequestHandler
         return 1;
     }
 
-    public function edit(int $owner_id, int $photo_id, string $caption = "")
+    public function edit(int $owner_id, int $photo_id, string $caption = "", int $no_comments = -1)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
 
         $photo = (new PhotosRepo())->getByOwnerAndVIDUnsafe($owner_id, $photo_id);
+        $changes = 0;
 
         if (!$photo || $photo->isDeleted() || !$photo->canBeModifiedBy($this->getUser())) {
             $this->fail(21, "Access denied");
@@ -518,6 +519,16 @@ final class Photos extends VKAPIRequestHandler
 
         if (!empty($caption)) {
             $photo->setDescription($caption);
+            $changes += 1;
+        }
+
+        if ($no_comments != -1) {
+            $photo->setCommentPrivacy($no_comments == 0);
+            $changes += 1;
+        }
+
+        if ($changes > 0) {
+            $photo->setEdited(time());
             $photo->save();
         }
 
@@ -597,6 +608,10 @@ final class Photos extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
+        if (!$photo->canBeCommentedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
         $sticker = null;
         if ($sticker_id > 0) {
             $sticker = (new \openvk\Web\Models\Repositories\Stickers())->getSticker($sticker_id);
@@ -661,7 +676,7 @@ final class Photos extends VKAPIRequestHandler
             if (!$photo || $photo->isDeleted()) {
                 continue;
             }
-            $res["items"][] = $photo->toVkApiStruct($photo_sizes, $extended);
+            $res["items"][] = $photo->toVkApiStruct($this->getUser(), $photo_sizes, $extended);
         }
 
         if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
@@ -817,7 +832,7 @@ final class Photos extends VKAPIRequestHandler
         }
 
         return [
-            $photoObj->toVkApiStruct(),
+            $photoObj->toVkApiStruct($this->getUser()),
         ];
     }
 

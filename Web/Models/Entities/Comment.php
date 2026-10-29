@@ -6,7 +6,7 @@ namespace openvk\Web\Models\Entities;
 
 use openvk\Web\Models\Repositories\{Clubs, Comments};
 use openvk\Web\Models\RowModel;
-use openvk\Web\Models\Entities\{Note};
+use openvk\Web\Models\Entities\{Note, Playlist};
 
 class Comment extends Post
 {
@@ -63,10 +63,10 @@ class Comment extends Post
             return false;
         }
 
-        return $this->getOwner()->getId() == $user->getId() ||
-               $this->getTarget()->getOwner()->getId() == $user->getId() ||
+        return $this->getOwner()->getRealId() == $user->getRealId() ||
+               $this->getTarget()->getOwner()->getRealId() == $user->getRealId() ||
                $this->getTarget() instanceof Post && $this->getTarget()->getTargetWall() < 0 && (new Clubs())->get(abs($this->getTarget()->getTargetWall()))->canBeModifiedBy($user) ||
-               $this->getTarget() instanceof Topic && $this->getTarget()->canBeModifiedBy($user);
+               ($this->getTarget() instanceof Topic || $this->getTarget() instanceof Playlist) && $this->getTarget()->canBeModifiedBy($user);
     }
 
     public function toVkApiStruct(?User $user = null, bool $need_likes = false, bool $extended = false, ?Note $note = null): object
@@ -106,11 +106,11 @@ class Comment extends Post
 
             if ($attachment instanceof \openvk\Web\Models\Entities\Photo) {
                 if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 4) {
-                    $res->attachments[] = $attachment->toVkApiStruct();
+                    $res->attachments[] = $attachment->toVkApiStruct($user);
                 } else {
                     $res->attachments[] = [
                         'type' => 'photo',
-                        'photo' => $attachment->toVkApiStruct(),
+                        'photo' => $attachment->toVkApiStruct($user),
                     ];
                 }
             } elseif ($attachment instanceof \openvk\Web\Models\Entities\Video) {
@@ -240,6 +240,9 @@ class Comment extends Post
                 break;
             case 'openvk\Web\Models\Entities\Topic':
                 $target_name = 'topic';
+                break;
+            case 'openvk\Web\Models\Entities\Playlist':
+                $target_name = 'playlist';
                 break;
         }
 

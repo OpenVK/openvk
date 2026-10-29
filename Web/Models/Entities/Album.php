@@ -15,6 +15,7 @@ class Album extends MediaCollection
     protected $relTableName    = "album_relations";
     protected $entityTableName = "photos";
     protected $entityClassName = 'openvk\Web\Models\Entities\Photo';
+    protected $hasVirtualIdColumns = false;
 
     protected $specialNames = [
         16 => "_avatar_album",
