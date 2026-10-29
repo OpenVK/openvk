@@ -1,0 +1,51 @@
+<div class='scroll_node'>
+    <div class="profile_thumb">
+        <a href="{$owner->getURL()}">
+        <img src="{$owner->getAvatarUrl('miniscule')}" style="width: 50px;">
+        </a>
+    </div>
+    <article class="note_body" id="userContent" style="width: {$width ?? 540}px; display: inline-block; margin-bottom: 35px;">
+        <div class="note_header">
+            <div class="note_title">
+                <div class="note_title">
+                    <a href="/note{$note->getPrettyId()}">{$note->getName()}</a>
+                </div>
+            </div>
+            <div class="byline">
+                <span><a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a></span> {$note->getPublicationTime()}
+                <span n:if="$note->getEditTime() > $note->getPublicationTime()">({_edited} {$note->getEditTime()})</span>
+            </div>
+        </div>
+        <div style="margin-left: 6px;">
+            {$note->getText(750)|noescape}
+        </div>
+        <div class="note_footer" style="margin: 10px 0 0;">
+            <div class="comments_count">
+                <div style="display: flex;align-items: center;gap: 5px;">
+                    {if !($forceNoLike ?? false)}
+                        <div class="like_wrap tidy">
+                            {var $liked = $thisUser && $note->hasLikeFrom($thisUser)}
+                            {var $likesCount = $note->getLikesCount()}
+                            <a class="post-like-button" data-type="note" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$note->getPrettyId()}">
+                                <div class="heart" id="{if $liked}liked{/if}"></div>
+                                <span class="likeCnt">{if $likesCount > 0}{$likesCount}{/if}</span>
+                            </a>
+                        </div>
+                    {/if}
+                    <a href="/note{$note->getPrettyId()}">
+                        {if $note->getCommentsCount() > 0}
+                            {_comments} ({$note->getCommentsCount()})
+                        {else}
+                            {_no_comments}
+                        {/if}
+                    </a>
+                    <span n:if="isset($thisUser) && $thisUser->getId() === $note->getOwner()->getId()">&nbsp;|&nbsp;
+                        <a id="_noteDelete" href="/note{$note->getOwner()->getId()}_{$note->getId()}/delete">{_delete}</a>
+                        &nbsp;|&nbsp;
+                        <a href="/note{$note->getOwner()->getId()}_{$note->getVirtualId()}/edit" rel='nofollow'>{_edit}</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </article>    
+</div>

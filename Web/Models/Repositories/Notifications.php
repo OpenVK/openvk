@@ -7,6 +7,7 @@ namespace openvk\Web\Models\Repositories;
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Entities\Notifications\Notification;
 use openvk\Web\Models\Repositories\Users;
+use openvk\Web\Models\ModelCodes;
 
 class Notifications
 {
@@ -15,7 +16,7 @@ class Notifications
 
     public function __construct()
     {
-        $this->modelCodes = array_flip(json_decode(file_get_contents(__DIR__ . "/../../../data/modelCodes.json"), true));
+        $this->modelCodes = array_flip(ModelCodes::get());
     }
 
     private function getEDB(bool $throw = true): ?object

@@ -36,6 +36,10 @@
                     <input type='checkbox' name='is_unlisted' value='1' n:attr='checked => $playlist->isUnlisted()'>
                     {_playlist_hide_from_search}
                 </label>
+                <label>
+                    <input type='checkbox' name='can_comment' value='1' n:attr='checked => !$playlist->isCommentsClosed()'>
+                    {_toggle_comments_checkbox}
+                </label>
                 <a id='_playlistAppendTracks'>{_add_audio_verb}</a>
             </div>
         </div>

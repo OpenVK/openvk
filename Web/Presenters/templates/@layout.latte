@@ -170,7 +170,7 @@
                         <object n:class="$notificationsCount == 0 ? zero_counter : '' ">
                             <b>{$notificationsCount}</b>
                         </object>
-                        <object class="imc counter zero_counter">
+                        <object class="counter zero_counter">
                             <b>0</b>
                         </object>
                     </a>
@@ -278,7 +278,7 @@
                             <a href="/notifications" class="link my_feedback" title="{_my_feedback} [Alt+Shift+N]" accesskey="n">
                                 <div class="pc_v">{_my_feedback}</div>
                                 <div class="mobile_v">{_feedback}</div>
-                                <object type="internal/link" class="imc counter shown" n:if="$notificationsCount > 0">
+                                <object type="internal/link" class="counter shown" n:if="$notificationsCount > 0">
                                     <b>{$notificationsCount}</b>
                                 </object>
                             </a>

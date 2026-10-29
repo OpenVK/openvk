@@ -95,14 +95,24 @@ $(document).on("click", ".post-like-button", function (e) {
     e.preventDefault();
     e.stopPropagation()
 
-    var thisBtn = u(this).first();
-    var link = u(this).attr("href");
-    var heart = u(".heart", thisBtn);
-    var counter = u(".likeCnt", thisBtn);
-    var likes = counter.text() === "" ? 0 : counter.text();
-    var isLiked = heart.attr("id") === 'liked';
+    const thisBtn = u(this).first();
+    const link = u(this).attr("href");
+    const entity = u(this).attr("data-type");
+    const eid = u(this).attr("data-id");
+    const heart = u(".heart", thisBtn);
+    const counter = u(".likeCnt", thisBtn);
+    const likes = counter.text() === "" ? 0 : counter.text();
+    const isLiked = heart.attr("id") === 'liked';
+    const method = isLiked ? "likes.delete" : "likes.add";
 
-    ky.post(link)
+    window.OVKAPI.call(method, {
+        "type": entity,
+        "owner_id": eid.split("_")[0],
+        "item_id": eid.split("_")[1],
+    });
+
+    /*ky.post(link)*/
+
     heart.attr("id", isLiked ? '' : 'liked');
     counter.text(parseInt(likes) + (isLiked ? -1 : 1));
     if (counter.text() === "0") {
@@ -1918,6 +1928,9 @@ class LikersWindow {
 }
 
 async function showArticle(note_id) {
+    window.router.route("/note" + note_id);
+    return;
+
     u("body").addClass("dimmed");
     let note = await API.Notes.getNote(note_id);
     u("#articleAuthorAva").attr("src", note.author.ava);
@@ -1968,10 +1981,11 @@ async function onPostEditButtonClick(e) {
 
         const api_req = await window.OVKAPI.call(`wall.${type == 'post' ? 'getById' : 'getComment'}`, params)
         const api_post = api_req.items[0]
+        const wall_id = api_post.owner_id;
 
         edit_place.html(`
             <div class='edit_menu'>
-                <form id="write" class="model_content_textarea has_emoji_picker">
+                <form id="write" class="model_content_textarea has_emoji_picker ${type == "post" ? "" : "textarea_comments"} ${wall_id < 0 ? "textarea_club" : ""}" data-owner="${wall_id}">
                     <div class="textareas">
                         <textarea placeholder="${tr('edit')}" name="text" style="width: 100%;resize: none;overflow:hidden;" class="expanded-textarea small-textarea">${api_post.text}</textarea>
                         <!--<div class="emoji_picker_entrypoint" data-stickers="0"></div>-->
@@ -2172,8 +2186,19 @@ async function onPostEditButtonClick(e) {
 }
 
 async function __uploadToTextarea(file, textareaNode, is_from_messenger = false) {
+    let is_unlisted = false;
+    let club_id = null;
     if (textareaNode.closest(".messenger-layer").length > 0) {
         is_from_messenger = true;
+    }
+
+    if (textareaNode.closest(".textarea_comments").length > 0) {
+        is_unlisted = true;
+    }
+
+    if (textareaNode.closest(".textarea_club").length > 0) {
+        is_unlisted = true;
+        club_id = textareaNode.closest(".textarea_club").last().dataset.oid;
     }
 
     console.log("Upload | Photo upload, ", textareaNode.closest(".messenger-layer"), is_from_messenger)
@@ -2206,12 +2231,18 @@ async function __uploadToTextarea(file, textareaNode, is_from_messenger = false)
     form_data.append("hash", u("meta[name=csrf]").attr("value"))
 
     if (is_from_messenger == true) {
-        form_data.append("is_from_messenger", "1");
-        const u = window.im_variants.getCompromise();
-
-        if (u.state.getOperator().supposed_type == "club") {
-            form_data.append("club", Math.abs(u.state.getOperator().id));
+        const us = window.im_variants.getCompromise();
+        if (us.state.getOperator().supposed_type == "club") {
+            form_data.append("club", Math.abs(us.state.getOperator().id));
         }
+    }
+
+    if (is_unlisted == true || is_from_messenger == true) {
+        form_data.append("is_from_messenger", "1");
+    }
+
+    if (club_id != null) {
+        form_data.append('club', Math.abs(club_id));
     }
 
     if (filetype == 'photo') {
@@ -3263,9 +3294,21 @@ function OpenAvatarUpdateDialogue(group = null, chat = null, aspectRatio = NaN, 
         (function () {
             u("#tmpPhDelF").remove();
         }),
-    ], true);
+    ], true, "avatar_upload_step1");
 
     msg.getNode().attr("style", "width: 600px;");
+
+    try {
+        msg.getNode().last().addEventListener("paste", (e) => {
+            if (e.clipboardData.files.length === 1) {
+                msg.getNode().find("#avatarUpload input").last().files = e.clipboardData.files;
+                msg.getNode().find("#avatarUpload input").trigger("change");
+            }
+        })
+    } catch (e) {
+        console.error(e);
+    }
+
     document.querySelector(".ovk-diag-body").style.padding = "13px"
 
     $("#avatarUpload input").on("change", (ev) => {

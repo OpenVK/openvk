@@ -187,6 +187,10 @@ final class Utils extends VKAPIRequestHandler
         $div = $exactOffset / $perPage;
 
         if ($div > 0.5) {
+            if ($div > 1) {
+                return floor($exactOffset / $perPage) * $perPage;
+            }
+
             return ceil($exactOffset / $perPage) * $perPage;
         } else {
             return intdiv($exactOffset, $perPage) * $perPage;

@@ -715,7 +715,9 @@ final class UserPresenter extends OpenVKPresenter
                 $settings = PrivacySettings::getPossibleSettings();
                 foreach ($settings as $setting) {
                     $input = $this->postParam(str_replace(".", "_", $setting));
-                    $user->setPrivacySetting($setting, min(3, (int) abs((int) $input ?? $user->getPrivacySetting($setting))));
+                    if (!is_null($input)) {
+                        $user->setPrivacySetting($setting, min(3, abs((int) $input)));
+                    }
                 }
 
                 $prof = $this->postParam("profile_type") == 1 || $this->postParam("profile_type") == 0 ? (int) $this->postParam("profile_type") : 0;
@@ -1096,6 +1098,12 @@ final class UserPresenter extends OpenVKPresenter
                 $data = (new Faves())->fetchLikesSection($this->user->identity, 'Video', $page);
                 $count = (new Faves())->fetchLikesSectionCount($this->user->identity, 'Video');
                 $display_section = "videos";
+                break;
+            case 'note':
+            case 'notes':
+                $data = (new Faves())->fetchLikesSection($this->user->identity, 'Note', $page);
+                $count = (new Faves())->fetchLikesSectionCount($this->user->identity, 'Note');
+                $display_section = "notes";
                 break;
         }
 

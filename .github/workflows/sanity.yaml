@@ -1,0 +1,51 @@
+name: PR sanity checks
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  pr-title:
+    name: Conventional commit in PR title
+    runs-on: ubuntu-latest
+
+    steps:
+      # Commits are squash-merged and the PR title is used as the commit message
+      - name: Check PR title
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          RE='^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([^)]+\))?!?:[[:space:]].+'
+          if [[ "$TITLE" =~ $RE ]]; then
+            echo "PR title is fine: $TITLE"
+          else
+            echo "::error::PR title must follow Conventional Commits (allowed types: build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test), got: '$TITLE'"
+            exit 1
+          fi
+
+  migrations:
+    name: Unique migration numbers
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v7
+
+      # The checkout contains the PR merged into the base branch, so a number
+      # clashing with an already merged migration is caught here as well
+      - name: Check install/sqls for duplicate numbers
+        run: |
+          fail=0
+          while IFS= read -r dir; do
+            dups=$(find "$dir" -maxdepth 1 -name '*.sql' -printf '%f\n' | cut -d- -f1 | sort | uniq -d)
+            if [ -n "$dups" ]; then
+              fail=1
+              echo "::error::$dir contains duplicate migration numbers:"
+              for n in $dups; do
+                find "$dir" -maxdepth 1 -name "$n-*.sql" -printf '  %f\n'
+              done
+            fi
+          done < <(find install/sqls -type d)
+          exit "$fail"

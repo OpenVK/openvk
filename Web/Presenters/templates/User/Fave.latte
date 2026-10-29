@@ -59,6 +59,8 @@
                                         <div class="scroll_node">
                                             {include "../components/video.latte", video => $dat}
                                         </div>
+                                    {elseif $section == "notes"}
+                                        {include "../Notes/listItem.latte", note => $dat, owner => $dat->getOwner(), width => 410}
                                     {/if}
                                 {/if}
                             {/foreach}
@@ -72,6 +74,7 @@
                             <a n:attr="id => $section === 'comments' ? 'used'" href="/fave?section=comments">{_s_comments}</a>
                             <a n:attr="id => $section === 'photos' ? 'used'" href="/fave?section=photos">{_s_photos}</a>
                             <a n:attr="id => $section === 'videos' ? 'used'" href="/fave?section=videos">{_s_videos}</a>
+                            <a n:attr="id => $section === 'notes' ? 'used'" href="/fave?section=notes">{_notes}</a>
                         </div>
                     </div>
                 </div>

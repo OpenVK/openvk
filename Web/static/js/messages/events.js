@@ -662,6 +662,13 @@ export class EventHandler {
         const isActiveChatOpen = Boolean(this.im?.state?.is_active && isCurrentChat && isMessengerMounted);
         setTimeout(() => {
             try {
+                const wasAtEnd = Boolean(
+                    isCurrentChat &&
+                    this.im?.messenger?.view &&
+                    typeof this.im.messenger.view.isAtEnd === 'function' &&
+                    this.im.messenger.view.isAtEnd(150)
+                );
+
                 const found = _crs.findMessageById(_msg.id, _msg.random_id || _msg.data?.random_id);
 
                 if (found == null) {
@@ -694,14 +701,16 @@ export class EventHandler {
                     this.im.conversations.update();
                 }
 
-                const isTabVisible = this.im?.state?.is_tab_visible ?? (typeof document === 'undefined' || (!document.hidden && (typeof document.hasFocus === 'function' ? document.hasFocus() : true)));
+                const isTabVisible = typeof document === 'undefined' || !document.hidden;
 
-                if (this.im.state.is_active && isCurrentChat) {
-                    const wasAtEnd = this.im.messenger.view ? this.im.messenger.view.isAtEnd() : false;
+                if (isActiveChatOpen || (this.im?.state?.is_active && isCurrentChat)) {
                     this.im.messenger.update();
-                    if (wasAtEnd) {
+                    if (wasAtEnd || isSelf) {
                         if (isTabVisible && this.im.messenger.view) {
                             this.im.messenger.view._scrollToEnd();
+                            requestAnimationFrame(() => {
+                                this.im.messenger.view?._scrollToEnd?.();
+                            });
                         } else if (this.im.messenger.view) {
                             this.im.messenger.view._wasAtEndBeforeBackground = true;
                         }
@@ -709,7 +718,6 @@ export class EventHandler {
                 }
 
                 if (isActiveChatOpen && !isSelf) {
-                    const wasAtEnd = this.im.messenger.view ? this.im.messenger.view.isAtEnd() : false;
                     if (wasAtEnd && isTabVisible) {
                         const msgCmid = Number((_msg.data && (_msg.data.conversation_message_id || _msg.data.local_id)) || _msg.conversation_message_id || 0);
                         _crs.peer.read(_msg.id, msgCmid);
@@ -1104,6 +1112,7 @@ export class EventHandler {
             }
         }
 
+        const imInstance = this.im || window.im;
         if (imInstance && typeof imInstance.updateTabs === 'function') {
             imInstance.updateTabs();
         }

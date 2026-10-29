@@ -185,12 +185,12 @@ function incrementNotificationsCounter() {
         if (!counterObject) {
             counterObject = document.createElement('object');
             counterObject.type = 'internal/link';
-            counterObject.className = 'imc counter shown';
+            counterObject.className = 'counter shown';
             counterObject.innerHTML = ' <b>1</b>';
             link.appendChild(counterObject);
         } else {
             counterObject.classList.remove('zero_counter');
-            counterObject.classList.add('imc', 'counter', 'shown');
+            counterObject.classList.add('counter', 'shown');
             const bTag = counterObject.querySelector('b');
             if (bTag) {
                 let currentCount = parseInt(bTag.textContent) || 0;

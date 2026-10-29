@@ -7,12 +7,13 @@ namespace openvk\Web\Models\Entities;
 use Nette\Database\Table\ActiveRow;
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
+use openvk\Web\Models\Entities\Postable;
 use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\Repositories\Util\EntityStream;
 use Chandler\Database\DatabaseConnection;
 
-abstract class MediaCollection extends RowModel
+abstract class MediaCollection extends Postable
 {
     use Traits\TOwnable;
     protected $relTableName;
@@ -48,16 +49,6 @@ abstract class MediaCollection extends RowModel
         }
 
         return true;
-    }
-
-    public function getOwner(): RowModel
-    {
-        $oid = $this->getRecord()->owner;
-        if ($oid > 0) {
-            return (new Users())->get($oid);
-        } else {
-            return (new Clubs())->get($oid * -1);
-        }
     }
 
     public function getOwnerId(): int
