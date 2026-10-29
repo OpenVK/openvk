@@ -4,14 +4,19 @@ declare(strict_types=1);
 
 namespace openvk\Web\Models\Entities\Relationships;
 
+use Chandler\Database\DatabaseConnection as DB;
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\ModelCodes;
 use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\RowModel;
+use openvk\Web\Util\Cache;
 
 class Geoban extends RowModel
 {
     protected $tableName = "geoblocks";
+
+    private static ?string $countryCache = null;
+    private static bool $countryCacheSet = false;
 
     public function getId(): int
     {
@@ -132,13 +137,143 @@ class Geoban extends RowModel
         return in_array(strtoupper($country), $this->getPlaces(), true);
     }
 
-    public static function resolveCountry(?User $user): ?string
+    public static function isSomethingBannedFor(mixed $model, ?User $user): ?RowModel
     {
-        if (is_null($user)) {
+        $modelCode = self::resolveModelCode($model);
+        $modelId   = self::resolveModelId($model);
+        if (is_null($modelCode) || is_null($modelId)) {
             return null;
         }
 
-        return self::resolveCountryByGeoIP() ?? self::resolveCountryByHeaders();
+        if ($user->canSeeGeoblocked()) {
+            return null;
+        }
+
+        $country = self::resolveCountry($user);
+        if (is_null($country)) {
+            return null;
+        }
+
+        $country = strtoupper($country);
+        $countryBan = null;
+
+        foreach (self::getPlacesForModel($modelCode, $modelId) as $places) {
+            if (in_array($country, $places, true)) {
+                $countryBan = new Geoban(self::getBlock($modelCode, $modelId)->fetch());
+            }
+        }
+
+        if ($countryBan != null) {
+            if ($modelCode === 18) {
+                if ($user && $model->getRealId() === $user->getRealId()) {
+                    return null;
+                }
+            }
+
+            if (method_exists($model, "canBeModifiedBy") && $model->canBeModifiedBy($user)) {
+                return null;
+            }
+        }
+
+        return $countryBan;
+    }
+
+    public static function resolveCountry(?User $user): ?string
+    {
+        if (self::$countryCacheSet) {
+            return self::$countryCache;
+        }
+
+        self::$countryCacheSet = true;
+        self::$countryCache    = self::resolveCountryByGeoIP() ?? self::resolveCountryByHeaders() ?? OPENVK_ROOT_CONF["openvk"]["preferences"]["geo"]["bans"]["fallbackCountry"];
+
+        return self::$countryCache;
+    }
+
+    private static function resolveModelCode(mixed $model): ?int
+    {
+        if (is_object($model)) {
+            $class = get_class($model);
+        } elseif (is_string($model) && $model !== "") {
+            $class = ltrim($model, "\\");
+        } else {
+            return null;
+        }
+
+        $codes = ModelCodes::get();
+        if (isset($codes[$class])) {
+            return $codes[$class];
+        }
+
+        if (is_object($model)) {
+            foreach (class_parents($model) as $parent) {
+                if (isset($codes[$parent])) {
+                    return $codes[$parent];
+                }
+            }
+
+            foreach (class_implements($model) as $interface) {
+                if (isset($codes[$interface])) {
+                    return $codes[$interface];
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private static function resolveModelId(mixed $model): ?int
+    {
+        if (is_object($model)) {
+            # Mirror AdminPresenter::parseModelId(): the admin stores the last
+            # numeric segment of the pretty id, e.g. "123_456" -> 456.
+            if (method_exists($model, "getPrettyId")) {
+                $prettyId = (string) $model->getPrettyId();
+                $parts    = explode("_", $prettyId);
+                $id       = (int) end($parts);
+                if ($id > 0) {
+                    return $id;
+                }
+            }
+
+            if (method_exists($model, "getId")) {
+                return (int) $model->getId();
+            }
+        }
+
+        if (is_int($model) || (is_string($model) && ctype_digit($model))) {
+            return (int) $model;
+        }
+
+        return null;
+    }
+
+    private static function getPlacesForModel(int $modelCode, int $modelId): array
+    {
+        $cacheKey = "geoban:$modelCode:$modelId";
+
+        return Cache::remember($cacheKey, 300, function () use ($modelCode, $modelId): array {
+            $rows = self::getBlock($modelCode, $modelId)->fetchAll();
+
+            $places = [];
+            foreach ($rows as $row) {
+                $raw = trim((string) $row->places);
+                if ($raw === "") {
+                    continue;
+                }
+
+                $places[] = array_values(array_filter(array_map("trim", explode(",", $raw))));
+            }
+
+            return $places;
+        });
+    }
+
+    private static function getBlock(int $modelCode, int $modelId)
+    {
+        return DB::i()->getContext()->table("geoblocks")
+                ->where("modelCode", $modelCode)
+                ->where("modelId", $modelId);
     }
 
     private static function resolveCountryByGeoIP(): ?string
@@ -148,7 +283,8 @@ class Geoban extends RowModel
         }
 
         # Chandler ships a legacy MaxMind GeoIP.dat database.
-        $dbDir = OPENVK_ROOT . "/vendor/openvk/chandler/3rdparty/maxmind";
+        // $dbDir = OPENVK_ROOT . "/vendor/openvk/chandler/3rdparty/maxmind";\
+        $dbDir = OPENVK_ROOT_CONF["openvk"]["preferences"]["geo"]["bans"]["database"];
         if (is_dir($dbDir) && function_exists("geoip_setup_custom_directory")) {
             @\geoip_setup_custom_directory($dbDir . DIRECTORY_SEPARATOR);
         }
@@ -187,5 +323,14 @@ class Geoban extends RowModel
         $this->stateChanges("edited", time());
 
         parent::save($log);
+
+        Cache::forgetPattern("geoban:*");
+    }
+
+    public function delete(bool $softly = true): void
+    {
+        parent::delete($softly);
+
+        Cache::forgetPattern("geoban:*");
     }
 }

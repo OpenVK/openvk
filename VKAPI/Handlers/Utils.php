@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace openvk\VKAPI\Handlers;
 
 use openvk\Web\Models\Repositories\{Users, Clubs, Posts, Photos, Videos};
+use openvk\Web\Models\Entities\Relationships\Geoban;
 use Chandler\Database\DatabaseConnection;
 
 final class Utils extends VKAPIRequestHandler
@@ -12,6 +13,11 @@ final class Utils extends VKAPIRequestHandler
     public function getServerTime(): int
     {
         return time();
+    }
+
+    public function getMyCountry(): ?string
+    {
+        return Geoban::resolveCountry($this->getUser());
     }
 
     public function resolveScreenName(string $screen_name): object
