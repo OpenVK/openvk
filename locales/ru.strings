@@ -3326,7 +3326,7 @@
 "peformer" = "Исполнитель";
 "post_display_error_switching_unavailable" = "Переключение недоступно";
 "purchase_failed" = "Не удалось совершить покупку";
-"reported_message_contains_1" = "Вложение сообщения";
+"reported_message_contains_1" = "Вложение в сообщениях";
 "reported_message_contains_2" = "Текст сообщения";
 "reported_message_contains_3" = "Автор сообщения — id $1, написанный в чате с id $2.";
 "resolve_message_context" = "Устранить контекст";
