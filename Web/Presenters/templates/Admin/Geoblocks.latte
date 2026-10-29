@@ -1,0 +1,56 @@
+{extends "@layout.latte"}
+
+{block title}
+    {_admin_geoblocks}
+{/block}
+
+{block heading}
+    <a style="float: right;" class="aui-button aui-button-primary" href="/admin/geoblock/id0">
+        {_create}
+    </a>
+
+    {_admin_geoblocks}
+{/block}
+
+{block content}
+    <table class="aui aui-table-list">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>{_admin_geoblock_model}</th>
+                <th>{_admin_geoblock_model_id}</th>
+                <th>{_admin_geoblock_places}</th>
+                <th>{_admin_geoblock_reason}</th>
+                <th>{_admin_geoblock_time}</th>
+                <th>{_admin_geoblock_initiator}</th>
+                <th>{_admin_actions}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr n:foreach="$geoblocks as $geoban">
+                <td>{$geoban->getId()}</td>
+                <td>{$geoban->getModelName()} ({$geoban->getModelCode()})</td>
+                <td>{$geoban->getModelId()}</td>
+                <td>{$geoban->getPlacesRaw()}</td>
+                <td>{$geoban->getReason() ?? "-"}</td>
+                <td>{$geoban->getTime() ?? "-"}</td>
+                <td>
+                    <a n:if="$geoban->getOwner()" href="{$geoban->getOwner()->getURL()}">{$geoban->getOwner()->getCanonicalName()}</a>
+                    <span n:if="!$geoban->getOwner()">-</span>
+                </td>
+                <td>
+                    <a class="aui-button aui-button-primary" href="/admin/geoblock/id{$geoban->getId()}">
+                        <span class="aui-icon aui-icon-small aui-iconfont-new-edit">{_edit}</span>
+                    </a>
+                    <a class="aui-button aui-button-secondary" href="/admin/geoblock/id{$geoban->getId()}/delete">
+                        <span class="aui-icon aui-icon-small aui-iconfont-cross-circle">{_delete}</span>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div align="right">
+        <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?p={($_GET['p'] ?? 1) - 1}">«</a>
+        <a class="aui-button" href="?p={($_GET['p'] ?? 1) + 1}">»</a>
+    </div>
+{/block}
