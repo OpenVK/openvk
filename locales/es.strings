@@ -165,6 +165,7 @@
 "post_on_your_wall" = "en tu muro";
 "post_on_group_wall" = "en $1";
 "post_on_user_wall" = "en el muro de $1";
+"post_archive" = "archivo de publicaciones"
 "wall" = "Muro";
 "post" = "Publicación";
 "write" = "Escribir";
