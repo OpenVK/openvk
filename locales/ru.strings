@@ -3329,7 +3329,7 @@
 "reported_message_contains_1" = "Вложение сообщения";
 "reported_message_contains_2" = "Текст сообщения";
 "reported_message_contains_3" = "Автор сообщения — id $1, написанный в чате с id $2.";
-"resolve_message_context" = "Разрешить контекст";
+"resolve_message_context" = "Устранить контекст";
 "select" = "Выбрать";
 "show_slideshow" = "Показать слайд-шоу";
 "smiles" = "Смайлы";
