@@ -138,11 +138,36 @@ class Geoban extends RowModel
             return null;
         }
 
-        /*
-         * OpenVK does not ship an IP geolocation database. The visitor's country
-         * is expected to be injected by the reverse proxy (Cloudflare) or by an
-         * nginx geoip module through one of the headers below.
-         */
+        return self::resolveCountryByGeoIP() ?? self::resolveCountryByHeaders();
+    }
+
+    private static function resolveCountryByGeoIP(): ?string
+    {
+        if (!function_exists("geoip_country_code_by_name")) {
+            return null;
+        }
+
+        # Chandler ships a legacy MaxMind GeoIP.dat database.
+        $dbDir = OPENVK_ROOT . "/vendor/openvk/chandler/3rdparty/maxmind";
+        if (is_dir($dbDir) && function_exists("geoip_setup_custom_directory")) {
+            @\geoip_setup_custom_directory($dbDir . DIRECTORY_SEPARATOR);
+        }
+
+        $ip = defined("CONNECTING_IP") ? CONNECTING_IP : ($_SERVER["REMOTE_ADDR"] ?? null);
+        if (!is_string($ip) || filter_var($ip, FILTER_VALIDATE_IP) === false) {
+            return null;
+        }
+
+        $code = @\geoip_country_code_by_name($ip);
+        if (is_string($code) && preg_match('/^[A-Za-z]{2}$/', $code)) {
+            return strtoupper($code);
+        }
+
+        return null;
+    }
+
+    private static function resolveCountryByHeaders(): ?string
+    {
         foreach (["HTTP_CF_IPCOUNTRY", "GEOIP_COUNTRY_CODE", "HTTP_X_COUNTRY_CODE", "HTTP_X_GEO_COUNTRY"] as $header) {
             $code = $_SERVER[$header] ?? null;
             if (is_string($code) && preg_match('/^[A-Za-z]{2}$/', $code)) {
