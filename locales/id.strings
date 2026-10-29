@@ -771,7 +771,7 @@
 "error_repost_fail" = "Gagal membagikan postingan";
 
 "forbidden" = "Access error";
-"forbidden_comment" = "This user\'s privacy settings do not allow you to look at his page.";
+"forbidden_comment" = "This user's privacy settings do not allow you to look at his page.";
 
 "changes_saved" = "Perubahan tersimpan";
 "changes_saved_comment" = "Data baru akan muncul di halamanmu";
@@ -2310,3 +2310,4 @@
 "timezone--780" = "(GMT+13): Nuku'alofa, Apia";
 "timezone--840" = "(GMT+14): Kiritimati, Kepulauan Line";
 "checkbox_in_registration" = "Saya menyetujui <a href='/privacy'>kebijakan privasi</a> dan <a href='/terms'>kebijakan situs</a>";
+"__transNames" = "";
