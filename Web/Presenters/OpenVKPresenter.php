@@ -494,4 +494,13 @@ abstract class OpenVKPresenter extends SimplePresenter
 
         return null;
     }
+
+    public function failBcGeoban($geoban, int $showType = 0): void
+    {
+        header("HTTP/1.1 451 Unavailable for legal reasons");
+
+        $this->template->_template = "@geoban.latte";
+        $this->template->ban = $geoban;
+        $this->template->country = \openvk\Web\Models\Entities\Relationships\Geoban::resolveCountry($this->user->identity);
+    }
 }

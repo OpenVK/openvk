@@ -16,6 +16,7 @@ use openvk\Web\Models\Privacy\PrivacySettings;
 use openvk\Web\Models\Entities\Messages\{Message, Correspondence};
 use openvk\Web\Models\Repositories\{Applications, Bans, Comments, Notes, Posts, Users, Clubs, Albums, Gifts, Notifications, Videos, Photos};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
+use openvk\Web\Models\Entities\Relationships\Geoban;
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
 use Chandler\Security\User as ChandlerUser;
@@ -1668,6 +1669,17 @@ class User extends RowModel
         return $this->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(null);
     }
 
+    public function canSeeGeoblocked(): bool
+    {
+        $cfg = OPENVK_ROOT_CONF["openvk"]["preferences"]["geo"]["notAffects"];
+
+        if (is_array($cfg) && in_array($this->getId(), $cfg)) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function canSeeTracy(): bool
     {
         $cfg = OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["canSeeTracy"];
@@ -1758,6 +1770,10 @@ class User extends RowModel
 
     public function canBeViewedBy(?User $user = null, bool $blacklist_check = true): bool
     {
+        if (Geoban::isSomethingBannedFor($this, $user)) {
+            return false;
+        }
+
         if (!is_null($user)) {
             if ($this->getId() == $user->getId()) {
                 return true;

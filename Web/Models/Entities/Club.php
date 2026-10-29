@@ -9,6 +9,7 @@ use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{User, Manager, Chat};
 use openvk\Web\Models\Entities\Relationships\Blacklist;
+use openvk\Web\Models\Entities\Relationships\Geoban;
 use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Managers, Posts};
 use Nette\Database\Table\{ActiveRow, GroupedSelection};
 use Chandler\Database\DatabaseConnection as DB;
@@ -520,6 +521,10 @@ class Club extends RowModel
 
     public function canBeViewedBy(?User $user = null)
     {
+        if (Geoban::isSomethingBannedFor($this, $user)) {
+            return false;
+        }
+
         return is_null($this->getBanReason());
     }
 

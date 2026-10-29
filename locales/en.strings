@@ -3524,3 +3524,9 @@
 "years_many" = "$1 years old";
 "you_have_not_entered_name_or_text" = "You haven't entered a name or text";
 "you_have_not_entered_text" = "You haven't entered any text";
+
+/* Geoban */
+
+"unavailable_in_your_region" = "Unavailable in your region";
+"unavailable_in_your_region_desc" = "This page is blocked in your country ($1) because of: $2. Request date: $3.";
+"unavailable_in_your_region_desc_less" = "This page is blocked in your country.";
