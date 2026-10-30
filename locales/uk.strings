@@ -3096,3 +3096,11 @@
 "im_write_bar_offline_today_female" = "$1 була в мережі сьогодні о $2";
 "audio_unknown_artist" = "Невідомий артист";
 "__transNames" = "";
+"privacy_setting_send_gifts" = "Хто може надсилати мені подарунки";
+"nt_playlist_instrumental" = "плейлист";
+"error_gift_unavailable" = "Цей подарунок або набір більше не доступний.";
+"error_gifts_send_privacy" = "Цей користувач обмежив коло осіб, які можуть надсилати йому подарунки.";
+"faves_notes_empty_tip" = "Тут будуть нотатки, які ви вподобали.";
+"catalogues" = "Каталоги";
+"new_posts" = "Стрічка";
+"new_posts_global" = "Усі новини";
