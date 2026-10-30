@@ -329,6 +329,7 @@ final class PhotosPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction(true);
 
         $upload_context = $this->queryParam("upload_context");
+        $album = null;
 
         if (is_null($this->queryParam("album"))) {
             if ((int) $upload_context == $this->user->id) {
@@ -377,7 +378,7 @@ final class PhotosPresenter extends OpenVKPresenter
                     "owner"  => $album->getOwner() instanceof User ? $album->getOwner()->getId() : $album->getOwner()->getId() * -1]);
             }
 
-            if (!isset($_FILES)) {
+            if (empty($_FILES)) {
                 $this->flashFail("err", tr("no_photo"), tr("select_file"), 500, true);
             }
 

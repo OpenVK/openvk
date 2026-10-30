@@ -18,7 +18,7 @@
 
 {block header}
     {$name}
-    <a style="float: right;" onClick="reportApp({$id})" n:if="$canReport ?? false">{_report}</a>
+    <a style="float: right;" onClick="reportApp({$id})" n:if="$canReport">{_report}</a>
 {/block}
 
 {block content}

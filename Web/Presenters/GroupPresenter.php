@@ -30,6 +30,8 @@ final class GroupPresenter extends OpenVKPresenter
         if (!$club) {
             $this->notFound();
         } else {
+            $this->template->backdrops = $club->getBackDropPictureURLs();
+
             if ($club->isBanned()) {
                 $this->template->_template = "Group/Banned.latte";
             } else {
@@ -229,7 +231,7 @@ final class GroupPresenter extends OpenVKPresenter
         $hidden = ["0" => false, "1" => true][$this->queryParam("hidden")] ?? null;
         //$index = $this->queryParam("index");
         if (!$user) {
-            $this->badRequest();
+            $this->throwError(400);
         }
 
         $club = $this->clubs->get($id);
@@ -521,6 +523,7 @@ final class GroupPresenter extends OpenVKPresenter
             $this->notFound();
         } else {
             $this->template->club = $club;
+            $this->template->backdrops = $club->getBackDropPictureURLs();
         }
 
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {

@@ -27,7 +27,7 @@ final class VKAPIPresenter extends OpenVKPresenter
         file_put_contents(OPENVK_ROOT . "/VKAPI/debug.log", $log, FILE_APPEND | LOCK_EX);
     }
 
-    private function fail(int $code, string $message, string $object, string $method): void
+    private function fail(int $code, string $message, string $object, string $method): never
     {
         $this->processVKAPIVersion();
 
@@ -1023,7 +1023,7 @@ final class VKAPIPresenter extends OpenVKPresenter
         array $params,
         string $format = "json",
         ?string $callback = null
-    ): void {
+    ): never {
         $this->processVKAPIVersion("3.0");
 
         $requestParamsList = [];
@@ -1545,7 +1545,7 @@ final class VKAPIPresenter extends OpenVKPresenter
         return null;
     }
 
-    private function packMessage($message, ?string $callback = null): string
+    private function packMessage($message, ?string $callback = null): never
     {
         $format = $_SERVER['HTTP_X_RESPONSE_FORMAT'] ?? null;
         if ($format == 'msgpack') {

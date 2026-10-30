@@ -149,7 +149,7 @@ class Themepack
 
         $result = file_get_contents($file);
         if (in_array(@end(explode(".", $resource)), $this->cssExtensions) && $processCSS) {
-            $compiler = new CSSCompiler([ "cacheDir" => OPENVK_ROOT . "/tmp" ]);
+            $compiler = new CSSCompiler();
             $compiler->setOutputStyle(OutputStyle::COMPRESSED);
 
             $result = $compiler->compileString($result, $file)->getCSS();

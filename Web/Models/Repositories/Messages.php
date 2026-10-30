@@ -45,6 +45,7 @@ class Messages
         DatabaseConnection::i()->getConnection()->query(file_get_contents(__DIR__ . "/../sql/mysql-msg-fix.tsql"));
         $coresps = DatabaseConnection::i()->getConnection()->query($query, $id, $class, $id, $class, $limit, $offset);
         foreach ($coresps as $c) {
+            $anotherCorrespondent = null;
             if ($c->class === 'openvk\Web\Models\Entities\User') {
                 $anotherCorrespondent = (new Users())->get($c->id);
             } elseif ($c->class === 'openvk\Web\Models\Entities\Club') {

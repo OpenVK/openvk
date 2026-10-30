@@ -1,4 +1,6 @@
 {extends "../@listView.latte"}
+
+{default $x = null}
 {var $iterator = iterator_to_array($reports)}
 {var $page     = $paginatorConf->page}
 {var $table_body_id = "reports"}

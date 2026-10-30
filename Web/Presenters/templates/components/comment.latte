@@ -6,6 +6,7 @@
 
 {* default variables *}
 {var $timeOnly = $timeOnly ?? false}
+{var $compact = $compact ?? false}
 {var $correctLink = $correctLink ?? false}
 {var $no_reply_button = $no_reply_button ?? false}
 {var $noEdit = $noEdit ?? false}
@@ -43,7 +44,7 @@
                             </div>
                         </div>
                     </div>
-                    <div n:if="isset($thisUser) &&! ($compact ?? false)" class="post-menu">
+                    <div n:if="isset($thisUser) && !$compact" class="post-menu">
                         <a href="{if $correctLink}{$comment->getTargetURL()}{/if}#_comment{$comment->getId()}" class="date">{$comment->getPublicationTime()}
                             <span n:if="$comment->getEditTime()" class="edited editedMark">({_edited_short})</span>
                         </a>
@@ -75,7 +76,7 @@
                             </div>
                         {/if}
 
-                        <span n:if="$compact ?? false">
+                        <span n:if="$compact">
 
                         |&nbsp;<a
                             class="date"

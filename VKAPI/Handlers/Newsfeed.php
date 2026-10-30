@@ -304,7 +304,7 @@ final class Newsfeed extends VKAPIRequestHandler
 
         # Legacy field mapping for API < 5.0 (VK 3.x clients)
         if (VKAPI_DECL_VER_MAJOR < 5) {
-            $result['new_from']   = (string) ($next_from ?? $start_from ?? "1/" . time() . "_1");
+            $result['new_from']   = (string) ($next_from ?? $start_from);
             $result['new_offset'] = (int) ($offset + count($final_items));
             $result['next_from']  = $result['new_from'];
 

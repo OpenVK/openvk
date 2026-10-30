@@ -2,7 +2,7 @@ includes:
     - vendor/efabrica/phpstan-latte/rules.neon
 
 parameters:
-    level: 0
+    level: 1
     paths:
         - bin
         - CLI
@@ -16,6 +16,19 @@ parameters:
     
     bootstrapFiles:
         - chandler_loader.php
+        - phpstan-bootstrap.php
+
+    # OPENVK_ROOT_CONF is a runtime config constant. Keep it generic so PHPStan
+    # does not depend on the local openvk.yml; key parity is checked by the
+    # configs sanity job.
+    dynamicConstantNames:
+        CHANDLER_ROOT_CONF: 'array<string, mixed>'
+        OPENVK_ROOT_CONF: 'array<string, mixed>'
+        CONNECTING_IP: string
+        VKAPI_DECL_VER: string
+        VKAPI_OVK_APP: string
+        VKAPI_DECL_VER_MAJOR: int
+        VKAPI_DECL_VER_MINOR: int
 
     tmpDir: tmp/phpstan
 
@@ -46,18 +59,6 @@ parameters:
         breakIncludeCycles: true
         collectedPaths:
             - vendor/openvk/chandler/chandler/MVC/SimplePresenter.php
-        globalVariables:
-            parentModule: 'string|null'
-            backdrops: 'array<int, string>|null'
-            club: '\openvk\Web\Models\Entities\Club|null'
-            title: 'string|null'
-            commentSection: 'bool|null'
-            post: '\openvk\Web\Models\Entities\Post|null'
-            owner: 'int|\openvk\Web\Models\Entities\User|null'
-            custom_id: 'int|string|null'
-            iterator: 'iterable'
-            # @listView.latte passes the current list item into blocks as "x => $dat"
-            x: 'mixed'
         errorPatternsToIgnore:
             # Notification/Feed.latte includes notification templates dynamically
             - '/^Cannot resolve included latte template\.$/'

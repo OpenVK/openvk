@@ -22,6 +22,15 @@ use Chandler\Security\User as ChandlerUser;
 
 use function morphos\Russian\inflectName;
 
+/**
+ * @method void setVerified(int|bool $verified)
+ * @method void setBlock_Reason(int|string|null $reason)
+ * @method void setDeleted(int|bool $deleted)
+ * @method void setDeact_Date(int $date)
+ * @method void setDeact_Reason(?string $reason)
+ * @method void setPhone(?string $phone)
+ * @method void setClient_name(?string $clientName)
+ */
 class User extends RowModel
 {
     use Traits\TBackDrops;
@@ -690,6 +699,7 @@ class User extends RowModel
         }
 
         $total = max(100 - $incompleteness + $this->getRating(), 0);
+        $percent = 0;
         if (ovkGetQuirk("profile.rating-bar-behaviour") === 0) {
             if ($total >= 100) {
                 $percent = round(($total / 10 ** strlen(strval($total))) * 100, 0);

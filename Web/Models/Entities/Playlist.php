@@ -14,6 +14,7 @@ use openvk\Web\Models\Entities\Photo;
 /**
  * @method setName(string $name)
  * @method setDescription(?string $desc)
+ * @method void setCover_photo_id(?int $photoId)
  */
 class Playlist extends MediaCollection
 {

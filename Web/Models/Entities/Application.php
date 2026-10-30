@@ -11,6 +11,9 @@ use openvk\Web\Models\Repositories\Notes;
 use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\RowModel;
 
+/**
+ * @method void setCoins(float|int $coins)
+ */
 class Application extends RowModel
 {
     protected $tableName = "apps";

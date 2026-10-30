@@ -14,6 +14,9 @@ use Nette\Database\Table\{ActiveRow, GroupedSelection};
 use Chandler\Database\DatabaseConnection as DB;
 use Chandler\Security\User as ChandlerUser;
 
+/**
+ * @method void setBlock_Reason(?string $reason)
+ */
 class Club extends RowModel
 {
     use Traits\TBackDrops;

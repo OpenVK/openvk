@@ -10,7 +10,7 @@ use Chandler\Session\Session;
 
 final class InternalAPIPresenter extends OpenVKPresenter
 {
-    private function fail(int $code, string $message): void
+    private function fail(int $code, string $message): never
     {
         header("HTTP/1.1 400 Bad Request");
         header("Content-Type: application/x-msgpack");
@@ -152,7 +152,7 @@ final class InternalAPIPresenter extends OpenVKPresenter
             $this->redirect("/");
         }
 
-        $type = $this->queryParam("type", false);
+        $type = $this->queryParam("type");
         if ($type == "post") {
             $post = (new Posts())->getPostById($owner_id, $post_id, true);
         } else {

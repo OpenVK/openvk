@@ -1,10 +1,10 @@
-{capture $pageTitle}{ifset title}{include title}{/ifset}{/capture}
+{capture $pageTitle}{ifset block title}{include title}{/ifset}{/capture}
 {if !isset($parentModule) || substr($parentModule, 0, 21) === 'libchandler:absolute.'}
 <!DOCTYPE html>
 <html lang="{php echo getLanguage()}">
     <head>
         <title>
-            {ifset title}{$pageTitle} - {/ifset}{$instance_name}
+            {ifset block title}{$pageTitle} - {/ifset}{$instance_name}
         </title>
         <meta charset="utf-8" />
 
@@ -158,7 +158,7 @@
                     {/if}
                     <div class="mobile_title">
                         <span>
-                        {ifset title}
+                        {ifset block title}
                             {$pageTitle}
                         {/ifset}
                         </span>
