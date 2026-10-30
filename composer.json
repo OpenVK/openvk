@@ -22,7 +22,7 @@
     },
     "require": {
         "php": "~8.4",
-        "openvk/chandler": "dev-phpstan-latte",
+        "openvk/chandler": "dev-master",
         "whichbrowser/parser": "dev-master",
         "james-heinrich/getid3": "^1.9@dev",
         "rybakit/msgpack": "^0.10.0",
