@@ -21,8 +21,12 @@
             <details class="profile_actions profile_actions--centered profile_actions--down">
                 <summary class="profile_link">{_administrator_actions}</summary>
                 <div class="profile_actions_menu">
-                    <a n:if="$thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL)" href="javascript:unbanUser()" class="profile_link">{_unban_user_action}</a>
+                    <a n:if="$thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL)" href="javascript:unbanUser()" class="profile_link">
+                        <img class="profile_actions_icon" src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/im-ban-user.png" alt="" />
+                        {_unban_user_action}
+                    </a>
                     <a n:if="$thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)" href="javascript:toggleBanInSupport()" class="profile_link">
+                        <img class="profile_actions_icon" src="/assets/packages/static/openvk/img/oxygen-icons/16x16/apps/help-browser.png" alt="" />
                         {if $user->isBannedInSupport()}
                             {_unban_in_support_user_action}
                         {else}

@@ -747,15 +747,21 @@ body.no_footer .navigation_footer {
 
 .profile_actions>summary::after {
     content: "";
-    float: right;
-    margin-top: 5px;
+    display: inline-block;
+    margin-left: 5px;
+    vertical-align: middle;
     border: 4px solid transparent;
     border-top-color: #777;
 }
 
-.profile_actions[open]>summary::after {
-    border-top-color: transparent;
-    border-bottom-color: #777;
+.profile_actions[open]>summary.profile_link {
+    background: linear-gradient(#8f8f8f, #757575);
+    border-bottom-color: #757575;
+    color: #fff;
+}
+
+.profile_actions[open]>summary.profile_link::after {
+    border-top-color: #fff;
 }
 
 .profile_actions_menu {
@@ -771,7 +777,28 @@ body.no_footer .navigation_footer {
 }
 
 .profile_actions_menu .profile_link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     width: 100%;
+    padding: 5px 8px;
+    border-bottom: 0;
+}
+
+.profile_actions_menu .profile_link:hover {
+    background: #e9edf1;
+}
+
+.profile_actions_icon {
+    flex: 0 0 16px;
+    width: 16px;
+    height: 16px;
+    opacity: 0.65;
+    filter: grayscale(1);
+}
+
+.profile_actions_menu .profile_link:hover .profile_actions_icon {
+    opacity: 1;
 }
 
 .profile_actions--down .profile_actions_menu {

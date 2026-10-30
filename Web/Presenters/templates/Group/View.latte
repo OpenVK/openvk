@@ -287,8 +287,14 @@
             <details class="profile_actions">
                 <summary class="profile_link">{_administrator_actions}</summary>
                 <div class="profile_actions_menu">
-                    <a href="/admin/clubs/id{$club->getId()}" class="profile_link">{_manage_group_action}</a>
-                    <a href="/admin/logs?obj_id={$club->getId()}&obj_type=Club" class="profile_link" rel="nofollow">{_last_actions}</a>
+                    <a href="/admin/clubs/id{$club->getId()}" class="profile_link">
+                        <img class="profile_actions_icon" src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/user-group-new.png" alt="" />
+                        {_manage_group_action}
+                    </a>
+                    <a href="/admin/logs?obj_id={$club->getId()}&obj_type=Club" class="profile_link" rel="nofollow">
+                        <img class="profile_actions_icon" src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/view-history.png" alt="" />
+                        {_last_actions}
+                    </a>
                 </div>
             </details>
         {/if}
