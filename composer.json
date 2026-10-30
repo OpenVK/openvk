@@ -1,5 +1,11 @@
 {
     "name": "openvk/openvk",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/OpenVK/phpstan-latte"
+        }
+    ],
     "scripts": {
         "fix": "php-cs-fixer fix",
         "lint": [
@@ -7,7 +13,7 @@
             "@lint:latte"
         ],
         "lint:latte": "chandler-latte-lint Web/Presenters/templates Email",
-        "analyse": "phpstan analyse --memory-limit 1G"
+        "analyse": "phpstan analyse --memory-limit 2G"
     },
     "config": {
         "platform": {
@@ -44,11 +50,18 @@
             "openvk\\": ""
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Chandler\\PHPStanLatte\\": "vendor/openvk/chandler/tools/phpstan-latte/",
+            "openvk\\PHPStanLatte\\": "tools/phpstan-latte/"
+        }
+    },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.68",
         "phpstan/phpstan": "^2.1",
-        "fakerphp/faker": "^1.24"
+        "fakerphp/faker": "^1.24",
+        "efabrica/phpstan-latte": "^0.21"
     }
 }

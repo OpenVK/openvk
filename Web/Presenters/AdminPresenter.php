@@ -177,7 +177,8 @@ final class AdminPresenter extends OpenVKPresenter
 
     public function renderUsers(): void
     {
-        $this->template->users = $this->searchResults($this->users, $this->template->count);
+        $this->template->users = $this->searchResults($this->users, $count);
+        $this->template->count = $count;
     }
 
     public function renderUser(int $id): void
@@ -235,7 +236,8 @@ final class AdminPresenter extends OpenVKPresenter
 
     public function renderClubs(): void
     {
-        $this->template->clubs = $this->searchResults($this->clubs, $this->template->count);
+        $this->template->clubs = $this->searchResults($this->clubs, $count);
+        $this->template->count = $count;
     }
 
     public function renderClub(int $id): void
@@ -249,7 +251,13 @@ final class AdminPresenter extends OpenVKPresenter
 
         $this->template->club = $club;
 
-        $this->template->followers = $this->template->club->getFollowers((int) ($this->queryParam("p") ?? 1));
+        if ($this->template->mode === "followers") {
+            $this->template->followers = $this->template->club->getFollowers((int) ($this->queryParam("p") ?? 1), 20);
+            $this->template->count     = $this->template->club->getFollowersCount();
+        } else {
+            $this->template->followers = [];
+            $this->template->count     = 0;
+        }
 
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {
             return;
@@ -338,7 +346,9 @@ final class AdminPresenter extends OpenVKPresenter
         $this->warnIfNoCommerce();
 
         $this->template->act        = $this->queryParam("act") ?? "list";
-        $this->template->categories = iterator_to_array($this->gifts->getCategories((int) ($this->queryParam("p") ?? 1), null, $this->template->count, true));
+        $count = 0;
+        $this->template->categories = iterator_to_array($this->gifts->getCategories((int) ($this->queryParam("p") ?? 1), null, $count, true));
+        $this->template->count      = $count;
     }
 
     public function renderGiftCategory(string $slug, int $id): void
@@ -429,7 +439,9 @@ final class AdminPresenter extends OpenVKPresenter
         }
 
         $this->template->cat   = $cat;
-        $this->template->gifts = iterator_to_array($cat->getGifts((int) ($this->queryParam("p") ?? 1), 20, $this->template->count, true));
+        $count = 0;
+        $this->template->gifts = iterator_to_array($cat->getGifts((int) ($this->queryParam("p") ?? 1), 20, $count, true));
+        $this->template->count = $count;
     }
 
     public function renderGift(int $id): void
@@ -541,6 +553,7 @@ final class AdminPresenter extends OpenVKPresenter
         return str_starts_with($ret, "/admin/gifts") ? $ret : $fallback;
     }
 
+    /** @phpstan-latte-ignore route placeholder without a template */
     public function renderFiles(): void {}
 
     public function renderQuickBan(int $id): void
@@ -852,10 +865,11 @@ final class AdminPresenter extends OpenVKPresenter
     {
         $this->template->mode = in_array($this->queryParam("act"), ["audios", "playlists"]) ? $this->queryParam("act") : "audios";
         if ($this->template->mode === "audios") {
-            $this->template->audios = $this->searchResults($this->audios, $this->template->count);
+            $this->template->audios = $this->searchResults($this->audios, $count);
         } else {
-            $this->template->playlists = $this->searchPlaylists($this->template->count);
+            $this->template->playlists = $this->searchPlaylists($count);
         }
+        $this->template->count = $count;
     }
 
     public function renderEditMusic(int $audio_id): void
@@ -932,15 +946,19 @@ final class AdminPresenter extends OpenVKPresenter
             $this->template->obj_type = $obj_type;
         }
 
+        $page = (int) ($this->queryParam("p") ?? 1);
         $logs = iterator_to_array((new Logs())->search($filter));
-        $this->template->logs = $logs;
+        $this->template->logs  = array_slice($logs, ($page - 1) * 20, 20);
+        $this->template->count = sizeof($logs);
         $this->template->object_types = (new Logs())->getTypes();
     }
 
     public function renderStickerPacks(): void
     {
-        $page = (int) ($this->queryParam("p") ?? 1);
-        $this->template->packs = iterator_to_array($this->stickers->getAllPacks($page, null, $this->template->count));
+        $page  = (int) ($this->queryParam("p") ?? 1);
+        $count = 0;
+        $this->template->packs = iterator_to_array($this->stickers->getAllPacks($page, null, $count));
+        $this->template->count = $count;
     }
 
     public function renderStickerPack(int $id): void

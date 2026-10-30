@@ -222,6 +222,7 @@ final class UserPresenter extends OpenVKPresenter
             $this->template->user = $user;
             $this->template->page = max(1, (int) ($this->queryParam("p") ?: 1));
             $this->template->admin = $this->queryParam("act") == "managed";
+            $this->template->count = $user->getClubCount($this->template->admin);
         }
     }
 
@@ -242,6 +243,7 @@ final class UserPresenter extends OpenVKPresenter
             $this->template->user = $user;
             $this->template->page = max(1, (int) ($this->queryParam("p") ?: 1));
             $this->template->admin = $this->queryParam("act") == "managed";
+            $this->template->count = $user->getEventsCount($this->template->admin);
         }
     }
 

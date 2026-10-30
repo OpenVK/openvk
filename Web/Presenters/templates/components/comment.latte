@@ -7,6 +7,8 @@
 {* default variables *}
 {var $timeOnly = $timeOnly ?? false}
 {var $correctLink = $correctLink ?? false}
+{var $no_reply_button = $no_reply_button ?? false}
+{var $noEdit = $noEdit ?? false}
 
 <a name="cid={$comment->getId()}"></a>
 <table data-id="1_{$comment->getId()}" border="0" style="font-size: 11px;" class="post comment" id="_comment{$comment->getId()}" data-comment-id="{$comment->getId()}" data-owner-id="{$author->getId()}" data-from-group="{$author instanceof $Club ? 'true' : 'false'}" n:attr="data-post-id => $postId">
@@ -37,7 +39,7 @@
 
                         <div n:ifcontent class="attachments attachments_m">
                             <div class="attachment" n:foreach="$attachmentsLayout->extras as $attachment">
-                                {include "attachment.latte", attachment => $attachment, post => $comment}
+                                {include "attachment.latte", attachment => $attachment, parent => $comment, parentType => "comment", tilesCount => 1}
                             </div>
                         </div>
                     </div>

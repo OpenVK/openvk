@@ -1,6 +1,8 @@
 {extends "@layout.latte"}
 
 {block wrap}
+{var $page = $page ?? 1}
+{var $count = $count ?? 0}
 <div class="wrap2">
     <div class="wrap1">
         <div class="page_wrap padding_top">
@@ -13,7 +15,7 @@
             {/ifset}
 
             {ifset before_content}
-                {include before_content, x => $dat}
+                {include before_content, x => $dat ?? null}
             {/ifset}
 
             {ifset specpage}
@@ -23,7 +25,7 @@
                     {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
 
                     {ifset top}
-                        {include top, x => $dat}
+                        {include top, x => $dat ?? null}
                     {/ifset}
 
                     {if sizeof($data) > 0}

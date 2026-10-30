@@ -82,7 +82,7 @@
 
                         {var $width = ($bigWall ?? false) ? 550 : 320}
                         {if isset($nestedLevel)}
-                            {var $width = $width - 70 * $nestedLevel}
+                            {var $width = $width - 70 * ($nestedLevel ?? 0)}
                         {/if}
                         {var $attachmentsLayout = $post->getChildrenWithLayout($width)}
                         <div n:ifcontent class="attachments attachments_b" style="height: {$attachmentsLayout->height|noescape}; width: {$attachmentsLayout->width|noescape};">
@@ -93,7 +93,7 @@
 
                         <div n:ifcontent class="attachments attachments_m">
                             <div class="attachment" n:foreach="$attachmentsLayout->extras as $attachment">
-                                {include "../attachment.latte", attachment => $attachment}
+                                {include "../attachment.latte", attachment => $attachment, parent => $post, parentType => "post", tilesCount => 1}
                             </div>
                         </div>
                     </div>
