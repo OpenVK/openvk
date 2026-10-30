@@ -1911,6 +1911,7 @@
 /* Admin actions */
 
 "login_as" = "Login as $1";
+"administrator_actions" = "Administrator actions";
 "manage_user_action" = "Manage user";
 "manage_group_action" = "Manage group";
 "ban_user_action" = "Ban user";

@@ -2264,6 +2264,7 @@
 /* Admin actions */
 
 "login_as" = "Войти как $1";
+"administrator_actions" = "Действия администратора";
 "manage_user_action" = "Управление пользователем";
 "manage_group_action" = "Управление группой";
 "ban_user_action" = "Заблокировать пользователя";

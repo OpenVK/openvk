@@ -267,13 +267,6 @@
             {/if}
         </div>
 
-        {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
-            <div class="profile_links_important" id="profile_links_admin">
-                    <a href="/admin/clubs/id{$club->getId()}" id="profile_link">{_manage_group_action}</a>
-                    <a href="/admin/logs?obj_id={$club->getId()}&obj_type=Club" class="profile_link">Последние действия</a>
-            </div>
-        {/if}
-
         {if $canBeModified}
             <a href="/club{$club->getId()}/edit" id="profile_link">{_edit_group}</a>
             <a href="/club{$club->getId()}/stats" rel="nofollow" id="profile_link">{_statistics}</a>
@@ -290,6 +283,15 @@
         <a n:if="!$club->isHideFromGlobalFeedEnabled()" onclick="onIgnoreSomeoneClick(event)" class="profile_link" style="display:block;" id="__ignoreSomeone" data-val='{!$ignore_status ? 1 : 0}' data-id="{$club->getRealId()}">
             {if !$ignore_status}{_ignore_club}{else}{_unignore_club}{/if}
         </a>
+        {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+            <details class="profile_actions">
+                <summary class="profile_link">{_administrator_actions}</summary>
+                <div class="profile_actions_menu">
+                    <a href="/admin/clubs/id{$club->getId()}" class="profile_link">{_manage_group_action}</a>
+                    <a href="/admin/logs?obj_id={$club->getId()}&obj_type=Club" class="profile_link" rel="nofollow">{_last_actions}</a>
+                </div>
+            </details>
+        {/if}
     </div>
     <div class="hide_on_mobiles">
         <div class="content_title_expanded" onclick="hidePanel(this);">
