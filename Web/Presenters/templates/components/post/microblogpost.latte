@@ -1,4 +1,6 @@
+{default $club = null}
 {var $author = $post->getOwner()}
+
 {var $comments = $post->getLastComments(3)}
 {var $commentsCount = $post->getCommentsCount()}
 {var $platform = $post->getPlatform()}
@@ -14,8 +16,7 @@
 {else}
     {var $deac = "post_deact_silent"}
 {/if}
-{var $compact = isset($compact) ? true : false}
-{var $club = isset($club) ? $club}
+{default $compact = false}
 
 {var $commentTextAreaId = $post === NULL ? rand(1,300) : $post->getId()}
 

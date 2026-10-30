@@ -1,4 +1,6 @@
 {extends "../@listView.latte"}
+
+{default $x = null}
 {var $iterator = iterator_to_array($topics)}
 {var $page     = $paginatorConf->page}
 {var $canModify = $club->canBeModifiedBy($thisUser)}

@@ -30,6 +30,8 @@ final class GroupPresenter extends OpenVKPresenter
         if (!$club) {
             $this->notFound();
         } else {
+            $this->template->backdrops = $club->getBackDropPictureURLs();
+
             if ($club->isBanned()) {
                 $this->template->_template = "Group/Banned.latte";
             } else {
@@ -521,6 +523,7 @@ final class GroupPresenter extends OpenVKPresenter
             $this->notFound();
         } else {
             $this->template->club = $club;
+            $this->template->backdrops = $club->getBackDropPictureURLs();
         }
 
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {

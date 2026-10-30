@@ -1,4 +1,6 @@
 {extends "../@listView.latte"}
+
+{default $x = null}
 {var $Manager = openvk\Web\Models\Entities\Manager::class}
 {var $iterator = $onlyShowManagers ? $managers : $followers}
 {var $count    = $paginatorConf->count}
