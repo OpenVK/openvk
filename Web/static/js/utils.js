@@ -635,3 +635,17 @@ if (typeof window !== "undefined" && !window.imLog) {
     window.imLog.isEnabled = window.isImVerboseLogging;
 }
 
+document.addEventListener('click', function (event) {
+    document.querySelectorAll('details.profile_actions[open]').forEach(function (details) {
+        if (!(event.target instanceof Element) || !details.contains(event.target) || event.target.closest('.profile_actions_menu')) {
+            details.removeAttribute('open');
+        }
+    });
+});
+
+document.addEventListener('keydown', function (event) {
+    if (event.key !== 'Escape') return;
+    document.querySelectorAll('details.profile_actions[open]').forEach(function (details) {
+        details.removeAttribute('open');
+    });
+});
