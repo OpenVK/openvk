@@ -345,6 +345,10 @@ class Post extends Postable
             return false;
         }
 
+        if ($this->isGeoblockedFor($user)) {
+            return false;
+        }
+
         return $this->getWallOwner()->canBeViewedBy($user);
     }
 

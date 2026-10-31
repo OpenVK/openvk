@@ -8,6 +8,7 @@
 {var $canBePinned = $post->canBePinnedBy($thisUser ?? NULL)}
 {var $canBeDeleted = $post->canBeDeletedBy($thisUser ?? NULL)}
 {var $canBeArchived = $post->canBeArchivedBy($thisUser ?? NULL)}
+{var $isBlocked = $post->isGeoblockedFor($thisUser)}
 {if $post->isDeactivationMessage() && $post->getText()}
     {var $deac = "post_deact"}
 {else}
@@ -75,29 +76,33 @@
                     <div class="text" id="text{$post->getPrettyId()}">
                         {var $owner = $author->getId()}
 
-                        <span data-text="{$post->getText(false)}" class="really_text {if $bigText}collapsed_text{/if}">{$post->getText()|noescape}</span>
-                        {if $bigText}
-                        <a class="collapse_button" onclick="javascript:expandText(this)">{_show_more}</a>
-                        {/if}
+                        {if $isBlocked}
+                            {include "../postable/geoblock_mark.latte"}
+                        {else}
+                            <span data-text="{$post->getText(false)}" class="really_text {if $bigText}collapsed_text{/if}">{$post->getText()|noescape}</span>
+                            {if $bigText}
+                            <a class="collapse_button" onclick="javascript:expandText(this)">{_show_more}</a>
+                            {/if}
 
-                        {var $width = ($bigWall ?? false) ? 550 : 320}
-                        {if isset($nestedLevel)}
-                            {var $width = $width - 70 * $nestedLevel}
-                        {/if}
-                        {var $attachmentsLayout = $post->getChildrenWithLayout($width)}
-                        <div n:ifcontent class="attachments attachments_b" style="height: {$attachmentsLayout->height|noescape}; width: {$attachmentsLayout->width|noescape};">
-                            <div class="attachment" n:foreach="$attachmentsLayout->tiles as $attachment" style="float: {$attachment[3]|noescape}; width: {$attachment[0]|noescape}; height: {$attachment[1]|noescape};">
-                                {include "../attachment.latte", attachment => $attachment[2], parent => $post, parentType => "post", tilesCount => sizeof($attachmentsLayout->tiles)}
+                            {var $width = ($bigWall ?? false) ? 550 : 320}
+                            {if isset($nestedLevel)}
+                                {var $width = $width - 70 * $nestedLevel}
+                            {/if}
+                            {var $attachmentsLayout = $post->getChildrenWithLayout($width)}
+                            <div n:ifcontent class="attachments attachments_b" style="height: {$attachmentsLayout->height|noescape}; width: {$attachmentsLayout->width|noescape};">
+                                <div class="attachment" n:foreach="$attachmentsLayout->tiles as $attachment" style="float: {$attachment[3]|noescape}; width: {$attachment[0]|noescape}; height: {$attachment[1]|noescape};">
+                                    {include "../attachment.latte", attachment => $attachment[2], parent => $post, parentType => "post", tilesCount => sizeof($attachmentsLayout->tiles)}
+                                </div>
                             </div>
-                        </div>
 
-                        <div n:ifcontent class="attachments attachments_m">
-                            <div class="attachment" n:foreach="$attachmentsLayout->extras as $attachment">
-                                {include "../attachment.latte", attachment => $attachment}
+                            <div n:ifcontent class="attachments attachments_m">
+                                <div class="attachment" n:foreach="$attachmentsLayout->extras as $attachment">
+                                    {include "../attachment.latte", attachment => $attachment}
+                                </div>
                             </div>
-                        </div>
+                        {/if}
                     </div>
-                    <div n:if="$post->getGeo()" class="post-geo">
+                    <div n:if="$post->getGeo() && !$isBlocked" class="post-geo">
                         <div onclick="javascript:openGeo({$post->getGeo()}, {$post->getTargetWall()}, {$post->getVirtualId()})">
                             <svg class="map_svg_icon" width="13" height="12" viewBox="0 0 3.4395833 3.175">
                                 <g><path d="M 1.7197917 0.0025838216 C 1.1850116 0.0049444593 0.72280427 0.4971031 0.71520182 1.0190592 C 0.70756921 1.5430869 1.7223755 3.1739665 1.7223755 3.1739665 C 1.7223755 3.1739665 2.7249195 1.5439189 2.7243815 0.99632161 C 2.7238745 0.48024825 2.2492929 0.00024648357 1.7197917 0.0025838216 z M 1.7197917 0.52606608 A 0.48526123 0.48526123 0 0 1 2.2050334 1.0113078 A 0.48526123 0.48526123 0 0 1 1.7197917 1.4965495 A 0.48526123 0.48526123 0 0 1 1.23455 1.0113078 A 0.48526123 0.48526123 0 0 1 1.7197917 0.52606608 z " /></g>
@@ -113,10 +118,10 @@
                         <br/>
                         &nbsp;! {_post_is_ad}
                     </div>
-                    <div n:if="$post->hasSource()" class="sourceDiv">
+                    <div n:if="$post->hasSource() && !$isBlocked" class="sourceDiv">
                         <a onclick="openSource(event)" title="{$post->getSource()}" href="{$post->getSource()}">{_source}</a>
                     </div>
-                    <div n:if="$post->isSigned()" class="post-signature">
+                    <div n:if="$post->isSigned() && !$isBlocked" class="post-signature">
                         {var $actualAuthor = $post->getOwner(false)}
                         <span>
                             {_author}:
@@ -127,7 +132,7 @@
                     </div>
                 </div>
                 <div class='post-edit' n:if='!$compact'></div>
-                <div n:if="!($compact ?? false)" class="post-menu">
+                <div n:if="!($compact ?? false) && !$isBlocked" class="post-menu">
                     {if !isset($thisUser)}
                         {var $forceNoDeleteLink = true}
                         {var $forceNoPinLink = true}

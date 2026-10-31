@@ -10,6 +10,7 @@ use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\Repositories\Comments;
+use openvk\Web\Models\Entities\Relationships\Geoban;
 use Chandler\Database\DatabaseConnection as DB;
 use Nette\InvalidStateException as ISE;
 use Nette\Database\Table\Selection;
@@ -429,5 +430,10 @@ abstract class Postable extends Attachable
     public function getAttachmentString(): string
     {
         return $this->shortName . $this->getPrettyIdWithKey();
+    }
+
+    public function isGeoblockedFor(?User $user = null)
+    {
+        return Geoban::isSomethingBannedFor($this, $user) != null;
     }
 }

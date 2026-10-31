@@ -139,13 +139,17 @@ class Geoban extends RowModel
 
     public static function isSomethingBannedFor(mixed $model, ?User $user): ?RowModel
     {
+        if (!OPENVK_ROOT_CONF["openvk"]["preferences"]["geo"]["bans"]["enabled"]) {
+            return null;
+        }
+
         $modelCode = self::resolveModelCode($model);
         $modelId   = self::resolveModelId($model);
         if (is_null($modelCode) || is_null($modelId)) {
             return null;
         }
 
-        if ($user->canSeeGeoblocked()) {
+        if ($user && $user->canSeeGeoblocked()) {
             return null;
         }
 
@@ -170,7 +174,7 @@ class Geoban extends RowModel
                 }
             }
 
-            if (method_exists($model, "canBeModifiedBy") && $model->canBeModifiedBy($user)) {
+            if (method_exists($model, "canBeModifiedBy") && $user && $model->canBeModifiedBy($user)) {
                 return null;
             }
         }

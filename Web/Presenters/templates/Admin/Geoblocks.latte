@@ -29,7 +29,7 @@
         <tbody>
             <tr n:foreach="$geoblocks as $geoban">
                 <td>{$geoban->getId()}</td>
-                <td>{$geoban->getModelName()} ({$geoban->getModelCode()})</td>
+                <td>{$geoban->getModelName()}</td>
                 <td>{$geoban->getModelId()}</td>
                 <td>{$geoban->getPlacesRaw()}</td>
                 <td>{$geoban->getReason() ?? "-"}</td>
