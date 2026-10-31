@@ -77,7 +77,7 @@
             <a n:if="$post->isCommentsClosed()" onclick="onCloseCommentsClick(event, false, {$post->getPrettyId()}, 'wall')" class="profile_link" style="display:block;width:96%;">{_open_post_comments}</a>
         {/if}
 
-        <a n:if="$canDelete ?? false" id="_ajaxDelete" class="profile_link" style="display:block;width:96%;" href="/wall{$post->getPrettyId()}/delete">{_delete}</a>
+        <a n:if="$canDelete ?? false" id="_ajaxDelete" class="profile_link" style="display:block;width:96%;" href="/wall{$post->getPrettyId()}/delete" data-restore-url="/wall{$post->getPrettyId()}/restore" onclick="ajax_delete(event)">{_delete}</a>
         <a
             n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL) AND $post->getEditTime()"
             style="display:block;width:96%;"

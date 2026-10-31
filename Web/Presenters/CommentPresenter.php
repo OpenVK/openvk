@@ -237,7 +237,10 @@ final class CommentPresenter extends OpenVKPresenter
 
         $comment = (new Comments())->get($id);
         $isAjax = $_SERVER["REQUEST_METHOD"] === "POST" && $this->postParam("ajax") == "1";
-        if (!$comment) {
+        if ($isAjax) {
+            $this->assertNoCSRF();
+        }
+        if (!$comment || $comment->isDeleted()) {
             $this->notFound();
         }
         if (!$comment->canBeDeletedBy($this->user->identity)) {
@@ -247,7 +250,13 @@ final class CommentPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("forbidden"), 0, $isAjax);
         }
 
-        $comment->delete();
+        if ($isAjax) {
+            $comment->deletePreservingReferences();
+            $restoreToken = $this->makeRestoreToken(Comment::class, $id);
+            $this->returnJson(["success" => true, "restore_token" => $restoreToken]);
+        } else {
+            $comment->delete();
+        }
         $this->flashFail(
             "succ",
             tr("success"),
@@ -255,5 +264,32 @@ final class CommentPresenter extends OpenVKPresenter
             0,
             $isAjax
         );
+    }
+
+    public function renderRestoreComment(int $id): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction(true);
+        $this->assertNoCSRF();
+
+        if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+            $this->throwError(405, "Method Not Allowed", "POST required.");
+        }
+
+        $comment = (new Comments())->get($id);
+        if (!$comment || !$comment->isDeleted()) {
+            $this->notFound();
+        }
+
+        $target = $comment->getTarget();
+        if (!$target || $target->isDeleted() || !$target->canBeViewedBy($this->user->identity) ||
+            !$comment->canBeDeletedBy($this->user->identity) ||
+            ($target instanceof Post && $target->getWallOwner()->isBanned())) {
+            $this->throwError(403, "Forbidden", tr("error_access_denied"));
+        }
+
+        $this->assertRestoreToken($comment);
+        $comment->undelete();
+        $this->returnJson(["success" => true]);
     }
 }

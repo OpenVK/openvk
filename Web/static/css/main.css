@@ -1987,6 +1987,7 @@ body.scrolled .toTop:hover,
 
 .post-deleted {
     opacity: 1;
+    margin: 5px 0;
     /*animation-name: post-deleted;
     animation-duration: 5s;*/
 }

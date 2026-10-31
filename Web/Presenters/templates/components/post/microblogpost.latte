@@ -61,7 +61,7 @@
 
                     <span class="nobold pinned_mark">{_pinned}</span>
 
-                    <a onclick="ajax_delete(event)" n:if="$canBeDeleted && !($forceNoDeleteLink ?? false) && $compact == false" class="postAction delete" href="/wall{$post->getPrettyId()}/delete"></a>
+                    <a onclick="ajax_delete(event)" n:if="$canBeDeleted && !($forceNoDeleteLink ?? false) && $compact == false" class="postAction delete" href="/wall{$post->getPrettyId()}/delete" data-restore-url="/wall{$post->getPrettyId()}/restore"></a>
                     <a n:if="!$canBeDeleted" class="postAction report" title="{_report}" href="javascript:reportPost({$post->getId()})"></a>
 
                     {if $canBePinned && !($forceNoPinLink ?? false) && $compact == false}

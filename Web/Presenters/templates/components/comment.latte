@@ -51,7 +51,7 @@
                         {if !$timeOnly}
                             {if $comment->canBeDeletedBy($thisUser)}
                                 <span>|</span>
-                                <a href="/comment{$comment->getId()}/delete" onclick="ajax_delete(event)">{_delete}</a>
+                                <a href="/comment{$comment->getId()}/delete" data-restore-url="/comment{$comment->getId()}/restore" onclick="ajax_delete(event)">{_delete}</a>
                             {/if}
                             {if !$noEdit && $comment->canBeEditedBy($thisUser)}
                                 <span>|</span>

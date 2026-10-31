@@ -82,6 +82,8 @@ class Post extends Postable
         return $this->getRecord()
                  ->related("attachments.attachable_id")
                  ->where("attachable_type", get_class($this))
+                 ->where("(target_type != ? OR target_id IN (SELECT id FROM posts WHERE deleted = 0))", Post::class)
+                 ->where("(target_type != ? OR target_id IN (SELECT id FROM comments WHERE deleted = 0))", Comment::class)
                  ->count("*");
     }
 

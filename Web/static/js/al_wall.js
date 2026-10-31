@@ -1214,8 +1214,13 @@ class PostViewer extends Viewer {
                 author_name = nameBlock.find(".post-author-name").first().textContent;
                 author_url = nameBlock.find("a").first().getAttribute("href");
                 nameBlock.find("a").first().remove();
-                dates = post.find(".post-author .date").first().textContent;
-                postUrl = post.find(".post-author .date").first().getAttribute("href");
+                const dateLink = post.find(".post-author .date").first();
+                const dateText = dateLink.cloneNode(true);
+                if (!post.hasClass("is-pinned")) {
+                    dateText.querySelectorAll(".pinned_mark").forEach(mark => mark.remove());
+                }
+                dates = dateText.textContent;
+                postUrl = dateLink.getAttribute("href");
                 author_ava = post.find(".post-author-ava > a > img").first().src;
                 nameBlock.find(".date").first().remove();
                 this.modal.getNode().find("#itemContentActions").prepend(post.find(".like_wrap").last().outerHTML);
@@ -1306,28 +1311,26 @@ class PostViewer extends Viewer {
             msg.context.offset = offset;
 
             const htmls = await msg._downloadPage(id);
-
-            CMessageBox.toggleLoader(false);
-
-            msg.open();
-            msg._updFrame({
-                "html": htmls[0],
-                "cached": htmls[1]
-            });
-
             await msg.loadWallContext();
-
             const it = msg.items[id];
 
+            msg.open();
             if (it == null) {
+                msg._updFrame({
+                    id,
+                    "html": htmls[0],
+                    "cached": htmls[1]
+                });
                 makeError(tr("post_display_error_switching_unavailable"));
             } else {
-                msg.selectItemByApiId(id);
                 it.html = htmls[0];
                 it.cached = htmls[1];
+                await msg.selectItemByApiId(id);
             }
         } catch (e) {
             console.error(e);
+        } finally {
+            CMessageBox.toggleLoader(false);
         }
     }
 }
@@ -1455,27 +1458,6 @@ $(document).on('keydown', '.edit_menu #write', (e) => {
     }
 })
 
-/* on a post page */
-$(document).on("click", "#_ajaxDelete", function (e) {
-    MessageBox(tr('warning'), tr('question_confirm'), [
-        tr('yes'),
-        tr('no')
-    ], [
-        () => {
-            if (e.target.closest(".ovk-msg-all")) {
-                const msg = find_msgbox_by_node(e.target.closest(".ovk-msg-all"));
-                msg._viewer.setCurrentEntryDeleted(true);
-            } else {
-                window.router.route(e.target.href)
-            }
-        },
-        Function.noop
-    ], false, "deletionOfSmth");
-
-    e.stopPropagation()
-    return e.preventDefault();
-});
-
 /* on a wall */
 $(document).on("click", "#_wallDelete", function (e) {
     MessageBox(tr('warning'), tr('question_confirm'), [
@@ -1485,8 +1467,11 @@ $(document).on("click", "#_wallDelete", function (e) {
         async () => {
             const post = e.target.attributes['data'].value
             const href = e.target.href + "?ajax=1"
+            const form = new FormData()
+            form.append("hash", window.router.csrf)
             const req = await fetch(href, {
-                method: "POST"
+                method: "POST",
+                body: form
             })
             const response = await req.json()
             if (response.success == true) {
@@ -4310,50 +4295,110 @@ function onArchivePostButtonClick(e) {
     });
 }
 
-function ajax_delete(event = null) {
-    if (event != null) {
-        event.preventDefault();
-        event.stopPropagation();
+async function ajax_delete(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const link = event.currentTarget;
+    if (link.dataset.deletePending) {
+        return;
+    }
+    const msgbox = link.closest(".ovk-msg-all");
+    const container = msgbox || document;
+    const post = link.closest(".post") || container.querySelector("#post_page_main > .post") ||
+        (msgbox && container.querySelector("#itemContent > .post"));
+    if (!post) {
+        console.error("Could not find the post or comment to delete.");
+        fastError(tr("error"));
+        return;
     }
 
-    const href = event.target.href;
-    const types = event.target.closest(".comment") ? "comment_from_page" : "post";
-    const m = MessageBox(tr("warning"), tr("question_confirm"), [tr("yes"), tr("no")], [() => {
-        const f = new FormData();
-        f.append("hash", window.router.csrf);
-        f.append("ajax", "1")
+    const viewerPost = msgbox && post.parentElement?.id === "itemContent";
+    const pageMeta = post.parentElement?.id === "post_page_main" ? container.querySelector("#post_page_meta") : null;
+    const pageMetaDisplay = pageMeta?.style.display;
+    const type = post.classList.contains("comment") ? "comment_from_page" : "post";
 
-        fetch(href, {
-            "method": "POST",
-            "body": f
-        }).then(f => {
-            f.text().then(text => {
-                try {
-                    const data = JSON.parse(text);
-                    if (f.status != 200) {
-                        fastError(f.status);
-                        return;
-                    }
-                    let post_node = null;
+    const request = async (url, restoreToken = null) => {
+        const form = new FormData();
+        form.append("hash", window.router.csrf);
+        form.append("ajax", "1");
+        if (restoreToken) {
+            form.append("restore_token", restoreToken);
+        }
 
-                    if (event.target.closest(".ovk-msg-all") != null) {
-                        post_node = event.target.closest(".ovk-msg-all").querySelector(".post");
-                    } else {
-                        post_node = event.target.closest(".post");
-                    }
+        const response = await fetch(url, { method: "POST", body: form });
+        if (!response.ok) {
+            throw new Error(response.status);
+        }
 
-                    post_node.outerHTML = `<div class="post post-divider"><div class="post-deleted">${tr(types + "_is_deleted")}</div></div>`
-                } catch (e) {
-                    console.error(e);
-                    fastError(String(e));
+        const data = await response.json();
+        if (!data.success) {
+            throw new Error(data.flash?.message || tr("error"));
+        }
+
+        return data;
+    };
+
+    const invalidateViewer = () => {
+        if (msgbox && find_msgbox_by_node(msgbox)?._viewer) {
+            reset_msgbox_details(u(msgbox));
+        }
+    };
+
+    link.dataset.deletePending = "1";
+    try {
+        const data = await request(link.href);
+
+        const placeholder = document.createElement("div");
+        placeholder.className = "post post-divider";
+        const message = document.createElement("div");
+        message.className = "post-deleted";
+        message.append(document.createTextNode(tr(type + "_is_deleted") + " "));
+
+        const restore = document.createElement("a");
+        restore.href = link.dataset.restoreUrl;
+        restore.textContent = tr("restore");
+        restore.addEventListener("click", async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (restore.dataset.pending) {
+                return;
+            }
+            restore.dataset.pending = "1";
+            try {
+                await request(restore.href, data.restore_token);
+                placeholder.replaceWith(post);
+                if (pageMeta) {
+                    pageMeta.style.display = pageMetaDisplay;
                 }
-
-                if (event.target.closest(".ovk-msg-all") != null) {
-                    reset_msgbox_details(event.target.closest(".ovk-msg-all"));
+                if (viewerPost) {
+                    msgbox.classList.remove("viewer-deleted");
                 }
-            })
-        })
-    }, () => { }]);
+                invalidateViewer();
+            } catch (error) {
+                console.error(error);
+                fastError(String(error));
+            } finally {
+                delete restore.dataset.pending;
+            }
+        });
+
+        message.append(restore);
+        placeholder.append(message);
+        post.replaceWith(placeholder);
+        if (pageMeta) {
+            pageMeta.style.display = "none";
+        }
+        if (viewerPost) {
+            msgbox.classList.add("viewer-deleted");
+        }
+        invalidateViewer();
+    } catch (error) {
+        console.error(error);
+        fastError(String(error));
+    } finally {
+        delete link.dataset.deletePending;
+    }
 }
 
 function ajax_pin(event = null) {
