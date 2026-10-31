@@ -39,4 +39,9 @@ abstract class Attachable extends RowModel
 
         parent::delete();
     }
+
+    public function deletePreservingReferences(): void
+    {
+        parent::delete();
+    }
 }

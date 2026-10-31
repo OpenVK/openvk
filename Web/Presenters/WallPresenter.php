@@ -674,7 +674,13 @@ final class WallPresenter extends OpenVKPresenter
 
         $post = $this->posts->getPostById($wall, $post_id, true);
         $isAjax = $this->queryParam("ajax") == "1" || ($_SERVER["REQUEST_METHOD"] === "POST" && $this->postParam("ajax") == "1");
-        if (!$post) {
+        if ($isAjax) {
+            if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+                $this->throwError(405, "Method Not Allowed", "POST required.");
+            }
+            $this->assertNoCSRF();
+        }
+        if (!$post || $post->isDeleted()) {
             $this->notFound();
         }
         $user = $this->user->id;
@@ -689,18 +695,17 @@ final class WallPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("forbidden"), null, $isAjax);
         }
 
-        if ($wall < 0) {
-            $canBeDeletedByOtherUser = $wallOwner->canBeModifiedBy($this->user->identity);
-        } else {
-            $canBeDeletedByOtherUser = false;
-        }
-
+        $restoreToken = null;
         if (!is_null($user)) {
-            if ($post->getTargetWall() < 0 && !$post->getWallOwner()->canBeModifiedBy($this->user->identity) && $post->getWallOwner()->getWallType() != 1 && $post->getSuggestionType() == 0) {
-                $this->flashFail("err", tr("failed_to_delete_post"), tr("error_deleting_suggested"), null, $isAjax);
+            if (!$post->canBeDeletedBy($this->user->identity)) {
+                $this->flashFail("err", tr("failed_to_delete_post"), tr("forbidden"), null, $isAjax);
             }
 
-            if ($post->getOwnerPost() == $user || $post->getTargetWall() == $user || $canBeDeletedByOtherUser) {
+            if ($isAjax) {
+                $postId = $post->getId();
+                $post->deletePreservingReferences();
+                $restoreToken = $this->makeRestoreToken(Post::class, $postId);
+            } else {
                 $post->unwire();
                 $post->delete();
             }
@@ -709,10 +714,35 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         if ($isAjax) {
-            $this->returnJson(["success" => true]);
+            $this->returnJson(["success" => true, "restore_token" => $restoreToken]);
         } else {
             $this->redirect($wall < 0 ? "/club" . ($wall * -1) : "/id" . $wall);
         }
+    }
+
+    public function renderRestore(int $wall, int $post_id): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction(true);
+        $this->assertNoCSRF();
+
+        if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+            $this->throwError(405, "Method Not Allowed", "POST required.");
+        }
+
+        $post = $this->posts->getPostById($wall, $post_id, true);
+        if (!$post || !$post->isDeleted()) {
+            $this->notFound();
+        }
+
+        $wallOwner = $post->getWallOwner();
+        if (!$wallOwner || $wallOwner->isBanned() || !$post->canBeDeletedBy($this->user->identity)) {
+            $this->throwError(403, "Forbidden", tr("error_access_denied"));
+        }
+
+        $this->assertRestoreToken($post);
+        $post->undelete();
+        $this->returnJson(["success" => true]);
     }
 
     public function renderArchive(int $wall, int $post_id): void

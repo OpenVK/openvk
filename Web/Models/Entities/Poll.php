@@ -188,7 +188,13 @@ class Poll extends Attachable
 
     public function canVote(User $user): bool
     {
-        return !$this->hasEnded() && !$this->hasVoted($user) && !is_null($this->getAttachedPost()) && $this->getAttachedPost()->getSuggestionType() == 0;
+        if ($this->hasEnded() || $this->hasVoted($user)) {
+            return false;
+        }
+
+        $post = $this->getAttachedPost();
+
+        return $post !== null && $post->getSuggestionType() == 0;
     }
 
     public function vote(User $user, array $optionIds): void
@@ -342,19 +348,23 @@ class Poll extends Attachable
         }
     }
 
-    public function getAttachedPost()
+    public function getAttachedPost(): ?Post
     {
-        $post = DatabaseConnection::i()->getContext()->table("attachments")
-            ->where(
-                ["attachable_type" => static::class,
-                    "attachable_id"    => $this->getId()]
-            )->fetch();
-
-        if (!is_null($post->target_id)) {
-            return (new Posts())->get($post->target_id);
-        } else {
-            return null;
+        $attachments = DatabaseConnection::i()->getContext()->table("attachments")
+            ->where([
+                "attachable_type" => static::class,
+                "attachable_id"   => $this->getId(),
+                "target_type"     => Post::class,
+            ]);
+        $posts = new Posts();
+        foreach ($attachments as $attachment) {
+            $post = $posts->get($attachment->target_id);
+            if ($post && !$post->isDeleted()) {
+                return $post;
+            }
         }
+
+        return null;
     }
 
     public function toVkApiStruct(?User $user = null): object
