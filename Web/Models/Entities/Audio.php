@@ -272,6 +272,10 @@ class Audio extends Media
     # NOTICE may flush model to DB if it was just processed
     public function isAvailable(): bool
     {
+        if ($this->isGeoblockedFor(null)) {
+            return false;
+        }
+
         if ($this->getRecord()->processed) {
             return true;
         }

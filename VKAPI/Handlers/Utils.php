@@ -95,7 +95,7 @@ final class Utils extends VKAPIRequestHandler
 
     public function resolveOffset(int $owner_id, int $id, ?int $id2 = null, string $method = "wall.get", int $perPage = 10, bool $rev = false)
     {
-        $this->requireUser();
+        // $this->requireUser();
 
         if ($perPage <= 0) {
             $this->fail(100, "One of the parameters specified was missing or invalid");

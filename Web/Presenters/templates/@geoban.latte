@@ -12,7 +12,7 @@
         {if $thisUser && $thisUser->isAdmin()}
             <a href="/admin/geoblock/id{$ban->getId()}">{tr("unavailable_in_your_region_desc_less")}</a>
         {else}
-            <a href="/admin/geoblock/id{$ban->getId()}">{tr("unavailable_in_your_region_desc", $country, $ban->getReason(), $ban->getTime())}</a>
+            {tr("unavailable_in_your_region_desc", $country, $ban->getReason(), $ban->getTime())}
         {/if}
     </p>
 </center>
