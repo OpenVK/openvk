@@ -95,6 +95,9 @@
             </a>
         </div>
         <div n:ifset="$thisUser" id="profile_links">
+            {var $canAdmin = $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+            {var $canSupport = $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
+            {var $canSubstitute = $thisUser->getChandlerUser()->can("substitute")->model('openvk\Web\Models\Entities\User')->whichBelongsTo(0)}
             {if $user->getId() == $thisUser->getId()}
                 <div id="profile_link" style="width: 194px;">
                     <a href="/edit" class="link">{_edit_page}</a>
@@ -103,40 +106,6 @@
                     <a onClick="showIncreaseRatingDialog({$thisUser->getCoins()}, {ltrim($thisUser->getUrl(), '/')}, {$csrfToken})" class="link">{_increase_rating}</a>
                 </div>
             {else}
-                {if $thisUser->getChandlerUser()->can("substitute")->model('openvk\Web\Models\Entities\User')->whichBelongsTo(0)}
-                    <a href="/setSID/{$user->getChandlerUser()->getId()}?hash={rawurlencode($csrfToken)}" class="profile_link" style="width: 194px;">
-                        {tr("login_as", $user->getFirstName())}
-                    </a>
-                {/if}
-
-                {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
-                    <a href="/admin/users/id{$user->getId()}" class="profile_link" style="width: 194px;">
-                        {_manage_user_action}
-                    </a>
-                    <a href="javascript:banUser()" class="profile_link" style="width: 194px;">
-                        {_ban_user_action}
-                    </a>
-                    <a href="javascript:warnUser()" class="profile_link" style="width: 194px;">
-                        {_warn_user_action}
-                    </a>
-                    <a href="/admin/user{$user->getId()}/bans" class="profile_link" rel="nofollow">
-                        {_blocks}
-                    </a>
-                    <a href="/admin/logs?uid={$user->getId()}" class="profile_link" style="width: 194px;" rel="nofollow">
-                        {_last_actions}
-                    </a>
-                {/if}
-
-                {if $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
-                    <a href="javascript:toggleBanInSupport()" class="profile_link" style="width: 194px;">
-                        {if $user->isBannedInSupport()}
-                            {_unban_in_support_user_action}
-                        {else}
-                            {_ban_in_support_user_action}
-                        {/if}
-                    </a>
-                {/if}
-
                 <a style="width: 194px;" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && ($user->getGiftCount() == 0 || !$user->getPrivacyPermission('gifts.read', $thisUser ?? NULL)) && $user->getPrivacyPermission('gifts.send', $thisUser ?? NULL)" href="/gifts?act=pick&user={$user->getId()}" class="profile_link">{_send_gift}</a>
                 <a style="width: 194px;" n:if="$user->getPrivacyPermission('messages.write', $thisUser) || ($thisUser && $user->hasActiveDialogueWith($thisUser))" onclick="showUserDialog(event, {$user->getRealId()})" href="/im?sel={$user->getId()}" class="profile_link">{_send_message}</a>
 
@@ -180,6 +149,52 @@
                 </a>
             {/if}
             <a style="width: 194px;" n:if="$user->getFollowersCount() > 0" href="/friends{$user->getId()}?act=incoming" class="profile_link">{tr("followers", $user->getFollowersCount())}</a>
+            {if $user->getId() !== $thisUser->getId() && ($canAdmin || $canSupport || $canSubstitute)}
+                <details class="profile_actions">
+                    <summary class="profile_link">{_administrator_actions}</summary>
+                    <div class="profile_actions_menu">
+                        {if $canAdmin}
+                            <a href="/admin/users/id{$user->getId()}" class="profile_link">
+                                <img class="profile_actions_icon" src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/user-properties.png" alt="" />
+                                {_manage_user_action}
+                            </a>
+                            <a href="javascript:banUser()" class="profile_link">
+                                <img class="profile_actions_icon" src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/im-ban-user.png" alt="" />
+                                {_ban_user_action}
+                            </a>
+                            <a href="javascript:warnUser()" class="profile_link">
+                                <img class="profile_actions_icon" src="/assets/packages/static/openvk/img/oxygen-icons/16x16/status/dialog-warning.png" alt="" />
+                                {_warn_user_action}
+                            </a>
+                            <a href="/admin/user{$user->getId()}/bans" class="profile_link" rel="nofollow">
+                                <img class="profile_actions_icon" src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/view-list-text.png" alt="" />
+                                {_blocks}
+                            </a>
+                            <a href="/admin/logs?uid={$user->getId()}" class="profile_link" rel="nofollow">
+                                <img class="profile_actions_icon" src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/view-history.png" alt="" />
+                                {_last_actions}
+                            </a>
+                        {/if}
+                        {if $canSupport}
+                            <a href="javascript:toggleBanInSupport()" class="profile_link">
+                                <img class="profile_actions_icon" src="/assets/packages/static/openvk/img/oxygen-icons/16x16/apps/help-browser.png" alt="" />
+                                {if $user->isBannedInSupport()}
+                                    {_unban_in_support_user_action}
+                                {else}
+                                    {_ban_in_support_user_action}
+                                {/if}
+                            </a>
+                        {/if}
+                        {if $canSubstitute}
+                            <div n:if="$canAdmin || $canSupport" class="profile_actions_divider"></div>
+                            <a href="/setSID/{$user->getChandlerUser()->getId()}?hash={rawurlencode($csrfToken)}" class="profile_link">
+                                <img class="profile_actions_icon" src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/system-switch-user.png" alt="" />
+                                {tr("login_as", $user->getFirstName())}
+                            </a>
+                        {/if}
+                    </div>
+                </details>
+            {/if}
         </div>
         <div n:if="isset($thisUser) && !$thisUser->prefersNotToSeeRating()" class="profile-hints">
             {var $completeness = $user->getProfileCompletenessReport()}

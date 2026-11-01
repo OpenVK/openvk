@@ -1180,6 +1180,10 @@
         border-bottom: unset;
     }
 
+    .profile_actions {
+        width: 100%;
+    }
+
     .profile-hints {
         padding: 13px 8px;
         box-sizing: border-box;

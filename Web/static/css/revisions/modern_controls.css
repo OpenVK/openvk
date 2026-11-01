@@ -76,10 +76,6 @@ only screen and (resolution >=1.25dppx) {
     margin-bottom: 5px;
 }
 
-#profile_links_admin {
-    background: radial-gradient(transparent, var(--error-bg));
-}
-
 #profile_links_common .brand_link {
     width: 100%;
     text-align: center;
