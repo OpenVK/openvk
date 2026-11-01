@@ -410,8 +410,9 @@ final class Photos extends VKAPIRequestHandler
 
         foreach ($photos_splitted_list as $photo_id) {
             $photo_s_id = explode("_", $photo_id);
-            $photo = (new PhotosRepo())->getByOwnerAndVID((int) $photo_s_id[0], (int) $photo_s_id[1], $photo_s_id[2] ?? null);
-            if (!$photo || $photo->isDeleted() || !$photo->canBeViewedBy($this->getUser())) {
+            $access_key = $photo_s_id[2] ?? null;
+            $photo = (new PhotosRepo())->getByOwnerAndVID((int) $photo_s_id[0], (int) $photo_s_id[1], $access_key);
+            if (!$photo || $photo->isDeleted() || !$photo->canBeViewedBy($this->getUser(), $access_key)) {
                 continue;
             }
 
@@ -471,9 +472,10 @@ final class Photos extends VKAPIRequestHandler
 
             foreach ($photos as $photo) {
                 $id = explode("_", $photo);
+                $access_key = $id[2] ?? null;
 
-                $photo_entity = (new PhotosRepo())->getByOwnerAndVID((int) $id[0], (int) $id[1], $id[2] ?? null);
-                if (!$photo_entity || $photo_entity->isDeleted() || !$photo_entity->canBeViewedBy($this->getUser())) {
+                $photo_entity = (new PhotosRepo())->getByOwnerAndVID((int) $id[0], (int) $id[1], $access_key);
+                if (!$photo_entity || $photo_entity->isDeleted() || !$photo_entity->canBeViewedBy($this->getUser(), $access_key)) {
                     continue;
                 }
 
