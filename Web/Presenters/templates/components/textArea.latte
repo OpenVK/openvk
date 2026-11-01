@@ -3,9 +3,12 @@
 {var $textAreaId = ($custom_id ?? NULL) === NULL ? $textAreaId : $custom_id}
 
 {* default variables *}
-{var $anonHide = $anonHide ?? false}
+{default $anonHide = false}
+{default $owner = null}
+{default $club = null}
+{default $uploadOwner = null}
 
-<div id="write" n:class='has_emoji_picker, model_content_textarea, $is_comments ? textarea_comments, $club ? textarea_club' style="padding: 5px 0;" data-id="{isset($owner) ? (gettype($owner) == 'integer' ? $owner : $owner->getRealId())}" data-oid="{isset($uploadOwner) ? (gettype($uploadOwner) == 'integer' ? $uploadOwner : $uploadOwner->getRealId())}">
+<div id="write" n:class='has_emoji_picker, model_content_textarea, $is_comments ? textarea_comments, $club ? textarea_club' style="padding: 5px 0;" data-id="{$owner !== null ? (gettype($owner) == 'integer' ? $owner : $owner->getRealId()) : ""}" data-oid="{$uploadOwner !== null ? (gettype($uploadOwner) == 'integer' ? $uploadOwner : $uploadOwner->getRealId()) : ""}">
     <form action="{$route}" method="post" enctype="multipart/form-data" style="margin:0;">
         <div class="textareas">
             {include "content-editable.latte",
@@ -34,7 +37,7 @@
             <div n:if="$postOpts ?? true" class="post-opts">
                 {var $anonEnabled = \OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']}
 
-                {if !is_null($thisUser) && !is_null($club ?? NULL) && isset($owner) && $owner < 0}
+                {if !is_null($thisUser) && $club !== null && $owner !== null && $owner < 0}
                     {if $club->canBeModifiedBy($thisUser)}
                         {var $anonHide = true}
 

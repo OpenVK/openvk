@@ -37,6 +37,9 @@ class SecurityFilter extends HTMLPurifier_Filter
     }
 }
 
+/**
+ * @method void setCached_Content(?string $content)
+ */
 class Note extends Postable
 {
     protected $tableName = "notes";

@@ -45,7 +45,7 @@ final class Places extends VKAPIRequestHandler
             }
         }
 
-        if (empty($result) && !empty($ids)) {
+        if (empty($result)) {
             $result[] = (object) [
                 "id"    => (int) ($ids[0] ?? 0),
                 "cid"   => (int) ($ids[0] ?? 0),
@@ -108,7 +108,7 @@ final class Places extends VKAPIRequestHandler
             ];
         }
 
-        if (empty($result) && !empty($ids)) {
+        if (empty($result)) {
             $result[] = (object) [
                 "id"    => (int) ($ids[0] ?? 1),
                 "cid"   => (int) ($ids[0] ?? 1),

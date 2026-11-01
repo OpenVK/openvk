@@ -2156,7 +2156,7 @@ final class Messages extends VKAPIRequestHandler
                     }
                 }
                 if (!empty($missingUserIds)) {
-                    $reqFields = !empty($fields) ? $fields : "online,first_name,last_name,photo_medium_rec,photo_rec";
+                    $reqFields = $fields;
                     $moreUsers = (new APIUsers())->get(implode(',', array_unique($missingUserIds)), $reqFields);
                     foreach ($moreUsers as $uStruct) {
                         $uID = is_array($uStruct) ? ($uStruct['id'] ?? 0) : (is_object($uStruct) ? ($uStruct->id ?? 0) : 0);

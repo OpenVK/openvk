@@ -15,6 +15,9 @@ use Chandler\Database\DatabaseConnection as DB;
 use Nette\InvalidStateException as ISE;
 use Nette\Database\Table\Selection;
 
+/**
+ * @method void setDeleted(int|bool $deleted)
+ */
 class Report extends RowModel
 {
     protected $tableName = "reports";

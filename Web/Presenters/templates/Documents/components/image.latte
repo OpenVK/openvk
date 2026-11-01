@@ -1,5 +1,6 @@
+{default $club = null}
 {var $preview = $doc->hasPreview() ? $doc->getPreview() : NULL}
-{var $copied = !isset($club) ? $doc->isCopiedBy($thisUser) : $doc->isCopiedBy($club)}
+{var $copied = $club === null ? $doc->isCopiedBy($thisUser) : $doc->isCopiedBy($club)}
 {var $modifiable = $doc->canBeModifiedBy($thisUser)}
 
 {* default variables *}

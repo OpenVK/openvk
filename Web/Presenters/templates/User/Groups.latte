@@ -1,4 +1,6 @@
 {extends "../@listView.latte"}
+
+{default $x = null}
 {var $iterator = $user->getClubs($page, $admin)}
 
 {block noscroll}{/block}

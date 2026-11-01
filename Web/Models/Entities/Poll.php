@@ -14,6 +14,9 @@ use openvk\Web\Models\Exceptions\PollLockedException;
 use openvk\Web\Models\Exceptions\AlreadyVotedException;
 use openvk\Web\Models\Exceptions\InvalidOptionException;
 
+/**
+ * @method void setTitle(string $title)
+ */
 class Poll extends Attachable
 {
     protected $tableName = "polls";

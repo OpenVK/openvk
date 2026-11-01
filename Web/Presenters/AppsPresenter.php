@@ -138,6 +138,8 @@ final class AppsPresenter extends OpenVKPresenter
         }
 
         $page = (int) ($this->queryParam("p") ?? 1);
+        $apps = [];
+        $count = 0;
         if ($act == "list") {
             $apps  = $this->apps->getList($page);
             $count = $this->apps->getListCount();

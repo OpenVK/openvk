@@ -2,7 +2,18 @@
 # Used by latte.features.phpstanCommand from phpstan.neon; it must not
 # include the Latte extension itself.
 parameters:
-    level: 0
+    level: 1
     bootstrapFiles:
         - chandler_loader.php
     tmpDir: tmp/phpstan-latte-inner
+    ignoreErrors:
+        # Compiled templates use ??/isset()/empty() for optional include
+        # parameters. The outer Latte extension resolves their types from the
+        # source templates; inside generated PHP they look like undefined
+        # variables, so only these generated-code identifiers are ignored.
+        -
+            identifier: nullCoalesce.variable
+        -
+            identifier: isset.variable
+        -
+            identifier: empty.variable

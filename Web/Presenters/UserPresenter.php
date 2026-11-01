@@ -40,6 +40,8 @@ final class UserPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
+        $this->template->backdrops = $user->getBackDropPictureURLs();
+
         if ($user->isDeleted() || !$user->canBeViewedBy($this->user->identity)) {
             if ($user->isDeactivated()) {
                 $this->template->_template = "User/deactivated.latte";
@@ -93,6 +95,7 @@ final class UserPresenter extends OpenVKPresenter
 
     public function renderFOAF(): void
     {
+        $user = null;
         if ($this->queryParam("id")) {
             $user = $this->users->get(intval($this->queryParam("id")));
         }
@@ -292,6 +295,7 @@ final class UserPresenter extends OpenVKPresenter
         }
 
         $user = $this->users->get($id);
+        $this->template->backdrops = $user->getBackDropPictureURLs();
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->willExecuteWriteAction($_GET['act'] === "status");
 

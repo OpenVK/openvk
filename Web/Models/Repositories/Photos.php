@@ -92,7 +92,6 @@ class Photos
 
     public function getEveryUserPhoto(User $user, int $offset = 0, int $limit = 10): \Traversable
     {
-        $perPage ??= OPENVK_DEFAULT_PER_PAGE;
         $photos = $this->photos->where([
             "owner"    => $user->getId(),
             "deleted"  => 0,

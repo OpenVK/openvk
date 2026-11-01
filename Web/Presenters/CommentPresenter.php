@@ -84,6 +84,7 @@ final class CommentPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
+        $club = null;
         if ($entity instanceof Post && $entity->getTargetWall() < 0) {
             $club = (new Clubs())->get(abs($entity->getTargetWall()));
         } elseif ($entity instanceof Topic) {
@@ -217,7 +218,7 @@ final class CommentPresenter extends OpenVKPresenter
         }
 
         if ($replyToUser instanceof User && $replyToUser != $this->user) {
-            (new ReplyCommentNotification($replyToUser, $comment, $entity, $this->user->identity))->emit();
+            (new ReplyCommentNotification($replyToUser, $comment, $this->user->identity))->emit();
         }
 
         if ($isAjax == "1") {

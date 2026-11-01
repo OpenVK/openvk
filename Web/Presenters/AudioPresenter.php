@@ -42,6 +42,7 @@ final class AudioPresenter extends OpenVKPresenter
         $this->template->_template = "Audio/List.latte";
         $page = (int) ($this->queryParam("p") ?? 1);
         $audios = [];
+        $audiosCount = 0;
 
         if ($mode === "list") {
             $entity = null;
@@ -344,6 +345,7 @@ final class AudioPresenter extends OpenVKPresenter
             $audio = $this->audios->get($id);
 
             if ($audio && !$audio->isDeleted() && !$audio->isWithdrawn()) {
+                $playlist = null;
                 if (!empty($this->postParam("playlist"))) {
                     $playlist = (new Audios())->getPlaylist((int) $this->postParam("playlist"));
 

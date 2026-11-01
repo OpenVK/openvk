@@ -216,6 +216,10 @@ class UpgradeCommand extends Command
             return $rc;
         }
 
+        if ($this->eventDb === null) {
+            return 0;
+        }
+
         $installFile = file_get_contents(__DIR__ . "/../install/init-migration-table-event.sql");
 
         return $this->executeSqlScript(32, $installFile, $io, false, true);

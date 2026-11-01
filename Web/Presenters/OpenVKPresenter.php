@@ -254,9 +254,11 @@ abstract class OpenVKPresenter extends SimplePresenter
                 if ($this->user->identity->isDeactivated()) {
                     header("HTTP/1.1 403 Forbidden");
                     $this->getTemplatingEngine()->render(__DIR__ . "/templates/@deactivated.latte", [
-                        "thisUser"    => $this->user->identity,
-                        "csrfToken"   => $GLOBALS["csrfToken"],
-                        "isTimezoned" => Session::i()->get("_timezoneOffset"),
+                        "thisUser"     => $this->user->identity,
+                        "csrfToken"    => $GLOBALS["csrfToken"],
+                        "isTimezoned"  => Session::i()->get("_timezoneOffset"),
+                        "parentModule" => $this->getCaller(),
+                        "backdrops"    => null,
                     ]);
                 } else {
                     Authenticator::i()->logout();
@@ -270,9 +272,11 @@ abstract class OpenVKPresenter extends SimplePresenter
             if ($this->user->identity->isBanned() && !$this->banTolerant) {
                 header("HTTP/1.1 403 Forbidden");
                 $this->getTemplatingEngine()->render(__DIR__ . "/templates/@banned.latte", [
-                    "thisUser"    => $this->user->identity,
-                    "csrfToken"   => $GLOBALS["csrfToken"],
-                    "isTimezoned" => Session::i()->get("_timezoneOffset"),
+                    "thisUser"     => $this->user->identity,
+                    "csrfToken"    => $GLOBALS["csrfToken"],
+                    "isTimezoned"  => Session::i()->get("_timezoneOffset"),
+                    "parentModule" => $this->getCaller(),
+                    "backdrops"    => null,
                 ]);
                 exit;
             }
@@ -281,9 +285,11 @@ abstract class OpenVKPresenter extends SimplePresenter
             if (!$this->user->identity->isActivated() && !$this->activationTolerant) {
                 header("HTTP/1.1 403 Forbidden");
                 $this->getTemplatingEngine()->render(__DIR__ . "/templates/@email.latte", [
-                    "thisUser"    => $this->user->identity,
-                    "csrfToken"   => $GLOBALS["csrfToken"],
-                    "isTimezoned" => Session::i()->get("_timezoneOffset"),
+                    "thisUser"     => $this->user->identity,
+                    "csrfToken"    => $GLOBALS["csrfToken"],
+                    "isTimezoned"  => Session::i()->get("_timezoneOffset"),
+                    "parentModule" => $this->getCaller(),
+                    "backdrops"    => null,
                 ]);
                 exit;
             }
@@ -345,6 +351,8 @@ abstract class OpenVKPresenter extends SimplePresenter
 
         $this->template->baseUrl = ovk_scheme(true) . $_SERVER['HTTP_HOST'];
         $this->template->instance_name = OPENVK_ROOT_CONF['openvk']['appearance']['name'];
+        $this->template->parentModule = $this->getCaller();
+        $this->template->backdrops = null;
 
         header("X-OpenVK-User-Validated: $userValidated");
         header("X-Accel-Expires: $cacheTime");

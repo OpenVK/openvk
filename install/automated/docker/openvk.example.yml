@@ -203,12 +203,16 @@ openvk:
                 dsn: "mysql:host=mariadb-eventdb;dbname=openvk_eventdb" # or unix_socket=/tmp/mysql.sock
                 user: "openvk"
                 password: "openvk"
+        redis:
+            addr: "redis"
+            port: 6379
+            password: ""
         notificationsBroker:
             enable: true
-            redis:
-                addr: "redis"
-                port: 6379
-                password: ""
             stream:
                 maxlen: 1000
                 prefix: "ovk_notifs"
+        im:
+            enable: false
+            server_url: "http://127.0.0.1:8080"
+            lp_server_addr: "openvk.org"

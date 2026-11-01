@@ -13,7 +13,7 @@
 {else}
     {var $deac = "post_deact_silent"}
 {/if}
-{var $compact = isset($compact) ? true : false}
+{default $compact = false}
 
 {var $bigText = mb_strlen($post->getText()) > 520 || substr_count($post->getText(), "\n") + 1 > 10}
 
@@ -23,7 +23,7 @@
             <td class="post-author-ava" width="54" valign="top">
                 <a class="post-author-url" href="{$author->getURL()}">
                     <img src="{$author->getAvatarURL('miniscule')}" class="post-avatar" width="50" loading=lazy />
-                    <span n:if="!$post->isPostedOnBehalfOfGroup() && !($compact ?? false) && $author->isOnline()" class="post-online">{_online}</span>
+                    <span n:if="!$post->isPostedOnBehalfOfGroup() && !$compact && $author->isOnline()" class="post-online">{_online}</span>
                 </a>
             </td>
             <td width="100%" valign="top">
@@ -127,7 +127,7 @@
                     </div>
                 </div>
                 <div class='post-edit' n:if='!$compact'></div>
-                <div n:if="!($compact ?? false)" class="post-menu">
+                <div n:if="!$compact" class="post-menu">
                     {if !isset($thisUser)}
                         {var $forceNoDeleteLink = true}
                         {var $forceNoPinLink = true}

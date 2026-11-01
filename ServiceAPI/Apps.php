@@ -8,7 +8,6 @@ use openvk\Web\Models\Entities\APIToken;
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Repositories\APITokens;
 use openvk\Web\Models\Repositories\Applications;
-use WhichBrowser;
 
 class Apps implements Handler
 {
@@ -109,7 +108,7 @@ class Apps implements Handler
             $stale = false;
             $token = new APIToken();
             $token->setUser($this->user);
-            $token->setPlatform($clientName ?? (new WhichBrowser\Parser(getallheaders()))->toString());
+            $token->setPlatform($clientName);
             $token->save();
         }
 

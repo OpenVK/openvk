@@ -1212,7 +1212,7 @@ final class Wall extends VKAPIRequestHandler
         if ($extended == true) {
             $profiles = array_unique($profiles);
             $groups   = array_unique($groups);
-            $response['profiles'] = (!empty($profiles) ? (new Users())->get(implode(',', $profiles), $fields) : []);
+            $response['profiles'] = (new Users())->get(implode(',', $profiles), $fields);
             $response['groups']   = (!empty($groups) ? (new Groups())->get(implode(',', $groups), $fields) : []);
         }
 
@@ -1233,6 +1233,7 @@ final class Wall extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
+        $club = null;
         if ($post->getTargetWall() < 0) {
             $club = (new ClubsRepo())->get(abs($post->getTargetWall()));
         }
@@ -1297,7 +1298,7 @@ final class Wall extends VKAPIRequestHandler
 
         $replyToUser = $comment->getReplyToComment()?->getOwner();
         if ($replyToUser instanceof User && $replyToUser != $this->user) {
-            (new ReplyCommentNotification($replyToUser, $comment, $post, $this->user))->emit();
+            (new ReplyCommentNotification($replyToUser, $comment, $this->user))->emit();
         }
 
         if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {
@@ -1406,7 +1407,7 @@ final class Wall extends VKAPIRequestHandler
             $this->fail(7, "Access to editing denied");
         }
 
-        if (!empty($message) || (empty($message) && sizeof($final_attachments) > 0)) {
+        if (!empty($message) || sizeof($final_attachments) > 0) {
             $post->setContent($message);
         }
 
@@ -1484,7 +1485,7 @@ final class Wall extends VKAPIRequestHandler
             $this->fail(15, "Access to editing comment denied");
         }
 
-        if (!empty($message) || (empty($message) && sizeof($final_attachments) > 0)) {
+        if (!empty($message) || sizeof($final_attachments) > 0) {
             $comment->setContent($message);
         }
 
