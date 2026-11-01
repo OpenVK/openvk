@@ -23,6 +23,26 @@ jobs:
             exit 1
           fi
 
+  configs:
+    name: Config parity
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: yaml
+          coverage: none
+
+      - name: Compare configs with openvk-example.yml
+        run: php tools/check-configs.php
+
   migrations:
     name: Unique migration numbers
     runs-on: ubuntu-latest
