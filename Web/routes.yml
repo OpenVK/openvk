@@ -401,6 +401,8 @@ routes:
       handler: "Admin->quickBan"
     - url: "/admin/unban/{num}"
       handler: "Admin->quickUnban"
+    - url: "/admin/reactivate/{num}"
+      handler: "Admin->reactivate"
     - url: "/admin/warn/{num}"
       handler: "Admin->quickWarn"
     - url: "/admin/session/delete"

@@ -73,11 +73,13 @@ final class WallPresenter extends OpenVKPresenter
     public function renderWall(int $user, bool $embedded = false): void
     {
         $owner = ($user < 0 ? (new Clubs()) : (new Users()))->get(abs($user));
-        if (!$owner || $owner->isBanned() || !$owner->canBeViewedBy($this->user->identity)) {
+        $readOnly = $owner instanceof User && $owner->isReadOnlyFor($this->user->identity);
+
+        if (!$owner || (!$readOnly && $owner->isBanned()) || !$owner->canBeViewedBy($this->user->identity)) {
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
-        if ($user > 0 && $owner->isDeleted()) {
+        if ($user > 0 && !$readOnly && $owner->isDeleted()) {
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
@@ -94,6 +96,8 @@ final class WallPresenter extends OpenVKPresenter
         } else {
             $canPost = false;
         }
+
+        $this->template->readOnly = $readOnly;
 
         if ($embedded == true) {
             $this->template->_template = "components/wall.latte";
@@ -174,11 +178,12 @@ final class WallPresenter extends OpenVKPresenter
     public function renderRSS(int $user): void
     {
         $owner = get_entity_by_id($user);
+        $readOnly = $owner instanceof User && $owner->isReadOnlyFor($this->user->identity);
 
         error_reporting(E_ALL ^ E_DEPRECATED);
         header('Content-Type: application/rss+xml; charset=utf-8');
 
-        if (!$owner || $owner->isBanned() || $owner->isDeleted() || !$owner->canBeViewedBy($this->user->identity)) {
+        if (!$owner || (!$readOnly && ($owner->isBanned() || $owner->isDeleted())) || !$owner->canBeViewedBy($this->user->identity)) {
             http_response_code(403);
             exit("403");
         }
@@ -549,11 +554,13 @@ final class WallPresenter extends OpenVKPresenter
 
         $this->logPostView($post, $wall);
 
+        $readOnly = $post->getInteractionOwner()?->isReadOnlyFor($this->user->identity) ?? false;
+        $this->template->readOnly = $readOnly;
         $this->template->post     = $post;
         if ($post->getTargetWall() > 0) {
             $this->template->wallOwner = (new Users())->get($post->getTargetWall());
             $this->template->isWallOfGroup = false;
-            if ($this->template->wallOwner->isBanned()) {
+            if (!$readOnly && $this->template->wallOwner->isBanned()) {
                 $this->flashFail("err", tr("error"), tr("forbidden"));
             }
         } else {
@@ -588,6 +595,10 @@ final class WallPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
+        if (!$post->canBeInteractedWith($this->user->identity)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
         if (!is_null($this->user->identity)) {
             $post->toggleLike($this->user->identity);
         }
@@ -614,6 +625,10 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         if ($post->getWallOwner()->isBanned()) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
+        if (!$post->canBeInteractedWith($this->user->identity)) {
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 

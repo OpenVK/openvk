@@ -232,6 +232,10 @@ final class VideosPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
+        if (!$video->canBeInteractedWith($this->user->identity)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
         if (!is_null($this->user->identity)) {
             $video->toggleLike($this->user->identity);
         }

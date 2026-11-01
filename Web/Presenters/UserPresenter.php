@@ -40,7 +40,9 @@ final class UserPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
-        if ($user->isDeleted() || !$user->canBeViewedBy($this->user->identity)) {
+        $moderationView = $user->isReadOnlyFor($this->user->identity);
+
+        if (!$moderationView && ($user->isDeleted() || !$user->canBeViewedBy($this->user->identity))) {
             if ($user->isDeactivated()) {
                 $this->template->_template = "User/deactivated.latte";
 
@@ -68,6 +70,7 @@ final class UserPresenter extends OpenVKPresenter
                 $this->template->user = $user;
             }
         } else {
+            $this->template->moderationView = $moderationView;
             $this->template->avatarAlbum = (new Albums())->getUserAvatarAlbum($user);
             $this->template->albums      = array_values(array_filter(iterator_to_array((new Albums())->getUserAlbums($user)), function ($album) {
                 return !$album->isCreatedBySystem();
@@ -533,6 +536,10 @@ final class UserPresenter extends OpenVKPresenter
         $user = $this->users->get((int) $this->postParam("id"));
         if (!$user) {
             exit("Invalid state");
+        }
+
+        if ($user->isReadOnlyFor($this->user->identity)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
         if ($this->postParam("act") == "rej") {

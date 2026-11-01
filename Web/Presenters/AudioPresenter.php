@@ -9,6 +9,7 @@ use openvk\Web\Models\Entities\Audio;
 use openvk\Web\Models\Entities\Club;
 use openvk\Web\Models\Entities\Photo;
 use openvk\Web\Models\Entities\Playlist;
+use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Repositories\Audios;
 use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\Repositories\Users;
@@ -55,7 +56,8 @@ final class AudioPresenter extends OpenVKPresenter
                 $audiosCount = $this->audios->getClubCollectionSize($entity);
             } else {
                 $entity = (new Users())->get($owner);
-                if (!$entity || $entity->isDeleted() || $entity->isBanned()) {
+                $readOnly = $entity instanceof User && $entity->isReadOnlyFor($this->user->identity);
+                if (!$entity || (!$readOnly && ($entity->isDeleted() || $entity->isBanned()))) {
                     $this->redirect("/audios" . $this->user->id);
                 }
 

@@ -509,6 +509,10 @@ final class PhotosPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
+        if (!$photo->canBeInteractedWith($this->user->identity)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
         if (!is_null($this->user->identity)) {
             $photo->toggleLike($this->user->identity);
         }

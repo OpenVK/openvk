@@ -14,6 +14,7 @@ use openvk\Web\Models\Entities\IP;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Repositories\{IPs, Users, APITokens, Tickets, Reports, CurrentUser, Posts};
 use openvk\Web\Util\IMBroker;
+use openvk\Web\Util\ModerationContext;
 use openvk\Web\Util\RateLimiter;
 use WhichBrowser;
 
@@ -25,6 +26,7 @@ abstract class OpenVKPresenter extends SimplePresenter
     protected $errorTemplate = "@error";
     protected $user = null;
     protected $presenterName;
+    protected bool $hiddenContentModeration = true;
 
     private function calculateQueryString(array $data): string
     {
@@ -249,6 +251,10 @@ abstract class OpenVKPresenter extends SimplePresenter
             $this->template->thisUser    = $this->user->identity;
             $this->template->userTainted = $user->isTainted();
             CurrentUser::get($this->user->identity, $_SERVER["REMOTE_ADDR"], $_SERVER["HTTP_USER_AGENT"]);
+
+            if ($this->hiddenContentModeration && $this->user->identity && $this->hasPermission("admin", "viewHidden", 0)) {
+                ModerationContext::enter($this->user->id);
+            }
 
             if ($this->user->identity->isDeleted() && !$this->deactivationTolerant) {
                 if ($this->user->identity->isDeactivated()) {

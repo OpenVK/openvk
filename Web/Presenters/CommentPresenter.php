@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace openvk\Web\Presenters;
 
-use openvk\Web\Models\Entities\{Comment, Notifications\MentionNotification, Notifications\ReplyCommentNotification, Photo, Video, User, Topic, Post};
+use openvk\Web\Models\Entities\{Comment, Notifications\MentionNotification, Notifications\ReplyCommentNotification, Photo, Video, User, Topic, Post, Postable};
 use openvk\Web\Models\Entities\Notifications\CommentNotification;
 use openvk\Web\Models\Repositories\{Comments, Clubs, Videos, Photos, Audios};
 use Nette\InvalidStateException as ISE;
@@ -31,7 +31,12 @@ final class CommentPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
-        if ($comment->getTarget() instanceof Post && $comment->getTarget()->getWallOwner()->isBanned()) {
+        $target = $comment->getTarget();
+        if ($target instanceof Post && $target->getWallOwner()->isBanned()) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
+        if ($target instanceof Postable && !$target->canBeInteractedWith($this->user->identity)) {
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 

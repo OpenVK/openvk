@@ -16,7 +16,15 @@
 {block content}
     {var $users  = iterator_to_array($users)}
     {var $amount = sizeof($users)}
-    
+
+    <div class="admin-deleted-filter" style="margin-bottom: 10px;">
+        {if $showDeleted}
+            <a href="?{http_build_query(array_merge($_GET, ['deleted' => null, 'p' => null]), 'k', '&', \PHP_QUERY_RFC3986)}">{_admin_hide_deleted}</a>
+        {else}
+            <a href="?{http_build_query(array_merge($_GET, ['deleted' => 1, 'p' => null]), 'k', '&', \PHP_QUERY_RFC3986)}">{_admin_show_deleted}</a>
+        {/if}
+    </div>
+
     <table class="aui aui-table-list">
         <thead>
             <tr>
@@ -43,6 +51,9 @@
                     <a href="{$user->getURL()}">{$user->getCanonicalName()}</a>
 
                     <span n:if="$user->isBanned()" class="aui-lozenge aui-lozenge-subtle aui-lozenge-removed">{_admin_banned}</span>
+                    <span n:if="$user->isDeleted()" class="aui-lozenge aui-lozenge-subtle aui-lozenge-removed">
+                        {if $user->isDeactivated()}{_admin_deactivated}{else}{_deleted}{/if}
+                    </span>
                 </td>
                 <td>{$user->isFemale() ? tr("female") : tr("male")}</td>
                 <td>{$user->getShortCode() ?? "(" . tr("none") . ")"}</td>

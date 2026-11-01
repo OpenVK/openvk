@@ -71,9 +71,13 @@
         </div>
     {else}
 
+    {if $moderationView ?? false}
+        {include "ModerationBanner.latte"}
+    {/if}
+
     <div class="left_small_block">
         <div class="avatar_block">
-            {var $hasAvatar = !str_contains($user->getAvatarUrl('miniscule'), "/assets/packages/static/openvk/img/camera_200.png")}
+            {var $hasAvatar = !$user->isBanned() && !str_contains($user->getAvatarUrl('miniscule'), "/assets/packages/static/openvk/img/camera_200.png")}
 
             {if $thisUser && $user->getId() == $thisUser->getId()}
                 <div class="avatar_controls">
@@ -106,6 +110,7 @@
                     <a onClick="showIncreaseRatingDialog({$thisUser->getCoins()}, {ltrim($thisUser->getUrl(), '/')}, {$csrfToken})" class="link">{_increase_rating}</a>
                 </div>
             {else}
+                {if !($moderationView ?? false)}
                 <a style="width: 194px;" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && ($user->getGiftCount() == 0 || !$user->getPrivacyPermission('gifts.read', $thisUser ?? NULL)) && $user->getPrivacyPermission('gifts.send', $thisUser ?? NULL)" href="/gifts?act=pick&user={$user->getId()}" class="profile_link">{_send_gift}</a>
                 <a style="width: 194px;" n:if="$user->getPrivacyPermission('messages.write', $thisUser) || ($thisUser && $user->hasActiveDialogueWith($thisUser))" onclick="showUserDialog(event, {$user->getRealId()})" href="/im?sel={$user->getId()}" class="profile_link">{_send_message}</a>
 
@@ -147,6 +152,7 @@
                 <a n:if="!$user->isHideFromGlobalFeedEnabled()" class="profile_link" onclick="onIgnoreSomeoneClick(event)" style="display:block;width:96%;" id="__ignoreSomeone" data-val='{!$ignore_status ? 1 : 0}' data-id="{$user->getId()}">
                     {if !$ignore_status}{_ignore_user}{else}{_unignore_user}{/if}
                 </a>
+                {/if}
             {/if}
             <a style="width: 194px;" n:if="$user->getFollowersCount() > 0" href="/friends{$user->getId()}?act=incoming" class="profile_link">{tr("followers", $user->getFollowersCount())}</a>
             {if $user->getId() !== $thisUser->getId() && ($canAdmin || $canSupport || $canSubstitute)}
@@ -158,7 +164,7 @@
                                 <img class="profile_actions_icon" src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/user-properties.png" alt="" />
                                 {_manage_user_action}
                             </a>
-                            <a href="javascript:banUser()" class="profile_link">
+                            <a n:if="!$user->isBanned()" href="javascript:banUser()" class="profile_link">
                                 <img class="profile_actions_icon" src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/im-ban-user.png" alt="" />
                                 {_ban_user_action}
                             </a>

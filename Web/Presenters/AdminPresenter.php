@@ -68,10 +68,17 @@ final class AdminPresenter extends OpenVKPresenter
         }
     }
 
-    private function searchResults(object $repo, &$count)
+    private function searchResults(object $repo, &$count, bool $includeDeleted = false)
     {
         $query = $this->queryParam("q") ?? "";
         $page  = (int) ($this->queryParam("p") ?? 1);
+
+        if ($repo instanceof Users) {
+            $found = $repo->find($query, [], ['type' => 'id', 'invert' => false], $includeDeleted);
+            $count = $found->size();
+
+            return $found->page($page, 20);
+        }
 
         $count = $repo->find($query)->size();
         return $repo->find($query)->page($page, 20);
@@ -177,7 +184,9 @@ final class AdminPresenter extends OpenVKPresenter
 
     public function renderUsers(): void
     {
-        $this->template->users = $this->searchResults($this->users, $count);
+        $showDeleted = (bool) $this->queryParam("deleted");
+        $this->template->showDeleted = $showDeleted;
+        $this->template->users = $this->searchResults($this->users, $count, $showDeleted);
         $this->template->count = $count;
     }
 
@@ -600,6 +609,19 @@ final class AdminPresenter extends OpenVKPresenter
         $user->setBlock_Reason(null);
         // $user->setUnblock_time(NULL);
         $user->save();
+        exit(json_encode([ "success" => true ]));
+    }
+
+    public function renderReactivate(int $id): void
+    {
+        $this->assertNoCSRF();
+
+        $user = $this->users->get($id);
+        if (!$user || !$user->isDeactivated()) {
+            exit(json_encode([ "error" => "User is not deactivated" ]));
+        }
+
+        $user->reactivate();
         exit(json_encode([ "success" => true ]));
     }
 

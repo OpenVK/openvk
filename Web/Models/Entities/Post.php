@@ -57,6 +57,13 @@ class Post extends Postable
         return parent::getOwner($real);
     }
 
+    public function getInteractionOwner(): ?User
+    {
+        $owner = $this->getWallOwner();
+
+        return $owner instanceof User ? $owner : null;
+    }
+
     public function getPrettyId(): string
     {
         return $this->getRecord()->wall . "_" . $this->getVirtualId();

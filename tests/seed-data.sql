@@ -52,6 +52,7 @@ INSERT INTO ChandlerACLRelations (user, `group`, priority) VALUES
 -- ChandlerACLGroupsPermissions: admin.access for Administrators + OpenVK role perms
 INSERT INTO ChandlerACLGroupsPermissions (`group`, model, context, permission, status) VALUES
 ('594e6cb4-2a3a-11ea-9e1e-42010aac0003', 'admin', NULL, 'access', 1),
+('594e6cb4-2a3a-11ea-9e1e-42010aac0003', 'admin', 0, 'viewHidden', 1),
 ('e1000000-0000-0000-0000-000000000002', 'openvk\\Web\\Models\\Entities\\TicketReply', 0, 'write', 1),
 ('e1000000-0000-0000-0000-000000000003', 'openvk\\Web\\Models\\Entities\\Report', 0, 'admin', 1),
 ('e1000000-0000-0000-0000-000000000004', 'openvk\\Web\\Models\\Entities\\Ban', 0, 'write', 1);

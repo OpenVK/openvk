@@ -41,6 +41,13 @@ class Feed
 
     private function checkPrivacy($user, string $filter = "post")
     {
+        if (method_exists($user, "getInteractionOwner")) {
+            $interactionOwner = $user->getInteractionOwner();
+            if ($interactionOwner && $interactionOwner->isReadOnlyFor($this->owner)) {
+                return false;
+            }
+        }
+
         switch ($filter) {
             case "post":
                 return true;

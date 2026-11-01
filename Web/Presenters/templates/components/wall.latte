@@ -18,7 +18,7 @@
                 <div class='scroll_node' n:foreach='$posts as $post' data-uniqueid="{$post->getPrettyId()}">
                     <a name="postGarter={$post->getId()}"></a>
 
-                    {include "../components/post.latte", post => $post, commentSection => true}
+                    {include "../components/post.latte", post => $post, commentSection => true, forceNoCommentsLink => ($readOnly ?? false), forceNoShareLink => ($readOnly ?? false), forceNoLike => ($readOnly ?? false)}
                 </div>
                 {include "../components/paginator.latte", conf => $paginatorConf}
             {else}

@@ -1,0 +1,84 @@
+<div class="msg msg_yellow moderation-banner">
+    <b>{_moderation_view_title}</b><br />
+    {_moderation_view_warning}
+    <br /><br />
+
+    <span n:if="$user->isBanned()">
+        {_moderation_view_banned}
+        <b>{$user->getBanReason()}</b>.
+        {if $user->getUnbanTime() !== null}
+            {_before}: <b>{$user->getUnbanTime()}</b>
+        {else}
+            <b>{_forever}</b>
+        {/if}
+        <br />
+    </span>
+
+    <span n:if="$user->isDeactivated()">
+        {tr("moderation_view_deactivated", $user->getDeactivationDate()->format("d.m.Y", true))}
+        <br />
+    </span>
+
+    <span n:if="$user->isDeleted() && !$user->isDeactivated()">
+        {_moderation_view_deleted}<br />
+    </span>
+
+    <span n:if="$user->isClosed()">
+        {_moderation_view_closed}<br />
+    </span>
+
+    <span n:if="$thisUser && $user->isBlacklistedBy($thisUser)">
+        {_moderation_view_blacklisted}<br />
+    </span>
+
+    <span n:if="$thisUser && $thisUser->isBlacklistedBy($user)">
+        {_moderation_view_blacklisted_by_viewer}<br />
+    </span>
+
+    {_moderation_view_readonly}
+</div>
+
+{if $thisUser && $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+    <div class="moderation-banner-actions" style="margin: 10px 0;">
+        <button n:if="$user->isBanned()" type="button" id="unbanHiddenProfile" class="button" onclick="unbanHiddenProfile()">{_unban_user_action}</button>
+        <button n:if="$user->isDeactivated()" type="button" id="restoreHiddenProfile" class="button" onclick="restoreHiddenProfile()">{_moderation_view_restore}</button>
+    </div>
+
+    <script>
+        function unbanHiddenProfile() {
+            MessageBox(tr("moderation_view_unban_title"), tr("moderation_view_unban_confirm", {$user->getCanonicalName()}), [tr("ok"), tr("cancel")], [
+                function() {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("GET", "/admin/unban/{$user->getId()}?hash=" + {rawurlencode($csrfToken)}, true);
+                    xhr.onload = function() {
+                        if (xhr.responseText.indexOf("success") === -1) {
+                            MessageBox(tr("error"), tr("error_on_server_side"), [tr("ok")], [Function.noop]);
+                        } else {
+                            location.reload();
+                        }
+                    };
+                    xhr.send(null);
+                },
+                Function.noop
+            ]);
+        }
+
+        function restoreHiddenProfile() {
+            MessageBox(tr("moderation_view_restore_title"), tr("moderation_view_restore_confirm", {$user->getCanonicalName()}), [tr("ok"), tr("cancel")], [
+                function() {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("GET", "/admin/reactivate/{$user->getId()}?hash=" + {rawurlencode($csrfToken)}, true);
+                    xhr.onload = function() {
+                        if (xhr.responseText.indexOf("success") === -1) {
+                            MessageBox(tr("error"), tr("error_on_server_side"), [tr("ok")], [Function.noop]);
+                        } else {
+                            location.reload();
+                        }
+                    };
+                    xhr.send(null);
+                },
+                Function.noop
+            ]);
+        }
+    </script>
+{/if}
