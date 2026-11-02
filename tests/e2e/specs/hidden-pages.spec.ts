@@ -14,6 +14,12 @@ function sql(query: string): void {
 
 const ALICE_ID = 2;
 
+function banAlicePermanently(): void {
+  sql(`INSERT INTO bans (id, user, initiator, iat, exp, time, reason, removed_manually, removed_by) VALUES
+       (2, ${ALICE_ID}, 1, UNIX_TIMESTAMP(), 0, 0, 'Spamming', 0, 0);
+       UPDATE profiles SET block_reason = 2 WHERE id = ${ALICE_ID}`);
+}
+
 test.describe('Hidden pages', () => {
   test('admin sees a closed profile', async ({ page }) => {
     sql(`UPDATE profiles SET profile_type = 1 WHERE id = ${ALICE_ID}`);
@@ -33,6 +39,22 @@ test.describe('Hidden pages', () => {
     await expect(page.locator('form[action="/setSub/user"] input[type="submit"]')).toHaveValue('Cancel request');
   });
 
+  test('shows the closed profile moderation preview', async ({ page }) => {
+    sql(`UPDATE profiles SET profile_type = 1 WHERE id = ${ALICE_ID}`);
+
+    await loginAsAdmin(page);
+    await page.goto('/id2');
+
+    await expect(page.locator('.page_body')).toHaveScreenshot('hidden-pages-closed-admin.png', {
+      maxDiffPixels: 200,
+      mask: [
+        page.locator('section.footer-body').filter({ hasText: /Altair/ }),
+        page.locator('.fictional_profile_section').filter({ hasText: /Audios/ }),
+        page.locator('#basicInfo tr').filter({ hasText: /Birth date/ }),
+      ],
+    });
+  });
+
   test('regular user sees the closed profile stub', async ({ page }) => {
     sql(`UPDATE profiles SET profile_type = 1 WHERE id = ${ALICE_ID}`);
 
@@ -45,7 +67,7 @@ test.describe('Hidden pages', () => {
   });
 
   test('admin sees a banned profile and its unban action', async ({ page }) => {
-    sql(`UPDATE profiles SET block_reason = 1 WHERE id = ${ALICE_ID}`);
+    banAlicePermanently();
 
     await loginAsAdmin(page);
     await page.goto('/id2');
@@ -55,6 +77,22 @@ test.describe('Hidden pages', () => {
     await expect(page.locator('#unbanHiddenProfile')).toBeVisible();
     await expect(page.locator('#restoreHiddenProfile')).toHaveCount(0);
     await expect(page.locator('form[action="/setSub/user"]')).toHaveCount(0);
+  });
+
+  test('shows the banned profile moderation preview', async ({ page }) => {
+    banAlicePermanently();
+
+    await loginAsAdmin(page);
+    await page.goto('/id2');
+
+    await expect(page.locator('.page_body')).toHaveScreenshot('hidden-pages-banned-admin.png', {
+      maxDiffPixels: 200,
+      mask: [
+        page.locator('section.footer-body').filter({ hasText: /Altair/ }),
+        page.locator('.fictional_profile_section').filter({ hasText: /Audios/ }),
+        page.locator('#basicInfo tr').filter({ hasText: /Birth date/ }),
+      ],
+    });
   });
 
   test('admin sees a deleted profile without restore action', async ({ page }) => {
