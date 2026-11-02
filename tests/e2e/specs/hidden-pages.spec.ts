@@ -7,12 +7,18 @@ const dbUser = process.env.DB_USER || 'openvk';
 const dbPass = process.env.DB_PASSWORD || 'openvk';
 const dbName = process.env.DB_NAME || 'db';
 const mysql = `mysql -h ${dbHost} -u ${dbUser} ${dbName} --ssl-mode=DISABLED --default-character-set=utf8mb4`;
+const mysqlValue = `${mysql} -N -B`;
 
 function sql(query: string): void {
   execSync(mysql, { input: query, env: { ...process.env, MYSQL_PWD: dbPass } });
 }
 
+function sqlValue(query: string): string {
+  return execSync(mysqlValue, { input: query, env: { ...process.env, MYSQL_PWD: dbPass } }).toString().trim();
+}
+
 const ALICE_ID = 2;
+const BOB_ID = 3;
 
 function banAlicePermanently(): void {
   sql(`INSERT INTO bans (id, user, initiator, iat, exp, time, reason, removed_manually, removed_by) VALUES
@@ -256,5 +262,44 @@ test.describe('Hidden pages', () => {
 
     await expect(page.locator('.profileName h2')).toContainText('Alice');
     await expect(page.locator('a[href="/im?sel=2"]')).toHaveCount(0);
+  });
+
+  test('cannot subscribe to a hidden user without an explicit add', async ({ page }) => {
+    sql(`UPDATE profiles SET deleted = 1, deact_date = 0 WHERE id = ${BOB_ID}`);
+
+    await loginAsCharlie(page);
+
+    await page.request.post('/setSub/user', { form: { id: String(BOB_ID) } });
+    expect(sqlValue(`SELECT COUNT(*) FROM subscriptions WHERE follower = 4 AND target = ${BOB_ID}`)).toBe('0');
+
+    await page.request.post('/setSub/user', { form: { id: String(BOB_ID), act: 'add' } });
+    expect(sqlValue(`SELECT COUNT(*) FROM subscriptions WHERE follower = 4 AND target = ${BOB_ID}`)).toBe('0');
+  });
+
+  test('hidden subscriptions do not leak posts into the local feed', async ({ page }) => {
+    sql(`UPDATE profiles SET deleted = 1, deact_date = 0 WHERE id = ${BOB_ID}`);
+    sql(`INSERT INTO subscriptions (follower, model, target) VALUES (4, 'openvk\\\\Web\\\\Models\\\\Entities\\\\User', ${BOB_ID})`);
+
+    await loginAsCharlie(page);
+    await page.goto('/feed');
+
+    await expect(page.getByText('Hey everyone! Bob here. Just joined this cool network.')).toHaveCount(0);
+  });
+
+  test('audio controls are read-only on a hidden profile', async ({ page }) => {
+    sql(`UPDATE profiles SET deleted = 1, deact_date = 0 WHERE id = ${ALICE_ID}`);
+
+    await loginAsAdmin(page);
+    await page.goto('/audios2');
+
+    await expect(page.locator('.audioEmbed[data-readonly="1"]').first()).toBeVisible();
+    await expect(page.locator('.add-icon')).toHaveCount(0);
+    await expect(page.locator('.download-icon')).toHaveCount(0);
+
+    const token = await page.locator('meta[name="csrf"]').getAttribute('value');
+    const response = await page.request.post('/audio1/action?act=add', { form: { hash: token ?? '' } });
+    const body = await response.json();
+
+    expect(body.flash.message).toBe('Access denied');
   });
 });

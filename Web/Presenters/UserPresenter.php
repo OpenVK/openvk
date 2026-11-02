@@ -7,7 +7,7 @@ namespace openvk\Web\Presenters;
 use Nette\InvalidStateException;
 use openvk\Web\Util\Sms;
 use openvk\Web\Themes\Themepacks;
-use openvk\Web\Models\Entities\{Photo, Post, EmailChangeVerification};
+use openvk\Web\Models\Entities\{Photo, Post, EmailChangeVerification, User};
 use openvk\Web\Models\Privacy\PrivacySettings;
 use openvk\Web\Models\Entities\Notifications\{CoinsTransferNotification, RatingUpNotification};
 use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Videos, Notes, Vouchers, EmailChangeVerifications, Audios, Faves};
@@ -539,20 +539,35 @@ final class UserPresenter extends OpenVKPresenter
             exit("Invalid state");
         }
 
-        if ($this->postParam("act") === "add" && !$user->canReceiveFriendRequestsFrom($this->user->identity)) {
+        $act = $this->postParam("act");
+        if (!in_array($act, ["add", "rem", "rej"], true)) {
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
-        if ($this->postParam("act") == "rej") {
-            $user->changeFlags($this->user->identity, 0b10000000, true);
-        } else {
-            if ($user->getSubscriptionStatus($this->user->identity) == \openvk\Web\Models\Entities\User::SUBSCRIPTION_ABSENT) {
+        $status = $user->getSubscriptionStatus($this->user->identity);
+
+        if ($act === "add") {
+            if (!$user->canReceiveFriendRequestsFrom($this->user->identity)) {
+                $this->flashFail("err", tr("error"), tr("forbidden"));
+            }
+
+            if ($status === User::SUBSCRIPTION_ABSENT) {
                 if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->user->identity, "friends.outgoing_sub")) {
                     $this->flashFail("err", tr("error"), tr("limit_exceed_exception"));
                 }
-            }
 
-            $user->toggleSubscription($this->user->identity);
+                $user->toggleSubscription($this->user->identity);
+            } elseif ($status === User::SUBSCRIPTION_INCOMING) {
+                $user->toggleSubscription($this->user->identity);
+            }
+        } elseif ($act === "rem") {
+            if ($status === User::SUBSCRIPTION_OUTGOING || $status === User::SUBSCRIPTION_MUTUAL) {
+                $user->toggleSubscription($this->user->identity);
+            }
+        } elseif ($act === "rej") {
+            if ($status === User::SUBSCRIPTION_INCOMING) {
+                $user->changeFlags($this->user->identity, 0b10000000, true);
+            }
         }
 
         $this->redirect($_SERVER['HTTP_REFERER']);

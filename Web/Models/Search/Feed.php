@@ -50,7 +50,7 @@ class Feed
 
         switch ($filter) {
             case "post":
-                return true;
+                return method_exists($user, "canBeViewedBy") ? $user->canBeViewedBy($this->owner) : true;
             case "photo":
                 return $user->getPrivacyPermission("photos.read", $this->owner, false);
             case "video":
