@@ -102,10 +102,19 @@ test.describe('Hidden pages', () => {
     await loginAsAdmin(page);
     await page.goto('/id2');
 
-    await expect(page.locator('.moderation-banner')).toContainText('blacklist');
+    await expect(page.locator('.moderation-banner')).toContainText('This user has restricted access to their page (blacklist).');
     await expect(page.locator('.profileName h2')).toContainText('Alice');
     await expect(page.locator('a[href="/im?sel=2"]')).toHaveCount(0);
     await expect(page.locator('form[action="/setSub/user"]')).toHaveCount(0);
+  });
+
+  test('admin sees the correct banner when they blacklisted the user', async ({ page }) => {
+    sql(`INSERT INTO blacklist_relations (author, target, created) VALUES (1, ${ALICE_ID}, UNIX_TIMESTAMP())`);
+
+    await loginAsAdmin(page);
+    await page.goto('/id2');
+
+    await expect(page.locator('.moderation-banner')).toContainText('You have blacklisted this user.');
   });
 
   test('admin user list shows deleted users only with the filter', async ({ page }) => {
@@ -151,6 +160,15 @@ test.describe('Hidden pages', () => {
     await expect(page.locator('.post-like-button')).toHaveCount(0);
   });
 
+  test('admin sees notes of a deleted profile', async ({ page }) => {
+    sql(`UPDATE profiles SET deleted = 1, deact_date = 0 WHERE id = ${ALICE_ID}`);
+
+    await loginAsAdmin(page);
+    await page.goto('/note2_1');
+
+    await expect(page.getByText('This is the content of my first note on OpenVK.')).toBeVisible();
+  });
+
   test('polls on a hidden profile are read-only', async ({ page }) => {
     sql(`UPDATE profiles SET deleted = 1, deact_date = 0 WHERE id = ${ALICE_ID}`);
     sql("INSERT INTO attachments (attachable_type, attachable_id, target_type, target_id, `index`) VALUES ('openvk\\\\Web\\\\Models\\\\Entities\\\\Poll', 1, 'openvk\\\\Web\\\\Models\\\\Entities\\\\Post', 1, 0)");
@@ -163,23 +181,24 @@ test.describe('Hidden pages', () => {
     await expect(page.locator('.poll-results')).toBeVisible();
   });
 
-  test('viewHidden bypasses page privacy on an open profile', async ({ page }) => {
-    sql(`UPDATE profiles SET privacy = 2305843009205305344 WHERE id = ${ALICE_ID}`);
+  test('viewHidden bypasses info privacy on an open profile', async ({ page }) => {
+    sql(`UPDATE profiles SET privacy = 7493989779936116736 WHERE id = ${ALICE_ID}`);
 
     await loginAsAdmin(page);
     await page.goto('/id2');
 
     await expect(page.locator('.moderation-banner')).toHaveCount(0);
     await expect(page.locator('.profileName h2')).toContainText('Alice');
+    await expect(page.locator('#basicInfo')).toBeVisible();
   });
 
-  test('regular user cannot bypass page privacy on an open profile', async ({ page }) => {
-    sql(`UPDATE profiles SET privacy = 2305843009205305344 WHERE id = ${ALICE_ID}`);
+  test('regular user cannot bypass info privacy on an open profile', async ({ page }) => {
+    sql(`UPDATE profiles SET privacy = 7493989779936116736 WHERE id = ${ALICE_ID}`);
 
     await loginAsCharlie(page);
     await page.goto('/id2');
 
-    await expect(page.getByText('Access error')).toBeVisible();
+    await expect(page.locator('#basicInfo')).toHaveCount(0);
   });
 
   test('viewHidden bypasses photos privacy on an open profile', async ({ page }) => {

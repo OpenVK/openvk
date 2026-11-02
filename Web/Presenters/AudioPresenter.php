@@ -96,7 +96,8 @@ final class AudioPresenter extends OpenVKPresenter
                 $playlistsCount = $this->audios->getClubPlaylistsCount($entity);
             } else {
                 $entity = (new Users())->get($owner);
-                if (!$entity || $entity->isDeleted() || $entity->isBanned()) {
+                $readOnly = $entity instanceof User && $entity->isReadOnlyFor($this->user->identity);
+                if (!$entity || (!$readOnly && ($entity->isDeleted() || $entity->isBanned()))) {
                     $this->redirect("/playlists" . $this->user->id);
                 }
 

@@ -390,14 +390,14 @@ class Video extends Media
         return "/video" . $this->getPrettyId();
     }
 
-    public function canBeViewedBy(?User $user = null, ?string $access_key = null): bool
+    public function canBeViewedBy(?User $user = null, ?string $access_key = null, bool $allowModeration = true): bool
     {
         if ($this->isDeleted()) {
             return false;
         }
 
         $owner = $this->getOwner();
-        if ($owner->isDeleted() && !$owner->canBeViewedBy($user)) {
+        if ($owner->isDeleted() && !$owner->canBeViewedBy($user, true, $allowModeration)) {
             return false;
         }
 
@@ -414,7 +414,7 @@ class Video extends Media
         }
 
         if (get_class($this->getOwner()) == "openvk\\Web\\Models\\Entities\\User") {
-            return $this->getOwner()->canBeViewedBy($user) && $this->getOwner()->getPrivacyPermission('videos.read', $user);
+            return $this->getOwner()->canBeViewedBy($user, true, $allowModeration) && $this->getOwner()->getPrivacyPermission('videos.read', $user, $allowModeration);
         } else {
             # Groups doesn't have videos but ok
             return $this->getOwner()->canBeViewedBy($user);

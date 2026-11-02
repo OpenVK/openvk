@@ -120,6 +120,41 @@ abstract class OpenVKPresenter extends SimplePresenter
         }
     }
 
+    protected function canAttachContent($attachment): bool
+    {
+        if (!$attachment || $attachment->isDeleted()) {
+            return false;
+        }
+
+        if ($attachment instanceof \openvk\Web\Models\Entities\Photo || $attachment instanceof \openvk\Web\Models\Entities\Video) {
+            return $attachment->canBeViewedBy($this->user->identity, null, false);
+        }
+
+        if ($attachment instanceof \openvk\Web\Models\Entities\Note) {
+            return $attachment->canBeViewedBy($this->user->identity, false);
+        }
+
+        if ($attachment instanceof \openvk\Web\Models\Entities\Audio) {
+            $owner = $attachment->getOwner();
+
+            if (!$owner instanceof \openvk\Web\Models\Entities\User) {
+                return true;
+            }
+
+            return $owner->canBeViewedBy($this->user->identity, true, false)
+                && $owner->getPrivacyPermission('audios.read', $this->user->identity, false);
+        }
+
+        if ($attachment instanceof \openvk\Web\Models\Entities\Document) {
+            $owner = $attachment->getOwner();
+
+            return !($owner instanceof \openvk\Web\Models\Entities\User)
+                || $owner->canBeViewedBy($this->user->identity, true, false);
+        }
+
+        return $attachment->canBeViewedBy($this->user->identity);
+    }
+
     protected function hasPermission(string $model, string $action, int $context): bool
     {
         if (is_null($this->user->identity)) {

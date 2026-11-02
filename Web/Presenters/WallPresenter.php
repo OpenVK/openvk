@@ -479,7 +479,7 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         foreach ($horizontal_attachments as $horizontal_attachment) {
-            if (!$horizontal_attachment || $horizontal_attachment->isDeleted() || !$horizontal_attachment->canBeViewedBy($this->user->identity)) {
+            if (!$this->canAttachContent($horizontal_attachment)) {
                 continue;
             }
 
@@ -487,7 +487,7 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         foreach ($vertical_attachments as $vertical_attachment) {
-            if (!$vertical_attachment || $vertical_attachment->isDeleted() || !$vertical_attachment->canBeViewedBy($this->user->identity)) {
+            if (!$this->canAttachContent($vertical_attachment)) {
                 continue;
             }
 

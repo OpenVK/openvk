@@ -649,7 +649,7 @@ class User extends RowModel
         $isWrite = in_array($permission, self::WRITE_PRIVACY_SETTINGS, true);
 
         if ($this->isReadOnlyFor($user)) {
-            return !$isWrite;
+            return $moderationBypass && !$isWrite;
         }
 
         if ($moderationBypass && !$isWrite && $this->canBypassPrivacy($user)) {
@@ -1811,9 +1811,9 @@ class User extends RowModel
         }
     }
 
-    public function canBeViewedBy(?User $user = null, bool $blacklist_check = true): bool
+    public function canBeViewedBy(?User $user = null, bool $blacklist_check = true, bool $allowModeration = true): bool
     {
-        if ($user && ModerationContext::isActiveFor($user->getId())) {
+        if ($allowModeration && $user && ModerationContext::isActiveFor($user->getId())) {
             return true;
         }
 

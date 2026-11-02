@@ -101,7 +101,7 @@ final class UserPresenter extends OpenVKPresenter
             $user = $this->users->get(intval($this->queryParam("id")));
         }
 
-        if (!$user || $user->isDeleted()) {
+        if (!$user || ($user->isDeleted() && !$user->canBeViewedBy($this->user->identity))) {
             $this->notFound();
             exit();
         }
@@ -982,7 +982,7 @@ final class UserPresenter extends OpenVKPresenter
         }
 
         $receiver = $this->users->getByAddress($receiverAddress);
-        if (!$receiver || !$receiver->canBeViewedBy($this->user->identity)) {
+        if (!$receiver || $receiver->isReadOnlyFor($this->user->identity) || !$receiver->canBeViewedBy($this->user->identity)) {
             $this->flashFail("err", tr("failed_to_tranfer_points"), tr("receiver_not_found"));
         }
 
@@ -1029,7 +1029,7 @@ final class UserPresenter extends OpenVKPresenter
         }
 
         $receiver = $this->users->getByAddress($receiverAddress);
-        if (!$receiver) {
+        if (!$receiver || $receiver->isReadOnlyFor($this->user->identity)) {
             $this->flashFail("err", tr("failed_to_increase_rating"), tr("receiver_not_found"));
         }
 

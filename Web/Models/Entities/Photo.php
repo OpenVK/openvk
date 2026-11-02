@@ -587,14 +587,14 @@ class Photo extends Media
         ];
     }
 
-    public function canBeViewedBy(?User $user = null, ?string $access_key = null): bool
+    public function canBeViewedBy(?User $user = null, ?string $access_key = null, bool $allowModeration = true): bool
     {
         if ($this->isDeleted()) {
             return false;
         }
 
         $owner = $this->getOwner();
-        if ($owner->isDeleted() && !$owner->canBeViewedBy($user)) {
+        if ($owner->isDeleted() && !$owner->canBeViewedBy($user, true, $allowModeration)) {
             return false;
         }
 
@@ -611,9 +611,9 @@ class Photo extends Media
         }
 
         if (!is_null($this->getAlbum())) {
-            return $this->getAlbum()->canBeViewedBy($user);
+            return $this->getAlbum()->canBeViewedBy($user, $allowModeration);
         } else {
-            return $this->getOwner()->canBeViewedBy($user);
+            return $this->getOwner()->canBeViewedBy($user, true, $allowModeration);
         }
     }
 
