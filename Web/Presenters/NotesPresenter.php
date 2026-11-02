@@ -52,6 +52,7 @@ final class NotesPresenter extends OpenVKPresenter
         $this->template->cCount   = $note->getCommentsCount();
         $this->template->cPage    = (int) ($this->queryParam("p") ?? 1);
         $this->template->forceNoLike = $note->getOwner()->isReadOnlyFor($this->user->identity);
+        $this->template->readOnly = $this->template->forceNoLike;
         $this->template->comments = iterator_to_array($note->getComments($this->template->cPage));
         $this->template->note     = $note;
     }

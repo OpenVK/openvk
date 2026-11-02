@@ -286,6 +286,16 @@ test.describe('Hidden pages', () => {
     await expect(page.getByText('Hey everyone! Bob here. Just joined this cool network.')).toHaveCount(0);
   });
 
+  test('admin feed does not include hidden subscriptions', async ({ page }) => {
+    sql(`UPDATE profiles SET deleted = 1, deact_date = 0 WHERE id = ${BOB_ID}`);
+    sql(`INSERT INTO subscriptions (follower, model, target) VALUES (1, 'openvk\\\\Web\\\\Models\\\\Entities\\\\User', ${BOB_ID})`);
+
+    await loginAsAdmin(page);
+    await page.goto('/feed');
+
+    await expect(page.getByText('Hey everyone! Bob here. Just joined this cool network.')).toHaveCount(0);
+  });
+
   test('audio controls are read-only on a hidden profile', async ({ page }) => {
     sql(`UPDATE profiles SET deleted = 1, deact_date = 0 WHERE id = ${ALICE_ID}`);
 

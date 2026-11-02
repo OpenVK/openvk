@@ -601,6 +601,7 @@ final class AudioPresenter extends OpenVKPresenter
         $this->template->cover_url = $this->template->cover ? $this->template->cover->getURL() : "/assets/packages/static/openvk/img/song.jpg";
         $this->template->ownerId = $owner_id;
         $this->template->owner = $playlist->getOwner();
+        $this->template->readOnly = $playlist->getOwner() instanceof User && $playlist->getOwner()->isReadOnlyFor($this->user->identity);
         $this->template->isBookmarked = $this->user->identity && $playlist->isBookmarkedBy($this->user->identity);
         $this->template->isMy = $this->user->identity &&  $playlist->getOwner()->getId() === $this->user->id;
         $this->template->canEdit = $this->user->identity && $playlist->canBeModifiedBy($this->user->identity);

@@ -188,7 +188,7 @@ class Poll extends Attachable
 
     public function canVote(User $user): bool
     {
-        return $this->canBeVotedBy($user) && !$this->hasEnded() && !$this->hasVoted($user) && $this->getAttachedPost()->getSuggestionType() == 0;
+        return $this->canBeVotedBy($user) && !$this->hasEnded() && !$this->hasVoted($user) && !is_null($this->getAttachedPost()) && $this->getAttachedPost()->getSuggestionType() == 0;
     }
 
     public function canBeVotedBy(?User $user): bool
@@ -199,7 +199,7 @@ class Poll extends Attachable
 
         $post = $this->getAttachedPost();
 
-        return $post && $post->canBeViewedBy($user) && $post->canBeInteractedWith($user);
+        return !$post || ($post->canBeViewedBy($user) && $post->canBeInteractedWith($user));
     }
 
     public function vote(User $user, array $optionIds): void

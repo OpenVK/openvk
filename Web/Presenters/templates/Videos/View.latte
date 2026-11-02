@@ -77,7 +77,8 @@
                             count => $cCount,
                             page => $cPage,
                             model => "videos",
-                            parent => $video}
+                            parent => $video,
+                            readOnly => ($readOnly ?? false)}
                 </div>
                 <div class='media-page-wrapper-actions'>
                     {include "../components/postable/postable_mark.latte", owner => $video->getOwner(), item => $video}

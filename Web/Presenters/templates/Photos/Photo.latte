@@ -66,7 +66,7 @@
             
             <div class="media-page-wrapper-details">
                 <div class='media-page-wrapper-comments'>
-                    {include "../components/comments.latte", comments => $comments, count => $cCount, page => $cPage, model => "photos", parent => $photo, custom_id => 999}
+                    {include "../components/comments.latte", comments => $comments, count => $cCount, page => $cPage, model => "photos", parent => $photo, custom_id => 999, readOnly => ($readOnly ?? false)}
                 </div>
                 <div class='media-page-wrapper-actions'>
                     {include "../components/postable/postable_mark.latte", owner => $owner, item => $photo}

@@ -9,6 +9,7 @@
 {var $correctLink = $correctLink ?? false}
 {var $no_reply_button = $no_reply_button ?? false}
 {var $noEdit = $noEdit ?? false}
+{var $readOnly = $readOnly ?? false}
 
 <a name="cid={$comment->getId()}"></a>
 <table data-id="1_{$comment->getId()}" border="0" style="font-size: 11px;" class="post comment" id="_comment{$comment->getId()}" data-comment-id="{$comment->getId()}" data-owner-id="{$author->getId()}" data-from-group="{$author instanceof $Club ? 'true' : 'false'}" n:attr="data-post-id => $postId">
@@ -66,6 +67,7 @@
                                 {var $canReport = true}
                                 <a href="javascript:reportComment({$comment->getId()})">{_report}</a>
                             {/if}
+                            {if !$readOnly}
                             <div style="float: right; font-size: .7rem;">
                                 {var $isLiked = $comment->hasLikeFrom($thisUser)}
                                 <a class="post-like-button" href="/comment{$comment->getId()}/like?hash={rawurlencode($csrfToken)}" data-likes='{$likesCount}' data-entity="comment" data-id="1_{$comment->getPrettyId()}" data-type='comment'>
@@ -73,6 +75,7 @@
                                     <span class="likeCnt">{if $likesCount > 0}{$likesCount}{/if}</span>
                                 </a>
                             </div>
+                            {/if}
                         {/if}
 
                         <span n:if="$compact ?? false">

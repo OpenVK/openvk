@@ -50,6 +50,10 @@ class Feed
 
         switch ($filter) {
             case "post":
+                if ($user instanceof User) {
+                    return $user->canBeViewedBy($this->owner, true, false);
+                }
+
                 return method_exists($user, "canBeViewedBy") ? $user->canBeViewedBy($this->owner) : true;
             case "photo":
                 return $user->getPrivacyPermission("photos.read", $this->owner, false);
