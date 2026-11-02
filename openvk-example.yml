@@ -78,6 +78,17 @@ openvk:
             withdrawTax: 8
         stickers:
             withdrawTax: 2
+        geo:
+            bans:
+                enabled: false
+                notAffects: []
+                database: "/vendor/openvk/chandler/3rdparty/maxmind"
+                trustedProxies:
+                    - "127.0.0.1/32"
+                    - "10.0.0.0/8"
+                headerCountry: "X-Geo-Country"
+                fallbackCountry: "RU"
+                mediaCacheTtl: 300
         security:
             requireEmail: false
             requirePhone: false

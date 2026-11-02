@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace openvk\VKAPI\Handlers;
 
 use openvk\Web\Models\Repositories\{Users, Clubs, Posts, Photos, Videos};
+use openvk\Web\Models\Entities\Relationships\Geoban;
 use Chandler\Database\DatabaseConnection;
 
 final class Utils extends VKAPIRequestHandler
@@ -12,6 +13,11 @@ final class Utils extends VKAPIRequestHandler
     public function getServerTime(): int
     {
         return time();
+    }
+
+    public function getMyCountry(): ?string
+    {
+        return Geoban::resolveCountry($this->getUser());
     }
 
     public function resolveScreenName(string $screen_name): object
@@ -89,7 +95,7 @@ final class Utils extends VKAPIRequestHandler
 
     public function resolveOffset(int $owner_id, int $id, ?int $id2 = null, string $method = "wall.get", int $perPage = 10, bool $rev = false)
     {
-        $this->requireUser();
+        // $this->requireUser();
 
         if ($perPage <= 0) {
             $this->fail(100, "One of the parameters specified was missing or invalid");

@@ -2153,6 +2153,21 @@
 "admin_banned_link_not_specified" = "The link is not specified";
 "admin_banned_link_not_found" = "Link not found";
 
+"admin_geoblocks" = "Geoblocks";
+"admin_geoblock" = "Geoblock";
+"admin_geoblock_model" = "Entity type";
+"admin_geoblock_model_select" = "Select entity type";
+"admin_geoblock_model_id" = "Entity ID";
+"admin_geoblock_model_id_description" = "Numeric ID or pretty ID (with underscore), e.g. 123 or 123_456";
+"admin_geoblock_places" = "Countries";
+"admin_geoblock_places_description" = "Comma-separated list of two-letter country codes where the block is active, e.g. RU, BY, KZ";
+"admin_geoblock_reason" = "Reason";
+"admin_geoblock_time" = "Request date";
+"admin_geoblock_time_description" = "Arbitrary string describing the date of the request";
+"admin_geoblock_initiator" = "Initiator";
+"admin_geoblock_invalid_target" = "Invalid entity type or ID";
+"admin_geoblock_not_found" = "Geoblock not found";
+
 "admin_gift_moved_successfully" = "Gift moved successfully";
 "admin_gift_moved_to_recycle" = "This gift was moved to <b>Recycle Bin</b>.";
 "admin_original_file" = "Original file";
@@ -3510,3 +3525,10 @@
 "years_many" = "$1 years old";
 "you_have_not_entered_name_or_text" = "You haven't entered a name or text";
 "you_have_not_entered_text" = "You haven't entered any text";
+
+/* Geoban */
+
+"unavailable_in_your_region" = "Unavailable in your region";
+"unavailable_in_your_region_desc" = "This page is blocked in your country ($1) because of: $2. Request date: $3.";
+"unavailable_in_your_region_desc_less" = "This page is blocked in your country.";
+"item_unavailable" = "Item is unavailable";

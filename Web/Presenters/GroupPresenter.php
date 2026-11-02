@@ -8,6 +8,7 @@ use openvk\Web\Models\Entities\{Club, Photo, Post};
 use Nette\InvalidStateException;
 use openvk\Web\Models\Entities\Notifications\ClubModeratorNotification;
 use openvk\Web\Models\Repositories\{Clubs, Users, Albums, Videos, Managers, Topics, Audios, Posts, Documents};
+use openvk\Web\Models\Entities\Relationships\Geoban;
 use Chandler\Security\Authenticator;
 use Nette\InvalidStateException as ISE;
 use Chandler\Session\Session;
@@ -30,6 +31,12 @@ final class GroupPresenter extends OpenVKPresenter
         if (!$club) {
             $this->notFound();
         } else {
+            $geoban = Geoban::isSomethingBannedFor($club, $this->user->identity);
+            if ($geoban) {
+                $this->failBcGeoban($geoban);
+                return;
+            }
+
             if ($club->isBanned()) {
                 $this->template->_template = "Group/Banned.latte";
             } else {

@@ -13,6 +13,7 @@ use openvk\Web\Models\Entities\Notifications\{CoinsTransferNotification, RatingU
 use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Videos, Notes, Vouchers, EmailChangeVerifications, Audios, Faves};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use openvk\Web\Util\Validator;
+use openvk\Web\Models\Entities\Relationships\Geoban;
 use Chandler\Security\Authenticator;
 use lfkeitel\phptotp\{Base32, Totp};
 use chillerlan\QRCode\{QRCode, QROptions};
@@ -41,6 +42,12 @@ final class UserPresenter extends OpenVKPresenter
         }
 
         if ($user->isDeleted() || !$user->canBeViewedBy($this->user->identity)) {
+            $geoban = Geoban::isSomethingBannedFor($user, $this->user->identity);
+            if ($geoban) {
+                $this->failBcGeoban($geoban);
+                return;
+            }
+
             if ($user->isDeactivated()) {
                 $this->template->_template = "User/deactivated.latte";
 
