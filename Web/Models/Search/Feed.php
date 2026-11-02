@@ -41,17 +41,28 @@ class Feed
 
     private function checkPrivacy($user, string $filter = "post")
     {
+        if (method_exists($user, "getInteractionOwner")) {
+            $interactionOwner = $user->getInteractionOwner();
+            if ($interactionOwner && $interactionOwner->isReadOnlyFor($this->owner)) {
+                return false;
+            }
+        }
+
         switch ($filter) {
             case "post":
-                return true;
+                if ($user instanceof User) {
+                    return $user->canBeViewedBy($this->owner, true, false);
+                }
+
+                return method_exists($user, "canBeViewedBy") ? $user->canBeViewedBy($this->owner) : true;
             case "photo":
-                return $user->getPrivacyPermission("photos.read", $this->owner);
+                return $user->getPrivacyPermission("photos.read", $this->owner, false);
             case "video":
-                return $user->getPrivacyPermission("videos.read", $this->owner);
+                return $user->getPrivacyPermission("videos.read", $this->owner, false);
             case "audio":
-                return $user->getPrivacyPermission("audios.read", $this->owner);
+                return $user->getPrivacyPermission("audios.read", $this->owner, false);
             case "note":
-                return $user->getPrivacyPermission("notes.read", $this->owner);
+                return $user->getPrivacyPermission("notes.read", $this->owner, false);
         }
 
         return true;

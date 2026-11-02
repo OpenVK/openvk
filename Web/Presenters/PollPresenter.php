@@ -29,7 +29,7 @@ final class PollPresenter extends OpenVKPresenter
         $this->template->title    = $poll->getTitle();
         $this->template->isAnon   = $poll->isAnonymous();
         $this->template->multiple = $poll->isMultipleChoice();
-        $this->template->unlocked = $poll->isRevotable();
+        $this->template->unlocked = $poll->isRevotable() && $poll->canBeVotedBy($this->user->identity);
         $this->template->until    = $poll->endsAt();
         $this->template->votes    = $poll->getVoterCount();
         $this->template->meta     = $poll->getMetaDescription();

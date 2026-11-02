@@ -1444,6 +1444,7 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
 
     const pageContent = e.target.closest('.page_content')
     const parent = pageContent ?? ctxPlace
+    const readOnly = u(e.target).closest('.audioEmbed').attr('data-readonly') === '1'
 
     const rect = parent.getBoundingClientRect()
     let x, y;
@@ -1461,7 +1462,7 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
 
     const ctx_u = u(`
         <div id='ctx_menu' style='top:${y}px;left:${x}px;' data-type='ctx_type'>
-            <a id='audio_ctx_copy'>${tr('copy_link_to_audio')}</a>
+            ${readOnly ? '' : `<a id='audio_ctx_copy'>${tr('copy_link_to_audio')}</a>`}
             ${ctx_type == 'main_player' ? `
             <a id='audio_ctx_repeat' ${window.player.audioPlayer.loop ? `class='pressed'` : ''}>${tr('repeat_tip')}</a>
             <a id='audio_ctx_shuffle'>${tr('shuffle_tip')}</a>
@@ -1471,8 +1472,8 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
             <a style='display:none;' id='audio_ctx_play_next'>${tr('audio_ctx_play_next')}</a>
             <a id='audio_ctx_link_playlist'>${tr('playlist')}</a>
             ` : ''}
-            <a id='audio_ctx_add_to_group'>${tr('audio_ctx_add_to_group')}</a>
-            <a id='audio_ctx_add_to_playlist'>${tr('audio_ctx_add_to_playlist')}</a>
+            ${readOnly ? '' : `<a id='audio_ctx_add_to_group'>${tr('audio_ctx_add_to_group')}</a>`}
+            ${readOnly ? '' : `<a id='audio_ctx_add_to_playlist'>${tr('audio_ctx_add_to_playlist')}</a>`}
             ${ctx_type == 'main_player' ? `<a id='audio_ctx_clear_context'>${tr('audio_ctx_clear_context')}</a>` : ''}
             ${ctx_type == 'main_player' ? `<a id='audio_ctx_show_count'>${tr('audio_ctx_show_count')}</a>` : ''}
             ${ctx_type == 'main_player' ? `<a>BigPlayer v1.3</a>` : ''}

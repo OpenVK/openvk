@@ -50,12 +50,14 @@
                         |
                         {var $liked = $photo->hasLikeFrom($thisUser)}
                         {var $likesCount = $photo->getLikesCount()}
+                        {if !($readOnly ?? false)}
                         <div class='like_wrap tidy'>
                             <a href="/photo{$photo->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$photo->getPrettyId()}" data-type='photo'>
                                 <div class="heart" id="{if $liked}liked{/if}"></div>
                                 <span class="likeCnt">{if $likesCount > 0}{$likesCount}{/if}</span>
                             </a>
                         </div>
+                        {/if}
                     {/if}
                 </div>
             </div>
@@ -64,7 +66,7 @@
             
             <div class="media-page-wrapper-details">
                 <div class='media-page-wrapper-comments'>
-                    {include "../components/comments.latte", comments => $comments, count => $cCount, page => $cPage, model => "photos", parent => $photo, custom_id => 999}
+                    {include "../components/comments.latte", comments => $comments, count => $cCount, page => $cPage, model => "photos", parent => $photo, custom_id => 999, readOnly => ($readOnly ?? false)}
                 </div>
                 <div class='media-page-wrapper-actions'>
                     {include "../components/postable/postable_mark.latte", owner => $owner, item => $photo}

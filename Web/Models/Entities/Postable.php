@@ -70,6 +70,13 @@ abstract class Postable extends Attachable
         }
     }
 
+    public function getInteractionOwner(): ?User
+    {
+        $owner = $this->getOwner();
+
+        return $owner instanceof User ? $owner : null;
+    }
+
     public function getSecondOwner(): RowModel
     {
         if (!$this->hasContext()) {
@@ -416,6 +423,11 @@ abstract class Postable extends Attachable
             return false;
         }
 
+        $interactionOwner = $this->getInteractionOwner();
+        if ($interactionOwner && $interactionOwner->isReadOnlyFor($user)) {
+            return false;
+        }
+
         if (method_exists($this, "isPrivate") && $this->isPrivate()) {
             return false;
         }
@@ -451,6 +463,17 @@ abstract class Postable extends Attachable
         }
 
         return false;
+    }
+
+    public function canBeInteractedWith(?User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        $interactionOwner = $this->getInteractionOwner();
+
+        return !($interactionOwner && $interactionOwner->isReadOnlyFor($user));
     }
 
     public function getAttachmentString(): string

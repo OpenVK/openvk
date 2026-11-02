@@ -8,6 +8,13 @@ use openvk\Web\Models\Repositories\{Posts, Comments};
 use MessagePack\MessagePack;
 use Chandler\Session\Session;
 
+/**
+ * Web UI internal RPC.
+ *
+ * Intentionally inherits the moderation context from OpenVKPresenter so
+ * lazy-loaded content keeps working on hidden pages for admins. The outward
+ * VK API disables it explicitly in VKAPIPresenter.
+ */
 final class InternalAPIPresenter extends OpenVKPresenter
 {
     private function fail(int $code, string $message): void

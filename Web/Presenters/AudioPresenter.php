@@ -9,6 +9,7 @@ use openvk\Web\Models\Entities\Audio;
 use openvk\Web\Models\Entities\Club;
 use openvk\Web\Models\Entities\Photo;
 use openvk\Web\Models\Entities\Playlist;
+use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Repositories\Audios;
 use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\Repositories\Users;
@@ -42,6 +43,7 @@ final class AudioPresenter extends OpenVKPresenter
         $this->template->_template = "Audio/List.latte";
         $page = (int) ($this->queryParam("p") ?? 1);
         $audios = [];
+        $readOnly = false;
 
         if ($mode === "list") {
             $entity = null;
@@ -55,7 +57,8 @@ final class AudioPresenter extends OpenVKPresenter
                 $audiosCount = $this->audios->getClubCollectionSize($entity);
             } else {
                 $entity = (new Users())->get($owner);
-                if (!$entity || $entity->isDeleted() || $entity->isBanned()) {
+                $readOnly = $entity instanceof User && $entity->isReadOnlyFor($this->user->identity);
+                if (!$entity || (!$readOnly && ($entity->isDeleted() || $entity->isBanned()))) {
                     $this->redirect("/audios" . $this->user->id);
                 }
 
@@ -94,7 +97,8 @@ final class AudioPresenter extends OpenVKPresenter
                 $playlistsCount = $this->audios->getClubPlaylistsCount($entity);
             } else {
                 $entity = (new Users())->get($owner);
-                if (!$entity || $entity->isDeleted() || $entity->isBanned()) {
+                $readOnly = $entity instanceof User && $entity->isReadOnlyFor($this->user->identity);
+                if (!$entity || (!$readOnly && ($entity->isDeleted() || $entity->isBanned()))) {
                     $this->redirect("/playlists" . $this->user->id);
                 }
 
@@ -129,6 +133,7 @@ final class AudioPresenter extends OpenVKPresenter
 
         $this->template->mode = $mode;
         $this->template->page = $page;
+        $this->template->readOnly = $readOnly;
 
         if (in_array($mode, ["list", "new", "popular"]) && $this->user->identity && $page < 2) {
             $this->template->friendsAudios = $this->user->identity->getBroadcastList("all", true);
@@ -464,6 +469,10 @@ final class AudioPresenter extends OpenVKPresenter
             $this->flashFail("err", "error", tr("invalid_playlist"), null, true);
         }
 
+        if ($this->queryParam("act") === "bookmark" && $this->isOwnerReadOnly($playlist->getOwner())) {
+            $this->flashFail("err", "error", tr("access_denied"), null, true);
+        }
+
         switch ($this->queryParam("act")) {
             case "bookmark":
                 if (!$playlist->isBookmarkedBy($this->user->identity)) {
@@ -592,6 +601,7 @@ final class AudioPresenter extends OpenVKPresenter
         $this->template->cover_url = $this->template->cover ? $this->template->cover->getURL() : "/assets/packages/static/openvk/img/song.jpg";
         $this->template->ownerId = $owner_id;
         $this->template->owner = $playlist->getOwner();
+        $this->template->readOnly = $playlist->getOwner() instanceof User && $playlist->getOwner()->isReadOnlyFor($this->user->identity);
         $this->template->isBookmarked = $this->user->identity && $playlist->isBookmarkedBy($this->user->identity);
         $this->template->isMy = $this->user->identity &&  $playlist->getOwner()->getId() === $this->user->id;
         $this->template->canEdit = $this->user->identity && $playlist->canBeModifiedBy($this->user->identity);
@@ -610,6 +620,12 @@ final class AudioPresenter extends OpenVKPresenter
         }
     }
 
+    private function isOwnerReadOnly(?object $owner): bool
+    {
+        return $owner instanceof User
+            && !$owner->getPrivacyPermission('audios.read', $this->user->identity, false);
+    }
+
     public function renderAction(int $audio_id): void
     {
         $this->assertUserLoggedIn();
@@ -625,6 +641,10 @@ final class AudioPresenter extends OpenVKPresenter
 
         if (!$audio || $audio->isDeleted()) {
             $this->flashFail("err", "error", tr("invalid_audio"), null, true);
+        }
+
+        if ($this->isOwnerReadOnly($audio->getOwner()) && !in_array($this->queryParam("act"), ["remove", "remove_club"], true)) {
+            $this->flashFail("err", "error", tr("access_denied"), null, true);
         }
 
         switch ($this->queryParam("act")) {

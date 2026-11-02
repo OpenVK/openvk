@@ -7,6 +7,7 @@ namespace openvk\Web\Models\Entities;
 use morphos\Gender;
 use openvk\Web\Util\IMBroker;
 use openvk\Web\Util\Cache;
+use openvk\Web\Util\ModerationContext;
 use openvk\Web\Themes\{Themepack, Themepacks};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
@@ -42,6 +43,14 @@ class User extends RowModel
     public const PRIVACY_ONLY_FRIENDS    = 1;
     public const PRIVACY_ONLY_REGISTERED = 2;
     public const PRIVACY_EVERYONE        = 3;
+
+    private const WRITE_PRIVACY_SETTINGS = [
+        "friends.add",
+        "wall.write",
+        "messages.write",
+        "messages.add_to_chats",
+        "gifts.send",
+    ];
 
     public const NSFW_INTOLERANT    = 0;
     public const NSFW_TOLERANT      = 1;
@@ -635,8 +644,18 @@ class User extends RowModel
         ])->get($id);
     }
 
-    public function getPrivacyPermission(string $permission, ?User $user = null): bool
+    public function getPrivacyPermission(string $permission, ?User $user = null, bool $moderationBypass = true): bool
     {
+        $isWrite = in_array($permission, self::WRITE_PRIVACY_SETTINGS, true);
+
+        if ($this->isReadOnlyFor($user)) {
+            return $moderationBypass && !$isWrite;
+        }
+
+        if ($moderationBypass && !$isWrite && $this->canBypassPrivacy($user)) {
+            return true;
+        }
+
         if ($this->isDeleted() || $this->isBanned()) {
             return false;
         }
@@ -1758,7 +1777,7 @@ class User extends RowModel
         return $this->getRecord()->profile_type;
     }
 
-    public function canBeViewedBy(?User $user = null, bool $blacklist_check = true): bool
+    private function canBeViewedByNormally(?User $user = null, bool $blacklist_check = true): bool
     {
         if ($user && $this->getId() == $user->getId()) {
             return true;
@@ -1790,6 +1809,60 @@ class User extends RowModel
                 return false;
             }
         }
+    }
+
+    public function canBeViewedBy(?User $user = null, bool $blacklist_check = true, bool $allowModeration = true): bool
+    {
+        if ($allowModeration && $user && ModerationContext::isActiveFor($user->getId())) {
+            return true;
+        }
+
+        return $this->canBeViewedByNormally($user, $blacklist_check);
+    }
+
+    public function isReadOnlyFor(?User $user = null): bool
+    {
+        if (!$user || $this->getId() === $user->getId() || !ModerationContext::isActiveFor($user->getId())) {
+            return false;
+        }
+
+        if ($this->isDeleted() || $this->isBanned()) {
+            return true;
+        }
+
+        if ($this->isBlacklistedBy($user) || $user->isBlacklistedBy($this)) {
+            return true;
+        }
+
+        if ($this->isClosed()) {
+            return $this->getSubscriptionStatus($user) !== User::SUBSCRIPTION_MUTUAL;
+        }
+
+        return false;
+    }
+
+    public function canBypassPrivacy(?User $user = null): bool
+    {
+        return $user
+            && $this->getId() !== $user->getId()
+            && ModerationContext::isActiveFor($user->getId());
+    }
+
+    public function canReceiveFriendRequestsFrom(?User $user = null): bool
+    {
+        if (!$user || $this->getId() === $user->getId()) {
+            return false;
+        }
+
+        if ($this->isDeleted() || $this->isBanned()) {
+            return false;
+        }
+
+        if ($this->isBlacklistedBy($user) || $user->isBlacklistedBy($this)) {
+            return false;
+        }
+
+        return true;
     }
 
     public function isClosed(): bool

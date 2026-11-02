@@ -79,10 +79,13 @@ class Users
         return $user ? $this->getByChandlerUserId($user->getId()) : null;
     }
 
-    public function find(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false]): Util\EntityStream
+    public function find(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false], bool $includeDeleted = false): Util\EntityStream
     {
         $query = "%$query%";
-        $result = $this->users->where("CONCAT_WS(' ', first_name, last_name, pseudo, shortcode) LIKE ?", $query)->where("deleted", 0);
+        $result = $this->users->where("CONCAT_WS(' ', first_name, last_name, pseudo, shortcode) LIKE ?", $query);
+        if (!$includeDeleted) {
+            $result = $result->where("deleted", 0);
+        }
         $order_str = 'id';
 
         switch ($order['type']) {

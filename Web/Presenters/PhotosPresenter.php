@@ -218,6 +218,7 @@ final class PhotosPresenter extends OpenVKPresenter
             }
         }
 
+        $this->template->readOnly = $photo->getOwner() instanceof User && $photo->getOwner()->isReadOnlyFor($this->user->identity);
         $this->template->sort = $this->queryParam("sort") ?? "asc";
         $input_sort = $this->template->sort == "asc" ? "ASC" : "DESC";
 
@@ -507,6 +508,10 @@ final class PhotosPresenter extends OpenVKPresenter
         $photo = $this->photos->getByOwnerAndVID($wall, $post_id);
         if (!$photo || $photo->isDeleted() || !$photo->canBeViewedBy($this->user->identity)) {
             $this->notFound();
+        }
+
+        if (!$photo->canBeInteractedWith($this->user->identity)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
         if (!is_null($this->user->identity)) {
