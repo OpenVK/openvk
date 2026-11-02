@@ -644,10 +644,16 @@ class User extends RowModel
         ])->get($id);
     }
 
-    public function getPrivacyPermission(string $permission, ?User $user = null): bool
+    public function getPrivacyPermission(string $permission, ?User $user = null, bool $moderationBypass = true): bool
     {
+        $isWrite = in_array($permission, self::WRITE_PRIVACY_SETTINGS, true);
+
         if ($this->isReadOnlyFor($user)) {
-            return !in_array($permission, self::WRITE_PRIVACY_SETTINGS, true);
+            return !$isWrite;
+        }
+
+        if ($moderationBypass && !$isWrite && $this->canBypassPrivacy($user)) {
+            return true;
         }
 
         if ($this->isDeleted() || $this->isBanned()) {
@@ -1833,6 +1839,13 @@ class User extends RowModel
         }
 
         return false;
+    }
+
+    public function canBypassPrivacy(?User $user = null): bool
+    {
+        return $user
+            && $this->getId() !== $user->getId()
+            && ModerationContext::isActiveFor($user->getId());
     }
 
     public function canReceiveFriendRequestsFrom(?User $user = null): bool

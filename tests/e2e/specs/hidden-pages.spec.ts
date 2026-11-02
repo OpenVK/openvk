@@ -162,4 +162,42 @@ test.describe('Hidden pages', () => {
     await expect(page.locator('.poll form')).toHaveCount(0);
     await expect(page.locator('.poll-results')).toBeVisible();
   });
+
+  test('viewHidden bypasses page privacy on an open profile', async ({ page }) => {
+    sql(`UPDATE profiles SET privacy = 2305843009205305344 WHERE id = ${ALICE_ID}`);
+
+    await loginAsAdmin(page);
+    await page.goto('/id2');
+
+    await expect(page.locator('.moderation-banner')).toHaveCount(0);
+    await expect(page.locator('.profileName h2')).toContainText('Alice');
+  });
+
+  test('regular user cannot bypass page privacy on an open profile', async ({ page }) => {
+    sql(`UPDATE profiles SET privacy = 2305843009205305344 WHERE id = ${ALICE_ID}`);
+
+    await loginAsCharlie(page);
+    await page.goto('/id2');
+
+    await expect(page.getByText('Access error')).toBeVisible();
+  });
+
+  test('viewHidden bypasses photos privacy on an open profile', async ({ page }) => {
+    sql(`UPDATE profiles SET privacy = 9115285645789495296 WHERE id = ${ALICE_ID}`);
+
+    await loginAsAdmin(page);
+    await page.goto('/photo2_1');
+
+    await expect(page.getByText('Sunset at the beach')).toBeVisible();
+  });
+
+  test('viewHidden does not bypass write privacy on a normal profile', async ({ page }) => {
+    sql(`UPDATE profiles SET privacy = 9223345648567320576 WHERE id = ${ALICE_ID}`);
+
+    await loginAsAdmin(page);
+    await page.goto('/id2');
+
+    await expect(page.locator('.profileName h2')).toContainText('Alice');
+    await expect(page.locator('a[href="/im?sel=2"]')).toHaveCount(0);
+  });
 });

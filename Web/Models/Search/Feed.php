@@ -52,13 +52,13 @@ class Feed
             case "post":
                 return true;
             case "photo":
-                return $user->getPrivacyPermission("photos.read", $this->owner);
+                return $user->getPrivacyPermission("photos.read", $this->owner, false);
             case "video":
-                return $user->getPrivacyPermission("videos.read", $this->owner);
+                return $user->getPrivacyPermission("videos.read", $this->owner, false);
             case "audio":
-                return $user->getPrivacyPermission("audios.read", $this->owner);
+                return $user->getPrivacyPermission("audios.read", $this->owner, false);
             case "note":
-                return $user->getPrivacyPermission("notes.read", $this->owner);
+                return $user->getPrivacyPermission("notes.read", $this->owner, false);
         }
 
         return true;
