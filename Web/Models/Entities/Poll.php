@@ -188,11 +188,26 @@ class Poll extends Attachable
 
     public function canVote(User $user): bool
     {
-        return !$this->hasEnded() && !$this->hasVoted($user) && !is_null($this->getAttachedPost()) && $this->getAttachedPost()->getSuggestionType() == 0;
+        return $this->canBeVotedBy($user) && !$this->hasEnded() && !$this->hasVoted($user) && $this->getAttachedPost()->getSuggestionType() == 0;
+    }
+
+    public function canBeVotedBy(?User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        $post = $this->getAttachedPost();
+
+        return $post && $post->canBeViewedBy($user) && $post->canBeInteractedWith($user);
     }
 
     public function vote(User $user, array $optionIds): void
     {
+        if (!$this->canBeVotedBy($user)) {
+            throw new PollLockedException();
+        }
+
         if ($this->hasEnded()) {
             throw new PollLockedException();
         }
@@ -224,6 +239,10 @@ class Poll extends Attachable
 
     public function revokeVote(User $user): void
     {
+        if (!$this->canBeVotedBy($user)) {
+            throw new PollLockedException();
+        }
+
         if (!$this->isRevotable()) {
             throw new PollLockedException();
         }
@@ -350,11 +369,11 @@ class Poll extends Attachable
                     "attachable_id"    => $this->getId()]
             )->fetch();
 
-        if (!is_null($post->target_id)) {
-            return (new Posts())->get($post->target_id);
-        } else {
+        if (!$post || is_null($post->target_id)) {
             return null;
         }
+
+        return (new Posts())->get($post->target_id);
     }
 
     public function toVkApiStruct(?User $user = null): object

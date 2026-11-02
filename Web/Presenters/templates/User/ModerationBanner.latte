@@ -35,7 +35,11 @@
         {_moderation_view_blacklisted_by_viewer}<br />
     </span>
 
-    {_moderation_view_readonly}
+    {if $canSendFriendRequest ?? false}
+        {_moderation_view_readonly_friends}
+    {else}
+        {_moderation_view_readonly}
+    {/if}
 </div>
 
 {if $thisUser && $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}

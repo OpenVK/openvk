@@ -23,8 +23,14 @@ test.describe('Hidden pages', () => {
 
     await expect(page.locator('.moderation-banner')).toContainText('Hidden page preview');
     await expect(page.locator('.moderation-banner')).toContainText('This profile is closed');
+    await expect(page.locator('.moderation-banner')).toContainText('friend request');
     await expect(page.locator('.profileName h2')).toContainText('Alice');
     await expect(page.locator('a[href="/im?sel=2"]')).toHaveCount(0);
+
+    const addFriend = page.locator('form[action="/setSub/user"] input[type="submit"]');
+    await expect(addFriend).toHaveValue('Add to friends');
+    await addFriend.click();
+    await expect(page.locator('form[action="/setSub/user"] input[type="submit"]')).toHaveValue('Cancel request');
   });
 
   test('regular user sees the closed profile stub', async ({ page }) => {
@@ -35,6 +41,7 @@ test.describe('Hidden pages', () => {
 
     await expect(page.locator('.moderation-banner')).toHaveCount(0);
     await expect(page.getByText(/limited access to/)).toBeVisible();
+    await expect(page.locator('form[action="/setSub/user"]')).toBeVisible();
   });
 
   test('admin sees a banned profile and its unban action', async ({ page }) => {
@@ -47,6 +54,7 @@ test.describe('Hidden pages', () => {
     await expect(page.locator('.profileName h2')).toContainText('Alice');
     await expect(page.locator('#unbanHiddenProfile')).toBeVisible();
     await expect(page.locator('#restoreHiddenProfile')).toHaveCount(0);
+    await expect(page.locator('form[action="/setSub/user"]')).toHaveCount(0);
   });
 
   test('admin sees a deleted profile without restore action', async ({ page }) => {
@@ -59,6 +67,7 @@ test.describe('Hidden pages', () => {
     await expect(page.locator('.profileName h2')).toContainText('DELETED');
     await expect(page.getByText('Hello world! This is my very first post')).toBeVisible();
     await expect(page.locator('#restoreHiddenProfile')).toHaveCount(0);
+    await expect(page.locator('form[action="/setSub/user"]')).toHaveCount(0);
   });
 
   test('regular user sees the deleted profile stub', async ({ page }) => {
@@ -112,5 +121,45 @@ test.describe('Hidden pages', () => {
     const row = page.locator('tr', { has: page.locator('a[href="/alice"]') });
     await expect(row).toBeVisible();
     await expect(row.getByText('Deleted', { exact: true })).toBeVisible();
+  });
+
+  test('admin who is a mutual friend of a closed profile keeps normal access', async ({ page }) => {
+    sql(`UPDATE profiles SET profile_type = 1 WHERE id = ${ALICE_ID};
+         INSERT INTO subscriptions (follower, model, target) VALUES
+         (1, 'openvk\\\\Web\\\\Models\\\\Entities\\\\User', 2),
+         (2, 'openvk\\\\Web\\\\Models\\\\Entities\\\\User', 1)`);
+
+    await loginAsAdmin(page);
+    await page.goto('/id2');
+
+    await expect(page.locator('.moderation-banner')).toHaveCount(0);
+    await expect(page.locator('.profileName h2')).toContainText('Alice');
+    await expect(page.locator('a[href="/im?sel=2"]')).toBeVisible();
+    await expect(page.locator('form[action="/setSub/user"]')).toBeVisible();
+  });
+
+  test('admin sees photos and videos of a deleted profile', async ({ page }) => {
+    sql(`UPDATE profiles SET deleted = 1, deact_date = 0 WHERE id = ${ALICE_ID}`);
+
+    await loginAsAdmin(page);
+    await page.goto('/photo2_1');
+    await expect(page.getByText('Sunset at the beach')).toBeVisible();
+    await expect(page.locator('.post-like-button')).toHaveCount(0);
+
+    await page.goto('/video2_1');
+    await expect(page.locator('.ovk-vid-details b', { hasText: 'Welcome Video' })).toBeVisible();
+    await expect(page.locator('.post-like-button')).toHaveCount(0);
+  });
+
+  test('polls on a hidden profile are read-only', async ({ page }) => {
+    sql(`UPDATE profiles SET deleted = 1, deact_date = 0 WHERE id = ${ALICE_ID}`);
+    sql("INSERT INTO attachments (attachable_type, attachable_id, target_type, target_id, `index`) VALUES ('openvk\\\\Web\\\\Models\\\\Entities\\\\Poll', 1, 'openvk\\\\Web\\\\Models\\\\Entities\\\\Post', 1, 0)");
+
+    await loginAsAdmin(page);
+    await page.goto('/id2');
+
+    await expect(page.getByText('What is your favorite programming language?')).toBeVisible();
+    await expect(page.locator('.poll form')).toHaveCount(0);
+    await expect(page.locator('.poll-results')).toBeVisible();
   });
 });

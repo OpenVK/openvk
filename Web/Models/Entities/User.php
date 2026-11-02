@@ -1820,11 +1820,36 @@ class User extends RowModel
             return false;
         }
 
-        return $this->isDeleted()
-            || $this->isBanned()
-            || $this->isClosed()
-            || $this->isBlacklistedBy($user)
-            || $user->isBlacklistedBy($this);
+        if ($this->isDeleted() || $this->isBanned()) {
+            return true;
+        }
+
+        if ($this->isBlacklistedBy($user) || $user->isBlacklistedBy($this)) {
+            return true;
+        }
+
+        if ($this->isClosed()) {
+            return $this->getSubscriptionStatus($user) !== User::SUBSCRIPTION_MUTUAL;
+        }
+
+        return false;
+    }
+
+    public function canReceiveFriendRequestsFrom(?User $user = null): bool
+    {
+        if (!$user || $this->getId() === $user->getId()) {
+            return false;
+        }
+
+        if ($this->isDeleted() || $this->isBanned()) {
+            return false;
+        }
+
+        if ($this->isBlacklistedBy($user) || $user->isBlacklistedBy($this)) {
+            return false;
+        }
+
+        return true;
     }
 
     public function isClosed(): bool

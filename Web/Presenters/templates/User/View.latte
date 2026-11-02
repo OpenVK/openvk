@@ -113,7 +113,9 @@
                 {if !($moderationView ?? false)}
                 <a style="width: 194px;" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && ($user->getGiftCount() == 0 || !$user->getPrivacyPermission('gifts.read', $thisUser ?? NULL)) && $user->getPrivacyPermission('gifts.send', $thisUser ?? NULL)" href="/gifts?act=pick&user={$user->getId()}" class="profile_link">{_send_gift}</a>
                 <a style="width: 194px;" n:if="$user->getPrivacyPermission('messages.write', $thisUser) || ($thisUser && $user->hasActiveDialogueWith($thisUser))" onclick="showUserDialog(event, {$user->getRealId()})" href="/im?sel={$user->getId()}" class="profile_link">{_send_message}</a>
+                {/if}
 
+                {if $canSendFriendRequest ?? false}
                 {var $subStatus = $user->getSubscriptionStatus($thisUser)}
                 {if $subStatus === 0}
                     <form action="/setSub/user" method="post" class="profile_link_form">
@@ -144,7 +146,9 @@
                         <input type="submit" class="profile_link" value="{_friends_delete}" style="width: 194px;" />
                     </form>
                 {/if}
+                {/if}
 
+                {if !($moderationView ?? false)}
                 <a n:if="!$blacklist_status" id="_bl_toggler" data-name="{$user->getMorphedName('genitive', false, false)}" data-val="1" data-id="{$user->getRealId()}" class="profile_link" style="display:block;width:96%;">{_bl_add}</a>
                 {* 4 admins *}
                 <a n:if="$blacklist_status" id="_bl_toggler" data-val="0" data-id="{$user->getRealId()}" class="profile_link" style="display:block;width:96%;">{_bl_remove}</a>

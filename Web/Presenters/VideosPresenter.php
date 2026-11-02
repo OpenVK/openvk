@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace openvk\Web\Presenters;
 
 use openvk\Web\Models\Entities\Video;
+use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Repositories\{Users, Clubs, Videos};
 use Nette\InvalidStateException as ISE;
 
@@ -73,6 +74,7 @@ final class VideosPresenter extends OpenVKPresenter
 
         $this->template->user     = $user;
         $this->template->video    = $video;
+        $this->template->readOnly = $user instanceof User && $user->isReadOnlyFor($this->user->identity);
         $this->template->cCount   = $this->template->video->getCommentsCount();
         $this->template->cPage    = (int) ($this->queryParam("p") ?? 1);
 

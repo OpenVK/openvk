@@ -30,6 +30,7 @@ final class NotesPresenter extends OpenVKPresenter
         }
 
         $this->template->page  = (int) ($this->queryParam("p") ?? 1);
+        $this->template->forceNoLike = $user->isReadOnlyFor($this->user->identity);
         $this->template->notes = $this->notes->getUserNotes($user, $this->template->page);
         $this->template->count = $this->notes->getUserNotesCount($user);
         $this->template->owner = $user;
@@ -50,6 +51,7 @@ final class NotesPresenter extends OpenVKPresenter
 
         $this->template->cCount   = $note->getCommentsCount();
         $this->template->cPage    = (int) ($this->queryParam("p") ?? 1);
+        $this->template->forceNoLike = $note->getOwner()->isReadOnlyFor($this->user->identity);
         $this->template->comments = iterator_to_array($note->getComments($this->template->cPage));
         $this->template->note     = $note;
     }

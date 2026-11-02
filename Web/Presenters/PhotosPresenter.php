@@ -218,6 +218,7 @@ final class PhotosPresenter extends OpenVKPresenter
             }
         }
 
+        $this->template->readOnly = $photo->getOwner() instanceof User && $photo->getOwner()->isReadOnlyFor($this->user->identity);
         $this->template->sort = $this->queryParam("sort") ?? "asc";
         $input_sort = $this->template->sort == "asc" ? "ASC" : "DESC";
 

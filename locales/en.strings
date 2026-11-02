@@ -3516,6 +3516,7 @@
 "moderation_view_title" = "Hidden page preview";
 "moderation_view_warning" = "You are viewing this page as an instance administrator. Do not take screenshots or share its contents with third parties.";
 "moderation_view_readonly" = "Interaction with this page is disabled.";
+"moderation_view_readonly_friends" = "Interaction is limited: you can send a friend request.";
 "moderation_view_closed" = "This profile is closed.";
 "moderation_view_banned" = "This user is banned.";
 "moderation_view_deleted" = "This page is deleted.";

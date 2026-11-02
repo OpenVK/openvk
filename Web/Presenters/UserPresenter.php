@@ -40,6 +40,7 @@ final class UserPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
+        $this->template->canSendFriendRequest = $user->canReceiveFriendRequestsFrom($this->user->identity);
         $moderationView = $user->isReadOnlyFor($this->user->identity);
 
         if (!$moderationView && ($user->isDeleted() || !$user->canBeViewedBy($this->user->identity))) {
@@ -538,7 +539,7 @@ final class UserPresenter extends OpenVKPresenter
             exit("Invalid state");
         }
 
-        if ($user->isReadOnlyFor($this->user->identity)) {
+        if ($this->postParam("act") === "add" && !$user->canReceiveFriendRequestsFrom($this->user->identity)) {
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 

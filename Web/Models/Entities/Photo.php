@@ -589,7 +589,12 @@ class Photo extends Media
 
     public function canBeViewedBy(?User $user = null, ?string $access_key = null): bool
     {
-        if ($this->isDeleted() || $this->getOwner()->isDeleted()) {
+        if ($this->isDeleted()) {
+            return false;
+        }
+
+        $owner = $this->getOwner();
+        if ($owner->isDeleted() && !$owner->canBeViewedBy($user)) {
             return false;
         }
 

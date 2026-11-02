@@ -3344,6 +3344,7 @@
 "moderation_view_title" = "Просмотр скрытой страницы";
 "moderation_view_warning" = "Вы видите эту страницу как администратор инстанса. Не делайте скриншоты и не передавайте её содержимое третьим лицам.";
 "moderation_view_readonly" = "Взаимодействие с этой страницей отключено.";
+"moderation_view_readonly_friends" = "Взаимодействие ограничено: можно отправить заявку в друзья.";
 "moderation_view_closed" = "Профиль закрыт.";
 "moderation_view_banned" = "Пользователь заблокирован.";
 "moderation_view_deleted" = "Страница удалена.";
