@@ -560,12 +560,14 @@ class Club extends RowModel
                 return false;
             }
 
-            if ($this->isClosed() && $this->getSubscriptionStatus($user)) {
+            if (!$this->isClosed()) {
                 return true;
             }
 
-            if (!$this->isClosed()) {
+            if ($this->isClosed() && $this->getSubscriptionStatus($user)) {
                 return true;
+            } else {
+                return false;
             }
         } else {
             if ($this->isClosed()) {
