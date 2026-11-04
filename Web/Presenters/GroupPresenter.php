@@ -344,11 +344,11 @@ final class GroupPresenter extends OpenVKPresenter
             $club->setEveryone_can_upload_audios(empty($this->postParam("upload_audios")) ? 0 : 1);
             $club->setEveryone_can_upload_videos(empty($this->postParam("upload_videos")) ? 0 : 1);
             $club->setIs_messages_enabled(empty($this->postParam("is_messages_enabled")) ? 0 : 1);
-            
+
             switch ($this->postParam("group_type")) {
                 case 0:
                 case 1:
-                // case 2: -- uncomment dis when y'all make private groups
+                    // case 2: -- uncomment dis when y'all make private groups
                     $club->setClosed($this->postParam("group_type"));
                     break;
             }
