@@ -290,7 +290,7 @@ class Club extends RowModel
             "follower" => $user->getId(),
             "target"   => $this->getId(),
             "model"    => static::class,
-            "flags"    => 0
+            "flags"    => 0,
         ])->count("*") === 1;
         ;
     }
@@ -301,7 +301,7 @@ class Club extends RowModel
                 "follower" => $user->getId(),
                 "target"   => $this->getId(),
                 "model"    => static::class,
-                "flags"    => 1
+                "flags"    => 1,
             ])->count("*") === 1;
         } else {
             return false;
