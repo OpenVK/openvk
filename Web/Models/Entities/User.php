@@ -1015,7 +1015,8 @@ class User extends RowModel
         } else {
             $sel = $this->getRecord()
                 ->related("subscriptions.follower")
-                ->limit($count, $page);
+                ->limit($count, $page)
+                ->where("NOT (flags = 1 AND target IN (SELECT id FROM groups WHERE closed = 1))");
 
             if (!$andEvents) {
                 $sel = $sel->where("target IN (SELECT id FROM groups WHERE type = ?)", 1);
@@ -1056,7 +1057,8 @@ class User extends RowModel
         } else {
             $sel = $this->getRecord()->related("subscriptions.follower");
             $sel = $sel->where("model", "openvk\\Web\\Models\\Entities\\Club")
-                ->where("target IN (SELECT id FROM groups WHERE type = ?)", 1);
+                ->where("target IN (SELECT id FROM groups WHERE type = ?)", 1)
+                ->where("NOT (flags = 1 AND target IN (SELECT id FROM groups WHERE closed = 1))");
 
             if ($messagesEnabled) {
                 $sel = $sel->where("target IN (SELECT id FROM groups WHERE is_messages_enabled = 1 AND deleted = 0 AND block_reason IS NULL)");

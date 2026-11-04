@@ -1725,6 +1725,7 @@
 "forbidden" = "Access error";
 "unknown_error" = "Unknown error";
 "forbidden_comment" = "This user's privacy settings do not allow you to look at his page.";
+"forbidden_comment_group" = "This page or piece of content belongs to a closed or private group and is accessible only to its members.";
 
 "changes_saved" = "Changes saved";
 "changes_saved_comment" = "New data will appear on your page";
