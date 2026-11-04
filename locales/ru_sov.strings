@@ -241,6 +241,8 @@
 "group_type" = "Тип группы";
 "group_type_open" = "Это открытая группа. В неё может вступить любой желающий.";
 "group_type_closed" = "Это закрытая группа. Для вступления необходимо подавать заявку.";
+"group_type_open_title" = "Открытая";
+"group_type_closed_title" = "Закрытая";
 "creator" = "Создатель";
 "administrators" = "Администраторы";
 "add_to_left_menu" = "Добавить в левое меню";
