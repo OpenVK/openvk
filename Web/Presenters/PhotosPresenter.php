@@ -48,7 +48,7 @@ final class PhotosPresenter extends OpenVKPresenter
                 $this->notFound();
             }
             if (!$club->canBeViewedBy($this->user->identity)) {
-                $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+                $this->flashFail("err", tr("forbidden"), tr("forbidden_comment_group"));
             }
             $this->template->albums  = $this->albums->getClubAlbums($club, (int) ($this->queryParam("p") ?? 1));
             $this->template->count   = $this->albums->getClubAlbumsCount($club);

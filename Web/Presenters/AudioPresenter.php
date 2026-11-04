@@ -51,6 +51,10 @@ final class AudioPresenter extends OpenVKPresenter
                     $this->redirect("/audios" . $this->user->id);
                 }
 
+                if (!$entity->canBeViewedBy($this->user->identity)) {
+                    $this->flashFail("err", tr("forbidden"), tr("forbidden_comment_group"));
+                }
+
                 $audios = $this->audios->getByClub($entity, $page, 10);
                 $audiosCount = $this->audios->getClubCollectionSize($entity);
             } else {
