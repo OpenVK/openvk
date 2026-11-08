@@ -143,7 +143,7 @@ class Audios
         foreach ($ids as $id) {
             $audio = $this->get((int) $id);
 
-            if (!$audio || $audio->isDeleted()) {
+            if (!$audio || $audio->isDeleted() || GeoBlock::i()->isBlocked($audio)) {
                 continue;
             }
 

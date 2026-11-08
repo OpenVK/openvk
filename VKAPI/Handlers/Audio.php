@@ -361,6 +361,8 @@ final class Audio extends VKAPIRequestHandler
                 $this->fail(50, "Invalid user");
             }
 
+            $this->failIfGeoBlocked($user);
+
             if (!$user->getPrivacyPermission("audios.read", $this->getUser())) {
                 $this->fail(15, "Access denied: this user chose to hide his audios");
             }
@@ -617,6 +619,8 @@ final class Audio extends VKAPIRequestHandler
             if (!$user) {
                 $this->fail(50, "Invalid user");
             }
+
+            $this->failIfGeoBlocked($user);
 
             if (!$user->getPrivacyPermission("audios.read", $this->getUser())) {
                 $this->fail(50, "Access to playlists denied");
@@ -915,6 +919,8 @@ final class Audio extends VKAPIRequestHandler
         if (!$playlist || $playlist->isDeleted()) {
             $this->fail(15, "Access error");
         }
+
+        $this->failIfGeoBlocked($playlist);
 
         return (object) [
             "id" => $playlist->getId(),

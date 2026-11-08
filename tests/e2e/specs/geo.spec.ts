@@ -8,6 +8,7 @@ async function blockTarget(page, target: string): Promise<void> {
   await form.locator('input[name="reason"]').fill('test demand');
   await form.locator('button[type="submit"]').click();
   await page.waitForURL('**/admin/geo');
+  await page.locator('table.aui tbody tr').first().waitFor({ state: 'visible' });
 }
 
 async function countryPage(browser, country: string) {
@@ -54,6 +55,31 @@ test.describe('Geo blocks', () => {
     const usPage = await countryPage(browser, 'US');
     const usResponse = await usPage.goto('/id3');
     expect(usResponse?.status()).toBe(200);
+  });
+
+  test('blocks a pinned post', async ({ page, browser }) => {
+    await blockTarget(page, '/wall2_5');
+
+    const ruPage = await countryPage(browser, 'RU');
+    expect((await ruPage.goto('/wall2_5'))?.status()).toBe(451);
+    await ruPage.goto('/wall2');
+    await expect(ruPage.locator('text=Pinned announcement: I am now accepting friend requests!')).toHaveCount(0);
+
+    const usPage = await countryPage(browser, 'US');
+    expect((await usPage.goto('/wall2_5'))?.status()).toBe(200);
+  });
+
+  test('blocks derived blob paths for a photo', async ({ page, browser }) => {
+    await blockTarget(page, '/photo2_1');
+
+    const hash = '0'.repeat(128);
+    const derived = `/blob_00/${hash}_cropped/normal.jpeg`;
+
+    const ruPage = await countryPage(browser, 'RU');
+    expect((await ruPage.goto(derived))?.status()).toBe(451);
+
+    const usPage = await countryPage(browser, 'US');
+    expect((await usPage.goto(derived))?.status()).not.toBe(451);
   });
 
   test('unblocks a post', async ({ page, browser }) => {

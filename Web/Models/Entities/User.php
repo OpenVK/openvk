@@ -1827,6 +1827,10 @@ class User extends RowModel
 
     public function canBeViewedBy(?User $user = null, bool $blacklist_check = true, bool $allowModeration = true): bool
     {
+        if (GeoBlock::i()->isBlocked($this)) {
+            return false;
+        }
+
         if ($allowModeration && $user && ModerationContext::isActiveFor($user->getId())) {
             return true;
         }

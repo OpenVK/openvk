@@ -58,7 +58,7 @@ openvk:
             database: "/usr/share/GeoIP/GeoLite2-Country.mmdb"
             trustedProxies:
                 - "127.0.0.1/32"
-            headerCountry: "X-Geo-Country"
+            headerCountry: null
             defaultCountries:
                 - "RU"
             mediaCacheTtl: 300

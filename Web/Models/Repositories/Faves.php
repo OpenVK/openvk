@@ -6,6 +6,7 @@ namespace openvk\Web\Models\Repositories;
 
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Entities\User;
+use openvk\Web\Util\GeoBlock;
 use Nette\Database\Table\ActiveRow;
 
 class Faves
@@ -41,7 +42,9 @@ class Faves
             }
 
             $entity = $repo->get($like->target);
-            yield $entity;
+            if ($entity !== null && !GeoBlock::i()->isBlocked($entity)) {
+                yield $entity;
+            }
         }
     }
 

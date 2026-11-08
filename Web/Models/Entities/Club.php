@@ -523,6 +523,10 @@ class Club extends RowModel
 
     public function canBeViewedBy(?User $user = null, bool $blacklist_check = true, bool $allowModeration = true)
     {
+        if (GeoBlock::i()->isBlocked($this)) {
+            return false;
+        }
+
         return is_null($this->getBanReason());
     }
 

@@ -3551,3 +3551,4 @@
 "admin_geo_actions" = "Actions";
 "admin_geo_disabled" = "Geo blocks are disabled in configuration. Records can be created, but they are not enforced.";
 "admin_geo_bypass" = "You are viewing content hidden in your region as an administrator.";
+"admin_geo_unavailable" = "Geo blocks are enabled, but no country source is available: the .mmdb is missing and headerCountry is not configured. All checks currently pass.";

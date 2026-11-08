@@ -64,6 +64,20 @@ final class GeoIp
         }
     }
 
+    public function isAvailable(): bool
+    {
+        $config = $this->config();
+        if (!(bool) ($config["enabled"] ?? false)) {
+            return true;
+        }
+
+        if (trim((string) ($config["headerCountry"] ?? "")) !== "") {
+            return true;
+        }
+
+        return $this->reader() !== null;
+    }
+
     public function clientIp(): ?string
     {
         $remote = $_SERVER["REMOTE_ADDR"] ?? null;

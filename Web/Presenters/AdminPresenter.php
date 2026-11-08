@@ -8,6 +8,7 @@ use Chandler\Database\Log;
 use Chandler\Database\Logs;
 use openvk\Web\Models\Entities\{Voucher, Gift, GiftCategory, User, BannedLink};
 use openvk\Web\Util\GeoBlock;
+use openvk\Web\Util\GeoIp;
 use openvk\Web\Models\Repositories\{Audios,
     ChandlerGroups,
     Stickers,
@@ -1199,9 +1200,10 @@ final class AdminPresenter extends OpenVKPresenter
     public function renderGeo(): void
     {
         $geo = GeoBlock::i();
-        $this->template->geoEnabled   = $geo->isEnabled();
-        $this->template->geoBlocks    = $geo->getActiveBlocks();
-        $this->template->geoCountries = implode(", ", $geo->getDefaultCountries());
+        $this->template->geoEnabled     = $geo->isEnabled();
+        $this->template->geoUnavailable = $geo->isEnabled() && !GeoIp::i()->isAvailable();
+        $this->template->geoBlocks      = $geo->getActiveBlocks();
+        $this->template->geoCountries   = implode(", ", $geo->getDefaultCountries());
 
         $targetInput = $_SERVER["REQUEST_METHOD"] === "POST"
             ? $this->postParam("target")
