@@ -31,7 +31,7 @@
 {if sizeof($comments) > 0}
     <div class='scroll_container'>
         <div class='scroll_node' n:foreach="$comments as $comment">
-            {include "comment.latte", comment => $comment, no_reply_button => $readOnly}
+            {include "comment.latte", comment => $comment, no_reply_button => $readOnly, readOnly => $readOnly}
         </div>
     </div>
     <div style="margin-top: 11px;">

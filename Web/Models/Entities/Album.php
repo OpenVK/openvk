@@ -76,7 +76,7 @@ class Album extends MediaCollection
         return $this->has($photo);
     }
 
-    public function canBeViewedBy(?User $user = null): bool
+    public function canBeViewedBy(?User $user = null, bool $allowModeration = true): bool
     {
         if ($this->isDeleted()) {
             return false;
@@ -85,7 +85,7 @@ class Album extends MediaCollection
         $owner = $this->getOwner();
 
         if (get_class($owner) == "openvk\\Web\\Models\\Entities\\User") {
-            return $owner->canBeViewedBy($user) && $owner->getPrivacyPermission('photos.read', $user);
+            return $owner->canBeViewedBy($user, true, $allowModeration) && $owner->getPrivacyPermission('photos.read', $user, $allowModeration);
         } else {
             return $owner->canBeViewedBy($user);
         }

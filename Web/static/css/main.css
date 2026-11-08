@@ -1744,6 +1744,12 @@ table.User {
     background-color: #F9F6E7;
 }
 
+.msg.moderation-banner {
+    width: auto;
+    margin-left: 0;
+    margin-right: 0;
+}
+
 .edit_link {
     color: #c5c5c5;
     font-family: verdana, arial, sans-serif;

@@ -15,4 +15,12 @@ test.describe('Polls', () => {
     await page.goto('/poll2');
     await expect(page.locator('.poll')).toHaveScreenshot('poll-ended.png', { maxDiffPixels: 200 });
   });
+
+  test('revokes a vote in a standalone poll', async ({ page }) => {
+    await page.goto('/poll2');
+    await expect(page.getByText('Cancel my vote')).toBeVisible();
+
+    await page.getByText('Cancel my vote').click();
+    await expect(page.getByText('Cancel my vote')).toHaveCount(0);
+  });
 });

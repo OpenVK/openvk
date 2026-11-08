@@ -520,7 +520,7 @@ class Club extends RowModel
         $this->save();
     }
 
-    public function canBeViewedBy(?User $user = null)
+    public function canBeViewedBy(?User $user = null, bool $blacklist_check = true, bool $allowModeration = true)
     {
         return is_null($this->getBanReason());
     }
