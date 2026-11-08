@@ -24,4 +24,9 @@ final class ModerationContext
     {
         return self::$viewerId !== null && $viewerId !== null && self::$viewerId === $viewerId;
     }
+
+    public static function getViewerId(): ?int
+    {
+        return self::$viewerId;
+    }
 }

@@ -151,11 +151,15 @@ class User extends RowModel
     public function getAvatarUrl(string $size = "miniscule", $avPhoto = null): string
     {
         $serverUrl = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
+        $moderationViewerId = ModerationContext::getViewerId();
+        $showRealAvatar = $moderationViewerId !== null && $moderationViewerId !== $this->getId();
 
-        if ($this->getRecord()->deleted) {
-            return "$serverUrl/assets/packages/static/openvk/img/camera_200.png";
-        } elseif ($this->isBanned()) {
-            return "$serverUrl/assets/packages/static/openvk/img/banned.jpg";
+        if (!$showRealAvatar) {
+            if ($this->getRecord()->deleted) {
+                return "$serverUrl/assets/packages/static/openvk/img/camera_200.png";
+            } elseif ($this->isBanned()) {
+                return "$serverUrl/assets/packages/static/openvk/img/banned.jpg";
+            }
         }
 
         if (!$avPhoto) {
@@ -163,6 +167,12 @@ class User extends RowModel
         }
 
         if (is_null($avPhoto)) {
+            if ($this->getRecord()->deleted) {
+                return "$serverUrl/assets/packages/static/openvk/img/camera_200.png";
+            } elseif ($this->isBanned()) {
+                return "$serverUrl/assets/packages/static/openvk/img/banned.jpg";
+            }
+
             return "$serverUrl/assets/packages/static/openvk/img/camera_200.png";
         } else {
             return $avPhoto->getURLBySizeId($size);

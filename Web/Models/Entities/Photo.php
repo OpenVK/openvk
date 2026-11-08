@@ -603,7 +603,8 @@ class Photo extends Media
         }
 
         if ($this->isSystem() || $this->isUnlisted()) {
-            if ($user && $user->getId() === $this->getOwner()->getId()) {
+            if ($user && ($user->getId() === $this->getOwner()->getId()
+                || ($this->isSystem() && $owner instanceof User && $owner->isReadOnlyFor($user)))) {
                 return true;
             }
 

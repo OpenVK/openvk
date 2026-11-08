@@ -77,7 +77,8 @@
 
     <div class="left_small_block">
         <div class="avatar_block">
-            {var $hasAvatar = !$user->isBanned() && !str_contains($user->getAvatarUrl('miniscule'), "/assets/packages/static/openvk/img/camera_200.png")}
+            {var $avatarPreviewUrl = $user->getAvatarUrl('miniscule')}
+            {var $hasAvatar = !str_contains($avatarPreviewUrl, "/assets/packages/static/openvk/img/camera_200.png") && !str_contains($avatarPreviewUrl, "/assets/packages/static/openvk/img/banned.jpg")}
 
             {if $thisUser && $user->getId() == $thisUser->getId()}
                 <div class="avatar_controls">

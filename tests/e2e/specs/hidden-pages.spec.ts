@@ -254,6 +254,20 @@ test.describe('Hidden pages', () => {
     await expect(page.getByText('Sunset at the beach')).toBeVisible();
   });
 
+  test('admin sees the real avatar of a hidden user', async ({ page }) => {
+    banAlicePermanently();
+    sql(`INSERT INTO albums (id, owner, name, special_type, created, deleted) VALUES (2, ${ALICE_ID}, 'Avatar', 16, UNIX_TIMESTAMP(), 0)`);
+    sql(`INSERT INTO photos (id, owner, virtual_id, created, hash, deleted, description) VALUES (3, ${ALICE_ID}, 3, UNIX_TIMESTAMP(), '${'0'.repeat(128)}', 0, 'Avatar')`);
+    sql("INSERT INTO album_relations (collection, media) VALUES (2, 3)");
+
+    await loginAsAdmin(page);
+    await page.goto('/id2');
+
+    const src = await page.locator('#bigAvatar').getAttribute('src');
+    expect(src).not.toContain('banned.jpg');
+    expect(src).not.toContain('camera_200.png');
+  });
+
   test('viewHidden does not bypass write privacy on a normal profile', async ({ page }) => {
     sql(`UPDATE profiles SET privacy = 9223345648567320576 WHERE id = ${ALICE_ID}`);
 
