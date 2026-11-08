@@ -608,7 +608,7 @@ final class AudioPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
-        $this->assertGeoVisible($playlist->getOwner());
+        $this->assertGeoVisible($playlist);
 
         $this->template->playlist = $playlist;
         $this->template->count = $playlist->size();

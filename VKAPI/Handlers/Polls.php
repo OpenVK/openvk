@@ -22,6 +22,8 @@ final class Polls extends VKAPIRequestHandler
             $this->fail(100, "One of the parameters specified was missing or invalid: poll_id is incorrect");
         }
 
+        $this->failIfGeoBlocked($poll);
+
         $users = [];
         $answers = [];
         foreach ($poll->getResults()->options as $answer) {
@@ -87,6 +89,8 @@ final class Polls extends VKAPIRequestHandler
             $this->fail(251, "Invalid poll id");
         }
 
+        $this->failIfGeoBlocked($poll);
+
         try {
             $poll->vote($this->getUser(), explode(",", $answer_ids));
             return 1;
@@ -110,6 +114,8 @@ final class Polls extends VKAPIRequestHandler
             $this->fail(251, "Invalid poll id");
         }
 
+        $this->failIfGeoBlocked($poll);
+
         try {
             $poll->revokeVote($this->getUser());
             return 1;
@@ -129,6 +135,8 @@ final class Polls extends VKAPIRequestHandler
         if (!$poll) {
             $this->fail(15, "Access denied");
         }
+
+        $this->failIfGeoBlocked($poll);
 
         if ($poll->isAnonymous()) {
             $this->fail(15, "Access denied");
