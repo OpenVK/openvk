@@ -412,6 +412,10 @@ final class Photos extends VKAPIRequestHandler
             $photo_s_id = explode("_", $photo_id);
             $access_key = $photo_s_id[2] ?? null;
             $photo = (new PhotosRepo())->getByOwnerAndVID((int) $photo_s_id[0], (int) $photo_s_id[1], $access_key);
+            if ($photo) {
+                $this->failIfGeoBlocked($photo);
+            }
+
             if (!$photo || $photo->isDeleted() || !$photo->canBeViewedBy($this->getUser(), $access_key)) {
                 continue;
             }
@@ -452,7 +456,7 @@ final class Photos extends VKAPIRequestHandler
             $res["count"] = $album->size();
 
             foreach ($photos as $photo) {
-                if (!$photo || $photo->isDeleted()) {
+                if (!$photo || $photo->isDeleted() || \openvk\Web\Util\GeoBlock::i()->isBlocked($photo)) {
                     continue;
                 }
 
@@ -652,7 +656,13 @@ final class Photos extends VKAPIRequestHandler
 
         if ($owner_id < 0) {
             $club = (new Clubs())->get(abs($owner_id));
-            if (!$club || !$club->canBeViewedBy($this->getUser())) {
+            if (!$club) {
+                $this->fail(15, "Access denied");
+            }
+
+            $this->failIfGeoBlocked($club);
+
+            if (!$club->canBeViewedBy($this->getUser())) {
                 $this->fail(15, "Access denied");
             }
 
@@ -663,7 +673,13 @@ final class Photos extends VKAPIRequestHandler
             ];
         } else {
             $user = (new UsersRepo())->get($owner_id);
-            if (!$user || !$user->getPrivacyPermission('photos.read', $this->getUser())) {
+            if (!$user) {
+                $this->fail(15, "Access denied");
+            }
+
+            $this->failIfGeoBlocked($user);
+
+            if (!$user->getPrivacyPermission('photos.read', $this->getUser())) {
                 $this->fail(15, "Access denied");
             }
 

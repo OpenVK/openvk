@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace openvk\Web\Models\Repositories\Util;
 
 use Nette\Database\Table\ActiveRow;
+use openvk\Web\Util\GeoBlock;
 
 class EntityStream implements \IteratorAggregate
 {
@@ -34,7 +35,12 @@ class EntityStream implements \IteratorAggregate
     private function stream(\Traversable $iterator): \Traversable
     {
         foreach ($iterator as $result) {
-            yield $this->getEntity($result);
+            $entity = $this->getEntity($result);
+            if (GeoBlock::i()->isBlocked($entity)) {
+                continue;
+            }
+
+            yield $entity;
         }
     }
 

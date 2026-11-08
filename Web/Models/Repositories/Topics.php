@@ -6,6 +6,7 @@ namespace openvk\Web\Models\Repositories;
 
 use openvk\Web\Models\Entities\Topic;
 use openvk\Web\Models\Entities\Club;
+use openvk\Web\Util\GeoBlock;
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
 
@@ -47,7 +48,7 @@ class Topics
 
         foreach (DatabaseConnection::i()->getConnection()->query($query, $club->getId(), $club->getId()) as $topic) {
             $topic = $this->get($topic->id);
-            if (!$topic) {
+            if (!$topic || GeoBlock::i()->isBlocked($topic)) {
                 continue;
             }
 
@@ -76,7 +77,12 @@ class Topics
         ])->page(1, $count ?? OPENVK_DEFAULT_PER_PAGE)->order("created DESC");
 
         foreach ($topics as $topic) {
-            yield $this->toTopic($topic);
+            $entity = $this->toTopic($topic);
+            if ($entity !== null && GeoBlock::i()->isBlocked($entity)) {
+                continue;
+            }
+
+            yield $entity;
         }
     }
 }

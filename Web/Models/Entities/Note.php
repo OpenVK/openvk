@@ -7,6 +7,7 @@ namespace openvk\Web\Models\Entities;
 use HTMLPurifier_Config;
 use HTMLPurifier;
 use HTMLPurifier_Filter;
+use openvk\Web\Util\GeoBlock;
 
 class SecurityFilter extends HTMLPurifier_Filter
 {
@@ -167,6 +168,10 @@ class Note extends Postable
     public function canBeViewedBy(?User $user = null, bool $allowModeration = true): bool
     {
         if ($this->isDeleted()) {
+            return false;
+        }
+
+        if (GeoBlock::i()->isBlocked($this)) {
             return false;
         }
 

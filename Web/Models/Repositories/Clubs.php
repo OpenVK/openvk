@@ -8,6 +8,7 @@ use openvk\Web\Models\Entities\{Club, Manager};
 use openvk\Web\Models\Repositories\{Aliases, Users};
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
+use openvk\Web\Util\GeoBlock;
 
 class Clubs
 {
@@ -89,6 +90,8 @@ class Clubs
             $result->order($order_str);
         }
 
+        GeoBlock::i()->excludeEntity($result, "groups", "club");
+
         return new Util\EntityStream("Club", $result);
     }
 
@@ -109,6 +112,8 @@ class Clubs
         if ($order_str) {
             $result->order($order_str);
         }
+
+        GeoBlock::i()->excludeEntity($result, "groups", "club");
 
         return new Util\EntityStream("Club", $result);
     }

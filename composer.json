@@ -43,7 +43,8 @@
         "php81_bc/strftime": "^0.0.2",
         "ext-iconv": "*",
         "predis/predis": "^3.4",
-        "easyrdf/easyrdf": "^1.1"
+        "easyrdf/easyrdf": "^1.1",
+        "geoip2/geoip2": "^3.1"
     },
     "autoload": {
         "psr-4": {

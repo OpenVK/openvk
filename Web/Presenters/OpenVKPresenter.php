@@ -13,6 +13,7 @@ use Nette\InvalidStateException as ISE;
 use openvk\Web\Models\Entities\IP;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Repositories\{IPs, Users, APITokens, Tickets, Reports, CurrentUser, Posts};
+use openvk\Web\Util\GeoBlock;
 use openvk\Web\Util\IMBroker;
 use openvk\Web\Util\ModerationContext;
 use openvk\Web\Util\RateLimiter;
@@ -190,6 +191,29 @@ abstract class OpenVKPresenter extends SimplePresenter
         }
     }
 
+    protected function assertGeoVisible(object $entity): void
+    {
+        $geo = GeoBlock::i();
+        $bypass = $geo->isAdminBypass();
+
+        $geo->setAdminBypass(false);
+        $blocked = $geo->isBlocked($entity);
+        $geo->setAdminBypass($bypass);
+
+        if (!$blocked) {
+            return;
+        }
+
+        $this->template->geoBlocked = true;
+        if ($bypass) {
+            return;
+        }
+
+        header("Cache-Control: no-store");
+        header("X-Accel-Expires: 0");
+        $this->throwError(451, "Unavailable For Legal Reasons", tr("geo_blocked"));
+    }
+
     protected function willExecuteWriteAction(string|bool $arg1 = false, string|bool $arg2 = ""): void
     {
         $json   = is_bool($arg1) ? $arg1 : (is_bool($arg2) ? $arg2 : false);
@@ -268,14 +292,20 @@ abstract class OpenVKPresenter extends SimplePresenter
         $cacheTime     = OPENVK_ROOT_CONF["openvk"]["preferences"]["nginxCacheTime"] ?? 0;
 
         if (OPENVK_ROOT_CONF['openvk']['preferences']['news']['show']) {
-            $post = (new Posts())->getPostsFromUsersWall(-OPENVK_ROOT_CONF['openvk']['preferences']['news']['groupId'], 1, 1);
-            $post = iterator_to_array($post)[0];
+            $posts = iterator_to_array((new Posts())->getPostsFromUsersWall(
+                -OPENVK_ROOT_CONF['openvk']['preferences']['news']['groupId'],
+                1,
+                1
+            ));
+            $post = $posts[0] ?? null;
 
-            $text = wordwrap($post->getText(false), 150, '\n', false);
-            $text = explode('\n', $text)[0];
+            if ($post !== null) {
+                $text = wordwrap($post->getText(false), 150, '\n', false);
+                $text = explode('\n', $text)[0];
 
-            $this->template->newsText = $text;
-            $this->template->newsLink = '/wall' . $post->getPrettyId();
+                $this->template->newsText = $text;
+                $this->template->newsLink = '/wall' . $post->getPrettyId();
+            }
         }
 
         if (!is_null($user)) {
@@ -384,8 +414,21 @@ abstract class OpenVKPresenter extends SimplePresenter
             $this->template->thisUser = null;
         }
 
+        $geo = GeoBlock::i();
+        $geo->setAdminBypass(
+            $this->user->identity !== null
+            && $this->hasPermission("admin", "access", -1)
+            && !isset($_GET["geo_preview"])
+        );
+        $this->template->geoBypass = $geo->isAdminBypass();
+        $this->template->geoBlocked = false;
+
         $this->template->baseUrl = ovk_scheme(true) . $_SERVER['HTTP_HOST'];
         $this->template->instance_name = OPENVK_ROOT_CONF['openvk']['appearance']['name'];
+
+        if ($geo->isEnabled() && $cacheTime > 0) {
+            $cacheTime = min($cacheTime, 60);
+        }
 
         header("X-OpenVK-User-Validated: $userValidated");
         header("X-Accel-Expires: $cacheTime");

@@ -8,6 +8,7 @@ use openvk\Web\Models\Entities\{Club, Photo, Post};
 use Nette\InvalidStateException;
 use openvk\Web\Models\Entities\Notifications\ClubModeratorNotification;
 use openvk\Web\Models\Repositories\{Clubs, Users, Albums, Videos, Managers, Topics, Audios, Posts, Documents};
+use openvk\Web\Util\GeoBlock;
 use Chandler\Security\Authenticator;
 use Nette\InvalidStateException as ISE;
 use Chandler\Session\Session;
@@ -29,20 +30,24 @@ final class GroupPresenter extends OpenVKPresenter
         $club = $this->clubs->get($id);
         if (!$club) {
             $this->notFound();
-        } else {
+        }
+
+        $this->assertGeoVisible($club);
+
+        if ($club) {
             if ($club->isBanned()) {
                 $this->template->_template = "Group/Banned.latte";
             } else {
                 $docs = (new Documents())->getDocumentsByOwner($club->getRealId());
-                $this->template->albums = (new Albums())->getClubAlbums($club, 1, 3);
+                $this->template->albums = GeoBlock::i()->filterEntities((new Albums())->getClubAlbums($club, 1, 3));
                 $this->template->albumsCount = (new Albums())->getClubAlbumsCount($club);
-                $this->template->topics = (new Topics())->getLastTopics($club, 3);
+                $this->template->topics = GeoBlock::i()->filterEntities((new Topics())->getLastTopics($club, 3));
                 $this->template->topicsCount = (new Topics())->getClubTopicsCount($club);
                 $this->template->audios      = (new Audios())->getRandomThreeAudiosByEntityId($club->getRealId());
                 $this->template->audiosCount = (new Audios())->getClubCollectionSize($club);
                 $this->template->docsCount   = $docs->size();
-                $this->template->docs        = $docs->offsetLimit(0, 2);
-                $this->template->videos      = (new Videos())->getByUser($club, 1, 2);
+                $this->template->docs        = GeoBlock::i()->filterEntities($docs->offsetLimit(0, 2));
+                $this->template->videos      = GeoBlock::i()->filterEntities((new Videos())->getByUser($club, 1, 2));
                 $this->template->videosCount = (new Videos())->getUserVideosCount($club);
             }
 
