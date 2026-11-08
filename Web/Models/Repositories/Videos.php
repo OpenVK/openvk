@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace openvk\Web\Models\Repositories;
 
 use openvk\Web\Models\Entities\{User, Club, Video};
+use openvk\Web\Util\GeoBlock;
 use Chandler\Database\DatabaseConnection;
 use Nette\Database\Table\ActiveRow;
 
@@ -102,7 +103,12 @@ class Videos
         }
 
         foreach ($request->page($page, $perPage)->order("created DESC") as $video) {
-            yield new Video($video);
+            $entity = new Video($video);
+            if (GeoBlock::i()->isBlocked($entity)) {
+                continue;
+            }
+
+            yield $entity;
         }
     }
 
@@ -118,7 +124,12 @@ class Videos
         }
 
         foreach ($request->limit($limit, $offset)->order("created DESC") as $video) {
-            yield new Video($video);
+            $entity = new Video($video);
+            if (GeoBlock::i()->isBlocked($entity)) {
+                continue;
+            }
+
+            yield $entity;
         }
     }
 
@@ -135,7 +146,12 @@ class Videos
     {
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
         foreach ($this->videos->where("owner", $club->getId() * -1)->where(["deleted" => 0, "unlisted" => 0])->page($page, $perPage)->order("created DESC") as $video) {
-            yield new Video($video);
+            $entity = new Video($video);
+            if (GeoBlock::i()->isBlocked($entity)) {
+                continue;
+            }
+
+            yield $entity;
         }
     }
 
@@ -143,7 +159,12 @@ class Videos
     {
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
         foreach ($this->videos->where("owner", $club->getId() * -1)->where(["deleted" => 0, "unlisted" => 0])->limit($limit, $offset)->order("created DESC") as $video) {
-            yield new Video($video);
+            $entity = new Video($video);
+            if (GeoBlock::i()->isBlocked($entity)) {
+                continue;
+            }
+
+            yield $entity;
         }
     }
 
@@ -184,6 +205,9 @@ class Videos
         if ($order_str) {
             $result->order($order_str);
         }
+
+        GeoBlock::i()->excludeEntity($result, "videos", "video");
+        GeoBlock::i()->excludeOwner($result, "videos.owner");
 
         return new Util\EntityStream("Video", $result);
     }

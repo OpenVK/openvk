@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace openvk\Web\Presenters;
 
+use openvk\Web\Util\GeoBlock;
+
 final class BlobPresenter extends OpenVKPresenter
 {
     protected $banTolerant   = true;
@@ -33,6 +35,13 @@ final class BlobPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
+        if (GeoBlock::i()->isBlobBlocked((string) $name)) {
+            header("HTTP/1.1 451 Unavailable For Legal Reasons");
+            header("Cache-Control: no-store");
+            header("X-Accel-Expires: 0");
+            exit("<b>" . tr("geo_blocked") . "</b>");
+        }
+
         if (isset($_SERVER["HTTP_IF_NONE_MATCH"])) {
             header("HTTP/1.1 304 Not Modified");
             exit();
@@ -45,10 +54,14 @@ final class BlobPresenter extends OpenVKPresenter
             $mimeType = "audio/mpeg";
         }
 
+        $cacheTtl = GeoBlock::i()->isEnabled()
+            ? (int) (OPENVK_ROOT_CONF["openvk"]["preferences"]["geo"]["mediaCacheTtl"] ?? 300)
+            : 1210000;
+
         header("Content-Type: " . $mimeType);
         header("Accept-Ranges: bytes");
-        header("Cache-Control: public, max-age=1210000");
-        header("X-Accel-Expires: 1210000");
+        header("Cache-Control: public, max-age=$cacheTtl");
+        header("X-Accel-Expires: $cacheTtl");
         header("ETag: W/\"" . hash_file("snefru", $path) . "\"");
 
         if (isset($_SERVER['HTTP_RANGE'])) {

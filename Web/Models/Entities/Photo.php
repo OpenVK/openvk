@@ -12,6 +12,7 @@ use openvk\Web\Models\Repositories\Albums;
 use Chandler\Database\DatabaseConnection as DB;
 use Nette\InvalidStateException as ISE;
 use Nette\Utils\Image;
+use openvk\Web\Util\GeoBlock;
 
 class Photo extends Media
 {
@@ -590,6 +591,10 @@ class Photo extends Media
     public function canBeViewedBy(?User $user = null, ?string $access_key = null, bool $allowModeration = true): bool
     {
         if ($this->isDeleted()) {
+            return false;
+        }
+
+        if (GeoBlock::i()->isBlocked($this, null, true)) {
             return false;
         }
 

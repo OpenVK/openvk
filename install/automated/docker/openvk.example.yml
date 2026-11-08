@@ -53,6 +53,15 @@ openvk:
         defaultLanguage: "ru"
         femaleGenderPriority: true
         nginxCacheTime: null
+        geo:
+            enabled: false
+            database: "/usr/share/GeoIP/GeoLite2-Country.mmdb"
+            trustedProxies:
+                - "127.0.0.1/32"
+            headerCountry: "X-Geo-Country"
+            defaultCountries:
+                - "RU"
+            mediaCacheTtl: 300
         uploads:
             disableLargeUploads: false
             mode: "basic"

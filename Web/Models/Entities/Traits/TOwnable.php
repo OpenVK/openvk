@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace openvk\Web\Models\Entities\Traits;
 
 use openvk\Web\Models\Entities\User;
+use openvk\Web\Util\GeoBlock;
 
 trait TOwnable
 {
@@ -12,6 +13,10 @@ trait TOwnable
     {
         # TODO: #950
         if ($this->isDeleted()) {
+            return false;
+        }
+
+        if (GeoBlock::i()->isBlocked($this)) {
             return false;
         }
 

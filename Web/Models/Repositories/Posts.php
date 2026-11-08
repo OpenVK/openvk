@@ -8,6 +8,7 @@ use openvk\Web\Models\Entities\Post;
 use openvk\Web\Models\Entities\User;
 use Nette\Database\Table\{ActiveRow, Selection};
 use Chandler\Database\DatabaseConnection;
+use openvk\Web\Util\GeoBlock;
 
 class Posts
 {
@@ -79,7 +80,12 @@ class Posts
         ])->order("created DESC")->limit($perPage, $offset);
 
         foreach ($sel as $post) {
-            yield new Post($post);
+            $entity = new Post($post);
+            if (GeoBlock::i()->isBlocked($entity)) {
+                continue;
+            }
+
+            yield $entity;
         }
     }
 
@@ -104,7 +110,12 @@ class Posts
         $sel->order("created DESC")->limit($perPage, $offset);
 
         foreach ($sel as $post) {
-            yield new Post($post);
+            $entity = new Post($post);
+            if (GeoBlock::i()->isBlocked($entity)) {
+                continue;
+            }
+
+            yield $entity;
         }
     }
 
@@ -129,7 +140,12 @@ class Posts
         $sel->order("created DESC")->limit($perPage, $offset);
 
         foreach ($sel as $post) {
-            yield new Post($post);
+            $entity = new Post($post);
+            if (GeoBlock::i()->isBlocked($entity)) {
+                continue;
+            }
+
+            yield $entity;
         }
     }
 
@@ -145,7 +161,12 @@ class Posts
                     ->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
 
         foreach ($sel as $post) {
-            yield new Post($post);
+            $entity = new Post($post);
+            if (GeoBlock::i()->isBlocked($entity)) {
+                continue;
+            }
+
+            yield $entity;
         }
     }
 
@@ -248,6 +269,10 @@ class Posts
             $result->order($order_str);
         }
 
+        GeoBlock::i()->excludeEntity($result, "posts", "post");
+        GeoBlock::i()->excludeOwner($result, "posts.wall");
+        GeoBlock::i()->excludeOwner($result, "posts.owner");
+
         return new Util\EntityStream("Post", $result);
     }
 
@@ -316,7 +341,12 @@ class Posts
         $this->applyYearFilter($sel, $year)->order("created DESC")->limit($perPage, $offset);
 
         foreach ($sel as $post) {
-            yield new Post($post);
+            $entity = new Post($post);
+            if (GeoBlock::i()->isBlocked($entity)) {
+                continue;
+            }
+
+            yield $entity;
         }
     }
 
@@ -357,7 +387,12 @@ class Posts
                     ->limit($perPage, $offset);
 
         foreach ($sel as $post) {
-            yield new Post($post);
+            $entity = new Post($post);
+            if (GeoBlock::i()->isBlocked($entity)) {
+                continue;
+            }
+
+            yield $entity;
         }
     }
 
@@ -380,7 +415,12 @@ class Posts
                     ->limit($perPage, $offset);
 
         foreach ($sel as $post) {
-            yield new Post($post);
+            $entity = new Post($post);
+            if (GeoBlock::i()->isBlocked($entity)) {
+                continue;
+            }
+
+            yield $entity;
         }
     }
 

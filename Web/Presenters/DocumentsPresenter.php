@@ -6,6 +6,7 @@ namespace openvk\Web\Presenters;
 
 use openvk\Web\Models\Repositories\{Documents, Clubs};
 use openvk\Web\Models\Entities\Document;
+use openvk\Web\Util\GeoBlock;
 use Nette\InvalidStateException as ISE;
 
 final class DocumentsPresenter extends OpenVKPresenter
@@ -26,9 +27,10 @@ final class DocumentsPresenter extends OpenVKPresenter
             $owner = (new Clubs())->get(abs($owner_id));
             if (!$owner || $owner->isBanned()) {
                 $this->notFound();
-            } else {
-                $this->template->group = $owner;
             }
+
+            $this->assertGeoVisible($owner);
+            $this->template->group = $owner;
         }
 
         if (!$owner_id) {
@@ -71,7 +73,7 @@ final class DocumentsPresenter extends OpenVKPresenter
         $this->template->current_tab = $tab;
         $this->template->order = $order;
         $this->template->count = $docs->size();
-        $this->template->docs  = iterator_to_array($docs->page($page, OPENVK_DEFAULT_PER_PAGE));
+        $this->template->docs  = iterator_to_array(GeoBlock::i()->filterEntities($docs->page($page, OPENVK_DEFAULT_PER_PAGE)));
         $this->template->locale_string = "you_have_x_documents";
         if ($current_tab != 0) {
             $this->template->locale_string = "x_documents_in_tab";
@@ -189,6 +191,8 @@ final class DocumentsPresenter extends OpenVKPresenter
         if (!$doc || $doc->isDeleted()) {
             $this->notFound();
         }
+
+        $this->assertGeoVisible($doc);
 
         if (!$doc->checkAccessKey($access_key)) {
             $this->notFound();

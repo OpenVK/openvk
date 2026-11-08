@@ -1,3 +1,4 @@
+{if !is_object($attachment) || !method_exists($attachment, "isGeoBlocked") || !$attachment->isGeoBlocked(true)}
 {if $attachment instanceof \openvk\Web\Models\Entities\Photo}
     {if !$attachment->isDeleted()}
         {var $link = "/photo" . ($attachment->isAnonymous() ? ("s/" . base_convert((string) $attachment->getId(), 10, 32)) : $attachment->getPrettyId())}
@@ -123,6 +124,7 @@
     {* Link attachments are displayed inline in text *}
 {else}
     <span style="color:red;">{_version_incompatibility}</span>
+{/if}
 {/if}
 
 {php $nestedLevel = NULL}

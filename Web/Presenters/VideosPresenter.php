@@ -7,6 +7,7 @@ namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\Video;
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Repositories\{Users, Clubs, Videos};
+use openvk\Web\Util\GeoBlock;
 use Nette\InvalidStateException as ISE;
 
 final class VideosPresenter extends OpenVKPresenter
@@ -36,12 +37,14 @@ final class VideosPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
+        $this->assertGeoVisible($owner);
+
         if (!$owner->canBeViewedBy($this->user->identity) || ($owner->getRealId() > 0 && !$owner->getPrivacyPermission('videos.read', $this->user->identity ?? null))) {
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
         $this->template->user   = $owner;
-        $this->template->videos = (new Videos())->getByUser($owner, (int) ($this->queryParam("p") ?? 1));
+        $this->template->videos = GeoBlock::i()->filterEntities((new Videos())->getByUser($owner, (int) ($this->queryParam("p") ?? 1)));
         $this->template->count  = (new Videos())->getUserVideosCount($owner);
         $this->template->paginatorConf = (object) [
             "count"   => $this->template->count,
@@ -61,6 +64,8 @@ final class VideosPresenter extends OpenVKPresenter
         if (!$video || $video->isDeleted()) {
             $this->notFound();
         }
+
+        $this->assertGeoVisible($video);
 
         $user = $video->getOwner();
 

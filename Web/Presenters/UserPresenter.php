@@ -40,6 +40,8 @@ final class UserPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
+        $this->assertGeoVisible($user);
+
         $this->template->canSendFriendRequest = $user->canReceiveFriendRequestsFrom($this->user->identity);
         $moderationView = $user->isReadOnlyFor($this->user->identity);
 

@@ -3528,3 +3528,26 @@
 "moderation_view_restore_title" = "Restore page";
 "moderation_view_unban_confirm" = "You are about to unban $1.";
 "moderation_view_restore_confirm" = "You are about to restore the page of $1.";
+
+"geo_blocked" = "This content is not available in your region.";
+"admin_geo" = "Geo blocks";
+"admin_geo_target" = "URL or object";
+"admin_geo_lookup" = "Look up";
+"admin_geo_blocking" = "Block";
+"admin_geo_countries" = "Countries (ISO 3166-1 alpha-2, comma separated)";
+"admin_geo_reason" = "Reason";
+"admin_geo_external_ref" = "Demand number/date";
+"admin_geo_attachments" = "Attachments";
+"admin_geo_block" = "Block";
+"admin_geo_unblock" = "Unblock";
+"admin_geo_unblocked" = "Block removed.";
+"admin_geo_blocked" = "Block added.";
+"admin_geo_block_not_found" = "Block not found.";
+"admin_geo_target_invalid" = "Could not resolve the target URL.";
+"admin_geo_active" = "Active blocks";
+"admin_geo_entity" = "Entity";
+"admin_geo_country" = "Country";
+"admin_geo_created" = "Created";
+"admin_geo_actions" = "Actions";
+"admin_geo_disabled" = "Geo blocks are disabled in configuration. Records can be created, but they are not enforced.";
+"admin_geo_bypass" = "You are viewing content hidden in your region as an administrator.";

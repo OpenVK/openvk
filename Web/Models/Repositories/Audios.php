@@ -10,6 +10,7 @@ use openvk\Web\Models\Entities\Club;
 use openvk\Web\Models\Entities\Playlist;
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Repositories\Util\EntityStream;
+use openvk\Web\Util\GeoBlock;
 use Nette\Database\Table\ActiveRow;
 
 class Audios
@@ -90,6 +91,11 @@ class Audios
         foreach ($iter as $rel) {
             $audio = $this->get($rel->audio);
             if (!$audio || $audio->isDeleted()) {
+                $deleted++;
+                continue;
+            }
+
+            if (GeoBlock::i()->isBlocked($audio)) {
                 $deleted++;
                 continue;
             }

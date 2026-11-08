@@ -25,6 +25,8 @@ final class PollPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
+        $this->assertGeoVisible($poll);
+
         $this->template->id       = $poll->getId();
         $this->template->title    = $poll->getTitle();
         $this->template->isAnon   = $poll->isAnonymous();
@@ -58,6 +60,8 @@ final class PollPresenter extends OpenVKPresenter
         if (!$poll) {
             $this->notFound();
         }
+
+        $this->assertGeoVisible($poll);
 
         if ($poll->isAnonymous()) {
             $this->flashFail("err", tr("forbidden"), tr("poll_err_anonymous"));

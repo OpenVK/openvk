@@ -3356,3 +3356,26 @@
 "moderation_view_restore_title" = "Восстановить страницу";
 "moderation_view_unban_confirm" = "Вы собираетесь разблокировать пользователя $1.";
 "moderation_view_restore_confirm" = "Вы собираетесь восстановить страницу $1.";
+
+"geo_blocked" = "Материал недоступен в вашем регионе.";
+"admin_geo" = "Геоблокировки";
+"admin_geo_target" = "Ссылка или объект";
+"admin_geo_lookup" = "Проверить";
+"admin_geo_blocking" = "Блокировка";
+"admin_geo_countries" = "Страны (ISO 3166-1 alpha-2, через запятую)";
+"admin_geo_reason" = "Причина";
+"admin_geo_external_ref" = "Номер/дата требования";
+"admin_geo_attachments" = "Вложения";
+"admin_geo_block" = "Заблокировать";
+"admin_geo_unblock" = "Разблокировать";
+"admin_geo_unblocked" = "Блокировка снята.";
+"admin_geo_blocked" = "Блокировка добавлена.";
+"admin_geo_block_not_found" = "Блокировка не найдена.";
+"admin_geo_target_invalid" = "Не удалось найти объект по ссылке.";
+"admin_geo_active" = "Активные блокировки";
+"admin_geo_entity" = "Объект";
+"admin_geo_country" = "Страна";
+"admin_geo_created" = "Создано";
+"admin_geo_actions" = "Действия";
+"admin_geo_disabled" = "Геоблокировки выключены в конфигурации. Записи можно создавать, но они не применяются.";
+"admin_geo_bypass" = "Вы видите материал, скрытый для вашего региона, как администратор.";

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace openvk\Web\Models\Repositories;
 
 use openvk\Web\Models\Entities\{Photo, User, Club};
+use openvk\Web\Util\GeoBlock;
 use Chandler\Database\DatabaseConnection;
 use Nette\Database\Table\ActiveRow;
 
@@ -102,7 +103,12 @@ class Photos
         ])->order("id DESC");
 
         foreach ($photos->limit($limit, $offset) as $photo) {
-            yield $this->toPhoto($photo);
+            $entity = $this->toPhoto($photo);
+            if ($entity !== null && GeoBlock::i()->isBlocked($entity)) {
+                continue;
+            }
+
+            yield $entity;
         }
     }
 
@@ -128,7 +134,12 @@ class Photos
         ])->order("id DESC");
 
         foreach ($photos->limit($limit, $offset) as $photo) {
-            yield $this->toPhoto($photo);
+            $entity = $this->toPhoto($photo);
+            if ($entity !== null && GeoBlock::i()->isBlocked($entity)) {
+                continue;
+            }
+
+            yield $entity;
         }
     }
 

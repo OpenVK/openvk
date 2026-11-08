@@ -491,6 +491,10 @@
                         <div class="wrap1">
                             <div id="auth" class="page-wrap">
                                 <div class="page_content">
+                                    <div class="msg msg_warn" n:if="$geoBypass && $geoBlocked">
+                                        <b>{_admin_geo}</b><br/>
+                                        {_admin_geo_bypass}
+                                    </div>
                                     <div class="msg msg_{$flashMessage->type}" n:ifset="$flashMessage">
                                         <b>{$flashMessage->title}</b><br/>
                                         {$flashMessage->msg|noescape}

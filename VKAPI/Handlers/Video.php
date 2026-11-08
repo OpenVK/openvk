@@ -43,6 +43,10 @@ final class Video extends VKAPIRequestHandler
                 $id         = explode("_", $cleanVid);
                 $access_key = $id[2] ?? null;
                 $video      = (new VideosRepo())->getByOwnerAndVID(intval($id[0]), intval($id[1] ?? 0), $access_key);
+                if ($video) {
+                    $this->failIfGeoBlocked($video);
+                }
+
                 if ($video && !$video->isDeleted() && $video->canBeViewedBy($this->getUser(), $access_key)) {
                     $out_video = $video->getApiStructure($this->getUser())->video;
                     $items[] = $out_video;
@@ -305,6 +309,8 @@ final class Video extends VKAPIRequestHandler
         if (!$video || $video->isDeleted()) {
             $this->fail(100, "One of the parameters specified was missing or invalid: video not found");
         }
+
+        $this->failIfGeoBlocked($video);
 
         $commentsRepo = new CommentsRepo();
         $comments = $commentsRepo->getCommentsByTarget($video, $offset, $count, $sort === "desc" ? "DESC" : "ASC");
