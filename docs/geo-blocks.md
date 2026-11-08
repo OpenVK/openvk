@@ -15,7 +15,7 @@ openvk:
             trustedProxies:
                 - "127.0.0.1/32"
                 - "10.0.0.0/8"
-            headerCountry: "X-Geo-Country"
+            headerCountry: null # set only if the edge sends a trusted country header
             defaultCountries: ["RU"]
             mediaCacheTtl: 300
 ```
@@ -28,6 +28,9 @@ unknown country.
 `trustedProxies` must contain the CDN/reverse-proxy networks. Only those peers
 may supply `X-Forwarded-For`, `X-Real-IP` or `X-Geo-Country`. Do not trust
 these headers from arbitrary clients.
+
+The admin page shows a warning when geo blocks are enabled but neither a
+readable database nor `headerCountry` is configured.
 
 ## Admin panel and CLI
 

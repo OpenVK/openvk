@@ -548,6 +548,10 @@ class Club extends RowModel
 
     public function canBeViewedBy(?User $user = null, bool $blacklist_check = true, bool $allowModeration = true)
     {
+        if (GeoBlock::i()->isBlocked($this)) {
+            return false;
+        }
+
         if (!is_null($user)) {
             if ($this->getOwner()->getId() === $user->getId()) {
                 return true;
@@ -569,11 +573,7 @@ class Club extends RowModel
                 return true;
             }
         } else {
-            if ($this->isClosed()) {
-                return false;
-            } else {
-                return true;
-            }
+            return !$this->isClosed();
         }
     }
 

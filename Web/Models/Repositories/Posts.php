@@ -45,7 +45,8 @@ class Posts
                 "archived" => false,
             ])->fetch();
 
-            self::$pinnedCache[$user] = $this->toPost($post);
+            $entity = $this->toPost($post);
+            self::$pinnedCache[$user] = $entity !== null && GeoBlock::i()->isBlocked($entity) ? null : $entity;
         }
 
         return self::$pinnedCache[$user];

@@ -7,7 +7,7 @@ namespace openvk\Web\Util;
 use Chandler\Database\DatabaseConnection;
 use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\Selection;
-use openvk\Web\Models\Entities\{Album, Audio, Club, Comment, Document, Note, Photo, Poll, Post, Topic, User, Video};
+use openvk\Web\Models\Entities\{Album, Audio, Club, Comment, Document, Note, Photo, Playlist, Poll, Post, Topic, User, Video};
 use openvk\Web\Models\Repositories\{Albums, Audios, Clubs, Comments, Documents, Notes, Photos, Polls, Posts, Topics, Users, Videos};
 
 /**
@@ -29,6 +29,7 @@ final class GeoBlock
         "photo"    => Photo::class,
         "audio"    => Audio::class,
         "album"    => Album::class,
+        "playlist" => Playlist::class,
         "poll"     => Poll::class,
         "user"     => User::class,
         "club"     => Club::class,
@@ -232,6 +233,8 @@ final class GeoBlock
             return false;
         }
 
+        $hash = $this->normalizeBlobHash($hash);
+
         $rows = $this->context->query(
             "SELECT 'photo' AS type, id FROM photos WHERE hash = ?"
             . " UNION ALL SELECT 'video' AS type, id FROM videos WHERE hash = ?"
@@ -251,6 +254,19 @@ final class GeoBlock
         }
 
         return false;
+    }
+
+    /**
+     * /blob_* also serves derived paths such as <hash>_cropped/<size>.jpeg and
+     * <hash>_fragments/...; reduce them to the original media hash.
+     */
+    private function normalizeBlobHash(string $name): string
+    {
+        if (preg_match("/^([0-9a-f]{32,128})/i", $name, $matches) === 1) {
+            return strtolower($matches[1]);
+        }
+
+        return $name;
     }
 
     /**
@@ -546,6 +562,7 @@ final class GeoBlock
             "photo"    => (new Photos())->get($id),
             "audio"    => (new Audios())->get($id),
             "album"    => (new Albums())->get($id),
+            "playlist" => (new Audios())->getPlaylist($id),
             "topic"    => (new Topics())->get($id),
             "poll"     => (new Polls())->get($id),
             "comment"  => (new Comments())->get($id),

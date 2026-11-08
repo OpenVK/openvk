@@ -26,20 +26,21 @@ final class BlobPresenter extends OpenVKPresenter
     {
         header("Access-Control-Allow-Origin: *");
 
-        $dir  = $this->getDirName($dir);
-        $base = realpath(OPENVK_ROOT . "/storage/$dir");
-        $path = realpath(OPENVK_ROOT . "/storage/$dir/$name.$format");
-        if (!$path) { # Will also check if file exists since realpath fails on ENOENT
-            $this->notFound();
-        } elseif (strpos($path, $path) !== 0) { # Prevent directory traversal and storage container escape
-            $this->notFound();
-        }
+        $dir = $this->getDirName($dir);
 
         if (GeoBlock::i()->isBlobBlocked((string) $name)) {
             header("HTTP/1.1 451 Unavailable For Legal Reasons");
             header("Cache-Control: no-store");
             header("X-Accel-Expires: 0");
             exit("<b>" . tr("geo_blocked") . "</b>");
+        }
+
+        $base = realpath(OPENVK_ROOT . "/storage/$dir");
+        $path = realpath(OPENVK_ROOT . "/storage/$dir/$name.$format");
+        if (!$path) { # Will also check if file exists since realpath fails on ENOENT
+            $this->notFound();
+        } elseif (strpos($path, $base) !== 0) { # Prevent directory traversal and storage container escape
+            $this->notFound();
         }
 
         if (isset($_SERVER["HTTP_IF_NONE_MATCH"])) {

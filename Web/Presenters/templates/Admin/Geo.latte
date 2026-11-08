@@ -13,6 +13,10 @@
         <div class="aui-message aui-message-warning">
             <p>{_admin_geo_disabled}</p>
         </div>
+    {elseif $geoUnavailable}
+        <div class="aui-message aui-message-error">
+            <p>{_admin_geo_unavailable}</p>
+        </div>
     {/if}
 
     <form method="get" action="/admin/geo" class="aui">
