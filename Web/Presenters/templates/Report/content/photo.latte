@@ -14,7 +14,7 @@
                         <span style="color: grey;">{_info_description}:</span>
                         {$photo->getDescription() ?? "(" . tr("none") . ")"}<br/>
                         <span style="color: grey;">{_info_uploaded_by}:</span>
-                        <a href="{$photo->getOwner()->getURL()}">{$photo->getOwner()->getFullName()}</a><br/>
+                        <a href="{$photo->getOwner()->getURL()}">{$photo->getOwner()->getCanonicalName()}</a><br/>
                         <span style="color: grey;">{_info_upload_date}:</span>
                         {$photo->getPublicationTime()}
                     </div>
