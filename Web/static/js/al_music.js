@@ -1224,6 +1224,8 @@ u(document).on('keydown', (e) => {
         e.preventDefault()
     }
 
+    if ($(e.target).is('input, textarea, select, button, a')) return
+
     const arrow_click_offset = 3
     const volume_offset = 0.1
     switch(e.keyCode) {
