@@ -115,6 +115,11 @@ class Audios
                 continue;
             }
 
+            if (GeoBlock::i()->isBlocked($playlist)) {
+                $deleted++;
+                continue;
+            }
+
             yield $playlist;
         }
     }

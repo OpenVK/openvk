@@ -62,7 +62,9 @@ A direct page returns `451`; API methods return error `15`; media returns
 Do not serve `/blob_*` directly from a static network share: the PHP check must
 run. A cached response must be keyed by country, otherwise a response generated
 for one country can be served to another. See
-`install/automated/common/geo-cache.conf` for an nginx example.
+`install/automated/common/geo-cache-http.conf` (inside `http {}`) and
+`install/automated/common/geo-cache-server.conf` (inside `server {}`) for an
+nginx example.
 
 There is no automatic cache purge. Blocking takes effect after the configured
 cache TTL; keep it short (`mediaCacheTtl`, HTML is capped at 60 seconds when

@@ -194,7 +194,7 @@ class Poll extends Attachable
 
     public function canBeVotedBy(?User $user): bool
     {
-        if (!$user) {
+        if (!$user || GeoBlock::i()->isBlocked($this)) {
             return false;
         }
 

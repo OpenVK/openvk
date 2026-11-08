@@ -182,6 +182,8 @@ final class Audio extends VKAPIRequestHandler
                 $this->fail(0o404, "Group not found");
             }
 
+            $this->failIfGeoBlocked($group);
+
             return (new Audios())->getClubCollectionSize($group);
         }
 
@@ -211,6 +213,15 @@ final class Audio extends VKAPIRequestHandler
 
         if ($owner_id == 0) {
             $owner_id = $this->getUser()->getRealId();
+        }
+
+        if ($owner_id < 0) {
+            $group = (new Clubs())->get(abs($owner_id));
+            if (!$group) {
+                $this->fail(50, "Invalid group");
+            }
+
+            $this->failIfGeoBlocked($group);
         }
 
         $shuffleSeed    = null;

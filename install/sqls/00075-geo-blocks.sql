@@ -28,6 +28,3 @@ ALTER TABLE `documents`
 
 ALTER TABLE `audios`
   ADD KEY `hash` (`hash`);
-
-ALTER TABLE `album_relations`
-  ADD KEY `media` (`media`);

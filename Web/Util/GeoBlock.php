@@ -99,6 +99,10 @@ final class GeoBlock
             return true;
         }
 
+        if ($this->isInBlockedAlbum($entity, $country)) {
+            return true;
+        }
+
         if ($entity instanceof Comment) {
             $target = $entity->getTarget();
             if ($target instanceof \openvk\Web\Models\RowModel && $this->isBlocked($target, $country)) {
@@ -195,6 +199,7 @@ final class GeoBlock
         } else {
             $data = $entity->unwrap();
             $add((int) ($data->owner ?? 0));
+            $add((int) ($data->context_id ?? 0));
         }
 
         $unique = [];
@@ -203,6 +208,22 @@ final class GeoBlock
         }
 
         return array_values($unique);
+    }
+
+    private function isInBlockedAlbum(object $entity, string $country): bool
+    {
+        if (!($entity instanceof Photo || $entity instanceof Video)) {
+            return false;
+        }
+
+        return $this->context->table("album_relations")
+            ->where("media", $entity->getId())
+            ->where(
+                "collection IN (SELECT entity_id FROM geo_blocks"
+                . " WHERE revoked_at IS NULL AND country_code = ? AND entity_type = 'album')",
+                strtoupper(trim($country))
+            )
+            ->count("*") > 0;
     }
 
     public function isAvatarPhoto(Photo $photo): bool
@@ -279,12 +300,20 @@ final class GeoBlock
             return;
         }
 
-        $query->where(
-            "NOT EXISTS (SELECT 1 FROM geo_blocks gb WHERE gb.revoked_at IS NULL"
-            . " AND gb.country_code = ? AND gb.entity_type = ? AND gb.entity_id = $table.id)",
-            strtoupper(trim($country)),
-            $type
-        );
+        $ids = [];
+        $rows = $this->context->table("geo_blocks")
+            ->where("entity_type", $type)
+            ->where("country_code", strtoupper(trim($country)))
+            ->where("revoked_at", null)
+            ->fetchAll();
+
+        foreach ($rows as $row) {
+            $ids[] = (int) $row->entity_id;
+        }
+
+        if ($ids !== []) {
+            $query->where("id NOT IN (?)", $ids);
+        }
     }
 
     /**
@@ -298,12 +327,31 @@ final class GeoBlock
             return;
         }
 
-        $query->where(
-            "NOT EXISTS (SELECT 1 FROM geo_blocks gb WHERE gb.revoked_at IS NULL"
-            . " AND gb.country_code = ? AND ((gb.entity_type = 'user' AND gb.entity_id = $column)"
-            . " OR (gb.entity_type = 'club' AND gb.entity_id = ABS($column))))",
-            strtoupper(trim($country))
-        );
+        $column = preg_replace("/^[a-z_]+\\./i", "", $column) ?? $column;
+        $userIds = [];
+        $clubIds = [];
+
+        $rows = $this->context->table("geo_blocks")
+            ->where("country_code", strtoupper(trim($country)))
+            ->where("revoked_at", null)
+            ->where("entity_type", ["user", "club"])
+            ->fetchAll();
+
+        foreach ($rows as $row) {
+            if ($row->entity_type === "user") {
+                $userIds[] = (int) $row->entity_id;
+            } else {
+                $clubIds[] = (int) $row->entity_id;
+            }
+        }
+
+        if ($userIds !== []) {
+            $query->where("$column NOT IN (?)", $userIds);
+        }
+
+        if ($clubIds !== []) {
+            $query->where("-$column NOT IN (?)", $clubIds);
+        }
     }
 
     /**
