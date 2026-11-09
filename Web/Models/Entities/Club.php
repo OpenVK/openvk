@@ -235,12 +235,6 @@ class Club extends RowModel
     public function isPrivate(): bool
     {
         return $this->getRecord()->closed === static::PRIVATE;
-        return $this->getRecord()->closed !== static::OPEN;
-    }
-
-    public function isPrivate(): bool
-    {
-        return $this->getRecord()->closed === static::PRIVATE;
     }
 
     public function isVerified(): bool
@@ -384,15 +378,12 @@ class Club extends RowModel
         ])->fetch());
 
         return $subbed && ($this->isClosed() ? $this->isSubscriptionAccepted($user) : true);
-        return $subbed && ($this->isClosed() ? $this->isSubscriptionAccepted($user) : true);
     }
 
-    public function getFollowersQuery(string $sort = "follower ASC"): ?GroupedSelection
     public function getFollowersQuery(string $sort = "follower ASC"): ?GroupedSelection
     {
         $query = $this->getRecord()->related("subscriptions.target");
 
-        if ($this->getOpennesStatus() !== static::PRIVATE) {
         if ($this->getOpennesStatus() !== static::PRIVATE) {
             $query = $query->where("model", "openvk\\Web\\Models\\Entities\\Club")->order($sort);
         } else {
