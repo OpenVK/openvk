@@ -29,7 +29,7 @@ final class DocumentsPresenter extends OpenVKPresenter
             } else {
                 $this->template->group = $owner;
             }
-            
+
             if (!$owner->canBeViewedBy($this->user->identity)) {
                 $this->flashFail("err", tr("forbidden"), tr("forbidden_comment_group"));
             }

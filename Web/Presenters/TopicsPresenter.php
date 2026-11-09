@@ -88,7 +88,7 @@ final class TopicsPresenter extends OpenVKPresenter
         if (!$club) {
             $this->notFound();
         }
-        
+
         if (!$club->canBeViewedBy($this->user->identity)) {
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment_group"));
         }
