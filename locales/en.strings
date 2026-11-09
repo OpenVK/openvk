@@ -434,6 +434,8 @@
 "event_type" = "Event type";
 "event_type_open" = "This is an open event. Anyone can join it.";
 "event_type_closed" = "This is a closed event. To enter, you must request an invite.";
+"group_type_open_title" = "Open";
+"group_type_closed_title" = "Closed";
 "creator" = "Creator";
 "administrators" = "Administrators";
 "event_host" = "Host";
