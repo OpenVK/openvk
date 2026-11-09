@@ -46,6 +46,13 @@
             {_followers}
         </a>
     </div>
+    {if $club->isClosed()}
+    <div id="ki" class="tab">
+        <a id="ki" href="/club{$club->getId()}/followers/req">
+            {_req}
+        </a>
+    </div>
+    {/if}
     {/if}
 {/block}
 
