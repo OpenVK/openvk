@@ -548,7 +548,7 @@ class Club extends RowModel
     public function canBeViewedBy(?User $user = null, bool $blacklist_check = true, bool $allowModeration = true)
     {
         if (!is_null($user)) {
-            if ($this->getOwner() == $user) {
+            if ($this->getOwner()->getId() === $user->getId()) {
                 return true;
             }
 
