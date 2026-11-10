@@ -234,14 +234,14 @@
                             <input type="hidden" name="act" value="rem" />
                             <input type="hidden" name="id"  value="{$club->getId()}" />
                             <input type="hidden" name="hash" value="{$csrfToken}" />
-                            <input type="submit" id="profile_link" value="{_clubs_cancel_request}" />
+                            <input type="submit" class="brand_link subscribe_button" id="brand_link subscribe_button" value="{_clubs_cancel_request}" />
                         </form>
                     {else}
                         <form action="/setSub/club" method="post">
                         <input type="hidden" name="act" value="add" />
                         <input type="hidden" name="id"  value="{$club->getId()}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
-                        <input type="submit" id="profile_link" value="{_clubs_sumbit_request}" />
+                        <input type="submit" class="brand_link subscribe_button" id="profile_link" value="{_clubs_sumbit_request}" />
                     </form>
                     {/if}
                 {else}
@@ -250,11 +250,11 @@
                         <input type="hidden" name="id"  value="{$club->getId()}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
                         {if $club->isEvent() && !$club->isEventOver()}
-                            <input type="submit" id="profile_link" value="{_ill_come_to_meeting}" />
+                            <input type="submit" class="brand_link brand_link_pitched subscribe_button" id="profile_link" value="{_ill_come_to_meeting}" />
                         {elseif $club->isEvent() && $club->isEventOver()}
-                            <input type="submit" id="profile_link" value="{_add_to_list_event}" />
+                            <input type="submit" class="brand_link brand_link_pitched subscribe_button" id="profile_link" value="{_add_to_list_event}" />
                         {else}
-                            <input type="submit" id="profile_link" value="{_join_community}" />
+                            <input type="submit" class="brand_link subscribe_button" id="profile_link" value="{_join_community}" />
                         {/if}
                     </form>
                     {if $club->isEvent() && !$club->isEventOver()}
