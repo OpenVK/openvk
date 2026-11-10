@@ -1033,6 +1033,8 @@ final class Wall extends VKAPIRequestHandler
                         "type" => "doc",
                         "doc" => $attachment->toVkApiStruct($this->getUser()),
                     ];
+                } elseif ($attachment instanceof \openvk\Web\Models\Entities\Messages\Sticker) {
+                    $attachments[] = $attachment->toApiAttachment($this->getUser());
                 }
             }
 
@@ -1159,6 +1161,8 @@ final class Wall extends VKAPIRequestHandler
                     "type" => "doc",
                     "doc" => $attachment->toVkApiStruct($this->getUser()),
                 ];
+            } elseif ($attachment instanceof \openvk\Web\Models\Entities\Messages\Sticker) {
+                $attachments[] = $attachment->toApiAttachment($this->getUser());
             }
         }
 
