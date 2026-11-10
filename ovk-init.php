@@ -602,7 +602,7 @@ return (function () {
 
     $showCommitHash = true; # plz remove when release
     if (is_dir($gitDir = OPENVK_ROOT . "/.git") && $showCommitHash) {
-        $ver = trim(`git --git-dir="$gitDir" log --pretty="%h" -n1 HEAD` ?? "Unknown version") . "-nightly";
+        $ver = trim(shell_exec('git --git-dir="' . $gitDir . '" log --pretty="%h" -n1 HEAD') ?? "Unknown version") . "-nightly";
     } else {
         $ver = "Public Technical Preview 4";
     }
