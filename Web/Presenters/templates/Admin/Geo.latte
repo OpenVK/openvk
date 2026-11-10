@@ -1,0 +1,101 @@
+{extends "@layout.latte"}
+
+{block title}
+    {_admin_geo}
+{/block}
+
+{block heading}
+    {_admin_geo}
+{/block}
+
+{block content}
+    {if !$geoEnabled}
+        <div class="aui-message aui-message-warning">
+            <p>{_admin_geo_disabled}</p>
+        </div>
+    {elseif $geoUnavailable}
+        <div class="aui-message aui-message-error">
+            <p>{_admin_geo_unavailable}</p>
+        </div>
+    {/if}
+
+    <form method="get" action="/admin/geo" class="aui">
+        <div class="field-group">
+            <label for="geo-target">{_admin_geo_target}</label>
+            <input class="text long-field" type="text" id="geo-target" name="target" value="{$geoTarget ? ($geoTarget['type'] . ':' . $geoTarget['id']) : ''}" placeholder="/wall1_2, /id1, /club1" />
+        </div>
+        <button type="submit" class="aui-button">{_admin_geo_lookup}</button>
+    </form>
+
+    {if $geoTarget}
+        <form method="post" action="/admin/geo" class="aui">
+            <input type="hidden" name="hash" value="{$csrfToken}" />
+            <input type="hidden" name="action" value="block" />
+            <input type="hidden" name="target" value="{$geoTarget['type']}:{$geoTarget['id']}" />
+
+            <h2>{_admin_geo_blocking}: {$geoTarget['label']}</h2>
+
+            <div class="field-group">
+                <label for="geo-countries">{_admin_geo_countries}</label>
+                <input class="text" type="text" id="geo-countries" name="countries" value="{$geoCountries}" />
+            </div>
+
+            <div class="field-group">
+                <label for="geo-reason">{_admin_geo_reason}</label>
+                <input class="text long-field" type="text" id="geo-reason" name="reason" required="required" />
+            </div>
+
+            <div class="field-group">
+                <label for="geo-ref">{_admin_geo_external_ref}</label>
+                <input class="text long-field" type="text" id="geo-ref" name="external_ref" />
+            </div>
+
+            {if sizeof($geoAttachments) > 0}
+                <fieldset class="group">
+                    <legend><span>{_admin_geo_attachments}</span></legend>
+                    <div class="checkbox" n:foreach="$geoAttachments as $attachment">
+                        <input type="checkbox" checked="checked" name="attachments[]" value="{$attachment['type']}:{$attachment['id']}" id="geo-attachment-{$attachment['type']}-{$attachment['id']}" />
+                        <label for="geo-attachment-{$attachment['type']}-{$attachment['id']}">{$attachment['label']}</label>
+                    </div>
+                </fieldset>
+            {/if}
+
+            <button type="submit" class="aui-button aui-button-primary">{_admin_geo_block}</button>
+        </form>
+    {/if}
+
+    <h2>{_admin_geo_active}</h2>
+
+    <table class="aui aui-table-list">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>{_admin_geo_entity}</th>
+                <th>{_admin_geo_country}</th>
+                <th>{_admin_geo_reason}</th>
+                <th>{_admin_geo_external_ref}</th>
+                <th>{_admin_geo_created}</th>
+                <th>{_admin_geo_actions}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr n:foreach="$geoBlocks as $block">
+                <td>{$block->id}</td>
+                <td>{$block->entity_type}:{$block->entity_id}{if $block->parent_id} (child){/if}</td>
+                <td>{$block->country_code}</td>
+                <td>{$block->reason}</td>
+                <td>{$block->external_ref ?? "-"}</td>
+                <td>{date("Y-m-d H:i", $block->created_at)}</td>
+                <td>
+                    <form method="post" action="/admin/geo" style="display: flex; gap: 4px;">
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <input type="hidden" name="action" value="unblock" />
+                        <input type="hidden" name="block_id" value="{$block->id}" />
+                        <input class="text" type="text" name="reason" placeholder="{_admin_geo_reason}" required="required" style="width: 160px;" />
+                        <button type="submit" class="aui-button">{_admin_geo_unblock}</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{/block}

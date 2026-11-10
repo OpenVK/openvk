@@ -62,7 +62,7 @@ final class Users extends VKAPIRequestHandler
                 $usr = $users->getByShortURL($userIdentifier);
             }
 
-            if (is_null($usr) || $usr->isDeleted()) {
+            if (is_null($usr) || $usr->isDeleted() || \openvk\Web\Util\GeoBlock::i()->isBlocked($usr)) {
                 $response[$i] = (object) [
                     "id" 		  => is_numeric($userIdentifier) ? (int) $userIdentifier : 0,
                     "first_name"  => "DELETED",
@@ -596,6 +596,8 @@ final class Users extends VKAPIRequestHandler
         if (!$user || $user->isDeleted()) {
             $this->fail(14, "Invalid user");
         }
+
+        $this->failIfGeoBlocked($user);
 
         if (!$user->canBeViewedBy($this->getUser())) {
             $this->fail(15, "Access denied");

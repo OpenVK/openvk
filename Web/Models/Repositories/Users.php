@@ -9,6 +9,7 @@ use openvk\Web\Models\Repositories\Aliases;
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
 use Chandler\Security\User as ChandlerUser;
+use openvk\Web\Util\GeoBlock;
 
 class Users
 {
@@ -155,6 +156,8 @@ class Users
         if ($order_str) {
             $result->order($order_str);
         }
+
+        GeoBlock::i()->excludeEntity($result, "profiles", "user");
 
         return new Util\EntityStream("User", $result);
     }

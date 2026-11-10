@@ -9,6 +9,7 @@ use openvk\Web\Models\Entities\{Poll, Post, Photo, Video, Club, User, Audio, Com
 use openvk\Web\Models\Entities\Notifications\{MentionNotification, RepostNotification, WallPostNotification, PostAcceptedNotification, NewSuggestedPostsNotification};
 use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums, Notes, Videos, Comments, Photos, Audios};
 use openvk\Web\Util\Cache;
+use openvk\Web\Util\GeoBlock;
 use openvk\Web\Models\Search\Feed;
 use openvk\Web\Models\Search\CustomFeeds;
 use Chandler\Database\DatabaseConnection;
@@ -75,7 +76,13 @@ final class WallPresenter extends OpenVKPresenter
         $owner = ($user < 0 ? (new Clubs()) : (new Users()))->get(abs($user));
         $readOnly = $owner instanceof User && $owner->isReadOnlyFor($this->user->identity);
 
-        if (!$owner || (!$readOnly && $owner->isBanned()) || !$owner->canBeViewedBy($this->user->identity)) {
+        if (!$owner) {
+            $this->notFound();
+        }
+
+        $this->assertGeoVisible($owner);
+
+        if ((!$readOnly && $owner->isBanned()) || !$owner->canBeViewedBy($this->user->identity)) {
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
@@ -154,7 +161,7 @@ final class WallPresenter extends OpenVKPresenter
         $this->template->canPost = $canPost;
         $this->template->count   = $count;
         $this->template->type    = $type;
-        $this->template->posts   = iterator_to_array($iterator);
+        $this->template->posts   = iterator_to_array(GeoBlock::i()->filterEntities($iterator));
         $this->template->archiveYears = $archiveYears;
         $this->template->archiveYear = $archiveYear;
         $this->template->paginatorConf = (object) [
@@ -188,7 +195,12 @@ final class WallPresenter extends OpenVKPresenter
             exit("403");
         }
 
-        $posts = iterator_to_array($this->posts->getPostsFromUsersWall($user));
+        if (GeoBlock::i()->isBlocked($owner)) {
+            http_response_code(451);
+            exit("451");
+        }
+
+        $posts = iterator_to_array(GeoBlock::i()->filterEntities($this->posts->getPostsFromUsersWall($user)));
 
         $feed = new \Bhaktaraz\RSSGenerator\Feed();
 
@@ -310,9 +322,23 @@ final class WallPresenter extends OpenVKPresenter
         foreach ($iterator as $post) {
             if ($feedClass != null) {
                 $classPath = "\\openvk\\Web\\Models\\Entities\\" . $feedClass;
+                $entity = new $classPath($post);
 
-                $this->template->posts[] = new $classPath($post);
+                if (GeoBlock::i()->isBlocked($entity)) {
+                    $this->template->geoBlocked = true;
+                    continue;
+                }
+
+                $this->template->posts[] = $entity;
             } else {
+                if (is_array($post)) {
+                    [$target, $comment] = $post;
+                    if (GeoBlock::i()->isBlocked($target) || GeoBlock::i()->isBlocked($comment)) {
+                        $this->template->geoBlocked = true;
+                        continue;
+                    }
+                }
+
                 $this->template->posts[] = $post;
             }
         }
@@ -332,7 +358,7 @@ final class WallPresenter extends OpenVKPresenter
         $count = $this->posts->getPostCountByHashtag($hashtag);
 
         $this->template->hashtag       = $hashtag;
-        $this->template->posts         = $posts;
+        $this->template->posts         = GeoBlock::i()->filterEntities($posts);
         $this->template->paginatorConf = (object) [
             "count"   => 0,
             "page"    => $page,
@@ -358,6 +384,8 @@ final class WallPresenter extends OpenVKPresenter
         if ($wallOwner->isBanned()) {
             $this->flashFail("err", tr("error"), tr("forbidden"), 0, $isAjax);
         }
+
+        $this->assertGeoVisible($wallOwner);
 
         if ($wall > 0) {
             $canPost = $wallOwner->getPrivacyPermission("wall.write", $this->user->identity);
@@ -544,6 +572,8 @@ final class WallPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
+        $this->assertGeoVisible($post);
+
         if (!$post->canBeViewedBy($this->user->identity)) {
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
@@ -623,6 +653,8 @@ final class WallPresenter extends OpenVKPresenter
         if (!$post || $post->isDeleted()) {
             $this->notFound();
         }
+
+        $this->assertGeoVisible($post);
 
         if ($post->getWallOwner()->isBanned()) {
             $this->flashFail("err", tr("error"), tr("forbidden"));

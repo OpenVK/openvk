@@ -126,6 +126,16 @@
                     <div class="text_mini_light">見つかりません</div>
                 </div>
             </main>
+        {elseif $code == 451}
+            <main>
+                <div class="text_left">
+                    <p>{_geo_blocked}</p>
+                </div>
+                <a href="/"><img src="/assets/packages/static/openvk/img/oof.apng" alt="Ouch" id="error"></a>
+                <div class="text_right">
+                    <p>{_geo_blocked}</p>
+                </div>
+            </main>
         {else}
             <main>
                 <div class="text_left">

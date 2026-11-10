@@ -63,6 +63,8 @@ final class TopicsPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
+        $this->assertGeoVisible($topic);
+
         $this->template->topic    = $topic;
         $this->template->chat     = $topic->getChat($this->user->identity);
         $this->template->club     = $topic->getClub();

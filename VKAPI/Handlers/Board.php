@@ -260,6 +260,8 @@ final class Board extends VKAPIRequestHandler
             $this->fail(5, "Not found");
         }
 
+        $this->failIfGeoBlocked($topic);
+
         $items    = [];
         $profiles = [];
         $groups   = [];
@@ -343,7 +345,7 @@ final class Board extends VKAPIRequestHandler
             foreach ($topics as $topic_id) {
                 $topic = (new TopicsRepo())->getTopicById($group_id, (int) $topic_id);
 
-                if ($topic && !$topic->isDeleted()) {
+                if ($topic && !$topic->isDeleted() && !\openvk\Web\Util\GeoBlock::i()->isBlocked($topic)) {
                     $obj->items[] = $topic->toVkApiStruct($preview, $preview_length > 1 ? $preview_length : 90);
                 }
             }

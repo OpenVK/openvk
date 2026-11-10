@@ -21,7 +21,7 @@ final class Status extends VKAPIRequestHandler
             $clubId = $group_id > 0 ? $group_id : abs($user_id);
             $club   = (new ClubsRepo())->get($clubId);
 
-            if (!$club || ($this->getUser() && !$club->canBeViewedBy($this->getUser()))) {
+            if (!$club || !$club->canBeViewedBy($this->getUser())) {
                 $this->fail(15, "Access denied");
             }
 
@@ -31,7 +31,7 @@ final class Status extends VKAPIRequestHandler
         } else {
             $user = (new UsersRepo())->get($user_id);
 
-            if (!$user || $user->isDeleted() || !$user->getPrivacyPermission("page.info.read", $this->getUser())) {
+            if (!$user || $user->isDeleted() || !$user->canBeViewedBy($this->getUser()) || !$user->getPrivacyPermission("page.info.read", $this->getUser())) {
                 $this->fail(15, "Invalid user");
             }
 

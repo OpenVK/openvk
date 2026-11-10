@@ -47,6 +47,10 @@ final class Wall extends VKAPIRequestHandler
             }
         }
 
+        if ($wallOnwer) {
+            $this->failIfGeoBlocked($wallOnwer);
+        }
+
         if ($wallOnwer && !$wallOnwer->canBeViewedBy($this->getUser())) {
             $this->fail(15, "Access denied");
         } elseif (!$wallOnwer) {
@@ -118,6 +122,10 @@ final class Wall extends VKAPIRequestHandler
             $attachments = [];
             $repost = [];
             foreach ($post->getChildren() as $attachment) {
+                if (!$attachment->canBeViewedBy($this->getUser())) {
+                    continue;
+                }
+
                 if ($attachment instanceof \openvk\Web\Models\Entities\Photo) {
                     if ($attachment->isDeleted()) {
                         continue;
@@ -449,6 +457,8 @@ final class Wall extends VKAPIRequestHandler
             $post = (new PostsRepo())->getPostById(intval($id[0]), intval($id[1]), true);
 
             if ($post && !$post->isDeleted()) {
+                $this->failIfGeoBlocked($post);
+
                 if (!$post->canBeViewedBy($user)) {
                     continue;
                 }
@@ -461,6 +471,10 @@ final class Wall extends VKAPIRequestHandler
                 $attachments = [];
                 $repost = []; // чел высрал семь сигарет 😳 помянем 🕯
                 foreach ($post->getChildren() as $attachment) {
+                    if (!$attachment->canBeViewedBy($user ?? $this->getUser())) {
+                        continue;
+                    }
+
                     if ($attachment instanceof \openvk\Web\Models\Entities\Photo) {
                         $attachments[] = $this->getApiPhoto($attachment);
                     } elseif ($attachment instanceof \openvk\Web\Models\Entities\Poll) {
@@ -488,7 +502,7 @@ final class Wall extends VKAPIRequestHandler
                         if (!$attachment->isArchived()) {
                             foreach ($attachment->getChildren() as $repostAttachment) {
                                 if ($repostAttachment instanceof \openvk\Web\Models\Entities\Photo) {
-                                    if ($attachment->isDeleted()) {
+                                    if ($attachment->isDeleted() || !$repostAttachment->canBeViewedBy($this->getUser())) {
                                         continue;
                                     }
 
@@ -1406,6 +1420,8 @@ final class Wall extends VKAPIRequestHandler
             $this->fail(102, "Invalid post");
         }
 
+        $this->failIfGeoBlocked($post);
+
         if (!$post->canBeEditedBy($this->getUser())) {
             $this->fail(7, "Access to editing denied");
         }
@@ -1483,6 +1499,8 @@ final class Wall extends VKAPIRequestHandler
         if (!$comment || $comment->isDeleted()) {
             $this->fail(102, "Invalid comment");
         }
+
+        $this->failIfGeoBlocked($comment);
 
         if (!$comment->canBeEditedBy($this->getUser()) || $comment->hasSticker()) {
             $this->fail(15, "Access to editing comment denied");

@@ -14,6 +14,7 @@ use openvk\Web\Models\Repositories\Audios;
 use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Util\Cache;
+use openvk\Web\Util\GeoBlock;
 
 final class AudioPresenter extends OpenVKPresenter
 {
@@ -74,6 +75,8 @@ final class AudioPresenter extends OpenVKPresenter
                 $this->notFound();
             }
 
+            $this->assertGeoVisible($entity);
+
             $this->template->owner = $entity;
             $this->template->ownerId = $owner;
             $this->template->club = $owner < 0 ? $entity : null;
@@ -110,6 +113,8 @@ final class AudioPresenter extends OpenVKPresenter
                 $playlistsCount = $this->audios->getUserPlaylistsCount($entity);
             }
 
+            $this->assertGeoVisible($entity);
+
             $this->template->playlists = iterator_to_array($playlists);
             $this->template->playlistsCount = $playlistsCount;
             $this->template->owner = $entity;
@@ -127,7 +132,7 @@ final class AudioPresenter extends OpenVKPresenter
 
         // $this->renderApp("owner=$owner");
         if ($audios !== []) {
-            $this->template->audios = iterator_to_array($audios);
+            $this->template->audios = iterator_to_array(GeoBlock::i()->filterEntities($audios));
             $this->template->audiosCount = $audiosCount;
         }
 
@@ -157,6 +162,9 @@ final class AudioPresenter extends OpenVKPresenter
         } elseif ($audio->isWithdrawn()) {
             header("HTTP/1.1 451 Unavailable for legal reasons");
             exit("<b>" . tr("audio_embed_withdrawn") . ".</b>");
+        } elseif (GeoBlock::i()->isBlocked($audio)) {
+            header("HTTP/1.1 451 Unavailable for legal reasons");
+            exit("<b>" . tr("geo_blocked") . ".</b>");
         } elseif (!$audio->canBeViewedBy(null)) {
             header("HTTP/1.1 403 Forbidden");
             exit("<b>" . tr("audio_embed_forbidden") . ".</b>");
@@ -323,6 +331,8 @@ final class AudioPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
+        $this->assertGeoVisible($found_audio);
+
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $isAjax = $this->postParam("ajax") == "1";
 
@@ -348,7 +358,7 @@ final class AudioPresenter extends OpenVKPresenter
 
             $audio = $this->audios->get($id);
 
-            if ($audio && !$audio->isDeleted() && !$audio->isWithdrawn()) {
+            if ($audio && !$audio->isDeleted() && !$audio->isWithdrawn() && !GeoBlock::i()->isBlocked($audio)) {
                 if (!empty($this->postParam("playlist"))) {
                     $playlist = (new Audios())->getPlaylist((int) $this->postParam("playlist"));
 
@@ -594,6 +604,8 @@ final class AudioPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
+        $this->assertGeoVisible($playlist);
+
         $this->template->playlist = $playlist;
         $this->template->count = $playlist->size();
         $this->template->page = $page;
@@ -616,7 +628,7 @@ final class AudioPresenter extends OpenVKPresenter
             $this->template->comments = iterator_to_array($playlist->getComments($page, null, $input_sort));
         } else {
             $this->template->act = "audios";
-            $this->template->audios = iterator_to_array($playlist->fetch($page, 10));
+            $this->template->audios = iterator_to_array(GeoBlock::i()->filterEntities($playlist->fetch($page, 10)));
         }
     }
 

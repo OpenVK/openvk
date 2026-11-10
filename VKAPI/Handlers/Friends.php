@@ -399,6 +399,7 @@ final class Friends extends VKAPIRequestHandler
             }
 
             $query = $target->getCommonFriendsQuery($source)->order($order == "random" ? "RAND()" : "id ASC");
+            \openvk\Web\Util\GeoBlock::i()->excludeEntity($query, "profiles", "user");
             if ($count > 0) {
                 $query->limit($count, $offset);
             }

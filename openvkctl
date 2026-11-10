@@ -15,5 +15,6 @@ $application->add(new CLI\RebuildImagesCommand());
 $application->add(new CLI\FetchToncoinTransactions());
 $application->add(new CLI\CleanupPendingUploadsCommand());
 $application->add(new CLI\GenerateUsersCommand());
+$application->add(new CLI\GeoCommand());
 
 $application->run();

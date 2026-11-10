@@ -429,6 +429,9 @@ routes:
       handler: "Admin->bannedLink"
     - url: "/admin/bannedLink/id{num}/unban"
       handler: "Admin->unbanLink"
+    - url: "/admin/geo"
+      handler: "Admin->geo"
+
     - url: "/admin/music"
       handler: "Admin->music"
     - url: "/admin/music/{num}/edit"

@@ -158,6 +158,8 @@ final class Notes extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
+        $this->failIfGeoBlocked($user);
+
         if (!$user->getPrivacyPermission('notes.read', $this->getUser())) {
             $this->fail(15, "Access denied");
         }
@@ -189,6 +191,9 @@ final class Notes extends VKAPIRequestHandler
             foreach ($notes_splitted as $note_id) {
                 $note_id = intval($note_id);
                 $note = (new NotesRepo())->getNoteById($user_id, $note_id);
+                if ($note) {
+                    $this->failIfGeoBlocked($note);
+                }
 
                 if ($note && !$note->isDeleted()) {
                     $notes_return_object->items[] = $note->toVkApiStruct($this->getUser());

@@ -7,6 +7,7 @@ namespace openvk\Web\Models\Entities;
 use morphos\Gender;
 use openvk\Web\Util\IMBroker;
 use openvk\Web\Util\Cache;
+use openvk\Web\Util\GeoBlock;
 use openvk\Web\Util\ModerationContext;
 use openvk\Web\Themes\{Themepack, Themepacks};
 use openvk\Web\Util\DateTime;
@@ -76,7 +77,7 @@ class User extends RowModel
             if (!$rel) {
                 continue;
             }
-            if (in_array($rel->getId(), $ids)) {
+            if (in_array($rel->getId(), $ids) || GeoBlock::i()->isBlocked($rel)) {
                 continue;
             }
             $ids[] = $rel->getId();
@@ -795,7 +796,10 @@ class User extends RowModel
 
         $friends = $this->getCommonFriendsQuery($me)->limit($limit, ($page - 1) * $limit)->order($order);
         foreach ($friends->fetchAll() as $friend) {
-            yield $users->toUser($friend);
+            $entity = $users->toUser($friend);
+            if ($entity !== null && !GeoBlock::i()->isBlocked($entity)) {
+                yield $entity;
+            }
         }
     }
 
@@ -842,7 +846,7 @@ class User extends RowModel
 
         foreach ($ids as $id) {
             $user = $users->get($id);
-            if ($user) {
+            if ($user && !GeoBlock::i()->isBlocked($user)) {
                 yield $user;
             }
         }
@@ -1823,6 +1827,10 @@ class User extends RowModel
 
     public function canBeViewedBy(?User $user = null, bool $blacklist_check = true, bool $allowModeration = true): bool
     {
+        if (GeoBlock::i()->isBlocked($this)) {
+            return false;
+        }
+
         if ($allowModeration && $user && ModerationContext::isActiveFor($user->getId())) {
             return true;
         }

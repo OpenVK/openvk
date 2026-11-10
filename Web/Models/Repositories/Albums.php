@@ -8,6 +8,7 @@ use openvk\Web\Models\Entities\Album;
 use openvk\Web\Models\Entities\Photo;
 use openvk\Web\Models\Entities\Club;
 use openvk\Web\Models\Entities\User;
+use openvk\Web\Util\GeoBlock;
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
 
@@ -49,7 +50,12 @@ class Albums
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
         $albums  = $this->albums->where("owner", $user->getId())->where("deleted", false);
         foreach ($albums->page($page, $perPage) as $album) {
-            yield new Album($album);
+            $entity = new Album($album);
+            if (GeoBlock::i()->isBlocked($entity)) {
+                continue;
+            }
+
+            yield $entity;
         }
     }
 
@@ -64,7 +70,12 @@ class Albums
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
         $albums  = $this->albums->where("owner", $club->getId() * -1)->where("special_type", 0)->where("deleted", false);
         foreach ($albums->page($page, $perPage) as $album) {
-            yield new Album($album);
+            $entity = new Album($album);
+            if (GeoBlock::i()->isBlocked($entity)) {
+                continue;
+            }
+
+            yield $entity;
         }
     }
 

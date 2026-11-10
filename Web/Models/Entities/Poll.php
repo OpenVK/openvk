@@ -13,6 +13,7 @@ use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Exceptions\PollLockedException;
 use openvk\Web\Models\Exceptions\AlreadyVotedException;
 use openvk\Web\Models\Exceptions\InvalidOptionException;
+use openvk\Web\Util\GeoBlock;
 
 class Poll extends Attachable
 {
@@ -193,7 +194,7 @@ class Poll extends Attachable
 
     public function canBeVotedBy(?User $user): bool
     {
-        if (!$user) {
+        if (!$user || GeoBlock::i()->isBlocked($this)) {
             return false;
         }
 
@@ -337,6 +338,10 @@ class Poll extends Attachable
 
     public function canBeViewedBy(?User $user = null): bool
     {
+        if (GeoBlock::i()->isBlocked($this)) {
+            return false;
+        }
+
         # waiting for #935 :(
         /*if(!is_null($this->getAttachedPost())) {
             return $this->getAttachedPost()->canBeViewedBy($user);

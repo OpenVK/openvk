@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace openvk\Web\Presenters;
 
 use openvk\Web\Models\Repositories\{Posts, Comments};
+use openvk\Web\Util\GeoBlock;
 use MessagePack\MessagePack;
 use Chandler\Session\Session;
 
@@ -130,7 +131,7 @@ final class InternalAPIPresenter extends OpenVKPresenter
         }
 
 
-        if (is_null($post)) {
+        if (is_null($post) || GeoBlock::i()->isBlocked($post)) {
             $this->returnJson([
                 "success" => 0,
             ]);
@@ -166,7 +167,7 @@ final class InternalAPIPresenter extends OpenVKPresenter
             $post = (new Comments())->get($post_id);
         }
 
-        if (!$post || !$post->canBeEditedBy($this->user->identity)) {
+        if (!$post || GeoBlock::i()->isBlocked($post) || !$post->canBeEditedBy($this->user->identity)) {
             exit('');
         }
 

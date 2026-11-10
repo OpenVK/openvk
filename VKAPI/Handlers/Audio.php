@@ -182,6 +182,8 @@ final class Audio extends VKAPIRequestHandler
                 $this->fail(0o404, "Group not found");
             }
 
+            $this->failIfGeoBlocked($group);
+
             return (new Audios())->getClubCollectionSize($group);
         }
 
@@ -211,6 +213,15 @@ final class Audio extends VKAPIRequestHandler
 
         if ($owner_id == 0) {
             $owner_id = $this->getUser()->getRealId();
+        }
+
+        if ($owner_id < 0) {
+            $group = (new Clubs())->get(abs($owner_id));
+            if (!$group) {
+                $this->fail(50, "Invalid group");
+            }
+
+            $this->failIfGeoBlocked($group);
         }
 
         $shuffleSeed    = null;
@@ -360,6 +371,8 @@ final class Audio extends VKAPIRequestHandler
             if (!$user) {
                 $this->fail(50, "Invalid user");
             }
+
+            $this->failIfGeoBlocked($user);
 
             if (!$user->getPrivacyPermission("audios.read", $this->getUser())) {
                 $this->fail(15, "Access denied: this user chose to hide his audios");
@@ -617,6 +630,8 @@ final class Audio extends VKAPIRequestHandler
             if (!$user) {
                 $this->fail(50, "Invalid user");
             }
+
+            $this->failIfGeoBlocked($user);
 
             if (!$user->getPrivacyPermission("audios.read", $this->getUser())) {
                 $this->fail(50, "Access to playlists denied");
@@ -915,6 +930,8 @@ final class Audio extends VKAPIRequestHandler
         if (!$playlist || $playlist->isDeleted()) {
             $this->fail(15, "Access error");
         }
+
+        $this->failIfGeoBlocked($playlist);
 
         return (object) [
             "id" => $playlist->getId(),

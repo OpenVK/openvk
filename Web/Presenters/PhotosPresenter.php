@@ -6,6 +6,7 @@ namespace openvk\Web\Presenters;
 
 use openvk\Web\Models\Entities\{Club, Photo, Album, User};
 use openvk\Web\Models\Repositories\{Photos, Albums, Users, Clubs};
+use openvk\Web\Util\GeoBlock;
 use Nette\InvalidStateException as ISE;
 
 final class PhotosPresenter extends OpenVKPresenter
@@ -31,11 +32,14 @@ final class PhotosPresenter extends OpenVKPresenter
             if (!$user) {
                 $this->notFound();
             }
+
+            $this->assertGeoVisible($user);
+
             if (!$user->canBeViewedBy($this->user->identity) || !$user->getPrivacyPermission('photos.read', $this->user->identity ?? null)) {
                 $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
             }
 
-            $this->template->albums  = $this->albums->getUserAlbums($user, (int) ($this->queryParam("p") ?? 1));
+            $this->template->albums  = GeoBlock::i()->filterEntities($this->albums->getUserAlbums($user, (int) ($this->queryParam("p") ?? 1)));
             $this->template->count   = $this->albums->getUserAlbumsCount($user);
             $this->template->owner   = $user;
             $this->template->canEdit = false;
@@ -47,10 +51,13 @@ final class PhotosPresenter extends OpenVKPresenter
             if (!$club) {
                 $this->notFound();
             }
+
+            $this->assertGeoVisible($club);
+
             if (!$club->canBeViewedBy($this->user->identity)) {
                 $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
             }
-            $this->template->albums  = $this->albums->getClubAlbums($club, (int) ($this->queryParam("p") ?? 1));
+            $this->template->albums  = GeoBlock::i()->filterEntities($this->albums->getClubAlbums($club, (int) ($this->queryParam("p") ?? 1)));
             $this->template->count   = $this->albums->getClubAlbumsCount($club);
             $this->template->owner   = $club;
             $this->template->canEdit = false;
@@ -171,6 +178,8 @@ final class PhotosPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
+        $this->assertGeoVisible($album);
+
         if (!$album->canBeViewedBy($this->user->identity)) {
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
@@ -183,7 +192,7 @@ final class PhotosPresenter extends OpenVKPresenter
         }
 
         $this->template->album  = $album;
-        $this->template->photos = iterator_to_array($album->getPhotos((int) ($this->queryParam("p") ?? 1), 20));
+        $this->template->photos = iterator_to_array(GeoBlock::i()->filterEntities($album->getPhotos((int) ($this->queryParam("p") ?? 1), 20)));
         $this->template->paginatorConf = (object) [
             "count"   => $album->getPhotosCount(),
             "page"    => (int) ($this->queryParam("p") ?? 1),
@@ -202,6 +211,8 @@ final class PhotosPresenter extends OpenVKPresenter
         if (!$photo || $photo->isDeleted()) {
             $this->notFound();
         }
+
+        $this->assertGeoVisible($photo);
 
         if (!$photo->canBeViewedBy($this->user->identity, $key)) {
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
@@ -250,6 +261,13 @@ final class PhotosPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
+        if (GeoBlock::i()->isBlocked($photo, null, true)) {
+            header("HTTP/1.1 451 Unavailable For Legal Reasons");
+            header("Cache-Control: no-store");
+            header("X-Accel-Expires: 0");
+            exit();
+        }
+
         if (!$photo->canBeViewedBy($this->user->identity, $key)) {
             $this->notFound();
         }
@@ -275,10 +293,14 @@ final class PhotosPresenter extends OpenVKPresenter
             }
         }
 
+        $cacheTtl = GeoBlock::i()->isEnabled()
+            ? (int) (OPENVK_ROOT_CONF["openvk"]["preferences"]["geo"]["mediaCacheTtl"] ?? 300)
+            : 1210000;
+
         header("Access-Control-Allow-Origin: *");
         header("Accept-Ranges: bytes");
-        header("Cache-Control: public, max-age=1210000");
-        header("X-Accel-Expires: 1210000");
+        header("Cache-Control: public, max-age=$cacheTtl");
+        header("X-Accel-Expires: $cacheTtl");
 
         $etag = "W/\"" . hash_file("snefru", $path) . "\"";
         header("ETag: $etag");
