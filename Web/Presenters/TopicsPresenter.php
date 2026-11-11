@@ -31,6 +31,10 @@ final class TopicsPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
+        if (!$club->canBeViewedBy($this->user->identity)) {
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment_group"));
+        }
+
         $this->template->club = $club;
         $page = (int) ($this->queryParam("p") ?? 1);
 
@@ -58,6 +62,11 @@ final class TopicsPresenter extends OpenVKPresenter
     {
         $this->assertUserLoggedIn();
 
+        $club = $this->clubs->get($clubId);
+        if (!$club->canBeViewedBy($this->user->identity)) {
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment_group"));
+        }
+
         $topic = $this->topics->getTopicById($clubId, $topicId);
         if (!$topic) {
             $this->notFound();
@@ -78,6 +87,10 @@ final class TopicsPresenter extends OpenVKPresenter
         $club = $this->clubs->get($clubId);
         if (!$club) {
             $this->notFound();
+        }
+
+        if (!$club->canBeViewedBy($this->user->identity)) {
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment_group"));
         }
 
         if (!$club->isEveryoneCanCreateTopics() && !$club->canBeModifiedBy($this->user->identity)) {

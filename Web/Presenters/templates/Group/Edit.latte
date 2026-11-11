@@ -22,6 +22,13 @@
                 {_followers}
             </a>
         </div>
+        {if $club->isClosed()}
+        <div id="ki" class="tab">
+            <a id="ki" href="/club{$club->getId()}/followers/req">
+                {_req}
+            </a>
+        </div>
+        {/if}
     </div>
     
     <div class="container_gray">
@@ -43,6 +50,17 @@
                         </td>
                         <td>
                             <textarea type="text" name="about" style="resize:vertical;">{$club->getDescription()}</textarea>
+                        </td>
+                    </tr>
+		            <tr n:if="!$club->isEvent()">
+                        <td width="120" valign="top">
+                            <span class="nobold">{_group_type}: </span>
+                        </td>
+                        <td>
+                            <select name="group_type">
+                                <option value="0" n:attr="selected => $club->getOpennesStatus() == 0" > {_group_type_open_title}</option>
+                                <option value="1" n:attr="selected => $club->getOpennesStatus() == 1" > {_group_type_closed_title}</option>
+                            </select>
                         </td>
                     </tr>
                     <tr>

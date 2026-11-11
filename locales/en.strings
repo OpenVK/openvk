@@ -411,6 +411,8 @@
 "subscriptions" = "Subscriptions";
 "join_community" = "Join community";
 "leave_community" = "Leave community";
+"clubs_sumbit_request" = "Send a request";
+"clubs_cancel_request" = "Cancel request";
 "check_community" = "View community";
 "view_group_messages" = "Group Messages";
 "add_to_list_event" = "Add to list";
@@ -432,6 +434,8 @@
 "event_type" = "Event type";
 "event_type_open" = "This is an open event. Anyone can join it.";
 "event_type_closed" = "This is a closed event. To enter, you must request an invite.";
+"group_type_open_title" = "Open";
+"group_type_closed_title" = "Closed";
 "creator" = "Creator";
 "administrators" = "Administrators";
 "event_host" = "Host";
@@ -1723,6 +1727,7 @@
 "forbidden" = "Access error";
 "unknown_error" = "Unknown error";
 "forbidden_comment" = "This user's privacy settings do not allow you to look at his page.";
+"forbidden_comment_group" = "This page or piece of content belongs to a closed or private group and is accessible only to its members.";
 
 "changes_saved" = "Changes saved";
 "changes_saved_comment" = "New data will appear on your page";

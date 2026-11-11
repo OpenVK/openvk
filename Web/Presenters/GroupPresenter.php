@@ -173,6 +173,10 @@ final class GroupPresenter extends OpenVKPresenter
             $flag = 1;
         }
 
+        if ($club->isClosed() && !$club->isPrivate() && !$club->getSubscriptionStatus($this->user->identity)) {
+            $flag = 1;
+        }
+
         $club->toggleSubscription($this->user->identity, $flag);
 
         $this->redirect($club->getURL());
@@ -219,6 +223,76 @@ final class GroupPresenter extends OpenVKPresenter
             "tidy"    => false,
             "atTop"   => false,
         ];
+    }
+
+    public function renderRequests(int $id): void
+    {
+        $this->assertUserLoggedIn();
+
+        $club = $this->clubs->get($id);
+        if (!$club) {
+            $this->notFound();
+        }
+
+        if ($club->isBanned()) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
+        if (!$club->canBeModifiedBy($this->user->identity)) {
+            $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
+        }
+
+        $page = (int) ($this->queryParam("p") ?? 1);
+
+        $this->template->club             = $club;
+        $this->template->page             = $page;
+        $this->template->followers        = $club->getPotentialFollowers($page);
+        $this->template->count            = $club->getPotentialFollowersCount();
+
+        $this->template->paginatorConf = (object) [
+            "count"   => $this->template->count,
+            "page"    => $page,
+            "amount"  => 10,
+            "perPage" => OPENVK_DEFAULT_PER_PAGE,
+            "tidy"    => false,
+            "atTop"   => false,
+        ];
+    }
+
+    public function renderFlag(int $id): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        $accept = $this->queryParam("accept");
+        $userId = (int) $this->queryParam("user");
+        if (!in_array($accept, ["0", "1"], true) || !$userId) {
+            $this->badRequest();
+        }
+
+        $club = $this->clubs->get($id);
+        $user = (new Users())->get($userId);
+        if (!$club || !$user) {
+            $this->notFound();
+        }
+
+        if (!$club->canBeModifiedBy($this->user->identity)) {
+            $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
+        }
+
+        if (!$club->isClosed()) {
+            $this->flashFail("err", tr("error"), tr("unknown_error"));
+        }
+
+        if ($club->isJoinRequestSent($user)) {
+            if ($accept === "1") {
+                $club->changeFlags($user, 0, false);
+            } else {
+                $club->toggleSubscription($user, 1); // existing row with flags=1 -> deleted
+            }
+        }
+
+        $this->redirect("/club{$club->getId()}/followers/req");
     }
 
     public function renderModifyAdmin(int $id): void
@@ -340,6 +414,14 @@ final class GroupPresenter extends OpenVKPresenter
             $club->setEveryone_can_upload_audios(empty($this->postParam("upload_audios")) ? 0 : 1);
             $club->setEveryone_can_upload_videos(empty($this->postParam("upload_videos")) ? 0 : 1);
             $club->setIs_messages_enabled(empty($this->postParam("is_messages_enabled")) ? 0 : 1);
+
+            switch ($this->postParam("group_type")) {
+                case 0:
+                case 1:
+                    // case 2: -- uncomment dis when y'all make private groups
+                    $club->setClosed($this->postParam("group_type"));
+                    break;
+            }
 
             if (!$club->isHidingFromGlobalFeedEnforced()) {
                 $club->setHide_From_Global_Feed(empty($this->postParam("hide_from_global_feed") ? 0 : 1));

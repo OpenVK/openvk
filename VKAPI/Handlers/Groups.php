@@ -265,7 +265,7 @@ final class Groups extends VKAPIRequestHandler
         return 1;
     }
 
-    public function getMembers(int $group_id, int $offset = 0, int $count = 10, string $fields = "")
+    public function getMembers(int $group_id, int $offset = 0, int $count = 10, string $fields = "", string $filter = "")
     {
         $this->requireUser();
 
@@ -276,18 +276,56 @@ final class Groups extends VKAPIRequestHandler
         }
 
         $sort_string = "follower ASC";
-        $members = array_slice(iterator_to_array($club->getFollowers(1, $count + $offset, $sort_string), false), $offset, $count);
 
-        $obj = (object) [
-            "count" => $club->getFollowersCount(),
-            "items" => [],
-        ];
-
-        foreach ($members as $member) {
-            $obj->items[] = $member->toVkApiStruct($this->getUser(), $fields);
+        switch ($filter) {
+            case "unsure":
+                if ($club->isEvent()) {
+                    $mcount = $club->getPotentialFollowersCount();
+                    $members = $club->getPotentialFollowers(1, $count + $offset, $sort_string);
+                } else {
+                    $this->fail(-100, "Filter \'unsure\' cannot be applied to non-event groups");
+                }
+                break;
+            default:
+                $mcount = $club->getFollowersCount();
+                $members = $club->getFollowers(1, $count + $offset, $sort_string);
+                break;        // vk4me 2.9.2 reference
         }
 
-        return $obj;
+        $members = array_slice(iterator_to_array($members, false), $offset, $count);
+        $items = [];
+
+        foreach ($members as $member) {
+            $items[] = $member->toVkApiStruct($this->getUser(), $fields);
+        }
+
+        return $this->generateItems($mcount, $items);
+    }
+
+    public function getRequests(int $group_id, int $offset = 0, int $count = 10, string $fields = "")
+    {
+        $this->requireUser();
+
+        $club = (new ClubsRepo())->get($group_id);
+
+        if (!$club || !$club->canBeModifiedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        if (!$club->isClosed()) {
+            $this->fail(15, "This method cannot be used for open groups");
+        }
+
+        $sort_string = "follower ASC";
+        $members = array_slice(iterator_to_array($club->getPotentialFollowers(1, $count + $offset, $sort_string), false), $offset, $count);
+
+        $items = [];
+
+        foreach ($members as $member) {
+            $items[] = $member->toVkApiStruct($this->getUser(), $fields);
+        }
+
+        return $this->generateItems($club->getPotentialFollowersCount(), $items);
     }
 
     public function getSettings(string $group_id)
