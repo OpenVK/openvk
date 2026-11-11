@@ -2129,6 +2129,7 @@ body.scrolled .toTop:hover,
     font-size: 10px;
     margin-right: 3px;
     float: left;
+    width: max-content;
 }
 
 .like_wrap.tidy .likeCnt {
