@@ -643,7 +643,7 @@ class Club extends RowModel
         $res->id          = $this->getId();
         $res->name        = $this->getName();
         $res->screen_name = $this->getShortCode() ?? "club" . $this->getId();
-        $res->is_closed   = 0;
+        $res->is_closed   = (int) $this->isClosed();
         $res->type        = $this->isEvent() ? 'event' : 'group';
         $res->is_member   = $user ? (int) $this->getSubscriptionStatus($user) : 0;
         $res->is_admin    = $user ? (int) $this->canBeModifiedBy($user) : 0;
