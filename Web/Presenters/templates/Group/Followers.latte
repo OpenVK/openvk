@@ -49,7 +49,7 @@
     {if $club->isClosed()}
     <div id="ki" class="tab">
         <a id="ki" href="/club{$club->getId()}/followers/req">
-            {_req}
+            {_req} {if $club->getPotentialFollowersCount() > 0}(<b>{$club->getPotentialFollowersCount()}</b>){/if}
         </a>
     </div>
     {/if}

@@ -33,7 +33,7 @@
     </div>
     <div id="activetabs" class="tab">
         <a id="act_tab_a" href="/club{$club->getId()}/followers/req">
-            {_req}
+            {_req} {if $club->getPotentialFollowersCount() > 0}(<b>{$club->getPotentialFollowersCount()}</b>){/if}
         </a>
     </div>
 {/block}
