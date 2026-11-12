@@ -1146,7 +1146,7 @@
 "gift_back" = "Қарымта сыйлық жіберу";
 
 "gift_select" = "Сыйлық таңдау";
-"collections" = "Жинақтар";
+"collections" = "Жинақ";
 "confirm" = "Растау";
 "as_anonymous" = "Жасырын жазба";
 "gift_your_message" = "Хабарламаңыз";
@@ -2873,7 +2873,7 @@
 "stickers_pack_balance" = "Жинақ теңгерімі";
 "stickers_pack_uninstalled" = "Жинақ стикерлеріңізден алып тасталды";
 "stickers_uninstall_confirm" = "Бұл жинақты шынымен стикерлеріңізден алып тастағыңыз келе ме?";
-"stickers_uninstall_pack" = "Жинақтарымнан алып тастау";
+"stickers_uninstall_pack" = "Жинақтан алып тастау";
 "stickers_pack_purchased" = "Жинақ сәтті қосылды!";
 "stickers_not_enough_coins" = "Сатып алуға дауыс жеткіліксіз";
 "stickers_purchased_label" = "Сатып алынды";
