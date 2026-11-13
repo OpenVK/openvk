@@ -37,6 +37,8 @@ routes:
       handler: "Support->editAgent"
     - url: "/support/ticket{num}/close"
       handler: "Support->closeTicket"
+    - url: "/support/admin"
+      handler: "Support->admin"
     - url: "/language"
       handler: "About->language"
     - url: "/language/{text}.js"

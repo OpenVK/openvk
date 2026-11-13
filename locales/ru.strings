@@ -1372,6 +1372,7 @@
 "support_status_2" = "Закрыто";
 "support_greeting_hi" = "Здравствуйте, $1!";
 "support_greeting_regards" = "С уважением,<br/>команда поддержки $1.";
+"support_main" = "Главная";
 "support_faq" = "Часто задаваемые вопросы";
 "support_list" = "Список обращений";
 "support_new" = "Новое обращение";
@@ -1441,6 +1442,41 @@
 "confirm_report_submission_2" = "Какой будет причина удаления?";
 "confirm_report_submission_3" = "А причина бана пользователя?";
 "confirm_report_submission_4" = "Сообщить автору жалобы об игнорировании";
+
+"support_known_issue" = "Известная проблема";
+"support_known_issues" = "Известные проблемы";
+"support_known_issue_ok" = "Это решает мою проблему";
+"support_known_issues_ok" = "Это решает мои проблемы";
+
+"support_faq_back" = "На главную";
+"support_faq_error_title" = "Не удалось получить раздел справочника";
+"support_faq_error_msg" = "Либо его не стало, либо его и не было вовсе...";
+"support_faq_show_untranslated" = "Показывать непереведённые разделы";
+
+"support_admin_tab" = "Редактирование справочника";
+"support_admin_current_known_issue" = "Текущая известная проблема";
+"support_admin_issue_new" = "Новая известная проблема";
+"support_admin_issue_edit" = "Редактировать проблему";
+"support_admin_edit_topic" = "Редактировать раздел";
+"support_admin_topics" = "Разделы";
+"support_admin_topic_new" = "Новый раздел";
+"support_admin_topic_delete" = "Удалить раздел";
+"support_admin_topic_name" = "Название";
+"support_admin_topic_icon" = "Иконка";
+"support_admin_topic_disabled" = "Отключён";
+"support_admin_topic_for_admins" = "Только для администраторов";
+"support_admin_topic_q" = "Вопрос";
+"support_admin_topic_a" = "Ответ";
+"support_admin_topic_title" = "Вопросы и ответы";
+"support_admin_succ_title" = "Раздел успешно сохранён";
+"support_admin_succ_msg" = "<a href='/support?topic=$1'>Посмотреть раздел »</a>";
+"support_admin_err_title" = "Не удалось сохранить раздел";
+"support_admin_err_msg_1" = "Поля не должны быть пустыми.";
+"support_admin_err_msg_2" = "Раздел с таким URL уже <a href='/support/admin?act=editFaq&topic=$1'>существует</a>.";
+"support_admin_err_msg_2_1" = "Раздел с таким URL уже существует.";
+"support_admin_err_msg_3" = "Недопустимый URL.";
+"support_admin_faq_hint_1" = "В ответах поддерживаются HTML-теги и Markdown.";
+"support_admin_faq_hint_2" = "Содержимое на основном языке сайта (Русский) обязательно.<br/>При отсутствии перевода на язык пользователя, ему будет предоставлена справка на этом языке.";
 
 /* Invite */
 

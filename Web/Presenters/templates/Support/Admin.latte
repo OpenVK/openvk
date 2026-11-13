@@ -1,0 +1,325 @@
+{extends "../@layout.latte"}
+{block title}{_menu_help}{/block}
+
+{block header}
+    {_menu_help}
+{/block}
+
+{block content}
+    {css "css/faq.css"}
+
+    {var $isIssues  = $mode === 'knownIssues'}
+    {var $isFaq     = $mode === 'editFaq'}
+    {var $isCreate  = $mode === 'newTopic'}
+    {var $isCreateI = $mode === 'newIssue'}
+
+    <div class="tabs">
+        <div id="ki" class="tab">
+            <a id="ki" href="/support">{_support_main}</a>
+        </div>
+        <div id="activetabs" class="tab">
+            <a id="act_tab_a" href="/support/admin">{_support_admin_tab}</a>
+        </div>
+        <div n:if="$count > 0" id="ki" class="tab">
+            <a id="ki" href="/support?act=list">{_support_list}</a>
+        </div>
+        <div id="ki" class="tab">
+            <a id="ki" href="/support?act=new">{_support_new}</a>
+        </div>
+    </div>
+    <br />
+
+    <div class="mb_tabs" style="margin: -13px -10px 0;">
+        <div n:attr="id => ($isIssues && !$isIssue ? 'active' : 'ki')" class="mb_tab">
+            <div>
+                <a href="?act=knownIssues">{_support_known_issues}</a>
+            </div>
+        </div>
+        <div n:attr="id => ($isFaq && !$isTopic ? 'active' : 'ki')" class="mb_tab">
+            <div>
+                <a href="?act=editFaq">{_support_admin_topics}</a>
+            </div>
+        </div>
+        <div n:if="$isCreate" id="active" class="mb_tab">
+            <div>
+                <a>{_support_admin_topic_new}</a>
+            </div>
+        </div>
+        <div n:if="$isTopic" id="active" class="mb_tab">
+            <div>
+                <a>{_support_admin_edit_topic}</a>
+            </div>
+        </div>
+        <div n:if="$isCreateI" id="active" class="mb_tab">
+            <div>
+                <a>{_support_admin_issue_new}</a>
+            </div>
+        </div>
+        <div n:if="$isIssue" id="active" class="mb_tab">
+            <div>
+                <a>{_support_admin_issue_edit}</a>
+            </div>
+        </div>
+        <select n:if="$isCreate || $isTopic || $isCreateI || $isIssue" id="faq-lang" autocomplete="off" onchange="faqChangeLang()">
+            <option n:foreach="getLanguages() as $l" n:attr="selected => $l['code'] === $mainLang" value="{$l['code']}">
+                {var $result = preg_match("/(.+)\((.+)\)/", $l['native_name'], $name)}
+                {if $result == 1}
+                    {$name[1]} ({$name[2]})
+                {else}
+                    {$l['native_name']}
+                {/if}
+            </option>
+        </select>
+        <a n:if="$isIssues && !$isIssue || $isFaq && !$isTopic" href="?act={$isIssues ? 'newIssue' : 'newTopic'}" class="button" style="float: right;">{_create}</a>
+    </div>
+
+    {if $isIssues && !$isIssue}
+        <div class="container_gray">
+            <div n:foreach="$issues as $i" class="content">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="list_view_item_info faq-issue_listItem" width="100%">
+                                <h1>{$i['title']}</h1>
+                                <p>{$i['description']}</p>
+                            </td>
+                            <td class="action_links list_view_item_actions" valign="top">
+                                <a href="?act=knownIssues&issue={$i['id']}" class="profile_link">{_edit}</a>
+                                <a href="" class="profile_link">{$i['enabled'] ? tr("disable") : tr("enable")}</a>
+                                <a href="" class="profile_link">{_delete}</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {/if}
+
+    {if $isCreateI || $isIssue}
+        <div class="container_gray">
+            <form method="POST" enctype="multipart/form-data">
+                <table class="flexible_table" cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+                    <tbody>
+                        <tr>
+                            <td width="120" valign="top">
+                                <span class="faq-title_{$mainLang} active">{_support_admin_topic_name}:</span>
+                                {if $isIssue}
+                                    <span n:foreach="$issue['title'] as $l => $i" n:if="$l !== $mainLang" class="faq-title_{$l}">{_support_admin_topic_name}:</span>
+                                {/if}
+                            </td>
+                            <td id="faq-title">
+                                <input type="text" onchange="faqUnwarn(this, {$mainLang})" name="title[{$mainLang}]" class="active" value="{$isIssue ? $issue['title'][$mainLang] : ""}">
+                                {if $isIssue}
+                                    <input n:foreach="$issue['title'] as $l => $i" n:if="$l !== $mainLang" type="text" onchange="faqUnwarn(this, {$l})" name="title[{$l}]" value="{$i}">
+                                {/if}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="120" valign="top">
+                                <span n:if="!$isIssue" class="faq-title_{$mainLang} active">{_description}:</span>
+                                {if $isIssue}
+                                    <span n:foreach="$issue['description'] as $l => $d" n:if="$l !== $mainLang" class="faq-desc_{$l} {$l === $mainLang ? 'active' : ''}">{_description}:</span>
+                                {/if}
+                            </td>
+                            <td id="faq-desc">
+                                <textarea class="faq-desc_{$mainLang} active" onchange="faqUnwarn(this)" name="description[{$mainLang}]">{$isIssue ? $issue['description'][$mainLang] : ""}</textarea>
+                                {if $isIssue}
+                                    <textarea n:foreach="$issue['description'] as $l => $d" n:if="$l !== $mainLang" class="faq-desc_{$l} {$l === $mainLang ? 'active' : ''}" onchange="faqUnwarn(this)" name="description[{$l}]">{$d}</textarea>
+                                {/if}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="120" valign="top" align="right">
+                                <input type="checkbox" name="disabled" {$isIssue && !$issue['enabled'] ? 'checked' : ''}>
+                            </td>
+                            <td style="text-align: left;">{_support_admin_topic_disabled}</td>
+                        </tr>
+                        <tr>
+                            <td width="120" valign="top" align="right">
+                                <input type="checkbox" name="for_admin" {$isIssue && $issue['for_admin'] ? 'checked' : ''}>
+                            </td>
+                            <td style="text-align: left;">{_support_admin_topic_for_admins}</td>
+                        </tr>
+                        <tr n:if="$isIssue">
+                            <td colspan="2" align="center">
+                                <a onclick="faqDeleteTopic({$csrfToken}, {$issue['id']})">{_support_admin_topic_delete}</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="flex_column_center_gap5px">
+                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                    <input type="submit" value="{_save}" class="button">
+                </div>
+            </form>
+        </div>
+    {/if}
+
+    {if $isFaq && !$isTopic}
+        <div class="faq-box" style="margin: 0 0 -10px;">
+            <table n:foreach="$topics as $t" border="0" cellspacing="2px">
+                <tr>
+                    <td width="28px" valign="top">
+                        <div class="faq-icon_{$t['icon']}"></div>
+                    </td>
+                    <td valign="top">
+                        <h4 class="faq-h4">{$t['title']}</h4>
+                        <a class="faq-q compact" href="?act=editFaq&topic={$t['url']}">{_edit}</a>
+                        <a class="faq-q compact" onclick="faqDisableTopic({$csrfToken}, {$t['url']}, this)">{$t['enabled'] ? tr("disable") : tr("enable")}</a>
+                        <span class="faq-q compact" n:if="$t['for_admin']">{_support_admin_topic_for_admins}</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    {/if}
+
+    {if $isCreate || $isTopic}
+        {var $index = 1}
+
+        <div class="container_gray">
+            <h4>{_main_information}</h4>
+            <form method="POST" onsubmit="return faqValidate({$isTopic ? $topic['url'] : ''})" enctype="multipart/form-data">
+                <table class="flexible_table faq-table" cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+                    <tbody>
+                        <tr>
+                            <td width="120" valign="top">
+                                <span class="faq-title_{$mainLang} active">{_support_admin_topic_name}:</span>
+                                {if $isTopic}
+                                    <span n:foreach="$topic['title'] as $l => $t" n:if="$l !== $mainLang" class="faq-title_{$l}">{_support_admin_topic_name}:</span>
+                                {/if}
+                            </td>
+                            <td id="faq-title">
+                                <input type="text" onchange="faqUnwarn(this, {$mainLang})" name="title[{$mainLang}]" class="active" value="{$isTopic ? $topic['title'][$mainLang] : ""}">
+                                {if $isTopic}
+                                     <input n:foreach="$topic['title'] as $l => $t" n:if="$l !== $mainLang" type="text" onchange="faqUnwarn(this, {$l})" name="title[{$l}]" value="{$t}">
+                                {/if}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="120" valign="top">
+                                <span class="faq-title_url active">URL:</span>
+                            </td>
+                            <td><input type="text" onchange="faqUnwarn(this)" name="url" value="{$isTopic ? $topic['url'] : ''}"></td>
+                        </tr>
+                        <tr>
+                            <td width="120" valign="top">
+                                {_support_admin_topic_icon}:
+                            </td>
+                            <td>
+                                <div id="faq-icon" class="faq-icon_{$isTopic ? $topic['icon'] : '1'}">
+                                    <input type="hidden" name="icon" value="{$isTopic ? $topic['icon'] : '1'}">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="120" valign="top" align="right">
+                                <input type="checkbox" name="disabled" {$isTopic && !$topic['enabled'] ? 'checked' : ''}>
+                            </td>
+                            <td style="text-align: left;">{_support_admin_topic_disabled}</td>
+                        </tr>
+                        <tr>
+                            <td width="120" valign="top" align="right">
+                                <input type="checkbox" name="for_admin" {$isTopic && $topic['for_admin'] ? 'checked' : ''}>
+                            </td>
+                            <td style="text-align: left;">{_support_admin_topic_for_admins}</td>
+                        </tr>
+                        <tr n:if="$isTopic">
+                            <td colspan="2" align="center">
+                                <a onclick="faqDeleteTopic({$csrfToken}, {$topic['url']})">{_support_admin_topic_delete}</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+                <h4>{_support_admin_topic_title}</h4>
+                <div id="faq-questions">
+                    {if $isTopic}
+                        <table n:foreach="$topic['content'] as $l => $q" data-lang="{$l}" class="{$l === $mainLang ? 'active' : ''} flexible_table" width="80%" border="0" align="center">
+                            <tbody n:foreach="$q as $c">
+                                {var $i = $index++}
+                                <tr>
+                                    <td>
+                                        <span>{_support_admin_topic_q}:</span>
+                                    </td>
+                                    <td>
+                                        <input type="text" onchange="faqUnwarn(this)" name="questions[{$l}][{$i}][q]" value="{$c['q']}">
+                                    </td>
+                                    <td>
+                                        <div class="faq-remove" onclick="faqRemoveQuestion(this)">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="150" valign="top">
+                                        <span>{_support_admin_topic_a}:</span>
+                                    </td>
+                                    <td>
+                                        <textarea onchange="faqUnwarn(this)" name="questions[{$l}][{$i}][a]">{$c['a']}</textarea>
+                                    </td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    {else}
+                        <table data-lang="{$mainLang}" class="active flexible_table" width="80%" border="0" align="center">
+                            <tbody>
+                                <tr>
+                                    <td width="150" valign="top">
+                                        <span>{_support_admin_topic_q}:</span>
+                                    </td>
+                                    <td>
+                                        <input type="text" onchange="faqUnwarn(this)" name="questions[{$mainLang}][0][q]">
+                                    </td>
+                                    <td>
+                                        <div class="faq-remove" onclick="faqRemoveQuestion(this)">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="150" valign="top">
+                                        <span>{_support_admin_topic_a}:</span>
+                                    </td>
+                                    <td>
+                                        <textarea onchange="faqUnwarn(this)" name="questions[{$mainLang}][0][a]"></textarea>
+                                    </td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3"></td>
+                                </tr>
+                            </tbody>
+                        </table>                    
+                    {/if}
+                </div>
+
+                <div class="flex_column_center_gap5px">
+                    <a onclick="faqAddQuestion()" class="button">{_add}</a>
+                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                    <input type="submit" value="{_save}" class="button">
+                </div>
+            </form>
+            <br>
+            <h4>{_additional_information}</h4>
+            <div>
+                <ul style="color: unset;">
+                    <li>{_support_admin_faq_hint_1}</li>
+                    <li>{_support_admin_faq_hint_2|noescape}</li>
+                </ul>
+            </div>
+        </div>
+    {/if}
+
+    <script>
+        {if $isCreate || $isTopic}
+            question = {$index};
+        {/if}
+        topics = Object.keys({json_encode($topics, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)|noescape});
+        mainLang = {$mainLang};
+    </script>
+    {script "js/al_faq.js"}
+{/block}
