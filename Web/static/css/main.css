@@ -1897,7 +1897,8 @@ body.scrolled .toTop:hover,
 .post-source #remove_source_button,
 .post-replyto #remove_reply_button,
 #small_remove_button,
-.cross {
+.cross,
+.faq-remove {
     display: inline-block;
     background-repeat: no-repeat;
     background: url('/assets/packages/static/openvk/img/arrows.png?v=3');
@@ -1919,7 +1920,8 @@ body.scrolled .toTop:hover,
 .post-source #remove_source_button:hover,
 .post-replyto #remove_reply_button:hover,
 #small_remove_button:hover,
-.cross:hover {
+.cross:hover,
+.faq-remove:hover {
     opacity: 0.8;
 }
 

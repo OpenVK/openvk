@@ -23,7 +23,7 @@
                 <a n:attr="id => ($isMain ? 'act_tab_a' : 'ki')" href="/support">{_support_main}</a>
             </div>
             <div n:if="$isAdmin" id="ki" class="tab">
-                <a href="/support/admin" id="ki">{_support_admin_tab}</a>
+                <a id="ki" href="/support/admin">{_support_admin_tab}</a>
             </div>
             <div n:if="$count > 0" n:attr="id => ($isList ? 'activetabs' : 'ki')" class="tab">
                 <a n:attr="id => ($isList ? 'act_tab_a' : 'ki')" href="/support?act=list">{_support_list}</a>
@@ -58,7 +58,7 @@
         {/if}
     {/if}
 
-    {if $isMain}
+    {if $isMain} 
         {var $showUntrans = $_COOKIE["faq_show_untranslated"] === "1"}
         {if $isTopic}
             <div id="search_page" class="faq-topic">
@@ -66,7 +66,7 @@
                     {if !empty($topic)}
                         <div class="faq-back">
                             <a href="/support">« {_support_faq_back}</a>
-                            | <a n:if="$isAdmin" href="/support/admin?act=editFaq?topic=sex">{_support_admin_edit_topic}</a>
+                            <a n:if="$isAdmin" href="/support/admin?act=editFaq&topic={$topic['url']}" style="float: right;">{_support_admin_edit_topic}</a>
                         </div>
                         <table border="0" cellspacing="2px">
                             <tbody>
@@ -133,9 +133,9 @@
                         </td>
                         <td valign="top">
                             <h4 class="faq-h4">{$t['title']}</h4>
-                            <a n:foreach="$t['questions'] as $q" class="faq-q compact" href="/support?topic={$t['url']}&question={$q['index']}">{$q['title']}</a>
-                            <a class="faq-more" href="/support?topic={$t['url']}">{_archive_more}  »</a>
-                            <span n:if="$t['for_admin']">опаа у меня тоже есть птички</span>
+                            <a n:foreach="$t['questions'] as $q" class="faq-q compact" href="?topic={$t['url']}&question={$q['index']}">{$q['title']}</a>
+                            <a class="faq-more" href="?topic={$t['url']}">{_archive_more}  »</a>
+                            <span n:if="$t['for_admin']">{_support_topic_for_admin}</span>
                         </td>
                     </tr>
                 </table>
@@ -183,7 +183,8 @@
         </div>
     {/if}
     <script>
-        let issues = Object.values({$issuesJson|noescape});
+        issues = Object.values({$issuesJson|noescape});
+        issue = 0;
     </script>
     {script "js/al_faq.js"}
 {/block}

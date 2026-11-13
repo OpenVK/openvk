@@ -1449,8 +1449,28 @@
 
 "support_admin_tab" = "Редактирование справочника";
 "support_admin_current_known_issue" = "Текущая известная проблема";
+"support_admin_issue_new" = "Новая известная проблема";
+"support_admin_issue_edit" = "Редактировать проблему";
 "support_admin_edit_topic" = "Редактировать раздел";
-"support_admin_faq_hint": "Поддерживаются теги HTML и Markdown.";
+"support_admin_topics" = "Разделы";
+"support_admin_topic_new" = "Новый раздел";
+"support_admin_topic_delete" = "Удалить раздел";
+"support_admin_topic_name" = "Название";
+"support_admin_topic_icon" = "Иконка";
+"support_admin_topic_disabled" = "Отключён";
+"support_admin_topic_for_admins" = "Только для администраторов";
+"support_admin_topic_q" = "Вопрос";
+"support_admin_topic_a" = "Ответ";
+"support_admin_topic_title" = "Вопросы и ответы";
+"support_admin_succ_title" = "Раздел успешно сохранён";
+"support_admin_succ_msg" = "<a href='/support?topic=$1'>Посмотреть раздел »</a>";
+"support_admin_err_title" = "Не удалось сохранить раздел";
+"support_admin_err_msg_1" = "Поля не должны быть пустыми.";
+"support_admin_err_msg_2" = "Раздел с таким URL уже <a href='/support/admin?act=editFaq&topic=$1'>существует</a>.";
+"support_admin_err_msg_2_1" = "Раздел с таким URL уже существует.";
+"support_admin_err_msg_3" = "Недопустимый URL.";
+"support_admin_faq_hint_1" = "В ответах поддерживаются HTML-теги и Markdown.";
+"support_admin_faq_hint_2" = "Содержимое на основном языке сайта (Русский) обязательно.<br/>При отсутствии перевода на язык пользователя, ему будет предоставлена справка на этом языке.";
 
 /* Invite */
 

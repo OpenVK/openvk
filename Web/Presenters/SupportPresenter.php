@@ -536,4 +536,99 @@ final class SupportPresenter extends OpenVKPresenter
 
         $this->flashFail("succ", tr("ticket_changed"), tr("ticket_changed_comment"));
     }
+
+    public function renderAdmin(): void
+    {
+        $this->assertPermission("admin", "access", -1);
+
+        $mainLang = getDefaultLanguage();
+        $lang = Session::i()->get("lang", $mainLang);
+
+        $this->template->mode     = in_array($this->queryParam("act"), ["knownIssues", "newIssue", "editFaq", "newTopic"]) ? $this->queryParam("act") : "knownIssues";
+        $this->template->mainLang = $mainLang;
+        
+        $this->template->topics  = $this->faq->getTopicList($lang, true, true);
+        $this->template->isTopic = array_key_exists($this->queryParam("topic"), $this->template->topics);
+        
+        $this->template->issues  = $this->faq->getIssues($lang, true, true);
+        $this->template->isIssue = array_key_exists($this->queryParam("issue"), $this->template->issues);
+
+        if ($this->template->mode === "editFaq" && $this->template->isTopic) {
+            $this->template->topic = $this->faq->getRawTopic($this->queryParam("topic"));
+        }
+        
+        if ($this->template->mode === "knownIssues" && $this->template->isIssue) {
+            $this->template->issue = $this->faq->getRawIssue($this->queryParam("issue"));
+        }
+
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            if ($this->template->mode === "newTopic" || ($this->template->mode === "editFaq" && $this->template->isTopic)) {
+                $topic = [];
+                $url = trim($_POST["url"] ?? "");
+
+                if ($this->template->isTopic) {
+                    unset($this->template->topics[$url]);
+                }
+
+                if ($url === "" || !preg_match('/^[a-zA-Z0-9]+$/', $url)) {
+                    $this->flashFail("err", tr("support_admin_err_title"), tr("support_admin_err_msg_3"));
+                    return;
+                } elseif (array_key_exists($url, $this->template->topics)) {
+                    $this->flashFail("err", tr("support_admin_err_title"), tr("support_admin_err_msg_2", $url));
+                    return;
+                }
+                
+                $titles = [];
+                foreach ($_POST["title"] as $l => $t) {
+                    if (trim($t ?? "") === "") {
+                        if ($l === $this->template->mainLang) {
+                            $this->flashFail("err", tr("support_admin_err_title"), tr("support_admin_err_msg_1"));
+                            return;
+                        }
+                        continue;
+                    }
+                    $titles[$l] = $t;
+                }
+
+                foreach ($_POST["questions"] as $l => $q) {
+                    if (!array_key_exists($l, $titles)) { 
+                        $this->flashFail("err", tr("support_admin_err_title"), tr("support_admin_err_msg_1"));
+                        return;                        
+                     }
+                    foreach ($q as $i => $item) {
+                        if (trim($item["q"] ?? "") === "" || trim($item["a"] ?? "") === "") {
+                            unset($_POST["questions"][$l][$i]);
+                        }
+                    }
+                    
+                }
+
+                $topic[$url] = [
+                    "title"     => $titles,
+                    "icon"      => (int) $_POST["icon"] ?? 1,
+                    "enabled"   => !isset($_POST['disabled']),
+                    "for_admin" => isset($_POST['for_admin'])
+                ];
+
+                $this->faq->createTopic($topic, $_POST["questions"]);
+                $this->flashFail("succ", tr("support_admin_succ_title"), tr("support_admin_succ_msg", $_POST["url"]));
+            }
+
+            if ($this->queryParam("act") === "deleteTopic") {
+                if (array_key_exists($_POST["name"], $this->template->topics)) {
+                    $this->returnJson([ "success" => $this->faq->deleteTopic($_POST["name"]) ]);
+                } else {
+                    $this->returnJson([ "success" => false ]);
+                }
+            }
+
+            if ($this->queryParam("act") === "disableTopic") {
+                if (array_key_exists($_POST["name"], $this->template->topics)) {
+                    $this->returnJson([ "success" => $this->faq->disableTopic($_POST["name"]) ]);
+                } else {
+                    $this->returnJson([ "success" => -1 ]);
+                }
+            }
+        }
+    }
 }
