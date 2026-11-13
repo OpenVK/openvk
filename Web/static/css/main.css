@@ -723,6 +723,94 @@ body.no_footer .navigation_footer {
     margin-left: 5px;
 }
 
+.profile_actions {
+    position: relative;
+    display: block;
+    width: 194px;
+    max-width: 100%;
+}
+
+.profile_actions--centered {
+    width: 200px;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.profile_actions>summary {
+    list-style: none;
+    width: 100%;
+}
+
+.profile_actions>summary::-webkit-details-marker {
+    display: none;
+}
+
+.profile_actions>summary::after {
+    content: "";
+    display: inline-block;
+    margin-left: 5px;
+    vertical-align: middle;
+    border: 4px solid transparent;
+    border-top-color: #777;
+}
+
+.profile_actions[open]>summary.profile_link {
+    background: linear-gradient(#8f8f8f, #757575);
+    border-bottom-color: #757575;
+    color: #fff;
+}
+
+.profile_actions[open]>summary.profile_link::after {
+    border-top-color: #fff;
+}
+
+.profile_actions_menu {
+    position: absolute;
+    bottom: calc(100% - 1px);
+    left: 0;
+    z-index: 30;
+    box-sizing: border-box;
+    width: 100%;
+    background: #fff;
+    border: 1px solid #aaa;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.profile_actions_menu .profile_link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    border-bottom: 0;
+}
+
+.profile_actions_menu .profile_link:hover {
+    background: #e9edf1;
+}
+
+.profile_actions_icon {
+    flex: 0 0 16px;
+    width: 16px;
+    height: 16px;
+    opacity: 0.65;
+    filter: grayscale(1);
+}
+
+.profile_actions_menu .profile_link:hover .profile_actions_icon {
+    opacity: 1;
+}
+
+.profile_actions--down .profile_actions_menu {
+    top: calc(100% - 1px);
+    bottom: auto;
+}
+
+.profile_actions_divider {
+    height: 1px;
+    margin: 4px 0;
+    background: #ddd;
+}
+
 .page_footer {
     margin-left: 130px;
     padding-top: 5px;
@@ -1656,6 +1744,12 @@ table.User {
     background-color: #F9F6E7;
 }
 
+.msg.moderation-banner {
+    width: auto;
+    margin-left: 0;
+    margin-right: 0;
+}
+
 .edit_link {
     color: #c5c5c5;
     font-family: verdana, arial, sans-serif;
@@ -2202,8 +2296,8 @@ h4.gift_cat_header {
 }
 
 .gift_grid {
-    width: calc(100% + 16px);
-    margin: 0 -8px;
+    width: calc(100% + 20px);
+    margin: 0 -10px;
     display: flex;
     flex-wrap: wrap;
 }
@@ -2940,10 +3034,6 @@ li {
     padding: 1px 1px;
     border-radius: 2px;
     height: 11px;
-}
-
-.navigation_counter {
-    display: inline;
 }
 
 #app_news_container {
@@ -6532,6 +6622,36 @@ hr {
     user-select: all;
     display: inline-block;
     vertical-align: baseline;
+}
+
+#catalogues_list .catalogue_item {
+    display: block;
+}
+
+.feed_container {
+    margin-top: 10px;
+}
+
+.comment_list_item .comment_target_c {
+    padding-left: 55px;
+}
+
+.comment_list_item {
+    border-bottom: 1px #ddd solid;
+    margin-bottom: 10px;
+}
+
+.comment_list_item .comment_target_pseudo {
+    display: grid;
+    grid-template-columns: 0fr 1fr;
+    gap: 10px;
+}
+
+.comment_list_item .comment_target_pseudo img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    object-position: top;
 }
 
 /* Stickers Gift Dialog Styles */

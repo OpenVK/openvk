@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace openvk\Web\Presenters;
 
 use openvk\Web\Models\Exceptions\TooMuchOptionsException;
-use openvk\Web\Models\Entities\{Poll, Post, Photo, Video, Club, User};
+use openvk\Web\Models\Entities\{Poll, Post, Photo, Video, Club, User, Audio, Comment};
 use openvk\Web\Models\Entities\Notifications\{MentionNotification, RepostNotification, WallPostNotification, PostAcceptedNotification, NewSuggestedPostsNotification};
 use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums, Notes, Videos, Comments, Photos, Audios};
 use openvk\Web\Util\Cache;
+use openvk\Web\Models\Search\Feed;
+use openvk\Web\Models\Search\CustomFeeds;
 use Chandler\Database\DatabaseConnection;
 use Nette\InvalidStateException as ISE;
-use Bhaktaraz\RSSGenerator\Item;
-use Bhaktaraz\RSSGenerator\Feed;
-use Bhaktaraz\RSSGenerator\Channel;
 
 final class WallPresenter extends OpenVKPresenter
 {
@@ -74,11 +73,13 @@ final class WallPresenter extends OpenVKPresenter
     public function renderWall(int $user, bool $embedded = false): void
     {
         $owner = ($user < 0 ? (new Clubs()) : (new Users()))->get(abs($user));
-        if (!$owner || $owner->isBanned() || !$owner->canBeViewedBy($this->user->identity)) {
+        $readOnly = $owner instanceof User && $owner->isReadOnlyFor($this->user->identity);
+
+        if (!$owner || (!$readOnly && $owner->isBanned()) || !$owner->canBeViewedBy($this->user->identity)) {
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
-        if ($user > 0 && $owner->isDeleted()) {
+        if ($user > 0 && !$readOnly && $owner->isDeleted()) {
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
@@ -95,6 +96,8 @@ final class WallPresenter extends OpenVKPresenter
         } else {
             $canPost = false;
         }
+
+        $this->template->readOnly = $readOnly;
 
         if ($embedded == true) {
             $this->template->_template = "components/wall.latte";
@@ -174,45 +177,29 @@ final class WallPresenter extends OpenVKPresenter
 
     public function renderRSS(int $user): void
     {
-        $owner = ($user < 0 ? (new Clubs()) : (new Users()))->get(abs($user));
-        if (is_null($this->user->identity)) {
-            $canPost = false;
-        } elseif ($user > 0) {
-            if (!$owner->isBanned() && $owner->canBeViewedBy($this->user->identity)) {
-                $canPost = $owner->getPrivacyPermission("wall.write", $this->user->identity);
-            } else {
-                $this->flashFail("err", tr("error"), tr("forbidden"));
-            }
-        } elseif ($user < 0) {
-            if ($owner->canBeModifiedBy($this->user->identity)) {
-                $canPost = true;
-            } elseif ($owner->isBanned()) {
-                $this->flashFail("err", tr("error"), tr("forbidden"));
-            } else {
-                $canPost = $owner->canPost();
-            }
-        } else {
-            $canPost = false;
+        $owner = get_entity_by_id($user);
+        $readOnly = $owner instanceof User && $owner->isReadOnlyFor($this->user->identity);
+
+        error_reporting(E_ALL ^ E_DEPRECATED);
+        header('Content-Type: application/rss+xml; charset=utf-8');
+
+        if (!$owner || (!$readOnly && ($owner->isBanned() || $owner->isDeleted())) || !$owner->canBeViewedBy($this->user->identity)) {
+            http_response_code(403);
+            exit("403");
         }
 
         $posts = iterator_to_array($this->posts->getPostsFromUsersWall($user));
 
-        $feed = new Feed();
+        $feed = new \Bhaktaraz\RSSGenerator\Feed();
 
-        $channel = new Channel();
+        $channel = new \Bhaktaraz\RSSGenerator\Channel();
         $channel->title($owner->getCanonicalName() . " — " . OPENVK_ROOT_CONF['openvk']['appearance']['name'])->url(ovk_scheme(true) . $_SERVER["HTTP_HOST"])->appendTo($feed);
 
         foreach ($posts as $post) {
-            $item = new Item();
-            $item
-                ->title($post->getOwner()->getCanonicalName())
-                ->description($post->getText())
-                ->url(ovk_scheme(true) . $_SERVER["HTTP_HOST"] . "/wall{$post->getPrettyId()}")
-                ->pubDate($post->getPublicationTime()->timestamp())
-                ->appendTo($channel);
+            $item = $post->toRss();
+            $item->appendTo($channel);
         }
 
-        header("Content-Type: application/rss+xml");
         exit((string) $feed);
     }
 
@@ -220,108 +207,120 @@ final class WallPresenter extends OpenVKPresenter
     {
         $this->assertUserLoggedIn();
 
-        $id    = $this->user->id;
-        $subs  = DatabaseConnection::i()
-                 ->getContext()
-                 ->table("subscriptions")
-                 ->where("follower", $id);
-        $ids   = array_map(function ($rel) {
-            return $rel->target * ($rel->model === "openvk\Web\Models\Entities\User" ? 1 : -1);
-        }, iterator_to_array($subs));
+        $page  = max((int) ($_GET["p"] ?? 1), 0);
+        $perPage = 10;
+        $section = $this->queryParam("section") ?? "local_posts";
+        $iterator = null;
+        $count = 0;
 
-        $ignored_sources_ids = $this->user->identity->getIgnoredSources(
-            0,
-            OPENVK_ROOT_CONF['openvk']['preferences']['newsfeed']['ignoredSourcesLimit'] ?? 50,
-            true
-        );
-
-        $ids = array_diff($ids, $ignored_sources_ids);
-
-        $ids[] = $this->user->id;
-
-        $perPage = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);
-        $withAlienWallPosts = $this->getWithAlienWallPostsPreference();
-
-        $posts   = DatabaseConnection::i()
-                   ->getContext()
-                   ->table("posts")
-                   ->select("id")
-                   ->where("wall IN (?)", $ids)
-                   ->where("deleted", 0)
-                   ->where("suggested", 0)
-                   ->where("archived", 0)
-                   ->order("created DESC");
-
-        if ($withAlienWallPosts === 0) {
-            $posts->where("(`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`)");
+        if ($section == "fave") {
+            $this->redirect("/fave");
+            return;
         }
+
+        $isGlobal = $section == "global";
+        $feedType = "post";
+        $feedClass = 'Post';
+        $posts = [];
+
+        $feed = new Feed($this->user->identity, $isGlobal, null);
+
+        $withAlienWallPosts = (int) $this->getWithAlienWallPostsPreference();
+        $returnBanned = (int) $this->queryParam('return_banned');
+        $keepNsfwSettings = (int) $this->queryParam('return_nsfw');
+        $listId = ((int) $this->queryParam('list'));
+        $list = null;
+
+        if ($listId) {
+            $this->notFound();
+
+            $list = CustomFeeds::getById($listId);
+            if (!$list || $list->isDeleted() || !$list->isCustomFeed() || !$list->canBeViewedBy($this->user->identity)) {
+                $this->notFound();
+            }
+        }
+
+        $types = ["photos" => ["photo", 'Photo'], "videos" => ["video", 'Video'], "audios" => ["audio", 'Audio'], "notes" => ["note", 'Note']];
+
+        if (isset($types[$section])) {
+            $feedType = $types[$section][0];
+            $feedClass = $types[$section][1];
+            $this->template->isAnother = true;
+        }
+
+        switch ($section) {
+            case "comments":
+                $posts = $feed->fetchComments();
+
+                $feedType = "comment";
+                $feedClass = null;
+
+                break;
+            default:
+                $posts = $feed->fetchFeed($returnBanned === 1, $withAlienWallPosts === 1, $keepNsfwSettings === 0, $feedType, [null, null, null, null, ($page - 1) * $perPage, $perPage], $list);
+
+                break;
+        }
+
+        if ($isGlobal) {
+            $iterator = $posts;
+            $count = $feed->getGlobalFeedCountCached();
+        } else {
+            $count = $posts->count();
+            $iterator = $posts->page((int) ($_GET["p"] ?? 1), $perPage);
+        }
+
+        // building target + comment on it
+        if ($section == "comments") {
+            $tmpIterator = [];
+
+            foreach ($iterator as $item) {
+                try {
+                    $item = new Comment($item);
+                    $target = $item->getTarget();
+
+                    $tmpIterator[] = [$target, $item, $target->shortName];
+                } catch (\Throwable $e) {
+                    bdump($e);
+                }
+            }
+
+            $iterator = $tmpIterator;
+        }
+
         $this->template->paginatorConf = (object) [
-            "count"   => sizeof($posts),
-            "page"    => (int) ($_GET["p"] ?? 1),
-            "amount"  => $posts->page((int) ($_GET["p"] ?? 1), $perPage)->count(),
+            "count"   => $count,
+            "page"    => $page,
+            "amount"  => $count,
             "perPage" => $perPage,
             "tidy"    => false,
             "atTop"   => false,
         ];
+        $this->template->section = $section;
         $this->template->posts = [];
-        foreach ($posts->page((int) ($_GET["p"] ?? 1), $perPage) as $post) {
-            $this->template->posts[] = $this->posts->get($post->id);
+        $this->template->isGlobal = $isGlobal;
+        $this->template->feedType = $feedType;
+        $this->template->showMediaTabs = $section != "comments";
+        $this->template->availSections = [["local_posts", tr("news")], ["comments", tr("comments")]];
+        $this->template->availLocalSections = [["local_posts", tr("new_posts")], ["global", tr("new_posts_global")], ["photos", tr("att_tab_photos")], ["videos", tr("videos")], ["audios", tr("audios")], ["notes", tr("notes")]];//, ["fave", tr("bookmarks_tab")]];
+        // $this->template->feedLists = CustomFeeds::get($this->user->identity);
+        $this->template->feedLists = [];
+        $this->template->list = $listId;
+
+        foreach ($iterator as $post) {
+            if ($feedClass != null) {
+                $classPath = "\\openvk\\Web\\Models\\Entities\\" . $feedClass;
+
+                $this->template->posts[] = new $classPath($post);
+            } else {
+                $this->template->posts[] = $post;
+            }
         }
     }
 
     public function renderGlobalFeed(): void
     {
-        $this->assertUserLoggedIn();
-
-        // $this->redirect("/search?section=posts&ref=globalfeed");
-        // exit;
-
-        $page  = (int) ($_GET["p"] ?? 1);
-        $pPage = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);
-
-        $withAlienWallPosts = $this->getWithAlienWallPostsPreference();
-
-        $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) LEFT JOIN `profiles` ON LEAST(`posts`.`wall`, 0) = 0 AND `profiles`.`id` = ABS(`posts`.`wall`)";
-        $queryBase .= " WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND ((`profiles`.`profile_type` = 0 AND `profiles`.`hide_global_feed` = 0) OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0 AND `posts`.`archived` = 0";
-
-        if ($withAlienWallPosts === 0) {
-            $queryBase .= " AND ((`posts`.`wall` < 0 AND (`posts`.`flags` & 128) > 0) OR (`posts`.`wall` > 0 AND `posts`.`wall` = `posts`.`owner`))";
-        }
-
-        if ($this->user->identity->getNsfwTolerance() === User::NSFW_INTOLERANT) {
-            $queryBase .= " AND `nsfw` = 0";
-        }
-
-        if (((int) $this->queryParam('return_banned')) == 0) {
-            $ignored_sources_ids = $this->user->identity->getIgnoredSources(0, OPENVK_ROOT_CONF['openvk']['preferences']['newsfeed']['ignoredSourcesLimit'] ?? 50, true);
-
-            if (sizeof($ignored_sources_ids) > 0) {
-                $imploded_ids = implode("', '", $ignored_sources_ids);
-
-                $queryBase .= " AND `posts`.`wall` NOT IN ('$imploded_ids')";
-            }
-        }
-
-        $posts = DatabaseConnection::i()->getConnection()->query("SELECT `posts`.`id` " . $queryBase . " ORDER BY `created` DESC LIMIT " . $pPage . " OFFSET " . ($page - 1) * $pPage);
-        $count = Cache::remember(
-            "feedcount:" . md5($queryBase),
-            300,
-            fn() => DatabaseConnection::i()->getConnection()->query("SELECT COUNT(*) " . $queryBase)->fetch()->{"COUNT(*)"}
-        );
-
-        $this->template->_template     = "Wall/Feed.latte";
-        $this->template->globalFeed    = true;
-        $this->template->paginatorConf = (object) [
-            "count"   => $count,
-            "page"    => (int) ($_GET["p"] ?? 1),
-            "amount"  => $posts->getRowCount(),
-            "perPage" => $pPage,
-            "tidy"    => false,
-            "atTop"   => false,
-        ];
-        foreach ($posts as $post) {
-            $this->template->posts[] = $this->posts->get($post->id);
-        }
+        $this->redirect("/feed?section=global");
     }
 
     public function renderHashtagFeed($hashtag): void
@@ -480,7 +479,7 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         foreach ($horizontal_attachments as $horizontal_attachment) {
-            if (!$horizontal_attachment || $horizontal_attachment->isDeleted() || !$horizontal_attachment->canBeViewedBy($this->user->identity)) {
+            if (!$this->canAttachContent($horizontal_attachment)) {
                 continue;
             }
 
@@ -488,7 +487,7 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         foreach ($vertical_attachments as $vertical_attachment) {
-            if (!$vertical_attachment || $vertical_attachment->isDeleted() || !$vertical_attachment->canBeViewedBy($this->user->identity)) {
+            if (!$this->canAttachContent($vertical_attachment)) {
                 continue;
             }
 
@@ -555,11 +554,13 @@ final class WallPresenter extends OpenVKPresenter
 
         $this->logPostView($post, $wall);
 
+        $readOnly = $post->getInteractionOwner()?->isReadOnlyFor($this->user->identity) ?? false;
+        $this->template->readOnly = $readOnly;
         $this->template->post     = $post;
         if ($post->getTargetWall() > 0) {
             $this->template->wallOwner = (new Users())->get($post->getTargetWall());
             $this->template->isWallOfGroup = false;
-            if ($this->template->wallOwner->isBanned()) {
+            if (!$readOnly && $this->template->wallOwner->isBanned()) {
                 $this->flashFail("err", tr("error"), tr("forbidden"));
             }
         } else {
@@ -594,6 +595,10 @@ final class WallPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
+        if (!$post->canBeInteractedWith($this->user->identity)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
         if (!is_null($this->user->identity)) {
             $post->toggleLike($this->user->identity);
         }
@@ -620,6 +625,10 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         if ($post->getWallOwner()->isBanned()) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
+        if (!$post->canBeInteractedWith($this->user->identity)) {
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 

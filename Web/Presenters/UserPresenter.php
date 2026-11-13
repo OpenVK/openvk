@@ -7,7 +7,7 @@ namespace openvk\Web\Presenters;
 use Nette\InvalidStateException;
 use openvk\Web\Util\Sms;
 use openvk\Web\Themes\Themepacks;
-use openvk\Web\Models\Entities\{Photo, Post, EmailChangeVerification};
+use openvk\Web\Models\Entities\{Photo, Post, EmailChangeVerification, User};
 use openvk\Web\Models\Privacy\PrivacySettings;
 use openvk\Web\Models\Entities\Notifications\{CoinsTransferNotification, RatingUpNotification};
 use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Videos, Notes, Vouchers, EmailChangeVerifications, Audios, Faves};
@@ -40,7 +40,10 @@ final class UserPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
-        if ($user->isDeleted() || !$user->canBeViewedBy($this->user->identity)) {
+        $this->template->canSendFriendRequest = $user->canReceiveFriendRequestsFrom($this->user->identity);
+        $moderationView = $user->isReadOnlyFor($this->user->identity);
+
+        if (!$moderationView && ($user->isDeleted() || !$user->canBeViewedBy($this->user->identity))) {
             if ($user->isDeactivated()) {
                 $this->template->_template = "User/deactivated.latte";
 
@@ -68,6 +71,7 @@ final class UserPresenter extends OpenVKPresenter
                 $this->template->user = $user;
             }
         } else {
+            $this->template->moderationView = $moderationView;
             $this->template->avatarAlbum = (new Albums())->getUserAvatarAlbum($user);
             $this->template->albums      = array_values(array_filter(iterator_to_array((new Albums())->getUserAlbums($user)), function ($album) {
                 return !$album->isCreatedBySystem();
@@ -97,7 +101,7 @@ final class UserPresenter extends OpenVKPresenter
             $user = $this->users->get(intval($this->queryParam("id")));
         }
 
-        if (!$user || $user->isDeleted()) {
+        if (!$user || ($user->isDeleted() && !$user->canBeViewedBy($this->user->identity))) {
             $this->notFound();
             exit();
         }
@@ -222,6 +226,7 @@ final class UserPresenter extends OpenVKPresenter
             $this->template->user = $user;
             $this->template->page = max(1, (int) ($this->queryParam("p") ?: 1));
             $this->template->admin = $this->queryParam("act") == "managed";
+            $this->template->count = $user->getClubCount($this->template->admin);
         }
     }
 
@@ -242,6 +247,7 @@ final class UserPresenter extends OpenVKPresenter
             $this->template->user = $user;
             $this->template->page = max(1, (int) ($this->queryParam("p") ?: 1));
             $this->template->admin = $this->queryParam("act") == "managed";
+            $this->template->count = $user->getEventsCount($this->template->admin);
         }
     }
 
@@ -533,16 +539,35 @@ final class UserPresenter extends OpenVKPresenter
             exit("Invalid state");
         }
 
-        if ($this->postParam("act") == "rej") {
-            $user->changeFlags($this->user->identity, 0b10000000, true);
-        } else {
-            if ($user->getSubscriptionStatus($this->user->identity) == \openvk\Web\Models\Entities\User::SUBSCRIPTION_ABSENT) {
+        $act = $this->postParam("act");
+        if (!in_array($act, ["add", "rem", "rej"], true)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
+        $status = $user->getSubscriptionStatus($this->user->identity);
+
+        if ($act === "add") {
+            if (!$user->canReceiveFriendRequestsFrom($this->user->identity)) {
+                $this->flashFail("err", tr("error"), tr("forbidden"));
+            }
+
+            if ($status === User::SUBSCRIPTION_ABSENT) {
                 if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->user->identity, "friends.outgoing_sub")) {
                     $this->flashFail("err", tr("error"), tr("limit_exceed_exception"));
                 }
-            }
 
-            $user->toggleSubscription($this->user->identity);
+                $user->toggleSubscription($this->user->identity);
+            } elseif ($status === User::SUBSCRIPTION_INCOMING) {
+                $user->toggleSubscription($this->user->identity);
+            }
+        } elseif ($act === "rem") {
+            if ($status === User::SUBSCRIPTION_OUTGOING || $status === User::SUBSCRIPTION_MUTUAL) {
+                $user->toggleSubscription($this->user->identity);
+            }
+        } elseif ($act === "rej") {
+            if ($status === User::SUBSCRIPTION_INCOMING) {
+                $user->changeFlags($this->user->identity, 0b10000000, true);
+            }
         }
 
         $this->redirect($_SERVER['HTTP_REFERER']);
@@ -715,7 +740,9 @@ final class UserPresenter extends OpenVKPresenter
                 $settings = PrivacySettings::getPossibleSettings();
                 foreach ($settings as $setting) {
                     $input = $this->postParam(str_replace(".", "_", $setting));
-                    $user->setPrivacySetting($setting, min(3, (int) abs((int) $input ?? $user->getPrivacySetting($setting))));
+                    if (!is_null($input)) {
+                        $user->setPrivacySetting($setting, min(3, abs((int) $input)));
+                    }
                 }
 
                 $prof = $this->postParam("profile_type") == 1 || $this->postParam("profile_type") == 0 ? (int) $this->postParam("profile_type") : 0;
@@ -970,7 +997,7 @@ final class UserPresenter extends OpenVKPresenter
         }
 
         $receiver = $this->users->getByAddress($receiverAddress);
-        if (!$receiver || !$receiver->canBeViewedBy($this->user->identity)) {
+        if (!$receiver || $receiver->isReadOnlyFor($this->user->identity) || !$receiver->canBeViewedBy($this->user->identity)) {
             $this->flashFail("err", tr("failed_to_tranfer_points"), tr("receiver_not_found"));
         }
 
@@ -1017,7 +1044,7 @@ final class UserPresenter extends OpenVKPresenter
         }
 
         $receiver = $this->users->getByAddress($receiverAddress);
-        if (!$receiver) {
+        if (!$receiver || $receiver->isReadOnlyFor($this->user->identity)) {
             $this->flashFail("err", tr("failed_to_increase_rating"), tr("receiver_not_found"));
         }
 
@@ -1096,6 +1123,12 @@ final class UserPresenter extends OpenVKPresenter
                 $data = (new Faves())->fetchLikesSection($this->user->identity, 'Video', $page);
                 $count = (new Faves())->fetchLikesSectionCount($this->user->identity, 'Video');
                 $display_section = "videos";
+                break;
+            case 'note':
+            case 'notes':
+                $data = (new Faves())->fetchLikesSection($this->user->identity, 'Note', $page);
+                $count = (new Faves())->fetchLikesSectionCount($this->user->identity, 'Note');
+                $display_section = "notes";
                 break;
         }
 

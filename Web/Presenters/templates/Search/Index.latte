@@ -458,6 +458,7 @@
 {/block}
 
 {block searchOptions}
+    {var $genre = $_REQUEST['genre'] ?? ''}
     <div n:if="$section == 'users'" class="search_option">
         <div class="search_option_name">
             <div class='search_option_name_ico'></div>

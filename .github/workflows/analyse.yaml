@@ -32,4 +32,4 @@ jobs:
         run: |
           docker container run --rm \
             -v ./openvk.example.yml:/opt/openvk/openvk.yml \
-            openvk vendor/bin/phpstan analyse --memory-limit 1G
+            openvk vendor/bin/phpstan analyse --memory-limit 2G

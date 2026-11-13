@@ -163,7 +163,7 @@ final class Stickers extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
-        if (!$user->getPrivacyPermission("gifts.read", $this->getUser())) {
+        if (!$user->getPrivacyPermission("gifts.send", $this->getUser())) {
             $this->fail(15, "Access denied");
         }
 

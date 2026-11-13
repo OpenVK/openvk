@@ -11,9 +11,9 @@
     <meta property="og:title" content="{$name} — {$instance_name}" />
     <meta property="og:url" content="{$baseUrl}/app{$id}" />
     <meta property="og:type" content="website" />
-    <meta n:if="!is_null($description)" property="og:description" content="{mb_strlen($description) > 300 ? mb_substr($description, 0, 297) . '...' : $description}" />
+    <meta n:if="!is_null($desc)" property="og:description" content="{mb_strlen($desc) > 300 ? mb_substr($desc, 0, 297) . '...' : $desc}" />
     <meta name="twitter:title" content="{$name} — {$instance_name}" />
-    <meta n:if="!is_null($description)" name="twitter:description" content="{mb_strlen($description) > 200 ? mb_substr($description, 0, 197) . '...' : $description}" />
+    <meta n:if="!is_null($desc)" name="twitter:description" content="{mb_strlen($desc) > 200 ? mb_substr($desc, 0, 197) . '...' : $desc}" />
 {/block}
 
 {block header}

@@ -8,6 +8,7 @@ use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{User};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Util\NotificationBroker;
+use openvk\Web\Models\ModelCodes;
 
 class Notification
 {
@@ -31,7 +32,7 @@ class Notification
 
     private function encodeType(object $model): int
     {
-        return (int) json_decode(file_get_contents(__DIR__ . "/../../../../data/modelCodes.json"), true)[get_class($model)];
+        return (int) ModelCodes::get()[get_class($model)];
     }
 
     public function reverseModelOrder(): bool

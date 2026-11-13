@@ -486,8 +486,13 @@ class Photo extends Media
 
         $album = $this->getAlbum();
 
-        $res->id       = $res->pid = (int) $this->getVirtualId();
-        $res->owner_id = $res->user_id = (int) $this->getOwner()->getId();
+        $res->id       = $res->pid = (int) $this->getCompromiseVirtualId();
+        $res->owner_id = $res->user_id = (int) $this->getOwner()->getRealId();
+
+        if ($this->isUnderContextAndFromAdmin()) {
+            $res->user_id = $this->getOwner(true)->getRealId();
+        }
+
         $res->aid      = $res->album_id = (int) ($album ? $album->getId() : ($this->isUnlisted() ? -3 : 0));
         $dims = $this->getDimensions();
         $res->width    = (int) ($dims[0] ?? 0);
@@ -582,22 +587,34 @@ class Photo extends Media
         ];
     }
 
-    public function canBeViewedBy(?User $user = null): bool
+    public function canBeViewedBy(?User $user = null, ?string $access_key = null, bool $allowModeration = true): bool
     {
-        if ($this->isDeleted() || $this->getOwner()->isDeleted()) {
+        if ($this->isDeleted()) {
             return false;
         }
 
+        $owner = $this->getOwner();
+        if ($owner->isDeleted() && !$owner->canBeViewedBy($user, true, $allowModeration)) {
+            return false;
+        }
+
+        if ($this->isValidAccessKey($access_key) || $this->isAccessKeyProvided()) {
+            return true;
+        }
+
         if ($this->isSystem() || $this->isUnlisted()) {
-            if ($user && $user->getId() === $this->getOwner()->getId()) {
+            if ($user && ($user->getId() === $this->getOwner()->getId()
+                || ($this->isSystem() && $owner instanceof User && $owner->isReadOnlyFor($user)))) {
                 return true;
             }
+
+            return false;
         }
 
         if (!is_null($this->getAlbum())) {
-            return $this->getAlbum()->canBeViewedBy($user);
+            return $this->getAlbum()->canBeViewedBy($user, $allowModeration);
         } else {
-            return $this->getOwner()->canBeViewedBy($user);
+            return $this->getOwner()->canBeViewedBy($user, true, $allowModeration);
         }
     }
 
@@ -630,8 +647,8 @@ class Photo extends Media
     {
         $res = (object) [];
 
-        $res->id        = $this->getVirtualId();
-        $res->owner_id  = $this->getOwner()->getId();
+        $res->id        = $this->getCompromiseVirtualId();
+        $res->owner_id  = $this->getOwner()->getRealId();
         $res->aid       = 0;
         $res->src       = $this->getURLBySizeId("tiny");
         $res->src_big   = $this->getURLBySizeId("normal");

@@ -31,7 +31,7 @@ final class PhotosPresenter extends OpenVKPresenter
             if (!$user) {
                 $this->notFound();
             }
-            if (!$user->getPrivacyPermission('photos.read', $this->user->identity ?? null)) {
+            if (!$user->canBeViewedBy($this->user->identity) || !$user->getPrivacyPermission('photos.read', $this->user->identity ?? null)) {
                 $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
             }
 
@@ -46,6 +46,9 @@ final class PhotosPresenter extends OpenVKPresenter
             $club = (new Clubs())->get(abs($owner));
             if (!$club) {
                 $this->notFound();
+            }
+            if (!$club->canBeViewedBy($this->user->identity)) {
+                $this->flashFail("err", tr("forbidden"), tr("forbidden_comment_group"));
             }
             $this->template->albums  = $this->albums->getClubAlbums($club, (int) ($this->queryParam("p") ?? 1));
             $this->template->count   = $this->albums->getClubAlbumsCount($club);
@@ -200,7 +203,7 @@ final class PhotosPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
-        if (!$photo->canBeViewedBy($this->user->identity)) {
+        if (!$photo->canBeViewedBy($this->user->identity, $key)) {
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
@@ -215,6 +218,7 @@ final class PhotosPresenter extends OpenVKPresenter
             }
         }
 
+        $this->template->readOnly = $photo->getOwner() instanceof User && $photo->getOwner()->isReadOnlyFor($this->user->identity);
         $this->template->sort = $this->queryParam("sort") ?? "asc";
         $input_sort = $this->template->sort == "asc" ? "ASC" : "DESC";
 
@@ -246,7 +250,7 @@ final class PhotosPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
-        if (!$photo->checkAccessKey($key)) {
+        if (!$photo->canBeViewedBy($this->user->identity, $key)) {
             $this->notFound();
         }
 
@@ -393,15 +397,16 @@ final class PhotosPresenter extends OpenVKPresenter
                     $photo->setDescription("");
                     $photo->setFile($_FILES["photo_" . $i]);
                     $photo->setCreated(time());
-                    if ($is_from_messenger) {
-                        $clubId = $this->postParam("club");
-                        if ($clubId != null) {
-                            $club = (new Clubs())->get((int) $clubId);
-                            if ($club && $club->canBeModifiedBy($this->user->identity)) {
-                                $photo->setContext($club, true);
-                            }
-                        }
 
+                    $clubId = $this->postParam("club");
+                    if ($clubId != null) {
+                        $club = (new Clubs())->get((int) $clubId);
+                        if ($club) {
+                            $photo->setContext($club, $club->canBeModifiedBy($this->user->identity));
+                        }
+                    }
+
+                    if ($is_from_messenger) {
                         $photo->setAsFromMessage();
                     }
 
@@ -503,6 +508,10 @@ final class PhotosPresenter extends OpenVKPresenter
         $photo = $this->photos->getByOwnerAndVID($wall, $post_id);
         if (!$photo || $photo->isDeleted() || !$photo->canBeViewedBy($this->user->identity)) {
             $this->notFound();
+        }
+
+        if (!$photo->canBeInteractedWith($this->user->identity)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
         if (!is_null($this->user->identity)) {

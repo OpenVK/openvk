@@ -7,6 +7,7 @@ namespace openvk\Web\Models\Entities;
 use morphos\Gender;
 use openvk\Web\Util\IMBroker;
 use openvk\Web\Util\Cache;
+use openvk\Web\Util\ModerationContext;
 use openvk\Web\Themes\{Themepack, Themepacks};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
@@ -42,6 +43,14 @@ class User extends RowModel
     public const PRIVACY_ONLY_FRIENDS    = 1;
     public const PRIVACY_ONLY_REGISTERED = 2;
     public const PRIVACY_EVERYONE        = 3;
+
+    private const WRITE_PRIVACY_SETTINGS = [
+        "friends.add",
+        "wall.write",
+        "messages.write",
+        "messages.add_to_chats",
+        "gifts.send",
+    ];
 
     public const NSFW_INTOLERANT    = 0;
     public const NSFW_TOLERANT      = 1;
@@ -142,11 +151,15 @@ class User extends RowModel
     public function getAvatarUrl(string $size = "miniscule", $avPhoto = null): string
     {
         $serverUrl = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
+        $moderationViewerId = ModerationContext::getViewerId();
+        $showRealAvatar = $moderationViewerId !== null && $moderationViewerId !== $this->getId();
 
-        if ($this->getRecord()->deleted) {
-            return "$serverUrl/assets/packages/static/openvk/img/camera_200.png";
-        } elseif ($this->isBanned()) {
-            return "$serverUrl/assets/packages/static/openvk/img/banned.jpg";
+        if (!$showRealAvatar) {
+            if ($this->getRecord()->deleted) {
+                return "$serverUrl/assets/packages/static/openvk/img/camera_200.png";
+            } elseif ($this->isBanned()) {
+                return "$serverUrl/assets/packages/static/openvk/img/banned.jpg";
+            }
         }
 
         if (!$avPhoto) {
@@ -154,6 +167,12 @@ class User extends RowModel
         }
 
         if (is_null($avPhoto)) {
+            if ($this->getRecord()->deleted) {
+                return "$serverUrl/assets/packages/static/openvk/img/camera_200.png";
+            } elseif ($this->isBanned()) {
+                return "$serverUrl/assets/packages/static/openvk/img/banned.jpg";
+            }
+
             return "$serverUrl/assets/packages/static/openvk/img/camera_200.png";
         } else {
             return $avPhoto->getURLBySizeId($size);
@@ -635,21 +654,33 @@ class User extends RowModel
         ])->get($id);
     }
 
-    public function getPrivacyPermission(string $permission, ?User $user = null): bool
+    public function getPrivacyPermission(string $permission, ?User $user = null, bool $moderationBypass = true): bool
     {
+        $isWrite = in_array($permission, self::WRITE_PRIVACY_SETTINGS, true);
+
+        if ($this->isReadOnlyFor($user)) {
+            return $moderationBypass && !$isWrite;
+        }
+
+        if ($moderationBypass && !$isWrite && $this->canBypassPrivacy($user)) {
+            return true;
+        }
+
         if ($this->isDeleted() || $this->isBanned()) {
+            return false;
+        }
+
+        if ($user && $user->getId() === $this->getId()) {
+            return true;
+        }
+
+        if (!$this->canBeViewedBy($user, true)) {
             return false;
         }
 
         $permStatus = $this->getPrivacySetting($permission);
         if (!$user) {
             return $permStatus === User::PRIVACY_EVERYONE;
-        } elseif ($user->getId() === $this->getId()) {
-            return true;
-        }
-
-        if (/*$permission != "messages.write" && */!$this->canBeViewedBy($user, true)) {
-            return false;
         }
 
         switch ($permStatus) {
@@ -984,7 +1015,8 @@ class User extends RowModel
         } else {
             $sel = $this->getRecord()
                 ->related("subscriptions.follower")
-                ->limit($count, $page);
+                ->limit($count, $page)
+                ->where("NOT (flags = 1 AND target IN (SELECT id FROM groups WHERE closed = 1))");
 
             if (!$andEvents) {
                 $sel = $sel->where("target IN (SELECT id FROM groups WHERE type = ?)", 1);
@@ -1025,7 +1057,8 @@ class User extends RowModel
         } else {
             $sel = $this->getRecord()->related("subscriptions.follower");
             $sel = $sel->where("model", "openvk\\Web\\Models\\Entities\\Club")
-                ->where("target IN (SELECT id FROM groups WHERE type = ?)", 1);
+                ->where("target IN (SELECT id FROM groups WHERE type = ?)", 1)
+                ->where("NOT (flags = 1 AND target IN (SELECT id FROM groups WHERE closed = 1))");
 
             if ($messagesEnabled) {
                 $sel = $sel->where("target IN (SELECT id FROM groups WHERE is_messages_enabled = 1 AND deleted = 0 AND block_reason IS NULL)");
@@ -1756,21 +1789,21 @@ class User extends RowModel
         return $this->getRecord()->profile_type;
     }
 
-    public function canBeViewedBy(?User $user = null, bool $blacklist_check = true): bool
+    private function canBeViewedByNormally(?User $user = null, bool $blacklist_check = true): bool
     {
+        if ($user && $this->getId() == $user->getId()) {
+            return true;
+        }
+
+        if ($user && $user->isAdmin() && !(OPENVK_ROOT_CONF['openvk']['preferences']['blacklists']['applyToAdmins'] ?? true)) {
+            return true;
+        }
+
+        if ($this->isDeleted() || $this->isBanned()) {
+            return false;
+        }
+
         if (!is_null($user)) {
-            if ($this->getId() == $user->getId()) {
-                return true;
-            }
-
-            if ($user->isAdmin() && !(OPENVK_ROOT_CONF['openvk']['preferences']['blacklists']['applyToAdmins'] ?? true)) {
-                return true;
-            }
-
-            if ($this->isDeleted() || $this->isBanned()) {
-                return false;
-            }
-
             if ($blacklist_check && ($this->isBlacklistedBy($user) || $user->isBlacklistedBy($this))) {
                 return false;
             }
@@ -1778,23 +1811,67 @@ class User extends RowModel
             if ($this->getProfileType() == 0) {
                 return true;
             } else {
-                if ($user->getSubscriptionStatus($this) == User::SUBSCRIPTION_MUTUAL) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return $user->getSubscriptionStatus($this) == User::SUBSCRIPTION_MUTUAL;
             }
 
         } else {
             if ($this->getProfileType() == 0) {
-                if ($this->getPrivacySetting("page.read") == 3) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return $this->getPrivacySetting("page.read") == 3;
             } else {
                 return false;
             }
+        }
+    }
+
+    public function canBeViewedBy(?User $user = null, bool $blacklist_check = true, bool $allowModeration = true): bool
+    {
+        if ($allowModeration && $user && ModerationContext::isActiveFor($user->getId())) {
+            return true;
+        }
+
+        return $this->canBeViewedByNormally($user, $blacklist_check);
+    }
+
+    public function isReadOnlyFor(?User $user = null): bool
+    {
+        if (!$user || $this->getId() === $user->getId() || !ModerationContext::isActiveFor($user->getId())) {
+            return false;
+        }
+
+        if ($this->isDeleted() || $this->isBanned()) {
+            return true;
+        }
+
+        if ($this->isBlacklistedBy($user) || $user->isBlacklistedBy($this)) {
+            return true;
+        }
+
+        if ($this->isClosed()) {
+            return $this->getSubscriptionStatus($user) !== User::SUBSCRIPTION_MUTUAL;
+        }
+
+        return false;
+    }
+
+    public function canBypassPrivacy(?User $user = null): bool
+    {
+        return $user
+            && $this->getId() !== $user->getId()
+            && ModerationContext::isActiveFor($user->getId());
+    }
+
+    public function canReceiveFriendRequestsFrom(?User $user = null): bool
+    {
+        if (!$user || $this->getId() === $user->getId()) {
+            return false;
+        }
+
+        if ($this->isDeleted() || $this->isBanned()) {
+            return false;
+        }
+
+        if ($this->isBlacklistedBy($user) || $user->isBlacklistedBy($this)) {
+            return false;
         }
 
         return true;
@@ -1975,28 +2052,53 @@ class User extends RowModel
 
     public function getIgnoredSources(int $offset = 0, int $limit = 10, bool $onlyIds = false)
     {
-        $sources = DatabaseConnection::i()->getContext()->table("ignored_sources")->where("owner", $this->getId())->limit($limit, $offset)->order('id DESC');
+        $userId = $this->getId();
+
+        if ($onlyIds) {
+            $cacheKey = "ignored_sources_ids:{$userId}:{$offset}:{$limit}";
+            $cachedIds = \openvk\Web\Util\Cache::remember($cacheKey, 600, function () use ($userId, $offset, $limit) {
+                $sources = DatabaseConnection::i()->getContext()->table("ignored_sources")->where("owner", $userId)->limit($limit, $offset)->order('id DESC');
+                $output_array = [];
+
+                foreach ($sources as $source) {
+                    $output_array[] = (int) $source->source;
+                }
+
+                return $output_array;
+            });
+
+            return $cachedIds;
+        }
+
+        $cacheKey = "ignored_sources_ids:{$userId}:{$offset}:{$limit}";
+        $cachedIds = \openvk\Web\Util\Cache::remember($cacheKey, 600, function () use ($userId, $offset, $limit) {
+            $sources = DatabaseConnection::i()->getContext()->table("ignored_sources")->where("owner", $userId)->limit($limit, $offset)->order('id DESC');
+            $output_array = [];
+
+            foreach ($sources as $source) {
+                $output_array[] = (int) $source->source;
+            }
+
+            return $output_array;
+        });
+
         $output_array = [];
 
-        foreach ($sources as $source) {
-            if ($onlyIds) {
-                $output_array[] = (int) $source->source;
+        foreach ($cachedIds as $ignored_source_id) {
+            $ignored_source_id = (int) $ignored_source_id;
+            $ignored_source_model = null;
+
+            if ($ignored_source_id > 0) {
+                $ignored_source_model = (new \openvk\Web\Models\Repositories\Users())->get($ignored_source_id);
             } else {
-                $ignored_source_model = null;
-                $ignored_source_id = (int) $source->source;
-
-                if ($ignored_source_id > 0) {
-                    $ignored_source_model = (new Users())->get($ignored_source_id);
-                } else {
-                    $ignored_source_model = (new Clubs())->get(abs($ignored_source_id));
-                }
-
-                if (!$ignored_source_model) {
-                    continue;
-                }
-
-                $output_array[] = $ignored_source_model;
+                $ignored_source_model = (new \openvk\Web\Models\Repositories\Clubs())->get(abs($ignored_source_id));
             }
+
+            if (!$ignored_source_model) {
+                continue;
+            }
+
+            $output_array[] = $ignored_source_model;
         }
 
         return $output_array;

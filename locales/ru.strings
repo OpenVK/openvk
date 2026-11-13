@@ -400,6 +400,8 @@
 "subscriptions" = "Подписки";
 "join_community" = "Вступить в группу";
 "leave_community" = "Выйти из группы";
+"clubs_sumbit_request" = "Отправить заявку";
+"clubs_cancel_request" = "Отменить заявку";
 "check_community" = "Просмотр группы";
 "view_group_messages" = "Сообщения";
 "add_to_list_event" = "Добавить в список";
@@ -418,6 +420,8 @@
 "group_type" = "Тип группы";
 "group_type_open" = "Это открытая группа. В неё может вступить любой желающий.";
 "group_type_closed" = "Это закрытая группа. Для вступления необходимо подавать заявку.";
+"group_type_open_title" = "Открытая";
+"group_type_closed_title" = "Закрытая";
 "event_type" = "Тип встречи";
 "event_type_open" = "Это открытая встреча. В ней может поучавствовать любой желающий.";
 "event_type_closed" = "Это закрытая встреча. Для вступления Вы должны получить приглашение.";
@@ -781,6 +785,7 @@
 "privacy_setting_view_audio" = "Кому видно мои аудиозаписи";
 "privacy_setting_see_likes" = "Кому видны мои лайки";
 "privacy_setting_view_gifts" = "Кому видны мои подарки";
+"privacy_setting_send_gifts" = "Кто может отправлять мне подарки";
 "privacy_setting_see_online" = "Кто видит мою неактивность";
 "privacy_title_info" = "Информация в профиле";
 "privacy_title_content" = "Контент в профиле";
@@ -789,7 +794,7 @@
 "privacy_value_anybody" = "Все желающие";
 "privacy_value_anybody_short" = "Все";
 "privacy_value_anybody_dative" = "Всем желающим";
-"privacy_value_users" = "Пользователям OpenVK";
+"privacy_value_users" = "Пользователи инстанса";
 "privacy_value_users_nominative" = "Пользователи OpenVK";
 "privacy_value_friends" = "Друзья";
 "privacy_value_friends_dative" = "Друзьям";
@@ -1127,6 +1132,7 @@
 "nt_note_instrumental" = "заметкой";
 "nt_photo_instrumental" = "фотографией";
 "nt_topic_instrumental" = "темой";
+"nt_playlist_instrumental" = "плейлистом";
 
 "nt_you_were_mentioned_u" = "Вас упомянул пользователь";
 "nt_you_were_mentioned_g" = "Вас упомянуло сообщество";
@@ -1718,7 +1724,8 @@
 "messenger_typing_one_user" = "$1 набирает сообщение";
 "messenger_typing_two_users" = "$1 и $2 набирают";
 "messenger_typing_three_users" = "$1, $2 и $3 набирают";
-"messenger_typing_other" = "$1 набирают сообщение..."; /* больше трёх */
+/* больше трёх */
+"messenger_typing_other" = "$1 набирают сообщение...";
 "messenger_audiomessage_between_two" = "Записывает голосовое сообщение";
 "messenger_audiomessage_one_user" = "$1 записывает голосовое сообщение";
 "messenger_audiomessage_two_users" = "$1 и $2 записывают голосовые сообщения";
@@ -1753,7 +1760,7 @@
 "edit_of_message" = "Редактирование сообщения";
 
 "messages_agreement_1" = "Используя секцию сообщений, вы соглашаетесь с тем, что:";
-"messages_agreement_2" = "Вы согласны с <a href="/terms">правилами</a> и <a href="/privacy">политикой конфиденциальности</a> сайта.";
+"messages_agreement_2" = "Вы согласны с <a href=\"/terms\">правилами</a> и <a href=\"/privacy\">политикой конфиденциальности</a> сайта.";
 "messages_agreement_3" = "Загруженные в беседе медиафайлы могут быть доступны по ссылке даже после удаления.";
 "messages_agreement_4" = "В случае жалобы на сообщение модератор может посмотреть диалог, в котором его отправили, для выяснения контекста. Так же любое сообщение может быть переслано человеком, который находится в смежном с вами диалоге.";
 "messages_agreement_5" = "Нужно держать аккаунт в безопасности.";
@@ -2124,7 +2131,8 @@
 "error_data_too_big" = "Аттрибут '$1' не может быть длиннее $2 $3";
 "forbidden" = "Ошибка доступа";
 "unknown_error" = "Неизвестная ошибка";
-"forbidden_comment" = "Настройки приватности этого пользователя не разрешают вам смотреть на его страницу.";
+"forbidden_comment" = "Настройки приватности этого пользователя не разрешают вам смотреть на его страницу или его части.";
+"forbidden_comment_group" = "Это страница или материал закрытой или частной группы, доступный только для их участников.";
 "changes_saved" = "Изменения сохранены";
 "changes_saved_comment" = "Новые данные появятся на вашей странице";
 "photo_saved" = "Фотография сохранена";
@@ -2186,8 +2194,10 @@
 "error_when_gifting" = "Не удалось подарить";
 "error_user_not_exists" = "Пользователь или набор не существуют.";
 "error_no_rights_gifts" = "Не удалось подтвердить права на подарок.";
+"error_gift_unavailable" = "Подарок или набор снят с витрины.";
 "error_no_more_gifts" = "У вас больше не осталось таких подарков.";
 "error_no_money" = "Ору нищ не пук.";
+"error_gifts_send_privacy" = "Пользователь ограничил круг лиц, которые могут присылать ему подарки.";
 
 "gift_sent" = "Подарок отправлен";
 "gift_sent_desc" = "Вы отправили подарок <b>$1</b> за $2 голосов";
@@ -2295,6 +2305,7 @@
 /* Admin actions */
 
 "login_as" = "Войти как $1";
+"administrator_actions" = "Действия администратора";
 "manage_user_action" = "Управление пользователем";
 "manage_group_action" = "Управление группой";
 "ban_user_action" = "Заблокировать пользователя";
@@ -3152,6 +3163,7 @@
 "faves_comments_empty_tip" = "Здесь будут отображаться понравившиеся Вам комментарии.";
 "faves_photos_empty_tip" = "Здесь будут отображаться понравившиеся Вам фотографии.";
 "faves_videos_empty_tip" = "Здесь будут отображаться понравившиеся Вам видео.";
+"faves_notes_empty_tip" = "Здесь будут отображаться понравившиеся Вам заметки.";
 "faves_zero" = "Ни одной закладки";
 "faves_one" = "$1 закладка";
 "faves_few" = "$1 закладки";
@@ -3296,10 +3308,27 @@
 
 "router_reconnect_error" = "Не удалось загрузить страницу после нескольких попыток. Попробовать открыть её напрямую?";
 
+/* Catalogues */
+
+"catalogues" = "Каталоги";
+"new_posts" = "Лента";
+"new_posts_global" = "Все новости";
+
+"post_target_note" = "Заметка";
+"post_target_photo" = "Фото";
+"post_target_topic" = "Обсуждение";
+"post_target_video" = "Видеозапись";
+"post_target_playlist" = "Плейлист";
+"toggle_comments_checkbox" = "Разрешить комментирование";
+
 /* Synchronization & Codebase Coverage Keys */
 
 "access_denied" = "Доступ запрещён";
 "admin_public" = "Публичный";
+"admin_hide_from_catalog" = "Скрыть из каталога";
+"admin_hidden_from_catalog" = "Скрыто из каталога";
+"admin_return_to_catalog" = "Вернуть в каталог";
+"admin_returned_to_catalog" = "Возвращено в каталог";
 "admin_sticker_added" = "Стикер добавлен";
 "admin_sticker_added_desc" = "Стикер был успешно добавлен в набор.";
 "admin_sticker_deleted" = "Стикер удалён";
@@ -3339,10 +3368,10 @@
 "peformer" = "Исполнитель";
 "post_display_error_switching_unavailable" = "Переключение недоступно";
 "purchase_failed" = "Не удалось совершить покупку";
-"reported_message_contains_1" = "Вложение сообщения";
+"reported_message_contains_1" = "Вложение в сообщениях";
 "reported_message_contains_2" = "Текст сообщения";
-"reported_message_contains_3" = "Автор сообщения — id $1, написано в чате с id $2.";
-"resolve_message_context" = "Разрешить контекст";
+"reported_message_contains_3" = "Автор сообщения — id $1, написанный в чате с id $2.";
+"resolve_message_context" = "Устранить контекст";
 "select" = "Выбрать";
 "show_slideshow" = "Показать слайд-шоу";
 "smiles" = "Смайлы";
@@ -3350,3 +3379,21 @@
 "unlisted" = "Доступно только по ссылке";
 "upload" = "Загрузить";
 "user" = "Пользователь";
+"admin_deactivated" = "деактивирован";
+"admin_show_deleted" = "Показать удалённых";
+"admin_hide_deleted" = "Скрыть удалённых";
+"moderation_view_title" = "Просмотр скрытой страницы";
+"moderation_view_warning" = "Вы видите эту страницу как администратор инстанса. Не делайте скриншоты и не передавайте её содержимое третьим лицам.";
+"moderation_view_readonly" = "Взаимодействие с этой страницей отключено.";
+"moderation_view_readonly_friends" = "Взаимодействие ограничено: можно отправить заявку в друзья.";
+"moderation_view_closed" = "Профиль закрыт.";
+"moderation_view_banned" = "Пользователь заблокирован.";
+"moderation_view_deleted" = "Страница удалена.";
+"moderation_view_deactivated" = "Страница деактивирована. Восстановление возможно до $1.";
+"moderation_view_blacklisted" = "Пользователь ограничил доступ к своей странице (чёрный список).";
+"moderation_view_blacklisted_by_viewer" = "Вы добавили этого пользователя в чёрный список.";
+"moderation_view_restore" = "Восстановить страницу";
+"moderation_view_unban_title" = "Разблокировать пользователя";
+"moderation_view_restore_title" = "Восстановить страницу";
+"moderation_view_unban_confirm" = "Вы собираетесь разблокировать пользователя $1.";
+"moderation_view_restore_confirm" = "Вы собираетесь восстановить страницу $1.";

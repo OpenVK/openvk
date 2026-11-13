@@ -411,6 +411,8 @@
 "subscriptions" = "Subscriptions";
 "join_community" = "Join community";
 "leave_community" = "Leave community";
+"clubs_sumbit_request" = "Send a request";
+"clubs_cancel_request" = "Cancel request";
 "check_community" = "View community";
 "view_group_messages" = "Group Messages";
 "add_to_list_event" = "Add to list";
@@ -432,6 +434,8 @@
 "event_type" = "Event type";
 "event_type_open" = "This is an open event. Anyone can join it.";
 "event_type_closed" = "This is a closed event. To enter, you must request an invite.";
+"group_type_open_title" = "Open";
+"group_type_closed_title" = "Closed";
 "creator" = "Creator";
 "administrators" = "Administrators";
 "event_host" = "Host";
@@ -807,6 +811,7 @@
 "privacy_setting_view_audio" = "Who can see my audios";
 "privacy_setting_see_likes" = "Who can see my likes";
 "privacy_setting_view_gifts" = "Who can see my gifts";
+"privacy_setting_send_gifts" = "Who can send me gifts";
 "privacy_setting_see_online" = "Who can see my inactiviy time";
 "privacy_title_info" = "Profile info";
 "privacy_title_content" = "Profile content";
@@ -1174,6 +1179,7 @@
 "nt_note_instrumental" = "note";
 "nt_photo_instrumental" = "photo";
 "nt_topic_instrumental" = "topic";
+"nt_playlist_instrumental" = "playlist";
 
 "nt_you_were_mentioned_u" = "You were mentioned by user";
 "nt_you_were_mentioned_g" = "You were mentioned by group";
@@ -1721,6 +1727,7 @@
 "forbidden" = "Access error";
 "unknown_error" = "Unknown error";
 "forbidden_comment" = "This user's privacy settings do not allow you to look at his page.";
+"forbidden_comment_group" = "This page or piece of content belongs to a closed or private group and is accessible only to its members.";
 
 "changes_saved" = "Changes saved";
 "changes_saved_comment" = "New data will appear on your page";
@@ -1798,8 +1805,10 @@
 "error_when_gifting" = "Failed to gift";
 "error_user_not_exists" = "User or pack does not exist.";
 "error_no_rights_gifts" = "Failed to check rights on gift.";
+"error_gift_unavailable" = "This gift or set is no longer available.";
 "error_no_more_gifts" = "You no longer have such gifts.";
 "error_no_money" = "Shout out to a beggar.";
+"error_gifts_send_privacy" = "This user restricted who can send them gifts.";
 
 "gift_sent" = "Gift sent";
 "gift_sent_desc" = "You sent a gift to $1 for $2 votes";
@@ -1907,6 +1916,7 @@
 /* Admin actions */
 
 "login_as" = "Login as $1";
+"administrator_actions" = "Administrator actions";
 "manage_user_action" = "Manage user";
 "manage_group_action" = "Manage group";
 "ban_user_action" = "Ban user";
@@ -2958,6 +2968,7 @@
 "faves_comments_empty_tip" = "There will be comments liked by you.";
 "faves_photos_empty_tip" = "There will be photos liked by you.";
 "faves_videos_empty_tip" = "There will be videos liked by you.";
+"faves_notes_empty_tip" = "There will be notes liked by you.";
 "faves_zero" = "No bookmarks";
 "faves_one" = "One bookmark";
 "faves_few" = "$1 bookmarks";
@@ -3305,6 +3316,18 @@
 
 "router_reconnect_error" = "Tried to connect to this page multiple times and got error. Go to the page manually?";
 
+/* Catalogues */
+
+"catalogues" = "Catalogues";
+"new_posts" = "Feed";
+"new_posts_global" = "Global feed";
+
+"post_target_note" = "Note";
+"post_target_photo" = "Photo";
+"post_target_topic" = "Group s topic";
+"post_target_video" = "Video";
+"post_target_playlist" = "Playlist";
+"toggle_comments_checkbox" = "Enable comments";
 
 /* Synchronization & Codebase Coverage Keys */
 
@@ -3332,6 +3355,10 @@
 "admin_overview_posts_few" = "Posts";
 "admin_overview_videos_few" = "Videos";
 "admin_public" = "Public";
+"admin_hide_from_catalog" = "Hide from catalog";
+"admin_hidden_from_catalog" = "Hidden from the catalog";
+"admin_return_to_catalog" = "Return to catalog";
+"admin_returned_to_catalog" = "Returned to the catalog";
 "admin_sticker_added" = "Sticker added";
 "admin_sticker_added_desc" = "The sticker has been successfully added to the pack.";
 "admin_sticker_deleted" = "Sticker deleted";
@@ -3488,3 +3515,21 @@
 "years_many" = "$1 years old";
 "you_have_not_entered_name_or_text" = "You haven't entered a name or text";
 "you_have_not_entered_text" = "You haven't entered any text";
+"admin_deactivated" = "deactivated";
+"admin_show_deleted" = "Show deleted";
+"admin_hide_deleted" = "Hide deleted";
+"moderation_view_title" = "Hidden page preview";
+"moderation_view_warning" = "You are viewing this page as an instance administrator. Do not take screenshots or share its contents with third parties.";
+"moderation_view_readonly" = "Interaction with this page is disabled.";
+"moderation_view_readonly_friends" = "Interaction is limited: you can send a friend request.";
+"moderation_view_closed" = "This profile is closed.";
+"moderation_view_banned" = "This user is banned.";
+"moderation_view_deleted" = "This page is deleted.";
+"moderation_view_deactivated" = "This page is deactivated. It can be restored until $1.";
+"moderation_view_blacklisted" = "This user has restricted access to their page (blacklist).";
+"moderation_view_blacklisted_by_viewer" = "You have blacklisted this user.";
+"moderation_view_restore" = "Restore page";
+"moderation_view_unban_title" = "Unban user";
+"moderation_view_restore_title" = "Restore page";
+"moderation_view_unban_confirm" = "You are about to unban $1.";
+"moderation_view_restore_confirm" = "You are about to restore the page of $1.";

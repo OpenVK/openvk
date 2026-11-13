@@ -76,6 +76,16 @@
             </div>
         </fieldset>
 
+        <fieldset class="group">
+            <legend></legend>
+            <div class="checkbox" resolved="">
+                <input class="checkbox" type="checkbox" name="unlisted" id="unlisted" n:attr="checked => $form->unlisted" />
+                <span class="aui-form-glyph"></span>
+
+                <label for="unlisted">{_admin_hide_from_catalog}</label>
+            </div>
+        </fieldset>
+
         <input n:if="$form->id === 0" type="hidden" name="_cat" value="{$_GET['cat'] ?? 1}" />
 
         <div class="buttons-container">

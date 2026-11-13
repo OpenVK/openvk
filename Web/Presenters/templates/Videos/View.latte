@@ -56,12 +56,14 @@
                         |
                         {var $liked = $video->hasLikeFrom($thisUser)}
                         {var $likesCount = $video->getLikesCount()}
+                        {if !($readOnly ?? false)}
                         <div class='like_wrap tidy'>
                             <a href="/video{$video->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$video->getPrettyId()}" data-type='video'>
                                 <div class="heart" id="{if $liked}liked{/if}"></div>
                                 <span class="likeCnt">{if $likesCount > 0}{$likesCount}{/if}</span>
                             </a>
                         </div>
+                        {/if}
                     {/if}
                 </div>
             </div>
@@ -75,16 +77,11 @@
                             count => $cCount,
                             page => $cPage,
                             model => "videos",
-                            parent => $video}
+                            parent => $video,
+                            readOnly => ($readOnly ?? false)}
                 </div>
                 <div class='media-page-wrapper-actions'>
-                    <a href="{$user->getURL()}" class='media-page-author-block'>
-                        <img class='cCompactAvatars' src="{$user->getAvatarURL('miniscule')}">
-
-                        <div class='media-page-author-block-name'>
-                            <b>{$user->getCanonicalName()}</b>
-                        </div>
-                    </a>
+                    {include "../components/postable/postable_mark.latte", owner => $video->getOwner(), item => $video}
 
                     <div>
                         <div n:if="isset($thisUser) && $video->canBeModifiedBy($thisUser)">

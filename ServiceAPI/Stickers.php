@@ -263,8 +263,8 @@ class Stickers implements Handler
             return;
         }
 
-        if (!$targetUser->getPrivacyPermission("gifts.read", $this->user)) {
-            $reject(15, tr("forbidden"));
+        if (!$targetUser->getPrivacyPermission("gifts.send", $this->user)) {
+            $reject(15, tr("error_gifts_send_privacy"));
             return;
         }
 

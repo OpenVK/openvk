@@ -237,7 +237,7 @@ class UpgradeCommand extends Command
             return 24;
         }
 
-        $uname = addslashes(`whoami`);
+        $uname = addslashes(shell_exec('whoami'));
         $bar = new ProgressBar($io, sizeof($migrations));
         $bar->setFormat("very_verbose");
 

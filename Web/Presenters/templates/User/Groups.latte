@@ -1,6 +1,5 @@
 {extends "../@listView.latte"}
 {var $iterator = $user->getClubs($page, $admin)}
-{var $count    = $user->getClubCount($admin)}
 
 {block noscroll}{/block}
 {block title}
@@ -82,6 +81,10 @@
             <tr>
                 <td class="label"><span class="nobold">{_size}:</span></td>
                 <td class="data"><a href="/club{$x->getId()}/followers">{tr("participants", $x->getFollowersCount())}</a></td>
+            </tr>
+            <tr>
+                <td class="label"><span class="nobold">{_group_type}:</span></td>
+                <td class="data">{if $x->isClosed() == 0}{_group_type_open_title}{else}{_group_type_closed_title}{/if}</td>
             </tr>
         </tbody>
     </table>

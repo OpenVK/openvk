@@ -10,7 +10,7 @@
     <div class="insertThere" id="wall_block_posts"></div>
     <div id="underHeader">
         <div n:if="$canPost" class="content_subtitle">
-            {include "../components/textArea.latte", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true, docs => true}
+            {include "../components/textArea.latte", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true, docs => true, uploadOwner => $club ?? $thisUser}
         </div>
 
         <div class="content scroll_container">
@@ -18,7 +18,7 @@
                 <div class='scroll_node' n:foreach='$posts as $post' data-uniqueid="{$post->getPrettyId()}">
                     <a name="postGarter={$post->getId()}"></a>
 
-                    {include "../components/post.latte", post => $post, commentSection => true}
+                    {include "../components/post.latte", post => $post, commentSection => true, readOnly => ($readOnly ?? false), forceNoCommentsLink => ($readOnly ?? false), forceNoShareLink => ($readOnly ?? false), forceNoLike => ($readOnly ?? false)}
                 </div>
                 {include "../components/paginator.latte", conf => $paginatorConf}
             {else}

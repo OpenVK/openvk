@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace openvk\Web\Models\Entities;
 
+use Chandler\Database\DatabaseConnection as DB;
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\User;
@@ -170,6 +171,37 @@ class Gift extends RowModel
     public function setStickersProductId(?int $id): void
     {
         $this->stateChanges("stickers_product_id", $id);
+    }
+
+    public function isUnlisted(): bool
+    {
+        return (bool) $this->getRecord()->unlisted;
+    }
+
+    public function setUnlisted(bool $unlisted = true): void
+    {
+        $this->stateChanges("unlisted", (int) $unlisted);
+    }
+
+    /**
+     * A gift can be obtained when it is listed and has at least one listed category.
+     * Stickerpack gifts are not in the catalog and are governed by their pack.
+     */
+    public function isAvailable(): bool
+    {
+        if ($this->isUnlisted()) {
+            return false;
+        }
+
+        if (!is_null($this->getStickersProductId())) {
+            return true;
+        }
+
+        return DB::i()->getContext()->table("gift_relations")
+            ->where("gift", $this->getId())
+            ->where("category.deleted", false)
+            ->where("category.unlisted", false)
+            ->count("*") > 0;
     }
 
     public function delete(bool $softly = true): void

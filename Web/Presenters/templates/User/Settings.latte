@@ -470,6 +470,18 @@
                         </select>
                     </td>
                 </tr>
+                <tr>
+                    <td width="120" valign="top">
+                        <span class="nobold">{_privacy_setting_send_gifts}</span>
+                    </td>
+                    <td>
+                        <select name="gifts.send" style="width: 164px;">
+                            <option value="3" {if $user->getPrivacySetting('gifts.send') == 3}selected{/if}>{_privacy_value_anybody}</option>
+                            <option value="1" {if $user->getPrivacySetting('gifts.send') == 1}selected{/if}>{_privacy_value_friends}</option>
+                            <option value="0" {if $user->getPrivacySetting('gifts.send') == 0}selected{/if}>{_privacy_value_nobody}</option>
+                        </select>
+                    </td>
+                </tr>
             </table>
             <table class="flexible_table fullsize_selects" cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
                 <tr>

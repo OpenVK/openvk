@@ -34,6 +34,11 @@ class Polls implements Handler
             return;
         }
 
+        if (!$poll->canBeVotedBy($this->user)) {
+            $reject("Access denied");
+            return;
+        }
+
         try {
             $options = explode(",", $options);
             $poll->vote($this->user, $options);
@@ -59,6 +64,11 @@ class Polls implements Handler
         $poll = $this->polls->get($pollId);
         if (!$poll) {
             $reject("Poll not found");
+            return;
+        }
+
+        if (!$poll->canBeVotedBy($this->user)) {
+            $reject("Access denied");
             return;
         }
 

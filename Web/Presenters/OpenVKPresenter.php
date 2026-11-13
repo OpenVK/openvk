@@ -14,6 +14,7 @@ use openvk\Web\Models\Entities\IP;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Repositories\{IPs, Users, APITokens, Tickets, Reports, CurrentUser, Posts};
 use openvk\Web\Util\IMBroker;
+use openvk\Web\Util\ModerationContext;
 use openvk\Web\Util\RateLimiter;
 use WhichBrowser;
 
@@ -25,6 +26,7 @@ abstract class OpenVKPresenter extends SimplePresenter
     protected $errorTemplate = "@error";
     protected $user = null;
     protected $presenterName;
+    protected bool $hiddenContentModeration = true;
 
     private function calculateQueryString(array $data): string
     {
@@ -116,6 +118,41 @@ abstract class OpenVKPresenter extends SimplePresenter
 
             $this->redirect($loginUrl);
         }
+    }
+
+    protected function canAttachContent($attachment): bool
+    {
+        if (!$attachment || $attachment->isDeleted()) {
+            return false;
+        }
+
+        if ($attachment instanceof \openvk\Web\Models\Entities\Photo || $attachment instanceof \openvk\Web\Models\Entities\Video) {
+            return $attachment->canBeViewedBy($this->user->identity, null, false);
+        }
+
+        if ($attachment instanceof \openvk\Web\Models\Entities\Note) {
+            return $attachment->canBeViewedBy($this->user->identity, false);
+        }
+
+        if ($attachment instanceof \openvk\Web\Models\Entities\Audio) {
+            $owner = $attachment->getOwner();
+
+            if (!$owner instanceof \openvk\Web\Models\Entities\User) {
+                return true;
+            }
+
+            return $owner->canBeViewedBy($this->user->identity, true, false)
+                && $owner->getPrivacyPermission('audios.read', $this->user->identity, false);
+        }
+
+        if ($attachment instanceof \openvk\Web\Models\Entities\Document) {
+            $owner = $attachment->getOwner();
+
+            return !($owner instanceof \openvk\Web\Models\Entities\User)
+                || $owner->canBeViewedBy($this->user->identity, true, false);
+        }
+
+        return $attachment->canBeViewedBy($this->user->identity);
     }
 
     protected function hasPermission(string $model, string $action, int $context): bool
@@ -220,7 +257,7 @@ abstract class OpenVKPresenter extends SimplePresenter
         $user = Authenticator::i()->getUser();
 
         if (!$this->template) {
-            $this->template = new \stdClass();
+            $this->template = new \Chandler\MVC\TemplateScope();
         }
 
         $this->template->isXmas = intval(date('d')) >= 1 && date('m') == 12 || intval(date('d')) <= 15 && date('m') == 1 ? true : false;
@@ -249,6 +286,10 @@ abstract class OpenVKPresenter extends SimplePresenter
             $this->template->thisUser    = $this->user->identity;
             $this->template->userTainted = $user->isTainted();
             CurrentUser::get($this->user->identity, $_SERVER["REMOTE_ADDR"], $_SERVER["HTTP_USER_AGENT"]);
+
+            if ($this->hiddenContentModeration && $this->user->identity && $this->hasPermission("admin", "viewHidden", 0)) {
+                ModerationContext::enter($this->user->id);
+            }
 
             if ($this->user->identity->isDeleted() && !$this->deactivationTolerant) {
                 if ($this->user->identity->isDeactivated()) {

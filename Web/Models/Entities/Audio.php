@@ -237,6 +237,11 @@ class Audio extends Media
         return parent::getURL();
     }
 
+    public function getPageURL(): string
+    {
+        return "/audio0_" . $this->getId();
+    }
+
     public function getKeys(): array
     {
         $keys[bin2hex($this->getRecord()->kid)] = bin2hex($this->getRecord()->key);

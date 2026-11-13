@@ -31,6 +31,11 @@
                     </td>
                     <td style="vertical-align: middle;">
                         {$gift->getName()}
+                        {if $gift->isUnlisted()}
+                            <span class="aui-lozenge aui-lozenge-subtle aui-lozenge-warning">{_admin_unlisted}</span>
+                        {else}
+                            <span class="aui-lozenge aui-lozenge-subtle aui-lozenge-success">{_admin_public}</span>
+                        {/if}
                         <span n:if="$gift->isFree()" class="aui-lozenge aui-lozenge-subtle aui-lozenge-success">
                             {_admin_price_free}
                         </span>
@@ -57,6 +62,9 @@
                         {/if}
                     </td>
                     <td style="vertical-align: middle; text-align: right;">
+                        <a class="aui-button" href="/admin/gifts/id{$gift->getId()}?act=toggle&hash={rawurlencode($csrfToken)}&ret={urlencode($_SERVER['REQUEST_URI'])}">
+                            {if $gift->isUnlisted()}{_admin_return_to_catalog}{else}{_admin_hide_from_catalog}{/if}
+                        </a>
                         <a class="aui-button aui-button-primary" href="/admin/gifts/id{$gift->getId()}">
                             <span class="aui-icon aui-icon-small aui-iconfont-new-edit">Редактировать</span>
                         </a>

@@ -1,0 +1,8 @@
+# Configuration for the nested PHPStan run over compiled Latte templates.
+# Used by latte.features.phpstanCommand from phpstan.neon; it must not
+# include the Latte extension itself.
+parameters:
+    level: 0
+    bootstrapFiles:
+        - chandler_loader.php
+    tmpDir: tmp/phpstan-latte-inner

@@ -1,6 +1,5 @@
 {extends "../@listView.latte"}
 {var $iterator = $user->getEvents($page, $admin)}
-{var $count    = $user->getEventsCount($admin)}
 
 {block noscroll}{/block}
 {block title}

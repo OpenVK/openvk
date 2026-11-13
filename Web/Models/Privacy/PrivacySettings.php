@@ -24,6 +24,7 @@ class PrivacySettings
             "messages.add_to_chats",
             "gifts.read",
             "page.online.read",
+            "gifts.send",
         ];
     }
 }

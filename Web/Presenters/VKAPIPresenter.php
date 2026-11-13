@@ -16,6 +16,7 @@ use MessagePack\Packer;
 final class VKAPIPresenter extends OpenVKPresenter
 {
     protected $silent = true;
+    protected bool $hiddenContentModeration = false;
     private ?string $currentObject = null;
     private ?string $currentMethod = null;
 

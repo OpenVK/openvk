@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace openvk\Web\Presenters;
 
-use openvk\Web\Models\Entities\{Comment, Notifications\MentionNotification, Notifications\ReplyCommentNotification, Photo, Video, User, Topic, Post};
+use openvk\Web\Models\Entities\{Comment, Notifications\MentionNotification, Notifications\ReplyCommentNotification, Photo, Video, User, Topic, Post, Postable};
 use openvk\Web\Models\Entities\Notifications\CommentNotification;
 use openvk\Web\Models\Repositories\{Comments, Clubs, Videos, Photos, Audios};
 use Nette\InvalidStateException as ISE;
@@ -18,6 +18,7 @@ final class CommentPresenter extends OpenVKPresenter
         "videos"  => "openvk\\Web\\Models\\Repositories\\Videos",
         "notes"   => "openvk\\Web\\Models\\Repositories\\Notes",
         "topics"  => "openvk\\Web\\Models\\Repositories\\Topics",
+        "audio_playlists"  => "openvk\\Web\\Models\\Repositories\\Audios",
     ];
 
     public function renderLike(int $id): void
@@ -30,7 +31,12 @@ final class CommentPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
-        if ($comment->getTarget() instanceof Post && $comment->getTarget()->getWallOwner()->isBanned()) {
+        $target = $comment->getTarget();
+        if ($target instanceof Post && $target->getWallOwner()->isBanned()) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
+        if ($target instanceof Postable && !$target->canBeInteractedWith($this->user->identity)) {
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
@@ -46,20 +52,27 @@ final class CommentPresenter extends OpenVKPresenter
         $this->redirect($_SERVER["HTTP_REFERER"]);
     }
 
-    public function renderMakeComment(string $repo, int $eId): void
+    public function renderMakeComment(string $repoName, int $eId): void
     {
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
 
-        $repoClass = $this->models[$repo] ?? null;
+        $repoClass = $this->models[$repoName] ?? null;
         $isAjax = $this->postParam("ajax") == "1";
 
         if (!$repoClass) {
-            chandler_http_panic(400, "Bad Request", "Unexpected $repo.");
+            chandler_http_panic(400, "Bad Request", "Unexpected $repoName.");
         }
 
         $repo   = new $repoClass();
-        $entity = $repo->get($eId);
+        $entity = null;
+
+        if ($repoName === "audio_playlists") {
+            $entity = $repo->getPlaylist($eId);
+        } else {
+            $entity = $repo->get($eId);
+        }
+
         if (!$entity) {
             $this->notFound();
         }
@@ -170,7 +183,7 @@ final class CommentPresenter extends OpenVKPresenter
         }
 
         foreach ($horizontal_attachments as $horizontal_attachment) {
-            if (!$horizontal_attachment || $horizontal_attachment->isDeleted() || !$horizontal_attachment->canBeViewedBy($this->user->identity)) {
+            if (!$this->canAttachContent($horizontal_attachment)) {
                 continue;
             }
             if ($horizontal_attachment instanceof \openvk\Web\Models\Entities\Messages\Sticker && !$horizontal_attachment->canBeUsedBy($this->user->identity)) {
@@ -181,7 +194,7 @@ final class CommentPresenter extends OpenVKPresenter
         }
 
         foreach ($vertical_attachments as $vertical_attachment) {
-            if (!$vertical_attachment || $vertical_attachment->isDeleted() || !$vertical_attachment->canBeViewedBy($this->user->identity)) {
+            if (!$this->canAttachContent($vertical_attachment)) {
                 continue;
             }
 

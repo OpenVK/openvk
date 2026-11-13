@@ -12,7 +12,7 @@
         </td>
         <td valign="top" style="width: 100%">
             {ifset infotable}
-                {include infotable, x => $dat}
+                {include infotable, x => $dat ?? null}
             {else}
         <a href="/video{$video->getPrettyId()}">
             <b class="video_name" onclick="VideoViewer.openById({$video->getPrettyIdWithKey()}, {}, event)">

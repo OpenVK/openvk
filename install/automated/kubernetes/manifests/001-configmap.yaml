@@ -3,7 +3,13 @@ data:
   openvk.yml: |
     chandler:
       debug: true
+      websiteUrl: null
       rootApp: "openvk"
+
+      preferences:
+        logs:
+          enabled: true
+          entitiesNamespace: "openvk\\Web\\Models\\Entities\\"
 
       database:
           dsn: "mysql:host=mariadb-primary-svc;dbname=db"
@@ -11,6 +17,9 @@ data:
           password: "openvk"
 
       security:
+          # 128-character random hex string used for CSRF tokens, JWT
+          # session signing, and captcha encryption. Generate one with:
+          #   php -r "echo bin2hex(random_bytes(64));"
           secret: "081906e04f2921e48751fbc5df44dbbcd7f6ecba065ade3d8ea28034cb8d6db24da10965845b5f3376847674e3bce61b5c0e439d12eef3c00d30f3b953657cac"
           csrfProtection: "permissive"
           extendedValidation: false
@@ -19,10 +28,27 @@ data:
       captcha:
           enable: true
 
+      email:
+          host: "mail.example.com"
+          port: 465
+          user: "user"
+          pass: "word"
+          addr: "noreply@example.com"
+          ssl: true
+
+      redisUrl: "tcp://redis-svc:6379"
+
+      errorPages:
+          client: "Web/Presenters/templates/@error.latte"
+          server: "Web/Presenters/templates/@server-error.phtml"
+
     openvk:
       debug: true
+      ignorePhpVersion: false
+
       appearance:
           name: "OpenVK"
+          searchPlaceholder: "@header_search"
           motd: "Yet another OpenVK instance"
     
       mirrors: # list all existing and previous domains without www. Won't work with different port
@@ -45,13 +71,24 @@ data:
                   - "index.php"
           photos:
               upgradeStructure: true
+              photoSaving: "quick"
+          videos:
+              disableUploading: false
+          docs:
+              maxSize: 10 # in megabytes
+              allowedFormats: ["jpg", "jpeg", "png", "gif", "webp", "psd", "aep", "docx", "doc", "odt", "txt", "md", "pptx", "ppt", "xls", "xlsx", "pdf", "djvu", "fb2", "ps", "apk", "zip", "7z", "mp4", "avi", "mp3", "flac"]
           apps:
               withdrawTax: 8
+          stickers:
+              withdrawTax: 2
           security:
               requireEmail: false
               requirePhone: false
               forcePhoneVerification: false
               forceEmailVerification: false
+              forceStrongPassword: false
+              disablePasswordRestoring: true # turn this off if you have configured e-mail sending correctly
+              disableSubAddressing: false # aka plus sign
               enableSu: true
               rateLimits:
                   actions: 5
@@ -59,24 +96,62 @@ data:
                   maxViolations: 50
                   maxViolationsAge: 120
                   autoban: true
+                  methods:
+                      messages.send:
+                          actions: 15
+                          time: 5
+                      messages.markAsRead:
+                          bypass: true
+                      messages.setActivity:
+                          bypass: true
+                  eventsLimit:
+                      enable: true
+                      ignoreForAdmins: true
+                      restrictionTime: 86400
+                      list:
+                          groups.create: 5
+                          groups.sub: 50
+                          friends.outgoing_sub: 25
+                          wall.post: 5000
+                          gifts.send: 30
+                          messages.notfriends: 10
+          blacklists:
+              limit: 100
+              applyToAdmins: true
           registration:
               enable: true
-              reason: "" # reason for disabling registration
+              disablingReason: "" # reason for disabling registration
+              redirectAfter: null
+              emailWhitelist:
+                  enable: false
+                  allowedHosts: []
           support:
               supportName: "Moderator"
               adminAccount: 1 # Change this ok
+              supportAccount: 1
+              devAccount: 1381
+              canSeeTracy: []
               fastAnswers:
                   - "This is a list of quick answers to common questions for support. Post your responses here and agents can send it quickly with just 3 clicks"
                   - "There can be as many answers as you want, but it is best to have a maximum of 10.\n\nYou can also remove all answers from the list to disable this feature"
                   - "Good luck filling! If you are a regular support agent, inform the administrator that he forgot to fill the config"
           messages:
               strict: false
+          music:
+              exposeOriginalURLs: true
+              notAvailableFor: []
+          newsfeed:
+              ignoredSourcesLimit: 50
+          notes:
+              disableHotlinking: true
+              allowedHosts: []
           wall:
               christian: false
               anonymousPosting:
                   enable: false
                   account: 100
               postSizes:
+                  maxAttachments: 10
                   maxSize: 60000
                   processingLimit: 3000
                   emojiProcessingLimit: 1000
@@ -125,9 +200,22 @@ data:
               enable: false
               text: "Global alert example <b>with HTML</b>"
               canBeDismissed: true
+          stickersBanner:
+              enable: false
+              src: "https://example.org/stickers_banner.png" # Width - 630px, height - auto
+              caption: "New stickers feature!"
+              link: "/stickers"
           bellsAndWhistles:
               testLabel: false
+          themepacks:
+              disabled: []
+              onTop: ["midnight", "openvk_modern"]
           defaultMobileTheme: ""
+          defaultFeaturePhoneTheme: ""
+          logs: true
+          news:
+              show: false
+              groupId: 1
       
       telemetry:
           plausible:
@@ -159,15 +247,19 @@ data:
                   dsn: "mysql:host=mariadb-eventdb-svc;dbname=openvk_eventdb"
                   user: "openvk"
                   password: "openvk"
+          redis:
+              addr: "redis-svc"
+              port: 6379
+              password: ""
           notificationsBroker:
               enable: false
-              redis:
-                  addr: "redis-svc"
-                  port: 6379
-                  password: ""
               stream:
                   maxlen: 1000
                   prefix: "ovk_notifs"
+          im:
+              enable: false
+              server_url: "http://127.0.0.1:8080"
+              lp_server_addr: "openvk.org"
 kind: ConfigMap
 metadata:
   name: openvk-config

@@ -1,6 +1,12 @@
 chandler:
     debug: false
+    websiteUrl: null
     rootApp: "openvk"
+
+    preferences:
+        logs:
+            enabled: false
+            entitiesNamespace: "openvk\\Web\\Models\\Entities\\"
 
     database:
         dsn: "mysql:host=mariadb-primary;dbname=db"
@@ -16,10 +22,27 @@ chandler:
     captcha:
         enable: false
 
+    email:
+        host: "mail.example.com"
+        port: 465
+        user: "user"
+        pass: "word"
+        addr: "noreply@example.com"
+        ssl: true
+
+    redisUrl: "tcp://redis:6379"
+
+    errorPages:
+        client: "Web/Presenters/templates/@error.latte"
+        server: "Web/Presenters/templates/@server-error.phtml"
+
 openvk:
     debug: false
+    ignorePhpVersion: false
+
     appearance:
         name: "OpenVK Test"
+        searchPlaceholder: "@header_search"
         motd: "Screenshot Test Instance"
     
     mirrors: # list all existing and previous domains without www. Won't work with different port
@@ -27,11 +50,15 @@ openvk:
         - "ovk.local"
 
     preferences:
+        defaultLanguage: "ru"
         femaleGenderPriority: true
         nginxCacheTime: null
         uploads:
             disableLargeUploads: true
             mode: "basic"
+            api:
+                maxFilesPerDomain: 10
+                maxFileSize: 25000000
         shortcodes:
             minLength: 3
             forbiddenNames: []
@@ -52,6 +79,7 @@ openvk:
             forceEmailVerification: false
             forceStrongPassword: false
             disablePasswordRestoring: false
+            disableSubAddressing: false
             enableSu: true
             rateLimits:
                 actions: 9999
@@ -59,25 +87,47 @@ openvk:
                 maxViolations: 9999
                 maxViolationsAge: 9999
                 autoban: false
+                methods:
+                    messages.send:
+                        actions: 15
+                        time: 5
+                    messages.markAsRead:
+                        bypass: true
+                    messages.setActivity:
+                        bypass: true
                 eventsLimit:
                     enable: false
+                    ignoreForAdmins: true
+                    restrictionTime: 86400
+                    list:
+                        groups.create: 5
+                        groups.sub: 50
+                        friends.outgoing_sub: 25
+                        wall.post: 5000
+                        gifts.send: 30
+                        messages.notfriends: 10
         blacklists:
             limit: 100
             applyToAdmins: true
         registration:
             enable: true
             disablingReason: ""
+            redirectAfter: null
             emailWhitelist:
                 enable: false
                 allowedHosts: []
         support:
             supportName: "Agent"
             adminAccount: 1
+            supportAccount: 1
+            devAccount: 1381
+            canSeeTracy: []
             fastAnswers: []
         messages:
             strict: false
         music:
             exposeOriginalURLs: true
+            notAvailableFor: []
         newsfeed:
             ignoredSourcesLimit: 50
         notes:
@@ -99,44 +149,99 @@ openvk:
             showReason: true
         maintenanceMode:
             all: false
+            photos: false
+            videos: false
+            audios: false
+            documents: false
+            messenger: false
+            user: false
+            group: false
+            comment: false
+            gifts: false
+            apps: false
+            notes: false
+            notification: false
+            support: false
+            topics: false
         ton:
             enabled: false
+            address: "🅿"
+            testnet: false # Only for testing purposes.
+            rate: 0.02     # TONs per 1 coin
+            regex: "ovk=([0-9]+)"
+            hint: "ovk=$1"
         menu:
             links: []
         about:
             links: []
         adPoster:
             enable: false
+            src: "https://example.org/ad_poster.jpeg"
+            caption: "Ad caption"
+            link: "https://example.org/product.aspx?id=10&from=ovk"
+        stickers:
+            withdrawTax: 2
+        stickersBanner:
+            enable: false
+            src: "https://example.org/stickers_banner.png"
+            caption: "New stickers feature!"
+            link: "/stickers"
         siteAlert:
             enable: false
             text: "Global alert example <b>with HTML</b>"
             canBeDismissed: true
         bellsAndWhistles:
             testLabel: false
+        themepacks:
+            disabled: []
+            onTop: ["midnight", "openvk_modern"]
         defaultMobileTheme: ""
         defaultFeaturePhoneTheme: ""
         logs: false
         news:
             show: false
+            groupId: 1
 
     telemetry:
         plausible:
             enable: false
+            domain: ""
+            server: ""
         piwik:
             enable: false
+            container: ""
+            site: ""
+            layer: "dataLayer"
         matomo:
             enable: false
+            container: ""
+            site: ""
 
     credentials:
         smsc:
             enable: false
+            client: ""
+            secret: "SECRET_KEY_HERE"
         telegram:
             enable: false
+            token: "TOKEN_HERE"
+            helpdeskChat: ""
         eventDB:
             enable: true
             database:
                 dsn: "mysql:host=mariadb-eventdb;dbname=openvk_eventdb"
                 user: "openvk"
                 password: "openvk"
+        redis:
+            addr: "redis"
+            port: 6379
+            password: ""
         notificationsBroker:
             enable: false
+            stream:
+                maxlen: 1000
+                prefix: "ovk_notifs"
+        im:
+            enable: false
+            server_url: "http://127.0.0.1:8080"
+            lp_server_addr: "openvk.org"

@@ -14,6 +14,7 @@ use openvk\Web\Util\DateTime;
 class Topic extends Postable
 {
     protected $tableName = "topics";
+    public $shortName  = "topic";
     protected $upperNodeReferenceColumnName = "group";
 
     /**
@@ -106,6 +107,11 @@ class Topic extends Postable
             return "/im?join=" . $this->getPrettyId() . "&act=topic";
         }
 
+        return "/topic" . $this->getPrettyId();
+    }
+
+    public function getPageURL(): string
+    {
         return "/topic" . $this->getPrettyId();
     }
 

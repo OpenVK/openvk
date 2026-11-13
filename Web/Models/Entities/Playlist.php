@@ -22,6 +22,8 @@ class Playlist extends MediaCollection
     protected $entityTableName = "audios";
     protected $entityClassName = 'openvk\Web\Models\Entities\Audio';
     protected $allowDuplicates = false;
+    protected $hasVirtualIdColumns = false;
+    public $shortName = "playlist";
 
     private $importTable;
 
@@ -35,10 +37,20 @@ class Playlist extends MediaCollection
         $this->importTable = DatabaseConnection::i()->getContext()->table("playlist_imports");
     }
 
+    public function isPrivate(): bool
+    {
+        return false;
+    }
+
     public function getCoverURL(string $size = "normal"): ?string
     {
         $photo = (new Photos())->get((int) $this->getRecord()->cover_photo_id);
         return is_null($photo) ? "/assets/packages/static/openvk/img/song.jpg" : $photo->getURLBySizeId($size);
+    }
+
+    public function getPageURL(): string
+    {
+        return "/playlist" . $this->getPrettyId() . "?act=comments";
     }
 
     public function getLength(): int

@@ -37,11 +37,21 @@ trait TSubscribable
         $sub  = $ctx->table("subscriptions")->where($data);
         if (!($sub->fetch())) {
             $ctx->table("subscriptions")->insert($data);
+            try {
+                \openvk\Web\Util\Cache::forgetPattern("feed_subs_ids:{$user->getRealId()}:*");
+                \openvk\Web\Util\Cache::forgetPattern("feed_subs_ids:{$user->getId()}:*");
+            } catch (\Throwable $e) {
+            }
 
             return true;
         }
 
         $sub->delete();
+        try {
+            \openvk\Web\Util\Cache::forgetPattern("feed_subs_ids:{$user->getRealId()}:*");
+            \openvk\Web\Util\Cache::forgetPattern("feed_subs_ids:{$user->getId()}:*");
+        } catch (\Throwable $e) {
+        }
         return false;
     }
 

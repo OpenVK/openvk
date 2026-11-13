@@ -31,6 +31,12 @@ abstract class Postable extends Attachable
     public $shortName = "undefined";
     protected $upperNodeReferenceColumnName = "owner";
     protected $containsContextColumns = false;
+    protected $hasVirtualIdColumns = true;
+    /**
+     * Indicates whether access to this entity was authorized via a valid access key.
+     * When true, canBeViewedBy() allows viewing even if the owner's profile is private.
+     */
+    protected bool $accessKeyProvided = false;
 
     public const COMMENTABLE_EVERYBODY = 0;
     public const COMMENTABLE_FRIENDS = 1;
@@ -64,6 +70,13 @@ abstract class Postable extends Attachable
         }
     }
 
+    public function getInteractionOwner(): ?User
+    {
+        $owner = $this->getOwner();
+
+        return $owner instanceof User ? $owner : null;
+    }
+
     public function getSecondOwner(): RowModel
     {
         if (!$this->hasContext()) {
@@ -79,8 +92,17 @@ abstract class Postable extends Attachable
         return (new Clubs())->get($oid * -1);
     }
 
+    public function isUnderContextAndFromAdmin()
+    {
+        return $this->getRecord()->context_admin == 1;
+    }
+
     public function getVirtualId(): int
     {
+        if ($this->hasVirtualIdColumns === false) {
+            return $this->getId();
+        }
+
         return $this->getRecord()->virtual_id;
     }
 
@@ -180,6 +202,27 @@ abstract class Postable extends Attachable
         }
     }
 
+    public function isAccessKeyProvided(): bool
+    {
+        return $this->accessKeyProvided;
+    }
+
+    public function setAccessKeyProvided(bool $provided = true): static
+    {
+        $this->accessKeyProvided = $provided;
+        return $this;
+    }
+
+    public function isValidAccessKey(?string $access_key): bool
+    {
+        $realKey = $this->getAccessKey();
+        if ($access_key === null || $access_key === "" || $realKey === null || $realKey === "") {
+            return false;
+        }
+
+        return hash_equals((string) $realKey, (string) $access_key);
+    }
+
     public function getAccessKey(): ?string
     {
         return $this->getRecord()->access_key;
@@ -187,7 +230,8 @@ abstract class Postable extends Attachable
 
     public function checkAccessKey(?string $access_key): bool
     {
-        if ($this->getAccessKey() === $access_key) {
+        if ($this->isValidAccessKey($access_key)) {
+            $this->setAccessKeyProvided(true);
             return true;
         }
 
@@ -210,7 +254,11 @@ abstract class Postable extends Attachable
 
     public function isAnonymous(): bool
     {
-        return (bool) $this->getRecord()->anonymous;
+        try {
+            return (bool) $this->getRecord()->anonymous;
+        } catch (\Nette\MemberAccessException $e) {
+            return false;
+        }
     }
 
     public function makeNotUnlisted(): void
@@ -287,13 +335,17 @@ abstract class Postable extends Attachable
                 $this->stateChanges("created", time());
             }
 
-            $this->stateChanges("virtual_id", $pCount + 1);
+            if ($this->hasVirtualIdColumns === true) {
+                $this->stateChanges("virtual_id", $pCount + 1);
+            }
 
             if ($this->hasContext()) {
                 $vid_contextual = $this->getContextId();
                 $vCount = $this->getTable()->where("context_id", $vid_contextual)->count();
 
-                $this->stateChanges("context_vid", $vCount + 1);
+                if ($this->hasVirtualIdColumns === true) {
+                    $this->stateChanges("context_vid", $vCount + 1);
+                }
             }
         } /*else {
             $this->stateChanges("edited", time());
@@ -371,6 +423,11 @@ abstract class Postable extends Attachable
             return false;
         }
 
+        $interactionOwner = $this->getInteractionOwner();
+        if ($interactionOwner && $interactionOwner->isReadOnlyFor($user)) {
+            return false;
+        }
+
         if (method_exists($this, "isPrivate") && $this->isPrivate()) {
             return false;
         }
@@ -406,6 +463,17 @@ abstract class Postable extends Attachable
         }
 
         return false;
+    }
+
+    public function canBeInteractedWith(?User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        $interactionOwner = $this->getInteractionOwner();
+
+        return !($interactionOwner && $interactionOwner->isReadOnlyFor($user));
     }
 
     public function getAttachmentString(): string

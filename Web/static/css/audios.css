@@ -995,10 +995,13 @@
     background: rgba(44, 44, 44, 0.8);
     padding: 1px;
     width: 500px;
+    max-width: calc(100vw - 40px);
     height: 37px;
     position: fixed;
     z-index: 1025;
     border-radius: 3px;
+    left: auto !important;
+    right: 20px;
 }
 
 #ajax_audio_player,

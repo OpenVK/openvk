@@ -304,18 +304,14 @@
                             <div n:if="$canAccessAdminPanel || $canAccessHelpdesk || $canAccessReports || $canAccessNsp || $menuLinksAvaiable" class="menu_divider"></div>
                             <a href="/admin" class="link my_admin" n:if="$canAccessAdminPanel" title="{_admin} [Alt+Shift+A]" accesskey="a" rel="nofollow">{_admin}</a>
                             <a href="/support/tickets" class="link my_support" n:if="$canAccessHelpdesk">{_helpdesk}
-                                {if $helpdeskTicketNotAnsweredCount > 0}
-                                    <div class="navigation_counter">
-                                    (<b>{$helpdeskTicketNotAnsweredCount}</b>)
-                                    </div>
-                                {/if}
+                                <object type="internal/link" class="counter shown" n:if="$helpdeskTicketNotAnsweredCount > 0">
+                                    <b>{$helpdeskTicketNotAnsweredCount}</b>
+                                </object>
                             </a>
                             <a n:if="$canAccessReports" href="/scumfeed" class="link my_reports" rel="nofollow">{tr("reports")}
-                                {if $reportNotAnsweredCount > 0}
-                                    <div class="navigation_counter">
-                                    (<b>{$reportNotAnsweredCount}</b>)
-                                    </div>
-                                {/if}
+                                <object type="internal/link" class="counter shown" n:if="$reportNotAnsweredCount > 0">
+                                    <b>{$reportNotAnsweredCount}</b>
+                                </object>
                             </a>
                             <a n:if="$canAccessNsp" href="/noSpam" class="link my_spam" rel="nofollow">
                                 noSpam
@@ -448,9 +444,9 @@
                             <a href="/logout?hash={urlencode($csrfToken)}" class="link">{_menu_logout}</a>
                         {else}
                             <a href="/support" class="link">{_menu_support}
-                                {if $ticketAnsweredCount > 0}
-                                    (<b>{$ticketAnsweredCount}</b>)
-                                {/if}
+                                <object type="internal/link" class="counter shown" n:if="$ticketAnsweredCount > 0">
+                                    <b>{$ticketAnsweredCount}</b>
+                                </object>
                             </a>
                             <a href="/logout?hash={urlencode($csrfToken)}" class="link">{_menu_logout}</a>
                         {/if}

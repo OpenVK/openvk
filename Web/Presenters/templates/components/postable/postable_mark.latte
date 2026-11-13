@@ -1,0 +1,18 @@
+{if !$item->hasContext() || $item->isUnderContextAndFromAdmin()}
+    <a href="{$owner->getURL()}" class='media-page-author-block'>
+        <img class='cCompactAvatars' src="{$owner->getAvatarURL('miniscule')}">
+
+        <div class='media-page-author-block-name'>
+            <b>{$owner->getCanonicalName()}</b>
+        </div>
+    </a>
+{else}
+    {var $owner2 = $item->getOwner(true)}
+    <a href="{$owner2->getURL()}" class='media-page-author-block'>
+        <img class='cCompactAvatars' src="{$owner2->getAvatarURL('miniscule')}">
+
+        <div class='media-page-author-block-name'>
+            <b>{$owner2->getCanonicalName()}</b>
+        </div>
+    </a>
+{/if}

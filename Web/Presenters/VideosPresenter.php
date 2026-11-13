@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace openvk\Web\Presenters;
 
 use openvk\Web\Models\Entities\Video;
+use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Repositories\{Users, Clubs, Videos};
 use Nette\InvalidStateException as ISE;
 
@@ -35,7 +36,7 @@ final class VideosPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
-        if ($owner->getRealId() > 0 && !$owner->getPrivacyPermission('videos.read', $this->user->identity ?? null)) {
+        if (!$owner->canBeViewedBy($this->user->identity) || ($owner->getRealId() > 0 && !$owner->getPrivacyPermission('videos.read', $this->user->identity ?? null))) {
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
@@ -54,7 +55,8 @@ final class VideosPresenter extends OpenVKPresenter
 
     public function renderView(int $owner, int $vId): void
     {
-        $video = $this->videos->getByOwnerAndVID($owner, $vId);
+        $key = $this->queryParam("key");
+        $video = $this->videos->getByOwnerAndVID($owner, $vId, $key);
 
         if (!$video || $video->isDeleted()) {
             $this->notFound();
@@ -66,12 +68,13 @@ final class VideosPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
-        if ($user->getRealId() > 0 && !$user->getPrivacyPermission('videos.read', $this->user->identity ?? null)) {
+        if (!$video->canBeViewedBy($this->user->identity, $key)) {
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
         $this->template->user     = $user;
         $this->template->video    = $video;
+        $this->template->readOnly = $user instanceof User && $user->isReadOnlyFor($this->user->identity);
         $this->template->cCount   = $this->template->video->getCommentsCount();
         $this->template->cPage    = (int) ($this->queryParam("p") ?? 1);
 
@@ -228,6 +231,10 @@ final class VideosPresenter extends OpenVKPresenter
         }
 
         if (method_exists($video, "canBeViewedBy") && !$video->canBeViewedBy($this->user->identity)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
+        if (!$video->canBeInteractedWith($this->user->identity)) {
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 

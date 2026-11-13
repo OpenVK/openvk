@@ -68,10 +68,17 @@ final class AdminPresenter extends OpenVKPresenter
         }
     }
 
-    private function searchResults(object $repo, &$count)
+    private function searchResults(object $repo, &$count, bool $includeDeleted = false)
     {
         $query = $this->queryParam("q") ?? "";
         $page  = (int) ($this->queryParam("p") ?? 1);
+
+        if ($repo instanceof Users) {
+            $found = $repo->find($query, [], ['type' => 'id', 'invert' => false], $includeDeleted);
+            $count = $found->size();
+
+            return $found->page($page, 20);
+        }
 
         $count = $repo->find($query)->size();
         return $repo->find($query)->page($page, 20);
@@ -177,7 +184,10 @@ final class AdminPresenter extends OpenVKPresenter
 
     public function renderUsers(): void
     {
-        $this->template->users = $this->searchResults($this->users, $this->template->count);
+        $showDeleted = (bool) $this->queryParam("deleted");
+        $this->template->showDeleted = $showDeleted;
+        $this->template->users = $this->searchResults($this->users, $count, $showDeleted);
+        $this->template->count = $count;
     }
 
     public function renderUser(int $id): void
@@ -235,7 +245,8 @@ final class AdminPresenter extends OpenVKPresenter
 
     public function renderClubs(): void
     {
-        $this->template->clubs = $this->searchResults($this->clubs, $this->template->count);
+        $this->template->clubs = $this->searchResults($this->clubs, $count);
+        $this->template->count = $count;
     }
 
     public function renderClub(int $id): void
@@ -249,7 +260,13 @@ final class AdminPresenter extends OpenVKPresenter
 
         $this->template->club = $club;
 
-        $this->template->followers = $this->template->club->getFollowers((int) ($this->queryParam("p") ?? 1));
+        if ($this->template->mode === "followers") {
+            $this->template->followers = $this->template->club->getFollowers((int) ($this->queryParam("p") ?? 1), 20);
+            $this->template->count     = $this->template->club->getFollowersCount();
+        } else {
+            $this->template->followers = [];
+            $this->template->count     = 0;
+        }
 
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {
             return;
@@ -338,7 +355,9 @@ final class AdminPresenter extends OpenVKPresenter
         $this->warnIfNoCommerce();
 
         $this->template->act        = $this->queryParam("act") ?? "list";
-        $this->template->categories = iterator_to_array($this->gifts->getCategories((int) ($this->queryParam("p") ?? 1), null, $this->template->count));
+        $count = 0;
+        $this->template->categories = iterator_to_array($this->gifts->getCategories((int) ($this->queryParam("p") ?? 1), null, $count, true));
+        $this->template->count      = $count;
     }
 
     public function renderGiftCategory(string $slug, int $id): void
@@ -359,8 +378,22 @@ final class AdminPresenter extends OpenVKPresenter
             $cat = new GiftCategory();
         }
 
+        if ($this->queryParam("act") === "toggle") {
+            $this->assertNoCSRF();
+            if ($gen) {
+                $this->notFound();
+            }
+
+            $cat->setUnlisted(!$cat->isUnlisted());
+            $cat->save();
+
+            $this->flash("succ", tr($cat->isUnlisted() ? "admin_hidden_from_catalog" : "admin_returned_to_catalog"));
+            $this->redirect($this->giftsReturnPath("/admin/gifts/" . $cat->getSlug() . "." . $cat->getId() . ".meta"));
+        }
+
         $this->template->form = (object) [];
-        $this->template->form->id        = $id;
+        $this->template->form->id       = $id;
+        $this->template->form->unlisted = $gen ? false : $cat->isUnlisted();
         $this->template->form->languages = [];
         foreach (getLanguages() as $language) {
             $language = (object) $language;
@@ -397,6 +430,9 @@ final class AdminPresenter extends OpenVKPresenter
             }
         }
 
+        $cat->setUnlisted(!is_null($this->postParam("unlisted")));
+        $cat->save();
+
         $this->redirect("/admin/gifts/" . $cat->getSlug() . "." . $cat->getId() . ".meta");
     }
 
@@ -412,7 +448,9 @@ final class AdminPresenter extends OpenVKPresenter
         }
 
         $this->template->cat   = $cat;
-        $this->template->gifts = iterator_to_array($cat->getGifts((int) ($this->queryParam("p") ?? 1), 20, $this->template->count));
+        $count = 0;
+        $this->template->gifts = iterator_to_array($cat->getGifts((int) ($this->queryParam("p") ?? 1), 20, $count, true));
+        $this->template->count = $count;
     }
 
     public function renderGift(int $id): void
@@ -430,6 +468,18 @@ final class AdminPresenter extends OpenVKPresenter
 
                 $gift->delete();
                 $this->flashFail("succ", tr("admin_gift_moved_successfully"), tr("admin_gift_moved_to_recycle"));
+                break;
+            case "toggle":
+                $this->assertNoCSRF();
+                if (!$gift) {
+                    $this->notFound();
+                }
+
+                $gift->setUnlisted(!$gift->isUnlisted());
+                $gift->save();
+
+                $this->flash("succ", tr($gift->isUnlisted() ? "admin_hidden_from_catalog" : "admin_returned_to_catalog"));
+                $this->redirect($this->giftsReturnPath("/admin/gifts/id" . $gift->getId()));
                 break;
             case "copy":
             case "move":
@@ -463,12 +513,13 @@ final class AdminPresenter extends OpenVKPresenter
                 }
 
                 $this->template->form = (object) [];
-                $this->template->form->id     = $id;
-                $this->template->form->name   = $gen ? "New Gift (1)" : $gift->getName();
-                $this->template->form->price  = $gen ? 0 : $gift->getPrice();
-                $this->template->form->usages = $gen ? 0 : $gift->getUsages();
-                $this->template->form->limit  = $gen ? -1 : ($gift->getLimit() === INF ? -1 : $gift->getLimit());
-                $this->template->form->pic    = $gen ? null : $gift->getImage(Gift::IMAGE_URL);
+                $this->template->form->id       = $id;
+                $this->template->form->name     = $gen ? "New Gift (1)" : $gift->getName();
+                $this->template->form->price    = $gen ? 0 : $gift->getPrice();
+                $this->template->form->usages   = $gen ? 0 : $gift->getUsages();
+                $this->template->form->limit    = $gen ? -1 : ($gift->getLimit() === INF ? -1 : $gift->getLimit());
+                $this->template->form->pic      = $gen ? null : $gift->getImage(Gift::IMAGE_URL);
+                $this->template->form->unlisted = $gen ? false : $gift->isUnlisted();
 
                 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
                     return;
@@ -481,6 +532,7 @@ final class AdminPresenter extends OpenVKPresenter
                 $gift->setName($this->postParam("name"));
                 $gift->setPrice((int) $this->postParam("price"));
                 $gift->setUsages((int) $this->postParam("usages"));
+                $gift->setUnlisted(!is_null($this->postParam("unlisted")));
                 if (isset($_FILES["pic"]) && $_FILES["pic"]["error"] === UPLOAD_ERR_OK) {
                     if (!$gift->setImage($_FILES["pic"]["tmp_name"])) {
                         $this->flashFail("err", tr("error_when_saving_gift"), tr("error_when_saving_gift_bad_image"));
@@ -503,6 +555,14 @@ final class AdminPresenter extends OpenVKPresenter
         }
     }
 
+    private function giftsReturnPath(string $fallback): string
+    {
+        $ret = (string) ($this->queryParam("ret") ?? "");
+
+        return str_starts_with($ret, "/admin/gifts") ? $ret : $fallback;
+    }
+
+    /** @phpstan-latte-ignore route placeholder without a template */
     public function renderFiles(): void {}
 
     public function renderQuickBan(int $id): void
@@ -549,6 +609,19 @@ final class AdminPresenter extends OpenVKPresenter
         $user->setBlock_Reason(null);
         // $user->setUnblock_time(NULL);
         $user->save();
+        exit(json_encode([ "success" => true ]));
+    }
+
+    public function renderReactivate(int $id): void
+    {
+        $this->assertNoCSRF();
+
+        $user = $this->users->get($id);
+        if (!$user || !$user->isDeactivated()) {
+            exit(json_encode([ "error" => "User is not deactivated" ]));
+        }
+
+        $user->reactivate();
         exit(json_encode([ "success" => true ]));
     }
 
@@ -814,10 +887,11 @@ final class AdminPresenter extends OpenVKPresenter
     {
         $this->template->mode = in_array($this->queryParam("act"), ["audios", "playlists"]) ? $this->queryParam("act") : "audios";
         if ($this->template->mode === "audios") {
-            $this->template->audios = $this->searchResults($this->audios, $this->template->count);
+            $this->template->audios = $this->searchResults($this->audios, $count);
         } else {
-            $this->template->playlists = $this->searchPlaylists($this->template->count);
+            $this->template->playlists = $this->searchPlaylists($count);
         }
+        $this->template->count = $count;
     }
 
     public function renderEditMusic(int $audio_id): void
@@ -894,15 +968,19 @@ final class AdminPresenter extends OpenVKPresenter
             $this->template->obj_type = $obj_type;
         }
 
+        $page = (int) ($this->queryParam("p") ?? 1);
         $logs = iterator_to_array((new Logs())->search($filter));
-        $this->template->logs = $logs;
+        $this->template->logs  = array_slice($logs, ($page - 1) * 20, 20);
+        $this->template->count = sizeof($logs);
         $this->template->object_types = (new Logs())->getTypes();
     }
 
     public function renderStickerPacks(): void
     {
-        $page = (int) ($this->queryParam("p") ?? 1);
-        $this->template->packs = iterator_to_array($this->stickers->getAllPacks($page, null, $this->template->count));
+        $page  = (int) ($this->queryParam("p") ?? 1);
+        $count = 0;
+        $this->template->packs = iterator_to_array($this->stickers->getAllPacks($page, null, $count));
+        $this->template->count = $count;
     }
 
     public function renderStickerPack(int $id): void

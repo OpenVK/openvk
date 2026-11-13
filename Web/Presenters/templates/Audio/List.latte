@@ -1,6 +1,7 @@
 {extends "../@layout.latte"}
 
 {block title}
+    {var $alone_audio = $alone_audio ?? null}
     {if $mode == 'list'}
         {if $ownerId > 0}
             {_audios} {$owner->getMorphedName("genitive", false, false)}
@@ -64,6 +65,7 @@
 {/block}
 
 {block content}
+    {var $alone_audio = $alone_audio ?? null}
     {* Taken from: https://archive.li/P32em *}
 
     {* Must be moved from latte to js *}

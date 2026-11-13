@@ -1009,6 +1009,7 @@ body.manyMsgs .ovk-msg-all.msgbox-stacked-hidden {
 .post.in-window>tbody .post-content .text .really_text,
 .post.in-window>tbody .post-content .text>span {
     font-size: 1.4em;
+    line-height: 1.1;
     font-family: Georgia;
     padding: 0;
 }

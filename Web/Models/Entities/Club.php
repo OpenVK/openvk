@@ -226,9 +226,15 @@ class Club extends RowModel
         return $this->getStartDate()->timestamp() < time() ? true : false;
     }
 
+    // Returns true if it's closed in any way (closed or private)
     public function isClosed(): bool
     {
-        return $this->getRecord()->closed === 1 ? true : false;
+        return $this->getRecord()->closed !== static::OPEN;
+    }
+
+    public function isPrivate(): bool
+    {
+        return $this->getRecord()->closed === static::PRIVATE;
     }
 
     public function isVerified(): bool
@@ -280,11 +286,26 @@ class Club extends RowModel
 
     public function isSubscriptionAccepted(User $user): bool
     {
-        return !is_null($this->getRecord()->related("subscriptions.follower")->where([
-            "follower" => $this->getId(),
-            "target"   => $user->getId(),
-        ])->fetch());
+        return $this->getRecord()->related("subscriptions.target")->where([
+            "follower" => $user->getId(),
+            "target"   => $this->getId(),
+            "model"    => static::class,
+            "flags"    => 0,
+        ])->count("*") === 1;
         ;
+    }
+    public function isJoinRequestSent(User $user): bool
+    {
+        if ($this->isClosed()) {
+            return $this->getRecord()->related("subscriptions.target")->where([
+                "follower" => $user->getId(),
+                "target"   => $this->getId(),
+                "model"    => static::class,
+                "flags"    => 1,
+            ])->count("*") === 1;
+        } else {
+            return false;
+        }
     }
 
     public function getPostViewStats(bool $unique = false): ?array
@@ -356,17 +377,19 @@ class Club extends RowModel
             "follower" => $user->getId(),
         ])->fetch());
 
-        return $subbed && ($this->getOpennesStatus() === static::CLOSED ? $this->isSubscriptionAccepted($user) : true);
+        return $subbed && ($this->isClosed() ? $this->isSubscriptionAccepted($user) : true);
     }
 
-    public function getFollowersQuery(string $sort = "follower ASC"): GroupedSelection
+    public function getFollowersQuery(string $sort = "follower ASC"): ?GroupedSelection
     {
         $query = $this->getRecord()->related("subscriptions.target");
 
-        if ($this->getOpennesStatus() === static::OPEN) {
+        if ($this->getOpennesStatus() !== static::PRIVATE) {
             $query = $query->where("model", "openvk\\Web\\Models\\Entities\\Club")->order($sort);
         } else {
-            return false;
+            // Closed clubs do not expose followers; keep the return type and
+            // let callers work with an empty selection instead of false.
+            $query = $query->where("1=0");
         }
 
         return $query->group("follower");
@@ -481,8 +504,12 @@ class Club extends RowModel
         ])->delete();
     }
 
-    public function canBeModifiedBy(User $user): bool
+    public function canBeModifiedBy(?User $user): bool
     {
+        if ($user === null) {
+            return false;
+        }
+
         $id = $user->getId();
         if ($this->getOwner()->getId() === $id) {
             return true;
@@ -518,9 +545,35 @@ class Club extends RowModel
         $this->save();
     }
 
-    public function canBeViewedBy(?User $user = null)
+    public function canBeViewedBy(?User $user = null, bool $blacklist_check = true, bool $allowModeration = true)
     {
-        return is_null($this->getBanReason());
+        if (!is_null($user)) {
+            if ($this->getOwner()->getId() === $user->getId()) {
+                return true;
+            }
+
+            if ($this->canBeModifiedBy($user)) {
+                return true;
+            }
+
+            if ($this->isBanned()) {
+                return false;
+            }
+
+            if ($this->isClosed() && $this->getSubscriptionStatus($user)) {
+                return true;
+            }
+
+            if (!$this->isClosed()) {
+                return true;
+            }
+        } else {
+            if ($this->isClosed()) {
+                return false;
+            } else {
+                return true;
+            }
+        }
     }
 
     public function getAlert(): ?string
@@ -590,7 +643,7 @@ class Club extends RowModel
         $res->id          = $this->getId();
         $res->name        = $this->getName();
         $res->screen_name = $this->getShortCode() ?? "club" . $this->getId();
-        $res->is_closed   = 0;
+        $res->is_closed   = (int) $this->isClosed();
         $res->type        = $this->isEvent() ? 'event' : 'group';
         $res->is_member   = $user ? (int) $this->getSubscriptionStatus($user) : 0;
         $res->is_admin    = $user ? (int) $this->canBeModifiedBy($user) : 0;
@@ -763,5 +816,14 @@ class Club extends RowModel
     public function getFinishDate(): ?DateTime
     {
         return !is_null($this->getRecord()->finish_date) ? new DateTime($this->getRecord()->finish_date) : null;
+    }
+
+    public function getPrivacyPermission(string $permission, ?User $user = null): bool
+    {
+        if ($this->isDeleted() || $this->isBanned()) {
+            return false;
+        }
+
+        return true;
     }
 }

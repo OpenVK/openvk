@@ -24,14 +24,14 @@
     {var $commentsURL = "/al_comments/create/$model/" . $parent->getId()}
     {var $club = $parent instanceof \openvk\Web\Models\Entities\Post && $parent->getTargetWall() < 0 ? (new openvk\Web\Models\Repositories\Clubs)->get(abs($parent->getTargetWall())) : ($club ?? null)}
     {if !$readOnly}
-        {include "textArea.latte", route => $commentsURL, postOpts => false, graffiti => (bool) ovkGetQuirk("comments.allow-graffiti"), club => $club, custom_id => $custom_id}
+        {include "textArea.latte", route => $commentsURL, postOpts => false, graffiti => (bool) ovkGetQuirk("comments.allow-graffiti"), club => $club, custom_id => $custom_id, is_comments => true, uploadOwner => $club ?? $thisUser}
     {/if}
 </div>
 
 {if sizeof($comments) > 0}
     <div class='scroll_container'>
         <div class='scroll_node' n:foreach="$comments as $comment">
-            {include "comment.latte", comment => $comment, no_reply_button => $readOnly}
+            {include "comment.latte", comment => $comment, no_reply_button => $readOnly, readOnly => $readOnly}
         </div>
     </div>
     <div style="margin-top: 11px;">

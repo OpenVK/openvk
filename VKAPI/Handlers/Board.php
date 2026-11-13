@@ -26,6 +26,10 @@ final class Board extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
+        if (!$club->canBeViewedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
         if (!$club->canBeModifiedBy($this->getUser()) && !$club->isEveryoneCanCreateTopics()) {
             $this->fail(15, "Access denied");
         }
@@ -71,6 +75,10 @@ final class Board extends VKAPIRequestHandler
 
         $club = (new ClubsRepo())->get($group_id);
         if (!$club || !$club->canBeModifiedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
+        if (!$club->canBeViewedBy($this->getUser())) {
             $this->fail(15, "Access denied");
         }
 
@@ -133,6 +141,10 @@ final class Board extends VKAPIRequestHandler
         $topic = (new TopicsRepo())->getTopicById($group_id, $topic_id);
 
         if (!$topic || !$topic->getClub()->canBeModifiedBy($this->getUser())) {
+            return 0;
+        }
+
+        if (!$topic->getClub()->canBeViewedBy($this->getUser())) {
             return 0;
         }
 
