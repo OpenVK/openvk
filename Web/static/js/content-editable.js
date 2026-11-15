@@ -700,37 +700,51 @@
                 wrap.appendChild(textarea);
             }
 
-            const editable = document.createElement('div');
-            const cleanClasses = (textarea.className || '').replace(/\bcontent-editable-fallback\b/g, '').trim();
-            editable.className = 'content-editable ' + (cleanClasses || 'small-textarea');
-            if (textarea.id) {
-                editable.setAttribute('data-target-id', textarea.id);
+            let editable = null;
+            const extras = [];
+            for (let i = 0; i < wrap.children.length; i++) {
+                const child = wrap.children[i];
+                if (child !== textarea && child.classList && child.classList.contains('content-editable') && child.tagName !== 'TEXTAREA') {
+                    if (!editable) {
+                        editable = child;
+                    } else {
+                        extras.push(child);
+                    }
+                }
             }
-            if (textarea.style && textarea.style.cssText) {
-                editable.style.cssText = textarea.style.cssText;
+            for (let i = 0; i < extras.length; i++) {
+                extras[i].parentNode.removeChild(extras[i]);
             }
-            editable.style.display = '';
 
             const placeholder = textarea.getAttribute('placeholder') || '';
-            if (placeholder) {
-                editable.setAttribute('data-placeholder', placeholder);
-            }
-
             const dataSubmit = textarea.getAttribute('data-submit-on-enter');
             const submitOnEnter = options.submitOnEnter !== undefined
                 ? !!options.submitOnEnter
                 : (dataSubmit === 'true' || dataSubmit === '1');
-
             const dataSingle = textarea.getAttribute('data-single-line');
             const singleLine = options.singleLine !== undefined
                 ? !!options.singleLine
                 : (dataSingle === 'true' || dataSingle === '1');
-            if (singleLine) {
-                editable.setAttribute('data-single-line', 'true');
-            }
 
-            // Insert editable right before textarea in DOM
-            wrap.insertBefore(editable, textarea);
+            if (!editable) {
+                editable = document.createElement('div');
+                const cleanClasses = (textarea.className || '').replace(/\bcontent-editable-fallback\b/g, '').trim();
+                editable.className = 'content-editable ' + (cleanClasses || 'small-textarea');
+                if (textarea.id) {
+                    editable.setAttribute('data-target-id', textarea.id);
+                }
+                if (textarea.style && textarea.style.cssText) {
+                    editable.style.cssText = textarea.style.cssText;
+                }
+                editable.style.display = '';
+                if (placeholder) {
+                    editable.setAttribute('data-placeholder', placeholder);
+                }
+                if (singleLine) {
+                    editable.setAttribute('data-single-line', 'true');
+                }
+                wrap.insertBefore(editable, textarea);
+            }
 
             // Hide textarea (it now serves as form target and fallback storage)
             textarea.style.display = 'none';

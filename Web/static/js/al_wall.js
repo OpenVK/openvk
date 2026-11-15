@@ -524,7 +524,7 @@ class PhotoViewer extends Viewer {
             this._addCachedDetailsToEntry(entry, details)
         }
 
-        if (itemId === this.currentId) {
+        if (itemId === this.currentId && context != "pagination") {
             this._getCurrentEntryCacheNode().last().innerHTML = entry.cached;
             this._getCurrentEntryCacheNode().find(".bsdn").nodes.forEach(bsdnInitElement);
         }
@@ -863,9 +863,8 @@ class VideoViewer extends Viewer {
         } else {
             this.modal.getNode().find('#ovk-player-info').html(details);
             this._addCachedDetailsToEntry(entry, details)
+            this._getCurrentEntryCacheNode().last().innerHTML = entry.cached;
         }
-
-        this._getCurrentEntryCacheNode().last().innerHTML = entry.cached;
         this.modal.getNode().find('#ovk-player-info .bsdn').nodes.forEach(item => {
             bsdnInitElement(item);
         });
@@ -1282,6 +1281,7 @@ class PostViewer extends Viewer {
         if (context == "pagination") {
             const htmls = await this._downloadPage(itemId, postfix_);
             this._appendDetailsAsPagination(next, event.target, htmls[1], entry);
+            return;
         }
 
         this._updFrame(entry, true);
