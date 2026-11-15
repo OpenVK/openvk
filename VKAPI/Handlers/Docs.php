@@ -134,6 +134,10 @@ final class Docs extends VKAPIRequestHandler
         foreach ($item_ids as $id) {
             $splitted_id = explode("_", $id);
             $doc = (new Documents())->getDocumentById((int) $splitted_id[0], (int) $splitted_id[1], $splitted_id[2]);
+            if ($doc) {
+                $this->failIfGeoBlocked($doc);
+            }
+
             if (!$doc || $doc->isDeleted()) {
                 continue;
             }

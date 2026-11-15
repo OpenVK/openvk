@@ -8,6 +8,7 @@ use Chandler\Database\DatabaseConnection as DB;
 use openvk\Web\Models\Repositories\{Clubs, Users};
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\Notifications\LikeNotification;
+use openvk\Web\Util\GeoBlock;
 
 class Post extends Postable
 {
@@ -352,6 +353,10 @@ class Post extends Postable
             return false;
         }
 
+        if (GeoBlock::i()->isBlocked($this)) {
+            return false;
+        }
+
         return $this->getWallOwner()->canBeViewedBy($user);
     }
 
@@ -559,6 +564,10 @@ class Post extends Postable
         }
 
         foreach ($this->getChildren() as $child) {
+            if (!$child->canBeViewedBy(null)) {
+                continue;
+            }
+
             if ($child instanceof Photo) {
                 $child_page = $domain . $child->getPageURL();
                 $child_url = $child->getURL();

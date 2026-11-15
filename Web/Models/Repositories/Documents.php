@@ -8,6 +8,7 @@ use openvk\Web\Models\Entities\Document;
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Repositories\Util\EntityStream;
+use openvk\Web\Util\GeoBlock;
 
 class Documents
 {
@@ -180,6 +181,9 @@ class Documents
         if ($order_str) {
             $result->order($order_str);
         }
+
+        GeoBlock::i()->excludeEntity($result, "documents", "document");
+        GeoBlock::i()->excludeOwner($result, "documents.owner");
 
         return new Util\EntityStream("Document", $result);
     }

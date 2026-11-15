@@ -28,7 +28,9 @@ final class Groups extends VKAPIRequestHandler
         $clbs = [];
         if ($user_id == 0) {
             foreach ($this->getUser()->getClubs($offset, $isAdmin, $count, true, true, $isMessages) as $club) {
-                $clbs[] = $club;
+                if (!\openvk\Web\Util\GeoBlock::i()->isBlocked($club)) {
+                    $clbs[] = $club;
+                }
             }
             $clbsCount = $this->getUser()->getClubCount($isAdmin, true, $isMessages);
         } else {
@@ -39,12 +41,16 @@ final class Groups extends VKAPIRequestHandler
                 $this->fail(15, "Access denied");
             }
 
+            $this->failIfGeoBlocked($user);
+
             if (!$user->getPrivacyPermission('groups.read', $this->getUser())) {
                 $this->fail(260, "Access to the groups list is denied due to the user's privacy settings");
             }
 
             foreach ($user->getClubs($offset, $isAdmin, $count, true, true, $isMessages) as $club) {
-                $clbs[] = $club;
+                if (!\openvk\Web\Util\GeoBlock::i()->isBlocked($club)) {
+                    $clbs[] = $club;
+                }
             }
 
             $clbsCount = $user->getClubCount($isAdmin, true, $isMessages);
@@ -126,6 +132,10 @@ final class Groups extends VKAPIRequestHandler
             } else {
                 $clb = $clubs->getByShortURL($rawId);
                 $clubId = $clb ? $clb->getId() : 0;
+            }
+
+            if ($clb !== null && \openvk\Web\Util\GeoBlock::i()->isBlocked($clb)) {
+                continue;
             }
 
             if (is_null($clb)) {
@@ -271,7 +281,13 @@ final class Groups extends VKAPIRequestHandler
 
         $club = (new ClubsRepo())->get($group_id);
 
-        if (!$club || !$club->canBeViewedBy($this->getUser())) {
+        if (!$club) {
+            $this->fail(15, "Access denied");
+        }
+
+        $this->failIfGeoBlocked($club);
+
+        if (!$club->canBeViewedBy($this->getUser())) {
             $this->fail(15, "Access denied");
         }
 

@@ -6,6 +6,7 @@ namespace openvk\Web\Presenters;
 
 use openvk\Web\Models\Repositories\{Users, Notes};
 use openvk\Web\Models\Entities\Note;
+use openvk\Web\Util\GeoBlock;
 
 final class NotesPresenter extends OpenVKPresenter
 {
@@ -25,13 +26,16 @@ final class NotesPresenter extends OpenVKPresenter
         if (!$user) {
             $this->notFound();
         }
+
+        $this->assertGeoVisible($user);
+
         if (!$user->getPrivacyPermission('notes.read', $this->user->identity ?? null)) {
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
 
         $this->template->page  = (int) ($this->queryParam("p") ?? 1);
         $this->template->forceNoLike = $user->isReadOnlyFor($this->user->identity);
-        $this->template->notes = $this->notes->getUserNotes($user, $this->template->page);
+        $this->template->notes = GeoBlock::i()->filterEntities($this->notes->getUserNotes($user, $this->template->page));
         $this->template->count = $this->notes->getUserNotesCount($user);
         $this->template->owner = $user;
     }
@@ -42,6 +46,9 @@ final class NotesPresenter extends OpenVKPresenter
         if (!$note || $note->getOwner()->getId() !== $owner || $note->isDeleted()) {
             $this->notFound();
         }
+
+        $this->assertGeoVisible($note);
+
         if (!$note->getOwner()->getPrivacyPermission('notes.read', $this->user->identity ?? null)) {
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }

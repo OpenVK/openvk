@@ -7,6 +7,7 @@ namespace openvk\Web\Models\Repositories;
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Entities\Note;
 use openvk\Web\Models\Entities\User;
+use openvk\Web\Util\GeoBlock;
 use Nette\Database\Table\ActiveRow;
 
 class Notes
@@ -36,7 +37,12 @@ class Notes
     {
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
         foreach ($this->notes->where("owner", $user->getId())->where("deleted", 0)->order("created $sort")->page($page, $perPage) as $album) {
-            yield new Note($album);
+            $entity = new Note($album);
+            if (GeoBlock::i()->isBlocked($entity)) {
+                continue;
+            }
+
+            yield $entity;
         }
     }
 

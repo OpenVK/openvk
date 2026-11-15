@@ -8,6 +8,7 @@ use openvk\Web\Models\Entities\Postable;
 use openvk\Web\Models\Entities\Comment;
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
+use openvk\Web\Util\GeoBlock;
 
 class Comments
 {
@@ -42,7 +43,12 @@ class Comments
         ])->limit($perPage ?? OPENVK_DEFAULT_PER_PAGE, $offset)->order("created " . $sort);
 
         foreach ($comments as $comment) {
-            yield $this->toComment($comment);
+            $entity = $this->toComment($comment);
+            if ($entity !== null && GeoBlock::i()->isBlocked($entity)) {
+                continue;
+            }
+
+            yield $entity;
         }
     }
 
@@ -56,7 +62,12 @@ class Comments
 
         $comments = array_reverse(iterator_to_array($comments));
         foreach ($comments as $comment) {
-            yield $this->toComment($comment);
+            $entity = $this->toComment($comment);
+            if ($entity !== null && GeoBlock::i()->isBlocked($entity)) {
+                continue;
+            }
+
+            yield $entity;
         }
     }
 
