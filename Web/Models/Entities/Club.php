@@ -729,6 +729,19 @@ class Club extends RowModel
                 case 'members_count':
                     $res->members_count = $this->getFollowersCount();
                     break;
+                case 'member_status':
+                    $st = 0;
+                    if (!$this->isClosed() && $this->getSubscriptionStatus($user)) {
+                        $st = 1;
+                    } else if ($this->isClosed() && $this->isJoinRequestSent($user)) {
+                        $st = 4;
+                    } else if ($this->isClosed() && !$this->isSubscriptionAccepted($user)) {
+                        $st = 1;
+                    } else if ($this->isEvent() && $this->isJoinRequestSent($user)) {
+                        $st = 2;
+                    }
+                    $res->member_status = $st;
+                    break;
                 case 'real_id':
                     $res->real_id = $this->getRealId();
                     break;

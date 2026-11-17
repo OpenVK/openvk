@@ -365,7 +365,8 @@ final class WallPresenter extends OpenVKPresenter
             if ($wallOwner->canBeModifiedBy($this->user->identity)) {
                 $canPost = true;
             } else {
-                $canPost = $wallOwner->canPost();
+                // keeps non-members out of closed clubs
+                $canPost = $wallOwner->canPost() && $wallOwner->canBeViewedBy($this->user->identity);
             }
         } else {
             $canPost = false;

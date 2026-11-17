@@ -174,15 +174,27 @@ final class Groups extends VKAPIRequestHandler
 
         $club = (new ClubsRepo())->get($group_id);
 
-        $isMember = !is_null($this->getUser()) ? (int) $club->getSubscriptionStatus($this->getUser()) : 0;
-
-        if ($isMember == 0) {
-            if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->getUser(), "groups.sub")) {
-                $this->failTooOften();
-            }
-
-            $club->toggleSubscription($this->getUser());
+        if (!$club || $club->isBanned()) {
+            $this->fail(15, "Access denied");
         }
+
+        $user = $this->getUser();
+
+        // else a pending request gets a second, already accepted row
+        if ($club->getSubscriptionStatus($user) || $club->isJoinRequestSent($user)) {
+            return 1;
+        }
+
+        if ($club->isPrivate()) {
+            // TODO invite-only, and invites don't exist yet
+            $this->fail(15, "Access denied");
+        }
+
+        if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($user, "groups.sub")) {
+            $this->failTooOften();
+        }
+
+        $club->toggleSubscription($user, $club->isClosed() ? 1 : 0);
 
         return 1;
     }
@@ -194,10 +206,16 @@ final class Groups extends VKAPIRequestHandler
 
         $club = (new ClubsRepo())->get($group_id);
 
-        $isMember = !is_null($this->getUser()) ? (int) $club->getSubscriptionStatus($this->getUser()) : 0;
+        if (!$club) {
+            $this->fail(15, "Access denied");
+        }
 
-        if ($isMember == 1) {
-            $club->toggleSubscription($this->getUser());
+        $user = $this->getUser();
+
+        if ($club->getSubscriptionStatus($user)) {
+            $club->toggleSubscription($user);
+        } elseif ($club->isJoinRequestSent($user)) {
+            $club->toggleSubscription($user, 1);
         }
 
         return 1;
