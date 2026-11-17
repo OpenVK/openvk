@@ -733,11 +733,11 @@ class Club extends RowModel
                     $st = 0;
                     if (!$this->isClosed() && $this->getSubscriptionStatus($user)) {
                         $st = 1;
-                    } else if ($this->isClosed() && $this->isJoinRequestSent($user)) {
+                    } elseif ($this->isClosed() && $this->isJoinRequestSent($user)) {
                         $st = 4;
-                    } else if ($this->isClosed() && !$this->isSubscriptionAccepted($user)) {
+                    } elseif ($this->isClosed() && !$this->isSubscriptionAccepted($user)) {
                         $st = 1;
-                    } else if ($this->isEvent() && $this->isJoinRequestSent($user)) {
+                    } elseif ($this->isEvent() && $this->isJoinRequestSent($user)) {
                         $st = 2;
                     }
                     $res->member_status = $st;
