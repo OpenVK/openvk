@@ -7,7 +7,7 @@
 
 /* Main page */
 
-"home" = "Główny";
+"home" = "Główna";
 "welcome" = "Zapraszamy";
 
 /* Login */
@@ -15,7 +15,7 @@
 "log_in" = "Zaloguj się";
 "password" = "Hasło";
 "registration" = "Rejestracja";
-"forgot_password" = "Zapomniałem hasła?";
+"forgot_password" = "Zapomniałeś hasła?";
 
 "login_failed" = "Nie można się zalogować";
 "invalid_username_or_password" = "Niepoprawna nazwa użytkownika lub hasło. <a href='/restore'>Zapomniałeś hasła?</a>";
@@ -670,7 +670,7 @@
 "banned_title" = "Ci ban";
 "banned_header" = "Zostałeś zablokowany";
 "banned_alt" = "Użytkownik jest zablokowany.";
-"banned_1" = "Przepraszam, <b>$1</b>, ale zostałeś zablokowany";
+"banned_1" = "Przepraszamy, <b>$1</b>, ale zostałeś zablokowany";
 "banned_2" = "A powód tego jest prosty: <b>$1</b>. Niestety, tym razem musieliśmy Cię zablokować na dobre.";
 "banned_3" = "Nadal możesz <a href=\"/support?act=new\">napisz do działu obsługi</a>, jeśli uważasz, że wystąpił błąd lub <a href=\"/logout?hash=$1\">wyjść</a>.";
 
@@ -856,7 +856,7 @@
 "bday_reminder_text" = "$1 urodziny $2.";
 "bday_and" = " i ";
 "tour_section_2_text_3_3" = "";
-"nospam_audio" = "";
+"nospam_audio" = "Nagrania";
 "faves_zero" = "";
 "size" = "";
 "select_audio" = "";
@@ -871,12 +871,12 @@
 "audios_unlisted" = "";
 "tour_section_11_wordart" = "";
 "full_coverage" = "";
-"nospam_topic" = "";
+"nospam_topic" = "Temy";
 "publish_suggested" = "";
 "going_to_report_app" = "";
 "auditory" = "";
 "playlists_club" = "";
-"forever" = "";
+"forever" = "na zawsze";
 "edited_short" = "";
 "sent" = "";
 "deleted" = "";
@@ -893,7 +893,7 @@
 "s_main" = "";
 "helpdesk_positive_answers" = "";
 "error_uploading_photo" = "";
-"nospam_video" = "";
+"nospam_video" = "Wideo";
 "admin" = "";
 "helpdesk_agent_card" = "";
 "user_blacklisted" = "";
@@ -910,9 +910,9 @@
 "block_params" = "";
 "tour_section_4" = "";
 "error_suggestions_closed" = "";
-"additional_field_place_interests" = "";
+"additional_field_place_interests" = "W \"Interesach\"";
 "admin_commonsettings" = "";
-"link_to_page" = "";
+"link_to_page" = "Link na strone";
 "liked_verb" = "";
 "reports" = "";
 "increase_by" = "";
@@ -920,7 +920,7 @@
 "save_changes" = "";
 "poll_add_option" = "";
 "error_video_no_title" = "";
-"no_found" = "";
+"no_found" = "Nie znaleziono";
 "invalid_real_name" = "";
 "delete_playlist" = "";
 "poll_multi" = "";
@@ -953,7 +953,7 @@
 "no_audios_club" = "";
 "s_order_by_name" = "";
 "admin_user_online_incognito" = "";
-"you_can_add" = "";
+"you_can_add" = "Ty możesz";
 "poll_embed" = "";
 "new_playlist" = "";
 "emp_agent_one" = "";
@@ -984,13 +984,13 @@
 "additional_fields_description" = "";
 "admin_voucher_status_closed" = "";
 "no_photo" = "";
-"nospam_club" = "";
+"nospam_club" = "Grupy";
 "add_image" = "";
-"limited_access_to_page_f" = "";
+"limited_access_to_page_f" = "1$ ograniczyła dostęp do swojej strony.";
 "profile_deactivate_button" = "";
 "audios_group" = "";
 "sure_deleting_photo" = "";
-"count" = "";
+"count" = "Licz";
 "poll_edit_expires" = "";
 "tour_section_6_title_1" = "";
 "media_file_corrupted_or_too_large" = "";
@@ -1004,14 +1004,14 @@
 "friends_online" = "";
 "confirm_m" = "";
 "ifnotlike_title" = "";
-"nospam_comment" = "";
+"nospam_comment" = "Komentarze";
 "notif_0_6_18" = "";
 "transition_is_blocked" = "";
 "admin_overview_notes_other" = "";
 "profile_type" = "";
 "poll" = "";
 "video_is_deleted" = "";
-"relationship_7_prefix" = "";
+"relationship_7_prefix" = "z";
 "audio_ctx_show_count" = "";
 "search_for_videos" = "";
 "appjs_err_funds" = "";
@@ -1021,7 +1021,7 @@
 "documents_sort_size" = "";
 "upload_new_picture" = "";
 "is_x_photos_one" = "";
-"in_group" = "";
+"in_group" = "do grupy";
 "search_by_groups" = "";
 "registration_welcome_2" = "";
 "timezone-420" = "";
@@ -1032,7 +1032,7 @@
 "post_on_user_wall" = "";
 "supports_xhtml" = "";
 "error_code" = "";
-"add_to_friends_m" = "";
+"add_to_friends_m" = "dodaj go do przyjaciół.";
 "nt_mention_in_video" = "";
 "c_permission_removed_from_group" = "";
 "admin_banned_link_regexp" = "";
@@ -1042,11 +1042,11 @@
 "video_uploads_disabled" = "";
 "admin_overview_registrated_users_one" = "";
 "sure_delete_playlist" = "";
-"limited_access_to_page_m" = "";
+"limited_access_to_page_m" = "$1 ograniczył dostęp do swojej strony.";
 "tour_section_10_text_1" = "";
 "apply_voucher" = "";
 "admin_price" = "";
-"email_sent" = "";
+"email_sent" = "Email był wysłany.";
 "admin_banned_link_initiator" = "";
 "logs_id_post" = "";
 "gift_sent_desc" = "";
@@ -1066,7 +1066,7 @@
 "admin_banned_link_description" = "";
 "share_video" = "";
 "track_unknown" = "";
-"error_when_searching" = "";
+"error_when_searching" = "Pomyłka podczas wykonywania";
 "s_order_invert" = "";
 "going_to_report_comment" = "";
 "error_playlist_creating_too_small" = "";
@@ -1091,7 +1091,7 @@
 "profile_deactivate_reason_3_text" = "";
 "tour_section_13_text_2" = "";
 "marital_status_user_id" = "";
-"checkbox_in_registration_unchecked" = "";
+"checkbox_in_registration_unchecked" = "Musisz zgodzić się z polityką prywatności i zasadami w celu rejestracji.";
 "admin_longpool_broken" = "";
 "timezone--765" = "";
 "s_with_photo" = "";
@@ -1144,7 +1144,7 @@
 "failed_to_delete_post" = "";
 "audio_popular" = "";
 "suggested_posts_in_group_by_you_other" = "";
-"nospam_photo" = "";
+"nospam_photo" = "Foto";
 "admin_club_enforceexcludeglobalfeed" = "";
 "subs_coverage" = "";
 "admin_commerce_disabled" = "";
@@ -1179,7 +1179,7 @@
 "no_access_playlists" = "";
 "tour_section_6_text_5" = "";
 "ffmpeg_not_installed" = "";
-"favorite_games" = "";
+"favorite_games" = "Ulubione gry";
 "error_suggestions" = "";
 "x_is_now_hidden" = "";
 "you_have_x_documents_many" = "";
@@ -1193,7 +1193,7 @@
 "faves_photos_empty_tip" = "";
 "error_file_adding_copied" = "";
 "email_change_confirm_message" = "";
-"email_sent_desc" = "";
+"email_sent_desc" = "Otrzymacię instrukcje, jeśli ten adres istneje";
 "document_type_0" = "";
 "error_no_rights_gifts" = "";
 "url_is_banned" = "";
@@ -1225,7 +1225,7 @@
 "go_to_my_documents" = "";
 "poll_public" = "";
 "tour_section_14" = "";
-"show_only_month_and_day" = "";
+"show_only_month_and_day" = "Pokaż tylko miesąc i dzień";
 "ignore_report" = "";
 "url_is_banned_comment" = "";
 "document_type_7" = "";
@@ -1247,7 +1247,7 @@
 "app_uninstall" = "";
 "you_have_x_documents_other" = "";
 "backdrop_save" = "";
-"in_wall" = "";
+"in_wall" = "na moją ściane";
 "logs_id_object" = "";
 "banned_until_time" = "";
 "backdrop_succ_rem" = "";
@@ -1259,7 +1259,7 @@
 "reason" = "";
 "admin_overview_documents_one" = "";
 "search_for_posts" = "";
-"before" = "";
+"before" = "przed";
 "tour_section_4_text_3" = "";
 "registration_welcome_1" = "";
 "audio_embed_processing" = "";
@@ -1278,7 +1278,7 @@
 "show_comments" = "";
 "tour_section_2_text_1_3" = "";
 "mobile_friends" = "";
-"nospam_album" = "";
+"nospam_album" = "Albumy";
 "supported_formats" = "";
 "s_photos" = "";
 "helpdesk" = "";
@@ -1287,10 +1287,10 @@
 "admin_title" = "";
 "backdrop_short" = "";
 "empty_playlist" = "";
-"custom_field_favorite_albums" = "";
-"nospam_message" = "";
+"custom_field_favorite_albums" = "Ulubiony album muzyczny";
+"nospam_message" = "Wiadomości";
 "admin_giftsets_title" = "";
-"register_to_access_page_f" = "";
+"register_to_access_page_f" = "Zaloguj żeby otczymać dostęp do jej strony.";
 "admin_settings_integrations" = "";
 "tour_section_12_text_2_1" = "";
 "faves_few" = "";
@@ -1303,7 +1303,7 @@
 "reg_title" = "";
 "logs_changes" = "";
 "success" = "";
-"additional" = "";
+"additional" = "Dodatkowe";
 "c_users" = "";
 "tour_section_6_title_2" = "";
 "ignore_user" = "";
@@ -1316,7 +1316,7 @@
 "app_err_ava" = "";
 "error_sending_report" = "";
 "app_delete_modal_desc" = "";
-"nospam_playlist" = "";
+"nospam_playlist" = "Playlisty";
 "upload_picts" = "";
 "upload_new_photo" = "";
 "tour_section_6_bottom_text_1" = "";
@@ -1342,7 +1342,7 @@
 "support_ticket_one" = "";
 "change_geo_name" = "";
 "mobile_desktop_version" = "";
-"additional_field_place" = "";
+"additional_field_place" = "Miejsce";
 "note_x_is_now_deleted" = "";
 "app_err_note_desc" = "";
 "error_geolocation" = "";
@@ -1381,7 +1381,7 @@
 "audio_embed_not_found" = "";
 "tour_section_2_title_2" = "";
 "you_have_x_documents_zero" = "";
-"type" = "";
+"type" = "Typ";
 "albums_list_other" = "";
 "death" = "";
 "email_rate_limit_error" = "";
@@ -1395,7 +1395,7 @@
 "profile_deactivate_reason_1" = "";
 "timezone-120" = "";
 "no_nearest_posts" = "";
-"relationship_5_prefix" = "";
+"relationship_5_prefix" = "z";
 "tour_section_12_text_4_3" = "";
 "ui_settings_window" = "";
 "error_video_damaged_file" = "";
@@ -1457,12 +1457,12 @@
 "timezone-540" = "";
 "s_order_by_length" = "";
 "error_declining_invalid_post" = "";
-"email_error" = "";
+"email_error" = "Wystąpił niespodziewany bląd podczas wysłania.";
 "backdrop_succ" = "";
 "document_type_4" = "";
 "appjs_payment_total" = "";
 "admin_newgift" = "";
-"select_section_for_start" = "";
+"select_section_for_start" = "Obierz sekcję żeby zacząć";
 "new_email_address" = "";
 "tour_section_9" = "";
 "geotag" = "";
@@ -1499,7 +1499,7 @@
 "read_in_rss" = "";
 "tour_section_7_text_1" = "";
 "nt_accepted_your_post" = "";
-"closed_page" = "";
+"closed_page" = "Strona zamknięta";
 "no_ignores_count" = "";
 "notes_list_other" = "";
 "error_video_incorrect_link" = "";
@@ -1524,7 +1524,7 @@
 "timezone-600" = "";
 "admin_voucher_status" = "";
 "c_group_not_found" = "";
-"add_to_friends_f" = "";
+"add_to_friends_f" = "dodaj ją do przyjaciół.";
 "geo_place" = "";
 "caution" = "";
 "file_too_big" = "";
@@ -1541,7 +1541,7 @@
 "x_is_admin" = "";
 "nt_new_suggested_posts" = "";
 "tour_next" = "";
-"additional_field_text" = "";
+"additional_field_text" = "Teskt";
 "error_on_server_side" = "";
 "tour_section_2_text_1_2" = "";
 "my_gifts" = "";
@@ -1551,7 +1551,7 @@
 "is_x_photos_other" = "";
 "document_type_5" = "";
 "appjs_payment" = "";
-"custom_field_favorite_anime" = "";
+"custom_field_favorite_anime" = "Ulubione anime";
 "c_remove_from_group" = "";
 "s_any" = "";
 "tour_section_9_bottom_text_3" = "";
@@ -1560,7 +1560,7 @@
 "helpdesk_show_number" = "";
 "bans_history_start" = "";
 "app_err_forbidden_desc" = "";
-"register_to_access_page_m" = "";
+"register_to_access_page_m" = "Zaloguj żeby otczymać dostęp do jego strony.";
 "show_more_comments" = "";
 "change_cover" = "";
 "admin_overview_banned_users_one" = "";
@@ -1642,12 +1642,12 @@
 "app_creation_hint_iframe" = "";
 "there" = "";
 "suggested_by_you_other" = "";
-"nospam_document" = "";
+"nospam_document" = "Dokumenty";
 "admin_banned_link_regexp_description" = "";
 "changes_saved_video_comment" = "";
 "add_image_group" = "";
 "notes_closed" = "";
-"verified_page" = "";
+"verified_page" = "Strona oficjalna";
 "friends_list_other" = "";
 "app_uninstalled" = "";
 "tour_section_5_text_1" = "";
@@ -1731,7 +1731,7 @@
 "search_for_comments" = "";
 "appjs_wall_post" = "";
 "s_apps" = "";
-"checkbox_in_registration" = "";
+"checkbox_in_registration" = "I zgadzam się z polityką X15X87X";
 "appjs_act_likes" = "";
 "detach" = "";
 "going_to_report_post" = "";
@@ -1843,7 +1843,7 @@
 "suggestion_successfully_published" = "";
 "changes_history" = "";
 "s_only_in_names" = "";
-"relationship_3_prefix" = "";
+"relationship_3_prefix" = "z";
 "change_geo_name_new" = "";
 "sign_short" = "";
 "change_video" = "";
@@ -1859,10 +1859,10 @@
 "graffiti" = "";
 "minutes_count_other" = "";
 "album_poster" = "";
-"relationship_4_prefix" = "";
+"relationship_4_prefix" = "z";
 "poll_locked" = "";
-"relationship_2_prefix" = "";
-"additional_field_place_contacts" = "";
+"relationship_2_prefix" = "z";
+"additional_field_place_contacts" = "W \"kontaktach\"";
 "unignore_user" = "";
 "error_adding_source_long" = "";
 "admin_first_known_ip" = "";
@@ -1870,7 +1870,7 @@
 "poll_voter_count_other" = "";
 "aw_legacy_ui" = "";
 "error_suggestions_access" = "";
-"custom_field_favorite_vtubers" = "";
+"custom_field_favorite_vtubers" = "Ulubione vTubeży";
 "suggested_posts_by_you" = "";
 "report_is_ignored" = "";
 "limitations_file_allowed_formats" = "";
@@ -1885,7 +1885,7 @@
 "faves_posts_empty_tip" = "";
 "admin_ownerid" = "";
 "faves" = "";
-"show_my_birthday" = "";
+"show_my_birthday" = "Pokaż moje urodziny";
 "video_processing" = "";
 "listens_count_few" = "";
 "agent_profile_created_2" = "";
@@ -1916,20 +1916,20 @@
 "bans_history_active" = "";
 "section" = "";
 "req_zero" = "";
-"nospam_post" = "";
+"nospam_post" = "Posty";
 "restrict_topic" = "";
 "app_delete_succ" = "";
 "user_blacklisted_you" = "";
 "tour_section_9_text_2_2" = "";
 "content" = "";
 "appjs_act_can" = "";
-"nospam_user" = "";
+"nospam_user" = "Użytkowniki";
 "new_content_reports_other" = "";
 "group_hasnt_audio" = "";
 "tour_section_13_bottom_text_2" = "";
-"custom_field_favorite_manga" = "";
+"custom_field_favorite_manga" = "Ulubiona manga";
 "nt_post_small" = "";
-"subm" = "";
+"subm" = "Zaaplikuj";
 "c_group_removed" = "";
 "friends_add_msg" = "";
 "cant_delete_video" = "";
@@ -1953,7 +1953,7 @@
 "copy_link_to_audio" = "";
 "friends_online_one" = "";
 "error_invalid_wall_value" = "";
-"neutral" = "";
+"neutral" = "oni/im";
 "mobile_menu" = "";
 "url_is_banned_proceed" = "";
 "audios_explicit" = "";
@@ -2008,7 +2008,7 @@
 "is_x_photos_zero" = "";
 "bans_history_removed" = "";
 "report_question" = "";
-"n_user" = "";
+"n_user" = "użytkownik";
 "friends_list_one" = "";
 "profile_deactivate_reason_1_text" = "";
 "take_snapshot" = "";
@@ -2017,12 +2017,12 @@
 "nt_you_were_mentioned_g" = "";
 "post_deact_g" = "";
 "app_balance" = "";
-"user_is_blocked" = "";
+"user_is_blocked" = "Użytkownik jest zablokowany";
 "tour_section_13" = "";
 "tour_section_13_title_1" = "";
 "ec_1" = "";
 "tour_section_6_text_7" = "";
-"limits" = "";
+"limits" = "Limity";
 "bl_remove" = "";
 "audio_requirements" = "";
 "timezone--60" = "";
@@ -2034,7 +2034,7 @@
 "tour_section_3_title_1" = "";
 "tour_section_12_text_1" = "";
 "nt_you_were_mentioned_u" = "";
-"nospam_application" = "";
+"nospam_application" = "Aplikację";
 "suggested_posts_by_everyone" = "";
 "cast_vote" = "";
 "playlist_not_bookmarked" = "";
@@ -2051,7 +2051,7 @@
 "show_less" = "";
 "you_still_have_x_points" = "";
 "timezone--660" = "";
-"post_on_your_wall" = "";
+"post_on_your_wall" = "na twojej ścianie";
 "cookies_popup_content" = "";
 "suggested_by_everyone_zero" = "";
 "note_preview_empty_err" = "";
@@ -2099,12 +2099,12 @@
 "post_is_ad" = "";
 "timezone-180" = "";
 "edit_audio" = "";
-"to_top" = "";
+"to_top" = "Na góre";
 "tour_section_12_text_3" = "";
 "where_for_search" = "";
 "logs_editing" = "";
 "suggested_by_everyone_many" = "";
-"desc_none" = "";
+"desc_none" = "bez opisu";
 "ui_settings_view_of_posts" = "";
 "has_repost" = "";
 "admin_about_version" = "";
@@ -2149,7 +2149,7 @@
 "helpdesk_avatar_url" = "";
 "group_closed_post" = "";
 "time_before" = "";
-"additional_field_name" = "";
+"additional_field_name" = "Nazwa grupy";
 "poll_voter_count_few" = "";
 "ui_settings_view_of_posts_microblog" = "";
 "uploading_new_image" = "";
@@ -2182,7 +2182,7 @@
 "my_audios_small" = "";
 "timezone--300" = "";
 "c_add_to_group" = "";
-"relationship_6_prefix" = "";
+"relationship_6_prefix" = "z";
 "s_order_by_upload_date" = "";
 "admin_uses" = "";
 "error_when_saving_gift_bad_image" = "";
@@ -2196,12 +2196,12 @@
 "unable_to_load_queue" = "";
 "bl_count_zero" = "";
 "ui_settings_timezone" = "";
-"time" = "";
+"time" = "Czas";
 "error_declining_declined_post" = "";
 "admin_audio_length" = "";
 "time_after" = "";
 "set_playlist_name" = "";
-"additional_information" = "";
+"additional_information" = "Informacja dodatkowa";
 "admin_overview_apps_other" = "";
 "suggested_by_you_few" = "";
 "timezone--180" = "";
@@ -2314,7 +2314,7 @@
 "stickers_create_forbidden" = "";
 "conversations_count_title_one" = "";
 "stickers_period_14d" = "";
-"archive_action" = "";
+"archive_action" = "Archiwum";
 "message_deletion_one" = "";
 "view_group_messages" = "";
 "conversation_title_club" = "";
@@ -2355,7 +2355,7 @@
 "friends_online_count_few" = "";
 "month_gen_1" = "";
 "pin_confirmation" = "";
-"restore_all_posts_from_year" = "";
+"restore_all_posts_from_year" = "Odnów wszystkie posty z $1";
 "zero_unread_conversations_error" = "";
 "remove_from_chat" = "";
 "admin_can_create_stickers" = "";
@@ -2445,7 +2445,7 @@
 "messages_agreement_4" = "";
 "view_list" = "";
 "change" = "";
-"post_deleted" = "";
+"post_deleted" = "Post jest usunięnty";
 "event_chat_invite_user_self_neutral" = "";
 "members_count_many" = "";
 "messenger_tab_messenger" = "";
@@ -2630,7 +2630,7 @@
 "stickers_withdraw_receive" = "";
 "stickers_purchased_label" = "";
 "stickers_empty_prompt" = "";
-"archive_all_posts_from_year" = "";
+"archive_all_posts_from_year" = "Zarchiwizuj wszystkie post z $1";
 "month_6" = "";
 "week_day_short_1" = "";
 "friends_online_count_one" = "";
@@ -2655,14 +2655,14 @@
 "location" = "";
 "stickers_gift_self_error" = "";
 "messenger_typing_one_user" = "";
-"archive_more" = "";
+"archive_more" = "Więcej";
 "unpin_message" = "";
 "privacy_setting_write_messages_tip" = "";
 "emoji_group_smileys_emotion" = "";
 "chat_mute_title" = "";
 "friends_online_count_many" = "";
 "messages_unable_to_load_audio" = "";
-"show_next" = "";
+"show_next" = "Pokaż następne";
 "messenger_typing_other" = "";
 "event_chat_pin_message_female" = "";
 "selected_area_chat" = "";
@@ -2670,7 +2670,7 @@
 "week_day_short_2" = "";
 "event_chat_invite_user_self_female" = "";
 "month_gen_10" = "";
-"archive_banner_title" = "";
+"archive_banner_title" = "Ten post jest zarchiwizowany";
 "stickers_withdraw_modal_title" = "";
 "messenger_tab_contact" = "";
 "message_viewers_empty" = "";
@@ -2722,7 +2722,7 @@
 "day_template" = "";
 "delete_for_all" = "";
 "day_template_with_year" = "";
-"unarchive_action" = "";
+"unarchive_action" = "Odnów";
 "conversations_count_title" = "";
 "chat_invite_already_member" = "";
 "message_deletion_confirm" = "";
@@ -2755,12 +2755,12 @@
 "event_chat_moderator_add_female" = "";
 "convo_action_kick" = "";
 "privacy_title_messages" = "";
-"chat_title_self" = "";
+"chat_title_self" = "Ty";
 "reset_invite_link" = "";
 "stickers_gift_front_slot" = "";
 "stickers_gift_already_owned" = "";
 "open_post_comments" = "";
-"archive_more_year" = "";
+"archive_more_year" = "Więcej: 1$";
 "att_tab_videos" = "";
 "privacy_setting_see_online" = "";
 "event_chat_invite_user_verb_male" = "";
@@ -2827,7 +2827,7 @@
 "stickers_uninstall_confirm" = "";
 "im_write_bar_offline_yesterday_female" = "";
 "im_option_disable_animated_stickers" = "";
-"in_chat" = "";
+"in_chat" = "do rozmowy";
 "create_event" = "";
 "reply_to_message_user" = "";
 "stickers_pack_saved" = "";
@@ -2953,7 +2953,7 @@
 "privacy_setting_add_in_chats" = "";
 "stickers_count_few" = "";
 "stickers_recent" = "";
-"close_post_comments" = "";
+"close_post_comments" = "Zamknij komenty";
 "group_messages" = "";
 "stickers_err_bad_slug" = "";
 "no_important_messages" = "";
