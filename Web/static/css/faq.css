@@ -1,0 +1,194 @@
+.faq-q {
+    background: url(/assets/packages/static/openvk/img/bullet_faq.gif) no-repeat;
+    color: #6d6262;
+    cursor: pointer;
+    font-size: 12px;
+    padding-left: 9px;
+    margin-top: 15px;
+    display: block;
+}
+
+.faq-q.active {
+    color: black;
+    font-weight: bold;
+}
+
+.faq-q.compact { margin: 8px 0 0 -4px; }
+
+.faq-q.busy { cursor: wait; }
+
+.faq-more {
+    color: #6d6262;
+    font-size: 12px;
+    margin-top: 8px;
+    display: block;
+    text-transform: lowercase;
+}
+
+.faq-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 37px;
+    padding: 13px 0 26px;
+    margin: -13px 0 -10px;
+    background: url(/assets/packages/static/openvk/img/faq_divider.png) calc(50% - 1px) 0 repeat-y;
+}
+
+.faq-box center { margin-top: 14px; }
+
+.faq-topic {
+    margin: -13px -10px 0;
+    min-height: 250px;
+}
+
+.faq-topic .verticalGrayTabsWrapper { margin-bottom: -10px; }
+
+.faq-topic table { margin-left: 9px; }
+
+.faq-issue {
+    background: #f7f7f7;
+    margin: -13px -10px 13px;
+    padding: 4px 3px 0;
+    border-bottom: solid 1px #d3d3d3;
+}
+
+.faq-issue_subtitle {
+    height: 28px;
+    line-height: 2.4;
+    color: #6d6262;
+    cursor: pointer;
+}
+
+.faq-issue h1, .faq-issue_listItem h1 {
+    font-size: 19px;
+    margin: 0;
+}
+
+.faq-issue p, .faq-issue_listItem p { margin: 6px 0 11px; }
+
+.faq-issue button { margin-bottom: 20px; }
+
+.faq-back {
+    background: #f7f7f7;
+    margin: -3px -3px 11px;
+    padding: 10px 19px;
+    border-bottom: solid 1px #d8d8d8;
+    color: #d8d8d8;
+}
+
+.faq-back a { color: black; }
+
+.faq-box table {
+    width: 45%;
+    margin-left: 3px;
+}
+
+.faq-a {
+    background: #fafafa;
+    padding: 7px 5px;
+    border: 2px solid #ddd;
+    margin: 7px 32px 0 9px;
+}
+
+.faq-a p { margin: 0; }
+
+.faq-h4 { 
+    color: #6d6262; 
+    border-bottom: none;
+    margin-top: 7px;
+}
+
+a.faq-h4 {
+    font-weight: bold;
+    font-size: 12px;
+}
+
+[class^="faq-arrow_"] {
+    background: url(/assets/packages/static/openvk/img/faq_arrow.png);
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    margin-right: 4px;
+    user-select: none;
+}
+
+.faq-arrow_back { background-position: 0 -12px; }
+
+#faq-title input:not(.active), [class^="faq-title_"]:not(.active), #faq-questions table:not(.active) { display: none; }
+
+[class^="faq-title_"] { color: gray; }
+
+#faq-questions table { margin-top: 5px; }
+
+#faq-questions tbody, .faq-table {
+    color: gray;
+    text-align: right;
+}
+
+#faq-questions tbody:not(:first) { border-top: 1px solid #cbcbcb; }
+
+#faq-questions td[colspan="3"] { height: 5px; }
+
+#faq-lang {
+    float: right;
+    width: fit-content;
+    margin-top: 1px;
+}
+
+.faq-warn {
+    color: #9a205e;
+    font-weight: bold;
+}
+
+#faq-icon {
+    background-color: #fff;
+    border: solid 1px #c0cad5;
+    cursor: pointer;
+}
+
+#faq-icon_set {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 196px;
+    justify-content: center;
+    margin: 0 -4px;
+}
+
+#faq-icon_set [class^="faq-icon_"] {
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+#faq-icon_set [class^="faq-icon_"]:hover {
+    background-color: #f6f6f6;
+}
+
+[class^="faq-icon_"] {
+    background: url(/assets/packages/static/openvk/img/faq_icons.png);
+    width: 28px;
+    height: 28px;
+}
+
+.faq-icon_0  { background-position: 0 0; }
+.faq-icon_1  { background-position: 0 -28px; }
+.faq-icon_2  { background-position: 0 -56px; }
+.faq-icon_3  { background-position: 0 -84px; }
+.faq-icon_4  { background-position: 0 -112px; }
+.faq-icon_5  { background-position: 0 -140px; }
+.faq-icon_6  { background-position: 0 -168px; }
+.faq-icon_7  { background-position: 0 -196px; }
+.faq-icon_8  { background-position: 0 -224px; }
+.faq-icon_9  { background-position: 0 -252px; }
+.faq-icon_10 { background-position: 0 -280px; }
+.faq-icon_11 { background-position: 0 -308px; }
+.faq-icon_12 { background-position: 0 -336px; }
+.faq-icon_13 { background-position: 0 -364px; }
+.faq-icon_14 { background-position: 0 -392px; }
+.faq-icon_15 { background-position: 0 -420px; }
+.faq-icon_16 { background-position: 0 -448px; }
+.faq-icon_17 { background-position: 0 -476px; }
+.faq-icon_18 { background-position: 0 -504px; }
+.faq-icon_19 { background-position: 0 -532px; }
+.faq-icon_20 { background-position: 0 -560px; }
+.faq-icon_21 { background-position: 0 -588px; }

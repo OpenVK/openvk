@@ -1,0 +1,19 @@
+example:
+    title:
+        ru: "Заголовок"
+        en: "Title"
+    description:
+        ru: "Описание"
+        en: "Description"
+    for_admin: false
+    enabled: true
+    
+example_admin:
+    title:
+        ru: "Заголовок"
+        en: "Title"
+    description:
+        ru: "Описание для админов если что!!!!!"
+        en: "Description for admins!!!!"
+    for_admin: true
+    enabled: true

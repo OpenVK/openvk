@@ -1,0 +1,7 @@
+faq:
+    title:
+        ru: Часто задаваемые вопросы
+        en: Frequently Asked Questions
+    icon: 2
+    enabled: true
+    for_admin: false
