@@ -719,7 +719,8 @@ final class Wall extends VKAPIRequestHandler
             if ($wallOwner->canBeModifiedBy($this->getUser())) {
                 $canPost = true;
             } else {
-                $canPost = $wallOwner->canPost();
+                // keeps non-members out of closed clubs
+                $canPost = $wallOwner->canPost() && $wallOwner->canBeViewedBy($this->getUser());
             }
         } else {
             $canPost = false;
