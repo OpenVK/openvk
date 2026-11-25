@@ -21,7 +21,7 @@ async function showUserDialog(event, userId) {
                     <div id="write" class="has_emoji_picker model_content_textarea">
                         <div class="textareas">
                             <textarea min-height: 190px; id="_text" class="udlg-textarea expanded-textarea small-textarea" placeholder="${tr('enter_message')}"></textarea>
-                            <div class="emoji_picker_entrypoint" data-stickers="0"></div>
+                            <button type="button" class="emoji_picker_entrypoint" data-stickers="0" aria-label="${tr('smiles')}"></button>
                         </div>
 
                         <div class="post-horizontal"></div>

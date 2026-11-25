@@ -466,7 +466,7 @@ export const FastChatBox = ({
                         onKeyDown=${(e) => onKeyDown(e, chat.peerId)}
                         onFocus=${() => onFocus(chat.peerId)}
                     ></textarea>
-                    <div class="fc_emoji_btn emoji_picker_entrypoint" title="${tr('smiles')}"></div>
+                    <button type="button" class="fc_emoji_btn emoji_picker_entrypoint" title="${tr('smiles')}" aria-label="${tr('smiles')}"></button>
                 </div>
             `}
         </div>

@@ -681,7 +681,7 @@ export const InputArea = ({ editMsg, replyTo, onRemoveReply, onSend, onKeyPress,
                                     onKeyDown=${onKeyPress}
                                 ></textarea>
                             `}
-                            <div class="emoji_picker_entrypoint"></div>
+                            <button type="button" class="emoji_picker_entrypoint" aria-label="${tr('smiles')}"></button>
                         </div>
                         <div class="post-horizontal"></div>
                         <div class="post-vertical"></div>

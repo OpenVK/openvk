@@ -956,6 +956,7 @@ input[class=button] {
 input[type=checkbox],
 input[type=radio] {
     background-color: transparent;
+    touch-action: manipulation;
     -webkit-appearance: none;
     -moz-appearance: none;
     -ms-appearance: none;
@@ -1405,6 +1406,11 @@ h4 {
 }
 
 .emoji_picker_entrypoint {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 0;
+    padding: 0;
+    background-color: transparent;
     width: 16px;
     height: 17px;
     background: url(../img/im/chats.png);
