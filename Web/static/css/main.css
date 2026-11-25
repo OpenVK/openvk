@@ -1404,6 +1404,18 @@ h4 {
     pointer-events: auto;
 }
 
+.emoji.emoji_fallback {
+    display: inline;
+    width: auto;
+    height: auto;
+    background: none;
+    font-size: inherit;
+    line-height: inherit;
+    overflow: visible;
+    cursor: default;
+    white-space: nowrap;
+}
+
 .emoji_picker_entrypoint {
     width: 16px;
     height: 17px;

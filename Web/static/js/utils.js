@@ -578,6 +578,21 @@ function encode_emoji(emoji) {
     return hexString;
 }
 
+const emojiSpriteSupportCache = new Map();
+function emoji_has_sprite(hex) {
+    if (emojiSpriteSupportCache.has(hex)) return emojiSpriteSupportCache.get(hex);
+    if (typeof document === 'undefined' || !document.body) return false;
+
+    const probe = document.createElement('span');
+    probe.className = `emoji emoji_${hex}`;
+    probe.style.cssText = 'position:absolute;visibility:hidden;pointer-events:none;';
+    document.body.appendChild(probe);
+    const supported = getComputedStyle(probe).backgroundImage !== 'none';
+    probe.remove();
+    emojiSpriteSupportCache.set(hex, supported);
+    return supported;
+}
+
 let emojiSequenceRegex;
 try {
     emojiSequenceRegex = new RegExp('[\\p{RGI_Emoji}]', 'gv');
@@ -590,6 +605,9 @@ function encode_emojis(text) {
     return text.replace(emojiSequenceRegex, (emoji) => {
         let es = encode_emoji(emoji);
         if (es === "2764FE0F") es = "2764";
+        if (!emoji_has_sprite(es)) {
+            return `<span class="emoji emoji_fallback">${emoji}</span>`;
+        }
         return `<span class="emoji emoji_${es}">${emoji}</span>`;
     });
 }

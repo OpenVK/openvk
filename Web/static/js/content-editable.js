@@ -24,6 +24,15 @@
         return hex;
     }
 
+    function emojiToHtml(emoji) {
+        let hex = getEmojiHex(emoji);
+        if (hex === '2764FE0F') hex = '2764';
+        if (typeof window.emoji_has_sprite === 'function' && !window.emoji_has_sprite(hex)) {
+            return '<span class="emoji emoji_fallback" contenteditable="false">' + escapeHtml(emoji) + '</span>';
+        }
+        return '<img class="emoji emoji_' + hex + '" src="' + BLANK_GIF + '" alt="' + escapeHtml(emoji) + '" draggable="false" contenteditable="false" />';
+    }
+
     function escapeHtml(str) {
         return (str || '')
             .replace(/&/g, '&amp;')
@@ -60,9 +69,7 @@
                 return '<span class="mention-token" contenteditable="false" data-mention="' + fullMatch + '" style="color: var(--link, #2b587a); user-select: all; cursor: default;">' + displayText + '</span>';
             });
             return escaped.replace(emojiSeqRegex, function (emoji) {
-                let hex = getEmojiHex(emoji);
-                if (hex === '2764FE0F') hex = '2764';
-                return '<img class="emoji emoji_' + hex + '" src="' + BLANK_GIF + '" alt="' + escapeHtml(emoji) + '" draggable="false" contenteditable="false" />';
+                return emojiToHtml(emoji);
             });
         });
         return htmlLines.join('<br>');
@@ -264,8 +271,10 @@
 
             // VK smart click: clicking an emoji or mention positions the caret before or after it based on click offset
             this.el.addEventListener('mousedown', function (e) {
-                if (e.target && e.target.tagName === 'IMG' && (e.target.classList.contains('emoji') || e.target.hasAttribute('alt'))) {
-                    self.editableFocus(e.target, e.offsetX > 8);
+                const emojiEl = e.target.closest ? e.target.closest('.emoji') : null;
+                if (emojiEl && self.el.contains(emojiEl)) {
+                    const rect = emojiEl.getBoundingClientRect();
+                    self.editableFocus(emojiEl, e.clientX > rect.left + rect.width / 2);
                     e.preventDefault();
                     return;
                 }
@@ -471,8 +480,19 @@
 
         // Native insertHTML using document.execCommand with fallback: preserves Undo stack (Ctrl+Z)
         insertHTML(html) {
+            const savedRange = this.saveRange() || this.savedRange;
+            const insertionRange = savedRange && this.el.contains(savedRange.commonAncestorContainer)
+                ? savedRange.cloneRange()
+                : null;
+            const selection = window.getSelection();
             this.el.focus();
-            this.restoreRange();
+            if (insertionRange && selection) {
+                selection.removeAllRanges();
+                selection.addRange(insertionRange);
+                this.savedRange = insertionRange.cloneRange();
+            } else {
+                this.restoreRange();
+            }
             let success = false;
             try {
                 success = document.execCommand('insertHTML', false, html);
@@ -558,10 +578,7 @@
         }
 
         insertEmoji(emoji) {
-            let hex = getEmojiHex(emoji);
-            if (hex === '2764FE0F') hex = '2764';
-            const imgHtml = '<img class="emoji emoji_' + hex + '" src="' + BLANK_GIF + '" alt="' + escapeHtml(emoji) + '" draggable="false" contenteditable="false" />';
-            this.insertHTML(imgHtml);
+            this.insertHTML(emojiToHtml(emoji));
         }
 
         getText() {
