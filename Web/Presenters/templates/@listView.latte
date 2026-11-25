@@ -51,7 +51,7 @@
                                                 {include description, x => $dat}
                                             {/ifset}
                                         </td>
-                                        <td n:ifset="actions" valign="top" class="action_links list_view_item_actions">
+                                        <td n:ifset="actions" valign="top" class="action_links list_view_item_actions {ifset $show_mobile_list_actions}friend_list_actions{/ifset}">
                                             {include actions, x => $dat}
                                         </td>
                                     </tr>
