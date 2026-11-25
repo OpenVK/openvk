@@ -2249,30 +2249,34 @@ async function __uploadToTextarea(file, textareaNode, is_from_messenger = false)
         const temp_url = URL.createObjectURL(file)
         const rand = random_int(0, 1000)
         textareaNode.find('.post-horizontal').append(`<a id='temp_filler${rand}' class="upload-item lagged"><img src='${temp_url}'></a>`)
+        updateMessageSendButtonState(textareaNode)
 
-        const res = await fetch(`/photos/upload?upload_context=${textareaNode.nodes[0].dataset.id}`, {
-            method: 'POST',
-            body: form_data
-        })
-        const json_response = await res.json()
-        if (!json_response.success) {
+        try {
+            const res = await fetch(`/photos/upload?upload_context=${textareaNode.nodes[0].dataset.id}`, {
+                method: 'POST',
+                body: form_data
+            })
+            const json_response = await res.json()
+            if (!json_response.success) {
+                fastError((tr("error_uploading_photo") + json_response.flash.message))
+                return
+            }
+
+            json_response.photos.forEach(photo => {
+                __appendToTextarea({
+                    'type': 'photo',
+                    'preview': photo.url,
+                    'page_url': photo.pretty_id + (photo.access_key ? "?key=" + photo.access_key : ""),
+                    'id': photo.pretty_id + (photo.access_key ? "_" + photo.access_key : ""),
+                    'key': photo.access_key,
+                    'fullsize_url': photo.link,
+                }, textareaNode)
+            })
+        } finally {
             u(`#temp_filler${rand}`).remove()
-            fastError((tr("error_uploading_photo") + json_response.flash.message))
-            return
+            URL.revokeObjectURL(temp_url)
+            updateMessageSendButtonState(textareaNode)
         }
-
-        json_response.photos.forEach(photo => {
-            __appendToTextarea({
-                'type': 'photo',
-                'preview': photo.url,
-                'page_url': photo.pretty_id + (photo.access_key ? "?key=" + photo.access_key : ""),
-                'id': photo.pretty_id + (photo.access_key ? "_" + photo.access_key : ""),
-                'key': photo.access_key,
-                'fullsize_url': photo.link,
-            }, textareaNode)
-        })
-        u(`#temp_filler${rand}`).remove()
-        URL.revokeObjectURL(temp_url)
     } else {
         return
     }
@@ -2803,7 +2807,7 @@ $(document).on('click', '#__notesAttachment', async (e) => {
 })
 
 function showFastVideoUpload(node, event) {
-    const is_from_messenger = event.target.closest(".messenger-layer") != null;
+    const is_from_messenger = isMessageComposer(node) || event.target.closest(".messenger-layer") != null;
     const tmpIm = window.im_variants.getCompromise();
 
     let current_tab = 'file'
@@ -2835,14 +2839,16 @@ function showFastVideoUpload(node, event) {
             const video_name = u(`#_fast_video_upload input[name='name']`).nodes[0].value
             const video_desc = u(`#_fast_video_upload textarea[name='desc']`).nodes[0].value
             let append_result = null
+            let uploadPending = false;
 
             if (video_name.length < 1) {
                 u(`#_fast_video_upload input[name='name']`).nodes[0].focus()
                 return
             }
 
-            const form_data = new FormData
-            switch (current_tab) {
+            try {
+                const form_data = new FormData
+                switch (current_tab) {
                 default:
                 case 'file':
                     const video_file = u(`#_fast_video_upload input[name='blob']`).nodes[0]
@@ -2865,6 +2871,10 @@ function showFastVideoUpload(node, event) {
                         }
                     }
 
+                    if (is_from_messenger) {
+                        setMessageAttachmentUploadPending(node, true);
+                        uploadPending = true;
+                    }
                     window.messagebox_stack[1].getNode().find('.ovk-diag-action button').nodes[1].classList.add('lagged')
                     const fetcher = await fetch(`/videos/upload`, {
                         method: 'POST',
@@ -2896,6 +2906,10 @@ function showFastVideoUpload(node, event) {
                         }
                     }
 
+                    if (is_from_messenger) {
+                        setMessageAttachmentUploadPending(node, true);
+                        uploadPending = true;
+                    }
                     window.messagebox_stack[1].getNode().find('.ovk-diag-action button').nodes[1].classList.add('lagged')
                     const fetcher_yt = await fetch(`/videos/upload`, {
                         method: 'POST',
@@ -2905,26 +2919,29 @@ function showFastVideoUpload(node, event) {
                     append_result = fetcher_yt_results
 
                     break
-            }
+                }
 
-            if (append_result.payload) {
-                append_result = append_result.payload
-                const preview = append_result.image[0]
-                __appendToTextarea({
-                    'type': 'video',
-                    'preview': preview.url,
-                    'page_url': append_result.owner_id + '_' + append_result.id + (append_result.access_key ? '?key=' + append_result.access_key : ""),
-                    'id': append_result.owner_id + '_' + append_result.id + (append_result.access_key ? '_' + append_result.access_key : ""),
-                    'key': append_result.access_key,
-                    'fullsize_preview': preview.url,
-                }, node)
+                if (append_result.payload) {
+                    append_result = append_result.payload
+                    const preview = append_result.image[0]
+                    __appendToTextarea({
+                        'type': 'video',
+                        'preview': preview.url,
+                        'page_url': append_result.owner_id + '_' + append_result.id + (append_result.access_key ? '?key=' + append_result.access_key : ""),
+                        'id': append_result.owner_id + '_' + append_result.id + (append_result.access_key ? '_' + append_result.access_key : ""),
+                        'key': append_result.access_key,
+                        'fullsize_preview': preview.url,
+                    }, node)
 
-                window.messagebox_stack.forEach(msg_ => {
-                    msg_.close()
-                })
-            } else {
-                fastError(append_result.flash.message)
-                msg.close()
+                    window.messagebox_stack.forEach(msg_ => {
+                        msg_.close()
+                    })
+                } else {
+                    fastError(append_result.flash.message)
+                    msg.close()
+                }
+            } finally {
+                if (uploadPending) setMessageAttachmentUploadPending(node, false);
             }
         }]
     })

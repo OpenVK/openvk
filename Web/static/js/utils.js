@@ -178,6 +178,35 @@ function collect_attachments(target) {
     return horizontal_array.concat(vertical_array)
 }
 
+function getMessageComposerRoot(target) {
+    const node = target?.nodes?.[0] || target;
+    return node?.closest?.('#write') || node;
+}
+
+function isMessageComposer(target) {
+    const root = getMessageComposerRoot(target);
+    return !!root && !!(root.closest?.('.messenger-layer') || root.querySelector?.('.input--messagebox-buttons .button'));
+}
+
+function updateMessageSendButtonState(target) {
+    const root = getMessageComposerRoot(target);
+    const button = root?.querySelector?.('.input--messagebox-buttons .button');
+    if (!button) return;
+
+    const pendingUploads = Number(root.dataset.pendingMessageUploads || 0) > 0;
+    const photoUpload = !!root.querySelector('.post-horizontal > .upload-item.lagged');
+    button.disabled = pendingUploads || photoUpload;
+}
+
+function setMessageAttachmentUploadPending(target, pending) {
+    const root = getMessageComposerRoot(target);
+    if (!root?.dataset) return;
+
+    const count = Number(root.dataset.pendingMessageUploads || 0);
+    root.dataset.pendingMessageUploads = String(Math.max(0, count + (pending ? 1 : -1)));
+    updateMessageSendButtonState(root);
+}
+
 function getRemainingTime(fullTime, time) {
     let timer = fullTime - time
 
