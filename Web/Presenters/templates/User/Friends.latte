@@ -1,5 +1,6 @@
 {extends "../@listView.latte"}
 {var $perPage = 6} {* Why 6? Check User::_abstractRelationGenerator *}
+{var $show_mobile_list_actions = true}
 
 {block title}
     {include "Friends/Title.latte", act => $act}

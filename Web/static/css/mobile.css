@@ -2426,6 +2426,10 @@
         right: 0;
     }
 
+    .list_view_item_actions.friend_list_actions {
+        display: table-cell;
+    }
+
     .content .list_view_item_actions {
         min-width: 140px !important;
     }
