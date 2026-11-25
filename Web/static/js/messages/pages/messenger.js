@@ -892,6 +892,11 @@ export class Messenger {
 
     // onSendMessageButtonClick
     async onSendMessage() {
+        const messageBox = document.querySelector('.messenger-app--input---messagebox');
+        const writeBox = messageBox?.closest('#write');
+        if (Number(writeBox?.dataset.pendingMessageUploads || 0) > 0
+            || messageBox?.querySelector('.post-horizontal > .upload-item.lagged')) return false;
+
         const _tmp_atts = collect_attachments(u('.messenger-app--input---messagebox'));
         const win = this.getWindow();
         const rawText = win ? (win.getCurrentText() || '') : '';

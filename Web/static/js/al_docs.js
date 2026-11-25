@@ -1,7 +1,7 @@
 function showDocumentUploadDialog(target = null, append_to_url = null, after_upload = null, textareaNode = null)
 {
     let file = null
-    const is_from_messenger = textareaNode && textareaNode.closest(".messenger-layer").length > 0;
+    const is_from_messenger = isMessageComposer(textareaNode);
     const cmsg = new CMessageBox({
         title: tr("document_uploading_in_general"),
         body: `
@@ -80,32 +80,37 @@ function showDocumentUploadDialog(target = null, append_to_url = null, after_upl
                     fd.append("return_template", "1");
                 }
 
-                const endpoint_url = `/docs/upload` + (!isNaN(append_to_url) ? "?gid="+append_to_url : '')
-                const fetcher = await fetch(endpoint_url, {
-                    method: 'POST',
-                    body: fd,
-                })
-                let is_success = false;
-                let payload = null;
+                if (is_from_messenger) setMessageAttachmentUploadPending(textareaNode, true);
+                try {
+                    const endpoint_url = `/docs/upload` + (!isNaN(append_to_url) ? "?gid="+append_to_url : '')
+                    const fetcher = await fetch(endpoint_url, {
+                        method: 'POST',
+                        body: fd,
+                    })
+                    let is_success = false;
+                    let payload = null;
 
-                if (is_from_messenger == true) {
-                    payload = await fetcher.text();
-                    is_success = payload != null;
-                } else {
-                    payload = await fetcher.json();
-                    is_success = payload.success;
-                }
-
-                if(is_success == true) {
-                    if(target != "search") {
-                        window.router.route(location.href)
+                    if (is_from_messenger == true) {
+                        payload = await fetcher.text();
+                        is_success = payload != null;
                     } else {
-                        if (after_upload) {
-                            await after_upload(payload);
-                        }
+                        payload = await fetcher.json();
+                        is_success = payload.success;
                     }
-                } else {
-                    fastError(escapeHtml(payload.flash.message))
+
+                    if(is_success == true) {
+                        if(target != "search") {
+                            window.router.route(location.href)
+                        } else {
+                            if (after_upload) {
+                                await after_upload(payload);
+                            }
+                        }
+                    } else {
+                        fastError(escapeHtml(payload.flash.message))
+                    }
+                } finally {
+                    if (is_from_messenger) setMessageAttachmentUploadPending(textareaNode, false);
                 }
             }, Function.noop],
         })
@@ -496,7 +501,7 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_arg =
     })
     msg.getNode().on("click", "#_doc_picker_upload", async (e) => {
         showDocumentUploadDialog("search", source_arg >= 0 ? NaN : Math.abs(source_arg), async (payload) => {
-            const is_from_messenger = textareaNode.closest(".messenger-layer").length > 0;
+            const is_from_messenger = isMessageComposer(textareaNode);
             if (is_from_messenger == true) {
                 // ((((((((
                 const pre = new DOMParser().parseFromString(payload, "text/html");
