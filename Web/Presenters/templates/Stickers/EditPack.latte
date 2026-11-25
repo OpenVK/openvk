@@ -262,7 +262,7 @@
                                               data-single-line="true"
                                               rows="1">{$stk->getEmoji()}</textarea>
                                 </div>
-                                <div class="emoji_picker_entrypoint" title="{_stickers_emoji_placeholder}"></div>
+                                <button type="button" class="emoji_picker_entrypoint" title="{_stickers_emoji_placeholder}" aria-label="{_stickers_emoji_placeholder}"></button>
                             </div>
                             <label class="existing_sticker_label_main">
                                 <input type="radio" name="main_sticker_id" value="{$stk->getId()}" {if $pack->getMainSticker() && $pack->getMainSticker()->getId() === $stk->getId()}checked{/if} />
@@ -510,9 +510,11 @@
                         file._draftEmoji = emojiTextarea.value;
                     });
 
-                    var pickerBtn = document.createElement('div');
+                    var pickerBtn = document.createElement('button');
                     pickerBtn.className = 'emoji_picker_entrypoint';
+                    pickerBtn.type = 'button';
                     pickerBtn.title = {_stickers_emoji_placeholder};
+                    pickerBtn.setAttribute('aria-label', {_stickers_emoji_placeholder});
 
                     ceWrap.appendChild(emojiTextarea);
                     emojiWrap.appendChild(ceWrap);

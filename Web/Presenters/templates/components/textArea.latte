@@ -15,7 +15,7 @@
                 class => "small-textarea",
                 style => "width: 100%; resize: none;"
             }
-            <div class="emoji_picker_entrypoint" {if ($postOpts ?? true)}data-stickers="0"{/if}></div>
+            <button type="button" class="emoji_picker_entrypoint" aria-label="{_smiles}" {if ($postOpts ?? true)}data-stickers="0"{/if}></button>
         </div>
 
         <div>
