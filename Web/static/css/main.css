@@ -1404,8 +1404,15 @@ h4 {
     pointer-events: auto;
 }
 
-.emoji[class*="emoji_"] {
+.emoji.emoji_fallback {
+    width: auto;
+    height: auto;
+    background: none;
+    font-size: inherit;
+    line-height: inherit;
     overflow: visible;
+    cursor: default;
+    white-space: nowrap;
 }
 
 .emoji_picker_entrypoint {

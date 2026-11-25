@@ -25,6 +25,9 @@
     function emojiToHtml(emoji) {
         let hex = getEmojiHex(emoji);
         if (hex === '2764FE0F') hex = '2764';
+        if (typeof window.emoji_has_sprite === 'function' && !window.emoji_has_sprite(hex)) {
+            return '<span class="emoji emoji_fallback" contenteditable="false">' + escapeHtml(emoji) + '</span>';
+        }
         return '<span class="emoji emoji_' + hex + '" contenteditable="false">' + escapeHtml(emoji) + '</span>';
     }
 
@@ -475,8 +478,19 @@
 
         // Native insertHTML using document.execCommand with fallback: preserves Undo stack (Ctrl+Z)
         insertHTML(html) {
+            const savedRange = this.saveRange() || this.savedRange;
+            const insertionRange = savedRange && this.el.contains(savedRange.commonAncestorContainer)
+                ? savedRange.cloneRange()
+                : null;
+            const selection = window.getSelection();
             this.el.focus();
-            this.restoreRange();
+            if (insertionRange && selection) {
+                selection.removeAllRanges();
+                selection.addRange(insertionRange);
+                this.savedRange = insertionRange.cloneRange();
+            } else {
+                this.restoreRange();
+            }
             let success = false;
             try {
                 success = document.execCommand('insertHTML', false, html);
