@@ -1404,6 +1404,10 @@ h4 {
     pointer-events: auto;
 }
 
+.emoji[class*="emoji_"] {
+    overflow: visible;
+}
+
 .emoji_picker_entrypoint {
     width: 16px;
     height: 17px;

@@ -1,8 +1,6 @@
 (function (window) {
     'use strict';
 
-    const BLANK_GIF = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-
     let emojiSeqRegex;
     try {
         emojiSeqRegex = new RegExp('[\\p{RGI_Emoji}]', 'gv');
@@ -22,6 +20,12 @@
             hex += emoji.charCodeAt(i).toString(16).padStart(4, '0').toUpperCase();
         }
         return hex;
+    }
+
+    function emojiToHtml(emoji) {
+        let hex = getEmojiHex(emoji);
+        if (hex === '2764FE0F') hex = '2764';
+        return '<span class="emoji emoji_' + hex + '" contenteditable="false">' + escapeHtml(emoji) + '</span>';
     }
 
     function escapeHtml(str) {
@@ -60,9 +64,7 @@
                 return '<span class="mention-token" contenteditable="false" data-mention="' + fullMatch + '" style="color: var(--link, #2b587a); user-select: all; cursor: default;">' + displayText + '</span>';
             });
             return escaped.replace(emojiSeqRegex, function (emoji) {
-                let hex = getEmojiHex(emoji);
-                if (hex === '2764FE0F') hex = '2764';
-                return '<img class="emoji emoji_' + hex + '" src="' + BLANK_GIF + '" alt="' + escapeHtml(emoji) + '" draggable="false" contenteditable="false" />';
+                return emojiToHtml(emoji);
             });
         });
         return htmlLines.join('<br>');
@@ -264,8 +266,10 @@
 
             // VK smart click: clicking an emoji or mention positions the caret before or after it based on click offset
             this.el.addEventListener('mousedown', function (e) {
-                if (e.target && e.target.tagName === 'IMG' && (e.target.classList.contains('emoji') || e.target.hasAttribute('alt'))) {
-                    self.editableFocus(e.target, e.offsetX > 8);
+                const emojiEl = e.target.closest ? e.target.closest('.emoji') : null;
+                if (emojiEl && self.el.contains(emojiEl)) {
+                    const rect = emojiEl.getBoundingClientRect();
+                    self.editableFocus(emojiEl, e.clientX > rect.left + rect.width / 2);
                     e.preventDefault();
                     return;
                 }
@@ -558,10 +562,7 @@
         }
 
         insertEmoji(emoji) {
-            let hex = getEmojiHex(emoji);
-            if (hex === '2764FE0F') hex = '2764';
-            const imgHtml = '<img class="emoji emoji_' + hex + '" src="' + BLANK_GIF + '" alt="' + escapeHtml(emoji) + '" draggable="false" contenteditable="false" />';
-            this.insertHTML(imgHtml);
+            this.insertHTML(emojiToHtml(emoji));
         }
 
         getText() {
