@@ -59,8 +59,12 @@ class Poll extends Attachable
         return $res;
     }
 
-    public function getUserVote(User $user): ?array
+    public function getUserVote(?User $user): ?array
     {
+        if ($user === null) {
+            return null;
+        }
+
         $ctx       = DatabaseConnection::i()->getContext();
         $votedOpts = $ctx->table("poll_votes")
             ->where(["user" => $user->getId(), "poll" => $this->getId()]);
@@ -181,14 +185,14 @@ class Poll extends Attachable
         return false;
     }
 
-    public function hasVoted(User $user): bool
+    public function hasVoted(?User $user): bool
     {
-        return !is_null($this->getUserVote($user));
+        return $user !== null && !is_null($this->getUserVote($user));
     }
 
-    public function canVote(User $user): bool
+    public function canVote(?User $user): bool
     {
-        return $this->canBeVotedBy($user) && !$this->hasEnded() && !$this->hasVoted($user) && !is_null($this->getAttachedPost()) && $this->getAttachedPost()->getSuggestionType() == 0;
+        return $user !== null && $this->canBeVotedBy($user) && !$this->hasEnded() && !$this->hasVoted($user) && !is_null($this->getAttachedPost()) && $this->getAttachedPost()->getSuggestionType() == 0;
     }
 
     public function canBeVotedBy(?User $user): bool

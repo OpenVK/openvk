@@ -1724,7 +1724,7 @@ final class Wall extends VKAPIRequestHandler
         }
 
         $userVote = [];
-        foreach ($attachment->getUserVote($user) as $vote) {
+        foreach ($attachment->getUserVote($user) ?? [] as $vote) {
             $userVote[] = $vote[0];
         }
 

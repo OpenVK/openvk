@@ -34,7 +34,7 @@ final class Polls extends VKAPIRequestHandler
         }
 
         $userVote = [];
-        foreach ($poll->getUserVote($this->getUser()) as $vote) {
+        foreach ($poll->getUserVote($this->getUser()) ?? [] as $vote) {
             $userVote[] = $vote[0];
         }
 
