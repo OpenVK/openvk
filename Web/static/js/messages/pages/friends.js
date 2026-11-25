@@ -82,20 +82,19 @@ export class FriendsPage extends IMPage {
     }
 
     async onCreateChat(e) {
-        toggleUnclickability(e.target, true);
-
         const ids = [];
         this.selected_friends.forEach(peer => {
             ids.push(peer.id || peer);
         });
 
-        if (this.options.referrer == "add_new") {
-            if (ids.length === 0) {
-                fastErrortr("error_chat_not_enough_friends");
-                toggleUnclickability(e.target, false);
-                return;
-            }
+        if (ids.length === 0) {
+            fastError(tr("error_chat_not_enough_friends"));
+            return;
+        }
 
+        toggleUnclickability(e.target, true);
+
+        if (this.options.referrer == "add_new") {
             try {
                 await window.OVKAPI.call("messages.addChatUser", {
                     "peer_id": this.options.convo_id,
@@ -111,12 +110,6 @@ export class FriendsPage extends IMPage {
         }
 
         let title = this._set_name ? this.name : "";
-
-        if (ids.length < 0) {
-            fastError(tr("error_chat_not_enough_friends"));
-            toggleUnclickability(e.target, false);
-            return;
-        }
 
         try {
             const resp = await window.OVKAPI.call('messages.createChat', {
