@@ -1405,6 +1405,7 @@ h4 {
 }
 
 .emoji.emoji_fallback {
+    display: inline;
     width: auto;
     height: auto;
     background: none;

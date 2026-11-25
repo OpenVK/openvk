@@ -1,6 +1,8 @@
 (function (window) {
     'use strict';
 
+    const BLANK_GIF = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
     let emojiSeqRegex;
     try {
         emojiSeqRegex = new RegExp('[\\p{RGI_Emoji}]', 'gv');
@@ -28,7 +30,7 @@
         if (typeof window.emoji_has_sprite === 'function' && !window.emoji_has_sprite(hex)) {
             return '<span class="emoji emoji_fallback" contenteditable="false">' + escapeHtml(emoji) + '</span>';
         }
-        return '<span class="emoji emoji_' + hex + '" contenteditable="false">' + escapeHtml(emoji) + '</span>';
+        return '<img class="emoji emoji_' + hex + '" src="' + BLANK_GIF + '" alt="' + escapeHtml(emoji) + '" draggable="false" contenteditable="false" />';
     }
 
     function escapeHtml(str) {
