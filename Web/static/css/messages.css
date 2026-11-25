@@ -3327,7 +3327,6 @@ body:has(#im_container.at_page) .page-wrap {
 }
 
 .im-search-calendar-btn {
-    width: 25px;
     height: 24px;
     padding: 0;
     display: inline-flex;
