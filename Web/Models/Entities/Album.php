@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
 
 use openvk\Web\Models\Repositories\Photos;
+use openvk\Web\Util\GeoBlock;
 
 class Album extends MediaCollection
 {
@@ -79,6 +80,10 @@ class Album extends MediaCollection
     public function canBeViewedBy(?User $user = null, bool $allowModeration = true): bool
     {
         if ($this->isDeleted()) {
+            return false;
+        }
+
+        if (GeoBlock::i()->isBlocked($this)) {
             return false;
         }
 

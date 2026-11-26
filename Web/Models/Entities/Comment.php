@@ -7,6 +7,7 @@ namespace openvk\Web\Models\Entities;
 use openvk\Web\Models\Repositories\{Clubs, Comments};
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{Note, Playlist};
+use openvk\Web\Util\GeoBlock;
 
 class Comment extends Post
 {
@@ -146,6 +147,10 @@ class Comment extends Post
     public function canBeViewedBy(?User $user = null): bool
     {
         if ($this->isDeleted() || $this->getTarget()->isDeleted()) {
+            return false;
+        }
+
+        if (GeoBlock::i()->isBlocked($this)) {
             return false;
         }
 

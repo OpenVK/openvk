@@ -7,6 +7,7 @@ namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\{Comment, Notifications\MentionNotification, Notifications\ReplyCommentNotification, Photo, Video, User, Topic, Post, Postable};
 use openvk\Web\Models\Entities\Notifications\CommentNotification;
 use openvk\Web\Models\Repositories\{Comments, Clubs, Videos, Photos, Audios};
+use openvk\Web\Util\GeoBlock;
 use Nette\InvalidStateException as ISE;
 
 final class CommentPresenter extends OpenVKPresenter
@@ -75,6 +76,14 @@ final class CommentPresenter extends OpenVKPresenter
 
         if (!$entity) {
             $this->notFound();
+        }
+
+        if (GeoBlock::i()->isBlocked($entity)) {
+            if (GeoBlock::i()->isAdminBypass()) {
+                $this->template->geoBlocked = true;
+            } else {
+                $this->flashFail("err", tr("forbidden"), tr("geo_blocked"), 0, $isAjax);
+            }
         }
 
         if (!$entity->canBeViewedBy($this->user->identity)) {

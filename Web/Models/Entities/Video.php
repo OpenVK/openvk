@@ -7,6 +7,7 @@ namespace openvk\Web\Models\Entities;
 use openvk\Web\Util\Shell\Shell;
 use openvk\Web\Util\Shell\Exceptions\{ShellUnavailableException, UnknownCommandException};
 use openvk\Web\Models\VideoDrivers\VideoDriver;
+use openvk\Web\Util\GeoBlock;
 use Nette\InvalidStateException as ISE;
 
 define("VIDEOS_FRIENDLY_ERROR", "Uploads are disabled on this instance :<");
@@ -393,6 +394,10 @@ class Video extends Media
     public function canBeViewedBy(?User $user = null, ?string $access_key = null, bool $allowModeration = true): bool
     {
         if ($this->isDeleted()) {
+            return false;
+        }
+
+        if (GeoBlock::i()->isBlocked($this)) {
             return false;
         }
 

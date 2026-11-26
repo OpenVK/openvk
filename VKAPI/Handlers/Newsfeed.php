@@ -68,6 +68,11 @@ final class Newsfeed extends VKAPIRequestHandler
                     ->where("? >= created", $endTime);
 
             foreach ($posts->limit($fetchCap) as $post) {
+                $entity = (new PostsRepo())->get($post->id);
+                if (!$entity || \openvk\Web\Util\GeoBlock::i()->isBlocked($entity)) {
+                    continue;
+                }
+
                 $candidates[] = ['type' => 'post', 'id' => $post->id, 'created' => $post->created];
             }
         }
@@ -91,6 +96,11 @@ final class Newsfeed extends VKAPIRequestHandler
             $photoGroups = [];
             $groupOrder  = [];
             foreach ($photos->limit($photoFetchCap) as $photo) {
+                $photoEntity = (new PhotosRepo())->get($photo->id);
+                if (!$photoEntity || \openvk\Web\Util\GeoBlock::i()->isBlocked($photoEntity)) {
+                    continue;
+                }
+
                 $owner = (int) $photo->owner;
                 $day   = intdiv((int) $photo->created, 86400);
                 $key   = "{$owner}_{$day}";
@@ -126,6 +136,11 @@ final class Newsfeed extends VKAPIRequestHandler
                     ->where("? >= created", $endTime);
 
             foreach ($videos->limit($fetchCap) as $video) {
+                $videoEntity = (new VideosRepo())->get($video->id);
+                if (!$videoEntity || \openvk\Web\Util\GeoBlock::i()->isBlocked($videoEntity)) {
+                    continue;
+                }
+
                 $candidates[] = ['type' => 'video', 'id' => $video->id, 'created' => $video->created, 'owner' => (int) $video->owner];
             }
         }
@@ -374,7 +389,7 @@ final class Newsfeed extends VKAPIRequestHandler
 
             foreach ($posts as $item) {
                 $post   = (new PostsRepo())->get($item->id);
-                if (!$post || $post->isDeleted()) {
+                if (!$post || $post->isDeleted() || \openvk\Web\Util\GeoBlock::i()->isBlocked($post)) {
                     continue;
                 }
 
@@ -388,6 +403,11 @@ final class Newsfeed extends VKAPIRequestHandler
         }
 
         foreach ($posts as $post) {
+            $entity = (new PostsRepo())->get($post->id);
+            if (!$entity || \openvk\Web\Util\GeoBlock::i()->isBlocked($entity)) {
+                continue;
+            }
+
             $rposts[] = $post->wall . "_" . $post->virtual_id;
             $lastPost = $post;
         }
@@ -442,7 +462,12 @@ final class Newsfeed extends VKAPIRequestHandler
         $rposts = [];
         $lastPost = null;
         foreach ($queryBase->limit($count) as $post) {
-            $rposts[] = $postsRepo->get($post->id)->getPrettyId();
+            $entity = $postsRepo->get($post->id);
+            if (!$entity || \openvk\Web\Util\GeoBlock::i()->isBlocked($entity)) {
+                continue;
+            }
+
+            $rposts[] = $entity->getPrettyId();
             $lastPost = $post;
         }
 

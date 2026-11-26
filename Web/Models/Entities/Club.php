@@ -6,6 +6,7 @@ namespace openvk\Web\Models\Entities;
 
 use openvk\Web\Models\Repositories\{Photos, Topics, Videos, Documents};
 use openvk\Web\Util\DateTime;
+use openvk\Web\Util\GeoBlock;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{User, Manager, Chat};
 use openvk\Web\Models\Entities\Relationships\Blacklist;
@@ -406,7 +407,7 @@ class Club extends RowModel
 
         foreach ($rels as $rel) {
             $rel = (new Users())->get($rel->follower);
-            if (!$rel) {
+            if (!$rel || GeoBlock::i()->isBlocked($rel)) {
                 continue;
             }
 
@@ -425,7 +426,7 @@ class Club extends RowModel
 
         foreach ($rels as $rel) {
             $rel = (new Users())->get($rel->follower);
-            if (!$rel) {
+            if (!$rel || GeoBlock::i()->isBlocked($rel)) {
                 continue;
             }
 
@@ -547,6 +548,10 @@ class Club extends RowModel
 
     public function canBeViewedBy(?User $user = null, bool $blacklist_check = true, bool $allowModeration = true)
     {
+        if (GeoBlock::i()->isBlocked($this)) {
+            return false;
+        }
+
         if (!is_null($user)) {
             if ($this->getOwner()->getId() === $user->getId()) {
                 return true;
@@ -568,11 +573,7 @@ class Club extends RowModel
                 return true;
             }
         } else {
-            if ($this->isClosed()) {
-                return false;
-            } else {
-                return true;
-            }
+            return !$this->isClosed();
         }
     }
 

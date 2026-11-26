@@ -8,6 +8,7 @@ use Chandler\MVC\Routing\Router;
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Exceptions\{AlreadyVotedException, InvalidOptionException, PollLockedException};
 use openvk\Web\Models\Repositories\Polls as PollRepo;
+use openvk\Web\Util\GeoBlock;
 use UnexpectedValueException;
 
 class Polls implements Handler
@@ -31,6 +32,11 @@ class Polls implements Handler
         $poll = $this->polls->get($pollId);
         if (!$poll) {
             $reject("Poll not found");
+            return;
+        }
+
+        if (GeoBlock::i()->isBlocked($poll)) {
+            $reject("Access denied");
             return;
         }
 
@@ -64,6 +70,11 @@ class Polls implements Handler
         $poll = $this->polls->get($pollId);
         if (!$poll) {
             $reject("Poll not found");
+            return;
+        }
+
+        if (GeoBlock::i()->isBlocked($poll)) {
+            $reject("Access denied");
             return;
         }
 

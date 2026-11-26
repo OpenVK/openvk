@@ -7,6 +7,8 @@ namespace openvk\Web\Presenters;
 use Chandler\Database\Log;
 use Chandler\Database\Logs;
 use openvk\Web\Models\Entities\{Voucher, Gift, GiftCategory, User, BannedLink};
+use openvk\Web\Util\GeoBlock;
+use openvk\Web\Util\GeoIp;
 use openvk\Web\Models\Repositories\{Audios,
     ChandlerGroups,
     Stickers,
@@ -1193,5 +1195,114 @@ final class AdminPresenter extends OpenVKPresenter
 
         $this->flash("succ", tr("admin_sticker_outline_uploaded"), "");
         $this->redirect("/admin/stickers/id" . $pack->getId() . "/sticker/" . $sticker->getId());
+    }
+
+    public function renderGeo(): void
+    {
+        $geo = GeoBlock::i();
+        $this->template->geoEnabled     = $geo->isEnabled();
+        $this->template->geoUnavailable = $geo->isEnabled() && !GeoIp::i()->isAvailable();
+        $this->template->geoBlocks      = $geo->getActiveBlocks();
+        $this->template->geoCountries   = implode(", ", $geo->getDefaultCountries());
+
+        $targetInput = $_SERVER["REQUEST_METHOD"] === "POST"
+            ? $this->postParam("target")
+            : $this->queryParam("target");
+
+        $target = $targetInput ? $geo->resolveTarget((string) $targetInput) : null;
+        $this->template->geoTarget = $target;
+        $this->template->geoAttachments = [];
+
+        if ($target !== null && $target["type"] === "post") {
+            foreach ($target["entity"]->getChildren() as $attachment) {
+                $type = $geo->entityType($attachment);
+                if ($type === null) {
+                    continue;
+                }
+
+                $this->template->geoAttachments[] = [
+                    "type"  => $type,
+                    "id"    => $geo->entityId($attachment),
+                    "label" => $type . ":" . $geo->entityId($attachment),
+                ];
+            }
+        }
+
+        if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+            return;
+        }
+
+        $this->willExecuteWriteAction();
+        $action = (string) $this->postParam("action");
+        $reason = trim((string) $this->postParam("reason"));
+
+        try {
+            if ($action === "unblock") {
+                $block = $geo->getBlockById((int) $this->postParam("block_id"));
+                if ($block === null) {
+                    throw new \InvalidArgumentException(tr("admin_geo_block_not_found"));
+                }
+
+                $geo->unblock(
+                    (string) $block->entity_type,
+                    (int) $block->entity_id,
+                    [(string) $block->country_code],
+                    $reason,
+                    $this->user->id
+                );
+
+                $this->flash("succ", tr("admin_geo_unblocked"), "");
+                $this->redirect("/admin/geo");
+            }
+
+            if ($target === null) {
+                throw new \InvalidArgumentException(tr("admin_geo_target_invalid"));
+            }
+
+            $countries = preg_split("/[\s,]+/", (string) $this->postParam("countries"), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+            $countries = array_values(array_unique(array_map("strtoupper", $countries)));
+            if ($countries === []) {
+                $countries = $geo->getDefaultCountries();
+            }
+
+            $inserted = $geo->block(
+                $target["type"],
+                $target["id"],
+                $countries,
+                $reason,
+                $this->postParam("external_ref"),
+                $this->user->id
+            );
+
+            $attachments = $_POST["attachments"] ?? [];
+            if (is_array($attachments) && $target["type"] === "post") {
+                foreach ($attachments as $attachment) {
+                    if (!is_string($attachment) || !str_contains($attachment, ":")) {
+                        continue;
+                    }
+
+                    [$type, $id] = explode(":", $attachment, 2);
+                    if (!is_numeric($id)) {
+                        continue;
+                    }
+
+                    foreach ($countries as $country) {
+                        $parentId = $inserted[$country] ?? null;
+                        if ($parentId === null) {
+                            $parent = $geo->getActiveBlock($target["type"], $target["id"], $country);
+                            $parentId = $parent?->id;
+                        }
+
+                        $geo->block((string) $type, (int) $id, [$country], $reason, $this->postParam("external_ref"), $this->user->id, $parentId);
+                    }
+                }
+            }
+
+            $this->flash("succ", tr("admin_geo_blocked"), "");
+        } catch (\Throwable $e) {
+            $this->flash("err", tr("error"), $e->getMessage());
+        }
+
+        $this->redirect("/admin/geo");
     }
 }

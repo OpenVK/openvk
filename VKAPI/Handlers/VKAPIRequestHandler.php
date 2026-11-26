@@ -8,6 +8,7 @@ use openvk\VKAPI\Exceptions\APIErrorException;
 use openvk\Web\Models\Entities\IP;
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Repositories\IPs;
+use openvk\Web\Util\GeoBlock;
 use openvk\Web\Util\RateLimiter;
 
 abstract class VKAPIRequestHandler
@@ -29,6 +30,13 @@ abstract class VKAPIRequestHandler
     protected function failTooOften(string $message = "Rate limited"): never
     {
         $this->fail(9, $message);
+    }
+
+    protected function failIfGeoBlocked(object $entity): void
+    {
+        if (GeoBlock::i()->isBlocked($entity)) {
+            $this->fail(15, "Access denied");
+        }
     }
 
     protected function getUser(): ?User
