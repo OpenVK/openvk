@@ -2,7 +2,7 @@
 {var $comment = $notification->getModel(0)}
 
 <a href="{$user->getURL()}"><b>{$user->getCanonicalName()}</b></a>
-{_nt_replied_yours} {include under}: "{$comment->getText()}".
+{_nt_replied_yours} {include under}: "{$comment->getText()|noescape}".
 <div class="nobold">
     {$notification->getDateTime()}
 </div>
