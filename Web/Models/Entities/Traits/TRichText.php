@@ -34,31 +34,44 @@ trait TRichText
         return $text;
     }
 
-    private function formatLinks(string &$text): string
+    private function escapeHtml(string $text, int $extraFlags = 0): string
     {
-        $text = htmlentities($text);
+        return htmlspecialchars($text, ENT_DISALLOWED | ENT_XHTML | $extraFlags);
+    }
 
-        return preg_replace_callback(
-            "%(([A-z]++):\/\/(\S*?\.\S*?))([\s)\[\]{},\"\'<]|\.\s|$)%",
-            (function (array $matches): string {
-                $isSameDomain = str_replace("www.", "", explode("/", $matches[3], 2)[0]) == str_replace("www.", "", $_SERVER["SERVER_NAME"]);
-                if (!$isSameDomain) {
-                    $href = rawurlencode(html_entity_decode($matches[1]));
-                    $href = str_replace("%26amp%3B", "%26", $href);
-                    $href = 'away.php?to=' . $href;
-                } else {
-                    $domainNPath = explode("/", $matches[3], 2);
-                    $href = end($domainNPath);
-                }
-                $link = str_replace("\r", "", $matches[1]); // clears caret return that triggered <br> to be spawned
-                $rel  = $this->isAd() ? "sponsored" : "ugc";
+    private function formatLink(string $rawUrl, string $hostNPath, string $terminator, string $serverName, string $rel): string
+    {
+        $domainNPath  = explode("/", $hostNPath, 2);
+        $isSameDomain = $serverName !== "" && str_replace("www.", "", strtolower($domainNPath[0])) === $serverName;
+        $href         = $isSameDomain
+            ? $this->escapeHtml($domainNPath[1] ?? "", ENT_QUOTES)
+            : "away.php?to=" . rawurlencode($rawUrl);
 
-                $terminator = htmlentities($matches[4]);
+        $link = $this->escapeHtml(str_replace("\r", "", $rawUrl)); // clears caret return that triggered <br> to be spawned
 
-                return "<a href='/$href' rel='$rel' target='_blank'>$link</a>$terminator";
-            }),
-            $text
-        );
+        return "<a href='/$href' rel='$rel' target='_blank'>$link</a>" . $this->escapeHtml($terminator);
+    }
+
+    private function formatLinks(string $text): string
+    {
+        $pattern = "%(([A-Za-z]++):\/\/([^\s<>\"\'()\[\]{}]*?\.[^\s<>\"\']*?))([\s)\[\]{},\"\'<>]|\.\s|$)%";
+        if (!preg_match_all($pattern, $text, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER)) {
+            return $this->escapeHtml($text);
+        }
+
+        $serverName = str_replace("www.", "", strtolower($_SERVER["SERVER_NAME"] ?? ""));
+        $rel        = $this->isAd() ? "sponsored" : "ugc";
+        $result     = "";
+        $offset     = 0;
+
+        foreach ($matches as $match) {
+            $matchStart = $match[0][1];
+            $result    .= $this->escapeHtml(substr($text, $offset, $matchStart - $offset));
+            $result    .= $this->formatLink($match[1][0], $match[3][0], $match[4][0], $serverName, $rel);
+            $offset     = $matchStart + strlen($match[0][0]);
+        }
+
+        return $result . $this->escapeHtml(substr($text, $offset));
     }
 
     private function removeZalgo(string $text): string
@@ -132,12 +145,12 @@ trait TRichText
     public function getText(bool $html = true): string
     {
         $contentColumn = property_exists($this, "overrideContentColumn") ? $this->overrideContentColumn : "content";
+        $rawText       = (string) $this->getRecord()->{$contentColumn};
+        $proc          = iconv_strlen($rawText) <= OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["processingLimit"];
 
-        $text = htmlspecialchars($this->getRecord()->{$contentColumn}, ENT_DISALLOWED | ENT_XHTML);
-        $proc = iconv_strlen($this->getRecord()->{$contentColumn}) <= OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["processingLimit"];
         if ($html) {
             if ($proc) {
-                $text = $this->formatLinks($text);
+                $text = $this->formatLinks($rawText);
                 // Mentions: @user, @user (name), [id1|name]
                 $text = preg_replace("%@([A-Za-z0-9]++) \(((?:[\p{L&}\p{Lo} 0-9]\p{Mn}?)++)\)%Xu", "[$1|$2]", $text);
                 $text = preg_replace("%\*([A-Za-z0-9]++) \(((?:[\p{L&}\p{Lo} 0-9]\p{Mn}?)++)\)%Xu", "[$1|$2]", $text);
@@ -150,11 +163,14 @@ trait TRichText
                 }, $text);
 
                 $text = $this->formatEmojis($text);
+            } else {
+                $text = $this->escapeHtml($rawText);
             }
 
             $text = $this->removeZalgo($text);
             $text = nl2br($text);
         } else {
+            $text = $this->escapeHtml($rawText);
             $text = preg_replace("%@([A-Za-z0-9]++) \(((?:[\p{L&}\p{Lo} 0-9]\p{Mn}?)++)\)%Xu", "[$1|$2]", $text);
             $text = preg_replace("%\*([A-Za-z0-9]++) \(((?:[\p{L&}\p{Lo} 0-9]\p{Mn}?)++)\)%Xu", "[$1|$2]", $text);
             $text = preg_replace("%([\n\r\s]|^)(@([A-Za-z0-9]++))%Xu", "$1[$3|@$3]", $text);
