@@ -1,0 +1,9 @@
+"home" = "実家";
+"welcome" = "いらっしゃいませ";
+"to_top" = "トップへ";
+"show_next" = "次の項目を表示";
+"log_in" = "ログイン";
+"password" = "パスワード";
+"registration" = "登録";
+"forgot_password" = "パスワードをお忘れですか？";
+"checkbox_in_registration" = "<a href='/privacy'>プライバシーポリシー</a>および<a href='/terms'>サイトポリシー</a>に同意します。";

@@ -2146,7 +2146,7 @@
 "zero_unread_conversations_error" = "";
 "remove_from_chat" = "";
 "admin_can_create_stickers" = "";
-"out_of_chat" = "";
+"out_of_chat" = "来自对话";
 "stickers_withdraw_modal_amount_label" = "";
 "event_chat_moderator_remove_male" = "";
 "stickers_pack_unlisted" = "";
@@ -2428,7 +2428,7 @@
 "chat_mute_title" = "";
 "friends_online_count_many" = "";
 "messages_unable_to_load_audio" = "";
-"show_next" = "";
+"show_next" = "展示下一个项目";
 "messenger_typing_other" = "";
 "event_chat_pin_message_female" = "";
 "selected_area_chat" = "";
@@ -2708,3 +2708,4 @@
 "post_is_deleted" = "";
 "im_write_bar_offline_today_female" = "";
 "audio_unknown_artist" = "";
+"participants_few" = "1美元参与者";
